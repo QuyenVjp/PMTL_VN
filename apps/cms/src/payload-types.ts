@@ -209,6 +209,9 @@ export interface Post {
    * URL-friendly slug, tu dong sinh neu de trong.
    */
   slug: string;
+  sourceRef?: string | null;
+  sourceUrl?: string | null;
+  viewCount?: number | null;
   excerpt: string;
   content: {
     root: {
@@ -422,6 +425,9 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  sourceRef?: T;
+  sourceUrl?: T;
+  viewCount?: T;
   excerpt?: T;
   content?: T;
   status?: T;

@@ -11,6 +11,29 @@ export const postFields: Field[] = [
   },
   buildSlugField(),
   {
+    name: "sourceRef",
+    type: "text",
+    admin: {
+      position: "sidebar",
+    },
+  },
+  {
+    name: "sourceUrl",
+    type: "text",
+    admin: {
+      position: "sidebar",
+    },
+  },
+  {
+    name: "viewCount",
+    type: "number",
+    defaultValue: 0,
+    admin: {
+      position: "sidebar",
+      readOnly: true,
+    },
+  },
+  {
     name: "excerpt",
     type: "textarea",
     required: true,

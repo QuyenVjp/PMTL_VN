@@ -147,30 +147,29 @@ type AuthErrorResponse = {
 ```ts
 type PostSummary = {
   id: string;
+  sourceRef: string;
   title: string;
   slug: string;
-  excerpt: string;
+  excerpt: string; // auto-generated from contentPlainText
   publishedAt: string | null;
-  categories: string[];
+  topic: string | null;
+  tags: string[];
+  images: { id: string; url: string }[];
+  viewCount: number;
 };
 
 ## Post detail
 
 ```ts
 type PostDetail = PostSummary & {
+  sourceUrl: string | null;
   content: {
     root: {
       children: any[]; // Lexical JSON structure
     };
   };
-  author?: {
-    id: string;
-    displayName: string;
-  };
-  featuredImage?: {
-    id: string;
-    url: string;
-  };
+  contentPlainText: string; // auto-generated for search/SEO
+  normalizedSearchText: string; // auto-generated for search
 };
 ```
 ```
@@ -192,9 +191,14 @@ type CommentCreateInput = {
 type SearchResultItem = {
   id: string;
   type: 'post' | 'event';
+  sourceRef?: string;
   title: string;
   slug: string;
   excerpt: string;
+  topic?: string;
+  tags?: string[];
+  contentPlainText?: string;
+  publishedAt?: string | null;
   url: string;
 };
 ```
