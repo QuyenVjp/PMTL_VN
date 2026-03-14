@@ -1,0 +1,100 @@
+# Conventions
+
+## 1. Quy tắc folder
+
+### Web
+
+- `src/app`: route, layout, metadata, revalidate strategy.
+- `src/features/<feature>`: code đặc thù domain, gồm `api`, `components`, `hooks`, `utils`, `types.ts`.
+- `src/components/ui`: primitive UI tái sử dụng.
+- `src/components/common`: component dùng nhiều feature nhưng không phải primitive.
+- `src/lib`: integration layer như CMS client, search client, env, logger.
+- Với auth: `src/features/auth/*` chứa auth API wrapper, form, hook session, auth error parsing.
+- Guard route ưu tiên dùng server-side session check hoặc middleware mỏng, không dồn business rule vào page file.
+
+### CMS
+
+- `src/app/(payload)`: lớp host Next-native cho Payload admin UI, REST API, GraphQL và route compatibility.
+- `src/app/(site)`: route public tối thiểu của app CMS, không chứa business logic domain.
+- `src/payload.config.ts`: trung tâm cấu hình Payload cho admin, API, collection và globals.
+- `src/collections/<CollectionName>/index.ts`: cấu hình collection.
+- `src/collections/<CollectionName>/fields.ts`: field definitions.
+- `src/collections/<CollectionName>/access.ts`: access rules.
+- `src/collections/<CollectionName>/hooks.ts`: hook binding.
+- `src/collections/<CollectionName>/service.ts`: business logic cho collection đó.
+- `src/services`: service dùng chung nhiều collection.
+- `src/integrations`: code ra ngoài hệ thống như Meilisearch, webhook.
+- Với auth user collection: `index.ts` mô tả auth config, `access.ts` chỉ giữ RBAC/document access, `hooks.ts` chỉ orchestration nhẹ, `service.ts` giữ register/login/profile/reset-password flow.
+
+### Shared
+
+- `constants`: constant dùng nhiều nơi.
+- `enums`: enum domain.
+- `schemas`: Zod schema dùng chung.
+- `types`: type domain thuần.
+- `validators`: helper validate thuần.
+- `mappers`: chuyển đổi shape giữa domain layers.
+- `utils`: util thuần không phụ thuộc framework.
+
+## 2. Naming conventions
+
+- Folder feature dùng `kebab-case` hoặc `PascalCase` theo chuẩn framework hiện tại:
+  - Web feature: `posts`, `search`, `events`.
+  - Payload collection: `Posts`, `Comments`, `Users`.
+- Type/interface domain đặt tên rõ nghĩa như `PostSummary`, `SearchResultItem`, `CommentCreateInput`.
+- Không dùng tên mơ hồ như `data`, `helper`, `common` nếu file chỉ làm một việc cụ thể.
+
+## 3. File nào chứa gì
+
+- Sửa UI của feature `posts` -> `apps/web/src/features/posts/components/*`
+- Sửa UI/auth flow -> `apps/web/src/features/auth/*`
+- Sửa request từ web sang CMS -> `apps/web/src/features/posts/api/*` hoặc `apps/web/src/lib/cms/*`
+- Sửa request auth/session giữa web và CMS -> `apps/web/src/features/auth/api/*`
+- Sửa schema/content model của Payload -> `apps/cms/src/collections/*/fields.ts`
+- Sửa quyền -> `apps/cms/src/collections/*/access.ts`
+- Sửa auth/profile rule ở CMS -> `apps/cms/src/collections/Users/service.ts`
+- Sửa business rule -> `apps/cms/src/collections/*/service.ts` hoặc `apps/cms/src/services/*`
+- Sửa admin/API bootstrap của CMS -> `apps/cms/src/app/(payload)/*`
+- Sửa shape dùng chung -> `packages/shared/src/schemas/*`, `packages/shared/src/types/*`
+
+## 4. Cách thêm feature mới
+
+### Web
+
+1. Tạo `apps/web/src/features/<feature>`.
+2. Thêm `types.ts`, `api`, `components`, `utils`.
+3. Chỉ đưa code sang `src/components/common` nếu ít nhất 2 feature cùng dùng.
+
+### CMS
+
+1. Tạo `apps/cms/src/collections/<FeatureName>`.
+2. Tách `index.ts`, `fields.ts`, `access.ts`, `hooks.ts`, `service.ts`.
+3. Nếu cần side effect ngoài hệ thống, gọi qua `src/integrations/*` thay vì gọi thẳng trong hook.
+
+## 5. Rules env
+
+- Env public cho web phải prefix `NEXT_PUBLIC_`.
+- Không đọc `process.env` trực tiếp trong component. Luôn đi qua `lib/env`.
+- Compose env file ở `infra/docker`.
+- Auth env nền tảng hiện tại gồm `AUTH_RESET_PASSWORD_URL` và `PAYLOAD_AUTH_DISABLE_EMAIL`.
+- `PAYLOAD_CONFIG_PATH` được dùng bởi script CLI của `apps/cms`, không phải env contract giữa services.
+
+## 6. API contracts
+
+- Web không dựa vào raw Payload document nếu chưa map.
+- Mọi dữ liệu từ CMS đi qua mapper trước khi vào UI layer.
+- Contract chính được ghi ở `docs/api/contracts.md`.
+
+## 7. Access control
+
+- Access rule nằm ở `access.ts`.
+- Hook không tự ý chặn quyền nếu logic đó là authorization.
+- Service có thể validate business rule sau khi access đã pass.
+- Quy ước role hiện tại: `super-admin`, `admin`, `editor`, `moderator`, `member`.
+- Guest chỉ xem public content; member dùng user feature; moderator trở lên xử lý moderation scope; admin và super-admin quản trị rộng hơn.
+
+## 8. Error handling
+
+- Integration layer throw error typed hoặc error có message rõ nghĩa.
+- UI layer không parse lỗi mơ hồ từ hệ thống thấp hơn.
+- Logger chỉ log ở boundary như route handler, service, worker.

@@ -1,0 +1,13 @@
+{
+  email admin@example.com
+}
+
+{$PMTL_DOMAIN:localhost} {
+  encode zstd gzip
+  reverse_proxy web:3000
+}
+
+{$PMTL_CMS_DOMAIN:cms.localhost} {
+  encode zstd gzip
+  reverse_proxy cms:3001
+}

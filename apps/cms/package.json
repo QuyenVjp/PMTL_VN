@@ -1,0 +1,31 @@
+{
+  "name": "@pmtl/cms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts next dev --port 3001",
+    "build": "pnpm run generate:types && pnpm run generate:importmap && next build",
+    "start": "next start --port 3001",
+    "lint": "eslint .",
+    "typecheck": "pnpm run generate:types && pnpm run generate:importmap && tsc --noEmit",
+    "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
+    "generate:importmap": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:importmap",
+    "migrate": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "^3.79.0",
+    "@payloadcms/next": "3.79.0",
+    "@payloadcms/richtext-lexical": "^3.79.0",
+    "@pmtl/shared": "workspace:*",
+    "cross-env": "^10.0.0",
+    "meilisearch": "^0.55.0",
+    "next": "15.4.11",
+    "payload": "^3.79.0",
+    "pino": "^10.0.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "sharp": "^0.34.5",
+    "zod": "^4.1.11"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "pmtl-vn",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=20.18.0",
+    "pnpm": ">=10.30.3"
+  },
+  "scripts": {
+    "dev": "tsx infra/scripts/dev.ts",
+    "dev:apps": "turbo run dev --parallel --filter=@pmtl/web --filter=@pmtl/cms",
+    "dev:web": "pnpm --filter @pmtl/web dev",
+    "dev:cms": "pnpm --filter @pmtl/cms dev",
+    "dev:infra": "tsx infra/scripts/dev.ts --infra-only",
+    "dev:infra:down": "docker compose -f infra/docker/compose.dev.yml down",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "docker:dev": "docker compose -f infra/docker/compose.dev.yml up --build",
+    "docker:prod": "docker compose -f infra/docker/compose.prod.yml up -d"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.35.0",
+    "eslint-config-next": "^16.1.6",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.6",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0"
+  }
+}

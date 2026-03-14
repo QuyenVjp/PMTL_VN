@@ -1,0 +1,105 @@
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+    env_file:
+      - .env.dev
+    environment:
+      NODE_ENV: development
+    depends_on:
+      cms:
+        condition: service_started
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+
+  cms:
+    build:
+      context: ../..
+      dockerfile: apps/cms/Dockerfile
+    env_file:
+      - .env.dev
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.14
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meili-dev-data:/meili_data
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7700/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    ports:
+      - "7700:7700"
+    networks:
+      - backend
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      web:
+        condition: service_started
+      cms:
+        condition: service_started
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - frontend
+      - backend
+
+volumes:
+  postgres-dev-data:
+  meili-dev-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  frontend:
+  backend:

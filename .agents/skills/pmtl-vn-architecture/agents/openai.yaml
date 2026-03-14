@@ -1,0 +1,3 @@
+interface:
+  display_name: "PMTL_VN Architecture"
+  short_description: "Guide for Next.js 16 + Payload + Docker + Caddy + Meilisearch + Payload auth monorepo work."
