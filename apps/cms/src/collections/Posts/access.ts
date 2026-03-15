@@ -1,5 +1,6 @@
 import { isAuthenticated } from "@/access/is-authenticated";
 import { isEditorOrAdmin } from "@/access/is-editor-or-admin";
+
 import type { AccessArgs } from "@/access/types";
 
 function canReadPost({ req }: AccessArgs) {

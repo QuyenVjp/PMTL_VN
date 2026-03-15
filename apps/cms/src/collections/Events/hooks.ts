@@ -1,22 +1,10 @@
 import { revalidateContent } from "@/hooks/revalidate-content";
-import { syncEventSearch } from "@/services/search.service";
 
-import { prepareEventData } from "./service";
+import { prepareEventData, syncEventSearchDocument } from "./service";
 
 type EventHookArgs = {
-  data?: {
-    title?: string | null;
-    slug?: string | null;
-    startAt?: string | null;
-    endAt?: string | null;
-  };
-  doc?: {
-    id: string;
-    slug: string;
-    title: string;
-    summary?: string | null;
-    excerpt?: string | null;
-  };
+  data?: Record<string, unknown>;
+  doc?: Record<string, unknown>;
   collection?: {
     slug?: string;
   };
@@ -35,12 +23,7 @@ export const eventHooks = {
       }
 
       await Promise.all([
-        syncEventSearch({
-          id: doc.id,
-          slug: doc.slug,
-          title: doc.title,
-          excerpt: doc.summary ?? doc.excerpt ?? "",
-        }),
+        syncEventSearchDocument(doc as never),
         revalidateContent({
           doc,
           ...(collection ? { collection } : {}),

@@ -16,6 +16,8 @@
 
 - `src/app/(payload)`: lớp host Next-native cho Payload admin UI, REST API, GraphQL và route compatibility.
 - `src/app/(site)`: route public tối thiểu của app CMS, không chứa business logic domain.
+- `src/admin/components`: branding, intro, helper UI cho admin panel.
+- `src/admin/widgets`: dashboard widget cho admin panel.
 - `src/payload.config.ts`: trung tâm cấu hình Payload cho admin, API, collection và globals.
 - `src/collections/<CollectionName>/index.ts`: cấu hình collection.
 - `src/collections/<CollectionName>/fields.ts`: field definitions.
@@ -24,6 +26,7 @@
 - `src/collections/<CollectionName>/service.ts`: business logic cho collection đó.
 - `src/services`: service dùng chung nhiều collection.
 - `src/integrations`: code ra ngoài hệ thống như Meilisearch, webhook.
+- `src/routes`: helper cho route compatibility hoặc public adapter mỏng, gồm `public.ts`, `session.ts`, `request-metadata.ts`; không chứa business logic domain.
 - Với auth user collection: `index.ts` mô tả auth config, `access.ts` chỉ giữ RBAC/document access, `hooks.ts` chỉ orchestration nhẹ, `service.ts` giữ register/login/profile/reset-password flow.
 
 ### Shared
@@ -40,7 +43,7 @@
 
 - Folder feature dùng `kebab-case` hoặc `PascalCase` theo chuẩn framework hiện tại:
   - Web feature: `posts`, `search`, `events`.
-  - Payload collection: `Posts`, `Comments`, `Users`.
+  - Payload collection: `Posts`, `PostComments`, `Users`.
 - Type/interface domain đặt tên rõ nghĩa như `PostSummary`, `SearchResultItem`, `CommentCreateInput`.
 - Không dùng tên mơ hồ như `data`, `helper`, `common` nếu file chỉ làm một việc cụ thể.
 
@@ -55,6 +58,8 @@
 - Sửa auth/profile rule ở CMS -> `apps/cms/src/collections/Users/service.ts`
 - Sửa business rule -> `apps/cms/src/collections/*/service.ts` hoặc `apps/cms/src/services/*`
 - Sửa admin/API bootstrap của CMS -> `apps/cms/src/app/(payload)/*`
+- Sửa branding, dashboard widget, admin helper UI -> `apps/cms/src/admin/*`
+- Sửa route compatibility / adapter mỏng cho FE cũ -> `apps/cms/src/routes/*` và `apps/cms/src/app/(payload)/api/*`
 - Sửa shape dùng chung -> `packages/shared/src/schemas/*`, `packages/shared/src/types/*`
 
 ## 4. Cách thêm feature mới

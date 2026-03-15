@@ -1,49 +1,38 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { AuthNavigation } from "@/features/auth/components/auth-navigation";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/posts", label: "Posts" },
-  { href: "/events", label: "Events" },
-  { href: "/search", label: "Search" },
+  { href: "/", label: "Trang chủ" },
+  { href: "/posts", label: "Bài viết" },
+  { href: "/events", label: "Sự kiện" },
+  { href: "/search", label: "Tìm kiếm" },
 ];
 
 export function SiteHeader() {
   return (
-    <header
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 20,
-        background: "rgba(249, 246, 240, 0.82)",
-        backdropFilter: "blur(14px)",
-        borderBottom: "1px solid rgba(18, 33, 23, 0.08)",
-      }}
-    >
-      <div
-        className="app-shell"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "18px 0",
-          gap: 16,
-        }}
-      >
-        <div>
-          <strong>PMTL_VN</strong>
-          <p className="muted" style={{ margin: "4px 0 0", fontSize: "0.92rem" }}>
-            Monorepo web architecture for solo dev + AI
-          </p>
-        </div>
-        <nav className="inline-list">
+    <header className="site-header">
+      <div className="app-shell header-inner">
+        <Link className="brand" href="/">
+          <Image
+            src="/images/logoo.png"
+            alt="Pháp Môn Tâm Linh"
+            width={164}
+            height={48}
+            className="brand-logo"
+            priority
+          />
+        </Link>
+        <nav className="inline-list nav-links">
           {links.map((link) => (
-            <Link key={link.href} href={link.href}>
+            <Link key={link.href} href={link.href} className="nav-link">
               {link.label}
             </Link>
           ))}
-          <AuthNavigation />
+          <div className="auth-nav">
+            <AuthNavigation />
+          </div>
         </nav>
       </div>
     </header>

@@ -7,7 +7,7 @@ export function SiteShell({ children }: PropsWithChildren) {
   return (
     <>
       <SiteHeader />
-      <main className="app-shell" style={{ padding: "32px 0 40px" }}>
+      <main className="app-shell main-shell">
         {children}
       </main>
       <SiteFooter />

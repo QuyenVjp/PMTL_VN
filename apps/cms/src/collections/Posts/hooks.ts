@@ -1,16 +1,15 @@
-import { revalidateContent } from "@/hooks/revalidate-content";
-import { syncPostSearch } from "@/services/search.service";
 import { wrapLexicalContent } from "@/hooks/lexical-migration";
-
-import { preparePostData } from "./service";
-
-import type { Post } from "@/payload-types";
+import { revalidateContent } from "@/hooks/revalidate-content";
+import {
+  preparePostData,
+  syncPostSearchDocument,
+} from "./service";
 
 type PostHookArgs = {
   data?: Record<string, unknown>;
-  doc?: Post;
+  doc?: Record<string, unknown>;
   req?: unknown;
-  originalDoc?: Post;
+  originalDoc?: Record<string, unknown>;
   operation?: "create" | "update";
   collection?: {
     slug?: string;
@@ -20,26 +19,29 @@ type PostHookArgs = {
 export const postHooks = {
   beforeChange: [
     ({ data, originalDoc, operation }: PostHookArgs) => {
-      // Migrate plain text content to Lexical if needed
-      if (data?.content && typeof data.content === "string") {
+      if (!data) {
+        return data;
+      }
+
+      if (typeof data.content === "string") {
         data.content = wrapLexicalContent(data.content);
       }
 
-      if (data) {
-        if (operation === "create") {
-          data.viewCount = 0;
-        }
-
-        if (operation === "update" && originalDoc) {
-          data.viewCount = originalDoc.viewCount ?? 0;
-        }
-
-        if (typeof data.sourceUrl === "string") {
-          data.sourceUrl = data.sourceUrl.trim();
-        }
+      if (operation === "create") {
+        data.commentCount = 0;
+        data.views = 0;
+        data.uniqueViews = 0;
+        data.likes = 0;
       }
 
-      return data ? preparePostData(data) : data;
+      if (operation === "update" && originalDoc) {
+        data.commentCount = data.commentCount ?? originalDoc.commentCount ?? 0;
+        data.views = data.views ?? originalDoc.views ?? 0;
+        data.uniqueViews = data.uniqueViews ?? originalDoc.uniqueViews ?? 0;
+        data.likes = data.likes ?? originalDoc.likes ?? 0;
+      }
+
+      return preparePostData(data);
     },
   ],
   afterChange: [
@@ -49,7 +51,7 @@ export const postHooks = {
       }
 
       await Promise.all([
-        syncPostSearch(doc, req),
+        syncPostSearchDocument(doc as never, req),
         revalidateContent({
           doc,
           ...(collection ? { collection } : {}),

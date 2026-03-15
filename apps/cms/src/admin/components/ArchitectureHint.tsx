@@ -1,8 +1,6 @@
 export function ArchitectureHint() {
   return (
-    <div>
-      CMS logic duoc tach thanh collection config, access, hooks va service de AI sua nhanh.
-    </div>
+    <div>Logic CMS được tách thành collection config, access, hooks và service để AI sửa nhanh.</div>
   );
 }
 

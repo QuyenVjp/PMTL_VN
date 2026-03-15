@@ -1,0 +1,161 @@
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.9rem;
+  background: linear-gradient(135deg, #155e75, #0f766e);
+  color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: inherit;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.brandTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.brandSubtitle {
+  color: var(--theme-elevation-500);
+  font-size: 0.75rem;
+}
+
+.introCard {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 1rem;
+  background: var(--theme-elevation-50);
+  background:
+    radial-gradient(circle at top right, rgba(21, 94, 117, 0.15), transparent 40%),
+    linear-gradient(180deg, var(--theme-elevation-50), var(--theme-elevation-100));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.introHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.eyebrow {
+  color: #0f766e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.introTitle {
+  margin: 0;
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.introText {
+  margin: 0;
+  color: var(--theme-elevation-700);
+  max-width: 68ch;
+}
+
+.linkGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.linkCard {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 0.85rem;
+  background: var(--theme-elevation-100);
+  color: inherit;
+  text-decoration: none;
+}
+
+.linkCard:hover {
+  border-color: #0f766e;
+  transform: translateY(-1px);
+}
+
+.linkLabel {
+  font-weight: 600;
+}
+
+.linkHint {
+  color: var(--theme-elevation-500);
+  font-size: 0.82rem;
+}
+
+.widgetCard {
+  display: grid;
+  gap: 1rem;
+  height: 100%;
+  padding: 1.15rem;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, var(--theme-elevation-50), var(--theme-elevation-100));
+}
+
+.widgetTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.widgetDescription {
+  margin: 0;
+  color: var(--theme-elevation-600);
+  font-size: 0.88rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.statCard {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem;
+  border-radius: 0.85rem;
+  background: var(--theme-elevation-150);
+}
+
+.statValue {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statLabel {
+  color: var(--theme-elevation-700);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.statHint {
+  color: var(--theme-elevation-500);
+  font-size: 0.78rem;
+}

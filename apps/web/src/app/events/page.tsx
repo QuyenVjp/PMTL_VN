@@ -1,16 +1,29 @@
-import { SectionTitle } from "@/components/ui/section-title";
-import { EventList } from "@/features/events/components/event-list";
-import { upcomingEventFixtures } from "@/features/events/utils/fixtures";
+import HeaderServer from "@/components/HeaderServer";
+import Footer from "@/components/Footer";
+import StickyBanner from "@/components/StickyBanner";
+import EventsClient from "./EventsClient";
+import { fetchEvents } from "@/lib/api/event";
 
-export default function EventsPage() {
+export const revalidate = 3600; // ISR cache
+
+export const metadata = {
+  title: "Sự Kiện & Pháp Hội - Pháp Môn Tâm Linh",
+  description: "Cập nhật các sự kiện, pháp hội, phóng sinh, khóa tu tập mới nhất tại Việt Nam.",
+};
+
+export default async function EventsPage() {
+  const { data: initialEvents } = await fetchEvents();
+
   return (
-    <section className="section-stack">
-      <SectionTitle
-        title="Events domain"
-        description="Listing va filter event tach rieng khoi post, nhung van dung chung shared schema."
-      />
-      <EventList events={upcomingEventFixtures} />
-    </section>
+    <div className="min-h-screen bg-background">
+      <HeaderServer />
+      <main className="py-16 md:py-20">
+        <div className="container mx-auto px-6">
+          <EventsClient initialEvents={initialEvents || []} />
+        </div>
+      </main>
+      <Footer />
+      <StickyBanner />
+    </div>
   );
 }
-

@@ -43,7 +43,7 @@ function mapAuthError(error: unknown): Response {
   return jsonResponse(500, {
     error: {
       code: "AUTH_UNKNOWN",
-      message: "He thong auth gap loi khong xac dinh.",
+      message: "Hệ thống auth gặp lỗi không xác định.",
     } satisfies AuthError,
   });
 }
@@ -111,7 +111,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
         return jsonResponse(401, {
           error: {
             code: "AUTH_UNAUTHENTICATED",
-            message: "Ban chua dang nhap.",
+            message: "Bạn chưa đăng nhập.",
           } satisfies AuthError,
         });
       }
@@ -125,7 +125,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
       const session = await getCurrentSession(payload, request.headers);
 
       if (!session) {
-        throw new UserAuthError("AUTH_UNAUTHENTICATED", "Ban chua dang nhap.", 401);
+        throw new UserAuthError("AUTH_UNAUTHENTICATED", "Bạn chưa đăng nhập.", 401);
       }
 
       const body = await parseBody(request);

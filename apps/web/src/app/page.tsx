@@ -1,96 +1,120 @@
-import { ArrowRight, Boxes, DatabaseZap, Search } from "lucide-react";
+// ─────────────────────────────────────────────────────────────
+//  app/page.tsx — Server Component
+//  Fetch dữ liệu động từ Strapi CMS → truyền props vào các section
+// ─────────────────────────────────────────────────────────────
 
-import { SectionTitle } from "@/components/ui/section-title";
-import { AuthStatusPanel } from "@/features/auth/components/auth-status-panel";
-import { CommentGuidelines } from "@/features/comments/components/comment-guidelines";
-import { EventList } from "@/features/events/components/event-list";
-import { upcomingEventFixtures } from "@/features/events/utils/fixtures";
-import { getFeaturedPosts } from "@/features/posts/api/get-featured-posts";
-import { PostList } from "@/features/posts/components/post-list";
-import { SearchPanel } from "@/features/search/components/search-panel";
+import HeaderServer from "@/components/HeaderServer";
+import HeroSection from "@/components/HeroSection";
+import PhaoBaoSection from "@/components/PhaoBaoSection";
+import ActionCards from "@/components/ActionCards";
+import AboutSection from "@/components/AboutSection";
+import AwardsSection from "@/components/AwardsSection";
+import HallGallery from "@/components/HallGallery";
+import VideoSection from "@/components/VideoSection";
+import ContentFeeds from "@/components/ContentFeeds";
+import NewsletterSignup from "@/components/NewsletterSignup";
+import Footer from "@/components/Footer";
+import StickyBanner from "@/components/StickyBanner";
 
-export default function HomePage() {
-  const featuredPosts = getFeaturedPosts();
+import {
+  getHomepageSettings,
+  FALLBACK_HERO_SLIDES,
+  FALLBACK_STATS,
+  FALLBACK_PHAP_BAO,
+  FALLBACK_ACTION_CARDS,
+  FALLBACK_VIDEOS,
+  FALLBACK_AWARDS,
+  FALLBACK_GALLERY,
+  FALLBACK_STICKY_BANNER,
+} from "@/lib/api/homepage";
+
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Pháp Môn Tâm Linh — Trang Chủ | Hộ Trì Phật Pháp',
+  description: 'Trung tâm chia sẻ lời khai thị, hướng dẫn tu tập niệm kinh, phóng sinh và các hoạt động Phật sự theo truyền bá của Sư Phụ Lư Quân Hoành. Hành trình tìm về sự thanh tịnh và giải thoát.',
+  keywords: ['Pháp Môn Tâm Linh', 'Niệm Kinh', 'Sư Phụ Lư Quân Hoành', 'Bạch Thoại Phật Pháp', 'Khai Thị'],
+  openGraph: {
+    title: 'Pháp Môn Tâm Linh — Trang Chủ | Hộ Trì Phật Pháp',
+    description: 'Trung tâm chia sẻ lời khai thị, hướng dẫn tu tập niệm kinh và các hoạt động Phật sự.',
+    url: 'https://phapmontamlinh.vn',
+    siteName: 'Pháp Môn Tâm Linh',
+    images: [
+      {
+        url: '/images/PMTL-LOGO.png',
+        width: 1200,
+        height: 630,
+        alt: 'Pháp Môn Tâm Linh Logo',
+      },
+    ],
+    locale: 'vi_VN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Pháp Môn Tâm Linh — Trang Chủ',
+    description: 'Trung tâm chia sẻ lời khai thị và hướng dẫn tu tập Phật pháp.',
+    images: ['/images/PMTL-LOGO.png'],
+  },
+}
+
+
+export default async function HomePage() {
+  // Fetch dữ liệu trang chủ từ CMS — fallback nếu CMS chưa có data
+  const settings = await getHomepageSettings()
+
+  const heroSlides = settings?.heroSlides ?? FALLBACK_HERO_SLIDES
+  const stats = settings?.stats ?? FALLBACK_STATS
+  const phapBao = settings?.phapBao ?? FALLBACK_PHAP_BAO
+  const actionCards = settings?.actionCards ?? FALLBACK_ACTION_CARDS
+  const featuredVideos = settings?.featuredVideos ?? FALLBACK_VIDEOS
+  const awards = settings?.awards ?? FALLBACK_AWARDS
+  const gallerySlides = settings?.gallerySlides ?? FALLBACK_GALLERY
+  const stickyBanner = settings?.stickyBanner ?? FALLBACK_STICKY_BANNER
 
   return (
-    <div className="section-stack" style={{ gap: 28 }}>
-      <section className="hero-grid">
-        <div className="panel" style={{ padding: 32 }}>
-          <span className="eyebrow">Stage 1 + Stage 2 ready</span>
-          <h1 style={{ fontSize: "clamp(2.8rem, 8vw, 5.2rem)", margin: "18px 0 16px" }}>
-            Kien truc monorepo de AI doc code la biet sua dung cho.
-          </h1>
-          <p className="muted" style={{ fontSize: "1.08rem", lineHeight: 1.7 }}>
-            Route o web mong, business rule nam o Payload service, shared schema o package rieng,
-            infra compose ro rang theo tung boundary.
-          </p>
-          <div className="pill-list" style={{ marginTop: 20 }}>
-            <span className="pill">
-              <Boxes size={16} style={{ marginRight: 8, verticalAlign: "middle" }} />
-              apps/web + apps/cms
-            </span>
-            <span className="pill">
-              <DatabaseZap size={16} style={{ marginRight: 8, verticalAlign: "middle" }} />
-              Postgres + Payload
-            </span>
-            <span className="pill">
-              <Search size={16} style={{ marginRight: 8, verticalAlign: "middle" }} />
-              Meilisearch projection
-            </span>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <HeaderServer />
+      <main>
+        {/* Hero slideshow 3 ảnh */}
+        <HeroSection slides={heroSlides} stats={stats} />
+        <div className="zen-divider max-w-xs mx-auto" />
 
-        <SearchPanel />
-      </section>
+        {/* 5 Đại Pháp Bảo */}
+        <PhaoBaoSection items={phapBao} />
+        <div className="zen-divider max-w-xs mx-auto" />
 
-      <section className="content-grid">
-        <div className="section-stack">
-          <SectionTitle
-            title="Featured posts"
-            description="Feature folder tu quan ly api wrapper, component va type rieng."
-          />
-          <PostList posts={featuredPosts} />
-        </div>
-        <div className="section-stack">
-          <SectionTitle
-            title="Upcoming events"
-            description="Event rules duoc validate o shared layer va CMS service."
-          />
-          <EventList events={upcomingEventFixtures} />
-        </div>
-      </section>
+        {/* 3 card hành động nhanh */}
+        <ActionCards cards={actionCards} />
+        <div className="zen-divider max-w-xs mx-auto" />
 
-      <section className="cards-grid">
-        <CommentGuidelines />
-        <AuthStatusPanel />
-        <div className="panel" style={{ padding: 24 }}>
-          <h3 style={{ marginTop: 0 }}>Profile foundation</h3>
-          <p className="muted" style={{ marginBottom: 0 }}>
-            Profile edit, role/status display va session protection da nam o route `/profile`.
-          </p>
-        </div>
-      </section>
+        {/* Giới thiệu Pháp Môn & Đài Trưởng */}
+        <AboutSection />
+        <div className="zen-divider max-w-xs mx-auto" />
 
-      <section className="panel" style={{ padding: 28 }}>
-        <h2 style={{ marginTop: 0 }}>Boundary rules</h2>
-        <div className="cards-grid">
-          <div>
-            <strong>Web route layer</strong>
-            <p className="muted">Render page, load data, metadata, cache/revalidate.</p>
-          </div>
-          <div>
-            <strong>Feature layer</strong>
-            <p className="muted">UI state, form, fetch wrapper, client interaction.</p>
-          </div>
-          <div>
-            <strong>CMS service layer</strong>
-            <p className="muted">
-              Validation, indexing, notification, queue handoff.
-              <ArrowRight size={16} style={{ marginLeft: 8, verticalAlign: "middle" }} />
-            </p>
-          </div>
-        </div>
-      </section>
+        {/* Giải thưởng & vinh danh quốc tế */}
+        <AwardsSection awards={awards} />
+        <div className="zen-divider max-w-xs mx-auto" />
+
+        {/* Slideshow hội trường trang nghiêm */}
+        <HallGallery slides={gallerySlides} />
+        <div className="zen-divider max-w-xs mx-auto" />
+
+        {/* 3 Video giới thiệu quan trọng */}
+        <VideoSection videos={featuredVideos} />
+        <div className="zen-divider max-w-xs mx-auto" />
+
+        {/* Khai thị mới nhất & Chuyện Phật Pháp */}
+        <ContentFeeds />
+        <div className="zen-divider max-w-xs mx-auto" />
+
+
+
+        {/* Bản tin Phật pháp */}
+        <NewsletterSignup />
+      </main>
+      <Footer />
+      <StickyBanner config={stickyBanner} />
     </div>
   );
 }

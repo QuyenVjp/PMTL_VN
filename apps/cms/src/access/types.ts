@@ -5,6 +5,6 @@ export type RequestUser = {
 
 export type AccessArgs = {
   req: {
-    user?: RequestUser | Record<string, unknown> | null;
+    user?: RequestUser | null;
   };
 };

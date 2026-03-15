@@ -7,12 +7,12 @@ export function AuthStatusPanel() {
 
   return (
     <div className="panel" style={{ padding: 24 }}>
-      <h3 style={{ marginTop: 0 }}>Auth boundary</h3>
-      {isLoading ? <p className="muted">Dang tai session...</p> : null}
+      <h3 style={{ marginTop: 0 }}>Trạng thái xác thực</h3>
+      {isLoading ? <p className="muted">Đang tải session...</p> : null}
       {!isLoading && session ? (
         <div className="section-stack">
           <p className="muted" style={{ marginBottom: 0 }}>
-            Dang nhap voi {session.user.email}
+            Đăng nhập với {session.user.email}
           </p>
           <div className="pill-list">
             <span className="pill">{session.user.role}</span>
@@ -22,7 +22,7 @@ export function AuthStatusPanel() {
       ) : null}
       {!isLoading && !session ? (
         <p className="muted" style={{ marginBottom: 0 }}>
-          Chua co session. Web se chuyen huong protected route neu cookie auth khong ton tai.
+          Chưa có session. Web sẽ chặn các route bảo vệ khi cookie auth không tồn tại.
         </p>
       ) : null}
       {error ? <p style={{ color: "#a33", marginBottom: 0 }}>{error}</p> : null}

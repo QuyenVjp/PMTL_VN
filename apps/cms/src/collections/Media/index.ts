@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { t } from "@/admin/i18n";
+
 import { mediaAccess } from "./access";
 import { mediaFields } from "./fields";
 import { mediaHooks } from "./hooks";
@@ -7,14 +9,18 @@ import { mediaHooks } from "./hooks";
 export const Media: CollectionConfig = {
   slug: "media",
   labels: {
-    singular: "Media",
-    plural: "Media",
+    singular: t("Media", "Media"),
+    plural: t("Thư viện media", "Media"),
+  },
+  admin: {
+    defaultColumns: ["filename", "alt", "updatedAt"],
+    useAsTitle: "filename",
   },
   access: mediaAccess,
   hooks: mediaHooks,
   upload: {
     staticDir: "media",
-    mimeTypes: ["image/*"],
+    mimeTypes: ["image/*", "application/pdf", "audio/*"],
   },
   fields: mediaFields,
 };

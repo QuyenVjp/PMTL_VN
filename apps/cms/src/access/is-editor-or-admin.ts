@@ -1,9 +1,3 @@
-import type { AccessArgs } from "./types";
+import { isRole } from "./roles";
 
-export function isEditorOrAdmin({ req }: AccessArgs): boolean {
-  return (
-    req.user?.role === "super-admin" ||
-    req.user?.role === "admin" ||
-    req.user?.role === "editor"
-  );
-}
+export const isEditorOrAdmin = isRole("editor");

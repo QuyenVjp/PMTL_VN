@@ -21,6 +21,11 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { BrandIcon as BrandIcon_94f491e77584675078b97536bf7c470a } from '../../../admin/components/BrandIcon.tsx'
+import { BrandLogo as BrandLogo_2b0497d22b74100384b17adb809f2cb8 } from '../../../admin/components/BrandLogo.tsx'
+import { DashboardIntro as DashboardIntro_f034028d3aee13a03e9b681df4d36f47 } from '../../../admin/components/DashboardIntro.tsx'
+import { ContentStatsWidget as ContentStatsWidget_0967d1c414cab49432b6c07fdfb72b77 } from '../../../admin/widgets/ContentStatsWidget.tsx'
+import { QuickLinksWidget as QuickLinksWidget_e0bd1fb40f1ad901ba284cd001b253ad } from '../../../admin/widgets/QuickLinksWidget.tsx'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -47,5 +52,10 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/admin/components/BrandIcon.tsx#BrandIcon": BrandIcon_94f491e77584675078b97536bf7c470a,
+  "/admin/components/BrandLogo.tsx#BrandLogo": BrandLogo_2b0497d22b74100384b17adb809f2cb8,
+  "/admin/components/DashboardIntro.tsx#DashboardIntro": DashboardIntro_f034028d3aee13a03e9b681df4d36f47,
+  "/admin/widgets/ContentStatsWidget.tsx#ContentStatsWidget": ContentStatsWidget_0967d1c414cab49432b6c07fdfb72b77,
+  "/admin/widgets/QuickLinksWidget.tsx#QuickLinksWidget": QuickLinksWidget_e0bd1fb40f1ad901ba284cd001b253ad,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

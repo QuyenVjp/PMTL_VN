@@ -1,4 +1,5 @@
 import { isAdmin } from "@/access/is-admin";
+import { isSelfOrRole } from "@/access/roles";
 
 type UserQueryAccess =
   | boolean
@@ -21,37 +22,8 @@ export function canManageUserRoles({ req }: UserAccessArgs): boolean {
   return req.user?.role === "super-admin" || req.user?.role === "admin";
 }
 
-function canReadUsers({ req }: UserAccessArgs): UserQueryAccess {
-  if (req.user?.role === "super-admin" || req.user?.role === "admin") {
-    return true;
-  }
-
-  if (!req.user?.id) {
-    return false;
-  }
-
-  return {
-    id: {
-      equals: req.user.id,
-    },
-  };
-}
-
-function canUpdateUsers({ req }: UserAccessArgs): UserQueryAccess {
-  if (req.user?.role === "super-admin" || req.user?.role === "admin") {
-    return true;
-  }
-
-  if (!req.user?.id) {
-    return false;
-  }
-
-  return {
-    id: {
-      equals: req.user.id,
-    },
-  };
-}
+const canReadUsers = isSelfOrRole("admin") as ({ req }: UserAccessArgs) => UserQueryAccess;
+const canUpdateUsers = isSelfOrRole("admin") as ({ req }: UserAccessArgs) => UserQueryAccess;
 
 export const userAccess = {
   read: canReadUsers,

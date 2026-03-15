@@ -15,16 +15,16 @@ export function AuthNavigation() {
   if (!session) {
     return (
       <div className="inline-list">
-        <Link href="/login">Dang nhap</Link>
-        <Link href="/register">Dang ky</Link>
+        <Link href="/login">Đăng nhập</Link>
+        <Link href="/register">Đăng ký</Link>
       </div>
     );
   }
 
   return (
     <div className="inline-list">
-      <span className="muted">Xin chao, {session.user.displayName}</span>
-      <Link href="/profile">Profile</Link>
+      <span className="muted">Xin chào, {session.user.displayName}</span>
+      <Link href="/profile">Hồ sơ</Link>
       <LogoutButton />
     </div>
   );

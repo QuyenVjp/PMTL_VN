@@ -1,8 +1,11 @@
-import { normalizeUserProfileInput } from "./service";
+import { ensureUserProfileDefaults, normalizeUserProfileInput } from "./service";
 
 type UserHookArgs = {
   data?: {
-    displayName?: string | null;
+    publicId?: string | null;
+    fullName?: string | null;
+    username?: string | null;
+    phone?: string | null;
     bio?: string | null;
   };
 };
@@ -14,7 +17,7 @@ export const userHooks = {
         return data;
       }
 
-      return normalizeUserProfileInput(data);
+      return ensureUserProfileDefaults(normalizeUserProfileInput(data));
     },
   ],
 };

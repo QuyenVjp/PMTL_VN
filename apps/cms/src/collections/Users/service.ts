@@ -15,13 +15,20 @@ import {
   type UserRole,
 } from "@pmtl/shared";
 
+import { ensurePublicId } from "@/services/public-id.service";
+
 type RawUser = {
   id: number | string;
+  publicId?: string | null;
   email: string;
-  displayName?: string | null;
+  fullName?: string | null;
+  username?: string | null;
   bio?: string | null;
+  dharmaName?: string | null;
+  phone?: string | null;
   role?: UserRole | null;
-  status?: "active" | "pending" | "suspended" | null;
+  isBlocked?: boolean | null;
+  lastLoginAt?: string | null;
   avatar?:
     | null
     | number
@@ -49,6 +56,12 @@ export function canManageUsers(role?: string): boolean {
   return role === "super-admin" || role === "admin";
 }
 
+export function assertCanManageUser(role?: string): void {
+  if (!canManageUsers(role)) {
+    throw new UserAuthError("AUTH_FORBIDDEN", "Bạn không có quyền quản lý người dùng.", 403);
+  }
+}
+
 export function buildResetPasswordURL(token: string): string {
   const baseUrl =
     process.env.AUTH_RESET_PASSWORD_URL ??
@@ -57,14 +70,46 @@ export function buildResetPasswordURL(token: string): string {
   return new URL(`?token=${encodeURIComponent(token)}`, baseUrl).toString();
 }
 
-export function normalizeUserProfileInput<T extends { bio?: string | null; displayName?: string | null }>(
+function normalizePhone(value?: string | null): string | undefined {
+  const nextValue = value?.replace(/\s+/g, " ").trim();
+
+  return nextValue || undefined;
+}
+
+function normalizeUsername(value?: string | null): string | undefined {
+  const nextValue = value
+    ?.trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return nextValue || undefined;
+}
+
+export function normalizeUserProfileInput<
+  T extends { bio?: string | null; fullName?: string | null; username?: string | null; phone?: string | null },
+>(
   input: T,
 ): T {
   return {
     ...input,
     bio: input.bio?.trim() ?? "",
-    displayName: input.displayName?.trim() ?? input.displayName,
+    fullName: input.fullName?.trim() ?? input.fullName,
+    username: normalizeUsername(input.username),
+    phone: normalizePhone(input.phone),
   };
+}
+
+export function ensureUserProfileDefaults<T extends { publicId?: string | null | undefined; role?: UserRole | null | undefined }>(
+  input: T,
+): T {
+  return ensurePublicId(
+    {
+      ...input,
+      role: input.role ?? "member",
+    },
+    "usr",
+  );
 }
 
 function mapAvatar(avatar: RawUser["avatar"]): { avatarId: string | null; avatarUrl: string | null } {
@@ -87,14 +132,29 @@ export function mapUserToAuthUser(user: RawUser): AuthUser {
   return {
     id: String(user.id),
     email: user.email,
-    displayName: user.displayName ?? user.email,
+    displayName: user.fullName ?? user.email,
     bio: user.bio ?? "",
     role: user.role ?? "member",
-    status: user.status ?? "active",
+    status: user.isBlocked ? "suspended" : "active",
     avatarId: avatar.avatarId,
     avatarUrl: avatar.avatarUrl,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+  };
+}
+
+export function mapUserToPublicDTO(user: RawUser) {
+  return {
+    publicId: user.publicId ?? null,
+    email: user.email,
+    fullName: user.fullName ?? user.email,
+    username: user.username ?? null,
+    bio: user.bio ?? "",
+    dharmaName: user.dharmaName ?? null,
+    phone: user.phone ?? null,
+    role: user.role ?? "member",
+    isBlocked: Boolean(user.isBlocked),
+    lastLoginAt: user.lastLoginAt ?? null,
   };
 }
 
@@ -112,7 +172,7 @@ function assertUserCanAuthenticate(user: RawUser | null | undefined): asserts us
     throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
   }
 
-  if (user.status !== "active") {
+  if (user.isBlocked) {
     throw new UserAuthError("AUTH_USER_INACTIVE", "Tai khoan hien khong the dang nhap.", 403);
   }
 }
@@ -132,6 +192,41 @@ async function findUserByEmail(payload: Payload, email: string): Promise<RawUser
   return (result.docs[0] as RawUser | undefined) ?? null;
 }
 
+export async function createUserProfile(
+  payload: Payload,
+  input: RegisterInput & { role?: UserRole; isBlocked?: boolean },
+): Promise<RawUser> {
+  const normalizedInput = ensureUserProfileDefaults(
+    normalizeUserProfileInput({
+      fullName: input.displayName,
+      role: input.role ?? "member",
+      isBlocked: input.isBlocked ?? false,
+    }),
+  );
+
+  return (await payload.create({
+    collection: "users",
+    data: {
+      email: input.email.toLowerCase(),
+      password: input.password,
+      ...normalizedInput,
+      bio: "",
+    },
+    overrideAccess: true,
+  } as never)) as RawUser;
+}
+
+export async function updateLastLoginAt(payload: Payload, userId: string | number): Promise<void> {
+  await payload.update({
+    collection: "users",
+    id: userId,
+    data: {
+      lastLoginAt: new Date().toISOString(),
+    },
+    overrideAccess: true,
+  });
+}
+
 export async function registerUser(payload: Payload, input: RegisterInput): Promise<AuthSession> {
   const parsedInput = registerSchema.parse(input);
   const existingUser = await findUserByEmail(payload, parsedInput.email);
@@ -141,18 +236,11 @@ export async function registerUser(payload: Payload, input: RegisterInput): Prom
   }
 
   const role = await resolveRegistrationRole(payload);
-  const createdUser = (await payload.create({
-    collection: "users",
-    data: {
-      email: parsedInput.email.toLowerCase(),
-      password: parsedInput.password,
-      displayName: parsedInput.displayName,
-      bio: "",
-      role,
-      status: "active",
-    },
-    overrideAccess: true,
-  })) as RawUser;
+  const createdUser = await createUserProfile(payload, {
+    ...parsedInput,
+    role,
+    isBlocked: false,
+  });
 
   const loginResult = await payload.login({
     collection: "users",
@@ -166,6 +254,8 @@ export async function registerUser(payload: Payload, input: RegisterInput): Prom
   if (!loginResult.token) {
     throw new UserAuthError("AUTH_UNKNOWN", "Khong tao duoc session sau khi dang ky.", 500);
   }
+
+  await updateLastLoginAt(payload, (loginResult.user as RawUser | undefined)?.id ?? createdUser.id);
 
   return {
     token: loginResult.token,
@@ -191,6 +281,8 @@ export async function loginUser(payload: Payload, input: LoginInput): Promise<Au
   if (!loginResult.token || !loginResult.user) {
     throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
   }
+
+  await updateLastLoginAt(payload, (loginResult.user as RawUser).id);
 
   return {
     token: loginResult.token,
@@ -279,7 +371,10 @@ export async function updateOwnProfile(
   const updatedUser = (await payload.update({
     collection: "users",
     id: Number(userId),
-    data: normalizeUserProfileInput(parsedInput),
+    data: normalizeUserProfileInput({
+      fullName: parsedInput.displayName,
+      bio: parsedInput.bio,
+    }),
     overrideAccess: true,
   })) as unknown as RawUser;
 

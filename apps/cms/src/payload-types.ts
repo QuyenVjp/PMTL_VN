@@ -70,9 +70,33 @@ export interface Config {
     users: User;
     media: Media;
     categories: Category;
+    tags: Tag;
     posts: Post;
-    comments: Comment;
+    postComments: PostComment;
     events: Event;
+    beginnerGuides: BeginnerGuide;
+    downloads: Download;
+    hubPages: HubPage;
+    communityPosts: CommunityPost;
+    communityComments: CommunityComment;
+    guestbookEntries: GuestbookEntry;
+    chantItems: ChantItem;
+    chantPlans: ChantPlan;
+    lunarEvents: LunarEvent;
+    lunarEventOverrides: LunarEventOverride;
+    chantPreferences: ChantPreference;
+    practiceLogs: PracticeLog;
+    sutras: Sutra;
+    sutraVolumes: SutraVolume;
+    sutraChapters: SutraChapter;
+    sutraGlossary: SutraGlossary;
+    sutraBookmarks: SutraBookmark;
+    sutraReadingProgress: SutraReadingProgress;
+    pushSubscriptions: PushSubscription;
+    pushJobs: PushJob;
+    requestGuards: RequestGuard;
+    moderationReports: ModerationReport;
+    auditLogs: AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,9 +107,33 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    comments: CommentsSelect<false> | CommentsSelect<true>;
+    postComments: PostCommentsSelect<false> | PostCommentsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    beginnerGuides: BeginnerGuidesSelect<false> | BeginnerGuidesSelect<true>;
+    downloads: DownloadsSelect<false> | DownloadsSelect<true>;
+    hubPages: HubPagesSelect<false> | HubPagesSelect<true>;
+    communityPosts: CommunityPostsSelect<false> | CommunityPostsSelect<true>;
+    communityComments: CommunityCommentsSelect<false> | CommunityCommentsSelect<true>;
+    guestbookEntries: GuestbookEntriesSelect<false> | GuestbookEntriesSelect<true>;
+    chantItems: ChantItemsSelect<false> | ChantItemsSelect<true>;
+    chantPlans: ChantPlansSelect<false> | ChantPlansSelect<true>;
+    lunarEvents: LunarEventsSelect<false> | LunarEventsSelect<true>;
+    lunarEventOverrides: LunarEventOverridesSelect<false> | LunarEventOverridesSelect<true>;
+    chantPreferences: ChantPreferencesSelect<false> | ChantPreferencesSelect<true>;
+    practiceLogs: PracticeLogsSelect<false> | PracticeLogsSelect<true>;
+    sutras: SutrasSelect<false> | SutrasSelect<true>;
+    sutraVolumes: SutraVolumesSelect<false> | SutraVolumesSelect<true>;
+    sutraChapters: SutraChaptersSelect<false> | SutraChaptersSelect<true>;
+    sutraGlossary: SutraGlossarySelect<false> | SutraGlossarySelect<true>;
+    sutraBookmarks: SutraBookmarksSelect<false> | SutraBookmarksSelect<true>;
+    sutraReadingProgress: SutraReadingProgressSelect<false> | SutraReadingProgressSelect<true>;
+    pushSubscriptions: PushSubscriptionsSelect<false> | PushSubscriptionsSelect<true>;
+    pushJobs: PushJobsSelect<false> | PushJobsSelect<true>;
+    requestGuards: RequestGuardsSelect<false> | RequestGuardsSelect<true>;
+    moderationReports: ModerationReportsSelect<false> | ModerationReportsSelect<true>;
+    auditLogs: AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -99,14 +147,20 @@ export interface Config {
     'site-settings': SiteSetting;
     navigation: Navigation;
     homepage: Homepage;
+    'sidebar-config': SidebarConfig;
+    'chanting-settings': ChantingSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
+    'sidebar-config': SidebarConfigSelect<false> | SidebarConfigSelect<true>;
+    'chanting-settings': ChantingSettingsSelect<false> | ChantingSettingsSelect<true>;
   };
   locale: null;
   widgets: {
+    'content-overview': ContentOverviewWidget;
+    'editor-shortcuts': EditorShortcutsWidget;
     collections: CollectionsWidget;
   };
   user: User;
@@ -139,11 +193,22 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  displayName: string;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  fullName: string;
+  /**
+   * Reserved for future public routes or mentions.
+   */
+  username?: string | null;
+  phone?: string | null;
+  dharmaName?: string | null;
   avatar?: (number | null) | Media;
   bio?: string | null;
   role: 'super-admin' | 'admin' | 'editor' | 'moderator' | 'member';
-  status: 'active' | 'pending' | 'suspended';
+  isBlocked?: boolean | null;
+  lastLoginAt?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -169,8 +234,19 @@ export interface User {
  */
 export interface Media {
   id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  /**
+   * Short accessible description for the image.
+   */
   alt: string;
   caption?: string | null;
+  /**
+   * Optional grouping for campaigns or topics.
+   */
+  tags?: (number | Tag)[] | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -185,16 +261,44 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  name: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  description?: string | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
   id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
   name: string;
   /**
-   * URL-friendly slug, tu dong sinh neu de trong.
+   * URL-friendly slug, auto-generated when empty.
    */
   slug: string;
   description?: string | null;
+  parent?: (number | null) | Category;
+  color?: string | null;
+  order?: number | null;
+  isActive?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -204,15 +308,20 @@ export interface Category {
  */
 export interface Post {
   id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  postType: 'article' | 'transcript' | 'source-note' | 'event-recap';
+  /**
+   * Retained for compatibility with legacy content and referenced source material.
+   */
+  sourceRef?: string | null;
   title: string;
   /**
-   * URL-friendly slug, tu dong sinh neu de trong.
+   * URL-friendly slug, auto-generated when empty.
    */
   slug: string;
-  sourceRef?: string | null;
-  sourceUrl?: string | null;
-  viewCount?: number | null;
-  excerpt: string;
   content: {
     root: {
       type: string;
@@ -228,29 +337,51 @@ export interface Post {
     };
     [k: string]: unknown;
   };
-  status: 'draft' | 'published' | 'archived';
-  publishedAt?: string | null;
-  author?: (number | null) | User;
+  /**
+   * Leave empty to let the system generate the excerpt.
+   */
+  excerptOverride?: string | null;
+  excerptComputed?: string | null;
+  primaryCategory?: (number | null) | Category;
   categories?: (number | Category)[] | null;
-  featuredImage?: (number | null) | Media;
+  tags?: (number | Tag)[] | null;
+  postFlags?: {
+    featured?: boolean | null;
+    allowComments?: boolean | null;
+  };
+  coverMedia?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  source?: {
+    sourceName?: string | null;
+    sourceTitle?: string | null;
+    sourceUrl?: string | null;
+  };
+  series?: {
+    seriesKey?: string | null;
+    seriesNumber?: number | null;
+  };
+  eventContext?: {
+    eventDate?: string | null;
+    location?: string | null;
+    relatedEvent?: (number | null) | Event;
+  };
+  relatedPosts?: (number | Post)[] | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  contentPlainText?: string | null;
+  normalizedSearchText?: string | null;
+  commentCount?: number | null;
+  views?: number | null;
+  uniqueViews?: number | null;
+  likes?: number | null;
+  publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "comments".
- */
-export interface Comment {
-  id: number;
-  post: number | Post;
-  authorName: string;
-  authorEmail: string;
-  content: string;
-  status: 'pending' | 'approved' | 'rejected';
-  approvedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -258,16 +389,783 @@ export interface Comment {
  */
 export interface Event {
   id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
   title: string;
   /**
-   * URL-friendly slug, tu dong sinh neu de trong.
+   * URL-friendly slug, auto-generated when empty.
    */
   slug: string;
-  summary: string;
-  startAt: string;
-  endAt: string;
-  location: string;
-  status: 'draft' | 'published' | 'archived';
+  description: string;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  date: string;
+  timeString?: string | null;
+  location?: string | null;
+  type: 'ceremony' | 'retreat' | 'talk' | 'livestream';
+  speaker?: string | null;
+  language?: string | null;
+  link?: string | null;
+  youtubeId?: string | null;
+  embedURL?: string | null;
+  coverImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  files?: (number | Media)[] | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  eventStatus: 'upcoming' | 'live' | 'past';
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "postComments".
+ */
+export interface PostComment {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  post: number | Post;
+  parent?: (number | null) | PostComment;
+  content: string;
+  authorName: string;
+  authorAvatar?: string | null;
+  badge?: string | null;
+  isOfficialReply?: boolean | null;
+  submittedByUser?: (number | null) | User;
+  submittedByIpHash?: string | null;
+  moderationStatus: 'pending' | 'approved' | 'rejected' | 'flagged' | 'hidden';
+  spamScore?: number | null;
+  reportCount?: number | null;
+  lastReportReason?: string | null;
+  isHidden?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "beginnerGuides".
+ */
+export interface BeginnerGuide {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  description?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  guideType: 'starter' | 'practice' | 'faq';
+  duration?: string | null;
+  stepNumber?: number | null;
+  details?:
+    | {
+        title?: string | null;
+        content?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  iconName?: string | null;
+  pdfURL?: string | null;
+  videoURL?: string | null;
+  images?: (number | Media)[] | null;
+  attachedFiles?: (number | Media)[] | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads".
+ */
+export interface Download {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  description?: string | null;
+  file?: (number | null) | Media;
+  externalURL?: string | null;
+  fileType?: string | null;
+  fileSizeMB?: number | null;
+  category?: string | null;
+  groupYear?: number | null;
+  groupLabel?: string | null;
+  notes?: string | null;
+  thumbnail?: (number | null) | Media;
+  isUpdating?: boolean | null;
+  isNew?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hubPages".
+ */
+export interface HubPage {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  description?: string | null;
+  coverImage?: (number | null) | Media;
+  visualTheme?: string | null;
+  blocks?:
+    | {
+        type: string;
+        title?: string | null;
+        content?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  curatedPosts?: (number | Post)[] | null;
+  downloads?: (number | Download)[] | null;
+  menuLabel?: string | null;
+  menuIconName?: string | null;
+  showInMenu?: boolean | null;
+  sortOrder?: number | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "communityPosts".
+ */
+export interface CommunityPost {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  content: string;
+  type: 'story' | 'question' | 'reflection';
+  category?: string | null;
+  rating?: number | null;
+  tags?:
+    | {
+        value?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  coverImage?: (number | null) | Media;
+  videoURL?: string | null;
+  authorUser?: (number | null) | User;
+  authorNameSnapshot?: string | null;
+  moderationStatus: 'pending' | 'approved' | 'rejected' | 'flagged' | 'hidden';
+  spamScore?: number | null;
+  reportCount?: number | null;
+  lastReportReason?: string | null;
+  pinned?: boolean | null;
+  isHidden?: boolean | null;
+  likes?: number | null;
+  views?: number | null;
+  commentsCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "communityComments".
+ */
+export interface CommunityComment {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  post: number | CommunityPost;
+  parent?: (number | null) | CommunityComment;
+  content: string;
+  authorUser?: (number | null) | User;
+  authorNameSnapshot?: string | null;
+  moderationStatus: 'pending' | 'approved' | 'rejected' | 'flagged' | 'hidden';
+  likes?: number | null;
+  spamScore?: number | null;
+  reportCount?: number | null;
+  lastReportReason?: string | null;
+  isHidden?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guestbookEntries".
+ */
+export interface GuestbookEntry {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  authorName: string;
+  message: string;
+  country?: string | null;
+  avatar?: string | null;
+  badge?: string | null;
+  entryType?: string | null;
+  questionCategory?: string | null;
+  submittedByUser?: (number | null) | User;
+  submittedByIpHash?: string | null;
+  adminReply?: string | null;
+  isAnswered?: boolean | null;
+  approvalStatus: 'pending' | 'approved' | 'rejected';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantItems".
+ */
+export interface ChantItem {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  kind: string;
+  openingPrayer?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  audio?: (number | null) | Media;
+  scriptFile?: (number | null) | Media;
+  scriptPreviewImages?: (number | Media)[] | null;
+  recommendedPresets?:
+    | {
+        label?: string | null;
+        target?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  timeRules?:
+    | {
+        dateFrom?: string | null;
+        dateTo?: string | null;
+        lunarDay?: number | null;
+        notes?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantPlans".
+ */
+export interface ChantPlan {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  planType: string;
+  planItems?:
+    | {
+        chantItem: number | ChantItem;
+        target?: number | null;
+        isOptional?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lunarEvents".
+ */
+export interface LunarEvent {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  recurrenceData?: {
+    lunarMonth?: number | null;
+    lunarDay?: number | null;
+    isLeapMonth?: boolean | null;
+  };
+  eventType?: string | null;
+  priority?: number | null;
+  relatedPosts?: (number | Post)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lunarEventOverrides".
+ */
+export interface LunarEventOverride {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  lunarEvent: number | LunarEvent;
+  chantItem: number | ChantItem;
+  mode?: string | null;
+  target?: number | null;
+  max?: number | null;
+  priority?: number | null;
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantPreferences".
+ */
+export interface ChantPreference {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  user: number | User;
+  plan: number | ChantPlan;
+  enabledOptionalItems?:
+    | {
+        chantItem?: (number | null) | ChantItem;
+        id?: string | null;
+      }[]
+    | null;
+  targetsByItem?:
+    | {
+        chantItem?: (number | null) | ChantItem;
+        target?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  intentionsByItem?:
+    | {
+        chantItem?: (number | null) | ChantItem;
+        intention?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "practiceLogs".
+ */
+export interface PracticeLog {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  user: number | User;
+  plan: number | ChantPlan;
+  practiceDate: string;
+  itemStates?:
+    | {
+        chantItem?: (number | null) | ChantItem;
+        completed?: boolean | null;
+        count?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  sessionConfig?: {
+    durationMinutes?: number | null;
+    notes?: string | null;
+  };
+  startedAt?: string | null;
+  completedAt?: string | null;
+  isCompleted?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutras".
+ */
+export interface Sutra {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  description?: string | null;
+  shortExcerpt?: string | null;
+  coverImage?: (number | null) | Media;
+  translator?: string | null;
+  reviewer?: string | null;
+  tags?: (number | Tag)[] | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  isFeatured?: boolean | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraVolumes".
+ */
+export interface SutraVolume {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  sutra: number | Sutra;
+  title: string;
+  volumeNumber: number;
+  sortOrder?: number | null;
+  description?: string | null;
+  bookStart?: string | null;
+  bookEnd?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraChapters".
+ */
+export interface SutraChapter {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  sutra: number | Sutra;
+  volume?: (number | null) | SutraVolume;
+  title: string;
+  /**
+   * URL-friendly slug, auto-generated when empty.
+   */
+  slug: string;
+  chapterNumber: number;
+  openingText?: string | null;
+  endingText?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  estimatedReadMinutes?: number | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraGlossary".
+ */
+export interface SutraGlossary {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  sutra: number | Sutra;
+  term: string;
+  meaning: string;
+  volume?: (number | null) | SutraVolume;
+  chapter?: (number | null) | SutraChapter;
+  sortOrder?: number | null;
+  markerKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraBookmarks".
+ */
+export interface SutraBookmark {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  user: number | User;
+  sutra: number | Sutra;
+  location?: {
+    chapter?: (number | null) | SutraChapter;
+    paragraph?: string | null;
+  };
+  excerpt?: string | null;
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraReadingProgress".
+ */
+export interface SutraReadingProgress {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  user: number | User;
+  sutra: number | Sutra;
+  location?: {
+    chapter?: (number | null) | SutraChapter;
+    paragraph?: string | null;
+  };
+  scrollPercent?: number | null;
+  lastReadAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pushSubscriptions".
+ */
+export interface PushSubscription {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  user?: (number | null) | User;
+  endpoint: string;
+  keys?: {
+    p256dh?: string | null;
+    auth?: string | null;
+  };
+  timezone?: string | null;
+  isActive?: boolean | null;
+  failedCount?: number | null;
+  notificationPrefs?: {
+    posts?: boolean | null;
+    events?: boolean | null;
+    community?: boolean | null;
+  };
+  quietHours?: {
+    from?: string | null;
+    to?: string | null;
+  };
+  lastSentAt?: string | null;
+  lastError?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pushJobs".
+ */
+export interface PushJob {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  kind: string;
+  status: string;
+  chunkSize?: number | null;
+  message?: string | null;
+  url?: string | null;
+  tag?: string | null;
+  payload?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  cursor?: number | null;
+  sentCount?: number | null;
+  failedCount?: number | null;
+  errorSummary?: string | null;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "requestGuards".
+ */
+export interface RequestGuard {
+  id: number;
+  guardKey: string;
+  scope: string;
+  notes?: string | null;
+  expiresAt: string;
+  lastSeenAt?: string | null;
+  hits?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moderationReports".
+ */
+export interface ModerationReport {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  entityType: string;
+  entityPublicId: string;
+  status: string;
+  entityRef?: {
+    collection?: string | null;
+    id?: string | null;
+  };
+  reason: string;
+  notes?: string | null;
+  reporterUser?: (number | null) | User;
+  reporterIpHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLogs".
+ */
+export interface AuditLog {
+  id: number;
+  /**
+   * Stable identifier for public APIs, audit, reports, and data synchronization.
+   */
+  publicId: string;
+  action: string;
+  actorType?: string | null;
+  targetType?: string | null;
+  actorUser?: (number | null) | User;
+  targetPublicId?: string | null;
+  targetRef?: {
+    collection?: string | null;
+    id?: string | null;
+  };
+  requestId?: string | null;
+  ipHash?: string | null;
+  userAgent?: string | null;
+  changedFields?:
+    | {
+        field?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -308,16 +1206,112 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
       } | null)
     | ({
-        relationTo: 'comments';
-        value: number | Comment;
+        relationTo: 'postComments';
+        value: number | PostComment;
       } | null)
     | ({
         relationTo: 'events';
         value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'beginnerGuides';
+        value: number | BeginnerGuide;
+      } | null)
+    | ({
+        relationTo: 'downloads';
+        value: number | Download;
+      } | null)
+    | ({
+        relationTo: 'hubPages';
+        value: number | HubPage;
+      } | null)
+    | ({
+        relationTo: 'communityPosts';
+        value: number | CommunityPost;
+      } | null)
+    | ({
+        relationTo: 'communityComments';
+        value: number | CommunityComment;
+      } | null)
+    | ({
+        relationTo: 'guestbookEntries';
+        value: number | GuestbookEntry;
+      } | null)
+    | ({
+        relationTo: 'chantItems';
+        value: number | ChantItem;
+      } | null)
+    | ({
+        relationTo: 'chantPlans';
+        value: number | ChantPlan;
+      } | null)
+    | ({
+        relationTo: 'lunarEvents';
+        value: number | LunarEvent;
+      } | null)
+    | ({
+        relationTo: 'lunarEventOverrides';
+        value: number | LunarEventOverride;
+      } | null)
+    | ({
+        relationTo: 'chantPreferences';
+        value: number | ChantPreference;
+      } | null)
+    | ({
+        relationTo: 'practiceLogs';
+        value: number | PracticeLog;
+      } | null)
+    | ({
+        relationTo: 'sutras';
+        value: number | Sutra;
+      } | null)
+    | ({
+        relationTo: 'sutraVolumes';
+        value: number | SutraVolume;
+      } | null)
+    | ({
+        relationTo: 'sutraChapters';
+        value: number | SutraChapter;
+      } | null)
+    | ({
+        relationTo: 'sutraGlossary';
+        value: number | SutraGlossary;
+      } | null)
+    | ({
+        relationTo: 'sutraBookmarks';
+        value: number | SutraBookmark;
+      } | null)
+    | ({
+        relationTo: 'sutraReadingProgress';
+        value: number | SutraReadingProgress;
+      } | null)
+    | ({
+        relationTo: 'pushSubscriptions';
+        value: number | PushSubscription;
+      } | null)
+    | ({
+        relationTo: 'pushJobs';
+        value: number | PushJob;
+      } | null)
+    | ({
+        relationTo: 'requestGuards';
+        value: number | RequestGuard;
+      } | null)
+    | ({
+        relationTo: 'moderationReports';
+        value: number | ModerationReport;
+      } | null)
+    | ({
+        relationTo: 'auditLogs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -366,11 +1360,16 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  displayName?: T;
+  publicId?: T;
+  fullName?: T;
+  username?: T;
+  phone?: T;
+  dharmaName?: T;
   avatar?: T;
   bio?: T;
   role?: T;
-  status?: T;
+  isBlocked?: T;
+  lastLoginAt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -393,8 +1392,10 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  publicId?: T;
   alt?: T;
   caption?: T;
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -412,9 +1413,27 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  publicId?: T;
   name?: T;
   slug?: T;
   description?: T;
+  parent?: T;
+  color?: T;
+  order?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  publicId?: T;
+  name?: T;
+  slug?: T;
+  description?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -423,33 +1442,85 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
+  publicId?: T;
+  postType?: T;
+  sourceRef?: T;
   title?: T;
   slug?: T;
-  sourceRef?: T;
-  sourceUrl?: T;
-  viewCount?: T;
-  excerpt?: T;
   content?: T;
-  status?: T;
-  publishedAt?: T;
-  author?: T;
+  excerptOverride?: T;
+  excerptComputed?: T;
+  primaryCategory?: T;
   categories?: T;
-  featuredImage?: T;
+  tags?: T;
+  postFlags?:
+    | T
+    | {
+        featured?: T;
+        allowComments?: T;
+      };
+  coverMedia?: T;
+  gallery?: T;
+  source?:
+    | T
+    | {
+        sourceName?: T;
+        sourceTitle?: T;
+        sourceUrl?: T;
+      };
+  series?:
+    | T
+    | {
+        seriesKey?: T;
+        seriesNumber?: T;
+      };
+  eventContext?:
+    | T
+    | {
+        eventDate?: T;
+        location?: T;
+        relatedEvent?: T;
+      };
+  relatedPosts?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  contentPlainText?: T;
+  normalizedSearchText?: T;
+  commentCount?: T;
+  views?: T;
+  uniqueViews?: T;
+  likes?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "comments_select".
+ * via the `definition` "postComments_select".
  */
-export interface CommentsSelect<T extends boolean = true> {
+export interface PostCommentsSelect<T extends boolean = true> {
+  publicId?: T;
   post?: T;
-  authorName?: T;
-  authorEmail?: T;
+  parent?: T;
   content?: T;
-  status?: T;
-  approvedAt?: T;
+  authorName?: T;
+  authorAvatar?: T;
+  badge?: T;
+  isOfficialReply?: T;
+  submittedByUser?: T;
+  submittedByIpHash?: T;
+  moderationStatus?: T;
+  spamScore?: T;
+  reportCount?: T;
+  lastReportReason?: T;
+  isHidden?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -458,13 +1529,597 @@ export interface CommentsSelect<T extends boolean = true> {
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
+  publicId?: T;
   title?: T;
   slug?: T;
-  summary?: T;
-  startAt?: T;
-  endAt?: T;
+  description?: T;
+  content?: T;
+  date?: T;
+  timeString?: T;
   location?: T;
+  type?: T;
+  speaker?: T;
+  language?: T;
+  link?: T;
+  youtubeId?: T;
+  embedURL?: T;
+  coverImage?: T;
+  gallery?: T;
+  files?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  eventStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "beginnerGuides_select".
+ */
+export interface BeginnerGuidesSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  description?: T;
+  content?: T;
+  guideType?: T;
+  duration?: T;
+  stepNumber?: T;
+  details?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  iconName?: T;
+  pdfURL?: T;
+  videoURL?: T;
+  images?: T;
+  attachedFiles?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads_select".
+ */
+export interface DownloadsSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  description?: T;
+  file?: T;
+  externalURL?: T;
+  fileType?: T;
+  fileSizeMB?: T;
+  category?: T;
+  groupYear?: T;
+  groupLabel?: T;
+  notes?: T;
+  thumbnail?: T;
+  isUpdating?: T;
+  isNew?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hubPages_select".
+ */
+export interface HubPagesSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  slug?: T;
+  description?: T;
+  coverImage?: T;
+  visualTheme?: T;
+  blocks?:
+    | T
+    | {
+        type?: T;
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  curatedPosts?: T;
+  downloads?: T;
+  menuLabel?: T;
+  menuIconName?: T;
+  showInMenu?: T;
+  sortOrder?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "communityPosts_select".
+ */
+export interface CommunityPostsSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  slug?: T;
+  content?: T;
+  type?: T;
+  category?: T;
+  rating?: T;
+  tags?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  coverImage?: T;
+  videoURL?: T;
+  authorUser?: T;
+  authorNameSnapshot?: T;
+  moderationStatus?: T;
+  spamScore?: T;
+  reportCount?: T;
+  lastReportReason?: T;
+  pinned?: T;
+  isHidden?: T;
+  likes?: T;
+  views?: T;
+  commentsCount?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "communityComments_select".
+ */
+export interface CommunityCommentsSelect<T extends boolean = true> {
+  publicId?: T;
+  post?: T;
+  parent?: T;
+  content?: T;
+  authorUser?: T;
+  authorNameSnapshot?: T;
+  moderationStatus?: T;
+  likes?: T;
+  spamScore?: T;
+  reportCount?: T;
+  lastReportReason?: T;
+  isHidden?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guestbookEntries_select".
+ */
+export interface GuestbookEntriesSelect<T extends boolean = true> {
+  publicId?: T;
+  authorName?: T;
+  message?: T;
+  country?: T;
+  avatar?: T;
+  badge?: T;
+  entryType?: T;
+  questionCategory?: T;
+  submittedByUser?: T;
+  submittedByIpHash?: T;
+  adminReply?: T;
+  isAnswered?: T;
+  approvalStatus?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantItems_select".
+ */
+export interface ChantItemsSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  slug?: T;
+  kind?: T;
+  openingPrayer?: T;
+  content?: T;
+  audio?: T;
+  scriptFile?: T;
+  scriptPreviewImages?: T;
+  recommendedPresets?:
+    | T
+    | {
+        label?: T;
+        target?: T;
+        id?: T;
+      };
+  timeRules?:
+    | T
+    | {
+        dateFrom?: T;
+        dateTo?: T;
+        lunarDay?: T;
+        notes?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantPlans_select".
+ */
+export interface ChantPlansSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  slug?: T;
+  planType?: T;
+  planItems?:
+    | T
+    | {
+        chantItem?: T;
+        target?: T;
+        isOptional?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lunarEvents_select".
+ */
+export interface LunarEventsSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  recurrenceData?:
+    | T
+    | {
+        lunarMonth?: T;
+        lunarDay?: T;
+        isLeapMonth?: T;
+      };
+  eventType?: T;
+  priority?: T;
+  relatedPosts?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lunarEventOverrides_select".
+ */
+export interface LunarEventOverridesSelect<T extends boolean = true> {
+  publicId?: T;
+  lunarEvent?: T;
+  chantItem?: T;
+  mode?: T;
+  target?: T;
+  max?: T;
+  priority?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chantPreferences_select".
+ */
+export interface ChantPreferencesSelect<T extends boolean = true> {
+  publicId?: T;
+  user?: T;
+  plan?: T;
+  enabledOptionalItems?:
+    | T
+    | {
+        chantItem?: T;
+        id?: T;
+      };
+  targetsByItem?:
+    | T
+    | {
+        chantItem?: T;
+        target?: T;
+        id?: T;
+      };
+  intentionsByItem?:
+    | T
+    | {
+        chantItem?: T;
+        intention?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "practiceLogs_select".
+ */
+export interface PracticeLogsSelect<T extends boolean = true> {
+  publicId?: T;
+  user?: T;
+  plan?: T;
+  practiceDate?: T;
+  itemStates?:
+    | T
+    | {
+        chantItem?: T;
+        completed?: T;
+        count?: T;
+        id?: T;
+      };
+  sessionConfig?:
+    | T
+    | {
+        durationMinutes?: T;
+        notes?: T;
+      };
+  startedAt?: T;
+  completedAt?: T;
+  isCompleted?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutras_select".
+ */
+export interface SutrasSelect<T extends boolean = true> {
+  publicId?: T;
+  title?: T;
+  slug?: T;
+  description?: T;
+  shortExcerpt?: T;
+  coverImage?: T;
+  translator?: T;
+  reviewer?: T;
+  tags?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  isFeatured?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraVolumes_select".
+ */
+export interface SutraVolumesSelect<T extends boolean = true> {
+  publicId?: T;
+  sutra?: T;
+  title?: T;
+  volumeNumber?: T;
+  sortOrder?: T;
+  description?: T;
+  bookStart?: T;
+  bookEnd?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraChapters_select".
+ */
+export interface SutraChaptersSelect<T extends boolean = true> {
+  publicId?: T;
+  sutra?: T;
+  volume?: T;
+  title?: T;
+  slug?: T;
+  chapterNumber?: T;
+  openingText?: T;
+  endingText?: T;
+  content?: T;
+  estimatedReadMinutes?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraGlossary_select".
+ */
+export interface SutraGlossarySelect<T extends boolean = true> {
+  publicId?: T;
+  sutra?: T;
+  term?: T;
+  meaning?: T;
+  volume?: T;
+  chapter?: T;
+  sortOrder?: T;
+  markerKey?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraBookmarks_select".
+ */
+export interface SutraBookmarksSelect<T extends boolean = true> {
+  publicId?: T;
+  user?: T;
+  sutra?: T;
+  location?:
+    | T
+    | {
+        chapter?: T;
+        paragraph?: T;
+      };
+  excerpt?: T;
+  note?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sutraReadingProgress_select".
+ */
+export interface SutraReadingProgressSelect<T extends boolean = true> {
+  publicId?: T;
+  user?: T;
+  sutra?: T;
+  location?:
+    | T
+    | {
+        chapter?: T;
+        paragraph?: T;
+      };
+  scrollPercent?: T;
+  lastReadAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pushSubscriptions_select".
+ */
+export interface PushSubscriptionsSelect<T extends boolean = true> {
+  publicId?: T;
+  user?: T;
+  endpoint?: T;
+  keys?:
+    | T
+    | {
+        p256dh?: T;
+        auth?: T;
+      };
+  timezone?: T;
+  isActive?: T;
+  failedCount?: T;
+  notificationPrefs?:
+    | T
+    | {
+        posts?: T;
+        events?: T;
+        community?: T;
+      };
+  quietHours?:
+    | T
+    | {
+        from?: T;
+        to?: T;
+      };
+  lastSentAt?: T;
+  lastError?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pushJobs_select".
+ */
+export interface PushJobsSelect<T extends boolean = true> {
+  publicId?: T;
+  kind?: T;
   status?: T;
+  chunkSize?: T;
+  message?: T;
+  url?: T;
+  tag?: T;
+  payload?: T;
+  cursor?: T;
+  sentCount?: T;
+  failedCount?: T;
+  errorSummary?: T;
+  startedAt?: T;
+  finishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "requestGuards_select".
+ */
+export interface RequestGuardsSelect<T extends boolean = true> {
+  guardKey?: T;
+  scope?: T;
+  notes?: T;
+  expiresAt?: T;
+  lastSeenAt?: T;
+  hits?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moderationReports_select".
+ */
+export interface ModerationReportsSelect<T extends boolean = true> {
+  publicId?: T;
+  entityType?: T;
+  entityPublicId?: T;
+  status?: T;
+  entityRef?:
+    | T
+    | {
+        collection?: T;
+        id?: T;
+      };
+  reason?: T;
+  notes?: T;
+  reporterUser?: T;
+  reporterIpHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "auditLogs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  publicId?: T;
+  action?: T;
+  actorType?: T;
+  targetType?: T;
+  actorUser?: T;
+  targetPublicId?: T;
+  targetRef?:
+    | T
+    | {
+        collection?: T;
+        id?: T;
+      };
+  requestId?: T;
+  ipHash?: T;
+  userAgent?: T;
+  changedFields?:
+    | T
+    | {
+        field?: T;
+        id?: T;
+      };
+  metadata?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -516,6 +2171,10 @@ export interface SiteSetting {
   id: number;
   siteName: string;
   siteDescription: string;
+  supportEmail?: string | null;
+  supportPhone?: string | null;
+  defaultMetaTitle?: string | null;
+  defaultMetaDescription?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -525,13 +2184,20 @@ export interface SiteSetting {
  */
 export interface Navigation {
   id: number;
+  /**
+   * Each row becomes one top navigation item.
+   */
   items?:
     | {
         label: string;
         href: string;
+        openInNewTab?: boolean | null;
         id?: string | null;
       }[]
     | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -543,6 +2209,71 @@ export interface Homepage {
   id: number;
   heroTitle: string;
   heroDescription: string;
+  heroPrimaryLabel?: string | null;
+  heroPrimaryHref?: string | null;
+  featuredSectionTitle: string;
+  featuredSectionDescription?: string | null;
+  latestSectionTitle: string;
+  latestSectionDescription?: string | null;
+  studySectionTitle: string;
+  studySectionDescription?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebar-config".
+ */
+export interface SidebarConfig {
+  id: number;
+  showSearch?: boolean | null;
+  showCategoryTree?: boolean | null;
+  showArchive?: boolean | null;
+  showLatestComments?: boolean | null;
+  showDownloadLinks?: boolean | null;
+  downloadLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?:
+    | {
+        label: string;
+        href: string;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chanting-settings".
+ */
+export interface ChantingSetting {
+  id: number;
+  pageTitle: string;
+  pageDescription?: string | null;
+  guidelineSections?:
+    | {
+        title: string;
+        content: string;
+        id?: string | null;
+      }[]
+    | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+    canonicalUrl?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -553,6 +2284,10 @@ export interface Homepage {
 export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   siteDescription?: T;
+  supportEmail?: T;
+  supportPhone?: T;
+  defaultMetaTitle?: T;
+  defaultMetaDescription?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -567,8 +2302,12 @@ export interface NavigationSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        openInNewTab?: T;
         id?: T;
       };
+  ctaLabel?: T;
+  ctaHref?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -580,9 +2319,96 @@ export interface NavigationSelect<T extends boolean = true> {
 export interface HomepageSelect<T extends boolean = true> {
   heroTitle?: T;
   heroDescription?: T;
+  heroPrimaryLabel?: T;
+  heroPrimaryHref?: T;
+  featuredSectionTitle?: T;
+  featuredSectionDescription?: T;
+  latestSectionTitle?: T;
+  latestSectionDescription?: T;
+  studySectionTitle?: T;
+  studySectionDescription?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sidebar-config_select".
+ */
+export interface SidebarConfigSelect<T extends boolean = true> {
+  showSearch?: T;
+  showCategoryTree?: T;
+  showArchive?: T;
+  showLatestComments?: T;
+  showDownloadLinks?: T;
+  downloadLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        id?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chanting-settings_select".
+ */
+export interface ChantingSettingsSelect<T extends boolean = true> {
+  pageTitle?: T;
+  pageDescription?: T;
+  guidelineSections?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+        canonicalUrl?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-overview_widget".
+ */
+export interface ContentOverviewWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "editor-shortcuts_widget".
+ */
+export interface EditorShortcutsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from "payload";
 
+import { t } from "@/admin/i18n";
+
 import { categoryAccess } from "./access";
 import { categoryFields } from "./fields";
 import { categoryHooks } from "./hooks";
@@ -7,12 +9,12 @@ import { categoryHooks } from "./hooks";
 export const Categories: CollectionConfig = {
   slug: "categories",
   labels: {
-    singular: "Category",
-    plural: "Categories",
+    singular: t("Chủ đề", "Category"),
+    plural: t("Chủ đề", "Categories"),
   },
   admin: {
+    defaultColumns: ["name", "slug", "order", "isActive", "updatedAt"],
     useAsTitle: "name",
-    defaultColumns: ["name", "slug"],
   },
   access: categoryAccess,
   hooks: categoryHooks,

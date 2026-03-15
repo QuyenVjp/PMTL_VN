@@ -1,9 +1,11 @@
-import { slugify } from "@pmtl/shared";
+import { generateCategorySlug, normalizeCategoryData } from "./service";
 
 type CategoryHookArgs = {
   data?: {
+    publicId?: string | null;
     name?: string | null;
     slug?: string | null;
+    description?: string | null;
   };
 };
 
@@ -14,10 +16,10 @@ export const categoryHooks = {
         return data;
       }
 
-      return {
+      return normalizeCategoryData({
         ...data,
-        slug: data.slug?.trim() || (data.name ? slugify(data.name) : undefined),
-      };
+        slug: generateCategorySlug(data),
+      });
     },
   ],
 };

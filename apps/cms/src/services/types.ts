@@ -2,6 +2,7 @@ export type ContentDocument = {
   id: string | number;
   slug: string;
   title: string;
+  publicId?: string | null;
   sourceRef?: string | null;
   excerpt?: string | null;
   contentPlainText?: string | null;

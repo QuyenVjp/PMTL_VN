@@ -88,13 +88,34 @@ function mapUrlHost(rawValue: string | undefined, fromHost: string, toHost: stri
   return rawValue;
 }
 
+function mapUrlPort(rawValue: string | undefined, fromPort: string, toPort: string): string | undefined {
+  if (!rawValue) {
+    return rawValue;
+  }
+
+  try {
+    const value = new URL(rawValue);
+
+    if (value.port === fromPort) {
+      value.port = toPort;
+      return value.toString();
+    }
+  } catch {
+    return rawValue;
+  }
+
+  return rawValue;
+}
+
 function normalizeLocalAppEnv(baseEnv: EnvMap): EnvMap {
   const localEnv: EnvMap = {
     ...process.env,
     ...baseEnv,
   } as EnvMap;
 
-  localEnv.DATABASE_URL = mapUrlHost(baseEnv.DATABASE_URL, "postgres", "localhost") ?? baseEnv.DATABASE_URL;
+  const postgresHostPort = baseEnv.POSTGRES_HOST_PORT ?? "55432";
+  const databaseUrlWithLocalHost = mapUrlHost(baseEnv.DATABASE_URL, "postgres", "localhost") ?? baseEnv.DATABASE_URL;
+  localEnv.DATABASE_URL = mapUrlPort(databaseUrlWithLocalHost, "5432", postgresHostPort) ?? databaseUrlWithLocalHost;
   localEnv.MEILI_HOST = mapUrlHost(baseEnv.MEILI_HOST, "meilisearch", "localhost") ?? baseEnv.MEILI_HOST;
   localEnv.PAYLOAD_PUBLIC_SERVER_URL =
     mapUrlHost(baseEnv.PAYLOAD_PUBLIC_SERVER_URL, "cms", "localhost") ?? "http://localhost:3001";
@@ -176,13 +197,6 @@ async function waitForHttp(url: string, timeoutMs: number): Promise<void> {
   throw new Error(`${url} khong san sang trong ${timeoutMs}ms.`);
 }
 
-async function waitForInfraReady(): Promise<void> {
-  log("Dang cho postgres tren localhost:5432...");
-  await waitForTcpPort(5432, "127.0.0.1", 60_000);
-  log("Dang cho meilisearch tren http://localhost:7700/health...");
-  await waitForHttp("http://localhost:7700/health", 60_000);
-}
-
 function runLocalApps(localEnv: EnvMap): void {
   log("Khoi dong web va cms local voi hot reload...");
   log("Web: http://localhost:3000");
@@ -215,14 +229,20 @@ async function main(): Promise<void> {
   ensureDockerInstalled();
   ensureDockerEnvFile();
   runDockerComposeInfra();
-  await waitForInfraReady();
+
+  const dockerEnv = parseEnvFile(dockerEnvPath);
+  const postgresHostPort = Number.parseInt(dockerEnv.POSTGRES_HOST_PORT ?? "55432", 10);
+
+  log(`Dang cho postgres tren localhost:${postgresHostPort}...`);
+  await waitForTcpPort(postgresHostPort, "127.0.0.1", 60_000);
+  log("Dang cho meilisearch tren http://localhost:7700/health...");
+  await waitForHttp("http://localhost:7700/health", 60_000);
 
   if (isInfraOnly) {
     log("Ha tang dev da san sang.");
     return;
   }
 
-  const dockerEnv = parseEnvFile(dockerEnvPath);
   const localEnv = normalizeLocalAppEnv(dockerEnv);
   runLocalApps(localEnv);
 }

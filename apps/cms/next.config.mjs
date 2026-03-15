@@ -1,9 +1,7 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 
 const nextConfig = {
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: true,
 };
 
 export default withPayload(nextConfig);

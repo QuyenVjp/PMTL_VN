@@ -12,8 +12,8 @@ export function PostList({ posts }: PostListProps) {
   if (!posts.length) {
     return (
       <EmptyState
-        title="Chua co bai viet"
-        description="Khi Payload co du lieu, feature nay se lay tu CMS client thay vi fixture."
+        title="Chưa có bài viết"
+        description="Khi Payload có dữ liệu, mục này sẽ lấy trực tiếp từ CMS thay vì fixture."
       />
     );
   }

@@ -1,0 +1,47 @@
+{
+  "name": "Pháp Môn Tâm Linh",
+  "short_name": "PMTL",
+  "description": "Cổng thông tin Phật pháp: Niệm kinh, Lịch âm, Cộng đồng tu học",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1209",
+  "theme_color": "#c9933c",
+  "orientation": "portrait-primary",
+  "lang": "vi",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/images/PMTL-LOGO.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/PMTL-LOGO.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Niệm Kinh Hôm Nay",
+      "short_name": "Niệm Kinh",
+      "url": "/niem-kinh",
+      "icons": [{ "src": "/images/PMTL-LOGO.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Lịch Âm",
+      "short_name": "Lịch Âm",
+      "url": "/lunar-calendar",
+      "icons": [{ "src": "/images/PMTL-LOGO.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Blog Phật Pháp",
+      "short_name": "Blog",
+      "url": "/blog",
+      "icons": [{ "src": "/images/PMTL-LOGO.png", "sizes": "96x96" }]
+    }
+  ],
+  "categories": ["lifestyle", "education", "religion"]
+}

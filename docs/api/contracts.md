@@ -1,6 +1,13 @@
 # API Contracts
 
-## Auth user shape
+## Runtime note
+
+- `apps/cms` hiện host Payload theo hướng Next-native.
+- Payload REST gốc vẫn còn qua catch-all `/api/[...slug]`.
+- Web/BFF phase đầu nên ưu tiên gọi compatibility routes dưới đây thay vì ăn raw Payload document.
+- Admin UI của CMS nằm tại `/admin`.
+
+## Auth contracts
 
 ```ts
 type AuthUser = {
@@ -8,18 +15,14 @@ type AuthUser = {
   email: string;
   displayName: string;
   bio: string;
-  role: 'super-admin' | 'admin' | 'editor' | 'moderator' | 'member';
-  status: 'active' | 'pending' | 'suspended';
+  role: "super-admin" | "admin" | "editor" | "moderator" | "member";
+  status: "active" | "pending" | "suspended";
   avatarId: string | null;
   avatarUrl: string | null;
   createdAt: string;
   updatedAt: string;
 };
-```
 
-## Auth session shape
-
-```ts
 type AuthSession = {
   token: string;
   exp: number | null;
@@ -27,188 +30,263 @@ type AuthSession = {
 };
 ```
 
-## Auth endpoints between web and cms
+Auth endpoints:
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `GET /api/auth/me`
+- `PATCH /api/auth/profile`
 
-Ghi chú runtime:
-- `apps/cms` hiện host Payload theo hướng Next-native.
-- Compatibility route cho web vẫn giữ tại `/api/auth/*`.
-- Admin UI của CMS được phục vụ tại `/admin`.
+Ghi chú:
+- `users` nội bộ dùng `fullName` và `isBlocked`, nhưng contract ra web vẫn map về `displayName` và `status`.
+- `resetToken`/`resetUrl` chỉ dùng cho local/dev khi `PAYLOAD_AUTH_DISABLE_EMAIL=true`.
 
-`POST /api/auth/register`
+## Globals compatibility routes
+
+- `GET /api/site-settings`
+- `GET /api/homepage`
+- `GET /api/sidebar`
+- `GET /api/chanting-settings`
+
+## Public content compatibility routes
+
+### Posts
+
+- `GET /api/posts`
+- `GET /api/posts/:slugOrPublicId`
+- `POST /api/posts/:publicId/view`
+- `GET /api/posts/:publicId/comments`
+- `POST /api/posts/:publicId/comments/submit`
+- `POST /api/comments/:publicId/report`
 
 ```ts
-type RegisterInput = {
-  email: string;
-  password: string;
-  displayName: string;
+type PostSummary = {
+  id: string | null;
+  sourceRef: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  publishedAt: string | null;
+  topic: string | number | null;
+  tags: Array<string | number>;
+  images: Array<string | number>;
+  viewCount: number;
 };
 
-type RegisterResponse = {
-  session: AuthSession;
+type PostDetail = PostSummary & {
+  sourceUrl: string | null;
+  content: unknown;
+  contentPlainText: string;
+  normalizedSearchText: string;
+};
+
+type PostCommentDTO = {
+  id: string | null;
+  post: string | null;
+  parent: string | null;
+  content: string;
+  authorName: string;
+  authorAvatar: string;
+  badge: string;
+  isOfficialReply: boolean;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 ```
 
-`POST /api/auth/login`
+### Events
+
+- `GET /api/events`
+- `GET /api/events/:publicId`
 
 ```ts
-type LoginInput = {
-  email: string;
-  password: string;
-};
-
-type LoginResponse = {
-  session: AuthSession;
+type EventDTO = {
+  id: string | null;
+  title: string;
+  slug: string;
+  description: string;
+  date: string | null;
+  location: string;
+  type: string;
+  eventStatus: string;
 };
 ```
 
-`POST /api/auth/logout`
+### Guides / Downloads / Hub / Sutra / Chanting
+
+- `GET /api/guides`
+- `GET /api/guides/:publicId`
+- `GET /api/downloads`
+- `GET /api/downloads/:publicId`
+- `GET /api/hub-pages`
+- `GET /api/hub-pages/:slugOrPublicId`
+- `GET /api/sutras`
+- `GET /api/sutras/:publicId`
+- `GET /api/sutras/:sutraPublicId/chapters/:chapterPublicId`
+- `GET /api/chant-items`
+- `GET /api/chant-items/:publicId`
+- `GET /api/chant-plans`
+- `GET /api/chant-plans/:publicId`
 
 ```ts
-type LogoutResponse = {
-  success: true;
+type GuideDTO = {
+  id: string | null;
+  title: string;
+  description: string;
+  iconName: string;
+};
+
+type DownloadDTO = {
+  id: string | null;
+  title: string;
+  description: string;
+  externalURL: string;
+  fileType: string;
+};
+
+type HubPageDTO = {
+  id: string | null;
+  title: string;
+  slug: string;
+  description: string;
+};
+
+type SutraDTO = {
+  id: string | null;
+  title: string;
+  slug: string;
+  description: string;
+  shortExcerpt: string;
+};
+
+type ChantItemDTO = {
+  id: string | null;
+  title: string;
+  slug: string;
+  kind: string;
+};
+
+type ChantPlanDTO = {
+  id: string | null;
+  title: string;
+  slug: string;
+  planType: string;
 };
 ```
 
-`POST /api/auth/forgot-password`
+## Community / UGC routes
+
+- `GET /api/community/posts`
+- `GET /api/community/posts/:publicId`
+- `POST /api/community/posts/submit`
+- `GET /api/community/posts/:publicId/comments`
+- `POST /api/community/posts/:publicId/comments`
+- `POST /api/community/posts/:publicId/report`
+- `GET /api/guestbook`
+- `POST /api/guestbook/submit`
+- `POST /api/community/comments/:publicId/report`
 
 ```ts
-type ForgotPasswordInput = {
-  email: string;
+type CommunityPostDTO = {
+  id: string | null;
+  title: string;
+  content: string;
+  slug: string;
+  type: string;
+  authorName: string;
+  likes: number;
+  views: number;
+  commentsCount: number;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
-type ForgotPasswordResponse = {
+type CommunityCommentDTO = {
+  id: string | null;
+  content: string;
+  authorName: string;
+  likes: number;
+  parent: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+};
+
+type GuestbookEntryDTO = {
+  id: string | null;
+  authorName: string;
   message: string;
-  resetToken?: string;
-  resetUrl?: string;
+  country: string;
+  avatar: string;
+  badge: string;
+  adminReply: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 ```
 
 Ghi chú:
-- `resetToken` và `resetUrl` chỉ nên dùng cho local/dev hoặc flow debug khi `PAYLOAD_AUTH_DISABLE_EMAIL=true`.
-- Production nên để CMS gửi email thật và không dựa vào token trả trực tiếp về web UI.
+- Public/community routes không expose `spamScore`, `submittedByIpHash`, `reportCount`, `lastReportReason`.
+- Report endpoint hiện tạo `moderationReports` và sync summary cơ bản lên entity mục tiêu.
 
-`POST /api/auth/reset-password`
+## User-state chanting routes
+
+- `GET /api/chanting/preferences`
+- `POST /api/chanting/preferences`
+- `GET /api/chanting/practice-log`
+- `POST /api/chanting/practice-log`
 
 ```ts
-type ResetPasswordInput = {
-  token: string;
-  password: string;
+type ChantPreferenceDTO = {
+  id: string | null;
+  plan: string | number | null;
+  enabledOptionalItems: Array<{ chantItem: string | number | null }>;
+  targetsByItem: Array<{ chantItem: string | number | null; target: number }>;
+  intentionsByItem: Array<{ chantItem: string | number | null; intention: string }>;
 };
 
-type ResetPasswordResponse = {
-  session: AuthSession;
+type PracticeLogDTO = {
+  id: string | null;
+  plan: string | number | null;
+  practiceDate: string | null;
+  itemStates: unknown[];
+  sessionConfig: {
+    durationMinutes?: number | null;
+    notes?: string | null;
+  } | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  isCompleted: boolean;
 };
 ```
 
-`GET /api/auth/me`
+Ghi chú:
+- Hai route này dựa trên Payload auth session hiện tại.
+- `POST /api/chanting/practice-log` dùng semantics upsert theo `user + practiceDate + plan`.
+
+## Push routes
+
+- `POST /api/push/subscribe`
+- `POST /api/push/unsubscribe`
+
+## Error shape
 
 ```ts
-type MeResponse = {
-  session: AuthSession;
-};
-```
-
-`PATCH /api/auth/profile`
-
-```ts
-type UpdateProfileInput = {
-  displayName: string;
-  bio: string;
-};
-
-type UpdateProfileResponse = {
-  user: AuthUser;
-};
-```
-
-## Auth error shape
-
-```ts
-type AuthError = {
-  code:
-    | 'AUTH_INVALID_CREDENTIALS'
-    | 'AUTH_FORBIDDEN'
-    | 'AUTH_UNAUTHENTICATED'
-    | 'AUTH_USER_INACTIVE'
-    | 'AUTH_TOKEN_REQUIRED'
-    | 'AUTH_RESET_TOKEN_INVALID'
-    | 'AUTH_EMAIL_IN_USE'
-    | 'AUTH_UNKNOWN';
+type ApiError = {
   message: string;
+  code?: string;
 };
 
-type AuthErrorResponse = {
-  error: AuthError;
-};
-```
-
-## Post summary
-
-```ts
-type PostSummary = {
-  id: string;
-  sourceRef: string;
-  title: string;
-  slug: string;
-  excerpt: string; // auto-generated from contentPlainText
-  publishedAt: string | null;
-  topic: string | null;
-  tags: string[];
-  images: { id: string; url: string }[];
-  viewCount: number;
-};
-
-## Post detail
-
-```ts
-type PostDetail = PostSummary & {
-  sourceUrl: string | null;
-  content: {
-    root: {
-      children: any[]; // Lexical JSON structure
-    };
-  };
-  contentPlainText: string; // auto-generated for search/SEO
-  normalizedSearchText: string; // auto-generated for search
-};
-```
-```
-
-## Comment create input
-
-```ts
-type CommentCreateInput = {
-  postId: string;
-  authorName: string;
-  authorEmail: string;
-  content: string;
+type ApiErrorResponse = {
+  error: ApiError;
 };
 ```
 
-## Search result item
+## Contract rules
 
-```ts
-type SearchResultItem = {
-  id: string;
-  type: 'post' | 'event';
-  sourceRef?: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  topic?: string;
-  tags?: string[];
-  contentPlainText?: string;
-  publishedAt?: string | null;
-  url: string;
-};
-```
-
-## Quy tắc contract
-
-- Web luôn map Payload document sang shape domain riêng.
-- Web auth gọi CMS auth endpoint, không tự trở thành auth authority thứ hai.
-- Web tiếp tục gọi `apps/cms` qua cùng API path sau migrate sang Next-native Payload.
-- Session/user shape phải ổn định giữa `apps/cms`, `apps/web`, và `packages/shared`.
-- Search result shape phải ổn định giữa web và Meilisearch indexer.
-- Không expose field nội bộ moderation sang frontend public.
-- Với `Posts` khi bật drafts/versions: public read chỉ lấy bản published; để tương thích dữ liệu cũ, CMS vẫn cho phép đọc docs chưa có `_status` (legacy trước khi bật drafts).
+- Web không dựa vào raw Payload document nếu chưa map.
+- Compatibility routes phải che field moderation/system nhạy cảm khỏi frontend public.
+- `publicId` là identity chính cho public/API/report/audit; `slug` chỉ phục vụ SEO.
+- Search và BFF có thể tiếp tục map từ compatibility DTO sang shape UI cũ trong phase đầu.
+- Payload REST gốc vẫn hữu ích cho admin/integration, nhưng không phải public contract mặc định cho web.
