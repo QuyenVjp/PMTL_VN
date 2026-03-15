@@ -86,6 +86,32 @@ function normalizeUsername(value?: string | null): string | undefined {
   return nextValue || undefined;
 }
 
+function normalizeAvatarInput(value?: string | number | null): number | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (value === null) {
+    return null;
+  }
+
+  if (typeof value === "number") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const parsed = Number(trimmed);
+  if (Number.isFinite(parsed) && parsed > 0) {
+    return parsed;
+  }
+
+  throw new UserAuthError("AUTH_UNKNOWN", "Avatar id khong hop le.", 400);
+}
+
 export function normalizeUserProfileInput<
   T extends { bio?: string | null; fullName?: string | null; username?: string | null; phone?: string | null },
 >(
@@ -368,13 +394,43 @@ export async function updateOwnProfile(
   input: UpdateProfileInput,
 ): Promise<AuthUser> {
   const parsedInput = updateProfileSchema.parse(input);
+  const fullName = parsedInput.displayName ?? parsedInput.fullName;
+  const nextProfile = normalizeUserProfileInput({
+    ...(fullName !== undefined ? { fullName } : {}),
+    ...(parsedInput.bio !== undefined ? { bio: parsedInput.bio } : {}),
+    ...(parsedInput.phone !== undefined && parsedInput.phone !== null ? { phone: parsedInput.phone } : {}),
+  });
+  const updateData: {
+    fullName?: string;
+    bio?: string;
+    phone?: string;
+    dharmaName?: string | null;
+    avatar?: number | null;
+  } = {
+    ...(nextProfile.fullName ? { fullName: nextProfile.fullName } : {}),
+    ...(nextProfile.bio !== undefined ? { bio: nextProfile.bio } : {}),
+    ...(nextProfile.phone ? { phone: nextProfile.phone } : {}),
+  };
+
+  if (parsedInput.phone === null) {
+    updateData.phone = "";
+  }
+
+  if (parsedInput.dharmaName !== undefined) {
+    updateData.dharmaName = parsedInput.dharmaName?.trim() || null;
+  }
+
+  if (parsedInput.avatar !== undefined) {
+    const normalizedAvatar = normalizeAvatarInput(parsedInput.avatar);
+    if (normalizedAvatar !== undefined) {
+      updateData.avatar = normalizedAvatar;
+    }
+  }
+
   const updatedUser = (await payload.update({
     collection: "users",
     id: Number(userId),
-    data: normalizeUserProfileInput({
-      fullName: parsedInput.displayName,
-      bio: parsedInput.bio,
-    }),
+    data: updateData,
     overrideAccess: true,
   })) as unknown as RawUser;
 

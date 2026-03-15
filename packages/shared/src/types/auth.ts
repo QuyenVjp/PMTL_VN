@@ -56,7 +56,11 @@ export type ResetPasswordInput = {
 };
 
 export type UpdateProfileInput = {
-  displayName: string;
-  bio: string;
+  displayName?: string;
+  fullName?: string;
+  bio?: string;
+  phone?: string | null;
+  dharmaName?: string | null;
+  avatar?: string | number | null;
 };
 

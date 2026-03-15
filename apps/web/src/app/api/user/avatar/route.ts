@@ -5,6 +5,7 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
+import { logger } from '@/lib/logger'
 
 const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
@@ -37,22 +38,51 @@ export async function POST(req: NextRequest) {
     const data = await parseResponseBody(res)
 
     if (!res.ok) {
+      logger.warn('Avatar upload failed', {
+        status: res.status,
+        hasApiToken: Boolean(process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN),
+        response: data,
+      })
+
       return NextResponse.json(
         { error: normalizeApiErrorMessage(data, res.status, 'Upload thất bại') },
         { status: res.status }
       )
     }
 
-    const uploaded = (data as any)?.doc ?? (Array.isArray(data) ? data[0] : data)
+    const uploaded = (() => {
+      if (data && typeof data === 'object' && 'doc' in data) {
+        const record = data as { doc?: unknown }
+        return record.doc
+      }
 
-    if (!uploaded) {
+      return Array.isArray(data) ? data[0] : data
+    })()
+
+    if (!uploaded || typeof uploaded !== 'object') {
       return NextResponse.json({ error: 'Phản hồi upload không hợp lệ' }, { status: 500 })
     }
+
+    const media = uploaded as { id?: string | number; url?: string | null }
+    const mediaUrl = media.url
+
+    if (!media.id || typeof mediaUrl !== 'string' || mediaUrl.length === 0) {
+      logger.error('Avatar upload returned incomplete media payload', {
+        payload: uploaded,
+      })
+      return NextResponse.json({ error: 'Phản hồi upload không hợp lệ' }, { status: 500 })
+    }
+
     return NextResponse.json({
-      id: uploaded.id,
-      url: uploaded.url.startsWith('http') ? uploaded.url : `${CMS_API_URL}${uploaded.url}`,
+      id: media.id,
+      url: mediaUrl.startsWith('http') ? mediaUrl : `${CMS_API_URL}${mediaUrl}`,
     })
-  } catch {
+  } catch (error) {
+    logger.error('Avatar upload crashed', {
+      error,
+      path: req.nextUrl.pathname,
+    })
+
     return NextResponse.json({ error: 'Lỗi máy chủ' }, { status: 500 })
   }
 }
