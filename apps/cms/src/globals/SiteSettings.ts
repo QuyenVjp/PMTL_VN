@@ -1,10 +1,18 @@
 import type { GlobalConfig } from "payload";
 
 import { t } from "@/admin/i18n";
+import { revalidateGlobal } from "@/hooks/revalidate-global";
 
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: t("Cài đặt website", "Site settings"),
+  hooks: {
+    afterChange: [
+      async ({ doc, global }) => {
+        await revalidateGlobal({ doc, global });
+      },
+    ],
+  },
   fields: [
     {
       type: "tabs",
@@ -74,4 +82,3 @@ export const SiteSettings: GlobalConfig = {
     },
   ],
 };
-

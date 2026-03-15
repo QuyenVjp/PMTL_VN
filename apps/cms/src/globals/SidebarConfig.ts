@@ -1,12 +1,20 @@
 import type { GlobalConfig } from "payload";
 
 import { t } from "@/admin/i18n";
+import { revalidateGlobal } from "@/hooks/revalidate-global";
 
 export const SidebarConfig: GlobalConfig = {
   slug: "sidebar-config",
   label: t("Cấu hình sidebar", "Sidebar config"),
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, global }) => {
+        await revalidateGlobal({ doc, global });
+      },
+    ],
   },
   fields: [
     {

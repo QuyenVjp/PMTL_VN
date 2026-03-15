@@ -46,4 +46,17 @@ export const communityPostHooks = {
       ]);
     },
   ],
+  afterDelete: [
+    async ({ doc, collection }: CommunityPostHookArgs) => {
+      if (!doc) {
+        return;
+      }
+
+      await revalidateContent({
+        doc,
+        ...(collection ? { collection } : {}),
+        operation: "delete",
+      });
+    },
+  ],
 };

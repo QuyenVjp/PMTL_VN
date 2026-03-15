@@ -1,7 +1,13 @@
 import { prepareHubPageData } from "./service";
 
+import { revalidateContent } from "@/hooks/revalidate-content";
+
 type HubPageHookArgs = {
   data?: Record<string, unknown>;
+  doc?: Record<string, unknown>;
+  collection?: {
+    slug?: string;
+  };
 };
 
 export const hubPageHooks = {
@@ -12,6 +18,31 @@ export const hubPageHooks = {
       }
 
       return prepareHubPageData(data);
+    },
+  ],
+  afterChange: [
+    async ({ doc, collection }: HubPageHookArgs) => {
+      if (!doc) {
+        return;
+      }
+
+      await revalidateContent({
+        doc,
+        ...(collection ? { collection } : {}),
+      });
+    },
+  ],
+  afterDelete: [
+    async ({ doc, collection }: HubPageHookArgs) => {
+      if (!doc) {
+        return;
+      }
+
+      await revalidateContent({
+        doc,
+        ...(collection ? { collection } : {}),
+        operation: "delete",
+      });
     },
   ],
 };

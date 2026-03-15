@@ -1,90 +1,112 @@
-export interface RevalidationTarget {
-  tags: string[]
-  paths: string[]
-}
+import type { RevalidationWebhookPayload } from "@pmtl/shared";
 
-interface WebhookEntry {
-  documentId?: string
-  slug?: string
-  [key: string]: unknown
+export interface RevalidationTarget {
+  tags: string[];
+  paths: string[];
 }
 
 function unique(values: string[]) {
-  return Array.from(new Set(values.filter(Boolean)))
+  return Array.from(new Set(values.filter(Boolean)));
 }
 
-export function getRevalidationTarget(uidOrModel: string, entry?: WebhookEntry): RevalidationTarget {
-  const slug = typeof entry?.slug === 'string' ? entry.slug : undefined
-  const tags: string[] = []
-  const paths: string[] = []
+function getSlug(payload: RevalidationWebhookPayload) {
+  return typeof payload.document?.slug === "string" ? payload.document.slug : undefined;
+}
 
-  switch (uidOrModel) {
-    case 'api::blog-post.blog-post':
-    case 'blog-post':
-      tags.push('blog-posts', 'blog-posts-slugs', 'blog-posts-related')
-      paths.push('/blog', '/search', '/archive')
+export function getRevalidationTarget(payload: RevalidationWebhookPayload): RevalidationTarget {
+  const slug = getSlug(payload);
+  const tags: string[] = [];
+  const paths: string[] = [];
+
+  switch (payload.slug) {
+    case "posts":
+      tags.push("blog-posts", "blog-posts-slugs", "blog-posts-related");
+      paths.push("/blog", "/search", "/archive");
       if (slug) {
-        tags.push(`blog-post-${slug}`, `blog-post-seo-${slug}`)
-        paths.push(`/blog/${slug}`)
+        tags.push(`blog-post-${slug}`, `blog-post-seo-${slug}`);
+        paths.push(`/blog/${slug}`);
       }
-      if (typeof entry?.documentId === 'string') tags.push(`blog-post-${entry.documentId}`)
-      break
-    case 'api::category.category':
-    case 'category':
-      tags.push('categories', 'blog-posts')
-      paths.push('/blog', '/search')
-      if (slug) paths.push(`/category/${slug}`)
-      break
-    case 'api::blog-tag.blog-tag':
-    case 'blog-tag':
-      tags.push('blog-tags', 'blog-posts')
-      paths.push('/blog', '/search')
-      if (slug) paths.push(`/tag/${slug}`)
-      break
-    case 'api::hub-page.hub-page':
-    case 'hub-page':
-      tags.push('hub-pages')
-      if (slug) paths.push(`/hub/${slug}`)
-      break
-    case 'api::download-item.download-item':
-    case 'download-item':
-      tags.push('downloads')
-      paths.push('/library')
-      break
-    case 'api::event.event':
-    case 'event':
-      tags.push('events')
-      paths.push('/events')
-      if (slug) paths.push(`/events/${slug}`)
-      break
-    case 'api::site-setting.site-setting':
-    case 'site-setting':
-    case 'setting':
-      tags.push('homepage-settings', 'settings')
-      paths.push('/')
-      break
-    case 'api::sidebar-config.sidebar-config':
-    case 'sidebar-config':
-      tags.push('sidebar-config')
-      paths.push('/blog')
-      break
-    case 'api::gallery-item.gallery-item':
-    case 'gallery-item':
-      tags.push('gallery')
-      paths.push('/gallery')
-      break
-    case 'api::sutra.sutra':
-    case 'sutra':
-      tags.push('sutras', 'sutra-dictionary')
-      paths.push('/kinh-dien')
-      if (slug) paths.push(`/kinh-dien/${slug}`)
-      break
+      if (payload.document?.id != null) {
+        tags.push(`blog-post-${payload.document.id}`);
+      }
+      break;
+    case "categories":
+      tags.push("categories", "blog-posts");
+      paths.push("/blog", "/search");
+      if (slug) {
+        tags.push(`category-${slug}`);
+        paths.push(`/category/${slug}`);
+      }
+      break;
+    case "tags":
+      tags.push("blog-tags", "blog-posts");
+      paths.push("/blog", "/search");
+      if (slug) {
+        paths.push(`/tag/${slug}`);
+      }
+      break;
+    case "events":
+      tags.push("events");
+      paths.push("/events");
+      if (slug) {
+        paths.push(`/events/${slug}`);
+      }
+      break;
+    case "homepage":
+      tags.push("homepage-settings");
+      paths.push("/");
+      break;
+    case "site-settings":
+      tags.push("settings");
+      paths.push("/");
+      break;
+    case "navigation":
+      tags.push("global-navigation");
+      break;
+    case "sidebar-config":
+      tags.push("sidebar-config");
+      paths.push("/blog");
+      break;
+    case "chanting-settings":
+      tags.push("chanting-setting");
+      paths.push("/niem-kinh");
+      break;
+    case "hubPages":
+      tags.push("hub-pages");
+      if (slug) {
+        paths.push(`/hub/${slug}`);
+      }
+      break;
+    case "communityPosts":
+      tags.push("community-posts");
+      paths.push("/shares");
+      if (slug) {
+        tags.push(`community-post-${slug}`);
+        paths.push(`/shares/${slug}`);
+      }
+      break;
+    case "beginnerGuides":
+      tags.push("guides");
+      paths.push("/beginner-guide");
+      break;
+    case "downloads":
+      tags.push("downloads");
+      paths.push("/library");
+      break;
+    case "sutras":
+      tags.push("sutras", "sutra-dictionary");
+      paths.push("/kinh-dien");
+      if (slug) {
+        tags.push(`sutra-${slug}`, `sutra-${slug}-volumes`, `sutra-${slug}-chapters`, `sutra-${slug}-glossaries`);
+        paths.push(`/kinh-dien/${slug}`);
+      }
+      break;
     default:
-      break
+      break;
   }
 
   return {
     tags: unique(tags),
     paths: unique(paths),
-  }
+  };
 }

@@ -106,6 +106,7 @@ Production rule:
 - Required production secrets include:
   - `PAYLOAD_SECRET`
   - `PAYLOAD_API_TOKEN`
+  - `REVALIDATE_SECRET`
   - `POSTGRES_PASSWORD`
   - `MEILI_MASTER_KEY`
   - `REDIS_URL`

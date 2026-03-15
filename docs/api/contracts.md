@@ -7,6 +7,45 @@
 - Web/BFF phase đầu nên ưu tiên gọi compatibility routes dưới đây thay vì ăn raw Payload document.
 - Admin UI của CMS nằm tại `/admin`.
 
+## Internal revalidation contract
+
+- `POST /api/revalidate`
+- Chỉ dành cho webhook nội bộ từ `apps/cms` sang `apps/web`
+- Header bắt buộc: `Authorization: Bearer <REVALIDATE_SECRET>`
+
+```ts
+type RevalidationWebhookPayload = {
+  source: "payload";
+  entityType: "collection" | "global";
+  slug:
+    | "posts"
+    | "categories"
+    | "tags"
+    | "events"
+    | "hubPages"
+    | "communityPosts"
+    | "beginnerGuides"
+    | "downloads"
+    | "sutras"
+    | "homepage"
+    | "navigation"
+    | "site-settings"
+    | "sidebar-config"
+    | "chanting-settings";
+  operation: "create" | "update" | "delete";
+  document?: {
+    id?: string | number;
+    publicId?: string | null;
+    slug?: string | null;
+  };
+};
+```
+
+Ghi chú:
+- `INTERNAL_WEBHOOK_URL` nên trỏ từ CMS sang web nội bộ, ví dụ `http://web:3000/api/revalidate` trong Docker.
+- `REVALIDATE_SECRET` phải giống nhau ở cả `apps/cms` và `apps/web`.
+- Route này sẽ map `Payload` slugs sang cache tags và paths thực tế của frontend rồi gọi `revalidateTag` / `revalidatePath`.
+
 ## Auth contracts
 
 ```ts

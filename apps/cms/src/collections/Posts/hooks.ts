@@ -66,4 +66,17 @@ export const postHooks = {
       ]);
     },
   ],
+  afterDelete: [
+    async ({ doc, collection }: PostHookArgs) => {
+      if (!doc) {
+        return;
+      }
+
+      await revalidateContent({
+        doc,
+        ...(collection ? { collection } : {}),
+        operation: "delete",
+      });
+    },
+  ],
 };

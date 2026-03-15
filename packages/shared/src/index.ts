@@ -8,6 +8,7 @@ export * from "./mappers/search";
 export * from "./schemas/auth";
 export * from "./schemas/comment";
 export * from "./schemas/pagination";
+export * from "./schemas/revalidation";
 export * from "./schemas/search";
 export * from "./types/auth";
 export * from "./types/content";

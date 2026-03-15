@@ -1,12 +1,20 @@
 import type { GlobalConfig } from "payload";
 
 import { t } from "@/admin/i18n";
+import { revalidateGlobal } from "@/hooks/revalidate-global";
 
 export const Navigation: GlobalConfig = {
   slug: "navigation",
   label: t("Điều hướng", "Navigation"),
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, global }) => {
+        await revalidateGlobal({ doc, global });
+      },
+    ],
   },
   fields: [
     {

@@ -2,12 +2,20 @@ import type { GlobalConfig } from "payload";
 
 import { t } from "@/admin/i18n";
 import { buildSeoGroupField } from "@/fields/seo-fields";
+import { revalidateGlobal } from "@/hooks/revalidate-global";
 
 export const ChantingSettings: GlobalConfig = {
   slug: "chanting-settings",
   label: t("Cài đặt niệm chú", "Chanting settings"),
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, global }) => {
+        await revalidateGlobal({ doc, global });
+      },
+    ],
   },
   fields: [
     {

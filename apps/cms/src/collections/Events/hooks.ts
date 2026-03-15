@@ -31,4 +31,17 @@ export const eventHooks = {
       ]);
     },
   ],
+  afterDelete: [
+    async ({ doc, collection }: EventHookArgs) => {
+      if (!doc) {
+        return;
+      }
+
+      await revalidateContent({
+        doc,
+        ...(collection ? { collection } : {}),
+        operation: "delete",
+      });
+    },
+  ],
 };
