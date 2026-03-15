@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { TagIcon } from 'lucide-react'
 import { getCategoryTree } from '@/lib/api/categories'
-import type { CategoryTree } from '@/types/strapi'
+import type { CategoryTree } from '@/types/cms'
 
 export default async function CategoryWidget() {
   let topLevel: CategoryTree[] = []

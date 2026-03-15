@@ -1,5 +1,5 @@
-import { buildStrapiUrl } from '@/lib/strapi'
-import type { CategoryTree } from '@/types/strapi'
+import { buildCmsUrl } from '@/lib/cms'
+import type { CategoryTree } from '@/types/cms'
 
 interface CategoryTreeResponse {
   data: CategoryTree[]
@@ -18,7 +18,7 @@ export async function GET() {
       })
     }
 
-    const url = buildStrapiUrl('/categories/tree')
+    const url = buildCmsUrl('/categories/tree')
     const res = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',

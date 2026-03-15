@@ -13,6 +13,7 @@ export const PostComments: CollectionConfig = {
     plural: t("Bình luận bài viết", "Post comments"),
   },
   admin: {
+    group: t("Cộng đồng", "Cộng đồng"),
     useAsTitle: "authorName",
     defaultColumns: ["authorName", "post", "moderationStatus", "reportCount", "updatedAt"],
   },

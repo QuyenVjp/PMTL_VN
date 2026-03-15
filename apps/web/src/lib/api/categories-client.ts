@@ -1,4 +1,4 @@
-import type { Category, CategoryTree, StrapiList } from '@/types/strapi'
+import type { Category, CategoryTree, CmsList } from '@/types/cms'
 
 // ── Cache phía trình duyệt: categories ít khi thay đổi ────────
 let _cacheData: Category[] | null = null
@@ -26,7 +26,7 @@ export async function getCategoriesClient(): Promise<Category[]> {
 
     if (!res.ok) return _cacheData ?? []
 
-    const data: StrapiList<Category> = await res.json()
+    const data: CmsList<Category> = await res.json()
     const danhSach = data.data ?? []
 
     // Cập nhật cache phía client

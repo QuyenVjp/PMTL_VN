@@ -8,7 +8,7 @@
 // ─────────────────────────────────────────────────────────────
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server';
-import { STRAPI_URL } from '@/lib/strapi';
+import { CMS_API_URL } from '@/lib/cms';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
   try {
     const qs = new URLSearchParams({ date });
     if (planSlug) qs.set('planSlug', planSlug);
-    const res = await fetch(`${STRAPI_URL}/api/practice-logs/my?${qs}`, {
+    const res = await fetch(`${CMS_API_URL}/api/practice-logs/my?${qs}`, {
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',
     });
@@ -65,7 +65,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const res = await fetch(`${STRAPI_URL}/api/practice-logs/my`, {
+    const res = await fetch(`${CMS_API_URL}/api/practice-logs/my`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

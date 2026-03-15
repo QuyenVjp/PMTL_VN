@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { NextRequest } from 'next/server'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 export async function GET(request: NextRequest) {
   const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   try {
     if (index) {
       // Trả về mục lục năm/tháng
-      const res = await fetch(`${STRAPI_URL}/api/blog-posts/archive-index`, {
+      const res = await fetch(`${CMS_API_URL}/api/blog-posts/archive-index`, {
         headers: { Authorization: `Bearer ${token}` },
         next: { revalidate: 3600, tags: ['blog-posts'] },
       })
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     const monthParam = month ? `&month=${month}` : ''
     const res = await fetch(
-      `${STRAPI_URL}/api/blog-posts/archive?year=${year}${monthParam}&page=${page}&pageSize=${pageSize}`,
+      `${CMS_API_URL}/api/blog-posts/archive?year=${year}${monthParam}&page=${page}&pageSize=${pageSize}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { revalidate: 600, tags: ['blog-posts'] },

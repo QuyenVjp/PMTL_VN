@@ -13,6 +13,7 @@ export const PushJobs: CollectionConfig = {
     plural: t("Push jobs", "Push jobs"),
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "publicId",
     defaultColumns: ["kind", "status", "sentCount", "failedCount", "updatedAt"],
   },

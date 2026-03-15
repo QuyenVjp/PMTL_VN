@@ -1,8 +1,8 @@
 // components/hub/layouts/HubReferenceLayout.tsx
 // Reference theme: academic, index-like, minimal decoration
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
-import type { HubPage } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
+import type { HubPage } from '@/types/cms'
 import { Library, Download } from 'lucide-react'
 import HubBlockRenderer from '../HubBlockRenderer'
 import HubSection from '../HubSection'
@@ -19,7 +19,7 @@ export default function HubReferenceLayout({ hubPage }: HubReferenceLayoutProps)
     <main className="min-h-screen bg-background">
       <div className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-card/70 to-background">
         {hubPage.coverImage && (() => {
-          const imgSrc = getStrapiMediaUrl(
+          const imgSrc = getCmsMediaUrl(
             hubPage.coverImage!.formats?.large?.url ?? hubPage.coverImage!.url
           )
           return imgSrc ? (

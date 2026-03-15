@@ -13,6 +13,7 @@ export const PushSubscriptions: CollectionConfig = {
     plural: t("Đăng ký push", "Push subscriptions"),
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "endpoint",
     defaultColumns: ["user", "isActive", "failedCount", "lastSentAt", "updatedAt"],
   },

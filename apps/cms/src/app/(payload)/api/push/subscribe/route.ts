@@ -1,4 +1,6 @@
 import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
+import { appendRouteAuditLog } from "@/services/audit.service";
+import { getRequestMetadata } from "@/routes/request-metadata";
 import { upsertPushSubscription } from "@/services/push.service";
 
 type PushSubscriptionInput = {
@@ -133,6 +135,22 @@ export async function POST(request: Request) {
             draft: false,
             overrideAccess: true,
           });
+
+    await appendRouteAuditLog(payload, {
+      action: "pushSubscriptions.upsert",
+      actorType: prepared.user ? "user" : "anonymous",
+      actorUser: prepared.user ?? null,
+      targetType: "pushSubscriptions",
+      targetPublicId: document.publicId ?? null,
+      targetRef: {
+        collection: "pushSubscriptions",
+        id: String(document.id),
+      },
+      ...getRequestMetadata(request.headers),
+      metadata: {
+        isActive: document.isActive ?? true,
+      },
+    });
 
     return jsonResponse(200, document);
   } catch (error) {

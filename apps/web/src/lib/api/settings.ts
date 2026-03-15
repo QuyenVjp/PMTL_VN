@@ -3,8 +3,8 @@
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
 
-import { strapiFetch } from '@/lib/strapi'
-import type { SiteSetting, StrapiSingle } from '@/types/strapi'
+import { cmsGet } from "@/lib/cms/client";
+import type { SiteSetting } from "@/types/cms";
 
 /** Fallback settings used when Strapi is unavailable or not configured */
 export const DEFAULT_SETTINGS: SiteSetting = {
@@ -37,11 +37,11 @@ export const DEFAULT_SETTINGS: SiteSetting = {
 /** Get site settings — returns fallback if Strapi unavailable */
 export async function getSiteSettings(): Promise<SiteSetting> {
   try {
-    const res = await strapiFetch<StrapiSingle<SiteSetting>>('/setting', {
-      populate: ['logo', 'awards'],
-      next: { revalidate: 3600, tags: ['settings'] }, // cache 1hr — rarely changes
-    })
-    return res.data ?? DEFAULT_SETTINGS
+    const document = await cmsGet<SiteSetting>("/api/site-settings", {
+      next: { revalidate: 3600, tags: ["settings"] },
+    });
+
+    return document ?? DEFAULT_SETTINGS;
   } catch {
     // Graceful degradation — always return usable settings
     return DEFAULT_SETTINGS

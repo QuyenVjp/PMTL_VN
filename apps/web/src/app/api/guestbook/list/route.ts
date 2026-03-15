@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { NextRequest } from 'next/server'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const res = await fetch(
-      `${STRAPI_URL}/api/guestbook-entries/list?page=${page}&pageSize=${pageSize}`,
+      `${CMS_API_URL}/api/guestbook?page=${page}&pageSize=${pageSize}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store',

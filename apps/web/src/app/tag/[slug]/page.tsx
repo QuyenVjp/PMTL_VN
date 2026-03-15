@@ -12,7 +12,7 @@ import StickyBanner from '@/components/StickyBanner'
 import BlogPagination from '@/components/BlogPagination'
 import { fetchTagBySlug, getAllTagSlugs } from '@/lib/api/blog-tags'
 import { getPosts } from '@/lib/api/blog'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import { PAGINATION } from '@/lib/config/pagination'
 import { Tag, ChevronLeft } from 'lucide-react'
 
@@ -116,7 +116,7 @@ export default async function TagPage({ params, searchParams }: Props) {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
               {posts.map((post) => {
-                const thumbUrl = post.thumbnail ? getStrapiMediaUrl(post.thumbnail.url) : null
+                const thumbUrl = post.thumbnail ? getCmsMediaUrl(post.thumbnail.url) : null
                 return (
                   <article
                     key={post.documentId}

@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     if (access_token) {
       // Exchange provider access token to Strapi JWT + user
-      const res = await fetch(`${STRAPI_URL}/api/auth/google/callback?access_token=${access_token}`)
+      const res = await fetch(`${CMS_API_URL}/api/auth/google/callback?access_token=${access_token}`)
       const data = await parseResponseBody(res) as Record<string, any>
       if (!res.ok || !data.jwt) {
         return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     } else if (id_token) {
       // Fallback only when Strapi returned JWT directly as id_token.
       jwt = id_token
-      const meRes = await fetch(`${STRAPI_URL}/api/users/me?populate=*`, {
+      const meRes = await fetch(`${CMS_API_URL}/api/users/me?populate=*`, {
         headers: { Authorization: `Bearer ${jwt}` },
       })
       const meData = await parseResponseBody(meRes) as Record<string, any>
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     if (user?.avatar_url && typeof user.avatar_url === 'object') {
       user.avatar_url = user.avatar_url.url?.startsWith('http')
         ? user.avatar_url.url
-        : `${STRAPI_URL}${user.avatar_url.url}`
+        : `${CMS_API_URL}${user.avatar_url.url}`
     }
 
     const response = NextResponse.json({ user })

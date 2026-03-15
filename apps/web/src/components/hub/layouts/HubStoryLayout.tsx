@@ -2,8 +2,8 @@
 // Story theme: narrative, warmth, image-heavy, testimonial
 import Link from 'next/link'
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
-import type { HubPage } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
+import type { HubPage } from '@/types/cms'
 import { BookOpen, Download } from 'lucide-react'
 import HubBlockRenderer from '../HubBlockRenderer'
 import HubSection from '../HubSection'
@@ -26,7 +26,7 @@ export default function HubStoryLayout({ hubPage }: HubStoryLayoutProps) {
           3. Giới hạn độ dài text tránh overflow */}
       <div className="relative overflow-hidden border-b border-gold/10 bg-gradient-to-b from-card/70 to-background">
         {hubPage.coverImage ? (() => {
-          const imgSrc = getStrapiMediaUrl(
+          const imgSrc = getCmsMediaUrl(
             hubPage.coverImage!.formats?.large?.url ?? hubPage.coverImage!.url
           )
           return imgSrc ? (
@@ -73,7 +73,7 @@ export default function HubStoryLayout({ hubPage }: HubStoryLayoutProps) {
             {(() => {
               const featured = hubPage.curated_posts![0]
               const thumbUrl = featured.thumbnail
-                ? getStrapiMediaUrl(featured.thumbnail.formats?.large?.url ?? featured.thumbnail.url)
+                ? getCmsMediaUrl(featured.thumbnail.formats?.large?.url ?? featured.thumbnail.url)
                 : null
               return (
                 <Link
@@ -124,7 +124,7 @@ export default function HubStoryLayout({ hubPage }: HubStoryLayoutProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                 {hubPage.curated_posts!.slice(1, 4).map((post) => {
                   const thumbUrl = post.thumbnail
-                    ? getStrapiMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
+                    ? getCmsMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
                     : null
                   return (
                     <Link

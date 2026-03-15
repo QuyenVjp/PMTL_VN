@@ -5,7 +5,7 @@ import ArchiveGrid from '@/components/archive/ArchiveGrid'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import type { ArchiveYear } from '@/types/strapi'
+import type { ArchiveYear } from '@/types/cms'
 
 export const metadata: Metadata = {
   title: 'Lưu Trữ Bài Viết | Phật Môn Tịnh Lữ',

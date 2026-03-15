@@ -10,9 +10,9 @@ import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import { getCategoryBySlug, getCategories, getCategoryBreadcrumb } from '@/lib/api/categories'
-import { strapiFetch, getStrapiMediaUrl } from '@/lib/strapi'
+import { cmsFetch, getCmsMediaUrl } from '@/lib/cms'
 import Breadcrumbs from '@/components/Breadcrumbs'
-import type { BlogPost, StrapiList, Category } from '@/types/strapi'
+import type { BlogPost, CmsList, Category } from '@/types/cms'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -21,7 +21,7 @@ interface Props {
 // generateMetadata updated for simplified schema
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const result = await strapiFetch<StrapiList<Category>>(`/categories`, { // Using Category type instead of any
+  const result = await cmsFetch<CmsList<Category>>(`/categories`, { // Using Category type instead of any
     filters: { slug: { $eq: slug } },
     pagination: { page: 1, pageSize: 1 },
   })
@@ -58,7 +58,7 @@ export default async function CategoryPage({ params }: Props) {
   let posts: BlogPost[] = []
   let total = 0
   try {
-    const res = await strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+    const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
       filters: {
         // Filter by dynamic category relation
         categories: { slug: { $eq: slug } }
@@ -133,7 +133,7 @@ export default async function CategoryPage({ params }: Props) {
                 const post = posts[0]
                 const thumb = post.thumbnail || (post.gallery?.length ? post.gallery[0] : null)
                 const thumbUrl = thumb
-                  ? getStrapiMediaUrl(thumb.formats?.medium?.url || thumb.formats?.small?.url || thumb.url)
+                  ? getCmsMediaUrl(thumb.formats?.medium?.url || thumb.formats?.small?.url || thumb.url)
                   : null
                 return (
                   <Link
@@ -180,7 +180,7 @@ export default async function CategoryPage({ params }: Props) {
                   {posts.slice(1).map((post) => {
                     const thumb = post.thumbnail || (post.gallery && post.gallery.length > 0 ? post.gallery[0] : null)
                     const thumbUrl = thumb
-                      ? getStrapiMediaUrl(thumb.formats?.medium?.url || thumb.formats?.small?.url || thumb.url)
+                      ? getCmsMediaUrl(thumb.formats?.medium?.url || thumb.formats?.small?.url || thumb.url)
                       : null
                     return (
                       <Link

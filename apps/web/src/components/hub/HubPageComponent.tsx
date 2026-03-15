@@ -1,5 +1,5 @@
 // components/hub/HubPageComponent.tsx — Dispatcher by visualTheme
-import type { HubPage } from '@/types/strapi'
+import type { HubPage } from '@/types/cms'
 import HubTeachingLayout from './layouts/HubTeachingLayout'
 import HubPracticeLayout from './layouts/HubPracticeLayout'
 import HubStoryLayout from './layouts/HubStoryLayout'

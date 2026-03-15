@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRightIcon, BookIcon, CompassIcon, UsersIcon } from "@/components/icons/ZenIcons";
-import type { ActionCardItem } from "@/types/strapi";
+import type { ActionCardItem } from "@/types/cms";
 import { resolveIconToken } from "@/lib/ui-icons";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {

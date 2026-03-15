@@ -13,6 +13,7 @@ export const Tags: CollectionConfig = {
     plural: t("Nhãn", "Tags"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "name",
     defaultColumns: ["name", "slug", "isActive", "updatedAt"],
   },

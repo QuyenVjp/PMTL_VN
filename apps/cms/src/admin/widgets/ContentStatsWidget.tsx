@@ -58,7 +58,7 @@ export async function ContentStatsWidget({ req }: WidgetServerProps) {
     },
     {
       hint: "Tài liệu và tệp tải về",
-      label: "Downloads",
+      label: "Tải về",
       value: downloads,
     },
     {

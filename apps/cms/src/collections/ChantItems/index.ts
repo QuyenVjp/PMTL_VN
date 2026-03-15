@@ -13,6 +13,7 @@ export const ChantItems: CollectionConfig = {
     plural: t("Bài niệm", "Chant items"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "title",
     defaultColumns: ["title", "kind", "slug", "updatedAt"],
   },

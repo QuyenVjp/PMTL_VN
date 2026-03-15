@@ -8,7 +8,7 @@ import ArchivePostList from '@/components/archive/ArchivePostList'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import type { StrapiList, BlogPost } from '@/types/strapi'
+import type { CmsList, BlogPost } from '@/types/cms'
 
 interface Params {
   year: string
@@ -41,7 +41,7 @@ export default async function ArchiveMonthPage({ params }: { params: Promise<Par
     notFound()
   }
 
-  let posts: StrapiList<BlogPost> = {
+  let posts: CmsList<BlogPost> = {
     data: [],
     meta: { pagination: { page: 1, pageSize: 12, pageCount: 0, total: 0 } },
   }

@@ -3,7 +3,7 @@
 //  Client functions cho Community Posts & Comments
 // ─────────────────────────────────────────────────────────────
 
-import { buildAuthHeaders as authHeaders, resolveUrl, STRAPI_API as API } from '@/lib/strapi-client'
+import { buildAuthHeaders as authHeaders, resolveUrl, CMS_CLIENT_API as API } from '@/lib/cms-client'
 import { createHttpError, createHttpErrorFromPayload, parseResponseBody } from '@/lib/http-error'
 
 function imgUrl(media: unknown): string {
@@ -155,7 +155,7 @@ export async function viewPost(documentId: string): Promise<number> {
 
 export async function uploadFile(file: File): Promise<string | undefined> {
   const formData = new FormData()
-  formData.append('files', file)
+  formData.append('file', file)
   const res = await fetch(`/api/upload`, {
     method: 'POST',
     body: formData,
@@ -187,7 +187,7 @@ export async function submitPost(data: {
   video_url?: string
   tags?: string | string[]
   cover_image?: number | string
-  actorUserId?: number
+  actorUserId?: string | number
   actorEndpoint?: string
 }): Promise<void> {
   const res = await fetch(`/api/community-posts/submit`, {
@@ -224,7 +224,7 @@ export async function submitComment(data: {
   author_name: string
   author_avatar?: string
   parentDocumentId?: string
-  actorUserId?: number
+  actorUserId?: string | number
   actorEndpoint?: string
 }): Promise<void> {
   const res = await fetch(`/api/community-comments/submit`, {

@@ -1,10 +1,10 @@
 // components/hub/blocks/PostListAutoBlock.tsx
 import Link from 'next/link'
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import { getPosts } from '@/lib/api/blog'
 import { Sparkles, ArrowRight } from 'lucide-react'
-import type { Category } from '@/types/strapi'
+import type { Category } from '@/types/cms'
 
 interface PostListAutoBlockProps {
   heading: string
@@ -45,7 +45,7 @@ export default async function PostListAutoBlock({ heading, description, category
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {posts.map((post) => {
           const thumbUrl = post.thumbnail
-            ? getStrapiMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
+            ? getCmsMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
             : null
           return (
             <Link

@@ -2,11 +2,11 @@
 //  lib/api/hub.ts — Hub page API functions
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
-import { strapiFetch } from '@/lib/strapi'
-import type { StrapiList, HubPage } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { CmsList, HubPage } from '@/types/cms'
 import { getPosts } from '@/lib/api/blog'
 import { fetchDownloads } from '@/lib/api/downloads'
-import type { DownloadItem } from '@/types/strapi'
+import type { DownloadItem } from '@/types/cms'
 
 function buildFallbackHubPages(): HubPage[] {
   const now = new Date().toISOString()
@@ -40,63 +40,6 @@ function buildFallbackHubPages(): HubPage[] {
       visualTheme: "practice",
     },
   ]
-}
-
-const POPULATE_HUB = {
-  // Section links + thumbnail
-  sections: {
-    populate: {
-      links: {
-        populate: {
-          thumbnail: { fields: ['url', 'formats', 'width', 'height', 'alternativeText'] },
-        },
-      },
-    },
-  },
-  // Cover image của hub page
-  coverImage: { fields: ['url', 'formats', 'alternativeText'] },
-  // Bài Editor chọn tay
-  curated_posts: {
-    fields: ['id', 'documentId', 'title', 'slug', 'publishedAt'],
-    populate: {
-      thumbnail: { fields: ['url', 'formats', 'alternativeText'] },
-    },
-  },
-  // Tài liệu tải xuống gắn vào hub
-  downloads: {
-    fields: [
-      'id', 'documentId', 'title', 'description', 'url', 'fileType',
-      'category', 'groupYear', 'groupLabel', 'notes', 'isUpdating',
-      'isNew', 'sortOrder', 'fileSizeMB',
-    ],
-  },
-  // Dynamic blocks
-  blocks: {
-    on: {
-      'blocks.post-list-auto': {
-        populate: {
-          category: { fields: ['id', 'documentId', 'name', 'slug'] }
-        }
-      },
-      'blocks.post-list-manual': {
-        populate: {
-          posts: {
-            fields: ['id', 'documentId', 'title', 'slug', 'publishedAt'],
-            populate: { thumbnail: { fields: ['url', 'formats'] } }
-          }
-        }
-      },
-      'blocks.download-grid': {
-        populate: {
-          downloads: {
-            fields: ['id', 'documentId', 'title', 'url', 'fileType', 'isNew', 'isUpdating']
-          }
-        }
-      },
-      'blocks.rich-text': true
-    }
-  }
-
 }
 
 function hasRenderableHubContent(hub: HubPage): boolean {
@@ -175,7 +118,7 @@ function selectFallbackDownloads(hub: HubPage, items: DownloadItem[]): DownloadI
 async function hydrateHubFallback(hub: HubPage): Promise<HubPage> {
   if (hasRenderableHubContent(hub)) return hub
 
-  const emptyPosts: StrapiList<import('@/types/strapi').BlogPost> = {
+  const emptyPosts: CmsList<import('@/types/cms').BlogPost> = {
     data: [],
     meta: {
       pagination: { page: 1, pageSize: 0, pageCount: 0, total: 0 },
@@ -236,9 +179,8 @@ async function hydrateHubFallback(hub: HubPage): Promise<HubPage> {
 /** Lấy một hub-page theo slug. Populate đầy đủ: sections, curated_posts, downloads */
 export async function getHubBySlug(slug: string): Promise<HubPage | null> {
   try {
-    const res = await strapiFetch<StrapiList<HubPage>>('/hub-pages', {
+    const res = await cmsFetch<CmsList<HubPage>>('/hub-pages', {
       filters: { slug: { $eq: slug } },
-      populate: POPULATE_HUB,
       pagination: { page: 1, pageSize: 1 },
       next: { revalidate: 3600, tags: ['hub-pages'] },
     })
@@ -256,8 +198,7 @@ export async function getHubBySlug(slug: string): Promise<HubPage | null> {
 /** Lấy toàn bộ hub-pages (dùng cho menu/sitemap). Không populate nặng. */
 export async function getHubPages(): Promise<HubPage[]> {
   try {
-    const res = await strapiFetch<StrapiList<HubPage>>('/hub-pages', {
-      fields: ['id', 'documentId', 'title', 'slug', 'sortOrder', 'showInMenu', 'menuIcon'],
+    const res = await cmsFetch<CmsList<HubPage>>('/hub-pages', {
       filters: { showInMenu: { $eq: true } },
       sort: ['sortOrder:asc', 'title:asc'],
       pagination: { page: 1, pageSize: 50 },

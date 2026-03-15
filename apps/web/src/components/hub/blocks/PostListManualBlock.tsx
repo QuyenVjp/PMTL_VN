@@ -2,8 +2,8 @@
 // Visual: Phật giáo, không gian chủ đề, có dẫn nhập, palette vàng/trầm
 import Link from 'next/link'
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi'
-import type { BlogPost } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
+import type { BlogPost } from '@/types/cms'
 import { BookMarked } from 'lucide-react'
 
 interface PostListManualBlockProps {
@@ -47,7 +47,7 @@ export default function PostListManualBlock({ heading, description, posts }: Pos
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {posts.map((post) => {
           const thumbUrl = post.thumbnail
-            ? getStrapiMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
+            ? getCmsMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
             : null
           return (
             <Link

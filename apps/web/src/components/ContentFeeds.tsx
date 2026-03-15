@@ -11,9 +11,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightIcon, BookIcon } from "@/components/icons/ZenIcons";
 import { getCategoriesClient } from "@/lib/api/categories-client";
-import type { Category, BlogPost } from "@/types/strapi";
+import type { Category, BlogPost } from "@/types/cms";
 import { BookOpen, Clock } from "lucide-react";
-import { getStrapiMediaUrl } from "@/lib/strapi";
+import { getCmsMediaUrl } from "@/lib/cms";
 
 type CommunityStory = {
   id: string;
@@ -201,7 +201,7 @@ const ContentFeeds = () => {
                         {bai.cover_image && (
                           <div className="h-32 w-full shrink-0 overflow-hidden rounded-xl md:w-48">
                             <Image
-                              src={getStrapiMediaUrl(bai.cover_image.url) || ''}
+                              src={getCmsMediaUrl(bai.cover_image.url) || ''}
                               alt={bai.title}
                               width={200}
                               height={150}
@@ -227,7 +227,7 @@ const ContentFeeds = () => {
                           <div className="card-meta border-t border-border/70 pt-4">
                             <div className="flex size-7 items-center justify-center overflow-hidden rounded-full bg-secondary">
                               {bai.author_avatar ? (
-                                <Image src={getStrapiMediaUrl(bai.author_avatar) || ''} alt={bai.author_name || "Tác giả"} width={24} height={24} />
+                                <Image src={getCmsMediaUrl(bai.author_avatar) || ''} alt={bai.author_name || "Tác giả"} width={24} height={24} />
                               ) : (
                                 <span className="text-[10px] font-bold text-gold-dim">{bai.author_name?.charAt(0)}</span>
                               )}

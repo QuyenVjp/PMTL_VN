@@ -13,6 +13,7 @@ export const HubPages: CollectionConfig = {
     plural: t("Trang hub", "Hub pages"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "title",
     defaultColumns: ["title", "slug", "_status", "showInMenu", "updatedAt"],
   },

@@ -2,8 +2,8 @@
 // Teaching theme: scholarly, typography-first, reading hall
 import Link from 'next/link'
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
-import type { HubPage } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
+import type { HubPage } from '@/types/cms'
 import { BookMarked, Download } from 'lucide-react'
 import HubBlockRenderer from '../HubBlockRenderer'
 import HubSection from '../HubSection'
@@ -24,7 +24,7 @@ export default function HubTeachingLayout({ hubPage }: HubTeachingLayoutProps) {
           không bao giờ cướp thị giác hay cản chữ dù có noise đến đâu. */}
       <div className="relative overflow-hidden border-b border-gold/10 bg-gradient-to-b from-card/75 to-background">
         {hubPage.coverImage && (() => {
-          const imgSrc = getStrapiMediaUrl(
+          const imgSrc = getCmsMediaUrl(
             hubPage.coverImage!.formats?.large?.url ?? hubPage.coverImage!.url
           )
           return imgSrc ? (
@@ -73,7 +73,7 @@ export default function HubTeachingLayout({ hubPage }: HubTeachingLayoutProps) {
             <div className="space-y-6 md:space-y-8">
               {hubPage.curated_posts!.map((post) => {
                 const thumbUrl = post.thumbnail
-                  ? getStrapiMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
+                  ? getCmsMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
                   : null
                 return (
                   <Link

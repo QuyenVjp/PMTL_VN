@@ -1,4 +1,6 @@
 import { execSync, spawnSync } from "node:child_process";
+import { existsSync, rmSync } from "node:fs";
+import path from "node:path";
 
 function parsePort(value: string | undefined): number {
   const parsed = Number.parseInt(value ?? "", 10);
@@ -121,6 +123,17 @@ function main(): void {
     console.warn(`[dev] ${label}: port ${port} is still busy, pids=${remaining.join(",")}`);
   } else {
     console.info(`[dev] ${label}: port ${port} is now free.`);
+  }
+
+  const nextDevLockPath = path.join(process.cwd(), ".next", "dev", "lock");
+  if (existsSync(nextDevLockPath)) {
+    try {
+      rmSync(nextDevLockPath, { force: true });
+      console.info(`[dev] ${label}: removed stale Next dev lock.`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`[dev] ${label}: could not remove stale Next dev lock: ${message}`);
+    }
   }
 }
 

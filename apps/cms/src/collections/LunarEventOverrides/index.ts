@@ -13,6 +13,7 @@ export const LunarEventOverrides: CollectionConfig = {
     plural: t("Override âm lịch", "Lunar overrides"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "publicId",
     defaultColumns: ["lunarEvent", "chantItem", "mode", "priority", "updatedAt"],
   },

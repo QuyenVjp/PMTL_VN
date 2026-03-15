@@ -2,12 +2,12 @@
 //  lib/api/sidebar.ts — Sidebar config API functions
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
-import { strapiFetch } from '@/lib/strapi'
-import type { StrapiSingle, SidebarConfig, BlogCommentThread } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { CmsSingle, SidebarConfig, BlogCommentThread } from '@/types/cms'
 
 export async function getSidebarConfig(): Promise<SidebarConfig | null> {
   try {
-    const res = await strapiFetch<StrapiSingle<SidebarConfig>>('/sidebar-config', {
+    const res = await cmsFetch<CmsSingle<SidebarConfig>>('/sidebar-config', {
       populate: {
         downloadLinks: true,
         socialLinks: true,
@@ -24,7 +24,7 @@ export async function getSidebarConfig(): Promise<SidebarConfig | null> {
 export async function getSidebarLatestComments(limit = 5): Promise<BlogCommentThread['data']> {
   try {
     // Fetch the most-recently approved top-level comments across all posts
-    const res = await strapiFetch<BlogCommentThread>(
+    const res = await cmsFetch<BlogCommentThread>(
       `/blog-comments/latest?limit=${limit}`,
       { noCache: true }
     )

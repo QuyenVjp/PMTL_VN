@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 /** Generic paginated list response from Strapi */
-export interface StrapiList<T> {
+export interface CmsList<T> {
   data: T[]
   meta: {
     pagination: {
@@ -17,13 +17,13 @@ export interface StrapiList<T> {
 }
 
 /** Generic single item response from Strapi */
-export interface StrapiSingle<T> {
+export interface CmsSingle<T> {
   data: T
   meta: Record<string, unknown>
 }
 
 /** Strapi media/image format */
-export interface StrapiMedia {
+export interface CmsMedia {
   id: number
   documentId: string
   name: string
@@ -32,10 +32,10 @@ export interface StrapiMedia {
   width: number | null
   height: number | null
   formats: {
-    thumbnail?: StrapiMediaFormat
-    small?: StrapiMediaFormat
-    medium?: StrapiMediaFormat
-    large?: StrapiMediaFormat
+    thumbnail?: CmsMediaFormat
+    small?: CmsMediaFormat
+    medium?: CmsMediaFormat
+    large?: CmsMediaFormat
   } | null
   hash: string
   ext: string
@@ -48,7 +48,7 @@ export interface StrapiMedia {
   updatedAt: string
 }
 
-export interface StrapiMediaFormat {
+export interface CmsMediaFormat {
   name: string
   hash: string
   ext: string
@@ -61,16 +61,16 @@ export interface StrapiMediaFormat {
 }
 
 /** SEO component (shared.seo) */
-export interface StrapiSEO {
+export interface CmsSeo {
   id: number
   metaTitle: string | null
   metaDescription: string | null
-  metaImage: StrapiMedia | null
+  metaImage: CmsMedia | null
   keywords: string | null
   canonicalURL: string | null
 }
 
-export interface StrapiOEmbedField {
+export interface CmsOEmbedField {
   url: string
   thumbnail: string | null
   oembed: Record<string, unknown> | null
@@ -141,11 +141,11 @@ export interface BlogPost {
   content: string
   excerpt: string | null           // tóm tắt ngắn (auto-extracted hoặc editor nhập tay)
   // ── Media ──────────────────────────────────────────────────────
-  thumbnail: StrapiMedia | null
-  gallery: StrapiMedia[] | null
+  thumbnail: CmsMedia | null
+  gallery: CmsMedia[] | null
   video_url: string | null
   audio_url: string | null
-  oembed: StrapiOEmbedField | null
+  oembed: CmsOEmbedField | null
   // ── Taxonomy ────────────────────────────────────────────────────
   categories: Category[] | null
   tags: BlogTag[] | null
@@ -170,7 +170,7 @@ export interface BlogPost {
   allowComments: boolean           // true = cho phép bình luận (default), false = đã khóa
   commentCount: number             // số bình luận đã duyệt (denorm)
   // ── SEO ────────────────────────────────────────────────────────
-  seo: StrapiSEO | null
+  seo: CmsSeo | null
   publishedAt: string | null
   createdAt: string
   updatedAt: string
@@ -191,8 +191,8 @@ export interface BeginnerGuide {
   icon: UiIconValue
   pdf_url: string | null
   video_url: string | null
-  images: StrapiMedia[] | null
-  attached_files: StrapiMedia[] | null // <== New direct file attachments
+  images: CmsMedia[] | null
+  attached_files: CmsMedia[] | null // <== New direct file attachments
   publishedAt: string | null
   createdAt: string
   updatedAt: string
@@ -265,7 +265,7 @@ export interface StickyBannerConfig {
   enabled: boolean
 }
 
-// StrapiSEO da duoc dinh nghia o tren (dong 63) — khong lap lai
+// CmsSeo da duoc dinh nghia o tren (dong 63) — khong lap lai
 
 // ─── Settings ────────────────────────────────────────────────
 
@@ -284,7 +284,7 @@ export interface SiteSetting {
   documentId: string
   siteTitle: string
   siteDescription: string
-  logo: StrapiMedia | null
+  logo: CmsMedia | null
   socialLinks: SocialLinks | null
   contactEmail: string | null
   contactPhone: string | null
@@ -332,7 +332,7 @@ export interface BlogComment {
   id: number
   documentId: string
   authorName: string
-  authorAvatar: StrapiMedia | null
+  authorAvatar: CmsMedia | null
   userId: string | null
   content: string
   likes: number
@@ -362,7 +362,7 @@ export interface GuestbookEntry {
   documentId: string
   authorName: string
   country: string | null
-  avatar: StrapiMedia | null
+  avatar: CmsMedia | null
   message: string
   adminReply: string | null
   approvalStatus: 'pending' | 'approved'
@@ -410,7 +410,7 @@ export interface HubLink {
   title: string
   url: string
   description: string | null
-  thumbnail: StrapiMedia | null
+  thumbnail: CmsMedia | null
   kind: 'internal' | 'external'
 }
 
@@ -434,7 +434,7 @@ export interface HubPage {
   slug: string
   description: string | null
   sections: HubSection[]
-  coverImage?: StrapiMedia | null
+  coverImage?: CmsMedia | null
   curated_posts?: BlogPost[]       // Legacy — Bài Editor chọn tay
   downloads?: DownloadItem[]       // Legacy — Khối tài liệu tải gắn vào hub này
   blocks?: HubBlock[]              // New Dynamic Blocks
@@ -464,7 +464,7 @@ export interface DownloadItem {
   isNew: boolean
   sortOrder: number
   fileSizeMB?: number | null
-  thumbnail?: StrapiMedia | null
+  thumbnail?: CmsMedia | null
   publishedAt: string | null
   createdAt: string
 }
@@ -493,7 +493,7 @@ export interface SidebarConfig {
   showDownloadLinks: boolean
   downloadLinks: QuickLink[]
   socialLinks: CmsSocialLink[]
-  qrImages: StrapiMedia[] | null
+  qrImages: CmsMedia[] | null
 }
 
 // ─── Series ───────────────────────────────────────────────────
@@ -507,7 +507,7 @@ export interface SeriesPost {
   eventDate: string | null
   location: string | null
   publishedAt: string | null
-  thumbnail: StrapiMedia | null
+  thumbnail: CmsMedia | null
 }
 
 export interface SeriesData {
@@ -523,7 +523,7 @@ export interface SeriesData {
 
 // ─── Event ────────────────────────────────────────────────────
 
-export interface StrapiEvent {
+export interface CmsEvent {
   id: number
   documentId: string
   title: string
@@ -539,10 +539,10 @@ export interface StrapiEvent {
   language: string
   link: string | null
   youtubeId: string | null
-  oembed: StrapiOEmbedField | null
-  coverImage: StrapiMedia | null
-  gallery: StrapiMedia[] | null
-  files: StrapiMedia[] | null
+  oembed: CmsOEmbedField | null
+  coverImage: CmsMedia | null
+  gallery: CmsMedia[] | null
+  files: CmsMedia[] | null
   publishedAt: string | null
   createdAt: string
   updatedAt: string
@@ -563,7 +563,7 @@ export interface GalleryItem {
   device: string | null
   photographer: string | null
   shotDate: string | null
-  image: StrapiMedia | null
+  image: CmsMedia | null
   featured: boolean
   sortOrder: number
   keywords: string | null
@@ -581,7 +581,7 @@ export interface Sutra {
   slug: string
   description: string | null
   shortExcerpt: string | null
-  coverImage: StrapiMedia | null
+  coverImage: CmsMedia | null
   translatorHan: string | null
   translatorViet: string | null
   reviewer: string | null

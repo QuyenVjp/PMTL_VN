@@ -27,7 +27,7 @@ export async function updateMe(data: Record<string, unknown>): Promise<unknown> 
  */
 export async function uploadAvatarFile(file: File): Promise<{ id: number; url: string }> {
   const form = new FormData()
-  form.append('files', file)
+  form.append('file', file)
 
   const res = await fetch('/api/user/avatar', {
     method: 'POST',

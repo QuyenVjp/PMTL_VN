@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import type { ArchiveYear } from '@/types/strapi'
+import type { ArchiveYear } from '@/types/cms'
 
 const MONTH_VI_SHORT = [
   '', 'Th.1', 'Th.2', 'Th.3', 'Th.4', 'Th.5', 'Th.6',

@@ -1,4 +1,6 @@
 import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
+import { appendRouteAuditLog } from "@/services/audit.service";
+import { getRequestMetadata } from "@/routes/request-metadata";
 
 export async function POST(request: Request) {
   try {
@@ -34,6 +36,21 @@ export async function POST(request: Request) {
         isActive: false,
       },
       overrideAccess: true,
+    });
+
+    await appendRouteAuditLog(payload, {
+      action: "pushSubscriptions.unsubscribe",
+      actorType: "anonymous",
+      targetType: "pushSubscriptions",
+      targetPublicId: document.publicId ?? null,
+      targetRef: {
+        collection: "pushSubscriptions",
+        id: String(document.id),
+      },
+      ...getRequestMetadata(request.headers),
+      metadata: {
+        endpoint,
+      },
     });
 
     return jsonResponse(200, { success: true });

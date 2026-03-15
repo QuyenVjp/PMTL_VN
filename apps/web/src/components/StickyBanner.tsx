@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { CloseIcon, BookIcon } from "@/components/icons/ZenIcons";
 import Link from "next/link";
-import type { StickyBannerConfig } from "@/types/strapi";
+import type { StickyBannerConfig } from "@/types/cms";
 
 import {
   Dialog,

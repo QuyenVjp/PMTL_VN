@@ -2,7 +2,7 @@ import type { Payload } from "payload";
 
 import { ensurePublicId } from "@/services/public-id.service";
 import { buildExcerptFromText, buildSlug, extractLexicalPlainText, normalizeSearchText } from "@/services/content-helpers.service";
-import { syncPostSearch } from "@/services/search.service";
+import { queueOrSyncPostSearch } from "@/services/search.service";
 
 type PostSource = {
   sourceName?: string | null | undefined;
@@ -237,17 +237,20 @@ export function mapPostToLegacyDTO(post: PostData) {
 }
 
 export async function syncPostSearchDocument(document: PostData, req?: unknown): Promise<void> {
-  await syncPostSearch(
+  await queueOrSyncPostSearch(
     {
       id: document.publicId ?? document.id ?? "",
+      documentId: document.id ? String(document.id) : null,
       slug: document.slug ?? "",
       title: document.title ?? "",
       sourceRef: document.sourceRef ?? "",
       excerpt: document.excerptComputed ?? "",
       contentPlainText: document.contentPlainText ?? "",
-      topic: extractRelationId(document.primaryCategory),
-      tags: mapRelationList(document.tags),
+      topic: document.primaryCategory ?? null,
+      tags: document.tags ?? [],
       publishedAt: document.publishedAt ?? null,
+      views: document.views ?? 0,
+      featured: document.postFlags?.featured ?? false,
     },
     req,
   );

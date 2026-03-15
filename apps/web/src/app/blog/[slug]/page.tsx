@@ -12,7 +12,7 @@ import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import { getPostBySlug, getAllPostSlugs, getRelatedPosts, getPostBySlugForMetadata } from '@/lib/api/blog'
 import { getSeriesData } from '@/lib/api/series'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import ViewTracker from '@/components/ViewTracker'
 import { ArrowRightIcon } from '@/components/icons/ZenIcons'
@@ -51,8 +51,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // SEO Images
     const seoImage = seoData?.metaImage
-    const thumbUrl = post.thumbnail ? getStrapiMediaUrl(post.thumbnail.url) : null
-    const finalImageUrl = seoImage ? getStrapiMediaUrl(seoImage.url) : thumbUrl
+    const thumbUrl = post.thumbnail ? getCmsMediaUrl(post.thumbnail.url) : null
+    const finalImageUrl = seoImage ? getCmsMediaUrl(seoImage.url) : thumbUrl
 
     return {
       title: seoTitle,
@@ -111,7 +111,7 @@ export default async function BlogPostPage({ params }: Props) {
   ])
 
   const thumbnailUrl = post.thumbnail
-    ? getStrapiMediaUrl(post.thumbnail.formats?.large?.url ?? post.thumbnail.url)
+    ? getCmsMediaUrl(post.thumbnail.formats?.large?.url ?? post.thumbnail.url)
     : null
 
   const youtubeId = post.video_url ? getYouTubeId(post.video_url) : null
@@ -282,7 +282,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <h3 className="ant-title mb-4 text-lg text-foreground">Hình ảnh minh họa</h3>
                   <div className={`grid gap-3 ${post.gallery.length === 1 ? 'grid-cols-1' : post.gallery.length === 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'}`}>
                     {post.gallery.map((img) => {
-                      const imgUrl = getStrapiMediaUrl(img.formats?.medium?.url ?? img.url)
+                      const imgUrl = getCmsMediaUrl(img.formats?.medium?.url ?? img.url)
                       if (!imgUrl) return null
                       return (
                         <div key={img.id} className="rounded-lg overflow-hidden aspect-video bg-secondary">
@@ -343,7 +343,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {related.map((rp) => {
                       const rpThumb = rp.thumbnail
-                        ? getStrapiMediaUrl(rp.thumbnail.formats?.small?.url ?? rp.thumbnail.url)
+                        ? getCmsMediaUrl(rp.thumbnail.formats?.small?.url ?? rp.thumbnail.url)
                         : null
                       return (
                         <Link

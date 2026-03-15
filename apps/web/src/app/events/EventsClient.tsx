@@ -7,8 +7,8 @@ import Image from "next/image";
 import {
   MapPin, Clock, Calendar, ChevronRight, PlayCircle
 } from "lucide-react";
-import type { StrapiEvent } from "@/types/strapi";
-import { getStrapiMediaUrl } from "@/lib/strapi-helpers";
+import type { CmsEvent } from "@/types/cms";
+import { getCmsMediaUrl } from "@/lib/cms-helpers";
 import { cn } from "@/lib/utils";
 
 const typeLabels: Record<string, { label: string }> = {
@@ -19,7 +19,7 @@ const typeLabels: Record<string, { label: string }> = {
   "festival": { label: "Lễ Hội" },
 };
 
-export default function EventsClient({ initialEvents }: { initialEvents: StrapiEvent[] }) {
+export default function EventsClient({ initialEvents }: { initialEvents: CmsEvent[] }) {
   const [filter, setFilter] = useState<"all" | "upcoming" | "past">("all");
 
   const filtered = initialEvents.filter((e) => {
@@ -131,7 +131,7 @@ export default function EventsClient({ initialEvents }: { initialEvents: StrapiE
                   <div className="lg:w-1/2 relative h-64 lg:h-auto overflow-hidden bg-muted">
                     {featuredEvent.coverImage ? (
                       <Image
-                        src={getStrapiMediaUrl(featuredEvent.coverImage.url) ?? ''}
+                        src={getCmsMediaUrl(featuredEvent.coverImage.url) ?? ''}
                         alt={featuredEvent.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-1000"

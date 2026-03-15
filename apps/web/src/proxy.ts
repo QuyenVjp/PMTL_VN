@@ -1,6 +1,10 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+function getAuthCookie(req: NextRequest) {
+  return req.cookies.get("pmtl-session")?.value ?? req.cookies.get("auth_token")?.value;
+}
+
 export function proxy(req: NextRequest) {
   const idToken = req.nextUrl.searchParams.get("id_token");
   const accessToken = req.nextUrl.searchParams.get("access_token");
@@ -12,7 +16,7 @@ export function proxy(req: NextRequest) {
     return NextResponse.redirect(callbackUrl);
   }
 
-  const token = req.cookies.get("auth_token")?.value;
+  const token = getAuthCookie(req);
 
   if (req.nextUrl.pathname.startsWith("/profile") && !token) {
     const redirectUrl = req.nextUrl.clone();

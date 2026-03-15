@@ -1,6 +1,6 @@
 // components/hub/DownloadRow.tsx
 import { ExternalLink, RefreshCw, Sparkles, FileText, Music, Video, Archive, File, BookOpen } from 'lucide-react'
-import type { DownloadItem } from '@/types/strapi'
+import type { DownloadItem } from '@/types/cms'
 
 function FileIcon({ type }: { type: string }) {
   switch (type) {

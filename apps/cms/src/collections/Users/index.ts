@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { t } from "@/admin/i18n";
+import { buildPasswordResetEmail } from "@/services/email-template.service";
 
 import { buildResetPasswordURL } from "./service";
 
@@ -23,12 +24,13 @@ export const Users: CollectionConfig = {
         const token = args?.token ?? "";
         const resetURL = buildResetPasswordURL(token);
 
-        return `<p>Mở link này để đặt lại mật khẩu:</p><p><a href="${resetURL}">${resetURL}</a></p>`;
+        return buildPasswordResetEmail(resetURL);
       },
-      generateEmailSubject: () => "PMTL_VN password reset",
+      generateEmailSubject: () => "PMTL_VN | Dat lai mat khau",
     },
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "fullName",
     defaultColumns: ["fullName", "email", "role", "isBlocked", "updatedAt"],
   },

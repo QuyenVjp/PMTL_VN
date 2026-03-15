@@ -12,7 +12,7 @@ import {
   BookOpen, ArrowRight, Zap, Leaf, Compass, Award, ChevronRight
 } from 'lucide-react'
 import { getCategoryTreeClient } from '@/lib/api/categories-client'
-import type { CategoryTree } from '@/types/strapi'
+import type { CategoryTree } from '@/types/cms'
 
 // ── Map biểu tượng theo slug/tên ─────────────────────────────
 function layBieuTuong(ten: string, slug: string) {

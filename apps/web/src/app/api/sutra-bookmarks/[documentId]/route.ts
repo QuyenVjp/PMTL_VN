@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-import { STRAPI_URL } from '@/lib/strapi'
+import { CMS_API_URL } from '@/lib/cms'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,7 +21,7 @@ export async function DELETE(
   if (!documentId) return NextResponse.json({ error: 'Thiếu documentId' }, { status: 400 })
 
   try {
-    const res = await fetch(`${STRAPI_URL}/api/sutra-bookmarks/my/${documentId}`, {
+    const res = await fetch(`${CMS_API_URL}/api/sutra-bookmarks/my/${documentId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',

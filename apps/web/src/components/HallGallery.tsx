@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Autoplay from "embla-carousel-autoplay"
-import type { GallerySlide } from "@/types/strapi"
+import type { GallerySlide } from "@/types/cms"
 
 import {
   Carousel,

@@ -13,6 +13,7 @@ export const SutraBookmarks: CollectionConfig = {
     plural: t("Đánh dấu kinh", "Sutra bookmarks"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "publicId",
     defaultColumns: ["user", "sutra", "updatedAt"],
   },

@@ -49,6 +49,9 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const postgresHostPort = process.env.POSTGRES_HOST_PORT ?? "55432";
 const defaultDatabaseUrl = `postgresql://pmtl:pmtl@localhost:${postgresHostPort}/pmtl`;
+const shouldPushDb =
+  process.env.PAYLOAD_DB_PUSH === "true" ||
+  (process.env.PAYLOAD_DB_PUSH == null && process.env.NODE_ENV !== "production");
 
 function adminComponent(relativePath: string, exportName: string) {
   return {
@@ -97,6 +100,10 @@ export default buildConfig({
           widgetSlug: "editor-shortcuts",
           width: "medium",
         },
+        {
+          widgetSlug: "search-status",
+          width: "large",
+        },
       ],
       widgets: [
         {
@@ -109,6 +116,11 @@ export default buildConfig({
           label: t("Đường dẫn nhanh", "Quick links"),
           slug: "editor-shortcuts",
         },
+        {
+          Component: adminComponent("admin/widgets/SearchStatusWidget.tsx", "SearchStatusWidget"),
+          label: t("Trạng thái search", "Search status"),
+          slug: "search-status",
+        },
       ],
     },
     suppressHydrationWarning: true,
@@ -118,7 +130,7 @@ export default buildConfig({
     },
     meta: {
       icons: {
-        icon: "/favicon.svg",
+        icon: "/favicon.png",
       },
       titleSuffix: " | PMTL CMS",
     },
@@ -162,6 +174,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL ?? defaultDatabaseUrl,
     },
+    push: shouldPushDb,
   }),
   sharp,
   typescript: {

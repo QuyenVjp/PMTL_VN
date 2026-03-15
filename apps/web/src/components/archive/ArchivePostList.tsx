@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import type { StrapiList, BlogPost } from '@/types/strapi'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import type { CmsList, BlogPost } from '@/types/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
 
 interface ArchivePostListProps {
-  data: StrapiList<BlogPost>
+  data: CmsList<BlogPost>
   year: number
   month?: number
 }
@@ -16,7 +16,7 @@ const MONTH_VI = [
 
 function PostCard({ post }: { post: BlogPost }) {
   const cover = post.thumbnail
-    ? getStrapiMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
+    ? getCmsMediaUrl(post.thumbnail.formats?.small?.url ?? post.thumbnail.url)
     : null
 
   const day = post.publishedAt
@@ -63,7 +63,7 @@ function PostCard({ post }: { post: BlogPost }) {
 
 function FeaturedPostCard({ post }: { post: BlogPost }) {
   const cover = post.thumbnail
-    ? getStrapiMediaUrl(post.thumbnail.formats?.large?.url ?? post.thumbnail.url)
+    ? getCmsMediaUrl(post.thumbnail.formats?.large?.url ?? post.thumbnail.url)
     : null
 
   return (

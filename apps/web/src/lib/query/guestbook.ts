@@ -1,7 +1,7 @@
 'use client'
 
 import { keepPreviousData, queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { GuestbookList } from '@/types/strapi'
+import type { GuestbookList } from '@/types/cms'
 import type { GuestbookFormValues } from '@/lib/validation/guestbook'
 
 export const guestbookKeys = {

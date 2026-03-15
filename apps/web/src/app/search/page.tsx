@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import type { StrapiList } from '@/types/strapi'
+import type { CmsList } from '@/types/cms'
 import { getCategories, getAllTags } from '@/lib/api/blog'
 import { searchPostsAndCategories } from '@/app/actions/search'
 import { getSearchDateFrom, hasActiveSearchFilters, parseSearchPageParams } from '@/lib/search/search-params'
@@ -69,7 +69,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       initialCategories={categories}
       initialTags={tags}
       initialState={initialState}
-      initialResults={initialResults as StrapiList<SearchHit>}
+      initialResults={initialResults as CmsList<SearchHit>}
     />
   )
 }

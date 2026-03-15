@@ -56,6 +56,9 @@ Ghi chú:
 
 - `GET /api/posts`
 - `GET /api/posts/:slugOrPublicId`
+- `GET /api/posts/search?q=<query>&limit=<n>`
+- `POST /api/posts/search/reindex`
+- `GET /api/search/status`
 - `POST /api/posts/:publicId/view`
 - `GET /api/posts/:publicId/comments`
 - `POST /api/posts/:publicId/comments/submit`
@@ -80,6 +83,27 @@ type PostDetail = PostSummary & {
   content: unknown;
   contentPlainText: string;
   normalizedSearchText: string;
+};
+
+type PostSearchResult = {
+  totalHits: number;
+  engine: "meilisearch" | "payload-fallback";
+  hits: Array<{
+    id: string;
+    type: "post";
+    title: string;
+    slug: string;
+    excerpt: string;
+    sourceRef: string;
+    publishedAt: string | null;
+    topic: string;
+    tags: string[];
+    viewCount: number;
+    thumbnail: {
+      url?: string | null;
+      alternativeText?: string | null;
+    } | null;
+  }>;
 };
 
 type PostCommentDTO = {
@@ -269,6 +293,24 @@ Ghi chú:
 
 - `POST /api/push/subscribe`
 - `POST /api/push/unsubscribe`
+- `GET /api/push/stats`
+
+## Moderation routes
+
+- `GET /api/moderation/reports`
+- `POST /api/moderation/reports/:publicId/decision`
+
+Ghi chú:
+- Hai route này yêu cầu role `moderator` trở lên.
+- `decision` hiện hỗ trợ `approved | rejected | flagged | hidden`.
+
+## Queue / worker notes
+
+- `POST /api/posts/search/reindex` yêu cầu role `editor` trở lên và enqueue search sync batch cho posts.
+- `GET /api/search/status` trả health của Meilisearch, queue counts và số document hiện có trong index posts.
+- `GET /api/push/stats` trả tổng subscription active/inactive và số push job đang chờ/lỗi.
+- Community submit/report, guestbook submit, post comment submit hiện vừa append audit log vừa enqueue notification cho moderator/admin.
+- Self-send prevention hiện được áp dụng ở notification job bằng `excludeUserIds`.
 
 ## Error shape
 

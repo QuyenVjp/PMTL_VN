@@ -9,7 +9,7 @@ import ArchivePostList from '@/components/archive/ArchivePostList'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import type { ArchiveYear, StrapiList, BlogPost } from '@/types/strapi'
+import type { ArchiveYear, CmsList, BlogPost } from '@/types/cms'
 
 interface Params {
   year: string
@@ -30,7 +30,7 @@ export default async function ArchiveYearPage({ params }: { params: Promise<Para
   if (isNaN(year) || year < 2000) notFound()
 
   let index: ArchiveYear[] = []
-  let posts: StrapiList<BlogPost> = {
+  let posts: CmsList<BlogPost> = {
     data: [],
     meta: { pagination: { page: 1, pageSize: 12, pageCount: 0, total: 0 } },
   }

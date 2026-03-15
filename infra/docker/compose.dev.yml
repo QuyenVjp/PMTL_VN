@@ -37,6 +37,28 @@ services:
     networks:
       - backend
 
+  worker:
+    build:
+      context: ../..
+      dockerfile: apps/cms/Dockerfile
+    env_file:
+      - .env.dev
+    environment:
+      NODE_ENV: development
+    command: ["pnpm", "--filter", "@pmtl/cms", "worker:start"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      cms:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - backend
+
   postgres:
     image: postgres:17-alpine
     restart: unless-stopped
@@ -75,6 +97,28 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --maxmemory 256mb
+      --maxmemory-policy noeviction
+    volumes:
+      - redis-dev-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
   caddy:
     image: caddy:2.10-alpine
     restart: unless-stopped
@@ -97,6 +141,7 @@ services:
 volumes:
   postgres-dev-data:
   meili-dev-data:
+  redis-dev-data:
   caddy-data:
   caddy-config:
 

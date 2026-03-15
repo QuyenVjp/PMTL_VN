@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2Icon, MessageCircleIcon, LockIcon } from 'lucide-react'
-import type { BlogCommentThread } from '@/types/strapi'
+import type { BlogCommentThread } from '@/types/cms'
 import CommentItem from './CommentItem'
 import CommentForm from './CommentForm'
 

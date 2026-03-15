@@ -13,6 +13,7 @@ export const AuditLogs: CollectionConfig = {
     plural: t("Audit logs", "Audit logs"),
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "publicId",
     defaultColumns: ["action", "targetType", "targetPublicId", "createdAt"],
   },

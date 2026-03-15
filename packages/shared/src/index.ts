@@ -12,6 +12,8 @@ export * from "./schemas/search";
 export * from "./types/auth";
 export * from "./types/content";
 export * from "./types/lexical";
+export * from "./types/queue-jobs";
 export * from "./utils/public-id";
+export * from "./utils/search-semantic";
 export * from "./utils/slug";
 export * from "./validators/events";

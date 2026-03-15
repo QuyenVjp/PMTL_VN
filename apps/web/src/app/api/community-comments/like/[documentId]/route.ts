@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 // URL format: /api/community-comments/like/[documentId]
 export async function POST(
@@ -20,7 +20,7 @@ export async function POST(
   }
 
   try {
-    const res = await fetch(`${STRAPI_URL}/api/community-comments/like/${documentId}`, {
+    const res = await fetch(`${CMS_API_URL}/api/community-comments/like/${documentId}`, {
       method: 'POST',
       headers,
     });

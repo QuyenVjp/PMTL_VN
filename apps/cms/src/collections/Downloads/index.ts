@@ -13,6 +13,7 @@ export const Downloads: CollectionConfig = {
     plural: t("Tệp tải về", "Downloads"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "title",
     defaultColumns: ["title", "fileType", "_status", "groupYear", "updatedAt"],
   },

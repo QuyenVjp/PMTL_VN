@@ -2,7 +2,7 @@
 // Hiển thị metadata chuyên đề + điều hướng Trước/Tiếp trong chuỗi bài.
 import Link from 'next/link'
 import { BookOpenIcon, MapPinIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import type { SeriesData, BlogPost } from '@/types/strapi'
+import type { SeriesData, BlogPost } from '@/types/cms'
 
 interface SeriesNavProps {
   post: BlogPost

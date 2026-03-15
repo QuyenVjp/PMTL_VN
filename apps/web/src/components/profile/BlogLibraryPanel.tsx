@@ -13,8 +13,8 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import type { BlogReaderPostList, BlogReaderState, BlogReaderSummary, BlogPost } from '@/types/strapi'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
+import type { BlogReaderPostList, BlogReaderState, BlogReaderSummary, BlogPost } from '@/types/cms'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
 import { cn } from '@/lib/utils'
 
 type LibraryTab = 'favorite' | 'read'
@@ -68,7 +68,7 @@ function BlogLibraryList({
   return (
     <div className="space-y-3">
       {posts.map((post) => {
-        const thumbUrl = getStrapiMediaUrl(post.thumbnail?.formats?.thumbnail?.url ?? post.thumbnail?.url)
+        const thumbUrl = getCmsMediaUrl(post.thumbnail?.formats?.thumbnail?.url ?? post.thumbnail?.url)
         const readerState = stateMap[post.documentId]
         const readRecentLabel = getRecentLabel(readerState?.lastReadAt)
         const favoriteRecentLabel = getRecentLabel(readerState?.favoritedAt)

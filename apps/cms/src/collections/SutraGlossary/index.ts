@@ -13,6 +13,7 @@ export const SutraGlossary: CollectionConfig = {
     plural: t("Thuật ngữ kinh", "Sutra glossary"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "term",
     defaultColumns: ["term", "sutra", "volume", "chapter", "sortOrder"],
   },

@@ -4,4 +4,5 @@ export const SEARCH_INDEX_NAMES = {
   posts: "posts",
   events: "events",
 } as const;
+export * from "./queues";
 

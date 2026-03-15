@@ -1,7 +1,20 @@
-import type { ContentDocument } from "./types";
-import { syncSearchDocument } from "@/integrations/meilisearch/sync-document";
+import { buildSemanticSearchText, normalizeSemanticText } from "@pmtl/shared";
+import { searchQuerySchema } from "@pmtl/shared";
+import { mapSearchSourceToResult } from "@pmtl/shared";
 
-type RelationshipValue = string | number | { id?: string | number; name?: string | null };
+import { meilisearchClient } from "@/integrations/meilisearch/client";
+import { syncSearchDocument } from "@/integrations/meilisearch/sync-document";
+import { enqueueSearchSyncJob, getQueueJobCounts } from "@/services/queue.service";
+import type { ContentDocument } from "./types";
+import type { Payload } from "payload";
+import { QUEUE_NAMES } from "@pmtl/shared";
+
+const postsIndexName = process.env.MEILI_POSTS_INDEX?.trim() || "posts";
+
+type RelationshipValue =
+  | string
+  | number
+  | { id?: string | number | null; name?: string | null; slug?: string | null };
 
 type SearchSyncRequest = {
   payload: {
@@ -9,7 +22,9 @@ type SearchSyncRequest = {
   };
 };
 
-function isCategoryObject(value: unknown): value is { id?: string | number; name?: string | null } {
+function isCategoryObject(
+  value: unknown,
+): value is { id?: string | number | null; name?: string | null; slug?: string | null } {
   return typeof value === "object" && value !== null;
 }
 
@@ -26,91 +41,348 @@ function isSearchSyncRequest(value: unknown): value is SearchSyncRequest {
   return typeof (payload as { findByID?: unknown }).findByID === "function";
 }
 
-function normalizeSearchText(value: string): string {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-async function resolveRelationshipName(
+async function resolveRelationship(
   collection: "categories" | "tags",
   value: RelationshipValue,
   req?: unknown,
-): Promise<string | null> {
-  if (isCategoryObject(value) && typeof value.name === "string" && value.name.trim()) {
-    return value.name.trim();
+): Promise<{ name: string | null; slug: string | null }> {
+  if (isCategoryObject(value)) {
+    const name = typeof value.name === "string" && value.name.trim() ? value.name.trim() : null;
+    const slug = typeof value.slug === "string" && value.slug.trim() ? value.slug.trim() : null;
+
+    if (name || slug) {
+      return { name, slug };
+    }
   }
 
   if (!isSearchSyncRequest(req)) {
-    return null;
+    return { name: null, slug: null };
   }
 
   const rawId = isCategoryObject(value) ? value.id : value;
   if (typeof rawId !== "string" && typeof rawId !== "number") {
-    return null;
+    return { name: null, slug: null };
   }
 
   try {
-    const category = await req.payload.findByID({
+    const relationship = await req.payload.findByID({
       collection,
       id: rawId,
       depth: 0,
     });
 
-    if (isCategoryObject(category) && typeof category.name === "string" && category.name.trim()) {
-      return category.name.trim();
+    if (isCategoryObject(relationship)) {
+      return {
+        name:
+          typeof relationship.name === "string" && relationship.name.trim()
+            ? relationship.name.trim()
+            : null,
+        slug:
+          typeof relationship.slug === "string" && relationship.slug.trim()
+            ? relationship.slug.trim()
+            : null,
+      };
     }
   } catch {
-    return null;
+    return { name: null, slug: null };
   }
 
-  return null;
+  return { name: null, slug: null };
 }
 
 export async function syncPostSearch(document: ContentDocument, req?: unknown): Promise<void> {
-  const topic = document.topic ? await resolveRelationshipName("categories", document.topic, req) : null;
-  const tags = (
-    await Promise.all((document.tags ?? []).map((tag) => resolveRelationshipName("tags", tag, req)))
-  ).filter((tag): tag is string => Boolean(tag));
+  const topic = document.topic ? await resolveRelationship("categories", document.topic, req) : { name: null, slug: null };
+  const resolvedTags = await Promise.all(
+    (document.tags ?? []).map((tag) => resolveRelationship("tags", tag, req)),
+  );
+
+  const tags = resolvedTags
+    .map((tag) => tag.name)
+    .filter((tag): tag is string => Boolean(tag));
+
+  const tagSlugs = [
+    ...(document.tagSlugs ?? []),
+    ...resolvedTags.map((tag) => tag.slug).filter((tag): tag is string => Boolean(tag)),
+  ];
 
   const contentPlainText = document.contentPlainText?.trim() ?? "";
-  const normalized = normalizeSearchText(
+  const semantic = buildSemanticSearchText([
+    document.sourceRef ?? "",
+    document.title,
+    document.excerpt ?? "",
+    contentPlainText,
+    topic.name ?? "",
+    tags.join(" "),
+  ]);
+
+  const normalized = normalizeSemanticText(
     [
       document.sourceRef ?? "",
       document.title,
-      contentPlainText,
-      topic ?? "",
-      tags.join(" "),
       document.slug,
+      contentPlainText,
+      topic.name ?? "",
+      tags.join(" "),
+      semantic.semanticHints.join(" "),
     ].join(" "),
   );
 
-  await syncSearchDocument("posts", {
-    id: document.id,
+  await syncSearchDocument(postsIndexName, {
+    id: document.publicId ?? document.id,
+    documentId: String(document.documentId ?? document.id ?? document.publicId ?? ""),
     sourceRef: document.sourceRef ?? "",
     title: document.title,
     slug: document.slug,
     excerpt: document.excerpt ?? "",
     contentPlainText,
-    topic: topic ?? "",
+    topic: topic.name ?? "",
+    topicSlug: document.topicSlug ?? topic.slug ?? "",
     tags,
+    tagSlugs: Array.from(new Set(tagSlugs)),
+    semanticText: semantic.semanticText,
+    semanticHints: semantic.semanticHints,
     normalizedSearchText: normalized,
     publishedAt: document.publishedAt ?? null,
+    views: typeof document.views === "number" ? document.views : 0,
+    featured: Boolean(document.featured),
+    thumbnail: document.thumbnailUrl
+      ? {
+          url: document.thumbnailUrl,
+          alternativeText: document.thumbnailAlt ?? null,
+        }
+      : null,
     type: "post",
   });
 }
 
+export async function queueOrSyncPostSearch(document: ContentDocument, req?: unknown): Promise<"queued" | "synced"> {
+  const queued = await enqueueSearchSyncJob(document);
+
+  if (queued) {
+    return "queued";
+  }
+
+  await syncPostSearch(document, req);
+
+  return "synced";
+}
+
 export async function syncEventSearch(document: ContentDocument): Promise<void> {
+  const semantic = buildSemanticSearchText([
+    document.title,
+    document.excerpt ?? "",
+    document.contentPlainText ?? "",
+  ]);
+
   await syncSearchDocument("events", {
-    id: document.id,
+    id: document.publicId ?? document.id,
+    documentId: String(document.documentId ?? document.id ?? document.publicId ?? ""),
     title: document.title,
     slug: document.slug,
     excerpt: document.excerpt ?? "",
+    semanticText: semantic.semanticText,
+    semanticHints: semantic.semanticHints,
+    normalizedSearchText: normalizeSemanticText(semantic.semanticText),
     type: "event",
   });
+}
+
+type SearchPostsInput = {
+  payload: Payload;
+  query: string;
+  limit?: number;
+};
+
+type SearchPostHit = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  sourceRef?: string | null;
+  publishedAt?: string | null;
+  topic?: string | null;
+  tags?: string[] | null;
+  views?: number | null;
+  thumbnail?:
+    | {
+        url?: string | null;
+        alternativeText?: string | null;
+      }
+    | null;
+};
+
+function mapSearchHitToPostResult(hit: SearchPostHit) {
+  const result = mapSearchSourceToResult({
+    id: hit.id,
+    type: "post",
+    title: hit.title,
+    slug: hit.slug,
+    excerpt: hit.excerpt ?? "",
+  });
+
+  return {
+    ...result,
+    sourceRef: hit.sourceRef ?? "",
+    publishedAt: hit.publishedAt ?? null,
+    topic: hit.topic ?? "",
+    tags: hit.tags ?? [],
+    viewCount: typeof hit.views === "number" ? hit.views : 0,
+    thumbnail: hit.thumbnail ?? null,
+  };
+}
+
+async function searchPostsViaPayload({ payload, query, limit }: SearchPostsInput) {
+  const normalizedQuery = normalizeSemanticText(query);
+  const result = await payload.find({
+    collection: "posts",
+    depth: 0,
+    ...(limit ? { limit } : {}),
+    where: {
+      or: [
+        {
+          title: {
+            like: query,
+          },
+        },
+        {
+          normalizedSearchText: {
+            like: normalizedQuery,
+          },
+        },
+        {
+          sourceRef: {
+            like: query,
+          },
+        },
+      ],
+    },
+  });
+
+  return {
+    totalHits: result.totalDocs,
+    hits: result.docs.map((document) =>
+      mapSearchHitToPostResult({
+        id: document.publicId ?? String(document.id),
+        title: document.title,
+        slug: document.slug,
+        excerpt: document.excerptComputed ?? "",
+        sourceRef: document.sourceRef ?? "",
+        publishedAt: document.publishedAt ?? null,
+        views: document.views ?? 0,
+      }),
+    ),
+    engine: "payload-fallback" as const,
+  };
+}
+
+export async function searchPosts(input: SearchPostsInput) {
+  const parsedInput = searchQuerySchema.parse({
+    q: input.query,
+    limit: input.limit,
+  });
+
+  if (!meilisearchClient) {
+    return searchPostsViaPayload({
+      payload: input.payload,
+      query: parsedInput.q,
+      limit: parsedInput.limit,
+    });
+  }
+
+  const response = await meilisearchClient.index(postsIndexName).search<SearchPostHit>(parsedInput.q, {
+    limit: parsedInput.limit,
+    attributesToHighlight: ["title", "excerpt"],
+  });
+
+  return {
+    totalHits: response.estimatedTotalHits ?? response.hits.length,
+    hits: response.hits.map(mapSearchHitToPostResult),
+    engine: "meilisearch" as const,
+  };
+}
+
+export async function enqueuePostReindexBatch(payload: Payload, options?: { limit?: number; page?: number }) {
+  const limit = options?.limit && options.limit > 0 ? options.limit : 100;
+  const page = options?.page && options.page > 0 ? options.page : 1;
+  const result = await payload.find({
+    collection: "posts",
+    depth: 0,
+    limit,
+    page,
+    overrideAccess: true,
+  });
+
+  const queued = await Promise.all(
+    result.docs.map((document) =>
+      enqueueSearchSyncJob({
+        id: document.id,
+        documentId: document.id ? String(document.id) : null,
+        publicId: document.publicId ?? null,
+        slug: document.slug,
+        title: document.title,
+        sourceRef: document.sourceRef ?? "",
+        excerpt: document.excerptComputed ?? "",
+        contentPlainText: document.contentPlainText ?? "",
+        topic: document.primaryCategory ?? null,
+        tags: document.tags ?? [],
+        publishedAt: document.publishedAt ?? null,
+        views: document.views ?? 0,
+        featured: document.postFlags?.featured ?? false,
+      }),
+    ),
+  );
+
+  return {
+    page,
+    limit,
+    totalDocs: result.totalDocs,
+    totalPages: result.totalPages,
+    queuedCount: queued.filter(Boolean).length,
+  };
+}
+
+export async function getPostSearchStatus(payload: Payload) {
+  const [postCount, queue, meiliHealth, meiliStats, indexStats, recentTasks] = await Promise.all([
+    payload.count({
+      collection: "posts",
+      overrideAccess: true,
+    }),
+    getQueueJobCounts(QUEUE_NAMES.searchSync),
+    meilisearchClient?.health().catch(() => null) ?? Promise.resolve(null),
+    meilisearchClient?.getStats().catch(() => null) ?? Promise.resolve(null),
+    meilisearchClient?.index(postsIndexName).getStats().catch(() => null) ?? Promise.resolve(null),
+    meilisearchClient?.tasks.getTasks({ indexUids: [postsIndexName], limit: 5 }).catch(() => null) ?? Promise.resolve(null),
+  ]);
+
+  return {
+    engine: meilisearchClient ? "meilisearch" : "payload-fallback",
+    postsIndexName,
+    postsInCms: postCount.totalDocs,
+    queue,
+    meilisearch: {
+      enabled: Boolean(meilisearchClient),
+      healthy: meiliHealth?.status === "available",
+      status: meiliHealth?.status ?? "unavailable",
+      databaseSize: meiliStats?.databaseSize ?? null,
+      lastUpdate: meiliStats?.lastUpdate ?? null,
+      indexes: meiliStats?.indexes ?? {},
+      index: indexStats
+        ? {
+            numberOfDocuments: indexStats.numberOfDocuments ?? 0,
+            isIndexing: indexStats.isIndexing ?? false,
+            fieldDistribution: indexStats.fieldDistribution ?? {},
+          }
+        : null,
+      recentTasks:
+        recentTasks?.results?.map((task: { uid: number; status: string; type: string; enqueuedAt?: string | null; startedAt?: string | null; finishedAt?: string | null; error?: unknown }) => ({
+          uid: task.uid,
+          status: task.status,
+          type: task.type,
+          enqueuedAt: task.enqueuedAt ?? null,
+          startedAt: task.startedAt ?? null,
+          finishedAt: task.finishedAt ?? null,
+          error: task.error ?? null,
+        })) ?? [],
+    },
+  };
 }

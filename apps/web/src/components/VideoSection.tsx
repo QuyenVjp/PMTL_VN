@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import type { VideoItem } from "@/types/strapi";
+import type { VideoItem } from "@/types/cms";
 
 interface VideoSectionProps {
   videos: VideoItem[]

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
-import { STRAPI_URL } from '@/lib/strapi'
+import { CMS_API_URL } from '@/lib/cms'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const qs = req.nextUrl.searchParams.toString()
-    const res = await fetch(`${STRAPI_URL}/api/chant-preferences/my${qs ? `?${qs}` : ''}`, {
+    const res = await fetch(`${CMS_API_URL}/api/chant-preferences/my${qs ? `?${qs}` : ''}`, {
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',
     })
@@ -43,7 +43,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const res = await fetch(`${STRAPI_URL}/api/chant-preferences/my`, {
+    const res = await fetch(`${CMS_API_URL}/api/chant-preferences/my`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

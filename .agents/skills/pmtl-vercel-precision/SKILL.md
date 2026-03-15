@@ -10,8 +10,8 @@ Use this skill when the user wants PMTL UI to feel more precise, premium, and di
 ## Read First
 
 1. Read the target page or component.
-2. Read [docs/pmtl-homepage-vercel-grade-audit.md](../../../docs/pmtl-homepage-vercel-grade-audit.md) when the task affects homepage direction or marketing page quality.
-3. Read [docs/pmtl-precision-design-playbook.md](../../../docs/pmtl-precision-design-playbook.md) before making visual decisions.
+2. Read [docs/pmtl-homepage-vercel-grade-audit.md](../../../docs/design/pmtl-homepage-vercel-grade-audit.md) when the task affects homepage direction or marketing page quality.
+3. Read [docs/pmtl-precision-design-playbook.md](../../../docs/design/pmtl-precision-design-playbook.md) before making visual decisions.
 4. If the task touches existing project conventions, also use `pmtl-vn-project`.
 5. If the task edits shadcn-style primitives or composition patterns, also use `shadcn`.
 

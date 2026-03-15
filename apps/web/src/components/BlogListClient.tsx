@@ -11,8 +11,8 @@ import { useCallback, useTransition, useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRightIcon, SearchIcon } from '@/components/icons/ZenIcons'
-import { getStrapiMediaUrl } from '@/lib/strapi'
-import type { BlogPost, Category } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
+import type { BlogPost, Category } from '@/types/cms'
 import type { BlogArchiveStat } from '@/lib/api/blog'
 import BlogPagination from '@/components/BlogPagination'
 import { Loader2, SlidersHorizontal, X, ExternalLink, ChevronDown, Check } from 'lucide-react'
@@ -405,7 +405,7 @@ export default function BlogListClient({
               const thumbMedia = post.thumbnail ?? post.gallery?.[0]
               // Ưu tiên medium → large → original để full-width đẹp, tránh vỡ
               const thumbUrl = thumbMedia
-                ? getStrapiMediaUrl(
+                ? getCmsMediaUrl(
                   thumbMedia.formats?.medium?.url ??
                   thumbMedia.formats?.large?.url ??
                   thumbMedia.url

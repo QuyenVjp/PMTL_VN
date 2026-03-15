@@ -98,6 +98,14 @@ function normalizeTextArray(value?: { value?: string | null | undefined }[] | st
     .filter(Boolean);
 }
 
+function normalizeTagItems(
+  value?: { value?: string | null | undefined }[] | string[] | null,
+): Array<{ value: string }> {
+  return normalizeTextArray(value).map((item) => ({
+    value: item,
+  }));
+}
+
 function extractRelationId(value: unknown): string {
   if (typeof value === "string" || typeof value === "number") {
     return String(value);
@@ -126,7 +134,7 @@ export function submitCommunityPost<T extends CommunityPostInput>(input: T): T {
       slug: sanitizeText(input.slug),
       videoURL: sanitizeText(input.videoURL),
       category: sanitizeText(input.category),
-      tags: normalizeTextArray(input.tags),
+      tags: normalizeTagItems(input.tags),
       rating: normalizeNumber(input.rating),
       authorNameSnapshot: sanitizeText(input.authorNameSnapshot),
       likes: normalizeNumber(input.likes),

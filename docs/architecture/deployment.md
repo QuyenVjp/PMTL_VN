@@ -23,12 +23,18 @@ docker compose -f infra/docker/compose.prod.yml up -d
 
 - `web`: SSR/ISR và UI.
 - `cms`: Next.js app host Payload admin UI, REST API, GraphQL và content workflows.
+- `worker`: tiến trình nền dùng cùng codebase CMS để xử lý BullMQ jobs cho search sync, push dispatch, email notification và cleanup.
 - `postgres`: source of truth.
 - `meilisearch`: index tìm kiếm.
+- `redis`: queue backend và request guard adapter phase 2.
 - `caddy`: reverse proxy, TLS, compression.
 
-## Stage 2
+## Queue runtime
 
-- Thêm `redis` cho cache/queue.
-- Thêm `worker` cho indexing, notification, email, backup jobs.
-- Thêm monitoring, alerting, scheduled backup.
+- `cms` chỉ enqueue job, không xử lý long-running work trong request path.
+- `worker` dùng Redis + BullMQ để xử lý:
+  - post search sync
+  - push dispatch
+  - email notification
+  - expired request guard cleanup
+- Production compose cần `REDIS_URL`, `VAPID_*` và `SMTP_*` nếu muốn bật đầy đủ push/email.

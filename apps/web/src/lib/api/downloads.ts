@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
 //  fe-pmtl/lib/api/downloads.ts
-//  Lấy tài liệu tải từ Strapi download-item collection
+//  Lấy tài liệu tải từ Payload Downloads API
 // ─────────────────────────────────────────────────────────────
-import { strapiFetch } from '@/lib/strapi'
+import { cmsFetch } from '@/lib/cms'
 
 export interface DownloadItem {
   id: number
@@ -40,7 +40,7 @@ export async function fetchDownloads(params?: {
     filters.category = { $eq: params.category }
   }
 
-  const data = await strapiFetch<{ data: any[]; meta: any }>('/download-items', {
+  const data = await cmsFetch<{ data: any[]; meta: any }>('/downloads', {
     sort: ['sortOrder:asc', 'groupYear:desc', 'createdAt:desc'],
     pagination: { pageSize: params?.pageSize ?? 100 },
     populate: ['thumbnail'],

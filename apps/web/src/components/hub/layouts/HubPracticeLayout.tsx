@@ -1,8 +1,8 @@
 // components/hub/layouts/HubPracticeLayout.tsx
 // Practice theme: clear, structured, instructional
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
-import type { HubPage } from '@/types/strapi'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
+import type { HubPage } from '@/types/cms'
 import { CheckCircle2, Download } from 'lucide-react'
 import HubBlockRenderer from '../HubBlockRenderer'
 import HubSection from '../HubSection'
@@ -20,7 +20,7 @@ export default function HubPracticeLayout({ hubPage }: HubPracticeLayoutProps) {
       {/* ── HERO: Start-aligned, Instructional Tone, Heavy dimming ── */}
       <div className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-card/70 to-background">
         {hubPage.coverImage && (() => {
-          const imgSrc = getStrapiMediaUrl(
+          const imgSrc = getCmsMediaUrl(
             hubPage.coverImage!.formats?.large?.url ?? hubPage.coverImage!.url
           )
           return imgSrc ? (

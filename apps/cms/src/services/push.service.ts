@@ -1,6 +1,7 @@
 import type { Payload } from "payload";
 
 import { ensurePublicId } from "@/services/public-id.service";
+import { enqueuePushDispatchJob } from "@/services/queue.service";
 
 function sanitizeText(value?: string | null): string {
   return value?.replace(/\s+/g, " ").trim() ?? "";
@@ -54,18 +55,65 @@ export function createPushJob<T extends { publicId?: string | null | undefined; 
 }
 
 export async function enqueuePushDispatch(payload: Payload, id: string | number) {
-  return payload.update({
+  const updated = await payload.update({
     collection: "pushJobs",
     id,
     data: {
       status: "queued",
+      startedAt: null,
+      finishedAt: null,
+    },
+    overrideAccess: true,
+  });
+
+  const queued = await enqueuePushDispatchJob(id);
+
+  if (!queued) {
+    return updated;
+  }
+
+  return updated;
+}
+
+export function dispatchPushChunk() {
+  return;
+}
+
+export async function markPushJobProcessing(payload: Payload, id: string | number) {
+  return payload.update({
+    collection: "pushJobs",
+    id,
+    data: {
+      status: "processing",
+      startedAt: new Date().toISOString(),
+      finishedAt: null,
+      errorSummary: "",
     },
     overrideAccess: true,
   });
 }
 
-export function dispatchPushChunk() {
-  return;
+export async function updatePushJobProgress(
+  payload: Payload,
+  id: string | number,
+  input: {
+    cursor: number;
+    sentCount: number;
+    failedCount: number;
+    errorSummary?: string;
+  },
+) {
+  return payload.update({
+    collection: "pushJobs",
+    id,
+    data: {
+      cursor: input.cursor,
+      sentCount: input.sentCount,
+      failedCount: input.failedCount,
+      ...(input.errorSummary !== undefined ? { errorSummary: sanitizeText(input.errorSummary) } : {}),
+    },
+    overrideAccess: true,
+  });
 }
 
 export async function completePushJob(payload: Payload, id: string | number) {

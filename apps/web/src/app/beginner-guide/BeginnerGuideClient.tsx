@@ -11,8 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 import { ArrowRightIcon } from "@/components/icons/ZenIcons";
-import { resolveUrl } from "@/lib/strapi-client";
-import type { BeginnerGuide, StrapiMedia } from "@/types/strapi";
+import { resolveUrl } from "@/lib/cms-client";
+import type { BeginnerGuide, CmsMedia } from "@/types/cms";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -163,7 +163,7 @@ export default function BeginnerGuideClient({ initialGuides }: BeginnerGuideClie
                                     {/* Ảnh đính kèm từ CMS */}
                                     {step.images && step.images.length > 0 && (
                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        {step.images.map((img: StrapiMedia) => {
+                                        {step.images.map((img: CmsMedia) => {
                                           const imgUrl = resolveUrl(img.formats?.large?.url || img.formats?.medium?.url || img.url);
                                           if (!imgUrl) return null;
                                           return (

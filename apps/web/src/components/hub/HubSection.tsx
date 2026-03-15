@@ -1,7 +1,7 @@
 // components/hub/HubSection.tsx — Server component
 // Renders a single HubSection: heading + description + links grid
 // Visual language: Phật giáo, trang nghiêm, nhịp điệu thị giác rõ ràng
-import type { HubSection as HubSectionType } from '@/types/strapi'
+import type { HubSection as HubSectionType } from '@/types/cms'
 import HubLinkCard from './HubLinkCard'
 import { BookOpen, FolderOpen, Flame, LayoutGrid } from 'lucide-react'
 

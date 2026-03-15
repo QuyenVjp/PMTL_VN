@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { PhapBaoItem } from "@/types/strapi";
+import type { PhapBaoItem } from "@/types/cms";
 import { resolveIconToken } from "@/lib/ui-icons";
 
 // SVG icons — consistent with project style

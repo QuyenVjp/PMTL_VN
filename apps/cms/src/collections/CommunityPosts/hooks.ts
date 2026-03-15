@@ -1,3 +1,6 @@
+import type { Payload } from "payload";
+
+import { appendCollectionAuditLog } from "@/hooks/append-audit-log";
 import { revalidateContent } from "@/hooks/revalidate-content";
 import { submitCommunityPost } from "@/services/community.service";
 
@@ -7,6 +10,14 @@ type CommunityPostHookArgs = {
   collection?: {
     slug?: string;
   };
+  req?: {
+    payload?: Payload;
+    user?: {
+      id?: string | number | null;
+      role?: string | null;
+    } | null;
+  };
+  operation?: string;
 };
 
 export const communityPostHooks = {
@@ -16,15 +27,23 @@ export const communityPostHooks = {
     },
   ],
   afterChange: [
-    async ({ doc, collection }: CommunityPostHookArgs) => {
+    async ({ doc, collection, req, operation }: CommunityPostHookArgs) => {
       if (!doc) {
         return;
       }
 
-      await revalidateContent({
-        doc,
-        ...(collection ? { collection } : {}),
-      });
+      await Promise.all([
+        revalidateContent({
+          doc,
+          ...(collection ? { collection } : {}),
+        }),
+        appendCollectionAuditLog({
+          req,
+          doc,
+          collection,
+          operation,
+        }),
+      ]);
     },
   ],
 };

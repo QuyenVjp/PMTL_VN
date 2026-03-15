@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getSiteSettings } from "@/lib/api/settings";
-import type { SocialLinks } from "@/types/strapi";
+import type { SocialLinks } from "@/types/cms";
 
 const YoutubeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">

@@ -24,11 +24,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import type { BlogReaderPostList, BlogReaderState, BlogReaderSummary, BlogTag, Category, StrapiList } from '@/types/strapi'
+import type { BlogReaderPostList, BlogReaderState, BlogReaderSummary, BlogTag, Category, CmsList } from '@/types/cms'
 import { PAGINATION, getPaginationRange } from '@/lib/config/pagination'
 import type { SearchHit } from '@/lib/search/types'
 import { getEntityStableKey } from '@/lib/entity-identity'
-import { getStrapiMediaUrl } from '@/lib/strapi-helpers'
+import { getCmsMediaUrl } from '@/lib/cms-helpers'
 import { cn } from '@/lib/utils'
 import {
   getSearchDateFrom,
@@ -70,7 +70,7 @@ interface SearchClientProps {
   initialCategories: Category[]
   initialTags: BlogTag[]
   initialState: SearchPageState
-  initialResults: StrapiList<SearchHit>
+  initialResults: CmsList<SearchHit>
 }
 
 const TIME_FILTERS = [
@@ -210,9 +210,14 @@ function ResultCard({
   onRead: (post: SearchHit) => void
   onToggleFavorite: (post: SearchHit) => void
 }) {
-  const thumbUrl = getStrapiMediaUrl(post.thumbnail?.url)
+  const thumbUrl = getCmsMediaUrl(post.thumbnail?.url)
   const highlightedTitle = post._formatted?.title || post.title
-  const highlightedExcerpt = post._formatted?.excerpt || post._formatted?.content || post.excerpt || ''
+  const highlightedExcerpt =
+    post._formatted?.excerpt ||
+    post._formatted?.contentPlainText ||
+    post._formatted?.content ||
+    post.excerpt ||
+    ''
   const readRecentLabel = getRecentLabel(readerState?.lastReadAt)
   const favoriteRecentLabel = getRecentLabel(readerState?.favoritedAt)
 
@@ -455,7 +460,7 @@ export default function SearchClient({
       setIsLoading(true)
 
       try {
-        let nextResults: StrapiList<SearchHit>
+        let nextResults: CmsList<SearchHit>
 
         if (requestState.library !== 'all') {
           if (!user) {
@@ -511,7 +516,7 @@ export default function SearchClient({
               return accumulator
             }, {})
             setStateMap(nextStateMap)
-            nextResults = response as unknown as StrapiList<SearchHit>
+            nextResults = response as unknown as CmsList<SearchHit>
           }
         } else {
           const response = await searchPostsAndCategories({
@@ -523,7 +528,7 @@ export default function SearchClient({
             pageSize: PAGINATION.SEARCH_PAGE_SIZE,
             sort: requestState.sort,
           })
-          nextResults = response as StrapiList<SearchHit>
+          nextResults = response as CmsList<SearchHit>
         }
 
         if (ignore) return

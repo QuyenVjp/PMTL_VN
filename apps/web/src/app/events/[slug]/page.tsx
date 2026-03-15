@@ -6,7 +6,7 @@ import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import { fetchEventBySlug, getAllEventSlugs } from '@/lib/api/event'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import {
   Calendar, MapPin, User, Globe, ExternalLink,
   ChevronLeft, FileText, Download, Play, Video
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const event = await fetchEventBySlug(slug)
     if (!event) return { title: 'Sự kiện không tìm thấy' }
 
-    const imageUrl = event.coverImage ? getStrapiMediaUrl(event.coverImage.url) : undefined
+    const imageUrl = event.coverImage ? getCmsMediaUrl(event.coverImage.url) : undefined
 
     return {
       title: `${event.title} — Pháp Môn Tâm Linh`,
@@ -63,7 +63,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   if (!event) notFound()
 
-  const coverUrl = event.coverImage ? getStrapiMediaUrl(event.coverImage.url) : null
+  const coverUrl = event.coverImage ? getCmsMediaUrl(event.coverImage.url) : null
   const typeLabel = typeLabels[event.type] ?? event.type
   const oembedHtml =
     typeof event.oembed?.oembed?.html === 'string' && event.oembed.oembed.html.length > 0
@@ -309,7 +309,7 @@ export default async function EventDetailPage({ params }: Props) {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {event.gallery.map((img) => {
-                      const imgUrl = getStrapiMediaUrl(img.url)
+                      const imgUrl = getCmsMediaUrl(img.url)
                       if (!imgUrl) return null
                       return (
                         <div key={img.id} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-border group cursor-zoom-in">
@@ -337,7 +337,7 @@ export default async function EventDetailPage({ params }: Props) {
                   </h3>
                   <div className="space-y-3">
                     {event.files.map((file) => {
-                      const fileUrl = getStrapiMediaUrl(file.url)
+                      const fileUrl = getCmsMediaUrl(file.url)
                       if (!fileUrl) return null
                       const isImage = file.mime?.startsWith('image/')
                       const Icon = isImage ? FileText : Download

@@ -1,7 +1,7 @@
 // components/hub/blocks/DownloadGridBlock.tsx
 // Visual: palette vàng/trầm Phật giáo — không dùng màu đỏ/tím/xanh lá mạnh
 import { Download, ExternalLink, FileText, Music, Video, Archive, File, BookOpen, RefreshCw, Sparkles } from 'lucide-react'
-import type { DownloadItem } from '@/types/strapi'
+import type { DownloadItem } from '@/types/cms'
 
 interface DownloadGridBlockProps {
   heading: string

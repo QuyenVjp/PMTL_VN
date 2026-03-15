@@ -117,6 +117,9 @@ function normalizeLocalAppEnv(baseEnv: EnvMap): EnvMap {
   const databaseUrlWithLocalHost = mapUrlHost(baseEnv.DATABASE_URL, "postgres", "localhost") ?? baseEnv.DATABASE_URL;
   localEnv.DATABASE_URL = mapUrlPort(databaseUrlWithLocalHost, "5432", postgresHostPort) ?? databaseUrlWithLocalHost;
   localEnv.MEILI_HOST = mapUrlHost(baseEnv.MEILI_HOST, "meilisearch", "localhost") ?? baseEnv.MEILI_HOST;
+  localEnv.REDIS_URL =
+    mapUrlHost(baseEnv.REDIS_URL ?? "redis://redis:6379", "redis", "localhost") ?? "redis://localhost:6379";
+  localEnv.PAYLOAD_DB_PUSH = baseEnv.PAYLOAD_DB_PUSH ?? "false";
   localEnv.PAYLOAD_PUBLIC_SERVER_URL =
     mapUrlHost(baseEnv.PAYLOAD_PUBLIC_SERVER_URL, "cms", "localhost") ?? "http://localhost:3001";
   localEnv.CMS_PUBLIC_URL = mapUrlHost(baseEnv.CMS_PUBLIC_URL, "cms", "localhost") ?? "http://localhost:3001";
@@ -130,7 +133,7 @@ function normalizeLocalAppEnv(baseEnv: EnvMap): EnvMap {
 function runDockerComposeInfra(): void {
   const result = spawnSync(
     "docker",
-    ["compose", "-f", composeFilePath, "up", "-d", "postgres", "meilisearch"],
+    ["compose", "-f", composeFilePath, "up", "-d", "postgres", "meilisearch", "redis"],
     {
       cwd: repoRoot,
       stdio: "inherit",
@@ -199,12 +202,21 @@ async function waitForHttp(url: string, timeoutMs: number): Promise<void> {
 
 function runLocalApps(localEnv: EnvMap): void {
   log("Khoi dong web va cms local voi hot reload...");
+  log("Khoi dong worker BullMQ local...");
   log("Web: http://localhost:3000");
   log("CMS API: http://localhost:3001/api/health");
   log("Meilisearch: http://localhost:7700/health");
-  log("Dung Ctrl+C de dung web/cms. Postgres va Meilisearch se tiep tuc chay nen.");
+  log("Redis: redis://localhost:6379");
+  log("Dung Ctrl+C de dung web/cms/worker. Postgres, Meilisearch va Redis se tiep tuc chay nen.");
 
-  const child = spawn(pnpmCommand, ["dev:apps"], {
+  const appChild = spawn(pnpmCommand, ["dev:apps"], {
+    cwd: repoRoot,
+    env: localEnv,
+    shell: process.platform === "win32",
+    stdio: "inherit",
+  });
+
+  const workerChild = spawn(pnpmCommand, ["dev:worker"], {
     cwd: repoRoot,
     env: localEnv,
     shell: process.platform === "win32",
@@ -212,17 +224,48 @@ function runLocalApps(localEnv: EnvMap): void {
   });
 
   const stopChild = () => {
-    if (!child.killed) {
-      child.kill("SIGINT");
+    if (!appChild.killed) {
+      appChild.kill("SIGINT");
+    }
+
+    if (!workerChild.killed) {
+      workerChild.kill("SIGINT");
     }
   };
 
   process.on("SIGINT", stopChild);
   process.on("SIGTERM", stopChild);
 
-  child.on("exit", (code) => {
+  appChild.on("exit", (code) => {
+    if (!workerChild.killed) {
+      workerChild.kill("SIGINT");
+    }
+
     process.exit(code ?? 0);
   });
+
+  workerChild.on("exit", (code) => {
+    if (!appChild.killed) {
+      appChild.kill("SIGINT");
+    }
+
+    process.exit(code ?? 0);
+  });
+}
+
+function syncCmsSchema(localEnv: EnvMap): void {
+  log("Dong bo schema CMS voi Postgres local...");
+
+  const result = spawnSync(pnpmCommand, ["--filter", "@pmtl/cms", "db:sync"], {
+    cwd: repoRoot,
+    env: localEnv,
+    shell: process.platform === "win32",
+    stdio: "inherit",
+  });
+
+  if (result.status !== 0) {
+    fail("Khong the dong bo schema CMS truoc khi khoi dong dev runtime.");
+  }
 }
 
 async function main(): Promise<void> {
@@ -237,6 +280,8 @@ async function main(): Promise<void> {
   await waitForTcpPort(postgresHostPort, "127.0.0.1", 60_000);
   log("Dang cho meilisearch tren http://localhost:7700/health...");
   await waitForHttp("http://localhost:7700/health", 60_000);
+  log("Dang cho redis tren localhost:6379...");
+  await waitForTcpPort(6379, "127.0.0.1", 60_000);
 
   if (isInfraOnly) {
     log("Ha tang dev da san sang.");
@@ -244,6 +289,7 @@ async function main(): Promise<void> {
   }
 
   const localEnv = normalizeLocalAppEnv(dockerEnv);
+  syncCmsSchema(localEnv);
   runLocalApps(localEnv);
 }
 

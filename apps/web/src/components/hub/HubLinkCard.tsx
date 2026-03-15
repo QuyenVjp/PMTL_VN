@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ExternalLinkIcon, ArrowRightIcon } from 'lucide-react'
-import type { HubLink } from '@/types/strapi'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import type { HubLink } from '@/types/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
 import { cn } from '@/lib/utils'
 
 interface HubLinkCardProps {
@@ -14,7 +14,7 @@ interface HubLinkCardProps {
 
 export default function HubLinkCard({ link, theme }: HubLinkCardProps) {
   const thumbnailUrl = link.thumbnail
-    ? getStrapiMediaUrl(link.thumbnail.formats?.small?.url ?? link.thumbnail.url)
+    ? getCmsMediaUrl(link.thumbnail.formats?.small?.url ?? link.thumbnail.url)
     : null
 
   const normalizedUrl = (link.url ?? '').trim()

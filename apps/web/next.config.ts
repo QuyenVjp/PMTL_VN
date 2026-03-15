@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  cacheComponents: true,
   reactStrictMode: true,
   transpilePackages: ["@pmtl/shared", "@pmtl/ui"],
   images: {

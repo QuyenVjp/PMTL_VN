@@ -13,6 +13,7 @@ export const Posts: CollectionConfig = {
     plural: t("Bài viết", "Posts"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "title",
     defaultColumns: ["title", "postType", "primaryCategory", "_status", "updatedAt", "publishedAt"],
     listSearchableFields: ["sourceRef", "title", "slug", "excerptComputed"],

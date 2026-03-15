@@ -1,6 +1,6 @@
 // components/layout/widgets/DownloadLinksWidget.tsx — Server component
 import { DownloadIcon } from 'lucide-react'
-import type { QuickLink } from '@/types/strapi'
+import type { QuickLink } from '@/types/cms'
 
 interface DownloadLinksWidgetProps {
   links: QuickLink[]

@@ -1,5 +1,5 @@
 import { createHttpError } from '@/lib/http-error'
-import type { SutraBookmark, SutraReadingProgress } from '@/types/strapi'
+import type { SutraBookmark, SutraReadingProgress } from '@/types/cms'
 
 export async function fetchMyReadingProgress(params?: {
   sutraDocumentId?: string

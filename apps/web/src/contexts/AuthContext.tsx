@@ -7,14 +7,16 @@
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
 
 export interface AuthUser {
-  id: number
+  id: string
   documentId?: string
-  username: string
+  username?: string
   email: string
-  confirmed: boolean
-  blocked: boolean
+  confirmed?: boolean
+  blocked?: boolean
   createdAt: string
   updatedAt: string
+  role?: string
+  status?: string
   // Các trường mở rộng (khai báo trong schema extension)
   fullName?: string | null
   avatar_url?: string | null
@@ -53,7 +55,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await fetch('/api/auth/me')
       if (!res.ok) { setUser(null); return }
       const data = await res.json()
-      setUser(data)
+      const sessionUser = data?.session?.user
+
+      if (!sessionUser) {
+        setUser(null)
+        return
+      }
+
+      setUser({
+        id: String(sessionUser.id),
+        email: sessionUser.email,
+        username: sessionUser.email,
+        confirmed: sessionUser.status === 'active',
+        blocked: sessionUser.status === 'suspended',
+        createdAt: sessionUser.createdAt,
+        updatedAt: sessionUser.updatedAt,
+        role: sessionUser.role,
+        status: sessionUser.status,
+        fullName: sessionUser.displayName,
+        avatar_url: sessionUser.avatarUrl,
+        bio: sessionUser.bio,
+      })
     } catch {
       setUser(null)
     } finally {

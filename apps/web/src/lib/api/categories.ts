@@ -2,8 +2,8 @@
 //  lib/api/categories.ts — Category tree API
 //  Server-side only
 // ─────────────────────────────────────────────────────────────
-import { strapiFetch } from '@/lib/strapi'
-import type { Category, CategoryTree, StrapiList } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { Category, CategoryTree, CmsList } from '@/types/cms'
 
 interface CategoryTreeResponse {
   data: CategoryTree[]
@@ -15,7 +15,7 @@ interface CategoryTreeResponse {
 /** Fetch flat list of all categories */
 export async function getCategories(): Promise<Category[]> {
   try {
-    const res = await strapiFetch<StrapiList<Category>>('/categories', {
+    const res = await cmsFetch<CmsList<Category>>('/categories', {
       sort: ['order:asc', 'name:asc'],
       populate: ['parent'],
       pagination: { page: 1, pageSize: 100 },
@@ -29,7 +29,7 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getCategoryTree(): Promise<CategoryTree[]> {
   try {
-    const res = await strapiFetch<CategoryTreeResponse>('/categories/tree', {
+    const res = await cmsFetch<CategoryTreeResponse>('/categories/tree', {
       next: { revalidate: 300, tags: ['categories'] },
     })
 
@@ -43,7 +43,7 @@ export async function getCategoryTree(): Promise<CategoryTree[]> {
 /** Get single category by slug */
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   try {
-    const res = await strapiFetch<StrapiList<Category>>('/categories', {
+    const res = await cmsFetch<CmsList<Category>>('/categories', {
       filters: { slug: { $eq: slug } },
       populate: ['parent', 'parent.parent'],
       pagination: { page: 1, pageSize: 1 },

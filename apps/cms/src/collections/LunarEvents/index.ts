@@ -13,6 +13,7 @@ export const LunarEvents: CollectionConfig = {
     plural: t("Sự kiện âm lịch", "Lunar events"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "title",
     defaultColumns: ["title", "eventType", "priority", "updatedAt"],
   },

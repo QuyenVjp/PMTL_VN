@@ -26,6 +26,7 @@
 - `src/collections/<CollectionName>/service.ts`: business logic cho collection đó.
 - `src/services`: service dùng chung nhiều collection.
 - `src/integrations`: code ra ngoài hệ thống như Meilisearch, webhook.
+- `src/workers`: processor và bootstrap cho BullMQ worker của CMS.
 - `src/routes`: helper cho route compatibility hoặc public adapter mỏng, gồm `public.ts`, `session.ts`, `request-metadata.ts`; không chứa business logic domain.
 - Với auth user collection: `index.ts` mô tả auth config, `access.ts` chỉ giữ RBAC/document access, `hooks.ts` chỉ orchestration nhẹ, `service.ts` giữ register/login/profile/reset-password flow.
 
@@ -60,6 +61,8 @@
 - Sửa admin/API bootstrap của CMS -> `apps/cms/src/app/(payload)/*`
 - Sửa branding, dashboard widget, admin helper UI -> `apps/cms/src/admin/*`
 - Sửa route compatibility / adapter mỏng cho FE cũ -> `apps/cms/src/routes/*` và `apps/cms/src/app/(payload)/api/*`
+- Sửa queue producer / notification producer -> `apps/cms/src/services/queue.service.ts`, `apps/cms/src/services/notification.service.ts`
+- Sửa queue consumer / background job -> `apps/cms/src/workers/*`
 - Sửa shape dùng chung -> `packages/shared/src/schemas/*`, `packages/shared/src/types/*`
 
 ## 4. Cách thêm feature mới
@@ -82,6 +85,7 @@
 - Không đọc `process.env` trực tiếp trong component. Luôn đi qua `lib/env`.
 - Compose env file ở `infra/docker`.
 - Auth env nền tảng hiện tại gồm `AUTH_RESET_PASSWORD_URL` và `PAYLOAD_AUTH_DISABLE_EMAIL`.
+- Queue/notification env phase 2 hiện có `REDIS_URL`, `VAPID_*`, `SMTP_*`, `WORKER_MAINTENANCE_INTERVAL_MS`.
 - `PAYLOAD_CONFIG_PATH` được dùng bởi script CLI của `apps/cms`, không phải env contract giữa services.
 
 ## 6. API contracts

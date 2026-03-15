@@ -33,6 +33,7 @@ export function mapRouteError(error: unknown): Response {
   }
 
   const message = error instanceof Error ? error.message : "CMS route error.";
+  console.error("[cms-route-error]", error);
 
   return jsonResponse(500, {
     error: {

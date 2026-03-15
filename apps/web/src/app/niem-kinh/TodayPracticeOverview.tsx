@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
-import type { BlogPost, StrapiEvent } from '@/types/strapi'
+import type { BlogPost, CmsEvent } from '@/types/cms'
 import type { ProgressMap, TodayChantResponse } from '@/lib/api/chanting'
 import {
   findNextPendingChantItem,
@@ -11,7 +11,7 @@ import {
   summarizeChantProgress,
 } from '@/lib/chanting-progress'
 import { BookOpen, CalendarDays, ChevronRight, Flame, Moon, ScrollText } from 'lucide-react'
-import { formatDateVN, timeAgo, truncate } from '@/lib/strapi-helpers'
+import { formatDateVN, timeAgo, truncate } from '@/lib/cms-helpers'
 
 interface Props {
   todayChant: TodayChantResponse
@@ -19,7 +19,7 @@ interface Props {
   solarLabel: string
   lunarLabel: string
   recommendedPosts: BlogPost[]
-  upcomingEvents: StrapiEvent[]
+  upcomingEvents: CmsEvent[]
 }
 
 export default function TodayPracticeOverview({

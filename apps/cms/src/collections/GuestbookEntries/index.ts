@@ -13,6 +13,7 @@ export const GuestbookEntries: CollectionConfig = {
     plural: t("Sổ lưu niệm", "Guestbook entries"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "authorName",
     defaultColumns: ["authorName", "entryType", "approvalStatus", "isAnswered", "updatedAt"],
   },

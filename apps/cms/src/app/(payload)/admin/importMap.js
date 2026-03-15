@@ -26,6 +26,7 @@ import { BrandLogo as BrandLogo_2b0497d22b74100384b17adb809f2cb8 } from '../../.
 import { DashboardIntro as DashboardIntro_f034028d3aee13a03e9b681df4d36f47 } from '../../../admin/components/DashboardIntro.tsx'
 import { ContentStatsWidget as ContentStatsWidget_0967d1c414cab49432b6c07fdfb72b77 } from '../../../admin/widgets/ContentStatsWidget.tsx'
 import { QuickLinksWidget as QuickLinksWidget_e0bd1fb40f1ad901ba284cd001b253ad } from '../../../admin/widgets/QuickLinksWidget.tsx'
+import { SearchStatusWidget as SearchStatusWidget_c3d6b7ff972f60818ebff3779920d57e } from '../../../admin/widgets/SearchStatusWidget.tsx'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -57,5 +58,6 @@ export const importMap = {
   "/admin/components/DashboardIntro.tsx#DashboardIntro": DashboardIntro_f034028d3aee13a03e9b681df4d36f47,
   "/admin/widgets/ContentStatsWidget.tsx#ContentStatsWidget": ContentStatsWidget_0967d1c414cab49432b6c07fdfb72b77,
   "/admin/widgets/QuickLinksWidget.tsx#QuickLinksWidget": QuickLinksWidget_e0bd1fb40f1ad901ba284cd001b253ad,
+  "/admin/widgets/SearchStatusWidget.tsx#SearchStatusWidget": SearchStatusWidget_c3d6b7ff972f60818ebff3779920d57e,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

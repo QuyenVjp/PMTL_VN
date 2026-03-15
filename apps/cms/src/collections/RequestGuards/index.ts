@@ -13,6 +13,7 @@ export const RequestGuards: CollectionConfig = {
     plural: t("Request guards", "Request guards"),
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "guardKey",
     defaultColumns: ["guardKey", "scope", "hits", "expiresAt", "lastSeenAt"],
   },

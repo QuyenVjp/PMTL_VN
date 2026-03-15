@@ -1,3 +1,4 @@
+import { appendCollectionAuditLog } from "@/hooks/append-audit-log";
 import { wrapLexicalContent } from "@/hooks/lexical-migration";
 import { revalidateContent } from "@/hooks/revalidate-content";
 import {
@@ -52,6 +53,12 @@ export const postHooks = {
 
       await Promise.all([
         syncPostSearchDocument(doc as never, req),
+        appendCollectionAuditLog({
+          req: req as never,
+          doc,
+          collection,
+          operation: "upsert",
+        }),
         revalidateContent({
           doc,
           ...(collection ? { collection } : {}),

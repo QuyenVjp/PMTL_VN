@@ -1,41 +1,54 @@
 'use server'
 
-import { getPosts, GetPostsOptions, getAllTags, getCategories } from '@/lib/api/blog'
-import { isMeilisearchConfigured, searchBlogPostsViaMeilisearch } from '@/lib/meilisearch'
+import { getPosts, getAllTags, getCategories } from '@/lib/api/blog'
+import { buildCMSUrl } from '@/lib/cms/client'
 import { revalidatePath, unstable_cache } from 'next/cache'
+import type { SearchHit } from '@/lib/search/types'
+import type { GetPostsOptions } from '@/lib/api/blog'
 
 /**
- * Search posts via Meilisearch (faster, typo-tolerant)
- * Falls back to Strapi if Meilisearch unavailable
+ * Search posts via CMS-owned search endpoint.
+ * Falls back to content listing if the search service is unavailable.
  */
 export async function searchPostsAndCategories(options: GetPostsOptions) {
   const page = options.page ?? 1
   const pageSize = options.pageSize ?? 10
 
   try {
-    if (!isMeilisearchConfigured()) {
-      throw new Error('Meilisearch is not configured')
-    }
+    const url = new URL(buildCMSUrl('/api/posts/search'))
+    url.searchParams.set('q', options.search || '')
+    url.searchParams.set('limit', String(pageSize))
 
-    // Try Meilisearch first (fast, typo-tolerant)
-    const res = await searchBlogPostsViaMeilisearch(options.search || '', {
-      page: options.page,
-      pageSize: options.pageSize,
-      sort: options.sort,
-      categorySlug: options.categorySlug,
-      tagSlugs: options.tagSlugs,
-      dateFrom: options.dateFrom,
-      dateTo: options.dateTo,
+    const res = await fetch(url, {
+      cache: 'no-store',
     })
 
+    if (!res.ok) {
+      throw new Error(`CMS search failed with status ${res.status}`)
+    }
+
+    const payload = (await res.json()) as {
+      hits?: SearchHit[]
+      totalHits?: number
+    }
+
+    const hits = Array.isArray(payload.hits) ? payload.hits : []
+    const total = typeof payload.totalHits === 'number' ? payload.totalHits : hits.length
+
     return {
-      data: res.data ?? [],
-      meta: res.meta,
+      data: hits,
+      meta: {
+        pagination: {
+          page,
+          pageSize,
+          pageCount: Math.max(1, Math.ceil(Math.max(total, hits.length) / pageSize)),
+          total,
+        },
+      },
     }
   } catch (error) {
-    console.warn('[Search] Meilisearch unavailable, falling back to Strapi:', error)
+    console.warn('[Search] CMS search unavailable, falling back to content listing:', error)
 
-    // Fallback to Strapi database search if Meilisearch is down
     try {
       const res = await getPosts({ ...options, revalidate: 0 })
       return {
@@ -83,7 +96,7 @@ export async function incrementViewAction(documentId: string): Promise<{ success
     const headers: HeadersInit = { 'Content-Type': 'application/json' }
     if (token) headers['Authorization'] = `Bearer ${token}`
 
-    const res = await fetch(`${strapiUrl}/api/blog-posts/${documentId}/view`, {
+    const res = await fetch(`${strapiUrl}/api/posts/${documentId}/view`, {
       method: 'POST',
       headers,
       cache: 'no-store',
@@ -96,6 +109,7 @@ export async function incrementViewAction(documentId: string): Promise<{ success
 }
 
 export async function revalidateBlogPath(slug: string) {
+  await Promise.resolve()
   revalidatePath(`/blog/${slug}`)
   revalidatePath('/blog')
 }

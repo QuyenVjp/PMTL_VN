@@ -1,5 +1,5 @@
-// Khong import strapiFetch vi endpoint /with-blogs dung Document Service direct
-// strapiFetch chi dung cho REST API thong thuong
+// Khong import cmsFetch vi endpoint /with-blogs dung Document Service direct
+// cmsFetch chi dung cho REST API thong thuong
 
 export interface BlogPostPreview {
   id: number;
@@ -28,11 +28,11 @@ export interface LunarEvent {
  */
 export async function fetchLunarEvents(): Promise<LunarEvent[]> {
   try {
-    const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001');
+    const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001');
     const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN);
 
     // Goi endpoint custom /with-blogs — dung Document Service ben BE, co relatedBlogs
-    const res = await fetch(`${STRAPI_URL}/api/lunar-events/with-blogs`, {
+    const res = await fetch(`${CMS_API_URL}/api/lunar-events/with-blogs`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       next: { revalidate: 0 },
     });

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import "@payloadcms/next/css";
+import "@/admin/admin-theme.css";
 
 import configPromise from "@payload-config";
 import { RootLayout, handleServerFunctions, metadata } from "@payloadcms/next/layouts";

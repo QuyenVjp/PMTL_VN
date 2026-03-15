@@ -13,6 +13,7 @@ export const Media: CollectionConfig = {
     plural: t("Thư viện media", "Media"),
   },
   admin: {
+    group: t("Tư liệu", "Tư liệu"),
     defaultColumns: ["filename", "alt", "updatedAt"],
     useAsTitle: "filename",
   },

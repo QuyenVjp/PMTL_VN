@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDownIcon, ChevronUpIcon, HeartIcon, CornerDownRightIcon, FlagIcon } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import type { BlogComment } from '@/types/strapi'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import type { BlogComment } from '@/types/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
 import CommentForm from './CommentForm'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { toast } from 'sonner'
@@ -51,7 +51,7 @@ export default function CommentItem({
   const [localLikes, setLocalLikes] = useState(comment.likes)
 
   const avatarUrl = comment.authorAvatar
-    ? getStrapiMediaUrl(
+    ? getCmsMediaUrl(
       comment.authorAvatar.formats?.thumbnail?.url ?? comment.authorAvatar.url
     )
     : null

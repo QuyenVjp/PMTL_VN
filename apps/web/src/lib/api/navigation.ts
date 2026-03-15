@@ -73,7 +73,7 @@ function sanitizeNavItems(items: PayloadNavigationItem[] | null | undefined): Na
 
 const getNavigationGlobal = unstable_cache(
   async (): Promise<PayloadNavigationGlobal> => {
-    return cmsGet<PayloadNavigationGlobal>("/api/globals/navigation", {
+    return cmsGet<PayloadNavigationGlobal>("/api/navigation", {
       next: { revalidate: 300, tags: ["global-navigation"] },
     });
   },

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { BookOpenText, FileText, ImageIcon } from 'lucide-react'
 import type { TodayChantItem } from '@/lib/api/chanting'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -32,7 +32,7 @@ function ScriptPreviewBody({ item }: Props) {
   const imageItems = (item.scriptPreviewImages ?? [])
     .map((image) => ({
       ...image,
-      url: getStrapiMediaUrl(image.url) ?? image.url,
+      url: getCmsMediaUrl(image.url) ?? image.url,
     }))
     .filter((image) => Boolean(image.url))
 
@@ -40,7 +40,7 @@ function ScriptPreviewBody({ item }: Props) {
     ? {
         id: item.scriptFile.id,
         name: item.scriptFile.name,
-        url: getStrapiMediaUrl(item.scriptFile.url) ?? item.scriptFile.url,
+        url: getCmsMediaUrl(item.scriptFile.url) ?? item.scriptFile.url,
         mime: item.scriptFile.mime,
         size: item.scriptFile.size,
         ext: item.scriptFile.ext,

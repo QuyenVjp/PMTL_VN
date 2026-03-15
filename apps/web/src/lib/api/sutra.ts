@@ -1,14 +1,14 @@
-import { getStrapiMediaUrl, strapiFetch } from '@/lib/strapi'
+import { getCmsMediaUrl, cmsFetch } from '@/lib/cms'
 import type {
-  StrapiList,
-  StrapiSingle,
+  CmsList,
+  CmsSingle,
   Sutra,
   SutraBookmark,
   SutraChapter,
   SutraGlossary,
   SutraReadingProgress,
   SutraVolume,
-} from '@/types/strapi'
+} from '@/types/cms'
 
 export interface SutraListItem {
   id: number
@@ -48,7 +48,7 @@ function normalizeListItem(item: Sutra): SutraListItem {
     slug: item.slug,
     shortExcerpt: item.shortExcerpt,
     description: item.description,
-    coverUrl: getStrapiMediaUrl(item.coverImage?.url),
+    coverUrl: getCmsMediaUrl(item.coverImage?.url),
     tags: (item.tags ?? []).map((tag) => ({
       documentId: tag.documentId,
       name: tag.name,
@@ -62,7 +62,7 @@ function normalizeListItem(item: Sutra): SutraListItem {
 }
 
 export async function fetchSutraList(): Promise<SutraListItem[]> {
-  const res = await strapiFetch<StrapiList<Sutra>>('/sutras', {
+  const res = await cmsFetch<CmsList<Sutra>>('/sutras', {
     status: 'published',
     sort: ['isFeatured:desc', 'sortOrder:asc', 'title:asc'],
     fields: ['title', 'slug', 'shortExcerpt', 'description', 'translatorHan', 'translatorViet', 'reviewer'],
@@ -80,7 +80,7 @@ export async function fetchSutraList(): Promise<SutraListItem[]> {
 
 export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | null> {
   // Step 1: Fetch Sutra base data (no nested pagination in populate for Strapi v5)
-  const sutraRes = await strapiFetch<StrapiList<Sutra>>('/sutras', {
+  const sutraRes = await cmsFetch<CmsList<Sutra>>('/sutras', {
     status: 'published',
     filters: { slug: { $eq: slug } },
     fields: ['title', 'slug', 'description', 'shortExcerpt', 'translatorHan', 'translatorViet', 'reviewer'],
@@ -97,7 +97,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 
   // Step 2: Fetch Volumes by sutra id (avoid nested populate pagination errors)
   let volumes: SutraVolume[] = []
-  const volumeRes = await strapiFetch<StrapiList<SutraVolume>>('/sutra-volumes', {
+  const volumeRes = await cmsFetch<CmsList<SutraVolume>>('/sutra-volumes', {
     status: 'published',
     fields: ['title', 'slug', 'volumeNumber', 'bookStart', 'bookEnd', 'description', 'sortOrder', 'documentId'],
     sort: ['volumeNumber:asc', 'sortOrder:asc'],
@@ -131,7 +131,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
   // Fetch broadly then narrow in memory to avoid relation-filter edge cases in Strapi v5.
   const volumeDocIds = new Set(volumes.map((v) => v.documentId))
   let chapters: SutraChapter[] = []
-  const chapterRes = await strapiFetch<StrapiList<SutraChapter>>('/sutra-chapters', {
+  const chapterRes = await cmsFetch<CmsList<SutraChapter>>('/sutra-chapters', {
     status: 'published',
     fields: ['title', 'slug', 'chapterNumber', 'openingText', 'content', 'endingText', 'estimatedReadMinutes', 'sortOrder', 'documentId'],
     sort: ['chapterNumber:asc', 'sortOrder:asc'],
@@ -173,7 +173,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 
   // Step 4: Fetch Glossaries by sutra id
   let glossaries: SutraGlossary[] = []
-  const glossaryRes = await strapiFetch<StrapiList<SutraGlossary>>('/sutra-glossaries', {
+  const glossaryRes = await cmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
     status: 'published',
     fields: ['markerKey', 'term', 'meaning', 'sortOrder', 'documentId'],
     sort: ['sortOrder:asc', 'createdAt:asc'],
@@ -220,7 +220,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 }
 
 export async function fetchSutraDictionary(): Promise<SutraDictionaryEntry[]> {
-  const res = await strapiFetch<StrapiList<SutraGlossary>>('/sutra-glossaries', {
+  const res = await cmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
     status: 'published',
     fields: ['documentId', 'markerKey', 'term', 'meaning', 'sortOrder'],
     populate: {

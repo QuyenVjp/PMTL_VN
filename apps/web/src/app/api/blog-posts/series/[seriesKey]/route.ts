@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { NextRequest } from 'next/server'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +21,7 @@ export async function GET(
 
   try {
     const res = await fetch(
-      `${STRAPI_URL}/api/blog-posts/series/${encodeURIComponent(seriesKey)}?currentSlug=${encodeURIComponent(currentSlug)}`,
+      `${CMS_API_URL}/api/blog-posts/series/${encodeURIComponent(seriesKey)}?currentSlug=${encodeURIComponent(currentSlug)}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         next: { revalidate: 3600, tags: ['blog-posts'] },

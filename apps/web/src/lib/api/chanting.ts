@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/chanting.ts  —  Types + server-side helpers for Niệm Kinh
-//  Chỉ dùng trong Server Components / Route Handlers (có strapiFetch)
+//  Chỉ dùng trong Server Components / Route Handlers (có cmsFetch)
 // ─────────────────────────────────────────────────────────────
-import { buildStrapiUrl, STRAPI_URL } from '@/lib/strapi';
-import type { StrapiMedia, StrapiSingle } from '@/types/strapi';
+import { buildCmsUrl, CMS_API_URL } from '@/lib/cms';
+import type { CmsMedia, CmsSingle } from '@/types/cms';
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -37,8 +37,8 @@ export interface TodayChantItem {
   timeRules: TimeRules | null;
   openingPrayer: string | null;  // Lời cầu nguyện mở đầu trước khi niệm
   content?: string | null;
-  scriptFile?: StrapiMedia | null;
-  scriptPreviewImages?: StrapiMedia[];
+  scriptFile?: CmsMedia | null;
+  scriptPreviewImages?: CmsMedia[];
   isOptional: boolean;
   source: 'base' | 'enableOverride';
   capsApplied: boolean;
@@ -126,7 +126,7 @@ export async function fetchTodayChant(params: {
     if (lunarMonth) qs.set('lunarMonth', String(lunarMonth));
     if (lunarDay) qs.set('lunarDay', String(lunarDay));
 
-    const url = `${STRAPI_URL}/api/chant-plans/today-chant?${qs}`;
+    const url = `${CMS_API_URL}/api/chant-plans/today-chant?${qs}`;
     const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN);
     const res = await fetch(url, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -157,7 +157,7 @@ export async function fetchTodayChantMy(params: {
     if (lunarMonth) qs.set('lunarMonth', String(lunarMonth));
     if (lunarDay) qs.set('lunarDay', String(lunarDay));
 
-    const url = `${STRAPI_URL}/api/chant-plans/today-chant/my?${qs}`;
+    const url = `${CMS_API_URL}/api/chant-plans/today-chant/my?${qs}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',
@@ -181,7 +181,7 @@ export async function fetchPracticeLog(params: {
   try {
     const qs = new URLSearchParams({ date });
     if (planSlug) qs.set('planSlug', planSlug);
-    const res = await fetch(`${STRAPI_URL}/api/practice-logs/my?${qs}`, {
+    const res = await fetch(`${CMS_API_URL}/api/practice-logs/my?${qs}`, {
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',
     });
@@ -204,7 +204,7 @@ export async function upsertPracticeLog(params: {
 }): Promise<PracticeLog | null> {
   const { date, planSlug, itemsProgress, sessionConfig, jwt } = params;
   try {
-    const res = await fetch(`${STRAPI_URL}/api/practice-logs/my`, {
+    const res = await fetch(`${CMS_API_URL}/api/practice-logs/my`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ export async function upsertPracticeLog(params: {
 
 export async function fetchChantingSetting(): Promise<ChantingSetting | null> {
   try {
-    const url = buildStrapiUrl('/chanting-setting', {
+    const url = buildCmsUrl('/chanting-setting', {
       populate: {
         guidelineSections: true,
       },
@@ -240,7 +240,7 @@ export async function fetchChantingSetting(): Promise<ChantingSetting | null> {
       return null;
     }
 
-    const response = (await res.json()) as StrapiSingle<ChantingSetting>;
+    const response = (await res.json()) as CmsSingle<ChantingSetting>;
     return response.data ?? null;
   } catch {
     return null;

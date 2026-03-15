@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { SearchIcon } from "@/components/icons/ZenIcons";
-import type { HeroSlide, StatItem } from "@/types/strapi";
+import type { HeroSlide, StatItem } from "@/types/cms";
 
 interface HeroSectionProps {
   slides: HeroSlide[];

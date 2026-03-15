@@ -13,6 +13,7 @@ export const Events: CollectionConfig = {
     plural: t("Sự kiện", "Events"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "title",
     defaultColumns: ["title", "location", "date", "eventStatus", "updatedAt"],
   },

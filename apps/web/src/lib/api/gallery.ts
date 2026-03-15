@@ -1,5 +1,5 @@
-import { getStrapiMediaUrl, strapiFetch } from '@/lib/strapi'
-import type { GalleryItem, StrapiList } from '@/types/strapi'
+import { getCmsMediaUrl, cmsFetch } from '@/lib/cms'
+import type { GalleryItem, CmsList } from '@/types/cms'
 
 export interface GalleryCardItem {
   id: number
@@ -45,7 +45,7 @@ function parseKeywords(value: string | null | undefined): string[] {
 }
 
 function toGalleryCardItem(item: GalleryItem): GalleryCardItem | null {
-  const imageUrl = getStrapiMediaUrl(item.image?.url)
+  const imageUrl = getCmsMediaUrl(item.image?.url)
   if (!imageUrl) return null
 
   return {
@@ -72,7 +72,7 @@ function toGalleryCardItem(item: GalleryItem): GalleryCardItem | null {
 }
 
 export async function fetchGalleryItems(): Promise<GalleryCardItem[]> {
-  const response = await strapiFetch<StrapiList<GalleryItem>>('/gallery-items', {
+  const response = await cmsFetch<CmsList<GalleryItem>>('/gallery-items', {
     status: 'published',
     sort: ['featured:desc', 'sortOrder:asc', 'shotDate:desc', 'publishedAt:desc'],
     populate: ['image'],

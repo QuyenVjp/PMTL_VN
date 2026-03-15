@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/guides.ts — Hướng Dẫn Sơ Học & Kinh Bài Tập API
-//  Server-side only — fetch from Strapi v5
+//  Server-side only — fetch from Payload CMS
 // ─────────────────────────────────────────────────────────────
 
-import { strapiFetch } from '@/lib/strapi'
-import type { StrapiList, BeginnerGuide } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { CmsList, BeginnerGuide } from '@/types/cms'
 
 /**
  * Fetch danh sách hướng dẫn theo loại.
@@ -12,7 +12,7 @@ import type { StrapiList, BeginnerGuide } from '@/types/strapi'
  */
 export async function getGuides(guideType: 'so-hoc' | 'kinh-bai-tap'): Promise<BeginnerGuide[]> {
   try {
-    const res = await strapiFetch<StrapiList<BeginnerGuide>>('/beginner-guides', {
+    const res = await cmsFetch<CmsList<BeginnerGuide>>('/guides', {
       filters: { guide_type: { $eq: guideType } },
       sort: ['step_number:asc', 'order:asc'],
       populate: ['images', 'attached_files', 'icon'],
@@ -39,7 +39,7 @@ export async function getDailyRecitationSteps(): Promise<BeginnerGuide[]> {
 /** Fetch một guide cụ thể theo documentId */
 export async function getGuideById(documentId: string): Promise<BeginnerGuide | null> {
   try {
-    const res = await strapiFetch<{ data: BeginnerGuide }>(`/beginner-guides/${documentId}`, {
+    const res = await cmsFetch<{ data: BeginnerGuide }>(`/guides/${documentId}`, {
       populate: ['images', 'attached_files', 'icon'],
       next: { revalidate: 300, tags: [`guide-${documentId}`] },
     })

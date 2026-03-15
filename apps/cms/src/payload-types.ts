@@ -161,6 +161,7 @@ export interface Config {
   widgets: {
     'content-overview': ContentOverviewWidget;
     'editor-shortcuts': EditorShortcutsWidget;
+    'search-status': SearchStatusWidget;
     collections: CollectionsWidget;
   };
   user: User;
@@ -2405,6 +2406,16 @@ export interface ContentOverviewWidget {
  * via the `definition` "editor-shortcuts_widget".
  */
 export interface EditorShortcutsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search-status_widget".
+ */
+export interface SearchStatusWidget {
   data?: {
     [k: string]: unknown;
   };

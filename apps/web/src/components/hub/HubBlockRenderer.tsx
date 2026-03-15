@@ -1,6 +1,6 @@
 // components/hub/HubBlockRenderer.tsx
 // Renderer với spacing rhythm — visual cadence, không flat space-y-4
-import type { HubBlock } from '@/types/strapi'
+import type { HubBlock } from '@/types/cms'
 import RichTextBlock from './blocks/RichTextBlock'
 import PostListManualBlock from './blocks/PostListManualBlock'
 import PostListAutoBlock from './blocks/PostListAutoBlock'

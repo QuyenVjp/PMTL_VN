@@ -12,9 +12,9 @@ const links = [
     label: "Thư viện media",
   },
   {
-    href: "/admin/collections/comments",
-    hint: "Lọc bình luận để xử lý kiểm duyệt.",
-    label: "Bình luận",
+    href: "/admin/collections/communityPosts",
+    hint: "Duyệt bài cộng đồng và nội dung người dùng gửi lên.",
+    label: "Bài cộng đồng",
   },
   {
     href: "/admin/globals/site-settings",

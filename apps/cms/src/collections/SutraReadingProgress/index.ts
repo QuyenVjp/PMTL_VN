@@ -13,6 +13,7 @@ export const SutraReadingProgress: CollectionConfig = {
     plural: t("Tiến độ đọc kinh", "Sutra reading progress"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "publicId",
     defaultColumns: ["user", "sutra", "scrollPercent", "lastReadAt"],
   },

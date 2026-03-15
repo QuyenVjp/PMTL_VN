@@ -7,9 +7,9 @@ const quickLinks = [
     label: "Bài viết",
   },
   {
-    href: "/admin/collections/comments",
-    hint: "Kiểm tra bình luận chờ duyệt.",
-    label: "Bình luận",
+    href: "/admin/collections/postComments",
+    hint: "Xem bình luận bài viết đang chờ kiểm duyệt.",
+    label: "Bình luận bài viết",
   },
   {
     href: "/admin/globals/homepage",
@@ -20,6 +20,11 @@ const quickLinks = [
     href: "/admin/globals/navigation",
     hint: "Cập nhật menu và nút điều hướng.",
     label: "Điều hướng",
+  },
+  {
+    href: "/admin/globals/site-settings",
+    hint: "Đổi tên site, thông tin liên hệ và SEO mặc định.",
+    label: "Cài đặt website",
   },
 ];
 

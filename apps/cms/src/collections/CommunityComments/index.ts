@@ -13,6 +13,7 @@ export const CommunityComments: CollectionConfig = {
     plural: t("Bình luận cộng đồng", "Community comments"),
   },
   admin: {
+    group: t("Cộng đồng", "Cộng đồng"),
     useAsTitle: "authorNameSnapshot",
     defaultColumns: ["authorNameSnapshot", "post", "moderationStatus", "reportCount", "updatedAt"],
   },

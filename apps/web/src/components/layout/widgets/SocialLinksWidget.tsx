@@ -1,12 +1,12 @@
 // components/layout/widgets/SocialLinksWidget.tsx — Server component
 import Image from 'next/image'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
 import { resolveIconToken } from '@/lib/ui-icons'
-import type { CmsSocialLink, StrapiMedia, UiIconValue } from '@/types/strapi'
+import type { CmsSocialLink, CmsMedia, UiIconValue } from '@/types/cms'
 
 interface SocialLinksWidgetProps {
   socialLinks: CmsSocialLink[]
-  qrImages?: StrapiMedia[] | null
+  qrImages?: CmsMedia[] | null
 }
 
 // Map iconName to a simple SVG path or a recognizable character fallback
@@ -92,7 +92,7 @@ export default function SocialLinksWidget({ socialLinks, qrImages }: SocialLinks
           <div className="flex flex-wrap gap-3">
             {qrImages!.map((img) => {
               const rawUrl = img.formats?.thumbnail?.url ?? img.url
-              const src = rawUrl ? getStrapiMediaUrl(rawUrl) : null
+              const src = rawUrl ? getCmsMediaUrl(rawUrl) : null
               if (!src) return null
               return (
                 <div key={img.id} className="w-20 h-20 rounded-lg overflow-hidden border border-border bg-white">

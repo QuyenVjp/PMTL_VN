@@ -13,6 +13,7 @@ export const ModerationReports: CollectionConfig = {
     plural: t("Báo cáo kiểm duyệt", "Moderation reports"),
   },
   admin: {
+    group: t("Hệ thống", "Hệ thống"),
     useAsTitle: "publicId",
     defaultColumns: ["entityType", "entityPublicId", "reason", "status", "updatedAt"],
   },

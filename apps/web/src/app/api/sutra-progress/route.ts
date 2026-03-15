@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { STRAPI_URL } from '@/lib/strapi'
+import { CMS_API_URL } from '@/lib/cms'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   if (!jwt) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const qs = req.nextUrl.searchParams.toString()
-  const url = `${STRAPI_URL}/api/sutra-reading-progresses/my${qs ? `?${qs}` : ''}`
+  const url = `${CMS_API_URL}/api/sutra-reading-progresses/my${qs ? `?${qs}` : ''}`
 
   try {
     const res = await fetch(url, {
@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const res = await fetch(`${STRAPI_URL}/api/sutra-reading-progresses/my`, {
+    const res = await fetch(`${CMS_API_URL}/api/sutra-reading-progresses/my`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

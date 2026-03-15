@@ -3,7 +3,7 @@
 
 import { getBlogCommentsBySlug } from '@/lib/api/blogComments'
 import CommentsClient from './CommentsClient'
-import type { BlogCommentThread } from '@/types/strapi'
+import type { BlogCommentThread } from '@/types/cms'
 
 interface CommentsSectionProps {
   slug: string

@@ -4,8 +4,8 @@
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2Icon, ShieldCheckIcon } from 'lucide-react'
-import type { GuestbookEntry, GuestbookList as GuestbookListType } from '@/types/strapi'
-import { getStrapiMediaUrl } from '@/lib/strapi'
+import type { GuestbookEntry, GuestbookList as GuestbookListType } from '@/types/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
 import GuestbookForm from './GuestbookForm'
 import { useGuestbookList } from '@/lib/query/guestbook'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -30,7 +30,7 @@ function timeDisplay(dateStr: string): string {
 
 function EntryCard({ entry }: { entry: GuestbookEntry }) {
   const avatarUrl = entry.avatar
-    ? getStrapiMediaUrl(entry.avatar.formats?.thumbnail?.url ?? entry.avatar.url)
+    ? getCmsMediaUrl(entry.avatar.formats?.thumbnail?.url ?? entry.avatar.url)
     : null
 
   const initials = entry.authorName

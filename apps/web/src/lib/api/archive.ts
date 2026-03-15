@@ -2,11 +2,11 @@
 //  lib/api/archive.ts — Archive API functions
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
-import { strapiFetch } from '@/lib/strapi'
-import type { ArchiveYear, StrapiList, BlogPost } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { ArchiveYear, CmsList, BlogPost } from '@/types/cms'
 
 export async function getArchiveIndex(): Promise<ArchiveYear[]> {
-  const res = await strapiFetch<{ data: ArchiveYear[] }>('/blog-posts/archive-index', {
+  const res = await cmsFetch<{ data: ArchiveYear[] }>('/blog-posts/archive-index', {
     noCache: false,
     next: { revalidate: 3600, tags: ['blog-posts'] },
   })
@@ -18,9 +18,9 @@ export async function getArchivePosts(
   month?: number,
   page = 1,
   pageSize = 12
-): Promise<StrapiList<BlogPost>> {
+): Promise<CmsList<BlogPost>> {
   const monthParam = month ? `&month=${month}` : ''
-  return strapiFetch<StrapiList<BlogPost>>(
+  return cmsFetch<CmsList<BlogPost>>(
     `/blog-posts/archive?year=${year}${monthParam}&page=${page}&pageSize=${pageSize}`,
     { noCache: false, next: { revalidate: 3600, tags: ['blog-posts'] } }
   )

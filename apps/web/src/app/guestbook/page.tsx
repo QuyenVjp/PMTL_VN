@@ -7,7 +7,7 @@ import GuestbookSidebar from '@/components/guestbook/GuestbookSidebar'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import type { GuestbookList as GuestbookListType } from '@/types/strapi'
+import type { GuestbookList as GuestbookListType } from '@/types/cms'
 
 export const metadata: Metadata = {
   title: 'Sổ Lưu Bút & Hỏi Đáp | Phật Môn Tịnh Lữ',

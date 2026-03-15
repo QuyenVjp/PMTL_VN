@@ -3,8 +3,8 @@
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
 
-import { strapiFetch } from '@/lib/strapi'
-import type { BlogPost, StrapiList, StrapiSingle, Category, BlogTag } from '@/types/strapi'
+import { cmsFetch } from '@/lib/cms'
+import type { BlogPost, CmsList, CmsSingle, Category, BlogTag } from '@/types/cms'
 
 /** Shared populate config for all post queries */
 const POPULATE_FULL = [
@@ -42,7 +42,7 @@ export interface GetPostsOptions {
 }
 
 /** Get paginated list of published blog posts */
-export async function getPosts(options: GetPostsOptions = {}): Promise<StrapiList<BlogPost>> {
+export async function getPosts(options: GetPostsOptions = {}): Promise<CmsList<BlogPost>> {
   const {
     page = 1,
     pageSize = 10,
@@ -94,7 +94,7 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<StrapiLis
         ? ['views:desc', 'publishedAt:desc']
         : ['publishedAt:desc']
 
-  return strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+  return cmsFetch<CmsList<BlogPost>>('/blog-posts', {
     sort: sortOrder,
     filters,
     pagination: { page, pageSize },
@@ -106,7 +106,7 @@ export async function getPosts(options: GetPostsOptions = {}): Promise<StrapiLis
 
 /** Get a single blog post by slug */
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-  const res = await strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+  const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
     filters: { slug: { $eq: slug } },
     populate: POPULATE_FULL,
     pagination: { page: 1, pageSize: 1 },
@@ -123,7 +123,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
  * Used in generateMetadata() to avoid fetching full content
  */
 export async function getPostBySlugForMetadata(slug: string): Promise<BlogPost | null> {
-  const res = await strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+  const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
     filters: { slug: { $eq: slug } },
     populate: POPULATE_METADATA,
     pagination: { page: 1, pageSize: 1 },
@@ -138,7 +138,7 @@ export async function getPostBySlugForMetadata(slug: string): Promise<BlogPost |
 /** Get a blog post by documentId */
 export async function getPostById(documentId: string): Promise<BlogPost | null> {
   try {
-    const res = await strapiFetch<StrapiSingle<BlogPost>>(`/blog-posts/${documentId}`, {
+    const res = await cmsFetch<CmsSingle<BlogPost>>(`/blog-posts/${documentId}`, {
       populate: POPULATE_FULL,
       next: { revalidate: 3600, tags: [`blog-post-${documentId}`] },
     })
@@ -155,7 +155,7 @@ export async function getAllPostSlugs(): Promise<string[]> {
   let pageCount = 1
 
   while (page <= pageCount) {
-    const res = await strapiFetch<StrapiList<Pick<BlogPost, 'slug'>>>('/blog-posts', {
+    const res = await cmsFetch<CmsList<Pick<BlogPost, 'slug'>>>('/blog-posts', {
       populate: [],
       fields: ['slug'],
       pagination: { page, pageSize: 100 },
@@ -185,7 +185,7 @@ export async function checkDuplicatePost(
     if (excludeDocumentId) {
       filters['documentId'] = { $ne: excludeDocumentId }
     }
-    const res = await strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+    const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
       filters,
       populate: ['thumbnail'],
       pagination: { page: 1, pageSize: 1 },
@@ -206,7 +206,7 @@ export async function getRelatedPosts(post: BlogPost, limit = 4): Promise<BlogPo
     if (post.categories && post.categories.length > 0) {
       filters['categories'] = { slug: { $in: post.categories.map(c => c.slug) } }
     }
-    const res = await strapiFetch<StrapiList<BlogPost>>('/blog-posts', {
+    const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
       filters,
       sort: ['publishedAt:desc'],
       pagination: { page: 1, pageSize: limit },
@@ -228,7 +228,7 @@ export async function getRelatedPosts(post: BlogPost, limit = 4): Promise<BlogPo
 export async function incrementPostViews(documentId: string): Promise<void> {
   const strapiUrl = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
-  await fetch(`${strapiUrl}/api/blog-posts/${documentId}/view`, {
+  await fetch(`${strapiUrl}/api/posts/${documentId}/view`, {
     method: 'POST',
     cache: 'no-store',
   }).catch(() => { }) // fire-and-forget
@@ -245,7 +245,7 @@ export async function getCategories(): Promise<Category[]> {
     let pageCount = 1
 
     while (page <= pageCount) {
-      const res = await strapiFetch<StrapiList<Category>>('/categories', {
+      const res = await cmsFetch<CmsList<Category>>('/categories', {
         sort: ['order:asc', 'name:asc'],
         populate: ['parent'],
         pagination: { page, pageSize: 100 },
@@ -274,7 +274,7 @@ export async function getAllTags(): Promise<BlogTag[]> {
     let pageCount = 1
 
     while (page <= pageCount) {
-      const res = await strapiFetch<StrapiList<BlogTag>>('/blog-tags', {
+      const res = await cmsFetch<CmsList<BlogTag>>('/blog-tags', {
         sort: ['name:asc'],
         pagination: { page, pageSize: 100 },
         next: { revalidate: 3600, tags: ['blog-tags'] },
@@ -300,7 +300,7 @@ export interface BlogArchiveStat {
 
 export async function getBlogArchiveIndex(): Promise<BlogArchiveStat[]> {
   try {
-    const res = await strapiFetch<{ data: BlogArchiveStat[] }>('/blog-posts/archive-index', {
+    const res = await cmsFetch<{ data: BlogArchiveStat[] }>('/blog-posts/archive-index', {
       next: { revalidate: 3600, tags: ['blog-posts'] },
     })
     return res.data ?? []
@@ -309,12 +309,12 @@ export async function getBlogArchiveIndex(): Promise<BlogArchiveStat[]> {
   }
 }
 
-export async function getBlogArchive(year: number, month: number, page = 1, pageSize = 12): Promise<StrapiList<BlogPost>> {
+export async function getBlogArchive(year: number, month: number, page = 1, pageSize = 12): Promise<CmsList<BlogPost>> {
   const url = Number.isNaN(month)
     ? `/blog-posts/archive?year=${year}&page=${page}&pageSize=${pageSize}`
     : `/blog-posts/archive?year=${year}&month=${month}&page=${page}&pageSize=${pageSize}`
 
-  return strapiFetch<StrapiList<BlogPost>>(url, {
+  return cmsFetch<CmsList<BlogPost>>(url, {
     next: { revalidate: 3600, tags: ['blog-posts'] },
   })
 }

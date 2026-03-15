@@ -13,6 +13,7 @@ export const SutraVolumes: CollectionConfig = {
     plural: t("Quyển kinh", "Sutra volumes"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "title",
     defaultColumns: ["title", "sutra", "volumeNumber", "sortOrder", "updatedAt"],
   },

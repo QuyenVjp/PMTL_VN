@@ -13,3 +13,11 @@ export function getRequestIp(headers: Headers): string | null {
 export function getRequestIpHash(headers: Headers): string {
   return buildReporterIpHash(getRequestIp(headers));
 }
+
+export function getRequestMetadata(headers: Headers) {
+  return {
+    requestId: headers.get("x-request-id") ?? headers.get("x-correlation-id") ?? "",
+    ipHash: getRequestIpHash(headers),
+    userAgent: headers.get("user-agent") ?? "",
+  };
+}

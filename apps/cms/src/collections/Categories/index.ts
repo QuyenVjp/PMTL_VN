@@ -13,6 +13,7 @@ export const Categories: CollectionConfig = {
     plural: t("Chủ đề", "Categories"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     defaultColumns: ["name", "slug", "order", "isActive", "updatedAt"],
     useAsTitle: "name",
   },

@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-import { STRAPI_URL } from '@/lib/strapi'
+import { CMS_API_URL } from '@/lib/cms'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +15,7 @@ export async function GET() {
   if (!jwt) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   try {
-    const res = await fetch(`${STRAPI_URL}/api/blog-reader-states/my/summary`, {
+    const res = await fetch(`${CMS_API_URL}/api/blog-reader-states/my/summary`, {
       headers: { Authorization: `Bearer ${jwt}` },
       cache: 'no-store',
     })

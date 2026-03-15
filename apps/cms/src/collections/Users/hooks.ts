@@ -1,3 +1,6 @@
+import type { Payload } from "payload";
+
+import { appendCollectionAuditLog } from "@/hooks/append-audit-log";
 import { ensureUserProfileDefaults, normalizeUserProfileInput } from "./service";
 
 type UserHookArgs = {
@@ -8,6 +11,18 @@ type UserHookArgs = {
     phone?: string | null;
     bio?: string | null;
   };
+  doc?: Record<string, unknown>;
+  req?: {
+    payload?: Payload;
+    user?: {
+      id?: string | number | null;
+      role?: string | null;
+    } | null;
+  };
+  collection?: {
+    slug?: string;
+  };
+  operation?: string;
 };
 
 export const userHooks = {
@@ -18,6 +33,16 @@ export const userHooks = {
       }
 
       return ensureUserProfileDefaults(normalizeUserProfileInput(data));
+    },
+  ],
+  afterChange: [
+    async ({ req, doc, collection, operation }: UserHookArgs) => {
+      await appendCollectionAuditLog({
+        req,
+        doc,
+        collection,
+        operation,
+      });
     },
   ],
 };

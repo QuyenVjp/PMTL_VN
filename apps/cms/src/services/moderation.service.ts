@@ -83,3 +83,33 @@ export async function syncEntityModerationSummary(
 export function applyModerationDecision() {
   return;
 }
+
+export async function applyModerationDecisionToTarget(
+  payload: Payload,
+  input: {
+    collection: ModeratedCollection;
+    id: string | number;
+    decision: "approved" | "rejected" | "flagged" | "hidden";
+  },
+) {
+  if (input.collection === "guestbookEntries") {
+    return payload.update({
+      collection: "guestbookEntries",
+      id: input.id,
+      data: {
+        approvalStatus: input.decision === "approved" ? "approved" : "rejected",
+      },
+      overrideAccess: true,
+    });
+  }
+
+  return payload.update({
+    collection: input.collection,
+    id: input.id,
+    data: {
+      moderationStatus: input.decision,
+      isHidden: input.decision === "hidden" || input.decision === "rejected",
+    },
+    overrideAccess: true,
+  });
+}

@@ -7,7 +7,7 @@ Monorepo cho dự án web dùng Next.js 16, Payload CMS, PostgreSQL, Meilisearch
 - Rõ domain, rõ trách nhiệm từng file.
 - Solo developer có thể sửa nhanh, AI đọc vào hiểu ngay điểm cần thay đổi.
 - Giai đoạn 1 chạy gọn với `web + cms + postgres + meilisearch + caddy`.
-- Giai đoạn 2 mở rộng thêm `redis + worker + queue + monitoring + backup`.
+- Giai đoạn 2 hiện đã bật `redis + worker + BullMQ` cho search sync, moderation notification, push dispatch và email notification.
 
 ## Cấu trúc chính
 
@@ -39,8 +39,8 @@ pnpm dev
 `pnpm dev` bây giờ sẽ:
 
 - tự tạo `infra/docker/.env.dev` từ file mẫu nếu còn thiếu
-- bật `postgres + meilisearch` bằng Docker
-- chạy `apps/web` và `apps/cms` local với hot reload
+- bật `postgres + meilisearch + redis` bằng Docker
+- chạy `apps/web`, `apps/cms` và `cms worker` local với hot reload
 
 Nếu chỉ muốn bật hạ tầng dev:
 
@@ -68,13 +68,17 @@ docker compose -f infra/docker/compose.dev.yml up --build
 
 ## Scripts quan trọng
 
-- `pnpm dev`: bật infra dev bằng Docker và chạy web + cms local.
+- `pnpm dev`: bật infra dev bằng Docker và chạy web + cms + worker local.
 - `pnpm dev:apps`: chỉ chạy web + cms local.
-- `pnpm dev:infra`: chỉ bật postgres + meilisearch cho local dev.
+- `pnpm dev:worker`: chỉ chạy worker local.
+- `pnpm dev:infra`: chỉ bật postgres + meilisearch + redis cho local dev.
 - `pnpm dev:infra:down`: tắt hạ tầng dev local.
 - `pnpm build`: build toàn bộ workspace.
 - `pnpm lint`: lint toàn bộ workspace.
 - `pnpm typecheck`: kiểm tra TypeScript toàn bộ workspace.
+- `pnpm seed:demo`: nạp dữ liệu mẫu production-like vào CMS.
+- `pnpm reindex:posts`: enqueue batch reindex cho toàn bộ posts.
+- `pnpm smoke:test`: bắn smoke test vào CMS/web theo env hiện tại.
 - `pnpm docker:dev`: chạy stack local bằng Docker Compose.
 - `pnpm docker:prod`: chạy stack production compose.
 
@@ -98,3 +102,4 @@ docker compose -f infra/docker/compose.dev.yml up --build
 - Admin UI được phục vụ tại `apps/cms:/admin`.
 - REST API tiếp tục sống tại `apps/cms:/api/*`, nên `apps/web` không cần đổi boundary tích hợp.
 - Cấu trúc collection/access/hooks/service tiếp tục giữ nguyên để business logic không dính vào bootstrap framework.
+- `apps/cms` đồng thời có worker command riêng cho BullMQ: search sync, push dispatch, email notification và maintenance cleanup.

@@ -13,6 +13,7 @@ export const PracticeLogs: CollectionConfig = {
     plural: t("Nhật ký công phu", "Practice logs"),
   },
   admin: {
+    group: t("Tu học", "Tu học"),
     useAsTitle: "publicId",
     defaultColumns: ["user", "plan", "practiceDate", "isCompleted", "updatedAt"],
   },

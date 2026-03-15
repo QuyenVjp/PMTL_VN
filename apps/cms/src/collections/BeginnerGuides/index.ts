@@ -13,6 +13,7 @@ export const BeginnerGuides: CollectionConfig = {
     plural: t("Hướng dẫn nhập môn", "Beginner guides"),
   },
   admin: {
+    group: t("Nội dung", "Nội dung"),
     useAsTitle: "title",
     defaultColumns: ["title", "guideType", "_status", "order", "updatedAt"],
   },

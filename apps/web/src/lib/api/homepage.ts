@@ -3,9 +3,9 @@
 //  Server-side only — fetch settings from Strapi v5
 // ─────────────────────────────────────────────────────────────
 
-import { strapiFetch, getStrapiMediaUrl } from '@/lib/strapi'
+import { getCmsMediaUrl } from '@/lib/cms'
+import { cmsGet } from "@/lib/cms/client";
 import type {
-  StrapiSingle,
   SiteSetting,
   HeroSlide,
   StatItem,
@@ -15,7 +15,7 @@ import type {
   AwardItem,
   GallerySlide,
   StickyBannerConfig,
-} from '@/types/strapi'
+} from '@/types/cms'
 
 /**
  * Fetch toàn bộ cài đặt trang chủ từ Strapi (Single Type: setting)
@@ -23,37 +23,25 @@ import type {
  */
 export async function getHomepageSettings(): Promise<SiteSetting | null> {
   try {
-    const res = await strapiFetch<StrapiSingle<SiteSetting>>('/setting', {
-      populate: [
-        'logo',
-        'heroSlides',
-        'heroSlides.image',
-        'stats',
-        'phapBao',
-        'actionCards',
-        'featuredVideos',
-        'awards',
-        'gallerySlides',
-        'gallerySlides.image',
-        'stickyBanner'
-      ],
-      next: { revalidate: 300, tags: ['homepage-settings'] },
-    })
-    if (res.data) {
-      if (res.data.heroSlides) {
-        res.data.heroSlides = res.data.heroSlides.map((slide: any) => ({
+    const document = await cmsGet<SiteSetting>("/api/homepage", {
+      next: { revalidate: 300, tags: ["homepage-settings"] },
+    });
+
+    if (document) {
+      if (document.heroSlides) {
+        document.heroSlides = document.heroSlides.map((slide: any) => ({
           ...slide,
-          src: getStrapiMediaUrl(slide.image?.url) ?? slide.src ?? '/images/hero-bg.jpg',
+          src: getCmsMediaUrl(slide.image?.url) ?? slide.src ?? '/images/hero-bg.jpg',
         }))
       }
-      if (res.data.gallerySlides) {
-        res.data.gallerySlides = res.data.gallerySlides.map((slide: any) => ({
+      if (document.gallerySlides) {
+        document.gallerySlides = document.gallerySlides.map((slide: any) => ({
           ...slide,
-          src: getStrapiMediaUrl(slide.image?.url) ?? slide.src ?? '/images/hero-bg.jpg',
+          src: getCmsMediaUrl(slide.image?.url) ?? slide.src ?? '/images/hero-bg.jpg',
         }))
       }
-      if (res.data.featuredVideos) {
-        res.data.featuredVideos = res.data.featuredVideos.map((video: any) => ({
+      if (document.featuredVideos) {
+        document.featuredVideos = document.featuredVideos.map((video: any) => ({
           id: video.videoId || video.id || '',
           title: video.title || '',
           subtitle: video.subtitle || '',
@@ -63,24 +51,25 @@ export async function getHomepageSettings(): Promise<SiteSetting | null> {
           category: video.category || 'Video',
         }))
       }
-      if (res.data.phapBao) {
-        res.data.phapBao = res.data.phapBao.map((item: any) => ({
+      if (document.phapBao) {
+        document.phapBao = document.phapBao.map((item: any) => ({
           ...item,
           link: item.link || '#',
         }))
       }
-      if (res.data.actionCards) {
-        res.data.actionCards = res.data.actionCards.map((item: any) => ({
+      if (document.actionCards) {
+        document.actionCards = document.actionCards.map((item: any) => ({
           ...item,
           link: item.link || '#',
         }))
       }
 
-      if (res.data.stickyBanner) {
-        res.data.stickyBanner.buttonLink = res.data.stickyBanner.buttonLink || '#';
+      if (document.stickyBanner) {
+        document.stickyBanner.buttonLink = document.stickyBanner.buttonLink || '#';
       }
     }
-    return res.data ?? null
+
+    return document ?? null
   } catch (err) {
     console.error('[Homepage] Failed to fetch settings:', err)
     return null

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from "framer-motion";
-import type { AwardItem } from "@/types/strapi";
+import type { AwardItem } from "@/types/cms";
 
 interface AwardsSectionProps {
   awards: AwardItem[]

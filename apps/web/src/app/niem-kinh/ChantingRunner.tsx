@@ -13,7 +13,7 @@ import type {
   TodayChantItem,
   TodayChantResponse,
 } from '@/lib/api/chanting'
-import type { BlogPost, StrapiEvent } from '@/types/strapi'
+import type { BlogPost, CmsEvent } from '@/types/cms'
 import {
   findNextPendingChantItem,
   loadLastSelectedChantItem,
@@ -31,7 +31,7 @@ import {
   saveLocalChantTemplate,
   saveLocalSessionConfig,
 } from '@/lib/chanting-config'
-import { formatDateVN, truncate } from '@/lib/strapi-helpers'
+import { formatDateVN, truncate } from '@/lib/cms-helpers'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -63,7 +63,7 @@ interface Props {
   solarLabel: string
   lunarLabel: string
   recommendedPosts: BlogPost[]
-  upcomingEvents: StrapiEvent[]
+  upcomingEvents: CmsEvent[]
   chantingSetting: Pick<ChantingSetting, 'guidelinesTitle' | 'guidelinesSummary' | 'guidelineSections'>
 }
 

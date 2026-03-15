@@ -1,262 +1,195 @@
-// components/guestbook/GuestbookForm.tsx — Client component
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useActionState, useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+
 import { useAuth } from '@/contexts/AuthContext'
-import { useGuestbookSubmit } from '@/lib/query/guestbook'
-import { guestbookFormSchema, type GuestbookFormValues } from '@/lib/validation/guestbook'
+import {
+  guestbookKeys,
+} from '@/lib/query/guestbook'
 import { cn } from '@/lib/utils'
+import { ZenButton } from '@/components/ui-zen/zen-button'
+import { ZenField } from '@/components/ui-zen/zen-field'
+import { ZenInput } from '@/components/ui-zen/zen-input'
+import { ZenTextarea } from '@/components/ui-zen/zen-textarea'
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import {
+  initialGuestbookActionState,
+  submitGuestbookAction,
+} from '@/features/guestbook/actions/submit-guestbook-action'
 
 interface GuestbookFormProps {
   onSuccess: () => void
 }
 
+const QUESTION_TOPICS = [
+  'Tu học',
+  'Sức khỏe',
+  'Gia đình',
+  'Sự nghiệp',
+  'Cảm ngộ',
+  'Khác',
+] as const
+
 export default function GuestbookForm({ onSuccess }: GuestbookFormProps) {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const { user } = useAuth()
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const submitMutation = useGuestbookSubmit()
+  const [state, formAction, isPending] = useActionState(
+    submitGuestbookAction,
+    initialGuestbookActionState,
+  )
+  const [entryType, setEntryType] = useState<'message' | 'question'>('message')
+  const [message, setMessage] = useState('')
 
   const resolvedAuthorName = useMemo(
     () => user?.dharmaName || user?.fullName || user?.username || user?.email || '',
-    [user]
+    [user],
   )
 
-  const form = useForm<GuestbookFormValues>({
-    resolver: zodResolver(guestbookFormSchema),
-    defaultValues: {
-      authorName: resolvedAuthorName,
-      entryType: 'message',
-      questionCategory: '',
-      message: '',
-    },
-  })
-
-  const entryType = form.watch('entryType')
-  const messageValue = form.watch('message') ?? ''
-
   useEffect(() => {
-    form.setValue('authorName', resolvedAuthorName, {
-      shouldDirty: false,
-      shouldTouch: false,
-      shouldValidate: false,
-    })
-  }, [form, resolvedAuthorName])
-
-  useEffect(() => {
-    if (entryType !== 'question') {
-      form.setValue('questionCategory', '', {
-        shouldDirty: false,
-        shouldTouch: false,
-        shouldValidate: false,
-      })
+    if (!state.success) {
+      return
     }
-  }, [entryType, form])
 
-  async function handleSubmit(values: GuestbookFormValues) {
-    setError(null)
+    void queryClient.invalidateQueries({ queryKey: guestbookKeys.lists() })
+    router.refresh()
 
-    try {
-      await submitMutation.mutateAsync({
-        ...values,
-        authorName: (user ? resolvedAuthorName : values.authorName).trim(),
-        message: values.message.trim(),
-        questionCategory: values.entryType === 'question' ? values.questionCategory?.trim() || 'Tu học' : undefined,
-      })
+    const timeout = window.setTimeout(() => {
+      onSuccess()
+    }, 1200)
 
-      setSuccess(true)
-      form.reset({
-        authorName: user ? resolvedAuthorName : '',
-        entryType: 'message',
-        questionCategory: '',
-        message: '',
-      })
+    return () => window.clearTimeout(timeout)
+  }, [onSuccess, queryClient, router, state.success])
 
-      window.setTimeout(() => {
-        setSuccess(false)
-        onSuccess()
-      }, 3000)
-    } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : 'Không thể kết nối máy chủ. Vui lòng thử lại.')
-    }
-  }
-
-  if (success) {
+  if (state.success) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-md border border-gold/30 bg-gold/10 px-6 py-5 text-center"
+        className="rounded-xl border border-gold/30 bg-gold/10 px-6 py-5 text-center"
       >
-        <p className="ant-title mb-1 text-lg text-gold">Cảm ơn bạn!</p>
+        <p className="ant-title mb-1 text-lg text-gold">Đã ghi lưu bút</p>
         <p className="text-sm text-muted-foreground">
-          Lưu bút của bạn đã được ghi lại và hiển thị ngay trên trang.
+          {state.message ?? 'Lưu bút của bạn đang được làm mới trên trang.'}
         </p>
       </motion.div>
     )
   }
 
   return (
-    <Form {...form}>
-      <motion.form
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-4"
-      >
-        <FormField
-          control={form.control}
-          name="entryType"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <ToggleGroup
-                  type="single"
-                  value={field.value}
-                  onValueChange={(value) => {
-                    if (value) {
-                      field.onChange(value)
-                    }
-                  }}
-                  className="mb-2 w-fit rounded-md border border-border/60 bg-secondary/50 p-1"
-                >
-                  <ToggleGroupItem value="message" className="rounded px-4 py-1.5 text-xs font-semibold">
-                    Lưu bút
-                  </ToggleGroupItem>
-                  <ToggleGroupItem value="question" className="rounded px-4 py-1.5 text-xs font-semibold">
-                    Đặt câu hỏi
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </FormControl>
-            </FormItem>
-          )}
-        />
+    <motion.form
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      action={formAction}
+      className="flex flex-col gap-4"
+    >
+      <input type="hidden" name="entryType" value={entryType} />
 
-        {user ? (
-          <div className="rounded-md border border-gold/20 bg-gold/5 px-4 py-3">
-            <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-gold/70">Tài khoản gửi lưu bút</p>
-            <p className="text-sm font-medium text-foreground">
-              {user.dharmaName || user.fullName || user.username || user.email}
-            </p>
-          </div>
-        ) : (
-          <FormField
-            control={form.control}
-            name="authorName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs text-muted-foreground">Tên của bạn *</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Tên hoặc pháp danh"
-                    maxLength={100}
-                    disabled={submitMutation.isPending}
-                    className="px-4 py-2.5 text-sm"
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-        )}
-
-        {entryType === 'question' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden">
-            <FormField
-              control={form.control}
-              name="questionCategory"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs text-muted-foreground">Chủ đề câu hỏi</FormLabel>
-                  <Select
-                    value={field.value || ''}
-                    onValueChange={field.onChange}
-                    disabled={submitMutation.isPending}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="px-4 py-2.5 text-sm">
-                        <SelectValue placeholder="Chọn chủ đề" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="Tu học">Tu học</SelectItem>
-                        <SelectItem value="Sức khoẻ">Sức khoẻ</SelectItem>
-                        <SelectItem value="Gia đình">Gia đình</SelectItem>
-                        <SelectItem value="Sự nghiệp">Sự nghiệp</SelectItem>
-                        <SelectItem value="Cảm ngộ">Cảm ngộ</SelectItem>
-                        <SelectItem value="Khác">Khác</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </motion.div>
-        )}
-
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-xs text-muted-foreground">
-                {entryType === 'question' ? 'Nội dung câu hỏi *' : 'Lưu bút *'}
-              </FormLabel>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder="Ký gửi tâm tư, cảm nhận, lời chúc, hoặc bất cứ điều gì bạn muốn chia sẻ..."
-                  maxLength={2000}
-                  rows={4}
-                  disabled={submitMutation.isPending}
-                  className="min-h-[120px] resize-none px-4 py-2.5 text-sm focus-visible:border-gold/50 focus-visible:ring-gold/20 focus-visible:ring-offset-0"
-                />
-              </FormControl>
-              <div className="flex items-center justify-between gap-3">
-                <FormMessage className="text-xs" />
-                <p className="text-xs text-muted-foreground/60">{messageValue.length}/2000</p>
-              </div>
-            </FormItem>
-          )}
-        />
-
-        <AnimatePresence>
-          {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-xs text-destructive"
-              role="alert"
-            >
-              {error}
-            </motion.p>
-          )}
-        </AnimatePresence>
-
+      <div className="mb-1 flex w-fit rounded-xl border border-border/60 bg-secondary/50 p-1">
         <Button
-          type="submit"
-          disabled={submitMutation.isPending}
-          className={cn(
-            'w-full rounded-md bg-gold px-6 py-2.5 text-sm font-semibold text-black hover:bg-gold/90 sm:w-auto',
-            submitMutation.isPending && 'cursor-not-allowed opacity-60'
-          )}
+          type="button"
+          variant={entryType === 'message' ? 'sacred' : 'ghost'}
+          size="sm"
+          className="rounded-lg"
+          onClick={() => setEntryType('message')}
         >
-          {submitMutation.isPending ? 'Đang gửi...' : entryType === 'question' ? 'Gửi câu hỏi' : 'Gửi lưu bút'}
+          Lưu bút
         </Button>
-      </motion.form>
-    </Form>
+        <Button
+          type="button"
+          variant={entryType === 'question' ? 'sacred' : 'ghost'}
+          size="sm"
+          className="rounded-lg"
+          onClick={() => setEntryType('question')}
+        >
+          Đặt câu hỏi
+        </Button>
+      </div>
+
+      {user ? (
+        <div className="rounded-xl border border-gold/20 bg-gold/5 px-4 py-3">
+          <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-gold/70">Tài khoản gửi lưu bút</p>
+          <p className="text-sm font-medium text-foreground">
+            {resolvedAuthorName}
+          </p>
+          <input type="hidden" name="authorName" value={resolvedAuthorName} />
+        </div>
+      ) : (
+        <ZenField
+          label="Tên của bạn"
+          htmlFor="guestbook-authorName"
+          error={state.fieldErrors.authorName ?? null}
+        >
+          <ZenInput
+            id="guestbook-authorName"
+            name="authorName"
+            placeholder="Tên hoặc pháp danh"
+            maxLength={100}
+            disabled={isPending}
+          />
+        </ZenField>
+      )}
+
+      {entryType === 'question' && (
+        <ZenField
+          label="Chủ đề câu hỏi"
+          htmlFor="guestbook-questionCategory"
+          error={state.fieldErrors.questionCategory ?? null}
+        >
+          <select
+            id="guestbook-questionCategory"
+            name="questionCategory"
+            defaultValue=""
+            disabled={isPending}
+            className="flex h-12 w-full rounded-xl border border-border/80 bg-background/80 px-4 text-sm text-foreground transition-all duration-200 focus:border-gold/45 focus:outline-none focus:ring-2 focus:ring-gold/20"
+          >
+            <option value="">Chọn chủ đề</option>
+            {QUESTION_TOPICS.map((topic) => (
+              <option key={topic} value={topic}>
+                {topic}
+              </option>
+            ))}
+          </select>
+        </ZenField>
+      )}
+
+      <ZenField
+        label={entryType === 'question' ? 'Nội dung câu hỏi' : 'Lưu bút'}
+        htmlFor="guestbook-message"
+        error={state.fieldErrors.message ?? null}
+        hint={<span>{message.length}/2000</span>}
+      >
+        <ZenTextarea
+          id="guestbook-message"
+          name="message"
+          placeholder="Ký gửi tâm tư, cảm nhận, lời chúc, hoặc điều bạn muốn hỏi..."
+          maxLength={2000}
+          disabled={isPending}
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+        />
+      </ZenField>
+
+      {state.message && !state.success ? (
+        <p className="text-xs text-destructive" role="alert">
+          {state.message}
+        </p>
+      ) : null}
+
+      <ZenButton
+        type="submit"
+        variant="sacred"
+        className={cn(
+          'w-full sm:w-auto',
+          isPending && 'cursor-not-allowed opacity-70',
+        )}
+        disabled={isPending}
+      >
+        {isPending ? 'Đang gửi...' : entryType === 'question' ? 'Gửi câu hỏi' : 'Gửi lưu bút'}
+      </ZenButton>
+    </motion.form>
   )
 }

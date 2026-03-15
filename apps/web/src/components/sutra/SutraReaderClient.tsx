@@ -13,7 +13,7 @@ import {
   fetchMyReadingProgress,
   upsertMyReadingProgress,
 } from '@/lib/api/sutra-reader'
-import type { SutraBookmark, SutraGlossary } from '@/types/strapi'
+import type { SutraBookmark, SutraGlossary } from '@/types/cms'
 import type { SutraReaderData } from '@/lib/api/sutra'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

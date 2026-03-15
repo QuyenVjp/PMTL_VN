@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 import { NextRequest } from 'next/server'
 
-const STRAPI_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     '127.0.0.1'
 
   try {
-    const res = await fetch(`${STRAPI_URL}/api/guestbook-entries/submit`, {
+    const res = await fetch(`${CMS_API_URL}/api/guestbook/submit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

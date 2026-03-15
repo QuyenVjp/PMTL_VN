@@ -79,7 +79,8 @@
   - `pushSubscriptions`
   - `pushJobs`
 - `pushSubscriptions` là source of truth cho browser subscription state.
-- `pushJobs` là control-plane collection cho dispatch orchestration phase sau.
+- `pushJobs` là control-plane collection cho dispatch orchestration đang được worker xử lý qua Redis + BullMQ.
+- Self-send prevention hiện đi qua `includeUserIds` / `excludeUserIds` trong push job payload.
 
 ## Moderation / Audit / Control Plane
 
@@ -87,7 +88,7 @@
   - `requestGuards`
   - `moderationReports`
   - `auditLogs`
-- `requestGuards` là DB-backed guard store phase 1.
+- `requestGuards` là DB-backed guard store phase 1 và tự chuyển sang Redis-backed adapter khi `REDIS_URL` được cấu hình.
 - `moderationReports` là luồng report source-of-truth, sau đó sync summary ngược lên entity.
 - `auditLogs` là append-only trail cho admin/system actions.
 
@@ -102,4 +103,5 @@
 
 - Source of truth vẫn là Postgres/Payload document.
 - Schema đã chuẩn bị sẵn `contentPlainText` và `normalizedSearchText`.
-- Search sync sang Meilisearch vẫn là integration concern, không phải public contract.
+- Search posts public hiện đi qua compatibility route `/api/posts/search`.
+- Search sync sang Meilisearch hiện đi qua queue-first flow; route `/api/posts/search/reindex` cho phép editor/admin enqueue reindex batch.

@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -7,6 +7,11 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 import { createHttpError, getErrorMessage } from '@/lib/http-error'
+import { ZenButton } from '@/components/ui-zen/zen-button'
+import { ZenField } from '@/components/ui-zen/zen-field'
+import { ZenInput } from '@/components/ui-zen/zen-input'
+import { ZenPanel } from '@/components/ui-zen/zen-panel'
+import { submitRegisterAction, initialRegisterActionState } from '@/features/auth/actions/register-action'
 
 const EyeIcon = ({ open }: { open: boolean }) =>
   open ? (
@@ -26,24 +31,19 @@ const Field = ({
   label: string; type?: string; value: string; onChange: (v: string) => void
   placeholder?: string; error?: string; children?: React.ReactNode; id: string
 }) => (
-  <div className="space-y-1.5">
-    <label htmlFor={id} className="block text-sm font-medium text-foreground">
-      {label}
-    </label>
+  <ZenField label={label} htmlFor={id} error={error ?? null}>
     <div className="relative">
-      <input
+      <ZenInput
         id={id}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full px-4 py-3 bg-secondary border rounded-lg text-sm text-foreground placeholder:text-muted-foreground transition-all outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold/60 ${error ? 'border-red-500/60' : 'border-border hover:border-gold/30'
-          }`}
+        className={error ? 'border-red-500/60' : undefined}
       />
       {children}
     </div>
-    {error && <p className="text-xs text-red-400">{error}</p>}
-  </div>
+  </ZenField>
 )
 
 // ─── Login Form ───────────────────────────────────────────────
@@ -139,13 +139,14 @@ const LoginForm = () => {
           Quên mật khẩu?
         </Link>
       </div>
-      <button
+      <ZenButton
         type="submit"
         disabled={loading}
-        className="w-full py-3 bg-gold text-black text-sm font-semibold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-wait"
+        variant="sacred"
+        className="w-full"
       >
         {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-      </button>
+      </ZenButton>
     </form>
   )
 }
@@ -195,58 +196,40 @@ const RegisterForm = () => {
   const [confirm, setConfirm] = useState('')
   const [showPwd, setShowPwd] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [agree, setAgree] = useState(false)
+  const [state, formAction, isPending] = useActionState(
+    submitRegisterAction,
+    initialRegisterActionState
+  )
+  const success = Boolean(state?.success)
+  const message = state?.message
+  const user = state?.user
+  const fieldErrors = state?.fieldErrors ?? {}
 
-  const validate = () => {
-    const e: Record<string, string> = {}
-    if (!name.trim()) e.name = 'Vui lòng nhập họ và tên'
-    if (!email.trim()) e.email = 'Vui lòng nhập email'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Email không hợp lệ'
-    if (!password) e.password = 'Vui lòng nhập mật khẩu'
-    else if (password.length < 8) e.password = 'Mật khẩu từ 8 ký tự trở lên'
-    if (password !== confirm) e.confirm = 'Mật khẩu xác nhận không khớp'
-    if (!agree) e.agree = 'Vui lòng đồng ý với điều khoản'
-    return e
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const err = validate()
-    if (Object.keys(err).length) { setErrors(err); return }
-    setErrors({})
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: email,
-          email,
-          password
-        }),
-      })
-
-      if (!res.ok) {
-        throw await createHttpError(res, 'Đăng ký thất bại')
-      }
-
-      const data = await res.json()
-
-      login(data.user)
-      toast.success('Đăng ký thành công')
-      setSuccess(true)
-      setTimeout(() => router.push('/'), 2000)
-    } catch (error) {
-      const message = getErrorMessage(error, 'Lỗi kết nối máy chủ')
-      setErrors({ submit: message })
-      toast.error(message)
-      setLoading(false)
+  useEffect(() => {
+    if (!success || !user) {
+      return
     }
-  }
+
+    login({
+      id: user.id,
+      email: user.email,
+      username: user.email,
+      confirmed: true,
+      blocked: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      role: user.role,
+      fullName: user.displayName,
+    })
+    toast.success('Đăng ký thành công')
+
+    const timeout = window.setTimeout(() => {
+      router.push('/')
+    }, 1400)
+
+    return () => window.clearTimeout(timeout)
+  }, [login, router, success, user])
 
   if (success) return (
     <motion.div
@@ -270,20 +253,26 @@ const RegisterForm = () => {
   )
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {errors.submit && (
+    <form action={formAction} className="space-y-4">
+      {message && !success && (
         <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-xs text-red-400">{errors.submit}</p>
+          <p className="text-xs text-red-400">{message}</p>
         </div>
       )}
-      <Field id="reg-name" label="Họ và tên" value={name} onChange={setName} placeholder="Nguyễn Văn A" error={errors.name} />
-      <Field id="reg-email" label="Email" type="email" value={email} onChange={setEmail} placeholder="email@example.com" error={errors.email} />
-      <Field id="reg-password" label="Mật khẩu" type={showPwd ? 'text' : 'password'} value={password} onChange={setPassword} placeholder="Tối thiểu 8 ký tự" error={errors.password}>
+      <Field id="reg-name" label="Họ và tên" value={name} onChange={setName} placeholder="Nguyễn Văn A" error={fieldErrors.displayName}>
+        <input type="hidden" name="displayName" value={name} />
+      </Field>
+      <Field id="reg-email" label="Email" type="email" value={email} onChange={setEmail} placeholder="email@example.com" error={fieldErrors.email}>
+        <input type="hidden" name="email" value={email} />
+      </Field>
+      <Field id="reg-password" label="Mật khẩu" type={showPwd ? 'text' : 'password'} value={password} onChange={setPassword} placeholder="Tối thiểu 8 ký tự" error={fieldErrors.password}>
+        <input type="hidden" name="password" value={password} />
         <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
           <EyeIcon open={showPwd} />
         </button>
       </Field>
-      <Field id="reg-confirm" label="Xác nhận mật khẩu" type={showConfirm ? 'text' : 'password'} value={confirm} onChange={setConfirm} placeholder="Nhập lại mật khẩu" error={errors.confirm}>
+      <Field id="reg-confirm" label="Xác nhận mật khẩu" type={showConfirm ? 'text' : 'password'} value={confirm} onChange={setConfirm} placeholder="Nhập lại mật khẩu" error={fieldErrors.confirmPassword}>
+        <input type="hidden" name="confirmPassword" value={confirm} />
         <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
           <EyeIcon open={showConfirm} />
         </button>
@@ -292,6 +281,7 @@ const RegisterForm = () => {
         <label className="flex items-start gap-2.5 cursor-pointer">
           <input
             type="checkbox"
+            name="agreeToTerms"
             checked={agree}
             onChange={(e) => setAgree(e.target.checked)}
             className="mt-0.5 rounded border-border accent-gold"
@@ -300,15 +290,16 @@ const RegisterForm = () => {
             Tôi đồng ý với điều khoản sử dụng và chính sách quyền riêng tư
           </span>
         </label>
-        {errors.agree && <p className="text-xs text-red-400 mt-1">{errors.agree}</p>}
+        {fieldErrors.agreeToTerms && <p className="text-xs text-red-400 mt-1">{fieldErrors.agreeToTerms}</p>}
       </div>
-      <button
+      <ZenButton
         type="submit"
-        disabled={loading}
-        className="w-full py-3 bg-gold text-black text-sm font-semibold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-wait"
+        disabled={isPending}
+        variant="sacred"
+        className="w-full"
       >
-        {loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
-      </button>
+        {isPending ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
+      </ZenButton>
     </form>
   )
 }
@@ -341,7 +332,7 @@ export default function AuthPage() {
             </p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl shadow-xl p-6 md:p-8">
+          <ZenPanel className="p-6 md:p-8">
             <div className="flex bg-secondary rounded-xl p-1 mb-6">
               {(['login', 'register'] as const).map((t) => (
                 <button
@@ -374,7 +365,7 @@ export default function AuthPage() {
             </AnimatePresence>
 
             <GoogleLoginSection />
-          </div>
+          </ZenPanel>
 
           <p className="text-center text-xs text-muted-foreground mt-6">
             Mọi thông tin cá nhân đều được bảo mật tuyệt đối
@@ -384,3 +375,6 @@ export default function AuthPage() {
     </div>
   )
 }
+
+
+

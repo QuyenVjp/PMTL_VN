@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { fetchPushStats, strapiAdminFetch } from '@/lib/push-server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { fetchPushStats, fetchRecentNotifications } from '@/lib/push-server'
 
 export async function GET(req: NextRequest) {
   const secret = process.env.PUSH_SEND_SECRET
@@ -12,10 +13,7 @@ export async function GET(req: NextRequest) {
   try {
     const [subscriptionStats, jobs] = await Promise.all([
       fetchPushStats(),
-      strapiAdminFetch<{ data: Array<Record<string, unknown>> }>(
-        '/push-jobs?sort[0]=createdAt:desc&pagination[limit]=20',
-        { method: 'GET' }
-      ),
+      fetchRecentNotifications(20),
     ])
 
     return NextResponse.json({
