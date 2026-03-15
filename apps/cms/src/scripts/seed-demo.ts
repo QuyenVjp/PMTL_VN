@@ -1,6 +1,9 @@
 import { getPayload } from "payload";
 
 import config from "@/payload.config";
+import { getLogger, withError } from "@/services/logger.service";
+
+const logger = getLogger("scripts:seed-demo");
 import { wrapLexicalContent } from "@/hooks/lexical-migration";
 
 type WhereEquals = {
@@ -606,24 +609,24 @@ async function seedSystem(payload: Awaited<ReturnType<typeof getPayload>>, moder
 async function main() {
   const payload = await getPayload({ config });
 
-  console.info("[seed-demo] Seeding globals...");
+  logger.info("Seeding globals");
   await seedGlobals(payload);
-  console.info("[seed-demo] Seeding users...");
+  logger.info("Seeding users");
   const users = await seedUsers(payload);
-  console.info("[seed-demo] Seeding editorial...");
+  logger.info("Seeding editorial");
   const editorial = await seedEditorial(payload);
-  console.info("[seed-demo] Seeding community...");
+  logger.info("Seeding community");
   await seedCommunity(payload, users.member!.id, editorial.posts[0]!.id);
-  console.info("[seed-demo] Seeding chanting...");
+  logger.info("Seeding chanting");
   await seedChanting(payload, users.member!.id);
-  console.info("[seed-demo] Seeding sutra...");
+  logger.info("Seeding sutra");
   await seedSutra(payload, editorial.tags[0]!.id);
-  console.info("[seed-demo] Seeding system...");
+  logger.info("Seeding system");
   await seedSystem(payload, users.moderator!.id);
-  console.info("[seed-demo] Completed.");
+  logger.info("Demo seed completed");
 
-  console.log(
-    JSON.stringify(
+  process.stdout.write(
+    `${JSON.stringify(
       {
         ok: true,
         credentials: {
@@ -639,13 +642,13 @@ async function main() {
       },
       null,
       2,
-    ),
+    )}\n`,
   );
 
   process.exit(0);
 }
 
 void main().catch((error) => {
-  console.error("[seed-demo]", error);
+  logger.error(withError(undefined, error), "Demo seed failed");
   process.exit(1);
 });

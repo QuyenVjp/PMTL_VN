@@ -56,5 +56,5 @@ In web:
 - keep admin and moderation surfaces behind role checks
 - add guardrails to login, forgot password, comments, abuse reports, and search endpoints as those features are implemented
 
-## Phase Discipline
-Do not add Redis, queues, or worker-only security assumptions during phase 1 unless the task explicitly requires phase-2 infrastructure.
+## Infrastructure Discipline
+Add Redis, queues, or worker-specific security assumptions only when the runtime actually uses them, and document the network boundary, secrets, and failure mode.

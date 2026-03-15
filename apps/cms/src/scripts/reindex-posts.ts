@@ -1,7 +1,10 @@
 import { getPayload } from "payload";
 
 import config from "@/payload.config";
+import { getLogger, withError } from "@/services/logger.service";
 import { enqueuePostReindexBatch } from "@/services/search.service";
+
+const logger = getLogger("scripts:reindex-posts");
 
 function readNumberArg(name: string, fallback: number) {
   const flag = process.argv.find((arg) => arg.startsWith(`--${name}=`));
@@ -41,8 +44,15 @@ async function main() {
 
   const queuedTotal = summaries.reduce((sum, item) => sum + item.queuedCount, 0);
 
-  console.log(
-    JSON.stringify(
+  logger.info(
+    {
+      queuedTotal,
+      batches: summaries,
+    },
+    "Queued post reindex batches",
+  );
+  process.stdout.write(
+    `${JSON.stringify(
       {
         ok: true,
         queuedTotal,
@@ -50,13 +60,13 @@ async function main() {
       },
       null,
       2,
-    ),
+    )}\n`,
   );
 
   process.exit(0);
 }
 
 void main().catch((error) => {
-  console.error("[reindex-posts]", error);
+  logger.error(withError(undefined, error), "Post reindex script failed");
   process.exit(1);
 });

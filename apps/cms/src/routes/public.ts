@@ -2,6 +2,9 @@ import { getPayload } from "payload";
 import type { CollectionSlug, DataFromCollectionSlug, PaginatedDocs } from "payload";
 
 import config from "@/payload.config";
+import { getLogger, withError } from "@/services/logger.service";
+
+const logger = getLogger("routes:public");
 
 export async function getCmsPayload() {
   return getPayload({
@@ -33,7 +36,7 @@ export function mapRouteError(error: unknown): Response {
   }
 
   const message = error instanceof Error ? error.message : "CMS route error.";
-  console.error("[cms-route-error]", error);
+  logger.error(withError({ message }, error), "Unhandled CMS public route error");
 
   return jsonResponse(500, {
     error: {

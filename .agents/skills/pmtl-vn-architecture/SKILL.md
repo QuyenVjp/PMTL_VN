@@ -16,7 +16,7 @@ The current stack assumptions are:
 - Meilisearch powers search
 - Caddy terminates SSL and reverse proxies services
 - Docker Compose is the operational boundary
-- Redis, workers, and queues are phase 2 unless explicitly requested
+- Redis, workers, and queues are allowed when production runtime, abuse protection, or async processing requires them
 
 ## Core Rules
 Follow these rules on every task:
@@ -25,7 +25,7 @@ Follow these rules on every task:
 - Keep Payload collections thin: schema in collection files, business logic in services
 - Keep `packages/shared` framework-agnostic: types, enums, zod schemas, constants, validators, mappers, pure utils only
 - Do not move business logic into Payload collection config or Next route/page files
-- Do not introduce Redis, BullMQ, workers, or monitoring unless the task explicitly enters phase 2
+- Introduce Redis, BullMQ, workers, and monitoring only when there is a concrete production or operational need, and document the runtime contract
 - Prefer clear, maintainable code over clever abstractions
 - Update docs and env examples when architecture, contracts, or runtime requirements change
 
@@ -156,8 +156,8 @@ Supported and preferred:
 - Payload auth
 - docs/conventions/contracts maintenance
 
-### Phase 2
-Only add when explicitly requested:
+### Operational Expansion
+Add when the production runtime benefits clearly justify the added complexity:
 - Redis
 - worker service
 - BullMQ or jobs/queue infrastructure
@@ -210,7 +210,7 @@ When given a task:
 ## Common Bad Decisions
 - Mixing framework internals into `packages/shared`
 - Putting all CMS logic inside a single collection file
-- Adding Redis before phase 2 work actually needs it
+- Adding Redis without a concrete runtime use case or deployment plan
 - Adding a second auth system without a clear reason
 - Building production images directly on the VPS by default
 - Exposing internal services publicly without an explicit need

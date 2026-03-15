@@ -9,14 +9,14 @@ Preferred production workflow:
 Prefer not to use the VPS as the default build machine.
 
 ## Service Boundary
-Phase 1 services:
+Core services:
 - web
 - cms
 - postgres
 - meilisearch
 - caddy
 
-Phase 2, only when explicitly requested:
+Production expansion services:
 - redis
 - worker
 - monitoring services

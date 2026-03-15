@@ -85,7 +85,7 @@
 - Không đọc `process.env` trực tiếp trong component. Luôn đi qua `lib/env`.
 - Compose env file ở `infra/docker`.
 - Auth env nền tảng hiện tại gồm `AUTH_RESET_PASSWORD_URL` và `PAYLOAD_AUTH_DISABLE_EMAIL`.
-- Queue/notification env phase 2 hiện có `REDIS_URL`, `VAPID_*`, `SMTP_*`, `WORKER_MAINTENANCE_INTERVAL_MS`.
+- Queue/notification env runtime hiện có `REDIS_URL`, `VAPID_*`, `SMTP_*`, `WORKER_MAINTENANCE_INTERVAL_MS`.
 - `PAYLOAD_CONFIG_PATH` được dùng bởi script CLI của `apps/cms`, không phải env contract giữa services.
 
 ## 6. API contracts

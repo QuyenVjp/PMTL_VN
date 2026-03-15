@@ -1,3 +1,4 @@
+import { buildSemanticSynonymMap } from "@pmtl/shared";
 import { meilisearchClient } from "./client";
 import {
   generateSemanticEmbedding,
@@ -5,6 +6,9 @@ import {
   getSemanticEmbeddingDimensions,
   isSemanticEmbeddingEnabled,
 } from "./semantic-embeddings";
+import { getLogger, withError } from "@/services/logger.service";
+
+const logger = getLogger("integrations:meilisearch");
 
 type SearchDocument = {
   id: string | number;
@@ -37,6 +41,15 @@ async function ensureSearchIndex(indexName: string): Promise<void> {
       "topic",
       "tags",
     ],
+    rankingRules: [
+      "words",
+      "exactness",
+      "attribute",
+      "proximity",
+      "typo",
+      "sort",
+    ],
+    synonyms: buildSemanticSynonymMap(),
     ...(isSemanticEmbeddingEnabled()
       ? {
           embedders: {
@@ -80,7 +93,16 @@ export async function syncSearchDocument(
         };
       }
     } catch (error) {
-      console.error("[Meilisearch] Failed to generate semantic embedding:", error);
+      logger.warn(
+        withError(
+          {
+            indexName,
+            documentId: normalizedDocument.id,
+          },
+          error,
+        ),
+        "Failed to generate semantic embedding",
+      );
     }
   }
 

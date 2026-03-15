@@ -26,7 +26,7 @@ docker compose -f infra/docker/compose.prod.yml up -d
 - `worker`: tiến trình nền dùng cùng codebase CMS để xử lý BullMQ jobs cho search sync, push dispatch, email notification và cleanup.
 - `postgres`: source of truth.
 - `meilisearch`: index tìm kiếm.
-- `redis`: queue backend và request guard adapter phase 2.
+- `redis`: queue backend, shared rate-limit store và request guard adapter cho production multi-instance.
 - `caddy`: reverse proxy, TLS, compression.
 
 ## Queue runtime

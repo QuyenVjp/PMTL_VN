@@ -88,7 +88,7 @@
   - `requestGuards`
   - `moderationReports`
   - `auditLogs`
-- `requestGuards` là DB-backed guard store phase 1 và tự chuyển sang Redis-backed adapter khi `REDIS_URL` được cấu hình.
+- `requestGuards` là audit/control-plane store; production runtime dùng Redis-backed adapter cho request guard và rate-limit coordination khi `REDIS_URL` được cấu hình.
 - `moderationReports` là luồng report source-of-truth, sau đó sync summary ngược lên entity.
 - `auditLogs` là append-only trail cho admin/system actions.
 

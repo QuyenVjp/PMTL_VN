@@ -28,8 +28,8 @@
 - VPS không build source trực tiếp.
 - CI build image, push registry, server chỉ pull image để giảm drift môi trường.
 
-## ADR-006: Stage 2 mở rộng bằng worker và queue
+## ADR-006: Worker và Redis là production capability có điều kiện
 
-- Redis và worker không đưa vào runtime giai đoạn 1.
-- Kiến trúc hiện tại chừa sẵn `jobs/`, `worker` và env để scale sau mà không phải đập lại cấu trúc.
+- Redis và worker được bật khi runtime cần multi-instance rate limiting, queue processing, hoặc request guard ổn định giữa nhiều instance.
+- Kiến trúc giữ `jobs/`, `worker`, `proxy` và env contract rõ ràng để scale mà không phá boundaries giữa `web`, `cms`, `shared`, và `infra`.
 

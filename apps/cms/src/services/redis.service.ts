@@ -1,6 +1,8 @@
 import Redis from "ioredis";
+import { getLogger, withError } from "@/services/logger.service";
 
 let redisClient: Redis | null | undefined;
+const logger = getLogger("services:redis");
 
 export function getRedisUrl(): string | null {
   const redisUrl = process.env.REDIS_URL?.trim();
@@ -30,7 +32,7 @@ export function getRedisClient(): Redis | null {
   });
 
   redisClient.on("error", (error) => {
-    console.error("[redis]", error);
+    logger.error(withError({ redisUrl }, error), "Redis client error");
   });
 
   return redisClient;

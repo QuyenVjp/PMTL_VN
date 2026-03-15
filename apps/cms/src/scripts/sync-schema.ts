@@ -1,6 +1,9 @@
 import { getPayload } from "payload";
 
 import config from "@/payload.config";
+import { getLogger, withError } from "@/services/logger.service";
+
+const logger = getLogger("scripts:sync-schema");
 
 async function main() {
   const payload = await getPayload({ config });
@@ -10,11 +13,11 @@ async function main() {
     overrideAccess: true,
   });
 
-  console.info("[db:sync] Payload schema is ready.");
+  logger.info("Payload schema is ready");
   process.exit(0);
 }
 
 void main().catch((error) => {
-  console.error("[db:sync]", error);
+  logger.error(withError(undefined, error), "Payload schema sync failed");
   process.exit(1);
 });

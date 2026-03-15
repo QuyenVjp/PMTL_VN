@@ -4,5 +4,6 @@ export const SEARCH_INDEX_NAMES = {
   posts: "posts",
   events: "events",
 } as const;
+export * from "./design-tokens";
 export * from "./queues";
 

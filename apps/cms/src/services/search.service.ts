@@ -1,15 +1,22 @@
-import { buildSemanticSearchText, normalizeSemanticText } from "@pmtl/shared";
-import { searchQuerySchema } from "@pmtl/shared";
-import { mapSearchSourceToResult } from "@pmtl/shared";
+import {
+  buildSemanticSearchText,
+  expandSemanticQuery,
+  mapSearchSourceToResult,
+  normalizeSemanticText,
+  rerankSearchResults,
+  searchQuerySchema,
+} from "@pmtl/shared";
 
 import { meilisearchClient } from "@/integrations/meilisearch/client";
 import { syncSearchDocument } from "@/integrations/meilisearch/sync-document";
+import { getLogger, withError } from "@/services/logger.service";
 import { enqueueSearchSyncJob, getQueueJobCounts } from "@/services/queue.service";
 import type { ContentDocument } from "./types";
 import type { Payload } from "payload";
 import { QUEUE_NAMES } from "@pmtl/shared";
 
 const postsIndexName = process.env.MEILI_POSTS_INDEX?.trim() || "posts";
+const logger = getLogger("services:search");
 
 type RelationshipValue =
   | string
@@ -83,7 +90,17 @@ async function resolveRelationship(
             : null,
       };
     }
-  } catch {
+  } catch (error) {
+    logger.warn(
+      withError(
+        {
+          collection,
+          relationshipId: rawId,
+        },
+        error,
+      ),
+      "Failed to resolve search relationship",
+    );
     return { name: null, slug: null };
   }
 
@@ -202,7 +219,10 @@ type SearchPostHit = {
   publishedAt?: string | null;
   topic?: string | null;
   tags?: string[] | null;
+  semanticHints?: string[] | null;
+  featured?: boolean | null;
   views?: number | null;
+  _rankingScore?: number | null;
   thumbnail?:
     | {
         url?: string | null;
@@ -226,7 +246,10 @@ function mapSearchHitToPostResult(hit: SearchPostHit) {
     publishedAt: hit.publishedAt ?? null,
     topic: hit.topic ?? "",
     tags: hit.tags ?? [],
+    semanticHints: hit.semanticHints ?? [],
+    featured: Boolean(hit.featured),
     viewCount: typeof hit.views === "number" ? hit.views : 0,
+    _rankingScore: hit._rankingScore ?? null,
     thumbnail: hit.thumbnail ?? null,
   };
 }
@@ -260,16 +283,21 @@ async function searchPostsViaPayload({ payload, query, limit }: SearchPostsInput
 
   return {
     totalHits: result.totalDocs,
-    hits: result.docs.map((document) =>
-      mapSearchHitToPostResult({
-        id: document.publicId ?? String(document.id),
-        title: document.title,
-        slug: document.slug,
-        excerpt: document.excerptComputed ?? "",
-        sourceRef: document.sourceRef ?? "",
-        publishedAt: document.publishedAt ?? null,
-        views: document.views ?? 0,
-      }),
+    hits: rerankSearchResults(
+      result.docs.map((document) =>
+        mapSearchHitToPostResult({
+          id: document.publicId ?? String(document.id),
+          title: document.title,
+          slug: document.slug,
+          excerpt: document.excerptComputed ?? "",
+          sourceRef: document.sourceRef ?? "",
+          publishedAt: document.publishedAt ?? null,
+          semanticHints: [],
+          featured: document.postFlags?.featured ?? false,
+          views: document.views ?? 0,
+        }),
+      ),
+      query,
     ),
     engine: "payload-fallback" as const,
   };
@@ -289,14 +317,46 @@ export async function searchPosts(input: SearchPostsInput) {
     });
   }
 
-  const response = await meilisearchClient.index(postsIndexName).search<SearchPostHit>(parsedInput.q, {
-    limit: parsedInput.limit,
-    attributesToHighlight: ["title", "excerpt"],
-  });
+  const postsIndex = meilisearchClient.index(postsIndexName);
+  const semanticQueries = Array.from(
+    new Set([parsedInput.q, ...expandSemanticQuery(parsedInput.q)]),
+  ).slice(0, 4);
+
+  const responses = await Promise.all(
+    semanticQueries.map((query, index) =>
+      postsIndex.search<SearchPostHit>(query, {
+        limit: parsedInput.limit,
+        attributesToHighlight: ["title", "excerpt"],
+        showRankingScore: true,
+        ...(index === 0
+          ? {}
+          : {
+              matchingStrategy: "all",
+            }),
+      }),
+    ),
+  );
+
+  const dedupedHits = new Map<string, SearchPostHit>();
+
+  for (const response of responses) {
+    for (const hit of response.hits) {
+      const existingHit = dedupedHits.get(hit.id);
+
+      if (!existingHit || (hit._rankingScore ?? 0) > (existingHit._rankingScore ?? 0)) {
+        dedupedHits.set(hit.id, hit);
+      }
+    }
+  }
+
+  const rankedHits = rerankSearchResults(
+    Array.from(dedupedHits.values()).map(mapSearchHitToPostResult),
+    parsedInput.q,
+  ).slice(0, parsedInput.limit);
 
   return {
-    totalHits: response.estimatedTotalHits ?? response.hits.length,
-    hits: response.hits.map(mapSearchHitToPostResult),
+    totalHits: responses[0]?.estimatedTotalHits ?? rankedHits.length,
+    hits: rankedHits,
     engine: "meilisearch" as const,
   };
 }

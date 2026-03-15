@@ -99,6 +99,7 @@ export const postFields: Field[] = [
                 label: t("Chủ đề chính", "Primary category"),
                 type: "relationship",
                 relationTo: "categories",
+                index: true,
               },
               {
                 name: "categories",
@@ -129,6 +130,7 @@ export const postFields: Field[] = [
                     label: t("Nổi bật", "Featured"),
                     type: "checkbox",
                     defaultValue: false,
+                    index: true,
                   },
                   {
                     name: "allowComments",
