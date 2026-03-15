@@ -34,6 +34,8 @@ services:
     ports:
       - "3001:3001"
     restart: unless-stopped
+    volumes:
+      - worker-heartbeat:/var/run/pmtl
     networks:
       - backend
 
@@ -45,6 +47,8 @@ services:
       - .env.dev
     environment:
       NODE_ENV: development
+      WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
+      WORKER_HEARTBEAT_STALE_SECONDS: "120"
     command: ["pnpm", "--filter", "@pmtl/cms", "worker:start"]
     depends_on:
       postgres:
@@ -56,6 +60,20 @@ services:
       cms:
         condition: service_started
     restart: unless-stopped
+    volumes:
+      - worker-heartbeat:/var/run/pmtl
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "const fs=require('fs');const p=process.env.WORKER_HEARTBEAT_PATH||'/tmp/pmtl-worker-heartbeat';const stale=Number(process.env.WORKER_HEARTBEAT_STALE_SECONDS||120)*1000;const stat=fs.statSync(p);if(Date.now()-stat.mtimeMs>stale) process.exit(1);"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s
     networks:
       - backend
 
@@ -83,7 +101,10 @@ services:
     env_file:
       - .env.dev
     environment:
+      MEILI_ENV: ${MEILI_ENV:-development}
       MEILI_NO_ANALYTICS: "true"
+      MEILI_SCHEDULE_SNAPSHOT: ${MEILI_SCHEDULE_SNAPSHOT:-false}
+      MEILI_SNAPSHOT_DIR: ${MEILI_SNAPSHOT_DIR:-/meili_data/snapshots}
     volumes:
       - meili-dev-data:/meili_data
     healthcheck:
@@ -105,7 +126,7 @@ services:
       --appendonly yes
       --appendfsync everysec
       --maxmemory 256mb
-      --maxmemory-policy noeviction
+      --maxmemory-policy volatile-lru
     volumes:
       - redis-dev-data:/data
     healthcheck:
@@ -144,6 +165,7 @@ volumes:
   redis-dev-data:
   caddy-data:
   caddy-config:
+  worker-heartbeat:
 
 networks:
   frontend:

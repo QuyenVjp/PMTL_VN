@@ -1,5 +1,5 @@
-import type { Job } from "bullmq";
 import type { PushDispatchJob } from "@pmtl/shared";
+import type { Payload } from "payload";
 import webpush from "web-push";
 
 import {
@@ -8,7 +8,6 @@ import {
   markPushJobProcessing,
   updatePushJobProgress,
 } from "@/services/push.service";
-import { getWorkerPayload } from "@/workers/payload";
 
 type PushJobPayload = {
   title?: string;
@@ -120,13 +119,12 @@ function configureWebPush() {
   webpush.setVapidDetails(`mailto:${email}`, publicKey, privateKey);
 }
 
-export async function processPushDispatchJob(job: Job<PushDispatchJob>) {
+export async function runPushDispatchJob(payload: Payload, input: PushDispatchJob) {
   configureWebPush();
 
-  const payload = await getWorkerPayload();
   const pushJob = await payload.findByID({
     collection: "pushJobs",
-    id: job.data.pushJobId,
+    id: input.pushJobId,
     depth: 0,
     overrideAccess: true,
   });

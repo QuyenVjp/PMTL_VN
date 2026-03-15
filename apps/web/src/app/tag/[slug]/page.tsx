@@ -1,8 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 //  app/tag/[slug] — Server Component (posts by tag)
-//  ISR: 1 hour revalidate
+//  Cached at the data layer via Cache Components
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,26 +11,15 @@ import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import BlogPagination from '@/components/BlogPagination'
-import { fetchTagBySlug, getAllTagSlugs } from '@/lib/api/blog-tags'
+import { fetchTagBySlug } from '@/lib/api/blog-tags'
 import { getPosts } from '@/lib/api/blog'
 import { getCmsMediaUrl } from '@/lib/cms'
 import { PAGINATION } from '@/lib/config/pagination'
 import { Tag, ChevronLeft } from 'lucide-react'
 
-export const revalidate = 3600
-
 interface Props {
   params: Promise<{ slug: string }>
   searchParams: Promise<{ page?: string }>
-}
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getAllTagSlugs()
-    return slugs.map((slug) => ({ slug }))
-  } catch {
-    return []
-  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -56,6 +46,7 @@ function formatDate(dateStr: string | null): string {
 }
 
 export default async function TagPage({ params, searchParams }: Props) {
+  await connection()
   const { slug } = await params
   const { page } = await searchParams
   const currentPage = Math.max(1, parseInt(page ?? '1', 10))
@@ -66,7 +57,6 @@ export default async function TagPage({ params, searchParams }: Props) {
       page: currentPage,
       pageSize: PAGINATION.BLOG_PAGE_SIZE,
       tagSlugs: [slug],
-      revalidate: 3600,
     }),
   ])
 

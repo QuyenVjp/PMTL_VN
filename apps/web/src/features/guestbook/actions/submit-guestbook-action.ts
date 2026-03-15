@@ -46,7 +46,7 @@ export async function submitGuestbookAction(
     };
   }
 
-  const token = process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN;
+  const token = process.env.PAYLOAD_API_TOKEN;
 
   if (!token) {
     return {

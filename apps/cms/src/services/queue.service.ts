@@ -1,126 +1,130 @@
-import { Queue } from "bullmq";
+import type { Payload } from "payload";
 import { QUEUE_NAMES, type EmailNotificationJob, type SearchSyncJob } from "@pmtl/shared";
 
-import { getBullMqConnection } from "./redis.service";
+import { JOB_TASK_SLUGS } from "@/jobs";
 import type { ContentDocument } from "./types";
 
-const queues = new Map<(typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES], Queue>();
+type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];
 
-function getQueue(name: (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES]) {
-  const existingQueue = queues.get(name);
-
-  if (existingQueue) {
-    return existingQueue;
-  }
-
-  const connection = getBullMqConnection();
-
-  if (!connection) {
-    return null;
-  }
-
-  const queue = new Queue(name, {
-    connection,
-  });
-
-  queues.set(name, queue);
-
-  return queue;
+function buildSearchSyncInput(document: ContentDocument): SearchSyncJob {
+  return {
+    entityType: "post",
+    documentId: document.documentId ?? document.id,
+    publicId: document.publicId ?? null,
+    document,
+  };
 }
 
-export async function enqueueSearchSyncJob(document: ContentDocument) {
-  const queue = getQueue(QUEUE_NAMES.searchSync);
-
-  if (!queue) {
-    return false;
-  }
-
-  await queue.add(
-    "post-sync",
-    <SearchSyncJob>{
-      entityType: "post",
-      documentId: document.documentId ?? document.id,
-      publicId: document.publicId ?? null,
-      document,
-    },
-    {
-      removeOnComplete: 100,
-      removeOnFail: 100,
-      jobId: `search:post:${document.publicId ?? document.id}`,
-    },
-  );
+export async function enqueueSearchSyncJob(payload: Payload, document: ContentDocument) {
+  await payload.jobs.queue({
+    task: JOB_TASK_SLUGS.searchSync,
+    queue: QUEUE_NAMES.searchSync,
+    input: buildSearchSyncInput(document),
+    overrideAccess: true,
+  });
 
   return true;
 }
 
-export async function enqueuePushDispatchJob(pushJobId: string | number) {
-  const queue = getQueue(QUEUE_NAMES.pushDispatch);
-
-  if (!queue) {
-    return false;
-  }
-
-  await queue.add(
-    "push-dispatch",
-    {
+export async function enqueuePushDispatchJob(payload: Payload, pushJobId: string | number) {
+  await payload.jobs.queue({
+    task: JOB_TASK_SLUGS.pushDispatch,
+    queue: QUEUE_NAMES.pushDispatch,
+    input: {
       pushJobId: String(pushJobId),
     },
-    {
-      removeOnComplete: 100,
-      removeOnFail: 100,
-      jobId: `push:${pushJobId}`,
-    },
-  );
-
-  return true;
-}
-
-export async function enqueueEmailNotificationJob(job: EmailNotificationJob) {
-  const queue = getQueue(QUEUE_NAMES.emailNotification);
-
-  if (!queue) {
-    return false;
-  }
-
-  await queue.add("email-notification", job, {
-    removeOnComplete: 100,
-    removeOnFail: 100,
+    overrideAccess: true,
   });
 
   return true;
 }
 
-export async function closeQueues(): Promise<void> {
-  await Promise.all(Array.from(queues.values()).map((queue) => queue.close()));
-  queues.clear();
+export async function enqueueEmailNotificationJob(payload: Payload, job: EmailNotificationJob) {
+  await payload.jobs.queue({
+    task: JOB_TASK_SLUGS.emailNotification,
+    queue: QUEUE_NAMES.emailNotification,
+    input: job,
+    overrideAccess: true,
+  });
+
+  return true;
 }
 
-export async function getQueueJobCounts(name: (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES]) {
-  const queue = getQueue(name);
+async function countJobs(payload: Payload, where: Record<string, unknown>) {
+  const result = await payload.count({
+    collection: "payload-jobs" as never,
+    overrideAccess: true,
+    where: where as never,
+  });
 
-  if (!queue) {
-    return {
-      enabled: false,
-      counts: {
-        waiting: 0,
-        active: 0,
-        completed: 0,
-        failed: 0,
-        delayed: 0,
+  return result.totalDocs;
+}
+
+export async function getQueueJobCounts(payload: Payload, name: QueueName) {
+  const now = new Date().toISOString();
+  const [waiting, active, completed, failed, delayed] = await Promise.all([
+    countJobs(payload, {
+      queue: {
+        equals: name,
       },
-    };
-  }
-
-  const counts = await queue.getJobCounts("waiting", "active", "completed", "failed", "delayed");
+      processing: {
+        equals: false,
+      },
+      hasError: {
+        not_equals: true,
+      },
+      completedAt: {
+        exists: false,
+      },
+    }),
+    countJobs(payload, {
+      queue: {
+        equals: name,
+      },
+      processing: {
+        equals: true,
+      },
+    }),
+    countJobs(payload, {
+      queue: {
+        equals: name,
+      },
+      completedAt: {
+        exists: true,
+      },
+    }),
+    countJobs(payload, {
+      queue: {
+        equals: name,
+      },
+      hasError: {
+        equals: true,
+      },
+    }),
+    countJobs(payload, {
+      queue: {
+        equals: name,
+      },
+      processing: {
+        equals: false,
+      },
+      completedAt: {
+        exists: false,
+      },
+      waitUntil: {
+        greater_than: now,
+      },
+    }),
+  ]);
 
   return {
     enabled: true,
     counts: {
-      waiting: counts.waiting ?? 0,
-      active: counts.active ?? 0,
-      completed: counts.completed ?? 0,
-      failed: counts.failed ?? 0,
-      delayed: counts.delayed ?? 0,
+      waiting,
+      active,
+      completed,
+      failed,
+      delayed,
     },
   };
 }

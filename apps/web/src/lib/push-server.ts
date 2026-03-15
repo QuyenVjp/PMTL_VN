@@ -112,7 +112,7 @@ type RawPushJob = {
 
 const CMS_API_URL =
   process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
-const CMS_TOKEN = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)?.trim() ?? "";
+const CMS_TOKEN = process.env.PAYLOAD_API_TOKEN?.trim() ?? "";
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
   return {

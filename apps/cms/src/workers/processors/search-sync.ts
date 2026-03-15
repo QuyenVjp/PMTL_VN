@@ -1,21 +1,19 @@
-import type { Job } from "bullmq";
 import type { SearchSyncJob } from "@pmtl/shared";
+import type { Payload } from "payload";
 
 import { syncPostSearch } from "@/services/search.service";
-import { getWorkerPayload } from "@/workers/payload";
 
-export async function processSearchSyncJob(job: Job<SearchSyncJob>) {
-  if (job.data.entityType !== "post") {
+export async function runSearchSyncJob(payload: Payload, input: SearchSyncJob) {
+  if (input.entityType !== "post") {
     return { skipped: true, reason: "unsupported-entity-type" };
   }
 
-  const payload = await getWorkerPayload();
   const document =
-    job.data.document ??
-    (job.data.documentId
+    input.document ??
+    (input.documentId
       ? await payload.findByID({
           collection: "posts",
-          id: job.data.documentId,
+          id: input.documentId,
           depth: 0,
           overrideAccess: true,
         })
@@ -31,6 +29,6 @@ export async function processSearchSyncJob(job: Job<SearchSyncJob>) {
 
   return {
     synced: true,
-    publicId: job.data.publicId ?? ("publicId" in (document as Record<string, unknown>) ? document.publicId : null),
+    publicId: input.publicId ?? ("publicId" in (document as Record<string, unknown>) ? document.publicId : null),
   };
 }

@@ -173,7 +173,7 @@ export async function syncPostSearch(document: ContentDocument, req?: unknown): 
 }
 
 export async function queueOrSyncPostSearch(document: ContentDocument, req?: unknown): Promise<"queued" | "synced"> {
-  const queued = await enqueueSearchSyncJob(document);
+  const queued = isSearchSyncRequest(req) ? await enqueueSearchSyncJob(req.payload as Payload, document) : false;
 
   if (queued) {
     return "queued";
@@ -374,7 +374,7 @@ export async function enqueuePostReindexBatch(payload: Payload, options?: { limi
 
   const queued = await Promise.all(
     result.docs.map((document) =>
-      enqueueSearchSyncJob({
+      enqueueSearchSyncJob(payload, {
         id: document.id,
         documentId: document.id ? String(document.id) : null,
         publicId: document.publicId ?? null,
@@ -407,7 +407,7 @@ export async function getPostSearchStatus(payload: Payload) {
       collection: "posts",
       overrideAccess: true,
     }),
-    getQueueJobCounts(QUEUE_NAMES.searchSync),
+    getQueueJobCounts(payload, QUEUE_NAMES.searchSync),
     meilisearchClient?.health().catch(() => null) ?? Promise.resolve(null),
     meilisearchClient?.getStats().catch(() => null) ?? Promise.resolve(null),
     meilisearchClient?.index(postsIndexName).getStats().catch(() => null) ?? Promise.resolve(null),

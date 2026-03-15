@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 
 import Footer from '@/components/Footer'
 import HeaderServer from '@/components/HeaderServer'
@@ -6,14 +7,14 @@ import StickyBanner from '@/components/StickyBanner'
 import SutraLibraryClient from '@/components/sutra/SutraLibraryClient'
 import { fetchSutraList } from '@/lib/api/sutra'
 
-export const revalidate = 600
-
 export const metadata: Metadata = {
   title: 'Kinh Điển Đại Thừa | Pháp Môn Tâm Linh',
   description: 'Kho kinh điển đại thừa có phân tập/phẩm, lưu tiến độ đọc, bookmark và chú giải thuật ngữ ngay trong văn bản.',
 }
 
 export default async function SutraLibraryPage() {
+  await connection()
+
   const sutras = await fetchSutraList().catch(() => [])
 
   return (

@@ -1,12 +1,11 @@
 import Link from "next/link";
-import HeaderServer from "@/components/HeaderServer";
-import Footer from "@/components/Footer";
-import StickyBanner from "@/components/StickyBanner";
+import { connection } from "next/server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  await connection();
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <HeaderServer />
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center px-4">
           <h1 className="mb-4 text-6xl font-display text-gold">404</h1>
@@ -22,8 +21,6 @@ export default function NotFound() {
           </Link>
         </div>
       </main>
-      <Footer />
-      <StickyBanner />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  PUT /api/user/update — Proxy cập nhật thông tin user
-//  Đọc JWT từ httpOnly cookie, forward đến Strapi /users/me
+//  Đọc JWT từ httpOnly cookie, forward đến CMS /users/me
 // ─────────────────────────────────────────────────────────────
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'

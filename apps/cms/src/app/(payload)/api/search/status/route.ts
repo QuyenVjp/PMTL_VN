@@ -5,7 +5,7 @@ import { getPostSearchStatus } from "@/services/search.service";
 
 function hasSystemToken(headers: Headers) {
   const token = headers.get("authorization")?.replace(/^Bearer\s+/i, "").trim() ?? "";
-  const systemToken = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN ?? "").trim();
+  const systemToken = (process.env.PAYLOAD_API_TOKEN ?? "").trim();
 
   return Boolean(token && systemToken && token === systemToken);
 }

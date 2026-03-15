@@ -1,5 +1,7 @@
 // app/archive/[year]/[month]/page.tsx — Archive year+month page (server)
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeftIcon } from 'lucide-react'
@@ -30,9 +32,26 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   }
 }
 
-export const revalidate = 3600
-
 export default async function ArchiveMonthPage({ params }: { params: Promise<Params> }) {
+  return (
+    <div className="min-h-screen bg-background">
+      <Suspense fallback={null}>
+        <HeaderServer />
+      </Suspense>
+      <Suspense fallback={<ArchiveMonthFallback />}>
+        <ArchiveMonthContent params={params} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      <StickyBanner />
+    </div>
+  )
+}
+
+async function ArchiveMonthContent({ params }: { params: Promise<Params> }) {
+  await connection()
+
   const { year: yearStr, month: monthStr } = await params
   const year = parseInt(yearStr, 10)
   const month = parseInt(monthStr, 10)
@@ -55,30 +74,37 @@ export default async function ArchiveMonthPage({ params }: { params: Promise<Par
   const monthLabel = `${MONTH_VI[month]} ${year}`
 
   return (
-    <div className="min-h-screen bg-background">
-      <HeaderServer />
-      <main className="py-24">
-        <div className="container mx-auto max-w-5xl px-6">
-          <div className="flex items-center gap-2 mb-10">
-            <Link
-              href={`/archive/${year}`}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-gold transition-colors"
-            >
-              <ChevronLeftIcon className="w-4 h-4" />
-              Năm {year}
-            </Link>
-          </div>
-
-          <div className="mb-10">
-            <p className="text-gold text-xs font-medium tracking-widest uppercase mb-3">Kho Lưu Trữ</p>
-            <h1 className="ant-title text-4xl text-foreground md:text-5xl">{monthLabel}</h1>
-          </div>
-
-          <ArchivePostList data={posts} year={year} month={month} />
+    <main className="py-24">
+      <div className="container mx-auto max-w-5xl px-6">
+        <div className="flex items-center gap-2 mb-10">
+          <Link
+            href={`/archive/${year}`}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-gold transition-colors"
+          >
+            <ChevronLeftIcon className="w-4 h-4" />
+            Năm {year}
+          </Link>
         </div>
-      </main>
-      <Footer />
-      <StickyBanner />
-    </div>
+
+        <div className="mb-10">
+          <p className="text-gold text-xs font-medium tracking-widest uppercase mb-3">Kho Lưu Trữ</p>
+          <h1 className="ant-title text-4xl text-foreground md:text-5xl">{monthLabel}</h1>
+        </div>
+
+        <ArchivePostList data={posts} year={year} month={month} />
+      </div>
+    </main>
+  )
+}
+
+function ArchiveMonthFallback() {
+  return (
+    <main className="py-24">
+      <div className="container mx-auto max-w-5xl px-6">
+        <div className="panel-shell-strong p-8 text-center text-muted-foreground">
+          Đang tải lưu trữ theo tháng...
+        </div>
+      </div>
+    </main>
   )
 }

@@ -25,7 +25,8 @@ Follow these rules on every task:
 - Keep Payload collections thin: schema in collection files, business logic in services
 - Keep `packages/shared` framework-agnostic: types, enums, zod schemas, constants, validators, mappers, pure utils only
 - Do not move business logic into Payload collection config or Next route/page files
-- Introduce Redis, BullMQ, workers, and monitoring only when there is a concrete production or operational need, and document the runtime contract
+- Introduce Redis, Payload Jobs, workers, and monitoring only when there is a concrete production or operational need, and document the runtime contract
+- In `apps/web`, prefer Next.js 16 `cacheComponents` with `"use cache"` helper functions over route-level `revalidate` or `unstable_cache`
 - Prefer clear, maintainable code over clever abstractions
 - Update docs and env examples when architecture, contracts, or runtime requirements change
 
@@ -160,7 +161,7 @@ Supported and preferred:
 Add when the production runtime benefits clearly justify the added complexity:
 - Redis
 - worker service
-- BullMQ or jobs/queue infrastructure
+- Payload Jobs or other queue infrastructure
 - monitoring dashboards
 - alerting
 - log aggregation

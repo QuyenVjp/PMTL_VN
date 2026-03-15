@@ -1,8 +1,6 @@
-import type { Job } from "bullmq";
 import type { EmailNotificationJob } from "@pmtl/shared";
+import type { Payload } from "payload";
 import nodemailer from "nodemailer";
-
-import { getWorkerPayload } from "@/workers/payload";
 
 function buildTransport() {
   const host = process.env.SMTP_HOST?.trim();
@@ -31,12 +29,11 @@ function uniqueStrings(values: Array<string | null | undefined>) {
   return Array.from(new Set(values.map((value) => value?.trim()).filter((value): value is string => Boolean(value))));
 }
 
-async function resolveRoleRecipients(job: EmailNotificationJob) {
+async function resolveRoleRecipients(payload: Payload, job: EmailNotificationJob) {
   if (!job.recipientRoles?.length) {
     return [];
   }
 
-  const payload = await getWorkerPayload();
   const result = await payload.find({
     collection: "users",
     depth: 0,
@@ -60,14 +57,14 @@ async function resolveRoleRecipients(job: EmailNotificationJob) {
     .filter((email): email is string => Boolean(email?.trim()));
 }
 
-export async function processEmailNotificationJob(job: Job<EmailNotificationJob>) {
+export async function runEmailNotificationJob(payload: Payload, input: EmailNotificationJob) {
   const transport = buildTransport();
 
   if (!transport) {
     return { skipped: true, reason: "smtp-not-configured" };
   }
 
-  const recipients = uniqueStrings([...(job.data.to ?? []), ...(await resolveRoleRecipients(job.data))]);
+  const recipients = uniqueStrings([...(input.to ?? []), ...(await resolveRoleRecipients(payload, input))]);
 
   if (!recipients.length) {
     return { skipped: true, reason: "no-recipients" };
@@ -84,9 +81,9 @@ export async function processEmailNotificationJob(job: Job<EmailNotificationJob>
   await transport.sendMail({
     from: `${fromName} <${fromEmail}>`,
     to: recipients.join(", "),
-    subject: job.data.subject,
-    text: job.data.text,
-    ...(job.data.html ? { html: job.data.html } : {}),
+    subject: input.subject,
+    text: input.text,
+    ...(input.html ? { html: input.html } : {}),
   });
 
   return {

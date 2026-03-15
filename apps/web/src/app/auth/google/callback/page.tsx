@@ -13,7 +13,7 @@ function CallbackHandler() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Strapi may redirect with either access_token (provider token) or id_token (Strapi JWT)
+    // CMS auth bridge may redirect with either access_token (provider token) or id_token (CMS JWT)
     const accessToken = searchParams.get('access_token')
     const idToken = searchParams.get('id_token')
     const errorParam = searchParams.get('error')
@@ -21,7 +21,7 @@ function CallbackHandler() {
 
     const handleGoogleAuth = async () => {
       try {
-        // Gửi token của Strapi tới Backend để set cookie
+        // Gửi token của CMS tới Backend để set cookie
         const res = await fetch('/api/auth/google-callback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ function CallbackHandler() {
     } else if (accessToken || idToken) {
       handleGoogleAuth()
     } else {
-      const message = 'Không tìm thấy token Google từ Strapi.'
+      const message = 'Không tìm thấy token Google từ CMS.'
       toast.error(message)
       setError(message)
     }

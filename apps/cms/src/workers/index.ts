@@ -1,12 +1,9 @@
-import { Worker } from "bullmq";
 import { QUEUE_NAMES } from "@pmtl/shared";
+import { writeFile } from "node:fs/promises";
 import pino from "pino";
 
+import { runPendingCmsJobs } from "@/jobs";
 import { cleanupExpiredGuards } from "@/services/request-guard.service";
-import { closeRedisClient, getBullMqConnection } from "@/services/redis.service";
-import { processEmailNotificationJob } from "@/workers/processors/email-notification";
-import { processPushDispatchJob } from "@/workers/processors/push-dispatch";
-import { processSearchSyncJob } from "@/workers/processors/search-sync";
 import { getWorkerPayload } from "@/workers/payload";
 
 const logger = pino({
@@ -14,44 +11,62 @@ const logger = pino({
   level: process.env.LOG_LEVEL ?? "info",
 });
 
+const jobsIntervalMs = Number(process.env.WORKER_JOBS_INTERVAL_MS ?? "15000");
 const maintenanceIntervalMs = Number(process.env.WORKER_MAINTENANCE_INTERVAL_MS ?? "600000");
+const heartbeatPath = process.env.WORKER_HEARTBEAT_PATH ?? "/tmp/pmtl-worker-heartbeat";
+
+async function touchHeartbeat(reason: string) {
+  try {
+    await writeFile(
+      heartbeatPath,
+      JSON.stringify({
+        reason,
+        timestamp: new Date().toISOString(),
+      }),
+      "utf8",
+    );
+  } catch (error) {
+    logger.warn({ error, heartbeatPath }, "Failed to update worker heartbeat");
+  }
+}
 
 async function startWorker() {
-  const connection = getBullMqConnection();
-
-  if (!connection) {
-    throw new Error("REDIS_URL chưa được cấu hình cho worker.");
-  }
-
   const payload = await getWorkerPayload();
-  const workers = [
-    new Worker(QUEUE_NAMES.searchSync, processSearchSyncJob, {
-      connection,
-      concurrency: Number(process.env.WORKER_SEARCH_CONCURRENCY ?? "4"),
-    }),
-    new Worker(QUEUE_NAMES.pushDispatch, processPushDispatchJob, {
-      connection,
-      concurrency: Number(process.env.WORKER_PUSH_CONCURRENCY ?? "2"),
-    }),
-    new Worker(QUEUE_NAMES.emailNotification, processEmailNotificationJob, {
-      connection,
-      concurrency: Number(process.env.WORKER_EMAIL_CONCURRENCY ?? "2"),
-    }),
-  ];
+  let isRunningJobs = false;
 
-  for (const worker of workers) {
-    worker.on("completed", (job, result) => {
-      logger.info({ queue: worker.name, jobId: job.id, result }, "Worker job completed");
-    });
+  const runJobsCycle = async () => {
+    if (isRunningJobs) {
+      return;
+    }
 
-    worker.on("failed", (job, error) => {
-      logger.error({ queue: worker.name, jobId: job?.id, error }, "Worker job failed");
-    });
-  }
+    isRunningJobs = true;
+
+    try {
+      await payload.jobs.handleSchedules({
+        allQueues: true,
+      });
+      await runPendingCmsJobs({
+        payload,
+        silent: true,
+      });
+      await touchHeartbeat("jobs-cycle");
+    } catch (error) {
+      logger.error({ error }, "Failed to run pending CMS jobs");
+    } finally {
+      isRunningJobs = false;
+    }
+  };
+
+  await runJobsCycle();
+
+  const jobsTimer = setInterval(() => {
+    void runJobsCycle();
+  }, jobsIntervalMs);
 
   const maintenanceTimer = setInterval(() => {
     void cleanupExpiredGuards(payload)
       .then((removed) => {
+        void touchHeartbeat("maintenance-cycle");
         if (removed > 0) {
           logger.info({ removed }, "Expired request guards cleaned");
         }
@@ -62,12 +77,12 @@ async function startWorker() {
   }, maintenanceIntervalMs);
 
   maintenanceTimer.unref();
+  jobsTimer.unref();
 
   const shutdown = async () => {
+    clearInterval(jobsTimer);
     clearInterval(maintenanceTimer);
     logger.info("Stopping worker...");
-    await Promise.all(workers.map((worker) => worker.close()));
-    await closeRedisClient();
     process.exit(0);
   };
 
@@ -81,6 +96,8 @@ async function startWorker() {
 
   logger.info(
     {
+      heartbeatPath,
+      intervalMs: jobsIntervalMs,
       queues: Object.values(QUEUE_NAMES),
     },
     "PMTL worker is running",

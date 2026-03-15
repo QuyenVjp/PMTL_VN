@@ -1,8 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/community-server.ts — Server-side Community API
-//  Sử dụng cmsFetch để lấy dữ liệu trực tiếp từ Strapi với Token.
+//  Sử dụng cached CMS adapter để lấy dữ liệu trực tiếp từ CMS.
 // ─────────────────────────────────────────────────────────────
-import { cmsFetch } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
+import { logger } from '@/lib/logger'
 import type { CommunityPost } from './community'
 
 /** Lấy danh sách bài viết cộng đồng (Server-side) */
@@ -33,12 +34,14 @@ export async function getCommunityPosts(params: {
     most_liked: 'likes:desc',
   }
 
-  const res = await cmsFetch<{ data: any[]; meta: any }>('/community-posts', {
+  const res = await cachedCmsFetch<{ data: any[]; meta: any }>('/community-posts', {
     filters,
     pagination: { page, pageSize },
     sort: [sortMap[sort || 'newest'] || 'createdAt:desc'],
     populate: ['cover_image'],
-    next: { revalidate: 60, tags: ['community-posts'] }
+  }, {
+    profile: 'minutes',
+    tags: ['community-posts'],
   })
 
   const posts = (res.data || []).map(raw => ({
@@ -60,11 +63,13 @@ export async function getCommunityPosts(params: {
 /** Lấy chi tiết bài viết cộng đồng theo slug (Server-side) */
 export async function getCommunityPostBySlug(slug: string): Promise<CommunityPost | null> {
   try {
-    const res = await cmsFetch<{ data: any[] }>('/community-posts', {
+    const res = await cachedCmsFetch<{ data: any[] }>('/community-posts', {
       filters: { slug: { $eq: slug } },
       populate: ['cover_image', 'comments'],
       pagination: { page: 1, pageSize: 1 },
-      next: { revalidate: 60, tags: [`community-post-${slug}`] }
+    }, {
+      profile: 'minutes',
+      tags: [`community-post-${slug}`],
     })
 
     if (!res.data || res.data.length === 0) return null
@@ -80,8 +85,8 @@ export async function getCommunityPostBySlug(slug: string): Promise<CommunityPos
         ...c,
       })),
     } as CommunityPost
-  } catch (err) {
-    console.error(`[Community Server] Error fetching slug ${slug}:`, err)
+  } catch (error) {
+    logger.error('Failed to fetch community post by slug', { error, slug })
     return null
   }
 }

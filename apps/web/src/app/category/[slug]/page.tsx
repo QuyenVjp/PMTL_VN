@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,7 +11,9 @@ import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import { getCategoryBySlug, getCategories, getCategoryBreadcrumb } from '@/lib/api/categories'
-import { cmsFetch, getCmsMediaUrl } from '@/lib/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
+import { logger } from '@/lib/logger'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import type { BlogPost, CmsList, Category } from '@/types/cms'
 
@@ -21,9 +24,12 @@ interface Props {
 // generateMetadata updated for simplified schema
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const result = await cmsFetch<CmsList<Category>>(`/categories`, { // Using Category type instead of any
+  const result = await cachedCmsFetch<CmsList<Category>>(`/categories`, {
     filters: { slug: { $eq: slug } },
     pagination: { page: 1, pageSize: 1 },
+  }, {
+    profile: 'minutes',
+    tags: [`category-${slug}`],
   })
   const cat = result?.data?.[0]
   return {
@@ -44,6 +50,7 @@ function timeAgo(dateStr: string): string {
 }
 
 export default async function CategoryPage({ params }: Props) {
+  await connection()
   const { slug } = await params
   const [category, allCats] = await Promise.all([
     getCategoryBySlug(slug),
@@ -58,21 +65,21 @@ export default async function CategoryPage({ params }: Props) {
   let posts: BlogPost[] = []
   let total = 0
   try {
-    const res = await cmsFetch<CmsList<BlogPost>>('/blog-posts', {
+    const res = await cachedCmsFetch<CmsList<BlogPost>>('/blog-posts', {
       filters: {
-        // Filter by dynamic category relation
         categories: { slug: { $eq: slug } }
       },
       sort: ['publishedAt:desc'],
       populate: ['thumbnail', 'gallery', 'categories'],
       pagination: { page: 1, pageSize: 24 },
-      next: { revalidate: 60, tags: [`category-${slug}`] },
+    }, {
+      profile: 'minutes',
+      tags: [`category-${slug}`],
     })
     posts = res.data
     total = res.meta?.pagination?.total ?? 0
-  } catch (err) {
-    console.error(`[Category ${slug}] Fetch error:`, err instanceof Error ? err.message : err)
-    // no matching posts
+  } catch (error) {
+    logger.error('Failed to fetch category posts', { error, slug })
   }
 
   const subCategories = allCats.filter((c) => c.parent?.id === category.id)

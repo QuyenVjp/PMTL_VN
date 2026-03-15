@@ -327,17 +327,32 @@ JWT_SECRET=change_me_production
 
 ## Performance Patterns
 
-### ISR (Incremental Static Regeneration)
+### Next.js 16 Cache Components
 ```typescript
-// ✅ Use revalidate for appropriate routes:
-// app/posts/[slug]/page.tsx
-export const revalidate = 3600; // 1 hour - posts rarely change
+// ✅ Prefer cache at the data layer:
+import { cacheLife, cacheTag } from 'next/cache';
 
-// app/admin/dashboard/page.tsx
-export const revalidate = 60;   // 1 minute - dashboard updates often
+export async function getPostsCached() {
+  "use cache";
+  cacheLife('hours');
+  cacheTag('blog-posts');
+  return cmsFetch('/blog-posts');
+}
 
-// app/api/comments/route.ts
-export const revalidate = 300;  // 5 minutes - comments sync every 5 min
+// ✅ Keep route/page files thin and let feature helpers own caching
+const posts = await getPostsCached();
+
+// ✅ Use no-store only for truly user-specific or request-specific data
+await fetch(url, { cache: 'no-store' });
+
+// ✅ For route handlers/pages that must never prerender under cacheComponents,
+// use `await connection()` at the entry point.
+import { connection } from 'next/server';
+await connection();
+
+// ❌ Avoid defaulting to page-level `export const revalidate`
+// ❌ Avoid `unstable_cache` when `cacheComponents` + "use cache" fits
+// ❌ Do not use `export const dynamic = 'force-dynamic'` with cacheComponents enabled
 ```
 
 ### React Query for Client State
@@ -476,7 +491,7 @@ Before shipping to production:
 
 ### Performance ✅
 - [ ] Core Web Vitals measured (LCP, FID, CLS)
-- [ ] ISR/revalidation times tuned
+- [ ] Cache profiles and tags tuned for each feature
 - [ ] Search latency < 200ms
 - [ ] API response time < 500ms
 - [ ] Images optimized (AVIF/WebP)

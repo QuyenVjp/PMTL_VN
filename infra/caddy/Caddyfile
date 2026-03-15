@@ -4,10 +4,31 @@
 
 {$PMTL_DOMAIN:localhost} {
   encode zstd gzip
+  respond /api/metrics/* 404
+  header {
+    X-Content-Type-Options nosniff
+    X-Frame-Options SAMEORIGIN
+    Referrer-Policy strict-origin-when-cross-origin
+  }
+  log {
+    output stdout
+    format json
+  }
   reverse_proxy web:3000
 }
 
 {$PMTL_CMS_DOMAIN:cms.localhost} {
   encode zstd gzip
+  respond /api/metrics/* 404
+  respond /api/worker/health 404
+  header {
+    X-Content-Type-Options nosniff
+    X-Frame-Options SAMEORIGIN
+    Referrer-Policy strict-origin-when-cross-origin
+  }
+  log {
+    output stdout
+    format json
+  }
   reverse_proxy cms:3001
 }

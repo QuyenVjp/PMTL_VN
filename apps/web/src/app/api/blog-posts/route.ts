@@ -1,5 +1,13 @@
-import { cmsFetch } from "@/lib/cms";
-import type { CmsList, BlogPost } from "@/types/cms";
+import { logger } from "@/lib/logger";
+import { getPosts } from "@/lib/api/blog";
+
+function isPrerenderInterrupted(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    (error.message.includes("NEXT_PRERENDER_INTERRUPTED") ||
+      ("digest" in error && (error as { digest?: string }).digest === "NEXT_PRERENDER_INTERRUPTED"))
+  );
+}
 
 export async function GET(request: Request) {
   try {
@@ -9,13 +17,12 @@ export async function GET(request: Request) {
     const categorySlug = searchParams.get("categorySlug") || undefined;
     const search = searchParams.get("search") || undefined;
 
-    const normalized = await cmsFetch<CmsList<BlogPost>>("/blog-posts", {
-      pagination: { page, pageSize },
-      filters: {
-        ...(categorySlug ? { categorySlug } : {}),
-        ...(search ? { search } : {}),
-      },
-      next: { revalidate: 600, tags: ["blog-posts"] },
+    const normalized = await getPosts({
+      page,
+      pageSize,
+      categorySlug,
+      search,
+      revalidate: search ? 0 : 600,
     });
 
     return new Response(JSON.stringify(normalized), {
@@ -26,8 +33,28 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
+    if (isPrerenderInterrupted(error)) {
+      return new Response(
+        JSON.stringify({
+          data: [],
+          meta: {
+            pagination: {
+              page: 1,
+              pageSize: 10,
+              pageCount: 0,
+              total: 0,
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
     const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("[BlogPosts] Lỗi server:", errMsg);
+    logger.error("Blog posts API failed", { error });
     return new Response(
       JSON.stringify({ error: "Internal server error", message: errMsg }),
       { status: 500, headers: { "Content-Type": "application/json" } },

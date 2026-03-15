@@ -1,18 +1,17 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import { fetchEventBySlug, getAllEventSlugs } from '@/lib/api/event'
+import { fetchEventBySlug } from '@/lib/api/event'
 import { getCmsMediaUrl } from '@/lib/cms'
 import {
   Calendar, MapPin, User, Globe, ExternalLink,
   ChevronLeft, FileText, Download, Play, Video
 } from 'lucide-react'
-
-export const revalidate = 3600
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -24,15 +23,6 @@ const typeLabels: Record<string, string> = {
   'retreat': 'Khóa Tu',
   'liberation': 'Phóng Sinh',
   'festival': 'Lễ Hội',
-}
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getAllEventSlugs()
-    return slugs.map((slug) => ({ slug }))
-  } catch {
-    return []
-  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -58,6 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EventDetailPage({ params }: Props) {
+  await connection()
   const { slug } = await params
   const event = await fetchEventBySlug(slug)
 

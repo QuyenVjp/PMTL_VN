@@ -16,11 +16,11 @@ export async function POST(req: NextRequest) {
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
-  } else if ((process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)) {
+  } else if (process.env.PAYLOAD_API_TOKEN) {
     // Nếu là guest, ta có thể dùng system token để bypass permission nếu cần
     // Tuy nhiên nếu backend cho phép public submit thì không cần.
     // Tạm thời chỉ truyền token của user nếu có.
-    headers['Authorization'] = `Bearer ${(process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)}`;
+    headers['Authorization'] = `Bearer ${process.env.PAYLOAD_API_TOKEN}`;
   }
 
   try {

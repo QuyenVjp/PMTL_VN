@@ -101,7 +101,13 @@ Ghi chú:
 - `POST /api/posts/:publicId/view`
 - `GET /api/posts/:publicId/comments`
 - `POST /api/posts/:publicId/comments/submit`
+- `GET /api/comments/latest?limit=<n>`
+- `POST /api/comments/:publicId/like`
 - `POST /api/comments/:publicId/report`
+
+Ghi chú:
+- Web BFF đã bỏ compatibility layer `blog-comments/*`; frontend nên dùng trực tiếp nhóm route `posts/:id/comments` và `comments/:id/*`.
+- `GET /api/comments/latest` trả về top-level comment mới nhất đã được duyệt, có kèm slug/title bài viết để render widget sidebar.
 
 ```ts
 type PostSummary = {

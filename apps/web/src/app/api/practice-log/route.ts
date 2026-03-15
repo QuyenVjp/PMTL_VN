@@ -4,13 +4,11 @@
 //  GET  /api/practice-log?date=YYYY-MM-DD&planSlug=...
 //  PUT  /api/practice-log  body: { date, planSlug, itemsProgress }
 //
-//  Proxy đến Strapi — đọc JWT từ httpOnly cookie (không dùng Authorization header)
+//  Proxy đến CMS — đọc JWT từ httpOnly cookie (không dùng Authorization header)
 // ─────────────────────────────────────────────────────────────
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server';
 import { CMS_API_URL } from '@/lib/cms';
-
-export const dynamic = 'force-dynamic';
 
 function proxyJsonOrEmpty(res: Response, data: unknown) {
   if (res.status === 204) {

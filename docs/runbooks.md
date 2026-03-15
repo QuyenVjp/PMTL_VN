@@ -79,6 +79,88 @@ curl http://localhost:3001/api/health
 curl http://localhost:3000/api/health
 ```
 
+## Production Backup
+
+Purpose:
+- create PostgreSQL custom-format backups
+- trigger Meilisearch snapshot creation
+- apply simple retention locally before shipping off-site
+
+Run manual production backup:
+```bash
+./infra/scripts/backup-prod.sh
+```
+
+Recommended cron:
+```bash
+0 2 * * * cd /srv/pmtl && ./infra/scripts/backup-prod.sh
+```
+
+Expected result:
+- PostgreSQL dump stored under `backups/prod/postgres/`
+- Meilisearch snapshot queued inside the Meilisearch data volume
+
+Retention:
+- local default retention is `7` days via `RETENTION_DAYS`
+- off-site copy should be handled separately by the host or object-storage sync job
+
+Verification:
+```bash
+LATEST_DUMP="$(ls -t backups/prod/postgres/pmtl-*.dump | head -n 1)"
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml exec -T postgres \
+  pg_restore --list /dev/stdin < "$LATEST_DUMP"
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml exec -T meilisearch \
+  sh -lc 'ls -la ${MEILI_SNAPSHOT_DIR:-/meili_data/snapshots}'
+```
+
+Notes:
+- keep `MEILI_MASTER_KEY` available in the production env file
+- test full restore regularly; a backup that was never restored is not a finished control
+
+## Monitoring
+
+Stack:
+- Prometheus scrapes blackbox probes, worker metrics, postgres-exporter, redis-exporter
+- Alertmanager sends alerts to Telegram
+- Grafana is provisioned with the default PMTL dashboard
+
+Bring monitoring stack up with production services:
+```bash
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d \
+  prometheus alertmanager grafana blackbox-exporter postgres-exporter redis-exporter
+```
+
+Access locally on the VPS:
+```bash
+curl http://127.0.0.1:9090/-/healthy
+curl http://127.0.0.1:9093/-/healthy
+curl http://127.0.0.1:3300/api/health
+```
+
+Recommended SSH tunnels:
+```bash
+ssh -L 3300:127.0.0.1:3300 -L 9090:127.0.0.1:9090 your-vps
+```
+
+Telegram alert prerequisites:
+- `ALERT_TELEGRAM_BOT_TOKEN`
+- `ALERT_TELEGRAM_CHAT_ID`
+
+Monitoring verification:
+```bash
+curl http://127.0.0.1:9090/api/v1/targets
+curl http://127.0.0.1:9090/api/v1/rules
+curl http://localhost:3001/api/worker/health
+curl http://localhost:3001/api/metrics/worker
+```
+
+What to check first:
+- `probe_success` for `web`, `cms`, `worker`, `meilisearch`, `caddy`
+- `pmtl_worker_healthy`
+- `pmtl_worker_queue_jobs`
+- `pg_up`
+- `redis_memory_used_bytes / redis_memory_max_bytes`
+
 ## Rollback Deployment
 
 Strategy:

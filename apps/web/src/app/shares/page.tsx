@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { connection } from 'next/server'
 import SharesClient from '@/components/shares/SharesClient'
 import { fetchPosts } from '@/lib/api/community'
 import { getAllTags } from '@/lib/api/blog'
@@ -6,9 +7,6 @@ import { getCategories } from '@/lib/api/categories'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Người Thật Việc Thật - Chia sẻ cộng đồng | Phật Pháp Mật Tông',
@@ -20,6 +18,7 @@ export default async function SharesPage({
 }: {
   searchParams: Promise<{ page?: string; search?: string; category?: string; sort?: string }>
 }) {
+  await connection()
   const { page = '1', search, category, sort } = await searchParams;
 
   // Note: we fetch on the server to prevent initial client heavy load

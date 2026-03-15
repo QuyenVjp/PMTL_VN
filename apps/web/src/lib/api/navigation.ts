@@ -3,8 +3,7 @@
 //  Server-side only
 // ─────────────────────────────────────────────────────────────
 
-import { cmsGet } from "@/lib/cms/client";
-import { unstable_cache } from "next/cache";
+import { cachedCmsGet } from "@/lib/cms/server-cache";
 
 export interface NavItem {
   label: string;
@@ -71,18 +70,12 @@ function sanitizeNavItems(items: PayloadNavigationItem[] | null | undefined): Na
     .filter((item): item is NavItem => item !== null);
 }
 
-const getNavigationGlobal = unstable_cache(
-  async (): Promise<PayloadNavigationGlobal> => {
-    return cmsGet<PayloadNavigationGlobal>("/api/navigation", {
-      next: { revalidate: 300, tags: ["global-navigation"] },
-    });
-  },
-  ["global-navigation"],
-  {
-    revalidate: 300,
+async function getNavigationGlobal(): Promise<PayloadNavigationGlobal> {
+  return cachedCmsGet<PayloadNavigationGlobal>("/api/navigation", undefined, {
+    profile: "minutes",
     tags: ["global-navigation"],
-  },
-);
+  });
+}
 
 export async function buildNavigation(): Promise<NavigationData> {
   try {

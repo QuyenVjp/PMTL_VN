@@ -1,5 +1,7 @@
 // app/guestbook/page.tsx — Guestbook main page (Server Component)
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import { connection } from 'next/server'
 import { getGuestbookEntries, getGuestbookArchiveList, type ArchiveStat } from '@/lib/api/guestbook'
 import GuestbookPageHeader from '@/components/guestbook/GuestbookPageHeader'
 import GuestbookList from '@/components/guestbook/GuestbookList'
@@ -20,6 +22,25 @@ const fallback: GuestbookListType = {
 }
 
 export default async function GuestbookPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Suspense fallback={null}>
+        <HeaderServer />
+      </Suspense>
+      <Suspense fallback={<GuestbookPageFallback />}>
+        <GuestbookPageContent />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      <StickyBanner />
+    </div>
+  )
+}
+
+async function GuestbookPageContent() {
+  await connection()
+
   let initialData: GuestbookListType = fallback
   let archives: ArchiveStat[] = []
 
@@ -35,25 +56,32 @@ export default async function GuestbookPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <HeaderServer />
-      <main className="py-16 md:py-20">
-        <div className="container mx-auto max-w-6xl px-6">
-          <GuestbookPageHeader />
+    <main className="py-16 md:py-20">
+      <div className="container mx-auto max-w-6xl px-6">
+        <GuestbookPageHeader />
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
-            <div className="order-2 lg:order-1">
-              <GuestbookSidebar archives={archives} />
-            </div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
+          <div className="order-2 lg:order-1">
+            <GuestbookSidebar archives={archives} />
+          </div>
 
-            <div className="order-1 min-w-0 lg:order-2">
-              <GuestbookList initialData={initialData} />
-            </div>
+          <div className="order-1 min-w-0 lg:order-2">
+            <GuestbookList initialData={initialData} />
           </div>
         </div>
-      </main>
-      <Footer />
-      <StickyBanner />
-    </div>
+      </div>
+    </main>
+  )
+}
+
+function GuestbookPageFallback() {
+  return (
+    <main className="py-16 md:py-20">
+      <div className="container mx-auto max-w-6xl px-6">
+        <div className="panel-shell-strong p-8 text-center text-muted-foreground">
+          Đang tải sổ lưu bút...
+        </div>
+      </div>
+    </main>
   )
 }

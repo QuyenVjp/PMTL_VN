@@ -1,0 +1,58 @@
+groups:
+  - name: pmtl-service-health
+    rules:
+      - alert: PMTLServiceDown
+        expr: probe_success{job="blackbox-http"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.service }} is unreachable"
+          description: "Blackbox probe failed for {{ $labels.service }} (target: {{ $labels.instance }}) for more than 2 minutes."
+
+      - alert: PMTLWorkerHeartbeatStale
+        expr: pmtl_worker_healthy == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Worker heartbeat is stale"
+          description: "Worker heartbeat age is {{ $value }} state unhealthy for more than 2 minutes."
+
+      - alert: PMTLWorkerFailedJobs
+        expr: pmtl_worker_queue_jobs{state="failed"} > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Worker queue has failed jobs"
+          description: "Queue {{ $labels.queue }} has {{ $value }} failed jobs pending review."
+
+  - name: pmtl-data-stores
+    rules:
+      - alert: PMTLRedisExporterDown
+        expr: up{job="redis-exporter"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis exporter is down"
+          description: "Prometheus cannot scrape redis-exporter for more than 2 minutes."
+
+      - alert: PMTLRedisMemoryHigh
+        expr: redis_memory_max_bytes > 0 and (redis_memory_used_bytes / redis_memory_max_bytes) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory above 80%"
+          description: "Redis memory usage is above 80% of configured maxmemory."
+
+      - alert: PMTLPostgresDown
+        expr: pg_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "postgres-exporter reports pg_up=0 for more than 2 minutes."

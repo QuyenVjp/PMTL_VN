@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  app/page.tsx — Server Component
-//  Fetch dữ liệu động từ Strapi CMS → truyền props vào các section
+//  Fetch dữ liệu động từ CMS → truyền props vào các section
 // ─────────────────────────────────────────────────────────────
 
 import HeaderServer from "@/components/HeaderServer";
@@ -29,6 +29,7 @@ import {
 } from "@/lib/api/homepage";
 
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 
 export const metadata: Metadata = {
   title: 'Pháp Môn Tâm Linh — Trang Chủ | Hộ Trì Phật Pháp',
@@ -60,8 +61,10 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
+  await connection()
+
   // Fetch dữ liệu trang chủ từ CMS — fallback nếu CMS chưa có data
-  const settings = await getHomepageSettings()
+  const settings = await getHomepageSettings().catch(() => null)
 
   const heroSlides = settings?.heroSlides ?? FALLBACK_HERO_SLIDES
   const stats = settings?.stats ?? FALLBACK_STATS

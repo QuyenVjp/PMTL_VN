@@ -12,6 +12,7 @@ type CommentInput = {
   authorName?: string | null | undefined;
   authorEmail?: string | null | undefined;
   authorAvatar?: string | null | undefined;
+  likes?: number | null | undefined;
   badge?: string | null | undefined;
   isOfficialReply?: boolean | null | undefined;
   submittedByUser?: string | number | { id?: string | number | null } | null | undefined;
@@ -94,6 +95,7 @@ export function buildCommentData(input: CommentInput): CommentInput {
       content: sanitizeCommentContent(input.content),
       authorName: input.authorName?.trim() ?? "Khách",
       authorAvatar: input.authorAvatar?.trim() ?? "",
+      likes: normalizeScore(input.likes),
       badge: input.badge?.trim() ?? "",
       moderationStatus,
       spamScore,
@@ -164,12 +166,14 @@ export function mapCommentToPublicDTO<T extends CommentInput & { createdAt?: str
   comment: T,
 ) {
   return {
-    id: comment.publicId ?? (comment.id ? String(comment.id) : null),
+    id: typeof comment.id === "number" ? comment.id : Number(comment.id ?? 0),
+    documentId: comment.publicId ?? (comment.id ? String(comment.id) : ""),
     post: extractRelationId(comment.post) || null,
     parent: extractRelationId(comment.parent) || null,
     content: comment.content ?? "",
     authorName: comment.authorName ?? "Khách",
     authorAvatar: comment.authorAvatar ?? "",
+    likes: normalizeScore(comment.likes),
     badge: comment.badge ?? "",
     isOfficialReply: Boolean(comment.isOfficialReply),
     createdAt: comment.createdAt ?? null,
@@ -177,6 +181,46 @@ export function mapCommentToPublicDTO<T extends CommentInput & { createdAt?: str
   };
 }
 
-export function buildCommentTreeDTO<T>(comments: T[]): T[] {
-  return comments;
+type TreeComment = {
+  documentId?: string | null | undefined;
+  parent?: string | null | undefined;
+  replies?: unknown[] | null | undefined;
+};
+
+export function buildCommentTreeDTO<T extends TreeComment>(comments: T[]): T[] {
+  type TreeNode = T & { replies: T[] };
+
+  const byId = new Map<string, TreeNode>();
+  const roots: TreeNode[] = [];
+
+  for (const comment of comments) {
+    const documentId = typeof comment.documentId === "string" ? comment.documentId : "";
+    const normalized = {
+      ...comment,
+      replies: Array.isArray(comment.replies) ? [...(comment.replies as T[])] : [],
+    } as TreeNode;
+
+    if (documentId) {
+      byId.set(documentId, normalized);
+    } else {
+      roots.push(normalized);
+    }
+  }
+
+  for (const comment of byId.values()) {
+    const parentId = typeof comment.parent === "string" ? comment.parent : "";
+
+    if (parentId) {
+      const parent = byId.get(parentId);
+
+      if (parent) {
+        parent.replies.push(comment);
+        continue;
+      }
+    }
+
+    roots.push(comment);
+  }
+
+  return roots;
 }

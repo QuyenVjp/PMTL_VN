@@ -1,5 +1,6 @@
 // app/guestbook/archive/[year]/[month]/page.tsx — Guestbook archive page (Server Component)
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { getGuestbookArchive, getGuestbookArchiveList, type ArchiveStat } from '@/lib/api/guestbook'
 import GuestbookList from '@/components/guestbook/GuestbookList'
 import GuestbookSidebar from '@/components/guestbook/GuestbookSidebar'
@@ -24,6 +25,7 @@ export default async function GuestbookArchivePage({
 }: {
   params: Promise<{ year: string; month: string }>
 }) {
+  await connection()
   const { year, month } = await params
 
   const y = parseInt(year, 10)

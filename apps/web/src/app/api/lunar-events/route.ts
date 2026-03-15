@@ -1,13 +1,14 @@
 // Route Handler: /api/lunar-events
-// Proxy server-side fetch đến Strapi với API token để populate relatedBlogs đúng cách
-// Client (use client page) gọi route này thay vì gọi Strapi trực tiếp
+// Proxy server-side fetch đến CMS với API token để populate relatedBlogs đúng cách
+// Client (use client page) gọi route này thay vì gọi CMS trực tiếp
 
 import { NextResponse } from 'next/server';
+import { connection } from 'next/server';
 import { fetchLunarEvents } from '@/lib/api/lunar-calendar';
-
-export const dynamic = 'force-dynamic';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
+  await connection();
   try {
     const events = await fetchLunarEvents();
     return NextResponse.json(events, {
@@ -16,8 +17,8 @@ export async function GET() {
         'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
       }
     });
-  } catch (err) {
-    console.error('[/api/lunar-events] Error:', err);
+  } catch (error) {
+    logger.error('Lunar events API failed', { error });
     return NextResponse.json([], { status: 200 }); // trả [] để FE không crash
   }
 }

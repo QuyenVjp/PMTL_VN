@@ -1,4 +1,5 @@
-import { getCmsMediaUrl, cmsFetch } from '@/lib/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
 import type { GalleryItem, CmsList } from '@/types/cms'
 
 export interface GalleryCardItem {
@@ -72,13 +73,12 @@ function toGalleryCardItem(item: GalleryItem): GalleryCardItem | null {
 }
 
 export async function fetchGalleryItems(): Promise<GalleryCardItem[]> {
-  const response = await cmsFetch<CmsList<GalleryItem>>('/gallery-items', {
+  const response = await cachedCmsFetch<CmsList<GalleryItem>>('/gallery-items', {
     status: 'published',
     sort: ['featured:desc', 'sortOrder:asc', 'shotDate:desc', 'publishedAt:desc'],
     populate: ['image'],
     pagination: { pageSize: 100 },
-    next: { revalidate: 3600, tags: ['gallery'] },
-  })
+  }, { profile: 'hours', tags: ['gallery'] })
 
   return (response.data ?? [])
     .map(toGalleryCardItem)

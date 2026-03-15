@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger'
+
 // Khong import cmsFetch vi endpoint /with-blogs dung Document Service direct
 // cmsFetch chi dung cho REST API thong thuong
 
@@ -29,12 +31,12 @@ export interface LunarEvent {
 export async function fetchLunarEvents(): Promise<LunarEvent[]> {
   try {
     const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001');
-    const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN);
+    const token = process.env.PAYLOAD_API_TOKEN;
 
     // Goi endpoint custom /with-blogs — dung Document Service ben BE, co relatedBlogs
     const res = await fetch(`${CMS_API_URL}/api/lunar-events/with-blogs`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
-      next: { revalidate: 0 },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -43,8 +45,8 @@ export async function fetchLunarEvents(): Promise<LunarEvent[]> {
 
     const json = await res.json();
     return (json.data as LunarEvent[]) ?? [];
-  } catch (err) {
-    console.error('[LunarAPI] Error:', err);
+  } catch (error) {
+    logger.error('Failed to fetch lunar events', { error });
     return [];
   }
 }

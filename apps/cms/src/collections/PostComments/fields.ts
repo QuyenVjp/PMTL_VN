@@ -102,6 +102,15 @@ export const postCommentFields: Field[] = [
             type: "row",
             fields: [
               {
+                name: "likes",
+                label: t("Lượt thích", "Likes"),
+                type: "number",
+                defaultValue: 0,
+                admin: {
+                  readOnly: true,
+                },
+              },
+              {
                 name: "spamScore",
                 label: t("Điểm spam", "Spam score"),
                 type: "number",

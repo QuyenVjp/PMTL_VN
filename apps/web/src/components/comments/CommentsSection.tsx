@@ -1,7 +1,7 @@
 // CommentsSection.tsx — Server Component wrapper
 // Fetches first page of comments server-side (SEO) then passes to client.
 
-import { getBlogCommentsBySlug } from '@/lib/api/blogComments'
+import { getCommentsByPostSlug } from '@/lib/api/comments'
 import CommentsClient from './CommentsClient'
 import type { BlogCommentThread } from '@/types/cms'
 
@@ -18,7 +18,7 @@ export default async function CommentsSection({ slug, allowComments = true }: Co
 
 
   try {
-    initialData = await getBlogCommentsBySlug(slug, 1, 20)
+    initialData = await getCommentsByPostSlug(slug, 1, 20)
   } catch {
     // Nếu không tải được — hiển thị phần tử trống, client sẽ retry
   }

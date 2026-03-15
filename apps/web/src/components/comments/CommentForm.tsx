@@ -72,11 +72,10 @@ export default function CommentForm({
 
     startTransition(async () => {
       try {
-        const res = await fetch('/api/blog-comments/submit', {
+        const res = await fetch(`/api/posts/${encodeURIComponent(postSlug)}/comments`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            postSlug,
             content: content.trim(),
             authorName: finalAuthorName,
             authorAvatar: user?.avatar_url ?? undefined,

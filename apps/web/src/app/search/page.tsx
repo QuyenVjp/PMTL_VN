@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import type { CmsList } from '@/types/cms'
 import { getCategories, getAllTags } from '@/lib/api/blog'
 import { searchPostsAndCategories } from '@/app/actions/search'
@@ -33,6 +34,7 @@ export async function generateMetadata({ searchParams }: SearchPageProps): Promi
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
+  await connection()
   const initialState = parseSearchPageParams(await searchParams)
 
   const initialResultsPromise =

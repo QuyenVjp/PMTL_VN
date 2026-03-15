@@ -4,21 +4,31 @@
 //  GET /api/today-chant?date=YYYY-MM-DD&planSlug=<optional>
 //
 //  1) Tính lunarMonth/lunarDay từ date dùng @forvn/vn-lunar-calendar
-//  2) Gọi Strapi aggregator và trả về kết quả cho client
+//  2) Gọi CMS chanting endpoint và trả về kết quả cho client
 // ─────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from 'next/server';
+import { connection } from 'next/server';
+import { z } from 'zod';
 import { fetchTodayChant } from '@/lib/api/chanting';
 import { CHANTING_ADMIN_COPY } from '@/lib/config/chanting';
+import { logger } from '@/lib/logger';
 
-export const dynamic = 'force-dynamic';
+const todayChantQuerySchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  planSlug: z.string().trim().min(1).max(160).optional(),
+});
 
 export async function GET(req: NextRequest) {
+  await connection();
   try {
-    const { searchParams } = req.nextUrl;
-    const planSlug = searchParams.get('planSlug');
+    const parsed = todayChantQuerySchema.parse({
+      date: req.nextUrl.searchParams.get('date') ?? undefined,
+      planSlug: req.nextUrl.searchParams.get('planSlug') ?? undefined,
+    });
+    const planSlug = parsed.planSlug;
 
     // ── Xác định ngày hôm nay (Asia/Bangkok = UTC+7) ──
-    const dateParam = searchParams.get('date');
+    const dateParam = parsed.date;
     let isoDate: string;
     if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
       isoDate = dateParam;
@@ -46,7 +56,7 @@ export async function GET(req: NextRequest) {
         }
       }
     } catch (lunarErr) {
-      console.warn('[today-chant] Lunar conversion failed:', lunarErr);
+      logger.warn('today-chant lunar conversion failed', { error: lunarErr });
     }
 
     const data = await fetchTodayChant({ date: isoDate, lunarMonth, lunarDay, planSlug });
@@ -66,7 +76,11 @@ export async function GET(req: NextRequest) {
       headers: { 'Cache-Control': 'no-store' },
     });
   } catch (err) {
-    console.error('[api/today-chant] Error:', err);
+    if (err instanceof Error && err.name === 'ZodError') {
+      return NextResponse.json({ error: 'Tham số không hợp lệ' }, { status: 400 });
+    }
+
+    logger.error('today-chant route failed', { error: err, path: req.nextUrl.pathname });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

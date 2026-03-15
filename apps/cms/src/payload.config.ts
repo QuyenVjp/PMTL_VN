@@ -44,6 +44,7 @@ import { Homepage } from "./globals/Homepage";
 import { Navigation } from "./globals/Navigation";
 import { SidebarConfig } from "./globals/SidebarConfig";
 import { SiteSettings } from "./globals/SiteSettings";
+import { cmsJobTasks } from "./jobs";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -170,6 +171,16 @@ export default buildConfig({
     AuditLogs,
   ],
   globals: [SiteSettings, Navigation, Homepage, SidebarConfig, ChantingSettings],
+  jobs: {
+    access: {
+      cancel: () => true,
+      queue: () => true,
+      run: () => true,
+    },
+    deleteJobOnComplete: false,
+    enableConcurrencyControl: true,
+    tasks: cmsJobTasks,
+  },
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL ?? defaultDatabaseUrl,

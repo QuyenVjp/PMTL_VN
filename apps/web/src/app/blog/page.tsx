@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
@@ -13,9 +14,6 @@ import StickyBanner from '@/components/StickyBanner'
 import BlogListClient from '@/components/BlogListClient'
 import { getPosts, getCategories, getBlogArchiveIndex } from '@/lib/api/blog'
 import { PAGINATION } from '@/lib/config/pagination'
-
-// Keep blog listing fresh in production even when webhook revalidation is not configured.
-export const revalidate = 60
 
 export const metadata: Metadata = {
   title: 'Blog & Chia Sẻ | Khai Thị Của Sư Phụ',
@@ -31,6 +29,7 @@ interface PageProps {
 }
 
 export default async function BlogPage({ searchParams }: PageProps) {
+  await connection()
   const { page, category, q } = await searchParams
   // Đọc params từ URL
   const currentPage = Math.max(1, parseInt(page ?? '1', 10))
@@ -77,7 +76,7 @@ export default async function BlogPage({ searchParams }: PageProps) {
           {posts.length === 0 && !currentSearch && !currentCategory ? (
             <div className="py-16 text-center text-muted-foreground">
               <p className="text-lg mb-2">Chưa có bài viết nào</p>
-              <p className="text-sm">Hãy tạo bài viết trong Strapi Admin</p>
+              <p className="text-sm">Hãy tạo bài viết trong CMS Admin</p>
             </div>
           ) : (
             <Suspense fallback={null}>

@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  POST /api/auth/google-callback
-//  Trao đổi authorization code lấy JWT Strapi → set httpOnly cookie
+//  Trao đổi authorization code lấy JWT CMS → set httpOnly cookie
 // ─────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (access_token) {
-      // Exchange provider access token to Strapi JWT + user
+      // Exchange provider access token to CMS JWT + user
       const res = await fetch(`${CMS_API_URL}/api/auth/google/callback?access_token=${access_token}`)
       const data = await parseResponseBody(res) as Record<string, any>
       if (!res.ok || !data.jwt) {
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       jwt = data.jwt as string
       user = data.user as Record<string, any>
     } else if (id_token) {
-      // Fallback only when Strapi returned JWT directly as id_token.
+      // Fallback only when CMS returned JWT directly as id_token.
       jwt = id_token
       const meRes = await fetch(`${CMS_API_URL}/api/users/me?populate=*`, {
         headers: { Authorization: `Bearer ${jwt}` },

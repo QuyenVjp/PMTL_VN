@@ -6,7 +6,7 @@
 import { cmsGet } from "@/lib/cms/client";
 import type { SiteSetting } from "@/types/cms";
 
-/** Fallback settings used when Strapi is unavailable or not configured */
+/** Fallback settings used when CMS is unavailable or not configured */
 export const DEFAULT_SETTINGS: SiteSetting = {
   id: 0,
   documentId: '',
@@ -34,11 +34,11 @@ export const DEFAULT_SETTINGS: SiteSetting = {
   updatedAt: '',
 }
 
-/** Get site settings — returns fallback if Strapi unavailable */
+/** Get site settings — returns fallback if CMS unavailable */
 export async function getSiteSettings(): Promise<SiteSetting> {
   try {
     const document = await cmsGet<SiteSetting>("/api/site-settings", {
-      next: { revalidate: 3600, tags: ["settings"] },
+      cache: "force-cache",
     });
 
     return document ?? DEFAULT_SETTINGS;

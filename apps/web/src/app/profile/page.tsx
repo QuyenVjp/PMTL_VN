@@ -152,7 +152,7 @@ export default function ProfilePage() {
       const localUrl = URL.createObjectURL(file)
       setAvatarPreview(localUrl)
 
-      // 2. Tải ảnh lên Strapi và lấy Media ID
+      // 2. Tải ảnh lên CMS và lấy Media ID
       const { id, url: remoteUrl } = await uploadAvatarFile(file)
 
       // 3. Cập nhật User record trong DB bằng Media ID

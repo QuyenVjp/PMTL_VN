@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getSiteSettings } from "@/lib/api/settings";
+import { DEFAULT_SETTINGS } from "@/lib/api/settings";
 import type { SocialLinks } from "@/types/cms";
+import CurrentYear from "@/components/CurrentYear";
 
 const YoutubeIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -90,7 +91,7 @@ function buildSocialIcons(social: SocialLinks | null) {
 }
 
 const Footer = async () => {
-  const settings = await getSiteSettings()
+  const settings = DEFAULT_SETTINGS
 
   const address = settings.address ?? "2A Holden Street, Ashfield, NSW 2131, Australia"
   const phone = settings.contactPhone ?? "+61 2 9283 2758"
@@ -180,7 +181,7 @@ const Footer = async () => {
 
         <div className="border-t border-border/50 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground/60 text-center sm:text-left">
-            © {new Date().getFullYear()} Pháp Môn Tâm Linh. Nguyện đem công đức này hướng về khắp tất cả chúng sinh đều trọn thành Phật đạo.
+            © <CurrentYear /> Pháp Môn Tâm Linh. Nguyện đem công đức này hướng về khắp tất cả chúng sinh đều trọn thành Phật đạo.
           </p>
           <p className="text-xs text-gold/50 shrink-0">南無阿彌陀佛</p>
         </div>

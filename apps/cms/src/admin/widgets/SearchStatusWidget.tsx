@@ -26,7 +26,7 @@ export async function SearchStatusWidget({ req }: WidgetServerProps) {
     {
       label: "Queue dang cho",
       value: String(status.queue.counts.waiting),
-      hint: status.queue.enabled ? "Job search-sync dang cho worker." : "Redis/BullMQ chua bat.",
+      hint: status.queue.enabled ? "Job search-sync dang cho Payload worker." : "Payload Jobs chua san sang.",
     },
     {
       label: "Queue dang chay",

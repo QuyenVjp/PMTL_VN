@@ -202,7 +202,7 @@ async function waitForHttp(url: string, timeoutMs: number): Promise<void> {
 
 function runLocalApps(localEnv: EnvMap): void {
   log("Khoi dong web va cms local voi hot reload...");
-  log("Khoi dong worker BullMQ local...");
+  log("Khoi dong worker Payload Jobs local...");
   log("Web: http://localhost:3000");
   log("CMS API: http://localhost:3001/api/health");
   log("Meilisearch: http://localhost:7700/health");

@@ -21,8 +21,7 @@ export default async function LatestCommentsWidget() {
       </h3>
       <ul className="space-y-3">
         {comments.map((c) => {
-          const postSlug = (c as any).post?.slug as string | undefined
-          const postTitle = (c as any).post?.title as string | undefined
+          const postSlug = c.post?.slug
           const snippet = c.content.slice(0, 60) + (c.content.length > 60 ? '…' : '')
           return (
             <li key={c.documentId} className="rounded-xl bg-secondary/30 px-4 py-4 text-xs leading-relaxed">

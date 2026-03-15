@@ -3,6 +3,7 @@
 //  ISR: fallback revalidate 1 hour — instant via /api/revalidate webhook
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,7 +11,7 @@ import { Suspense } from 'react'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
-import { getPostBySlug, getAllPostSlugs, getRelatedPosts, getPostBySlugForMetadata } from '@/lib/api/blog'
+import { getPostBySlug, getRelatedPosts, getPostBySlugForMetadata } from '@/lib/api/blog'
 import { getSeriesData } from '@/lib/api/series'
 import { getCmsMediaUrl } from '@/lib/cms'
 import Breadcrumbs from '@/components/Breadcrumbs'
@@ -21,20 +22,9 @@ import CommentsSection from '@/components/comments/CommentsSection'
 import SeriesNav from '@/components/blog/SeriesNav'
 import BlogPostEngagement from '@/components/blog/BlogPostEngagement'
 import Sidebar from '@/components/layout/Sidebar'
-export const revalidate = 3600 // 1h fallback — webhook clears cache instantly on admin publish
 
 interface Props {
   params: Promise<{ slug: string }>
-}
-
-/** Pre-generate known slugs at build time */
-export async function generateStaticParams() {
-  try {
-    const slugs = await getAllPostSlugs()
-    return slugs.map((slug) => ({ slug }))
-  } catch {
-    return []
-  }
 }
 
 /** Dynamic SEO metadata per post */
@@ -100,6 +90,7 @@ function getYouTubeId(url: string): string | null {
 // LanguageBadge removed as it's no longer in schema
 
 export default async function BlogPostPage({ params }: Props) {
+  await connection()
   const { slug } = await params
   const post = await getPostBySlug(slug)
   if (!post) notFound()

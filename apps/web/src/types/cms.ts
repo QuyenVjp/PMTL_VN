@@ -1,15 +1,15 @@
-export * from "./strapi";
+export * from "./cms-content";
 
 export type {
-  StrapiError as CmsError,
+  CmsApiError as CmsError,
   CmsEvent as CmsEvent,
   CmsList as CmsList,
   CmsMedia as CmsMedia,
   CmsMediaFormat as CmsMediaFormat,
   CmsOEmbedField as CmsOEmbedField,
-  StrapiResponse as CmsResponse,
+  CmsApiResponse as CmsResponse,
   CmsSeo as CmsSeo,
   CmsSingle as CmsSingle,
-} from "./strapi";
+} from "./cms-content";
 
-export { isStrapiError as isCmsError } from "./strapi";
+export { isCmsApiError as isCmsError } from "./cms-content";

@@ -4,8 +4,6 @@ import { NextResponse } from "next/server";
 import { getCurrentSessionFromCMS } from "@/features/auth/api/cms-auth-client";
 import { clearAuthCookie, AUTH_COOKIE_NAME, LEGACY_AUTH_COOKIE_NAME } from "@/features/auth/utils/auth-cookie";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
   const cookieStore = await cookies();
   const token =

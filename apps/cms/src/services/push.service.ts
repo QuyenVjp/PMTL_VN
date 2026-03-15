@@ -66,7 +66,7 @@ export async function enqueuePushDispatch(payload: Payload, id: string | number)
     overrideAccess: true,
   });
 
-  const queued = await enqueuePushDispatchJob(id);
+  const queued = await enqueuePushDispatchJob(payload, id);
 
   if (!queued) {
     return updated;

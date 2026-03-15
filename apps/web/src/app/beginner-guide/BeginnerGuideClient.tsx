@@ -2,7 +2,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 //  app/beginner-guide/BeginnerGuideClient.tsx
 //  Trang Hướng Dẫn Sơ Học — 2 tab: Lộ Trình + Tài Liệu
-//  - Dữ liệu động từ Strapi (có fallback mock khi CMS trống)
+//  - Dữ liệu động từ CMS (có fallback mock khi CMS trống)
 //  - Tab "Tài Liệu": xem preview PDF/ảnh ngay trong trang
 // ─────────────────────────────────────────────────────────────────────────────
 

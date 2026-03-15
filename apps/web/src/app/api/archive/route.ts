@@ -3,15 +3,10 @@
 //  GET — bài viết theo năm/tháng + mục lục tổng hợp
 // ─────────────────────────────────────────────────────────────
 import { NextRequest } from 'next/server'
-
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+import { getArchiveIndex, getArchivePosts } from '@/lib/api/archive'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
-  const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)
-  if (!token) {
-    return Response.json({ error: 'Cấu hình token bị thiếu.' }, { status: 500 })
-  }
-
   const { searchParams } = new URL(request.url)
   const year = searchParams.get('year')
   const month = searchParams.get('month')
@@ -21,31 +16,23 @@ export async function GET(request: NextRequest) {
 
   try {
     if (index) {
-      // Trả về mục lục năm/tháng
-      const res = await fetch(`${CMS_API_URL}/api/blog-posts/archive-index`, {
-        headers: { Authorization: `Bearer ${token}` },
-        next: { revalidate: 3600, tags: ['blog-posts'] },
-      })
-      const data = await res.json()
-      return Response.json(data, { status: res.status })
+      const data = await getArchiveIndex()
+      return Response.json(data)
     }
 
     if (!year) {
       return Response.json({ error: 'Thiếu tham số year.' }, { status: 400 })
     }
 
-    const monthParam = month ? `&month=${month}` : ''
-    const res = await fetch(
-      `${CMS_API_URL}/api/blog-posts/archive?year=${year}${monthParam}&page=${page}&pageSize=${pageSize}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-        next: { revalidate: 600, tags: ['blog-posts'] },
-      }
+    const data = await getArchivePosts(
+      Number(year),
+      month ? Number(month) : undefined,
+      Number(page),
+      Number(pageSize),
     )
-
-    const data = await res.json()
-    return Response.json(data, { status: res.status })
-  } catch {
+    return Response.json(data)
+  } catch (error) {
+    logger.error('Archive API failed', { error, month, page, pageSize, year })
     return Response.json({ error: 'Lỗi server.' }, { status: 500 })
   }
 }

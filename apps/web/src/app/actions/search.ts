@@ -2,7 +2,8 @@
 
 import { getPosts, getAllTags, getCategories } from '@/lib/api/blog'
 import { buildCMSUrl } from '@/lib/cms/client'
-import { revalidatePath, unstable_cache } from 'next/cache'
+import { revalidatePath } from 'next/cache'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
 import type { SearchHit } from '@/lib/search/types'
 import type { GetPostsOptions } from '@/lib/api/blog'
 
@@ -56,7 +57,7 @@ export async function searchPostsAndCategories(options: GetPostsOptions) {
         meta: res.meta,
       }
     } catch (fallbackError) {
-      console.error('[Search] Strapi fallback failed, returning empty result:', fallbackError)
+      console.error('[Search] CMS fallback failed, returning empty result:', fallbackError)
       return {
         data: [],
         meta: {
@@ -72,31 +73,29 @@ export async function searchPostsAndCategories(options: GetPostsOptions) {
   }
 }
 
-export const fetchAllCategories = unstable_cache(
-  async () => {
-    return await getCategories()
-  },
-  ['all-categories'],
-  { revalidate: 3600, tags: ['categories'] }
-)
+export async function fetchAllCategories() {
+  return cachedCmsFetch<Awaited<ReturnType<typeof getCategories>>>('/categories', {}, {
+    profile: 'hours',
+    tags: ['categories'],
+  })
+}
 
-export const fetchAllTags = unstable_cache(
-  async () => {
-    return await getAllTags()
-  },
-  ['all-tags'],
-  { revalidate: 3600, tags: ['blog-tags'] }
-)
+export async function fetchAllTags() {
+  return cachedCmsFetch<Awaited<ReturnType<typeof getAllTags>>>('/blog-tags', {}, {
+    profile: 'hours',
+    tags: ['blog-tags'],
+  })
+}
 
 export async function incrementViewAction(documentId: string): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    const strapiUrl = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
-    const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)
+    const cmsUrl = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+    const token = process.env.PAYLOAD_API_TOKEN
 
     const headers: HeadersInit = { 'Content-Type': 'application/json' }
     if (token) headers['Authorization'] = `Bearer ${token}`
 
-    const res = await fetch(`${strapiUrl}/api/posts/${documentId}/view`, {
+    const res = await fetch(`${cmsUrl}/api/posts/${documentId}/view`, {
       method: 'POST',
       headers,
       cache: 'no-store',

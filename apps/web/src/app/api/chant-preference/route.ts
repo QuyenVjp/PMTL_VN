@@ -2,8 +2,6 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { CMS_API_URL } from '@/lib/cms'
 
-export const dynamic = 'force-dynamic'
-
 async function getUserJwt(): Promise<string | null> {
   const cookieStore = await cookies()
   return cookieStore.get('auth_token')?.value ?? null

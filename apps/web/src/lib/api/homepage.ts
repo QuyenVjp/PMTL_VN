@@ -1,10 +1,10 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/homepage.ts — Homepage Dynamic Content API
-//  Server-side only — fetch settings from Strapi v5
+//  Server-side only — fetch settings from CMS globals
 // ─────────────────────────────────────────────────────────────
 
 import { getCmsMediaUrl } from '@/lib/cms'
-import { cmsGet } from "@/lib/cms/client";
+import { cachedCmsGet } from "@/lib/cms/server-cache";
 import type {
   SiteSetting,
   HeroSlide,
@@ -18,13 +18,13 @@ import type {
 } from '@/types/cms'
 
 /**
- * Fetch toàn bộ cài đặt trang chủ từ Strapi (Single Type: setting)
- * Dùng documentId cho Strapi v5
+ * Fetch toàn bộ cài đặt trang chủ từ CMS global homepage.
  */
 export async function getHomepageSettings(): Promise<SiteSetting | null> {
   try {
-    const document = await cmsGet<SiteSetting>("/api/homepage", {
-      next: { revalidate: 300, tags: ["homepage-settings"] },
+    const document = await cachedCmsGet<SiteSetting>("/api/homepage", undefined, {
+      profile: "minutes",
+      tags: ["homepage-settings"],
     });
 
     if (document) {
@@ -70,13 +70,13 @@ export async function getHomepageSettings(): Promise<SiteSetting | null> {
     }
 
     return document ?? null
-  } catch (err) {
-    console.error('[Homepage] Failed to fetch settings:', err)
+  } catch (error) {
+    console.error('[Homepage] Failed to fetch homepage settings:', error)
     return null
   }
 }
 
-// ─── Fallback Data (Dùng khi Strapi chưa có dữ liệu) ──────
+// ─── Fallback Data (Dùng khi CMS chưa có dữ liệu) ──────
 
 export const FALLBACK_HERO_SLIDES: HeroSlide[] = [
   {

@@ -1,5 +1,7 @@
 // app/archive/page.tsx — Archive index page (server)
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
+import { Suspense } from 'react'
 import { getArchiveIndex } from '@/lib/api/archive'
 import ArchiveGrid from '@/components/archive/ArchiveGrid'
 import HeaderServer from '@/components/HeaderServer'
@@ -12,9 +14,26 @@ export const metadata: Metadata = {
   description: 'Kho lưu trữ toàn bộ bài viết theo năm và tháng.',
 }
 
-export const revalidate = 3600
-
 export default async function ArchivePage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Suspense fallback={null}>
+        <HeaderServer />
+      </Suspense>
+      <Suspense fallback={<ArchivePageFallback />}>
+        <ArchivePageContent />
+      </Suspense>
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      <StickyBanner />
+    </div>
+  )
+}
+
+async function ArchivePageContent() {
+  await connection()
+
   let data: ArchiveYear[] = []
   try {
     data = await getArchiveIndex()
@@ -23,22 +42,29 @@ export default async function ArchivePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <HeaderServer />
-      <main className="py-24">
-        <div className="container max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Kho Lưu Trữ</p>
-            <h1 className="ant-title mb-5 text-4xl text-foreground md:text-5xl">Lưu Trữ Bài Viết</h1>
-            <p className="text-muted-foreground text-base leading-relaxed max-w-2xl mx-auto">
-              Toàn bộ bài viết phân loại theo năm và tháng. Chọn tháng để xem danh sách bài.
-            </p>
-          </div>
-          <ArchiveGrid data={data} />
+    <main className="py-24">
+      <div className="container max-w-4xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <p className="text-gold text-xs font-medium tracking-widest uppercase mb-4">Kho Lưu Trữ</p>
+          <h1 className="ant-title mb-5 text-4xl text-foreground md:text-5xl">Lưu Trữ Bài Viết</h1>
+          <p className="text-muted-foreground text-base leading-relaxed max-w-2xl mx-auto">
+            Toàn bộ bài viết phân loại theo năm và tháng. Chọn tháng để xem danh sách bài.
+          </p>
         </div>
-      </main>
-      <Footer />
-      <StickyBanner />
-    </div>
+        <ArchiveGrid data={data} />
+      </div>
+    </main>
+  )
+}
+
+function ArchivePageFallback() {
+  return (
+    <main className="py-24">
+      <div className="container max-w-4xl mx-auto px-6">
+        <div className="panel-shell-strong p-8 text-center text-muted-foreground">
+          Đang tải lưu trữ...
+        </div>
+      </div>
+    </main>
   )
 }

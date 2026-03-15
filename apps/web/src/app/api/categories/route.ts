@@ -1,12 +1,12 @@
-import { cmsFetch } from "@/lib/cms";
-import type { CmsList, Category } from "@/types/cms";
+import { getCategories } from "@/lib/api/categories";
+import { logger } from "@/lib/logger";
+import { connection } from "next/server";
 
 export async function GET() {
+  await connection();
   try {
-    const normalized = await cmsFetch<CmsList<Category>>("/blog-tags", {
-      pagination: { page: 1, pageSize: 1000 },
-      next: { revalidate: 600, tags: ["categories"] },
-    });
+    const data = await getCategories();
+    const normalized = { data };
 
     return new Response(JSON.stringify(normalized), {
       status: 200,
@@ -17,10 +17,10 @@ export async function GET() {
     });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("[DanhMuc] Lỗi server:", errMsg);
+    logger.error("Categories API failed", { error });
     return new Response(
-      JSON.stringify({ error: "Internal server error", message: errMsg }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
+      JSON.stringify({ data: [], error: "Internal server error", message: errMsg }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
     );
   }
 }

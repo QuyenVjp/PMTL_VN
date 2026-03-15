@@ -1,4 +1,5 @@
-import { getCmsMediaUrl, cmsFetch } from '@/lib/cms'
+import { getCmsMediaUrl } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
 import type {
   CmsList,
   CmsSingle,
@@ -62,25 +63,32 @@ function normalizeListItem(item: Sutra): SutraListItem {
 }
 
 export async function fetchSutraList(): Promise<SutraListItem[]> {
-  const res = await cmsFetch<CmsList<Sutra>>('/sutras', {
-    status: 'published',
-    sort: ['isFeatured:desc', 'sortOrder:asc', 'title:asc'],
-    fields: ['title', 'slug', 'shortExcerpt', 'description', 'translatorHan', 'translatorViet', 'reviewer'],
-    populate: {
-      coverImage: { fields: ['url', 'alternativeText', 'width', 'height'] },
-      tags: { fields: ['name', 'slug', 'documentId'] },
-      volumes: { fields: ['documentId'] },
-    },
-    pagination: { page: 1, pageSize: 100 },
-    next: { revalidate: 600, tags: ['sutras'] },
-  })
+  try {
+    const res = await cachedCmsFetch<CmsList<Sutra>>('/sutras', {
+      status: 'published',
+      sort: ['isFeatured:desc', 'sortOrder:asc', 'title:asc'],
+      fields: ['title', 'slug', 'shortExcerpt', 'description', 'translatorHan', 'translatorViet', 'reviewer'],
+      populate: {
+        coverImage: { fields: ['url', 'alternativeText', 'width', 'height'] },
+        tags: { fields: ['name', 'slug', 'documentId'] },
+        volumes: { fields: ['documentId'] },
+      },
+      pagination: { page: 1, pageSize: 100 },
+    }, {
+      profile: 'minutes',
+      tags: ['sutras'],
+    })
 
-  return (res.data ?? []).map(normalizeListItem)
+    return (res.data ?? []).map(normalizeListItem)
+  } catch {
+    return []
+  }
 }
 
 export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | null> {
-  // Step 1: Fetch Sutra base data (no nested pagination in populate for Strapi v5)
-  const sutraRes = await cmsFetch<CmsList<Sutra>>('/sutras', {
+  try {
+  // Step 1: Fetch Sutra base data (no nested pagination in populate for the legacy REST shape)
+  const sutraRes = await cachedCmsFetch<CmsList<Sutra>>('/sutras', {
     status: 'published',
     filters: { slug: { $eq: slug } },
     fields: ['title', 'slug', 'description', 'shortExcerpt', 'translatorHan', 'translatorViet', 'reviewer'],
@@ -89,7 +97,9 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
       tags: { fields: ['name', 'slug', 'documentId'] },
     },
     pagination: { page: 1, pageSize: 1 },
-    next: { revalidate: 300, tags: [`sutra-${slug}`] },
+  }, {
+    profile: 'minutes',
+    tags: [`sutra-${slug}`],
   })
 
   const sutra = sutraRes.data?.[0]
@@ -97,7 +107,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 
   // Step 2: Fetch Volumes by sutra id (avoid nested populate pagination errors)
   let volumes: SutraVolume[] = []
-  const volumeRes = await cmsFetch<CmsList<SutraVolume>>('/sutra-volumes', {
+  const volumeRes = await cachedCmsFetch<CmsList<SutraVolume>>('/sutra-volumes', {
     status: 'published',
     fields: ['title', 'slug', 'volumeNumber', 'bookStart', 'bookEnd', 'description', 'sortOrder', 'documentId'],
     sort: ['volumeNumber:asc', 'sortOrder:asc'],
@@ -105,7 +115,9 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
       sutra: { fields: ['documentId', 'slug', 'title'] },
     },
     pagination: { page: 1, pageSize: 200 },
-    next: { revalidate: 300, tags: [`sutra-${slug}-volumes`] },
+  }, {
+    profile: 'minutes',
+    tags: [`sutra-${slug}-volumes`],
   })
   volumes = (volumeRes.data ?? [])
     .filter((item) => item.sutra?.documentId === sutra.documentId)
@@ -128,10 +140,10 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 
   // Step 3: Fetch Chapters.
   // Some data models attach chapters directly to sutra (no volume), others attach through volume.
-  // Fetch broadly then narrow in memory to avoid relation-filter edge cases in Strapi v5.
+  // Fetch broadly then narrow in memory to avoid relation-filter edge cases in the legacy REST shape.
   const volumeDocIds = new Set(volumes.map((v) => v.documentId))
   let chapters: SutraChapter[] = []
-  const chapterRes = await cmsFetch<CmsList<SutraChapter>>('/sutra-chapters', {
+  const chapterRes = await cachedCmsFetch<CmsList<SutraChapter>>('/sutra-chapters', {
     status: 'published',
     fields: ['title', 'slug', 'chapterNumber', 'openingText', 'content', 'endingText', 'estimatedReadMinutes', 'sortOrder', 'documentId'],
     sort: ['chapterNumber:asc', 'sortOrder:asc'],
@@ -145,7 +157,9 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
       },
     },
     pagination: { page: 1, pageSize: 2000 },
-    next: { revalidate: 300, tags: [`sutra-${slug}-chapters`] },
+  }, {
+    profile: 'minutes',
+    tags: [`sutra-${slug}-chapters`],
   })
 
   chapters = (chapterRes.data ?? [])
@@ -173,7 +187,7 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
 
   // Step 4: Fetch Glossaries by sutra id
   let glossaries: SutraGlossary[] = []
-  const glossaryRes = await cmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
+  const glossaryRes = await cachedCmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
     status: 'published',
     fields: ['markerKey', 'term', 'meaning', 'sortOrder', 'documentId'],
     sort: ['sortOrder:asc', 'createdAt:asc'],
@@ -183,7 +197,9 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
       volume: { fields: ['documentId', 'slug'] },
     },
     pagination: { page: 1, pageSize: 1000 },
-    next: { revalidate: 300, tags: [`sutra-${slug}-glossaries`] },
+  }, {
+    profile: 'minutes',
+    tags: [`sutra-${slug}-glossaries`],
   })
   glossaries = (glossaryRes.data ?? [])
     .filter((item) => item.sutra?.documentId === sutra.documentId)
@@ -217,33 +233,42 @@ export async function fetchSutraBySlug(slug: string): Promise<SutraReaderData | 
     chapters,
     glossaries,
   }
+  } catch {
+    return null
+  }
 }
 
 export async function fetchSutraDictionary(): Promise<SutraDictionaryEntry[]> {
-  const res = await cmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
-    status: 'published',
-    fields: ['documentId', 'markerKey', 'term', 'meaning', 'sortOrder'],
-    populate: {
-      sutra: { fields: ['documentId', 'title', 'slug'] },
-    },
-    sort: ['term:asc', 'sortOrder:asc', 'createdAt:asc'],
-    pagination: { page: 1, pageSize: 1000 },
-    next: { revalidate: 300, tags: ['sutra-dictionary'] },
-  })
+  try {
+    const res = await cachedCmsFetch<CmsList<SutraGlossary>>('/sutra-glossaries', {
+      status: 'published',
+      fields: ['documentId', 'markerKey', 'term', 'meaning', 'sortOrder'],
+      populate: {
+        sutra: { fields: ['documentId', 'title', 'slug'] },
+      },
+      sort: ['term:asc', 'sortOrder:asc', 'createdAt:asc'],
+      pagination: { page: 1, pageSize: 1000 },
+    }, {
+      profile: 'minutes',
+      tags: ['sutra-dictionary'],
+    })
 
-  return (res.data ?? []).map((item) => ({
-    documentId: item.documentId,
-    markerKey: item.markerKey,
-    term: item.term,
-    meaning: item.meaning,
-    sutra: item.sutra
-      ? {
-          documentId: item.sutra.documentId,
-          title: item.sutra.title,
-          slug: item.sutra.slug,
-        }
-      : null,
-  }))
+    return (res.data ?? []).map((item) => ({
+      documentId: item.documentId,
+      markerKey: item.markerKey,
+      term: item.term,
+      meaning: item.meaning,
+      sutra: item.sutra
+        ? {
+            documentId: item.sutra.documentId,
+            title: item.sutra.title,
+            slug: item.sutra.slug,
+          }
+        : null,
+    }))
+  } catch {
+    return []
+  }
 }
 
 export type { SutraReadingProgress, SutraBookmark }

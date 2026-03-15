@@ -1,4 +1,6 @@
-import { buildCmsUrl } from '@/lib/cms'
+import { getCategoryTree } from '@/lib/api/categories'
+import { logger } from '@/lib/logger'
+import { connection } from 'next/server'
 import type { CategoryTree } from '@/types/cms'
 
 interface CategoryTreeResponse {
@@ -9,32 +11,16 @@ interface CategoryTreeResponse {
 }
 
 export async function GET() {
+  await connection()
   try {
-    const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)
-    if (!token) {
-      return new Response(JSON.stringify({ error: 'API token not configured' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    const url = buildCmsUrl('/categories/tree')
-    const res = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+    const tree = await getCategoryTree()
+    const data = {
+      data: tree,
+      meta: {
+        totalRoots: tree.length,
       },
-      next: { revalidate: 600 },
-    })
+    } as CategoryTreeResponse
 
-    if (!res.ok) {
-      return new Response(
-        JSON.stringify({ error: 'Failed to fetch category tree', status: res.status }),
-        { status: res.status, headers: { 'Content-Type': 'application/json' } }
-      )
-    }
-
-    const data = await res.json() as CategoryTreeResponse
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
@@ -44,9 +30,10 @@ export async function GET() {
     })
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error)
+    logger.error('Category tree API failed', { error })
     return new Response(
-      JSON.stringify({ error: 'Internal server error', message: errMsg }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ data: [], meta: { totalRoots: 0 }, error: 'Internal server error', message: errMsg }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
     )
   }
 }

@@ -31,12 +31,12 @@ export const pushJobHooks = {
   ],
   afterChange: [
     async ({ doc, req, collection, operation }: PushJobHookArgs) => {
-      if (!doc?.id || doc.status !== "pending" && doc.status !== "queued") {
+      if (!doc?.id || !req?.payload || doc.status !== "pending" && doc.status !== "queued") {
         return;
       }
 
       await Promise.all([
-        enqueuePushDispatchJob(doc.id),
+        enqueuePushDispatchJob(req.payload, doc.id),
         appendCollectionAuditLog({
           req,
           doc,

@@ -3,7 +3,7 @@
 //  Server-side only — fetch from Payload CMS
 // ─────────────────────────────────────────────────────────────
 
-import { cmsFetch } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
 import type { CmsList, BeginnerGuide } from '@/types/cms'
 
 /**
@@ -12,13 +12,12 @@ import type { CmsList, BeginnerGuide } from '@/types/cms'
  */
 export async function getGuides(guideType: 'so-hoc' | 'kinh-bai-tap'): Promise<BeginnerGuide[]> {
   try {
-    const res = await cmsFetch<CmsList<BeginnerGuide>>('/guides', {
+    const res = await cachedCmsFetch<CmsList<BeginnerGuide>>('/guides', {
       filters: { guide_type: { $eq: guideType } },
       sort: ['step_number:asc', 'order:asc'],
       populate: ['images', 'attached_files', 'icon'],
       pagination: { page: 1, pageSize: 100 },
-      next: { revalidate: 300, tags: [`guides-${guideType}`] },
-    })
+    }, { profile: 'minutes', tags: [`guides-${guideType}`] })
     return res.data ?? []
   } catch (err) {
     console.error(`[Guides] Failed to fetch ${guideType}:`, err)
@@ -39,10 +38,9 @@ export async function getDailyRecitationSteps(): Promise<BeginnerGuide[]> {
 /** Fetch một guide cụ thể theo documentId */
 export async function getGuideById(documentId: string): Promise<BeginnerGuide | null> {
   try {
-    const res = await cmsFetch<{ data: BeginnerGuide }>(`/guides/${documentId}`, {
+    const res = await cachedCmsFetch<{ data: BeginnerGuide }>(`/guides/${documentId}`, {
       populate: ['images', 'attached_files', 'icon'],
-      next: { revalidate: 300, tags: [`guide-${documentId}`] },
-    })
+    }, { profile: 'minutes', tags: [`guide-${documentId}`] })
     return res.data ?? null
   } catch {
     return null

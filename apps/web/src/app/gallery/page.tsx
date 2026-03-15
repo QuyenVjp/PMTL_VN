@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 
 import Footer from '@/components/Footer'
 import GalleryClient from '@/components/gallery/GalleryClient'
@@ -11,9 +12,8 @@ export const metadata: Metadata = {
   description: 'Thư viện ảnh động về pháp hội, nghi lễ, hoa sen, kiến trúc cổ tự và những khoảnh khắc tu học của Pháp Môn Tâm Linh.',
 }
 
-export const revalidate = 3600
-
 export default async function GalleryPage() {
+  await connection()
   let items = FALLBACK_GALLERY_ITEMS
 
   try {

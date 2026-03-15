@@ -22,7 +22,7 @@ function normalizeUploadPayload(data: any) {
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
   // Ưu tiên token hệ thống để tránh bị chặn do role user thiếu quyền upload.
-  const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN) || cookieStore.get('auth_token')?.value
+  const token = process.env.PAYLOAD_API_TOKEN || cookieStore.get('auth_token')?.value
 
   try {
     const incoming = await req.formData()
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Phản hồi upload không hợp lệ' }, { status: 500 })
     }
 
-    // Giữ format mảng (tương thích Strapi client cũ)
+    // Giữ format mảng (tương thích legacy client cũ)
     return NextResponse.json([normalized])
   } catch (error) {
     console.error('Proxy upload error:', error)

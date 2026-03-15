@@ -1,8 +1,11 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/chanting.ts  —  Types + server-side helpers for Niệm Kinh
-//  Chỉ dùng trong Server Components / Route Handlers (có cmsFetch)
+//  Chỉ dùng trong Server Components / Route Handlers
 // ─────────────────────────────────────────────────────────────
-import { buildCmsUrl, CMS_API_URL } from '@/lib/cms';
+import { CMS_API_URL } from '@/lib/cms';
+import { buildCMSUrl } from '@/lib/cms/client';
+import { cachedCmsGet } from '@/lib/cms/server-cache';
+import { logger } from '@/lib/logger';
 import type { CmsMedia, CmsSingle } from '@/types/cms';
 
 // ── Types ─────────────────────────────────────────────────────
@@ -110,7 +113,7 @@ export interface ChantingSetting {
 // ── Server-side fetchers ──────────────────────────────────────
 
 /**
- * Gọi Strapi aggregator endpoint /chant-plans/today-chant
+ * Gọi CMS chanting endpoint cho lịch niệm theo ngày.
  * Chỉ dùng trong Server Components hoặc Route Handlers
  */
 export async function fetchTodayChant(params: {
@@ -127,18 +130,18 @@ export async function fetchTodayChant(params: {
     if (lunarDay) qs.set('lunarDay', String(lunarDay));
 
     const url = `${CMS_API_URL}/api/chant-plans/today-chant?${qs}`;
-    const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN);
+    const token = process.env.PAYLOAD_API_TOKEN;
     const res = await fetch(url, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
-      next: { revalidate: 60 }, // cache 1 phút
+      cache: 'force-cache',
     });
     if (!res.ok) {
-      console.error('[fetchTodayChant] Strapi error', res.status, await res.text());
+      logger.error('fetchTodayChant failed', { status: res.status, body: await res.text() });
       return null;
     }
     return res.json();
   } catch (err) {
-    console.error('[fetchTodayChant] Error:', err);
+    logger.error('fetchTodayChant crashed', { error: err });
     return null;
   }
 }
@@ -170,7 +173,7 @@ export async function fetchTodayChantMy(params: {
 }
 
 /**
- * Lấy practice log từ Strapi với JWT user token (dùng trong Server Action hoặc route handler)
+ * Lấy practice log từ CMS với JWT user token (dùng trong Server Action hoặc route handler)
  */
 export async function fetchPracticeLog(params: {
   date: string;
@@ -221,28 +224,13 @@ export async function upsertPracticeLog(params: {
 
 export async function fetchChantingSetting(): Promise<ChantingSetting | null> {
   try {
-    const url = buildCmsUrl('/chanting-setting', {
-      populate: {
-        guidelineSections: true,
-      },
+    const response = await cachedCmsGet<ChantingSetting | CmsSingle<ChantingSetting>>('/api/chanting-settings', undefined, {
+      profile: 'hours',
+      tags: ['chanting-setting'],
     });
-    const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN);
-    const res = await fetch(url, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      next: { revalidate: 3600, tags: ['chanting-setting'] },
-    });
-
-    // Single type này là optional trong giai đoạn chuyển môi trường.
-    // Nếu backend chưa build schema mới, FE rơi về fallback UI mà không spam console.
-    if (res.status === 404) return null;
-    if (!res.ok) {
-      console.error('[fetchChantingSetting] Strapi error', res.status, await res.text());
-      return null;
-    }
-
-    const response = (await res.json()) as CmsSingle<ChantingSetting>;
-    return response.data ?? null;
-  } catch {
+    return "data" in response ? response.data ?? null : response;
+  } catch (error) {
+    logger.error('fetchChantingSetting crashed', { error });
     return null;
   }
 }

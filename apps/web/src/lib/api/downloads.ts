@@ -2,7 +2,7 @@
 //  fe-pmtl/lib/api/downloads.ts
 //  Lấy tài liệu tải từ Payload Downloads API
 // ─────────────────────────────────────────────────────────────
-import { cmsFetch } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
 
 export interface DownloadItem {
   id: number
@@ -40,13 +40,12 @@ export async function fetchDownloads(params?: {
     filters.category = { $eq: params.category }
   }
 
-  const data = await cmsFetch<{ data: any[]; meta: any }>('/downloads', {
+  const data = await cachedCmsFetch<{ data: any[]; meta: any }>('/downloads', {
     sort: ['sortOrder:asc', 'groupYear:desc', 'createdAt:desc'],
     pagination: { pageSize: params?.pageSize ?? 100 },
     populate: ['thumbnail'],
     filters,
-    next: { revalidate: 3600, tags: ['downloads'] },
-  })
+  }, { profile: 'hours', tags: ['downloads'] })
 
   const items: DownloadItem[] = (data.data || []).map((item: any) => ({
     id: item.id,

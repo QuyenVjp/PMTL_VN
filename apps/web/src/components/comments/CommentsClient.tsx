@@ -22,7 +22,7 @@ export default function CommentsClient({ slug, initialData, allowComments = true
     async (p: number) => {
       setLoading(true)
       try {
-        const res = await fetch(`/api/blog-comments/by-post/${encodeURIComponent(slug)}?page=${p}&pageSize=20`)
+        const res = await fetch(`/api/posts/${encodeURIComponent(slug)}/comments?page=${p}&pageSize=20`)
         if (res.ok) {
           const json: BlogCommentThread = await res.json()
           setData(json)
@@ -43,7 +43,7 @@ export default function CommentsClient({ slug, initialData, allowComments = true
   }, [fetchPage])
 
   const handleLike = useCallback(async (documentId: string) => {
-    await fetch(`/api/blog-comments/like/${encodeURIComponent(documentId)}`, { method: 'POST' })
+    await fetch(`/api/comments/${encodeURIComponent(documentId)}/like`, { method: 'POST' })
   }, [])
 
   const { data: comments, meta } = data

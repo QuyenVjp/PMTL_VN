@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  POST /api/user/avatar — Proxy upload avatar
-//  Đọc JWT từ httpOnly cookie, forward multipart đến Strapi /upload
+//  Đọc JWT từ httpOnly cookie, forward multipart đến CMS /upload
 // ─────────────────────────────────────────────────────────────
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -11,7 +11,7 @@ const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PU
 
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
-  const token = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN) || cookieStore.get('auth_token')?.value
+  const token = process.env.PAYLOAD_API_TOKEN || cookieStore.get('auth_token')?.value
 
   if (!token) return NextResponse.json({ error: 'Chưa đăng nhập' }, { status: 401 })
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     if (!res.ok) {
       logger.warn('Avatar upload failed', {
         status: res.status,
-        hasApiToken: Boolean(process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN),
+        hasApiToken: Boolean(process.env.PAYLOAD_API_TOKEN),
         response: data,
       })
 

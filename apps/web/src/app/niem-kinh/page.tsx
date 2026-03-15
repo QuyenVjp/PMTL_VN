@@ -3,10 +3,11 @@
 //
 //  1) Tính ngày hôm nay (Asia/Bangkok)
 //  2) Tính âm lịch bằng @forvn/vn-lunar-calendar
-//  3) Fetch Today Chant List từ Strapi aggregator (server-side, có auth token)
+//  3) Fetch Today Chant List từ CMS aggregator (server-side, có auth token)
 //  4) Render ChantingRunner (client component)
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next';
+import { connection } from 'next/server';
 import { Suspense } from 'react';
 import HeaderServer from '@/components/HeaderServer';
 import Footer from '@/components/Footer';
@@ -17,9 +18,6 @@ import ChantingRunner from './ChantingRunner';
 import { Moon } from 'lucide-react';
 import { fetchEvents } from '@/lib/api/event';
 import { getPostBySlug, getPosts } from '@/lib/api/blog';
-
-
-export const revalidate = 3600; // Cache 1 hour, auto-revalidate
 
 export const metadata: Metadata = {
   title: 'Niệm Kinh — Công Khóa Hôm Nay',
@@ -69,6 +67,7 @@ export default async function NiemKinhPage({
 }: {
   searchParams: Promise<{ plan?: string; item?: string }>;
 }) {
+  await connection();
   const { plan: planSlug, item: itemSlug } = await searchParams;
   const { isoDate, year, month, day, serverNow } = getTodayBKK();
   const lunar = await getLunarDate(year, month, day);
@@ -81,7 +80,7 @@ export default async function NiemKinhPage({
       planSlug,
     }),
     fetchEvents().catch(() => ({ data: [] })),
-    getPosts({ page: 1, pageSize: 3, featured: true, revalidate: 3600 }).catch(() => ({ data: [], meta: { pagination: { page: 1, pageSize: 3, pageCount: 0, total: 0 } } })),
+    getPosts({ page: 1, pageSize: 3, featured: true }).catch(() => ({ data: [], meta: { pagination: { page: 1, pageSize: 3, pageCount: 0, total: 0 } } })),
     fetchChantingSetting().catch(() => null),
   ])
 
@@ -191,7 +190,7 @@ function EmptyState({ planSlug }: { planSlug?: string }) {
     <div className="relative rounded-xl border border-dashed border-muted-foreground/30 bg-card/30 p-12 text-center">
       <h2 className="text-lg font-semibold text-foreground mb-2">Chưa có lịch trình niệm để hiển thị</h2>
       <p className="text-muted-foreground text-sm mb-4">
-        Trong Strapi Admin, hãy kiểm tra{' '}
+        Trong CMS Admin, hãy kiểm tra{' '}
         <span className="font-semibold">{CHANTING_ADMIN_COPY.collectionName}</span>
         {planSlug ? (
           <>

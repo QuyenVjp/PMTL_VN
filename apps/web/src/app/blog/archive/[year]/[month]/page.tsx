@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import { Suspense } from 'react'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
 import StickyBanner from '@/components/StickyBanner'
 import BlogListClient from '@/components/BlogListClient'
 import { getBlogArchive, getBlogArchiveIndex, getCategories } from '@/lib/api/blog'
-
-export const revalidate = 3600 // 1h fallback
 
 export const metadata: Metadata = {
   title: 'Blog Archive | Phật Môn Tịnh Lữ',
@@ -21,6 +20,7 @@ interface PageProps {
 }
 
 export default async function BlogArchivePage({ params, searchParams }: PageProps) {
+  await connection()
   const { year, month } = await params
   const { page } = await searchParams
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { connection } from 'next/server'
 import Link from 'next/link'
 
 import Footer from '@/components/Footer'
@@ -8,14 +9,14 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { fetchSutraDictionary } from '@/lib/api/sutra'
 
-export const revalidate = 300
-
 export const metadata: Metadata = {
   title: 'Từ Điển Thuật Ngữ Kinh Điển | Pháp Môn Tâm Linh',
   description: 'Tra cứu thuật ngữ và chú giải dùng chung cho các bộ kinh đại thừa.',
 }
 
 export default async function SutraDictionaryPage() {
+  await connection()
+
   const entries = await fetchSutraDictionary().catch(() => [])
 
   return (

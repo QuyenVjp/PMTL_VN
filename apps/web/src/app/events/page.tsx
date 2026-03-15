@@ -3,8 +3,7 @@ import Footer from "@/components/Footer";
 import StickyBanner from "@/components/StickyBanner";
 import EventsClient from "./EventsClient";
 import { fetchEvents } from "@/lib/api/event";
-
-export const revalidate = 3600; // ISR cache
+import { connection } from "next/server";
 
 export const metadata = {
   title: "Sự Kiện & Pháp Hội - Pháp Môn Tâm Linh",
@@ -12,6 +11,7 @@ export const metadata = {
 };
 
 export default async function EventsPage() {
+  await connection();
   const { data: initialEvents } = await fetchEvents();
 
   return (

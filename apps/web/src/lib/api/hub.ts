@@ -2,7 +2,8 @@
 //  lib/api/hub.ts — Hub page API functions
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
-import { cmsFetch } from '@/lib/cms'
+import { cachedCmsFetch } from '@/lib/cms/server-cache'
+import { logger } from '@/lib/logger'
 import type { CmsList, HubPage } from '@/types/cms'
 import { getPosts } from '@/lib/api/blog'
 import { fetchDownloads } from '@/lib/api/downloads'
@@ -126,13 +127,13 @@ async function hydrateHubFallback(hub: HubPage): Promise<HubPage> {
   }
 
   const [featuredPostsRes, downloadsRes] = await Promise.all([
-    getPosts({ pageSize: hub.slug === 'thu-vien-khai-thi' ? 6 : 4, featured: true, revalidate: 3600 }).catch(() => emptyPosts),
+    getPosts({ pageSize: hub.slug === 'thu-vien-khai-thi' ? 6 : 4, featured: true }).catch(() => emptyPosts),
     fetchDownloads({ pageSize: 24 }).catch(() => ({ items: [], total: 0 })),
   ])
 
   const featuredPosts = featuredPostsRes.data?.length
     ? featuredPostsRes.data
-    : (await getPosts({ pageSize: hub.slug === 'thu-vien-khai-thi' ? 6 : 4, revalidate: 3600 }).catch(() => emptyPosts)).data
+    : (await getPosts({ pageSize: hub.slug === 'thu-vien-khai-thi' ? 6 : 4 }).catch(() => emptyPosts)).data
 
   const normalizedDownloads = (downloadsRes.items ?? []) as unknown as DownloadItem[]
   const fallbackDownloads = selectFallbackDownloads(hub, normalizedDownloads)
@@ -179,17 +180,18 @@ async function hydrateHubFallback(hub: HubPage): Promise<HubPage> {
 /** Lấy một hub-page theo slug. Populate đầy đủ: sections, curated_posts, downloads */
 export async function getHubBySlug(slug: string): Promise<HubPage | null> {
   try {
-    const res = await cmsFetch<CmsList<HubPage>>('/hub-pages', {
+    const res = await cachedCmsFetch<CmsList<HubPage>>('/hub-pages', {
       filters: { slug: { $eq: slug } },
       pagination: { page: 1, pageSize: 1 },
-      next: { revalidate: 3600, tags: ['hub-pages'] },
+    }, {
+      profile: 'hours',
+      tags: ['hub-pages'],
     })
     const hub = res.data[0] ?? null
     if (!hub) return null
     return hydrateHubFallback(hub)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.error(`[Hub] Fallback mode for slug "${slug}": ${message}`)
+    logger.warn('Falling back to static hub page', { error, slug })
     const hub = buildFallbackHubPages().find((item) => item.slug === slug) ?? null
     return hub ? hydrateHubFallback(hub) : null
   }
@@ -198,16 +200,17 @@ export async function getHubBySlug(slug: string): Promise<HubPage | null> {
 /** Lấy toàn bộ hub-pages (dùng cho menu/sitemap). Không populate nặng. */
 export async function getHubPages(): Promise<HubPage[]> {
   try {
-    const res = await cmsFetch<CmsList<HubPage>>('/hub-pages', {
+    const res = await cachedCmsFetch<CmsList<HubPage>>('/hub-pages', {
       filters: { showInMenu: { $eq: true } },
       sort: ['sortOrder:asc', 'title:asc'],
       pagination: { page: 1, pageSize: 50 },
-      next: { revalidate: 3600, tags: ['hub-pages'] },
+    }, {
+      profile: 'hours',
+      tags: ['hub-pages'],
     })
     return res.data
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.error(`[Hub] Falling back to static hub pages: ${message}`)
+    logger.warn('Falling back to static hub pages', { error })
     return buildFallbackHubPages()
   }
 }

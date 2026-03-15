@@ -11,7 +11,7 @@ export async function POST(
 ) {
   const { documentId } = await params
   const cookieStore = await cookies()
-  const token = cookieStore.get('auth_token')?.value || (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)
+  const token = cookieStore.get('auth_token')?.value || process.env.PAYLOAD_API_TOKEN
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };

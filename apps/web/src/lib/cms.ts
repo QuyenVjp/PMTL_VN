@@ -9,13 +9,14 @@ export const CMS_API_URL =
   "http://localhost:3001";
 
 const PAYLOAD_URL = CMS_API_URL;
+const OPTIONAL_CMS_PATHS = new Set(["/sidebar-config", "/categories", "/categories/tree", "/blog-tags"]);
 
 function getServerToken(): string | undefined {
   if (typeof window !== "undefined") {
     return undefined;
   }
 
-  return process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN;
+  return process.env.PAYLOAD_API_TOKEN;
 }
 
 export interface CmsFetchOptions {
@@ -55,6 +56,10 @@ function toCmsList<T>(data: T[], page = 1, pageSize = 0, total = data.length) {
 
 function isBridgePath(path: string): boolean {
   return path === "/blog-posts" || path === "/events" || path === "/blog-tags";
+}
+
+function shouldLogCmsFailure(path: string): boolean {
+  return !OPTIONAL_CMS_PATHS.has(path);
 }
 
 function mapPayloadPostToLegacy(post: Record<string, unknown>) {
@@ -325,17 +330,16 @@ export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): 
   try {
     const response = await fetch(url, {
       headers,
-      next:
-        cacheStrategy === "no-store"
-          ? undefined
-          : { revalidate: next?.revalidate ?? 3600, tags: next?.tags },
+      next: cacheStrategy === "no-store" ? undefined : next,
       cache: cacheStrategy,
     });
 
     if (!response.ok) {
       const errorBody = await response.json().catch(() => ({}));
       const errorMessage = errorBody?.error?.message ?? response.statusText;
-      console.error(`[CMS ${response.status}] ${path}: ${errorMessage}`);
+      if (shouldLogCmsFailure(path)) {
+        console.error(`[CMS ${response.status}] ${path}: ${errorMessage}`);
+      }
       throw new CMSAPIError(response.status, errorMessage, path);
     }
 
@@ -343,7 +347,9 @@ export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): 
 
     if (isCmsError(json)) {
       const errorMessage = json.error?.message ?? "Unknown error";
-      console.error(`[CMS ${json.error?.status}] ${path}: ${errorMessage}`);
+      if (shouldLogCmsFailure(path)) {
+        console.error(`[CMS ${json.error?.status}] ${path}: ${errorMessage}`);
+      }
       throw new CMSAPIError(json.error.status, errorMessage, path);
     }
 
@@ -363,7 +369,9 @@ export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): 
     }
 
     const message = error instanceof Error ? error.message : String(error);
-    console.error(`[CMS FATAL] ${path}: ${message}`);
+    if (shouldLogCmsFailure(path)) {
+      console.error(`[CMS FATAL] ${path}: ${message}`);
+    }
     throw new CMSAPIError(500, message, path);
   }
 }

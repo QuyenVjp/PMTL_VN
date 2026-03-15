@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import { Suspense } from 'react'
 import { Source_Serif_4, Be_Vietnam_Pro } from 'next/font/google'
 import Providers from './providers'
 import { Toaster } from "@/components/ui/sonner"
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
@@ -62,12 +63,14 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning className={`${fontDisplay.variable} ${fontBody.variable}`}>
       <body className="min-h-screen bg-background antialiased font-body" suppressHydrationWarning>
-        <Providers>
-          <SmoothScroll>
-            {children}
-            <Toaster position="top-center" />
-          </SmoothScroll>
-        </Providers>
+        <Suspense fallback={null}>
+          <Providers>
+            <SmoothScroll>
+              {children}
+              <Toaster position="top-center" />
+            </SmoothScroll>
+          </Providers>
+        </Suspense>
 
         <Script id="sw-register" strategy="afterInteractive">{`
           if ('serviceWorker' in navigator) {

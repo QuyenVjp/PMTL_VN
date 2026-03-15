@@ -6,7 +6,7 @@ import { normalizeApiErrorMessage, parseResponseBody } from "@/lib/http-error";
 import { buildCMSUrl } from "@/lib/cms/client";
 import { AUTH_COOKIE_NAME, LEGACY_AUTH_COOKIE_NAME } from "@/features/auth/utils/auth-cookie";
 
-const CMS_API_TOKEN = (process.env.PAYLOAD_API_TOKEN ?? process.env.STRAPI_API_TOKEN)?.trim();
+const CMS_API_TOKEN = process.env.PAYLOAD_API_TOKEN?.trim();
 
 function mapNotificationTypesToPrefs(notificationTypes: unknown) {
   const types = Array.isArray(notificationTypes)

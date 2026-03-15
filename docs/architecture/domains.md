@@ -79,7 +79,7 @@
   - `pushSubscriptions`
   - `pushJobs`
 - `pushSubscriptions` là source of truth cho browser subscription state.
-- `pushJobs` là control-plane collection cho dispatch orchestration đang được worker xử lý qua Redis + BullMQ.
+- `pushJobs` là control-plane collection cho dispatch orchestration đang được worker xử lý qua Payload Jobs.
 - Self-send prevention hiện đi qua `includeUserIds` / `excludeUserIds` trong push job payload.
 
 ## Moderation / Audit / Control Plane
@@ -104,4 +104,4 @@
 - Source of truth vẫn là Postgres/Payload document.
 - Schema đã chuẩn bị sẵn `contentPlainText` và `normalizedSearchText`.
 - Search posts public hiện đi qua compatibility route `/api/posts/search`.
-- Search sync sang Meilisearch hiện đi qua queue-first flow; route `/api/posts/search/reindex` cho phép editor/admin enqueue reindex batch.
+- Search sync sang Meilisearch hiện đi qua Payload Jobs queue-first flow; route `/api/posts/search/reindex` cho phép editor/admin enqueue reindex batch.

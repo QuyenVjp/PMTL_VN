@@ -51,9 +51,9 @@ export default function CommentItem({
   const [localLikes, setLocalLikes] = useState(comment.likes)
 
   const avatarUrl = comment.authorAvatar
-    ? getCmsMediaUrl(
-      comment.authorAvatar.formats?.thumbnail?.url ?? comment.authorAvatar.url
-    )
+    ? typeof comment.authorAvatar === 'string'
+      ? getCmsMediaUrl(comment.authorAvatar)
+      : getCmsMediaUrl(comment.authorAvatar.formats?.thumbnail?.url ?? comment.authorAvatar.url)
     : null
 
   const initials = comment.authorName
@@ -86,7 +86,7 @@ export default function CommentItem({
     if (reported) return
 
     try {
-      const res = await fetch(`/api/blog-comments/report/${encodeURIComponent(comment.documentId)}`, {
+      const res = await fetch(`/api/comments/${encodeURIComponent(comment.documentId)}/report`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reason }),

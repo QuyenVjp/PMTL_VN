@@ -86,7 +86,7 @@ export async function notifyModerators(input: ModerationAlertInput) {
       excludeUserIds,
       ...(input.metadata ? { metadata: input.metadata } : {}),
     }),
-    enqueueEmailNotificationJob({
+    enqueueEmailNotificationJob(input.payload, {
       recipientRoles,
       excludeUserIds,
       subject: input.subject,
@@ -139,7 +139,7 @@ export async function notifyUserModerationDecision(input: {
   const email = typeof user?.email === "string" ? user.email.trim() : "";
 
   if (email) {
-    await enqueueEmailNotificationJob({
+    await enqueueEmailNotificationJob(input.payload, {
       to: uniqueStringArray([email]),
       subject: input.subject,
       text: input.message,
