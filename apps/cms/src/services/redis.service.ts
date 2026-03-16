@@ -1,11 +1,12 @@
 import Redis from "ioredis";
 import { getLogger, withError } from "@/services/logger.service";
+import { normalizeDockerHostnameUrl } from "@/services/local-service-url.service";
 
 let redisClient: Redis | null | undefined;
 const logger = getLogger("services:redis");
 
 export function getRedisUrl(): string | null {
-  const redisUrl = process.env.REDIS_URL?.trim();
+  const redisUrl = normalizeDockerHostnameUrl(process.env.REDIS_URL, "redis", "127.0.0.1");
 
   return redisUrl ? redisUrl : null;
 }

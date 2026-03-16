@@ -36,22 +36,44 @@ const sentryStream = createSentryLogStream({
   enabled: isServerSentryEnabled(),
   sentry: {
     captureException(error, context) {
-      Sentry.withScope((scope) => {
+      const capture = () => {
+        Sentry.captureException(error);
+      };
+
+      const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
         scope.setTag("app", "worker");
         for (const [key, value] of Object.entries(context)) {
           scope.setExtra(key, value);
         }
-        Sentry.captureException(error);
-      });
+        capture();
+      };
+
+      if (typeof Sentry.withScope === "function") {
+        Sentry.withScope(scopeHandler);
+        return;
+      }
+
+      capture();
     },
     captureMessage(message, context) {
-      Sentry.withScope((scope) => {
+      const capture = () => {
+        Sentry.captureMessage(message, "warning");
+      };
+
+      const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
         scope.setTag("app", "worker");
         for (const [key, value] of Object.entries(context)) {
           scope.setExtra(key, value);
         }
-        Sentry.captureMessage(message, "warning");
-      });
+        capture();
+      };
+
+      if (typeof Sentry.withScope === "function") {
+        Sentry.withScope(scopeHandler);
+        return;
+      }
+
+      capture();
     },
   },
 });

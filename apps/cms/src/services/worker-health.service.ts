@@ -4,8 +4,9 @@ import { QUEUE_NAMES } from "@pmtl/shared";
 import type { Payload } from "payload";
 
 import { getQueueJobCounts } from "@/services/queue.service";
+import { getWorkerHeartbeatPath } from "@/services/worker-heartbeat-path.service";
 
-const workerHeartbeatPath = process.env.WORKER_HEARTBEAT_PATH ?? "/tmp/pmtl-worker-heartbeat.json";
+const workerHeartbeatPath = getWorkerHeartbeatPath();
 const workerHeartbeatStaleSeconds = Number(process.env.WORKER_HEARTBEAT_STALE_SECONDS ?? "120");
 
 type QueueHealth = Awaited<ReturnType<typeof getQueueJobCounts>>;

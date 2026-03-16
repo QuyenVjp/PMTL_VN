@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { getLogger, withError } from "@/services/logger.service";
+import { normalizeDockerHostnameUrl } from "@/services/local-service-url.service";
 
 const logger = getLogger("security:rate-limit");
 
@@ -18,7 +19,7 @@ const rateLimitEnvSchema = z.object({
 
 const env = rateLimitEnvSchema.parse({
   store: process.env.SECURITY_RATE_LIMIT_STORE ?? "auto",
-  redisUrl: process.env.REDIS_URL,
+  redisUrl: normalizeDockerHostnameUrl(process.env.REDIS_URL, "redis", "127.0.0.1") ?? undefined,
   defaultLimit: process.env.SECURITY_RATE_LIMIT_MAX,
   defaultWindowMs: process.env.SECURITY_RATE_LIMIT_WINDOW_MS,
   authLimit: process.env.SECURITY_RATE_LIMIT_AUTH_MAX,

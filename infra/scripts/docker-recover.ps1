@@ -9,13 +9,38 @@ function Write-Step {
   Write-Host "[docker-recover] $Message"
 }
 
-function Test-DockerServerReady {
+function Invoke-DockerCommand {
+  param(
+    [string[]]$Arguments
+  )
+
   try {
-    docker info *> $null
+    $null = & docker @Arguments 2>&1
     return $LASTEXITCODE -eq 0
   } catch {
     return $false
   }
+}
+
+function Test-DockerServerReady {
+  return Invoke-DockerCommand -Arguments @("info")
+}
+
+function Wait-BackendApiPipe {
+  param(
+    [int]$WaitSeconds = 20
+  )
+
+  $deadline = (Get-Date).AddSeconds($WaitSeconds)
+  do {
+    if (Test-Path "\\.\pipe\dockerBackendApiServer") {
+      return $true
+    }
+
+    Start-Sleep -Milliseconds 500
+  } while ((Get-Date) -lt $deadline)
+
+  return $false
 }
 
 Write-Step "Checking Docker Desktop service..."
@@ -37,14 +62,22 @@ if ($service.Status -ne "Running") {
   }
 }
 
-Write-Step "Stopping lingering com.docker.build/com.docker.backend processes..."
-Get-Process com.docker.build, com.docker.backend -ErrorAction SilentlyContinue | Stop-Process -Force
+if (Test-DockerServerReady) {
+  Write-Step "Docker engine is already ready."
+  exit 0
+}
 
 Write-Step "Starting Docker Desktop..."
-docker desktop start *> $null
+if (-not (Invoke-DockerCommand -Arguments @("desktop", "start"))) {
+  Write-Step "Docker Desktop start command did not complete yet. Continue waiting for daemon."
+}
 
 Write-Step "Switching engine to linux (best effort)..."
-docker desktop engine use linux *> $null
+if ((Wait-BackendApiPipe -WaitSeconds 20) -and (-not (Invoke-DockerCommand -Arguments @("desktop", "engine", "use", "linux")))) {
+  Write-Step "Docker backend pipe is not ready yet. Skip engine switch for now and keep waiting."
+} elseif (-not (Test-Path "\\.\pipe\dockerBackendApiServer")) {
+  Write-Step "Docker backend API pipe is not available yet. Skip engine switch for now and keep waiting."
+}
 
 $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
 do {

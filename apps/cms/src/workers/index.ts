@@ -1,16 +1,18 @@
 import { QUEUE_NAMES } from "@pmtl/shared";
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import net from "node:net";
 import os from "node:os";
+import path from "node:path";
 
 import { runPendingCmsJobs } from "@/jobs";
 import { cleanupExpiredGuards } from "@/services/request-guard.service";
+import { getWorkerHeartbeatPath } from "@/services/worker-heartbeat-path.service";
 import { workerLogger as logger, initWorkerSentry } from "@/workers/logger";
 import { getWorkerPayload } from "@/workers/payload";
 
 const jobsIntervalMs = Number(process.env.WORKER_JOBS_INTERVAL_MS ?? "15000");
 const maintenanceIntervalMs = Number(process.env.WORKER_MAINTENANCE_INTERVAL_MS ?? "600000");
-const heartbeatPath = process.env.WORKER_HEARTBEAT_PATH ?? "/tmp/pmtl-worker-heartbeat.json";
+const heartbeatPath = getWorkerHeartbeatPath();
 const startupRetryCount = Number(process.env.WORKER_STARTUP_RETRY_COUNT ?? "0");
 const startupRetryDelayMs = Number(process.env.WORKER_STARTUP_RETRY_DELAY_MS ?? "3000");
 
@@ -114,6 +116,7 @@ async function getWorkerPayloadWithRetry() {
 }
 async function touchHeartbeat(reason: string, queueNames: string[]) {
   try {
+    await mkdir(path.dirname(heartbeatPath), { recursive: true });
     await writeFile(
       heartbeatPath,
       JSON.stringify({

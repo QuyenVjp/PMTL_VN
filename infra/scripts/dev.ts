@@ -33,6 +33,20 @@ function fail(message: string): never {
   process.exit(1);
 }
 
+function ensureSupportedNodeVersion(): void {
+  const [major, minor] = process.versions.node.split(".").map((value) => Number.parseInt(value, 10));
+
+  if (Number.isNaN(major) || Number.isNaN(minor)) {
+    fail(`Khong doc duoc phien ban Node hien tai: ${process.versions.node}.`);
+  }
+
+  if (major < 20 || (major === 20 && minor < 18)) {
+    fail(
+      `Node ${process.versions.node} khong duoc ho tro. Repo nay can Node >=20.18.0. Hay chuyen sang Node 20 roi chay lai run-dev.bat.`,
+    );
+  }
+}
+
 function ensureDockerInstalled(): void {
   const result = spawnSync("docker", ["--version"], {
     cwd: repoRoot,
@@ -475,6 +489,7 @@ async function ensureDockerDaemonReady(): Promise<void> {
 }
 
 async function main(): Promise<void> {
+  ensureSupportedNodeVersion();
   ensureDockerInstalled();
   await ensureDockerDaemonReady();
   ensureDockerEnvFile();

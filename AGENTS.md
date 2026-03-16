@@ -18,10 +18,6 @@ Skill routing:
 - Use `pmtl-fe-craft` for all frontend implementation and refactoring
 - Use `pmtl-uiux-specialist` for interactive components, forms, and accessibility
 - Use `pmtl-creative-designer` for layout rhythm, typography, and visual polish
-- Use `next` for Next.js App Router patterns
-- Use `auth-module-builder` for auth/session/RBAC work
-- Use `docker-configuration-validator` for Docker, Compose, Caddy, and deploy changes
-- Use `auth-js` only as reference unless Auth.js is explicitly requested
 
 Implementation expectations:
 - Prefer full implementations over stubs
@@ -33,9 +29,7 @@ Implementation expectations:
 - All API responses must use TypeScript strict mode
 
 Production readiness docs:
-- Read `AI_CONFIG_SUMMARY.md` for quick overview
-- Read `PROJECT_AUDIT_REPORT.md` for current state audit
-- Read `QUICK_IMPLEMENTATION_GUIDE.md` for step-by-step implementation
-- Read `PRODUCTION_TOOLKIT_GUIDE.md` for library recommendations
+- Read `INFRASTRUCTURE_AUDIT_FINAL.md` for current state audit
+- Read `10_IMPLEMENTATION_GUIDE.md` for step-by-step implementation
 - Read `.vscode/.instructions.md` for Copilot context
 - See `.agents/skills/pmtl-production-ready/SKILL.md` for patterns
