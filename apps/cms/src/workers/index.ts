@@ -60,7 +60,6 @@ async function getWorkerPayloadWithRetry() {
 
   throw lastError;
 }
-
 async function touchHeartbeat(reason: string, queueNames: string[]) {
   try {
     await writeFile(
