@@ -1,23 +1,11 @@
+import * as Sentry from "@sentry/nextjs";
 import pino from "pino";
+import pretty from "pino-pretty";
+
+import { createSentryLogStream } from "@/services/pino-sentry-stream.service";
+import { isServerSentryEnabled } from "@/services/observability/sentry.service";
 
 type LogContext = Record<string, unknown>;
-type TransportTargetOptions = NonNullable<pino.LoggerOptions["transport"]>;
-
-function getTransportOptions(): TransportTargetOptions | undefined {
-  if (process.env.NODE_ENV === "production") {
-    return undefined;
-  }
-
-  return {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: "SYS:standard",
-      ignore: "pid,hostname",
-      singleLine: false,
-    },
-  };
-}
 
 const rootLoggerOptions: pino.LoggerOptions = {
   name: "pmtl-cms",
@@ -33,12 +21,50 @@ const rootLoggerOptions: pino.LoggerOptions = {
   },
 };
 
-const transportOptions = getTransportOptions();
-if (transportOptions) {
-  rootLoggerOptions.transport = transportOptions;
-}
+const prettyStream =
+  process.env.NODE_ENV === "production"
+    ? null
+    : pretty({
+        colorize: true,
+        translateTime: "SYS:standard",
+        ignore: "pid,hostname",
+        singleLine: false,
+      });
 
-const rootLogger = pino(rootLoggerOptions);
+const sentryStream = createSentryLogStream({
+  app: "cms",
+  enabled: isServerSentryEnabled(),
+  sentry: {
+    captureException(error, context) {
+      Sentry.withScope((scope) => {
+        scope.setTag("app", "cms");
+        for (const [key, value] of Object.entries(context)) {
+          scope.setExtra(key, value);
+        }
+        Sentry.captureException(error);
+      });
+    },
+    captureMessage(message, context) {
+      Sentry.withScope((scope) => {
+        scope.setTag("app", "cms");
+        for (const [key, value] of Object.entries(context)) {
+          scope.setExtra(key, value);
+        }
+        Sentry.captureMessage(message, "warning");
+      });
+    },
+  },
+});
+
+const rootLogger = pino(
+  rootLoggerOptions,
+  pino.multistream([
+    {
+      stream: prettyStream ?? process.stdout,
+    },
+    ...(sentryStream ? [{ level: "warn" as const, stream: sentryStream }] : []),
+  ]),
+);
 
 export function normalizeError(error: unknown): Record<string, unknown> {
   if (error instanceof Error) {

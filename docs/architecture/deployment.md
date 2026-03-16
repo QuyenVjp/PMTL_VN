@@ -24,6 +24,8 @@ Production notes:
 - Redis production dùng `volatile-lru` để request guard và rate-limit keys có TTL không làm runtime fail-write khi memory đầy
 - Meilisearch production bật snapshot scheduling qua `MEILI_SCHEDULE_SNAPSHOT`
 - worker có heartbeat file healthcheck trong container để Docker phát hiện tiến trình nền bị treo
+- monitoring service bind localhost only; truy cap Grafana/Prometheus/Alertmanager qua SSH tunnel, khong mo public port
+- build image truoc roi moi deploy len VPS; standalone build tren Windows co the canh bao trace `node:inspector`, nhung deploy Linux khong gap gioi han path nay
 
 ## Runtime responsibilities
 
@@ -55,14 +57,20 @@ Production notes:
   - `GRAFANA_ADMIN_PASSWORD`
   - `ALERT_TELEGRAM_BOT_TOKEN`
   - `ALERT_TELEGRAM_CHAT_ID`
+  - `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`
+  - `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` neu can upload sourcemaps
+  - `MONITORING_TEST_SECRET`
 
 ## Monitoring topology
 
 - `prometheus` scrape:
+  - `caddy` admin metrics cho traffic, latency, 5xx theo host
   - `blackbox-exporter` cho `web`, `cms`, `worker`, `meilisearch`, `caddy`
   - `postgres-exporter`
   - `redis-exporter`
+  - `node-exporter` cho RAM, disk, CPU host
   - `cms:/api/metrics/worker`
 - `grafana` bind localhost only (`127.0.0.1:${GRAFANA_PORT}`)
 - `prometheus` va `alertmanager` cung bind localhost only
-- public Caddy block `api/metrics/*` va `api/worker/health` tren domain public; monitoring scrape di thang qua network noi bo Docker
+- public Caddy block `api/metrics/*`, `api/worker/health`, va `api/internal/monitoring/*` tren domain public; monitoring scrape di thang qua network noi bo Docker
+- error tracking dung Sentry Cloud thay vi Loki de tiet kiem RAM cho VPS 4GB

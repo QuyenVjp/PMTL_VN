@@ -40,8 +40,7 @@
                 "value": 1
               }
             ]
-          },
-          "unit": "none"
+          }
         },
         "overrides": []
       },
@@ -57,9 +56,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
@@ -123,9 +120,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
@@ -189,9 +184,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
@@ -255,16 +248,14 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
       },
       "targets": [
         {
-          "expr": "pg_up",
+          "expr": "postgres_up",
           "refId": "A"
         }
       ],
@@ -321,9 +312,7 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
@@ -344,24 +333,34 @@
       },
       "fieldConfig": {
         "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 60
-              },
-              {
                 "color": "red",
-                "value": 120
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
               }
             ]
-          },
-          "unit": "s"
+          }
         },
         "overrides": []
       },
@@ -377,21 +376,382 @@
         "graphMode": "none",
         "justifyMode": "center",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         }
       },
       "targets": [
         {
-          "expr": "pmtl_worker_heartbeat_age_seconds",
+          "expr": "probe_success{service=\"meilisearch\"}",
           "refId": "A"
         }
       ],
-      "title": "Worker Heartbeat Age",
+      "title": "Meilisearch",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 0.75
+              },
+              {
+                "color": "red",
+                "value": 0.9
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "expr": "1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+          "refId": "A"
+        }
+      ],
+      "title": "Host Memory Used",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 0.75
+              },
+              {
+                "color": "red",
+                "value": 0.9
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay\"})",
+          "refId": "A"
+        }
+      ],
+      "title": "Root Disk Used",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 4
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(caddy_http_request_duration_seconds_count{host=~\".+\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP Traffic",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 0.01
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(caddy_http_request_duration_seconds_count{host=~\".+\",code=~\"5..\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "HTTP 5xx Rate",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 11,
+      "targets": [
+        {
+          "expr": "sum(rate(caddy_http_request_duration_seconds_count{host=~\".+\"}[5m])) by (host)",
+          "legendFormat": "{{ host }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Traffic By Host",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 12,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, host) (rate(caddy_http_request_duration_seconds_bucket{host=~\".+\"}[5m])))",
+          "legendFormat": "{{ host }}",
+          "refId": "A"
+        }
+      ],
+      "title": "P95 Request Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 16
+      },
+      "id": 13,
+      "targets": [
+        {
+          "expr": "1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
+          "legendFormat": "memory used",
+          "refId": "A"
+        },
+        {
+          "expr": "1 - (node_filesystem_avail_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay\"})",
+          "legendFormat": "disk used",
+          "refId": "B"
+        }
+      ],
+      "title": "Server Resource Pressure",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 16
+      },
+      "id": 14,
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Host CPU Busy",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "id": 15,
+      "targets": [
+        {
+          "expr": "pmtl_worker_queue_jobs",
+          "legendFormat": "{{ queue }} {{ state }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Worker Queue State",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -408,17 +768,17 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 4
+        "y": 24
       },
-      "id": 7,
+      "id": 16,
       "targets": [
         {
-          "expr": "probe_duration_seconds{job=\"blackbox-http\"}",
-          "legendFormat": "{{ service }}",
+          "expr": "pmtl_worker_heartbeat_age_seconds",
+          "legendFormat": "heartbeat age",
           "refId": "A"
         }
       ],
-      "title": "Health Probe Duration",
+      "title": "Worker Heartbeat Age",
       "type": "timeseries"
     },
     {
@@ -428,7 +788,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "percentunit"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -436,53 +796,24 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 4
+        "y": 24
       },
-      "id": 8,
+      "id": 17,
       "targets": [
         {
-          "expr": "redis_memory_used_bytes / redis_memory_max_bytes",
-          "legendFormat": "redis memory ratio",
+          "expr": "sum(postgres_stat_database_numbackends{datname!~\"template0|template1\"}) by (instance)",
+          "legendFormat": "connections",
           "refId": "A"
         }
       ],
-      "title": "Redis Memory Ratio",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 12
-      },
-      "id": 9,
-      "targets": [
-        {
-          "expr": "pmtl_worker_queue_jobs",
-          "legendFormat": "{{ queue }} {{ state }}",
-          "refId": "A"
-        }
-      ],
-      "title": "Worker Queue State",
+      "title": "Postgres Connections",
       "type": "timeseries"
     }
   ],
   "refresh": "30s",
   "schemaVersion": 39,
   "style": "dark",
-  "tags": [
-    "pmtl",
-    "production"
-  ],
+  "tags": ["pmtl", "production", "monitoring"],
   "templating": {
     "list": []
   },
@@ -491,7 +822,7 @@
     "to": "now"
   },
   "timezone": "browser",
-  "title": "PMTL Production Overview",
-  "uid": "pmtl-production-overview",
-  "version": 1
+  "title": "PMTL Overview",
+  "uid": "pmtl-overview",
+  "version": 2
 }

@@ -8,6 +8,10 @@ export function getWorkerPayload() {
   if (!payloadPromise) {
     payloadPromise = getPayload({
       config,
+    }).catch((error) => {
+      // Reset cached promise so next retry can establish a fresh connection.
+      payloadPromise = null;
+      throw error;
     });
   }
 

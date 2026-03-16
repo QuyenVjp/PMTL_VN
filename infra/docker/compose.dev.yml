@@ -103,12 +103,11 @@ services:
     environment:
       MEILI_ENV: ${MEILI_ENV:-development}
       MEILI_NO_ANALYTICS: "true"
-      MEILI_SCHEDULE_SNAPSHOT: ${MEILI_SCHEDULE_SNAPSHOT:-false}
       MEILI_SNAPSHOT_DIR: ${MEILI_SNAPSHOT_DIR:-/meili_data/snapshots}
     volumes:
       - meili-dev-data:/meili_data
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:7700/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:7700/health"]
       interval: 15s
       timeout: 5s
       retries: 5

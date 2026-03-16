@@ -120,14 +120,15 @@ Notes:
 ## Monitoring
 
 Stack:
-- Prometheus scrapes blackbox probes, worker metrics, postgres-exporter, redis-exporter
+- Prometheus scrapes Caddy metrics, blackbox probes, worker metrics, postgres-exporter, redis-exporter, node-exporter
 - Alertmanager sends alerts to Telegram
-- Grafana is provisioned with the default PMTL dashboard
+- Grafana is provisioned with the default PMTL Overview dashboard
+- Error logs va exceptions di len Sentry Cloud tu `web`, `cms`, `worker`
 
 Bring monitoring stack up with production services:
 ```bash
 docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d \
-  prometheus alertmanager grafana blackbox-exporter postgres-exporter redis-exporter
+  prometheus alertmanager grafana blackbox-exporter postgres-exporter redis-exporter node-exporter
 ```
 
 Access locally on the VPS:
@@ -146,20 +147,52 @@ Telegram alert prerequisites:
 - `ALERT_TELEGRAM_BOT_TOKEN`
 - `ALERT_TELEGRAM_CHAT_ID`
 
+Sentry prerequisites:
+- `SENTRY_ENABLED=true`
+- `NEXT_PUBLIC_SENTRY_ENABLED=true`
+- `SENTRY_DSN`
+- `NEXT_PUBLIC_SENTRY_DSN`
+- optional: `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_RELEASE`
+
 Monitoring verification:
 ```bash
 curl http://127.0.0.1:9090/api/v1/targets
 curl http://127.0.0.1:9090/api/v1/rules
+curl http://127.0.0.1:9090/api/v1/query?query=up
 curl http://localhost:3001/api/worker/health
 curl http://localhost:3001/api/metrics/worker
+pnpm monitoring:test
 ```
 
 What to check first:
 - `probe_success` for `web`, `cms`, `worker`, `meilisearch`, `caddy`
+- `caddy_http_request_duration_seconds_count` cho request volume va 5xx
 - `pmtl_worker_healthy`
 - `pmtl_worker_queue_jobs`
-- `pg_up`
+- `postgres_up`
+- `node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes`
+- `node_filesystem_avail_bytes / node_filesystem_size_bytes`
 - `redis_memory_used_bytes / redis_memory_max_bytes`
+
+Worker-down drill:
+```bash
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml stop worker
+curl http://localhost:3001/api/worker/health
+curl http://127.0.0.1:9093/api/v2/alerts
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml start worker
+```
+
+Sentry drill:
+```bash
+curl -X POST http://localhost:3000/api/internal/monitoring/sentry-test \
+  -H "Content-Type: application/json" \
+  -H "x-monitoring-test-secret: $MONITORING_TEST_SECRET" \
+  -d '{"message":"PMTL web monitoring drill"}'
+curl -X POST http://localhost:3001/api/internal/monitoring/sentry-test \
+  -H "Content-Type: application/json" \
+  -H "x-monitoring-test-secret: $MONITORING_TEST_SECRET" \
+  -d '{"message":"PMTL cms monitoring drill"}'
+```
 
 ## Rollback Deployment
 
@@ -187,6 +220,7 @@ Rollback decision triggers:
 - repeated `5xx` on `/api/auth/*`
 - broken profile upload or session handling
 - search or CMS publish flows failing after release
+- repeated `PMTLWebHigh5xx`, `PMTLWorkerHeartbeatStale`, hoac `PMTLHostMemoryHigh`
 
 ## Post-Incident Notes
 

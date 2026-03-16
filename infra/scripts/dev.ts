@@ -14,6 +14,13 @@ const dockerEnvExamplePath = path.join(repoRoot, "infra", "docker", ".env.dev.ex
 const composeFilePath = path.join(repoRoot, "infra", "docker", "compose.dev.yml");
 const isInfraOnly = process.argv.includes("--infra-only");
 const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+const dockerDesktopCandidates =
+  process.platform === "win32"
+    ? [
+        "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe",
+        path.join(process.env.LOCALAPPDATA ?? "", "Docker", "Docker Desktop.exe"),
+      ]
+    : [];
 
 function log(message: string): void {
   console.info(`[dev] ${message}`);
@@ -114,11 +121,13 @@ function normalizeLocalAppEnv(baseEnv: EnvMap): EnvMap {
   } as EnvMap;
 
   const postgresHostPort = baseEnv.POSTGRES_HOST_PORT ?? "55432";
-  const databaseUrlWithLocalHost = mapUrlHost(baseEnv.DATABASE_URL, "postgres", "localhost") ?? baseEnv.DATABASE_URL;
+  const databaseUrlWithLocalHost = mapUrlHost(baseEnv.DATABASE_URL, "postgres", "127.0.0.1") ?? baseEnv.DATABASE_URL;
   localEnv.DATABASE_URL = mapUrlPort(databaseUrlWithLocalHost, "5432", postgresHostPort) ?? databaseUrlWithLocalHost;
-  localEnv.MEILI_HOST = mapUrlHost(baseEnv.MEILI_HOST, "meilisearch", "localhost") ?? baseEnv.MEILI_HOST;
+  localEnv.MEILI_HOST = mapUrlHost(baseEnv.MEILI_HOST, "meilisearch", "127.0.0.1") ?? baseEnv.MEILI_HOST;
   localEnv.REDIS_URL =
-    mapUrlHost(baseEnv.REDIS_URL ?? "redis://redis:6379", "redis", "localhost") ?? "redis://localhost:6379";
+    mapUrlHost(baseEnv.REDIS_URL ?? "redis://redis:6379", "127.0.0.1", "127.0.0.1") ??
+    mapUrlHost(baseEnv.REDIS_URL ?? "redis://redis:6379", "redis", "127.0.0.1") ??
+    "redis://127.0.0.1:6379";
   localEnv.PAYLOAD_DB_PUSH = baseEnv.PAYLOAD_DB_PUSH ?? "false";
   localEnv.PAYLOAD_PUBLIC_SERVER_URL =
     mapUrlHost(baseEnv.PAYLOAD_PUBLIC_SERVER_URL, "cms", "localhost") ?? "http://localhost:3001";
@@ -133,7 +142,7 @@ function normalizeLocalAppEnv(baseEnv: EnvMap): EnvMap {
 function runDockerComposeInfra(): void {
   const result = spawnSync(
     "docker",
-    ["compose", "-f", composeFilePath, "up", "-d", "postgres", "meilisearch", "redis"],
+    ["compose", "--env-file", dockerEnvPath, "-f", composeFilePath, "up", "-d", "--wait", "postgres", "meilisearch", "redis"],
     {
       cwd: repoRoot,
       stdio: "inherit",
@@ -141,7 +150,7 @@ function runDockerComposeInfra(): void {
   );
 
   if (result.status !== 0) {
-    fail("Khong the khoi dong postgres va meilisearch bang Docker Compose.");
+    fail("Khong the khoi dong postgres, meilisearch va redis bang Docker Compose.");
   }
 }
 
@@ -268,8 +277,126 @@ function syncCmsSchema(localEnv: EnvMap): void {
   }
 }
 
+function isDockerDaemonReady(): boolean {
+  const result = spawnSync("docker", ["info"], {
+    cwd: repoRoot,
+    stdio: "ignore",
+  });
+
+  return result.status === 0;
+}
+
+function getDockerDesktopServiceState(): "running" | "stopped" | "missing" | "unknown" {
+  if (process.platform !== "win32") {
+    return "unknown";
+  }
+
+  const result = spawnSync(
+    "powershell",
+    [
+      "-NoLogo",
+      "-NoProfile",
+      "-Command",
+      "(Get-Service com.docker.service -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Status)",
+    ],
+    {
+      cwd: repoRoot,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    },
+  );
+
+  const output = result.stdout?.trim().toLowerCase();
+
+  if (!output) {
+    return "missing";
+  }
+
+  if (output === "running") {
+    return "running";
+  }
+
+  if (output === "stopped") {
+    return "stopped";
+  }
+
+  return "unknown";
+}
+
+function findDockerDesktopExecutable(): string | null {
+  for (const candidate of dockerDesktopCandidates) {
+    if (candidate && existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
+function tryLaunchDockerDesktop(): boolean {
+  if (process.platform !== "win32") {
+    return false;
+  }
+
+  const executable = findDockerDesktopExecutable();
+
+  if (!executable) {
+    return false;
+  }
+
+  const result = spawnSync(executable, [], {
+    cwd: repoRoot,
+    detached: true,
+    stdio: "ignore",
+    windowsHide: true,
+  });
+
+  return result.status === 0;
+}
+
+async function ensureDockerDaemonReady(): Promise<void> {
+  if (isDockerDaemonReady()) {
+    return;
+  }
+
+  const serviceState = getDockerDesktopServiceState();
+
+  if (serviceState === "stopped") {
+    fail(
+      "Docker Desktop Service dang bi tat. Hay mo Docker Desktop bang quyen Administrator hoac bat lai service `com.docker.service`, sau do chay lai `docker info` va `run-dev.bat`.",
+    );
+  }
+
+  const launched = tryLaunchDockerDesktop();
+
+  if (launched) {
+    log("Docker daemon chua san sang. Dang mo Docker Desktop va cho engine khoi dong...");
+  } else {
+    log("Docker daemon chua san sang. Dang cho Docker Desktop/daemon khoi dong...");
+  }
+
+  const timeoutMs = 180_000;
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    if (isDockerDaemonReady()) {
+      log("Docker daemon da san sang.");
+      return;
+    }
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, 3000);
+    });
+  }
+
+  fail(
+    "Docker daemon chua san sang. Hay mo Docker Desktop, chuyen sang Linux containers, dam bao `com.docker.service` dang chay, va kiem tra `docker info` chay duoc.",
+  );
+}
+
 async function main(): Promise<void> {
   ensureDockerInstalled();
+  await ensureDockerDaemonReady();
   ensureDockerEnvFile();
   runDockerComposeInfra();
 
