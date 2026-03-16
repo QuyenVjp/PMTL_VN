@@ -19,6 +19,7 @@
     "seed:demo": "pnpm --filter @pmtl/cms seed:demo",
     "reindex:posts": "pnpm --filter @pmtl/cms reindex:posts",
     "smoke:test": "tsx infra/scripts/smoke-test.ts",
+    "monitoring:test": "tsx infra/scripts/test-monitoring.ts",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "pnpm --filter @pmtl/cms test && pnpm --filter @pmtl/web test",

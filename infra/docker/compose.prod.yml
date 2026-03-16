@@ -212,7 +212,7 @@ services:
         max-file: "5"
 
   blackbox-exporter:
-    image: ${MONITORING_BLACKBOX_IMAGE:-quay.io/prometheus/blackbox-exporter:latest}
+    image: ${MONITORING_BLACKBOX_IMAGE:-quay.io/prometheus/blackbox-exporter:v0.28.0}
     container_name: pmtl-blackbox
     restart: unless-stopped
     mem_limit: 64m
@@ -229,7 +229,7 @@ services:
         max-file: "3"
 
   postgres-exporter:
-    image: ${MONITORING_POSTGRES_EXPORTER_IMAGE:-quay.io/prometheuscommunity/postgres-exporter:latest}
+    image: ${MONITORING_POSTGRES_EXPORTER_IMAGE:-quay.io/prometheuscommunity/postgres-exporter:v0.18.1}
     container_name: pmtl-postgres-exporter
     restart: unless-stopped
     mem_limit: 96m
@@ -249,7 +249,7 @@ services:
         max-file: "3"
 
   redis-exporter:
-    image: ${MONITORING_REDIS_EXPORTER_IMAGE:-oliver006/redis_exporter:latest}
+    image: ${MONITORING_REDIS_EXPORTER_IMAGE:-oliver006/redis_exporter:v1.72.1}
     container_name: pmtl-redis-exporter
     restart: unless-stopped
     mem_limit: 64m
@@ -269,7 +269,7 @@ services:
         max-file: "3"
 
   alertmanager:
-    image: ${MONITORING_ALERTMANAGER_IMAGE:-prom/alertmanager:latest}
+    image: ${MONITORING_ALERTMANAGER_IMAGE:-prom/alertmanager:v0.29.0}
     container_name: pmtl-alertmanager
     restart: unless-stopped
     mem_limit: 128m
@@ -297,7 +297,7 @@ services:
         max-file: "3"
 
   prometheus:
-    image: ${MONITORING_PROMETHEUS_IMAGE:-prom/prometheus:latest}
+    image: ${MONITORING_PROMETHEUS_IMAGE:-prom/prometheus:v3.5.1}
     container_name: pmtl-prometheus
     restart: unless-stopped
     mem_limit: 384m
@@ -315,6 +315,10 @@ services:
       alertmanager:
         condition: service_healthy
       blackbox-exporter:
+        condition: service_started
+      caddy:
+        condition: service_started
+      node-exporter:
         condition: service_started
       postgres-exporter:
         condition: service_started
@@ -337,7 +341,7 @@ services:
         max-file: "3"
 
   grafana:
-    image: ${MONITORING_GRAFANA_IMAGE:-grafana/grafana:latest}
+    image: ${MONITORING_GRAFANA_IMAGE:-grafana/grafana:12.0.1}
     container_name: pmtl-grafana
     restart: unless-stopped
     mem_limit: 256m
@@ -346,6 +350,7 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_SERVER_DOMAIN: ${PMTL_DOMAIN}
       GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://127.0.0.1:${GRAFANA_PORT:-3300}}
@@ -367,6 +372,28 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "3"
+
+  node-exporter:
+    image: ${MONITORING_NODE_EXPORTER_IMAGE:-quay.io/prometheus/node-exporter:v1.10.2}
+    container_name: pmtl-node-exporter
+    restart: unless-stopped
+    mem_limit: 96m
+    command:
+      - --path.rootfs=/host
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($|/)
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro,rslave
+    networks:
+      - backend
     logging:
       driver: json-file
       options:

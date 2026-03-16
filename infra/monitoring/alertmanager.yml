@@ -15,6 +15,7 @@ receivers:
         chat_id: ${ALERT_TELEGRAM_CHAT_ID}
         api_url: https://api.telegram.org
         parse_mode: HTML
+        send_resolved: true
         message: |
           {{ range .Alerts }}
           <b>{{ .Labels.severity | toUpper }}</b> - {{ .Annotations.summary }}

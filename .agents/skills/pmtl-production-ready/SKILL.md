@@ -423,16 +423,42 @@ logger.info(err.toString());                  // ❌ Lost context
 
 ### Error Tracking
 ```typescript
-// Optional: Use Sentry for production error tracking
+// Use Sentry Cloud for production error tracking
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 0.1,
+  sendDefaultPii: false,
 });
 
-// Then errors auto-sent to Sentry dashboard
+// For PMTL_VN:
+// - use @sentry/nextjs in web and cms
+// - use @sentry/node in worker
+// - keep browser replays off unless explicitly needed
+// - feed pino warn/error logs into Sentry via a dedicated sink
+```
+
+### Monitoring Baseline
+```yaml
+- Prometheus
+- Alertmanager
+- Grafana
+- blackbox-exporter
+- postgres-exporter
+- redis-exporter
+- node-exporter
+- Caddy admin metrics
+- Sentry Cloud
+```
+
+```typescript
+// PMTL_VN production defaults:
+// - monitoring ports bind 127.0.0.1 only
+// - Caddy blocks /api/metrics/*, /api/worker/health, /api/internal/monitoring/*
+// - worker writes heartbeat JSON to shared volume
+// - cms exposes /api/worker/health and /api/metrics/worker
 ```
 
 ---

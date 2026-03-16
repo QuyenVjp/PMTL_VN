@@ -1,14 +1,22 @@
-import { stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 
 import { QUEUE_NAMES } from "@pmtl/shared";
 import type { Payload } from "payload";
 
 import { getQueueJobCounts } from "@/services/queue.service";
 
-const workerHeartbeatPath = process.env.WORKER_HEARTBEAT_PATH ?? "/tmp/pmtl-worker-heartbeat";
+const workerHeartbeatPath = process.env.WORKER_HEARTBEAT_PATH ?? "/tmp/pmtl-worker-heartbeat.json";
 const workerHeartbeatStaleSeconds = Number(process.env.WORKER_HEARTBEAT_STALE_SECONDS ?? "120");
 
 type QueueHealth = Awaited<ReturnType<typeof getQueueJobCounts>>;
+type WorkerHeartbeatFile = {
+  service?: string;
+  hostname?: string;
+  pid?: number;
+  queueNames?: string[];
+  reason?: string;
+  timestamp?: string;
+};
 
 export type WorkerHealthStatus = {
   status: "ok" | "stale";
@@ -17,24 +25,40 @@ export type WorkerHealthStatus = {
   heartbeatAt: string | null;
   heartbeatAgeSeconds: number | null;
   staleAfterSeconds: number;
+  heartbeatReason: string | null;
+  hostname: string | null;
+  pid: number | null;
+  queueNames: string[];
   queues: Record<string, QueueHealth["counts"]>;
 };
 
 async function getHeartbeatState() {
   try {
-    const heartbeatStat = await stat(workerHeartbeatPath);
+    const [heartbeatStat, file] = await Promise.all([
+      stat(workerHeartbeatPath),
+      readFile(workerHeartbeatPath, "utf8"),
+    ]);
     const heartbeatAgeSeconds = Math.max(0, (Date.now() - heartbeatStat.mtimeMs) / 1000);
+    const parsed = JSON.parse(file) as WorkerHeartbeatFile;
 
     return {
       heartbeatAt: new Date(heartbeatStat.mtimeMs).toISOString(),
       heartbeatAgeSeconds,
       isStale: heartbeatAgeSeconds > workerHeartbeatStaleSeconds,
+      heartbeatReason: parsed.reason ?? null,
+      hostname: parsed.hostname ?? null,
+      pid: typeof parsed.pid === "number" ? parsed.pid : null,
+      queueNames: Array.isArray(parsed.queueNames) ? parsed.queueNames.filter((value): value is string => typeof value === "string") : [],
     };
   } catch {
     return {
       heartbeatAt: null,
       heartbeatAgeSeconds: null,
       isStale: true,
+      heartbeatReason: null,
+      hostname: null,
+      pid: null,
+      queueNames: [],
     };
   }
 }
@@ -54,6 +78,10 @@ export async function getWorkerHealthStatus(payload: Payload): Promise<WorkerHea
     heartbeatAt: heartbeat.heartbeatAt,
     heartbeatAgeSeconds: heartbeat.heartbeatAgeSeconds,
     staleAfterSeconds: workerHeartbeatStaleSeconds,
+    heartbeatReason: heartbeat.heartbeatReason,
+    hostname: heartbeat.hostname,
+    pid: heartbeat.pid,
+    queueNames: heartbeat.queueNames,
     queues: {
       [QUEUE_NAMES.searchSync]: searchSync.counts,
       [QUEUE_NAMES.pushDispatch]: pushDispatch.counts,
@@ -73,6 +101,9 @@ export function formatWorkerMetrics(status: WorkerHealthStatus) {
     "# HELP pmtl_worker_heartbeat_stale_after_seconds Worker heartbeat stale threshold in seconds.",
     "# TYPE pmtl_worker_heartbeat_stale_after_seconds gauge",
     `pmtl_worker_heartbeat_stale_after_seconds ${status.staleAfterSeconds}`,
+    "# HELP pmtl_worker_process_info Worker process identity labels.",
+    "# TYPE pmtl_worker_process_info gauge",
+    `pmtl_worker_process_info{hostname="${status.hostname ?? "unknown"}",pid="${status.pid ?? "unknown"}",reason="${status.heartbeatReason ?? "unknown"}"} 1`,
     "# HELP pmtl_worker_queue_jobs Number of jobs by queue and state.",
     "# TYPE pmtl_worker_queue_jobs gauge",
   ];
