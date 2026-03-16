@@ -12,4 +12,5 @@ if not exist "%PS_EXE%" (
 "%PS_EXE%" -NoLogo -NoProfile -ExecutionPolicy Bypass -File "infra\scripts\docker-recover.ps1" -TimeoutSeconds 150
 if %errorlevel% neq 0 exit /b 1
 
+nvm use 20
 pnpm dev
