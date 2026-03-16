@@ -1,5 +1,6 @@
 import { QUEUE_NAMES } from "@pmtl/shared";
 import { writeFile } from "node:fs/promises";
+import net from "node:net";
 import os from "node:os";
 
 import { runPendingCmsJobs } from "@/jobs";
@@ -21,20 +22,69 @@ function sleep(ms: number) {
 
 function isRetryableStartupError(error: unknown) {
   if (!(error instanceof Error)) {
-    return false;
+    // Payload/db adapter can surface non-Error rejections in transient startup states.
+    return true;
   }
 
   const message = error.message.toLowerCase();
   return message.includes("cannot connect to postgres") || message.includes("econnrefused") || message.includes("fetch failed");
 }
 
+function resolvePostgresEndpoint() {
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    return {
+      host: "127.0.0.1",
+      port: 5432,
+    };
+  }
+
+  try {
+    const parsed = new URL(databaseUrl);
+    const host = parsed.hostname || "127.0.0.1";
+    const port = Number(parsed.port || "5432");
+    return {
+      host,
+      port: Number.isFinite(port) ? port : 5432,
+    };
+  } catch {
+    return {
+      host: "127.0.0.1",
+      port: 5432,
+    };
+  }
+}
+
+function checkTcpReachable(host: string, port: number, timeoutMs = 1200): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host, port });
+    const done = (ok: boolean) => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(ok);
+    };
+
+    socket.setTimeout(timeoutMs);
+    socket.once("connect", () => done(true));
+    socket.once("timeout", () => done(false));
+    socket.once("error", () => done(false));
+  });
+}
+
 async function getWorkerPayloadWithRetry() {
   let lastError: unknown;
   let attempt = 1;
   const shouldRetryForever = !Number.isFinite(startupRetryCount) || startupRetryCount <= 0;
+  const postgresEndpoint = resolvePostgresEndpoint();
 
   while (shouldRetryForever || attempt <= startupRetryCount) {
     try {
+      const canReachPostgres = await checkTcpReachable(postgresEndpoint.host, postgresEndpoint.port);
+      if (!canReachPostgres) {
+        throw new Error(`Postgres TCP not reachable at ${postgresEndpoint.host}:${postgresEndpoint.port}`);
+      }
+
       return await getWorkerPayload();
     } catch (error) {
       lastError = error;
@@ -49,6 +99,8 @@ async function getWorkerPayloadWithRetry() {
           attempt,
           startupRetryCount: shouldRetryForever ? "infinite" : startupRetryCount,
           startupRetryDelayMs,
+          postgresHost: postgresEndpoint.host,
+          postgresPort: postgresEndpoint.port,
           error,
         },
         "Worker startup dependency not ready, retrying",

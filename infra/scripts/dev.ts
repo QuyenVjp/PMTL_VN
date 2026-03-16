@@ -14,6 +14,8 @@ const dockerEnvExamplePath = path.join(repoRoot, "infra", "docker", ".env.dev.ex
 const composeFilePath = path.join(repoRoot, "infra", "docker", "compose.dev.yml");
 const isInfraOnly = process.argv.includes("--infra-only");
 const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
+const windowsPowerShellPath = `${process.env.SystemRoot ?? "C:\\Windows"}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`;
+const pwshPath = "C:\\Program Files\\PowerShell\\7\\pwsh.exe";
 const dockerDesktopCandidates =
   process.platform === "win32"
     ? [
@@ -49,6 +51,22 @@ function ensureDockerEnvFile(): void {
 
   copyFileSync(dockerEnvExamplePath, dockerEnvPath);
   log("Da tao infra/docker/.env.dev tu file example.");
+}
+
+function getPowerShellExecutable(): string | null {
+  if (process.platform !== "win32") {
+    return null;
+  }
+
+  if (existsSync(windowsPowerShellPath)) {
+    return windowsPowerShellPath;
+  }
+
+  if (existsSync(pwshPath)) {
+    return pwshPath;
+  }
+
+  return null;
 }
 
 function parseEnvFile(filePath: string): EnvMap {
@@ -245,7 +263,47 @@ function runLocalApps(localEnv: EnvMap): void {
   process.on("SIGINT", stopChild);
   process.on("SIGTERM", stopChild);
 
+  const databaseUrl = localEnv.DATABASE_URL ?? "postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl";
+  let postgresPort = 55432;
+  try {
+    const parsed = new URL(databaseUrl);
+    postgresPort = Number.parseInt(parsed.port || "55432", 10);
+  } catch {
+    postgresPort = 55432;
+  }
+
+  let infraFailStreak = 0;
+  let monitorInFlight = false;
+  const infraMonitor = setInterval(() => {
+    if (monitorInFlight) {
+      return;
+    }
+
+    monitorInFlight = true;
+    void isTcpPortReachable(postgresPort, "127.0.0.1")
+      .then((ok) => {
+        if (ok) {
+          infraFailStreak = 0;
+          return;
+        }
+
+        infraFailStreak += 1;
+        if (infraFailStreak >= 3) {
+          log(
+            `Postgres localhost:${postgresPort} khong con reachable. Dung web/cms/worker de tranh spam loi. Chay lai run-dev.bat sau khi Docker on dinh.`,
+          );
+          stopChild();
+          process.exit(1);
+        }
+      })
+      .finally(() => {
+        monitorInFlight = false;
+      });
+  }, 5000);
+  infraMonitor.unref();
+
   appChild.on("exit", (code) => {
+    clearInterval(infraMonitor);
     if (!workerChild.killed) {
       workerChild.kill("SIGINT");
     }
@@ -254,11 +312,28 @@ function runLocalApps(localEnv: EnvMap): void {
   });
 
   workerChild.on("exit", (code) => {
-    if (!appChild.killed) {
-      appChild.kill("SIGINT");
+    const exitCode = code ?? 0;
+    if (exitCode !== 0) {
+      log(
+        `Worker da dung voi ma ${exitCode}. Web/CMS tiep tuc chay. Kiem tra log worker va chay lai \`pnpm dev:worker\` khi can.`,
+      );
     }
+  });
+}
 
-    process.exit(code ?? 0);
+function isTcpPortReachable(port: number, host: string, timeoutMs = 1200): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ host, port });
+    const done = (ok: boolean) => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(ok);
+    };
+
+    socket.setTimeout(timeoutMs);
+    socket.once("connect", () => done(true));
+    socket.once("timeout", () => done(false));
+    socket.once("error", () => done(false));
   });
 }
 
@@ -291,8 +366,13 @@ function getDockerDesktopServiceState(): "running" | "stopped" | "missing" | "un
     return "unknown";
   }
 
+  const powershellExecutable = getPowerShellExecutable();
+  if (!powershellExecutable) {
+    return "unknown";
+  }
+
   const result = spawnSync(
-    "powershell",
+    powershellExecutable,
     [
       "-NoLogo",
       "-NoProfile",
