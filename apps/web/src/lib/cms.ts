@@ -66,7 +66,12 @@ function toCmsList<T>(data: T[], page = 1, pageSize = 0, total = data.length) {
 }
 
 function isBridgePath(path: string): boolean {
-  return path === "/blog-posts" || path === "/events" || path === "/blog-tags";
+  return (
+    path === "/blog-posts" ||
+    path === "/events" ||
+    path === "/blog-tags" ||
+    path.startsWith("/blog-posts/archive")
+  );
 }
 
 function shouldLogCmsFailure(path: string): boolean {
@@ -178,10 +183,12 @@ function mapPayloadEventToLegacy(event: Record<string, unknown>): CmsEvent {
 }
 
 async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Promise<T | null> {
+  const [pathname, queryString] = path.split("?");
+  const searchParams = new URLSearchParams(queryString ?? "");
   const page = options.pagination?.page ?? 1;
   const pageSize = options.pagination?.pageSize ?? 20;
 
-  if (path === "/blog-posts") {
+  if (pathname === "/blog-posts") {
     const filters = options.filters ?? {};
     const search =
       typeof filters.search === "string" && filters.search.trim() ? filters.search.trim() : null;
@@ -257,7 +264,135 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
     ) as T;
   }
 
-  if (path === "/events") {
+  if (pathname === "/blog-posts/archive-index") {
+    const urlBase = new URL("/api/posts", PAYLOAD_URL);
+    urlBase.searchParams.set("depth", "0");
+    urlBase.searchParams.set("sort", "-publishedAt");
+
+    const allPosts: Record<string, unknown>[] = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    while (currentPage <= totalPages) {
+      const url = new URL(urlBase.toString());
+      url.searchParams.set("limit", "200");
+      url.searchParams.set("page", String(currentPage));
+
+      const response = await fetch(url.toString(), { cache: "no-store" });
+
+      if (!response.ok) {
+        break;
+      }
+
+      const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+      const docs = Array.isArray(payload.docs) ? payload.docs : [];
+      allPosts.push(...docs);
+
+      totalPages = typeof payload.totalPages === "number" ? payload.totalPages : currentPage;
+      currentPage += 1;
+    }
+
+    const bucket = new Map<number, Map<number, number>>();
+
+    for (const post of allPosts) {
+      const dateSource = (post.publishedAt as string | null) ?? (post.createdAt as string | null);
+      if (!dateSource) continue;
+      const date = new Date(dateSource);
+      if (Number.isNaN(date.getTime())) continue;
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+
+      const yearBucket = bucket.get(year) ?? new Map<number, number>();
+      yearBucket.set(month, (yearBucket.get(month) ?? 0) + 1);
+      bucket.set(year, yearBucket);
+    }
+
+    const years = Array.from(bucket.entries())
+      .map(([year, months]) => {
+        const monthEntries = Array.from(months.entries())
+          .sort((a, b) => b[0] - a[0])
+          .map(([month, count]) => ({ month, count }));
+        const total = monthEntries.reduce((sum, entry) => sum + entry.count, 0);
+        return {
+          year,
+          total,
+          months: monthEntries,
+        };
+      })
+      .sort((a, b) => b.year - a.year);
+
+    return { data: years } as T;
+  }
+
+  if (pathname === "/blog-posts/archive") {
+    const year = Number(searchParams.get("year") ?? "");
+    const month = Number(searchParams.get("month") ?? "");
+    const pageParam = Number(searchParams.get("page") ?? page);
+    const pageSizeParam = Number(searchParams.get("pageSize") ?? pageSize);
+    const safePage = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+    const safePageSize =
+      Number.isFinite(pageSizeParam) && pageSizeParam > 0 ? pageSizeParam : 20;
+
+    if (!Number.isFinite(year) || year <= 0) {
+      return toCmsList([], safePage, safePageSize, 0) as T;
+    }
+
+    const urlBase = new URL("/api/posts", PAYLOAD_URL);
+    urlBase.searchParams.set("depth", "1");
+    urlBase.searchParams.set("sort", "-publishedAt");
+
+    const allPosts: Record<string, unknown>[] = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    while (currentPage <= totalPages) {
+      const url = new URL(urlBase.toString());
+      url.searchParams.set("limit", "200");
+      url.searchParams.set("page", String(currentPage));
+
+      const response = await fetch(url.toString(), { cache: "no-store" });
+
+      if (!response.ok) {
+        break;
+      }
+
+      const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+      const docs = Array.isArray(payload.docs) ? payload.docs : [];
+      allPosts.push(...docs);
+
+      totalPages = typeof payload.totalPages === "number" ? payload.totalPages : currentPage;
+      currentPage += 1;
+    }
+
+    const filtered = allPosts.filter((post) => {
+      const dateSource = (post.publishedAt as string | null) ?? (post.createdAt as string | null);
+      if (!dateSource) return false;
+      const date = new Date(dateSource);
+      if (Number.isNaN(date.getTime())) return false;
+      if (date.getFullYear() !== year) return false;
+      if (Number.isFinite(month) && month > 0) {
+        return date.getMonth() + 1 === month;
+      }
+      return true;
+    });
+
+    filtered.sort((a, b) => {
+      const dateA = new Date(
+        ((a.publishedAt as string | null) ?? (a.createdAt as string | null) ?? 0) as string,
+      ).getTime();
+      const dateB = new Date(
+        ((b.publishedAt as string | null) ?? (b.createdAt as string | null) ?? 0) as string,
+      ).getTime();
+      return dateB - dateA;
+    });
+
+    const start = (safePage - 1) * safePageSize;
+    const paged = filtered.slice(start, start + safePageSize).map(mapPayloadPostToLegacy);
+
+    return toCmsList(paged, safePage, safePageSize, filtered.length) as T;
+  }
+
+  if (pathname === "/events") {
     const url = new URL("/api/events", PAYLOAD_URL);
     url.searchParams.set("depth", "0");
     url.searchParams.set("limit", String(pageSize));

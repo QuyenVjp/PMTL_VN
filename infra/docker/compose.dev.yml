@@ -12,6 +12,8 @@ services:
       NEXT_PUBLIC_SENTRY_ENABLED: "false"
       SENTRY_ENABLED: "false"
       WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "500"
     depends_on:
       cms:
         condition: service_healthy
@@ -76,6 +78,8 @@ services:
       NEXT_PUBLIC_SENTRY_ENABLED: "false"
       SENTRY_ENABLED: "false"
       WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "500"
     depends_on:
       postgres:
         condition: service_healthy

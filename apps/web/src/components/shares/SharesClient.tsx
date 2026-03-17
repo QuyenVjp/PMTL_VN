@@ -36,6 +36,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 const DEFAULT_SHARE_CATEGORIES = ['Tâm Linh', 'Sức Khoẻ', 'Gia Đình', 'Sự Nghiệp', 'Hôn Nhân', 'Thi Cử', 'Kinh Doanh', 'Mất Ngủ', 'Mối Quan Hệ'];
 const REPORT_REASON_OPTIONS = ['spam', 'abuse', 'off-topic', 'unsafe'] as const;
 
+function getPostKey(post: CommunityPost, index: number) {
+  if (post.documentId) return post.documentId;
+  if (post.slug) return post.slug;
+  return `post-${index}`;
+}
+
 /* ── Icons ────────────────────────────────────────────────── */
 const HeartIcon = ({ filled, className = 'w-4 h-4' }: { filled?: boolean; className?: string }) => (
   <svg viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" className={className}>
@@ -1345,8 +1351,8 @@ export default function SharesClient({
                 <Pin className="w-3.5 h-3.5" /> Câu Chuyện Nổi Bật
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {pinned.map((post) => (
-                  <PostCard key={post.documentId} post={post} onOpen={handleOpenPost} onLike={handleLike} liked={likedIds.has(String(post.documentId))} />
+                {pinned.map((post, index) => (
+                  <PostCard key={getPostKey(post, index)} post={post} onOpen={handleOpenPost} onLike={handleLike} liked={likedIds.has(String(post.documentId))} />
                 ))}
               </div>
             </motion.div>
@@ -1551,7 +1557,7 @@ export default function SharesClient({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {regular.map((post, i) => (
                       <motion.div
-                        key={post.documentId}
+                        key={getPostKey(post, i)}
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-40px' }}
