@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion } from 'framer-motion'
 import { toast } from 'sonner'
+import { withCsrfHeaders } from '@/lib/security/client'
 
 function CallbackHandler() {
   const router = useRouter()
@@ -24,7 +25,7 @@ function CallbackHandler() {
         // Gửi token của CMS tới Backend để set cookie
         const res = await fetch('/api/auth/google-callback', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: withCsrfHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({
             access_token: accessToken,
             id_token: idToken,

@@ -9,6 +9,9 @@ export const CMS_API_URL =
   "http://localhost:3001";
 
 const PAYLOAD_URL = CMS_API_URL;
+const CMS_PATH_ALIASES: Record<string, string> = {
+  "/sidebar-config": "/sidebar",
+};
 const OPTIONAL_CMS_PATHS = new Set(["/sidebar-config", "/categories", "/categories/tree", "/blog-tags"]);
 
 function getServerToken(): string | undefined {
@@ -29,6 +32,14 @@ export interface CmsFetchOptions {
   next?: NextFetchRequestConfig;
   noCache?: boolean;
 }
+
+type PayloadPaginatedResponse<T> = {
+  docs?: T[];
+  totalDocs?: number;
+  totalPages?: number;
+  page?: number;
+  limit?: number;
+};
 
 type PayloadListResponse<T> = {
   docs: T[];
@@ -304,13 +315,56 @@ export function buildCmsUrl(
   path: string,
   options: Omit<CmsFetchOptions, "next" | "noCache"> = {},
 ): string {
+  const normalizedPath = CMS_PATH_ALIASES[path] ?? path;
   const { populate, fields, filters, sort, pagination, status } = options;
   const query = qs.stringify(
     { populate, fields, filters, sort, pagination, status },
     { encodeValuesOnly: true, skipNulls: true },
   );
 
-  return `${CMS_API_URL}/api${path}${query ? `?${query}` : ""}`;
+  return `${CMS_API_URL}/api${normalizedPath}${query ? `?${query}` : ""}`;
+}
+
+function normalizePaginationResponse<T>(payload: PayloadPaginatedResponse<T>) {
+  const data = Array.isArray(payload.docs) ? payload.docs : [];
+  const page = typeof payload.page === "number" ? payload.page : 1;
+  const pageSize = typeof payload.limit === "number" ? payload.limit : data.length;
+  const total = typeof payload.totalDocs === "number" ? payload.totalDocs : data.length;
+  const pageCount =
+    typeof payload.totalPages === "number"
+      ? payload.totalPages
+      : Math.max(1, Math.ceil(total / Math.max(pageSize, 1)));
+
+  return {
+    data,
+    meta: {
+      pagination: {
+        page,
+        pageCount,
+        pageSize,
+        total,
+      },
+    },
+  };
+}
+
+function normalizeCmsPayload<T>(payload: unknown): T {
+  if (!payload || typeof payload !== "object") {
+    return payload as T;
+  }
+
+  if ("data" in payload || "meta" in payload) {
+    return payload as T;
+  }
+
+  if ("docs" in payload || "totalDocs" in payload || "totalPages" in payload) {
+    return normalizePaginationResponse(payload as PayloadPaginatedResponse<unknown>) as T;
+  }
+
+  return {
+    data: payload,
+    meta: {},
+  } as T;
 }
 
 export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): Promise<T> {
@@ -361,7 +415,7 @@ export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): 
       throw new CMSAPIError(json.error.status, errorMessage, path);
     }
 
-    return json as T;
+    return normalizeCmsPayload<T>(json);
   } catch (error) {
     if (isBridgePath(path)) {
       return toCmsList(

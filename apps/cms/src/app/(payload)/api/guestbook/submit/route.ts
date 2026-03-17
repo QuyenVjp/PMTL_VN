@@ -1,3 +1,5 @@
+import { guestbookSubmitSchema } from "@pmtl/shared";
+
 import { mapGuestbookEntryToPublicDTO, submitGuestbookEntry } from "@/collections/GuestbookEntries/service";
 import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
 import { getRequestIpHash, getRequestMetadata } from "@/routes/request-metadata";
@@ -27,19 +29,26 @@ export async function POST(request: Request) {
       });
     }
 
-    const body = (await request.json()) as Record<string, unknown>;
+    const rawBody: unknown = await request.json();
+    const parsedBody = guestbookSubmitSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse(400, {
+        error: {
+          message: "Guestbook payload is invalid.",
+          details: parsedBody.error.flatten(),
+        },
+      });
+    }
 
     const created = await payload.create({
       collection: "guestbookEntries",
       data: submitGuestbookEntry({
         authorName:
           session?.user.displayName ??
-          (typeof body.authorName === "string" ? body.authorName : "Khách"),
-        message: typeof body.message === "string" ? body.message : "",
-        country: typeof body.country === "string" ? body.country : "",
-        avatar: typeof body.avatar === "string" ? body.avatar : "",
-        entryType: typeof body.entryType === "string" ? body.entryType : "",
-        questionCategory: typeof body.questionCategory === "string" ? body.questionCategory : "",
+          parsedBody.data.authorName,
+        message: parsedBody.data.message,
+        entryType: parsedBody.data.entryType,
+        questionCategory: parsedBody.data.questionCategory ?? "",
         submittedByUser: session ? Number(session.user.id) : null,
         submittedByIpHash: getRequestIpHash(request.headers),
       }) as never,

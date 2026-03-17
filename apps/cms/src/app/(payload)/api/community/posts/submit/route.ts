@@ -1,3 +1,5 @@
+import { communityPostSubmitSchema } from "@pmtl/shared";
+
 import { mapCommunityPostToPublicDTO, submitCommunityPost } from "@/collections/CommunityPosts/service";
 import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
 import { requireSession } from "@/routes/session";
@@ -26,19 +28,33 @@ export async function POST(request: Request) {
       });
     }
 
-    const body = (await request.json()) as Record<string, unknown>;
+    const rawBody: unknown = await request.json();
+    const parsedBody = communityPostSubmitSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse(400, {
+        error: {
+          message: "Community post payload is invalid.",
+          details: parsedBody.error.flatten(),
+        },
+      });
+    }
+
+    const tags = Array.isArray(parsedBody.data.tags)
+      ? parsedBody.data.tags
+      : typeof parsedBody.data.tags === "string"
+        ? parsedBody.data.tags.split(",").map((value) => value.trim()).filter(Boolean)
+        : [];
 
     const created = await payload.create({
       collection: "communityPosts",
       data: submitCommunityPost({
-        title: typeof body.title === "string" ? body.title : "",
-        content: typeof body.content === "string" ? body.content : "",
-        type: typeof body.type === "string" ? body.type : "story",
-        slug: typeof body.slug === "string" ? body.slug : "",
-        videoURL: typeof body.videoURL === "string" ? body.videoURL : "",
-        category: typeof body.category === "string" ? body.category : "",
-        rating: typeof body.rating === "number" ? body.rating : null,
-        tags: Array.isArray(body.tags) ? body.tags.map((value) => String(value)) : [],
+        title: parsedBody.data.title,
+        content: parsedBody.data.content,
+        type: parsedBody.data.type,
+        slug: "",
+        videoURL: parsedBody.data.video_url ?? "",
+        category: parsedBody.data.category,
+        tags,
         authorUser: Number(session.user.id),
         authorNameSnapshot: session.user.displayName,
       }) as never,

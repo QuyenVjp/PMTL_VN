@@ -16,6 +16,7 @@ export const postCommentFields: Field[] = [
             name: "post",
             label: t("Bài viết", "Post"),
             type: "relationship",
+            index: true,
             relationTo: "posts",
             required: true,
           },
@@ -23,6 +24,7 @@ export const postCommentFields: Field[] = [
             name: "parent",
             label: t("Bình luận cha", "Parent comment"),
             type: "relationship",
+            index: true,
             relationTo: "postComments",
           },
           {
@@ -72,12 +74,14 @@ export const postCommentFields: Field[] = [
             name: "submittedByUser",
             label: t("Người dùng gửi", "Submitted by user"),
             type: "relationship",
+            index: true,
             relationTo: "users",
           },
           {
             name: "submittedByIpHash",
             label: t("IP hash", "IP hash"),
             type: "text",
+            index: true,
             admin: {
               readOnly: true,
             },
@@ -92,6 +96,7 @@ export const postCommentFields: Field[] = [
             label: t("Trạng thái duyệt", "Moderation status"),
             type: "select",
             defaultValue: "pending",
+            index: true,
             required: true,
             options: moderationStatusValues.map((value) => ({
               label: value,

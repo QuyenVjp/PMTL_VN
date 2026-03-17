@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger'
 
 const webVitalSchema = z.object({
   id: z.string().min(1).max(200),
-  name: z.enum(['CLS', 'FCP', 'INP', 'LCP', 'TTFB']),
+  name: z.string().min(1).max(32),
   value: z.number().finite().nonnegative(),
   delta: z.number().finite(),
   rating: z.enum(['good', 'needs-improvement', 'poor']).optional(),

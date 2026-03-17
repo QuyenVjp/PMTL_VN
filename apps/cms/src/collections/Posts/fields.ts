@@ -40,6 +40,7 @@ export const postFields: Field[] = [
                 label: t("Loại bài", "Post type"),
                 type: "select",
                 defaultValue: "article",
+                index: true,
                 options: postTypeOptions,
                 required: true,
               },
@@ -61,6 +62,7 @@ export const postFields: Field[] = [
             name: "title",
             label: t("Tiêu đề", "Title"),
             type: "text",
+            index: true,
             required: true,
           },
           buildSlugField(),
@@ -336,6 +338,7 @@ export const postFields: Field[] = [
                 name: "publishedAt",
                 label: t("Ngày xuất bản", "Published at"),
                 type: "date",
+                index: true,
                 admin: {
                   readOnly: true,
                 },

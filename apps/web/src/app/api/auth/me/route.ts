@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { getCurrentSessionFromCMS } from "@/features/auth/api/cms-auth-client";
+import { getOptionalAuthSession, invalidateAuthSessionCache } from "@/features/auth/api/session";
 import { clearAuthCookie, AUTH_COOKIE_NAME, LEGACY_AUTH_COOKIE_NAME } from "@/features/auth/utils/auth-cookie";
 
 export async function GET() {
@@ -22,9 +22,14 @@ export async function GET() {
   }
 
   try {
-    const session = await getCurrentSessionFromCMS(token);
-    return NextResponse.json(session);
+    const session = await getOptionalAuthSession();
+    if (!session) {
+      throw new Error("Session not found");
+    }
+
+    return NextResponse.json({ session });
   } catch {
+    await invalidateAuthSessionCache(token);
     const response = NextResponse.json(
       {
         error: {

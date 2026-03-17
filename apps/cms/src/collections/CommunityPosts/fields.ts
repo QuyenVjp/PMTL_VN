@@ -8,6 +8,8 @@ const communityPostTypeOptions = [
   { label: t("Chia sẻ", "Story"), value: "story" },
   { label: t("Hỏi đáp", "Question"), value: "question" },
   { label: t("Cảm nhận", "Reflection"), value: "reflection" },
+  { label: t("Cảm ngộ", "Feedback"), value: "feedback" },
+  { label: t("Video", "Video"), value: "video" },
 ];
 
 const moderationOptions = [
@@ -30,6 +32,7 @@ export const communityPostFields: Field[] = [
             name: "title",
             label: t("Tiêu đề", "Title"),
             type: "text",
+            index: true,
             required: true,
           },
           buildSlugField(),
@@ -47,6 +50,7 @@ export const communityPostFields: Field[] = [
                 label: t("Loại bài", "Post type"),
                 type: "select",
                 defaultValue: "story",
+                index: true,
                 options: communityPostTypeOptions,
                 required: true,
               },
@@ -54,6 +58,7 @@ export const communityPostFields: Field[] = [
                 name: "category",
                 label: t("Chuyên mục", "Category"),
                 type: "text",
+                index: true,
               },
               {
                 name: "rating",
@@ -109,6 +114,7 @@ export const communityPostFields: Field[] = [
                 name: "authorUser",
                 label: t("Người dùng", "Author user"),
                 type: "relationship",
+                index: true,
                 relationTo: "users",
               },
               {
@@ -128,6 +134,7 @@ export const communityPostFields: Field[] = [
             label: t("Trạng thái duyệt", "Moderation status"),
             type: "select",
             defaultValue: "pending",
+            index: true,
             options: moderationOptions,
             required: true,
           },
@@ -164,6 +171,7 @@ export const communityPostFields: Field[] = [
                 label: t("Ghim", "Pinned"),
                 type: "checkbox",
                 defaultValue: false,
+                index: true,
               },
               {
                 name: "isHidden",

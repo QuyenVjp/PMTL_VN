@@ -612,7 +612,7 @@ export interface CommunityPost {
    */
   slug: string;
   content: string;
-  type: 'story' | 'question' | 'reflection';
+  type: 'story' | 'question' | 'reflection' | 'feedback' | 'video';
   category?: string | null;
   rating?: number | null;
   tags?:

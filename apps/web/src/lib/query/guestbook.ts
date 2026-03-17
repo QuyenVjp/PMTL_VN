@@ -3,6 +3,7 @@
 import { keepPreviousData, queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { GuestbookList } from '@/types/cms'
 import type { GuestbookFormValues } from '@/lib/validation/guestbook'
+import { withCsrfHeaders } from '@/lib/security/client'
 
 export const guestbookKeys = {
   all: ['guestbook'] as const,
@@ -41,9 +42,9 @@ async function fetchGuestbookList(params: {
 async function submitGuestbookEntry(payload: GuestbookFormValues) {
   const response = await fetch('/api/guestbook/submit', {
     method: 'POST',
-    headers: {
+    headers: withCsrfHeaders({
       'Content-Type': 'application/json',
-    },
+    }),
     body: JSON.stringify(payload),
   })
 

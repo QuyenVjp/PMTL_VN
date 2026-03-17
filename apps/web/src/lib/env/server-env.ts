@@ -1,10 +1,18 @@
 import { z } from "zod";
 
+function emptyStringToUndefined(value: unknown): unknown {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  return value.trim() ? value : undefined;
+}
+
 const serverEnvSchema = z.object({
   CMS_PUBLIC_URL: z.url().default("http://localhost:3001"),
   MEILI_HOST: z.url().default("http://meilisearch:7700"),
-  MEILI_MASTER_KEY: z.string().min(1).optional(),
-  PAYLOAD_API_TOKEN: z.string().min(1).optional(),
+  MEILI_MASTER_KEY: z.preprocess(emptyStringToUndefined, z.string().min(1).optional()),
+  PAYLOAD_API_TOKEN: z.preprocess(emptyStringToUndefined, z.string().min(1).optional()),
   PAYLOAD_PUBLIC_SERVER_URL: z.url().default("http://localhost:3001"),
 });
 

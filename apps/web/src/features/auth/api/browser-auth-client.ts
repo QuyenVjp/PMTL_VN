@@ -14,14 +14,15 @@ import type {
   UpdateProfileResponse,
 } from "../types";
 import { readAuthError } from "../utils/auth-error";
+import { withCsrfHeaders } from "@/lib/security/client";
 
 async function requestWebAuth<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
     ...init,
-    headers: {
+    headers: withCsrfHeaders({
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
-    },
+    }),
     credentials: "same-origin",
   });
 

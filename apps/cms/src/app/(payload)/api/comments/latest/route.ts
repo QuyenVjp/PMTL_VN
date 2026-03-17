@@ -1,33 +1,37 @@
-import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
+import { cachedFetch } from "@/services/cache.service";
+import { buildPublicCacheHeaders, getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
 import { commentThreadQuerySchema } from "@pmtl/shared";
 
 export async function GET(request: Request) {
   try {
-    const payload = await getCmsPayload();
     const url = new URL(request.url);
     const { pageSize } = commentThreadQuerySchema.parse({
       page: "1",
       pageSize: url.searchParams.get("limit") ?? "5",
     });
 
-    const result = await payload.find({
-      collection: "postComments",
-      depth: 2,
-      limit: pageSize,
-      page: 1,
-      sort: "-createdAt",
-      overrideAccess: true,
-      where: {
-        parent: {
-          exists: false,
+    const result = await cachedFetch(`post-comments:latest:${pageSize}`, 60, async () => {
+      const payload = await getCmsPayload();
+
+      return payload.find({
+        collection: "postComments",
+        depth: 1,
+        limit: pageSize,
+        page: 1,
+        sort: "-createdAt",
+        overrideAccess: true,
+        where: {
+          parent: {
+            exists: false,
+          },
+          moderationStatus: {
+            equals: "approved",
+          },
+          isHidden: {
+            not_equals: true,
+          },
         },
-        moderationStatus: {
-          equals: "approved",
-        },
-        isHidden: {
-          not_equals: true,
-        },
-      },
+      });
     });
 
     const docs = result.docs.map((comment) => ({
@@ -50,17 +54,25 @@ export async function GET(request: Request) {
           : null,
     }));
 
-    return jsonResponse(200, {
-      data: docs,
-      meta: {
-        pagination: {
-          page: 1,
-          pageSize,
-          pageCount: 1,
-          total: docs.length,
+    return jsonResponse(
+      200,
+      {
+        data: docs,
+        meta: {
+          pagination: {
+            page: 1,
+            pageSize,
+            pageCount: 1,
+            total: docs.length,
+          },
         },
       },
-    });
+      {
+        headers: buildPublicCacheHeaders(60, {
+          staleWhileRevalidateSeconds: 180,
+        }),
+      },
+    );
   } catch (error) {
     return mapRouteError(error);
   }

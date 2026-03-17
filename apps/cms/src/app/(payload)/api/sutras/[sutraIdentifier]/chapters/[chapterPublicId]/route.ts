@@ -1,4 +1,5 @@
-import { getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
+import { cachedFetch } from "@/services/cache.service";
+import { buildPublicCacheHeaders, getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
 
 export async function GET(
   _request: Request,
@@ -6,61 +7,70 @@ export async function GET(
 ) {
   try {
     const { sutraIdentifier, chapterPublicId } = await params;
-    const payload = await getCmsPayload();
+    const chapter = await cachedFetch(`sutra-chapter:${sutraIdentifier}:${chapterPublicId}`, 300, async () => {
+      const payload = await getCmsPayload();
+      const sutraResult = await payload.find({
+        collection: "sutras",
+        depth: 0,
+        limit: 1,
+        overrideAccess: true,
+        where: {
+          or: [
+            {
+              publicId: {
+                equals: sutraIdentifier,
+              },
+            },
+            {
+              slug: {
+                equals: sutraIdentifier,
+              },
+            },
+          ],
+        },
+      });
 
-    const sutraResult = await payload.find({
-      collection: "sutras",
-      depth: 0,
-      limit: 1,
-      where: {
-        or: [
-          {
-            publicId: {
-              equals: sutraIdentifier,
+      const sutra = sutraResult.docs[0];
+
+      if (!sutra) {
+        return null;
+      }
+
+      const chapterResult = await payload.find({
+        collection: "sutraChapters",
+        depth: 1,
+        limit: 1,
+        overrideAccess: true,
+        where: {
+          and: [
+            {
+              publicId: {
+                equals: chapterPublicId,
+              },
             },
-          },
-          {
-            slug: {
-              equals: sutraIdentifier,
+            {
+              sutra: {
+                equals: sutra.id,
+              },
             },
-          },
-        ],
-      },
+          ],
+        },
+      });
+
+      return chapterResult.docs[0] ?? null;
     });
-
-    const sutra = sutraResult.docs[0];
-
-    if (!sutra) {
-      return jsonResponse(404, { error: { message: "Sutra not found." } });
-    }
-
-    const chapterResult = await payload.find({
-      collection: "sutraChapters",
-      depth: 1,
-      limit: 1,
-      where: {
-        and: [
-          {
-            publicId: {
-              equals: chapterPublicId,
-            },
-          },
-          {
-            sutra: {
-              equals: sutra.id,
-            },
-          },
-        ],
-      },
-    });
-
-    const chapter = chapterResult.docs[0];
 
     if (!chapter) {
-      return jsonResponse(404, { error: { message: "Sutra chapter not found." } });
+      return jsonResponse(404, {
+        error: {
+          message: "Sutra chapter not found.",
+        },
+      });
     }
 
-    return jsonResponse(200, chapter);
+    return jsonResponse(200, chapter, {
+      headers: buildPublicCacheHeaders(300),
+    });
   } catch (error) {
     return mapRouteError(error);
   }

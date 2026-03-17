@@ -5,6 +5,7 @@
 
 import { buildAuthHeaders as authHeaders, resolveUrl, CMS_CLIENT_API as API } from '@/lib/cms-client'
 import { createHttpError, createHttpErrorFromPayload, parseResponseBody } from '@/lib/http-error'
+import { withCsrfHeaders } from '@/lib/security/client'
 
 function imgUrl(media: unknown): string {
   return resolveUrl(media) ?? ''
@@ -171,7 +172,7 @@ export async function fetchPostBySlug(slug: string): Promise<CommunityPost> {
 export async function likePost(documentId: string): Promise<number> {
   const res = await fetch(`/api/community-posts/like/${documentId}`, {
     method: 'POST',
-    headers: { ...authHeaders() },
+    headers: withCsrfHeaders({ ...authHeaders() }),
   })
   if (!res.ok) throw await createHttpError(res, 'Không thể thích bài viết')
   const json = await res.json()
@@ -181,7 +182,7 @@ export async function likePost(documentId: string): Promise<number> {
 export async function viewPost(documentId: string): Promise<number> {
   const res = await fetch(`/api/community-posts/${documentId}/view`, {
     method: 'POST',
-    headers: { ...authHeaders() },
+    headers: withCsrfHeaders({ ...authHeaders() }),
   })
   if (!res.ok) return 0
   const json = await res.json()
@@ -192,9 +193,9 @@ export async function uploadFile(file: File): Promise<string | undefined> {
   const formData = new FormData()
   formData.append('file', file)
   const res = await fetch(`/api/upload`, {
+    headers: withCsrfHeaders({ ...authHeaders() }),
     method: 'POST',
     body: formData,
-    headers: { ...authHeaders() },
   })
   if (!res.ok) throw await createHttpError(res, 'Upload ảnh thất bại')
   const json = await res.json()
@@ -229,7 +230,7 @@ export async function submitPost(data: {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
+      ...withCsrfHeaders(authHeaders()),
     },
     body: JSON.stringify(data),
   })
@@ -243,7 +244,7 @@ export async function reportPost(documentId: string, reason: 'spam' | 'abuse' | 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
+      ...withCsrfHeaders(authHeaders()),
     },
     body: JSON.stringify({ reason }),
   })
@@ -266,7 +267,7 @@ export async function submitComment(data: {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
+      ...withCsrfHeaders(authHeaders()),
     },
     body: JSON.stringify(data),
   })
@@ -278,7 +279,7 @@ export async function submitComment(data: {
 export async function likeComment(documentId: string): Promise<number> {
   const res = await fetch(`/api/community-comments/like/${documentId}`, {
     method: 'POST',
-    headers: { ...authHeaders() },
+    headers: withCsrfHeaders({ ...authHeaders() }),
   })
   if (!res.ok) throw await createHttpError(res, 'Không thể thích bình luận')
   const json = await res.json()
@@ -290,7 +291,7 @@ export async function reportComment(documentId: string, reason: 'spam' | 'abuse'
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
+      ...withCsrfHeaders(authHeaders()),
     },
     body: JSON.stringify({ reason }),
   })

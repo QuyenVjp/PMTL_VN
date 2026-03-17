@@ -1,5 +1,7 @@
 import "server-only";
 
+import { headers } from "next/headers";
+
 import type {
   ForgotPasswordInput,
   LoginInput,
@@ -9,6 +11,7 @@ import type {
 } from "@pmtl/shared";
 
 import { buildCMSUrl } from "@/lib/cms/client";
+import { CORRELATION_ID_HEADER } from "@/lib/security/request-context";
 
 import type {
   AuthSessionResponse,
@@ -27,11 +30,14 @@ async function cmsAuthRequest<T>(
     token?: string;
   },
 ): Promise<T> {
+  const requestHeaders = await headers();
+  const correlationId = requestHeaders.get(CORRELATION_ID_HEADER);
   const response = await fetch(buildCMSUrl(path), {
     method: init?.method ?? "GET",
     headers: {
       "Content-Type": "application/json",
       ...buildAuthHeaders(init?.token),
+      ...(correlationId ? { [CORRELATION_ID_HEADER]: correlationId } : {}),
       ...(init?.headers ?? {}),
     },
     ...(init?.body !== undefined ? { body: init.body } : {}),

@@ -1,36 +1,58 @@
+import { z } from "zod";
+
 import { mapCommunityCommentToDTO, submitCommunityComment } from "@/collections/CommunityComments/service";
-import { findCollectionDocument, getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
+import { cachedFetch } from "@/services/cache.service";
+import { buildPublicCacheHeaders, findCollectionDocument, getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
 import { requireSession } from "@/routes/session";
 import { appendRouteAuditLog } from "@/services/audit.service";
 import { getRequestMetadata } from "@/routes/request-metadata";
 import { notifyModerators } from "@/services/notification.service";
 import { consumeGuard } from "@/services/request-guard.service";
 
+const commentSubmitSchema = z.object({
+  content: z.string().trim().min(3).max(2000),
+  parentPublicId: z.string().trim().min(1).optional(),
+});
+
 export async function GET(_request: Request, { params }: { params: Promise<{ publicId: string }> }) {
   try {
-    const payload = await getCmsPayload();
     const { publicId } = await params;
-    const post = await findCollectionDocument("communityPosts", publicId);
+    const post = await findCollectionDocument("communityPosts", publicId, {
+      ttlSeconds: 120,
+    });
 
     if (!post) {
       return jsonResponse(404, { error: { message: "Community post not found." } });
     }
 
-    const result = await payload.find({
-      collection: "communityComments",
-      depth: 1,
-      limit: 100,
-      where: {
-        post: {
-          equals: post.id,
+    const result = await cachedFetch(`community-comments:thread:${post.id}`, 60, async () => {
+      const payload = await getCmsPayload();
+
+      return payload.find({
+        collection: "communityComments",
+        depth: 1,
+        limit: 100,
+        overrideAccess: true,
+        where: {
+          post: {
+            equals: post.id,
+          },
         },
-      },
+      });
     });
 
-    return jsonResponse(200, {
-      ...result,
-      docs: result.docs.map(mapCommunityCommentToDTO),
-    });
+    return jsonResponse(
+      200,
+      {
+        ...result,
+        docs: result.docs.map(mapCommunityCommentToDTO),
+      },
+      {
+        headers: buildPublicCacheHeaders(60, {
+          staleWhileRevalidateSeconds: 180,
+        }),
+      },
+    );
   } catch (error) {
     return mapRouteError(error);
   }
@@ -63,8 +85,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ pub
       return jsonResponse(404, { error: { message: "Community post not found." } });
     }
 
-    const body = (await request.json()) as Record<string, unknown>;
-    const parentPublicId = typeof body.parentPublicId === "string" ? body.parentPublicId : null;
+    const rawBody: unknown = await request.json();
+    const parsedBody = commentSubmitSchema.safeParse(rawBody);
+    if (!parsedBody.success) {
+      return jsonResponse(400, {
+        error: {
+          message: "Community comment payload is invalid.",
+          details: parsedBody.error.flatten(),
+        },
+      });
+    }
+
+    const parentPublicId = parsedBody.data.parentPublicId ?? null;
     const parentComment = parentPublicId
       ? await findCollectionDocument("communityComments", parentPublicId, { slugField: "publicId" })
       : null;
@@ -74,7 +106,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pub
       data: submitCommunityComment({
         post: post.id,
         parent: parentComment?.id ?? null,
-        content: typeof body.content === "string" ? body.content : "",
+        content: parsedBody.data.content,
         authorUser: Number(session.user.id),
         authorNameSnapshot: session.user.displayName,
       }) as never,

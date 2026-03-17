@@ -4,6 +4,9 @@
 // ─────────────────────────────────────────────────────────────
 import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
+import { logger } from '@/lib/logger'
+import { invalidateAuthSessionCache } from '@/features/auth/api/session'
+import { setAuthCookie } from '@/features/auth/utils/auth-cookie'
 
 const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
 
@@ -52,17 +55,12 @@ export async function POST(req: NextRequest) {
     }
 
     const response = NextResponse.json({ user })
-    response.cookies.set('auth_token', jwt!, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    })
+    await invalidateAuthSessionCache(jwt)
+    setAuthCookie(response, jwt!)
 
     return response
   } catch (err) {
-    console.error('[Google Callback] Error:', err)
+    logger.error('[Google Callback] Error', { error: err })
     return NextResponse.json(
       { error: 'Lỗi máy chủ khi xác thực Google' },
       { status: 500 }

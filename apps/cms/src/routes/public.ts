@@ -1,7 +1,8 @@
 import { getPayload } from "payload";
-import type { CollectionSlug, DataFromCollectionSlug, PaginatedDocs } from "payload";
+import type { CollectionSlug, DataFromCollectionSlug, GlobalSlug, PaginatedDocs } from "payload";
 
 import config from "@/payload.config";
+import { cachedFetch } from "@/services/cache.service";
 import { getLogger, withError } from "@/services/logger.service";
 
 const logger = getLogger("routes:public");
@@ -12,9 +13,28 @@ export async function getCmsPayload() {
   });
 }
 
-export function jsonResponse(status: number, body: unknown): Response {
+export function buildPublicCacheHeaders(
+  ttlSeconds: number,
+  options?: {
+    staleWhileRevalidateSeconds?: number;
+    cdnMaxAgeSeconds?: number;
+    visibility?: "public" | "private";
+  },
+): Headers {
+  const staleWhileRevalidateSeconds = options?.staleWhileRevalidateSeconds ?? ttlSeconds * 3;
+  const cdnMaxAgeSeconds = options?.cdnMaxAgeSeconds ?? staleWhileRevalidateSeconds;
+  const visibility = options?.visibility ?? "public";
+
+  return new Headers({
+    "Cache-Control": `${visibility}, max-age=${ttlSeconds}, stale-while-revalidate=${staleWhileRevalidateSeconds}`,
+    "CDN-Cache-Control": `max-age=${cdnMaxAgeSeconds}`,
+  });
+}
+
+export function jsonResponse(status: number, body: unknown, init?: ResponseInit): Response {
   return Response.json(body, {
     status,
+    ...init,
   });
 }
 
@@ -58,17 +78,36 @@ export function getPagination(url: URL) {
 export async function listCollection<TCollection extends CollectionSlug>(
   collection: TCollection,
   requestUrl: string,
+  options?: {
+    depth?: number;
+    overrideAccess?: boolean;
+    ttlSeconds?: number;
+    cacheKey?: string;
+  },
 ): Promise<PaginatedDocs<DataFromCollectionSlug<TCollection>>> {
-  const payload = await getCmsPayload();
   const url = new URL(requestUrl);
   const pagination = getPagination(url);
+  const depth = options?.depth ?? 1;
+  const overrideAccess = options?.overrideAccess ?? true;
+  const cacheKey = options?.cacheKey ?? `${collection}:list:${requestUrl}`;
 
-  return payload.find({
-    collection,
-    depth: 1,
-    limit: pagination.limit,
-    page: pagination.page,
-  });
+  const fetcher = async () => {
+    const payload = await getCmsPayload();
+
+    return payload.find({
+      collection,
+      depth,
+      limit: pagination.limit,
+      page: pagination.page,
+      overrideAccess,
+    });
+  };
+
+  if (!options?.ttlSeconds || options.ttlSeconds <= 0) {
+    return fetcher();
+  }
+
+  return cachedFetch(cacheKey, options.ttlSeconds, fetcher);
 }
 
 export function mapPaginatedResult<TDocument, TMapped>(
@@ -86,30 +125,76 @@ export async function findCollectionDocument<TCollection extends CollectionSlug>
   identifier: string,
   options?: {
     slugField?: string;
+    depth?: number;
+    overrideAccess?: boolean;
+    ttlSeconds?: number;
+    cacheKey?: string;
   },
 ): Promise<DataFromCollectionSlug<TCollection> | null> {
-  const payload = await getCmsPayload();
   const slugField = options?.slugField ?? "slug";
+  const depth = options?.depth ?? 1;
+  const overrideAccess = options?.overrideAccess ?? true;
+  const cacheKey = options?.cacheKey ?? `${collection}:detail:${slugField}:${identifier}`;
 
-  const result = await payload.find({
-    collection,
-    depth: 1,
-    limit: 1,
-    where: {
-      or: [
-        {
-          publicId: {
-            equals: identifier,
+  const fetcher = async () => {
+    const payload = await getCmsPayload();
+
+    return payload.find({
+      collection,
+      depth,
+      limit: 1,
+      overrideAccess,
+      where: {
+        or: [
+          {
+            publicId: {
+              equals: identifier,
+            },
           },
-        },
-        {
-          [slugField]: {
-            equals: identifier,
+          {
+            [slugField]: {
+              equals: identifier,
+            },
           },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    });
+  };
+
+  const result =
+    options?.ttlSeconds && options.ttlSeconds > 0
+      ? await cachedFetch(cacheKey, options.ttlSeconds, fetcher)
+      : await fetcher();
 
   return result.docs[0] ?? null;
+}
+
+export async function findGlobalDocument<TSlug extends GlobalSlug>(
+  slug: TSlug,
+  options?: {
+    depth?: number;
+    overrideAccess?: boolean;
+    ttlSeconds?: number;
+    cacheKey?: string;
+  },
+) {
+  const depth = options?.depth ?? 1;
+  const overrideAccess = options?.overrideAccess ?? true;
+  const cacheKey = options?.cacheKey ?? `global:${slug}`;
+
+  const fetcher = async () => {
+    const payload = await getCmsPayload();
+
+    return payload.findGlobal({
+      slug,
+      depth,
+      overrideAccess,
+    });
+  };
+
+  if (!options?.ttlSeconds || options.ttlSeconds <= 0) {
+    return fetcher();
+  }
+
+  return cachedFetch(cacheKey, options.ttlSeconds, fetcher);
 }

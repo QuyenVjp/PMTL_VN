@@ -5,6 +5,7 @@
 //  Client chỉ lưu thông tin user (không lưu JWT).
 // ─────────────────────────────────────────────────────────────
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react'
+import { withCsrfHeaders } from '@/lib/security/client'
 
 export interface AuthUser {
   id: string
@@ -92,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Xóa cookie ngay lập tức qua API route, reset state đồng thời
   const logout = useCallback(() => {
     setUser(null)
-    fetch('/api/auth/logout', { method: 'POST' }).catch(() => { })
+    fetch('/api/auth/logout', { method: 'POST', headers: withCsrfHeaders() }).catch(() => { })
   }, [])
 
   const refetch = useCallback(async () => {

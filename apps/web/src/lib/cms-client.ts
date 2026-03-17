@@ -1,3 +1,5 @@
+import { withCsrfHeaders } from "@/lib/security/client";
+
 const API = process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 export function getAuthToken(): null {
@@ -46,6 +48,7 @@ export async function uploadFile(file: File): Promise<{
   formData.append("file", file);
 
   const response = await fetch("/api/upload", {
+    headers: withCsrfHeaders(),
     method: "POST",
     body: formData,
   });

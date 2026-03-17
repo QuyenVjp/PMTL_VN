@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 import { createHttpError, getErrorMessage } from '@/lib/http-error'
+import { withCsrfHeaders } from '@/lib/security/client'
 import { ZenButton } from '@/components/ui-zen/zen-button'
 import { ZenField } from '@/components/ui-zen/zen-field'
 import { ZenInput } from '@/components/ui-zen/zen-input'
@@ -76,7 +77,7 @@ const LoginForm = () => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: withCsrfHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ email, password }),
       })
 

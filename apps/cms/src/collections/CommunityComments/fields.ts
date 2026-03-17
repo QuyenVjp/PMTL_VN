@@ -23,6 +23,7 @@ export const communityCommentFields: Field[] = [
             name: "post",
             label: t("Bài cộng đồng", "Community post"),
             type: "relationship",
+            index: true,
             relationTo: "communityPosts",
             required: true,
           },
@@ -30,6 +31,7 @@ export const communityCommentFields: Field[] = [
             name: "parent",
             label: t("Bình luận cha", "Parent comment"),
             type: "relationship",
+            index: true,
             relationTo: "communityComments",
           },
           {
@@ -42,6 +44,7 @@ export const communityCommentFields: Field[] = [
             name: "authorUser",
             label: t("Người dùng", "Author user"),
             type: "relationship",
+            index: true,
             relationTo: "users",
           },
           {
@@ -59,6 +62,7 @@ export const communityCommentFields: Field[] = [
             label: t("Trạng thái duyệt", "Moderation status"),
             type: "select",
             defaultValue: "pending",
+            index: true,
             options: moderationOptions,
             required: true,
           },

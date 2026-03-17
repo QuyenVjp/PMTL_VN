@@ -8,7 +8,6 @@ import { vi } from "@payloadcms/translations/languages/vi";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
-import { t } from "./admin/i18n";
 import { AuditLogs } from "./collections/AuditLogs";
 import { BeginnerGuides } from "./collections/BeginnerGuides";
 import { Categories } from "./collections/Categories";
@@ -154,8 +153,8 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL ?? defaultDatabaseUrl,
-      max: parseIntEnv("PAYLOAD_DB_POOL_MAX", isDevelopment ? 6 : 20),
-      min: parseIntEnv("PAYLOAD_DB_POOL_MIN", 0),
+      max: parseIntEnv("PAYLOAD_DB_POOL_MAX", isDevelopment ? 6 : 50),
+      min: parseIntEnv("PAYLOAD_DB_POOL_MIN", isDevelopment ? 0 : 5),
       idleTimeoutMillis: parseIntEnv("PAYLOAD_DB_POOL_IDLE_TIMEOUT_MS", 30000),
       connectionTimeoutMillis: parseIntEnv("PAYLOAD_DB_POOL_CONN_TIMEOUT_MS", 10000),
     },

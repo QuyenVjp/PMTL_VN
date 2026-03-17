@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
+import * as Sentry from '@sentry/nextjs'
 import { AlertCircle, Home, RotateCcw } from 'lucide-react'
 
 export default function Error({
@@ -12,8 +13,19 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log error for monitoring
-    console.error('[RootError]', error.message)
+    console.error('Root error boundary triggered', {
+      digest: error.digest,
+      message: error.message,
+      stack: error.stack,
+    })
+    Sentry.captureException(error, {
+      tags: {
+        boundary: 'root-error',
+      },
+      extra: {
+        digest: error.digest,
+      },
+    })
   }, [error])
 
   return (
@@ -61,6 +73,7 @@ export default function Error({
 
         {/* Support link */}
         <p className="text-xs text-muted-foreground">
+          {error.digest ? `Mã lỗi: ${error.digest}. ` : null}
           Nếu vấn đề vẫn tiếp tục, vui lòng{' '}
           <a href="https://zalo.me" className="text-gold hover:underline">
             liên hệ hỗ trợ

@@ -11,6 +11,11 @@ export default function GlobalError({
   };
 }) {
   useEffect(() => {
+    console.error("Global error boundary triggered", {
+      digest: error.digest,
+      message: error.message,
+      stack: error.stack,
+    });
     Sentry.captureException(error);
   }, [error]);
 

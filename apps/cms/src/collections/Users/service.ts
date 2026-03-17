@@ -62,6 +62,19 @@ export function assertCanManageUser(role?: string): void {
   }
 }
 
+function isInvalidCredentialError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const maybeStatus = "status" in error ? (error as { status?: unknown }).status : undefined;
+  if (maybeStatus === 401) {
+    return true;
+  }
+
+  return /email or password provided is incorrect/i.test(error.message);
+}
+
 export function buildResetPasswordURL(token: string): string {
   const baseUrl =
     process.env.AUTH_RESET_PASSWORD_URL ??
@@ -295,14 +308,24 @@ export async function loginUser(payload: Payload, input: LoginInput): Promise<Au
   const foundUser = await findUserByEmail(payload, parsedInput.email);
   assertUserCanAuthenticate(foundUser);
 
-  const loginResult = await payload.login({
-    collection: "users",
-    data: {
-      email: parsedInput.email.toLowerCase(),
-      password: parsedInput.password,
-    },
-    overrideAccess: true,
-  });
+  let loginResult;
+
+  try {
+    loginResult = await payload.login({
+      collection: "users",
+      data: {
+        email: parsedInput.email.toLowerCase(),
+        password: parsedInput.password,
+      },
+      overrideAccess: true,
+    });
+  } catch (error) {
+    if (isInvalidCredentialError(error)) {
+      throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
+    }
+
+    throw error;
+  }
 
   if (!loginResult.token || !loginResult.user) {
     throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
