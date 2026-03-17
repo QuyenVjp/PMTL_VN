@@ -1,5 +1,15 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalPassThroughEnv": [
+    "CMS_PUBLIC_URL",
+    "DATABASE_URL",
+    "MEILI_HOST",
+    "NEXT_PUBLIC_SITE_URL",
+    "PAYLOAD_DB_PUSH",
+    "PAYLOAD_PUBLIC_SERVER_URL",
+    "PORT",
+    "REDIS_URL"
+  ],
   "tasks": {
     "dev": {
       "cache": false,

@@ -1,7 +1,5 @@
 import "server-only";
 
-import os from "node:os";
-
 import Redis from "ioredis";
 
 import { logger } from "@/lib/logger";
@@ -15,7 +13,7 @@ function normalizeRedisUrl(value: string | undefined): string | null {
     return null;
   }
 
-  if (os.platform() !== "win32") {
+  if (process.platform !== "win32") {
     return trimmedValue;
   }
 

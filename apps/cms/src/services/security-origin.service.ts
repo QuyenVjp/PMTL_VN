@@ -40,7 +40,7 @@ export function getAllowedOrigins(request: NextRequest): string[] {
   const origins = new Set<string>(DEFAULT_ALLOWED_ORIGINS);
   const requestOrigin = normalizeOrigin(request.nextUrl.origin);
   const siteOrigin = normalizeOrigin(process.env.NEXT_PUBLIC_SITE_URL);
-  const cmsOrigin = normalizeOrigin(process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL);
+  const cmsOrigin = normalizeOrigin(process.env.CMS_PUBLIC_URL ?? process.env.PAYLOAD_PUBLIC_SERVER_URL);
   const securityOrigins = splitOrigins(process.env.SECURITY_ALLOWED_ORIGINS);
   const extraOrigins = splitOrigins(process.env.CORS_ALLOWED_ORIGINS);
 

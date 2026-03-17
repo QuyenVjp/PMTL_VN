@@ -608,6 +608,15 @@ NODE_DEBUG=http pnpm dev  # Enable HTTP debug logs
 
 ---
 
+## Runtime Fixes & Gotchas (2026)
+
+- Treat empty-string envs as `undefined` for optional secrets (example: `MEILI_MASTER_KEY`, `PAYLOAD_API_TOKEN`) to avoid Zod crashes on blank values.
+- Normalize Redis host to `127.0.0.1` only for Windows local dev; do not override in Docker/Linux.
+- Map invalid credential errors to 401 in CMS auth service to avoid 500s on wrong passwords.
+- Accept any non-empty Web Vitals metric name (max 32 chars) to prevent 400s when new metrics appear.
+
+---
+
 ## Recommended Reading
 
 - `docs/architecture/conventions.md` - Placement rules

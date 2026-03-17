@@ -1,5 +1,3 @@
-import os from "node:os";
-
 export function normalizeDockerHostnameUrl(rawUrl: string | undefined, dockerHostname: string, localHostname: string): string | null {
   const value = rawUrl?.trim();
 
@@ -7,7 +5,7 @@ export function normalizeDockerHostnameUrl(rawUrl: string | undefined, dockerHos
     return null;
   }
 
-  if (os.platform() !== "win32") {
+  if (process.platform !== "win32") {
     return value;
   }
 

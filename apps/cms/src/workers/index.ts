@@ -29,7 +29,12 @@ function isRetryableStartupError(error: unknown) {
   }
 
   const message = error.message.toLowerCase();
-  return message.includes("cannot connect to postgres") || message.includes("econnrefused") || message.includes("fetch failed");
+  return (
+    message.includes("cannot connect to postgres") ||
+    message.includes("econnrefused") ||
+    message.includes("fetch failed") ||
+    message.includes("tcp not reachable")
+  );
 }
 
 function resolvePostgresEndpoint() {

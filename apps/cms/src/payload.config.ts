@@ -65,7 +65,7 @@ function adminComponent(relativePath: string, exportName: string) {
 }
 
 export default buildConfig({
-  serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL ?? "http://localhost:3001",
+  serverURL: process.env.CMS_PUBLIC_URL ?? process.env.PAYLOAD_PUBLIC_SERVER_URL ?? "http://localhost:3001",
   routes: {
     admin: "/admin",
     api: "/api",
