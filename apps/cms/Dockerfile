@@ -3,8 +3,11 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
+FROM base AS dev
+ENV NODE_ENV=development
+
 FROM base AS deps
-COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/cms/package.json apps/cms/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/config/package.json packages/config/package.json
@@ -18,6 +21,6 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 RUN corepack enable
-COPY --from=build /app ./
+COPY --from=build /app ./ 
 EXPOSE 3001
 CMD ["pnpm", "--filter", "@pmtl/cms", "start"]

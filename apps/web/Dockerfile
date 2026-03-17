@@ -1,9 +1,13 @@
 FROM node:20-alpine AS base
 WORKDIR /app
+RUN apk add --no-cache libc6-compat
 RUN corepack enable
 
+FROM base AS dev
+ENV NODE_ENV=development
+
 FROM base AS deps
-COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/ui/package.json packages/ui/package.json

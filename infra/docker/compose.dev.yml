@@ -3,15 +3,39 @@ services:
     build:
       context: ../..
       dockerfile: apps/web/Dockerfile
+      target: dev
     env_file:
       - .env.dev
     environment:
       NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
     depends_on:
       cms:
-        condition: service_started
+        condition: service_healthy
+    working_dir: /app
+    command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "web"]
     ports:
       - "3000:3000"
+    volumes:
+      - ../..:/app
+      - node-modules:/app/node_modules
+      - pnpm-store:/root/.local/share/pnpm/store
+      - turbo-cache:/app/.turbo
+      - web-next-cache:/app/apps/web/.next
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((response)=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
+      interval: 20s
+      timeout: 10s
+      retries: 6
+      start_period: 45s
+    init: true
     restart: unless-stopped
     networks:
       - frontend
@@ -21,21 +45,47 @@ services:
     build:
       context: ../..
       dockerfile: apps/cms/Dockerfile
+      target: dev
     env_file:
       - .env.dev
     environment:
       NODE_ENV: development
       PORT: 3001
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "true"
     depends_on:
       postgres:
         condition: service_healthy
       meilisearch:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+    working_dir: /app
+    command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "cms"]
     ports:
       - "3001:3001"
     restart: unless-stopped
     volumes:
+      - ../..:/app
+      - node-modules:/app/node_modules
+      - pnpm-store:/root/.local/share/pnpm/store
+      - turbo-cache:/app/.turbo
+      - cms-next-cache:/app/apps/cms/.next
+      - cms-media-dev:/app/apps/cms/media
       - worker-heartbeat:/var/run/pmtl
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3001/api/health').then((response)=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
+      interval: 20s
+      timeout: 10s
+      retries: 6
+      start_period: 60s
+    init: true
     networks:
       - backend
 
@@ -43,13 +93,16 @@ services:
     build:
       context: ../..
       dockerfile: apps/cms/Dockerfile
+      target: dev
     env_file:
       - .env.dev
     environment:
       NODE_ENV: development
       WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
       WORKER_HEARTBEAT_STALE_SECONDS: "120"
-    command: ["pnpm", "--filter", "@pmtl/cms", "worker:start"]
+      CHOKIDAR_USEPOLLING: "true"
+    working_dir: /app
+    command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "worker"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -58,9 +111,12 @@ services:
       redis:
         condition: service_healthy
       cms:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
     volumes:
+      - ../..:/app
+      - node-modules:/app/node_modules
+      - pnpm-store:/root/.local/share/pnpm/store
       - worker-heartbeat:/var/run/pmtl
     healthcheck:
       test:
@@ -74,6 +130,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 45s
+    init: true
     networks:
       - backend
 
@@ -154,9 +211,9 @@ services:
     restart: unless-stopped
     depends_on:
       web:
-        condition: service_started
+        condition: service_healthy
       cms:
-        condition: service_started
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -175,6 +232,12 @@ volumes:
   caddy-data:
   caddy-config:
   worker-heartbeat:
+  node-modules:
+  pnpm-store:
+  turbo-cache:
+  web-next-cache:
+  cms-next-cache:
+  cms-media-dev:
 
 networks:
   frontend:

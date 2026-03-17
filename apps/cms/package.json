@@ -6,7 +6,9 @@
   "scripts": {
     "predev": "tsx ../../infra/scripts/ensure-port-free.ts 3001 cms",
     "dev": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false next dev --webpack --port 3001",
+    "dev:container": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false next dev --webpack --hostname 0.0.0.0 --port 3001",
     "worker:dev": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx watch src/workers/index.ts",
+    "worker:container": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx watch src/workers/index.ts",
     "worker:start": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/workers/index.ts",
     "build": "pnpm run generate:types && pnpm run generate:importmap && next build",
     "start": "next start --port 3001",

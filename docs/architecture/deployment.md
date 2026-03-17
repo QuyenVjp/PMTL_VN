@@ -15,8 +15,8 @@
 4. VPS chạy:
 
 ```bash
-docker compose -f infra/docker/compose.prod.yml pull
-docker compose -f infra/docker/compose.prod.yml up -d
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d
 ```
 
 Production notes:
@@ -26,6 +26,7 @@ Production notes:
 - worker có heartbeat file healthcheck trong container để Docker phát hiện tiến trình nền bị treo
 - monitoring service bind localhost only; truy cap Grafana/Prometheus/Alertmanager qua SSH tunnel, khong mo public port
 - build image truoc roi moi deploy len VPS; standalone build tren Windows co the canh bao trace `node:inspector`, nhung deploy Linux khong gap gioi han path nay
+- CMS uploads/media phai nam tren volume persistent rieng, khong nam trong image layer
 
 ## Runtime responsibilities
 

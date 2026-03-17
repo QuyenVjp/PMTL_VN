@@ -6,6 +6,7 @@
   "scripts": {
     "predev": "tsx ../../infra/scripts/ensure-port-free.ts 3000 web",
     "dev": "next dev --turbo --port 3000",
+    "dev:container": "next dev --hostname 0.0.0.0 --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
     "lint": "eslint .",

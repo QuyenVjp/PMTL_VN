@@ -8,13 +8,14 @@
     "pnpm": ">=10.30.3"
   },
   "scripts": {
-    "dev": "tsx infra/scripts/dev.ts",
-    "dev:apps": "turbo run dev --parallel --filter=@pmtl/web --filter=@pmtl/cms",
-    "dev:worker": "pnpm --filter @pmtl/cms worker:dev",
-    "dev:web": "pnpm --filter @pmtl/web dev",
-    "dev:cms": "pnpm --filter @pmtl/cms dev",
-    "dev:infra": "tsx infra/scripts/dev.ts --infra-only",
-    "dev:infra:down": "docker compose -f infra/docker/compose.dev.yml down",
+    "dev": "tsx infra/scripts/dev.ts up",
+    "dev:logs": "tsx infra/scripts/dev.ts logs",
+    "dev:stop": "tsx infra/scripts/dev.ts down",
+    "dev:rebuild": "tsx infra/scripts/dev.ts rebuild",
+    "dev:host:apps": "turbo run dev --parallel --filter=@pmtl/web --filter=@pmtl/cms",
+    "dev:host:worker": "pnpm --filter @pmtl/cms worker:dev",
+    "dev:host:web": "pnpm --filter @pmtl/web dev",
+    "dev:host:cms": "pnpm --filter @pmtl/cms dev",
     "db:reset:dev": "tsx infra/scripts/reset-dev-db.ts",
     "seed:demo": "pnpm --filter @pmtl/cms seed:demo",
     "seed:demo:reset": "pnpm --filter @pmtl/cms seed:demo:reset",
@@ -29,7 +30,7 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "docker:dev": "docker compose -f infra/docker/compose.dev.yml up --build",
+    "docker:dev": "tsx infra/scripts/dev.ts up --foreground",
     "docker:prod": "docker compose -f infra/docker/compose.prod.yml up -d"
   },
   "devDependencies": {

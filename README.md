@@ -29,74 +29,87 @@ docs/
   api/
 ```
 
-## Chạy local
+## Chạy dev chuẩn
 
 ```bash
 pnpm install
-pnpm dev
-```
-
-`pnpm dev` bây giờ sẽ:
-
-- tự tạo `infra/docker/.env.dev` từ file mẫu nếu còn thiếu
-- bật `postgres + meilisearch + redis` bằng Docker
-- chạy `apps/web`, `apps/cms` và `cms worker` local với hot reload
-
-Nếu chỉ muốn bật hạ tầng dev:
-
-```bash
-pnpm dev:infra
-```
-
-Nếu muốn tắt hạ tầng dev:
-
-```bash
-pnpm dev:infra:down
-```
-
-Trên Windows có thể chạy nhanh bằng:
-
-```bash
 run-dev.bat
 ```
 
-Mac dinh `run-dev.bat` se bo qua `db:sync` de tranh Payload pull schema qua lau trong moi lan boot.
-Chi khi can dong bo schema Postgres/Payload thu cong moi chay:
+Luồng dev chuẩn là full Docker. `run-dev.bat` va `pnpm dev` deu chi la wrapper cho `docker compose`, khong chay `web/cms/worker` tren host Windows nua.
+
+- tu tao `infra/docker/.env.dev` tu file mau neu con thieu
+- build dev image va chay `web + cms + worker + postgres + redis + meilisearch + caddy` trong Docker Compose
+- bind mount source code de giu hot reload trong container
+- tu dong `db:sync` cho CMS container luc boot de tranh lech schema dev
+
+Theo doi log:
 
 ```bash
-run-dev.bat --sync-schema
+logs-dev.bat
 ```
 
-`apps/cms` runtime khong auto `db push` nua. Dev boot chi khoi dong infra + web/cms/worker.
-
-Hoặc chạy toàn bộ stack bằng Docker container:
+Dung stack:
 
 ```bash
-docker compose -f infra/docker/compose.dev.yml up --build
+stop-dev.bat
+```
+
+Build lai image va recreate container:
+
+```bash
+rebuild-dev.bat
+```
+
+Neu muon chay bang pnpm thay vi `.bat`:
+
+```bash
+pnpm dev
+pnpm dev:logs
+pnpm dev:stop
+pnpm dev:rebuild
+```
+
+Hoac foreground:
+
+```bash
+pnpm docker:dev
 ```
 
 ## Scripts quan trọng
 
-- `pnpm dev`: bật infra dev bằng Docker và chạy web + cms + worker local.
-- `pnpm dev:apps`: chỉ chạy web + cms local.
-- `pnpm dev:worker`: chỉ chạy worker local.
-- `pnpm dev:infra`: chỉ bật postgres + meilisearch + redis cho local dev.
-- `pnpm dev:infra:down`: tắt hạ tầng dev local.
+- `run-dev.bat`: entrypoint chinh tren Windows, wrapper cho Docker Compose dev.
+- `logs-dev.bat`: xem log toan bo stack hoac log theo service.
+- `stop-dev.bat`: dung va don compose dev stack.
+- `rebuild-dev.bat`: build lai image dev va recreate container.
+- `pnpm dev`: wrapper cross-platform cho `docker compose up -d --build`.
+- `pnpm dev:logs`: wrapper cross-platform cho `docker compose logs -f`.
+- `pnpm dev:stop`: wrapper cross-platform cho `docker compose down`.
+- `pnpm dev:rebuild`: wrapper cross-platform cho `docker compose build --no-cache` + `up -d --force-recreate`.
+- `pnpm dev:host:*`: script local cu, chi giu lai de debug dac biet, khong phai luong dev chuan.
 - `pnpm build`: build toàn bộ workspace.
 - `pnpm lint`: lint toàn bộ workspace.
 - `pnpm typecheck`: kiểm tra TypeScript toàn bộ workspace.
 - `pnpm seed:demo`: nạp dữ liệu mẫu production-like vào CMS.
 - `pnpm reindex:posts`: enqueue batch reindex cho toàn bộ posts.
 - `pnpm smoke:test`: bắn smoke test vào CMS/web theo env hiện tại.
-- `pnpm docker:dev`: chạy stack local bằng Docker Compose.
+- `pnpm docker:dev`: chạy stack dev foreground bằng Docker Compose.
 - `pnpm docker:prod`: chạy stack production compose.
 
 ## Luồng triển khai production
 
 1. GitHub Actions build image cho `web` và `cms`.
 2. Push image lên registry.
-3. VPS pull image mới.
-4. VPS chạy `docker compose pull && docker compose up -d`.
+3. VPS cap nhat `infra/docker/.env.prod` hoac secret source de tro `WEB_IMAGE` va `CMS_IMAGE` den release tag can deploy.
+4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull`.
+5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d`.
+
+Boundary dev/prod:
+
+- Dev: `infra/docker/compose.dev.yml` dung bind mount source code, named volume cho `node_modules`, `.next`, `.turbo`, pnpm store, media uploads va data services.
+- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config, Grafana/Prometheus data, worker heartbeat va CMS uploads/media.
+- Caddy la public entrypoint duy nhat o production; `web` va `cms` noi bo sau Docker network.
+- `worker` chay cung stack compose production va dung chung image CMS, nhung command rieng.
 
 ## Tài liệu cần đọc trước khi code
 
