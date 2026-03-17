@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function GalleryPage() {
   await connection()
+
   let items = FALLBACK_GALLERY_ITEMS
 
   try {

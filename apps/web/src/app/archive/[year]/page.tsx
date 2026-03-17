@@ -25,6 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 }
 
 export default async function ArchiveYearPage({ params }: { params: Promise<Params> }) {
+  await connection()
+
   return (
     <div className="min-h-screen bg-background">
       <Suspense fallback={null}>
@@ -42,8 +44,6 @@ export default async function ArchiveYearPage({ params }: { params: Promise<Para
 }
 
 async function ArchiveYearContent({ params }: { params: Promise<Params> }) {
-  await connection()
-
   const { year: yearStr } = await params
   const year = parseInt(yearStr, 10)
   if (isNaN(year) || year < 2000) notFound()

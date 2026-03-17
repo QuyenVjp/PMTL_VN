@@ -33,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 }
 
 export default async function ArchiveMonthPage({ params }: { params: Promise<Params> }) {
+  await connection()
+
   return (
     <div className="min-h-screen bg-background">
       <Suspense fallback={null}>
@@ -50,8 +52,6 @@ export default async function ArchiveMonthPage({ params }: { params: Promise<Par
 }
 
 async function ArchiveMonthContent({ params }: { params: Promise<Params> }) {
-  await connection()
-
   const { year: yearStr, month: monthStr } = await params
   const year = parseInt(yearStr, 10)
   const month = parseInt(monthStr, 10)

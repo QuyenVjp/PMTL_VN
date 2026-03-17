@@ -15,6 +15,8 @@ export const metadata: Metadata = {
 }
 
 export default async function ArchivePage() {
+  await connection()
+
   return (
     <div className="min-h-screen bg-background">
       <Suspense fallback={null}>
@@ -32,8 +34,6 @@ export default async function ArchivePage() {
 }
 
 async function ArchivePageContent() {
-  await connection()
-
   let data: ArchiveYear[] = []
   try {
     data = await getArchiveIndex()

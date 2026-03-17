@@ -3,7 +3,6 @@
 // ─────────────────────────────────────────────────────────────
 
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -50,7 +49,6 @@ function timeAgo(dateStr: string): string {
 }
 
 export default async function CategoryPage({ params }: Props) {
-  await connection()
   const { slug } = await params
   const [category, allCats] = await Promise.all([
     getCategoryBySlug(slug),

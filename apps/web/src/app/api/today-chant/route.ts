@@ -6,8 +6,7 @@
 //  1) Tính lunarMonth/lunarDay từ date dùng @forvn/vn-lunar-calendar
 //  2) Gọi CMS chanting endpoint và trả về kết quả cho client
 // ─────────────────────────────────────────────────────────────
-import { NextRequest, NextResponse } from 'next/server';
-import { connection } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { fetchTodayChant } from '@/lib/api/chanting';
 import { CHANTING_ADMIN_COPY } from '@/lib/config/chanting';
@@ -20,6 +19,7 @@ const todayChantQuerySchema = z.object({
 
 export async function GET(req: NextRequest) {
   await connection();
+
   try {
     const parsed = todayChantQuerySchema.parse({
       date: req.nextUrl.searchParams.get('date') ?? undefined,

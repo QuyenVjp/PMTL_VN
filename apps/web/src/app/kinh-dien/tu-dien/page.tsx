@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import Link from 'next/link'
+import { connection } from 'next/server'
 
 import Footer from '@/components/Footer'
 import HeaderServer from '@/components/HeaderServer'

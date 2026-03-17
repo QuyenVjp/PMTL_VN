@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import { ReactNode, useState, useEffect } from 'react'
 import { AuthProvider } from '@/contexts/AuthContext'
+import WebVitalsReporter from '@/components/observability/WebVitalsReporter'
 
 // ── PostHog Analytics (tuỳ chọn — chỉ kích hoạt khi có NEXT_PUBLIC_POSTHOG_KEY) ──
 // Cài đặt: npm install posthog-js
@@ -52,6 +53,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <PostHogInit />
+          <WebVitalsReporter />
           {children}
         </AuthProvider>
       </QueryClientProvider>

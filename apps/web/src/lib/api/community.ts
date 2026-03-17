@@ -100,6 +100,41 @@ export async function fetchPosts(params?: {
   }
 }
 
+export async function fetchPostsServer(params?: {
+  page?: number
+  pageSize?: number
+}): Promise<{ posts: CommunityPost[]; total: number }> {
+  const cmsBaseUrl =
+    process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001'
+  const page = Math.max(1, params?.page ?? 1)
+  const pageSize = Math.max(1, params?.pageSize ?? 20)
+
+  try {
+    const response = await fetch(
+      `${cmsBaseUrl}/api/community/posts?page=${page}&limit=${pageSize}`,
+      { cache: 'no-store' }
+    )
+
+    if (!response.ok) {
+      return { posts: [], total: 0 }
+    }
+
+    const json = (await response.json()) as {
+      docs?: unknown[]
+      totalDocs?: number
+    }
+
+    const docs = Array.isArray(json.docs) ? json.docs : []
+
+    return {
+      posts: normalizePosts(docs as any[]),
+      total: typeof json.totalDocs === 'number' ? json.totalDocs : docs.length,
+    }
+  } catch {
+    return { posts: [], total: 0 }
+  }
+}
+
 export async function fetchPostById(documentId: string): Promise<CommunityPost> {
   const res = await fetch(`/api/community-posts/${documentId}`)
   if (!res.ok) throw await createHttpError(res, 'Không tìm thấy bài viết')

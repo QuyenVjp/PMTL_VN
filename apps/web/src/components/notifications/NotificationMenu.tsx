@@ -72,16 +72,44 @@ export default function NotificationMenu({ mobile = false }: { mobile?: boolean 
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState<NotificationItem[]>([])
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>([])
+  const [hasLoaded, setHasLoaded] = useState(false)
 
   useBodyScrollLock(open)
 
   useEffect(() => {
     setReadNotificationIds(getReadIds())
+  }, [])
+
+  useEffect(() => {
+    if (!open || hasLoaded) {
+      return
+    }
+
+    let cancelled = false
+
     fetch('/api/notifications?limit=8', { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : { data: [] }))
-      .then((data) => setItems(Array.isArray(data?.data) ? data.data : []))
-      .catch(() => setItems([]))
-  }, [])
+      .then((data) => {
+        if (cancelled) {
+          return
+        }
+
+        setItems(Array.isArray(data?.data) ? data.data : [])
+        setHasLoaded(true)
+      })
+      .catch(() => {
+        if (cancelled) {
+          return
+        }
+
+        setItems([])
+        setHasLoaded(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [hasLoaded, open])
 
   const unreadCount = useMemo(
     () => items.filter((item) => !readNotificationIds.includes(item.documentId)).length,

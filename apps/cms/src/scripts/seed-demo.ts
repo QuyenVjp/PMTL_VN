@@ -98,7 +98,22 @@ async function seedUsers(payload: Awaited<ReturnType<typeof getPayload>>) {
     });
 
     if (existing.docs[0]) {
-      created.push(existing.docs[0]);
+      const updated = await payload.update({
+        collection: "users",
+        id: existing.docs[0].id,
+        overrideAccess: true,
+        data: {
+          publicId: existing.docs[0].publicId || "",
+          email: user.email,
+          password: user.password,
+          fullName: user.fullName,
+          role: user.role,
+          isBlocked: false,
+          bio: "Tai khoan du lieu mau de smoke test PMTL_VN.",
+        },
+      });
+
+      created.push(updated);
       continue;
     }
 
@@ -125,6 +140,69 @@ async function seedUsers(payload: Awaited<ReturnType<typeof getPayload>>) {
     moderator: created[2],
     member: created[3],
   };
+}
+
+async function clearCollection(payload: Awaited<ReturnType<typeof getPayload>>, collection: Parameters<Awaited<ReturnType<typeof getPayload>>["find"]>[0]["collection"]) {
+  while (true) {
+    const result = await payload.find({
+      collection,
+      depth: 0,
+      limit: 200,
+      overrideAccess: true,
+    });
+
+    if (result.docs.length === 0) {
+      return;
+    }
+
+    for (const document of result.docs) {
+      await payload.delete({
+        collection,
+        id: document.id,
+        overrideAccess: true,
+      });
+    }
+  }
+}
+
+async function resetSeedCollections(payload: Awaited<ReturnType<typeof getPayload>>) {
+  const collectionsToClear: Array<Parameters<Awaited<ReturnType<typeof getPayload>>["find"]>[0]["collection"]> = [
+    "auditLogs",
+    "moderationReports",
+    "requestGuards",
+    "pushJobs",
+    "pushSubscriptions",
+    "sutraReadingProgress",
+    "sutraBookmarks",
+    "sutraChapters",
+    "sutraVolumes",
+    "sutraGlossary",
+    "sutras",
+    "practiceLogs",
+    "chantPreferences",
+    "lunarEventOverrides",
+    "lunarEvents",
+    "chantPlans",
+    "chantItems",
+    "guestbookEntries",
+    "communityComments",
+    "communityPosts",
+    "hubPages",
+    "downloads",
+    "events",
+    "postComments",
+    "posts",
+    "tags",
+    "categories",
+    "media",
+    "beginnerGuides",
+    "users",
+  ];
+
+  for (const collection of collectionsToClear) {
+    logger.info({ collection }, "Resetting seeded collection");
+    await clearCollection(payload, collection);
+  }
 }
 
 async function seedGlobals(payload: Awaited<ReturnType<typeof getPayload>>) {
@@ -608,6 +686,12 @@ async function seedSystem(payload: Awaited<ReturnType<typeof getPayload>>, moder
 
 async function main() {
   const payload = await getPayload({ config });
+  const shouldReset = process.argv.includes("--reset");
+
+  if (shouldReset) {
+    logger.info("Resetting seeded collections before reseeding");
+    await resetSeedCollections(payload);
+  }
 
   logger.info("Seeding globals");
   await seedGlobals(payload);

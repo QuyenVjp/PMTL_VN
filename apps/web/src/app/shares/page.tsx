@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
-import { connection } from 'next/server'
 import SharesClient from '@/components/shares/SharesClient'
-import { fetchPosts } from '@/lib/api/community'
+import { fetchPostsServer } from '@/lib/api/community'
 import { getAllTags } from '@/lib/api/blog'
 import { getCategories } from '@/lib/api/categories'
 import HeaderServer from '@/components/HeaderServer'
@@ -18,24 +17,24 @@ export default async function SharesPage({
 }: {
   searchParams: Promise<{ page?: string; search?: string; category?: string; sort?: string }>
 }) {
-  await connection()
   const { page = '1', search, category, sort } = await searchParams;
+  const hasQueryFilters = Boolean(search || (category && category !== 'Tất cả') || sort)
 
-  // Note: we fetch on the server to prevent initial client heavy load
-  const res = await fetchPosts({
-    page: parseInt(page, 10),
-    search,
-    category,
-    sort,
-    pageSize: 12,
-  }).catch(() => null);
+  const res = hasQueryFilters
+    ? null
+    : await fetchPostsServer({
+        page: parseInt(page, 10),
+        pageSize: 12,
+      }).catch(() => null);
   const [tagRes, categoryRes] = await Promise.all([
     getAllTags().catch(() => []),
     getCategories().catch(() => []),
   ]);
+  const safeTags = Array.isArray(tagRes) ? tagRes : []
+  const safeCategories = Array.isArray(categoryRes) ? categoryRes : []
   const categoryOptions = Array.from(
     new Set(
-      categoryRes
+      safeCategories
         .map((item) => item.name?.trim())
         .filter((item): item is string => Boolean(item))
     )
@@ -48,7 +47,7 @@ export default async function SharesPage({
         initialPosts={res?.posts || []}
         initialTotal={res?.total || 0}
         initialPage={parseInt(page, 10)}
-        availableTags={tagRes.map((tag) => tag.name).filter(Boolean)}
+        availableTags={safeTags.map((tag) => tag.name).filter(Boolean)}
         categoryOptions={categoryOptions}
       />
       <Footer />

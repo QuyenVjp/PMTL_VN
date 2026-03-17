@@ -73,16 +73,20 @@ function toGalleryCardItem(item: GalleryItem): GalleryCardItem | null {
 }
 
 export async function fetchGalleryItems(): Promise<GalleryCardItem[]> {
-  const response = await cachedCmsFetch<CmsList<GalleryItem>>('/gallery-items', {
-    status: 'published',
-    sort: ['featured:desc', 'sortOrder:asc', 'shotDate:desc', 'publishedAt:desc'],
-    populate: ['image'],
-    pagination: { pageSize: 100 },
-  }, { profile: 'hours', tags: ['gallery'] })
+  try {
+    const response = await cachedCmsFetch<CmsList<GalleryItem>>('/gallery-items', {
+      status: 'published',
+      sort: ['featured:desc', 'sortOrder:asc', 'shotDate:desc', 'publishedAt:desc'],
+      populate: ['image'],
+      pagination: { pageSize: 100 },
+    }, { profile: 'hours', tags: ['gallery'] })
 
-  return (response.data ?? [])
-    .map(toGalleryCardItem)
-    .filter((item): item is GalleryCardItem => item !== null)
+    return (response.data ?? [])
+      .map(toGalleryCardItem)
+      .filter((item): item is GalleryCardItem => item !== null)
+  } catch {
+    return []
+  }
 }
 
 export const FALLBACK_GALLERY_ITEMS: GalleryCardItem[] = [

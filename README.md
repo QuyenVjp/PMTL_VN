@@ -60,6 +60,15 @@ Trên Windows có thể chạy nhanh bằng:
 run-dev.bat
 ```
 
+Mac dinh `run-dev.bat` se bo qua `db:sync` de tranh Payload pull schema qua lau trong moi lan boot.
+Chi khi can dong bo schema Postgres/Payload thu cong moi chay:
+
+```bash
+run-dev.bat --sync-schema
+```
+
+`apps/cms` runtime khong auto `db push` nua. Dev boot chi khoi dong infra + web/cms/worker.
+
 Hoặc chạy toàn bộ stack bằng Docker container:
 
 ```bash

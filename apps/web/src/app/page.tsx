@@ -29,7 +29,6 @@ import {
 } from "@/lib/api/homepage";
 
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 
 export const metadata: Metadata = {
   title: 'Pháp Môn Tâm Linh — Trang Chủ | Hộ Trì Phật Pháp',
@@ -59,10 +58,7 @@ export const metadata: Metadata = {
   },
 }
 
-
 export default async function HomePage() {
-  await connection()
-
   // Fetch dữ liệu trang chủ từ CMS — fallback nếu CMS chưa có data
   const settings = await getHomepageSettings().catch(() => null)
 

@@ -1,9 +1,6 @@
 import Link from "next/link";
-import { connection } from "next/server";
 
 export default async function NotFound() {
-  await connection();
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1 flex items-center justify-center">

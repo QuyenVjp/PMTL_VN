@@ -55,6 +55,8 @@ export const metadata: Metadata = {
   },
 }
 
+const isProd = process.env.NODE_ENV === 'production'
+
 export default async function RootLayout({
   children,
 }: {
@@ -72,13 +74,34 @@ export default async function RootLayout({
           </Providers>
         </Suspense>
 
-        <Script id="sw-register" strategy="afterInteractive">{`
-          if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-              navigator.serviceWorker.register('/sw.js').catch(function() {});
-            });
-          }
-        `}</Script>
+        {isProd ? (
+          <Script id="sw-register" strategy="afterInteractive">{`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').catch(function() {});
+              });
+            }
+          `}</Script>
+        ) : (
+          <Script id="sw-unregister" strategy="afterInteractive">{`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for (const registration of registrations) {
+                    registration.unregister();
+                  }
+                });
+                if (window.caches) {
+                  caches.keys().then(function(keys) {
+                    return Promise.all(keys.map(function(key) {
+                      return caches.delete(key);
+                    }));
+                  });
+                }
+              });
+            }
+          `}</Script>
+        )}
       </body>
     </html>
   )

@@ -1,9 +1,10 @@
+import { connection } from "next/server";
 import { getCategories } from "@/lib/api/categories";
 import { logger } from "@/lib/logger";
-import { connection } from "next/server";
 
 export async function GET() {
   await connection();
+
   try {
     const data = await getCategories();
     const normalized = { data };

@@ -355,6 +355,27 @@ await connection();
 // ❌ Do not use `export const dynamic = 'force-dynamic'` with cacheComponents enabled
 ```
 
+### Next.js 16 Render Speed Playbook
+- Measure production with `next build` first. `next dev` compile times and cache-bypass warnings are not representative of shipped performance.
+- With `cacheComponents` enabled, prefer `"use cache"` helpers plus `cacheLife()` / `cacheTag()` at the data layer. Keep route/page files thin.
+- Do not scatter `await connection()` across content pages. Use it only for request-time pages or route handlers that truly depend on request data, cookies, `nextUrl.searchParams`, live auth, or volatile user content.
+- Never use `export const dynamic = 'force-dynamic'` in this repo while `cacheComponents` is enabled; Next 16 will reject it.
+- For Server Components, do not round-trip through this app's own `/api/*` routes when the server can call CMS/domain helpers directly. Fetch server-direct from the real backend/helper layer.
+- Push non-critical UI fetches behind interaction. Examples: notifications, user menu details, secondary widgets. First paint should not wait on them.
+- Treat community/guestbook/live feeds as runtime or PPR surfaces, but keep home/content discovery routes static or PPR whenever possible.
+- If a route has a valid fallback state when CMS is unavailable, encode that fallback in the helper instead of letting build/prerender crash.
+- Bridge/proxy helpers must catch network refusal at the fetch layer. Do not let connection errors escape before fallback logic runs.
+
+### Web Vitals Baseline
+- Instrument route-level Web Vitals with `useReportWebVitals` and post them to an internal monitoring route.
+- Log metrics with pino using route, metric name, value, delta, rating, and navigation type.
+- Use these metrics to tune route behavior:
+  - `TTFB`: server fetch depth, cacheability, request-time bailouts
+  - `LCP`: hero/media payload, critical data dependency, image sizing
+  - `INP`: client component weight and interaction deferral
+  - `CLS`: image dimensions, skeleton sizing, async slot stability
+- Prefer real-user metrics or Vercel Speed Insights over local intuition.
+
 ### React Query for Client State
 ```typescript
 // ✅ Use React Query for remote data fetching:

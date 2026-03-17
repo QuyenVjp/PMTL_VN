@@ -21,7 +21,7 @@ export async function getCategories(): Promise<Category[]> {
       populate: ['parent'],
       pagination: { page: 1, pageSize: 100 },
     }, { profile: 'minutes', tags: ['categories'] })
-    return res.data
+    return Array.isArray(res.data) ? res.data : []
   } catch {
     return []
   }

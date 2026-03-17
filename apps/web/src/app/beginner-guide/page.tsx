@@ -1,5 +1,4 @@
 import { getBeginnerGuides } from "@/lib/api/guides";
-import { connection } from "next/server";
 import BeginnerGuideClient from "./BeginnerGuideClient";
 
 export const metadata = {
@@ -8,7 +7,6 @@ export const metadata = {
 };
 
 export default async function BeginnerGuidePage() {
-  await connection();
   const guides = await getBeginnerGuides();
   return <BeginnerGuideClient initialGuides={guides} />;
 }

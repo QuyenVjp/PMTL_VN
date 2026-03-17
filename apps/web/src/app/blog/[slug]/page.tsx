@@ -3,7 +3,6 @@
 //  ISR: fallback revalidate 1 hour — instant via /api/revalidate webhook
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -90,7 +89,6 @@ function getYouTubeId(url: string): string | null {
 // LanguageBadge removed as it's no longer in schema
 
 export default async function BlogPostPage({ params }: Props) {
-  await connection()
   const { slug } = await params
   const post = await getPostBySlug(slug)
   if (!post) notFound()

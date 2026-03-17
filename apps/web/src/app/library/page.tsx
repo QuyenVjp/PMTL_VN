@@ -1,7 +1,6 @@
 // app/library/page.tsx — Server Component
 // Fetch data server-side, truyền xuống LibraryClient để render
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { fetchDownloads, DOWNLOAD_CATEGORIES, type DownloadItem } from '@/lib/api/downloads'
 import LibraryClient from '@/components/library/LibraryClient'
 import HeaderServer from '@/components/HeaderServer'
@@ -14,7 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default async function LibraryPage() {
-  await connection()
   let allItems: DownloadItem[] = []
 
   try {

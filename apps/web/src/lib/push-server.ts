@@ -278,6 +278,10 @@ export async function fetchPushJobByDocumentId(documentId: string): Promise<Push
 }
 
 export async function fetchRecentNotifications(limit = 24) {
+  if (!CMS_TOKEN) {
+    return { data: [] }
+  }
+
   try {
     const response = await cmsAdminFetch<PayloadListResponse<RawPushJob>>(
       `/api/pushJobs?where[status][equals]=completed&sort=-createdAt&limit=${Math.max(1, Math.min(100, limit))}&depth=0`,

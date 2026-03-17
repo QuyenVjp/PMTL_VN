@@ -2,11 +2,13 @@
 //  app/api/archive/route.ts
 //  GET — bài viết theo năm/tháng + mục lục tổng hợp
 // ─────────────────────────────────────────────────────────────
-import { NextRequest } from 'next/server'
+import { connection, NextRequest } from 'next/server'
 import { getArchiveIndex, getArchivePosts } from '@/lib/api/archive'
 import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
+  await connection()
+
   const { searchParams } = new URL(request.url)
   const year = searchParams.get('year')
   const month = searchParams.get('month')

@@ -16,6 +16,7 @@ apps/web/.next
 apps/web/out
 apps/cms/.payload
 apps/cms/.cache
+apps/cms/tmp-runtime-logs/
 infra/caddy/data
 infra/caddy/config
 *.log

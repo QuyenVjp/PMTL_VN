@@ -26,6 +26,7 @@ export default async function GuestbookArchivePage({
   params: Promise<{ year: string; month: string }>
 }) {
   await connection()
+
   const { year, month } = await params
 
   const y = parseInt(year, 10)

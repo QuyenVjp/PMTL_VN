@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 
 import Footer from '@/components/Footer'
@@ -28,8 +27,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function SutraReaderPage({ params, searchParams }: Props) {
-  await connection()
-
   const [{ sutraSlug }, { chapter }] = await Promise.all([params, searchParams])
   const data = await fetchSutraBySlug(sutraSlug).catch(() => null)
   if (!data) notFound()

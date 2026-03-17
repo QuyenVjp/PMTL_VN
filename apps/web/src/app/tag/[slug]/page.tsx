@@ -3,7 +3,6 @@
 //  Cached at the data layer via Cache Components
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -46,7 +45,6 @@ function formatDate(dateStr: string | null): string {
 }
 
 export default async function TagPage({ params, searchParams }: Props) {
-  await connection()
   const { slug } = await params
   const { page } = await searchParams
   const currentPage = Math.max(1, parseInt(page ?? '1', 10))

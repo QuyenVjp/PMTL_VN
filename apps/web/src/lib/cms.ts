@@ -59,7 +59,15 @@ function isBridgePath(path: string): boolean {
 }
 
 function shouldLogCmsFailure(path: string): boolean {
-  return !OPTIONAL_CMS_PATHS.has(path);
+  if (OPTIONAL_CMS_PATHS.has(path)) {
+    return false;
+  }
+
+  if (path === "/guestbook-entries/archive-list" || path.startsWith("/guestbook-entries/archive/")) {
+    return false;
+  }
+
+  return true;
 }
 
 function mapPayloadPostToLegacy(post: Record<string, unknown>) {
@@ -306,12 +314,6 @@ export function buildCmsUrl(
 }
 
 export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): Promise<T> {
-  const bridged = await payloadBridgeFetch<T>(path, options);
-
-  if (bridged !== null) {
-    return bridged;
-  }
-
   const { next, noCache, ...queryOptions } = options;
   const url = buildCmsUrl(path, queryOptions);
   const token = getServerToken();
@@ -328,6 +330,12 @@ export async function cmsFetch<T>(path: string, options: CmsFetchOptions = {}): 
   const cacheStrategy = noCache || isDraft ? "no-store" : "force-cache";
 
   try {
+    const bridged = await payloadBridgeFetch<T>(path, options);
+
+    if (bridged !== null) {
+      return bridged;
+    }
+
     const response = await fetch(url, {
       headers,
       next: cacheStrategy === "no-store" ? undefined : next,

@@ -1,7 +1,7 @@
 // app/guestbook/page.tsx — Guestbook main page (Server Component)
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import { connection } from 'next/server'
+import { Suspense } from 'react'
 import { getGuestbookEntries, getGuestbookArchiveList, type ArchiveStat } from '@/lib/api/guestbook'
 import GuestbookPageHeader from '@/components/guestbook/GuestbookPageHeader'
 import GuestbookList from '@/components/guestbook/GuestbookList'
@@ -22,6 +22,8 @@ const fallback: GuestbookListType = {
 }
 
 export default async function GuestbookPage() {
+  await connection()
+
   return (
     <div className="min-h-screen bg-background">
       <Suspense fallback={null}>
@@ -39,8 +41,6 @@ export default async function GuestbookPage() {
 }
 
 async function GuestbookPageContent() {
-  await connection()
-
   let initialData: GuestbookListType = fallback
   let archives: ArchiveStat[] = []
 

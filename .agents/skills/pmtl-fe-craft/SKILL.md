@@ -29,6 +29,11 @@ Apply this skill to ensure code feels written by a meticulous Senior Frontend En
 - Use `tabular-nums` for any numeric data lists (prices, counts, dates).
 - Implement `prefers-reduced-motion` checks for all animations.
 - Ensure all forms have proper `inputmode` and `autocomplete` attributes.
+- In Server Components, call domain/server helpers directly. Do not fetch this app's own `/api/*` routes unless the caller is a browser/client component.
+- Treat `next dev` timings as debugging noise; use production build output and real vitals to judge performance.
+- Keep initial render narrow: defer notifications, auth adornments, and secondary panels until interaction or after the main shell is visible.
+- When a route must be request-time under Next 16 `cacheComponents`, use `await connection()` at the entry point, not `export const dynamic`.
+- Prefer static or Partial Prerender for content shells, then stream or hydrate only the volatile segment.
 
 ## 5. Implementation Standard
 When the user asks for a feature, provide:

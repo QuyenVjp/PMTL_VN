@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2Icon, ShieldCheckIcon } from 'lucide-react'
 import type { GuestbookEntry, GuestbookList as GuestbookListType } from '@/types/cms'
 import { getCmsMediaUrl } from '@/lib/cms'
+import { normalizeGuestbookList } from '@/lib/api/guestbook'
 import GuestbookForm from './GuestbookForm'
 import { useGuestbookList } from '@/lib/query/guestbook'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -134,7 +135,8 @@ export default function GuestbookList({ initialData, year, month }: GuestbookLis
     setPage(1)
   }, [])
 
-  const { data: entries, meta } = data
+  const normalizedData = normalizeGuestbookList(data, page, 20)
+  const { data: entries, meta } = normalizedData
   const { pageCount, total } = meta.pagination
 
   return (

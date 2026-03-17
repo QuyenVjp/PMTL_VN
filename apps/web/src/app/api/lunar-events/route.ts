@@ -2,13 +2,13 @@
 // Proxy server-side fetch đến CMS với API token để populate relatedBlogs đúng cách
 // Client (use client page) gọi route này thay vì gọi CMS trực tiếp
 
-import { NextResponse } from 'next/server';
-import { connection } from 'next/server';
+import { connection, NextResponse } from 'next/server';
 import { fetchLunarEvents } from '@/lib/api/lunar-calendar';
 import { logger } from '@/lib/logger';
 
 export async function GET() {
   await connection();
+
   try {
     const events = await fetchLunarEvents();
     return NextResponse.json(events, {

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 
 import Footer from '@/components/Footer'
 import HeaderServer from '@/components/HeaderServer'
@@ -13,8 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default async function SutraLibraryPage() {
-  await connection()
-
   const sutras = await fetchSutraList().catch(() => [])
 
   return (

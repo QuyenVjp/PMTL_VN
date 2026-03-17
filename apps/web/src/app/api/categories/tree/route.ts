@@ -1,6 +1,6 @@
+import { connection } from 'next/server'
 import { getCategoryTree } from '@/lib/api/categories'
 import { logger } from '@/lib/logger'
-import { connection } from 'next/server'
 import type { CategoryTree } from '@/types/cms'
 
 interface CategoryTreeResponse {
@@ -12,6 +12,7 @@ interface CategoryTreeResponse {
 
 export async function GET() {
   await connection()
+
   try {
     const tree = await getCategoryTree()
     const data = {

@@ -6,7 +6,6 @@
 // ─────────────────────────────────────────────────────────────
 
 import type { Metadata } from 'next'
-import { connection } from 'next/server'
 import { Suspense } from 'react'
 import HeaderServer from '@/components/HeaderServer'
 import Footer from '@/components/Footer'
@@ -29,7 +28,6 @@ interface PageProps {
 }
 
 export default async function BlogPage({ searchParams }: PageProps) {
-  await connection()
   const { page, category, q } = await searchParams
   // Đọc params từ URL
   const currentPage = Math.max(1, parseInt(page ?? '1', 10))
