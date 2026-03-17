@@ -30,6 +30,10 @@ services:
       - ../../apps/web/tsconfig.json:/app/apps/web/tsconfig.json:ro
       - ../../apps/web/next-env.d.ts:/app/apps/web/next-env.d.ts:ro
       - ../../apps/web/next.config.ts:/app/apps/web/next.config.ts:ro
+      - ../../apps/web/postcss.config.mjs:/app/apps/web/postcss.config.mjs:ro
+      - ../../apps/web/tailwind.config.ts:/app/apps/web/tailwind.config.ts:ro
+      - ../../apps/web/components.json:/app/apps/web/components.json:ro
+      - ../../apps/web/design-tokens.ts:/app/apps/web/design-tokens.ts:ro
       - ../../packages/shared/src:/app/packages/shared/src
       - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
       - ../../packages/ui/src:/app/packages/ui/src
