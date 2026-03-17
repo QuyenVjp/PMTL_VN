@@ -255,6 +255,7 @@ services:
         max-file: "5"
 
   blackbox-exporter:
+    profiles: ["monitoring"]
     image: ${MONITORING_BLACKBOX_IMAGE:-quay.io/prometheus/blackbox-exporter:v0.28.0}
     container_name: pmtl-blackbox
     restart: unless-stopped
@@ -272,6 +273,7 @@ services:
         max-file: "3"
 
   postgres-exporter:
+    profiles: ["monitoring"]
     image: ${MONITORING_POSTGRES_EXPORTER_IMAGE:-quay.io/prometheuscommunity/postgres-exporter:v0.18.1}
     container_name: pmtl-postgres-exporter
     restart: unless-stopped
@@ -292,6 +294,7 @@ services:
         max-file: "3"
 
   redis-exporter:
+    profiles: ["monitoring"]
     image: ${MONITORING_REDIS_EXPORTER_IMAGE:-oliver006/redis_exporter:v1.72.1}
     container_name: pmtl-redis-exporter
     restart: unless-stopped
@@ -312,6 +315,7 @@ services:
         max-file: "3"
 
   alertmanager:
+    profiles: ["monitoring"]
     image: ${MONITORING_ALERTMANAGER_IMAGE:-prom/alertmanager:v0.29.0}
     container_name: pmtl-alertmanager
     restart: unless-stopped
@@ -340,6 +344,7 @@ services:
         max-file: "3"
 
   prometheus:
+    profiles: ["monitoring"]
     image: ${MONITORING_PROMETHEUS_IMAGE:-prom/prometheus:v3.5.1}
     container_name: pmtl-prometheus
     restart: unless-stopped
@@ -384,6 +389,7 @@ services:
         max-file: "3"
 
   grafana:
+    profiles: ["monitoring"]
     image: ${MONITORING_GRAFANA_IMAGE:-grafana/grafana:12.0.1}
     container_name: pmtl-grafana
     restart: unless-stopped
@@ -422,6 +428,7 @@ services:
         max-file: "3"
 
   node-exporter:
+    profiles: ["monitoring"]
     image: ${MONITORING_NODE_EXPORTER_IMAGE:-quay.io/prometheus/node-exporter:v1.10.2}
     container_name: pmtl-node-exporter
     restart: unless-stopped

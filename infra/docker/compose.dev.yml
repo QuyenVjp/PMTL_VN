@@ -9,6 +9,8 @@ services:
     environment:
       NODE_ENV: development
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SENTRY_ENABLED: "false"
+      SENTRY_ENABLED: "false"
       WATCHPACK_POLLING: "true"
     depends_on:
       cms:
@@ -18,7 +20,22 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ../..:/app
+      - ../../package.json:/app/package.json:ro
+      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml:ro
+      - ../../turbo.json:/app/turbo.json:ro
+      - ../../apps/web/src:/app/apps/web/src
+      - ../../apps/web/public:/app/apps/web/public
+      - ../../apps/web/package.json:/app/apps/web/package.json:ro
+      - ../../apps/web/tsconfig.json:/app/apps/web/tsconfig.json:ro
+      - ../../apps/web/next-env.d.ts:/app/apps/web/next-env.d.ts:ro
+      - ../../apps/web/next.config.ts:/app/apps/web/next.config.ts:ro
+      - ../../packages/shared/src:/app/packages/shared/src
+      - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
+      - ../../packages/ui/src:/app/packages/ui/src
+      - ../../packages/ui/package.json:/app/packages/ui/package.json:ro
+      - ../../packages/config:/app/packages/config:ro
+      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - turbo-cache:/app/.turbo
@@ -52,6 +69,8 @@ services:
       NODE_ENV: development
       PORT: 3001
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SENTRY_ENABLED: "false"
+      SENTRY_ENABLED: "false"
       WATCHPACK_POLLING: "true"
     depends_on:
       postgres:
@@ -66,7 +85,22 @@ services:
       - "3001:3001"
     restart: unless-stopped
     volumes:
-      - ../..:/app
+      - ../../package.json:/app/package.json:ro
+      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml:ro
+      - ../../turbo.json:/app/turbo.json:ro
+      - ../../apps/cms/src:/app/apps/cms/src
+      - ../../apps/cms/public:/app/apps/cms/public
+      - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
+      - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
+      - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts:ro
+      - ../../apps/cms/next.config.mjs:/app/apps/cms/next.config.mjs:ro
+      - ../../apps/cms/eslint.config.mjs:/app/apps/cms/eslint.config.mjs:ro
+      - ../../apps/cms/.env.local:/app/apps/cms/.env.local:ro
+      - ../../packages/shared/src:/app/packages/shared/src
+      - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
+      - ../../packages/config:/app/packages/config:ro
+      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - turbo-cache:/app/.turbo
@@ -98,6 +132,7 @@ services:
       - .env.dev
     environment:
       NODE_ENV: development
+      SENTRY_ENABLED: "false"
       WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
       WORKER_HEARTBEAT_STALE_SECONDS: "120"
       CHOKIDAR_USEPOLLING: "true"
@@ -114,7 +149,18 @@ services:
         condition: service_healthy
     restart: unless-stopped
     volumes:
-      - ../..:/app
+      - ../../package.json:/app/package.json:ro
+      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
+      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml:ro
+      - ../../turbo.json:/app/turbo.json:ro
+      - ../../apps/cms/src:/app/apps/cms/src
+      - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
+      - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
+      - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts:ro
+      - ../../packages/shared/src:/app/packages/shared/src
+      - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
+      - ../../packages/config:/app/packages/config:ro
+      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - worker-heartbeat:/var/run/pmtl

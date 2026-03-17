@@ -140,11 +140,15 @@ function timeAgo(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('vi-VN');
 }
 function avatar(name: string, size = 9) {
+  const safeName = name?.trim() || 'Ẩn danh';
   const colors = ['from-gold/40 to-amber-600/40 text-gold', 'from-emerald-500/30 to-teal-600/30 text-emerald-400', 'from-purple-500/30 to-indigo-600/30 text-purple-400', 'from-rose-500/30 to-pink-600/30 text-rose-400'];
-  const idx = name.charCodeAt(0) % colors.length;
+  const idx = safeName.charCodeAt(0) % colors.length;
   return `w-${size} h-${size} rounded-full bg-gradient-to-br ${colors[idx]} flex items-center justify-center font-bold text-sm shrink-0`;
 }
-function initials(name: string) { return name.charAt(0).toUpperCase(); }
+function initials(name: string) {
+  const safeName = name?.trim() || 'Ẩn danh';
+  return safeName.charAt(0).toUpperCase();
+}
 
 /* ── Type Badge — Tông màu Phật giáo, tĩnh lặng ── */
 const TypeBadge = ({ type }: { type: string }) => {

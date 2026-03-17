@@ -15,8 +15,8 @@
 4. VPS chạy:
 
 ```bash
-docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull
-docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull web cms worker caddy postgres pgbouncer meilisearch redis
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d web cms worker caddy postgres pgbouncer meilisearch redis
 ```
 
 Production notes:
@@ -27,6 +27,7 @@ Production notes:
 - monitoring service bind localhost only; truy cap Grafana/Prometheus/Alertmanager qua SSH tunnel, khong mo public port
 - build image truoc roi moi deploy len VPS; standalone build tren Windows co the canh bao trace `node:inspector`, nhung deploy Linux khong gap gioi han path nay
 - CMS uploads/media phai nam tren volume persistent rieng, khong nam trong image layer
+- monitoring stack nen chay bang `--profile monitoring`; tren VPS 4GB, khong nen coi no la phan bat buoc cua deploy chinh
 
 ## Runtime responsibilities
 

@@ -101,13 +101,15 @@ pnpm docker:dev
 1. GitHub Actions build image cho `web` và `cms`.
 2. Push image lên registry.
 3. VPS cap nhat `infra/docker/.env.prod` hoac secret source de tro `WEB_IMAGE` va `CMS_IMAGE` den release tag can deploy.
-4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull`.
-5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d`.
+4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull web cms worker caddy postgres pgbouncer meilisearch redis`.
+5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d web cms worker caddy postgres pgbouncer meilisearch redis`.
+6. Monitoring production la profile tuy chon; tren VPS 4GB, khong nen boot Grafana/Prometheus/Alertmanager/exporters trong deploy mac dinh.
 
 Boundary dev/prod:
 
 - Dev: `infra/docker/compose.dev.yml` dung bind mount source code, named volume cho `node_modules`, `.next`, `.turbo`, pnpm store, media uploads va data services.
-- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config, Grafana/Prometheus data, worker heartbeat va CMS uploads/media.
+- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config, worker heartbeat va CMS uploads/media.
+- Monitoring production duoc tach thanh profile `monitoring` de tranh lam VPS 4GB nghop RAM khi deploy stack chinh.
 - Caddy la public entrypoint duy nhat o production; `web` va `cms` noi bo sau Docker network.
 - `worker` chay cung stack compose production va dung chung image CMS, nhung command rieng.
 

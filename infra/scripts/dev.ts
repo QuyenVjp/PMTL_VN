@@ -49,11 +49,37 @@ function buildComposeArgs(args: string[]) {
   return ["compose", "--env-file", dockerEnvPath, "-f", composeFilePath, ...args];
 }
 
-function runCompose(args: string[]) {
-  return spawnSync("docker", buildComposeArgs(args), {
-    cwd: repoRoot,
-    stdio: "inherit",
-  });
+function sleep(ms: number) {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < ms) {
+    // intentional sync wait for small retry windows in wrapper script
+  }
+}
+
+function runCompose(args: string[], retries = 3) {
+  let lastResult:
+    | ReturnType<typeof spawnSync>
+    | undefined;
+
+  for (let attempt = 1; attempt <= retries; attempt += 1) {
+    const result = spawnSync("docker", buildComposeArgs(args), {
+      cwd: repoRoot,
+      stdio: "inherit",
+    });
+
+    if (result.status === 0) {
+      return result;
+    }
+
+    lastResult = result;
+
+    if (attempt < retries) {
+      console.warn(`[dev] Docker Compose failed (attempt ${attempt}/${retries}). Retrying in 3s...`);
+      sleep(3000);
+    }
+  }
+
+  return lastResult ?? { status: 1 };
 }
 
 function parseCommand(argv: string[]): { command: CommandName; foreground: boolean; services: string[] } {
