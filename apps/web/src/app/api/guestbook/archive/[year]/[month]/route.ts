@@ -12,7 +12,6 @@ export async function GET(
   { params }: { params: Promise<{ year: string; month: string }> }
 ) {
   await connection()
-
   const token = process.env.PAYLOAD_API_TOKEN
   const { year, month } = await params
   const { searchParams } = new URL(request.url)

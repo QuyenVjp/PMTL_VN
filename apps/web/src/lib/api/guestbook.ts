@@ -79,7 +79,6 @@ export function normalizeGuestbookList(
     },
   }
 }
-
 export async function getGuestbookEntries(page = 1, pageSize = 20): Promise<GuestbookList> {
   try {
     const response = await cmsFetch<unknown>(`/guestbook?page=${page}&pageSize=${pageSize}`, {
