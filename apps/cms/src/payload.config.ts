@@ -50,9 +50,13 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const postgresHostPort = process.env.POSTGRES_HOST_PORT ?? "55432";
 const defaultDatabaseUrl = `postgresql://pmtl:pmtl@localhost:${postgresHostPort}/pmtl`;
-const shouldPushDb =
-  process.env.PAYLOAD_DB_PUSH === "true" ||
-  (process.env.PAYLOAD_DB_PUSH == null && process.env.NODE_ENV !== "production");
+const shouldPushDb = process.env.PAYLOAD_DB_PUSH === "true";
+const isDevelopment = process.env.NODE_ENV !== "production";
+
+function parseIntEnv(name: string, fallback: number) {
+  const value = Number(process.env[name]);
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : fallback;
+}
 
 function adminComponent(relativePath: string, exportName: string) {
   return {
@@ -85,44 +89,10 @@ export default buildConfig({
   },
   admin: {
     components: {
-      beforeDashboard: [adminComponent("admin/components/DashboardIntro.tsx", "DashboardIntro")],
       graphics: {
         Icon: adminComponent("admin/components/BrandIcon.tsx", "BrandIcon"),
         Logo: adminComponent("admin/components/BrandLogo.tsx", "BrandLogo"),
       },
-    },
-    dashboard: {
-      defaultLayout: [
-        {
-          widgetSlug: "content-overview",
-          width: "large",
-        },
-        {
-          widgetSlug: "editor-shortcuts",
-          width: "medium",
-        },
-        {
-          widgetSlug: "search-status",
-          width: "large",
-        },
-      ],
-      widgets: [
-        {
-          Component: adminComponent("admin/widgets/ContentStatsWidget.tsx", "ContentStatsWidget"),
-          label: t("Tổng quan nội dung", "Content overview"),
-          slug: "content-overview",
-        },
-        {
-          Component: adminComponent("admin/widgets/QuickLinksWidget.tsx", "QuickLinksWidget"),
-          label: t("Đường dẫn nhanh", "Quick links"),
-          slug: "editor-shortcuts",
-        },
-        {
-          Component: adminComponent("admin/widgets/SearchStatusWidget.tsx", "SearchStatusWidget"),
-          label: t("Trạng thái search", "Search status"),
-          slug: "search-status",
-        },
-      ],
     },
     suppressHydrationWarning: true,
     theme: "dark",
@@ -184,6 +154,10 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URL ?? defaultDatabaseUrl,
+      max: parseIntEnv("PAYLOAD_DB_POOL_MAX", isDevelopment ? 6 : 20),
+      min: parseIntEnv("PAYLOAD_DB_POOL_MIN", 0),
+      idleTimeoutMillis: parseIntEnv("PAYLOAD_DB_POOL_IDLE_TIMEOUT_MS", 30000),
+      connectionTimeoutMillis: parseIntEnv("PAYLOAD_DB_POOL_CONN_TIMEOUT_MS", 10000),
     },
     push: shouldPushDb,
   }),

@@ -511,7 +511,7 @@ async function main(): Promise<void> {
   }
 
   const localEnv = normalizeLocalAppEnv(dockerEnv);
-  syncCmsSchema(localEnv);
+
   runLocalApps(localEnv);
 }
 

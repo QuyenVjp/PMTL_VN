@@ -14,3 +14,4 @@ export default withSentryConfig(payloadConfig, {
   silent: true,
   tunnelRoute: "/monitoring",
 });
+

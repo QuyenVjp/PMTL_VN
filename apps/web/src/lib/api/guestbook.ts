@@ -2,8 +2,22 @@
 //  lib/api/guestbook.ts — Guestbook API functions
 //  Server-side only — do NOT import from 'use client' files
 // ─────────────────────────────────────────────────────────────
-import { cmsFetch } from '@/lib/cms'
+import { CMSAPIError, cmsFetch } from '@/lib/cms'
 import type { GuestbookList } from '@/types/cms'
+
+function emptyGuestbookList(page = 1, pageSize = 20): GuestbookList {
+  return {
+    data: [],
+    meta: {
+      pagination: {
+        page,
+        pageCount: 0,
+        pageSize,
+        total: 0,
+      },
+    },
+  }
+}
 
 export async function getGuestbookEntries(page = 1, pageSize = 20): Promise<GuestbookList> {
   return cmsFetch<GuestbookList>(`/guestbook?page=${page}&pageSize=${pageSize}`, {
@@ -17,10 +31,18 @@ export async function getGuestbookArchive(
   page = 1,
   pageSize = 20
 ): Promise<GuestbookList> {
-  return cmsFetch<GuestbookList>(
-    `/guestbook-entries/archive/${year}/${month}?page=${page}&pageSize=${pageSize}`,
-    { noCache: true }
-  )
+  try {
+    return await cmsFetch<GuestbookList>(
+      `/guestbook-entries/archive/${year}/${month}?page=${page}&pageSize=${pageSize}`,
+      { noCache: true }
+    )
+  } catch (error) {
+    if (error instanceof CMSAPIError && error.status === 404) {
+      return emptyGuestbookList(page, pageSize)
+    }
+
+    throw error
+  }
 }
 
 export interface ArchiveStat {
@@ -30,9 +52,18 @@ export interface ArchiveStat {
 }
 
 export async function getGuestbookArchiveList(): Promise<ArchiveStat[]> {
-  const res = await cmsFetch<{ data: ArchiveStat[] }>('/guestbook-entries/archive-list', {
-    noCache: true // Bật cache thì thêm revalidate sau, tuỳ anh
-  })
-  return res.data || []
+  try {
+    const res = await cmsFetch<{ data: ArchiveStat[] }>('/guestbook-entries/archive-list', {
+      noCache: true
+    })
+
+    return res.data || []
+  } catch (error) {
+    if (error instanceof CMSAPIError && error.status === 404) {
+      return []
+    }
+
+    throw error
+  }
 }
 

@@ -11,10 +11,6 @@ export async function GET(
   { params }: { params: Promise<{ year: string; month: string }> }
 ) {
   const token = process.env.PAYLOAD_API_TOKEN
-  if (!token) {
-    return Response.json({ error: 'Cấu hình token bị thiếu.' }, { status: 500 })
-  }
-
   const { year, month } = await params
   const { searchParams } = new URL(request.url)
   const page = searchParams.get('page') ?? '1'
@@ -24,7 +20,7 @@ export async function GET(
     const res = await fetch(
       `${CMS_API_URL}/api/guestbook-entries/archive/${year}/${month}?page=${page}&pageSize=${pageSize}`,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         cache: 'no-store',
       }
     )

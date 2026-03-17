@@ -161,9 +161,6 @@ export interface Config {
   };
   locale: null;
   widgets: {
-    'content-overview': ContentOverviewWidget;
-    'editor-shortcuts': EditorShortcutsWidget;
-    'search-status': SearchStatusWidget;
     collections: CollectionsWidget;
   };
   user: User;
@@ -2530,36 +2527,6 @@ export interface ChantingSettingsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "content-overview_widget".
- */
-export interface ContentOverviewWidget {
-  data?: {
-    [k: string]: unknown;
-  };
-  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "editor-shortcuts_widget".
- */
-export interface EditorShortcutsWidget {
-  data?: {
-    [k: string]: unknown;
-  };
-  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "search-status_widget".
- */
-export interface SearchStatusWidget {
-  data?: {
-    [k: string]: unknown;
-  };
-  width: 'x-small' | 'small' | 'medium' | 'large' | 'x-large' | 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

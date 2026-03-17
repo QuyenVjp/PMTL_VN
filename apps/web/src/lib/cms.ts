@@ -59,7 +59,15 @@ function isBridgePath(path: string): boolean {
 }
 
 function shouldLogCmsFailure(path: string): boolean {
-  return !OPTIONAL_CMS_PATHS.has(path);
+  if (OPTIONAL_CMS_PATHS.has(path)) {
+    return false;
+  }
+
+  if (path === "/guestbook-entries/archive-list" || path.startsWith("/guestbook-entries/archive/")) {
+    return false;
+  }
+
+  return true;
 }
 
 function mapPayloadPostToLegacy(post: Record<string, unknown>) {

@@ -17,6 +17,7 @@
     "dev:infra:down": "docker compose -f infra/docker/compose.dev.yml down",
     "db:reset:dev": "tsx infra/scripts/reset-dev-db.ts",
     "seed:demo": "pnpm --filter @pmtl/cms seed:demo",
+    "seed:demo:reset": "pnpm --filter @pmtl/cms seed:demo:reset",
     "reindex:posts": "pnpm --filter @pmtl/cms reindex:posts",
     "smoke:test": "tsx infra/scripts/smoke-test.ts",
     "monitoring:test": "tsx infra/scripts/test-monitoring.ts",
