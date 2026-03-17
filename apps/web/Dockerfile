@@ -5,6 +5,12 @@ RUN corepack enable
 
 FROM base AS dev
 ENV NODE_ENV=development
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps/web/package.json apps/web/package.json
+COPY packages/shared/package.json packages/shared/package.json
+COPY packages/ui/package.json packages/ui/package.json
+COPY packages/config/package.json packages/config/package.json
+RUN pnpm install --filter @pmtl/web... --frozen-lockfile=false
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./

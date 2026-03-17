@@ -21,6 +21,14 @@ wait_for_install() {
 }
 
 if [ ! -d node_modules/.pnpm ] || [ "$current_hash" != "$lock_hash" ]; then
+  if [ -d node_modules/.pnpm ] && [ -z "$current_hash" ]; then
+    printf "%s" "$lock_hash" > "$stamp_file"
+  fi
+
+  current_hash="$(cat "$stamp_file" 2>/dev/null || true)"
+fi
+
+if [ ! -d node_modules/.pnpm ] || [ "$current_hash" != "$lock_hash" ]; then
   if mkdir "$lock_dir" 2>/dev/null; then
     trap 'rmdir "$lock_dir" 2>/dev/null || true' EXIT INT TERM
     install_deps
