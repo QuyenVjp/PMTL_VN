@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -14,13 +16,13 @@ export function SiteFooter() {
             <h4 className="footer-subtitle">Điều hướng nhanh</h4>
             <ul className="footer-links">
               <li>
-                <a href="/posts">Bài viết mới</a>
+                <Link href="/blog">Bài viết mới</Link>
               </li>
               <li>
-                <a href="/events">Sự kiện</a>
+                <Link href="/events">Sự kiện</Link>
               </li>
               <li>
-                <a href="/search">Tìm kiếm</a>
+                <Link href="/search">Tìm kiếm</Link>
               </li>
             </ul>
           </article>

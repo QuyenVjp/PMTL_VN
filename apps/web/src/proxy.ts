@@ -4,7 +4,8 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { isShuttingDown } from "@/lib/runtime/shutdown";
-import { CSRF_HEADER_NAME, ensureCsrfCookie, isCsrfProtectedMethod, isCsrfRequestValid, readCsrfTokenFromRequest } from "@/lib/security/csrf";
+import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
+import { ensureCsrfCookie, isCsrfProtectedMethod, isCsrfRequestValid, readCsrfTokenFromRequest } from "@/lib/security/csrf";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { cloneHeadersWithCorrelationId, CORRELATION_ID_HEADER } from "@/lib/security/request-context";
 

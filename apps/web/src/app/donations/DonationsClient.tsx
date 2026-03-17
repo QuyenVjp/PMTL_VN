@@ -1,0 +1,246 @@
+'use client';
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+
+import { HeartIcon } from "@/components/icons/ZenIcons";
+
+const ShieldIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const GlobeIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const ChartIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <line x1="12" y1="2" x2="12" y2="22" />
+    <path d="M17 5h4v14h-4" />
+    <path d="M3 9h4v10H3" />
+  </svg>
+);
+
+const HandshakeIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M17 12h4v8h-7V9M7 12H3v8h7V9M9 9L7 7M15 9l2-2M9 9l2 2M15 9l-2 2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const BookIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}>
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const expenseCategories = [
+  { label: "Hoạt động in ấn kinh sách", percent: 35, color: "bg-amber-500" },
+  { label: "Website & công nghệ", percent: 20, color: "bg-blue-500" },
+  { label: "Phóng sinh tập thể", percent: 18, color: "bg-green-500" },
+  { label: "Pháp hội & sự kiện", percent: 15, color: "bg-purple-500" },
+  { label: "Vận hành Quán Âm Đường", percent: 12, color: "bg-red-500" },
+];
+
+const transparencyItems = [
+  { icon: "chart", title: "Báo Cáo Tài Chính Công Khai", description: "Mọi khoản thu chi được công khai minh bạch, kiểm toán bởi đội ngũ tình nguyện viên." },
+  { icon: "handshake", title: "100% Tình Nguyện", description: "Tất cả nhân sự hoạt động hoàn toàn tình nguyện, không lương, không lợi nhuận." },
+  { icon: "book", title: "Kinh Sách Miễn Phí", description: "Toàn bộ kinh sách, tài liệu tu học đều phát hành miễn phí — không bao giờ thu phí." },
+  { icon: "globe", title: "Phi Lợi Nhuận Quốc Tế", description: "Đăng ký tổ chức phi lợi nhuận tại Úc, và hoạt động thiện nguyện tại 30+ quốc gia." },
+];
+
+const donationTiers = [
+  { amount: "Một Tượng Phật", description: "Tượng Phật Quán Thế Âm hoặc Bồ Tát — để sử dụng tại Quán Âm Đường.", highlight: false },
+  { amount: "Cuốn Kinh Sách", description: "In sắc nét, bìa cứng — phát miễn phí cho những ai đến tu học.", highlight: false },
+  { amount: "Bộ Hương & Nến", description: "Hương thơm, nến cúng — dùng hàng ngày cho bàn thờ tại Quán Âm Đường.", highlight: true },
+  { amount: "Tấm Ngôi Nhà Nhỏ", description: "Giấy vàng in kinh sẵn — để những đồng tu niệm kinh tại nhà.", highlight: false },
+];
+
+const faq = [
+  { q: "Có bắt buộc đóng góp không?", a: "Không. Pháp Môn Tâm Linh hoàn toàn miễn phí. Đóng góp là tự nguyện và tùy tâm. Bạn không cần đóng góp gì để tu học hay nhận tài liệu." },
+  { q: "Tại sao không nhận tiền trực tiếp?", a: "Để tuân thủ nguyên tắc 'liễm tài' — không lợi dụng tiền bạc. Chúng tôi chỉ chấp nhận các phật cụ cụ thể (tượng, kinh sách, hương cúng) để phục vụ hoạt động tu học, không bao giờ tiền mặt hay chuyển khoản." },
+  { q: "Tôi có thể đóng góp bằng cách nào?", a: "Để hỗ trợ, bạn có thể mua các phật cụ (tượng Phật, kinh sách, hương, v.v.) và gửi cho admin qua Zalo. Hoặc bạn có thể đóng góp bằng thời gian: làm tình nguyện viên, phiên dịch, chia sẻ Phật pháp với người thân." },
+  { q: "Ngoài phật cụ, tôi có thể đóng góp gì?", a: "Rất nhiều cách: tình nguyện tại Quán Âm Đường, phiên dịch kinh sách, hỗ trợ kỹ thuật website, chia sẻ Phật pháp với bạn bè, hoặc đơn giản niệm kinh hồi hướng cho chúng sinh." },
+];
+
+export default function DonationsClient() {
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  return (
+    <main className="py-16">
+      <div className="container mx-auto px-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12 flex flex-col items-center text-center">
+          <p className="mb-3 text-sm font-medium uppercase tracking-widest text-gold">Liễm Tài — Không Lợi Dụng Tiền</p>
+          <h1 className="mb-4 font-display text-4xl text-foreground md:text-5xl">Hộ Trì Phật Pháp</h1>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            &ldquo;不为经济目的，一切免费&rdquo; — Mọi thứ miễn phí. Chúng tôi <strong className="text-foreground">không nhận tiền</strong> — chỉ chấp nhận các phật cụ để hỗ trợ hoạt động tu học.
+          </p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-10 rounded-2xl border border-gold/10 bg-gradient-to-r from-gold/5 to-amber-500/5 p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10">
+              <ShieldIcon className="h-6 w-6 text-gold" />
+            </div>
+            <div>
+              <h2 className="mb-1 text-sm font-medium text-foreground"> Không Nhận Tiền — Chỉ Phật Cụ</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Theo nguyên tắc <strong>&ldquo;Liễm Tài&rdquo;</strong> (không lợi dụng tiền bạc), Pháp Môn Tâm Linh <strong className="text-foreground">hoàn toàn không nhận tiền</strong> từ bất kỳ ai.
+                Nếu bạn muốn hỗ trợ, vui lòng <strong>mua các phật cụ</strong> (tượng Phật, kinh sách, hương, v.v.) và gửi cho admin qua Zalo.
+                Mọi hoạt động tu học, tư vấn, tài liệu đều <strong className="text-foreground">hoàn toàn miễn phí</strong> — không có ngoại lệ.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
+            <section>
+              <h2 className="mb-5 flex items-center gap-2 font-display text-xl text-foreground">
+                <GlobeIcon className="h-5 w-5 text-gold" />
+                Nguyên Tắc Hoạt Động
+              </h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {transparencyItems.map((item) => {
+                  const iconProps = { className: "h-5 w-5 text-gold" };
+                  const icon = item.icon === "chart"
+                    ? <ChartIcon {...iconProps} />
+                    : item.icon === "handshake"
+                      ? <HandshakeIcon {...iconProps} />
+                      : item.icon === "book"
+                        ? <BookIcon {...iconProps} />
+                        : <GlobeIcon {...iconProps} />;
+
+                  return (
+                    <div key={item.title} className="rounded-xl border border-border bg-card p-4">
+                      <div className="mb-2">{icon}</div>
+                      <h3 className="mb-1 text-sm font-medium text-foreground">{item.title}</h3>
+                      <p className="text-xs leading-relaxed text-muted-foreground">{item.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-5 font-display text-xl text-foreground">Chi Phí Hoạt Động</h2>
+              <div className="rounded-xl border border-border bg-card p-5">
+                <div className="mb-4 flex h-4 overflow-hidden rounded-full">
+                  {expenseCategories.map((category) => (
+                    <div key={category.label} className={`${category.color} transition-all`} style={{ width: `${category.percent}%` }} />
+                  ))}
+                </div>
+                <div className="space-y-2.5">
+                  {expenseCategories.map((category) => (
+                    <div key={category.label} className="flex items-center gap-3">
+                      <div className={`h-3 w-3 shrink-0 rounded-full ${category.color}`} />
+                      <span className="flex-1 text-xs text-muted-foreground">{category.label}</span>
+                      <span className="text-xs font-medium text-foreground">{category.percent}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-5 font-display text-xl text-foreground">Câu Hỏi Thường Gặp</h2>
+              <div className="space-y-2">
+                {faq.map((item, index) => (
+                  <div key={item.q} className="overflow-hidden rounded-xl border border-border bg-card">
+                    <button onClick={() => setExpandedFaq(expandedFaq === index ? null : index)} className="flex w-full items-center justify-between p-4 text-left">
+                      <span className="text-sm font-medium text-foreground">{item.q}</span>
+                      <motion.span animate={{ rotate: expandedFaq === index ? 180 : 0 }} className="ml-2 shrink-0 text-muted-foreground">
+                        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                        </svg>
+                      </motion.span>
+                    </button>
+                    {expandedFaq === index && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-t border-border/50 px-4 pb-4 pt-3">
+                        <p className="text-xs leading-relaxed text-muted-foreground">{item.a}</p>
+                      </motion.div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <div className="space-y-6">
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h3 className="mb-4 flex items-center gap-2 text-sm font-medium text-foreground">
+                <HeartIcon className="h-4 w-4 text-gold" />
+                Các Phật Cụ Cần Hỗ Trợ
+              </h3>
+              <div className="space-y-3">
+                {donationTiers.map((tier) => (
+                  <div key={tier.amount} className={`rounded-lg border p-3 ${tier.highlight ? "border-gold/30 bg-gold/5" : "border-border/50 bg-secondary/50"}`}>
+                    <p className={`text-sm font-medium ${tier.highlight ? "text-gold" : "text-foreground"}`}>
+                      {tier.amount}
+                      {tier.highlight && <span className="ml-2 text-xs text-gold/60">★ Phổ biến</span>}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">{tier.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card p-5">
+              <h3 className="mb-4 text-sm font-medium text-foreground">Hỗ Trợ Bằng Phật Cụ</h3>
+              <div className="space-y-3">
+                <div className="rounded-lg border border-gold/10 bg-secondary/50 p-3">
+                  <p className="mb-2 text-xs font-medium text-foreground">Các Phật Cụ Cần Hỗ Trợ</p>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Nếu bạn muốn đóng góp, vui lòng <strong>mua trực tiếp các phật cụ</strong> sau đó gửi cho admin qua Zalo:
+                  </p>
+                  <ul className="mt-2.5 space-y-1.5 text-xs text-muted-foreground">
+                    <li>• Tượng Phật Quán Thế Âm, Bồ Tát</li>
+                    <li>• Hương, nến cúng bàn thờ</li>
+                    <li>• Sách kinh (in sắc nét, bìa cứng)</li>
+                    <li>• Vòng cơm kinh bằng gỗ tốt</li>
+                    <li>• Tấm Ngôi Nhà Nhỏ (giấy vàng in sẵn)</li>
+                    <li>• Túi vải, túi xách cho kinh sách</li>
+                    <li>• Mặt dây tâm linh bằng cánh sen, đá quý</li>
+                  </ul>
+                </div>
+                <div className="rounded-lg border border-gold/20 bg-gold/5 p-3">
+                  <p className="mb-1.5 text-xs font-medium text-foreground">Liên Hệ Gửi Phật Cụ</p>
+                  <a href="https://zalo.me/g/sjajsj328" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-gold px-3 py-2 text-xs font-medium text-black transition-colors hover:bg-gold/90">
+                    Chat Zalo
+                  </a>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Hãy nói với admin rõ loại phật cụ bạn muốn gửi, để không trùng lặp.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-gold/10 bg-gradient-to-br from-gold/5 to-amber-500/5 p-5">
+              <h3 className="mb-2 text-sm font-medium text-foreground">Những Cách Khác Để Hỗ Trợ</h3>
+              <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                Không cần mua phật cụ — bạn có thể đóng góp bằng thời gian và năng lực:
+              </p>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li>• Tình nguyện viên tại Quán Âm Đường</li>
+                <li>• Phiên dịch kinh sách sang các ngôn ngữ khác</li>
+                <li>• Hỗ trợ kỹ thuật website, design, lập trình</li>
+                <li>• Chia sẻ Phật pháp với người thân / bạn bè</li>
+                <li>• Niệm kinh hồi hướng cho chúng sinh</li>
+                <li>• Lên lịch phóng sinh tập thể, pháp hội</li>
+              </ul>
+              <a href="https://zalo.me/g/sjajsj328" target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-gold/10 px-4 py-2 text-xs font-medium text-gold transition-colors hover:bg-gold/20">
+                Liên Hệ Qua Zalo
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}

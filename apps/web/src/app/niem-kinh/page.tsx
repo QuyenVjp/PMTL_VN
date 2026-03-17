@@ -7,6 +7,7 @@
 //  4) Render ChantingRunner (client component)
 // ─────────────────────────────────────────────────────────────
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { connection } from 'next/server';
 import { Suspense } from 'react';
 import HeaderServer from '@/components/HeaderServer';
@@ -199,9 +200,9 @@ function EmptyState({ planSlug }: { planSlug?: string }) {
         ) : null}
         {' '}và bảo đảm entry đó đã có <span className="font-semibold">{CHANTING_ADMIN_COPY.itemComponent}</span>.
       </p>
-      <a href="/lunar-calendar" className="inline-block text-sm text-amber-500 hover:text-amber-600 font-medium transition-colors">
+      <Link href="/lunar-calendar" className="inline-block text-sm text-amber-500 hover:text-amber-600 font-medium transition-colors">
         Xem lịch tu học →
-      </a>
+      </Link>
     </div>
   );
 }

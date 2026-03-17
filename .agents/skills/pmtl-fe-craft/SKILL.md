@@ -34,6 +34,12 @@ Apply this skill to ensure code feels written by a meticulous Senior Frontend En
 - Keep initial render narrow: defer notifications, auth adornments, and secondary panels until interaction or after the main shell is visible.
 - When a route must be request-time under Next 16 `cacheComponents`, use `await connection()` at the entry point, not `export const dynamic`.
 - Prefer static or Partial Prerender for content shells, then stream or hydrate only the volatile segment.
+- Default to Server Components at the route level. If a page needs filters, tabs, carousels, or accordions, move `'use client'` into the smallest child component that owns that state.
+- Never import server-only modules (`node:*`, server helpers, crypto, filesystem) into browser-facing helpers. Split shared constants/types into a neutral module when both server and client need them.
+- Replace internal `<a href="/...">` navigation with `next/link`. Raw anchors are only for external URLs, `tel:`, `mailto:`, downloads, and deliberate full page reloads.
+- Do not keep purely decorative `framer-motion` wrappers in large sections by default. For PMTL_VN, prefer server-rendered sections first and reserve client animation for genuinely interactive areas.
+- For Docker dev on Windows, treat filesystem polling and bind mounts as the first bottleneck. Optimize client boundaries before reaching for experimental bundlers.
+- Do not enable `next-rspack` by default in this repo. It is experimental and should only be evaluated as an explicit web-only dev experiment after verifying compatibility; keep `apps/cms` on the supported path.
 
 ## 5. Implementation Standard
 When the user asks for a feature, provide:

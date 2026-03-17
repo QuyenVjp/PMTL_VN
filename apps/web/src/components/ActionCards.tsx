@@ -1,6 +1,3 @@
-'use client'
-
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRightIcon, BookIcon, CompassIcon, UsersIcon } from "@/components/icons/ZenIcons";
 import type { ActionCardItem } from "@/types/cms";
@@ -37,12 +34,8 @@ export default function ActionCards({ cards }: ActionCardsProps) {
             const isPrimary = index === 0;
 
             return (
-              <motion.div
+              <div
                 key={card.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.45, delay: index * 0.06 }}
                 className={isPrimary ? "lg:col-span-7" : "lg:col-span-5"}
               >
                 <Link
@@ -84,7 +77,7 @@ export default function ActionCards({ cards }: ActionCardsProps) {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             );
           })}
         </div>

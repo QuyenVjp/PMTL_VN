@@ -2,10 +2,8 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 import type { NextRequest, NextResponse } from "next/server";
 
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { isAllowedOrigin } from "@/lib/security/origin";
-
-export const CSRF_COOKIE_NAME = "pmtl-csrf";
-export const CSRF_HEADER_NAME = "x-csrf-token";
 const CSRF_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 function getCsrfSecret(): string {

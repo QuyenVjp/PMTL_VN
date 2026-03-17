@@ -1,6 +1,6 @@
 "use client";
 
-import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/security/csrf";
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 
 export function getCsrfToken(): string | null {
   if (typeof document === "undefined") {

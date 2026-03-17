@@ -176,6 +176,11 @@ try {
 }
 ```
 
+### Next.js 16 Runtime Boundary
+- Under `cacheComponents`, avoid reading `new Date()`, randomness, or server-only modules inside otherwise static Server Components unless the route has already opted into request-time data with `connection()`, `headers()`, `cookies()`, or an uncached fetch.
+- If only a tiny leaf needs browser time or client-only APIs, prefer a tiny client component over making the whole route dynamic.
+- When both server and client need the same auth/CSRF constants, keep those constants in a neutral module and let server-only logic (`node:crypto`, fs, streams) stay isolated.
+
 ### Input Validation
 ```typescript
 // ✅ ALWAYS use Zod schemas:
@@ -614,6 +619,8 @@ NODE_DEBUG=http pnpm dev  # Enable HTTP debug logs
 - Normalize Redis host to `127.0.0.1` only for Windows local dev; do not override in Docker/Linux.
 - Map invalid credential errors to 401 in CMS auth service to avoid 500s on wrong passwords.
 - Accept any non-empty Web Vitals metric name (max 32 chars) to prevent 400s when new metrics appear.
+- In Docker Desktop dev, `apps/web` should prefer the supported webpack dev path with polling over Turbopack for watch stability. The main dev slowdown is usually bind-mounted filesystem watch latency, not raw JS execution.
+- Keep `apps/cms` off experimental Next bundlers unless Payload compatibility has been explicitly validated against the exact version in use.
 
 ---
 

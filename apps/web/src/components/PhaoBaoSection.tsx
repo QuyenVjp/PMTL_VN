@@ -1,6 +1,3 @@
-'use client'
-
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { PhapBaoItem } from "@/types/cms";
@@ -46,12 +43,7 @@ const PhaoBaoSection = ({ items }: PhaoBaoSectionProps) => {
     <section className="section-shell">
       <div className="section-frame">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="section-intro-centered"
-        >
+        <div className="section-intro-centered">
           <p className="section-kicker">心灵法门 五大法宝</p>
           <h2 className="section-title">
             5 Đại Pháp Bảo
@@ -59,17 +51,13 @@ const PhaoBaoSection = ({ items }: PhaoBaoSectionProps) => {
           <p className="section-copy mx-auto">
             Năm Đại Pháp Bảo do Quán Thế Âm Bồ Tát truyền thụ — con đường hóa giải nghiệp chướng, tích đức hồi hướng và khai mở trí tuệ.
           </p>
-        </motion.div>
+        </div>
 
         {/* Cards Grid - 3 top, 2 bottom centered */}
         <div className="flex flex-wrap justify-center gap-6">
-          {items.map((item, i) => (
-            <motion.div
+          {items.map((item) => (
+            <div
               key={item.id}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
               className={`w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] `}
             >
               <Link href={item.link} className="block h-full">
@@ -99,7 +87,7 @@ const PhaoBaoSection = ({ items }: PhaoBaoSectionProps) => {
                   </span>
                 </div>
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

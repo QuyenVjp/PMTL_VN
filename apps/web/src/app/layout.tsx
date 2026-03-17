@@ -6,7 +6,6 @@ import Providers from './providers'
 import { Toaster } from "@/components/ui/sonner"
 import './globals.css'
 import { SmoothScroll } from '@/components/SmoothScroll'
-import WebVitalsReporter from '@/components/observability/WebVitalsReporter'
 
 const fontDisplay = Source_Serif_4({
   subsets: ['vietnamese'],
@@ -69,7 +68,6 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <Providers>
             <SmoothScroll>
-              <WebVitalsReporter />
               {children}
               <Toaster position="top-center" />
             </SmoothScroll>
