@@ -1,0 +1,153 @@
+graph TD
+    %% ============ INGRESS ============
+    subgraph "Ingress & Reverse Proxy"
+        Caddy["🌐 Caddy<br/>HTTP/HTTPS<br/>SSL Certs, Rate Limit, Routing"]
+    end
+
+    %% ============ EXTERNAL SERVICES ============
+    subgraph "External Services"
+        Email["📧 Email Service<br/>(SMTP / SendGrid)"]
+        Push["📱 Push Notification<br/>(Firebase / OneSignal)"]
+        CDN["🚀 CDN<br/>(Image Resize, Cache)"]
+        Backup["💾 Backup Storage<br/>(S3 / Local)"]
+    end
+
+    %% ============ FRONTEND ============
+    subgraph "Frontend Layer"
+        Web["🌍 apps/web<br/>Next.js App Router<br/>React Components, Server Actions"]
+    end
+
+    %% ============ BACKEND ============
+    subgraph "Backend Services (Payload CMS)"
+        PayloadAdmin["🎛️ Payload Admin UI<br/>Collections, Globals, Auth"]
+        PayloadAPI["📡 Payload REST API<br/>CRUD Collections, Media, Auth"]
+        AuthModule["🔐 Auth.js Integration<br/>Session Mgmt, Credentials<br/>Email Verify"]
+        ProxyLayer["🔀 Proxy Layer<br/>Internal Routing<br/>web → cms middleware"]
+    end
+
+    %% ============ BACKGROUND JOBS ============
+    subgraph "Background Jobs & Queue"
+        Queue["📋 Redis Queue<br/>BullMQ<br/>Task Management"]
+        Worker["⚙️ Worker Service<br/>Async Processing<br/>Reindex, Email, Cleanup<br/>Cron Jobs"]
+    end
+
+    %% ============ DATA PERSISTENCE ============
+    subgraph "Data Persistence Layer"
+        Postgres["🗄️ PostgreSQL 17<br/>Source of Truth<br/>All Collections, User, Auth"]
+        Redis["🔴 Redis<br/>Distributed Cache<br/>Session, Recent, Queue"]
+        Meilisearch["🔍 Meilisearch<br/>Full-Text Search Engine<br/>Content Index, Facets"]
+    end
+
+    %% ============ CONNECTION POOLING ============
+    subgraph "Connection Pooling"
+        PgBouncer["🔄 PgBouncer<br/>DB Connection Pooler<br/>Postgres Multiplexer"]
+    end
+
+    %% ============ MONITORING & OBSERVABILITY ============
+    subgraph "Metrics & Logging (Observability)"
+        Logger["📝 Pino Logger<br/>Structured JSON Logs<br/>stdout"]
+        Prometheus["📊 Prometheus<br/>Time-series DB<br/>Metric Scraping"]
+        Grafana["📈 Grafana<br/>Dashboard UI<br/>Visualization"]
+        Alertmanager["🚨 Alertmanager<br/>Alert Routing<br/>Grouping, Dedup"]
+        AlertSink["📡 Alert Sink<br/>Custom Notification Handler<br/>Telegram, Slack"]
+    end
+
+    %% ============ EXPORTERS ============
+    subgraph "Metric Exporters"
+        NodeExporter["🖥️ Node Exporter<br/>Host Metrics: CPU, RAM, Disk"]
+        RedisExporter["🔴 Redis Exporter<br/>Redis internal metrics"]
+        PostgresExporter["🗄️ Postgres Exporter<br/>DB Performance Metrics"]
+        BlackboxProbe["🌐 Blackbox Exporter<br/>Probing HTTP/SSL health"]
+    end
+
+    %% ============ INTERACTIONS ============
+
+    %% Ingress routing
+    Caddy -->|HTTP Traffic| Web
+    Caddy -->|HTTP Traffic| PayloadAdmin
+    Caddy -->|HTTP Traffic| PayloadAPI
+
+    %% Web ↔ Backend interaction
+    Web -->|Internal API<br/>Server Actions| ProxyLayer
+    ProxyLayer -->|REST Calls| PayloadAPI
+    ProxyLayer -->|Session Check| AuthModule
+
+    %% PayloadAPI ↔ Data layer (via PgBouncer)
+    PayloadAPI -->|SQL Queries| PgBouncer
+    PgBouncer -->|Connection Pool to| Postgres
+    PayloadAPI <-->|Distributed Cache| Redis
+    PayloadAPI -->|Trigger Reindex| Queue
+
+    %% Auth flows
+    AuthModule -->|Session Store| Redis
+    AuthModule -->|User/Verify queries| PgBouncer
+    AuthModule -->|Send Email Verify| Email
+
+    %% Worker ↔ Data
+    Queue <-->|Pull Tasks from| Worker
+    Worker -->|SQL Updates| PgBouncer
+    Worker -->|Invalidate Cache| Redis
+    Worker -->|Sync Index to| Meilisearch
+    Worker -->|SMTP Send| Email
+    Worker -->|Firebase Send| Push
+
+    %% Search engine queries
+    Meilisearch <-->|Client Query| Web
+    Meilisearch <-->|Internal Query| PayloadAPI
+
+    %% Direct Caching
+    Web -.->|Check Cache| Redis
+    PayloadAPI -.->|Check Cache| Redis
+
+    %% Media Assets
+    Web -->|Fetch Assets| CDN
+    PayloadAPI -->|Upload Assets| CDN
+
+    %% Observability flows
+    Web -->|Push JSON Logs| Logger
+    PayloadAPI -->|Push JSON Logs| Logger
+    AuthModule -->|Push JSON Logs| Logger
+    Worker -->|Push JSON Logs| Logger
+
+    %% Prometheus scraping
+    NodeExporter -->|/metrics| Prometheus
+    RedisExporter -->|Query Info| Redis
+    RedisExporter -->|/metrics| Prometheus
+    PostgresExporter -->|SQL Queries| Postgres
+    PostgresExporter -->|/metrics| Prometheus
+    BlackboxProbe -->|HTTP Probes| Caddy
+    BlackboxProbe -->|/metrics| Prometheus
+    Web -->|App Metrics| Prometheus
+    PayloadAPI -->|App Metrics| Prometheus
+    Worker -->|App Metrics| Prometheus
+
+    %% Visualization
+    Grafana -->|Query Prometheus| Prometheus
+
+    %% Alerting
+    Prometheus -->|Fire Alert Rules| Alertmanager
+    Alertmanager -->|Webhook Payload| AlertSink
+    AlertSink -->|Notify Team| Push
+
+    %% Data Backup
+    Postgres -.->|Nightly Snapshot| Backup
+
+    %% Styling (Keep as is)
+    style Caddy fill:#8b5cf6,color:#fff,stroke:#333,stroke-width:2px
+    style Web fill:#3b82f6,color:#fff,stroke:#333,stroke-width:2px
+    style PayloadAdmin fill:#10b981,color:#fff,stroke:#333,stroke-width:2px
+    style PayloadAPI fill:#10b981,color:#fff,stroke:#333,stroke-width:2px
+    style AuthModule fill:#f59e0b,color:#fff,stroke:#333,stroke-width:2px
+    style ProxyLayer fill:#6366f1,color:#fff,stroke:#333,stroke-width:2px
+    style Queue fill:#ec4899,color:#fff,stroke:#333,stroke-width:2px
+    style Worker fill:#ec4899,color:#fff,stroke:#333,stroke-width:2px
+    style Postgres fill:#0ea5e9,color:#fff,stroke:#333,stroke-width:2px
+    style PgBouncer fill:#06b6d4,color:#fff,stroke:#333,stroke-width:2px
+    style Redis fill:#d82c20,color:#fff,stroke:#333,stroke-width:2px
+    style Meilisearch fill:#ff4d4f,color:#fff,stroke:#333,stroke-width:2px
+    style Logger fill:#7c7c7c,color:#fff,stroke:#333,stroke-width:2px
+    style Prometheus fill:#7c7c7c,color:#fff,stroke:#333,stroke-width:2px
+    style Grafana fill:#7c7c7c,color:#fff,stroke:#333,stroke-width:2px
+    style Alertmanager fill:#7c7c7c,color:#fff,stroke:#333,stroke-width:2px
+    style AlertSink fill:#7c7c7c,color:#fff,stroke:#333,stroke-width:2px
+```

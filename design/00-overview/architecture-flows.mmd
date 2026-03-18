@@ -1,0 +1,138 @@
+## Flow 1: Client-Side Content Request → Caching → Search
+
+```mermaid
+flowchart TD
+    A["User loads post/search page<br/>apps/web"] --> B{"Check Redis<br/>Cache hit?"}
+    B -->|Cache hit| C["Return cached<br/>content"]
+    C --> D["Render page<br/>+ ghi nhận Metrics"]
+    B -->|Cache miss| E["Query Meilisearch<br/>hoặc gọi PayloadAPI"]
+    E --> F{"Published<br/>content?"}
+    F -->|No| G["403 Forbidden<br/>No Access"]
+    F -->|Yes| H["Lấy từ Postgres<br/>via Payload"]
+    H --> I["Store in Redis<br/>cache TTL"]
+    I --> C
+    D --> J["Log to Pino"]
+    J --> K["Send Metrics<br/>to Prometheus"]
+```
+
+## Flow 2: Editor Publishes → Reindex & Notify
+
+```mermaid
+flowchart TD
+    A["Editor clicks Publish<br/>trong Admin"] --> B["PayloadAPI save<br/>status=published"]
+    B --> C["DB Transaction<br/>update bảng posts"]
+    C --> D["SUCCESS: Trigger<br/>Webhook/Event"]
+    D --> E["Enqueue job<br/>vào Redis Queue"]
+    F["Ghi Audit Log:<br/>who, when, action"] --> G["Return 200<br/>về Admin UI"]
+    E --> F
+    H["Worker polling<br/>Redis Queue"] -->|Pick task| I["Reindex nội dung này<br/>vào Meilisearch"]
+    I --> J["Emit: ContentPublished<br/>event"]
+    J --> K["Enqueue job:<br/>Send Notification"]
+    K --> L["Invalidate Redis<br/>featured/recent cache"]
+    L --> M["Log job done"]
+```
+
+## Flow 3: Background Job: Send Notifications (Gửi thông báo)
+
+```mermaid
+flowchart TD
+    A["Notification job<br/>trong Queue"] --> B{"Notification type?"}
+    B -->|email| C["Get Email Template<br/>từ Payload"]
+    B -->|push| D["Get User<br/>Push Subscriptions"]
+    B -->|in-app| E["Save vào bảng<br/>notifications"]
+    C --> F["Render Template<br/>variables: user name, link"]
+    F --> G["Send via SMTP/<br/>SendGrid"]
+    G --> H["Mark sent<br/>trong DB"]
+    D --> I["Send via Firebase/<br/>OneSignal"]
+    I --> H
+    E --> J["Log to Pino"]
+    H --> J
+    J -->|On error| K["Retry Queue<br/>exponential backoff"]
+    K -->|Max retries| L["Alert Moderator"]
+```
+
+## Flow 4: Background Job: Reindex & Cleanup (Đánh lại chỉ mục & Dọn dẹp)
+
+```mermaid
+flowchart TD
+    A["Scheduled task<br/>every 1 hour<br/>reindex_all_published"] --> B["Query Postgres<br/>all published posts"]
+    B --> C["Transform sang<br/>Meilisearch format"]
+    C --> D["Batch Upsert<br/>vào Meilisearch"]
+    D --> E{"Success?"}
+    E -->|Yes| F["Log Metrics"]
+    E -->|No| G["Alert: Meilisearch<br/>connection error"]
+    F --> H["Trigger thêm<br/>cleanup old logs"]
+    H --> I["Delete audit_logs<br/>older than 90 days"]
+    I --> J["Vacuum Postgres<br/>để recover không gian"]
+```
+
+## Flow 5: User Login → Session Cache
+
+```mermaid
+flowchart TD
+    A["User POST /auth/signin"] --> B["Auth.js validates<br/>email + password"]
+    B --> C{"Credential match?"}
+    C -->|No| D["401 Unauthorized"]
+    C -->|Yes| E["Create JWT<br/>hoặc DB Session"]
+    E --> F["Store Session<br/>trong Redis"]
+    F --> G["Set secure cookie<br/>httpOnly, sameSite"]
+    G --> H["Return 200<br/> + Redirect Dashboard"]
+    I["Subsequent request<br/>kèm cookie"] -->|Auto| J["Middleware check<br/>Redis Session"]
+    J -->|Valid| K["Attach User<br/>vào Request"]
+    J -->|Expired| L["Refresh hoặc<br/>force re-login"]
+```
+
+## Flow 6: Moderator Handles Reported Comment
+
+```mermaid
+flowchart TD
+    A["User reports comment<br/>lý do: offensive"] --> B["Create ModerationReport<br/>status: pending"]
+    B --> C["Add vào Moderator Queue"]
+    C --> D["Notify Moderator<br/>push + email"]
+    E["Moderator xem<br/>Report Detail"] --> F{"Decision?"}
+    F -->|Delete comment| G["Soft-delete comment"]
+    G --> H["Notify tác giả: removed"]
+    H --> I["Log action<br/>who, when, reason"]
+    F -->|Keep| J["Mark report: rejected"]
+    J --> K["Notify reporter:<br/>reviewed, kept"]
+    F -->|Warn user| L["Increment<br/>User Violation Count"]
+    L --> M{"Violations > 3?"}
+    M -->|Yes| N["Auto-suspend user<br/>24h"]
+    M -->|No| O["Send warning email"]
+    I --> P["Log to Audit Logs"]
+    K --> P
+    N --> P
+    O --> P
+```
+
+## Flow 7: Cache Invalidation Pattern (Mô hình Xóa Cache)
+
+```mermaid
+flowchart TD
+    A["Bất kỳ write operation nào<br/>POST/PUT/DELETE"] --> B["Execute DB<br/>Transaction"]
+    B -->|Success| C["Invalidate Cache<br/>Keys"]
+    C --> D{"Keys nào<br/>bị ảnh hưởng?"}
+    D -->|Post updated| E["DEL posts:*<br/>recent_posts<br/>featured"]
+    D -->|Category added| F["DEL categories:*"]
+    D -->|User profile| G["DEL user:{id}:*"]
+    E --> H["Mọi tiến trình đọc tiếp theo lấy từ<br/>Meilisearch"]
+    F --> I["Mọi tiến trình đọc tiếp theo lấy từ<br/>Postgres"]
+    G --> J["Session Refresh"]
+```
+
+## Flow 8: Monitoring & Alert Loop
+
+```mermaid
+flowchart TD
+    A["Apps emit metrics<br/>Pino logs + stdout"] --> B["Prometheus Scrape<br/>mỗi 15 giây"]
+    B --> C["Store vào TSDB"]
+    C --> D{"Threshold<br/>bị vi phạm?"}
+    D -->|Error rate > 5%| E["Fire Alert:<br/>page_errors_high"]
+    D -->|DB response > 1s| F["Fire Alert:<br/>db_slow_query"]
+    D -->|Worker lag > 100| G["Fire Alert:<br/>job_queue_backed_up"]
+    E --> H["Alertmanager<br/>group + lọc trùng"]
+    F --> H
+    G --> H
+    H --> I["Send Telegram<br/>message cho Team"]
+    I --> J["On ACK: silence<br/>trong 5 phút"]
+```

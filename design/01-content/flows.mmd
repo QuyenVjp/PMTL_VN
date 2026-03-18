@@ -1,0 +1,105 @@
+## Luồng 1: Tạo & Xuất bản Nội dung
+
+```mermaid
+flowchart TD
+    A[Biên tập viên tạo Bài viết/Kinh văn mới] --> B{Có đính kèm media?}
+    B -->|Có| C[Tải lên audio/ảnh/PDF]
+    C --> D[Thêm thẻ/chuyên mục]
+    B -->|Không| D
+    D --> E[Thêm siêu dữ liệu<br/>tiêu đề, mô tả, tác giả]
+    E --> F{Lưu nháp hay<br/>gửi duyệt?}
+    F -->|Lưu nháp| G[Lưu ở trạng thái Nháp]
+    F -->|Gửi duyệt| H[Trạng thái: Đang chờ duyệt]
+    G --> I{Sau đó: Biên tập viên<br/>gửi duyệt}
+    I -->|Đúng| H
+    I -->|Không| G
+    H --> J[Admin/Người điều hành xem xét]
+    J --> K{Quyết định}
+    K -->|Phê duyệt| L[Trạng thái: Đã duyệt]
+    K -->|Yêu cầu sửa| M[Thông báo biên tập viên<br/>kèm ý kiến phản hồi]
+    M --> B
+    K -->|Từ chối| N[Trạng thái: Bị từ chối<br/>thông báo biên tập viên]
+    L --> O[Biên tập viên nhấn Xuất bản]
+    O --> P[Trạng thái: Đã xuất bản<br/>Ghi nhận thời gian Xuất bản]
+    P --> Q[Kích hoạt đánh chỉ mục<br/>sang Meilisearch]
+    Q --> R[Gửi thông báo<br/>đến người theo dõi]
+```
+
+## Luồng 2: Người đọc Bookmark & Theo dõi Tiến độ
+
+```mermaid
+flowchart TD
+    A[Thành viên xem Bài viết/Kinh văn] --> B[Đọc nội dung]
+    B --> C{Muốn<br/>bookmark?}
+    C -->|Có| D[Nhấn nút Bookmark]
+    D --> E[Tạo Bookmark Kinh văn<br/>hoặc Bookmark Bài viết]
+    E --> F[Thêm vào cache 'Bookmark của tôi']
+    C -->|Không| B
+    B --> G[Cuộn qua các chương]
+    G --> H{Đọc hết<br/>hay tạm dừng?}
+    H -->|Đọc hết| I[Cập nhật tiến độ đọc<br/>đánh dấu hoàn thành 100%]
+    H -->|Tạm dừng| J[Cập nhật tiến độ<br/>lưu chương hiện tại]
+    I --> K[Kích hoạt cập nhật thống kê đọc]
+    J --> L[Cache tiến độ mới nhất]
+    K --> M[Xóa khỏi danh sách đang đọc<br/>nếu đã hoàn thành 100%]
+```
+
+## Luồng 3: Vòng đời Nội dung & Lưu trữ
+
+```mermaid
+flowchart TD
+    A[Nội dung đã xuất bản] --> B{Đến lúc hoặc quyết định<br/>ngừng hiển thị?}
+    B -->|Không| A
+    B -->|Có| C{Lưu trữ hay<br/>xóa?}
+    C -->|Lưu trữ| D[Trạng thái: Đã lưu trữ<br/>ẩn khỏi công chúng]
+    C -->|Xóa mềm| E[Trạng thái: Đã xóa<br/>giữ lại để kiểm tra]
+    D --> F[Xóa khỏi Meilisearch]
+    E --> F
+    F --> G[Cập nhật bộ nhớ đệm (cache)]
+    G --> H[Ghi lại vào AuditLog]
+    H --> I{Nội dung có<br/>người bookmark?}
+    I -->|Có| J[Thông báo cho người dùng<br/>về nội dung đã lưu trữ]
+    I -->|Không| K[Hoàn tất]
+    J --> K
+```
+
+## Luồng 4: Biên tập viên Chỉnh sửa & Cập nhật Nội dung đang trực tuyến
+
+```mermaid
+flowchart TD
+    A[Biên tập viên xem Bài viết đã xuất bản] --> B[Nhấn Chỉnh sửa]
+    B --> C[Tạo Phiên bản mới<br/>dựa trên nội dung hiện tại]
+    C --> D[Sửa đổi: tiêu đề, nội dung,<br/>media, thẻ, v.v.]
+    D --> E{Sẵn sàng cập nhật?}
+    E -->|Chưa| D
+    E -->|Có| F[Gửi phiên bản đã cập nhật]
+    F --> G[Phiên bản mới được tạo<br/>trạng thái: Nháp]
+    G --> H[Admin xem xét thay đổi]
+    H --> I{Phê duyệt?}
+    I -->|Không| J[Yêu cầu sửa đổi]
+    J --> D
+    I -->|Có| K[Xuất bản phiên bản mới<br/>thay thế nội dung hiện tại]
+    K --> L[Giữ phiên bản cũ<br/>trong lịch sử]
+    L --> M[Cập nhật Meilisearch]
+    M --> N[Đánh lại chỉ mục các phụ thuộc]
+    N --> O[Thông báo người theo dõi<br/>nội dung đã cập nhật]
+```
+
+## Luồng 5: Quản lý Phân loại (Taxonomy)
+
+```mermaid
+flowchart TD
+    A[Biên tập viên gắn thẻ nội dung] --> B{Gắn lẻ<br/>hay hàng loạt?}
+    B -->|Lẻ| C[Gán 1-5 thẻ]
+    B -->|Hàng loạt| D[Nhập thẻ qua tệp CSV]
+    C --> E[Cập nhật bảng trung gian<br/>post_tags]
+    D --> E
+    E --> F{Gán chuyên mục?}
+    F -->|Có| G[Gán vào 1 Chuyên mục chính]
+    F -->|Không| G
+    G --> H[Cập nhật chỉ mục lọc<br/>trên Meilisearch]
+    H --> I{Thêm vào chuỗi bài (series)?}
+    I -->|Có| J[Liên kết với Series<br/>thiết lập thứ tự]
+    I -->|Không| K[Lưu]
+    J --> K
+```

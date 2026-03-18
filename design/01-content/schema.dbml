@@ -1,0 +1,178 @@
+// Content Module: Data Model (DBML)
+// Đây là bản phác thảo các Entities cốt lõi cho hệ thống nội dung
+// Source of Truth: PostgreSQL 17
+
+Table users {
+  id uuid [pk]
+  name varchar
+  email varchar [unique]
+  role varchar // "admin", "editor", "member", "guest"
+  created_at timestamp
+}
+
+Table posts {
+  id uuid [pk]
+  title varchar [not null]
+  slug varchar [unique, not null]
+  body text
+  excerpt text // lời trích dẫn ngắn (Excerpt)
+  author_id uuid [ref: > users.id]
+  post_type varchar // "post", "hub_page", "sutra", "document" (Discriminator)
+  status varchar [not null] // "draft", "submitted", "approved", "published", "archived", "deleted"
+  visibility varchar // "public", "members_only", "private"
+  published_at timestamp
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  created_by uuid [ref: > users.id]
+  updated_by uuid [ref: > users.id]
+}
+
+Table post_revisions {
+  id uuid [pk]
+  post_id uuid [not null, ref: > posts.id]
+  revision_number int [not null] // v1, v2, v3... (Versioning)
+  title varchar
+  body text
+  excerpt text
+  status varchar // Trạng thái của phiên bản tại thời điểm ghi Log
+  created_by uuid [not null, ref: > users.id]
+  created_at timestamp [not null]
+  note text // Audit Note: Mô tả những thay đổi trong bản Revision này
+}
+
+Table post_publish_history {
+  id uuid [pk]
+  post_id uuid [not null, ref: > posts.id]
+  published_at timestamp [not null]
+  published_by uuid [not null, ref: > users.id]
+  revision_id uuid [ref: > post_revisions.id]
+  action varchar // "published", "unpublished", "archived" (Lifecycle Actions)
+  created_at timestamp
+}
+
+Table categories {
+  id uuid [pk]
+  name varchar [not null]
+  slug varchar [unique]
+  description text
+  icon varchar
+  color varchar
+  order int // UI Sorting Order
+  created_at timestamp
+}
+
+Table tags {
+  id uuid [pk]
+  name varchar [not null, unique]
+  slug varchar [unique]
+  color varchar
+  usage_count int [default: 0] // Dùng cho Tag Cloud ranking
+  created_at timestamp
+}
+
+Table post_tags {
+  post_id uuid [not null, ref: > posts.id]
+  tag_id uuid [not null, ref: > tags.id]
+  created_at timestamp
+
+  indexes {
+    (post_id, tag_id) [pk]
+  }
+}
+
+Table post_categories {
+  post_id uuid [not null, ref: > posts.id]
+  category_id uuid [not null, ref: > categories.id]
+  is_primary bool [default: false] // Mỗi Post chỉ thuộc về 01 Primary Category
+  
+  indexes {
+    (post_id, category_id) [pk]
+  }
+}
+
+Table series {
+  id uuid [pk]
+  title varchar [not null]
+  slug varchar [unique]
+  description text
+  created_by uuid [ref: > users.id]
+  created_at timestamp
+}
+
+Table series_items {
+  id uuid [pk]
+  series_id uuid [not null, ref: > series.id]
+  post_id uuid [not null, ref: > posts.id]
+  sequence_order int [not null] // Thứ tự ưu tiên trong Series: 1, 2, 3...
+  created_at timestamp
+
+  indexes {
+    (series_id, sequence_order) [name: "idx_series_order"]
+  }
+}
+
+Table media_assets {
+  id uuid [pk]
+  name varchar [not null]
+  file_type varchar // Enum: "image", "audio", "pdf", "video"
+  mime_type varchar
+  file_path varchar [not null] // Đường dẫn trích xuất từ Storage Provider (S3/Local)
+  file_size int // Kích thước tệp (Bytes)
+  width int // Metadata cho Images
+  height int
+  duration int // Độ dài giây (cho Audio/Video)
+  uploaded_by uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table post_media {
+  post_id uuid [not null, ref: > posts.id]
+  media_id uuid [not null, ref: > media_assets.id]
+  media_role varchar // "featured_image", "audio", "attachment", "inline"
+  sequence_order int
+
+  indexes {
+    (post_id, media_id) [pk]
+  }
+}
+
+Table sutra_reading_progress {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  post_id uuid [not null, ref: > posts.id] // Post có post_type = "sutra"
+  current_section varchar // Định danh vị trí đang đọc (Bookmark location)
+  progress_percent int [default: 0] // Tỷ lệ hoàn thành (0-100%)
+  completed bool [default: false]
+  completed_at timestamp
+  last_read_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, post_id) [unique]
+  }
+}
+
+Table post_bookmarks {
+  id uuid [pk]
+  user_id uuid [not null, ref: > users.id]
+  post_id uuid [not null, ref: > posts.id]
+  bookmark_type varchar // "read_later", "favorite", "reference"
+  note text // Cá nhân hóa ghi chú cho Bookmark
+  created_at timestamp
+
+  indexes {
+    (user_id, post_id) [unique]
+  }
+}
+
+Table audit_logs {
+  id uuid [pk]
+  entity_type varchar // "post", "category", "tag", v.v.
+  entity_id uuid
+  action varchar // CRUD Actions: "created", "updated", "deleted", "published"
+  actor_id uuid [ref: > users.id]
+  old_data jsonb // Snapshot dữ liệu cũ (JSON format)
+  new_data jsonb // Snapshot dữ liệu mới (JSON format)
+  timestamp timestamp [default: `now()`]
+}
