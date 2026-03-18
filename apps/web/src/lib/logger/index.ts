@@ -1,5 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
-
 type LogLevel = "info" | "warn" | "error";
 
 const isServer = typeof window === "undefined";
@@ -12,26 +10,40 @@ const pinoLogger = (() => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { isServerSentryEnabled } = require("../observability/sentry") as typeof import("../observability/sentry");
 
+    const sentryEnabled = isServerSentryEnabled();
+    const sentryApi =
+      sentryEnabled
+        ? (require("@sentry/nextjs") as typeof import("@sentry/nextjs"))
+        : null;
+
     const sentryStream = createSentryLogStream({
       app: "web",
-      enabled: isServerSentryEnabled(),
+      enabled: sentryEnabled,
       sentry: {
         captureException(error, context) {
-          Sentry.withScope((scope) => {
+          if (!sentryApi) {
+            return;
+          }
+
+          sentryApi.withScope((scope) => {
             scope.setTag("app", "web");
             for (const [key, value] of Object.entries(context)) {
               scope.setExtra(key, value);
             }
-            Sentry.captureException(error);
+            sentryApi.captureException(error);
           });
         },
         captureMessage(message, context) {
-          Sentry.withScope((scope) => {
+          if (!sentryApi) {
+            return;
+          }
+
+          sentryApi.withScope((scope) => {
             scope.setTag("app", "web");
             for (const [key, value] of Object.entries(context)) {
               scope.setExtra(key, value);
             }
-            Sentry.captureMessage(message, "warning");
+            sentryApi.captureMessage(message, "warning");
           });
         },
       },

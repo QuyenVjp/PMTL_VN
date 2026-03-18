@@ -36,10 +36,15 @@ pnpm install
 run-dev.bat
 ```
 
-Luồng dev chuẩn là full Docker. `run-dev.bat` va `pnpm dev` deu chi la wrapper cho `docker compose`, khong chay `web/cms/worker` tren host Windows nua.
+`run-dev.bat` se hoi che do chay:
+
+- `1. Core`: `web + cms + postgres + meilisearch + redis` de code FE/BE va test chuc nang chinh.
+- `2. Full`: `core + worker + caddy` de test toan bo flow worker, proxy va cac tinh nang phu tro.
+
+Luồng dev chuẩn là Docker. `run-dev.bat` va `pnpm dev*` deu chi la wrapper cho `docker compose`, khong chay `web/cms/worker` tren host Windows nua.
 
 - tu tao `infra/docker/.env.dev` tu file mau neu con thieu
-- build dev image va chay `web + cms + worker + postgres + redis + meilisearch + caddy` trong Docker Compose
+- chay preset `core` hoac `full` trong Docker Compose
 - bind mount source code de giu hot reload trong container
 - tu dong `db:sync` cho CMS container luc boot de tranh lech schema dev
 
@@ -65,9 +70,15 @@ Neu muon chay bang pnpm thay vi `.bat`:
 
 ```bash
 pnpm dev
+pnpm dev:core
+pnpm dev:full
 pnpm dev:logs
+pnpm dev:logs:core
+pnpm dev:logs:full
 pnpm dev:stop
 pnpm dev:rebuild
+pnpm dev:rebuild:core
+pnpm dev:rebuild:full
 ```
 
 Hoac foreground:
@@ -78,11 +89,13 @@ pnpm docker:dev
 
 ## Scripts quan trọng
 
-- `run-dev.bat`: entrypoint chinh tren Windows, wrapper cho Docker Compose dev.
+- `run-dev.bat`: entrypoint chinh tren Windows, cho phep chon `core` hoac `full`.
 - `logs-dev.bat`: xem log toan bo stack hoac log theo service.
 - `stop-dev.bat`: dung va don compose dev stack.
 - `rebuild-dev.bat`: build lai image dev va recreate container.
-- `pnpm dev`: wrapper cross-platform cho `docker compose up -d --build`.
+- `pnpm dev`: wrapper cross-platform cho `docker compose up -d`.
+- `pnpm dev:core`: boot preset nhe `web + cms + postgres + meilisearch + redis`.
+- `pnpm dev:full`: boot preset day du `core + worker + caddy`.
 - `pnpm dev:logs`: wrapper cross-platform cho `docker compose logs -f`.
 - `pnpm dev:stop`: wrapper cross-platform cho `docker compose down`.
 - `pnpm dev:rebuild`: wrapper cross-platform cho `docker compose build --no-cache` + `up -d --force-recreate`.

@@ -14,10 +14,6 @@ export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value ?? cookieStore.get(LEGACY_AUTH_COOKIE_NAME)?.value
 
-  if (!token) {
-    return NextResponse.json({ error: 'Bạn cần đăng nhập để bình luận.' }, { status: 401 })
-  }
-
   try {
     const rawBody: unknown = await req.json()
     const parsedBody = communityCommentSubmitSchema.safeParse(rawBody)
@@ -36,12 +32,13 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         [CORRELATION_ID_HEADER]: req.headers.get(CORRELATION_ID_HEADER) ?? crypto.randomUUID(),
       },
       body: JSON.stringify({
         content: parsedBody.data.content,
         ...(parsedBody.data.parentDocumentId ? { parentPublicId: parsedBody.data.parentDocumentId } : {}),
+        author_name: parsedBody.data.author_name,
       }),
     });
 

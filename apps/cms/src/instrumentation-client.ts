@@ -1,9 +1,21 @@
 'use client';
 
-import * as Sentry from "@sentry/nextjs";
+import { getCmsClientSentryOptions, isClientSentryEnabled } from "@/services/observability/sentry.service";
 
-import { getCmsClientSentryOptions } from "@/services/observability/sentry.service";
+const sentryEnabled = isClientSentryEnabled();
 
-Sentry.init(getCmsClientSentryOptions());
+if (sentryEnabled) {
+  void import("@sentry/nextjs").then((Sentry) => {
+    Sentry.init(getCmsClientSentryOptions());
+  });
+}
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+export const onRouterTransitionStart = (href: string, navigationType: string) => {
+  if (!sentryEnabled) {
+    return;
+  }
+
+  void import("@sentry/nextjs").then((Sentry) => {
+    Sentry.captureRouterTransitionStart(href, navigationType);
+  });
+};

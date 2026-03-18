@@ -6,11 +6,19 @@ import { cachedFetch } from "@/services/cache.service";
 import { getLogger, withError } from "@/services/logger.service";
 
 const logger = getLogger("routes:public");
+let payloadPromise: ReturnType<typeof getPayload> | null = null;
 
 export async function getCmsPayload() {
-  return getPayload({
-    config,
-  });
+  if (!payloadPromise) {
+    payloadPromise = getPayload({
+      config,
+    }).catch((error) => {
+      payloadPromise = null;
+      throw error;
+    });
+  }
+
+  return payloadPromise;
 }
 
 export function buildPublicCacheHeaders(

@@ -203,9 +203,26 @@ export async function uploadFile(file: File): Promise<string | undefined> {
 }
 
 export async function getCurrentPushEndpoint(): Promise<string | undefined> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return undefined
+  if (
+    typeof window === 'undefined' ||
+    !('serviceWorker' in navigator) ||
+    !('PushManager' in window)
+  ) {
+    return undefined
+  }
+
   try {
-    const registration = await navigator.serviceWorker.ready
+    const registration = await Promise.race([
+      navigator.serviceWorker.getRegistration(),
+      new Promise<ServiceWorkerRegistration | undefined>((resolve) => {
+        window.setTimeout(() => resolve(undefined), 1500)
+      }),
+    ])
+
+    if (!registration) {
+      return undefined
+    }
+
     const subscription = await registration.pushManager.getSubscription()
     return subscription?.endpoint
   } catch {

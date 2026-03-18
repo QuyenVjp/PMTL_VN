@@ -3,15 +3,16 @@ import { z } from "zod";
 import { mapCommunityCommentToDTO, submitCommunityComment } from "@/collections/CommunityComments/service";
 import { cachedFetch } from "@/services/cache.service";
 import { buildPublicCacheHeaders, findCollectionDocument, getCmsPayload, jsonResponse, mapRouteError } from "@/routes/public";
-import { requireSession } from "@/routes/session";
+import { getRequestIpHash, getRequestMetadata } from "@/routes/request-metadata";
+import { getOptionalSession } from "@/routes/session";
 import { appendRouteAuditLog } from "@/services/audit.service";
-import { getRequestMetadata } from "@/routes/request-metadata";
 import { notifyModerators } from "@/services/notification.service";
 import { consumeGuard } from "@/services/request-guard.service";
 
 const commentSubmitSchema = z.object({
   content: z.string().trim().min(3).max(2000),
   parentPublicId: z.string().trim().min(1).optional(),
+  author_name: z.string().trim().min(2).max(120).optional(),
 });
 
 export async function GET(_request: Request, { params }: { params: Promise<{ publicId: string }> }) {
@@ -61,14 +62,15 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pub
 export async function POST(request: Request, { params }: { params: Promise<{ publicId: string }> }) {
   try {
     const payload = await getCmsPayload();
-    const session = await requireSession(request.headers);
+    const session = await getOptionalSession(request.headers);
     const { publicId } = await params;
+    const actorKey = session ? `user:${session.user.id}` : getRequestIpHash(request.headers) || "guest";
     const guard = await consumeGuard({
       payload,
-      guardKey: `community-comment:${publicId}:${session.user.id}`,
+      guardKey: `community-comment:${publicId}:${actorKey}`,
       scope: "comment-submit",
       ttlSeconds: 60 * 10,
-      maxHits: 8,
+      maxHits: session ? 8 : 3,
     });
 
     if (!guard.allowed) {
@@ -100,6 +102,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ pub
     const parentComment = parentPublicId
       ? await findCollectionDocument("communityComments", parentPublicId, { slugField: "publicId" })
       : null;
+    const authorName = session?.user.displayName ?? parsedBody.data.author_name?.trim() ?? "";
+
+    if (!authorName) {
+      return jsonResponse(400, {
+        error: {
+          message: "Thiếu tên người bình luận.",
+        },
+      });
+    }
 
     const created = await payload.create({
       collection: "communityComments",
@@ -107,16 +118,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ pub
         post: post.id,
         parent: parentComment?.id ?? null,
         content: parsedBody.data.content,
-        authorUser: Number(session.user.id),
-        authorNameSnapshot: session.user.displayName,
+        authorUser: session ? Number(session.user.id) : null,
+        authorNameSnapshot: authorName,
       }) as never,
       overrideAccess: true,
     });
 
     await appendRouteAuditLog(payload, {
       action: "communityComments.submit",
-      actorType: "user",
-      actorUser: Number(session.user.id),
+      actorType: session ? "user" : "guest",
+      actorUser: session ? Number(session.user.id) : null,
       targetType: "communityComments",
       targetPublicId: created.publicId ?? null,
       targetRef: {
@@ -131,11 +142,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ pub
 
     await notifyModerators({
       payload,
-      actorUserId: session.user.id,
-      actorDisplayName: session.user.displayName,
+      actorUserId: session?.user.id ?? null,
+      actorDisplayName: authorName,
       kind: "community-comment",
       subject: "Có bình luận cộng đồng mới cần duyệt",
-      message: `${session.user.displayName} vừa gửi bình luận trong bài cộng đồng ${publicId}.`,
+      message: `${authorName} vừa gửi bình luận trong bài cộng đồng ${publicId}.`,
       url: `/admin/collections/communityComments/${created.id}`,
       metadata: {
         targetPublicId: created.publicId ?? null,

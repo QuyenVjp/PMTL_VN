@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import Link from 'next/link'
-import * as Sentry from '@sentry/nextjs'
 import { AlertCircle, Home, RotateCcw } from 'lucide-react'
 
 export default function Error({
@@ -18,14 +17,19 @@ export default function Error({
       message: error.message,
       stack: error.stack,
     })
-    Sentry.captureException(error, {
-      tags: {
-        boundary: 'root-error',
-      },
-      extra: {
-        digest: error.digest,
-      },
-    })
+
+    if (process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true') {
+      void import('@sentry/nextjs').then((Sentry) => {
+        Sentry.captureException(error, {
+          tags: {
+            boundary: 'root-error',
+          },
+          extra: {
+            digest: error.digest,
+          },
+        })
+      })
+    }
   }, [error])
 
   return (

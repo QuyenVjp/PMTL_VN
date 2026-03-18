@@ -206,6 +206,45 @@ Displays project info and `components.json` configuration. Run this first to dis
 
 The `info` output includes a **Links** section with templated URLs for component docs, source, and examples. For resolved URLs, use `npx shadcn@latest docs <component>` instead.
 
+### `migrate` — Run migrations
+
+```bash
+npx shadcn@latest migrate [migration] [path] [options]
+```
+
+Runs specific migrations to update your project structure or library usage.
+
+| Flag            | Short | Description                | Default |
+| --------------- | ----- | -------------------------- | ------- |
+| `--list`        | `-l`  | List all available migrations | `false` |
+| `--yes`         | `-y`  | Skip confirmation prompt   | `false` |
+| `--cwd <cwd>`   | `-c`  | Working directory          | current |
+
+#### `migrate rtl`
+
+Transforms your components to support RTL (right-to-left) languages.
+- Updates `components.json` to set `rtl: true`.
+- Transforms physical CSS properties to logical equivalents (e.g., `ml-4` → `ms-4`, `text-left` → `text-start`).
+- Adds `rtl:` variants where needed.
+
+```bash
+# Migrate everything in UI directory
+npx shadcn@latest migrate rtl
+
+# Migrate specific files
+npx shadcn@latest migrate rtl "src/components/ui/**"
+```
+
+#### `migrate radix`
+
+Updates imports from individual `@radix-ui/react-*` packages to the unified `radix-ui` package.
+- Transforms imports from `@radix-ui/react-*` to `radix-ui`.
+- Adds `radix-ui` to `package.json`.
+
+```bash
+npx shadcn@latest migrate radix
+```
+
 ### `build` — Build a custom registry
 
 ```bash

@@ -9,6 +9,9 @@ type CommunityCommentHookArgs = {
     post?: string | number | { id?: string | number } | null;
   };
   req?: {
+    context?: {
+      skipCommunityCommentRecompute?: boolean;
+    };
     payload: Payload;
     user?: {
       id?: string | number | null;
@@ -47,6 +50,10 @@ export const communityCommentHooks = {
         return;
       }
 
+      if (req.context?.skipCommunityCommentRecompute) {
+        return;
+      }
+
       await Promise.all([
         recomputeCommunityCommentCount(req.payload, postId),
         appendCollectionAuditLog({
@@ -63,6 +70,10 @@ export const communityCommentHooks = {
       const postId = resolvePostId(doc?.post);
 
       if (!postId || !req?.payload) {
+        return;
+      }
+
+      if (req.context?.skipCommunityCommentRecompute) {
         return;
       }
 

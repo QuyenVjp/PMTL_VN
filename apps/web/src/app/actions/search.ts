@@ -14,10 +14,19 @@ import type { GetPostsOptions } from '@/lib/api/blog'
 export async function searchPostsAndCategories(options: GetPostsOptions) {
   const page = options.page ?? 1
   const pageSize = options.pageSize ?? 10
+  const normalizedSearch = options.search?.trim() ?? ''
+
+  if (!normalizedSearch) {
+    const res = await getPosts({ ...options, search: undefined, revalidate: 0 })
+    return {
+      data: res.data ?? [],
+      meta: res.meta,
+    }
+  }
 
   try {
     const url = new URL(buildCMSUrl('/api/posts/search'))
-    url.searchParams.set('q', options.search || '')
+    url.searchParams.set('q', normalizedSearch)
     url.searchParams.set('limit', String(pageSize))
 
     const res = await fetch(url, {

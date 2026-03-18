@@ -1,9 +1,3 @@
-// ─────────────────────────────────────────────────────────────
-//  lib/api/settings.ts — Site Settings API functions
-//  Server-side only — do NOT import from 'use client' files
-// ─────────────────────────────────────────────────────────────
-
-import { cmsGet } from "@/lib/cms/client";
 import type { SiteSetting } from "@/types/cms";
 
 /** Fallback settings used when CMS is unavailable or not configured */
@@ -37,6 +31,7 @@ export const DEFAULT_SETTINGS: SiteSetting = {
 /** Get site settings — returns fallback if CMS unavailable */
 export async function getSiteSettings(): Promise<SiteSetting> {
   try {
+    const { cmsGet } = await import("@/lib/cms/client");
     const document = await cmsGet<SiteSetting>("/api/site-settings", {
       cache: "force-cache",
     });

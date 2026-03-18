@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
 import pino from "pino";
 import pretty from "pino-pretty";
 
@@ -31,49 +30,62 @@ const prettyStream =
         singleLine: false,
       });
 
+const sentryEnabled = isServerSentryEnabled();
 const sentryStream = createSentryLogStream({
   app: "cms",
-  enabled: isServerSentryEnabled(),
+  enabled: sentryEnabled,
   sentry: {
     captureException(error, context) {
-      const capture = () => {
-        Sentry.captureException(error);
-      };
-
-      const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
-        scope.setTag("app", "cms");
-        for (const [key, value] of Object.entries(context)) {
-          scope.setExtra(key, value);
-        }
-        capture();
-      };
-
-      if (typeof Sentry.withScope === "function") {
-        Sentry.withScope(scopeHandler);
+      if (!sentryEnabled) {
         return;
       }
 
-      capture();
+      void import("@sentry/nextjs").then((Sentry) => {
+        const capture = () => {
+          Sentry.captureException(error);
+        };
+
+        const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
+          scope.setTag("app", "cms");
+          for (const [key, value] of Object.entries(context)) {
+            scope.setExtra(key, value);
+          }
+          capture();
+        };
+
+        if (typeof Sentry.withScope === "function") {
+          Sentry.withScope(scopeHandler);
+          return;
+        }
+
+        capture();
+      });
     },
     captureMessage(message, context) {
-      const capture = () => {
-        Sentry.captureMessage(message, "warning");
-      };
-
-      const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
-        scope.setTag("app", "cms");
-        for (const [key, value] of Object.entries(context)) {
-          scope.setExtra(key, value);
-        }
-        capture();
-      };
-
-      if (typeof Sentry.withScope === "function") {
-        Sentry.withScope(scopeHandler);
+      if (!sentryEnabled) {
         return;
       }
 
-      capture();
+      void import("@sentry/nextjs").then((Sentry) => {
+        const capture = () => {
+          Sentry.captureMessage(message, "warning");
+        };
+
+        const scopeHandler = (scope: { setTag: (key: string, value: string) => void; setExtra: (key: string, value: unknown) => void }) => {
+          scope.setTag("app", "cms");
+          for (const [key, value] of Object.entries(context)) {
+            scope.setExtra(key, value);
+          }
+          capture();
+        };
+
+        if (typeof Sentry.withScope === "function") {
+          Sentry.withScope(scopeHandler);
+          return;
+        }
+
+        capture();
+      });
     },
   },
 });

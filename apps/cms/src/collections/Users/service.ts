@@ -343,6 +343,7 @@ export async function loginUser(payload: Payload, input: LoginInput): Promise<Au
 export async function getCurrentSession(payload: Payload, headers: Headers): Promise<AuthSession | null> {
   const authResult = await payload.auth({
     headers,
+    canSetHeaders: false,
   });
 
   if (!authResult.user) {

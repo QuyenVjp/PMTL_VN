@@ -8,6 +8,12 @@ const dockerEnvExamplePath = path.join(repoRoot, "infra", "docker", ".env.dev.ex
 const composeFilePath = path.join(repoRoot, "infra", "docker", "compose.dev.yml");
 
 type CommandName = "up" | "logs" | "down" | "rebuild";
+type PresetName = "core" | "full";
+
+const presetServices: Record<PresetName, string[]> = {
+  core: ["web", "cms"],
+  full: ["web", "cms", "worker", "caddy"],
+};
 
 function fail(message: string): never {
   console.error(`[dev] ${message}`);
@@ -47,6 +53,31 @@ function ensureDockerEnvFile(): void {
 
 function buildComposeArgs(args: string[]) {
   return ["compose", "--env-file", dockerEnvPath, "-f", composeFilePath, ...args];
+}
+
+function resolveServices(rawServices: string[]) {
+  if (rawServices.length === 0) {
+    return {
+      services: [],
+      presetLabel: "full stack",
+    };
+  }
+
+  if (rawServices.length === 1) {
+    const preset = rawServices[0] as PresetName;
+
+    if (preset in presetServices) {
+      return {
+        services: presetServices[preset],
+        presetLabel: preset,
+      };
+    }
+  }
+
+  return {
+    services: rawServices,
+    presetLabel: rawServices.join(", "),
+  };
 }
 
 function sleep(ms: number) {
@@ -100,18 +131,20 @@ function parseCommand(argv: string[]): { command: CommandName; foreground: boole
 
 function main() {
   const { command, foreground, services } = parseCommand(process.argv.slice(2));
+  const resolved = resolveServices(services);
 
   ensureDockerInstalled();
   ensureDockerDaemonReady();
   ensureDockerEnvFile();
 
   if (command === "up") {
-    const result = runCompose(["up", ...(foreground ? [] : ["-d"]), "--build", ...services]);
+    console.info(`[dev] Starting ${resolved.presetLabel}.`);
+    const result = runCompose(["up", ...(foreground ? [] : ["-d"]), "--remove-orphans", ...resolved.services]);
     process.exit(result.status ?? 1);
   }
 
   if (command === "logs") {
-    const result = runCompose(["logs", "-f", "--tail", "200", ...services]);
+    const result = runCompose(["logs", "-f", "--tail", "200", ...resolved.services]);
     process.exit(result.status ?? 1);
   }
 
@@ -120,12 +153,13 @@ function main() {
     process.exit(result.status ?? 1);
   }
 
-  const buildResult = runCompose(["build", "--no-cache", ...services]);
+  console.info(`[dev] Rebuilding ${resolved.presetLabel}.`);
+  const buildResult = runCompose(["build", "--no-cache", ...resolved.services]);
   if (buildResult.status !== 0) {
     process.exit(buildResult.status ?? 1);
   }
 
-  const upResult = runCompose(["up", "-d", "--force-recreate", ...services]);
+  const upResult = runCompose(["up", "-d", "--force-recreate", "--remove-orphans", ...resolved.services]);
   process.exit(upResult.status ?? 1);
 }
 

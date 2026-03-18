@@ -1,6 +1,97 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-gold: hsl(var(--gold));
+  --color-gold-dim: hsl(var(--gold-dim));
+  --color-gold-glow: hsl(var(--gold-glow));
+  --color-cream: hsl(var(--cream));
+  --color-zen-dark: hsl(var(--zen-dark));
+  --color-zen-surface: hsl(var(--zen-surface));
+  --color-zen-border: hsl(var(--zen-border));
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+
+  --shadow-gold: var(--shadow-gold);
+  --shadow-elevated: var(--shadow-elevated);
+  --shadow-ant: var(--shadow-ant);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.5s ease-out;
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 @layer base {
   :root {
@@ -222,6 +313,15 @@
     background-clip: text;
   }
 
+  .prose-gold {
+    --tw-prose-links: hsl(var(--gold));
+    --tw-prose-invert-links: hsl(var(--gold-glow));
+    --tw-prose-bullets: hsl(var(--gold) / 0.36);
+    --tw-prose-counters: hsl(var(--gold-dim));
+    --tw-prose-quotes: hsl(var(--foreground));
+    --tw-prose-invert-quotes: hsl(var(--foreground));
+  }
+
   .zen-divider {
     height: 1px;
     background: linear-gradient(
@@ -290,11 +390,25 @@
   }
 
   .section-kicker {
-    @apply ant-label text-gold-dim;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--gold-dim));
   }
 
   .section-title {
-    @apply ant-title text-3xl leading-tight text-foreground md:text-5xl;
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+  }
+
+  @media (width >= 48rem) {
+    .section-title {
+      font-size: 3rem;
+    }
   }
 
   .section-copy {
@@ -352,11 +466,19 @@
   }
 
   .card-eyebrow {
-    @apply ant-label text-gold-dim;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--gold-dim));
   }
 
   .card-title {
-    @apply ant-title text-xl leading-snug text-foreground;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    line-height: 1.375;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
   }
 
   .card-copy {
@@ -396,11 +518,31 @@
   }
 
   .route-kicker {
-    @apply ant-label text-gold-dim;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--gold-dim));
   }
 
   .route-title {
-    @apply ant-title text-3xl leading-tight text-foreground md:text-4xl lg:text-5xl;
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+  }
+
+  @media (width >= 48rem) {
+    .route-title {
+      font-size: 2.25rem;
+    }
+  }
+
+  @media (width >= 64rem) {
+    .route-title {
+      font-size: 3rem;
+    }
   }
 
   .route-copy {
@@ -412,7 +554,21 @@
   }
 
   .toolbar-shell {
-    @apply panel-shell flex flex-col gap-3 p-4 md:flex-row md:items-center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid hsl(var(--border) / 0.8);
+    background: hsl(var(--card) / 0.95);
+    box-shadow: var(--shadow-ant);
+  }
+
+  @media (width >= 48rem) {
+    .toolbar-shell {
+      flex-direction: row;
+      align-items: center;
+    }
   }
 
   .toolbar-search {

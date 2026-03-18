@@ -11,6 +11,9 @@ type PostCommentHookArgs = {
     post?: string | number | { id?: string | number } | null;
   };
   req?: {
+    context?: {
+      skipPostCommentRecompute?: boolean;
+    };
     payload: Payload;
   };
 };
@@ -45,6 +48,10 @@ export const postCommentHooks = {
         return;
       }
 
+      if (req.context?.skipPostCommentRecompute) {
+        return;
+      }
+
       await recomputePostCommentCount(req.payload, postId);
     },
   ],
@@ -53,6 +60,10 @@ export const postCommentHooks = {
       const postId = resolvePostId(doc?.post);
 
       if (!postId || !req?.payload) {
+        return;
+      }
+
+      if (req.context?.skipPostCommentRecompute) {
         return;
       }
 

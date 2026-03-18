@@ -21,7 +21,9 @@
     "db:sync": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=true tsx src/scripts/sync-schema.ts",
     "reindex:posts": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/reindex-posts.ts --all-pages",
     "seed:demo": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/seed-demo.ts",
-    "seed:demo:reset": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/seed-demo.ts --reset"
+    "seed:demo:reset": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/seed-demo.ts --reset",
+    "seed:pmtl": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/seed-pmtl.ts",
+    "seed:pmtl:reset": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts PAYLOAD_DB_PUSH=false tsx src/scripts/seed-pmtl.ts --reset"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.79.0",

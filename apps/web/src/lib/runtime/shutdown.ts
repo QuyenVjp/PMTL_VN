@@ -1,7 +1,6 @@
-import * as Sentry from "@sentry/nextjs";
-
 import { closeRedisClient } from "@/lib/cache/redis";
 import { logger } from "@/lib/logger";
+import { isServerSentryEnabled } from "@/lib/observability/sentry";
 
 let shuttingDown = false;
 let registered = false;
@@ -18,10 +17,11 @@ async function handleShutdown(signal: string): Promise<void> {
   shuttingDown = true;
   logger.warn("Web graceful shutdown initiated", { signal });
 
-  await Promise.allSettled([
-    closeRedisClient(),
-    Sentry.close(2000),
-  ]);
+  const sentryClose = isServerSentryEnabled()
+    ? import("@sentry/nextjs").then((Sentry) => Sentry.close(2000))
+    : Promise.resolve(false);
+
+  await Promise.allSettled([closeRedisClient(), sentryClose]);
 }
 
 export function registerGracefulShutdown(): void {

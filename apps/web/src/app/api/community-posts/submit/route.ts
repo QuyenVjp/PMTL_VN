@@ -14,10 +14,6 @@ export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value ?? cookieStore.get(LEGACY_AUTH_COOKIE_NAME)?.value;
 
-  if (!token) {
-    return NextResponse.json({ error: "Bạn cần đăng nhập để gửi bài cộng đồng." }, { status: 401 });
-  }
-
   try {
     const rawBody: unknown = await request.json();
     const parsedBody = communityPostSubmitSchema.safeParse(rawBody);
@@ -42,7 +38,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         [CORRELATION_ID_HEADER]: request.headers.get(CORRELATION_ID_HEADER) ?? crypto.randomUUID(),
       },
       body: JSON.stringify({
@@ -53,6 +49,7 @@ export async function POST(request: NextRequest) {
         slug: slugify(parsedBody.data.title),
         videoURL: parsedBody.data.video_url ?? "",
         tags,
+        author_name: parsedBody.data.author_name,
       }),
     });
 

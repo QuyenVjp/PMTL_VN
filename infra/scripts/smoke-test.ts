@@ -34,7 +34,8 @@ async function waitForService(url: string, label: string) {
 
   while (Date.now() < deadline) {
     try {
-      await expectJson(url, undefined, { retries: 1, timeoutMs: 10_000 });
+      await warmUpEndpoint(url);
+      await expectJson(url, undefined, { retries: 1, timeoutMs: smokeRequestTimeoutMs });
       return;
     } catch (error) {
       lastError = error;

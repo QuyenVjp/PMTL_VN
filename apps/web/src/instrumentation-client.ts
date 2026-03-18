@@ -10,12 +10,12 @@ if (sentryEnabled) {
   });
 }
 
-export const onRouterTransitionStart = (...args: unknown[]) => {
+export const onRouterTransitionStart = (href: string, navigationType: string) => {
   if (!sentryEnabled) {
     return;
   }
 
   void import("@sentry/nextjs").then((Sentry) => {
-    Sentry.captureRouterTransitionStart(...(args as [string]));
+    Sentry.captureRouterTransitionStart(href, navigationType);
   });
 };

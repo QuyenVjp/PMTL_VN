@@ -1,381 +1,109 @@
 'use client'
-import { useActionState, useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import Link from 'next/link'
+
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { toast } from 'sonner'
-import { createHttpError, getErrorMessage } from '@/lib/http-error'
-import { withCsrfHeaders } from '@/lib/security/client'
-import { ZenButton } from '@/components/ui-zen/zen-button'
-import { ZenField } from '@/components/ui-zen/zen-field'
-import { ZenInput } from '@/components/ui-zen/zen-input'
-import { ZenPanel } from '@/components/ui-zen/zen-panel'
-import { submitRegisterAction, initialRegisterActionState } from '@/features/auth/actions/register-action'
+import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { GalleryVerticalEnd } from 'lucide-react'
 
-const EyeIcon = ({ open }: { open: boolean }) =>
-  open ? (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" />
-    </svg>
-  ) : (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" /><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" /><line x1="1" y1="1" x2="23" y2="23" />
-    </svg>
-  )
+import { cn } from '@/lib/utils'
+import { LoginForm } from '@/features/auth/components/login-form'
+import { RegisterForm } from '@/features/auth/components/register-form'
 
-// ─── Input Field ──────────────────────────────────────────────
-const Field = ({
-  label, type = 'text', value, onChange, placeholder, error, children, id,
-}: {
-  label: string; type?: string; value: string; onChange: (v: string) => void
-  placeholder?: string; error?: string; children?: React.ReactNode; id: string
-}) => (
-  <ZenField label={label} htmlFor={id} error={error ?? null}>
-    <div className="relative">
-      <ZenInput
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={error ? 'border-red-500/60' : undefined}
-      />
-      {children}
-    </div>
-  </ZenField>
-)
+type AuthMode = 'login' | 'register'
 
-// ─── Login Form ───────────────────────────────────────────────
-const LoginForm = () => {
-  const router = useRouter()
-  const { login } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPwd, setShowPwd] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+const authModes: AuthMode[] = ['login', 'register']
 
-  const validate = () => {
-    const e: Record<string, string> = {}
-    if (!email.trim()) e.email = 'Vui lòng nhập email'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Email không hợp lệ'
-    if (!password) e.password = 'Vui lòng nhập mật khẩu'
-    else if (password.length < 6) e.password = 'Mật khẩu từ 6 ký tự trở lên'
-    return e
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const err = validate()
-    if (Object.keys(err).length) { setErrors(err); return }
-    setErrors({})
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: withCsrfHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!res.ok) {
-        throw await createHttpError(res, 'Đăng nhập thất bại')
-      }
-
-      const data = await res.json()
-
-      login(data.user)
-      toast.success('Đăng nhập thành công')
-      setSuccess(true)
-      setTimeout(() => router.push('/'), 1500)
-    } catch (error) {
-      const message = getErrorMessage(error, 'Lỗi kết nối máy chủ')
-      setErrors({ submit: message })
-      toast.error(message)
-      setLoading(false)
-    }
-  }
-
-  if (success) return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="text-center py-8 space-y-4"
-    >
-      <div className="w-16 h-16 mx-auto rounded-full bg-gold/10 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
-          <path d="M20 6 9 17l-5-5" />
-        </svg>
-      </div>
-      <p className="font-display text-lg text-foreground">Đăng nhập thành công</p>
-      <p className="text-sm text-muted-foreground">Đang chuyển hướng...</p>
-      <Link href="/" className="inline-block mt-2 px-6 py-2.5 bg-gold text-black text-sm font-medium rounded-full hover:opacity-90 transition-opacity">
-        Về trang chủ
-      </Link>
-    </motion.div>
-  )
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      {errors.submit && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-xs text-red-400">{errors.submit}</p>
-        </div>
-      )}
-      <Field id="login-email" label="Email" type="email" value={email} onChange={setEmail} placeholder="email@example.com" error={errors.email} />
-      <Field id="login-password" label="Mật khẩu" type={showPwd ? 'text' : 'password'} value={password} onChange={setPassword} placeholder="••••••••" error={errors.password}>
-        <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-          <EyeIcon open={showPwd} />
-        </button>
-      </Field>
-      <div className="flex items-center justify-between">
-        <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-          <input type="checkbox" className="rounded border-border accent-gold" />
-          Nhớ đăng nhập
-        </label>
-        <Link href="/auth/forgot-password" className="text-xs text-gold hover:underline">
-          Quên mật khẩu?
-        </Link>
-      </div>
-      <ZenButton
-        type="submit"
-        disabled={loading}
-        variant="sacred"
-        className="w-full"
-      >
-        {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-      </ZenButton>
-    </form>
-  )
+function resolveMode(value: string | null): AuthMode {
+  return value === 'register' ? 'register' : 'login'
 }
 
-// ─── Google Login Section ──────────────────────────────────────
-const GoogleLoginSection = () => {
-  const handleGoogleLogin = () => {
-    const strapiUrl = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
-    window.location.href = `${strapiUrl}/api/connect/google`
-  }
-
-  return (
-    <>
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border"></div>
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">Hoặc tiếp tục với</span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleGoogleLogin}
-        className="w-full py-3 bg-secondary border border-border hover:border-gold/50 text-foreground text-sm font-medium rounded-lg flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
-          <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-          <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-          <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-          <path fill="#1976D2" d="M43.611,20.083L43.611,20.083L42,20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-        </svg>
-        Đăng nhập bằng Google
-      </button>
-    </>
-  )
-}
-
-// ─── Register Form ────────────────────────────────────────────
-const RegisterForm = () => {
-  const router = useRouter()
-  const { login } = useAuth()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-  const [showPwd, setShowPwd] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [agree, setAgree] = useState(false)
-  const [state, formAction, isPending] = useActionState(
-    submitRegisterAction,
-    initialRegisterActionState
-  )
-  const success = Boolean(state?.success)
-  const message = state?.message
-  const user = state?.user
-  const fieldErrors = state?.fieldErrors ?? {}
-
-  useEffect(() => {
-    if (!success || !user) {
-      return
-    }
-
-    login({
-      id: user.id,
-      email: user.email,
-      username: user.email,
-      confirmed: true,
-      blocked: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      role: user.role,
-      fullName: user.displayName,
-    })
-    toast.success('Đăng ký thành công')
-
-    const timeout = window.setTimeout(() => {
-      router.push('/')
-    }, 1400)
-
-    return () => window.clearTimeout(timeout)
-  }, [login, router, success, user])
-
-  if (success) return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="text-center py-8 space-y-4"
-    >
-      <div className="w-16 h-16 mx-auto rounded-full bg-gold/10 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gold">
-          <path d="M20 6 9 17l-5-5" />
-        </svg>
-      </div>
-      <p className="font-display text-lg text-foreground">Đăng ký thành công!</p>
-      <p className="text-sm text-muted-foreground">
-        Đang chuyển tới trang chủ...
-      </p>
-      <Link href="/auth" className="inline-block mt-2 px-6 py-2.5 border border-gold/50 text-gold text-sm font-medium rounded-full hover:bg-gold/10 transition-all">
-        Đăng nhập ngay
-      </Link>
-    </motion.div>
-  )
-
-  return (
-    <form action={formAction} className="space-y-4">
-      {message && !success && (
-        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-xs text-red-400">{message}</p>
-        </div>
-      )}
-      <Field id="reg-name" label="Họ và tên" value={name} onChange={setName} placeholder="Nguyễn Văn A" error={fieldErrors.displayName}>
-        <input type="hidden" name="displayName" value={name} />
-      </Field>
-      <Field id="reg-email" label="Email" type="email" value={email} onChange={setEmail} placeholder="email@example.com" error={fieldErrors.email}>
-        <input type="hidden" name="email" value={email} />
-      </Field>
-      <Field id="reg-password" label="Mật khẩu" type={showPwd ? 'text' : 'password'} value={password} onChange={setPassword} placeholder="Tối thiểu 8 ký tự" error={fieldErrors.password}>
-        <input type="hidden" name="password" value={password} />
-        <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-          <EyeIcon open={showPwd} />
-        </button>
-      </Field>
-      <Field id="reg-confirm" label="Xác nhận mật khẩu" type={showConfirm ? 'text' : 'password'} value={confirm} onChange={setConfirm} placeholder="Nhập lại mật khẩu" error={fieldErrors.confirmPassword}>
-        <input type="hidden" name="confirmPassword" value={confirm} />
-        <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-          <EyeIcon open={showConfirm} />
-        </button>
-      </Field>
-      <div>
-        <label className="flex items-start gap-2.5 cursor-pointer">
-          <input
-            type="checkbox"
-            name="agreeToTerms"
-            checked={agree}
-            onChange={(e) => setAgree(e.target.checked)}
-            className="mt-0.5 rounded border-border accent-gold"
-          />
-          <span className="text-xs text-muted-foreground leading-relaxed">
-            Tôi đồng ý với điều khoản sử dụng và chính sách quyền riêng tư
-          </span>
-        </label>
-        {fieldErrors.agreeToTerms && <p className="text-xs text-red-400 mt-1">{fieldErrors.agreeToTerms}</p>}
-      </div>
-      <ZenButton
-        type="submit"
-        disabled={isPending}
-        variant="sacred"
-        className="w-full"
-      >
-        {isPending ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
-      </ZenButton>
-    </form>
-  )
-}
-
-// ─── Main Page ────────────────────────────────────────────────
 export default function AuthPage() {
-  const [tab, setTab] = useState<'login' | 'register'>('login')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const mode = resolveMode(searchParams.get('mode'))
+
+  const setMode = (nextMode: AuthMode) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('mode', nextMode)
+    router.replace(`/auth?${params.toString()}`, { scroll: false })
+  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <div className="border-b border-border bg-background/95 backdrop-blur-md px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <Image src="/images/logoo.png" alt="Phap Mon Tam Linh" width={36} height={36} className="h-9 w-auto object-contain" />
-        </Link>
-        <Link href="/" className="text-xs text-muted-foreground hover:text-gold transition-colors">
-          Về trang chủ
-        </Link>
-      </div>
-
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="font-display text-3xl text-foreground mb-2">
-              {tab === 'login' ? 'Chào mừng trở lại' : 'Tham gia cộng đồng'}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {tab === 'login'
-                ? 'Đăng nhập để tiếp tục hành trình tu học'
-                : 'Kết nối với hàng ngàn hành gia trên toàn thế giới'}
-            </p>
+    <main className="min-h-svh bg-[radial-gradient(circle_at_top_left,hsl(var(--gold)/0.14),transparent_26%),linear-gradient(180deg,hsl(var(--background)),hsl(var(--card)))] px-4 py-4 md:px-6 md:py-6">
+      <div className="grid min-h-[calc(100svh-2rem)] overflow-hidden rounded-[2rem] border border-border/70 bg-card/92 shadow-elevated backdrop-blur lg:grid-cols-[minmax(0,0.96fr)_minmax(0,1.04fr)]">
+        <section className="relative flex flex-col bg-[linear-gradient(180deg,hsl(var(--background)/0.98),hsl(var(--card)/0.94))]">
+          <div className="flex items-center justify-between px-6 py-5 md:px-10 md:py-8">
+            <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-85">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-gold">
+                <GalleryVerticalEnd className="size-5" />
+              </span>
+              <span className="flex flex-col">
+                <span className="text-sm font-semibold tracking-[0.02em] text-foreground">Pháp Môn Tâm Linh</span>
+                <span className="text-xs uppercase tracking-[0.22em] text-muted-foreground">Portal thành viên</span>
+              </span>
+            </Link>
+            <Link
+              href="/"
+              className="rounded-full border border-border/80 bg-background/75 px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Về trang chủ
+            </Link>
           </div>
 
-          <ZenPanel className="p-6 md:p-8">
-            <div className="flex bg-secondary rounded-xl p-1 mb-6">
-              {(['login', 'register'] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTab(t)}
-                  className={`relative flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${tab === t ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                >
-                  {tab === t && (
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-background border border-border rounded-lg shadow-sm"
-                    />
-                  )}
-                  <span className="relative z-10">{t === 'login' ? 'Đăng nhập' : 'Đăng ký'}</span>
-                </button>
-              ))}
+          <div className="flex flex-1 items-center justify-center px-6 pb-8 pt-2 md:px-10 md:pb-10">
+            <div className="w-full max-w-md">
+              <div className="mb-6 inline-flex w-full rounded-2xl border border-border/80 bg-background/70 p-1.5 shadow-[inset_0_1px_0_hsl(var(--background)/0.8)]">
+                {authModes.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setMode(item)}
+                    className={cn(
+                      'min-h-11 flex-1 rounded-[1rem] px-4 text-sm font-medium transition-all duration-200 touch-manipulation',
+                      mode === item
+                        ? 'bg-card text-foreground shadow-ant'
+                        : 'text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    {item === 'login' ? 'Đăng nhập' : 'Đăng ký'}
+                  </button>
+                ))}
+              </div>
+
+              <div className="rounded-[1.75rem] border border-border/75 bg-background/76 p-6 shadow-[inset_0_1px_0_hsl(var(--background)/0.85)] backdrop-blur md:p-8">
+                {mode === 'login' ? <LoginForm redirectTo="/profile" /> : <RegisterForm />}
+              </div>
             </div>
+          </div>
+        </section>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={tab}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
-              >
-                {tab === 'login' ? <LoginForm /> : <RegisterForm />}
-              </motion.div>
-            </AnimatePresence>
+        <aside className="relative hidden lg:block">
+          <Image
+            src="/images/hero-bg.jpg"
+            alt="Không gian thiền định của Pháp Môn Tâm Linh"
+            fill
+            priority
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(var(--zen-dark)/0.24),hsl(var(--zen-dark)/0.72))]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,hsl(var(--gold)/0.26),transparent_24%),radial-gradient(circle_at_80%_70%,hsl(var(--gold-glow)/0.18),transparent_26%)]" />
 
-            <GoogleLoginSection />
-          </ZenPanel>
-
-          <p className="text-center text-xs text-muted-foreground mt-6">
-            Mọi thông tin cá nhân đều được bảo mật tuyệt đối
-          </p>
-        </div>
+          <div className="absolute inset-x-0 bottom-0 p-8 xl:p-12">
+            <div className="max-w-xl rounded-[2rem] border border-white/12 bg-black/22 p-8 text-white backdrop-blur-xl">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-white/65">
+                Nơi nhịp tu học được giữ đều
+              </p>
+              <h2 className="font-display text-4xl leading-[1.02] tracking-[-0.04em] text-white xl:text-5xl">
+                Một cổng vào yên tĩnh, rõ ràng, và đủ đẹp để người dùng muốn quay lại.
+              </h2>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-white/72">
+                Giao diện đăng nhập được làm lại theo tinh thần tối giản cao cấp: nhịp thở rộng, tương phản sạch,
+                và một điểm nhấn vàng đủ tiết chế để giữ bản sắc PMTL.
+              </p>
+            </div>
+          </div>
+        </aside>
       </div>
-    </div>
+    </main>
   )
 }
-
-
-
