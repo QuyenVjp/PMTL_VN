@@ -1,8 +1,15 @@
+# High-End Frontend Enforcement (Taste Skill + Output Skill)
+- **Primary:** Mặc định frontend/UI luôn ưu tiên [taste-skill](file:///.agents/skills/taste-skill/SKILL.md).
+- **Quality Gate:** Luôn sử dụng [output-skill](file:///.agents/skills/output-skill/SKILL.md) để ép output đầy đủ, không để lại placeholder.
+- **On-Demand:** Chỉ dùng [redesign-skill](file:///.agents/skills/redesign-skill/SKILL.md), [soft-skill](file:///.agents/skills/soft-skill/SKILL.md), hoặc [minimalist-skill](file:///.agents/skills/minimalist-skill/SKILL.md) khi tôi yêu cầu rõ ràng.
+
+# PMTL Project Skills
 Use the local skill `pmtl-vn-architecture` from `.agents/skills/pmtl-vn-architecture` for all architecture work.
 Use the local skill `pmtl-production-ready` from `.agents/skills/pmtl-production-ready` for production setup, libraries, security, and implementation guidance.
-Use the local skill `pmtl-fe-craft` for professional frontend implementation.
+Use the local skill `pmtl-fe-craft` for professional frontend implementation (Senior logic).
 Use the local skill `pmtl-uiux-specialist` for behavioral and interaction discipline.
 Use the local skill `pmtl-creative-designer` for visual identity and premium vibe.
+
 
 Repository constraints:
 - Preserve monorepo boundaries: `apps/web`, `apps/cms`, `packages/*`, `infra/*`, `docs/*`

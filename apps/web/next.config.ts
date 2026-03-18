@@ -1,6 +1,5 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
-import path from "node:path";
 
 function readConfiguredHostname(value: string | undefined): string | null {
   if (!value) {
@@ -21,15 +20,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   transpilePackages: ["@pmtl/shared", "@pmtl/ui"],
-  webpack: (config) => {
-    if (!sentryEnabled) {
-      config.resolve ??= {};
-      config.resolve.alias ??= {};
-      config.resolve.alias["@sentry/nextjs"] = path.resolve(__dirname, "src/lib/observability/sentry-stub.ts");
-    }
-
-    return config;
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowLocalIP: false,
@@ -59,8 +49,5 @@ const sentryConfig = {
   tunnelRoute: "/monitoring",
 };
 
-const sentryEnabled =
-  process.env.SENTRY_ENABLED === "true" || process.env.NEXT_PUBLIC_SENTRY_ENABLED === "true";
-
-export default sentryEnabled ? withSentryConfig(nextConfig, sentryConfig) : nextConfig;
+export default withSentryConfig(nextConfig, sentryConfig);
 

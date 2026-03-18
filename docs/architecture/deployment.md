@@ -21,6 +21,7 @@ docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.ym
 
 Production notes:
 - pin `WEB_IMAGE` và `CMS_IMAGE` theo release tag cụ thể, không dùng `:latest`
+- pin `PGBOUNCER_IMAGE` theo tag ton tai that tren Docker Hub (vd `edoburu/pgbouncer:v1.25.1-p0`), khong bo quen tien to `v`
 - Redis production dùng `volatile-lru` để request guard và rate-limit keys có TTL không làm runtime fail-write khi memory đầy
 - Meilisearch production bật snapshot scheduling qua `MEILI_SCHEDULE_SNAPSHOT`
 - worker có heartbeat file healthcheck trong container để Docker phát hiện tiến trình nền bị treo
@@ -30,6 +31,9 @@ Production notes:
 - build image truoc roi moi deploy len VPS; standalone build tren Windows co the canh bao trace `node:inspector`, nhung deploy Linux khong gap gioi han path nay
 - CMS uploads/media phai nam tren volume persistent rieng, khong nam trong image layer
 - monitoring stack nen chay bang `--profile monitoring`; tren VPS 4GB, khong nen coi no la phan bat buoc cua deploy chinh
+- smoke alert pipeline local dung them `--profile monitoring-test` + `ALERTMANAGER_CONFIG_PATH=../monitoring/alertmanager.local.yml` de verify delivery path ma khong spam Telegram that
+- `NODE_EXPORTER_ROOTFS_MOUNT` nen de `/:/host:ro` cho local Docker Desktop; tren Linux can mount propagation thi co the override `/:/host:ro,rslave`
+- `PMTL_ENV_FILE` cho phep compose prod nap mot env file khac `.env.prod` trong cac bai smoke/prod-like local ma khong can sua file secret chinh
 
 ## Runtime responsibilities
 
@@ -57,6 +61,7 @@ Production notes:
   - `MEILI_MASTER_KEY`
   - `MEILI_SCHEDULE_SNAPSHOT=true`
   - `WORKER_HEARTBEAT_PATH`
+  - `PGBOUNCER_IMAGE`
   - image tags release-specific cho `WEB_IMAGE`, `CMS_IMAGE`
   - `GRAFANA_ADMIN_PASSWORD`
   - `ALERT_TELEGRAM_BOT_TOKEN`

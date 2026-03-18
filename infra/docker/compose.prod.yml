@@ -19,7 +19,7 @@ services:
       - frontend
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:2019/config/"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:2019/config/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -37,17 +37,20 @@ services:
     mem_limit: 1024m
     stop_grace_period: 120s
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       NODE_ENV: production
+      HOSTNAME: 0.0.0.0
     depends_on:
       cms:
         condition: service_healthy
+    ports:
+      - "127.0.0.1:${MONITORING_WEB_PORT:-3000}:3000"
     networks:
       - frontend
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -65,7 +68,7 @@ services:
     mem_limit: 1024m
     stop_grace_period: 180s
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       NODE_ENV: production
       PORT: 3001
@@ -76,13 +79,15 @@ services:
         condition: service_started
       meilisearch:
         condition: service_healthy
+    ports:
+      - "127.0.0.1:${MONITORING_CMS_PORT:-3001}:3001"
     networks:
       - backend
     volumes:
       - cms-media-prod:/app/apps/cms/media
       - worker-heartbeat:/var/run/pmtl
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/api/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -99,7 +104,7 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     command:
       - postgres
       - -c
@@ -137,12 +142,12 @@ services:
         max-file: "5"
 
   pgbouncer:
-    image: edoburu/pgbouncer:1.24.1-p1
+    image: ${PGBOUNCER_IMAGE:-edoburu/pgbouncer:v1.25.1-p0}
     container_name: pmtl-pgbouncer
     restart: unless-stopped
     mem_limit: 128m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -171,7 +176,7 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       MEILI_ENV: ${MEILI_ENV:-production}
       MEILI_NO_ANALYTICS: "true"
@@ -222,7 +227,7 @@ services:
     mem_limit: 512m
     stop_grace_period: 180s
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
       WORKER_HEARTBEAT_STALE_SECONDS: "120"
@@ -280,12 +285,12 @@ services:
 
   postgres-exporter:
     profiles: ["monitoring"]
-    image: ${MONITORING_POSTGRES_EXPORTER_IMAGE:-quay.io/prometheuscommunity/postgres-exporter:v0.18.1}
+    image: ${MONITORING_POSTGRES_EXPORTER_IMAGE:-quay.io/prometheuscommunity/postgres-exporter:v0.19.1}
     container_name: pmtl-postgres-exporter
     restart: unless-stopped
     mem_limit: 96m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       DATA_SOURCE_NAME: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
     depends_on:
@@ -301,12 +306,12 @@ services:
 
   redis-exporter:
     profiles: ["monitoring"]
-    image: ${MONITORING_REDIS_EXPORTER_IMAGE:-oliver006/redis_exporter:v1.72.1}
+    image: ${MONITORING_REDIS_EXPORTER_IMAGE:-oliver006/redis_exporter:v1.82.0}
     container_name: pmtl-redis-exporter
     restart: unless-stopped
     mem_limit: 64m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       REDIS_ADDR: redis://redis:6379
     depends_on:
@@ -322,23 +327,24 @@ services:
 
   alertmanager:
     profiles: ["monitoring"]
-    image: ${MONITORING_ALERTMANAGER_IMAGE:-prom/alertmanager:v0.29.0}
+    image: ${MONITORING_ALERTMANAGER_IMAGE:-prom/alertmanager:v0.31.1}
     container_name: pmtl-alertmanager
     restart: unless-stopped
     mem_limit: 128m
     env_file:
-      - .env.prod
-    command:
-      - --config.file=/etc/alertmanager/alertmanager.yml
-      - --config.expand-env
+      - ${PMTL_ENV_FILE:-.env.prod}
+    entrypoint:
+      - /bin/sh
+      - /etc/alertmanager/start-alertmanager.sh
     volumes:
-      - ../monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ${ALERTMANAGER_CONFIG_PATH:-../monitoring/alertmanager.yml}:/etc/alertmanager/alertmanager.yml:ro
+      - ../monitoring/start-alertmanager.sh:/etc/alertmanager/start-alertmanager.sh:ro
     ports:
       - "127.0.0.1:${ALERTMANAGER_PORT:-9093}:9093"
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9093/-/healthy"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -351,7 +357,7 @@ services:
 
   prometheus:
     profiles: ["monitoring"]
-    image: ${MONITORING_PROMETHEUS_IMAGE:-prom/prometheus:v3.5.1}
+    image: ${MONITORING_PROMETHEUS_IMAGE:-prom/prometheus:v3.10.0}
     container_name: pmtl-prometheus
     restart: unless-stopped
     mem_limit: 384m
@@ -383,7 +389,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:9090/-/healthy"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -394,14 +400,39 @@ services:
         max-size: 5m
         max-file: "3"
 
+  alert-sink:
+    profiles: ["monitoring-test"]
+    image: node:20-alpine
+    container_name: pmtl-alert-sink
+    restart: unless-stopped
+    mem_limit: 64m
+    command: ["node", "/app/infra/monitoring/alert-sink.mjs"]
+    volumes:
+      - ../monitoring/alert-sink.mjs:/app/infra/monitoring/alert-sink.mjs:ro
+    ports:
+      - "127.0.0.1:${ALERT_SINK_PORT:-19094}:8080"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "3"
+
   grafana:
     profiles: ["monitoring"]
-    image: ${MONITORING_GRAFANA_IMAGE:-grafana/grafana:12.0.1}
+    image: ${MONITORING_GRAFANA_IMAGE:-grafana/grafana:12.4.1}
     container_name: pmtl-grafana
     restart: unless-stopped
     mem_limit: 256m
     env_file:
-      - .env.prod
+      - ${PMTL_ENV_FILE:-.env.prod}
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
@@ -422,7 +453,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -447,7 +478,7 @@ services:
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
-      - /:/host:ro,rslave
+      - ${NODE_EXPORTER_ROOTFS_MOUNT:-/:/host:ro}
     networks:
       - backend
     logging:

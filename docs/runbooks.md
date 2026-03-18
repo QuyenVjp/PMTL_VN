@@ -127,8 +127,17 @@ Stack:
 
 Bring monitoring stack up with production services:
 ```bash
-docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d \
-  prometheus alertmanager grafana blackbox-exporter postgres-exporter redis-exporter node-exporter
+docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml --profile monitoring up -d
+```
+
+Production-like local alert drill:
+```bash
+$env:PMTL_ENV_FILE=".env.prod.monitoring.local"
+$env:ALERTMANAGER_CONFIG_PATH="../monitoring/alertmanager.local.yml"
+pnpm docker:prod:monitoring:test
+pnpm monitoring:test
+Remove-Item Env:PMTL_ENV_FILE
+Remove-Item Env:ALERTMANAGER_CONFIG_PATH
 ```
 
 Access locally on the VPS:
@@ -146,6 +155,11 @@ ssh -L 3300:127.0.0.1:3300 -L 9090:127.0.0.1:9090 your-vps
 Telegram alert prerequisites:
 - `ALERT_TELEGRAM_BOT_TOKEN`
 - `ALERT_TELEGRAM_CHAT_ID`
+
+Telegram smoke:
+```bash
+pnpm telegram:test
+```
 
 Sentry prerequisites:
 - `SENTRY_ENABLED=true`

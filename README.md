@@ -106,8 +106,12 @@ pnpm docker:dev
 - `pnpm seed:demo`: nạp dữ liệu mẫu production-like vào CMS.
 - `pnpm reindex:posts`: enqueue batch reindex cho toàn bộ posts.
 - `pnpm smoke:test`: bắn smoke test vào CMS/web theo env hiện tại.
+- `pnpm monitoring:test`: verify Prometheus targets, worker metrics, Sentry drills va worker-down alert pipeline.
+- `pnpm telegram:test`: gui 1 tin nhan smoke thang qua Telegram Bot API neu bot token/chat id da cau hinh.
 - `pnpm docker:dev`: chạy stack dev foreground bằng Docker Compose.
 - `pnpm docker:prod`: chạy stack production compose.
+- `pnpm docker:prod:monitoring`: boot monitoring profile cho production compose.
+- `pnpm docker:prod:monitoring:test`: boot monitoring + local alert sink profile de drill alert delivery an toan.
 
 ## Luồng triển khai production
 
@@ -123,6 +127,8 @@ Boundary dev/prod:
 - Dev: `infra/docker/compose.dev.yml` dung bind mount source code, named volume cho `node_modules`, `.next`, `.turbo`, pnpm store, media uploads va data services.
 - Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config, worker heartbeat va CMS uploads/media.
 - Monitoring production duoc tach thanh profile `monitoring` de tranh lam VPS 4GB nghop RAM khi deploy stack chinh.
+- Drill alert delivery local dung them profile `monitoring-test` va `ALERTMANAGER_CONFIG_PATH=../monitoring/alertmanager.local.yml` de Alertmanager day vao alert sink thay vi Telegram that.
+- Co the override file env runtime bang `PMTL_ENV_FILE=.env.prod.monitoring.local` khi can boot prod-like stack/phien ban smoke rieng ma khong dung vao `.env.prod` chinh.
 - Caddy la public entrypoint duy nhat o production; `web` va `cms` noi bo sau Docker network.
 - `worker` chay cung stack compose production va dung chung image CMS, nhung command rieng.
 

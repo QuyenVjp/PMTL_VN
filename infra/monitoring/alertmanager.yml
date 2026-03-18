@@ -18,7 +18,7 @@ receivers:
         send_resolved: true
         message: |
           {{ range .Alerts }}
-          <b>{{ .Labels.severity | toUpper }}</b> - {{ .Annotations.summary }}
+          <b>{{ if eq .Labels.severity "critical" }}NGHIÊM TRỌNG{{ else if eq .Labels.severity "warning" }}CẢNH BÁO{{ else }}THÔNG BÁO{{ end }}</b> - {{ .Annotations.summary }}
           {{ .Annotations.description }}
-          service={{ .Labels.service }} alert={{ .Labels.alertname }}
+          Dịch vụ: {{ if .Labels.service }}{{ .Labels.service }}{{ else }}không xác định{{ end }} | Cảnh báo: {{ .Labels.alertname }}
           {{ end }}

@@ -1,5 +1,3 @@
-import { logger } from "@/lib/logger";
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -9,6 +7,20 @@ export class ApiError extends Error {
     super(message);
     this.name = "ApiError";
   }
+}
+
+async function logJsonFetchFailure(input: RequestInfo | URL, status: number, error: { message: string; details?: unknown }) {
+  if (typeof window === "undefined") {
+    const { logger } = await import("@/lib/logger");
+    logger.warn("JSON fetch failed", { error, status, url: String(input) });
+    return;
+  }
+
+  console.warn("JSON fetch failed", {
+    error,
+    status,
+    url: String(input),
+  });
 }
 
 async function parseErrorResponse(response: Response): Promise<{ message: string; details?: unknown }> {
@@ -47,7 +59,7 @@ export async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit)
 
     if (!response.ok) {
       const error = await parseErrorResponse(response);
-      logger.warn("JSON fetch failed", { error, status: response.status, url: String(input) });
+      await logJsonFetchFailure(input, response.status, error);
       throw new ApiError(error.message, response.status, error.details);
     }
 

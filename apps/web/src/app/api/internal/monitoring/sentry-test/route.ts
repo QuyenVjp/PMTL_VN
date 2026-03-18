@@ -1,8 +1,8 @@
-import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { logger } from "@/lib/logger";
+import { captureWebServerException, flushWebServerSentry } from "@/lib/observability/server-sentry";
 
 const requestSchema = z.object({
   secret: z.string().min(1),
@@ -28,11 +28,8 @@ export async function POST(request: NextRequest) {
   try {
     throw new Error(parsed.data.message);
   } catch (error) {
-    const eventId = Sentry.captureException(error, {
-      tags: {
-        app: "web",
-        monitoring_test: "true",
-      },
+    const eventId = captureWebServerException(error, {
+      monitoring_test: "true",
     });
 
     logger.error("Web monitoring test triggered", {
@@ -40,7 +37,7 @@ export async function POST(request: NextRequest) {
       error,
     });
 
-    await Sentry.flush(2000);
+    await flushWebServerSentry(2000);
 
     return NextResponse.json(
       {

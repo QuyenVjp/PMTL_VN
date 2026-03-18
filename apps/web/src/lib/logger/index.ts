@@ -9,42 +9,23 @@ const pinoLogger = (() => {
     const { createSentryLogStream } = require("./sentry-stream") as typeof import("./sentry-stream");
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { isServerSentryEnabled } = require("../observability/sentry") as typeof import("../observability/sentry");
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const {
+      captureWebServerException,
+      captureWebServerMessage,
+    } = require("../observability/server-sentry") as typeof import("../observability/server-sentry");
 
     const sentryEnabled = isServerSentryEnabled();
-    const sentryApi =
-      sentryEnabled
-        ? (require("@sentry/nextjs") as typeof import("@sentry/nextjs"))
-        : null;
 
     const sentryStream = createSentryLogStream({
       app: "web",
       enabled: sentryEnabled,
       sentry: {
         captureException(error, context) {
-          if (!sentryApi) {
-            return;
-          }
-
-          sentryApi.withScope((scope) => {
-            scope.setTag("app", "web");
-            for (const [key, value] of Object.entries(context)) {
-              scope.setExtra(key, value);
-            }
-            sentryApi.captureException(error);
-          });
+          captureWebServerException(error, context);
         },
         captureMessage(message, context) {
-          if (!sentryApi) {
-            return;
-          }
-
-          sentryApi.withScope((scope) => {
-            scope.setTag("app", "web");
-            for (const [key, value] of Object.entries(context)) {
-              scope.setExtra(key, value);
-            }
-            sentryApi.captureMessage(message, "warning");
-          });
+          captureWebServerMessage(message, context);
         },
       },
     });

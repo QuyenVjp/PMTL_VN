@@ -1,17 +1,10 @@
 import { isServerSentryEnabled } from "@/lib/observability/sentry";
+import { captureWebServerException } from "@/lib/observability/server-sentry";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const { registerGracefulShutdown } = await import("@/lib/runtime/shutdown");
     registerGracefulShutdown();
-
-    if (isServerSentryEnabled()) {
-      await import("./sentry.server.config");
-    }
-  }
-
-  if (process.env.NEXT_RUNTIME === "edge" && isServerSentryEnabled()) {
-    await import("./sentry.edge.config");
   }
 }
 
@@ -20,6 +13,14 @@ export async function onRequestError(...args: unknown[]) {
     return;
   }
 
-  const Sentry = await import("@sentry/nextjs");
-  await Sentry.captureRequestError(...(args as Parameters<typeof Sentry.captureRequestError>));
+  const error = args[0] instanceof Error ? args[0] : new Error("Next request error");
+  captureWebServerException(error, {
+    request_error_args: args.map((value) =>
+      value instanceof Error
+        ? value.message
+        : typeof value === "string"
+          ? value
+          : typeof value,
+    ),
+  });
 }

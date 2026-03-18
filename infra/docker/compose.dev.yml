@@ -31,6 +31,7 @@ services:
       - ../../apps/web/public:/app/apps/web/public
       - ../../apps/web/package.json:/app/apps/web/package.json:ro
       - ../../apps/web/tsconfig.json:/app/apps/web/tsconfig.json:ro
+      - ../../apps/web/vitest.config.ts:/app/apps/web/vitest.config.ts:ro
       - ../../apps/web/next-env.d.ts:/app/apps/web/next-env.d.ts
       - ../../apps/web/next.config.ts:/app/apps/web/next.config.ts:ro
       - ../../apps/web/postcss.config.mjs:/app/apps/web/postcss.config.mjs:ro

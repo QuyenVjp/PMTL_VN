@@ -1,17 +1,30 @@
-import { spawn } from "node:child_process";
 import { access } from "node:fs/promises";
+import { spawn } from "node:child_process";
 import path from "node:path";
+
+import { getEnvValue, parseSimpleEnvFile } from "./env-utils";
 
 type JsonRecord = Record<string, unknown>;
 
 const rootDir = process.cwd();
-const webBaseUrl = process.env.MONITORING_WEB_BASE_URL ?? "http://localhost:3000";
-const cmsBaseUrl = process.env.MONITORING_CMS_BASE_URL ?? "http://localhost:3001";
-const prometheusBaseUrl = process.env.MONITORING_PROMETHEUS_URL ?? "http://127.0.0.1:9090";
-const alertmanagerBaseUrl = process.env.MONITORING_ALERTMANAGER_URL ?? "http://127.0.0.1:9093";
-const monitoringSecret = process.env.MONITORING_TEST_SECRET ?? "";
 const composeFile = process.env.MONITORING_DOCKER_COMPOSE_FILE ?? path.join(rootDir, "infra/docker/compose.prod.yml");
 const envFile = process.env.MONITORING_ENV_FILE ?? path.join(rootDir, "infra/docker/.env.prod");
+const envFileValues = parseSimpleEnvFile(envFile);
+const webBaseUrl =
+  process.env.MONITORING_WEB_BASE_URL
+  ?? `http://127.0.0.1:${getEnvValue("MONITORING_WEB_PORT", envFileValues, "3000")}`;
+const cmsBaseUrl =
+  process.env.MONITORING_CMS_BASE_URL
+  ?? `http://127.0.0.1:${getEnvValue("MONITORING_CMS_PORT", envFileValues, "3001")}`;
+const prometheusBaseUrl =
+  process.env.MONITORING_PROMETHEUS_URL ??
+  `http://127.0.0.1:${getEnvValue("PROMETHEUS_PORT", envFileValues, "9090")}`;
+const alertmanagerBaseUrl =
+  process.env.MONITORING_ALERTMANAGER_URL ??
+  `http://127.0.0.1:${getEnvValue("ALERTMANAGER_PORT", envFileValues, "9093")}`;
+const alertSinkBaseUrl = process.env.MONITORING_ALERT_SINK_URL
+  ?? (getEnvValue("ALERT_SINK_PORT", envFileValues) ? `http://127.0.0.1:${getEnvValue("ALERT_SINK_PORT", envFileValues)}` : "");
+const monitoringSecret = getEnvValue("MONITORING_TEST_SECRET", envFileValues, "");
 const workerAlertWaitMs = Number(process.env.MONITORING_WORKER_ALERT_WAIT_MS ?? "270000");
 const pollIntervalMs = Number(process.env.MONITORING_POLL_INTERVAL_MS ?? "5000");
 const requestTimeoutMs = Number(process.env.MONITORING_REQUEST_TIMEOUT_MS ?? "15000");
@@ -62,6 +75,17 @@ async function fetchText(url: string) {
     status: response.status,
     body,
   };
+}
+
+async function resetAlertSink() {
+  if (!alertSinkBaseUrl) {
+    return;
+  }
+
+  await fetch(`${alertSinkBaseUrl}/alerts`, {
+    method: "DELETE",
+    signal: AbortSignal.timeout(requestTimeoutMs),
+  }).catch(() => undefined);
 }
 
 function runCompose(args: string[]) {
@@ -185,6 +209,33 @@ async function waitForWorkerAlert() {
   throw new Error("PMTLWorkerHeartbeatStale did not appear in Alertmanager within the wait window.");
 }
 
+async function checkAlertSinkDelivery() {
+  if (!alertSinkBaseUrl) {
+    return {
+      enabled: false,
+    };
+  }
+
+  const result = await fetchJson(`${alertSinkBaseUrl}/last`);
+  await requireOk("alert sink", result);
+
+  const alerts =
+    typeof result.body === "object"
+    && result.body
+    && Array.isArray((result.body as JsonRecord).alerts)
+      ? ((result.body as JsonRecord).alerts as unknown[])
+      : [];
+
+  if (alerts.length === 0) {
+    throw new Error("Alert sink did not record any delivered alerts.");
+  }
+
+  return {
+    enabled: true,
+    deliveredAlerts: alerts.length,
+  };
+}
+
 async function simulateWorkerDown() {
   if (!(await fileExists(composeFile))) {
     throw new Error(`Compose file not found: ${composeFile}`);
@@ -200,6 +251,8 @@ async function simulateWorkerDown() {
   }
 
   try {
+    await resetAlertSink();
+
     const healthCheckDeadline = Date.now() + 180000;
     let workerRouteFailed = false;
 
@@ -218,11 +271,13 @@ async function simulateWorkerDown() {
     }
 
     const alert = await waitForWorkerAlert();
+    const sink = await checkAlertSinkDelivery();
     const alertmanagerLogs = await runCompose(["logs", "--tail", "50", "alertmanager"]);
 
     return {
       workerHealthRoute: "503",
       alert,
+      sink,
       alertmanagerLogs: {
         code: alertmanagerLogs.code,
         stderr: alertmanagerLogs.stderr.trim(),

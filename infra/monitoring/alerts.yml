@@ -7,8 +7,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "{{ $labels.service }} is unreachable"
-          description: "Blackbox probe failed for {{ $labels.service }} (target: {{ $labels.instance }}) for more than 2 minutes."
+          summary: "{{ $labels.service }} không phản hồi"
+          description: "Blackbox probe thất bại với {{ $labels.service }} (đích: {{ $labels.instance }}) liên tục hơn 2 phút."
 
       - alert: PMTLWebHigh5xx
         expr: sum(rate(caddy_http_request_duration_seconds_count{host=~".+",code=~"5.."}[5m])) by (host) > 0.05
@@ -17,8 +17,8 @@ groups:
           severity: critical
           service: web
         annotations:
-          summary: "Web is serving 5xx responses"
-          description: "Host {{ $labels.host }} has a sustained 5xx rate above 0.05 req/s over the last 10 minutes."
+          summary: "Web đang trả về lỗi 5xx"
+          description: "Host {{ $labels.host }} có tỷ lệ 5xx duy trì trên 0.05 request/giây trong 10 phút gần nhất."
 
       - alert: PMTLWorkerHeartbeatStale
         expr: pmtl_worker_healthy == 0
@@ -26,8 +26,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Worker heartbeat is stale"
-          description: "Worker heartbeat age is {{ $value }} state unhealthy for more than 2 minutes."
+          summary: "Heartbeat của worker đã lỗi thời"
+          description: "Worker đang ở trạng thái không khỏe liên tục hơn 2 phút; giá trị heartbeat hiện tại là {{ $value }}."
 
       - alert: PMTLWorkerFailedJobs
         expr: pmtl_worker_queue_jobs{state="failed"} > 0
@@ -35,8 +35,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Worker queue has failed jobs"
-          description: "Queue {{ $labels.queue }} has {{ $value }} failed jobs pending review."
+          summary: "Hàng đợi worker có job lỗi"
+          description: "Queue {{ $labels.queue }} hiện có {{ $value }} job lỗi đang chờ kiểm tra."
 
   - name: pmtl-data-stores
     rules:
@@ -46,8 +46,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Redis exporter is down"
-          description: "Prometheus cannot scrape redis-exporter for more than 2 minutes."
+          summary: "Redis exporter đang không hoạt động"
+          description: "Prometheus không scrape được redis-exporter liên tục hơn 2 phút."
 
       - alert: PMTLRedisMemoryHigh
         expr: redis_memory_max_bytes > 0 and (redis_memory_used_bytes / redis_memory_max_bytes) > 0.8
@@ -55,8 +55,8 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Redis memory above 80%"
-          description: "Redis memory usage is above 80% of configured maxmemory."
+          summary: "Bộ nhớ Redis vượt 80%"
+          description: "Redis đang dùng quá 80% ngưỡng maxmemory đã cấu hình."
 
       - alert: PMTLPostgresDown
         expr: postgres_up == 0
@@ -64,8 +64,8 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "PostgreSQL is down"
-          description: "postgres-exporter reports postgres_up=0 for more than 2 minutes."
+          summary: "PostgreSQL đang không hoạt động"
+          description: "postgres-exporter ghi nhận postgres_up=0 liên tục hơn 2 phút."
 
       - alert: PMTLPostgresConnectionsHigh
         expr: sum(postgres_stat_database_numbackends{datname!~"template0|template1"}) by (instance) / max(pg_settings_max_connections) by (instance) > 0.8
@@ -74,8 +74,8 @@ groups:
           severity: warning
           service: postgres
         annotations:
-          summary: "PostgreSQL connection usage is high"
-          description: "PostgreSQL is above 80% of max_connections on {{ $labels.instance }} for more than 10 minutes."
+          summary: "Mức sử dụng kết nối PostgreSQL đang cao"
+          description: "PostgreSQL trên {{ $labels.instance }} đang vượt 80% max_connections liên tục hơn 10 phút."
 
   - name: pmtl-host-resources
     rules:
@@ -86,8 +86,8 @@ groups:
           severity: critical
           service: host
         annotations:
-          summary: "Host memory usage is above 90%"
-          description: "Node exporter reports memory usage above 90% for more than 10 minutes on {{ $labels.instance }}."
+          summary: "Bộ nhớ máy chủ vượt 90%"
+          description: "Node exporter ghi nhận mức dùng RAM trên {{ $labels.instance }} vượt 90% liên tục hơn 10 phút."
 
       - alert: PMTLHostDiskLow
         expr: (1 - (node_filesystem_avail_bytes{mountpoint="/",fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{mountpoint="/",fstype!~"tmpfs|overlay"})) > 0.9
@@ -96,5 +96,5 @@ groups:
           severity: critical
           service: host
         annotations:
-          summary: "Host root filesystem is above 90% used"
-          description: "Disk usage on the root filesystem is above 90% for more than 15 minutes on {{ $labels.instance }}."
+          summary: "Phân vùng gốc của máy chủ đã dùng quá 90%"
+          description: "Dung lượng đĩa ở filesystem gốc trên {{ $labels.instance }} vượt 90% liên tục hơn 15 phút."
