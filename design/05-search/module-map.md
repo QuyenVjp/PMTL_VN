@@ -1,5 +1,9 @@
 # Search Module
 
+> Ghi chú cho sinh viên:
+> Search không giữ dữ liệu gốc.
+> Nó chỉ dựng "bản sao để tìm kiếm nhanh" từ dữ liệu thật ở Postgres.
+
 ---
 markmap:
   colorFreezeLevel: 2

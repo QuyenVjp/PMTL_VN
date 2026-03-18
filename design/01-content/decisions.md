@@ -1,5 +1,8 @@
 # Content Module Decisions
 
+> Ghi chú cho sinh viên:
+> Mỗi quyết định ở đây dùng để ngăn AI hoặc dev mới quay lại mô hình cũ sai boundary.
+
 ## Decision 1. Content dùng split collections, không dùng single posts table
 
 ### Context

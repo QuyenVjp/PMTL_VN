@@ -1,5 +1,8 @@
 # Moderation Module Decisions
 
+> Ghi chú cho sinh viên:
+> Hãy nhớ câu này: `moderationReports` là nguồn gốc, còn field trên comment/post chỉ là phần tóm tắt để đọc nhanh.
+
 ## Decision 1. moderationReports là source of truth duy nhất
 
 ### Context

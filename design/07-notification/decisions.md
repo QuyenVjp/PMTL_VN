@@ -1,5 +1,8 @@
 # Notification Module Decisions
 
+> Ghi chú cho sinh viên:
+> `pushJobs` nhìn giống bảng notification, nhưng thực ra nó là bảng điều phối gửi, không phải hộp thư người dùng.
+
 ## Decision 1. Notification là async-only trong current scope
 
 ### Context

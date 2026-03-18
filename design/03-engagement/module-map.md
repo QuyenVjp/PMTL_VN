@@ -1,5 +1,8 @@
 # Engagement Module
 
+> Ghi chú cho sinh viên:
+> Engagement ở đây chủ yếu là dữ liệu cá nhân của người dùng, không phải dữ liệu nội dung công khai.
+
 ---
 markmap:
   colorFreezeLevel: 2

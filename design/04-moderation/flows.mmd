@@ -1,35 +1,30 @@
-## Luồng 1: Tạo moderation report
-
-```mermaid
 flowchart TD
-    A[User report entity] --> B[Tìm entity đích theo publicId]
-    B --> C[Tạo moderationReports]
-    C --> D[Lưu entityType, entityPublicId, entityRef, reason, reporter]
-    D --> E[Sync reportCount và lastReportReason lên entity đích]
-    E --> F[Enqueue alert cho moderator/admin]
-```
+    subgraph Flow1 ["Luồng 1: Tạo moderation report"]
+        M1A["User report entity"] --> M1B["Tìm entity đích theo publicId"]
+        M1B --> M1C["Tạo moderationReports"]
+        M1C --> M1D["Lưu entityType, entityPublicId, entityRef, reason, và reporter"]
+        M1D --> M1E["Sync reportCount và lastReportReason lên entity đích"]
+        M1E --> M1F["Enqueue alert cho moderator hoặc admin"]
+    end
 
-## Luồng 2: Moderator ra quyết định
+    subgraph Flow2 ["Luồng 2: Moderator ra quyết định"]
+        M2A["Moderator mở report"] --> M2B["Chọn decision"]
+        M2B --> M2C["Cập nhật status của moderation report"]
+        M2C --> M2D{"Target type"}
+        M2D -->|"comment hoặc community post"| M2E["Set moderationStatus và isHidden"]
+        M2D -->|"guestbook"| M2F["Set approvalStatus"]
+        M2E --> M2G["Notify user liên quan nếu có"]
+        M2F --> M2G
+    end
 
-```mermaid
-flowchart TD
-    A[Moderator mở report] --> B[Chọn decision]
-    B --> C[Cập nhật status của moderation report]
-    C --> D{Target type}
-    D -->|comment hoặc community post| E[Set moderationStatus + isHidden]
-    D -->|guestbook| F[Set approvalStatus]
-    E --> G[Notify user liên quan nếu có]
-    F --> G
-```
+    subgraph Flow3 ["Luồng 3: Guestbook moderation path"]
+        M3A["Guestbook entry pending hoặc bị report"] --> M3B["Moderator xem entry"]
+        M3B --> M3C{"Decision"}
+        M3C -->|"approved"| M3D["approvalStatus = approved"]
+        M3C -->|"rejected"| M3E["approvalStatus = rejected"]
+        M3D --> M3F["Entry hiển thị public"]
+        M3E --> M3G["Entry không hiển thị public"]
+    end
 
-## Luồng 3: Guestbook moderation path
-
-```mermaid
-flowchart TD
-    A[Guestbook entry pending hoặc bị report] --> B[Moderator xem entry]
-    B --> C{Decision}
-    C -->|approved| D[approvalStatus = approved]
-    C -->|rejected| E[approvalStatus = rejected]
-    D --> F[Entry hiển thị public]
-    E --> G[Entry không hiển thị public]
-```
+    M1F -.->|"tiếp"| M2A
+    M2G -.->|"tiếp"| M3A

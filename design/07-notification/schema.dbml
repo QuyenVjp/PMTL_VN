@@ -3,6 +3,24 @@
 // - push_jobs là control-plane record cho async dispatch.
 // - Email delivery hiện đi qua queue/job path, chưa có canonical email history table trong current scope.
 
+Project notification_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Notification module cho PMTL_VN.
+  Ghi nhớ:
+  - push_subscriptions = trạng thái đăng ký nhận push.
+  - push_jobs = record điều phối gửi.
+  - đây chưa phải inbox của người dùng.
+  '''
+}
+
+Enum push_job_status {
+  queued
+  active
+  completed
+  failed
+}
+
 Table users {
   id uuid [pk]
   public_id varchar [unique]
@@ -35,7 +53,7 @@ Table push_jobs {
   id uuid [pk]
   public_id varchar [unique]
   kind varchar [not null]
-  status varchar [not null] // queued | active | completed | failed
+  status push_job_status [not null]
   chunk_size int [default: 100]
   message text
   url varchar
@@ -49,4 +67,13 @@ Table push_jobs {
   finished_at timestamp
   created_at timestamp
   updated_at timestamp
+}
+
+TableGroup "Notification Recipients" [note: "Ai có thể được gửi tới"] {
+  users
+  push_subscriptions
+}
+
+TableGroup "Notification Control Plane" [note: "Điều phối gửi bất đồng bộ"] {
+  push_jobs
 }

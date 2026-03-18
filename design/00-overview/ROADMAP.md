@@ -1,5 +1,9 @@
 # PMTL_VN Design Alignment Roadmap
 
+> Ghi chú cho sinh viên:
+> Đây không phải roadmap làm sản phẩm từ đầu.
+> Đây là roadmap để kéo tài liệu thiết kế về khớp code đang có.
+
 ## Mục tiêu
 
 Roadmap này dùng để kéo design về khớp repo truth hiện tại.

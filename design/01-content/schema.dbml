@@ -5,6 +5,22 @@
 // - Repo hiện chưa materialize một field visibility chung cho toàn bộ editorial collections.
 //   Nếu sau này cần gated content, field audience phải được thêm ở collection owner tương ứng.
 
+Project content_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Content module cho PMTL_VN.
+  Gợi ý đọc nhanh:
+  - Nhìn nhóm Editorial trước.
+  - Sau đó nhìn nhóm Scripture.
+  - Cuối cùng nhìn nhóm Taxonomy và Media.
+  '''
+}
+
+Enum content_publication_status {
+  draft
+  published
+}
+
 Table users {
   id uuid [pk]
   public_id varchar [unique]
@@ -49,7 +65,7 @@ Table posts {
   author_id uuid [ref: > users.id]
   primary_category_id uuid [ref: > categories.id]
   cover_media_id uuid [ref: > media_assets.id]
-  _status varchar [not null] // Payload draft status: draft | published
+  _status content_publication_status [not null]
   published_at timestamp
   excerpt_override text
   excerpt_computed text
@@ -103,7 +119,7 @@ Table hub_pages {
   visual_theme varchar
   show_in_menu bool [default: false]
   sort_order int [default: 0]
-  _status varchar [not null] // draft | published
+  _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp
 }
@@ -136,7 +152,7 @@ Table beginner_guides {
   duration varchar
   step_number int
   order_no int [default: 0]
-  _status varchar [not null] // draft | published
+  _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp
 }
@@ -167,7 +183,7 @@ Table downloads {
   is_updating bool [default: false]
   is_new bool [default: false]
   sort_order int [default: 0]
-  _status varchar [not null] // draft | published
+  _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp
 }
@@ -184,7 +200,7 @@ Table sutras {
   reviewer varchar
   is_featured bool [default: false]
   sort_order int [default: 0]
-  _status varchar [not null] // draft | published
+  _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp
 }
@@ -235,4 +251,35 @@ Table sutra_glossary {
   meaning text [not null]
   marker_key varchar
   sort_order int [default: 0]
+}
+
+TableGroup "Editorial Content" [note: "Nội dung biên tập công khai hoặc bán công khai"] {
+  posts
+  hub_pages
+  hub_page_blocks
+  beginner_guides
+  downloads
+}
+
+TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ cho editorial"] {
+  post_tags
+  post_related_posts
+  post_gallery_media
+  hub_page_curated_posts
+  beginner_guide_media
+}
+
+TableGroup "Scripture Library" [note: "Thư viện kinh và cây đọc kinh"] {
+  sutras
+  sutra_tags
+  sutra_volumes
+  sutra_chapters
+  sutra_glossary
+}
+
+TableGroup "Taxonomy and Shared References" [note: "Dùng chung cho nhiều collection content"] {
+  users
+  media_assets
+  categories
+  tags
 }

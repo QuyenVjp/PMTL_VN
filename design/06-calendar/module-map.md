@@ -1,5 +1,9 @@
 # Calendar Module
 
+> Ghi chú cho sinh viên:
+> Calendar ở đây là dữ liệu lịch và sự kiện.
+> Nó không tự gửi notification, mà chỉ cung cấp dữ liệu cho module khác dùng.
+
 ---
 markmap:
   colorFreezeLevel: 2

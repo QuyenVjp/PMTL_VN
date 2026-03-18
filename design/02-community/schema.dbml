@@ -1,5 +1,31 @@
 // Community Module - logical schema aligned with current repo truth
 
+Project community_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Community module cho PMTL_VN.
+  Nhìn nhanh:
+  - community_posts là bài cộng đồng.
+  - community_comments là bình luận cho bài cộng đồng.
+  - post_comments là bình luận dưới bài editorial.
+  - guestbook_entries là luồng nhẹ hơn.
+  '''
+}
+
+Enum moderation_state {
+  pending
+  approved
+  rejected
+  flagged
+  hidden
+}
+
+Enum guestbook_approval_state {
+  pending
+  approved
+  rejected
+}
+
 Table users {
   id uuid [pk]
   public_id varchar [unique]
@@ -26,7 +52,7 @@ Table community_posts {
   author_name_snapshot varchar
   cover_media_id uuid
   video_url varchar
-  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  moderation_status moderation_state [not null]
   spam_score int [default: 0]
   report_count int [default: 0]
   last_report_reason varchar
@@ -56,7 +82,7 @@ Table community_comments {
   content text [not null]
   author_user_id uuid [ref: > users.id]
   author_name_snapshot varchar
-  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  moderation_status moderation_state [not null]
   likes int [default: 0]
   spam_score int [default: 0]
   report_count int [default: 0]
@@ -75,7 +101,7 @@ Table post_comments {
   author_user_id uuid [ref: > users.id]
   author_name_snapshot varchar
   author_email varchar
-  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  moderation_status moderation_state [not null]
   likes int [default: 0]
   report_count int [default: 0]
   last_report_reason varchar
@@ -98,7 +124,20 @@ Table guestbook_entries {
   submitted_by_ip_hash varchar
   admin_reply text
   is_answered bool [default: false]
-  approval_status varchar [not null] // pending | approved | rejected
+  approval_status guestbook_approval_state [not null]
   created_at timestamp
   updated_at timestamp
+}
+
+TableGroup "Community Core" [note: "Các bề mặt cộng đồng chính"] {
+  community_posts
+  community_comments
+  post_comments
+  guestbook_entries
+}
+
+TableGroup "Community Helpers" [note: "Bảng phụ hoặc tham chiếu nhẹ"] {
+  community_post_tags
+  users
+  posts
 }

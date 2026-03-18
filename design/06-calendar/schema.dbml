@@ -1,5 +1,22 @@
 // Calendar Module - logical schema aligned with current repo truth
 
+Project calendar_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Calendar module cho PMTL_VN.
+  Gợi ý đọc:
+  - events = sự kiện công khai.
+  - lunar_events = lịch âm gốc.
+  - lunar_event_overrides = lớp điều chỉnh hoặc gắn practice rule.
+  '''
+}
+
+Enum event_status_enum {
+  upcoming
+  live
+  past
+}
+
 Table media_assets {
   id uuid [pk]
   public_id varchar [unique]
@@ -34,7 +51,7 @@ Table events {
   youtube_id varchar
   embed_url varchar
   cover_image_id uuid [ref: > media_assets.id]
-  event_status varchar [not null] // upcoming | live | past
+  event_status event_status_enum [not null]
   created_at timestamp
   updated_at timestamp
 }
@@ -91,4 +108,22 @@ Table lunar_event_overrides {
   note text
   created_at timestamp
   updated_at timestamp
+}
+
+TableGroup "Event Publishing" [note: "Nhóm sự kiện public"] {
+  events
+  event_gallery_media
+  event_files
+}
+
+TableGroup "Lunar Calendar" [note: "Nhóm dữ liệu lịch âm"] {
+  lunar_events
+  lunar_event_related_posts
+  lunar_event_overrides
+}
+
+TableGroup "Shared References" [note: "Dữ liệu tham chiếu dùng để liên kết"] {
+  media_assets
+  posts
+  chant_items
 }

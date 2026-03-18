@@ -8,6 +8,10 @@ markmap:
 
 # PMTL_VN
 
+> Ghi chú cho sinh viên:
+> File này giống như bản đồ thành phố.
+> Nó giúp bạn biết module nào đang tồn tại thật trong repo và module nào chỉ là ứng viên tương lai.
+
 ## Current Scope
 
 ### 01. Identity

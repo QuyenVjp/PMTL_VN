@@ -1,5 +1,9 @@
 # Notification Module
 
+> Ghi chú cho sinh viên:
+> Notification ở repo này là async-only.
+> Tức là request thường chỉ tạo job, còn gửi thật sẽ do worker làm sau.
+
 ---
 markmap:
   colorFreezeLevel: 2

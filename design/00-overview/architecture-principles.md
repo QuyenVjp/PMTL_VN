@@ -1,5 +1,9 @@
 # PMTL_VN Architecture Principles
 
+> Ghi chú cho sinh viên:
+> File này là "luật chơi chung" của hệ thống.
+> Nếu hai file khác nhau mâu thuẫn nhau, hãy ưu tiên file này cùng với `CORE_DECISIONS.md`.
+
 ## Mục tiêu của tài liệu này
 
 Tài liệu này mô tả các nguyên tắc kiến trúc đang được áp dụng trong repo hiện tại.

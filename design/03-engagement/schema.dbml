@@ -3,6 +3,17 @@
 // - chant_items và chant_plans là reference data dùng cho user-state;
 //   file này mô tả chúng ở mức ref tối thiểu để giữ quan hệ rõ ràng.
 
+Project engagement_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Engagement module cho PMTL_VN.
+  Cách đọc nhanh:
+  - Nhóm Sutra State là bookmark và progress.
+  - Nhóm Practice State là preference và log.
+  - Các bảng sutras, chapters, chant_items, chant_plans chỉ là dữ liệu tham chiếu.
+  '''
+}
+
 Table users {
   id uuid [pk]
   public_id varchar [unique]
@@ -111,4 +122,26 @@ Table practice_log_item_states {
   chant_item_id uuid [ref: > chant_items.id]
   completed bool [default: false]
   count int
+}
+
+TableGroup "Sutra State" [note: "Dữ liệu cá nhân khi đọc kinh"] {
+  sutra_bookmarks
+  sutra_reading_progress
+}
+
+TableGroup "Practice State" [note: "Dữ liệu cá nhân cho công phu"] {
+  chant_preferences
+  chant_preference_optional_items
+  chant_preference_targets
+  chant_preference_intentions
+  practice_logs
+  practice_log_item_states
+}
+
+TableGroup "Reference Data" [note: "Dùng để liên kết, không phải owner của engagement"] {
+  users
+  sutras
+  sutra_chapters
+  chant_items
+  chant_plans
 }

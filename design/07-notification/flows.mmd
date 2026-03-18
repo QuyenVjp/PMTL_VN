@@ -1,40 +1,33 @@
-## Luồng 1: User subscribe push
-
-```mermaid
 flowchart TD
-    A[Trình duyệt gửi push subscription] --> B[CMS validate endpoint và keys]
-    B --> C[Upsert pushSubscriptions]
-    C --> D[Lưu user, timezone, prefs, quiet hours]
-```
+    subgraph Flow1 ["Luồng 1: User subscribe push"]
+        N1A["Trình duyệt gửi push subscription"] --> N1B["CMS validate endpoint và keys"]
+        N1B --> N1C["Upsert pushSubscriptions"]
+        N1C --> N1D["Lưu user, timezone, prefs, và quiet hours"]
+    end
 
-## Luồng 2: Tạo internal push job
+    subgraph Flow2 ["Luồng 2: Tạo internal push job"]
+        N2A["Module khác cần notify"] --> N2B["Gọi notification service"]
+        N2B --> N2C["Tạo pushJobs với status queued"]
+        N2C --> N2D["Lưu recipientRoles hoặc include and exclude user ids trong payload"]
+        N2D --> N2E["Worker push-dispatch đọc job"]
+    end
 
-```mermaid
-flowchart TD
-    A[Module khác cần notify] --> B[Gọi notification service]
-    B --> C[Tạo pushJobs với status queued]
-    C --> D[Lưu recipientRoles hoặc include/excludeUserIds trong payload]
-    D --> E[Worker push-dispatch đọc job]
-```
+    subgraph Flow3 ["Luồng 3: Worker dispatch push"]
+        N3A["Worker nhận push job"] --> N3B["Tải active subscriptions phù hợp"]
+        N3B --> N3C["Gửi từng chunk"]
+        N3C --> N3D["Cập nhật sentCount hoặc failedCount"]
+        N3D --> N3E{"Còn recipient?"}
+        N3E -->|"Có"| N3C
+        N3E -->|"Không"| N3F["Đánh dấu completed hoặc failed"]
+    end
 
-## Luồng 3: Worker dispatch push
+    subgraph Flow4 ["Luồng 4: Notify moderation decision"]
+        N4A["Moderation ra quyết định"] --> N4B["Resolve target user"]
+        N4B --> N4C["Tạo push job cho đúng user"]
+        N4C --> N4D["Enqueue email notification job nếu có email"]
+        N4D --> N4E["User nhận notification bất đồng bộ"]
+    end
 
-```mermaid
-flowchart TD
-    A[Worker nhận push job] --> B[Tải active subscriptions phù hợp]
-    B --> C[Gửi từng chunk]
-    C --> D[Cập nhật sentCount hoặc failedCount]
-    D --> E{Còn recipient?}
-    E -->|Có| C
-    E -->|Không| F[Đánh dấu completed hoặc failed]
-```
-
-## Luồng 4: Notify moderation decision
-
-```mermaid
-flowchart TD
-    A[Moderation ra quyết định] --> B[Resolve target user]
-    B --> C[Tạo push job cho đúng user]
-    C --> D[Enqueue email notification job nếu có email]
-    D --> E[User nhận notification bất đồng bộ]
-```
+    N1D -.->|"tiếp"| N2A
+    N2E -.->|"tiếp"| N3A
+    N3F -.->|"tiếp"| N4A

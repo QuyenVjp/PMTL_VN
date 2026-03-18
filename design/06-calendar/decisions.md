@@ -1,5 +1,9 @@
 # Calendar Module Decisions
 
+> Ghi chú cho sinh viên:
+> Điểm khó của module này là phân biệt `lunarEvents` với `lunarEventOverrides`.
+> Một cái là lịch gốc, một cái là lớp điều chỉnh.
+
 ## Decision 1. Events thuộc calendar module, không thuộc content module
 
 ### Context

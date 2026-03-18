@@ -4,6 +4,24 @@
 // - `meilisearch_posts_index` là computed index document.
 // - `posts_search_source` biểu diễn source fields thực lấy từ content module.
 
+Project search_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Search module cho PMTL_VN.
+  Cách đọc:
+  - posts_search_source = dữ liệu gốc đem đi index.
+  - search_sync_jobs = hàng chờ xử lý, không phải dữ liệu nghiệp vụ gốc.
+  - meilisearch_posts_index = bản sao để tìm kiếm nhanh.
+  '''
+}
+
+Enum search_job_status {
+  queued
+  active
+  completed
+  failed
+}
+
 Table posts_search_source {
   document_id uuid [pk]
   public_id varchar [unique]
@@ -33,7 +51,7 @@ Table search_sync_jobs {
   queue_name varchar [not null] // search-sync
   document_id uuid
   public_id varchar
-  status varchar [not null] // queued | active | completed | failed
+  status search_job_status [not null]
   attempts int [default: 0]
   enqueued_at timestamp
   processed_at timestamp
@@ -54,4 +72,17 @@ Table meilisearch_posts_index {
   published_at timestamp
   featured bool
   views int
+}
+
+TableGroup "Search Source" [note: "Dữ liệu gốc được trích từ content module"] {
+  posts_search_source
+  post_search_source_tags
+}
+
+TableGroup "Async Runtime" [note: "Artifact runtime cho worker và queue"] {
+  search_sync_jobs
+}
+
+TableGroup "Computed Index" [note: "Bản sao để Meilisearch truy vấn nhanh"] {
+  meilisearch_posts_index
 }

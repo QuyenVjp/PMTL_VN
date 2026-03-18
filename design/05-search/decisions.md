@@ -1,5 +1,8 @@
 # Search Module Decisions
 
+> Ghi chú cho sinh viên:
+> Nếu bạn sợ nhầm Meilisearch là database thứ hai, hãy đọc Decision 1 và Decision 3 trước.
+
 ## Decision 1. Search là downstream module, không phải canonical owner
 
 ### Context

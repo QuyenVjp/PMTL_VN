@@ -4,6 +4,24 @@
 // - Các table target bên dưới chỉ xuất hiện ở đây để mô tả summary sync,
 //   không chuyển ownership của chúng sang moderation module.
 
+Project moderation_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Moderation module cho PMTL_VN.
+  Ghi nhớ:
+  - moderation_reports là record gốc.
+  - các bảng comment, community_posts, guestbook_entries bên dưới chỉ được nhắc tới để mô tả field summary.
+  '''
+}
+
+Enum moderation_report_status {
+  pending
+  approved
+  rejected
+  flagged
+  hidden
+}
+
 Table users {
   id uuid [pk]
   public_id varchar [unique]
@@ -20,7 +38,7 @@ Table moderation_reports {
   entity_document_id varchar
   reason varchar [not null]
   notes text
-  status varchar [not null] // pending | approved | rejected | flagged | hidden
+  status moderation_report_status [not null]
   reporter_user_id uuid [ref: > users.id]
   reporter_ip_hash varchar
   created_at timestamp
@@ -58,4 +76,19 @@ Table guestbook_entries {
   id uuid [pk]
   public_id varchar [unique]
   approval_status varchar
+}
+
+TableGroup "Moderation Source of Truth" [note: "Bảng gốc cần đọc đầu tiên khi điều tra report"] {
+  moderation_reports
+}
+
+TableGroup "Moderated Targets" [note: "Entity bị ảnh hưởng bởi decision và summary sync"] {
+  post_comments
+  community_posts
+  community_comments
+  guestbook_entries
+}
+
+TableGroup "Actor Reference" [note: "Người report hoặc người bị ảnh hưởng"] {
+  users
 }

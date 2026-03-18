@@ -1,5 +1,9 @@
 # Moderation Module
 
+> Ghi chú cho sinh viên:
+> Moderation không chỉ là nút "ẩn bài".
+> Nó có record nguồn riêng để sau này còn audit và giải thích vì sao đã xử lý.
+
 ---
 markmap:
   colorFreezeLevel: 2

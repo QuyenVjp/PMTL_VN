@@ -1,46 +1,39 @@
-## Luồng 1: Đăng ký tài khoản
-
-```mermaid
 flowchart TD
-    A[Người dùng gửi form đăng ký] --> B[CMS validate payload]
-    B --> C[Tạo user trong Payload auth]
-    C --> D[Set role mặc định member]
-    D --> E[Trả auth session/response contract]
-```
+    subgraph Flow1 ["Luồng 1: Đăng ký tài khoản"]
+        I1A["Người dùng gửi form đăng ký"] --> I1B["CMS validate payload"]
+        I1B --> I1C["Tạo user trong Payload auth"]
+        I1C --> I1D["Set role mặc định member"]
+        I1D --> I1E["Trả auth session hoặc response contract"]
+    end
 
-## Luồng 2: Đăng nhập
+    subgraph Flow2 ["Luồng 2: Đăng nhập"]
+        I2A["Người dùng gửi email và mật khẩu"] --> I2B["Payload auth kiểm tra credentials"]
+        I2B --> I2C{"Hợp lệ?"}
+        I2C -->|"Không"| I2D["Trả lỗi 401"]
+        I2C -->|"Có"| I2E["Kiểm tra isBlocked"]
+        I2E --> I2F{"Bị khóa?"}
+        I2F -->|"Có"| I2G["Từ chối đăng nhập"]
+        I2F -->|"Không"| I2H["Cập nhật lastLoginAt"]
+        I2H --> I2I["Trả session hoặc cookie"]
+    end
 
-```mermaid
-flowchart TD
-    A[Người dùng gửi email + mật khẩu] --> B[Payload auth kiểm tra credentials]
-    B --> C{Hợp lệ?}
-    C -->|Không| D[Trả lỗi 401]
-    C -->|Có| E[Kiểm tra isBlocked]
-    E --> F{Bị khóa?}
-    F -->|Có| G[Từ chối đăng nhập]
-    F -->|Không| H[Cập nhật lastLoginAt]
-    H --> I[Trả session/cookie]
-```
+    subgraph Flow3 ["Luồng 3: Quên mật khẩu và đặt lại mật khẩu"]
+        I3A["Người dùng yêu cầu quên mật khẩu"] --> I3B["Payload tạo reset token"]
+        I3B --> I3C["Tạo reset URL"]
+        I3C --> I3D["Enqueue hoặc gửi email reset"]
+        I3D --> I3E["Người dùng mở reset URL"]
+        I3E --> I3F["Gửi mật khẩu mới"]
+        I3F --> I3G["Payload xác minh token và cập nhật mật khẩu"]
+        I3G --> I3H["Trả kết quả thành công"]
+    end
 
-## Luồng 3: Quên mật khẩu và đặt lại mật khẩu
+    subgraph Flow4 ["Luồng 4: Admin cập nhật role hoặc block state"]
+        I4A["Admin mở user trong CMS"] --> I4B["Cập nhật role hoặc isBlocked"]
+        I4B --> I4C["Payload access kiểm tra quyền"]
+        I4C --> I4D["Lưu user document"]
+        I4D --> I4E["Các module khác đọc role hoặc block state mới ở request tiếp theo"]
+    end
 
-```mermaid
-flowchart TD
-    A[Người dùng yêu cầu quên mật khẩu] --> B[Payload tạo reset token]
-    B --> C[Tạo reset URL]
-    C --> D[Enqueue hoặc gửi email reset]
-    D --> E[Người dùng mở reset URL]
-    E --> F[Gửi mật khẩu mới]
-    F --> G[Payload xác minh token và cập nhật mật khẩu]
-    G --> H[Trả kết quả thành công]
-```
-
-## Luồng 4: Admin cập nhật role hoặc block state
-
-```mermaid
-flowchart TD
-    A[Admin mở user trong CMS] --> B[Cập nhật role hoặc isBlocked]
-    B --> C[Payload access kiểm tra quyền]
-    C --> D[Lưu user document]
-    D --> E[Các module khác đọc role/block state mới ở lần request tiếp theo]
-```
+    I1E -.->|"tiếp"| I2A
+    I2I -.->|"tiếp"| I3A
+    I3H -.->|"tiếp"| I4A

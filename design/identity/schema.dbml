@@ -5,6 +5,25 @@
 // - Assumption: field `googleSub` hiện có trong code được xem là compatibility/system field,
 //   không phải auth flow current scope của module này.
 
+Project identity_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Identity module cho PMTL_VN.
+  Cách đọc nhanh:
+  - users là bảng quan trọng nhất.
+  - Payload auth là authority duy nhất.
+  - File này là schema logic để học kiến trúc, không phải dump DB thật của Payload.
+  '''
+}
+
+Enum user_role {
+  super_admin [note: "Super admin"]
+  admin [note: "Quản trị viên"]
+  editor [note: "Biên tập viên"]
+  moderator [note: "Điều phối viên"]
+  member [note: "Thành viên"]
+}
+
 Table media_assets {
   id uuid [pk]
   public_id varchar [unique]
@@ -20,9 +39,17 @@ Table users {
   dharma_name varchar
   avatar_media_id uuid [ref: > media_assets.id]
   bio text
-  role varchar [not null] // super-admin | admin | editor | moderator | member
+  role user_role [not null]
   is_blocked bool [default: false]
   last_login_at timestamp
   created_at timestamp
   updated_at timestamp
+}
+
+TableGroup "Identity Core" [note: "Nhóm lõi cho đăng nhập, role, và hồ sơ cơ bản"] {
+  users
+}
+
+TableGroup "Shared Reference" [note: "Bảng tham chiếu từ module khác"] {
+  media_assets
 }

@@ -1,5 +1,9 @@
 # MODULE_INTERACTIONS
 
+> Ghi chú cho sinh viên:
+> File này trả lời câu hỏi "module nào được phép đụng vào dữ liệu nào".
+> Khi bạn không chắc nên đặt code ở đâu, hãy đọc file này trước.
+
 Tài liệu này mô tả cách các module của PMTL_VN giao tiếp với nhau trong repo hiện tại.
 Mục tiêu là làm rõ:
 - module nào sở hữu dữ liệu

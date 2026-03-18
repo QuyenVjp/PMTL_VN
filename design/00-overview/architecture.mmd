@@ -1,29 +1,29 @@
 graph TD
-    subgraph "Ingress"
-        Caddy["Caddy<br/>reverse proxy / HTTPS"]
+    subgraph "Điều phối truy cập (Ingress)"
+        Caddy["Caddy<br/>proxy đảo / HTTPS"]
     end
 
-    subgraph "Frontend"
+    subgraph "Giao diện (Frontend)"
         Web["apps/web<br/>Next.js App Router"]
     end
 
-    subgraph "CMS Runtime"
-        CMS["apps/cms<br/>Payload admin + API + auth"]
-        Compat["Compatibility routes<br/>public DTO mapping"]
-        Proxy["web proxy boundary<br/>request/session guards"]
+    subgraph "Môi trường CMS (CMS Runtime)"
+        CMS["apps/cms<br/>Payload admin + API + định danh"]
+        Compat["Các luồng tương thích<br/>ánh xạ dữ liệu (DTO) công khai"]
+        Proxy["Ranh giới web proxy<br/>kiểm soát yêu cầu/phiên"]
     end
 
-    subgraph "Async Runtime"
-        Redis["Redis<br/>cache + queue + coordination"]
-        Worker["Worker<br/>search sync / push / email / maintenance"]
+    subgraph "Xử lý bất đồng bộ (Async Runtime)"
+        Redis["Redis<br/>bộ nhớ đệm + hàng đợi + điều phối"]
+        Worker["Worker<br/>đồng bộ tìm kiếm / thông báo / email / bảo trì"]
     end
 
-    subgraph "Data"
-        Postgres["PostgreSQL<br/>source of truth"]
-        Meili["Meilisearch<br/>search index only"]
+    subgraph "Dữ liệu (Data)"
+        Postgres["PostgreSQL<br/>nguồn dữ liệu chuẩn"]
+        Meili["Meilisearch<br/>chỉ dành cho chỉ mục tìm kiếm"]
     end
 
-    subgraph "Optional Monitoring"
+    subgraph "Giám sát (Tùy chọn)"
         PgBouncer["PgBouncer"]
         Prometheus["Prometheus"]
         Grafana["Grafana"]
@@ -37,20 +37,20 @@ graph TD
     Proxy --> Compat
     Compat --> CMS
 
-    CMS -->|read/write canonical data| Postgres
-    CMS -->|cache / enqueue jobs| Redis
-    Worker -->|pull jobs| Redis
-    Worker -->|read/write canonical data when needed| Postgres
-    Worker -->|update search documents| Meili
+    CMS -->|đọc/ghi dữ liệu chuẩn| Postgres
+    CMS -->|đệm / đưa việc vào hàng đợi| Redis
+    Worker -->|lấy việc| Redis
+    Worker -->|đọc/ghi dữ liệu chuẩn khi cần| Postgres
+    Worker -->|cập nhật tài liệu tìm kiếm| Meili
 
-    CMS -->|search queries / status| Meili
-    Web -->|public search via CMS contract| Compat
+    CMS -->|truy vấn tìm kiếm / trạng thái| Meili
+    Web -->|tìm kiếm công khai qua CMS| Compat
 
-    CMS -. optional .-> PgBouncer
+    CMS -. tùy chọn .-> PgBouncer
     PgBouncer -. pool .-> Postgres
 
-    Web -. metrics/logs .-> Prometheus
-    CMS -. metrics/logs .-> Prometheus
-    Worker -. metrics/logs .-> Prometheus
+    Web -. thông số/nhật ký .-> Prometheus
+    CMS -. thông số/nhật ký .-> Prometheus
+    Worker -. thông số/nhật ký .-> Prometheus
     Prometheus --> Grafana
     Prometheus --> Alertmanager

@@ -1,5 +1,9 @@
 # Community Module
 
+> Ghi chú cho sinh viên:
+> Community là nơi chứa bề mặt thảo luận và đóng góp của người dùng.
+> Nhưng report và quyết định xử lý vi phạm lại thuộc moderation module.
+
 ---
 markmap:
   colorFreezeLevel: 2

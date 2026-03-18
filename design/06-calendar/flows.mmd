@@ -1,29 +1,24 @@
-## Luồng 1: Tạo và publish event
-
-```mermaid
 flowchart TD
-    A[Editor tạo event] --> B[Nhập title, date, location, links, media]
-    B --> C[Payload lưu event document]
-    C --> D[System cập nhật eventStatus]
-    D --> E[Public route trả event DTO]
-```
+    subgraph Flow1 ["Luồng 1: Tạo và publish event"]
+        L1A["Editor tạo event"] --> L1B["Nhập title, date, location, links, và media"]
+        L1B --> L1C["Payload lưu event document"]
+        L1C --> L1D["System cập nhật eventStatus"]
+        L1D --> L1E["Public route trả event DTO"]
+    end
 
-## Luồng 2: Tra cứu lunar event
+    subgraph Flow2 ["Luồng 2: Tra cứu lunar event"]
+        L2A["Web hoặc service cần tra ngày âm"] --> L2B["Đọc lunarEvents"]
+        L2B --> L2C["Match recurrenceData theo ngày âm"]
+        L2C --> L2D["Nếu có override thì merge theo priority"]
+        L2D --> L2E["Trả calendar result"]
+    end
 
-```mermaid
-flowchart TD
-    A[Web hoặc service cần tra ngày âm] --> B[Đọc lunarEvents]
-    B --> C[Match recurrenceData theo ngày âm]
-    C --> D[Nếu có override thì merge theo priority]
-    D --> E[Trả calendar result]
-```
+    subgraph Flow3 ["Luồng 3: Cập nhật lunar override"]
+        L3A["Admin tạo override cho lunar event"] --> L3B["Chọn lunarEvent và chantItem"]
+        L3B --> L3C["Nhập mode, target, max, priority, và note"]
+        L3C --> L3D["Lưu lunarEventOverrides"]
+        L3D --> L3E["Practice layer có thể đọc override mới"]
+    end
 
-## Luồng 3: Cập nhật lunar override
-
-```mermaid
-flowchart TD
-    A[Admin tạo override cho lunar event] --> B[Chọn lunarEvent + chantItem]
-    B --> C[Nhập mode, target, max, priority, note]
-    C --> D[Lưu lunarEventOverrides]
-    D --> E[Practice layer có thể đọc override mới]
-```
+    L1E -.->|"tiếp"| L2A
+    L2E -.->|"tiếp"| L3A

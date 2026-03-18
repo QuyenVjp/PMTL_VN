@@ -1,5 +1,8 @@
 # Community Module Decisions
 
+> Ghi chú cho sinh viên:
+> Hãy để ý Decision 5, vì đó là chỗ nhiều người mới rất dễ thiết kế sai boundary.
+
 ## Decision 1. Tách discussion surfaces theo context thay vì gom chung một collection
 
 ### Context

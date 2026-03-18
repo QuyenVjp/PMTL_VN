@@ -1,5 +1,8 @@
 # Engagement Module Decisions
 
+> Ghi chú cho sinh viên:
+> Nếu bạn đang phân vân "bookmark nên để ở content hay engagement", file này chính là câu trả lời.
+
 ## Decision 1. Engagement chỉ sở hữu self-owned user state
 
 ### Context

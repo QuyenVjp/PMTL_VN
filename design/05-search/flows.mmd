@@ -1,33 +1,28 @@
-## Luồng 1: Publish content và enqueue search sync
-
-```mermaid
 flowchart TD
-    A[Content document được publish hoặc update] --> B[Owner service chuẩn hóa search fields]
-    B --> C[Enqueue search-sync job]
-    C --> D[Worker nhận job]
-    D --> E[Build search document]
-    E --> F[Upsert vào Meilisearch posts index]
-```
+    subgraph Flow1 ["Luồng 1: Publish content và enqueue search sync"]
+        S1A["Content document được publish hoặc update"] --> S1B["Owner service chuẩn hóa search fields"]
+        S1B --> S1C["Enqueue search-sync job"]
+        S1C --> S1D["Worker nhận job"]
+        S1D --> S1E["Build search document"]
+        S1E --> S1F["Upsert vào Meilisearch posts index"]
+    end
 
-## Luồng 2: Public search query
+    subgraph Flow2 ["Luồng 2: Public search query"]
+        S2A["Web gọi posts search endpoint"] --> S2B["CMS parse query và limit"]
+        S2B --> S2C{"Meilisearch available?"}
+        S2C -->|"Có"| S2D["Search index posts"]
+        S2C -->|"Không"| S2E["Fallback query qua Payload"]
+        S2D --> S2F["Map result sang public DTO"]
+        S2E --> S2F
+        S2F --> S2G["Trả engine marker cùng kết quả"]
+    end
 
-```mermaid
-flowchart TD
-    A[Web gọi /api/posts/search] --> B[CMS parse query và limit]
-    B --> C{Meilisearch available?}
-    C -->|Có| D[Search index posts]
-    C -->|Không| E[Fallback query qua Payload]
-    D --> F[Map result sang public DTO]
-    E --> F
-    F --> G[Trả engine = meilisearch hoặc payload-fallback]
-```
+    subgraph Flow3 ["Luồng 3: Manual reindex batch"]
+        S3A["Editor gọi reindex endpoint"] --> S3B["CMS đọc batch posts"]
+        S3B --> S3C["Enqueue nhiều search-sync jobs"]
+        S3C --> S3D["Worker xử lý queue"]
+        S3D --> S3E["Status endpoint phản ánh queue counts và index health"]
+    end
 
-## Luồng 3: Manual reindex batch
-
-```mermaid
-flowchart TD
-    A[Editor gọi /api/posts/search/reindex] --> B[CMS đọc batch posts]
-    B --> C[Enqueue nhiều search-sync jobs]
-    C --> D[Worker xử lý queue]
-    D --> E[Status endpoint phản ánh queue counts và index health]
-```
+    S1F -.->|"tiếp"| S2A
+    S2G -.->|"tiếp"| S3A

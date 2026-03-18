@@ -1,5 +1,8 @@
 # Identity Module
 
+> Ghi chú cho sinh viên:
+> File này giúp chốt một chuyện rất quan trọng: auth nằm ở Payload, không nằm rải ở web hay service khác.
+
 ---
 markmap:
   colorFreezeLevel: 2

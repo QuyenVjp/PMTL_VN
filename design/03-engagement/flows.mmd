@@ -1,38 +1,31 @@
-## Luồng 1: Lưu sutra bookmark
-
-```mermaid
 flowchart TD
-    A[Member đang đọc sutra] --> B[Chọn chapter hoặc paragraph]
-    B --> C[Nhấn bookmark]
-    C --> D[Lưu hoặc cập nhật sutraBookmarks]
-    D --> E[Bookmark gắn user, sutra, location, excerpt, note]
-```
+    subgraph Flow1 ["Luồng 1: Lưu sutra bookmark"]
+        E1A["Member đang đọc sutra"] --> E1B["Chọn chapter hoặc paragraph"]
+        E1B --> E1C["Nhấn bookmark"]
+        E1C --> E1D["Lưu hoặc cập nhật sutraBookmarks"]
+        E1D --> E1E["Bookmark gắn user, sutra, location, excerpt, và note"]
+    end
 
-## Luồng 2: Cập nhật reading progress
+    subgraph Flow2 ["Luồng 2: Cập nhật reading progress"]
+        E2A["Member đọc sutra chapter"] --> E2B["Web gửi vị trí đọc"]
+        E2B --> E2C["CMS upsert sutraReadingProgress"]
+        E2C --> E2D["Lưu chapter, paragraph, scrollPercent, và lastReadAt"]
+        E2D --> E2E["Progress được dùng cho lần đọc tiếp theo"]
+    end
 
-```mermaid
-flowchart TD
-    A[Member đọc sutra chapter] --> B[Web gửi vị trí đọc]
-    B --> C[CMS upsert sutraReadingProgress]
-    C --> D[Lưu chapter, paragraph, scrollPercent, lastReadAt]
-    D --> E[Progress được dùng cho lần đọc tiếp theo]
-```
+    subgraph Flow3 ["Luồng 3: Lưu chant preference"]
+        E3A["Member chọn chant plan"] --> E3B["Bật optional items"]
+        E3B --> E3C["Chỉnh target và intention"]
+        E3C --> E3D["Lưu chantPreferences theo user và plan"]
+    end
 
-## Luồng 3: Lưu chant preference
+    subgraph Flow4 ["Luồng 4: Ghi practice log"]
+        E4A["Member bắt đầu buổi công phu"] --> E4B["Tạo hoặc mở practice log của ngày"]
+        E4B --> E4C["Cập nhật itemStates trong phiên"]
+        E4C --> E4D["Lưu startedAt, completedAt, notes, và isCompleted"]
+        E4D --> E4E["User xem lại lịch sử cá nhân"]
+    end
 
-```mermaid
-flowchart TD
-    A[Member chọn chant plan] --> B[Bật optional items]
-    B --> C[Chỉnh target và intention]
-    C --> D[Lưu chantPreferences theo user + plan]
-```
-
-## Luồng 4: Ghi practice log
-
-```mermaid
-flowchart TD
-    A[Member bắt đầu buổi công phu] --> B[Tạo hoặc mở practice log của ngày]
-    B --> C[Cập nhật itemStates trong phiên]
-    C --> D[Lưu startedAt, completedAt, notes, isCompleted]
-    D --> E[User xem lại lịch sử cá nhân]
-```
+    E1E -.->|"tiếp"| E2A
+    E2E -.->|"tiếp"| E3A
+    E3D -.->|"tiếp"| E4A

@@ -1,5 +1,9 @@
 # Content Module
 
+> Ghi chú cho sinh viên:
+> Hãy nhớ thật kỹ: content ở repo này chỉ giữ nội dung biên tập và thư viện kinh.
+> Bookmark, progress, practice log không thuộc content nữa.
+
 ---
 markmap:
   colorFreezeLevel: 2

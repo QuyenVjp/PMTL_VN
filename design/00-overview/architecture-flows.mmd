@@ -1,95 +1,80 @@
-## Flow 1: Public content read
-
-```mermaid
 flowchart TD
-    A["User loads public page"] --> B["apps/web calls CMS compatibility route"]
-    B --> C{"Published public content?"}
-    C -->|No| D["404 hoặc 403 theo contract"]
-    C -->|Yes| E["CMS đọc Postgres"]
-    E --> F{"Có shared cache hợp lệ?"}
-    F -->|Có| G["Trả cached read model"]
-    F -->|Không| H["Build response từ canonical document"]
-    H --> I["Có thể ghi Redis cache cho published read"]
-    I --> J["Web render page"]
-```
+    subgraph Flow1 ["Luồng 1: Đọc nội dung công khai"]
+        F1A["Người dùng tải trang công khai"] --> F1B["apps/web gọi luồng tương thích của CMS"]
+        F1B --> F1C{"Nội dung đã xuất bản?"}
+        F1C -->|"Không"| F1D["Trả về 404 hoặc 403 theo giao ước"]
+        F1C -->|"Có"| F1E["CMS đọc Postgres"]
+        F1E --> F1F{"Bộ nhớ đệm dùng chung khả dụng?"}
+        F1F -->|"Có"| F1G["Trả về mẫu dữ liệu đã đệm"]
+        F1F -->|"Không"| F1H["Xây dựng phản hồi từ tài liệu chuẩn"]
+        F1H --> F1I["Lưu đệm Redis (tùy chọn) cho lần đọc sau"]
+        F1I --> F1J["Web hiển thị trang"]
+    end
 
-## Flow 2: Editorial publish -> revalidation -> search sync
+    subgraph Flow2 ["Luồng 2: Biên tập xuất bản, làm mới dữ liệu và đồng bộ tìm kiếm"]
+        F2A["Biên tập viên xuất bản tài liệu trong CMS"] --> F2B["Payload ghi tài liệu chuẩn vào Postgres"]
+        F2B --> F2C["Cập nhật publishedAt và các trường tìm kiếm"]
+        F2C --> F2D["Đưa việc đồng bộ tìm kiếm vào hàng đợi"]
+        F2C --> F2E["Kích hoạt làm mới web hoặc thu hồi bộ nhớ đệm"]
+        F2D --> F2F["Worker cập nhật tài liệu vào Meilisearch"]
+        F2E --> F2G["Luồng đọc công khai thấy nội dung mới"]
+    end
 
-```mermaid
-flowchart TD
-    A["Editor publish document trong CMS"] --> B["Payload lưu canonical document vào Postgres"]
-    B --> C["Cập nhật publishedAt và search source fields"]
-    C --> D["Enqueue search-sync job"]
-    C --> E["Trigger revalidation/invalidation cho web"]
-    D --> F["Worker upsert document vào Meilisearch"]
-    E --> G["Public read path thấy nội dung mới"]
-```
+    subgraph Flow3 ["Luồng 3: Cộng đồng gửi nội dung và cảnh báo kiểm duyệt"]
+        F3A["Người dùng gửi bài viết, bình luận hoặc mục lưu bút"] --> F3B["CMS kiểm tra và lưu trữ thực thể chuẩn"]
+        F3B --> F3C["Thực thể bắt đầu ở trạng thái chờ kiểm duyệt"]
+        F3C --> F3D["Ghi nhật ký kiểm toán (audit log) nếu cần"]
+        F3D --> F3E["Tạo việc gửi thông báo/email cho kiểm duyệt viên và admin"]
+    end
 
-## Flow 3: Community submit -> moderation alert
+    subgraph Flow4 ["Luồng 4: Báo cáo vi phạm đến quyết định và đồng bộ tóm tắt"]
+        F4A["Người dùng báo cáo thực thể"] --> F4B["Tạo bản ghi báo cáo vi phạm"]
+        F4B --> F4C["Đồng bộ số lượt báo cáo và lý do cuối cùng vào mục tiêu"]
+        F4C --> F4D["Kiểm duyệt viên xem xét báo cáo"]
+        F4D --> F4E{"Quyết định"}
+        F4E -->|"phê duyệt / gắn cờ / ẩn / từ chối"| F4F["Cập nhật trạng thái báo cáo vi phạm"]
+        F4F --> F4G["Áp dụng tóm tắt kiểm duyệt vào thực thể mục tiêu"]
+        F4G --> F4H["Tạo thông báo bất đồng bộ nếu cần"]
+    end
 
-```mermaid
-flowchart TD
-    A["User submit post/comment/guestbook"] --> B["CMS validate và lưu canonical entity"]
-    B --> C["Entity bắt đầu ở pending moderation state"]
-    C --> D["Append audit log nếu flow yêu cầu"]
-    D --> E["Tạo push/email job cho moderator/admin"]
-```
+    subgraph Flow5 ["Luồng 5: Đăng nhập bằng Payload auth"]
+        F5A["Người dùng gửi thông tin đăng nhập"] --> F5B["Payload auth xác thực thông tin"]
+        F5B --> F5C{"Hợp lệ?"}
+        F5C -->|"Không"| F5D["Trả về 401"]
+        F5C -->|"Có"| F5E["Tạo phiên hoặc cookie qua Payload auth"]
+        F5E --> F5F["Cập nhật lastLoginAt nếu cần"]
+        F5F --> F5G["Web sử dụng giao ước phiên cho các yêu cầu kế tiếp"]
+    end
 
-## Flow 4: Moderation report -> decision -> summary sync
+    subgraph Flow6 ["Luồng 6: Truy vấn tìm kiếm có phương án dự phòng"]
+        F6A["Web gọi điểm cuối tìm kiếm bài viết"] --> F6B["CMS phân tích truy vấn và giới hạn"]
+        F6B --> F6C{"Meilisearch khả dụng?"}
+        F6C -->|"Có"| F6D["Tìm kiếm trên chỉ mục Meilisearch"]
+        F6C -->|"Không"| F6E["Tìm kiếm dự phòng qua Payload"]
+        F6D --> F6F["Ánh xạ kết quả sang DTO công khai"]
+        F6E --> F6F
+        F6F --> F6G["Trả về kết quả kèm đánh dấu engine"]
+    end
 
-```mermaid
-flowchart TD
-    A["User report entity"] --> B["Tạo moderationReports record"]
-    B --> C["Sync reportCount / lastReportReason lên target"]
-    C --> D["Moderator xem report"]
-    D --> E{"Decision"}
-    E -->|approved / flagged / hidden / rejected| F["Cập nhật status report"]
-    F --> G["Áp dụng summary field lên target entity"]
-    G --> H["Tạo notification bất đồng bộ nếu cần"]
-```
+    subgraph Flow7 ["Luồng 7: Điều phối thông báo đẩy"]
+        F7A["Dịch vụ tạo bản ghi việc gửi thông báo"] --> F7B["Worker xử lý hàng đợi điều phối thông báo"]
+        F7B --> F7C["Tìm các đăng ký đang hoạt động phù hợp"]
+        F7C --> F7D["Gửi theo từng đợt (chunk)"]
+        F7D --> F7E["Cập nhật số lượng gửi, thất bại và tóm tắt lỗi"]
+        F7E --> F7F["Đánh dấu hoàn tất hoặc thất bại"]
+    end
 
-## Flow 5: Login với Payload auth
+    subgraph Flow8 ["Luồng 8: Vòng lặp giám sát"]
+        F8A["Web, CMS và Worker phát nhật ký và thông số"] --> F8B["Prometheus thu thập dữ liệu"]
+        F8B --> F8C["Grafana hiển thị bảng điều khiển"]
+        F8B --> F8D["Alertmanager đánh giá ngưỡng cảnh báo"]
+        F8D --> F8E["Kênh cảnh báo nhận thông báo"]
+    end
 
-```mermaid
-flowchart TD
-    A["User POST /api/auth/login"] --> B["Payload auth kiểm tra credentials"]
-    B --> C{"Hợp lệ?"}
-    C -->|Không| D["401 Unauthorized"]
-    C -->|Có| E["Tạo session/cookie theo Payload auth"]
-    E --> F["Cập nhật lastLoginAt nếu flow yêu cầu"]
-    F --> G["Web dùng session contract cho request tiếp theo"]
-```
-
-## Flow 6: Search request với fallback
-
-```mermaid
-flowchart TD
-    A["Web gọi /api/posts/search"] --> B["CMS parse query"]
-    B --> C{"Meilisearch available?"}
-    C -->|Có| D["Search Meilisearch index"]
-    C -->|Không| E["Fallback query qua Payload"]
-    D --> F["Map result sang public DTO"]
-    E --> F
-    F --> G["Trả engine = meilisearch hoặc payload-fallback"]
-```
-
-## Flow 7: Push notification dispatch
-
-```mermaid
-flowchart TD
-    A["Service tạo pushJobs record"] --> B["Worker đọc push-dispatch queue"]
-    B --> C["Resolve active subscriptions phù hợp"]
-    C --> D["Dispatch theo chunk"]
-    D --> E["Cập nhật sentCount / failedCount / errorSummary"]
-    E --> F["Đánh dấu completed hoặc failed"]
-```
-
-## Flow 8: Monitoring loop
-
-```mermaid
-flowchart TD
-    A["web / cms / worker emit logs và metrics"] --> B["Prometheus scrape hoặc collect"]
-    B --> C["Grafana hiển thị dashboard"]
-    B --> D["Alertmanager đánh giá ngưỡng cảnh báo"]
-    D --> E["Gửi alert qua channel đã cấu hình"]
-```
+    F1J -.->|"tiếp"| F2A
+    F2G -.->|"tiếp"| F3A
+    F3E -.->|"tiếp"| F4A
+    F4H -.->|"tiếp"| F5A
+    F5G -.->|"tiếp"| F6A
+    F6G -.->|"tiếp"| F7A
+    F7F -.->|"tiếp"| F8A

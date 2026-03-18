@@ -1,58 +1,51 @@
-## Luồng 1: Biên tập và xuất bản bài viết
-
-```mermaid
 flowchart TD
-    A[Editor tạo hoặc mở bài viết trong posts] --> B[Nhập title, content, taxonomy, media]
-    B --> C[Hệ thống chuẩn hóa slug, excerpt, plain text, normalized search text]
-    C --> D{Payload _status}
-    D -->|draft| E[Lưu bản nháp]
-    D -->|published| F[Thiết lập publishedAt nếu chưa có]
-    E --> G[Editor tiếp tục chỉnh sửa]
-    G --> D
-    F --> H[Public route có thể đọc document]
-    F --> I[Enqueue search sync]
-    F --> J[Trigger revalidation/invalidation]
-```
+    subgraph Flow1 ["Luồng 1: Biên tập và xuất bản bài viết"]
+        C1A["Editor tạo hoặc mở bài viết trong posts"] --> C1B["Nhập title, content, taxonomy, media"]
+        C1B --> C1C["Chuẩn hóa slug, excerpt, plain text, normalized search text"]
+        C1C --> C1D{"Payload _status"}
+        C1D -->|"draft"| C1E["Lưu bản nháp"]
+        C1D -->|"published"| C1F["Thiết lập publishedAt nếu chưa có"]
+        C1E --> C1G["Editor tiếp tục chỉnh sửa"]
+        C1G --> C1D
+        C1F --> C1H["Public route có thể đọc document"]
+        C1F --> C1I["Enqueue search sync"]
+        C1F --> C1J["Trigger revalidation or invalidation"]
+    end
 
-## Luồng 2: Cập nhật nội dung đã publish
+    subgraph Flow2 ["Luồng 2: Cập nhật nội dung đã publish"]
+        C2A["Editor sửa nội dung published"] --> C2B["Lưu thay đổi"]
+        C2B --> C2C["Cập nhật excerpt, search fields, và derived data"]
+        C2C --> C2D{"Document còn published?"}
+        C2D -->|"Có"| C2E["Enqueue search sync update"]
+        C2D -->|"Không"| C2F["Search document bị gỡ hoặc không còn public"]
+        C2E --> C2G["Invalidate public cache liên quan"]
+        C2F --> C2G
+    end
 
-```mermaid
-flowchart TD
-    A[Editor sửa nội dung published] --> B[Lưu thay đổi]
-    B --> C[Cập nhật excerpt/search fields/counters liên quan]
-    C --> D{Document còn published?}
-    D -->|Có| E[Enqueue search sync update]
-    D -->|Không| F[Search document bị gỡ hoặc không còn public]
-    E --> G[Invalidate public cache liên quan]
-    F --> G
-```
+    subgraph Flow3 ["Luồng 3: Xây và cập nhật thư viện kinh"]
+        C3A["Tạo sutra root"] --> C3B["Tạo volumes"]
+        C3B --> C3C["Tạo chapters"]
+        C3C --> C3D["Tạo glossary entries"]
+        C3D --> C3E["Liên kết cover image, tags, và metadata"]
+        C3E --> C3F{"Sutra published?"}
+        C3F -->|"Chưa"| C3G["Tiếp tục biên tập"]
+        C3F -->|"Rồi"| C3H["Public tree đọc kinh khả dụng"]
+    end
 
-## Luồng 3: Xây và cập nhật thư viện kinh
+    subgraph Flow4 ["Luồng 4: Public đọc nội dung và tìm kiếm"]
+        C4A["Web gọi compatibility route"] --> C4B{"Loại nội dung"}
+        C4B -->|"Post or Hub or Guide or Download"| C4C["CMS map document sang public DTO"]
+        C4B -->|"Sutra tree"| C4D["CMS trả root hoặc chapter DTO"]
+        C4C --> C4E["Web render"]
+        C4D --> C4E
+        C4E --> C4F{"Người dùng tìm kiếm post?"}
+        C4F -->|"Có"| C4G["Search module query Meilisearch"]
+        C4G --> C4H{"Meilisearch khả dụng?"}
+        C4H -->|"Có"| C4I["Trả kết quả từ index"]
+        C4H -->|"Không"| C4J["Fallback query qua Payload"]
+        C4F -->|"Không"| C4K["Kết thúc"]
+    end
 
-```mermaid
-flowchart TD
-    A[Tạo sutra root] --> B[Tạo volumes]
-    B --> C[Tạo chapters]
-    C --> D[Tạo glossary entries]
-    D --> E[Liên kết cover image, tags, metadata]
-    E --> F{Sutra published?}
-    F -->|Chưa| G[Tiếp tục biên tập]
-    F -->|Rồi| H[Public tree đọc kinh khả dụng]
-```
-
-## Luồng 4: Public đọc nội dung và tìm kiếm
-
-```mermaid
-flowchart TD
-    A[Web gọi compatibility route] --> B{Loại nội dung}
-    B -->|Post/Hub/Guide/Download| C[CMS map document sang public DTO]
-    B -->|Sutra tree| D[CMS trả root hoặc chapter DTO]
-    C --> E[Web render]
-    D --> E
-    E --> F{Người dùng tìm kiếm post?}
-    F -->|Có| G[Search module query Meilisearch]
-    G --> H{Meilisearch khả dụng?}
-    H -->|Có| I[Trả kết quả từ index]
-    H -->|Không| J[Fallback query qua Payload]
-    F -->|Không| K[Kết thúc]
-```
+    C1J -.->|"tiếp"| C2A
+    C2G -.->|"tiếp"| C3A
+    C3H -.->|"tiếp"| C4A

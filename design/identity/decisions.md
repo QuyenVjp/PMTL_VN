@@ -1,5 +1,8 @@
 # Identity Module Decisions
 
+> Ghi chú cho sinh viên:
+> Nếu bạn chỉ muốn hiểu nhanh auth của repo, hãy đọc Decision 1 và Decision 3 trước.
+
 ## Decision 1. Payload auth là auth authority duy nhất
 
 ### Context

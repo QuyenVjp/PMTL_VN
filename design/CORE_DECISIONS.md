@@ -1,5 +1,9 @@
 # CORE_DECISIONS
 
+> Ghi chú cho sinh viên:
+> Nếu bạn ít thời gian, hãy đọc riêng phần `Decision` của cả 10 mục trước.
+> Sau đó mới quay lại `Rationale` và `Trade-off`.
+
 Tài liệu này chốt các quyết định cắt ngang quan trọng nhất của PMTL_VN.
 Mỗi quyết định ở đây phải được ưu tiên hơn các giả định cũ trong design nếu hai bên mâu thuẫn.
 
