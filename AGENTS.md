@@ -28,6 +28,7 @@ Implementation expectations:
 - All error handling must include structured logging (use pino)
 - All user input must be validated with Zod schemas
 - All API responses must use TypeScript strict mode
+- **Vietnamese Language Standard:** NEVER generate or use Vietnamese without marks (tiếng Việt không dấu) in UI, API messages, or data. All Vietnamese text must include proper marks/accents.
 
 Production readiness docs:
 - Read `AUDIT_VERIFIED_2026.md` first for the verified production-readiness baseline and corrected findings

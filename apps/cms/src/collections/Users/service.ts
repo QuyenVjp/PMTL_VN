@@ -125,7 +125,7 @@ function normalizeAvatarInput(value?: string | number | null): number | null | u
     return parsed;
   }
 
-  throw new UserAuthError("AUTH_UNKNOWN", "Avatar id khong hop le.", 400);
+  throw new UserAuthError("AUTH_UNKNOWN", "ID ảnh đại diện không hợp lệ.", 400);
 }
 
 export function normalizeUserProfileInput<
@@ -211,11 +211,11 @@ async function resolveRegistrationRole(payload: Payload): Promise<UserRole> {
 
 function assertUserCanAuthenticate(user: RawUser | null | undefined): asserts user is RawUser {
   if (!user) {
-    throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
+    throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoặc mật khẩu không đúng.", 401);
   }
 
   if (user.isBlocked) {
-    throw new UserAuthError("AUTH_USER_INACTIVE", "Tai khoan hien khong the dang nhap.", 403);
+    throw new UserAuthError("AUTH_USER_INACTIVE", "Tài khoản hiện không thể đăng nhập.", 403);
   }
 }
 
@@ -347,7 +347,7 @@ export async function findOrCreateGoogleUser(
   input: GoogleIdentityInput,
 ): Promise<RawUser> {
   if (!input.emailVerified) {
-    throw new UserAuthError("AUTH_GOOGLE_EMAIL_UNVERIFIED", "Tai khoan Google chua xac minh email.", 401);
+    throw new UserAuthError("AUTH_GOOGLE_EMAIL_UNVERIFIED", "Tài khoản Google chưa xác minh email.", 401);
   }
 
   const normalizedEmail = input.email.toLowerCase();
@@ -368,7 +368,7 @@ export async function findOrCreateGoogleUser(
     if (byEmail.googleSub && byEmail.googleSub !== input.sub) {
       throw new UserAuthError(
         "AUTH_GOOGLE_ACCOUNT_CONFLICT",
-        "Email nay da lien ket voi mot tai khoan Google khac.",
+        "Email này đã liên kết với một tài khoản Google khác.",
         409,
       );
     }
@@ -422,7 +422,7 @@ export async function registerUser(payload: Payload, input: RegisterInput): Prom
   const existingUser = await findUserByEmail(payload, parsedInput.email);
 
   if (existingUser) {
-    throw new UserAuthError("AUTH_EMAIL_IN_USE", "Email nay da duoc su dung.", 409);
+    throw new UserAuthError("AUTH_EMAIL_IN_USE", "Email này đã được sử dụng.", 409);
   }
 
   const role = await resolveRegistrationRole(payload);
@@ -442,7 +442,7 @@ export async function registerUser(payload: Payload, input: RegisterInput): Prom
   });
 
   if (!loginResult.token) {
-    throw new UserAuthError("AUTH_UNKNOWN", "Khong tao duoc session sau khi dang ky.", 500);
+    throw new UserAuthError("AUTH_UNKNOWN", "Không tạo được phiên làm việc sau khi đăng ký.", 500);
   }
 
   await updateLastLoginAt(payload, (loginResult.user as RawUser | undefined)?.id ?? createdUser.id);
@@ -472,14 +472,14 @@ export async function loginUser(payload: Payload, input: LoginInput): Promise<Au
     });
   } catch (error) {
     if (isInvalidCredentialError(error)) {
-      throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
+      throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoặc mật khẩu không đúng.", 401);
     }
 
     throw error;
   }
 
   if (!loginResult.token || !loginResult.user) {
-    throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoac mat khau khong dung.", 401);
+    throw new UserAuthError("AUTH_INVALID_CREDENTIALS", "Email hoặc mật khẩu không đúng.", 401);
   }
 
   await updateLastLoginAt(payload, (loginResult.user as RawUser).id);
@@ -529,7 +529,7 @@ export async function requestPasswordReset(
   });
 
   return {
-    message: "Neu email ton tai, huong dan dat lai mat khau da duoc gui.",
+    message: "Nếu email tồn tại, hướng dẫn đặt lại mật khẩu đã được gửi.",
     ...(resetToken ? { resetToken } : {}),
   };
 }
@@ -551,7 +551,7 @@ export async function resetUserPassword(
   if (!resetResult.token || !resetResult.user) {
     throw new UserAuthError(
       "AUTH_RESET_TOKEN_INVALID",
-      "Token dat lai mat khau khong hop le hoac da het han.",
+      "Token đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.",
       400,
     );
   }

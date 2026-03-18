@@ -35,7 +35,7 @@ export function ForgotPasswordForm() {
       if (error instanceof WebAuthError) {
         setError(error.message);
       } else {
-        setError("Khong the gui yeu cau dat lai mat khau.");
+        setError("Không thể gửi yêu cầu đặt lại mật khẩu.");
       }
     }
   });
@@ -46,7 +46,7 @@ export function ForgotPasswordForm() {
 
   return (
     <form className="panel section-stack" onSubmit={handleSubmit} style={{ padding: 24 }}>
-      <h1 style={{ margin: 0 }}>Quen mat khau</h1>
+      <h1 style={{ margin: 0 }}>Quên mật khẩu</h1>
       <input
         {...form.register("email")}
         className="field"
@@ -65,7 +65,7 @@ export function ForgotPasswordForm() {
         </div>
       ) : null}
       <button className="button button-primary" disabled={form.formState.isSubmitting} type="submit">
-        {form.formState.isSubmitting ? "Dang gui..." : "Gui huong dan"}
+        {form.formState.isSubmitting ? "Đang gửi..." : "Gửi hướng dẫn"}
       </button>
     </form>
   );

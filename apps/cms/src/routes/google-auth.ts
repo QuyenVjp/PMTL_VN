@@ -54,7 +54,7 @@ function getGoogleClientConfig() {
   if (!clientId || !clientSecret) {
     throw new UserAuthError(
       "AUTH_GOOGLE_NOT_CONFIGURED",
-      "Dang nhap Google chua duoc cau hinh tren CMS.",
+      "Đăng nhập Google chưa được cấu hình trên CMS.",
       503,
     );
   }
@@ -135,7 +135,7 @@ function parseOAuthState(stateToken: string): OAuthStatePayload {
   );
 
   if (Date.now() - payload.requestedAt > GOOGLE_OAUTH_STATE_TTL_MS) {
-    throw new UserAuthError("AUTH_GOOGLE_STATE_EXPIRED", "OAuth state da het han.", 400);
+    throw new UserAuthError("AUTH_GOOGLE_STATE_EXPIRED", "OAuth state đã hết hạn.", 400);
   }
 
   return {
@@ -177,7 +177,7 @@ async function exchangeGoogleCode(code: string) {
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
     logger.warn({ status: response.status, payload }, "Google token exchange failed");
-    throw new UserAuthError("AUTH_GOOGLE_EXCHANGE_FAILED", "Khong doi duoc token Google.", 401);
+    throw new UserAuthError("AUTH_GOOGLE_EXCHANGE_FAILED", "Không đổi được token Google.", 401);
   }
 
   return googleTokenResponseSchema.parse(payload);
@@ -194,7 +194,7 @@ async function fetchGoogleProfile(accessToken: string) {
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
     logger.warn({ status: response.status, payload }, "Google userinfo request failed");
-    throw new UserAuthError("AUTH_GOOGLE_PROFILE_FAILED", "Khong lay duoc thong tin tu Google.", 401);
+    throw new UserAuthError("AUTH_GOOGLE_PROFILE_FAILED", "Không lấy được thông tin từ Google.", 401);
   }
 
   return googleProfileSchema.parse(payload);
@@ -239,7 +239,7 @@ export async function startGoogleAuth(request: Request): Promise<Response> {
     const authError =
       error instanceof UserAuthError
         ? error
-        : new UserAuthError("AUTH_GOOGLE_NOT_CONFIGURED", "Dang nhap Google chua san sang.", 500);
+        : new UserAuthError("AUTH_GOOGLE_NOT_CONFIGURED", "Đăng nhập Google chưa sẵn sàng.", 500);
 
     return jsonResponse(authError.statusCode, {
       error: {
@@ -261,13 +261,13 @@ export async function finishGoogleAuth(request: Request): Promise<Response> {
 
     if (query.error) {
       return Response.redirect(
-        buildErrorRedirect(query.error, query.error_description ?? "Dang nhap Google that bai.").toString(),
+        buildErrorRedirect(query.error, query.error_description ?? "Đăng nhập Google thất bại.").toString(),
         302,
       );
     }
 
     if (!query.code || !query.state) {
-      throw new UserAuthError("AUTH_GOOGLE_CALLBACK_INVALID", "Google callback bi thieu du lieu.", 400);
+      throw new UserAuthError("AUTH_GOOGLE_CALLBACK_INVALID", "Google callback bị thiếu dữ liệu.", 400);
     }
 
     const state = parseOAuthState(query.state);
@@ -279,7 +279,7 @@ export async function finishGoogleAuth(request: Request): Promise<Response> {
       ?.split("=")[1];
 
     if (!nonceCookie || nonceCookie !== state.nonce) {
-      throw new UserAuthError("AUTH_GOOGLE_STATE_INVALID", "OAuth state khong hop le.", 400);
+      throw new UserAuthError("AUTH_GOOGLE_STATE_INVALID", "OAuth state không hợp lệ.", 400);
     }
 
     const tokenPayload = await exchangeGoogleCode(query.code);
@@ -327,7 +327,7 @@ export async function finishGoogleAuth(request: Request): Promise<Response> {
     const authError =
       error instanceof UserAuthError
         ? error
-        : new UserAuthError("AUTH_GOOGLE_CALLBACK_FAILED", "Dang nhap Google that bai.", 500);
+        : new UserAuthError("AUTH_GOOGLE_CALLBACK_FAILED", "Đăng nhập Google thất bại.", 500);
 
     const response = Response.redirect(
       buildErrorRedirect(authError.code, authError.message, siteFallbackRedirect).toString(),

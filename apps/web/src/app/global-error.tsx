@@ -38,9 +38,9 @@ export default function GlobalError({
         }}
       >
         <main style={{ maxWidth: "640px", textAlign: "center" }}>
-          <h1 style={{ marginBottom: "12px" }}>He thong tam thoi gap loi</h1>
+          <h1 style={{ marginBottom: "12px" }}>Hệ thống tạm thời gặp lỗi</h1>
           <p style={{ margin: 0, opacity: 0.8 }}>
-            Loi da duoc ghi nhan de theo doi production. Vui long thu tai lai trang sau it phut.
+            Lỗi đã được ghi nhận để theo dõi production. Vui lòng thử tải lại trang sau ít phút.
           </p>
         </main>
       </body>

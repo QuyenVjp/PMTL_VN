@@ -14,7 +14,7 @@ export async function GET() {
       {
         error: {
           code: "AUTH_UNAUTHENTICATED",
-          message: "Ban chua dang nhap.",
+          message: "Bạn chưa đăng nhập.",
         },
       },
       { status: 401 },
@@ -34,7 +34,7 @@ export async function GET() {
       {
         error: {
           code: "AUTH_UNAUTHENTICATED",
-          message: "Session khong con hop le.",
+          message: "Session không còn hợp lệ.",
         },
       },
       { status: 401 },

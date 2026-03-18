@@ -74,7 +74,7 @@ export function LoginForm({ redirectTo = "/profile", className }: LoginFormProps
       if (error instanceof WebAuthError) {
         setError(error.message);
       } else {
-        setError("Khong the dang nhap luc nay.");
+        setError("Không thể đăng nhập lúc này.");
       }
     }
   });

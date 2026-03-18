@@ -11,6 +11,7 @@ Apply this skill to ensure code feels written by a meticulous Senior Frontend En
 - **No Over-commenting:** Do not describe *what* the code does (e.g., `// Initialize state`). Only comment on *why* a complex decision was made.
 - **No Over-nesting:** Use early returns to keep logic flat.
 - **Meaningful Naming:** Avoid generic names like `data`, `item`, `val`. Use specific domain terms (e.g., `sacredText`, `monkProfile`).
+- **No Vietnamese Without Marks:** NEVER generate Vietnamese text without proper marks (không dấu) in components, labels, or error messages. All content must use full, grammatically correct Vietnamese characters.
 - **No "Placeholder" Patterns:** Never leave `TODO` or `// Implement logic here`. Deliver full, working implementations.
 
 ## 2. Next.js & React Discipline

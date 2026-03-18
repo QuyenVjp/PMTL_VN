@@ -51,7 +51,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
       if (error instanceof WebAuthError) {
         setError(error.message);
       } else {
-        setError("Khong the tao tai khoan luc nay.");
+        setError("Không thể tạo tài khoản lúc này.");
       }
     }
   });

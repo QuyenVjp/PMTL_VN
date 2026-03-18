@@ -35,20 +35,20 @@ export function buildPasswordResetEmail(resetUrl: string) {
   const safeUrl = escapeHtml(resetUrl);
 
   return buildEmailShell({
-    eyebrow: "Bao mat tai khoan",
-    title: "Dat lai mat khau PMTL_VN",
+    eyebrow: "Bảo mật tài khoản",
+    title: "Đặt lại mật khẩu PMTL_VN",
     bodyHtml: `
-      <p>Anh chi can bam vao nut ben duoi de tao mat khau moi.</p>
+      <p>Anh/Chị chỉ cần bấm vào nút bên dưới để tạo mật khẩu mới.</p>
       <p style="margin:24px 0;">
         <a href="${safeUrl}" style="display:inline-block;padding:12px 18px;border-radius:10px;background:#0f766e;color:#ffffff;text-decoration:none;font-weight:700;">
-          Dat lai mat khau
+          Đặt lại mật khẩu
         </a>
       </p>
-      <p>Neu nut khong mo duoc, hay copy link nay:</p>
+      <p>Nếu nút không mở được, hãy copy link này:</p>
       <p><a href="${safeUrl}" style="color:#0f766e;">${safeUrl}</a></p>
-      <p>Neu anh khong yeu cau dat lai mat khau, chi can bo qua email nay.</p>
+      <p>Nếu anh/chị không yêu cầu đặt lại mật khẩu, chỉ cần bỏ qua email này.</p>
     `,
-    footer: "Email tu dong tu PMTL_VN. Vui long khong tra loi truc tiep vao hop thu nay.",
+    footer: "Email tự động từ PMTL_VN. Vui lòng không trả lời trực tiếp vào hộp thư này.",
   });
 }
 
@@ -56,7 +56,7 @@ export function buildModerationEmail(input: { subject: string; message: string; 
   const safeActionUrl = input.actionUrl ? escapeHtml(input.actionUrl) : null;
 
   return buildEmailShell({
-    eyebrow: "Thong bao he thong",
+    eyebrow: "Thông báo hệ thống",
     title: input.subject,
     bodyHtml: `
       <p>${escapeHtml(input.message)}</p>

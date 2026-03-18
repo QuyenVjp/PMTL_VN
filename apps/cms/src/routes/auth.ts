@@ -77,7 +77,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
       });
 
       if (!registerGuard.allowed) {
-        throw new UserAuthError("AUTH_RATE_LIMITED", "Ban thao tac qua nhanh. Vui long thu lai sau.", 429);
+        throw new UserAuthError("AUTH_RATE_LIMITED", "Bạn thao tác quá nhanh. Vui lòng thử lại sau.", 429);
       }
 
       const session = await registerUser(payload, body as never);
@@ -116,7 +116,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
       });
 
       if (!loginGuard.allowed) {
-        throw new UserAuthError("AUTH_RATE_LIMITED", "Ban dang dang nhap qua nhanh. Vui long doi it phut.", 429);
+        throw new UserAuthError("AUTH_RATE_LIMITED", "Bạn đang đăng nhập quá nhanh. Vui lòng đợi ít phút.", 429);
       }
 
       const session = await loginUser(payload, body as never);
@@ -175,7 +175,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
       });
 
       if (!forgotGuard.allowed) {
-        throw new UserAuthError("AUTH_RATE_LIMITED", "Ban yeu cau qua nhieu lan dat lai mat khau. Vui long thu lai sau.", 429);
+        throw new UserAuthError("AUTH_RATE_LIMITED", "Bạn yêu cầu quá nhiều lần đặt lại mật khẩu. Vui lòng thử lại sau.", 429);
       }
 
       const result = await requestPasswordReset(payload, body as never, {
@@ -215,7 +215,7 @@ export async function handleAuthRoute(request: Request): Promise<Response | null
       });
 
       if (!resetGuard.allowed) {
-        throw new UserAuthError("AUTH_RATE_LIMITED", "Ban dat lai mat khau qua nhanh. Vui long thu lai sau.", 429);
+        throw new UserAuthError("AUTH_RATE_LIMITED", "Bạn đặt lại mật khẩu quá nhanh. Vui lòng thử lại sau.", 429);
       }
 
       const session = await resetUserPassword(payload, body as never);

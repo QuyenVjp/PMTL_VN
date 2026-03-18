@@ -31,13 +31,13 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
     try {
       await updateProfileViaWeb(values);
-      setSuccess("Da cap nhat profile.");
+      setSuccess("Đã cập nhật hồ sơ.");
       router.refresh();
     } catch (error) {
       if (error instanceof WebAuthError) {
         setError(error.message);
       } else {
-        setError("Khong the cap nhat profile.");
+        setError("Không thể cập nhật hồ sơ.");
       }
     }
   });
@@ -49,12 +49,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <form className="panel section-stack" onSubmit={handleSubmit} style={{ padding: 24 }}>
       <h3 style={{ margin: 0 }}>Profile settings</h3>
-      <input {...form.register("displayName")} className="field" placeholder="Ten hien thi" />
-      <textarea {...form.register("bio")} className="textarea" placeholder="Bio ngan" />
+      <input {...form.register("displayName")} className="field" placeholder="Tên hiển thị" />
+      <textarea {...form.register("bio")} className="textarea" placeholder="Mô tả ngắn" />
       {error ? <p style={{ color: "#a33", margin: 0 }}>{error}</p> : null}
       {success ? <p style={{ color: "#15543d", margin: 0 }}>{success}</p> : null}
       <button className="button button-primary" disabled={form.formState.isSubmitting} type="submit">
-        {form.formState.isSubmitting ? "Dang luu..." : "Luu thay doi"}
+        {form.formState.isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
       </button>
     </form>
   );

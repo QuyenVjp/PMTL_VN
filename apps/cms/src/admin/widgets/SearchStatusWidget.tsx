@@ -11,41 +11,41 @@ export async function SearchStatusWidget({ req }: WidgetServerProps) {
     {
       label: "Search engine",
       value: status.engine === "meilisearch" ? "Meilisearch" : "Fallback",
-      hint: status.engine === "meilisearch" ? "Dang dung index bai viet rieng." : "Dang dung Payload fallback.",
+      hint: status.engine === "meilisearch" ? "Đang dùng index bài viết riêng." : "Đang dùng Payload fallback.",
     },
     {
-      label: "Bai viet CMS",
+      label: "Bài viết CMS",
       value: String(status.postsInCms),
-      hint: "Tong so bai viet hien co trong CMS.",
+      hint: "Tổng số bài viết hiện có trong CMS.",
     },
     {
-      label: "Doc trong index",
+      label: "Đọc trong index",
       value: String(status.meilisearch.index?.numberOfDocuments ?? 0),
-      hint: "So document dang nam trong index posts.",
+      hint: "Số document đang nằm trong index posts.",
     },
     {
-      label: "Queue dang cho",
+      label: "Queue đang chờ",
       value: String(status.queue.counts.waiting),
-      hint: status.queue.enabled ? "Job search-sync dang cho Payload worker." : "Payload Jobs chua san sang.",
+      hint: status.queue.enabled ? "Job search-sync đang chờ Payload worker." : "Payload Jobs chưa sẵn sàng.",
     },
     {
-      label: "Queue dang chay",
+      label: "Queue đang chạy",
       value: String(status.queue.counts.active),
-      hint: "So job worker dang xu ly.",
+      hint: "Số job worker đang xử lý.",
     },
     {
-      label: "Queue loi",
+      label: "Queue lỗi",
       value: String(status.queue.counts.failed),
-      hint: "Can xem log neu chi so nay tang.",
+      hint: "Cần xem log nếu chỉ số này tăng.",
     },
   ];
 
   return (
     <section className={styles.widgetCard}>
       <div>
-        <h3 className={styles.widgetTitle}>Trang thai search</h3>
+        <h3 className={styles.widgetTitle}>Trạng thái search</h3>
         <p className={styles.widgetDescription}>
-          Theo doi index bai viet, hang doi sync va suc khoe search ngay trong dashboard.
+          Theo dõi index bài viết, hàng đợi sync và sức khỏe search ngay trong dashboard.
         </p>
       </div>
 

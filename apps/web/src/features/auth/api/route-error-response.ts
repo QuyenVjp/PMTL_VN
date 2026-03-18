@@ -23,7 +23,7 @@ export function toAuthErrorResponse(error: unknown): NextResponse {
       {
         error: {
           code: "AUTH_UNKNOWN",
-          message: "Du lieu gui len khong hop le.",
+          message: "Dữ liệu gửi lên không lệ.",
         },
       },
       {
@@ -36,7 +36,7 @@ export function toAuthErrorResponse(error: unknown): NextResponse {
     {
       error: {
         code: "AUTH_UNKNOWN",
-        message: "Auth request that bai.",
+        message: "Yêu cầu xác thực thất bại.",
       },
     },
     {

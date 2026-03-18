@@ -32,9 +32,9 @@ export default function GlobalError({
         }}
       >
         <main style={{ maxWidth: "640px", textAlign: "center" }}>
-          <h1 style={{ marginBottom: "12px" }}>CMS tam thoi gap loi</h1>
+          <h1 style={{ marginBottom: "12px" }}>CMS tạm thời gặp lỗi</h1>
           <p style={{ margin: 0, opacity: 0.8 }}>
-            Loi da duoc gui len error monitoring. Hay thu tai lai sau khi worker va CMS on dinh lai.
+            Lỗi đã được gửi lên error monitoring. Hãy thử tải lại sau khi worker và CMS ổn định lại.
           </p>
         </main>
       </body>

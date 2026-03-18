@@ -17,7 +17,7 @@ export async function PATCH(request: Request) {
         {
           error: {
             code: "AUTH_UNAUTHENTICATED",
-            message: "Ban chua dang nhap.",
+            message: "Bạn chưa đăng nhập.",
           },
         },
         {

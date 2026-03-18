@@ -45,6 +45,7 @@ description: >-
   - relevant file(s) in `.agents/skills/*/SKILL.md`
   - relevant docs in `docs/architecture/*`, `docs/security.md`, `docs/api/contracts.md`
 - Do not leave new rules implicit in code only.
+- **Vietnamese Language Standard:** All generated or handled Vietnamese text in UI, API responses, logs (except debug), and database seeds MUST use proper marks (tiếng Việt có dấu). Vietnamese without marks is considered a bug.
 
 ### Monorepo Boundaries
 ```

@@ -35,7 +35,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       if (error instanceof WebAuthError) {
         setError(error.message);
       } else {
-        setError("Khong the dat lai mat khau.");
+        setError("Không thể đặt lại mật khẩu.");
       }
     }
   });
@@ -46,16 +46,16 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   return (
     <form className="panel section-stack" onSubmit={handleSubmit} style={{ padding: 24 }}>
-      <h1 style={{ margin: 0 }}>Dat lai mat khau</h1>
+      <h1 style={{ margin: 0 }}>Đặt lại mật khẩu</h1>
       <input
         {...form.register("password")}
         className="field"
-        placeholder="Mat khau moi"
+        placeholder="Mật khẩu mới"
         type="password"
       />
       {error ? <p style={{ color: "#a33", margin: 0 }}>{error}</p> : null}
       <button className="button button-primary" disabled={form.formState.isSubmitting} type="submit">
-        {form.formState.isSubmitting ? "Dang cap nhat..." : "Dat lai mat khau"}
+        {form.formState.isSubmitting ? "Đang cập nhật..." : "Đặt lại mật khẩu"}
       </button>
     </form>
   );
