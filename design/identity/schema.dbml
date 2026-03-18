@@ -1,0 +1,28 @@
+// Identity Module - logical schema aligned with current repo truth
+// Note:
+// - Payload auth internal token/session storage là framework-managed, không mô hình hóa chi tiết ở đây.
+// - `public_id` chỉ là public-facing identifier khi cần expose user reference an toàn hơn id nội bộ.
+// - Assumption: field `googleSub` hiện có trong code được xem là compatibility/system field,
+//   không phải auth flow current scope của module này.
+
+Table media_assets {
+  id uuid [pk]
+  public_id varchar [unique]
+}
+
+Table users {
+  id uuid [pk]
+  public_id varchar [unique]
+  email varchar [not null, unique]
+  full_name varchar [not null]
+  username varchar [unique]
+  phone varchar
+  dharma_name varchar
+  avatar_media_id uuid [ref: > media_assets.id]
+  bio text
+  role varchar [not null] // super-admin | admin | editor | moderator | member
+  is_blocked bool [default: false]
+  last_login_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}

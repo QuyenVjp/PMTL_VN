@@ -1,0 +1,89 @@
+# Community Module Decisions
+
+## Decision 1. Tách discussion surfaces theo context thay vì gom chung một collection
+
+### Context
+Repo hiện có `postComments`, `communityPosts`, `communityComments`, `guestbookEntries`.
+
+### Decision
+- Giữ `postComments` riêng cho editorial content discussion.
+- Giữ `communityPosts` và `communityComments` cho forum-like community content.
+- Giữ `guestbookEntries` là flow public nhẹ hơn.
+
+### Rationale
+- Khớp implementation hiện tại.
+- Mỗi surface có moderation và public DTO khác nhau.
+- Tránh generic UGC table khó validate và khó map UI.
+
+### Trade-off
+- Có nhiều collection hơn.
+- Report/moderation phải xử lý nhiều target type.
+
+## Decision 2. Threading dùng self-reference nhưng UI hiện tại nên giữ nông
+
+### Context
+`communityComments` và `postComments` đều có `parent` relation.
+
+### Decision
+- Data model cho phép comment tham chiếu parent comment.
+- Current UI/contract nên ưu tiên depth nông và predictable rendering.
+
+### Rationale
+- Khớp schema hiện có.
+- Tránh over-engineer tree algorithm quá sớm.
+
+### Trade-off
+- Nếu sau này muốn nested thread sâu, UI/service phải bổ sung quy tắc paging/flatten rõ hơn.
+
+## Decision 3. Author snapshot được lưu trên entity community
+
+### Context
+User name hoặc profile có thể thay đổi theo thời gian.
+Public DTO cần ổn định kể cả khi relation load tối thiểu.
+
+### Decision
+- Community entities giữ cả relation tới user và snapshot tên hiển thị.
+
+### Rationale
+- Giúp public DTO ổn định.
+- Giảm phụ thuộc read path vào relation depth.
+
+### Trade-off
+- Snapshot có thể không phản ánh tên mới nhất của user.
+- Cần chấp nhận đây là denormalized display field.
+
+## Decision 4. UGC moderation mặc định đi theo pending-first
+
+### Context
+Community content và comment đều có `moderationStatus`.
+Guestbook dùng `approvalStatus`.
+
+### Decision
+- Bài cộng đồng và comment mới mặc định vào trạng thái pending.
+- Guestbook entry cũng mặc định pending nhưng giữ workflow nhẹ hơn.
+
+### Rationale
+- Khớp current fields và moderation logic.
+- Hỗ trợ an toàn nội dung từ đầu mà không cần workflow enterprise phức tạp.
+
+### Trade-off
+- Public appearance có thể chậm hơn submit time.
+- Moderator/admin cần xử lý queue đều đặn.
+
+## Decision 5. Report lifecycle không thuộc community module
+
+### Context
+Community có nhiều điểm bắt đầu report nhưng repo đã có moderation module riêng.
+
+### Decision
+- Community chỉ khởi tạo report request.
+- `moderationReports` ở moderation module mới là source of truth.
+- Community entity chỉ giữ summary fields phục vụ read path.
+
+### Rationale
+- Boundary rõ.
+- Dễ tái dùng cùng một moderation flow cho post comments, community content, guestbook.
+
+### Trade-off
+- Cần sync summary ngược về community entity.
+- Debugging phải nhìn cả community record lẫn moderation record.

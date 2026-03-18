@@ -1,0 +1,114 @@
+// Engagement Module - logical schema aligned with current repo truth
+// Assumption:
+// - chant_items và chant_plans là reference data dùng cho user-state;
+//   file này mô tả chúng ở mức ref tối thiểu để giữ quan hệ rõ ràng.
+
+Table users {
+  id uuid [pk]
+  public_id varchar [unique]
+}
+
+Table sutras {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar
+}
+
+Table sutra_chapters {
+  id uuid [pk]
+  public_id varchar [unique]
+  sutra_id uuid [ref: > sutras.id]
+  title varchar
+}
+
+Table chant_items {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar
+}
+
+Table chant_plans {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar
+}
+
+Table sutra_bookmarks {
+  id uuid [pk]
+  public_id varchar [unique]
+  user_id uuid [not null, ref: > users.id]
+  sutra_id uuid [not null, ref: > sutras.id]
+  chapter_id uuid [ref: > sutra_chapters.id]
+  paragraph varchar
+  excerpt text
+  note text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table sutra_reading_progress {
+  id uuid [pk]
+  public_id varchar [unique]
+  user_id uuid [not null, ref: > users.id]
+  sutra_id uuid [not null, ref: > sutras.id]
+  chapter_id uuid [ref: > sutra_chapters.id]
+  paragraph varchar
+  scroll_percent int [default: 0]
+  last_read_at timestamp
+  updated_at timestamp
+}
+
+Table chant_preferences {
+  id uuid [pk]
+  public_id varchar [unique]
+  user_id uuid [not null, ref: > users.id]
+  plan_id uuid [not null, ref: > chant_plans.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table chant_preference_optional_items {
+  chant_preference_id uuid [ref: > chant_preferences.id]
+  chant_item_id uuid [ref: > chant_items.id]
+
+  indexes {
+    (chant_preference_id, chant_item_id) [pk]
+  }
+}
+
+Table chant_preference_targets {
+  id uuid [pk]
+  chant_preference_id uuid [ref: > chant_preferences.id]
+  chant_item_id uuid [ref: > chant_items.id]
+  target int
+}
+
+Table chant_preference_intentions {
+  id uuid [pk]
+  chant_preference_id uuid [ref: > chant_preferences.id]
+  chant_item_id uuid [ref: > chant_items.id]
+  intention varchar
+}
+
+Table practice_logs {
+  id uuid [pk]
+  public_id varchar [unique]
+  user_id uuid [not null, ref: > users.id]
+  plan_id uuid [not null, ref: > chant_plans.id]
+  practice_date date [not null]
+  started_at timestamp
+  completed_at timestamp
+  is_completed bool [default: false]
+  duration_minutes int
+  notes varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table practice_log_item_states {
+  id uuid [pk]
+  practice_log_id uuid [ref: > practice_logs.id]
+  chant_item_id uuid [ref: > chant_items.id]
+  completed bool [default: false]
+  count int
+}

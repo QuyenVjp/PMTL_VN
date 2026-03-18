@@ -1,0 +1,94 @@
+// Calendar Module - logical schema aligned with current repo truth
+
+Table media_assets {
+  id uuid [pk]
+  public_id varchar [unique]
+}
+
+Table posts {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar
+}
+
+Table chant_items {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar
+}
+
+Table events {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar [not null]
+  slug varchar [unique, not null]
+  description text [not null]
+  content jsonb
+  date timestamp [not null]
+  time_string varchar
+  location varchar
+  type varchar [not null] // ceremony | retreat | talk | livestream
+  speaker varchar
+  language varchar
+  external_link varchar
+  youtube_id varchar
+  embed_url varchar
+  cover_image_id uuid [ref: > media_assets.id]
+  event_status varchar [not null] // upcoming | live | past
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_gallery_media {
+  event_id uuid [ref: > events.id]
+  media_id uuid [ref: > media_assets.id]
+
+  indexes {
+    (event_id, media_id) [pk]
+  }
+}
+
+Table event_files {
+  event_id uuid [ref: > events.id]
+  media_id uuid [ref: > media_assets.id]
+
+  indexes {
+    (event_id, media_id) [pk]
+  }
+}
+
+Table lunar_events {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar [not null]
+  lunar_month int
+  lunar_day int
+  is_leap_month bool [default: false]
+  event_type varchar
+  priority int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table lunar_event_related_posts {
+  lunar_event_id uuid [ref: > lunar_events.id]
+  post_id uuid [ref: > posts.id]
+
+  indexes {
+    (lunar_event_id, post_id) [pk]
+  }
+}
+
+Table lunar_event_overrides {
+  id uuid [pk]
+  public_id varchar [unique]
+  lunar_event_id uuid [not null, ref: > lunar_events.id]
+  chant_item_id uuid [not null, ref: > chant_items.id]
+  mode varchar
+  target int
+  max int
+  priority int [default: 0]
+  note text
+  created_at timestamp
+  updated_at timestamp
+}

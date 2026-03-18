@@ -1,0 +1,33 @@
+## Luồng 1: Publish content và enqueue search sync
+
+```mermaid
+flowchart TD
+    A[Content document được publish hoặc update] --> B[Owner service chuẩn hóa search fields]
+    B --> C[Enqueue search-sync job]
+    C --> D[Worker nhận job]
+    D --> E[Build search document]
+    E --> F[Upsert vào Meilisearch posts index]
+```
+
+## Luồng 2: Public search query
+
+```mermaid
+flowchart TD
+    A[Web gọi /api/posts/search] --> B[CMS parse query và limit]
+    B --> C{Meilisearch available?}
+    C -->|Có| D[Search index posts]
+    C -->|Không| E[Fallback query qua Payload]
+    D --> F[Map result sang public DTO]
+    E --> F
+    F --> G[Trả engine = meilisearch hoặc payload-fallback]
+```
+
+## Luồng 3: Manual reindex batch
+
+```mermaid
+flowchart TD
+    A[Editor gọi /api/posts/search/reindex] --> B[CMS đọc batch posts]
+    B --> C[Enqueue nhiều search-sync jobs]
+    C --> D[Worker xử lý queue]
+    D --> E[Status endpoint phản ánh queue counts và index health]
+```

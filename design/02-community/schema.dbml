@@ -1,0 +1,104 @@
+// Community Module - logical schema aligned with current repo truth
+
+Table users {
+  id uuid [pk]
+  public_id varchar [unique]
+  full_name varchar
+}
+
+Table posts {
+  id uuid [pk]
+  public_id varchar [unique]
+  slug varchar
+  title varchar
+}
+
+Table community_posts {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar [not null]
+  slug varchar [unique, not null]
+  content text [not null]
+  type varchar [not null] // story | question | reflection | feedback | video
+  category varchar
+  rating int
+  author_user_id uuid [ref: > users.id]
+  author_name_snapshot varchar
+  cover_media_id uuid
+  video_url varchar
+  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  spam_score int [default: 0]
+  report_count int [default: 0]
+  last_report_reason varchar
+  pinned bool [default: false]
+  is_hidden bool [default: false]
+  likes int [default: 0]
+  views int [default: 0]
+  comments_count int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table community_post_tags {
+  community_post_id uuid [ref: > community_posts.id]
+  tag_value varchar
+
+  indexes {
+    (community_post_id, tag_value) [pk]
+  }
+}
+
+Table community_comments {
+  id uuid [pk]
+  public_id varchar [unique]
+  post_id uuid [not null, ref: > community_posts.id]
+  parent_comment_id uuid [ref: > community_comments.id]
+  content text [not null]
+  author_user_id uuid [ref: > users.id]
+  author_name_snapshot varchar
+  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  likes int [default: 0]
+  spam_score int [default: 0]
+  report_count int [default: 0]
+  last_report_reason varchar
+  is_hidden bool [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table post_comments {
+  id uuid [pk]
+  public_id varchar [unique]
+  post_id uuid [not null, ref: > posts.id]
+  parent_comment_id uuid [ref: > post_comments.id]
+  content text [not null]
+  author_user_id uuid [ref: > users.id]
+  author_name_snapshot varchar
+  author_email varchar
+  moderation_status varchar [not null] // pending | approved | rejected | flagged | hidden
+  likes int [default: 0]
+  report_count int [default: 0]
+  last_report_reason varchar
+  is_hidden bool [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table guestbook_entries {
+  id uuid [pk]
+  public_id varchar [unique]
+  author_name varchar [not null]
+  message text [not null]
+  country varchar
+  avatar varchar
+  badge varchar
+  entry_type varchar
+  question_category varchar
+  submitted_by_user_id uuid [ref: > users.id]
+  submitted_by_ip_hash varchar
+  admin_reply text
+  is_answered bool [default: false]
+  approval_status varchar [not null] // pending | approved | rejected
+  created_at timestamp
+  updated_at timestamp
+}

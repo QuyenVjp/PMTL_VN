@@ -1,0 +1,29 @@
+## Luồng 1: Tạo và publish event
+
+```mermaid
+flowchart TD
+    A[Editor tạo event] --> B[Nhập title, date, location, links, media]
+    B --> C[Payload lưu event document]
+    C --> D[System cập nhật eventStatus]
+    D --> E[Public route trả event DTO]
+```
+
+## Luồng 2: Tra cứu lunar event
+
+```mermaid
+flowchart TD
+    A[Web hoặc service cần tra ngày âm] --> B[Đọc lunarEvents]
+    B --> C[Match recurrenceData theo ngày âm]
+    C --> D[Nếu có override thì merge theo priority]
+    D --> E[Trả calendar result]
+```
+
+## Luồng 3: Cập nhật lunar override
+
+```mermaid
+flowchart TD
+    A[Admin tạo override cho lunar event] --> B[Chọn lunarEvent + chantItem]
+    B --> C[Nhập mode, target, max, priority, note]
+    C --> D[Lưu lunarEventOverrides]
+    D --> E[Practice layer có thể đọc override mới]
+```

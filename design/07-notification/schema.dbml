@@ -1,0 +1,52 @@
+// Notification Module - logical schema aligned with current repo truth
+// Note:
+// - push_jobs là control-plane record cho async dispatch.
+// - Email delivery hiện đi qua queue/job path, chưa có canonical email history table trong current scope.
+
+Table users {
+  id uuid [pk]
+  public_id varchar [unique]
+  email varchar
+  role varchar
+}
+
+Table push_subscriptions {
+  id uuid [pk]
+  public_id varchar [unique]
+  user_id uuid [ref: > users.id]
+  endpoint text [not null]
+  p256dh text
+  auth text
+  timezone varchar
+  is_active bool [default: true]
+  failed_count int [default: 0]
+  pref_posts bool [default: true]
+  pref_events bool [default: true]
+  pref_community bool [default: false]
+  quiet_hours_from varchar
+  quiet_hours_to varchar
+  last_sent_at timestamp
+  last_error varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table push_jobs {
+  id uuid [pk]
+  public_id varchar [unique]
+  kind varchar [not null]
+  status varchar [not null] // queued | active | completed | failed
+  chunk_size int [default: 100]
+  message text
+  url varchar
+  tag varchar
+  payload jsonb
+  cursor int [default: 0]
+  sent_count int [default: 0]
+  failed_count int [default: 0]
+  error_summary text
+  started_at timestamp
+  finished_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}

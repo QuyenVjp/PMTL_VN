@@ -1,133 +1,107 @@
-# Content Module: Design Decisions (Các Quyết định Thiết kế)
+# Content Module Decisions
 
-## Decision 1: Single Posts Table with post_type Discriminator
+## Decision 1. Content dùng split collections, không dùng single posts table
 
-**Context (Ngữ cảnh)**: Hệ thống cần hỗ trợ đồng thời Bài viết (Posts), Kinh văn (Sutras), Trang Hub (HubPages), và Tài liệu (Documents) trong cùng một module.
+### Context
+Design cũ giả định mọi loại content phải gộp vào một bảng `posts`.
+Repo hiện tại đã split collection rõ ràng theo trách nhiệm và public contract.
 
-**Options (Các phương án)**:
-- A: Một bảng `posts` duy nhất sử dụng cột `post_type` để phân loại.
-- B: Chia thành các bảng riêng biệt (PostsTable, SutrasTable, HubPagesTable).
-- C: Sử dụng Inheritance Pattern (Mẫu kế thừa) với các bảng phụ chuyên biệt.
+### Decision
+- Giữ editorial content theo collection riêng:
+  - `posts`
+  - `hubPages`
+  - `beginnerGuides`
+  - `downloads`
+  - `sutras`
+  - `sutraVolumes`
+  - `sutraChapters`
+  - `sutraGlossary`
+- Taxonomy và media tiếp tục là collection dùng chung qua reference.
 
-**Decision (Quyết định)**: A (Sử dụng Single Posts Table với bộ phân loại Discriminator).
+### Rationale
+- Khớp implementation thật.
+- Dễ giữ admin UI, validation, DTO mapping và field set riêng cho từng loại document.
+- Tránh null-field explosion của một mega-table.
 
-**Rationale (Lý do)**:
-- DB Schema đơn giản hơn, giảm thiểu gánh nặng quản trị dữ liệu.
-- Các Common Queries xuyên suốt hệ thống (Search, List, Filter) luôn duy trì tốc độ tối ưu.
-- Cột `post_type` sẽ đóng vai trò điều hướng UI Logic, thay vì làm phức tạp hóa Schema.
-- Tránh được sự phức tạp của lệnh JOIN trong các thao tác dữ liệu thông thường.
-- Các Payload Collections vẫn có thể sở hữu Admin Interfaces riêng biệt.
+### Trade-off
+- Có nhiều collection hơn để quản lý.
+- Search/discovery cần mapping từ nhiều owner collections thay vì một nguồn duy nhất.
 
-**Trade-off (Đánh đổi)**: Một số trường dữ liệu có thể không được sử dụng hết tùy theo phân loại (Vd: sutra-specific metadata). Giải pháp: Sử dụng Nullable Columns kết hợp với Documented Conventions.
+## Decision 2. Workflow publish dùng Payload drafts + publishedAt
 
----
+### Context
+Current collections editorial dùng `versions.drafts: true` và đã có logic `publishedAt`.
 
-## Decision 2: Revision History vs Content Versioning Strategy
+### Decision
+- Workflow gốc của editorial content là:
+  - draft
+  - published
+- `publishedAt` là timestamp public delivery.
+- Không giữ workflow approval nhiều bước cho content nếu code hiện tại chưa dùng.
 
-**Context (Ngữ cảnh)**: Cần theo dõi xem Ai đã thay đổi Cái gì, Khi nào (Audit Trail), đồng thời cho phép khôi phục (Rollback).
+### Rationale
+- Khớp repo truth.
+- Đủ rõ cho cache, search, public route và SEO.
 
-**Options (Các phương án)**:
-- A: Lưu trữ đầy đủ lịch sử phiên bản trong bảng riêng (`post_revisions`).
-- B: Sử dụng Immutable Entries, mỗi lần cập nhật đều tạo bản ghi bài viết mới hoàn toàn.
-- C: Sử dụng JSONB để theo dõi các thay đổi (Delta tracking) ngay tại bảng `posts`.
+### Trade-off
+- Editorial review workflow hiện tại không chi tiết như hệ thống CMS enterprise.
+- Nếu sau này cần review queue riêng thì phải thiết kế thêm, không tự suy từ file này.
 
-**Decision (Quyết định)**: A (Tách riêng bảng `post_revisions`).
+## Decision 3. Search fields nằm trên owner document
 
-**Rationale (Lý do)**:
-- Duy trì được một Audit Trail minh bạch cho việc kiểm tra.
-- Hỗ trợ tính năng Rollback mà không cần các logic xử lý phức tạp.
-- Giữ bảng `posts` luôn gọn nhẹ (chỉ chứa trạng thái hiện hành - Current State).
-- Tốc độ Query cho "nội dung hiện tại" luôn nhanh nhất.
+### Context
+`posts` đang có `contentPlainText`, `normalizedSearchText`, `excerptComputed`, và public counters.
+Search module cần source fields ổn định để build document.
 
-**Technical notes (Ghi chú kỹ thuật)**:
-- `post_revisions.revision_number` sẽ tự động tăng dần (Auto-increment) cho từng bài.
-- Mỗi lần nhấn Publish = Tạo ra một bản ghi Revision mới.
-- Admin có thể thực hiện xem lại hoặc Restore các phiên bản cũ dễ dàng.
+### Decision
+- Search source fields nằm trên content owner document.
+- Content module chịu trách nhiệm chuẩn hóa field nguồn.
+- Search module chỉ đọc và index, không sở hữu canonical content body.
 
----
+### Rationale
+- Giảm duplicated transformation logic.
+- Dễ debug khi search index sai vì source fields nằm ngay trong owner collection.
 
-## Decision 3: Post Status Workflow (Quy trình Trạng thái Bài viết)
+### Trade-off
+- Mỗi collection owner phải giữ discipline khi cập nhật field tính toán.
+- Một số search fields là denormalized data trên canonical record.
 
-**Context (Ngữ cảnh)**: Quản lý vòng đời nội dung (Content Lifecycle) từ khi khởi tạo đến khi lưu trữ hoặc xóa bỏ.
+## Decision 4. Taxonomy và media dùng reference rõ ràng
 
-**Status Flow (Luồng trạng thái)**:
-```
-Draft (Nháp) → SubmittedForReview (Gửi duyệt) → Approved (Đã duyệt) → Published (Đã xuất bản)
-                                        ↘ Rejected (Từ chối) ↙
-```
+### Context
+Editorial content hiện liên kết tới `categories`, `tags`, `media`, `relatedPosts`, và đôi lúc `events`.
 
-Các bước tiếp theo:
-```
-Published → Archived (Đã lưu trữ - ẩn khỏi Public)
-Published → Deleted (Đã xóa - thực hiện Soft-delete để phục vụ Audit)
-```
+### Decision
+- Dùng relation/reference explicit cho taxonomy và media.
+- Không embed generic metadata blob để thay thế quan hệ thật.
+- Event chỉ được tham chiếu từ content, ownership nằm ở calendar.
 
-**Rationale (Lý do)**:
-- Draft: Trạng thái chưa xuất bản, chỉ dành cho Editor.
-- SubmittedForReview: Chờ đợi sự phê duyệt từ Admin hoặc Moderator.
-- Published: Đã hiển thị Online cho Public hoặc Members.
-- Archived: Nội dung chủ động được ẩn đi (Vd: các nội dung cũ đã lỗi thời).
-- Deleted: Xóa mềm để đảm bảo Audit Compliance.
+### Rationale
+- Giữ boundary rõ.
+- Tối ưu cho public mapping, admin editing, và incremental refactor.
 
-**Technical (Kỹ thuật)**:
-- Timestamp `published_at` chỉ được thiết lập khi status chuyển thành `Published`.
-- Các câu Query cho Public Content: `WHERE status = 'published' AND published_at <= now()`.
-- Meilisearch Reindex chỉ bao gồm những bài đang ở trạng thái `Published`.
+### Trade-off
+- Một số read path cần populate/resolve relation.
+- Phải giữ mapper rõ thay vì đọc raw relation trực tiếp ngoài UI.
 
----
+## Decision 5. Content không sở hữu user-state hoặc moderation source-of-truth
 
-## Decision 4: Caching Strategy for Content Module (Chiến lược Bộ nhớ đệm)
+### Context
+Design cũ từng nhét bookmark và reading progress vào content schema.
+Repo hiện tại đã có collection self-owned state riêng và moderation report riêng.
 
-**Context (Ngữ cảnh)**: Tối ưu hóa việc truy cập các dữ liệu có tần suất cao (Recent posts, Featured content, Categories).
+### Decision
+- Không đặt các entity sau trong content module:
+  - bookmarks
+  - reading progress
+  - practice logs
+  - moderation reports
+- `postComments` cũng không thuộc content ownership; content chỉ là entity được bình luận.
 
-**Dữ liệu đẩy vào Redis**:
-- Recent Published Posts (20 bài gần nhất, TTL 1 giờ).
-- Featured Posts Collections (Nội dung nổi bật, TTL 4 giờ).
-- Category List & Tag Cloud (Danh sách chuyên mục và thẻ, TTL 24 giờ).
-- User's Reading Progress & Bookmarks (Tiến độ đọc và đánh dấu, TTL theo phiên làm việc).
+### Rationale
+- Khớp boundary module hiện tại.
+- Tránh để content trở thành module “ôm tất cả”.
 
-**Dữ liệu chỉ giữ tại Source-of-Truth duy nhất (Postgres)**:
-- Các nội dung Drafts & Unpublished (Không cache, để đảm bảo Privacy và Data Freshness).
-- Trạng thái khóa chỉnh sửa (Edit lock status).
-- Thống kê lượt Comment (Comment counts - chấp nhận độ trễ nhỏ).
-
-**Vai trò của Meilisearch Search Engine**:
-- Chỉ đánh chỉ mục các bài ở trạng thái `Published`.
-- Hỗ trợ Search và các Faceted Filters (Lọc theo Category, Tag, Date).
-
-**Cơ chế Xóa Cache (Invalidation)**:
-- Khi Publish/Unpublish bài viết → Invalidate cache của phần Recent Posts.
-- Khi thay đổi Category → Invalidate cache chuyên mục.
-- Khi User thay đổi Bookmarks → Invalidate bộ nhớ đệm Bookmarks của User đó.
-
----
-
-## Decision 5: Visibility & Access Control Model
-
-**Context (Ngữ cảnh)**: Hệ thống cần hỗ trợ đồng thời nội dung Public, Members-only, và Private.
-
-**Model (Mô hình)**: Sử dụng Visibility Enum cho từng Post kết hợp với Role-based Checks (RBAC).
-
-```
-visibility: "public" → Dành cho tất cả (Guest, Member, Admin)
-visibility: "members_only" → Chỉ dành cho thành viên đã Login + Admin
-visibility: "private" → Chỉ dành cho Owner (tác giả) + Admin
-```
-
-**Implementation (Triển khai)**:
-- Thêm cột `visibility` trực tiếp vào bảng `posts`.
-- Payload Access Control sẽ được cấu hình trong Collection Config:
-  ```ts
-  find: ({ req: { user } }) => {
-    if (!user) return { visibility: { equals: "public" } }
-    return { OR: [
-      { visibility: { equals: "public" } },
-      { visibility: { equals: "members_only" } }
-    ]}
-  }
-  ```
-- Tài khoản Admin luôn tự động Bypass (bỏ qua) tất cả các lớp kiểm soát này.
-
-**Query Optimization (Tối ưu hóa truy vấn)**:
-- Thiết lập Index cho bộ đôi `(visibility, published_at)` phục vụ việc liệt kê nội dung công khai.
-- Chỉ mục Meilisearch sẽ tích hợp sẵn Visibility Facet để lọc nhanh theo quyền truy cập.
+### Trade-off
+- Cross-module flow cần rõ hơn.
+- Module interactions phải được đọc cùng tài liệu này khi generate code.

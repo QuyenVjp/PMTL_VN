@@ -1,0 +1,46 @@
+## Luồng 1: Đăng ký tài khoản
+
+```mermaid
+flowchart TD
+    A[Người dùng gửi form đăng ký] --> B[CMS validate payload]
+    B --> C[Tạo user trong Payload auth]
+    C --> D[Set role mặc định member]
+    D --> E[Trả auth session/response contract]
+```
+
+## Luồng 2: Đăng nhập
+
+```mermaid
+flowchart TD
+    A[Người dùng gửi email + mật khẩu] --> B[Payload auth kiểm tra credentials]
+    B --> C{Hợp lệ?}
+    C -->|Không| D[Trả lỗi 401]
+    C -->|Có| E[Kiểm tra isBlocked]
+    E --> F{Bị khóa?}
+    F -->|Có| G[Từ chối đăng nhập]
+    F -->|Không| H[Cập nhật lastLoginAt]
+    H --> I[Trả session/cookie]
+```
+
+## Luồng 3: Quên mật khẩu và đặt lại mật khẩu
+
+```mermaid
+flowchart TD
+    A[Người dùng yêu cầu quên mật khẩu] --> B[Payload tạo reset token]
+    B --> C[Tạo reset URL]
+    C --> D[Enqueue hoặc gửi email reset]
+    D --> E[Người dùng mở reset URL]
+    E --> F[Gửi mật khẩu mới]
+    F --> G[Payload xác minh token và cập nhật mật khẩu]
+    G --> H[Trả kết quả thành công]
+```
+
+## Luồng 4: Admin cập nhật role hoặc block state
+
+```mermaid
+flowchart TD
+    A[Admin mở user trong CMS] --> B[Cập nhật role hoặc isBlocked]
+    B --> C[Payload access kiểm tra quyền]
+    C --> D[Lưu user document]
+    D --> E[Các module khác đọc role/block state mới ở lần request tiếp theo]
+```

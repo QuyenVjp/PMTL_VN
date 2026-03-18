@@ -1,0 +1,40 @@
+## Luồng 1: User subscribe push
+
+```mermaid
+flowchart TD
+    A[Trình duyệt gửi push subscription] --> B[CMS validate endpoint và keys]
+    B --> C[Upsert pushSubscriptions]
+    C --> D[Lưu user, timezone, prefs, quiet hours]
+```
+
+## Luồng 2: Tạo internal push job
+
+```mermaid
+flowchart TD
+    A[Module khác cần notify] --> B[Gọi notification service]
+    B --> C[Tạo pushJobs với status queued]
+    C --> D[Lưu recipientRoles hoặc include/excludeUserIds trong payload]
+    D --> E[Worker push-dispatch đọc job]
+```
+
+## Luồng 3: Worker dispatch push
+
+```mermaid
+flowchart TD
+    A[Worker nhận push job] --> B[Tải active subscriptions phù hợp]
+    B --> C[Gửi từng chunk]
+    C --> D[Cập nhật sentCount hoặc failedCount]
+    D --> E{Còn recipient?}
+    E -->|Có| C
+    E -->|Không| F[Đánh dấu completed hoặc failed]
+```
+
+## Luồng 4: Notify moderation decision
+
+```mermaid
+flowchart TD
+    A[Moderation ra quyết định] --> B[Resolve target user]
+    B --> C[Tạo push job cho đúng user]
+    C --> D[Enqueue email notification job nếu có email]
+    D --> E[User nhận notification bất đồng bộ]
+```

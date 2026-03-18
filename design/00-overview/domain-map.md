@@ -1,4 +1,4 @@
-# PMTL_VN: Domain Map (Bản Đồ Hệ Thống)
+# PMTL_VN Domain Map
 
 ---
 markmap:
@@ -6,145 +6,202 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# ☸️ Pháp Môn Tâm Linh (PMTL_VN)
+# PMTL_VN
 
-## 👥 Personas & Roles (Đối tượng & Vai trò)
-- **Guest (Khách)**: Chưa đăng ký, chỉ có thể xem nội dung Public.
-- **Member (Thành viên)**: Đăng ký tài khoản, có thể Bookmarks, Bình luận, và tham gia Social Community.
-- **Editor (Biên tập viên)**: Sáng tạo và biên tập Content (Kinh điển, Bài viết).
-- **Moderator (Người điều phối)**: Duyệt bài (Approval), phản hồi báo cáo, xử lý vi phạm.
-- **Admin (Quản trị viên)**: Toàn quyền quản trị hệ thống, cấu hình System Settings.
+## Current Scope
 
-## 01. Content Domain (Kho Tàng Nội Dung) - CORE
-### 01.1 📂 Canonical Texts (Kinh Điển Chính)
-- **Sutras**: Các bản kinh văn Phật giáo chính thống.
-- **SutraVolumes**: Phân loại theo quyển/bộ kinh.
-- **SutraChapters**: Các chương mục chi tiết trong kinh văn.
-- **SutraGlossary**: Thụât ngữ chuyên môn và giải nghĩa các từ khó.
-- **BeginnerGuides**: Các hướng dẫn (How-to) dành cho người mới.
-- **SutraLinks**: Liên kết trích dẫn chéo (Cross-references) giữa các bản kinh.
+### 01. Identity
+- **Owner**: `users`
+- **Authority**: Payload auth
+- **Responsibilities**:
+  - đăng ký, đăng nhập, đăng xuất
+  - reset mật khẩu
+  - role + block state
+  - profile cơ bản
+- **Current role set**:
+  - `super-admin`
+  - `admin`
+  - `editor`
+  - `moderator`
+  - `member`
 
-**Use cases**: Đọc kinh, Tìm kiếm, Bookmark, Comment, Progress Tracking.
+### 02. Content
+- **Editorial collections**:
+  - `posts`
+  - `hubPages`
+  - `beginnerGuides`
+  - `downloads`
+  - `media`
+  - `categories`
+  - `tags`
+- **Scripture library**:
+  - `sutras`
+  - `sutraVolumes`
+  - `sutraChapters`
+  - `sutraGlossary`
+- **Responsibilities**:
+  - editorial authoring
+  - publish workflow
+  - taxonomy
+  - media linking
+  - content search fields
 
-### 01.2 📰 Insights & Articles (Bài Viết & Khai Thị)
-- **Posts**: Tin tức, bài viết khai thị ngắn, các bài bạch thoại.
-- **HubPages**: Trang tổng hợp hoặc Landing Pages chuyên sâu.
-- **ScriptureCommentary**: Các bài giảng giải và bình chú chi tiết.
-- **TeachingNotes**: Ghi chú tóm tắt từ các buổi Pháp thoại.
-- **PaperArticles**: Các bài báo cáo nghiên cứu học thuật.
-- **Categories & Tags**: Hệ thống phân loại nội dung (Taxonomy).
-- **Series**: Chuỗi bài viết hoặc Course bài giảng theo chủ đề.
+### 03. Community
+- **Discussion surfaces**:
+  - `postComments`
+  - `communityPosts`
+  - `communityComments`
+  - `guestbookEntries`
+- **Responsibilities**:
+  - public discussion
+  - community submissions
+  - guestbook messages
+  - report initiation toward moderation
 
-**Use cases**: CMS Operations (Tạo, Sửa, Duyệt, Xuất bản), Taxonomy Management.
+### 04. Engagement
+- **Self-owned user state**:
+  - `sutraBookmarks`
+  - `sutraReadingProgress`
+  - `chantPreferences`
+  - `practiceLogs`
+- **Practice references used by this area**:
+  - `chantItems`
+  - `chantPlans`
+- **Responsibilities**:
+  - bookmark
+  - reading progress
+  - practice configuration
+  - personal practice history
 
-### 01.3 🎞️ Assets & Media Resources
-- **MediaAssets**: Kho lưu trữ ảnh, audio, video, PDF.
-- **AudioTracks**: Các bản ghi âm Pháp âm hoặc âm nhạc thiền định.
-- **PdfDocuments**: Các tài liệu E-book hoặc văn bản PDF để tải về.
-- **Galleries**: Bộ sưu tập hình ảnh sự kiện, khóa tu.
-- **TranscriptDocuments**: Bản chép lời (Transcripts) từ video/audio.
-- **FileDownloads**: Quản lý quyền truy cập và lượt tải về.
+### 05. Moderation
+- **Owner**: `moderationReports`
+- **Summary fields on target entities**:
+  - `reportCount`
+  - `lastReportReason`
+  - `isHidden`
+  - `approvalStatus`
+  - `moderationStatus`
+- **Responsibilities**:
+  - accept report
+  - moderator decision
+  - sync moderation summary back to target entity
 
-**Use cases**: Media Upload, RBAC cho Downloads, Tracking số lượt xem/tải.
+### 06. Search
+- **Source fields live in owner collections**
+- **Index**: Meilisearch
+- **Queue**: Redis + worker
+- **Current public search contract**:
+  - posts search
+  - search status
+  - reindex trigger
+- **Responsibilities**:
+  - queue search sync
+  - build search document
+  - serve search query with fallback
 
----
+### 07. Calendar
+- **Owner collections**:
+  - `events`
+  - `lunarEvents`
+  - `lunarEventOverrides`
+- **Responsibilities**:
+  - editorial event publishing
+  - lunar recurrence base
+  - per-event practice override mapping
 
-## 02. Individual Practice & Engagement (Tu Tập Cá Nhân)
-### 02.1 🧘 Practice Plans (Lộ trình Tu tập)
-- **ChantPlans**: Kế hoạch tụng kinh hàng ngày.
-- **ChantItems**: Các bài kinh lẻ hoặc Nghi quỹ cụ thể.
-- **ChantSchedules**: Lập lịch: Frequency, Time Slots, Weekday rules.
-- **PracticePresets**: Các bản cài đặt sẵn (Vd: Khóa lễ sáng/tối).
-- **PracticeNotifications**: Nhắc nhở qua Push-notification hoặc Email.
+### 08. Notification
+- **Control plane**:
+  - `pushSubscriptions`
+  - `pushJobs`
+- **Async delivery paths**:
+  - push dispatch
+  - email notification jobs
+- **Responsibilities**:
+  - store browser subscription state
+  - store notification preferences used for push delivery
+  - enqueue internal jobs
+  - notify moderators or affected users asynchronously
 
-**Use cases**: Thiết lập lộ trình, Bật/Tắt lịch nhắc, Ghi chép Practice Log.
+## Cross-Cutting Runtime
 
-### 02.2 📅 Buddhist Calendar & Events (Lịch & Sự kiện)
-- **LunarCalendar**: Lịch âm dương tích hợp (Default là âm lịch).
-- **LunarEvents**: Các ngày đại lễ Phật giáo quan trọng.
-- **LunarEventOverrides**: Tùy chỉnh cá nhân (Ngày giỗ, ngày phát nguyện).
-- **Events**: Thông báo về các buổi Offline, Khóa tu, Webinar.
-- **EventRegistrations**: Quản lý việc User đăng ký tham gia.
+### Infrastructure
+- PostgreSQL: canonical app data
+- Redis: cache + queue + coordination
+- Worker: background processing
+- Meilisearch: search index
+- Caddy: reverse proxy / HTTPS
 
-**Use cases**: Tra cứu lịch âm, Đăng ký sự kiện, Nhận Reminder.
+### Optional Monitoring
+- PgBouncer
+- Prometheus
+- Grafana
+- Alertmanager
+- Exporters
+- Blackbox
 
-### 02.3 📈 Progress Tracking (Theo dõi Tiến độ)
-- **ReadingProgress**: % hoàn thành khi đọc Kinh văn theo chương/phẩm.
-- **ReadingHistory**: Lịch sử chi tiết các nội dung đã xem.
-- **Bookmarks & Collections**: Lưu trữ các trích dẫn yêu thích theo chủ đề.
-- **StreakData**: Thống kê chuỗi ngày tu tập liên tục.
-- **UserStats**: Tổng hợp số liệu cá nhân để khích lệ tinh thần.
+## Current Scope Boundaries
 
-**Use cases**: Review Progress, Xuất báo cáo lịch sử (Export), Xem Leaderboard.
+### Content does not own
+- bookmarks
+- reading progress
+- practice logs
+- moderation reports
+- push jobs
 
----
+### Community does not own
+- moderation decisions
+- user identity authority
+- search index documents
 
-## 03. Sangha Connect (Cộng Đồng & Tương Tác)
-### 03.1 💬 Social Exchange (Thảo luận & Trao đổi)
-- **CommunityThreads**: Các chủ đề thảo luận chung trên Forum.
-- **ThreadReplies**: Các câu trả lời cấp 1.
-- **NestedReplies**: Các phản hồi theo dạng lồng nhau (Tree-structure).
-- **PostComments**: Hệ thống bình luận trực tiếp dưới Content bài viết.
-- **CommentLikes & Mentions**: Tương tác nhanh giữa các thành viên (@username).
+### Search does not own
+- canonical content
+- user state
+- moderation state
 
-### 03.2 👥 Social Graph (Mối Quan Hệ)
-- **UserFollows**: Theo dõi hoạt động của thành viên khác.
-- **Subscriptions**: Đăng ký nhận thông báo từ Thread hoặc Author cụ thể.
-- **BlockedUsers**: Tính năng chặn tài khoản vi phạm.
+### Notification does not own
+- canonical event/content/community data
+- moderation source-of-truth
 
-### 03.3 🎖️ Reputation & Gamification
-- **UserPoints**: Điểm Contributor dựa trên đóng góp nội dung.
-- **UserBadges**: Huy hiệu danh dự dành cho các đóng góp nổi bật.
-- **LeaderboardSnapshots**: Bảng xếp hạng hàng tuần/tháng (Cached).
+## Future Candidates
 
----
+Chỉ là ứng viên tương lai, chưa phải current scope.
 
-## 04. Moderation & Compliance (Kiểm Duyệt & An Toàn)
-### 04.1 🛡️ Reports & Workflow
-- **ModerationReports**: Tiếp nhận báo cáo vi phạm từ User.
-- **ReportCategories**: Phân loại lỗi (Spam, Offensive, Misinformation, v.v.).
-- **ModerationQueue**: Hàng chờ xử lý dành cho Moderators.
+### Identity
+- public profile pages hoàn chỉnh
+- social graph sâu hơn
+- mention/handle routing
 
-### 04.2 ⚖️ Policies & Violation History
-- **ContentPolicies**: Quy tắc cộng đồng (Auto-flag bằng từ khóa nhạy cảm).
-- **ViolationHistory**: Hồ sơ vi phạm của User (Warning, Suspension, Ban).
-- **EscalationQueue**: Chuyển các trường hợp khó lên Admin xử lý.
+### Content
+- gated membership content với audience visibility đầy đủ
+- richer version comparison UI
 
----
+### Community
+- follows / subscriptions theo author hoặc thread
+- richer reaction model ngoài `likes`
 
-## 05. Search & Discovery (Tìm Kiếm & Khám Phá)
-- **SearchIndex**: Đồng bộ dữ liệu sang Meilisearch Index.
-- **SearchFilters & Facets**: Bộ lọc theo Category, Tag, Date, Author.
-- **SearchSuggestions**: Gợi ý từ khóa tự động (Autocomplete).
-- **Recommendations**: Đề xuất nội dung dựa trên Reading History & Bookmarks.
+### Engagement
+- streaks
+- stats dashboard
+- article bookmarks nếu repo quyết định thêm collection riêng
 
----
+### Moderation
+- automated policy packs
+- escalation workflow nhiều cấp
 
-## 06. Communication Channels (Thông Báo & Liên Lạc)
-- **NotificationPreferences**: Cài đặt kênh nhận (Push, Email, In-app).
-- **EmailDigests**: Bản tin tổng hợp hàng ngày hoặc hàng tuần.
-- **NotificationQueue**: Xử lý gửi thông báo hàng loạt qua Async Jobs.
+### Search
+- recommendations
+- search suggestions
+- discovery ranking nâng cao
 
----
+### Notification
+- digest scheduling
+- in-app inbox nếu có owner data model riêng
 
-## 07. Identity & Auth (Xác Thực & Quản Lý Danh Tính)
-- **Users**: Dữ liệu cơ bản, Role, Trạng thái (Active/Inactive).
-- **Profiles**: Các thông tin bổ trợ như avatar, pháp danh, bio.
-- **Permissions Matrix**: Bảng phân quyền Role-to-Permission chi tiết.
-- **ApiTokens**: Quản lý các Token truy cập cho tích hợp bên ngoài.
+### Calendar
+- event registration
+- personalized reminder rules ngoài push subscription hiện tại
 
----
-
-## 08. Platform Infrastructure (Hạ Tầng & Vận Hành)
-- **AuditLogs**: Nhật ký ghi lại toàn bộ thay đổi dữ liệu hệ thống.
-- **SystemHealth**: Monitor sức khỏe DB, Redis, Worker, Meilisearch.
-- **ScheduledTasks**: Quản lý các công việc định kỳ (Dọn dẹp logs, Reindex).
-- **BackupSnapshots**: Quản lý các bản sao lưu dữ liệu an toàn.
-
----
-
-## 🔄 Future Enhancements (Mở rộng trong tương lai)
-- **InternalNotes**: Ghi chú nội bộ cho ban biên tập.
-- **ContentVersioning**: So sánh thay đổi giữa các phiên bản bài viết.
-- **i18n Support**: Hỗ trợ hiển thị đa ngôn ngữ.
-- **Real-time Feed**: Các thông báo tức thời qua WebSockets.
+Future candidate chỉ được nâng lên current scope khi có:
+- owner collection hoặc owner service rõ ràng
+- API contract rõ
+- runtime path rõ

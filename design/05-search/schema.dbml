@@ -1,0 +1,57 @@
+// Search Module - logical schema aligned with current repo truth
+// Note:
+// - `search_sync_jobs` là Redis/BullMQ runtime artifact, không phải source of truth.
+// - `meilisearch_posts_index` là computed index document.
+// - `posts_search_source` biểu diễn source fields thực lấy từ content module.
+
+Table posts_search_source {
+  document_id uuid [pk]
+  public_id varchar [unique]
+  slug varchar [not null]
+  title varchar [not null]
+  source_ref varchar
+  excerpt text
+  content_plain_text text
+  normalized_search_text text
+  topic varchar
+  published_at timestamp
+  featured bool [default: false]
+  views int [default: 0]
+}
+
+Table post_search_source_tags {
+  document_id uuid [ref: > posts_search_source.document_id]
+  tag_value varchar
+
+  indexes {
+    (document_id, tag_value) [pk]
+  }
+}
+
+Table search_sync_jobs {
+  job_id varchar [pk]
+  queue_name varchar [not null] // search-sync
+  document_id uuid
+  public_id varchar
+  status varchar [not null] // queued | active | completed | failed
+  attempts int [default: 0]
+  enqueued_at timestamp
+  processed_at timestamp
+  finished_at timestamp
+  error_summary text
+}
+
+// Computed search document stored in Meilisearch.
+Table meilisearch_posts_index {
+  document_id uuid [pk]
+  public_id varchar [unique]
+  slug varchar
+  title varchar
+  excerpt text
+  content_plain_text text
+  normalized_search_text text
+  topic varchar
+  published_at timestamp
+  featured bool
+  views int
+}

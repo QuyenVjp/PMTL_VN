@@ -1,0 +1,47 @@
+## Luồng 1: Gửi bài cộng đồng
+
+```mermaid
+flowchart TD
+    A[Member gửi community post] --> B[CMS validate title, content, type]
+    B --> C[Chuẩn hóa publicId, slug, author snapshot, spamScore]
+    C --> D[Lưu communityPosts với moderationStatus mặc định pending]
+    D --> E[Append audit log]
+    E --> F[Enqueue alert cho moderator/admin]
+```
+
+## Luồng 2: Bình luận vào bài cộng đồng
+
+```mermaid
+flowchart TD
+    A[Member gửi bình luận] --> B[Tìm community post đích]
+    B --> C{Có parent comment?}
+    C -->|Có| D[Xác thực parent thuộc cùng post]
+    C -->|Không| E[Tạo comment top-level]
+    D --> E
+    E --> F[Lưu communityComments với moderationStatus pending]
+    F --> G[Tính lại commentsCount của community post khi comment được duyệt]
+    G --> H[Enqueue alert moderation nếu cần]
+```
+
+## Luồng 3: Bình luận vào bài viết editorial
+
+```mermaid
+flowchart TD
+    A[Người dùng gửi post comment] --> B[Tìm post theo publicId hoặc slug]
+    B --> C[Tạo postComments]
+    C --> D[Comment có moderationStatus pending]
+    D --> E[Khi approved thì recompute commentCount cho post]
+```
+
+## Luồng 4: Guestbook submit và report
+
+```mermaid
+flowchart TD
+    A[Khách hoặc member gửi guestbook entry] --> B[Validate message]
+    B --> C[Chuẩn hóa publicId, ip hash, badge/country nếu có]
+    C --> D[Lưu guestbookEntries với approvalStatus pending]
+    D --> E[Notify moderator/admin]
+    E --> F{Người dùng report entity?}
+    F -->|Có| G[Tạo moderation report]
+    F -->|Không| H[Kết thúc]
+```

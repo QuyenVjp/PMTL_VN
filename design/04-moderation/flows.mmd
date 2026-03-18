@@ -1,0 +1,35 @@
+## Luồng 1: Tạo moderation report
+
+```mermaid
+flowchart TD
+    A[User report entity] --> B[Tìm entity đích theo publicId]
+    B --> C[Tạo moderationReports]
+    C --> D[Lưu entityType, entityPublicId, entityRef, reason, reporter]
+    D --> E[Sync reportCount và lastReportReason lên entity đích]
+    E --> F[Enqueue alert cho moderator/admin]
+```
+
+## Luồng 2: Moderator ra quyết định
+
+```mermaid
+flowchart TD
+    A[Moderator mở report] --> B[Chọn decision]
+    B --> C[Cập nhật status của moderation report]
+    C --> D{Target type}
+    D -->|comment hoặc community post| E[Set moderationStatus + isHidden]
+    D -->|guestbook| F[Set approvalStatus]
+    E --> G[Notify user liên quan nếu có]
+    F --> G
+```
+
+## Luồng 3: Guestbook moderation path
+
+```mermaid
+flowchart TD
+    A[Guestbook entry pending hoặc bị report] --> B[Moderator xem entry]
+    B --> C{Decision}
+    C -->|approved| D[approvalStatus = approved]
+    C -->|rejected| E[approvalStatus = rejected]
+    D --> F[Entry hiển thị public]
+    E --> G[Entry không hiển thị public]
+```

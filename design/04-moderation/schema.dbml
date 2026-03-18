@@ -1,0 +1,61 @@
+// Moderation Module - logical schema aligned with current repo truth
+// Note:
+// - moderation_reports là source of truth.
+// - Các table target bên dưới chỉ xuất hiện ở đây để mô tả summary sync,
+//   không chuyển ownership của chúng sang moderation module.
+
+Table users {
+  id uuid [pk]
+  public_id varchar [unique]
+  full_name varchar
+  email varchar
+}
+
+Table moderation_reports {
+  id uuid [pk]
+  public_id varchar [unique]
+  entity_type varchar [not null] // postComments | communityPosts | communityComments | guestbookEntries
+  entity_public_id varchar [not null]
+  entity_collection varchar
+  entity_document_id varchar
+  reason varchar [not null]
+  notes text
+  status varchar [not null] // pending | approved | rejected | flagged | hidden
+  reporter_user_id uuid [ref: > users.id]
+  reporter_ip_hash varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table post_comments {
+  id uuid [pk]
+  public_id varchar [unique]
+  moderation_status varchar
+  report_count int
+  last_report_reason varchar
+  is_hidden bool
+}
+
+Table community_posts {
+  id uuid [pk]
+  public_id varchar [unique]
+  moderation_status varchar
+  report_count int
+  last_report_reason varchar
+  is_hidden bool
+}
+
+Table community_comments {
+  id uuid [pk]
+  public_id varchar [unique]
+  moderation_status varchar
+  report_count int
+  last_report_reason varchar
+  is_hidden bool
+}
+
+Table guestbook_entries {
+  id uuid [pk]
+  public_id varchar [unique]
+  approval_status varchar
+}
