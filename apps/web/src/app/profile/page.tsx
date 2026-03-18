@@ -109,6 +109,8 @@ export default function ProfilePage() {
 
   if (!user) return null
 
+  const userName = user.username || user.email || 'nguoi-dung'
+
   const joinDate = new Date(user.createdAt).toLocaleDateString('vi-VN', {
     year: 'numeric',
     month: 'long',
@@ -196,7 +198,7 @@ export default function ProfilePage() {
                   {avatarPreview ? (
                     <Image
                       src={avatarPreview}
-                      alt={user.username}
+                      alt={userName}
                       width={80}
                       height={80}
                       className="h-20 w-20 rounded-full border-4 border-card object-cover"

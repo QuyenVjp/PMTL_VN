@@ -6,24 +6,22 @@ This project protects both runtimes:
 - `apps/web/src/proxy.ts`
 - `apps/cms/src/proxy.ts`
 
-Both proxies apply the same baseline before requests reach route handlers or Payload internals.
+Both proxies apply the baseline before requests reach route handlers or Payload internals. In this repo, `proxy.ts` is the request boundary file convention for Next.js 16.
 
 ## Current Protection Stack
 
 ### HTTP headers
-- Security headers are applied through `helmet`-backed helpers in:
-  - `apps/web/src/lib/security/headers.ts`
-  - `apps/cms/src/services/security-headers.service.ts`
+- Security headers are applied at the proxy/request-boundary layer.
+- Web applies them via `apps/web/src/lib/security/headers.ts`.
+- CMS applies its own API headers in `apps/cms/src/proxy.ts`.
 - Active headers include:
   - `Content-Security-Policy`
   - `Cross-Origin-Opener-Policy`
   - `Cross-Origin-Resource-Policy`
-  - `Origin-Agent-Cluster`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `Permissions-Policy`
-  - `X-Frame-Options: SAMEORIGIN`
-  - `Strict-Transport-Security` in production
+  - `X-Frame-Options: DENY` on web
 
 ### CORS
 - API traffic under `/api/*` is checked against explicit allowlists.
@@ -42,20 +40,19 @@ Both proxies apply the same baseline before requests reach route handlers or Pay
   - `Origin`
   - `Referer`
   - `Sec-Fetch-Site`
-  - optional double-submit token checks for fetch/XHR flows
+  - double-submit token checks for fetch/XHR flows
 - Browser requests should send:
   - `X-CSRF-Token`
   - `X-Requested-With: fetch`
-- Native same-origin form submissions are still protected by the origin and fetch-site checks.
+- The web CSRF cookie is reused until expiry and is issued as `SameSite=Strict`.
+- Requests with no trusted `Origin`, no trusted `Referer`, and no trusted `Sec-Fetch-Site` must fail closed.
 
 ### Rate limiting
 - Web and CMS use `rate-limiter-flexible`.
 - Supported stores:
-  - `memory` for local development or single-instance fallback
+  - `memory` for local development or explicit single-instance mode
   - `redis` for production multi-instance deployments
-  - `auto` to prefer Redis when `REDIS_URL` is present in production
 - Environment contract:
-  - `SECURITY_RATE_LIMIT_STORE`
   - `SECURITY_RATE_LIMIT_MAX`
   - `SECURITY_RATE_LIMIT_WINDOW_MS`
   - `SECURITY_RATE_LIMIT_AUTH_MAX`
@@ -68,9 +65,10 @@ Both proxies apply the same baseline before requests reach route handlers or Pay
   - auth endpoints
   - upload endpoints
 - Responses include rate-limit metadata and the active store (`memory` or `redis`).
+- Production rule:
+  - if Redis is expected and the limiter cannot talk to Redis, requests fail closed with `503`, not fail open.
 
-Production rule:
-- If the deployment runs more than one `web` or `cms` instance, `SECURITY_RATE_LIMIT_STORE=redis` is mandatory.
+- If the deployment runs more than one `web` or `cms` instance, `REDIS_URL` is mandatory.
 
 ### Auth cookies
 - Auth cookie helpers are configured for:
@@ -86,6 +84,7 @@ Production rule:
 - React escaping is the default defense for UI rendering.
 - Any future `dangerouslySetInnerHTML` usage must be sanitized and reviewed explicitly.
 - Search results and API responses must stay typed and mapped before hitting UI components.
+- `next/image` remote allowlists must stay explicit; wildcard `http://**` or `https://**` hosts are not allowed in production config.
 
 ### Input validation
 - New input contracts must be defined with Zod at the boundary.
@@ -123,11 +122,13 @@ Hard rule:
 Before each production deploy:
 - Confirm `NEXT_PUBLIC_SITE_URL` and `SECURITY_ALLOWED_ORIGINS` match the canonical HTTPS domains.
 - Confirm `REDIS_URL` is set when multiple app instances are deployed.
+- Confirm `apps/web/next.config.ts` only allows explicit media origins.
 - Verify login, logout, profile update, upload, and search routes with the proxy enabled.
 - Watch logs for:
   - `CSRF validation failed`
   - `CORS origin not allowed`
   - `Too many requests`
+  - `Rate limit service unavailable.`
   - Redis connection failures in rate-limit services
 
 ## Security Ownership Map

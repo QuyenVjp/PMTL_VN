@@ -132,7 +132,6 @@ function buildRedisLimiter(rule: RateLimitRule, client: Redis): RateLimiterRedis
     duration: Math.ceil(rule.durationMs / 1000),
     blockDuration: Math.ceil(rule.blockDurationMs / 1000),
     storeClient: client,
-    insuranceLimiter: buildMemoryLimiter(rule),
   });
 }
 
@@ -197,25 +196,25 @@ function formatResult(
 export async function checkRateLimit(request: NextRequest): Promise<RateLimitResult> {
   const rule = resolveRule(request.nextUrl.pathname);
   const key = `${rule.key}:${resolveClientIp(request)}`;
-  const { limiter, store } = await getLimiter(rule);
 
   try {
+    const { limiter, store } = await getLimiter(rule);
     const limiterRes = await limiter.consume(key);
     return formatResult(rule, key, limiterRes, store, true);
   } catch (error) {
     if (isRateLimiterRes(error)) {
-      return formatResult(rule, key, error, store, false);
+      return formatResult(rule, key, error, shouldUseRedisStore() ? "redis" : "memory", false);
     }
 
-    logger.error(withError({ key, store }, error), "CMS rate limiter failed unexpectedly; allowing request");
+    logger.error(withError({ key, store: shouldUseRedisStore() ? "redis" : "memory" }, error), "CMS rate limiter failed unexpectedly; blocking request");
     return {
-      allowed: true,
+      allowed: false,
       key,
       limit: rule.points,
-      remaining: rule.points,
+      remaining: 0,
       resetAt: Date.now() + rule.durationMs,
       retryAfter: Math.ceil(rule.durationMs / 1000),
-      store: "memory",
+      store: shouldUseRedisStore() ? "redis" : "memory",
     };
   }
 }

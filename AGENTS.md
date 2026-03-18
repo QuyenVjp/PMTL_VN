@@ -23,13 +23,14 @@ Implementation expectations:
 - Prefer full implementations over stubs
 - Keep code explicit and AI-friendly
 - Update docs and env examples when contracts or runtime requirements change
+- If you change project rules, security baselines, architecture conventions, or AI coding constraints, update `AGENTS.md`, the relevant `.agents/skills/*/SKILL.md`, and the affected docs in the same task
 - Run relevant verification after edits
 - All error handling must include structured logging (use pino)
 - All user input must be validated with Zod schemas
 - All API responses must use TypeScript strict mode
 
 Production readiness docs:
-- Read `INFRASTRUCTURE_AUDIT_FINAL.md` for current state audit
-- Read `10_IMPLEMENTATION_GUIDE.md` for step-by-step implementation
+- Read `AUDIT_VERIFIED_2026.md` first for the verified production-readiness baseline and corrected findings
+- Treat any older audit notes still visible in git history or local notes as historical context, not as the final source of truth
 - Read `.vscode/.instructions.md` for Copilot context
 - See `.agents/skills/pmtl-production-ready/SKILL.md` for patterns

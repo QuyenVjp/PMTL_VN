@@ -14,9 +14,15 @@ import { getCurrentSessionFromCMS } from "./cms-auth-client";
 
 const SESSION_CACHE_PREFIX = "auth-session";
 const inMemorySessionCache = new Map<string, { expiresAt: number; session: AuthSession | null }>();
+const pendingInvalidations = new Map<string, Promise<void>>();
+const invalidatedSessionTokens = new Map<string, number>();
 
 function getSessionCacheKey(token: string): string {
   return `${SESSION_CACHE_PREFIX}:${token}`;
+}
+
+function getSessionInvalidationKey(token: string): string {
+  return `${getSessionCacheKey(token)}:invalidated`;
 }
 
 function getTokenTtlSeconds(token: string): number {
@@ -37,7 +43,54 @@ function getTokenTtlSeconds(token: string): number {
   }
 }
 
+function pruneSessionCaches(): void {
+  const now = Date.now();
+
+  for (const [token, value] of inMemorySessionCache.entries()) {
+    if (value.expiresAt <= now) {
+      inMemorySessionCache.delete(token);
+    }
+  }
+
+  for (const [token, invalidatedUntil] of invalidatedSessionTokens.entries()) {
+    if (invalidatedUntil <= now) {
+      invalidatedSessionTokens.delete(token);
+    }
+  }
+}
+
+function markSessionInvalidated(token: string, durationMs = 2_000): void {
+  invalidatedSessionTokens.set(token, Date.now() + durationMs);
+  inMemorySessionCache.delete(token);
+}
+
+function isSessionLocallyInvalidated(token: string): boolean {
+  const invalidatedUntil = invalidatedSessionTokens.get(token);
+  if (!invalidatedUntil) {
+    return false;
+  }
+
+  if (invalidatedUntil <= Date.now()) {
+    invalidatedSessionTokens.delete(token);
+    return false;
+  }
+
+  return true;
+}
+
 async function readCachedSession(token: string): Promise<AuthSession | null | undefined> {
+  pruneSessionCaches();
+
+  const pendingInvalidation = pendingInvalidations.get(token);
+  if (pendingInvalidation) {
+    await pendingInvalidation;
+    return null;
+  }
+
+  if (isSessionLocallyInvalidated(token)) {
+    return null;
+  }
+
   const cached = inMemorySessionCache.get(token);
   if (cached && cached.expiresAt > Date.now()) {
     return cached.session;
@@ -53,7 +106,16 @@ async function readCachedSession(token: string): Promise<AuthSession | null | un
   }
 
   try {
-    const value = await redis.get(getSessionCacheKey(token));
+    const [value, invalidated] = await Promise.all([
+      redis.get(getSessionCacheKey(token)),
+      redis.get(getSessionInvalidationKey(token)),
+    ]);
+
+    if (invalidated) {
+      markSessionInvalidated(token);
+      return null;
+    }
+
     if (!value) {
       return undefined;
     }
@@ -71,6 +133,12 @@ async function readCachedSession(token: string): Promise<AuthSession | null | un
 }
 
 async function writeCachedSession(token: string, session: AuthSession | null): Promise<void> {
+  pruneSessionCaches();
+
+  if (isSessionLocallyInvalidated(token) || pendingInvalidations.has(token)) {
+    return;
+  }
+
   const ttlSeconds = getTokenTtlSeconds(token);
   inMemorySessionCache.set(token, {
     expiresAt: Date.now() + Math.min(ttlSeconds, 30) * 1000,
@@ -94,17 +162,36 @@ export async function invalidateAuthSessionCache(token?: string | null): Promise
     return;
   }
 
-  inMemorySessionCache.delete(token);
-
-  const redis = await ensureRedisConnected().catch(() => null);
-  if (!redis) {
+  const existingInvalidation = pendingInvalidations.get(token);
+  if (existingInvalidation) {
+    await existingInvalidation;
     return;
   }
 
+  const invalidationPromise = (async () => {
+    markSessionInvalidated(token);
+
+    const redis = await ensureRedisConnected().catch(() => null);
+    if (!redis) {
+      return;
+    }
+
+    try {
+      await Promise.all([
+        redis.del(getSessionCacheKey(token)),
+        redis.set(getSessionInvalidationKey(token), "1", "EX", 2),
+      ]);
+    } catch (error) {
+      logger.warn("Failed to invalidate cached auth session", { error });
+    }
+  })();
+
+  pendingInvalidations.set(token, invalidationPromise);
+
   try {
-    await redis.del(getSessionCacheKey(token));
-  } catch (error) {
-    logger.warn("Failed to invalidate cached auth session", { error });
+    await invalidationPromise;
+  } finally {
+    pendingInvalidations.delete(token);
   }
 }
 

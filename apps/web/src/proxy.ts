@@ -6,11 +6,18 @@ import { NextResponse } from "next/server";
 import { isShuttingDown } from "@/lib/runtime/shutdown";
 import { CSRF_HEADER_NAME } from "@/lib/security/csrf-constants";
 import { ensureCsrfCookie, isCsrfProtectedMethod, isCsrfRequestValid, readCsrfTokenFromRequest } from "@/lib/security/csrf";
+import { applySecurityHeaders } from "@/lib/security/headers";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { cloneHeadersWithCorrelationId, CORRELATION_ID_HEADER } from "@/lib/security/request-context";
 
 function getAuthCookie(req: NextRequest) {
   return req.cookies.get("pmtl-session")?.value ?? req.cookies.get("auth_token")?.value;
+}
+
+function finalizeResponse(req: NextRequest, response: NextResponse): NextResponse {
+  response.headers.set(CORRELATION_ID_HEADER, response.headers.get(CORRELATION_ID_HEADER) ?? req.headers.get(CORRELATION_ID_HEADER) ?? randomUUID());
+  ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
+  return applySecurityHeaders(response);
 }
 
 function isApiRequest(pathname: string): boolean {
@@ -59,7 +66,7 @@ export async function proxy(req: NextRequest) {
       { status: 503 },
     );
     response.headers.set(CORRELATION_ID_HEADER, correlationId);
-    return response;
+    return finalizeResponse(req, response);
   }
 
   const idToken = req.nextUrl.searchParams.get("id_token");
@@ -70,8 +77,7 @@ export async function proxy(req: NextRequest) {
     callbackUrl.pathname = "/auth/google/callback";
     const response = NextResponse.redirect(callbackUrl);
     response.headers.set(CORRELATION_ID_HEADER, correlationId);
-    ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-    return response;
+    return finalizeResponse(req, response);
   }
 
   const token = getAuthCookie(req);
@@ -83,8 +89,7 @@ export async function proxy(req: NextRequest) {
     redirectUrl.searchParams.set("redirect", originalPath);
     const response = NextResponse.redirect(redirectUrl);
     response.headers.set(CORRELATION_ID_HEADER, correlationId);
-    ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-    return response;
+    return finalizeResponse(req, response);
   }
 
   if (isApiRequest(req.nextUrl.pathname)) {
@@ -99,30 +104,29 @@ export async function proxy(req: NextRequest) {
         { status: 413 },
       );
       response.headers.set(CORRELATION_ID_HEADER, correlationId);
-      ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-      return response;
+      return finalizeResponse(req, response);
     }
 
     const rateLimitResult = await checkRateLimit(req);
     if (!rateLimitResult.allowed) {
       const response = NextResponse.json(
         {
-          error: "Too many requests.",
+          error: rateLimitResult.reason === "service-unavailable" ? "Rate limit service unavailable." : "Too many requests.",
           retryAfter: rateLimitResult.retryAfter,
         },
         {
-          status: 429,
+          status: rateLimitResult.reason === "service-unavailable" ? 503 : 429,
           headers: {
             "Retry-After": String(rateLimitResult.retryAfter),
             "X-RateLimit-Limit": String(rateLimitResult.limit),
             "X-RateLimit-Remaining": String(rateLimitResult.remaining),
             "X-RateLimit-Reset": String(Math.ceil(rateLimitResult.resetAt / 1000)),
+            "X-RateLimit-Store": rateLimitResult.store,
           },
         },
       );
       response.headers.set(CORRELATION_ID_HEADER, correlationId);
-      ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-      return response;
+      return finalizeResponse(req, response);
     }
 
     if (
@@ -139,8 +143,7 @@ export async function proxy(req: NextRequest) {
         { status: 403 },
       );
       response.headers.set(CORRELATION_ID_HEADER, correlationId);
-      ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-      return response;
+      return finalizeResponse(req, response);
     }
   }
 
@@ -150,8 +153,7 @@ export async function proxy(req: NextRequest) {
     },
   });
   response.headers.set(CORRELATION_ID_HEADER, correlationId);
-  ensureCsrfCookie(response, readCsrfTokenFromRequest(req));
-  return response;
+  return finalizeResponse(req, response);
 }
 
 export const config = {

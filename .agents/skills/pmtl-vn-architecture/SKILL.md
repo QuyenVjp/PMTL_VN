@@ -27,8 +27,11 @@ Follow these rules on every task:
 - Do not move business logic into Payload collection config or Next route/page files
 - Introduce Redis, Payload Jobs, workers, and monitoring only when there is a concrete production or operational need, and document the runtime contract
 - In `apps/web`, prefer Next.js 16 `cacheComponents` with `"use cache"` helper functions over route-level `revalidate` or `unstable_cache`
+- In `apps/web`, request-boundary logic belongs in `src/proxy.ts` for Next.js 16; do not blindly migrate to `middleware.ts`
 - Prefer clear, maintainable code over clever abstractions
+- When audit documents disagree, treat `AUDIT_VERIFIED_2026.md` as the checked baseline and older audits as hypotheses to validate
 - Update docs and env examples when architecture, contracts, or runtime requirements change
+- If you change project rules or AI-coding conventions, update the corresponding docs and skill files in the same task
 
 ## Repo Shape
 Assume this structure unless the user explicitly changes it:
@@ -56,7 +59,7 @@ Typical placement:
 
 For auth in web:
 - prefer `features/auth/*`
-- add route protection in middleware or the least invasive server-side guard that fits the existing setup
+- add route protection in `proxy.ts` or the least invasive server-side guard that fits the existing setup
 - treat CMS as the auth authority
 
 ### When working on cms

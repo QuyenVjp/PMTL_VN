@@ -45,6 +45,7 @@ export type RateLimitResult = {
   limit: number;
   remaining: number;
   retryAfter: number;
+  reason: "limited" | "service-unavailable";
   resetAt: number;
   store: "memory" | "redis";
 };
@@ -60,6 +61,15 @@ function getMemoryLimiter(profile: RateLimitProfile) {
   });
 }
 
+function shouldUseRedisStore(): boolean {
+  const redisUrl = process.env.REDIS_URL?.trim();
+  if (!redisUrl) {
+    return false;
+  }
+
+  return process.env.NODE_ENV === "production";
+}
+
 async function getLimiter(profile: RateLimitProfile): Promise<{ limiter: RateLimiterLike; store: "memory" | "redis" }> {
   const cached = limiterCache.get(profile.name);
   if (cached) {
@@ -67,6 +77,10 @@ async function getLimiter(profile: RateLimitProfile): Promise<{ limiter: RateLim
   }
 
   const client = await ensureRedisConnected().catch((error: unknown) => {
+    if (shouldUseRedisStore()) {
+      throw error;
+    }
+
     logger.warn("Web rate-limit Redis connect failed, using memory fallback", { error, profile: profile.name });
     return null;
   });
@@ -75,7 +89,6 @@ async function getLimiter(profile: RateLimitProfile): Promise<{ limiter: RateLim
     const limiter = new RateLimiterRedis({
       blockDuration: Math.ceil(profile.blockDurationMs / 1000),
       duration: Math.ceil(profile.durationMs / 1000),
-      insuranceLimiter: getMemoryLimiter(profile),
       keyPrefix: `web:${profile.name}`,
       points: profile.points,
       storeClient: client,
@@ -110,6 +123,7 @@ function formatResult(
     key,
     limit: profile.points,
     remaining,
+    reason: allowed ? "limited" : "limited",
     resetAt: Date.now() + msBeforeNext,
     retryAfter: Math.max(1, Math.ceil(msBeforeNext / 1000)),
     store,
@@ -181,31 +195,35 @@ export function resolveRateLimitProfile(pathname: string): RateLimitProfile {
 
 export async function checkRateLimit(request: NextRequest, profile = resolveRateLimitProfile(request.nextUrl.pathname)): Promise<RateLimitResult> {
   const key = `${profile.name}:${getClientIp(request)}`;
-  const { limiter, store } = await getLimiter(profile);
 
   try {
+    const { limiter, store } = await getLimiter(profile);
     const limiterRes = await limiter.consume(key);
     return formatResult(profile, key, limiterRes, store, true);
   } catch (error) {
     if (isRateLimiterRes(error)) {
+      const { store } = (await getLimiter(profile).catch(() => ({ store: shouldUseRedisStore() ? "redis" as const : "memory" as const }))) as {
+        store: "memory" | "redis";
+      };
       return formatResult(profile, key, error, store, false);
     }
 
-    logger.error("Web rate limiter failed unexpectedly; allowing request", {
+    logger.error("Web rate limiter failed unexpectedly; blocking request", {
       error,
       key,
       profile: profile.name,
-      store,
+      store: shouldUseRedisStore() ? "redis" : "memory",
     });
 
     return {
-      allowed: true,
+      allowed: false,
       key,
       limit: profile.points,
-      remaining: profile.points,
+      remaining: 0,
+      reason: "service-unavailable",
       resetAt: Date.now() + profile.durationMs,
       retryAfter: Math.ceil(profile.durationMs / 1000),
-      store: "memory",
+      store: shouldUseRedisStore() ? "redis" : "memory",
     };
   }
 }

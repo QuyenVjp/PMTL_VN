@@ -24,6 +24,8 @@ Production notes:
 - Redis production dùng `volatile-lru` để request guard và rate-limit keys có TTL không làm runtime fail-write khi memory đầy
 - Meilisearch production bật snapshot scheduling qua `MEILI_SCHEDULE_SNAPSHOT`
 - worker có heartbeat file healthcheck trong container để Docker phát hiện tiến trình nền bị treo
+- `web`, `cms`, `worker` dùng `stop_grace_period` dài hơn mặc định để tránh cắt request/job dang chay khi deploy
+- Postgres production set `statement_timeout`, `lock_timeout`, `idle_in_transaction_session_timeout` o level service de fail fast khi query treo
 - monitoring service bind localhost only; truy cap Grafana/Prometheus/Alertmanager qua SSH tunnel, khong mo public port
 - build image truoc roi moi deploy len VPS; standalone build tren Windows co the canh bao trace `node:inspector`, nhung deploy Linux khong gap gioi han path nay
 - CMS uploads/media phai nam tren volume persistent rieng, khong nam trong image layer
@@ -62,6 +64,13 @@ Production notes:
   - `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`
   - `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` neu can upload sourcemaps
   - `MONITORING_TEST_SECRET`
+
+## Runtime hardening baseline
+
+- `web` va `cms` health route tra `503` khi app dang shutdown de load balancer ngung gui request moi.
+- Rate limiting phai fail closed neu Redis duoc ky vong trong production.
+- Query timeout nen duoc dat o Postgres service va connection timeout o app pool.
+- Image allowlist cua web phai explicit cho CMS media/CDN duoc chap nhan, khong mo wildcard.
 
 ## Monitoring topology
 

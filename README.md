@@ -128,10 +128,24 @@ Boundary dev/prod:
 
 ## Tài liệu cần đọc trước khi code
 
+- `AUDIT_VERIFIED_2026.md`
 - `docs/architecture/conventions.md`
 - `docs/architecture/domains.md`
 - `docs/api/contracts.md`
 - `docs/cms/content-model.md`
+
+`AUDIT_VERIFIED_2026.md` là baseline đã được đối chiếu lại với code hiện tại. Nếu còn audit cũ trong git history hoặc ghi chú cá nhân, chỉ dùng chúng như giả thuyết cần kiểm lại.
+
+## Verification trong Docker dev
+
+Khi stack dev đang chạy bằng Docker, ưu tiên chạy verify từ bên trong container để dùng đúng Node/Pnpm của repo:
+
+```bash
+docker compose -f infra/docker/compose.dev.yml exec -T cms sh -lc "cd /app/apps/cms && pnpm test"
+docker compose -f infra/docker/compose.dev.yml exec -T web sh -lc "CMS_PUBLIC_URL=http://cms:3001 NEXT_PUBLIC_SITE_URL=http://web:3000 pnpm smoke:test"
+```
+
+Lý do: host shell cũ hơn baseline `Node >= 20.18`, nên `pnpm`, ESLint và một số script verify có thể fail do môi trường thay vì fail do mã nguồn.
 
 ## Ghi chú về CMS runtime hiện tại
 

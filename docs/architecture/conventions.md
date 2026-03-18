@@ -10,7 +10,7 @@
 - `src/components/common`: component dùng nhiều feature nhưng không phải primitive.
 - `src/lib`: integration layer như CMS client, search client, env, logger.
 - Với auth: `src/features/auth/*` chứa auth API wrapper, form, hook session, auth error parsing.
-- Guard route ưu tiên dùng server-side session check hoặc middleware mỏng, không dồn business rule vào page file.
+- Guard route ưu tiên dùng server-side session check hoặc `src/proxy.ts` mỏng theo file convention của Next.js 16, không dồn business rule vào page file.
 
 ### CMS
 
@@ -107,3 +107,12 @@
 - Integration layer throw error typed hoặc error có message rõ nghĩa.
 - UI layer không parse lỗi mơ hồ từ hệ thống thấp hơn.
 - Logger chỉ log ở boundary như route handler, service, worker.
+
+## 9. AI synchronization rule
+
+- Khi thay đổi quy tắc kiến trúc, security baseline, runtime contract, hoặc convention codegen cho AI, phải cập nhật trong cùng task:
+  - `AGENTS.md`
+  - skill liên quan trong `.agents/skills/*/SKILL.md`
+  - docs tương ứng trong `docs/architecture/*`, `docs/security.md`, `docs/api/contracts.md`
+- Không tạo rule mới trong code mà bỏ quên docs/skill; repo này ưu tiên "code + rule + docs" đồng bộ.
+- Với Next.js 16, request boundary runtime của web nằm ở `apps/web/src/proxy.ts`, không tự động đổi về `middleware.ts` nếu không có lý do version-specific rõ ràng.

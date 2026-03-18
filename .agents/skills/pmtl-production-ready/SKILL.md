@@ -14,6 +14,7 @@ description: >-
 **Stack:** Next.js 16 + Payload CMS 3 + PostgreSQL 17 + Meilisearch + Docker Compose
 **Environment:** Solo developer, production-grade, design-focused
 **Principles:** Clear code > clever code, explicit > implicit, safe > fast
+**Audit baseline:** Read `AUDIT_VERIFIED_2026.md` first; treat `PRODUCTION_READINESS_AUDIT_2026.md` as historical context that must be re-verified against current code.
 
 ---
 
@@ -36,6 +37,14 @@ description: >-
 ---
 
 ## Architecture Rules (Non-Negotiable)
+
+### Documentation Synchronization Rule
+- If you change project rules, runtime contracts, security baselines, or AI coding conventions, update the corresponding docs and skill files in the same task.
+- Minimum sync set:
+  - `AGENTS.md`
+  - relevant file(s) in `.agents/skills/*/SKILL.md`
+  - relevant docs in `docs/architecture/*`, `docs/security.md`, `docs/api/contracts.md`
+- Do not leave new rules implicit in code only.
 
 ### Monorepo Boundaries
 ```
@@ -60,7 +69,7 @@ description: >-
 ```typescript
 // ✅ CORRECT structure:
 src/
-├─ app/                         ← Routes, layouts, middleware
+├─ app/                         ← Routes, layouts, request-time entrypoints
 ├─ features/
 │  ├─ auth/                     ← Auth domain
 │  │  ├─ api/
@@ -134,13 +143,12 @@ packages/shared/src/
 
 ### TypeScript Strictness
 ```json
-// Both apps MUST use production TypeScript config:
+// Repo baseline:
 {
-  "extends": "@pmtl/config/typescript/production.json",
   "compilerOptions": {
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
@@ -149,6 +157,9 @@ packages/shared/src/
   }
 }
 ```
+
+- `strict: true` is mandatory.
+- `exactOptionalPropertyTypes` and `noUncheckedIndexedAccess` are recommended, but only enable them in a dedicated cleanup batch after proving the app passes typecheck.
 
 ### Error Handling Pattern
 ```typescript
@@ -177,6 +188,7 @@ try {
 ```
 
 ### Next.js 16 Runtime Boundary
+- In this repo, request-boundary logic for the web runtime lives in `apps/web/src/proxy.ts`. Do not replace it with `middleware.ts` unless the framework version changes or there is a version-specific reason confirmed by official docs.
 - Under `cacheComponents`, avoid reading `new Date()`, randomness, or server-only modules inside otherwise static Server Components unless the route has already opted into request-time data with `connection()`, `headers()`, `cookies()`, or an uncached fetch.
 - If only a tiny leaf needs browser time or client-only APIs, prefer a tiny client component over making the whole route dynamic.
 - When both server and client need the same auth/CSRF constants, keep those constants in a neutral module and let server-only logic (`node:crypto`, fs, streams) stay isolated.
@@ -283,9 +295,9 @@ export function CommentForm() {
 
 ### Authentication & Authorization
 ```typescript
-// ✅ Check auth in middleware (not every page):
-import { middleware } from '@/middleware';
-// Protects routes: /profile, /admin, /settings
+// ✅ Check auth at the request boundary:
+// apps/web/src/proxy.ts for cross-cutting guards
+// server-side session checks for route/page-specific auth
 
 // ✅ RBAC via Payload collections:
 // Use access.ts to control who can access/modify
@@ -618,6 +630,8 @@ NODE_DEBUG=http pnpm dev  # Enable HTTP debug logs
 - Treat empty-string envs as `undefined` for optional secrets (example: `MEILI_MASTER_KEY`, `PAYLOAD_API_TOKEN`) to avoid Zod crashes on blank values.
 - Normalize Redis host to `127.0.0.1` only for Windows local dev; do not override in Docker/Linux.
 - Map invalid credential errors to 401 in CMS auth service to avoid 500s on wrong passwords.
+- When Redis-backed rate limiting is expected in production, fail closed with `503` on limiter backend failure instead of silently allowing traffic.
+- Keep `apps/web/src/lib/security/origin.ts` and `apps/web/src/lib/security/headers.ts` explicit; wildcard image origins and permissive CSRF origin handling are not acceptable.
 - Accept any non-empty Web Vitals metric name (max 32 chars) to prevent 400s when new metrics appear.
 - In Docker Desktop dev, `apps/web` should prefer the supported webpack dev path with polling over Turbopack for watch stability. The main dev slowdown is usually bind-mounted filesystem watch latency, not raw JS execution.
 - Keep `apps/cms` off experimental Next bundlers unless Payload compatibility has been explicitly validated against the exact version in use.

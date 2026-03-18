@@ -15,7 +15,7 @@ case "$service" in
   cms|worker)
     workspace_dir="apps/cms"
     if [ "$service" = "worker" ]; then
-      required_bin="$workspace_dir/node_modules/tsx/dist/cli.mjs"
+      required_bin="node_modules/tsx/dist/cli.mjs"
     else
       required_bin="$workspace_dir/node_modules/next/dist/bin/next"
     fi
@@ -35,6 +35,14 @@ install_deps() {
 
 wait_for_install() {
   while [ -d "$lock_dir" ]; do
+    current_hash="$(cat "$stamp_file" 2>/dev/null || true)"
+
+    if ! needs_install; then
+      echo "[docker-dev] Detected completed dependency install with a stale lock; clearing lock."
+      rmdir "$lock_dir" 2>/dev/null || true
+      break
+    fi
+
     echo "[docker-dev] Waiting for dependency install lock..."
     sleep 2
   done

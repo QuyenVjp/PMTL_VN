@@ -47,7 +47,7 @@ In CMS:
 
 In web:
 - auth feature code under `features/auth/*`
-- route protection in middleware or the least invasive server-side guard that matches the current repo design
+- route protection in `proxy.ts` or the least invasive server-side guard that matches the current repo design
 
 ## Security Baseline
 - keep secrets in env files or deployment secret stores

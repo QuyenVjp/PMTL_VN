@@ -63,11 +63,23 @@ export function ensureCsrfCookie(response: NextResponse, currentToken?: string |
     httpOnly: false,
     maxAge: CSRF_MAX_AGE_SECONDS,
     path: "/",
-    sameSite: "lax",
+    sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
   });
 
   return token;
+}
+
+function getOriginFromReferer(referer: string | null): string | null {
+  if (!referer) {
+    return null;
+  }
+
+  try {
+    return new URL(referer).origin;
+  } catch {
+    return null;
+  }
 }
 
 export function isCsrfRequestValid(request: NextRequest): boolean {
@@ -84,15 +96,19 @@ export function isCsrfRequestValid(request: NextRequest): boolean {
 
   const origin = request.headers.get("origin");
   const referer = request.headers.get("referer");
-  const originAllowed = origin ? isAllowedOrigin(origin) : true;
-  let refererAllowed = true;
-  if (referer) {
-    try {
-      refererAllowed = isAllowedOrigin(new URL(referer).origin);
-    } catch {
-      refererAllowed = false;
-    }
+  if (origin) {
+    return isAllowedOrigin(origin);
   }
 
-  return originAllowed && refererAllowed;
+  const refererOrigin = getOriginFromReferer(referer);
+  if (refererOrigin) {
+    return isAllowedOrigin(refererOrigin);
+  }
+
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite) {
+    return ["same-origin", "same-site", "none"].includes(fetchSite);
+  }
+
+  return false;
 }

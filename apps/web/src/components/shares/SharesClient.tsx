@@ -408,7 +408,7 @@ const CommentItem = ({ comment, postId, allComments, depth = 0, onRefresh }: Com
 
   const handleReply = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalName = user ? (user.fullName || user.username) : replyName;
+    const finalName = (user ? (user.fullName || user.username || user.email) : replyName) || '';
     if (!reply.trim() || !finalName.trim()) {
       if (!finalName.trim()) toast.error('Vui lòng nhập tên của bạn');
       return;
@@ -570,7 +570,7 @@ const DetailModal = ({ post, onClose, onLike, liked, onRefreshPost }: DetailModa
 
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalName = user ? (user.fullName || user.username) : commentName;
+    const finalName = (user ? (user.fullName || user.username || user.email) : commentName) || '';
     if (!commentText.trim() || !finalName.trim()) return;
     setSending(true);
     try {
@@ -828,6 +828,9 @@ const SubmitModal = ({ open, onOpenChange, user, availableTags, categories }: { 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      if (!file) {
+        return;
+      }
       setCoverFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {

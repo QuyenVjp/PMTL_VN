@@ -35,7 +35,7 @@ services:
     container_name: pmtl-web
     restart: unless-stopped
     mem_limit: 1024m
-    stop_grace_period: 40s
+    stop_grace_period: 120s
     env_file:
       - .env.prod
     environment:
@@ -63,7 +63,7 @@ services:
     container_name: pmtl-cms
     restart: unless-stopped
     mem_limit: 1024m
-    stop_grace_period: 40s
+    stop_grace_period: 180s
     env_file:
       - .env.prod
     environment:
@@ -112,6 +112,12 @@ services:
       - maintenance_work_mem=64MB
       - -c
       - client_encoding=UTF8
+      - -c
+      - statement_timeout=10000
+      - -c
+      - lock_timeout=5000
+      - -c
+      - idle_in_transaction_session_timeout=60000
       - -c
       - log_min_duration_statement=1000
     volumes:
@@ -214,7 +220,7 @@ services:
     container_name: pmtl-worker
     restart: unless-stopped
     mem_limit: 512m
-    stop_grace_period: 40s
+    stop_grace_period: 180s
     env_file:
       - .env.prod
     environment:

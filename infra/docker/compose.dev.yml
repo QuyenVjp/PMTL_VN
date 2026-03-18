@@ -42,7 +42,7 @@ services:
       - ../../packages/ui/src:/app/packages/ui/src
       - ../../packages/ui/package.json:/app/packages/ui/package.json:ro
       - ../../packages/config:/app/packages/config:ro
-      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
+      - ../../infra/scripts:/app/infra/scripts:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - turbo-cache:/app/.turbo
@@ -103,6 +103,7 @@ services:
       - ../../apps/cms/public:/app/apps/cms/public
       - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
       - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
+      - ../../apps/cms/vitest.config.ts:/app/apps/cms/vitest.config.ts:ro
       - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts
       - ../../apps/cms/next.config.mjs:/app/apps/cms/next.config.mjs:ro
       - ../../apps/cms/eslint.config.mjs:/app/apps/cms/eslint.config.mjs:ro
@@ -110,7 +111,7 @@ services:
       - ../../packages/shared/src:/app/packages/shared/src
       - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
       - ../../packages/config:/app/packages/config:ro
-      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
+      - ../../infra/scripts:/app/infra/scripts:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - turbo-cache:/app/.turbo
@@ -167,11 +168,12 @@ services:
       - ../../apps/cms/src:/app/apps/cms/src
       - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
       - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
+      - ../../apps/cms/vitest.config.ts:/app/apps/cms/vitest.config.ts:ro
       - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts:ro
       - ../../packages/shared/src:/app/packages/shared/src
       - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
       - ../../packages/config:/app/packages/config:ro
-      - ../../infra/scripts/docker-dev-start.sh:/app/infra/scripts/docker-dev-start.sh:ro
+      - ../../infra/scripts:/app/infra/scripts:ro
       - node-modules:/app/node_modules
       - pnpm-store:/root/.local/share/pnpm/store
       - worker-heartbeat:/var/run/pmtl
