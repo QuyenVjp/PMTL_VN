@@ -45,6 +45,7 @@ markmap:
 
 ### Engagement / practice refs
 - `lunarEventOverrides.chantItem`
+- chant item definition gốc vẫn nằm ở content-side practice support data
 
 ### Notification
 - calendar không sở hữu delivery
@@ -54,3 +55,4 @@ markmap:
 - event ownership nằm ở calendar dù content có thể tham chiếu event
 - lunar recurrence base và override là hai lớp dữ liệu khác nhau
 - reminder logic không nằm trong current scope của calendar module
+- calendar chỉ map ngày/sự kiện với bài niệm hoặc guide; không sao chép script nghi thức từ tài liệu PDF vào event record

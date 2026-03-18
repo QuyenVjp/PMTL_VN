@@ -44,6 +44,8 @@ Mục tiêu là làm rõ:
   - editorial collections
   - taxonomy
   - scripture library
+  - `chantItems`
+  - `chantPlans`
   - media linkage
   - content search source fields
 - **References**:
@@ -76,7 +78,7 @@ Mục tiêu là làm rõ:
 - **References**:
   - identity cho `user`
   - content cho `sutras`, `sutraChapters`
-  - practice refs cho `chantItems`, `chantPlans`
+  - content practice refs cho `chantItems`, `chantPlans`
 - **Emits async work**:
   - hiện tại tối thiểu; không đẩy search
 
@@ -141,11 +143,13 @@ Mục tiêu là làm rõ:
 | Community | Moderation | Moderation owns report record | submit report | direct create + async notify | tạo `moderationReports`, sync summary, alert moderator |
 | Community | Notification | Notification không sở hữu community data | submit post/comment/guestbook | async job | tạo push/email alert cho moderator/admin |
 | Community | Identity | Identity owns user | submit/comment/report | direct reference | snapshot author name trên entity để giảm phụ thuộc read path |
-| Engagement | Content | Content owns scripture/library | bookmark/progress/log | direct reference | không write ngược vào content canonical data |
+| Engagement | Content | Content owns scripture/library và practice support content | bookmark/progress/log | direct reference | không write ngược vào content canonical data |
+| Content | Engagement | Engagement owns self-state | preference save / practice complete | direct call qua API contract | chỉ ghi user-state, không sửa script gốc |
 | Engagement | Identity | Identity owns user | read/write self state | direct reference | self-owned records theo user |
 | Moderation | Community | Community owns entity, Moderation owns report | moderator decision | direct write-back | update `moderationStatus`, `isHidden`, `approvalStatus`, summary fields |
 | Moderation | Notification | Notification owns delivery control plane | decision / new report | async job | notify moderator/admin hoặc affected user |
 | Search | Content | Content owns canonical documents | public query fallback | direct read | payload fallback khi Meilisearch unavailable |
+| Calendar | Content | Content owns chant guide/script/downloads | event override cần map bài niệm hoặc guide | direct reference | calendar không copy ritual script vào event |
 | Calendar | Notification | Notification owns delivery | event-related notice | async job | push/email nếu có producer gọi |
 | Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để enqueue delivery |
 
@@ -175,10 +179,10 @@ Mục tiêu là làm rõ:
 | Module | Owns data | Chỉ tham chiếu | Sync hay async | Side effects chính |
 |---|---|---|---|---|
 | Identity | `users`, auth/session | media avatar, audit refs | chủ yếu sync | reset password email, auth cookies |
-| Content | editorial docs, taxonomy, scripture, media links | users, events | sync write + async downstream | search sync, revalidation |
+| Content | editorial docs, taxonomy, scripture, chant guides/plans, media links | users, events | sync write + async downstream | search sync, revalidation |
 | Community | comments, community posts/comments, guestbook | users, posts | sync write + async downstream | moderation alert, moderator notification |
-| Engagement | bookmarks, reading progress, chant prefs, practice logs | users, sutras, chapters, chant refs | sync | rất ít side effects hiện tại |
+| Engagement | bookmarks, reading progress, chant prefs, practice logs | users, sutras, chapters, chant refs từ content | sync | rất ít side effects hiện tại |
 | Moderation | `moderationReports` | users, moderated entities | sync write + async notify | summary sync, moderator/user notification |
 | Search | search contract, index flow | content source fields, queue state | async-first | index upsert/delete, status reporting |
-| Calendar | events, lunar events, overrides | posts, chant refs | sync | event data cho module khác dùng |
+| Calendar | events, lunar events, overrides | posts, chant refs từ content | sync | event data cho module khác dùng |
 | Notification | push subscriptions, push jobs | users, content/community/moderation/calendar context | async | push dispatch, email dispatch |

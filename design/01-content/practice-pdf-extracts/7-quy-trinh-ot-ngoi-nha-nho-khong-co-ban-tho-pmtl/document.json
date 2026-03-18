@@ -1,0 +1,69 @@
+{
+  "title": "7. Quy trình đốt ngôi nhà nhỏ không có bàn thờ PMTL",
+  "slug": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl",
+  "presentation_mode": "vietnamese_priority_text",
+  "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\7. Quy trình đốt ngôi nhà nhỏ không có bàn thờ PMTL.pdf",
+  "page_count": 1,
+  "source_type": "text_pdf",
+  "extraction_method": "direct_text_extraction",
+  "confidence": "high",
+  "needs_review": true,
+  "ocr_languages": [
+    "eng",
+    "osd",
+    "vie",
+    "chi_sim"
+  ],
+  "flow_hints": [
+    {
+      "key": "mental-incense-flow",
+      "title_vi": "Thắp tâm hương",
+      "title_en": "Mental incense flow",
+      "module_targets": [
+        "content"
+      ]
+    },
+    {
+      "key": "little-house-recitation-flow",
+      "title_vi": "Ngôi Nhà Nhỏ",
+      "title_en": "Little House recitation flow",
+      "module_targets": [
+        "content",
+        "engagement"
+      ]
+    },
+    {
+      "key": "little-house-burning-without-altar-flow",
+      "title_vi": "Đốt Ngôi Nhà Nhỏ không có bàn thờ",
+      "title_en": "Little House burning without altar flow",
+      "module_targets": [
+        "content"
+      ]
+    }
+  ],
+  "business_signals": {
+    "has_prayer_template": true,
+    "has_recommended_counts": true,
+    "has_time_rules": false,
+    "has_step_flow": true,
+    "has_checklist_potential": true
+  },
+  "page_records": [
+    {
+      "page_number": 1,
+      "image_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/images/page-001.png",
+      "direct_text_length": 1635,
+      "ocr_text_length": 0,
+      "final_text_length": 1635,
+      "display_text_length": 1393,
+      "extraction_method": "pdf_text",
+      "confidence": "high",
+      "excerpt": "Pháp Môn Tâm Linh ( ) Quy trình đốt Ngôi Nhà Nhỏ ( ) (Cho trường hợp không có bàn thờ đặc trưng của PMTL/ ) Chuẩn bị sẵn Ngôi Nhà Nhỏ đã trì và chấm bút đỏ luôn được lưu trữ trong phong bì đỏ hoặc túi đỏ và vật dụng để đốt Ngôi nhà Nhỏ. 1. Thắp tâm hương (chắp tay) 2. “Cảm tạ Nam",
+      "display_mode": "balanced",
+      "needs_review": false
+    }
+  ],
+  "combined_text_markdown_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.md",
+  "json_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.json",
+  "combined_text": "## Page 1\n\nPháp Môn Tâm Linh ( )\nQuy trình đốt Ngôi Nhà Nhỏ ( )\n(Cho trường hợp không có bàn thờ đặc trưng của PMTL/ )\nChuẩn bị sẵn Ngôi Nhà Nhỏ đã trì và chấm bút\nđỏ luôn được lưu trữ trong phong bì đỏ hoặc túi\nđỏ và vật dụng để đốt Ngôi nhà Nhỏ.\n1. Thắp tâm hương (chắp tay)\n2. “Cảm tạ Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng\nĐại Linh Cảm Quán Thế Âm Bồ Tát (Ma Ha Tát).” __3 lần\n3. Sau đó niệm 1 biến “Chú Đại Bi”, 1 biến “Tâm Kinh”\n4. Nâng Ngôi Nhà Nhỏ lên khỏi đầu phía trước trán\nvà quán tưởng trong tâm quỳ lạy.\n5. “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn\nQuảng Đại Linh Cảm Quán Thế Âm bồ Tát có thể giúp\ncon__(họ tên mình), chuyển__(số lượng) tấm Ngôi Nhà\nNhỏ này tặng cho__(họ tên người tiếp nhận).”\n6. Trước khi đốt các Ngôi Nhà Nhỏ thì hãy khấn\n“Thỉnh cầu Đại Từ Đại Bi Quán Thế Âm Bồ Tát từ bi\n7. Tiếp theo mồi lửa đốt Ngôi Nhà Nhỏ bắt đầu đốt\ntừ phía trên góc phải của Ngôi nhà Nhỏ.\n8. Trong quá trình đốt các Ngôi Nhà Nhỏ đừng niệm\nkinh hay nói chuyện. Chỉ nói “Xin Đại từ Đại bi Quán\nThế Âm Bồ Tát từ bi”.\n9. Sau khi đốt xong khấn “Bái tạ Nam Mô Đại Từ\nĐại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán\nThế Âm Bồ Tát trợ giúp con__(họ tên mình) có thể\nmang những tấm Ngôi Nhà Nhỏ này tặng cho__(họ\ntên người tiếp nhận). Cuối cùng khấn. “Cảm tạ Đại\nTừ Đại Bi Quán Thế Âm Bồ Tát”.\nTro của Ngôi Nhà Nhỏ bỏ vào khăn\ngiấy hoặc phong thư gấp nhỏ lại và vứt\nđi cùng rác sinh hoạt gia đình"
+}

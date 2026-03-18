@@ -2,6 +2,7 @@
 // Assumption:
 // - chant_items và chant_plans là reference data dùng cho user-state;
 //   file này mô tả chúng ở mức ref tối thiểu để giữ quan hệ rõ ràng.
+// - practice support content gốc được mô tả thêm ở design/01-content/practice-support-reference.md.
 
 Project engagement_module {
   database_type: "PostgreSQL"

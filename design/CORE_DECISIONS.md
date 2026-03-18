@@ -170,7 +170,7 @@ Design cũ từng để content ôm cả engagement và wishlist.
 Repo hiện tại đã split collections khá rõ.
 
 ### Decision
-- `content` chỉ giữ editorial content, taxonomy, media, scripture library, và content search fields.
+- `content` chỉ giữ editorial content, taxonomy, media, scripture library, content search fields, và practice support content như `chantItems`, `chantPlans`, ritual guide.
 - `community` giữ discussion surfaces.
 - `engagement` giữ self-owned user state.
 - `calendar` giữ event/lunar scheduling data.
@@ -185,6 +185,11 @@ Repo hiện tại đã split collections khá rõ.
 ### Trade-off
 - Một số flow phải đi qua cross-module references thay vì nằm gọn trong một collection lớn.
 - Cần tài liệu interaction rõ để tránh duplicate logic.
+
+### Ghi chú thêm từ tài liệu PDF thực hành
+- Bộ PDF niệm kinh / phát nguyện / phóng sinh / Ngôi Nhà Nhỏ củng cố boundary này:
+  - script, lời khấn mẫu, số biến, time rule, checklist nghi thức thuộc lớp reference/public content
+  - progress cá nhân, cấu hình plan theo user, practice log vẫn là self-owned engagement state
 
 ## Decision 10. Auditability ưu tiên append-only log + denormalized summaries
 

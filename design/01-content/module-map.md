@@ -26,6 +26,10 @@ markmap:
 - `beginnerGuides`
 - `downloads`
 
+### Practice support content
+- `chantItems`
+- `chantPlans`
+
 ### Scripture library
 - `sutras`
 - `sutraVolumes`
@@ -54,6 +58,13 @@ markmap:
 - `contentPlainText`
 - `normalizedSearchText`
 - các field summary cần cho search và public DTO
+
+### Practice support references
+- script kinh/chú
+- preset số biến gợi ý
+- opening prayer / prayer template
+- time rules
+- PDF hướng dẫn và ảnh preview
 
 ### Audience visibility rule
 - current repo chủ yếu public hóa editorial content theo publish state
@@ -110,6 +121,12 @@ markmap:
 - tài nguyên tải về và metadata hiển thị
 - có thể liên kết media upload hoặc external URL
 
+### Practice support
+- `chantItems` là owner của bài niệm / chú / script / audio / preview image
+- `chantPlans` là owner của plan công khóa hoặc nghi thức
+- các tài liệu như niệm hằng ngày, thắp tâm hương, phát nguyện, phóng sinh, Ngôi Nhà Nhỏ nên map vào lớp này hoặc vào `downloads` / `beginnerGuides`
+- `practice-support-reference.md` là file nối giữa PDF thực tế và content model
+
 ### Sutra library
 - `sutras` là root document
 - `sutraVolumes` và `sutraChapters` tạo reading tree
@@ -127,3 +144,4 @@ markmap:
 - content model split collections, không dùng single mega-table
 - audience visibility không được hardcode ngoài owner collection
 - user-state phải nằm ngoài content
+- practice support content là public/editorial reference data, không phải user-state

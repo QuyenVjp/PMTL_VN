@@ -116,3 +116,6 @@
   - docs tương ứng trong `docs/architecture/*`, `docs/security.md`, `docs/api/contracts.md`
 - Không tạo rule mới trong code mà bỏ quên docs/skill; repo này ưu tiên "code + rule + docs" đồng bộ.
 - Với Next.js 16, request boundary runtime của web nằm ở `apps/web/src/proxy.ts`, không tự động đổi về `middleware.ts` nếu không có lý do version-specific rõ ràng.
+- Skill nội bộ phải theo taxonomy ở `docs/architecture/skills-taxonomy.md`: `governance`, `knowledge`, `review`, `verification`, `automation`, `scaffolding`, `runbook`.
+- Verification skill phải ưu tiên script/checks lặp lại được thay vì chỉ lặp lại prose checklist.
+- Nếu hai skill nội bộ bắt đầu chồng vai rõ rệt, gộp chúng hoặc tách vai cho rõ thay vì để routing mơ hồ.

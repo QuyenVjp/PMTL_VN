@@ -1,14 +1,39 @@
-# High-End Frontend Enforcement (Taste Skill + Output Skill)
-- **Primary:** Mặc định frontend/UI luôn ưu tiên [taste-skill](file:///.agents/skills/taste-skill/SKILL.md).
-- **Quality Gate:** Luôn sử dụng [output-skill](file:///.agents/skills/output-skill/SKILL.md) để ép output đầy đủ, không để lại placeholder.
-- **On-Demand:** Chỉ dùng [redesign-skill](file:///.agents/skills/redesign-skill/SKILL.md), [soft-skill](file:///.agents/skills/soft-skill/SKILL.md), hoặc [minimalist-skill](file:///.agents/skills/minimalist-skill/SKILL.md) khi tôi yêu cầu rõ ràng.
+# PMTL Skill Taxonomy
 
-# PMTL Project Skills
-Use the local skill `pmtl-vn-architecture` from `.agents/skills/pmtl-vn-architecture` for all architecture work.
-Use the local skill `pmtl-production-ready` from `.agents/skills/pmtl-production-ready` for production setup, libraries, security, and implementation guidance.
-Use the local skill `pmtl-fe-craft` for professional frontend implementation (Senior logic).
-Use the local skill `pmtl-uiux-specialist` for behavioral and interaction discipline.
-Use the local skill `pmtl-creative-designer` for visual identity and premium vibe.
+## Governance skills
+- **Output Gate:** Luôn sử dụng [output-skill](file:///.agents/skills/output-skill/SKILL.md) khi user yêu cầu full output, full file, hoặc nhiều deliverable không được cắt bớt.
+- **Default UI Style:** Mặc định frontend/UI luôn ưu tiên [pmtl-ui-style-system](file:///.agents/skills/pmtl-ui-style-system/SKILL.md).
+- **On-demand UI variants:** Chỉ dùng variant `soft`, `minimalist`, hoặc `redesign` trong `pmtl-ui-style-system` khi tôi yêu cầu rõ ràng.
+
+## Knowledge
+- Use the local skill `pmtl-vn-architecture` from `.agents/skills/pmtl-vn-architecture` for architecture, boundaries, auth authority, and domain placement.
+- Use the local skill `pmtl-production-baseline` from `.agents/skills/pmtl-production-baseline` for production-grade defaults, security posture, logging, validation, and runtime decisions.
+- Use the local skill `pmtl-fe-implementation` for frontend implementation and refactoring quality.
+- Use the local skill `pmtl-ui-behavior` for interaction discipline, accessibility, form behavior, and UI state handling.
+- Use the local skill `pmtl-ui-style-system` for visual direction, typography, layout rhythm, and premium UI variants.
+- Use the local skill `vercel-react-best-practices` for React/Next.js performance rules.
+
+## Review
+- Use the local skill `pmtl-review-web-ui` for UI/UX review, accessibility review, redesign audit, and PMTL-specific frontend critique.
+- Use the global skill `security-best-practices` only when the user explicitly requests a security review or secure-by-default guidance.
+
+## Verification
+- Use the local skill `pmtl-verify-quality-gate` after meaningful code changes.
+- Use the local skill `pmtl-verify-auth-flow` when touching auth, session, cookies, proxy, profile, or OAuth flows.
+- Use the local skill `pmtl-verify-search-sync` when touching search schema, indexing, Meilisearch sync, or search UX fallbacks.
+
+## Automation
+- Use the local skill `pmtl-automation-smoke-suite` for repeatable smoke, monitoring, and alert-drill execution.
+- Use the global skill `agent-browser` or installed `playwright` when browser automation or browser-based verification is the right tool.
+- Use the installed `sentry` skill when the task is primarily about Sentry monitoring or incident verification.
+
+## Scaffolding
+- Use the local skill `pmtl-scaffold-payload-collection` when creating a new Payload collection.
+- Use the local skill `shadcn` when adding or composing shadcn surfaces.
+
+## Runbook
+- Use the local skill `pmtl-runbook-docker-dev-recovery` when local Docker or compose-backed dev services are unhealthy.
+- Use the local skill `pmtl-runbook-cms-runtime-errors` when debugging recurring CMS runtime, auth, search, or monitoring failures.
 
 
 Repository constraints:
@@ -21,10 +46,14 @@ Repository constraints:
 
 Skill routing:
 - Use `pmtl-vn-architecture` for monorepo structure + domain design
-- Use `pmtl-production-ready` for features, security, logging, testing, debugging
-- Use `pmtl-fe-craft` for all frontend implementation and refactoring
-- Use `pmtl-uiux-specialist` for interactive components, forms, and accessibility
-- Use `pmtl-creative-designer` for layout rhythm, typography, and visual polish
+- Use `pmtl-production-baseline` for production defaults, security, logging, validation, and runtime guidance
+- Use `pmtl-fe-implementation` for frontend implementation and refactoring
+- Use `pmtl-ui-behavior` for interactive components, forms, and accessibility
+- Use `pmtl-ui-style-system` for layout rhythm, typography, visual polish, and explicit style variants
+- Use `pmtl-review-web-ui` for frontend review and design critique
+- Use `pmtl-verify-quality-gate`, `pmtl-verify-auth-flow`, and `pmtl-verify-search-sync` for verification instead of mixing verification into implementation skills
+- Use `pmtl-automation-smoke-suite` for repeatable smoke and monitoring drills
+- Use `pmtl-runbook-docker-dev-recovery` and `pmtl-runbook-cms-runtime-errors` for operational debugging paths
 
 Implementation expectations:
 - Prefer full implementations over stubs
@@ -38,7 +67,7 @@ Implementation expectations:
 - **Vietnamese Language Standard:** NEVER generate or use Vietnamese without marks (tiếng Việt không dấu) in UI, API messages, or data. All Vietnamese text must include proper marks/accents.
 
 Production readiness docs:
-- Read `AUDIT_VERIFIED_2026.md` first for the verified production-readiness baseline and corrected findings
+- Read `AUDIT_VERIFIED_2026.md` first for the verified production-readiness baseline and corrected findings when the file exists in the current checkout
 - Treat any older audit notes still visible in git history or local notes as historical context, not as the final source of truth
 - Read `.vscode/.instructions.md` for Copilot context
-- See `.agents/skills/pmtl-production-ready/SKILL.md` for patterns
+- Read `docs/architecture/skills-taxonomy.md` before changing skill routing or AI-coding conventions

@@ -63,6 +63,10 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
   - `sutraReadingProgress`
   - `chantPreferences`
   - `practiceLogs`
+- Practice support content nằm ở lớp editorial/public:
+  - `chantItems`
+  - `chantPlans`
+  - các PDF/script hỗ trợ niệm đi qua `downloads`, `media`, hoặc `beginnerGuides`
 - Moderation report source of truth là `moderationReports`.
 - Notification control plane hiện có `pushSubscriptions` và `pushJobs`.
 
@@ -109,6 +113,7 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 ### 8. Boundary module phải rõ
 - `identity` sở hữu user/auth data.
 - `content` sở hữu editorial documents, taxonomy, media, và content search fields.
+- `content` cũng sở hữu practice support content như `chantItems`, `chantPlans`, script file, ritual guide.
 - `community` sở hữu discussion surfaces và guestbook.
 - `engagement` sở hữu self-owned user state.
 - `calendar` sở hữu event và lunar schedule data.

@@ -35,6 +35,7 @@ markmap:
 ### Practice references
 - `chantItems`
 - `chantPlans`
+- các rule/script/checklist này do content sở hữu, engagement chỉ đọc qua reference
 
 ## Current responsibilities
 
@@ -68,3 +69,4 @@ markmap:
 ## Assumption
 - `chantItems` và `chantPlans` là practice reference data hỗ trợ engagement flows.
 - Module này chỉ mô tả phần user-state và quan hệ với các reference đó.
+- các tài liệu PDF như niệm hằng ngày, phóng sinh, và Ngôi Nhà Nhỏ được chuẩn hóa trước ở `design/01-content/practice-support-reference.md`

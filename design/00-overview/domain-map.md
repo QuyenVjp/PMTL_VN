@@ -35,6 +35,8 @@ markmap:
   - `hubPages`
   - `beginnerGuides`
   - `downloads`
+  - `chantItems`
+  - `chantPlans`
   - `media`
   - `categories`
   - `tags`
@@ -49,6 +51,7 @@ markmap:
   - taxonomy
   - media linking
   - content search fields
+  - practice support content cho niệm kinh / nghi thức / Ngôi Nhà Nhỏ
 
 ### 03. Community
 - **Discussion surfaces**:
@@ -68,9 +71,6 @@ markmap:
   - `sutraReadingProgress`
   - `chantPreferences`
   - `practiceLogs`
-- **Practice references used by this area**:
-  - `chantItems`
-  - `chantPlans`
 - **Responsibilities**:
   - bookmark
   - reading progress

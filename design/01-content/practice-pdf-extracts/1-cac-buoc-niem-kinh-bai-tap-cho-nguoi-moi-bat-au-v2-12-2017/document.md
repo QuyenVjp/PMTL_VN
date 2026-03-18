@@ -1,0 +1,48 @@
+# 1. Các bước niệm kinh bài tập (cho người mới bắt đầu)_V2 12.2017
+
+> Ghi chú cho sinh viên:
+> File này được tạo tự động từ pipeline local.
+> Mục tiêu là giúp đọc nhanh tài liệu PDF và đánh dấu phần nào cần review thêm.
+
+## Metadata
+- `source_path`: `D:\downloadALL\brave-download\KINH SACH VA HD\1. Các bước niệm kinh bài tập (cho người mới bắt đầu)_V2 12.2017.pdf`
+- `page_count`: `2`
+- `source_type`: `text_pdf`
+- `extraction_method`: `direct_text_extraction`
+- `confidence`: `high`
+- `needs_review`: `true`
+- `ocr_languages`: `eng, osd, vie, chi_sim`
+- `presentation_mode`: `balanced_text_and_images`
+
+## Flow hints
+- `daily-recitation-flow`
+  - tiếng Việt: Công khóa hằng ngày
+  - English: Daily recitation flow
+  - module targets: content, engagement
+- `mental-incense-flow`
+  - tiếng Việt: Thắp tâm hương
+  - English: Mental incense flow
+  - module targets: content
+
+## Business signals
+- `has_prayer_template`: `true`
+- `has_recommended_counts`: `true`
+- `has_time_rules`: `true`
+- `has_step_flow`: `true`
+- `has_checklist_potential`: `true`
+
+## Page review
+| Page | Method | Confidence | Needs review | Image | Excerpt |
+|---|---|---|---|---|---|
+| 1 | `pdf_text` | `high` | `false` | `1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/images/page-001.png` | CÁC BƯỚC NIỆM KINH BÀI TẬP HÀNG NGÀY (CHO NGƯỜI MỚI BẮT ĐẦU) （ ） Bước 1 Tịnh Khẩu Nghiệp Chân Ngôn (7 Biến) Bước 2 Thắp hương thỉnh an Bồ Tát, nếu không có bàn thờ Phật thì thắp Tâm Hương Cảm tạ “Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Bước 3 Ma |
+| 2 | `pdf_text` | `high` | `false` | `1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/images/page-002.png` | Tiêu Tai Cát Tường Thần Chú ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) tiêu tai cát tường, bình an thuận lợi. ” (Thường cần niệm 21, 27, 49 Biến) Chuẩn Đề Thần Chú ** “Thỉnh cầu Nam Mô Đại T |
+
+## Combined text
+
+## Page 1
+
+CÁC BƯỚC NIỆM KINH BÀI TẬP HÀNG NGÀY (CHO NGƯỜI MỚI BẮT ĐẦU) （ ） Bước 1 Tịnh Khẩu Nghiệp Chân Ngôn (7 Biến) Bước 2 Thắp hương thỉnh an Bồ Tát, nếu không có bàn thờ Phật thì thắp Tâm Hương Cảm tạ “Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Bước 3 Ma Ha Tát” ( 3 Lần) Dưới đây là 3 loại kinh văn căn bản cần niệm kinh văn bài tập hàng ngày. Thông thường Kinh Bài Tập hàng ngày bắt đầu bằng Chú Đại Bi, Kinh văn khác không có thứ tự cố định. Thiên Thủ Thiên Nhãn Vô Ngại Đại Bi Tâm Đà Na Ni ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) thân thể khỏe mạnh, tăng cường công lực. ** Niệm Kinh văn “Thiên Thủ Thiên Nhãn Vô Ngại Đại Bi Tâm Đà Na Ni” (3 - 7 Biến) Bát Nhã Ba La Mật Đa Tâm Kinh ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) khai mở trí tuệ, đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não. ** Niệm Kinh văn “Bát Nhã Ba La Mật Đa Tâm Kinh” (3 - 7 Biến) Lễ Phật Đại Sám Hối Văn ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) giúp con sám hối và tiêu trừ nghiệp Bước 4 chướng (trên thân hoặc một bộ phận nào đó trên cở thể) của con, phù hộ cho con thân thể khỏe mạnh, khai mở trí tuệ. ** Niệm Kinh văn “Lễ Phật Đại Sám Hối Văn” (1 - 7 Biến) Chú ý: Niệm các chú nhỏ cho người mới bắt đầu, thường người mới bắt đầu đều cần niệm Chú Vãng Sanh Chú Vãng Sanh (Bát Nhật Thiết Nghiệp Chướng Căn Bản Đắc Sinh Tịnh Độ Đà Na Ni – Một chú giúp loại bỏ nghiệp chướng và cầu nguyện cho việc vãng sinh vào cõi Tịnh Độ) ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) giúp con siêu độ những tiểu vong linh vì con mà chết, giúp con tiêu trừ nghiệt chướng. ” (Thường cần niệm 21, 27, 49 Biến) Giải Kết Chú ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) với YYY__(Tên đối phương) (có thể là người thân, bạn bè hoặ đồng nghiệp của quý vị) hóa giải ác duyên. ” (Thường cần niệm 21, 27, 49 Biến)
+
+## Page 2
+
+Tiêu Tai Cát Tường Thần Chú ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) tiêu tai cát tường, bình an thuận lợi. ” (Thường cần niệm 21, 27, 49 Biến) Chuẩn Đề Thần Chú ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) tâm tưởng sự thành (sự nghiệp thành công, hôn nhân viên mãn, học hành tiến bộ). ” (Thường cần niệm 21, 27, 49 Biến) Bổ Khuyết Chân Ngôn Bước 5 Sau khi niệm xong Kinh Văn Bài Tập Hàng Ngày, niệm 3 hoặc 7 biến Bổ Khuyết Chân Ngôn, không nhất thiết phải niệm sau mỗi loại Kinh văn. Thất Phật Diệt Tội Chân Ngôn Bước 6 Niệm (3 Biến) Sau khi niệm xong “Cảm tạ Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Bước 7 Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) ** Thời gian niệm kinh: Từ 5h sáng đến 12h đêm. ** Nếu gặp phải tinh huống nghiêm trọng, trước và sau khi phẫu thuật, bệnh nặng, ung thư…Mỗi ngày nên niệm Chú Đại Bi 21 hoặc 49 biến hoặc càng nhiều càng tốt. Trước khi tụng niệm có thể khấn cầu: “Xin Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát chữa trị bệnh của con XXX ở phần nào đó của cơ thể, sớm ngày hồi phục.” ** Nếu trong khi niệm kinh có sự gián đoạn, khuyên quý vị nên niệm lại từ đầu ** 《Bát Nhã Ba La Mật Đa Tâm Kinh》 và 《Vãng Sinh Tịnh Độ Thần Chú》 có thể niệm trước Chú ý 10h tối và ban ngày (kể cả trời mưa, âm u). Nhưng nếu trời âm u mưa gió nhiều, trời quá tối hoặc trời mưa to kèm theo sấm sét thì tốt nhất không nên tụng niệm. Ngoài ra, nếu cơ thể quý vị yếu, niệm kinh cảm thấy không thoải mái thì nên cố gắng niệm vào những ngày trời nắng, ban ngày. 《Lễ Phật Đại Sám Hối Văn》 thông thường không nên niệm từ 10h tối đến 5h sáng. Từ 2h đến 5h sáng tốt nhất không nên tụng niệm bất cứ Kinh văn nào Nếu cần thêm chi tiết, vui lòng tham khảo 《Quyển Cẩm Nang Nhập Môn Pháp Môn Tâm Linh》 hoặc 《Vấn Đáp về Huyền Học》/《Vấn Đáp về Phật Học》. Ban Thư Ký Đài Đông Phương chỉnh sửa – 12/2017

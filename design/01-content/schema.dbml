@@ -11,6 +11,7 @@ Project content_module {
   Content module cho PMTL_VN.
   Gợi ý đọc nhanh:
   - Nhìn nhóm Editorial trước.
+  - Sau đó nhìn nhóm Practice Support nếu anh đang làm phần niệm kinh / nghi thức.
   - Sau đó nhìn nhóm Scripture.
   - Cuối cùng nhìn nhóm Taxonomy và Media.
   '''
@@ -188,6 +189,63 @@ Table downloads {
   updated_at timestamp
 }
 
+Table chant_items {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar [not null]
+  slug varchar [unique]
+  kind varchar [not null, note: "Ví dụ: chú, kinh, opening-ritual, prayer-template"]
+  opening_prayer text
+  content jsonb [note: "Script hoặc rich content chính"]
+  audio_media_id uuid [ref: > media_assets.id]
+  script_file_media_id uuid [ref: > media_assets.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table chant_item_preview_media {
+  chant_item_id uuid [ref: > chant_items.id]
+  media_id uuid [ref: > media_assets.id]
+
+  indexes {
+    (chant_item_id, media_id) [pk]
+  }
+}
+
+Table chant_item_recommended_presets {
+  id uuid [pk]
+  chant_item_id uuid [ref: > chant_items.id]
+  label varchar
+  target int
+}
+
+Table chant_item_time_rules {
+  id uuid [pk]
+  chant_item_id uuid [ref: > chant_items.id]
+  date_from date
+  date_to date
+  lunar_day int
+  notes varchar
+}
+
+Table chant_plans {
+  id uuid [pk]
+  public_id varchar [unique]
+  title varchar [not null]
+  slug varchar [unique]
+  plan_type varchar [not null, note: "Ví dụ: daily-recitation, life-release, little-house"]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table chant_plan_items {
+  id uuid [pk]
+  chant_plan_id uuid [ref: > chant_plans.id]
+  chant_item_id uuid [ref: > chant_items.id]
+  target int
+  is_optional bool [default: false]
+}
+
 Table sutras {
   id uuid [pk]
   public_id varchar [unique]
@@ -259,6 +317,15 @@ TableGroup "Editorial Content" [note: "Nội dung biên tập công khai hoặc 
   hub_page_blocks
   beginner_guides
   downloads
+}
+
+TableGroup "Practice Support" [note: "Nội dung hỗ trợ niệm: bài niệm, plan, rule, media, ritual guide"] {
+  chant_items
+  chant_item_preview_media
+  chant_item_recommended_presets
+  chant_item_time_rules
+  chant_plans
+  chant_plan_items
 }
 
 TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ cho editorial"] {

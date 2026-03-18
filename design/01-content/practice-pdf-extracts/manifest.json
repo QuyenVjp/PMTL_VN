@@ -1,0 +1,1042 @@
+{
+  "source_dir": "D:\\downloadALL\\brave-download\\KINH SACH VA HD",
+  "output_dir": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\design\\01-content\\practice-pdf-extracts",
+  "document_count": 7,
+  "ocr_languages": [
+    "eng",
+    "osd",
+    "vie",
+    "chi_sim"
+  ],
+  "documents": [
+    {
+      "title": "1. Các bước niệm kinh bài tập (cho người mới bắt đầu)_V2 12.2017",
+      "slug": "1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017",
+      "presentation_mode": "balanced_text_and_images",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\1. Các bước niệm kinh bài tập (cho người mới bắt đầu)_V2 12.2017.pdf",
+      "page_count": 2,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "daily-recitation-flow",
+          "title_vi": "Công khóa hằng ngày",
+          "title_en": "Daily recitation flow",
+          "module_targets": [
+            "content",
+            "engagement"
+          ]
+        },
+        {
+          "key": "mental-incense-flow",
+          "title_vi": "Thắp tâm hương",
+          "title_en": "Mental incense flow",
+          "module_targets": [
+            "content"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": true,
+        "has_time_rules": true,
+        "has_step_flow": true,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/images/page-001.png",
+          "direct_text_length": 2248,
+          "ocr_text_length": 0,
+          "final_text_length": 2248,
+          "display_text_length": 2240,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "CÁC BƯỚC NIỆM KINH BÀI TẬP HÀNG NGÀY (CHO NGƯỜI MỚI BẮT ĐẦU) （ ） Bước 1 Tịnh Khẩu Nghiệp Chân Ngôn (7 Biến) Bước 2 Thắp hương thỉnh an Bồ Tát, nếu không có bàn thờ Phật thì thắp Tâm Hương Cảm tạ “Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Bước 3 Ma",
+          "display_mode": "balanced",
+          "needs_review": false
+        },
+        {
+          "page_number": 2,
+          "image_path": "1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/images/page-002.png",
+          "direct_text_length": 2057,
+          "ocr_text_length": 0,
+          "final_text_length": 2057,
+          "display_text_length": 2057,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Tiêu Tai Cát Tường Thần Chú ** “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát” phù hộ cho con XXX__(Tên quý vị) tiêu tai cát tường, bình an thuận lợi. ” (Thường cần niệm 21, 27, 49 Biến) Chuẩn Đề Thần Chú ** “Thỉnh cầu Nam Mô Đại T",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/document.md",
+      "json_path": "1-cac-buoc-niem-kinh-bai-tap-cho-nguoi-moi-bat-au-v2-12-2017/document.json"
+    },
+    {
+      "title": "2.Sách kinh",
+      "slug": "2-sach-kinh",
+      "presentation_mode": "image_first_vietnamese_text",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\2.Sách kinh.pdf",
+      "page_count": 47,
+      "source_type": "mixed_text_and_scan_pdf",
+      "extraction_method": "hybrid_text_extraction_plus_ocr",
+      "confidence": "medium",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [],
+      "business_signals": {
+        "has_prayer_template": false,
+        "has_recommended_counts": false,
+        "has_time_rules": false,
+        "has_step_flow": false,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "2-sach-kinh/images/page-001.png",
+          "direct_text_length": 27,
+          "ocr_text_length": 43,
+          "final_text_length": 43,
+          "display_text_length": 0,
+          "extraction_method": "hybrid_low_signal",
+          "confidence": "low",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 2,
+          "image_path": "2-sach-kinh/images/page-002.png",
+          "direct_text_length": 627,
+          "ocr_text_length": 0,
+          "final_text_length": 627,
+          "display_text_length": 204,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "NHỮNG SỰ CẦN LƯU Ý KHI ĐẶT VÀ TỤNG ĐỌC SÁCH KINH Phòng người độc thân , có thể cung kính để sách Kinh bên đầu giường ngủ (tốt nhất là dùng vải đỏ đậy lại) không được đặt nơi đối diện dưới chân giường ngủ.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 3,
+          "image_path": "2-sach-kinh/images/page-003.png",
+          "direct_text_length": 41,
+          "ocr_text_length": 192,
+          "final_text_length": 192,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 4,
+          "image_path": "2-sach-kinh/images/page-004.png",
+          "direct_text_length": 212,
+          "ocr_text_length": 0,
+          "final_text_length": 212,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 5,
+          "image_path": "2-sach-kinh/images/page-005.png",
+          "direct_text_length": 219,
+          "ocr_text_length": 0,
+          "final_text_length": 219,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 6,
+          "image_path": "2-sach-kinh/images/page-006.png",
+          "direct_text_length": 215,
+          "ocr_text_length": 0,
+          "final_text_length": 215,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 7,
+          "image_path": "2-sach-kinh/images/page-007.png",
+          "direct_text_length": 176,
+          "ocr_text_length": 0,
+          "final_text_length": 176,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 8,
+          "image_path": "2-sach-kinh/images/page-008.png",
+          "direct_text_length": 202,
+          "ocr_text_length": 0,
+          "final_text_length": 202,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 9,
+          "image_path": "2-sach-kinh/images/page-009.png",
+          "direct_text_length": 226,
+          "ocr_text_length": 0,
+          "final_text_length": 226,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 10,
+          "image_path": "2-sach-kinh/images/page-010.png",
+          "direct_text_length": 132,
+          "ocr_text_length": 0,
+          "final_text_length": 132,
+          "display_text_length": 12,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "(Niệm 3 lân)",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 11,
+          "image_path": "2-sach-kinh/images/page-011.png",
+          "direct_text_length": 196,
+          "ocr_text_length": 0,
+          "final_text_length": 196,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 12,
+          "image_path": "2-sach-kinh/images/page-012.png",
+          "direct_text_length": 167,
+          "ocr_text_length": 0,
+          "final_text_length": 167,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 13,
+          "image_path": "2-sach-kinh/images/page-013.png",
+          "direct_text_length": 89,
+          "ocr_text_length": 404,
+          "final_text_length": 404,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 14,
+          "image_path": "2-sach-kinh/images/page-014.png",
+          "direct_text_length": 122,
+          "ocr_text_length": 0,
+          "final_text_length": 122,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 15,
+          "image_path": "2-sach-kinh/images/page-015.png",
+          "direct_text_length": 201,
+          "ocr_text_length": 0,
+          "final_text_length": 201,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 16,
+          "image_path": "2-sach-kinh/images/page-016.png",
+          "direct_text_length": 0,
+          "ocr_text_length": 561,
+          "final_text_length": 561,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 17,
+          "image_path": "2-sach-kinh/images/page-017.png",
+          "direct_text_length": 127,
+          "ocr_text_length": 0,
+          "final_text_length": 127,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 18,
+          "image_path": "2-sach-kinh/images/page-018.png",
+          "direct_text_length": 84,
+          "ocr_text_length": 335,
+          "final_text_length": 335,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 19,
+          "image_path": "2-sach-kinh/images/page-019.png",
+          "direct_text_length": 165,
+          "ocr_text_length": 0,
+          "final_text_length": 165,
+          "display_text_length": 18,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "ā mí lì duō xī dān",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 20,
+          "image_path": "2-sach-kinh/images/page-020.png",
+          "direct_text_length": 208,
+          "ocr_text_length": 0,
+          "final_text_length": 208,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 21,
+          "image_path": "2-sach-kinh/images/page-021.png",
+          "direct_text_length": 64,
+          "ocr_text_length": 184,
+          "final_text_length": 184,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 22,
+          "image_path": "2-sach-kinh/images/page-022.png",
+          "direct_text_length": 142,
+          "ocr_text_length": 0,
+          "final_text_length": 142,
+          "display_text_length": 12,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Giải Kết Chú",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 23,
+          "image_path": "2-sach-kinh/images/page-023.png",
+          "direct_text_length": 164,
+          "ocr_text_length": 0,
+          "final_text_length": 164,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 24,
+          "image_path": "2-sach-kinh/images/page-024.png",
+          "direct_text_length": 389,
+          "ocr_text_length": 0,
+          "final_text_length": 389,
+          "display_text_length": 130,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "ná mó guī yī shí fāng jìn xū kōng jiè yī qiè xián shèng sēng nam mô quy y thập phương tận hư không giới nhất thiết Hiền Thánh Tăng",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 25,
+          "image_path": "2-sach-kinh/images/page-025.png",
+          "direct_text_length": 102,
+          "ocr_text_length": 484,
+          "final_text_length": 484,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 26,
+          "image_path": "2-sach-kinh/images/page-026.png",
+          "direct_text_length": 132,
+          "ocr_text_length": 0,
+          "final_text_length": 132,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 27,
+          "image_path": "2-sach-kinh/images/page-027.png",
+          "direct_text_length": 108,
+          "ocr_text_length": 503,
+          "final_text_length": 503,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 28,
+          "image_path": "2-sach-kinh/images/page-028.png",
+          "direct_text_length": 130,
+          "ocr_text_length": 0,
+          "final_text_length": 130,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 29,
+          "image_path": "2-sach-kinh/images/page-029.png",
+          "direct_text_length": 123,
+          "ocr_text_length": 0,
+          "final_text_length": 123,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 30,
+          "image_path": "2-sach-kinh/images/page-030.png",
+          "direct_text_length": 130,
+          "ocr_text_length": 0,
+          "final_text_length": 130,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 31,
+          "image_path": "2-sach-kinh/images/page-031.png",
+          "direct_text_length": 122,
+          "ocr_text_length": 0,
+          "final_text_length": 122,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 32,
+          "image_path": "2-sach-kinh/images/page-032.png",
+          "direct_text_length": 106,
+          "ocr_text_length": 467,
+          "final_text_length": 467,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 33,
+          "image_path": "2-sach-kinh/images/page-033.png",
+          "direct_text_length": 92,
+          "ocr_text_length": 410,
+          "final_text_length": 410,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 34,
+          "image_path": "2-sach-kinh/images/page-034.png",
+          "direct_text_length": 108,
+          "ocr_text_length": 457,
+          "final_text_length": 457,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 35,
+          "image_path": "2-sach-kinh/images/page-035.png",
+          "direct_text_length": 116,
+          "ocr_text_length": 588,
+          "final_text_length": 588,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 36,
+          "image_path": "2-sach-kinh/images/page-036.png",
+          "direct_text_length": 227,
+          "ocr_text_length": 0,
+          "final_text_length": 227,
+          "display_text_length": 28,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "(Trên đây 89 v Ph t, 89 l y)",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 37,
+          "image_path": "2-sach-kinh/images/page-037.png",
+          "direct_text_length": 248,
+          "ocr_text_length": 0,
+          "final_text_length": 248,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 38,
+          "image_path": "2-sach-kinh/images/page-038.png",
+          "direct_text_length": 232,
+          "ocr_text_length": 0,
+          "final_text_length": 232,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 39,
+          "image_path": "2-sach-kinh/images/page-039.png",
+          "direct_text_length": 211,
+          "ocr_text_length": 0,
+          "final_text_length": 211,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 40,
+          "image_path": "2-sach-kinh/images/page-040.png",
+          "direct_text_length": 237,
+          "ocr_text_length": 0,
+          "final_text_length": 237,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 41,
+          "image_path": "2-sach-kinh/images/page-041.png",
+          "direct_text_length": 234,
+          "ocr_text_length": 0,
+          "final_text_length": 234,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 42,
+          "image_path": "2-sach-kinh/images/page-042.png",
+          "direct_text_length": 187,
+          "ocr_text_length": 0,
+          "final_text_length": 187,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 43,
+          "image_path": "2-sach-kinh/images/page-043.png",
+          "direct_text_length": 202,
+          "ocr_text_length": 0,
+          "final_text_length": 202,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 44,
+          "image_path": "2-sach-kinh/images/page-044.png",
+          "direct_text_length": 203,
+          "ocr_text_length": 0,
+          "final_text_length": 203,
+          "display_text_length": 23,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "(3 niệm 1 lạy đứng lên)",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 45,
+          "image_path": "2-sach-kinh/images/page-045.png",
+          "direct_text_length": 96,
+          "ocr_text_length": 377,
+          "final_text_length": 377,
+          "display_text_length": 0,
+          "extraction_method": "ocr",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        },
+        {
+          "page_number": 46,
+          "image_path": "2-sach-kinh/images/page-046.png",
+          "direct_text_length": 148,
+          "ocr_text_length": 0,
+          "final_text_length": 148,
+          "display_text_length": 0,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": false
+        },
+        {
+          "page_number": 47,
+          "image_path": "2-sach-kinh/images/page-047.png",
+          "direct_text_length": 0,
+          "ocr_text_length": 70,
+          "final_text_length": 70,
+          "display_text_length": 0,
+          "extraction_method": "hybrid_low_signal",
+          "confidence": "medium",
+          "excerpt": "Xem ảnh trang để đối chiếu nội dung gốc.",
+          "display_mode": "image_first",
+          "needs_review": true
+        }
+      ],
+      "combined_text_markdown_path": "2-sach-kinh/document.md",
+      "json_path": "2-sach-kinh/document.json"
+    },
+    {
+      "title": "3. Trình tự thắp tâm hương(上心香的程序)",
+      "slug": "3-trinh-tu-thap-tam-huong",
+      "presentation_mode": "balanced_text_and_images",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\3. Trình tự thắp tâm hương(上心香的程序).pdf",
+      "page_count": 1,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "mental-incense-flow",
+          "title_vi": "Thắp tâm hương",
+          "title_en": "Mental incense flow",
+          "module_targets": [
+            "content"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": true,
+        "has_time_rules": false,
+        "has_step_flow": true,
+        "has_checklist_potential": false
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "3-trinh-tu-thap-tam-huong/images/page-001.png",
+          "direct_text_length": 1000,
+          "ocr_text_length": 0,
+          "final_text_length": 1000,
+          "display_text_length": 993,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "TRÌNH TỰ THẮP TÂM HƯƠNG ( ) Thắp tâm hương là “quán tưởng” bằng ý niệm, toàn bộ quá trình khi mình thắp hương đến Quán Thế Âm Bồ Tát mà thân không có bất cứ động tác nào. 《Các bước thắp tâm hương sáng/tối》 ①Chọn một nơi yên tĩnh và sáng sủa (tốt nhất là cạnh cửa sổ), ngồi xuống v",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "3-trinh-tu-thap-tam-huong/document.md",
+      "json_path": "3-trinh-tu-thap-tam-huong/document.json"
+    },
+    {
+      "title": "4.Trình tự phát nguyện",
+      "slug": "4-trinh-tu-phat-nguyen",
+      "presentation_mode": "balanced_text_and_images",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\4.Trình tự phát nguyện.pdf",
+      "page_count": 1,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "vow-making-flow",
+          "title_vi": "Phát nguyện",
+          "title_en": "Vow making flow",
+          "module_targets": [
+            "content"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": false,
+        "has_time_rules": false,
+        "has_step_flow": true,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "4-trinh-tu-phat-nguyen/images/page-001.png",
+          "direct_text_length": 1567,
+          "ocr_text_length": 0,
+          "final_text_length": 1567,
+          "display_text_length": 1561,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Trình tự phát nguyện Chắp tay nhìn lên trời và quán tưởng chư vị Bồ Tát (Nếu nhà không có bàn thờ của Pháp Môn Tâm Linh) Cảm tạ nam mô đại từ đại bi cứu khổ cứu nạn quảng đại linh cảm Quán Thế Â m Bồ Tát Cảm tạ nam mô Nam Kinh Bồ Tát Cảm tạ nam mô Thái Tuế Bồ Tát Cảm tạ nam mô Qu",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "4-trinh-tu-phat-nguyen/document.md",
+      "json_path": "4-trinh-tu-phat-nguyen/document.json"
+    },
+    {
+      "title": "5. Nghi thức phóng sinh Pháp Môn tâm Linh (心灵法门放生仪式)",
+      "slug": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh",
+      "presentation_mode": "balanced_text_and_images",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\5. Nghi thức phóng sinh Pháp Môn tâm Linh (心灵法门放生仪式).pdf",
+      "page_count": 2,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "life-release-flow",
+          "title_vi": "Phóng sinh",
+          "title_en": "Life release flow",
+          "module_targets": [
+            "content",
+            "calendar"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": true,
+        "has_time_rules": false,
+        "has_step_flow": false,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/images/page-001.png",
+          "direct_text_length": 2134,
+          "ocr_text_length": 0,
+          "final_text_length": 2134,
+          "display_text_length": 2127,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "NGHI THỨC PHÓNG SINH PHÁP MÔN TÂM LINH ( ) Phóng sinh là bố thí về tài, bố thí về pháp và bố thí vô úy, ba loại bố thí đều đầy đủ, công đức vô lượng. Lợi ích lớn nhất phóng sinh mang lại cho chúng ta là tiêu tai giải nạn, kéo dài thọ mệnh. Phóng sinh giúp tiêu tai kéo dài thọ mện",
+          "display_mode": "balanced",
+          "needs_review": false
+        },
+        {
+          "page_number": 2,
+          "image_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/images/page-002.png",
+          "direct_text_length": 2729,
+          "ocr_text_length": 0,
+          "final_text_length": 2729,
+          "display_text_length": 2729,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Lưu ý: Cuối cùng phải thêm câu: “Cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho con XXX___ [tên mình], hôm nay trợ giúp___YYY [tên đối phương] phóng sinh, cầu xin Bồ Tát gia hộ cho con không phải gánh nghiệp của___YYY [tên đối phương], mong cho việc phóng sinh của___YYY [tên",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/document.md",
+      "json_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/document.json"
+    },
+    {
+      "title": "6. Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý (小房子念誦方法與注意事項)",
+      "slug": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y",
+      "presentation_mode": "vietnamese_priority_text",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\6. Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý (小房子念誦方法與注意事項).pdf",
+      "page_count": 2,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "mental-incense-flow",
+          "title_vi": "Thắp tâm hương",
+          "title_en": "Mental incense flow",
+          "module_targets": [
+            "content"
+          ]
+        },
+        {
+          "key": "little-house-recitation-flow",
+          "title_vi": "Ngôi Nhà Nhỏ",
+          "title_en": "Little House recitation flow",
+          "module_targets": [
+            "content",
+            "engagement"
+          ]
+        },
+        {
+          "key": "little-house-burning-without-altar-flow",
+          "title_vi": "Đốt Ngôi Nhà Nhỏ không có bàn thờ",
+          "title_en": "Little House burning without altar flow",
+          "module_targets": [
+            "content"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": true,
+        "has_time_rules": false,
+        "has_step_flow": false,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/images/page-001.png",
+          "direct_text_length": 4246,
+          "ocr_text_length": 0,
+          "final_text_length": 4246,
+          "display_text_length": 2926,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý Những điều cần lưu ý trước khi tụng Ngôi Nhà Nhỏ: (Lưu ý: Mỗi ngày nên bắt đầu bằng việc tụng Chú Đại Bi trong phần Kinh Bài Tập, như vậy sẽ giúp tăng thêm năng lực khi tụng các kinh văn tiếp theo. Các phần Kinh Bài Tập k",
+          "display_mode": "balanced",
+          "needs_review": false
+        },
+        {
+          "page_number": 2,
+          "image_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/images/page-002.png",
+          "direct_text_length": 1758,
+          "ocr_text_length": 0,
+          "final_text_length": 1758,
+          "display_text_length": 1758,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "cần kinh của XXX, có thể khấn xin Bồ Tát gia hộ cho XXX được thân thể khỏe mạnh, bình an cát tường; nếu Ngôi Nhà Nhỏ hóa giải oán kết của XXX, có thể khấn xin Bồ Tát gia hộ hóa giải ác duyên giữa XXX và YYY. Phương pháp đốt Ngôi Nhà Nhỏ (trong nhà không có bàn thờ Phật) 1. Trước ",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.md",
+      "json_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.json"
+    },
+    {
+      "title": "7. Quy trình đốt ngôi nhà nhỏ không có bàn thờ PMTL",
+      "slug": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl",
+      "presentation_mode": "vietnamese_priority_text",
+      "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\7. Quy trình đốt ngôi nhà nhỏ không có bàn thờ PMTL.pdf",
+      "page_count": 1,
+      "source_type": "text_pdf",
+      "extraction_method": "direct_text_extraction",
+      "confidence": "high",
+      "needs_review": true,
+      "ocr_languages": [
+        "eng",
+        "osd",
+        "vie",
+        "chi_sim"
+      ],
+      "flow_hints": [
+        {
+          "key": "mental-incense-flow",
+          "title_vi": "Thắp tâm hương",
+          "title_en": "Mental incense flow",
+          "module_targets": [
+            "content"
+          ]
+        },
+        {
+          "key": "little-house-recitation-flow",
+          "title_vi": "Ngôi Nhà Nhỏ",
+          "title_en": "Little House recitation flow",
+          "module_targets": [
+            "content",
+            "engagement"
+          ]
+        },
+        {
+          "key": "little-house-burning-without-altar-flow",
+          "title_vi": "Đốt Ngôi Nhà Nhỏ không có bàn thờ",
+          "title_en": "Little House burning without altar flow",
+          "module_targets": [
+            "content"
+          ]
+        }
+      ],
+      "business_signals": {
+        "has_prayer_template": true,
+        "has_recommended_counts": true,
+        "has_time_rules": false,
+        "has_step_flow": true,
+        "has_checklist_potential": true
+      },
+      "page_records": [
+        {
+          "page_number": 1,
+          "image_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/images/page-001.png",
+          "direct_text_length": 1635,
+          "ocr_text_length": 0,
+          "final_text_length": 1635,
+          "display_text_length": 1397,
+          "extraction_method": "pdf_text",
+          "confidence": "high",
+          "excerpt": "Pháp Môn Tâm Linh (⼼ ⻔ ) Quy trình đốt Ngôi Nhà Nhỏ ( ) (Cho trường hợp không có bàn thờ đặc trưng của PMTL/⽆ ) Chuẩn bị sẵn Ngôi Nhà Nhỏ đã trì và chấm bút đỏ luôn được lưu trữ trong phong bì đỏ hoặc túi đỏ và vật dụng để đốt Ngôi nhà Nhỏ. 1. Thắp tâm hương (chắp tay) 2. “Cảm tạ",
+          "display_mode": "balanced",
+          "needs_review": false
+        }
+      ],
+      "combined_text_markdown_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.md",
+      "json_path": "7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.json"
+    }
+  ]
+}

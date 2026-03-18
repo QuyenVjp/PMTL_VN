@@ -1,0 +1,66 @@
+{
+  "title": "5. Nghi thức phóng sinh Pháp Môn tâm Linh (心灵法门放生仪式)",
+  "slug": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh",
+  "presentation_mode": "balanced_text_and_images",
+  "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\5. Nghi thức phóng sinh Pháp Môn tâm Linh (心灵法门放生仪式).pdf",
+  "page_count": 2,
+  "source_type": "text_pdf",
+  "extraction_method": "direct_text_extraction",
+  "confidence": "high",
+  "needs_review": true,
+  "ocr_languages": [
+    "eng",
+    "osd",
+    "vie",
+    "chi_sim"
+  ],
+  "flow_hints": [
+    {
+      "key": "life-release-flow",
+      "title_vi": "Phóng sinh",
+      "title_en": "Life release flow",
+      "module_targets": [
+        "content",
+        "calendar"
+      ]
+    }
+  ],
+  "business_signals": {
+    "has_prayer_template": true,
+    "has_recommended_counts": true,
+    "has_time_rules": false,
+    "has_step_flow": false,
+    "has_checklist_potential": true
+  },
+  "page_records": [
+    {
+      "page_number": 1,
+      "image_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/images/page-001.png",
+      "direct_text_length": 2134,
+      "ocr_text_length": 0,
+      "final_text_length": 2134,
+      "display_text_length": 2127,
+      "extraction_method": "pdf_text",
+      "confidence": "high",
+      "excerpt": "NGHI THỨC PHÓNG SINH PHÁP MÔN TÂM LINH ( ) Phóng sinh là bố thí về tài, bố thí về pháp và bố thí vô úy, ba loại bố thí đều đầy đủ, công đức vô lượng. Lợi ích lớn nhất phóng sinh mang lại cho chúng ta là tiêu tai giải nạn, kéo dài thọ mệnh. Phóng sinh giúp tiêu tai kéo dài thọ mện",
+      "display_mode": "balanced",
+      "needs_review": false
+    },
+    {
+      "page_number": 2,
+      "image_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/images/page-002.png",
+      "direct_text_length": 2729,
+      "ocr_text_length": 0,
+      "final_text_length": 2729,
+      "display_text_length": 2729,
+      "extraction_method": "pdf_text",
+      "confidence": "high",
+      "excerpt": "Lưu ý: Cuối cùng phải thêm câu: “Cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho con XXX___ [tên mình], hôm nay trợ giúp___YYY [tên đối phương] phóng sinh, cầu xin Bồ Tát gia hộ cho con không phải gánh nghiệp của___YYY [tên đối phương], mong cho việc phóng sinh của___YYY [tên",
+      "display_mode": "balanced",
+      "needs_review": false
+    }
+  ],
+  "combined_text_markdown_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/document.md",
+  "json_path": "5-nghi-thuc-phong-sinh-phap-mon-tam-linh/document.json",
+  "combined_text": "## Page 1\n\nNGHI THỨC PHÓNG SINH PHÁP MÔN TÂM LINH ( ) Phóng sinh là bố thí về tài, bố thí về pháp và bố thí vô úy, ba loại bố thí đều đầy đủ, công đức vô lượng. Lợi ích lớn nhất phóng sinh mang lại cho chúng ta là tiêu tai giải nạn, kéo dài thọ mệnh. Phóng sinh giúp tiêu tai kéo dài thọ mệnh, niệm kinh giúp hộ thân, làm cả hai hiệu quả sẽ tốt nhất. Trên đường đi phóng sinh: Khi đi phóng sinh có thể bắt đầu niệm kinh ngay, niệm 《Chú Đại Bi》 là tốt nhất. Trước khi niệm kinh nên nói rõ tên mình: “Cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho con [họ tên] tiêu tai giải nạn, kéo dài tuổi thọ, con nhất định sẽ làm thêm nhiều công đức nữa.” Nếu thay người khác phóng sinh thì nói: “Cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho [tên đối phương] tiêu tai giải nạn, kéo dài tuổi thọ…” Sau đó tiếp tục niệm 《Chú Đại Bi》, càng nhiều càng tốt. Tại địa điểm phóng sinh: (I. Cảm ân – II. Niệm kinh – III. Cầu nguyện – IV. Phóng sinh– V. Cảm ân) I. Cảm ân Chắp 2 tay lại trước ngực, hướng lên trời, đọc 3 lần: “Cảm ân Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát (Ma-ha-tát).” II. Niệm kinh – 《Chú Đại Bi》 1 biến – 《Tâm Kinh》 1 biến – 《Thất Phật Diệt Tội Chân Ngôn》 7 biến Nếu những đồng tu không biết niệm kinh, có thể niệm liên tục thánh hiệu: “Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát.” III. Cầu nguyện 1. Phóng sinh cho bản thân mình: Lời khấn nguyện: “Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát, hôm nay con XXX phóng sinh ___[số lượng] __ con cá, xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát từ bi gia hộ cho con XXX tiêu tai kéo dài thọ mạng, hoặc hóa giải oán kết, tiêu trừ nghiệp chướng (hoặc những điều nguyện cầu khác). Con nguyện sẽ tiếp tục làm nhiều việc công đức hơn nữa.” 2. Phóng sinh thay (tốt nhất nên dùng tiền của đối phương để phóng sinh thay): Lời khấn nguyện: “Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát, XXX (chỉ tên của người phóng sinh) phóng sinh ___[số lượng] __ con cá. Xin Quán Thế Âm Bồ Tát bảo hộ cho XXX tiêu tai kéo dài thọ mệnh (hoặc bảo hộ XXX việc gì đó) (Dù là dùng tiền của đối phương hay dùng tiền của mình để thay người khác phóng sinh, thì cũng tốt nhất đừng nói rõ số tiền.)\n\n## Page 2\n\nLưu ý: Cuối cùng phải thêm câu: “Cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho con XXX___ [tên mình], hôm nay trợ giúp___YYY [tên đối phương] phóng sinh, cầu xin Bồ Tát gia hộ cho con không phải gánh nghiệp của___YYY [tên đối phương], mong cho việc phóng sinh của___YYY [tên đối phương] có thể tiêu trừ nghiệp chướng của ___YYY [Tên đối phương]. 3. Phóng sinh cá cho Đài Trưởng Lư Quân Hoành Lời khấn nguyện: “Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát, hôm nay con__XXX [tên mình] phóng sinh ___[số lượng] __con cá cho Đài Trưởng Lư Quân Hoành. 4. Phóng sinh cho người đã mất Trong vòng bốn mươi chín ngày (tuần thất) sau khi người thân qua đời, có thể phóng sinh. Lời khấn nguyện: “Thỉnh cầu Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát, hôm nay con___XXX [tên mình] hôm nay phóng sinh___số lượng [bao nhiêu con cá hoặc tôm hay sinh vật khác], cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát từ bi gia hộ cho__ZZZ [tên người đã mất] tiêu trừ nghiệp chướng. IV. Về việc phóng sinh 1. Trước khi phóng sinh, tốt nhất nên đặc biệt khấn nguyện với Bồ Tát như sau: “Nếu việc phóng sinh có gây ra vấn đề về sinh thái hoặc ô nhiễm, cầu xin Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma-Ha-Tát và các vị Hộ Pháp từ bi tha thứ.” Lời khấn này nhằm tránh những tình huống bất lợi có thể xảy ra do môi trường nước không phù hợp hoặc do loài được phóng sinh không tương thích, ví dụ như nước bị ô nhiễm, loài cá được thả không thể sinh tồn tại vùng nước đó, hoặc trong khu vực có cá lớn ăn cá nhỏ khiến các loài không thể cộng sinh. Trong những trường hợp rõ ràng như nơi xung quanh có đánh bắt nghiêm trọng, cá nước ngọt không thích hợp thả ở biển (hoặc cá biển không thích hợp thả ở nước ngọt), thì nên tránh trước và chọn địa điểm phóng sinh phù hợp để đảm bảo việc phóng sinh được viên mãn và như pháp. 2. Trong quá trình phóng sinh, có thể không ngừng tụng niệm 《Chú Đại Bi》, 《Tâm Kinh》, 《Vãng Sanh Chú》, không giới hạn số biến, càng tụng nhiều càng tốt. Trước khi thả cá xuống nước, cần nói một lần nữa: “Con XXX [Tên mình] hôm nay phóng sinh __số lượng [bao nhiêu con cá, hoặc tôm hay sinh vật khác], cầu xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ cho con [tên mình] (hoặc người nhà là [tên người đó]) tiêu tai kéo dài thọ mệnh…” Khi thả cá xuống nước, cần nhẹ nhàng, không ném mạnh để tránh làm tổn thương cá. Khi tụng kinh, không nên nhìn trực tiếp vào mặt nước, tốt nhất nên ngẩng đầu niệm hướng lên trời. 3. Trong quá trình phóng sinh, nếu có cá bị chết, cần tụng 《Vãng Sanh Chú》 để siêu độ. Mỗi con cá chết, nên tụng ít nhất 7 biến. V. Cảm ân Sau khi phóng sinh kết thúc, chắp tay trang nghiêm, khấn: “Con xin cảm ân Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát (Ma-ha-tát)!”"
+}

@@ -87,3 +87,32 @@ Repo hiện chưa có owner data model rõ cho phần đó.
 
 ### Trade-off
 - Nếu sau này cần gamification, phải thêm decision và schema riêng.
+
+## Decision 6. Ngôi Nhà Nhỏ và nghi thức niệm dùng content làm reference, engagement chỉ giữ state
+
+### Context
+Bộ tài liệu PDF cho thấy phần niệm hằng ngày, phóng sinh, và đặc biệt Ngôi Nhà Nhỏ chứa nhiều:
+- script
+- lời khấn
+- số biến
+- checklist nghi thức
+- guardrail thao tác
+
+Các phần này là nội dung chuẩn để nhiều người cùng đọc, không phải dữ liệu cá nhân của một user.
+
+### Decision
+- Engagement không sở hữu script hay rule gốc của nghi thức.
+- Engagement chỉ lưu:
+  - preference của user
+  - practice log
+  - progress cá nhân
+- Script/rule/checklist gốc phải được tham chiếu từ content-side practice support data.
+
+### Rationale
+- Giữ boundary đúng với repo.
+- Tránh việc một thay đổi ở practice screen vô tình sửa “chân lý nội dung” của nghi thức.
+- Hợp với hướng dùng `chantItems` và `chantPlans` làm reference data công khai.
+
+### Trade-off
+- Practice UI cần compose dữ liệu từ content và engagement cùng lúc.
+- Cần review kỹ wording ở các flow nhạy cảm như Ngôi Nhà Nhỏ trước khi biến thành validation copy hoặc checklist UI.

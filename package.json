@@ -27,6 +27,7 @@
     "seed:demo:reset": "pnpm --filter @pmtl/cms seed:demo:reset",
     "reindex:posts": "pnpm --filter @pmtl/cms reindex:posts",
     "smoke:test": "tsx infra/scripts/smoke-test.ts",
+    "design:extract:practice-pdfs": "python infra/scripts/extract_practice_pdfs.py",
     "monitoring:test": "tsx infra/scripts/test-monitoring.ts",
     "telegram:test": "tsx infra/scripts/test-telegram.ts",
     "docker:prod:monitoring": "docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml --profile monitoring up -d",

@@ -8,6 +8,7 @@ Nếu bạn là sinh viên và muốn hiểu nhanh, đọc theo thứ tự này:
 2. `design/CORE_DECISIONS.md`
 3. `design/MODULE_INTERACTIONS.md`
 4. `design/01-content/*`
+   - đọc thêm `design/01-content/practice-support-reference.md` nếu bạn đang làm phần niệm kinh / Ngôi Nhà Nhỏ / phóng sinh
 5. `design/identity/*`
 6. các module còn lại
 
@@ -17,6 +18,7 @@ Nếu bạn là sinh viên và muốn hiểu nhanh, đọc theo thứ tự này:
 - Dùng để đọc giải thích.
 - Hợp để mở bằng Markdown Preview trong VS Code.
 - Các file `module-map.md` thường xem bằng markmap extension sẽ dễ hiểu hơn.
+- Riêng `practice-support-reference.md` là nơi nối tài liệu PDF thực tế với design của app.
 
 ### `.mmd`
 - Là file Mermaid thuần.
@@ -102,3 +104,18 @@ Hãy quay lại 3 file này:
 - `design/MODULE_INTERACTIONS.md`
 
 Ba file đó là “la bàn” của toàn bộ thư mục `design/`.
+
+## Tài liệu PDF hỗ trợ niệm nên đọc ở đâu?
+
+- Nếu anh đang map từ tài liệu kinh sách / hướng dẫn thực hành vào app:
+  - đọc `design/01-content/practice-support-reference.md`
+  - xem thêm `design/01-content/practice-support-flows.mmd`
+  - mở `design/01-content/practice-pdf-extracts/README.md` để xem output pipeline local từ PDF thật
+  - mở `design/01-content/chant-items-catalog.md` để xem danh sách chant item gợi ý
+  - mở `design/01-content/practice-ui-checklists.md` để xem checklist UI cho flow nghi thức
+  - mở `design/01-content/little-house-spec.md` nếu đang làm riêng phần Ngôi Nhà Nhỏ
+- File đó giúp trả lời:
+  - tài liệu nào nên map vào `chantItems`
+  - tài liệu nào nên map vào `chantPlans`
+  - phần nào là checklist UI
+  - phần nào còn cần human review

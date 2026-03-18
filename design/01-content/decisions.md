@@ -108,3 +108,33 @@ Repo hiện tại đã có collection self-owned state riêng và moderation rep
 ### Trade-off
 - Cross-module flow cần rõ hơn.
 - Module interactions phải được đọc cùng tài liệu này khi generate code.
+
+## Decision 6. Practice support content thuộc content, không thuộc engagement
+
+### Context
+Repo hiện có collection thật `chantItems` và `chantPlans`.
+Các tài liệu PDF niệm hằng ngày, thắp tâm hương, phát nguyện, phóng sinh, và Ngôi Nhà Nhỏ cho thấy có một lớp dữ liệu public/editorial riêng:
+- script
+- lời khấn mẫu
+- số biến gợi ý
+- time rules
+- checklist nghi thức
+
+### Decision
+- `chantItems` và `chantPlans` thuộc content module.
+- PDF hướng dẫn, bản in, preview image, script file nên đi qua `downloads`, `media`, hoặc `beginnerGuides` tùy use case.
+- Engagement chỉ được lưu:
+  - preference theo user
+  - practice log
+  - progress/bookmark cá nhân
+
+### Rationale
+- Khớp repo thật trong `apps/cms`.
+- Giữ được boundary rất rõ giữa “nội dung chuẩn để mọi người đọc” và “trạng thái cá nhân của một user”.
+- Dễ map bộ PDF hiện tại vào app mà không làm engagement phình to sai vai trò.
+
+### Trade-off
+- Reader hoặc practice screen phải compose từ nhiều owner:
+  - content cho script/rule
+  - engagement cho progress/log
+- Khi tài liệu PDF được cập nhật, cần review mapping sang `chantItems` / `chantPlans` thay vì sửa bừa ở UI.

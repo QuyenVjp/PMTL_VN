@@ -1,0 +1,82 @@
+{
+  "title": "6. Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý (小房子念誦方法與注意事項)",
+  "slug": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y",
+  "presentation_mode": "vietnamese_priority_text",
+  "source_path": "D:\\downloadALL\\brave-download\\KINH SACH VA HD\\6. Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý (小房子念誦方法與注意事項).pdf",
+  "page_count": 2,
+  "source_type": "text_pdf",
+  "extraction_method": "direct_text_extraction",
+  "confidence": "high",
+  "needs_review": true,
+  "ocr_languages": [
+    "eng",
+    "osd",
+    "vie",
+    "chi_sim"
+  ],
+  "flow_hints": [
+    {
+      "key": "mental-incense-flow",
+      "title_vi": "Thắp tâm hương",
+      "title_en": "Mental incense flow",
+      "module_targets": [
+        "content"
+      ]
+    },
+    {
+      "key": "little-house-recitation-flow",
+      "title_vi": "Ngôi Nhà Nhỏ",
+      "title_en": "Little House recitation flow",
+      "module_targets": [
+        "content",
+        "engagement"
+      ]
+    },
+    {
+      "key": "little-house-burning-without-altar-flow",
+      "title_vi": "Đốt Ngôi Nhà Nhỏ không có bàn thờ",
+      "title_en": "Little House burning without altar flow",
+      "module_targets": [
+        "content"
+      ]
+    }
+  ],
+  "business_signals": {
+    "has_prayer_template": true,
+    "has_recommended_counts": true,
+    "has_time_rules": false,
+    "has_step_flow": false,
+    "has_checklist_potential": true
+  },
+  "page_records": [
+    {
+      "page_number": 1,
+      "image_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/images/page-001.png",
+      "direct_text_length": 4246,
+      "ocr_text_length": 0,
+      "final_text_length": 4246,
+      "display_text_length": 2926,
+      "extraction_method": "pdf_text",
+      "confidence": "high",
+      "excerpt": "Phương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý Những điều cần lưu ý trước khi tụng Ngôi Nhà Nhỏ: (Lưu ý: Mỗi ngày nên bắt đầu bằng việc tụng Chú Đại Bi trong phần Kinh Bài Tập, như vậy sẽ giúp tăng thêm năng lực khi tụng các kinh văn tiếp theo. Các phần Kinh Bài Tập k",
+      "display_mode": "balanced",
+      "needs_review": false
+    },
+    {
+      "page_number": 2,
+      "image_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/images/page-002.png",
+      "direct_text_length": 1758,
+      "ocr_text_length": 0,
+      "final_text_length": 1758,
+      "display_text_length": 1758,
+      "extraction_method": "pdf_text",
+      "confidence": "high",
+      "excerpt": "cần kinh của XXX, có thể khấn xin Bồ Tát gia hộ cho XXX được thân thể khỏe mạnh, bình an cát tường; nếu Ngôi Nhà Nhỏ hóa giải oán kết của XXX, có thể khấn xin Bồ Tát gia hộ hóa giải ác duyên giữa XXX và YYY. Phương pháp đốt Ngôi Nhà Nhỏ (trong nhà không có bàn thờ Phật) 1. Trước ",
+      "display_mode": "balanced",
+      "needs_review": false
+    }
+  ],
+  "combined_text_markdown_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.md",
+  "json_path": "6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.json",
+  "combined_text": "## Page 1\n\nPhương pháp tụng niệm NGÔI NHÀ NHỎ và những điều cần lưu ý\nNhững điều cần lưu ý trước khi tụng Ngôi Nhà Nhỏ: (Lưu ý: Mỗi ngày nên bắt đầu bằng việc tụng Chú Đại Bi trong phần\nKinh Bài Tập, như vậy sẽ giúp tăng thêm năng lực khi tụng các kinh văn tiếp theo. Các phần Kinh Bài Tập khác và Ngôi Nhà Nhỏ\ncó thể linh hoạt sắp xếp thứ tự tùy theo tình hình của bản thân mình.)\n1. Trước khi tụng Ngôi Nhà Nhỏ, phải viết rõ phần “Kính Tặng” ( ): _______” (trừ trường hợp Ngôi Nhà Nhỏ tích lũy).\n(Có thể ghi là: Người cần kinh của ai đó, tên người quá cố, thai nhi của ai đó, người cần kinh trong ngôi nhà của ai đó, hoặc người\nmuốn hóa giải oán kết...)\n2. Trước khi tụng Ngôi Nhà Nhỏ, cũng phải viết phần “Tặng” ( ): ________” (ghi tên người tụng kinh).\nLời thỉnh cầu trước khi tụng niệm Ngôi Nhà Nhỏ:\nNam mô đại từ đại bi, cứu khổ cứu nạn, quảng đại linh cảm Quán Thế Âm Bồ Tát Ma Ha Tát. (3 lần)\nThỉnh cầu nam mô đại từ đại bi, cứu khổ cứu nạn, quảng đại linh cảm Quán Thế Âm Bồ Tát Ma Ha Tát giúp con (họ tên mình),\ncó thể đem Ngôi Nhà Nhỏ mà con sắp niệm tặng cho (họ tên người tiếp nhận), (có thể là người cần kinh, người quá cố, thai nhi\nhoặc người cần kinh trong ngôi nhà).\nPhương pháp tụng niệm Ngôi Nhà Nhỏ:\nthành tâm và nghiêm túc niệm đủ số lượng kinh văn trong Ngôi Nhà Nhỏ là được.\nPhương pháp chấm Ngôi Nhà Nhỏ: Cách chấm Ngôi Nhà Nhỏ đúng cách\n1. Khi chấm Ngôi Nhà Nhỏ nhất định phải dùng bút màu đỏ\n2. Khi chấm Ngôi Nhà Nhỏ cố gắng chấm chính giữa vòng tròn ( đầy 80% vòng tròn)\n3. Sau khi niệm xong chấm xong toàn bộ một tấm Ngôi Nhà Nhỏ thì ghi ngày, tháng, năm\ncủa ngày hôm đó lên.\nPhương pháp đốt Ngôi Nhà Nhỏ (trong nhà có bàn thờ Phật)\n1. Trước hết thắp hương trên bàn thờ Phật\n2. Cảm tạ Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát. (3 lần)\n3. Nâng Ngôi Nhà Nhỏ lên khỏi đầu phía trước trán và sau đó đặt lên bàn thờ đồng thời nói \"Cảm tạ đại từ đại bi Quán Thế Âm\nBồ Tát \". Tiếp đó quỳ xuống và nói lời cầu nguyện sau đây:\n4. Thỉnh cầu Nam Mô Đại từ Đại bi cứu khổ cứu nạn quảng đại linh cảm Quán Thế Âm Bồ Tát Ma Ha Tát có thể giúp con\n___(họ tên), chuyển __(số lượng) tấm Ngôi Nhà Nhỏ này tặng cho ___(họ tên người tiếp nhận). (có thể là người cần kinh , người\nquá cố, thai nhi hoặc người cần kinh trong ngôi nhà).\n5. Trước khi đốt các Ngôi Nhà Nhỏ, hãy khấn \"Thỉnh cầu đại từ đại bi Quán Thế Âm Bồ Tát từ bi gia hộ cho con”\n6. Sau đó đốt tờ Ngôi Nhà Nhỏ (châm lửa từ chỗ ghi “Kính Tặng”).\n7. Trong quá trình đốt Ngôi Nhà Nhỏ đừng niệm kinh hay nói chuyện. Chỉ nói “Xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát Từ Bi”\n8. Sau khi đốt xong khấn: Bái tạ Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát trợ giúp __con (họ tên) có thể mang những tấm\nNgôi Nhà Nhỏ này tặng cho__(họ tên người tiếp nhận). Cuối cùng khấn “Cảm tạ Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ”\n(Lạy 1 lạy). Đồng thời có thể cầu xin thêm những nguyện vọng tương ứng, ví dụ: Nếu ngôi nhà nhỏ đó được đốt tặng cho người\n\n## Page 2\n\ncần kinh của XXX, có thể khấn xin Bồ Tát gia hộ cho XXX được thân thể khỏe mạnh, bình an cát tường; nếu Ngôi Nhà Nhỏ hóa\ngiải oán kết của XXX, có thể khấn xin Bồ Tát gia hộ hóa giải ác duyên giữa XXX và YYY.\nPhương pháp đốt Ngôi Nhà Nhỏ (trong nhà không có bàn thờ Phật)\n1. Trước hết thắp tâm hương (chắp tay).\n2. Cảm tạ Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát. (3 lần).\nSau đó tụng: 1 biến “Thiên Thủ Thiên Nhãn Vô Ngại Đại Bi”; 1 Biến “Bát Nhã Ba La Mật Đa Tâm Kinh”\n3. Nâng Ngôi Nhà Nhỏ lên khỏi đầu phía trước trán và quán tưởng trong tâm quỳ lạy.\n4. Thỉnh cầu Nam Mô Đại từ Đại bi cứu khổ cứu nạn quảng đại linh cảm Quán Thế Âm Bồ Tát Ma Ha Tát có thể giúp con\n___(họ tên), chuyển __(số lượng) tấm Ngôi Nhà Nhỏ này tặng cho ___(họ tên người tiếp nhận). (có thể là người cần kinh , người\nquá cố, thai nhi hoặc người cần kinh trong ngôi nhà).\n5. Trước khi đốt Ngôi Nhà Nhỏ, hãy khấn \"Thỉnh cầu đại từ đại bi Quán Thế Âm Bồ Tát Ma Ha Tát từ bi gia hộ cho con”\n6. Sau đó đốt tờ Ngôi Nhà Nhỏ (châm lửa từ chỗ ghi “Kính Tặng”).\n7. Trong quá trình đốt Ngôi Nhà Nhỏ đừng niệm kinh hay nói chuyện. Chỉ nói “Xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát Từ Bi”\n8. Sau khi đốt xong khấn: Bái tạ Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát trợ giúp __con (họ tên) có thể mang những tấm\nNgôi Nhà Nhỏ này tặng cho__(họ tên người tiếp nhận). Cuối cùng khấn “Cảm tạ Đại Từ Đại Bi Quán Thế Âm Bồ Tát gia hộ”\n(Lạy 1 lạy). Đồng thời có thể cầu xin thêm những nguyện vọng tương ứng, ví dụ: Nếu ngôi nhà nhỏ đó được đốt tặng cho người\ncần kinh của XXX, có thể khấn xin Bồ Tát gia hộ cho XXX được thân thể khỏe mạnh, bình an cát tường; nếu Ngôi Nhà Nhỏ hóa\ngiải oán kết của XXX, có thể khấn xin Bồ Tát gia hộ hóa giải ác duyên giữa XXX và YYY."
+}
