@@ -63,10 +63,9 @@ export async function proxy(req: NextRequest) {
   }
 
   const idToken = req.nextUrl.searchParams.get("id_token");
-  const accessToken = req.nextUrl.searchParams.get("access_token");
 
-  // OAuth callback fallback: provider may redirect "/" with token query.
-  if ((idToken || accessToken) && req.nextUrl.pathname !== "/auth/google/callback") {
+  // OAuth callback fallback: if a reverse proxy strips the callback path, preserve the token hand-off.
+  if (idToken && req.nextUrl.pathname !== "/auth/google/callback") {
     const callbackUrl = req.nextUrl.clone();
     callbackUrl.pathname = "/auth/google/callback";
     const response = NextResponse.redirect(callbackUrl);

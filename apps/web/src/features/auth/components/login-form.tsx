@@ -84,7 +84,9 @@ export function LoginForm({ redirectTo = "/profile", className }: LoginFormProps
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${publicEnv.CMS_PUBLIC_URL}/api/connect/google`;
+    const url = new URL("/api/connect/google", publicEnv.CMS_PUBLIC_URL);
+    url.searchParams.set("redirectTo", redirectTo);
+    window.location.href = url.toString();
   };
 
   return (

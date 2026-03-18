@@ -10,12 +10,19 @@ import { withCsrfHeaders } from '@/lib/security/client'
 function CallbackHandler() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { login } = useAuth()
+  const { refetch } = useAuth()
   const [error, setError] = useState<string | null>(null)
 
+  const redirectTo = (() => {
+    const value = searchParams.get('redirect')
+    if (!value || !value.startsWith('/') || value.startsWith('//')) {
+      return '/'
+    }
+
+    return value
+  })()
+
   useEffect(() => {
-    // CMS auth bridge may redirect with either access_token (provider token) or id_token (CMS JWT)
-    const accessToken = searchParams.get('access_token')
     const idToken = searchParams.get('id_token')
     const errorParam = searchParams.get('error')
     const errorDescription = searchParams.get('error_description')
@@ -27,7 +34,6 @@ function CallbackHandler() {
           method: 'POST',
           headers: withCsrfHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({
-            access_token: accessToken,
             id_token: idToken,
           }),
         })
@@ -35,12 +41,8 @@ function CallbackHandler() {
 
         if (!res.ok) throw new Error(data.error || 'Xác thực phiên đăng nhập thất bại')
 
-        if (data.user) {
-          login(data.user)
-          router.push('/')
-        } else {
-          throw new Error('Không có dữ liệu người dùng từ server')
-        }
+        await refetch()
+        router.push(redirectTo)
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Lỗi xác thực Google'
         toast.error(message)
@@ -52,14 +54,14 @@ function CallbackHandler() {
       const message = `${errorParam}: ${errorDescription || 'Không rõ lý do'}`
       toast.error(message)
       setError(message)
-    } else if (accessToken || idToken) {
+    } else if (idToken) {
       handleGoogleAuth()
     } else {
       const message = 'Không tìm thấy token Google từ CMS.'
       toast.error(message)
       setError(message)
     }
-  }, [searchParams, login, router])
+  }, [searchParams, redirectTo, refetch, router])
 
   if (error) {
     return (

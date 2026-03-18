@@ -216,6 +216,10 @@ export interface User {
   bio?: string | null;
   role: 'super-admin' | 'admin' | 'editor' | 'moderator' | 'member';
   isBlocked?: boolean | null;
+  /**
+   * Google subject identifier used to link social sign-in.
+   */
+  googleSub?: string | null;
   lastLoginAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1474,6 +1478,7 @@ export interface UsersSelect<T extends boolean = true> {
   bio?: T;
   role?: T;
   isBlocked?: T;
+  googleSub?: T;
   lastLoginAt?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 import type { Payload } from "payload";
 import {
   forgotPasswordSchema,
@@ -26,6 +28,7 @@ type RawUser = {
   bio?: string | null;
   dharmaName?: string | null;
   phone?: string | null;
+  googleSub?: string | null;
   role?: UserRole | null;
   isBlocked?: boolean | null;
   lastLoginAt?: string | null;
@@ -231,6 +234,21 @@ async function findUserByEmail(payload: Payload, email: string): Promise<RawUser
   return (result.docs[0] as RawUser | undefined) ?? null;
 }
 
+async function findUserByGoogleSub(payload: Payload, googleSub: string): Promise<RawUser | null> {
+  const result = await payload.find({
+    collection: "users",
+    overrideAccess: true,
+    limit: 1,
+    where: {
+      googleSub: {
+        equals: googleSub,
+      },
+    },
+  });
+
+  return (result.docs[0] as RawUser | undefined) ?? null;
+}
+
 export async function createUserProfile(
   payload: Payload,
   input: RegisterInput & { role?: UserRole; isBlocked?: boolean },
@@ -264,6 +282,139 @@ export async function updateLastLoginAt(payload: Payload, userId: string | numbe
     },
     overrideAccess: true,
   });
+}
+
+function generateSocialAuthPassword(): string {
+  return randomBytes(32).toString("base64url");
+}
+
+type GoogleIdentityInput = {
+  sub: string;
+  email: string;
+  emailVerified: boolean;
+  fullName?: string | null;
+};
+
+async function createGoogleUserProfile(payload: Payload, input: GoogleIdentityInput): Promise<RawUser> {
+  const role = await resolveRegistrationRole(payload);
+  const normalizedInput = ensureUserProfileDefaults(
+    normalizeUserProfileInput({
+      fullName: input.fullName?.trim() || input.email,
+      role,
+      isBlocked: false,
+    }),
+  );
+
+  return (await payload.create({
+    collection: "users",
+    data: {
+      email: input.email.toLowerCase(),
+      password: generateSocialAuthPassword(),
+      ...normalizedInput,
+      bio: "",
+      googleSub: input.sub,
+    },
+    overrideAccess: true,
+  } as never)) as RawUser;
+}
+
+async function linkGoogleIdentity(
+  payload: Payload,
+  user: RawUser,
+  input: GoogleIdentityInput,
+): Promise<RawUser> {
+  const nextFullName = user.fullName?.trim() ? user.fullName : input.fullName?.trim() || user.email;
+  const shouldUpdateGoogleSub = user.googleSub !== input.sub;
+  const shouldUpdateFullName = nextFullName !== (user.fullName ?? "");
+
+  if (!shouldUpdateGoogleSub && !shouldUpdateFullName) {
+    return user;
+  }
+
+  return (await payload.update({
+    collection: "users",
+    id: user.id,
+    data: {
+      ...(shouldUpdateGoogleSub ? { googleSub: input.sub } : {}),
+      ...(shouldUpdateFullName ? { fullName: nextFullName } : {}),
+    },
+    overrideAccess: true,
+  } as never)) as unknown as RawUser;
+}
+
+export async function findOrCreateGoogleUser(
+  payload: Payload,
+  input: GoogleIdentityInput,
+): Promise<RawUser> {
+  if (!input.emailVerified) {
+    throw new UserAuthError("AUTH_GOOGLE_EMAIL_UNVERIFIED", "Tai khoan Google chua xac minh email.", 401);
+  }
+
+  const normalizedEmail = input.email.toLowerCase();
+  const byGoogleSub = await findUserByGoogleSub(payload, input.sub);
+
+  if (byGoogleSub) {
+    assertUserCanAuthenticate(byGoogleSub);
+    return linkGoogleIdentity(payload, byGoogleSub, {
+      ...input,
+      email: normalizedEmail,
+    });
+  }
+
+  const byEmail = await findUserByEmail(payload, normalizedEmail);
+  if (byEmail) {
+    assertUserCanAuthenticate(byEmail);
+
+    if (byEmail.googleSub && byEmail.googleSub !== input.sub) {
+      throw new UserAuthError(
+        "AUTH_GOOGLE_ACCOUNT_CONFLICT",
+        "Email nay da lien ket voi mot tai khoan Google khac.",
+        409,
+      );
+    }
+
+    return linkGoogleIdentity(payload, byEmail, {
+      ...input,
+      email: normalizedEmail,
+    });
+  }
+
+  return createGoogleUserProfile(payload, {
+    ...input,
+    email: normalizedEmail,
+  });
+}
+
+export async function createSignedSessionForUser(payload: Payload, user: RawUser): Promise<AuthSession> {
+  assertUserCanAuthenticate(user);
+  const { getFieldsToSign, jwtSign } = await import("payload");
+
+  const collectionConfig = payload.collections["users"]?.config;
+  const tokenExpiration =
+    collectionConfig && "auth" in collectionConfig && collectionConfig.auth?.tokenExpiration
+      ? collectionConfig.auth.tokenExpiration
+      : 60 * 60 * 24 * 7;
+
+  const { exp, token } = await jwtSign({
+    fieldsToSign: getFieldsToSign({
+      collectionConfig: collectionConfig as never,
+      email: user.email.toLowerCase(),
+      user: user as never,
+    }),
+    secret: process.env.PAYLOAD_SECRET ?? "replace-me",
+    tokenExpiration,
+  });
+
+  await updateLastLoginAt(payload, user.id);
+
+  return {
+    token,
+    exp,
+    user: mapUserToAuthUser({
+      ...user,
+      lastLoginAt: new Date().toISOString(),
+    }),
+  };
 }
 
 export async function registerUser(payload: Payload, input: RegisterInput): Promise<AuthSession> {

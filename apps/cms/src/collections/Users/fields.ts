@@ -117,6 +117,18 @@ export const userFields: Field[] = [
         label: t("Hệ thống", "System"),
         fields: [
           {
+            name: "googleSub",
+            label: t("Google subject", "Google subject"),
+            type: "text",
+            admin: {
+              readOnly: true,
+              description: t(
+                "Định danh Google dùng để liên kết đăng nhập social.",
+                "Google subject identifier used to link social sign-in.",
+              ),
+            },
+          },
+          {
             name: "lastLoginAt",
             label: t("Đăng nhập gần nhất", "Last login at"),
             type: "date",

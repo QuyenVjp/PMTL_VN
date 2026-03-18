@@ -125,6 +125,33 @@ Fix:
 - verify TLS termination
 - verify no subdomain mismatch between web and browser URL
 
+## Google Login Fails Or Redirect URI Mismatch
+
+Symptoms:
+- Google shows `redirect_uri_mismatch`
+- login returns to the site but session is not created
+
+Checks:
+- `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are present on CMS
+- `NEXT_PUBLIC_SITE_URL` is the web domain
+- `CMS_PUBLIC_URL` / `PAYLOAD_PUBLIC_SERVER_URL` is the CMS domain
+- the Google OAuth client is configured with the exact origins and callback URLs below
+
+Google Console values used by this repo:
+```text
+Authorized JavaScript origins
+http://localhost:3000
+https://phapmontamlinh-quantheambotat.vn
+
+Authorized redirect URIs
+http://localhost:3001/api/connect/google/callback
+https://cms.phapmontamlinh-quantheambotat.vn/api/connect/google/callback
+```
+
+Notes:
+- the callback now completes on CMS and hands a Payload JWT back to web
+- `redirect_uri` must match exactly, including scheme and subdomain
+
 ## Search Reindex Appears To Do Nothing
 
 Symptoms:
