@@ -4,6 +4,7 @@
 - **Output Gate:** Luôn sử dụng [output-skill](file:///.agents/skills/output-skill/SKILL.md) khi user yêu cầu full output, full file, hoặc nhiều deliverable không được cắt bớt.
 - **Default UI Style:** Mặc định frontend/UI luôn ưu tiên [pmtl-ui-style-system](file:///.agents/skills/pmtl-ui-style-system/SKILL.md).
 - **On-demand UI variants:** Chỉ dùng variant `soft`, `minimalist`, hoặc `redesign` trong `pmtl-ui-style-system` khi tôi yêu cầu rõ ràng.
+- **Design library preservation:** Các local skill [taste-skill](file:///.agents/skills/taste-skill/SKILL.md), [soft-skill](file:///.agents/skills/soft-skill/SKILL.md), [minimalist-skill](file:///.agents/skills/minimalist-skill/SKILL.md), và [redesign-skill](file:///.agents/skills/redesign-skill/SKILL.md) là thư viện thiết kế quý, phải giữ nguyên và chỉ orchestration chứ không thay thế bằng bản rút gọn.
 
 ## Knowledge
 - Use the local skill `pmtl-vn-architecture` from `.agents/skills/pmtl-vn-architecture` for architecture, boundaries, auth authority, and domain placement.
@@ -65,6 +66,14 @@ Implementation expectations:
 - All user input must be validated with Zod schemas
 - All API responses must use TypeScript strict mode
 - **Vietnamese Language Standard:** NEVER generate or use Vietnamese without marks (tiếng Việt không dấu) in UI, API messages, or data. All Vietnamese text must include proper marks/accents.
+
+Windows reliability defaults:
+- On Windows, prefer git grep -n for exact text search when bundled rg.exe is unavailable or access-denied.
+- Use PowerShell Get-ChildItem + Select-String as the next fallback for file discovery and content search.
+- Use mgrep for semantic or conceptual local search when exact text search is not enough.
+- Prefer repo or skill wrapper scripts for repeated workflows instead of building long one-off shell commands.
+- Split large edits into small file-local patches; avoid monolithic multi-file patches that can hit Windows command/path limits in tool wrappers.
+- When a Python helper only needs frontmatter or simple text parsing, prefer a stdlib implementation over adding a third-party dependency.
 
 Production readiness docs:
 - Read `AUDIT_VERIFIED_2026.md` first for the verified production-readiness baseline and corrected findings when the file exists in the current checkout

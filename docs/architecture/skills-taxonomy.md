@@ -44,13 +44,42 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 
 ## Migration map
 
-These old repo-local skills were intentionally consolidated:
+These old repo-local skills were intentionally consolidated into the new taxonomy, but some are still preserved as compatibility or design-library entrypoints so older prompts do not break:
 
 - `pmtl-production-ready` -> `pmtl-production-baseline` + `pmtl-verify-quality-gate` + `pmtl-runbook-cms-runtime-errors`
 - `pmtl-fe-craft` -> `pmtl-fe-implementation`
 - `pmtl-uiux-specialist` -> `pmtl-ui-behavior`
 - `pmtl-creative-designer` + `pmtl-vercel-precision` + `taste-skill` + `soft-skill` + `minimalist-skill` + `redesign-skill` -> `pmtl-ui-style-system`
 - `web-design-guidelines` -> `pmtl-review-web-ui`
+
+## Compatibility layer
+
+The following local skills are intentionally kept alive even after the taxonomy cleanup:
+
+- `taste-skill`
+- `soft-skill`
+- `minimalist-skill`
+- `redesign-skill`
+- `pmtl-production-ready`
+- `pmtl-fe-craft`
+- `pmtl-uiux-specialist`
+- `pmtl-creative-designer`
+- `pmtl-vercel-precision`
+- `web-design-guidelines`
+
+Reason:
+
+- preserve valuable design libraries
+- avoid breaking older prompts and workflows
+- allow the new taxonomy to act as the primary routing layer without deleting trusted legacy entrypoints
+
+## Windows-safe execution defaults
+
+- Prefer git grep -n for exact text search before falling back to the bundled rg.exe on Windows hosts where WindowsApps permissions can fail.
+- Use PowerShell Get-ChildItem and Select-String when exact search or file discovery must stay inside the local shell.
+- Use mgrep for semantic search instead of stretching exact-match tools beyond their job.
+- Keep edits file-local and split large write operations into smaller patches to avoid Windows command/path length failures in agent tooling.
+- Prefer stdlib-only Python helpers when a task only needs simple parsing or transformation.
 
 ## Rules
 

@@ -14,6 +14,13 @@ Use this skill to choose the right visual direction without keeping multiple ove
 - Minimalist / editorial: read `references/minimalist.md`
 - Redesign of an existing surface: read `references/redesign.md`
 
+For the preserved design-library skills:
+
+- If the user explicitly says `taste-skill`, read `../taste-skill/SKILL.md`
+- If the user explicitly says `soft-skill`, read `../soft-skill/SKILL.md`
+- If the user explicitly says `minimalist-skill`, read `../minimalist-skill/SKILL.md`
+- If the user explicitly says `redesign-skill`, read `../redesign-skill/SKILL.md`
+
 If the user does not request a variant explicitly, use the default variant.
 
 ## Shared rules
