@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -14,6 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 COMPOSE_FILE = ROOT / "infra" / "docker" / "compose.dev.yml"
 ENV_FILE = ROOT / "infra" / "docker" / ".env.dev"
+SKILLS_DIR = ROOT / ".agents" / "skills"
+TAXONOMY_PATH = ROOT / "docs" / "architecture" / "skills-taxonomy.md"
 
 SMOKE_DOCKER_ENV = {
     "CMS_PUBLIC_URL": "http://cms:3001",
@@ -131,6 +134,167 @@ def extract_json_blob(text: str) -> dict[str, object]:
     if start == -1 or end == -1 or end <= start:
         raise ValueError("Could not find JSON output in command output")
     return json.loads(text[start : end + 1])
+
+
+def normalize_heading(value: str) -> str:
+    normalized = re.sub(r"[^a-z0-9]+", "-", value.strip().lower()).strip("-")
+    return normalized
+
+
+SECTION_PATTERNS = {
+    "purpose": [r"purpose", r"overview", r"supported-suites", r"operating-model", r"interaction-rules", r"variant-selection"],
+    "use_when": [r"use-when", r"read-first", r"read-in-this-order", r"read-only-what-applies", r"review-order"],
+    "required_inputs": [r"required-inputs", r"inputs", r"input"],
+    "expected_output": [r"expected-output", r"output-rule", r"output"],
+    "execution_approach": [r"execution-approach", r"default-order", r"incident-approach", r"script", r"task-routing", r"core-rules", r"shared-rules"],
+    "quality_criteria": [r"quality-criteria", r"findings-to-prioritize", r"non-negotiables", r"baseline-rules", r"core-rules"],
+    "verification": [r"verification", r"output-rule", r"default-order", r"script", r"incident-approach"],
+    "edge_cases": [r"edge-cases", r"typical-incident-buckets", r"common-bad-decisions"],
+    "references": [r"references", r"variant-selection", r"pair-with", r"pair-withs", r"use-this-skill-with"],
+}
+
+REQUIRED_SECTIONS = (
+    "purpose",
+    "use_when",
+    "execution_approach",
+    "verification",
+)
+
+RECOMMENDED_SECTIONS = (
+    "required_inputs",
+    "expected_output",
+    "quality_criteria",
+    "edge_cases",
+    "references",
+)
+
+
+def load_skill_categories() -> dict[str, str]:
+    if not TAXONOMY_PATH.exists():
+        return {}
+
+    categories: dict[str, str] = {}
+    active_local_taxonomy = False
+    current_category: str | None = None
+    for raw_line in TAXONOMY_PATH.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if line == "## Active local taxonomy":
+            active_local_taxonomy = True
+            continue
+        if active_local_taxonomy and line.startswith("## "):
+            break
+        if not active_local_taxonomy:
+            continue
+        if line.startswith("### "):
+            current_category = line.removeprefix("### ").strip().lower()
+            continue
+        if current_category and line.startswith("- `") and "`" in line[3:]:
+            skill_name = line.split("`", 2)[1]
+            categories[skill_name] = current_category
+    return categories
+
+
+def classify_section_hits(headings: list[str], content: str) -> tuple[list[str], list[str]]:
+    normalized_headings = [normalize_heading(heading) for heading in headings]
+    hits: set[str] = set()
+
+    for section_name, patterns in SECTION_PATTERNS.items():
+        for heading in normalized_headings:
+            if any(re.fullmatch(pattern, heading) for pattern in patterns):
+                hits.add(section_name)
+                break
+
+    normalized_content = normalize_heading(content)
+    if "verification" not in hits and any(token in normalized_content for token in ("quality-gate", "verify", "verification")):
+        hits.add("verification")
+
+    missing_required = [section for section in REQUIRED_SECTIONS if section not in hits]
+    missing_recommended = [section for section in RECOMMENDED_SECTIONS if section not in hits]
+    return missing_required, missing_recommended
+
+
+def skill_audit(include_legacy: bool) -> int:
+    categories = load_skill_categories()
+    skill_reports: list[dict[str, object]] = []
+
+    for skill_dir in sorted(SKILLS_DIR.iterdir(), key=lambda item: item.name):
+        if not skill_dir.is_dir():
+            continue
+
+        skill_name = skill_dir.name
+        category = categories.get(skill_name)
+        if not include_legacy and category is None:
+            continue
+
+        skill_file = skill_dir / "SKILL.md"
+        content = skill_file.read_text(encoding="utf-8") if skill_file.exists() else ""
+        headings = re.findall(r"^#+\s+(.+)$", content, flags=re.MULTILINE)
+        frontmatter_name = bool(re.search(r"(?m)^name:\s*", content))
+        frontmatter_description = bool(re.search(r"(?m)^description:\s*", content))
+        missing_required, missing_recommended = classify_section_hits(headings, content)
+
+        artifact_paths = {
+            "references": skill_dir / "references",
+            "scripts": skill_dir / "scripts",
+            "templates": skill_dir / "templates",
+            "examples": skill_dir / "examples",
+            "verification": skill_dir / "verification",
+            "test_data": skill_dir / "test-data",
+            "gotchas": skill_dir / "gotchas.md",
+            "changelog": skill_dir / "changelog.md",
+        }
+        artifacts = {name: path.exists() for name, path in artifact_paths.items()}
+
+        score = 0
+        if skill_file.exists():
+            score += 1
+        if frontmatter_name and frontmatter_description:
+            score += 1
+        score += len(REQUIRED_SECTIONS) - len(missing_required)
+        score += sum(1 for key in ("references", "scripts", "templates", "examples", "verification", "gotchas", "changelog") if artifacts[key])
+
+        skill_reports.append(
+            {
+                "skill": skill_name,
+                "category": category or "legacy-or-unmapped",
+                "has_skill_md": skill_file.exists(),
+                "frontmatter_ok": frontmatter_name and frontmatter_description,
+                "missing_required_sections": missing_required,
+                "missing_recommended_sections": missing_recommended,
+                "artifacts": artifacts,
+                "score": score,
+            }
+        )
+
+    totals = {
+        "skills_audited": len(skill_reports),
+        "missing_required_sections": sum(1 for report in skill_reports if report["missing_required_sections"]),
+        "missing_verification_assets": sum(
+            1
+            for report in skill_reports
+            if not isinstance(report["artifacts"], dict) or not report["artifacts"].get("verification")
+        ),
+        "missing_changelog": sum(
+            1
+            for report in skill_reports
+            if not isinstance(report["artifacts"], dict) or not report["artifacts"].get("changelog")
+        ),
+        "missing_gotchas": sum(
+            1
+            for report in skill_reports
+            if not isinstance(report["artifacts"], dict) or not report["artifacts"].get("gotchas")
+        ),
+    }
+
+    emit_json(
+        {
+            "ok": True,
+            "include_legacy": include_legacy,
+            "totals": totals,
+            "skills": skill_reports,
+        }
+    )
+    return 0
 
 
 def quality_gate(scope: str, skip_tests: bool, runtime: str) -> int:
@@ -299,6 +463,10 @@ def build_parser() -> argparse.ArgumentParser:
     search_parser.set_defaults(
         handler=lambda args: search_sync(args.all_pages, args.page, args.limit, args.health_url, args.runtime)
     )
+
+    skill_parser = subparsers.add_parser("skill-audit")
+    skill_parser.add_argument("--include-legacy", action="store_true")
+    skill_parser.set_defaults(handler=lambda args: skill_audit(args.include_legacy))
 
     return parser
 

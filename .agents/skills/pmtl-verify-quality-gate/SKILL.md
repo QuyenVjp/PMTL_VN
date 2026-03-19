@@ -5,7 +5,18 @@ description: PMTL_VN verification skill for code quality gates. Use after meanin
 
 # PMTL Verify Quality Gate
 
-Use this skill after implementation, not before.
+## Purpose
+
+Run the strongest relevant checks after implementation so delivery is backed by evidence instead of confidence.
+
+## Use When
+
+- Any meaningful code change is considered done.
+- You need a deterministic verification path for web, CMS, or repo-wide edits.
+
+## Expected Output
+
+- Command results that show what passed, what failed, and which runtime was used.
 
 ## Default order
 
@@ -13,6 +24,12 @@ Use this skill after implementation, not before.
 2. Typecheck for the affected package or the monorepo.
 3. Lint for the affected package or the monorepo.
 4. Build or smoke verification when contracts changed.
+
+## Execution Approach
+
+1. Choose the narrowest scope that still proves the change.
+2. Run the quality gate through the repo wrapper instead of ad hoc commands.
+3. Escalate to smoke or domain-specific verification when contracts changed.
 
 ## Script
 
@@ -26,3 +43,13 @@ Example:
 py infra/tools/codex_actions.py quality-gate --scope all
 py infra/tools/codex_actions.py quality-gate --scope web --skip-tests
 ```
+
+## Verification
+
+- Treat non-zero exit codes as a failed gate.
+- Include the real command output summary in the final report, not only "tests passed".
+
+## References
+
+- `infra/tools/codex_actions.py`
+- `scripts/run_quality_gate.py`

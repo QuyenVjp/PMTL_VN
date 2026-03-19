@@ -18,6 +18,11 @@ File này bổ sung quy tắc thiết kế contract (hợp đồng dữ liệu/n
 
 - Input từ user phải map được về Zod schema (lược đồ dữ liệu) rõ ràng.
 - Queue payload, webhook payload, outbox event payload, search document payload và env config cũng phải map được về schema runtime rõ ràng.
+- Upload/file contract cũng phải nói rõ:
+  - storage provider hiện tại
+  - object key strategy
+  - metadata canonical ghi ở đâu
+  - public URL là derived field hay adapter output
 - Public route ưu tiên dùng `publicId`; `slug` chủ yếu cho SEO/read route.
 - DTO public không expose field hệ thống nhạy cảm như:
   - `spamScore`

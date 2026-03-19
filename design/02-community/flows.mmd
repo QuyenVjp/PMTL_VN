@@ -4,7 +4,7 @@ flowchart TD
         U1B --> U1C["Chuẩn hóa publicId, slug, ảnh chụp tác giả, và spamScore"]
         U1C --> U1D["Lưu communityPosts với moderationStatus mặc định là pending"]
         U1D --> U1E["Ghi audit log (nhật ký kiểm tra)"]
-        U1E --> U1F["Đưa cảnh báo vào hàng chờ cho admin hoặc super-admin (enqueue alert)"]
+        U1E --> U1F["Append outbox event cho admin hoặc super-admin alert"]
     end
 
     subgraph Flow2 ["Luồng 2: Bình luận vào bài cộng đồng"]
@@ -15,7 +15,7 @@ flowchart TD
         U2D --> U2E
         U2E --> U2F["Lưu communityComments với moderationStatus là pending"]
         U2F --> U2G["Tính lại commentsCount khi bình luận được duyệt"]
-        U2G --> U2H["Đưa cảnh báo moderation vào hàng chờ nếu cần"]
+        U2G --> U2H["Append outbox event cho moderation alert nếu cần"]
     end
 
     subgraph Flow3 ["Luồng 3: Bình luận vào bài viết biên tập"]
@@ -29,7 +29,7 @@ flowchart TD
         U4A["Khách hoặc thành viên gửi guestbook entry"] --> U4B["Kiểm tra nội dung lời nhắn (validate message)"]
         U4B --> U4C["Chuẩn hóa publicId, ip hash, badge, và country nếu có"]
         U4C --> U4D["Lưu guestbookEntries với approvalStatus là pending"]
-        U4D --> U4E["Thông báo admin hoặc super-admin (notify)"]
+        U4D --> U4E["Append outbox event cho admin hoặc super-admin notify"]
         U4E --> U4F{"Người dùng có report entity không?"}
         U4F -->|"Có"| U4G["Tạo moderation report (phiếu báo cáo kiểm duyệt)"]
         U4F -->|"Không"| U4H["Kết thúc"]

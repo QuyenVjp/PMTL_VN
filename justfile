@@ -1,4 +1,4 @@
-set shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
+set shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
 
 bootstrap:
   py infra/tools/codex_actions.py bootstrap
@@ -41,3 +41,6 @@ auth-check:
 
 search-check:
   py infra/tools/codex_actions.py search-sync --all-pages
+
+skill-audit:
+  py infra/tools/codex_actions.py skill-audit

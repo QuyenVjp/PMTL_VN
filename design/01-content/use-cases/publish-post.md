@@ -35,13 +35,14 @@
 3. Ghi canonical record (bản ghi chuẩn gốc) vào `posts` với `_status = published`.
 4. Thiết lập `publishedAt` nếu chưa có.
 5. Append audit event cho `post.publish`.
-6. Enqueue search sync job cho search module.
-7. Gọi revalidation/invalidation downstream cho web cache.
+6. Append `outbox_events` cho search sync, revalidation/invalidation, và notification announce nếu feature bật.
+7. Dispatcher phát execution job hoặc downstream handler tương ứng từ outbox.
 
 ## async (bất đồng bộ) side-effects
 - search sync
 - revalidation webhook
 - notification announcement nếu sau này flow bật
+- recovery path chuẩn là replay outbox hoặc batch reindex/revalidation từ canonical `posts`
 
 ## success result (kết quả thành công)
 - Document trở thành public content hợp lệ.
@@ -54,7 +55,7 @@
 - `403`: actor không có quyền biên tập.
 - `404`: document hoặc relation quan trọng không tồn tại.
 - `409`: conflict ở slug/publicId hoặc state publish không hợp lệ.
-- `500`: lỗi hook/service (lớp xử lý nghiệp vụ) hoặc enqueue downstream work.
+- `500`: lỗi hook/service (lớp xử lý nghiệp vụ) hoặc append outbox/downstream dispatch contract.
 
 ## Audit
 - bắt buộc log `post.publish`
@@ -66,7 +67,7 @@
 
 ## Performance target
 - Request publish không chờ search indexing xong.
-- Response nên xong trong `< 800ms` cho nhánh canonical write + enqueue.
+- Response nên xong trong `< 800ms` cho nhánh canonical write + append outbox.
 
 ## Notes for AI/codegen
 - `posts` mới là canonical owner; search index không phải nguồn dữ liệu gốc.

@@ -45,7 +45,8 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 ## write path (thứ tự ghi dữ liệu chuẩn)
 1. Bước ghi canonical record (bản ghi chuẩn gốc) đầu tiên.
 2. Bước cập nhật summary field nếu có.
-3. Bước enqueue async (bất đồng bộ) work nếu có.
+3. Bước append `outbox_events` nếu có side effect quan trọng.
+4. Bước dispatcher/execution queue nếu có.
 
 ## async (bất đồng bộ) side-effects
 - Search sync, notification, email, revalidation, worker (tiến trình xử lý nền) jobs.
@@ -80,7 +81,10 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 
 - Bước 1 luôn nói rõ canonical record (bản ghi chuẩn gốc) nằm ở module nào.
 - Nếu có summary field, phải nói rõ đó là summary, không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
-- Nếu có queue (hàng đợi xử lý)/job, phải nói rõ sync path chỉ enqueue hay thực sự gửi ngay.
+- Nếu có queue (hàng đợi xử lý)/job, phải tách rõ:
+  - request path chỉ append `outbox_events`
+  - dispatcher mới phát execution job
+  - worker mới thực thi side effect
 - Nếu có outbox, phải nói rõ:
   - event type
   - idempotency key
@@ -95,7 +99,7 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
   - entity không tồn tại
   - document chưa publish
   - duplicate submit/report
-  - queue (hàng đợi xử lý) unavailable nhưng request vẫn tiếp tục
+  - execution queue unavailable nhưng request vẫn tiếp tục nhờ outbox còn pending
 
 ## Viết phần `Notes for AI/codegen` như thế nào
 
@@ -105,11 +109,12 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
   - field summary
   - route publicId hay slug
   - side-effect nào là async-only (chỉ chạy ngầm, bất đồng bộ)
+  - recovery path là replay outbox, recompute projection, hay rebuild read model
 
 ## Không nên làm
 
 - Không mô tả kiểu "thường sẽ", "có thể là", "đại khái".
 - Không gọi Redis, queue (hàng đợi xử lý), search index là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
-- Không coi event là "đã giao" nếu mới chỉ append outbox hoặc mới chỉ enqueue execution queue.
+- Không coi event là "đã giao" nếu mới chỉ append outbox hoặc mới chỉ dispatch execution job.
 - Không để UI text hoặc DTO public lẫn với raw Payload document nếu chưa map contract (hợp đồng dữ liệu/nghiệp vụ).
 

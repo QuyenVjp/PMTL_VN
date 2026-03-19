@@ -65,7 +65,7 @@
 - replay outbox không được tạo duplicate alert cho cùng canonical report.
 
 ## Performance target
-- Canonical report create + enqueue alert nên `< 800ms`.
+- Canonical report create + append outbox alert nên `< 800ms`.
 
 ## Notes for AI/codegen
 - `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); đừng nhét full report lifecycle vào `postComments`.

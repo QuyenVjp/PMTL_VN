@@ -5,7 +5,7 @@ Tài liệu này giải thích kiến trúc hạ tầng chuẩn của PMTL_VN th
 
 - thành phần nào là bắt buộc
 - business event quan trọng đi theo flow nào
-- media/file nên sống ở đâu
+- media/file nên sống ở đâu trong current phase và target phase
 - observability chuẩn phải nhìn đủ metrics, logs, traces
 
 Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
@@ -36,7 +36,8 @@ Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
 | **`outbox_events` trong Postgres** | Transactional event log | Đảm bảo side effect quan trọng không bị rơi sau canonical write | Reliable handoff, replay, auditability |
 | **Redis** | Cache + execution queue (hàng đợi thực thi) | Tăng tốc read và chạy workload nền | Fast reads, async execution |
 | **Meilisearch** | Public search engine | Full-text, typo tolerance, facets | Search nhanh và thân thiện |
-| **Object Storage** (`S3` / `MinIO` / tương đương) | Binary asset storage | Tách file/media khỏi app runtime | Backup dễ, scale dễ, scan/quarantine rõ |
+| **Storage abstraction + Local Disk adapter** | Current media/file runtime cho 1 VPS | Khớp hạ tầng hiện tại nhưng không khóa logic vào local path | Rẻ, dễ chạy, dễ nâng cấp |
+| **S3-compatible Object Storage** (target phase) | Binary asset storage nâng cấp | Tách file/media khỏi app runtime khi cần scale/backup tốt hơn | Backup dễ, scan/quarantine rõ |
 | **pgvector** (optional) | Semantic retrieval trong Postgres | Chỉ dùng khi cần related-content / recommendation | Bổ sung cho Meilisearch, không thay Meilisearch |
 | **PgBouncer** | Connection Pooling | Giảm tải connection trực tiếp vào Postgres | Ổn định DB tốt hơn |
 
@@ -51,7 +52,7 @@ Postgres
 Apps cũng truy vấn thêm:
   - Redis (cache + execution queue)
   - Meilisearch (public search)
-  - Object Storage (media/file)
+  - Storage adapter (current local disk, target S3-compatible)
 ```
 
 ---
@@ -75,6 +76,19 @@ Canonical write transaction
 Append outbox event nếu có side effect quan trọng
      ↓
 Dispatcher / worker tiêu thụ payload đã chuẩn hóa
+```
+
+**Storage Boundary Flow**:
+```txt
+Upload request
+     ↓
+Schema + mime/size validation
+     ↓
+Storage abstraction
+     ↓
+Local adapter (current) hoặc S3 adapter (target)
+     ↓
+Metadata canonical lưu trong Postgres
 ```
 
 ---
@@ -154,15 +168,39 @@ Mark processed / failed / retryable
 | Email (SMTP/SendGrid) | Email Delivery | Gửi password reset và downstream notifications |
 | Push (Firebase / Web Push) | Web Push | Gửi thông báo tới trình duyệt |
 | CDN (Cloudflare) | Content Delivery | Phân phối ảnh/audio/PDF nhanh hơn |
-| Object Storage (`S3` / `MinIO`) | Media/File Storage | Nơi chuẩn cho binary asset production |
+| Local Disk Storage (current phase) | Media/File Storage trên 1 VPS | Đủ dùng trước mắt nếu có storage abstraction và backup rõ |
+| Object Storage (`S3` / `MinIO`) | Media/File Storage target phase | Nơi chuẩn khi cần nâng cấp binary asset production |
 | Embedding Provider | Embedding generation | Dùng khi semantic retrieval / related-content được bật |
 | S3 Backup | Off-site Backup | Lưu snapshot và backup ngoài máy chủ app |
 
 **Media/File note**:
-- local/dev có thể dùng media volume hiện tại
-- production chuẩn là object storage rõ như `S3` hoặc `MinIO`
+- current production fit có thể dùng local disk trên VPS
+- nhưng phải có storage abstraction và metadata canonical rõ
+- target phase là object storage rõ như `S3` hoặc `MinIO`
 - upload mới nên đi qua allowlist + size/mime validation + scan/quarantine
 - binary asset không nên là phần sống còn trong container filesystem
+
+---
+
+## Current Production Fit (Phù hợp production hiện tại)
+
+Cho current phase của PMTL_VN, baseline thực dụng là:
+
+- `single VPS`
+- `Postgres + PgBouncer + Redis + execution queue + Meilisearch + Caddy`
+- media/file dùng `local disk storage adapter`
+- binary metadata nằm trong Postgres
+- S3-compatible storage là hướng nâng cấp kế tiếp, không phải blocker để chạy production sớm
+
+Những thứ nên làm ngay thay vì over-engineer:
+
+- storage abstraction
+- outbox pattern hoàn chỉnh
+- Zod boundary validation
+- Redis rate limit ở app layer
+- audit logs
+- `/health/*` + `/metrics`
+- feature flags đơn giản
 
 ---
 
@@ -269,7 +307,8 @@ Xác định bottleneck thật
 | Postgres | Down toàn hệ thống | Restart hoặc restore backup | 5-30 phút |
 | Redis | Cache chậm, execution queue bị nghén | Restart; outbox giữ pending events để replay | < 1 phút |
 | Meilisearch | Search degrade / fallback | Rebuild index, replay sync, batch reindex | 5-30 phút |
-| Object Storage | Upload mới fail, asset serve có thể degrade | Retry upload/serve, fail closed cho upload mới | 5-30 phút |
+| Local Storage | Upload mới fail, asset serve có thể degrade | Khôi phục volume/path, retry upload/serve | 5-30 phút |
+| Object Storage (target) | Upload mới fail, asset serve có thể degrade | Retry upload/serve, fail closed cho upload mới | 5-30 phút |
 | Tempo / OTEL | Mất trace nhưng app vẫn chạy | Restore collector/backend | < 5 phút |
 | PgBouncer | App mất kết nối tới DB | Restart hoặc kết nối trực tiếp DB tạm thời | < 1 phút |
 | Caddy | Người dùng không thể truy cập | Restart ingress | < 1 phút |
@@ -284,10 +323,14 @@ Xác định bottleneck thật
 
 - [ ] Cấu hình backup Postgres ngoài máy chủ app.
 - [ ] Chốt schema `outbox_events`, retry policy, replay policy, dead-letter policy.
+- [ ] Chốt storage abstraction, local adapter config, và metadata schema cho `media_assets`.
 - [ ] Chốt Zod boundary schemas và env contracts cho web/cms/worker.
+- [ ] Chốt Redis app-layer rate limit cho auth/search/write/upload.
+- [ ] Chốt `audit_logs` và `feature_flags` schema/helper.
+- [ ] Chốt `/health/live`, `/health/ready`, `/health/startup`, `/metrics`.
 - [ ] Thiết lập Prometheus + Grafana + Alertmanager.
 - [ ] Thiết lập OpenTelemetry + Tempo và propagate trace context qua web/cms/worker.
-- [ ] Quy hoạch object storage + scan/quarantine cho media/file.
+- [ ] Chuẩn bị migration path từ local storage sang `S3-compatible` object storage.
 - [ ] Chỉ bật `pgvector` nếu use case recommendation / related-content đã rõ.
 - [ ] Định nghĩa alert rules cho DB, queue, outbox lag, search health, object storage health.
 - [ ] Thực hiện load test và failure drill.
@@ -297,12 +340,12 @@ Xác định bottleneck thật
 
 ## TL;DR
 
-**Postgres + Outbox + Execution Queue + Search + Object Storage + Tracing = Fast, Reliable, Observable System**
+**Postgres + Outbox + Execution Queue + Search + Local-first Storage Abstraction + Tracing = Fast, Reliable, Observable System**
 
 - **Caching**: phản hồi nhanh hơn cho read-path.
 - **Outbox + Queue**: side effect quan trọng không bị rơi.
 - **Advanced Search**: Meilisearch lo search box công khai.
 - **Semantic Optionality**: `pgvector` chỉ bật khi thực sự cần.
 - **Boundary Validation**: fail fast ở request, env, queue payload, webhook, search document.
-- **Object Storage**: tách binary asset khỏi app runtime.
+- **Storage Abstraction**: chạy local trước nhưng không khóa đường nâng cấp lên `S3`.
 - **Observability**: metrics + logs + traces, không nhìn từng mảnh rời rạc.

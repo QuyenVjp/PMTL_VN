@@ -5,7 +5,20 @@ description: PMTL_VN production-grade coding and runtime baseline. Use when impl
 
 # PMTL Production Baseline
 
-Use this skill for project-wide defaults, not for ad hoc review output.
+## Purpose
+
+Provide the non-negotiable PMTL repo defaults for production-grade implementation, runtime safety, validation, logging, and documentation sync.
+
+## Use When
+
+- Implementing or refactoring features that affect real runtime behavior.
+- Changing logging, env contracts, validation, caching, or request boundaries.
+- You need the default PMTL baseline before applying narrower skills.
+
+## Expected Output
+
+- Code and docs that follow the same repo-wide production baseline.
+- No silent runtime policy drift across apps, packages, and docs.
 
 ## Read first
 
@@ -13,6 +26,13 @@ Use this skill for project-wide defaults, not for ad hoc review output.
 2. Read `docs/architecture/conventions.md`.
 3. Read `docs/architecture/skills-taxonomy.md` when changing AI workflow or skill routing.
 4. Read `docs/runbooks.md` and `docs/troubleshooting.md` when the task touches monitoring or recovery.
+
+## Execution Approach
+
+1. Confirm the touched layer and keep logic in the correct package or app boundary.
+2. Validate user input and env contracts before changing runtime behavior.
+3. Add or preserve structured logging at real operational boundaries.
+4. Update docs and skill routing in the same task when rules change.
 
 ## Baseline rules
 
@@ -23,6 +43,24 @@ Use this skill for project-wide defaults, not for ad hoc review output.
 - Keep Next.js request-boundary logic in `apps/web/src/proxy.ts` unless official versioned guidance proves otherwise.
 - Prefer `"use cache"` helpers and data-layer caching over page-level cache flags.
 - Do not leave runtime rule changes undocumented. Update `AGENTS.md`, local skills, and affected docs together.
+
+## Verification
+
+- Re-read the touched docs and confirm the rule still matches code.
+- Pair with `pmtl-verify-quality-gate` after meaningful edits.
+- If auth or search contracts changed, pair with the dedicated verification skill for that area.
+
+## Edge Cases
+
+- Older audit notes can conflict with current repo reality; prefer verified 2026 docs.
+- Convenience fixes in one app can accidentally break monorepo boundaries or request ownership.
+
+## References
+
+- `docs/architecture/conventions.md`
+- `docs/architecture/skills-taxonomy.md`
+- `docs/runbooks.md`
+- `docs/troubleshooting.md`
 
 ## Use this skill with
 

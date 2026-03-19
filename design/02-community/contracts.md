@@ -59,7 +59,7 @@
 - `429`
   - request guard / anti-spam chặn
 - `500`
-  - lỗi proxy, CMS, append outbox, hoặc dispatch downstream work
+  - lỗi proxy, CMS, append outbox, hoặc execution dispatch downstream work
 
 ## Notes for AI/codegen
 

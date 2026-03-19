@@ -13,6 +13,7 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 ## Active local taxonomy
 
 ### Governance
+- `pmtl-skill-governance`
 - `output-skill`
 - `pmtl-ui-style-system`
 
@@ -89,4 +90,5 @@ Compatibility skills are opt-in aliases, not the default routing target. Prefer 
 - Prefer executable scripts inside `scripts/` when the same verification or scaffolding logic would otherwise be rewritten.
 - Prefer repo-level deterministic entrypoints such as `py infra/tools/codex_actions.py ...` or `just <recipe>` when a skill needs runtime-aware execution.
 - Keep `SKILL.md` short and route variant-specific detail into `references/`.
+- Canonical PMTL skills should aim to include purpose, trigger, execution, verification, and evolution notes, even if compatibility skills stay lighter.
 - When changing skill routing, update `AGENTS.md`, this file, and the affected local skill folders in the same task.

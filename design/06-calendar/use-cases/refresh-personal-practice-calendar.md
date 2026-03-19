@@ -50,7 +50,7 @@
 8. Nếu downstream reminder hoặc advisory consumer cần biết có refresh, append outbox event sau khi window mới đã ổn định.
 
 ## async (bất đồng bộ) side-effects
-- enqueue reminder candidate rebuild nếu flow bật
+- nếu flow bật, append outbox event cho reminder candidate rebuild rồi để dispatcher phát execution job
 - reminder candidate layer phải bám cùng nguyên tắc replace-window hoặc prune tương ứng, không giữ advice cũ âm thầm
 
 ## success result (kết quả thành công)

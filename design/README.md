@@ -7,19 +7,20 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 1. `design/00-overview/domain-map.md` (Bản đồ nghiệp vụ)
 2. `design/00-overview/execution-map.md` (Bản đồ thực thi)
 3. `design/CORE_DECISIONS.md` (Các quyết định cốt lõi)
-4. `design/MODULE_INTERACTIONS.md` (Tương tác giữa các module)
-5. `design/TERMINOLOGY_RULES.md` (Quy chuẩn thuật ngữ)
-6. `design/EN_VI_NOTATION_RULES.md` (Quy tắc ghi tiếng Anh kèm giải thích tiếng Việt)
-7. `design/SOURCE_NOTES_OFFICIAL.md` (Ghi chú nguồn chính thống)
-8. `design/00-overview/FEATURE_SURFACE_FROM_OFFICIAL_SITES.md` (Bề mặt tính năng từ trang chính hiệu)
-9. `design/ELDERLY_UX_RULES.md` (Quy tắc thiết kế cho người lớn tuổi)
-10. `design/AUDIT_POLICY.md` (Chính sách nhật ký kiểm định)
-11. `design/SLA_SLO.md` (Cam kết chất lượng vận hành)
-12. `design/SECURITY_BASELINE.md` (Tiêu chuẩn bảo mật cơ sở)
-13. `design/FAILURE_MODE_MATRIX.md` (Ma trận chế độ lỗi)
-14. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
-15. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
-16. `design/01-content/*` (Các nội dung biên tập)
+4. `design/ARCHITECTURE_GOVERNANCE.md` (Checklist kiến trúc gộp)
+5. `design/MODULE_INTERACTIONS.md` (Tương tác giữa các module)
+6. `design/TERMINOLOGY_RULES.md` (Quy chuẩn thuật ngữ)
+7. `design/EN_VI_NOTATION_RULES.md` (Quy tắc ghi tiếng Anh kèm giải thích tiếng Việt)
+8. `design/SOURCE_NOTES_OFFICIAL.md` (Ghi chú nguồn chính thống)
+9. `design/00-overview/FEATURE_SURFACE_FROM_OFFICIAL_SITES.md` (Bề mặt tính năng từ trang chính hiệu)
+10. `design/ELDERLY_UX_RULES.md` (Quy tắc thiết kế cho người lớn tuổi)
+11. `design/AUDIT_POLICY.md` (Chính sách nhật ký kiểm định)
+12. `design/SLA_SLO.md` (Cam kết chất lượng vận hành)
+13. `design/SECURITY_BASELINE.md` (Tiêu chuẩn bảo mật cơ sở)
+14. `design/FAILURE_MODE_MATRIX.md` (Ma trận chế độ lỗi)
+15. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
+16. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
+17. `design/01-content/*` (Các nội dung biên tập)
 
 - đọc thêm `design/01-content/practice-support-reference.md` nếu bạn đang làm phần niệm kinh / Ngôi Nhà Nhỏ / phóng sinh (practice support)
 
@@ -199,6 +200,8 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
   - chốt cách đọc hợp đồng (how to read contracts) và tránh nhầm raw Payload với public DTO
 - `USE_CASE_TEMPLATE.md`
   - mẫu chuẩn để viết logic chức năng dạng hành động (action-driven)
+- `ARCHITECTURE_GOVERNANCE.md`
+  - checklist gộp cho baseline hạ tầng, storage, outbox, metrics, health, rate limit, feature flags
 
 ## Tiêu chuẩn chất lượng tối thiểu (Minimum Quality Standards)
 

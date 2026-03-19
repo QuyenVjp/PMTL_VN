@@ -61,7 +61,7 @@
 - replay outbox không được tạo duplicate alert cho cùng canonical comment.
 
 ## Performance target
-- Ghi canonical comment + enqueue alert nên hoàn tất trong `< 800ms`.
+- Ghi canonical comment + append outbox alert nên hoàn tất trong `< 800ms`.
 
 ## Notes for AI/codegen
 - `postComments` là owner của comment, không phải content module.

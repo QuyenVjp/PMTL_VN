@@ -178,8 +178,8 @@ Khi đọc module này, hãy nhớ:
 1. owner module (module sở hữu) là ai?
 2. canonical record (bản ghi chuẩn gốc) phải ghi ở đâu trước?
 3. Có summary field nào cần sync không?
-4. Có side-effect async (bất đồng bộ) nào cần enqueue vào queue (hàng đợi xử lý) không?
-5. Side-effect đó có cần transactional handoff qua `outbox_events` không?
+4. Có side-effect async (bất đồng bộ) quan trọng nào cần transactional handoff qua `outbox_events` không?
+5. Dispatcher/execution queue/worker sẽ thực thi side-effect đó ở lớp nào?
 6. Có audit bắt buộc không?
 7. Boundary schema và env contract đã được chốt chưa?
 8. Route public đang dùng `publicId`, `slug`, hay session owner?

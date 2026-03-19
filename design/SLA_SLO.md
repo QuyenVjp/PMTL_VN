@@ -26,8 +26,8 @@ Nhưng vẫn cần đủ rõ để:
 - Sau khi publish content, index search nên được cập nhật trong `< 10 giây`.
 
 ### Community submit
-- Submit comment / community post / guestbook nên phản hồi trong `< 800ms` cho nhánh ghi canonical + enqueue side-effects.
-- Moderation alert cho report mới nên được enqueue trong `< 2 giây`.
+- Submit comment / community post / guestbook nên phản hồi trong `< 800ms` cho nhánh canonical write + append outbox event.
+- Moderation alert cho report mới nên được append vào `outbox_events` trong `< 2 giây`, còn dispatch downstream được phép trễ theo execution queue.
 
 ### Moderation
 - Từ lúc report được tạo đến lúc admin thấy report trong queue (hàng đợi xử lý) nên là `< 10 giây`.
@@ -73,6 +73,7 @@ Nhưng vẫn cần đủ rõ để:
 - Không nhét gửi email, push dispatch, reindex đồng bộ vào request path chỉ để "chắc ăn".
 - Nếu một flow có target latency thấp, hãy ưu tiên:
   - ghi canonical trước
-  - enqueue downstream work
+  - append `outbox_events` cho side effect quan trọng
+  - để dispatcher/execution queue xử lý phần downstream
   - trả response sớm
 

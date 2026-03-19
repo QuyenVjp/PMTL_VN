@@ -5,7 +5,20 @@ description: PMTL_VN visual system and style variants. Use for new frontend UI, 
 
 # PMTL UI Style System
 
-Use this skill to choose the right visual direction without keeping multiple overlapping local UI skills alive.
+## Purpose
+
+Route PMTL frontend work to the right visual direction while keeping the canonical style layer smaller than the preserved design-library aliases.
+
+## Use When
+
+- Starting a new PMTL surface and needing a default visual direction.
+- Redesigning an existing page or component family.
+- The user asks for a specific PMTL style variant or a preserved legacy design skill.
+
+## Expected Output
+
+- A deliberate visual direction with the correct variant references loaded.
+- Fewer overlapping style instructions across local PMTL skills.
 
 ## Variant selection
 
@@ -30,3 +43,15 @@ If the user does not request a variant explicitly, use the default variant.
 - Respect mobile collapse and avoid layout gimmicks that break below `md`.
 - Prefer one strong accent and restrained contrast over noisy multi-accent palettes.
 - Pair this skill with `pmtl-fe-implementation` and `pmtl-ui-behavior`.
+
+## Verification
+
+- Confirm the chosen variant matches the user request or the default PMTL direction.
+- Check that mobile collapse, hierarchy, and surface density still read clearly after styling changes.
+
+## References
+
+- `references/default.md`
+- `references/soft.md`
+- `references/minimalist.md`
+- `references/redesign.md`

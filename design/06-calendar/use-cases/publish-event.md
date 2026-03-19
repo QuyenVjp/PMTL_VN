@@ -33,7 +33,7 @@
 4. Nếu event được content tham chiếu, notification dùng, hoặc read model cần refresh, append outbox event downstream phù hợp.
 
 ## async (bất đồng bộ) side-effects
-- notification producer có thể enqueue job nếu flow nhắc sự kiện bật
+- notification producer có thể nhận outbox signal rồi mới dispatch execution job nếu flow nhắc sự kiện bật
 - personal practice calendar refresh signal nếu event ảnh hưởng cửa sổ lịch
 
 ## success result (kết quả thành công)

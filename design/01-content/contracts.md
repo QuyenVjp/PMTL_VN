@@ -86,7 +86,7 @@ Ghi chú:
 - `409`
   - slug/publicId conflict hoặc state conflict khi publish
 - `500`
-  - lỗi service (lớp xử lý nghiệp vụ)/hook/search enqueue/revalidation webhook
+  - lỗi service (lớp xử lý nghiệp vụ)/hook/append outbox event/search dispatch/revalidation webhook
 
 ## Notes for AI/codegen
 

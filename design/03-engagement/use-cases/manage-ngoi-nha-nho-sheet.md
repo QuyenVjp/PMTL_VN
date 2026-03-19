@@ -39,7 +39,7 @@
    - chuyển sang đã hóa
 
 ## async (bất đồng bộ) side-effects
-- có thể enqueue reminder hoặc backup sync nhẹ về sau
+- nếu sau này có reminder hoặc backup sync quan trọng, phải append `outbox_events` rồi mới dispatch execution job
 
 ## success result (kết quả thành công)
 - User thấy đúng tiến độ từng tờ `Ngôi Nhà Nhỏ`.
@@ -63,4 +63,5 @@
 ## Notes for AI/codegen
 - UI nên mô phỏng giấy thật, nhưng canonical record (bản ghi chuẩn gốc) vẫn là structured data.
 - Không biến flow này thành game tích điểm.
+- Nếu có derived summary hoặc reminder downstream, recovery path phải là recompute/replay từ canonical sheet state.
 

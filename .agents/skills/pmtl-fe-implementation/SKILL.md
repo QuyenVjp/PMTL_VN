@@ -5,6 +5,28 @@ description: Frontend implementation rules for PMTL_VN. Use for React or Next.js
 
 # PMTL Frontend Implementation
 
+## Purpose
+
+Guide day-to-day React and Next.js implementation in PMTL so frontend work stays feature-first, type-safe, and production-ready.
+
+## Use When
+
+- Adding or refactoring frontend features in `apps/web`.
+- Updating client/server boundaries, component structure, or fetch flows.
+- Reviewing whether a frontend change follows PMTL implementation habits.
+
+## Expected Output
+
+- Frontend code placed in the right layer with clear domain ownership.
+- No placeholder branches, weak typing, or accidental client-side sprawl.
+
+## Execution Approach
+
+1. Inspect the existing feature folder before creating new abstractions.
+2. Default to Server Components and only move to the client when interactivity requires it.
+3. Keep data contracts typed and validated close to the boundary.
+4. Finish with a verification pass through the quality gate.
+
 ## Core rules
 
 - Default to Server Components. Add `"use client"` only for real interactivity.
@@ -22,6 +44,22 @@ description: Frontend implementation rules for PMTL_VN. Use for React or Next.js
 - Feature code: `apps/web/src/features/<domain>`
 - Shared web utilities: `apps/web/src/lib`
 - Shared UI primitives: `apps/web/src/components`
+
+## Verification
+
+- Run `py infra/tools/codex_actions.py quality-gate --scope web` after meaningful changes.
+- Recheck that the final file placement still respects feature-first boundaries.
+
+## Edge Cases
+
+- Quick fixes often leak business logic into route files or shared UI.
+- Over-eager client components usually indicate missing server-first design, not a requirement.
+
+## References
+
+- `AGENTS.md`
+- `docs/architecture/conventions.md`
+- `apps/web/src/features`
 
 ## Pair with
 

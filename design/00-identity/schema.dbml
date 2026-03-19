@@ -25,6 +25,15 @@ Enum user_role {
 Table media_assets {
   id uuid [pk]
   public_id varchar [unique]
+  storage_provider varchar [not null, note: "local | s3-compatible"]
+  object_key varchar [unique, not null]
+  original_filename varchar
+  content_type varchar
+  size_bytes bigint
+  checksum_sha256 varchar
+  owner_id uuid [ref: > users.id]
+  created_at timestamp
+  updated_at timestamp
 }
 
 Table users {

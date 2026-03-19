@@ -33,6 +33,7 @@
 - If you change project rules, skill routing, or architecture conventions, update this file, the relevant skill docs, and the affected docs in the same task.
 
 ## Skill Routing
+- Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
 - Production defaults, logging, validation, runtime guidance: `.agents/skills/pmtl-production-baseline/SKILL.md`
 - Frontend implementation: `.agents/skills/pmtl-fe-implementation/SKILL.md`

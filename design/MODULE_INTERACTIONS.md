@@ -154,7 +154,7 @@ Mục tiêu là làm rõ:
 | Search | Content | Content owns canonical documents | public query fallback (đường dự phòng) | direct read | payload fallback (đường dự phòng) khi Meilisearch unavailable |
 | Calendar | Content | Content owns chant guide/script/downloads | event override cần map bài niệm hoặc guide | direct reference | calendar không copy ritual script vào event |
 | Calendar | Notification | Notification owns delivery | event-related notice | outbox event → async (bất đồng bộ) job | push/email nếu có producer gọi |
-| Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để enqueue delivery |
+| Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để dispatch delivery |
 
 ## Interaction details bổ sung cho lớp tu tập thực tế
 
@@ -183,6 +183,9 @@ Mục tiêu là làm rõ:
 - fan-out tới nhiều recipient
 - side effect có thể retry
 - cần transactional handoff khỏi canonical write
+
+Ghi chú:
+- "async job" ở đây luôn nên được hiểu là `canonical write -> outbox_events -> dispatcher -> execution queue -> worker`, không phải request path tự phát queue theo kiểu best effort.
 
 ## Delete / cleanup contracts
 

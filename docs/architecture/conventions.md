@@ -119,4 +119,5 @@
 - Với Next.js 16, request boundary runtime của web nằm ở `apps/web/src/proxy.ts`, không tự động đổi về `middleware.ts` nếu không có lý do version-specific rõ ràng.
 - Skill nội bộ phải theo taxonomy ở `docs/architecture/skills-taxonomy.md`: `governance`, `knowledge`, `review`, `verification`, `automation`, `scaffolding`, `runbook`.
 - Verification skill phải ưu tiên script/checks lặp lại được thay vì chỉ lặp lại prose checklist.
+- Canonical skill nên có đủ 5 lớp tối thiểu theo vận hành: intent, knowledge, execution, verification, evolution; nếu chưa đủ thì phải ghi rõ là compatibility hoặc partial skill.
 - Nếu hai skill nội bộ bắt đầu chồng vai rõ rệt, gộp chúng hoặc tách vai cho rõ thay vì để routing mơ hồ.

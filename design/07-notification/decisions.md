@@ -10,7 +10,7 @@ Push dispatch và email notification đều có queue (hàng đợi xử lý)/wo
 
 ### Decision
 - Notification delivery không chạy đồng bộ trong request path.
-- Request path chỉ append outbox event hoặc tạo job điều phối.
+- Request path chỉ append outbox event cho delivery request quan trọng; dispatcher mới tạo execution job điều phối.
 
 ### Rationale
 - Giảm latency.
@@ -74,7 +74,7 @@ Notification hiện tạo internal push jobs với recipient roles và include/e
 ## Decision 5. Email notification là async (bất đồng bộ) side path, chưa có canonical history table
 
 ### Context
-Repo hiện enqueue email notification jobs nhưng chưa có email history collection current scope.
+Repo hiện có email notification execution path nhưng chưa có email history collection current scope.
 
 ### Decision
 - Email notification là downstream side effect.

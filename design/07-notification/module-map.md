@@ -2,7 +2,7 @@
 
 > Ghi chú cho sinh viên:
 > Notification ở repo này là async-only (chỉ chạy ngầm, bất đồng bộ).
-> Tức là request thường chỉ tạo job, còn gửi thật sẽ do worker (tiến trình xử lý nền) làm sau.
+> Tức là request thường chỉ append outbox event cho delivery request quan trọng, còn dispatcher/worker (tiến trình xử lý nền) sẽ tạo và xử lý execution job phía sau.
 
 ---
 markmap:
@@ -43,7 +43,7 @@ markmap:
 ### Internal notification fan-out
 - notify admin/super-admin
 - notify affected user
-- create push job record
+- create push job record ở lớp dispatcher/execution
 
 ### Delivery tracking
 - `status`
@@ -68,4 +68,5 @@ markmap:
 - pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox canonical
 - self-send prevention có thể dùng include/exclude user ids
 - delivery request quan trọng không phát thẳng từ request path nếu cần reliability cao
+- recovery path chuẩn là replay outbox hoặc redrive execution jobs từ control-plane state
 

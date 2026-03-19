@@ -23,8 +23,8 @@ Mục tiêu:
 - `Postgres down` (PostgreSQL ngừng hoạt động)
 - `Meilisearch down` (Search engine ngừng hoạt động)
 - `Redis/worker (tiến trình xử lý nền) down` (Redis hoặc worker (tiến trình xử lý nền) queue (hàng đợi xử lý) ngừng hoạt động)
-- `media storage down` (volume/CDN/media path lỗi)
-- `object storage/scan fail` (object storage hoặc bước scan/quarantine lỗi)
+- `media storage down` (local volume/CDN/media path lỗi)
+- `object storage/scan fail` (S3-compatible storage hoặc bước scan/quarantine lỗi)
 
 ## Matrix theo module
 
@@ -111,6 +111,7 @@ Mục tiêu:
 #### Nguyên tắc
 - media là `supporting asset` (tài nguyên phụ trợ), không phải mọi lúc cũng là canonical text
 - system nên `degrade` chứ không đổ sập toàn bộ nếu bài text vẫn còn
+- current phase phải giả định media storage chính có thể là local disk trên VPS
 
 #### Hành vi mong muốn
 - bài text vẫn mở được nếu media path lỗi

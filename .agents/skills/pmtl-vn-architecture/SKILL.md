@@ -8,6 +8,17 @@ description: architecture and implementation guide for the pmtl_vn stack using n
 ## Overview
 Use this skill to keep work aligned with the real PMTL_VN architecture. It is for building new features, reviewing/refactoring code, evolving auth and access control, wiring search, and maintaining Docker/Caddy deployment without breaking monorepo boundaries or file conventions.
 
+## Use When
+
+- Creating, extending, or refactoring PMTL features across app boundaries.
+- Changing auth, access control, search, deployment, or runtime service ownership.
+- Reviewing placement decisions when multiple layers could own the work.
+
+## Expected Output
+
+- Code placed in the narrowest correct layer.
+- Architecture changes documented in the same task when contracts move.
+
 The current stack assumptions are:
 - `apps/web` is Next.js 16 App Router
 - `apps/cms` is a separate Payload runtime server
@@ -191,6 +202,12 @@ When you change behavior or architecture, update docs as part of the same task w
 - `docs/architecture/deployment.md` for infra/runtime changes
 - `docs/api/contracts.md` for request/response or auth contract changes
 - `.env.example` or env example files for runtime configuration changes
+
+## Verification
+
+- Recheck the chosen file placement against `references/repo-conventions.md`.
+- If service boundaries or public/private exposure changed, recheck the relevant security and deployment references.
+- Pair with `pmtl-verify-quality-gate` after meaningful implementation changes.
 
 ## Recommended Working Style
 When given a task:

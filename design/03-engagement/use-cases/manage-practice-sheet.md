@@ -37,7 +37,7 @@
 6. Append audit nhẹ cho create/complete nếu policy yêu cầu.
 
 ## async (bất đồng bộ) side-effects
-- có thể enqueue reminder sync nhẹ nếu user bật nhắc việc.
+- nếu sau này có reminder sync quan trọng, phải append `outbox_events` rồi mới dispatch execution job.
 
 ## success result (kết quả thành công)
 - User thấy đúng bảng công phu đang làm và tiến độ tổng.
@@ -52,4 +52,5 @@
 ## Notes for AI/codegen
 - Đây là personal practice sheet, không phải social post.
 - UI nên ít bước, rõ chữ, và không dùng hiệu ứng rối mắt.
+- Nếu projection/reminder downstream bị lệch, recovery path phải quay về canonical `practiceSheets`.
 

@@ -53,11 +53,19 @@ Mục tiêu:
 - không cho upload tùy ý loại file chạy được
 
 ### Storage rule
-- current local/dev có thể dùng volume media hiện tại
-- production design nên chuẩn bị cho object storage rõ ràng:
+- current phase được phép dùng local disk trên VPS nếu:
+  - có storage abstraction rõ
+  - metadata file nằm trong Postgres
+  - business logic không phụ thuộc trực tiếp local filesystem path
+- target phase nên chuyển sang object storage rõ ràng:
   - `S3`
   - `MinIO`
   - hoặc dịch vụ object storage tương đương
+- object key phải an toàn, không dùng trực tiếp raw filename từ user upload
+- local storage cũng phải tách thư mục rõ như:
+  - `uploads/avatars/`
+  - `uploads/posts/`
+  - `uploads/attachments/`
 - lý do:
   - dễ scan/quarantine
   - dễ backup

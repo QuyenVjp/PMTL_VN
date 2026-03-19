@@ -5,6 +5,28 @@ description: PMTL_VN interaction and accessibility discipline. Use when building
 
 # PMTL UI Behavior
 
+## Purpose
+
+Keep PMTL interactive surfaces accessible, predictable, and complete across forms, dialogs, navigation, and state feedback.
+
+## Use When
+
+- Building or reviewing forms, navigation, dialogs, and interactive components.
+- Checking loading, empty, success, and error behavior.
+- Auditing focus, keyboard flow, or validation quality.
+
+## Expected Output
+
+- Interfaces that communicate state clearly and remain keyboard-usable.
+- No critical interaction gaps hidden behind styling alone.
+
+## Execution Approach
+
+1. Map the full interaction cycle before editing UI.
+2. Ensure semantic structure, focus handling, and mobile-safe controls.
+3. Add explicit state feedback for submit, loading, success, empty, and error paths.
+4. Verify the flow with keyboard-first behavior in mind.
+
 ## Interaction rules
 
 - Use `:focus-visible`, not generic `:focus`.
@@ -22,6 +44,28 @@ description: PMTL_VN interaction and accessibility discipline. Use when building
 - Helper text optional, but structure must support it.
 - Errors belong near the related control.
 - Do not hide critical state changes behind motion alone.
+
+## Verification
+
+- Check keyboard completion: tab order, Enter submit, Escape dismiss where appropriate.
+- Check focus landing after validation failure and dialog close.
+- Check every non-trivial surface for loading, empty, success, and error states.
+
+## Quality Criteria
+
+- Interaction state is visible without guessing.
+- Accessibility is built into the default flow, not bolted on later.
+- Motion never becomes the only signal for a state change.
+
+## Edge Cases
+
+- Async forms with partial success need explicit follow-up messaging.
+- Toast-only validation is not enough when the form itself can explain the issue.
+
+## References
+
+- `pmtl-fe-implementation`
+- `pmtl-review-web-ui`
 
 ## Pair with
 

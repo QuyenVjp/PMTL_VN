@@ -59,7 +59,7 @@
 - replay outbox không được tạo duplicate alert rõ ràng.
 
 ## Performance target
-- submit path chỉ ghi record và enqueue downstream work.
+- submit path chỉ ghi canonical record và append outbox event cho downstream work.
 
 ## Notes for AI/codegen
 - `communityPosts` là canonical record (bản ghi chuẩn gốc); moderation và notification chỉ là downstream.

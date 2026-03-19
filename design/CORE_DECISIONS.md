@@ -249,26 +249,34 @@ Hệ thống có nhiều boundary: request public, admin action, queue payload, 
 - Tốn thêm công viết schema và giữ versioning.
 - Có thể phải cập nhật schema ở nhiều nơi khi contract thay đổi.
 
-## Decision 12. Media/file production phải tách khỏi app runtime bằng object storage
+## Decision 12. Media/file phải đi qua storage abstraction; current phase dùng local adapter, target phase là S3-compatible
 
 ### Context
-Media/file là binary asset có rủi ro mất dữ liệu, khó backup, và là security boundary riêng.
+Current production reality của PMTL_VN là chạy trên 1 VPS và chưa dùng object storage ngay.
+Tuy vậy media/file vẫn là binary asset có rủi ro mất dữ liệu, khó backup, và là security boundary riêng.
 
 ### Decision
-- Dev/local có thể dùng media volume cục bộ.
-- Production chuẩn phải dùng object storage rõ như `S3`, `MinIO`, hoặc tương đương.
+- Media/file phải đi qua storage abstraction rõ ràng, không để business logic phụ thuộc trực tiếp local filesystem path.
+- Current phase:
+  - cho phép `local disk storage` trên VPS
+  - nhưng vẫn phải có adapter/interface storage rõ
+  - metadata file nằm canonical trong Postgres
+- Target phase:
+  - chuyển sang `S3-compatible object storage`
+  - không đổi logic nghiệp vụ phía trên adapter
 - Upload pipeline phải tách:
   - metadata canonical
   - binary object
-  - scan/quarantine/publish state
+  - scan/quarantine/publish state khi feature đó được bật
 
 ### Rationale
-- Backup dễ hơn.
-- Scale và deploy an toàn hơn.
-- Hợp với file/media security boundary.
+- Khớp điều kiện hạ tầng hiện tại của dự án.
+- Không khóa chặt business logic vào local path.
+- Cho phép nâng cấp lên `S3` sau này mà không phải refactor lớn.
 
 ### Trade-off
-- Tăng thêm vận hành cho storage, scan và signed URL policy.
+- Current phase vẫn chịu rủi ro của local disk nếu VPS có sự cố.
+- Tăng thêm yêu cầu thiết kế adapter, metadata, và config storage.
 
 ## Decision 13. Observability chuẩn là metrics + logs + traces
 
@@ -306,4 +314,70 @@ Search text và search semantic không phải cùng một bài toán.
 
 ### Trade-off
 - Nếu muốn recommendation chất lượng cao hơn, phải đầu tư embedding pipeline, retention, reindex và quality evaluation.
+
+## Decision 15. App-layer rate limit dùng Redis là bắt buộc cho public write/auth/search surfaces
+
+### Context
+Public auth, search, submit form, và upload file đều là bề mặt dễ bị abuse hoặc accidental burst trên 1 VPS.
+
+### Decision
+- Rate limit phải đặt ở app layer và dùng Redis làm counter store.
+- Tối thiểu áp cho:
+  - login
+  - register
+  - forgot password
+  - create post/comment
+  - search
+  - upload file
+- Rule có thể theo IP, user ID, hoặc cả hai tùy flow.
+
+### Rationale
+- Thực chiến, rẻ, và hợp với hạ tầng hiện tại.
+- Bảo vệ app trước abuse mà không cần thêm infra nặng.
+
+### Trade-off
+- Tăng complexity ở request boundary.
+- Khi Redis lỗi, cần degrade policy rõ thay vì bỏ trống guard.
+
+## Decision 16. Health endpoints và Prometheus metrics là baseline vận hành bắt buộc
+
+### Context
+Hệ thống đã đủ nhiều dependency để cần readiness rõ và metrics có tên thống nhất.
+
+### Decision
+- Phải có:
+  - `/health/live`
+  - `/health/ready`
+  - `/health/startup`
+  - `/metrics`
+- `ready` phải check tối thiểu:
+  - Postgres
+  - Redis
+  - Meilisearch
+  - local storage base dir ở mức hợp lý khi current phase còn dùng local disk
+- App metrics phải phản ánh request, queue, outbox, upload, và rate-limit.
+
+### Rationale
+- Giúp deploy và recovery ít mù hơn.
+- Hợp với Prometheus/Grafana stack đã chốt.
+
+### Trade-off
+- Tốn công chuẩn hóa metric names và health policy.
+
+## Decision 17. Audit log và feature flags là hai control-plane tối thiểu nên có từ sớm
+
+### Context
+Hệ thống đang tăng số module và flow nhạy cảm; vừa cần khả năng điều tra, vừa cần rollout an toàn cho feature mới.
+
+### Decision
+- `audit_logs` là append-only cross-cutting table cho action quan trọng.
+- `feature_flags` là bảng điều khiển tối thiểu cho rollout theo key.
+- Helper kiểu `isFeatureEnabled(key)` là đủ cho current scope; chưa cần remote config platform.
+
+### Rationale
+- Rất đáng tiền trên 1 VPS nhưng chi phí thấp.
+- Giúp bật feature mới dần dần mà không phải đổi code path mù.
+
+### Trade-off
+- Cần discipline để không lạm dụng feature flag thành config rác.
 
