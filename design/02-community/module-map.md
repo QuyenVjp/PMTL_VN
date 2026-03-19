@@ -66,10 +66,12 @@ markmap:
 
 ### Notification
 - submit/report flow có thể tạo async (bất đồng bộ) alert cho admin/super-admin
+- alert quan trọng nên được phát từ `outbox_events`
 
 ## Current rules
 - UGC mặc định không trở thành canonical moderation record
 - report lifecycle thuộc moderation module
 - author snapshot được giữ ngay trên entity để ổn định public DTO
 - guestbook là flow nhẹ hơn community post/comment
+- canonical submit đi trước; alert/notify/review signal đi sau qua outbox
 

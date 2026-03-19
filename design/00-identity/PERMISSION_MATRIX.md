@@ -38,6 +38,8 @@ Mục tiêu:
 | Soft delete content | Có | Có nếu policy cho phép | Không |
 | Hard delete content protected | Có | Không mặc định | Không |
 | Xử lý moderation report | Có | Có | Không |
+| Re-resolve decision của admin khác | Có | Có | Không |
+| Resolve report trong super-admin protected scope | Có | Không | Không |
 | Ẩn comment/post vi phạm | Có | Có | Không |
 | Xóa comment/post của user khác theo moderation policy | Có | Có | Không |
 | Sửa self-profile | Có | Có | Có |
@@ -54,6 +56,8 @@ Mục tiêu:
 - được sửa hoặc ẩn bài/comment/report của người khác trong scope vận hành
 - không bị giới hạn kiểu `chỉ sửa bài của mình` ở current scope
 - lý do: current role model gộp editorial + moderation + support vào `admin`
+- được re-resolve decision của admin khác nếu policy nghiệp vụ cho phép
+- không được override action hoặc target nằm trong `super-admin protected scope`
 
 ### Với `super-admin`
 - được vượt qua các giới hạn support thông thường

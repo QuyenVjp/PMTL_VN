@@ -37,7 +37,7 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 - Điều kiện phải đúng trước khi xử lý.
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- Zod schema (lược đồ dữ liệu), route params, auth/session requirement.
+- Zod schema (lược đồ dữ liệu), route params, auth/session requirement, env/runtime dependency nếu có.
 
 ## Read set
 - Những collection/table/service (lớp xử lý nghiệp vụ) nào được đọc.
@@ -49,6 +49,7 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 
 ## async (bất đồng bộ) side-effects
 - Search sync, notification, email, revalidation, worker (tiến trình xử lý nền) jobs.
+- Nếu side effect quan trọng, ghi rõ có đi qua `outbox_events` hay không.
 
 ## success result (kết quả thành công)
 - API trả gì, UI thấy gì, entity đổi trạng thái gì.
@@ -80,6 +81,10 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 - Bước 1 luôn nói rõ canonical record (bản ghi chuẩn gốc) nằm ở module nào.
 - Nếu có summary field, phải nói rõ đó là summary, không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
 - Nếu có queue (hàng đợi xử lý)/job, phải nói rõ sync path chỉ enqueue hay thực sự gửi ngay.
+- Nếu có outbox, phải nói rõ:
+  - event type
+  - idempotency key
+  - dispatcher/execution step
 - Nếu có fallback (đường dự phòng), phải nói rõ fallback (đường dự phòng) được phép ở lớp nào.
 
 ## Viết phần `Errors` như thế nào
@@ -105,5 +110,6 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 
 - Không mô tả kiểu "thường sẽ", "có thể là", "đại khái".
 - Không gọi Redis, queue (hàng đợi xử lý), search index là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
+- Không coi event là "đã giao" nếu mới chỉ append outbox hoặc mới chỉ enqueue execution queue.
 - Không để UI text hoặc DTO public lẫn với raw Payload document nếu chưa map contract (hợp đồng dữ liệu/nghiệp vụ).
 

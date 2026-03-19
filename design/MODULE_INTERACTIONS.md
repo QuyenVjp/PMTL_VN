@@ -20,6 +20,8 @@ Mục tiêu là làm rõ:
   - event/job payload
 - Search và notification là downstream module.
 - Moderation là cross-cutting module nhưng không cướp ownership của entity bị report.
+- Business event quan trọng phải đi qua `outbox_events` trước khi được dispatcher phát sang execution queue hoặc downstream handler.
+- Mọi boundary giữa module phải có schema runtime rõ cho request, event payload, queue payload, webhook payload và env contract.
 
 ## Theo module
 
@@ -52,9 +54,9 @@ Mục tiêu là làm rõ:
   - identity cho author/admin biên soạn refs
   - calendar cho `relatedEvent`
 - **Emits async (bất đồng bộ) work**:
-  - search reindex
-  - webhook/revalidation
-  - notification khi có feature cần announce
+  - outbox event cho search reindex
+  - outbox event cho webhook/revalidation
+  - outbox event cho notification khi có feature cần announce
 
 ### Community
 - **Owns**:
@@ -66,8 +68,8 @@ Mục tiêu là làm rõ:
   - identity cho author snapshot / author user
   - content cho `postComments.post`
 - **Emits async (bất đồng bộ) work**:
-  - moderation alert
-  - internal notification cho admin/super-admin
+  - outbox event cho moderation alert
+  - outbox event cho internal notification cho admin/super-admin
 
 ### Engagement
 - **Owns**:
@@ -107,8 +109,9 @@ Mục tiêu là làm rõ:
   - public search route
   - status route
 - **async (bất đồng bộ) work**:
-  - queue (hàng đợi xử lý) search sync
+  - dispatcher phát search-sync job từ outbox
   - worker (tiến trình xử lý nền) upsert/delete index documents
+  - optional semantic retrieval sync khi feature `pgvector` đã được chốt
 
 ### Calendar
 - **Owns**:
@@ -137,20 +140,20 @@ Mục tiêu là làm rõ:
 | From | To | Ownership model | trigger (điểm kích hoạt) | Mode | Side effects |
 |---|---|---|---|---|---|
 | Web auth UI | Identity | Identity owns auth/session | register/login/logout/reset | direct call | cookie/session update |
-| Content | Search | Content owns source fields, Search owns index flow | publish/update post | async (bất đồng bộ) job | upsert/delete Meilisearch document |
+| Content | Search | Content owns source fields, Search owns index flow | publish/update post | outbox event → async (bất đồng bộ) job | upsert/delete Meilisearch document |
 | Content | Calendar | Calendar owns event record, Content chỉ tham chiếu | admin chọn `relatedEvent` | direct reference | không có write ngược mặc định |
-| Content | Notification | Notification không sở hữu content | publish hoặc manual internal alert | async (bất đồng bộ) job | push/email announcement nếu feature bật |
-| Community | Moderation | Moderation owns report record | submit report | direct create + async (bất đồng bộ) notify | tạo `moderationReports`, sync summary, alert admin |
-| Community | Notification | Notification không sở hữu community data | submit post/comment/guestbook | async (bất đồng bộ) job | tạo push/email alert cho admin/super-admin |
+| Content | Notification | Notification không sở hữu content | publish hoặc manual internal alert | outbox event → async (bất đồng bộ) job | push/email announcement nếu feature bật |
+| Community | Moderation | Moderation owns report record | submit report | direct create + outbox event | tạo `moderationReports`, sync summary, alert admin |
+| Community | Notification | Notification không sở hữu community data | submit post/comment/guestbook | outbox event → async (bất đồng bộ) job | tạo push/email alert cho admin/super-admin |
 | Community | Identity | Identity owns user | submit/comment/report | direct reference | snapshot author name trên entity để giảm phụ thuộc read path |
 | Engagement | Content | Content owns scripture/library và practice support content | bookmark/progress/log | direct reference | không write ngược vào content canonical data |
 | Content | Engagement | Engagement owns self-state | preference save / practice complete | direct call qua API contract (hợp đồng dữ liệu/nghiệp vụ) | chỉ ghi user-state, không sửa script gốc |
 | Engagement | Identity | Identity owns user | read/write self state | direct reference | self-owned records theo user |
 | Moderation | Community | Community owns entity, Moderation owns report | admin decision | direct write-back | update `moderationStatus`, `isHidden`, `approvalStatus`, summary fields |
-| Moderation | Notification | Notification owns delivery control plane | decision / new report | async (bất đồng bộ) job | notify admin/super-admin hoặc affected user |
+| Moderation | Notification | Notification owns delivery control plane | decision / new report | outbox event → async (bất đồng bộ) job | notify admin/super-admin hoặc affected user |
 | Search | Content | Content owns canonical documents | public query fallback (đường dự phòng) | direct read | payload fallback (đường dự phòng) khi Meilisearch unavailable |
 | Calendar | Content | Content owns chant guide/script/downloads | event override cần map bài niệm hoặc guide | direct reference | calendar không copy ritual script vào event |
-| Calendar | Notification | Notification owns delivery | event-related notice | async (bất đồng bộ) job | push/email nếu có producer gọi |
+| Calendar | Notification | Notification owns delivery | event-related notice | outbox event → async (bất đồng bộ) job | push/email nếu có producer gọi |
 | Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để enqueue delivery |
 
 ## Interaction details bổ sung cho lớp tu tập thực tế
@@ -158,9 +161,9 @@ Mục tiêu là làm rõ:
 | From | To | Ownership model | Trigger | Mode | Side effects |
 |---|---|---|---|---|---|
 | Engagement | Content | Content owns bài đọc chuẩn | mở `Ngôi Nhà Nhỏ`, bài tập hằng ngày | direct read | không write ngược |
-| Engagement | Notification | Notification owns delivery | reminder đọc hoặc đếm bài | async (bất đồng bộ) job | push nhắc theo giờ |
+| Engagement | Notification | Notification owns delivery | reminder đọc hoặc đếm bài | outbox event → async (bất đồng bộ) job | push nhắc theo giờ |
 | Vows & Merit | Calendar | Calendar owns ngày tu học | gợi ý ngày phát nguyện hoặc phóng sanh | direct read | build reminder candidates |
-| Vows & Merit | Notification | Notification owns delivery | đến hạn vow, ngày phóng sanh | async (bất đồng bộ) job | push/email reminder |
+| Vows & Merit | Notification | Notification owns delivery | đến hạn vow, ngày phóng sanh | outbox event → async (bất đồng bộ) job | push/email reminder |
 | Vows & Merit | Content | Content owns lời khấn và bài đọc | mở checklist phóng sanh | direct read | không write ngược |
 | Wisdom & QA | Content | Content owns beginner guides và hub điều hướng | đọc Bạch thoại hoặc khai thị | direct read | offline bundle (gói tải ngoại tuyến) build |
 | Wisdom & QA | Search | Search owns retrieval engine | tra cứu vấn đáp | direct read | query index |
@@ -179,6 +182,7 @@ Mục tiêu là làm rõ:
 - sync search index
 - fan-out tới nhiều recipient
 - side effect có thể retry
+- cần transactional handoff khỏi canonical write
 
 ## Delete / cleanup contracts
 

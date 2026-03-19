@@ -24,9 +24,12 @@ markmap:
 - current public search chủ yếu cho `posts`
 
 ### Search runtime
-- Redis queue (hàng đợi xử lý) `search-sync`
+- `outbox_events` cho business event search quan trọng
+- dispatcher phát search-sync
+- Redis execution queue (hàng đợi thực thi) `search-sync`
 - worker (tiến trình xử lý nền) processor search sync
 - Meilisearch index `posts`
+- `pgvector` chỉ là capability optional khi module recommendation được chốt
 
 ### Public contracts
 - `GET /api/posts/search`
@@ -44,7 +47,8 @@ markmap:
 - đọc counters/public metadata
 
 ### Index lifecycle
-- enqueue reindex/update
+- append outbox event cho publish/update quan trọng
+- dispatcher phát reindex/update
 - worker (tiến trình xử lý nền) upsert vào Meilisearch
 - remove hoặc stop public indexing khi document không còn public
 
@@ -68,5 +72,6 @@ markmap:
 ## Current rules
 - Meilisearch chỉ là index
 - current public search chỉ index published content
+- business event quan trọng của search không phát thẳng bằng pub/sub thuần
 - fallback (đường dự phòng) không được trở thành source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) mới
 

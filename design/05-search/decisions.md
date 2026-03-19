@@ -19,21 +19,26 @@ Repo đã chốt Postgres/Payload là source of truth (nguồn dữ liệu gốc
 ### Trade-off
 - Search correctness phụ thuộc vào quality của source field sync.
 
-## Decision 2. queue-first indexing (đánh chỉ mục ưu tiên qua hàng đợi xử lý) cho current scope
+## Decision 2. outbox-driven indexing cho current scope
 
 ### Context
-Repo đã có Redis + worker (tiến trình xử lý nền) + search-sync processor.
+Search là downstream projection nên cần handoff chắc tay giữa canonical write và execution queue.
 
 ### Decision
-- Search updates đi qua queue (hàng đợi xử lý) `search-sync` theo flow chuẩn.
-- Sync trực tiếp chỉ là fallback (đường dự phòng) đặc biệt khi queue (hàng đợi xử lý) path không khả dụng và code cho phép.
+- Search updates đi theo flow chuẩn:
+  - canonical content write
+  - append `outbox_events`
+  - dispatcher phát `search-sync`
+  - worker/indexer cập nhật Meilisearch
+- Sync trực tiếp chỉ là fallback (đường dự phòng) đặc biệt khi code/recovery path cho phép.
 
 ### Rationale
 - Giảm tải request path.
-- Có retry và quan sát queue (hàng đợi xử lý) rõ hơn.
+- Có retry, replay, và quan sát outbox/queue rõ hơn.
 
 ### Trade-off
 - Eventual consistency giữa content write và search result.
+- Tăng thêm một tầng dispatcher/outbox cần vận hành.
 
 ## Decision 3. Chỉ published content mới được index
 
@@ -83,4 +88,21 @@ Current contracts và service (lớp xử lý nghiệp vụ) hiện tập trung 
 
 ### Trade-off
 - Muốn search guides/sutras/downloads trong tương lai sẽ cần mở rộng contract (hợp đồng dữ liệu/nghiệp vụ) có chủ đích.
+
+## Decision 6. Meilisearch là engine chính; pgvector chỉ là optional capability
+
+### Context
+Search text công khai và recommendation gần nghĩa là hai bài toán khác nhau.
+
+### Decision
+- Meilisearch tiếp tục là engine chính cho public search.
+- `pgvector` không thay Meilisearch.
+- Chỉ thêm `pgvector` khi module recommendation / related-content / semantic retrieval đã được chốt rõ owner và contract.
+
+### Rationale
+- Giữ public search đơn giản, nhanh, và dễ quan sát.
+- Tránh mở rộng semantic stack quá sớm.
+
+### Trade-off
+- Nếu muốn recommendation nâng cao, sẽ cần pipeline embedding, retention, đánh giá chất lượng và fallback riêng.
 

@@ -3,6 +3,8 @@
 > Ghi chú cho sinh viên:
 > File này mô tả `repo truth (thực trạng repo)` và `implementation mapping (cách map sang code triển khai)`.
 > Các quyết định nền tảng như `Postgres là source of truth`, `Payload auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](C:\Users\ADMIN\DEV2\PMTL_VN\design\CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
+> Đây là `canonical source (nguồn chuẩn duy nhất)` cho owner/responsibility mapping giữa các module.
+> Các file index như `domain-map.md` chỉ được dẫn link về đây, không được tự chốt lại ownership.
 
 ## Mục tiêu của tài liệu này
 
@@ -25,9 +27,12 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 
 ### Data & Runtime
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
-- Redis chỉ dùng cho cache, queue (hàng đợi xử lý), rate-limit coordination, và request guard coordination.
+- `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng.
+- Redis chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination.
 - Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc.
+- object storage là đích chuẩn cho media/file trong production.
 - Caddy là reverse proxy và TLS entrypoint.
+- observability chuẩn là metrics + logs + traces.
 
 ## Repo truth theo miền dữ liệu
 
@@ -167,6 +172,7 @@ Service responsibilities:
 - engine query
 - fallback read
 - batch reindex orchestration
+- optional related-content / recommendation retrieval nếu `pgvector` được chốt
 
 ### 06-calendar
 
@@ -281,3 +287,9 @@ Service responsibilities:
 - public profile và follow graph sâu hơn
 
 Future candidate chỉ được thêm vào current scope khi có owner module (module sở hữu), contract (hợp đồng dữ liệu/nghiệp vụ), và runtime path rõ ràng.
+
+## Baseline bổ sung phải giữ
+
+- Boundary runtime phải có schema validation rõ cho request, queue payload, webhook payload, search document và env config.
+- Business event quan trọng phải đi qua outbox trước khi vào execution queue.
+- Recommendation/semantic retrieval chỉ thêm khi use case rõ; không ép `pgvector` thành mặc định của search.

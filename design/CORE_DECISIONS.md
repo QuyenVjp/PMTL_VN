@@ -1,7 +1,7 @@
 # CORE_DECISIONS
 
 > Ghi chú cho sinh viên:
-> Nếu bạn ít thời gian, hãy đọc riêng phần `Decision` của cả 10 mục trước.
+> Nếu bạn ít thời gian, hãy đọc riêng phần `Decision` của các mục trước.
 > Sau đó mới quay lại `Rationale` và `Trade-off`.
 
 Tài liệu này chốt các quyết định cắt ngang quan trọng nhất của PMTL_VN.
@@ -109,28 +109,31 @@ Repo hiện tại chủ yếu public hóa editorial content theo publish state.
 - Một số future gated-content use case chưa được materialize đầy đủ ở current schema (lược đồ dữ liệu).
 - AI cần đọc decision này cùng module schema (lược đồ dữ liệu) để không tự thêm visibility vô tội vạ.
 
-## Decision 6. async (bất đồng bộ) jobs là mặc định cho notification, search, email
+## Decision 6. async (bất đồng bộ) side effect quan trọng đi qua outbox trước khi vào execution queue
 
 ### Context
-Search indexing, push dispatch và email notification đều đã có queue (hàng đợi xử lý)/worker (tiến trình xử lý nền) path.
+Search indexing, push dispatch, email notification và webhook/revalidation đều là downstream side effect dễ bị rơi nếu canonical write thành công nhưng handoff thất bại.
 
 ### Decision
-- Các tác vụ sau phải đi qua Redis queue (hàng đợi xử lý) + worker (tiến trình xử lý nền):
+- Các tác vụ sau phải đi qua `Postgres transaction + outbox_events + dispatcher + execution queue/worker`:
   - search indexing
   - push dispatch
   - email notification
-- Sync path chỉ enqueue hoặc fallback (đường dự phòng) cục bộ khi queue (hàng đợi xử lý) path không khả dụng và flow cần tiếp tục.
+  - webhook/revalidation
+- Không phát business event quan trọng bằng Redis pub/sub thuần hoặc fire-and-forget direct call từ request path.
+- Execution queue vẫn được phép tồn tại, nhưng nó là tầng thực thi sau outbox chứ không phải transactional handoff gốc.
 
 ### Rationale
 - Giảm latency cho web/API path.
-- Hợp với stack đã chốt.
-- Dễ retry và quan sát lỗi hơn.
+- Tăng độ chắc cho canonical write + downstream side effects.
+- Dễ retry, replay, audit và reconciliation hơn.
 
 ### Trade-off
 - Hệ thống có eventual consistency.
-- Cần thêm status/health endpoint để quan sát queue (hàng đợi xử lý) và worker (tiến trình xử lý nền).
+- Tăng thêm một lớp dispatcher/outbox cần quan sát.
+- Cần thêm status/health cho outbox lag, queue lag và worker health.
 
-## Decision 7. Search indexing là queue-first (ưu tiên hàng đợi xử lý), published-only, có fallback (đường dự phòng)
+## Decision 7. Search indexing là outbox-driven projection, published-only, có fallback (đường dự phòng)
 
 ### Context
 Search hiện dựa trên Meilisearch nhưng repo đã có fallback (đường dự phòng) qua Payload query.
@@ -138,22 +141,28 @@ Search hiện dựa trên Meilisearch nhưng repo đã có fallback (đường d
 ### Decision
 - Search source fields nằm trên owner collections.
 - Chỉ document đã publish mới được index.
-- Flow chuẩn là enqueue search-sync job rồi để worker (tiến trình xử lý nền)/indexer cập nhật Meilisearch.
+- Flow chuẩn là:
+  - canonical write ở content owner
+  - append outbox event trong cùng transaction
+  - dispatcher phát search-sync execution job
+  - worker/indexer cập nhật Meilisearch
 - Public search vẫn có payload fallback (đường dự phòng) nếu Meilisearch unavailable.
 - Search sync guarantee hiện tại là `at-least-once async (bất đồng bộ) projection`, không phải exactly-once synchronous mirror.
 - Search sync payload phải idempotent và có recovery path qua batch reindex/status checks.
-- Current scope chưa bắt buộc `outbox pattern`, nhưng coi đó là hướng nâng cấp hợp lệ nếu queue-first sync không còn đủ tin cậy.
+- `Meilisearch` là search engine chính cho public search.
+- `pgvector` không thay Meilisearch; chỉ là capability bổ sung khi đã chốt rõ recommendation / related-content / retrieval gần nghĩa.
 
 ### Rationale
 - Bám implementation hiện có.
 - Không biến search thành hard dependency cho mọi read path.
 - Giữ dữ liệu index luôn là computed document.
+- Giảm nguy cơ "write OK nhưng search sync rơi" cho publish/update quan trọng.
 
 ### Trade-off
 - fallback (đường dự phòng) search chậm hơn và ít mạnh hơn Meilisearch.
 - Cần theo dõi độ trễ index nếu publish volume tăng.
 - Eventual consistency vẫn tồn tại; đổi lại canonical write không bị block bởi search engine.
-- Nếu downstream fan-out tăng hoặc sync drift xảy ra thường xuyên, có thể phải nâng cấp sang outbox/event log rõ hơn.
+- Muốn thêm recommendation bằng `pgvector` sẽ tăng độ phức tạp của pipeline embedding và retention policy.
 
 ## Decision 8. Cache strategy chỉ áp dụng cho published public reads
 
@@ -220,4 +229,81 @@ Repo đã có `auditLogs`, `moderationReports`, `pushJobs`, và nhiều summary 
 ### Trade-off
 - Có thêm bước sync summary.
 - Thiết kế read path cần rõ field nào là canonical, field nào là summary.
+
+## Decision 11. Runtime boundary validation và env contracts là bắt buộc
+
+### Context
+Hệ thống có nhiều boundary: request public, admin action, queue payload, webhook, search document, env/runtime config.
+
+### Decision
+- Mọi boundary quan trọng phải có schema validation runtime rõ ràng.
+- `Zod` là lựa chọn mặc định cho request DTO, queue payload, webhook payload, search document schema và env contracts.
+- TypeScript typing không được coi là đủ cho boundary runtime.
+
+### Rationale
+- Fail fast.
+- Giảm silent corruption và drift giữa producer/consumer.
+- Dễ debug hơn khi hệ thống có worker và downstream projections.
+
+### Trade-off
+- Tốn thêm công viết schema và giữ versioning.
+- Có thể phải cập nhật schema ở nhiều nơi khi contract thay đổi.
+
+## Decision 12. Media/file production phải tách khỏi app runtime bằng object storage
+
+### Context
+Media/file là binary asset có rủi ro mất dữ liệu, khó backup, và là security boundary riêng.
+
+### Decision
+- Dev/local có thể dùng media volume cục bộ.
+- Production chuẩn phải dùng object storage rõ như `S3`, `MinIO`, hoặc tương đương.
+- Upload pipeline phải tách:
+  - metadata canonical
+  - binary object
+  - scan/quarantine/publish state
+
+### Rationale
+- Backup dễ hơn.
+- Scale và deploy an toàn hơn.
+- Hợp với file/media security boundary.
+
+### Trade-off
+- Tăng thêm vận hành cho storage, scan và signed URL policy.
+
+## Decision 13. Observability chuẩn là metrics + logs + traces
+
+### Context
+Metrics và logs là cần, nhưng web/cms/worker/search/file pipeline đủ phức tạp để tracing có giá trị thật.
+
+### Decision
+- Giữ `Prometheus + Grafana + Alertmanager + Pino`.
+- Bổ sung `OpenTelemetry + Tempo`.
+- Trace context nên đi xuyên web, cms, worker, DB call, search call, queue handoff và webhook call.
+
+### Rationale
+- Thấy rõ request chậm ở đâu.
+- Tăng khả năng điều tra latency và drift.
+
+### Trade-off
+- Tăng chi phí instrument và vận hành collector/backend trace.
+
+## Decision 14. Semantic retrieval nâng cấp theo hướng optional capability, không ép thành mặc định
+
+### Context
+Search text và search semantic không phải cùng một bài toán.
+
+### Decision
+- `Meilisearch` tiếp tục là engine chính cho search box công khai.
+- `pgvector` chỉ thêm khi đã chốt use case rõ:
+  - related-content
+  - recommendation
+  - semantic retrieval / "bài gần nghĩa"
+- Không bật `pgvector` chỉ vì "muốn có AI".
+
+### Rationale
+- Tránh over-engineer.
+- Giữ public search đơn giản và nhanh.
+
+### Trade-off
+- Nếu muốn recommendation chất lượng cao hơn, phải đầu tư embedding pipeline, retention, reindex và quality evaluation.
 

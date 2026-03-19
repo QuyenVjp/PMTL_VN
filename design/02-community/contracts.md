@@ -32,6 +32,8 @@
 - submit post/comment/guestbook phải ghi canonical record (bản ghi chuẩn gốc) vào collection owner trước
 - moderation report đi vào `moderationReports`, không nhét lifecycle report vào entity community
 - entity community chỉ giữ summary moderation/read model (mô hình dữ liệu đọc) nếu flow cần
+- notification hoặc moderation alert quan trọng nên đi qua `outbox_events`
+- request payload, abuse metadata, webhook/proxy metadata và downstream event payload phải có schema runtime rõ
 
 ## Public response rules
 
@@ -57,11 +59,12 @@
 - `429`
   - request guard / anti-spam chặn
 - `500`
-  - lỗi proxy, CMS, enqueue downstream work
+  - lỗi proxy, CMS, append outbox, hoặc dispatch downstream work
 
 ## Notes for AI/codegen
 
 - Community submit khác moderation report; đừng gộp chung canonical write-path.
 - Report endpoint chỉ tạo record ở moderation module rồi sync summary ngược.
 - Public routes phải ưu tiên `publicId`, không phụ thuộc internal document id ở client.
+- Không coi notification alert là bằng chứng canonical rằng submit đã thành công; canonical record luôn ở community collections trước.
 

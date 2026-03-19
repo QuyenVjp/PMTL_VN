@@ -36,6 +36,7 @@
   - `videoRef`
   - `speaker`
   - `publishedAt`
+- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - `wisdomEntries`
@@ -50,8 +51,9 @@
 4. Ghi canonical record vào `wisdomEntries`.
 5. Chuyển trạng thái publish theo implementation hiện tại.
 6. Append audit `wisdom.entry.publish`.
-7. Enqueue search sync cho `Kho Trí Huệ`.
+7. Append outbox event cho search sync của `Kho Trí Huệ`.
 8. Nếu có audio/video liên quan, sync relation metadata.
+9. Nếu policy bật offline refresh, append outbox event cho bundle rebuild/downstream refresh.
 
 ## Async side-effects
 - search sync
@@ -81,6 +83,7 @@
 ## Idempotency / anti-spam
 - publish lại cùng `publicId` nên là update flow, không tạo record mới
 - không cho import cùng một source nhiều lần dưới hai record publish trùng rõ ràng nếu policy không cho
+- replay outbox không được tạo duplicate search/bundle signal cho cùng publish event.
 
 ## Performance target
 - canonical publish path nên hoàn tất `< 800ms`

@@ -175,7 +175,9 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 - Content (Nội dung) không được ôm **user-state** (trạng thái người dùng).
 - **Moderation** là first-class module (module hạng nhất).
 - **Notification** là async-only (chỉ chạy ngầm, bất đồng bộ) control-plane (lớp điều phối hệ thống).
-- **Search** là queue-first (ưu tiên hàng đợi xử lý) và có fallback (đường dự phòng).
+- **Search** là outbox-driven projection (bản chiếu đi từ outbox) và có fallback (đường dự phòng).
+- Business event quan trọng nên đi qua `outbox_events`, không fire-and-forget.
+- Boundary runtime nên được chốt bằng schema validation và env contracts.
 - App ưu tiên hỗ trợ tu tập thực tế (real-world practice), không ưu tiên tính năng "ảo".
 - **Người lớn tuổi** (Elderly) là nhóm sử dụng chính nên UI/logic phải đơn giản, rõ, dễ đọc.
 
@@ -262,6 +264,7 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 - Không có chế độ chỉ đọc "giả" khi Postgres chết.
 - Tìm kiếm có dự phòng (fallback (đường dự phòng)), nhưng dự phòng không thay thế nguồn dữ liệu gốc (source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)).
+- Event quan trọng không được coi là "đã phát" chỉ vì canonical write đã thành công.
 - SLA là yếu tố đầu vào thiết kế (design input), không phải tối ưu sau.
 - File/media/PDF là phần của ranh giới bảo mật (security boundary (ranh giới trách nhiệm)), không chỉ là “chuyện hạ tầng”.
 

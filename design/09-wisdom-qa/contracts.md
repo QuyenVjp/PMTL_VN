@@ -58,6 +58,8 @@
   - question/answer original nếu source có
   - bản dịch Việt song song nếu đã duyệt
   - practice rule extraction nếu đây là bài có rule thực hành cụ thể
+- publish/search/offline-bundle refresh signal quan trọng nên đi qua `outbox_events`
+- ingest payload, publish payload, search payload, bundle-manifest payload và env/runtime config phải có schema runtime rõ
 
 ## Notes for AI/codegen
 
@@ -66,4 +68,5 @@
 - Search nên xem module này và `01-content` như hai owner tách biệt nhưng một bề mặt đọc thống nhất `Kho Trí Huệ`.
 - Format `nguyên văn + bản dịch + link gốc + ảnh nguồn` là format ưu tiên cho bài thực tế cần cộng đồng cùng kiểm duyệt.
 - Với web phụng sự viên Việt Nam, chỉ dùng như `community_volunteer_site` hoặc `community_translation` nếu không phải source gốc.
+- Nếu search/offline drift xảy ra, recovery path chuẩn là replay signal, reindex hoặc rebuild bundle từ source records đã duyệt.
 

@@ -84,3 +84,20 @@ Calendar data thường kéo theo reminder, nhưng repo chưa mô hình hóa rem
 ### Trade-off
 - Cần cập nhật `eventStatus` nhất quán khi event thay đổi hoặc khi thời gian trôi qua.
 
+## Decision 6. Calendar projection và reminder signal quan trọng đi qua outbox/recompute path
+
+### Context
+Event publish/update, lunar override đổi logic, và refresh `personalPracticeCalendarReadModel` đều có thể kéo theo downstream notify/rebuild.
+
+### Decision
+- Canonical event/lunar write phải commit trước.
+- Signal quan trọng cho refresh hoặc notification đi qua `outbox_events`.
+- Với `personalPracticeCalendarReadModel`, recovery path chuẩn là recompute window hoặc replay signal, không vá từng row mơ hồ.
+
+### Rationale
+- Giữ read model và downstream reminder cùng ngôn ngữ reliability với phần còn lại của hệ thống.
+- Dễ điều tra hơn khi advisory hoặc reminder bị lệch.
+
+### Trade-off
+- Tăng thêm số path cần quan sát: outbox lag, refresh lag, stale window count.
+

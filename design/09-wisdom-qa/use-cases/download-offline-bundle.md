@@ -22,6 +22,7 @@
 - `deviceProfile`
 - `preferredLanguage`
 - optional `deviceKey`
+- bundle manifest payload và package job payload phải có schema runtime rõ
 
 ## Read set
 - `wisdomEntries`
@@ -35,6 +36,7 @@
 3. Trả manifest tải xuống và version hiện tại.
 4. Nếu cần lưu trạng thái cá nhân, append hoặc update `offlineBundles` state cho user hoặc device.
 5. Append audit nhẹ `wisdom.bundle.download` nếu policy cần.
+6. Nếu package cần build hoặc repair, append outbox event cho bundle prepare/rebuild thay vì làm fire-and-forget không kiểm soát.
 
 ## Async side-effects
 - prepare asset package
@@ -59,6 +61,7 @@
 ## Idempotency / anti-spam
 - cùng `user + device + bundle version` không nên tạo trùng nhiều record
 - nên dedupe theo `bundleType + version + user/device`
+- replay outbox không được tạo duplicate package job cho cùng bundle version và cùng target scope.
 
 ## Performance target
 - trả manifest nên `< 500ms`
@@ -67,3 +70,4 @@
 ## Notes
 - Không dùng AI tạo thêm tóm tắt hay câu trả lời mới trong offline package.
 - Bundle offline phải giữ quan hệ rõ giữa bản gốc, bản dịch, và asset media đi kèm.
+- Nếu bundle drift hoặc thiếu asset, recovery chuẩn là rebuild bundle từ source records và asset refs đã duyệt.

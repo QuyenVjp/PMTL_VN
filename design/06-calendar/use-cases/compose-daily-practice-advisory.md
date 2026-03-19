@@ -52,7 +52,7 @@
 
 ## async (bất đồng bộ) side-effects
 - optional:
-  - enqueue reminder candidate
+  - append outbox event cho reminder candidate refresh
   - refresh search/read cache nếu rule vừa được publish
 
 ## success result (kết quả thành công)
@@ -69,4 +69,5 @@
 ## Notes
 - `community volunteer site` chỉ là support ref hoặc local CTA, không được thay source chính thức.
 - card hiển thị phải ngắn, nhưng data model bên dưới phải đủ chi tiết để audit và peer review.
+- nếu compose output bị lệch, recovery chuẩn là recompute advisory window từ source data đã duyệt.
 

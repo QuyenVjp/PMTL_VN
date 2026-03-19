@@ -30,6 +30,7 @@
   - `language`
   - `limit`
   - `tags`
+- query payload và fallback search input phải có schema runtime rõ
 
 ## Read set
 - `qaEntries`
@@ -72,3 +73,4 @@
 - Không generate "lời giải" mới.
 - Retrieval phải ưu tiên nguồn chính thức, official mirror, và bản dịch đã duyệt.
 - `community_translation` chỉ được hiện như lớp phụ nếu record đã được policy cho phép.
+- Nếu search index bị lệch, recovery chuẩn là replay/reindex từ source records đã duyệt, không sửa tay hit output.

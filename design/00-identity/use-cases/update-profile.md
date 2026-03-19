@@ -19,6 +19,7 @@
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `updateProfileSchema`
+- nếu có downstream profile signal thì payload phải có schema runtime rõ
 
 ## Read set
 - auth session
@@ -30,6 +31,7 @@
 3. Ghi canonical update vào `users`.
 4. Invalidate/cập nhật session cache nếu cần.
 5. Append audit `auth.profile.update`.
+6. Nếu có downstream signal như avatar processing hoặc profile-notify, append outbox event sau canonical update.
 
 ## async (bất đồng bộ) side-effects
 - không có side-effect nặng bắt buộc
@@ -48,6 +50,7 @@
 
 ## Idempotency / anti-spam
 - update cùng payload chỉ ghi lại profile hiện tại, không tạo record mới.
+- replay outbox không được tạo duplicate downstream profile signal cho cùng update event.
 
 ## Performance target
 - profile update `< 800ms`.

@@ -27,6 +27,7 @@
   - `targetMetricType` nếu có
   - `targetValue` nếu có
   - `notes` nếu có
+- nếu có downstream reminder signal thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - auth session
@@ -40,7 +41,7 @@
 4. Tạo canonical record vào `vows`.
 5. Nếu payload có mốc tiến độ ban đầu, append một `vowProgressEntry` khởi tạo.
 6. Append audit `vow.create`.
-7. Nếu user bật nhắc việc, phát signal cho notification layer để chuẩn bị reminder candidates.
+7. Nếu user bật nhắc việc, append outbox event cho notification/reminder candidate layer.
 
 ## Async side-effects
 - reminder candidate generation
@@ -69,6 +70,7 @@
 - không cần idempotency key phức tạp ở phase đầu
 - nhưng UI nên chặn double-submit
 - service nên chống tạo trùng rõ ràng khi cùng user gửi payload gần như giống hệt trong cửa sổ thời gian ngắn
+- replay outbox không được tạo duplicate reminder candidate cho cùng vow mới.
 
 ## Performance target
 - create vow nên hoàn tất `< 500ms`

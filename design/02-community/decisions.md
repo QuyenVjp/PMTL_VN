@@ -91,3 +91,20 @@ Community có nhiều điểm bắt đầu report nhưng repo đã có moderatio
 - Cần sync summary ngược về community entity.
 - Debugging phải nhìn cả community record lẫn moderation record.
 
+## Decision 6. Async alert quan trọng đi qua outbox thay vì fire-and-forget
+
+### Context
+Community submit thường kéo theo moderation attention, admin notification hoặc downstream review signal.
+
+### Decision
+- Canonical submit phải commit vào community owner collection trước.
+- Alert/notification/review signal quan trọng đi qua `outbox_events`.
+- Consumer downstream phải idempotent và replay được.
+
+### Rationale
+- Tránh mất alert khi canonical record đã ghi thành công.
+- Hợp với baseline reliability chung của hệ thống.
+
+### Trade-off
+- Tăng thêm lớp dispatcher/outbox cần quan sát.
+

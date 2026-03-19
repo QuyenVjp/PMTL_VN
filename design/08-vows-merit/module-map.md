@@ -67,7 +67,10 @@ markmap:
 - nhắc nguyện
 - nhắc mốc thời hạn
 - nhắc các ngày phù hợp để hoàn thành thực hành
+- signal quan trọng nên phát qua `outbox_events`
 
 ## Current direction
 - tách `vow tracking` khỏi `practiceLogs`
 - biến `phóng sanh` thành sổ tay thực hành, không phải feed xã hội
+- canonical record đi trước; reminder/progress signal đi sau qua outbox
+- progress summary phải replay/recompute được từ source records

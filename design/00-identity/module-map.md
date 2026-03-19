@@ -86,4 +86,6 @@ markmap:
 - không tạo users store thứ hai ngoài `users`
 - role thay đổi bởi `super-admin` hoặc `admin` theo scope quản trị, không bởi public self-service (lớp xử lý nghiệp vụ) flow
 - public profile chỉ nên lộ field đã map qua contract (hợp đồng dữ liệu/nghiệp vụ), không trả raw user document
+- canonical auth/account write đi trước; email/provider follow-up signal đi sau qua outbox nếu có
+- recovery auth truth luôn quay về `users` + auth authority, không quay về client state
 

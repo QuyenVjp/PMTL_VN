@@ -40,7 +40,8 @@ Nó trả lời câu hỏi:
 
 Khi đọc module này, hãy nhớ:
 - canonical content nằm ở owner collection
-- search sync và revalidation chỉ là downstream
+- search sync, notification, webhook/revalidation là downstream
+- business event quan trọng nên đi qua outbox trước khi vào execution queue
 
 ### Community
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/02-community/contracts.md`
@@ -82,6 +83,7 @@ Khi đọc module này, hãy nhớ:
 Khi đọc module này, hãy nhớ:
 - `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 - field trên entity đích chỉ là summary
+- notify downstream quan trọng nên phát từ outbox event thay vì fire-and-forget
 
 ### Search
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/05-search/contracts.md`
@@ -90,8 +92,9 @@ Khi đọc module này, hãy nhớ:
   - `public-search-query.md`
 
 Khi đọc module này, hãy nhớ:
-- search là queue-first (ưu tiên hàng đợi xử lý)
+- search là outbox-driven projection trước khi vào execution queue
 - fallback (đường dự phòng) là để giữ service (lớp xử lý nghiệp vụ) usable khi engine lỗi
+- `pgvector` chỉ là capability bổ sung khi module recommendation / related-content đã được chốt
 
 ### Calendar
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/06-calendar/contracts.md`
@@ -122,6 +125,7 @@ Khi đọc module này, hãy nhớ:
 Khi đọc module này, hãy nhớ:
 - notification là async-only (chỉ chạy ngầm, bất đồng bộ) control-plane (lớp điều phối hệ thống)
 - `pushJobs` không phải inbox canonical
+- delivery request quan trọng nên đến notification qua outbox event
 
 ### Identity
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-identity/contracts.md`
@@ -175,10 +179,12 @@ Khi đọc module này, hãy nhớ:
 2. canonical record (bản ghi chuẩn gốc) phải ghi ở đâu trước?
 3. Có summary field nào cần sync không?
 4. Có side-effect async (bất đồng bộ) nào cần enqueue vào queue (hàng đợi xử lý) không?
-5. Có audit bắt buộc không?
-6. Route public đang dùng `publicId`, `slug`, hay session owner?
-7. Thuật ngữ có đúng `TERMINOLOGY_RULES.md` chưa?
-8. Có phù hợp `ELDERLY_UX_RULES.md` chưa?
+5. Side-effect đó có cần transactional handoff qua `outbox_events` không?
+6. Có audit bắt buộc không?
+7. Boundary schema và env contract đã được chốt chưa?
+8. Route public đang dùng `publicId`, `slug`, hay session owner?
+9. Thuật ngữ có đúng `TERMINOLOGY_RULES.md` chưa?
+10. Có phù hợp `ELDERLY_UX_RULES.md` chưa?
 
 ### Nếu chưa trả lời được
 - đừng code vội

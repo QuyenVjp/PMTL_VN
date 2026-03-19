@@ -12,6 +12,8 @@
   - tạo và cập nhật record của chính mình
 - `admin`
   - xem hoặc hỗ trợ khi có workflow support rõ ràng
+  - được tạo/sửa record thay cho `member` nếu flow là assisted-entry rõ ràng
+  - bắt buộc audit đủ `actor` và `owner` cho mọi cross-user action
 - `super-admin`
   - chỉ dùng cho audit/support sâu khi thật sự cần
 
@@ -28,6 +30,10 @@
   - số lượng hoặc quy mô
   - địa điểm hoặc ghi chú địa điểm
   - source-linked ritual note nếu app gợi ý bài niệm hoặc khai thị liên quan
+  - nếu là assisted entry:
+    - `ownerUserId`
+    - `actorUserId`
+    - lý do hỗ trợ nếu policy yêu cầu
 - với các rule thực hành cụ thể như:
   - sau khi phóng sanh niệm `Thánh Vô Lượng Thọ Quyết Định Quang Minh Vương Đà La Ni` `37` biến trong ngày hôm đó
   - app nên lưu ở dạng:
@@ -37,11 +43,15 @@
     - `bản dịch tiếng Việt`
     - `review status (trạng thái kiểm duyệt)`
   - không hardcode mù nếu chưa có source mapping rõ
+- create/update/void record quan trọng và reminder signal liên quan nên đi qua `outbox_events`
+- request payload, assisted-entry payload và downstream reminder payload phải có schema runtime rõ
 
 ## Public/private boundary (ranh giới trách nhiệm)
 
 - đây chủ yếu là self-owned state
 - chỉ chia sẻ ra community khi user chủ động tạo post riêng
+- correction được phép nhưng phải giữ lịch sử audit
+- void được phép nhưng không được hard delete âm thầm nếu đã từng tạo vow progress downstream
 
 ## Error expectations
 
@@ -49,10 +59,13 @@
 - `401`: chưa đăng nhập
 - `409`: conflict ở active vow cùng loại nếu policy không cho duplicate
 - `500`: lỗi service (lớp xử lý nghiệp vụ)/notification scheduling
+- `500`: lỗi service, append outbox, hoặc reminder scheduling/recompute
 
 ## Notes for AI/codegen
 
 - Đừng biến vow tracking thành todo list thường.
 - Đừng biến life release journal thành social feed canonical.
 - Admin scope ở đây nghĩa là `Phụng sự viên`, không tách thêm role vận hành riêng ở current scope.
+- Assisted entry là support workflow có kiểm soát, không phải quyền cross-user viết bừa.
+- Nếu reminder/progress downstream bị lệch, recovery path phải là replay signal hoặc recompute summary, không sửa tay âm thầm.
 

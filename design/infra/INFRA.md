@@ -1,23 +1,28 @@
 # PMTL Infrastructure: Why & What (Lý do & Mục đích)
 
-Tài liệu này giải thích các thành phần hạ tầng (Infrastructure) của hệ thống PMTL.
-Đây là bản chuẩn để đọc nhanh.
+Tài liệu này giải thích kiến trúc hạ tầng chuẩn của PMTL_VN theo hướng production-minded.
+Đây là bản đọc nhanh để chốt:
 
-Nếu cần đi sâu exporters, metrics, alerting và topology vận hành chi tiết hơn, đọc thêm:
+- thành phần nào là bắt buộc
+- business event quan trọng đi theo flow nào
+- media/file nên sống ở đâu
+- observability chuẩn phải nhìn đủ metrics, logs, traces
+
+Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
 - `design/infra/INFRA_DEEP_DIVE.md`
 
 ---
 
-## 4 Core Groups (4 Nhóm Chính)
+## 6 Core Groups (6 Nhóm Chính)
 
 ### 1. **Business Layer** (Lớp ứng dụng chính)
 
 | Component | Chức năng | Lợi ích mang lại |
 |-----------|----------|---------|
-| **apps/web** (Next.js) | Frontend / UI | Phục vụ người dùng cuối, đảm bảo tính Tương tác (Interactive) |
-| **apps/cms** (Payload) | Backend / API | Cung cấp giao diện Admin cho Editor và Serve dữ liệu qua API |
-| **worker (tiến trình xử lý nền)** (Bull queue (hàng đợi xử lý)) | Background Jobs | Xử lý các tác vụ ngầm (Email/Reindex) không làm block Main Thread |
-| **Caddy** (Reverse Proxy) | Ingress / SSL | Định tuyến (Routing), quản lý HTTPS/SSL tự động |
+| **apps/web** (Next.js) | Frontend / UI | Phục vụ người dùng cuối |
+| **apps/cms** (Payload) | Backend / API / Admin | Cung cấp API, auth authority và admin surface |
+| **worker (tiến trình xử lý nền)** | Background execution | Xử lý reindex, notify, email, webhook, replay |
+| **Caddy** (Reverse Proxy) | Ingress / SSL | Định tuyến và quản lý HTTPS |
 
 **Request Flow**: User → Caddy → web/cms → database → return response
 
@@ -27,167 +32,233 @@ Nếu cần đi sâu exporters, metrics, alerting và topology vận hành chi t
 
 | Technology | Chức năng | Tại sao cần? | Lợi ích |
 |---|---|---|---|
-| **Postgres** (Database) | source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) | Lưu trữ TẤT CẢ dữ liệu vĩnh viễn (Posts, Users, Comments) | Reliable, ACID compliance, Powerful Querying |
-| **Redis** (Cache) | Distributed Cache | Lưu trữ tạm thời (Sessions, Recent posts) để tăng tốc độ | API Response nhanh gấp 10 lần |
-| **Redis** (queue (hàng đợi xử lý)) | Job queue (hàng đợi xử lý) | Quản lý hàng chờ công việc (Email, Reindex) | Xử lý Async (Bất đồng bộ) mượt mà |
-| **Meilisearch** (Search) | Search Engine | Đánh chỉ mục Full-text Search chuyên sâu | Tìm kiếm siêu nhanh, hỗ trợ Typo Tolerance |
-| **PgBouncer** (Pooler) | Connection Pooling | Quản lý và tái sử dụng Connection tới DB | Giảm tải cho Postgres (từ 500 xuống ~20 connections) |
+| **Postgres** | source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) | Lưu dữ liệu canonical | Reliable, ACID, backup rõ |
+| **`outbox_events` trong Postgres** | Transactional event log | Đảm bảo side effect quan trọng không bị rơi sau canonical write | Reliable handoff, replay, auditability |
+| **Redis** | Cache + execution queue (hàng đợi thực thi) | Tăng tốc read và chạy workload nền | Fast reads, async execution |
+| **Meilisearch** | Public search engine | Full-text, typo tolerance, facets | Search nhanh và thân thiện |
+| **Object Storage** (`S3` / `MinIO` / tương đương) | Binary asset storage | Tách file/media khỏi app runtime | Backup dễ, scale dễ, scan/quarantine rõ |
+| **pgvector** (optional) | Semantic retrieval trong Postgres | Chỉ dùng khi cần related-content / recommendation | Bổ sung cho Meilisearch, không thay Meilisearch |
+| **PgBouncer** | Connection Pooling | Giảm tải connection trực tiếp vào Postgres | Ổn định DB tốt hơn |
 
 **Architecture Diagram**:
-```
-Apps (web/cms/worker (tiến trình xử lý nền))
+```txt
+Apps (web/cms/worker)
      ↓
-PgBouncer (Connection Pooler)
+PgBouncer
      ↓
-Postgres (Persistent Storage)
+Postgres
 
 Apps cũng truy vấn thêm:
-  - Redis (Cache hit/miss check)
-  - Meilisearch (Search queries)
+  - Redis (cache + execution queue)
+  - Meilisearch (public search)
+  - Object Storage (media/file)
 ```
 
 ---
 
-### 3. **Observability** (Khả năng quan sát & Giám sát)
+### 3. **Boundary Validation & Env Contracts** (Chuẩn hóa boundary và hợp đồng môi trường)
 
-**Stack**: Prometheus + Grafana + Alertmanager + Exporters
+| Thành phần | Chức năng | Tại sao cần? | Lợi ích |
+|------|----------|--------|---------|
+| **Zod at boundaries** | Validate request, route params, queue payload, webhook payload, search document | TypeScript không thay được runtime validation | Fail fast, debug dễ hơn |
+| **Env contracts** | Validate env từ lúc boot | Tránh chết muộn vì env sai/thiếu | Startup rõ lỗi hơn |
+| **Event versioning** | Chuẩn hóa payload outbox/queue | Tránh producer/consumer lệch nhau | Replay và migration rõ ràng |
+
+**Boundary Flow**:
+```txt
+Client / admin action / cron / webhook
+     ↓
+Schema validation tại boundary
+     ↓
+Canonical write transaction
+     ↓
+Append outbox event nếu có side effect quan trọng
+     ↓
+Dispatcher / worker tiêu thụ payload đã chuẩn hóa
+```
+
+---
+
+### 4. **Observability** (Khả năng quan sát & Giám sát)
+
+**Stack**: Prometheus + Grafana + Alertmanager + Pino + OpenTelemetry + Tempo
 
 | Tool | Chức năng | Tại sao chọn? | Lợi ích |
 |------|----------|--------|---------|
-| **Prometheus** | TSDB (Time-series DB) | Lưu trữ Metrics (CPU, RAM, DB Connections, v.v.) | Hỗ trợ Query, Graph, và Alerting mạnh mẽ |
-| **Grafana** | Visualization UI | Vẽ biểu đồ từ dữ liệu Prometheus | Admin Dashboard trực quan, dễ theo dõi |
-| **Alertmanager** | Alert Routing | Gửi cảnh báo tới Telegram/Slack/Email | Lọc trùng (Dedup) và điều hướng cảnh báo thông minh |
-| **Exporters** | Metric Collection | Thu thập dữ liệu từ OS và các Services | Giám sát trạng thái thực (CPU/RAM/Disk, Redis Size) |
+| **Prometheus** | TSDB cho metrics | Giám sát host/service/runtime | Query và alert mạnh |
+| **Grafana** | Dashboard | Xem metrics và traces | Giao diện tổng hợp |
+| **Alertmanager** | Alert routing | Gửi cảnh báo tới Telegram/Slack/Email | Điều hướng cảnh báo |
+| **Pino** | Structured logs | Ghi log theo context nhất quán | Debug và audit tốt hơn |
+| **OpenTelemetry** | Distributed tracing instrumentation | Theo dõi request và job xuyên nhiều service | Thấy rõ bottleneck theo span |
+| **Tempo** | Trace storage backend | Lưu trace tập trung | Correlate metrics + logs + traces |
 
-**Monitoring Flow**:
-```
-Services (Expose /metrics endpoint)
-     ↓ (Prometheus Scrape mỗi 15 giây)
-Prometheus (Lưu trữ Metrics)
-     ↓ (Kiểm tra Alert Rules)
-Alertmanager (Nếu threshold bị vi phạm)
+**Observability Flow**:
+```txt
+Services expose metrics
      ↓
-Telegram/Slack (Đội ngũ kỹ thuật nhận Notification)
+Prometheus
+     ↓
+Grafana / Alertmanager
 
-Grafana (Truy vấn Prometheus để hiển thị Dashboard)
-```
+Services emit traces qua OpenTelemetry
+     ↓
+Tempo
+     ↓
+Grafana
 
-**Ví dụ Alert Rule**:
-```
-IF redis_memory_usage > 1GB trong 5 phút
-THEN fire alert "RedisMemoryHigh"
-TO Alertmanager → TO Telegram
+Services emit structured logs qua Pino
+     ↓
+Log sink / console / future log pipeline
 ```
 
 ---
 
-### 4. **External Services** (Các dịch vụ bên thứ ba)
+### 5. **Async Reliability** (Độ tin cậy cho side effects bất đồng bộ)
 
-| service (lớp xử lý nghiệp vụ) | Chức năng | Lợi ích |
+| Thành phần | Chức năng | Lợi ích |
 |---------|----------|---|
-| Email (SMTP/SendGrid) | Email Delivery | Gửi Password Reset, Notifications từ worker (tiến trình xử lý nền) |
-| Push (Firebase) | Web Push | Gửi thông báo trực tiếp tới trình duyệt người dùng |
-| CDN (Cloudflare) | Content Delivery | Phân phối tài nguyên (Images, Audio, PDF) nhanh nhất |
-| S3 Storage | Off-site Backup | Lưu trữ các bản Snapshot dự phòng của Postgres |
+| **`outbox_events`** | Ghi business event trong cùng transaction với canonical write | Không mất event quan trọng |
+| **Outbox dispatcher** | Poll event chưa xử lý, phát sang execution queue hoặc handle trực tiếp | Retry, backoff, replay rõ |
+| **Execution queue** | Chạy workload nền như reindex, notify, email, webhook | Tách execution khỏi request path |
+| **Reconciliation / replay jobs** | Soát drift giữa Postgres và downstream systems | Có recovery path chuẩn |
+
+**Chuẩn flow cần nhớ**:
+```txt
+Canonical write vào Postgres
+  + append `outbox_events` trong cùng transaction
+     ↓
+Dispatcher đọc outbox chưa xử lý
+     ↓
+Phát sang execution queue hoặc xử lý idempotent trực tiếp
+     ↓
+Mark processed / failed / retryable
+```
+
+**Áp dụng bắt buộc cho business event quan trọng**:
+- publish/update content để reindex
+- notification fan-out
+- email delivery request
+- webhook/revalidation
+
+**Không nên dùng trực tiếp cho business event quan trọng**:
+- Redis pub/sub thuần
+- fire-and-forget webhook từ request path
+- chỉ enqueue queue mà không có transactional handoff
+
+---
+
+### 6. **External Services** (Các dịch vụ bên thứ ba)
+
+| Service | Chức năng | Lợi ích |
+|---------|----------|---|
+| Email (SMTP/SendGrid) | Email Delivery | Gửi password reset và downstream notifications |
+| Push (Firebase / Web Push) | Web Push | Gửi thông báo tới trình duyệt |
+| CDN (Cloudflare) | Content Delivery | Phân phối ảnh/audio/PDF nhanh hơn |
+| Object Storage (`S3` / `MinIO`) | Media/File Storage | Nơi chuẩn cho binary asset production |
+| Embedding Provider | Embedding generation | Dùng khi semantic retrieval / related-content được bật |
+| S3 Backup | Off-site Backup | Lưu snapshot và backup ngoài máy chủ app |
 
 **Media/File note**:
-- Với PDF, audio, video, image public:
-  - current local/dev có thể dùng media volume hiện tại
-  - production design nên chuẩn bị object storage rõ như `S3` hoặc `MinIO`
-  - file nên đi qua allowlist, size/mime validation, và scan/quarantine flow nếu nguồn chưa trusted
-
-**Deep-dive note (ghi chú bản đào sâu)**:
-- `INFRA.md` là bản đọc nhanh để hiểu kiến trúc hạ tầng.
-- `INFRA_DEEP_DIVE.md` là bản đào sâu cho exporters, metrics, topology vận hành, và có thể được chuyển sang `docs/` sau này nếu phần runbook vận hành lớn hơn.
+- local/dev có thể dùng media volume hiện tại
+- production chuẩn là object storage rõ như `S3` hoặc `MinIO`
+- upload mới nên đi qua allowlist + size/mime validation + scan/quarantine
+- binary asset không nên là phần sống còn trong container filesystem
 
 ---
 
 ## Real-world Request Flows (Luồng yêu cầu thực tế)
 
 ### Case 1: User Loads Homepage
-```
-User truy cập Domain
+```txt
+User truy cập domain
   ↓
-Caddy lắng nghe port 80/443
+Caddy
   ↓
-Route / → apps/web (localhost:3000)
+Route / → apps/web
   ↓
-Web gọi api/posts để lấy dữ liệu
+Web gọi CMS/BFF để lấy dữ liệu
   ↓
-CMS kiểm tra Redis Cache
-  ✓ Hit: Trả về dữ liệu ngay (~100ms)
-  ✗ Miss: Query Postgres → Ghi vào Redis → Trả về (~300ms)
-  ↓
-User thấy giao diện hoàn chỉnh
+Kiểm tra Redis cache
+  ✓ Hit: trả về nhanh
+  ✗ Miss: query Postgres → ghi Redis → trả về
 ```
 
-**Lợi ích của Caching**: Tăng tốc độ phản hồi gấp 10 lần cho những lượt truy cập sau.
+**Lợi ích của caching**: giảm tải read-path và giữ UX mượt hơn.
 
 ---
 
 ### Case 2: User Searches "Phật pháp"
-```
-User gõ từ khóa vào thanh Search
+```txt
+User gõ từ khóa vào ô search
   ↓
-Web gọi URL /api/search?q=Phật%20pháp
+Web gọi public search API
   ↓
-CMS thực hiện Query tới Meilisearch
-  ✓ Result: Trả về trong ~50ms
-  ✓ Typo tolerance: Gõ "Phật Phàp" vẫn ra đúng kết quả
-  ✓ Faceted Search: Hỗ trợ lọc theo Category/Tag/Date
+CMS query Meilisearch
+  ✓ Result: nhanh, typo tolerance, facets
+  ✗ Nếu Meilisearch lỗi: fallback về Payload/Postgres theo contract
   ↓
-Web hiển thị danh sách kết quả
+Web hiển thị kết quả
 ```
 
-**Lớp Search Engine**: Đảm bảo trải nghiệm tìm kiếm chuyên nghiệp (UX tốt hơn hẳn SQL Search).
+**Ghi chú semantic**:
+- ô search chính vẫn ưu tiên Meilisearch
+- `pgvector` chỉ bật khi cần related-content / recommendation / semantic retrieval
+- không thay Meilisearch bằng `pgvector`
 
 ---
 
 ### Case 3: Editor Publishes New Post
-```
-Editor nhấn "Publish" trong Admin Panel
+```txt
+Editor nhấn Publish
   ↓
-CMS lưu dữ liệu vào Postgres (Sync)
-  ✓ status = published, timestamp = now()
+CMS mở transaction canonical
   ↓
-CMS đẩy một Job vào Redis queue (hàng đợi xử lý): {type: 'reindex_post', postId: 123}
+Ghi Postgres:
+  ✓ status = published
+  ✓ publishedAt = now()
+  ✓ append `outbox_events` cho `post.published`
   ↓
-Giao diện Admin trả về 200 OK ngay lập tức
+Commit transaction
+  ↓
+UI trả về thành công ngay
 
-Phía sau (Background), worker (tiến trình xử lý nền):
+Phía sau:
   ↓
-Lấy (Pull) Job từ Redis queue (hàng đợi xử lý)
+Dispatcher poll `outbox_events`
   ↓
-Đánh lại chỉ mục (Reindex) vào Meilisearch
+Phát execution jobs:
+  - reindex_post
+  - notify_subscribers
+  - revalidate_web
   ↓
-Gửi thông báo tới Subscribers qua Email/Push
+Worker xử lý idempotent
   ↓
-Job hoàn thành
+Mark processed / retryable / failed
 ```
 
-**Lợi ích của Queuing**: Phản hồi tức thì cho người dùng, các tác vụ nặng chạy ngầm không gây Lag.
+**Lợi ích của Outbox + Queue**: canonical write và downstream side effect được tách rời nhưng vẫn handoff chắc tay.
 
 ---
 
-### Case 4: System Health Monitoring (Cảnh báo tự động)
-```
-Mỗi 15 giây, Prometheus Scrape Metrics:
-  - CPU usage: 45%, RAM: 2GB
-  - Redis size: 512MB
-  - Postgres: 12 active connections
+### Case 4: Slow Request Diagnosis
+```txt
+User mở trang chậm
   ↓
-Prometheus kiểm tra các Alert Rules:
-  NẾU CPU > 80% → Fire Alert
-  NẾU Redis Memory > 1GB → Fire Alert
+Trace cho thấy:
+  - web render
+  - CMS API
+  - Postgres query
+  - Meilisearch query
+  - queue handoff hoặc worker call
   ↓
-Alertmanager nhận tín hiệu
+Grafana xem trace trong Tempo
   ↓
-Gửi tin nhắn Telegram tới đội ngũ OPS
+Đối chiếu với metrics và logs
   ↓
-Team kỹ thuật can thiệp kịp thời (Scale up)
+Xác định bottleneck thật
 ```
 
-**Lợi ích của Monitoring**: Phát hiện sớm sự cố (Proactive) thay vì chờ User phản ánh (Reactive).
+**Lợi ích của tracing**: biết request chậm do DB, search, queue hay worker thay vì đoán.
 
 ---
 
@@ -195,36 +266,43 @@ Team kỹ thuật can thiệp kịp thời (Scale up)
 
 | Component | Impact (Ảnh hưởng) | Recovery Action | Estimated Time |
 |-----------|-------------------|-----------------|----------------|
-| Postgres | Down toàn hệ thống | Restart service (lớp xử lý nghiệp vụ) hoặc Restore Backup | 5-30 phút |
-| Redis | App chạy chậm lại, queue (hàng đợi xử lý) bị nghén | Restart service (lớp xử lý nghiệp vụ) | < 1 phút |
-| Meilisearch | Chức năng Search bị lỗi | Rebuild Meilisearch Index | 5-30 phút |
-| PgBouncer | App mất kết nối tới DB | Restart hoặc kết nối trực tiếp DB | < 1 phút |
-| Caddy | Người dùng không thể truy cập | Restart service (lớp xử lý nghiệp vụ) | < 1 phút |
-| worker (tiến trình xử lý nền) | Tác vụ ngầm bị trì trệ | Restart worker (tiến trình xử lý nền) service (lớp xử lý nghiệp vụ) | < 1 phút |
+| Postgres | Down toàn hệ thống | Restart hoặc restore backup | 5-30 phút |
+| Redis | Cache chậm, execution queue bị nghén | Restart; outbox giữ pending events để replay | < 1 phút |
+| Meilisearch | Search degrade / fallback | Rebuild index, replay sync, batch reindex | 5-30 phút |
+| Object Storage | Upload mới fail, asset serve có thể degrade | Retry upload/serve, fail closed cho upload mới | 5-30 phút |
+| Tempo / OTEL | Mất trace nhưng app vẫn chạy | Restore collector/backend | < 5 phút |
+| PgBouncer | App mất kết nối tới DB | Restart hoặc kết nối trực tiếp DB tạm thời | < 1 phút |
+| Caddy | Người dùng không thể truy cập | Restart ingress | < 1 phút |
+| worker | Tác vụ ngầm bị trì trệ | Restart worker; replay từ outbox nếu cần | < 1 phút |
 
-**Critical Path**: Postgres → PgBouncer → Caddy → CMS → Web (Các thành phần bắt buộc phải sống để hệ thống vận hành).
+**Critical Path**: Postgres → PgBouncer → CMS → Web  
+**Critical Async Path**: Postgres transaction → outbox_events → dispatcher → execution queue → worker
 
 ---
 
-## 🚀 Pre-launch Checklist (Danh sách kiểm tra trước khi ra mắt)
+## Pre-launch Checklist (Danh sách kiểm tra trước khi ra mắt)
 
-- [ ] Cấu hình Daily Backup Postgres lên S3.
-- [ ] Thiết lập Prometheus + Grafana hoàn chỉnh.
-- [ ] Định nghĩa đầy đủ Alert Rules (Critical & Warning).
-- [ ] Kiểm tra kết nối Telegram/Slack của Alertmanager.
-- [ ] Thực hiện Load Test (Stress test) để tìm nút thắt cổ chai.
-- [ ] Thử nghiệm Failover (Khởi động lại các service (lớp xử lý nghiệp vụ) xem có tự phục hồi không).
-- [ ] Viết Runbook hướng dẫn xử lý sự cố cơ bản cho team.
+- [ ] Cấu hình backup Postgres ngoài máy chủ app.
+- [ ] Chốt schema `outbox_events`, retry policy, replay policy, dead-letter policy.
+- [ ] Chốt Zod boundary schemas và env contracts cho web/cms/worker.
+- [ ] Thiết lập Prometheus + Grafana + Alertmanager.
+- [ ] Thiết lập OpenTelemetry + Tempo và propagate trace context qua web/cms/worker.
+- [ ] Quy hoạch object storage + scan/quarantine cho media/file.
+- [ ] Chỉ bật `pgvector` nếu use case recommendation / related-content đã rõ.
+- [ ] Định nghĩa alert rules cho DB, queue, outbox lag, search health, object storage health.
+- [ ] Thực hiện load test và failure drill.
+- [ ] Viết runbook recovery cơ bản cho team.
 
 ---
 
 ## TL;DR
 
-**Cache + queue (hàng đợi xử lý) + Search + Monitoring = Fast, Reliable, Observable System**
+**Postgres + Outbox + Execution Queue + Search + Object Storage + Tracing = Fast, Reliable, Observable System**
 
-- **Caching**: Phản hồi nhanh hơn 10 lần.
-- **Queuing**: Xử lý tác vụ ngầm mượt mà.
-- **Advanced Search**: Trải nghiệm tìm kiếm chuyên sâu.
-- **Pooling**: Ổn định kết nối Cơ sở dữ liệu.
-- **Observability**: Giám sát hệ thống toàn diện.
-
+- **Caching**: phản hồi nhanh hơn cho read-path.
+- **Outbox + Queue**: side effect quan trọng không bị rơi.
+- **Advanced Search**: Meilisearch lo search box công khai.
+- **Semantic Optionality**: `pgvector` chỉ bật khi thực sự cần.
+- **Boundary Validation**: fail fast ở request, env, queue payload, webhook, search document.
+- **Object Storage**: tách binary asset khỏi app runtime.
+- **Observability**: metrics + logs + traces, không nhìn từng mảnh rời rạc.

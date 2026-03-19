@@ -90,14 +90,16 @@ Mục tiêu:
 
 #### Hành vi mong muốn
 - content/community/engagement write vẫn ưu tiên commit canonical record (bản ghi chuẩn gốc) trước
+- business event quan trọng được giữ trong `outbox_events`
 - search sync, push dispatch, email, reminder build sẽ:
-  - pending
-  - retry khi worker (tiến trình xử lý nền) quay lại
-  - hoặc cần manual recovery nếu queue (hàng đợi xử lý) mất state
+  - pending trong outbox hoặc execution queue
+  - retry khi dispatcher/worker (tiến trình xử lý nền) quay lại
+  - replay được theo outbox nếu execution queue mất state
 
 #### Rule thiết kế
 - các job quan trọng phải idempotent
 - status/health phải phản ánh queue (hàng đợi xử lý) lag và worker (tiến trình xử lý nền) health
+- status/health phải phản ánh cả outbox lag và số event retry/fail
 
 #### Recovery path
 - restart Redis/worker (tiến trình xử lý nền)
@@ -167,7 +169,7 @@ Mục tiêu:
 
 ### "worker (tiến trình xử lý nền) chết thì dữ liệu có lệch không?"
 - Có thể trễ projection/job, nhưng canonical write không được mất.
-- Recovery path là retry + reindex/manual replay.
+- Recovery path là retry + replay outbox + reindex/manual replay.
 
 ### "Media chết có sập cả app không?"
 - Không nên.

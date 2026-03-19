@@ -44,6 +44,8 @@ markmap:
 - ghép `daily practice advisory (thông báo hoặc gói hướng dẫn)` dạng card ngắn cho người dùng
 - trả về lịch đọc được ngay cho user
 - không thay ownership của event/lunar canonical data
+- đây là `fully derived, window-based projection (mô hình chiếu tính lại hoàn toàn theo cửa sổ ngày)`
+- mỗi lần refresh phải replace trạng thái cũ trong cửa sổ, không được partial upsert mà không prune
 
 ### `personalPracticeCalendarService`
 - service (lớp xử lý nghiệp vụ) này không phải owner của event canonical data
@@ -153,7 +155,7 @@ markmap:
 - nếu là read tức thời:
   - trả danh sách `day record` ngay cho web
 - nếu là read model (mô hình dữ liệu đọc) materialized:
-  - upsert vào `personalPracticeCalendarReadModel`
+  - replace toàn bộ snapshot trong cửa sổ tương ứng vào `personalPracticeCalendarReadModel`
 - notification module chỉ đọc output này, không tự tính lại logic lịch
 
 ## Rule precedence cần chốt rõ
@@ -184,6 +186,7 @@ markmap:
 ### Notification
 - calendar không sở hữu delivery
 - module khác có thể đọc event/lunar data để tạo notification job
+- signal quan trọng nên được phát qua `outbox_events`
 
 ## Current rules
 - event ownership nằm ở calendar dù content có thể tham chiếu event
@@ -192,4 +195,6 @@ markmap:
 - calendar được phép sở hữu `read model (mô hình dữ liệu đọc)` cho lịch tu học cá nhân, nhưng không sở hữu push delivery
 - calendar chỉ map ngày/sự kiện với bài niệm hoặc guide; không sao chép script nghi thức từ tài liệu PDF vào event record
 - `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output compose, không phải owner data mới
+- khi refresh window, rows cũ không còn hợp lệ phải bị prune/remove để tránh stale advice tồn tại âm thầm
+- refresh/rebuild quan trọng nên có replay/recompute path rõ thay vì sửa tay từng row
 

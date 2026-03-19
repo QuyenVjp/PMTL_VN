@@ -33,6 +33,8 @@ Mục tiêu:
   - anti-spam
   - structured logging
 - không tin dữ liệu từ client là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
+- env/runtime config cũng phải qua env contract validation từ lúc boot
+- queue payload, outbox payload, webhook payload không được tin chỉ vì "nội bộ hệ thống gọi nhau"
 
 ## Media / file baseline
 
@@ -60,6 +62,7 @@ Mục tiêu:
   - dễ scan/quarantine
   - dễ backup
   - tách app runtime khỏi binary assets
+  - tránh mất file khi rebuild container hoặc đổi chiến lược deploy
 
 ## Search & data exposure baseline
 
@@ -67,6 +70,7 @@ Mục tiêu:
 - DTO public không expose raw internal fields
 - moderation internals không đi ra route public
 - fallback (đường dự phòng) read không được phá visibility policy
+- semantic retrieval hoặc recommendation không được bypass visibility hoặc publish policy chỉ vì query theo vector
 
 ## Failure-mode security rule
 
@@ -74,6 +78,10 @@ Mục tiêu:
   - không được trả lộ dữ liệu nhạy cảm
   - không được bỏ qua access control
   - có thể degrade feature, nhưng không được degrade security
+- khi outbox hoặc dispatcher lỗi:
+  - canonical write có thể commit
+  - nhưng event chưa được coi là delivered
+  - recovery phải đi theo replay/retry chuẩn, không được bỏ qua audit trail
 
 ## PDF / official resources rule
 
@@ -95,4 +103,9 @@ Mục tiêu:
   - upload vào đâu
   - scan ở bước nào
   - publish public ở bước nào
+- Nếu feature có webhook hoặc worker payload, phải ghi rõ:
+  - schema runtime nào validate
+  - ai phát sự kiện
+  - ai tiêu thụ
+  - idempotency key là gì
 

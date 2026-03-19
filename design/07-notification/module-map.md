@@ -24,8 +24,10 @@ markmap:
 
 ### Job control plane
 - `pushJobs`
+- `outbox_events` cho delivery request quan trọng
 
 ### async (bất đồng bộ) delivery paths
+- dispatcher phát push/email/webhook jobs từ outbox
 - push dispatch qua worker (tiến trình xử lý nền)
 - email notification jobs qua worker (tiến trình xử lý nền)/queue (hàng đợi xử lý)
 
@@ -65,4 +67,5 @@ markmap:
 - notification gửi bất đồng bộ
 - pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox canonical
 - self-send prevention có thể dùng include/exclude user ids
+- delivery request quan trọng không phát thẳng từ request path nếu cần reliability cao
 

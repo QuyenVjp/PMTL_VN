@@ -94,3 +94,20 @@ Codebase hiện có Google callback route và field compatibility cho provider m
 ### Trade-off
 - Cần ghi rõ policy merge account theo email/provider id để tránh hiểu nhầm.
 
+## Decision 6. Auth side-effect quan trọng đi qua outbox, còn session authority vẫn ở auth source gốc
+
+### Context
+Register, reset-password, welcome email, provider callback follow-up và account event downstream đều là side effect quan trọng nhưng không phải source of truth.
+
+### Decision
+- Canonical auth/account write phải commit vào `users` và auth state trước.
+- Email hoặc downstream auth signal quan trọng đi qua `outbox_events`.
+- Không coi client cookie/local state là nơi recovery auth truth.
+
+### Rationale
+- Giữ auth cùng ngôn ngữ reliability với toàn hệ thống.
+- Tránh nhầm lẫn giữa session authority và side-effect delivery.
+
+### Trade-off
+- Cần quan sát thêm outbox cho auth-related downstream work.
+

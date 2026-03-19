@@ -37,6 +37,8 @@ markmap:
 - admin xem report
 - cập nhật trạng thái report
 - áp dụng decision lên target entity
+- admin được re-resolve decision của admin khác nếu policy cho phép
+- scope có bảo vệ `super-admin`; chỉ `super-admin` mới được override phần protected này
 
 ### Summary sync
 - cập nhật `reportCount`
@@ -47,6 +49,7 @@ markmap:
 ### Notifications
 - alert admin/super-admin khi có report mới
 - notify affected user khi có moderation decision nếu flow gọi notification module
+- signal quan trọng nên phát qua `outbox_events`
 
 ## Current boundaries
 
@@ -63,4 +66,8 @@ markmap:
 - `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 - target entity giữ summary fields để tối ưu read path
 - guestbook dùng approval workflow nhẹ hơn comment/community content
+- re-resolve hợp lệ phải để lại audit trail mới, không xóa lịch sử cũ
+- `admin` không được thao tác trong `super-admin protected scope`
+- canonical report/decision đi trước; alert/notify đi sau qua outbox
+- target summary phải recompute được từ report source khi recovery
 

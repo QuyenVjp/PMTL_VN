@@ -128,9 +128,11 @@ markmap:
 
 ### Search
 - search index hợp nhất với `01-content` thành `Kho Trí Huệ`
+- signal quan trọng nên phát qua `outbox_events`
 
 ### Notification
 - có thể đọc context từ wisdom entry để tạo reminder học đêm hoặc nhắc đọc/nghe
+- reminder/read-later signal quan trọng cũng nên đi qua outbox nếu feature bật
 
 ## Current rules
 - retrieval-first: tra đúng nguồn trước
@@ -138,4 +140,6 @@ markmap:
 - audio/video là first-class learning surface, không phải phần phụ
 - offline là nhu cầu thật, không phải nice-to-have
 - bài song ngữ `gốc + dịch` là first-class format, không phải ghi chú phụ
+- canonical source record đi trước; search/bundle/reminder signal đi sau qua outbox
+- bundle/search drift phải có replay/rebuild path rõ
 

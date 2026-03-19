@@ -19,6 +19,7 @@
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - Payload write cho `events`.
+- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - `events`
@@ -29,10 +30,11 @@
 1. Validate event data.
 2. Ghi canonical record (bản ghi chuẩn gốc) vào `events`.
 3. Append audit `event.publish`.
-4. Nếu event được content tham chiếu hoặc notification dùng, emit downstream signal phù hợp.
+4. Nếu event được content tham chiếu, notification dùng, hoặc read model cần refresh, append outbox event downstream phù hợp.
 
 ## async (bất đồng bộ) side-effects
 - notification producer có thể enqueue job nếu flow nhắc sự kiện bật
+- personal practice calendar refresh signal nếu event ảnh hưởng cửa sổ lịch
 
 ## success result (kết quả thành công)
 - Event public read route có thể trả DTO chính xác.
@@ -55,4 +57,5 @@
 
 ## Notes for AI/codegen
 - Calendar sở hữu event record; content chỉ giữ relation `relatedEvent`.
+- Nếu signal downstream bị rơi, recovery path là replay outbox hoặc recompute window, không ghi tay notification state.
 

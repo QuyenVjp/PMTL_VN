@@ -20,6 +20,7 @@
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `communityPostSubmitSchema`
+- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - identity session
@@ -32,7 +33,7 @@
 3. Ghi canonical record (bản ghi chuẩn gốc) vào `communityPosts`.
 4. Khởi tạo summary fields đọc nhanh nếu collection dùng.
 5. Append audit `community.post.submit`.
-6. Enqueue notification nội bộ cho admin/super-admin nếu policy yêu cầu.
+6. Nếu policy yêu cầu attention nội bộ, append outbox event cho admin/super-admin notification hoặc moderation review signal.
 
 ## async (bất đồng bộ) side-effects
 - internal notification
@@ -55,6 +56,7 @@
 ## Idempotency / anti-spam
 - request guard là lớp chống flood chính.
 - không dùng notification job làm dấu hiệu canonical rằng bài đã được tạo.
+- replay outbox không được tạo duplicate alert rõ ràng.
 
 ## Performance target
 - submit path chỉ ghi record và enqueue downstream work.

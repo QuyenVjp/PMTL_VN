@@ -21,6 +21,7 @@
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `guestbookSubmitSchema`
 - route proxy forward correlation id và IP forwarding metadata theo policy hiện tại
+- nếu có downstream review signal thì outbox payload phải có schema runtime rõ
 
 ## Read set
 - request guard
@@ -32,7 +33,7 @@
 3. Ghi canonical entry vào `guestbookEntries`.
 4. Gán approval/moderation summary theo policy hiện tại.
 5. Append audit `guestbook.submit`.
-6. Enqueue notification cho admin/super-admin nếu cần duyệt.
+6. Nếu cần duyệt hoặc attention nội bộ, append outbox event cho admin/super-admin notification.
 
 ## async (bất đồng bộ) side-effects
 - internal moderation notification
@@ -52,6 +53,7 @@
 ## Idempotency / anti-spam
 - request guard là lớp chặn spam chính.
 - hashed IP hoặc fingerprint chỉ là abuse context, không là public contract (hợp đồng dữ liệu/nghiệp vụ).
+- replay outbox không được tạo duplicate review signal cho cùng entry.
 
 ## Performance target
 - submit nên trả nhanh, không đợi notification gửi xong.

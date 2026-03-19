@@ -18,6 +18,7 @@
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `registerSchema`
+- nếu có downstream email/signal thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - `users`
@@ -29,6 +30,7 @@
 4. Tạo auth session/token theo Payload auth.
 5. Set auth cookie ở web BFF.
 6. Append audit `auth.register`.
+7. Nếu có welcome email hoặc verification follow-up, append outbox event downstream.
 
 ## async (bất đồng bộ) side-effects
 - có thể có email welcome hoặc verification về sau, nhưng không phải canonical path hiện tại
@@ -47,6 +49,7 @@
 
 ## Idempotency / anti-spam
 - Retry cùng email sau khi user đã tạo phải trả conflict, không tạo nhiều user.
+- replay outbox không được tạo duplicate welcome/verification signal cho cùng user create event.
 
 ## Performance target
 - register nên `< 800ms` khi CMS khỏe.

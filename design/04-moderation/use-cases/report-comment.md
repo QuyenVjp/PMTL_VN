@@ -21,6 +21,7 @@
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `commentReportSchema`
 - route param dùng `publicId`
+- nếu có downstream alert thì outbox payload phải có event type, event version và idempotency key
 
 ## Read set
 - `postComments` hoặc comment target collection tương ứng
@@ -38,7 +39,7 @@
    - `lastReportReason`
    - `moderationStatus` hoặc `isHidden` nếu policy tự động kích hoạt
 6. Append audit `moderation.report.submit`.
-7. Enqueue alert cho admin/super-admin.
+7. Append outbox event cho admin/super-admin alert nếu policy cần.
 
 ## async (bất đồng bộ) side-effects
 - admin/super-admin notification
@@ -61,6 +62,7 @@
 ## Idempotency / anti-spam
 - Không cho cùng actor spam report cùng một target trong cửa sổ ngắn nếu policy đã xác định.
 - Retry do lỗi mạng không được tạo nhiều unresolved report giống hệt nhau.
+- replay outbox không được tạo duplicate alert cho cùng canonical report.
 
 ## Performance target
 - Canonical report create + enqueue alert nên `< 800ms`.

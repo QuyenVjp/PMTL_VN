@@ -34,7 +34,7 @@
 3. Ghi canonical comment record vào `postComments`.
 4. Cập nhật summary read model (mô hình dữ liệu đọc) nếu cần như `commentCount` trên post.
 5. Append audit event `community.comment.submit`.
-6. Enqueue moderation alert hoặc internal notification nếu policy bật.
+6. Nếu policy bật attention/review, append outbox event cho moderation alert hoặc internal notification.
 
 ## async (bất đồng bộ) side-effects
 - notification cho admin/super-admin
@@ -58,6 +58,7 @@
 ## Idempotency / anti-spam
 - request guard chịu trách nhiệm chống spam burst.
 - Nếu retry từ client do timeout, server nên tránh tạo duplicate rõ ràng khi có fingerprint phù hợp.
+- replay outbox không được tạo duplicate alert cho cùng canonical comment.
 
 ## Performance target
 - Ghi canonical comment + enqueue alert nên hoàn tất trong `< 800ms`.

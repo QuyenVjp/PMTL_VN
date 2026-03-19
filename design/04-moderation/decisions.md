@@ -89,3 +89,20 @@ Repo hiện tại chưa cần đến mức đó.
 ### Trade-off
 - Nếu moderation volume lớn hơn, sau này có thể cần queue (hàng đợi xử lý)/escalation model rõ hơn.
 
+## Decision 6. Moderation signal quan trọng đi qua outbox và summary phải recompute được
+
+### Context
+Report mới, decision resolve, notify affected user, và admin attention đều là downstream side effect quan trọng.
+
+### Decision
+- Canonical report write hoặc decision update phải commit vào `moderationReports` trước.
+- Alert/notify signal quan trọng đi qua `outbox_events`.
+- Summary trên target entity phải recompute được từ `moderationReports` nếu bị lệch.
+
+### Rationale
+- Giữ moderation cùng ngôn ngữ reliability với search, community, notification.
+- Dễ recovery khi summary hoặc notify downstream bị mất.
+
+### Trade-off
+- Tăng thêm outbox lag và summary recompute path cần quan sát.
+

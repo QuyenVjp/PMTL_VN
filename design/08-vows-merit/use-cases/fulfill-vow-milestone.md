@@ -41,6 +41,7 @@
 5. Recompute progress summary trên `vows`.
 6. Nếu đạt điều kiện hoàn thành, chuyển vow sang trạng thái `fulfilled` và set `fulfilledAt`.
 7. Append audit `vow.fulfill`.
+8. Nếu cần nhắc việc/chúc mừng/cập nhật lịch cá nhân, append outbox event downstream tương ứng.
 
 ## Async side-effects
 - update reminder candidates
@@ -69,6 +70,7 @@
 - nếu milestone tới từ source có `sourceRef`, phải dedupe theo `vow + sourceRef`
 - nếu là manual submit, UI nên chống bấm lặp
 - service nên từ chối append trùng rõ ràng trong cửa sổ ngắn nếu payload giống hệt
+- recovery path phải recompute được summary từ `vowProgressEntries` nếu downstream summary bị lệch.
 
 ## Performance target
 - append progress + recompute summary nên hoàn tất `< 600ms`

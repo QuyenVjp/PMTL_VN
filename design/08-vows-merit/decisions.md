@@ -31,3 +31,10 @@ Phóng sanh là thực hành có chuẩn bị và nghi thức hỗ trợ.
 - calendar cung cấp ngày quan trọng
 - notification chỉ gửi nhắc trên dữ liệu owner của module này
 
+## Decision 5. Vow/life-release signal quan trọng đi qua outbox và progress phải replay được
+
+### Decision
+- Canonical write của `vows`, `vowProgressEntries`, `lifeReleaseJournal` commit trước.
+- Reminder signal, recompute summary signal, và downstream notification quan trọng đi qua `outbox_events`.
+- Progress summary phải recompute hoặc replay được từ source records khi cần recovery.
+

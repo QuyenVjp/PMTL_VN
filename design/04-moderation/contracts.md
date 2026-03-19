@@ -26,6 +26,8 @@
   - `moderationStatus`
   - `approvalStatus`
   - `isHidden`
+- alert admin hoặc notify affected user quan trọng nên đi qua `outbox_events`
+- request payload, decision payload, protected-scope metadata và downstream event payload phải có schema runtime rõ
 
 ## Decision contract (hợp đồng dữ liệu/nghiệp vụ)
 
@@ -52,11 +54,12 @@ Expected decisions:
 - `409`
   - duplicate unresolved report hoặc state conflict
 - `500`
-  - lỗi sync summary / notify downstream
+  - lỗi sync summary, append outbox, hoặc notify downstream
 
 ## Notes for AI/codegen
 
 - `moderationReports` mới là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); summary field không phải lifecycle record.
 - Đừng expose full moderation internals cho route public/community.
 - Notify admin hoặc affected user là downstream async (bất đồng bộ), không phải canonical decision record.
+- Nếu summary drift xảy ra, recovery path chuẩn là recompute summary từ `moderationReports`, không vá tay mơ hồ trên target entity.
 

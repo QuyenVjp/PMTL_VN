@@ -10,11 +10,11 @@ Push dispatch và email notification đều có queue (hàng đợi xử lý)/wo
 
 ### Decision
 - Notification delivery không chạy đồng bộ trong request path.
-- Request path chỉ tạo job hoặc enqueue delivery.
+- Request path chỉ append outbox event hoặc tạo job điều phối.
 
 ### Rationale
 - Giảm latency.
-- Hợp với stack Redis + worker (tiến trình xử lý nền) đã chốt.
+- Hợp với stack outbox + execution queue + worker đã chốt.
 
 ### Trade-off
 - Delivery có eventual consistency.
@@ -86,4 +86,21 @@ Repo hiện enqueue email notification jobs nhưng chưa có email history colle
 
 ### Trade-off
 - Audit email delivery sâu hơn sẽ cần log/job sink hoặc model riêng trong tương lai.
+
+## Decision 6. Delivery request quan trọng phải đi qua outbox trước khi dispatch
+
+### Context
+Notify user/admin, push fan-out, email delivery request và webhook/revalidation đều là downstream side effect dễ rơi nếu request path chỉ fire-and-forget.
+
+### Decision
+- Notification module nhận business event quan trọng qua `outbox_events`.
+- Dispatcher mới phát push/email/webhook execution jobs.
+- Consumer phải idempotent theo event key hoặc dispatch key.
+
+### Rationale
+- Tăng độ chắc cho delivery request.
+- Dễ replay và điều tra hơn khi downstream lỗi.
+
+### Trade-off
+- Tăng độ phức tạp vận hành cho outbox/dispatcher/replay.
 

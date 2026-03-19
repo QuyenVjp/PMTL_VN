@@ -21,3 +21,10 @@
   - `Bạch thoại Phật pháp`
   - bài đọc căn bản
   - các bài hỏi đáp hay tra cứu
+
+## Decision 4. Publish/search/offline signal quan trọng đi qua outbox và phải rebuild được từ source đã duyệt
+
+### Decision
+- Canonical publish/update của `wisdomEntries`, `qaEntries`, `offlineBundles` commit trước.
+- Search sync và offline bundle refresh signal quan trọng đi qua `outbox_events`.
+- Search index, bundle manifest, và derived extraction phải rebuild/replay được từ source records đã duyệt.

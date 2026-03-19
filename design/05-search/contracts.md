@@ -17,6 +17,8 @@
 - search document trong Meilisearch là computed projection
 - sync guarantee hiện tại là `at-least-once`
 - search update phải idempotent theo `document id + updatedAt/version`
+- business event phát search sync phải đi qua `outbox_events`
+- search payload nên có version rõ nếu thay đổi shape theo thời gian
 
 ## Unified wisdom retrieval rule
 
@@ -34,6 +36,7 @@ Search result phải nói rõ engine:
 
 Status route nên phản ánh:
 - search engine health
+- outbox lag / retry state
 - queue (hàng đợi xử lý) state
 - index document count
 - index freshness / last successful sync
@@ -55,5 +58,6 @@ Status route nên phản ánh:
 - Batch reindex là operational action, nên có audit và status riêng.
 - Đừng dùng search index làm nơi quyết định publish state.
 - worker (tiến trình xử lý nền) chết giữa chừng phải dẫn đến retry/recovery, không được coi như sync đã hoàn tất.
-- Current scope chưa bắt buộc outbox pattern; nếu drift tăng, nâng cấp này là hợp lệ.
+- Current scope chuẩn hóa theo outbox-driven projection cho business event quan trọng.
+- `pgvector` chỉ là optional capability cho related-content / recommendation, không thay search box Meilisearch.
 

@@ -28,6 +28,8 @@ Nguồn:
 - session authority không nằm ở frontend store
 - permission logic chi tiết xem thêm `PERMISSION_MATRIX.md`
 - `admin` trong current scope là role vận hành, không bị giới hạn kiểu `chỉ sửa record của chính mình`
+- request payload, provider callback payload, session payload và env config liên quan auth phải có schema runtime rõ
+- email/reset/provider notification signal nếu có nên đi qua `outbox_events`
 
 ## Response rules
 
@@ -55,7 +57,7 @@ Không expose:
 - `409`
   - email đã tồn tại
 - `500`
-  - CMS auth runtime lỗi
+  - CMS auth runtime lỗi, append outbox lỗi, hoặc provider mapping lỗi
 
 ## Notes for AI/codegen
 
@@ -63,4 +65,5 @@ Không expose:
 - `users` là canonical owner của account + profile cơ bản.
 - Public/client state phải theo session do CMS phát hành, không tự phát minh token model khác.
 - Đừng tự bịa role `editor` hoặc `moderator` trở lại nếu design hiện tại chưa tách.
+- Nếu auth side-effect downstream bị lệch, recovery path phải dựa trên canonical `users` + auth state, không vá client token state bằng tay.
 
