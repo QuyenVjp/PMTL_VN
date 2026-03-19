@@ -2,8 +2,6 @@ import "server-only";
 
 import Redis from "ioredis";
 
-import { logger } from "@/lib/logger";
-
 let redisClient: Redis | null | undefined;
 
 function normalizeRedisUrl(value: string | undefined): string | null {
@@ -52,7 +50,7 @@ export function getRedisClient(): Redis | null {
   });
 
   redisClient.on("error", (error) => {
-    logger.error("Web Redis client error", { error, redisUrl });
+    console.error("[pmtl-web-redis] Web Redis client error", { error, redisUrl });
   });
 
   return redisClient;
@@ -79,7 +77,7 @@ export async function closeRedisClient(): Promise<void> {
   try {
     await redisClient.quit();
   } catch (error) {
-    logger.warn("Failed to close web Redis client cleanly", { error });
+    console.warn("[pmtl-web-redis] Failed to close web Redis client cleanly", { error });
   } finally {
     redisClient = null;
   }

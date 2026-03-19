@@ -1,15 +1,52 @@
-import * as Sentry from "@sentry/node";
-
 import { getWebServerSentryOptions, isServerSentryEnabled } from "@/lib/observability/sentry";
 
+type SentryScope = {
+  setTag(key: string, value: string): void;
+  setExtra(key: string, value: unknown): void;
+};
+
+type SentryModule = {
+  init(options: Record<string, unknown>): void;
+  withScope<T>(callback: (scope: SentryScope) => T): T;
+  captureException(error: unknown): string;
+  captureMessage(message: string, level?: string): string;
+  flush(timeoutMs?: number): Promise<boolean>;
+  close(timeoutMs?: number): Promise<boolean>;
+};
+
 let initialized = false;
+let sentryModule: SentryModule | null = null;
+
+function isEdgeRuntime() {
+  return "EdgeRuntime" in globalThis || process.env.NEXT_RUNTIME === "edge";
+}
+
+function getSentryModule() {
+  if (sentryModule || isEdgeRuntime()) {
+    return sentryModule;
+  }
+
+  try {
+    const localRequire = Function("return require")() as NodeRequire;
+    sentryModule = localRequire("@sentry/node") as SentryModule;
+  } catch {
+    sentryModule = null;
+  }
+
+  return sentryModule;
+}
 
 function ensureInitialized() {
   if (initialized || !isServerSentryEnabled()) {
     return isServerSentryEnabled();
   }
 
-  Sentry.init({
+  const sentry = getSentryModule();
+  if (!sentry) {
+    return false;
+  }
+
+  sentry.init({
     ...getWebServerSentryOptions(),
     defaultIntegrations: false,
   });
@@ -22,7 +59,12 @@ export function captureWebServerException(error: unknown, context?: Record<strin
     return "sentry-disabled";
   }
 
-  return Sentry.withScope((scope) => {
+  const sentry = getSentryModule();
+  if (!sentry) {
+    return "sentry-disabled";
+  }
+
+  return sentry.withScope((scope) => {
     scope.setTag("app", "web");
 
     if (context) {
@@ -31,7 +73,7 @@ export function captureWebServerException(error: unknown, context?: Record<strin
       }
     }
 
-    return Sentry.captureException(error);
+    return sentry.captureException(error);
   });
 }
 
@@ -40,7 +82,12 @@ export function captureWebServerMessage(message: string, context?: Record<string
     return "sentry-disabled";
   }
 
-  return Sentry.withScope((scope) => {
+  const sentry = getSentryModule();
+  if (!sentry) {
+    return "sentry-disabled";
+  }
+
+  return sentry.withScope((scope) => {
     scope.setTag("app", "web");
 
     if (context) {
@@ -49,7 +96,7 @@ export function captureWebServerMessage(message: string, context?: Record<string
       }
     }
 
-    return Sentry.captureMessage(message, "warning");
+    return sentry.captureMessage(message, "warning");
   });
 }
 
@@ -58,7 +105,8 @@ export async function flushWebServerSentry(timeoutMs = 2000) {
     return false;
   }
 
-  return Sentry.flush(timeoutMs);
+  const sentry = getSentryModule();
+  return sentry ? sentry.flush(timeoutMs) : false;
 }
 
 export async function closeWebServerSentry(timeoutMs = 2000) {
@@ -66,5 +114,6 @@ export async function closeWebServerSentry(timeoutMs = 2000) {
     return false;
   }
 
-  return Sentry.close(timeoutMs);
+  const sentry = getSentryModule();
+  return sentry ? sentry.close(timeoutMs) : false;
 }

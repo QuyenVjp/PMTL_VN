@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shlex
+import shutil
 import subprocess
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -19,10 +22,35 @@ SMOKE_DOCKER_ENV = {
 }
 
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+
+def emit_json(payload: dict[str, object]) -> None:
+    print(json.dumps(payload, ensure_ascii=True, indent=2))
+
+
 def run_process(command: list[str], *, cwd: Path = ROOT) -> dict[str, object]:
-    completed = subprocess.run(command, cwd=cwd, capture_output=True, text=True)
+    resolved_command = command[:]
+    if os.name == "nt":
+        command_line = subprocess.list2cmdline(command)
+        cmd_exe = os.environ.get("COMSPEC") or r"C:\Windows\System32\cmd.exe"
+        resolved_command = [cmd_exe, "/d", "/s", "/c", command_line]
+    else:
+        executable = resolved_command[0]
+        if shutil.which(executable) is None and shutil.which(f"{executable}.cmd"):
+            resolved_command[0] = f"{executable}.cmd"
+
+    completed = subprocess.run(
+        resolved_command,
+        cwd=cwd,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     return {
-        "command": command,
+        "command": resolved_command,
         "exit_code": completed.returncode,
         "stdout": completed.stdout.strip(),
         "stderr": completed.stderr.strip(),
@@ -59,9 +87,33 @@ def shell_prefix(env: dict[str, str] | None) -> str:
     return " ".join(f"{key}={shlex.quote(value)}" for key, value in env.items()) + " "
 
 
+def resolve_service_container(service: str) -> str:
+    preferred_name = f"docker-{service}-1"
+    direct = subprocess.run(
+        ["docker", "inspect", preferred_name],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if direct.returncode == 0:
+        return preferred_name
+
+    compose_result = subprocess.run(
+        [*compose_base_args(), "ps", "-q", service],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    container_id = compose_result.stdout.strip()
+    if compose_result.returncode == 0 and container_id:
+        return container_id
+
+    return preferred_name
+
+
 def run_in_service(service: str, command: list[str], *, env: dict[str, str] | None = None) -> dict[str, object]:
     shell_command = f"cd /app && {shell_prefix(env)}{' '.join(shlex.quote(part) for part in command)}"
-    return run_process([*compose_base_args(), "exec", "-T", service, "sh", "-lc", shell_command])
+    return run_process(["docker", "exec", resolve_service_container(service), "sh", "-lc", shell_command])
 
 
 def detect_runtime(preferred: str, *, required_services: set[str], default_auto: str) -> str:
@@ -107,7 +159,7 @@ def quality_gate(scope: str, skip_tests: bool, runtime: str) -> int:
     runner = (lambda command: run_in_service(service, command)) if selected_runtime == "docker" else run_process
     results = [runner(command) for command in commands]
     ok = all(result["exit_code"] == 0 for result in results)
-    print(json.dumps({"ok": ok, "runtime": selected_runtime, "scope": scope, "results": results}, ensure_ascii=False, indent=2))
+    emit_json({"ok": ok, "runtime": selected_runtime, "scope": scope, "results": results})
     return 0 if ok else 1
 
 
@@ -127,7 +179,7 @@ def smoke_suite(suite: str, runtime: str) -> int:
         result = run_process(commands[suite])
 
     ok = result["exit_code"] == 0
-    print(json.dumps({"ok": ok, "runtime": selected_runtime, "suite": suite, "result": result}, ensure_ascii=False, indent=2))
+    emit_json({"ok": ok, "runtime": selected_runtime, "suite": suite, "result": result})
     return 0 if ok else 1
 
 
@@ -147,19 +199,15 @@ def auth_flow(runtime: str) -> int:
         isinstance(item, dict) and item.get("step") == "member-login" and item.get("status") == "ok"
         for item in auth_results
     )
-    print(
-        json.dumps(
-            {
-                "ok": ok,
-                "runtime": selected_runtime,
-                "command": result["command"],
-                "exit_code": result["exit_code"],
-                "auth_results": auth_results,
-                "stderr": result["stderr"],
-            },
-            ensure_ascii=False,
-            indent=2,
-        )
+    emit_json(
+        {
+            "ok": ok,
+            "runtime": selected_runtime,
+            "command": result["command"],
+            "exit_code": result["exit_code"],
+            "auth_results": auth_results,
+            "stderr": result["stderr"],
+        }
     )
     return 0 if ok else 1
 
@@ -187,20 +235,16 @@ def search_sync(all_pages: bool, page: int, limit: int, health_url: str | None, 
         health = {"ok": False, "status": None, "body": str(error)}
 
     ok = result["exit_code"] == 0 and health["ok"]
-    print(
-        json.dumps(
-            {
-                "ok": ok,
-                "runtime": selected_runtime,
-                "command": result["command"],
-                "exit_code": result["exit_code"],
-                "stdout": result["stdout"],
-                "stderr": result["stderr"],
-                "health": health,
-            },
-            ensure_ascii=False,
-            indent=2,
-        )
+    emit_json(
+        {
+            "ok": ok,
+            "runtime": selected_runtime,
+            "command": result["command"],
+            "exit_code": result["exit_code"],
+            "stdout": result["stdout"],
+            "stderr": result["stderr"],
+            "health": health,
+        }
     )
     return 0 if ok else 1
 
@@ -220,7 +264,7 @@ def bootstrap() -> int:
     install_result = run_process(["pnpm", "install"])
     results.append({"step": "pnpm-install", **install_result})
     ok = install_result["exit_code"] == 0
-    print(json.dumps({"ok": ok, "results": results}, ensure_ascii=False, indent=2))
+    emit_json({"ok": ok, "results": results})
     return 0 if ok else 1
 
 

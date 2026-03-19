@@ -3,9 +3,6 @@ set -eu
 
 service="${1:?service is required}"
 lock_dir="node_modules/.docker-dev-install.lock"
-stamp_file="node_modules/.docker-dev-lockfile.sha256"
-lock_hash="$(sha256sum pnpm-lock.yaml | awk '{print $1}')"
-current_hash="$(cat "$stamp_file" 2>/dev/null || true)"
 
 case "$service" in
   web)
@@ -26,11 +23,18 @@ case "$service" in
     ;;
 esac
 
+stamp_file="node_modules/.docker-dev-${service}.sha256"
+lock_hash="$(
+  cat pnpm-lock.yaml package.json "$workspace_dir/package.json" | sha256sum | awk '{print $1}'
+)"
+current_hash="$(cat "$stamp_file" 2>/dev/null || true)"
+
 install_deps() {
   echo "[docker-dev] Installing workspace dependencies..."
   rm -rf "$workspace_dir/node_modules"
   CI=true pnpm install --frozen-lockfile --prefer-offline
   printf "%s" "$lock_hash" > "$stamp_file"
+  current_hash="$lock_hash"
 }
 
 wait_for_install() {

@@ -5,7 +5,6 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { ensureRedisConnected } from "@/lib/cache/redis";
-import { logger } from "@/lib/logger";
 import { getClientIp } from "@/lib/security/request-context";
 
 const envSchema = z.object({
@@ -52,6 +51,14 @@ export type RateLimitResult = {
 
 const limiterCache = new Map<string, { limiter: RateLimiterLike; store: "memory" | "redis" }>();
 
+function logRateLimitWarn(message: string, context?: Record<string, unknown>) {
+  console.warn(`[pmtl-web-rate-limit] ${message}`, context);
+}
+
+function logRateLimitError(message: string, context?: Record<string, unknown>) {
+  console.error(`[pmtl-web-rate-limit] ${message}`, context);
+}
+
 function getMemoryLimiter(profile: RateLimitProfile) {
   return new RateLimiterMemory({
     blockDuration: Math.ceil(profile.blockDurationMs / 1000),
@@ -81,7 +88,7 @@ async function getLimiter(profile: RateLimitProfile): Promise<{ limiter: RateLim
       throw error;
     }
 
-    logger.warn("Web rate-limit Redis connect failed, using memory fallback", { error, profile: profile.name });
+    logRateLimitWarn("Web rate-limit Redis connect failed, using memory fallback", { error, profile: profile.name });
     return null;
   });
 
@@ -208,7 +215,7 @@ export async function checkRateLimit(request: NextRequest, profile = resolveRate
       return formatResult(profile, key, error, store, false);
     }
 
-    logger.error("Web rate limiter failed unexpectedly; blocking request", {
+    logRateLimitError("Web rate limiter failed unexpectedly; blocking request", {
       error,
       key,
       profile: profile.name,

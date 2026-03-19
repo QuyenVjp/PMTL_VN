@@ -1,5 +1,4 @@
 import { isServerSentryEnabled } from "@/lib/observability/sentry";
-import { captureWebServerException } from "@/lib/observability/server-sentry";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
@@ -14,6 +13,7 @@ export async function onRequestError(...args: unknown[]) {
   }
 
   const error = args[0] instanceof Error ? args[0] : new Error("Next request error");
+  const { captureWebServerException } = await import("@/lib/observability/server-sentry");
   captureWebServerException(error, {
     request_error_args: args.map((value) =>
       value instanceof Error

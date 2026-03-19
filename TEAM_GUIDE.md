@@ -26,3 +26,5 @@
 - Prefer `py infra/tools/codex_actions.py ...` over long ad hoc shell commands.
 - Prefer repo wrappers over direct `docker compose exec ...` unless the task needs a one-off diagnostic.
 - For verification, `codex_actions.py` auto-selects Docker when the check depends on the repo runtime more than the host shell.
+- Database inspection for PMTL: prefer the `postgres-pmtl` MCP server when the Docker dev stack is up. It targets `127.0.0.1:55432`, which maps to the dev Postgres container on this repo.
+- Treat `postgres-pmtl` as a local-dev database tool only. Do not point it at production or long-lived shared environments.
