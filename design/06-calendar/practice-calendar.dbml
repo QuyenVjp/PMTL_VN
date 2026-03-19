@@ -38,6 +38,8 @@ Table personal_practice_calendar_read_model {
   recommended_windows jsonb [note: "Khung gio goi y / recommended practice windows"]
   vow_hooks jsonb [note: "Lien ket nguyen luc / vow hooks"]
   life_release_hooks jsonb [note: "Lien ket phong sanh / life release hooks"]
+  advisory_cards jsonb [note: "Thong bao tu hoc rut gon / concise daily practice advisory cards"]
+  source_refs jsonb [note: "Link bai goc, bai dich, community support refs"]
   source_version varchar(64)
   generated_at timestamptz [not null]
 }

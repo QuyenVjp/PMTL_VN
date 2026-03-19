@@ -3,21 +3,21 @@
 ## Purpose
 - Làm mới `personalPracticeCalendarReadModel` khi lịch âm, preference, vow, hoặc phóng sanh context thay đổi.
 
-## Owner module
+## owner module (module sở hữu)
 - `calendar`
 
 ## Actors
 - `system`
 - `admin` khi chạy thủ công
 
-## Trigger
+## trigger (điểm kích hoạt)
 - event/lunar data thay đổi
 - preference summary thay đổi
 - vow milestone hoặc life-release summary thay đổi
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - source data đọc được
-- read model service khả dụng
+- read model (mô hình dữ liệu đọc) service (lớp xử lý nghiệp vụ) khả dụng
 
 ## Read set
 - `events`
@@ -27,18 +27,18 @@
 - vow summaries
 - life release summaries
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Xác định cửa sổ ngày cần refresh.
 2. Resolve source inputs theo từng ngày.
 3. Compose `dayTags`, `recommendedItems`, `recommendedWindows`.
 4. Upsert `personalPracticeCalendarReadModel`.
 5. Append audit `practice-calendar.refresh` nếu là manual/admin run.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - enqueue reminder candidate rebuild nếu flow bật
 
-## Success result
-- Read model sẵn sàng cho route `GET /api/practice-calendar`.
+## success result (kết quả thành công)
+- read model (mô hình dữ liệu đọc) sẵn sàng cho route `GET /api/practice-calendar`.
 
 ## Errors
 - `400`: input window không hợp lệ.
@@ -46,4 +46,5 @@
 - `500`: lỗi compose hoặc persistence.
 
 ## Notes for AI/codegen
-- Đây là derived read model refresh, không được làm thay đổi ownership của event/lunar canonical data.
+- Đây là derived read model (mô hình dữ liệu đọc) refresh, không được làm thay đổi ownership của event/lunar canonical data.
+

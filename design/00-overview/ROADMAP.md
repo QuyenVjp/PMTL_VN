@@ -11,7 +11,7 @@ Nó không phải kế hoạch xây lại hệ thống từ đầu.
 Ưu tiên là làm cho:
 - `design/*`
 - `docs/*`
-- schema/flows/decisions
+- schema (lược đồ dữ liệu)/flows/decisions
 
 không còn mâu thuẫn với implementation đang chạy.
 
@@ -48,7 +48,7 @@ không còn mâu thuẫn với implementation đang chạy.
 
 ### Mục tiêu
 - chốt 10 quyết định cắt ngang toàn hệ thống
-- chốt owner, reference, sync/async, side effects giữa các module
+- chốt owner, reference, sync/async (bất đồng bộ), side effects giữa các module
 
 ### Exit criteria
 - module-level design sau đó có thể bám foundation này
@@ -68,23 +68,23 @@ không còn mâu thuẫn với implementation đang chạy.
 
 ### Exit criteria
 - content design không còn giả định single-table
-- content boundary tách sạch khỏi engagement và moderation ownership
+- content boundary (ranh giới trách nhiệm) tách sạch khỏi engagement và moderation ownership
 
 ## Phase 4. Identity Module
 
 ### Files
-- `design/identity/module-map.md`
-- `design/identity/flows.mmd`
-- `design/identity/schema.dbml`
-- `design/identity/decisions.md`
+- `design/00-00-identity/module-map.md`
+- `design/00-00-identity/flows.mmd`
+- `design/00-00-identity/schema.dbml`
+- `design/00-00-identity/decisions.md`
 
 ### Mục tiêu
 - ghi rõ auth model hiện tại
 - ghi rõ role model
-- ghi rõ public/profile identity contract
+- ghi rõ public/profile identity contract (hợp đồng dữ liệu/nghiệp vụ)
 
 ### Exit criteria
-- auth/authz design đủ rõ để AI generate code đúng boundary web/cms
+- auth/authz design đủ rõ để AI generate code đúng boundary (ranh giới trách nhiệm) web/cms
 
 ## Phase 5. Remaining Modules
 
@@ -128,9 +128,9 @@ không còn mâu thuẫn với implementation đang chạy.
 - mọi module chính đều có:
   - module map
   - flows
-  - schema
+  - schema (lược đồ dữ liệu)
   - decisions
-- các file phản ánh owner thật, contract thật, side effects thật
+- các file phản ánh owner thật, contract (hợp đồng dữ liệu/nghiệp vụ) thật, side effects thật
 
 ## Sau khi hoàn tất design
 
@@ -141,7 +141,7 @@ không còn mâu thuẫn với implementation đang chạy.
 
 ### Mục tiêu cuối
 - design khớp implementation
-- AI có thể generate code đúng boundary
+- AI có thể generate code đúng boundary (ranh giới trách nhiệm)
 - docs không còn phủ định nhau
 
 ## File structure mục tiêu
@@ -189,7 +189,7 @@ design/
     flows.mmd
     schema.dbml
     decisions.md
-  identity/
+  00-identity/
     module-map.md
     flows.mmd
     schema.dbml
@@ -207,3 +207,5 @@ design/
 - [ ] Identity module được mô tả
 - [ ] Community / Moderation / Engagement / Search / Notification / Calendar được mô tả
 - [ ] Docs sync không còn mâu thuẫn
+
+

@@ -21,7 +21,7 @@ markmap:
 - Payload auth là auth authority duy nhất
 - `apps/cms` sở hữu login/register/logout/reset-password/session flow
 - Google login được phép tồn tại nhưng phải map về cùng `users` collection và cùng session authority của Payload
-- Web chỉ tiêu thụ auth contract từ CMS
+- Web chỉ tiêu thụ auth contract (hợp đồng dữ liệu/nghiệp vụ) từ CMS
 
 ## Collection thuộc module
 - `users`
@@ -84,5 +84,6 @@ markmap:
 ## Current rules
 - không dùng auth framework thứ hai cho session hoặc đăng nhập
 - không tạo users store thứ hai ngoài `users`
-- role thay đổi bởi `super-admin` hoặc `admin` theo scope quản trị, không bởi public self-service flow
-- public profile chỉ nên lộ field đã map qua contract, không trả raw user document
+- role thay đổi bởi `super-admin` hoặc `admin` theo scope quản trị, không bởi public self-service (lớp xử lý nghiệp vụ) flow
+- public profile chỉ nên lộ field đã map qua contract (hợp đồng dữ liệu/nghiệp vụ), không trả raw user document
+

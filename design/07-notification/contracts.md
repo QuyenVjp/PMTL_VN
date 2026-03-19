@@ -16,9 +16,9 @@
 
 ## Canonical rules
 
-- subscription canonical record nằm ở `pushSubscriptions`
-- dispatch control-plane canonical record nằm ở `pushJobs`
-- gửi push/email thật là async worker concern
+- subscription canonical record (bản ghi chuẩn gốc) nằm ở `pushSubscriptions`
+- dispatch control-plane (lớp điều phối hệ thống) canonical record (bản ghi chuẩn gốc) nằm ở `pushJobs`
+- gửi push/email thật là async (bất đồng bộ) worker (tiến trình xử lý nền) concern
 
 ## Permission baseline
 
@@ -51,10 +51,11 @@ Subscribe payload phải có:
 - `409`
   - duplicate subscription hoặc state conflict
 - `500`
-  - create job hoặc worker dispatch fail
+  - create job hoặc worker (tiến trình xử lý nền) dispatch fail
 
 ## Notes for AI/codegen
 
 - `pushJobs` không phải inbox canonical của người dùng.
-- Notification là async-only; request path nên tạo/sửa job rồi trả sớm.
+- Notification là async-only (chỉ chạy ngầm, bất đồng bộ); request path nên tạo hoặc sửa job rồi trả sớm.
 - Self-send prevention nên xử lý ở job payload/rule, không hack ở UI.
+

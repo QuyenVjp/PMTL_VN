@@ -1,18 +1,18 @@
-# Collection & Service Boundaries
+# Collection & service (lớp xử lý nghiệp vụ) Boundaries
 
 File này là lớp bridge giữa design và code implementation.
 Nó trả lời:
 
 - module nào nên có collection nào
 - collection nào là canonical owner
-- service nào nên ôm business logic
+- service (lớp xử lý nghiệp vụ) nào nên ôm business logic
 
 ## Quy tắc chung
 
-- collection owner giữ canonical record
-- service owner giữ business write-path
+- collection owner giữ canonical record (bản ghi chuẩn gốc)
+- service (lớp xử lý nghiệp vụ) owner giữ business write-path
 - hook chỉ orchestration mỏng
-- route chỉ validate, gọi service, map response
+- route chỉ validate, gọi service (lớp xử lý nghiệp vụ), map response
 
 ## Module by module
 
@@ -29,7 +29,7 @@ Collections hiện có:
 - `SutraChapters`
 - `SutraGlossary`
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - slug/publicId/source field normalization
 - publish eligibility
 - DTO mapping
@@ -43,7 +43,7 @@ Collections hiện có:
 - `CommunityComments`
 - `GuestbookEntries`
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - submit validation orchestration
 - anti-spam / request guard coordination
 - author snapshot rules
@@ -61,18 +61,18 @@ Collections nên bổ sung:
 - `PracticeSheets` hoặc `NgoiNhaNhoSheets`
 - `PracticeSheetEntries` hoặc embedded counters theo tờ
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - self-owned upsert
 - `Ngôi Nhà Nhỏ` counting rules
 - practice session state transitions
-- compose content refs into usable practice read model
+- compose content refs into usable practice read model (mô hình dữ liệu đọc)
 
 ### 04-moderation
 
 Collections hiện có:
 - `ModerationReports`
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - report submit
 - duplicate report prevention
 - target summary sync
@@ -81,12 +81,12 @@ Service responsibilities:
 ### 05-search
 
 Collections hiện có:
-- không cần collection canonical riêng nếu search là index/control-plane
+- không cần collection canonical riêng nếu search là index/control-plane (lớp điều phối hệ thống)
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - index document build
 - engine query
-- fallback read
+- fallback (đường dự phòng) read
 - batch reindex orchestration
 
 ### 06-calendar
@@ -98,9 +98,9 @@ Collections hiện có:
 
 Collections/read models nên bổ sung khi cần:
 - `PracticeCalendarRules` nếu rule layer lớn hơn current event/lunar shape
-- hoặc generate read model mà không thêm collection nếu đủ đơn giản
+- hoặc generate read model (mô hình dữ liệu đọc) mà không thêm collection nếu đủ đơn giản
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - lunar resolution
 - important practice day tagging
 - reminder candidate generation
@@ -111,7 +111,7 @@ Collections hiện có:
 - `PushSubscriptions`
 - `PushJobs`
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - subscription upsert
 - job create
 - recipient resolution
@@ -126,7 +126,7 @@ Collections nên bổ sung:
 - `LifeReleaseJournal`
 - `LifeReleaseChecklistSnapshots` hoặc embedded checklist snapshot
 
-Service responsibilities:
+service (lớp xử lý nghiệp vụ) responsibilities:
 - vow lifecycle
 - milestone calculation
 - fulfillment checks
@@ -141,11 +141,11 @@ Collections nên bổ sung:
 - `OfflineBundles`
 - `MediaAssets` chỉ nếu content/media hiện tại chưa đủ diễn đạt offline pack
 
-Service responsibilities:
-- source ingestion metadata
+service (lớp xử lý nghiệp vụ) responsibilities:
+- source ingestion (nhập dữ liệu) metadata
 - tag normalization
 - retrieval ranking
-- offline bundle build
+- offline bundle (gói tải ngoại tuyến) build
 - bilingual/translation mapping
 
 ## Khuyến nghị placement trong repo
@@ -166,5 +166,6 @@ Service responsibilities:
 
 ## Notes for AI/codegen
 
-- Nếu phải tạo collection mới, tạo theo owner module thay vì nhét vào collection cũ cho tiện.
-- Nếu một service cần chạm nhiều module, tách orchestration ở owner service trước khi nghĩ đến shared abstraction.
+- Nếu phải tạo collection mới, tạo theo owner module (module sở hữu) thay vì nhét vào collection cũ cho tiện.
+- Nếu một service (lớp xử lý nghiệp vụ) cần chạm nhiều module, tách orchestration ở owner service (lớp xử lý nghiệp vụ) trước khi nghĩ đến shared abstraction.
+

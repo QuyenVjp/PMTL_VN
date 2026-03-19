@@ -43,7 +43,7 @@ Không expose:
 ## Error expectations
 
 - `400`
-  - schema fail
+  - schema (lược đồ dữ liệu) fail
   - password/token/body không hợp lệ
 - `401`
   - credentials sai
@@ -63,3 +63,4 @@ Không expose:
 - `users` là canonical owner của account + profile cơ bản.
 - Public/client state phải theo session do CMS phát hành, không tự phát minh token model khác.
 - Đừng tự bịa role `editor` hoặc `moderator` trở lại nếu design hiện tại chưa tách.
+

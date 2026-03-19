@@ -27,12 +27,36 @@ markmap:
 - `Phật ngôn Phật ngữ`
 - `bài pháp hội`
 - curated excerpts hoặc entry đã duyệt
+- mỗi entry nên hỗ trợ cặp:
+  - `nguyên văn gốc`
+  - `bản dịch tiếng Việt`
+  - `source URL`
+  - `source provenance (tầng nguồn gốc dữ liệu)`
+  - `ảnh chụp / screenshot nguồn`
+  - `review status (trạng thái kiểm duyệt)`
 
 ### QA entries
 - `Huyền học vấn đáp`
 - `Phật học vấn đáp`
 - alias theo chủ đề đời sống
 - source mapping về bài gốc
+- nên hỗ trợ format bài thực tế:
+  - `mã bài / timestamp`
+  - `question original`
+  - `answer original`
+  - `bản dịch Việt`
+  - `link gốc`
+  - `ảnh bài nếu có`
+  - `practice rule extraction` nếu có rule cụ thể
+
+### Teacher / authority profile
+- metadata giới thiệu `Sư Phụ Lư Quân Hoành` hoặc authority profile liên quan
+- phải tách rõ:
+  - `official-source-backed facts`
+  - `community-translated profile`
+  - `doctrinal claims / testimonial claims`
+- không trộn mọi loại claim vào một field văn xuôi duy nhất
+- phải giữ provenance (nguồn gốc dữ liệu) rõ để tránh lẫn fact, translation, và testimony
 
 ### Media learning model
 - audio entry metadata
@@ -68,6 +92,10 @@ markmap:
 ### Khai thị và Phật ngôn
 - surface đọc nhanh cho bài chỉ dạy ngắn hoặc trích đoạn quan trọng
 - phân loại theo chủ đề, dịp, pháp hội, hoặc hoàn cảnh tu học
+- cho phép song song:
+  - bản gốc Hoa
+  - bản dịch Việt
+  - link bài nguồn để cộng đồng cùng kiểm duyệt
 
 ### Audio / video / offline
 - nghe lại chương trình
@@ -82,7 +110,9 @@ markmap:
 - curated retrieval records
 - source mapping cho entry tri thức
 - media metadata phục vụ học/tra cứu
-- offline bundle metadata
+- offline bundle (gói tải ngoại tuyến) metadata
+- review state cho bản dịch và bài song ngữ
+- source provenance (tầng nguồn gốc dữ liệu) cho bài gốc, official mirror, và web phụng sự viên
 
 ### Wisdom & QA does not own
 - canonical beginner guide/hub pages
@@ -107,3 +137,5 @@ markmap:
 - không dùng AI sinh lời giải mới
 - audio/video là first-class learning surface, không phải phần phụ
 - offline là nhu cầu thật, không phải nice-to-have
+- bài song ngữ `gốc + dịch` là first-class format, không phải ghi chú phụ
+

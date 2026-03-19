@@ -1,24 +1,24 @@
 # Report Comment
 
 ## Purpose
-- Cho phép người dùng báo cáo một bình luận không phù hợp, đồng thời giữ source of truth tập trung ở moderation module.
+- Cho phép người dùng báo cáo một bình luận không phù hợp, đồng thời giữ source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) tập trung ở moderation module.
 
-## Owner module
+## owner module (module sở hữu)
 - `moderation`
 
 ## Actors
 - `member`
 - `guest` nếu route hiện tại cho phép theo policy
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Web gọi `POST /api/comments/:publicId/report` hoặc route report comment tương đương.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Target comment tồn tại.
 - `reason` hợp lệ theo `commentReportSchema`.
 - Actor chưa bị anti-spam/request guard chặn.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `commentReportSchema`
 - route param dùng `publicId`
 
@@ -28,11 +28,11 @@
 - identity session nếu có
 - request guard nếu policy dùng
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Resolve target comment bằng `publicId`.
 2. Validate payload report.
 3. Kiểm tra duplicate unresolved report theo policy.
-4. Ghi canonical record vào `moderationReports`.
+4. Ghi canonical record (bản ghi chuẩn gốc) vào `moderationReports`.
 5. Sync summary fields lên entity đích:
    - `reportCount`
    - `lastReportReason`
@@ -40,10 +40,10 @@
 6. Append audit `moderation.report.submit`.
 7. Enqueue alert cho admin/super-admin.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - admin/super-admin notification
 
-## Success result
+## success result (kết quả thành công)
 - Report source record được tạo.
 - Target entity có summary fields mới để admin/public filtering dùng.
 
@@ -66,5 +66,6 @@
 - Canonical report create + enqueue alert nên `< 800ms`.
 
 ## Notes for AI/codegen
-- `moderationReports` là source of truth; đừng nhét full report lifecycle vào `postComments`.
-- Summary fields trên target chỉ là read model.
+- `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); đừng nhét full report lifecycle vào `postComments`.
+- Summary fields trên target chỉ là read model (mô hình dữ liệu đọc).
+

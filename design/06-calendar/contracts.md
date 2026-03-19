@@ -19,7 +19,8 @@
 - event ownership nằm ở calendar
 - content chỉ tham chiếu event qua relation như `relatedEvent`
 - lunar override chỉ sửa cách lịch được diễn giải/hiển thị, không chuyển ownership sang module khác
-- personal practice calendar là `derived read model`, không phải canonical owner của event/lunar data
+- personal practice calendar là `derived read model (mô hình dữ liệu đọc)`, không phải canonical owner của event/lunar data
+- `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output read-model của calendar, không phải canonical owner của bài gốc hoặc bản dịch gốc
 
 ## Error expectations
 
@@ -41,3 +42,5 @@
 - Calendar không copy ritual script vào event record nếu content đã sở hữu dữ liệu đó.
 - Nếu có thông báo nhắc sự kiện, notification chỉ đọc context, không sở hữu event data.
 - Route `GET /api/practice-calendar` có thể ghép thêm preference/vow context, nhưng vẫn phải coi calendar là owner của read composition.
+- Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng các source-backed text gốc vẫn do `09-wisdom-qa` sở hữu.
+

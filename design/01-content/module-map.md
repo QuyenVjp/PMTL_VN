@@ -53,7 +53,7 @@ markmap:
 ### Publish
 - dùng Payload drafts cho workflow gốc
 - public delivery dựa trên publish state
-- giữ `publishedAt` cho read/search contract
+- giữ `publishedAt` cho read/search contract (hợp đồng dữ liệu/nghiệp vụ)
 
 ### Search source fields
 - `contentPlainText`
@@ -107,7 +107,7 @@ markmap:
 ### Posts
 - bài viết editorial
 - có taxonomy, source metadata, series metadata, related posts
-- có search fields và counters phục vụ public read model
+- có search fields và counters phục vụ public read model (mô hình dữ liệu đọc)
 
 ### Hub pages
 - landing/curation pages
@@ -164,3 +164,4 @@ markmap:
 - user-state phải nằm ngoài content
 - practice support content là public/editorial reference data, không phải user-state
 - `giới thiệu pháp môn` và `sơ học` là first-class content surface, không phải chỉ là vài post rời rạc
+

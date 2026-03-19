@@ -24,10 +24,10 @@
 - `GET /api/ngoi-nha-nho/sheets`
 - `POST /api/ngoi-nha-nho/sheets`
 
-## Auth contract
+## Auth contract (hợp đồng dữ liệu/nghiệp vụ)
 
 - engagement là self-owned state
-- mọi write contract mặc định gắn với user từ Payload auth session
+- mọi write contract (hợp đồng dữ liệu/nghiệp vụ) mặc định gắn với user từ Payload auth session
 - client không được tự chỉ định owner user khác
 
 ## Permission baseline
@@ -39,18 +39,18 @@
 
 ## Canonical write rules
 
-- practice log canonical record nằm ở `practiceLogs`
-- practice sheet canonical record nằm ở `practiceSheets`
-- `Ngôi Nhà Nhỏ` canonical record nằm ở `ngoiNhaNhoSheets`
-- bookmark canonical record nằm ở `sutraBookmarks`
-- reading progress canonical record nằm ở `sutraReadingProgress`
-- chant preference canonical record nằm ở `chantPreferences`
+- practice log canonical record (bản ghi chuẩn gốc) nằm ở `practiceLogs`
+- practice sheet canonical record (bản ghi chuẩn gốc) nằm ở `practiceSheets`
+- `Ngôi Nhà Nhỏ` canonical record (bản ghi chuẩn gốc) nằm ở `ngoiNhaNhoSheets`
+- bookmark canonical record (bản ghi chuẩn gốc) nằm ở `sutraBookmarks`
+- reading progress canonical record (bản ghi chuẩn gốc) nằm ở `sutraReadingProgress`
+- chant preference canonical record (bản ghi chuẩn gốc) nằm ở `chantPreferences`
 - content module chỉ được tham chiếu để lấy `sutra`, `chapter`, `chantItem`, `chantPlan`
 
 ## Error expectations
 
 - `400`
-  - thiếu `date`, `planSlug`, target chapter, hoặc body fail schema
+  - thiếu `date`, `planSlug`, target chapter, hoặc body fail schema (lược đồ dữ liệu)
 - `401`
   - không có auth token/session
 - `403`
@@ -60,7 +60,7 @@
 - `409`
   - state conflict hiếm, ví dụ duplicate record không merge được
 - `500`
-  - lỗi proxy/CMS/service
+  - lỗi proxy/CMS/service (lớp xử lý nghiệp vụ)
 
 ## Notes for AI/codegen
 
@@ -69,3 +69,4 @@
 - `practiceSheets` nên ưu tiên offline-first idempotent sync bằng `clientEventId`.
 - `ngoiNhaNhoSheets` nên khóa write khi status đã là `offered`.
 - Engagement không được block bởi search sync hay notification dispatch.
+

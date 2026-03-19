@@ -1,7 +1,7 @@
 # Community Module Decisions
 
 > Ghi chú cho sinh viên:
-> Hãy để ý Decision 5, vì đó là chỗ nhiều người mới rất dễ thiết kế sai boundary.
+> Hãy để ý Decision 5, vì đó là chỗ nhiều người mới rất dễ thiết kế sai boundary (ranh giới trách nhiệm).
 
 ## Decision 1. Tách discussion surfaces theo context thay vì gom chung một collection
 
@@ -29,14 +29,14 @@ Repo hiện có `postComments`, `communityPosts`, `communityComments`, `guestboo
 
 ### Decision
 - Data model cho phép comment tham chiếu parent comment.
-- Current UI/contract nên ưu tiên depth nông và predictable rendering.
+- Current UI/contract (hợp đồng dữ liệu/nghiệp vụ) nên ưu tiên depth nông và predictable rendering.
 
 ### Rationale
-- Khớp schema hiện có.
+- Khớp schema (lược đồ dữ liệu) hiện có.
 - Tránh over-engineer tree algorithm quá sớm.
 
 ### Trade-off
-- Nếu sau này muốn nested thread sâu, UI/service phải bổ sung quy tắc paging/flatten rõ hơn.
+- Nếu sau này muốn nested thread sâu, UI/service (lớp xử lý nghiệp vụ) phải bổ sung quy tắc paging/flatten rõ hơn.
 
 ## Decision 3. Author snapshot được lưu trên entity community
 
@@ -71,7 +71,7 @@ Guestbook dùng `approvalStatus`.
 
 ### Trade-off
 - Public appearance có thể chậm hơn submit time.
-- Moderator/admin cần xử lý queue đều đặn.
+- Moderator/admin cần xử lý queue (hàng đợi xử lý) đều đặn.
 
 ## Decision 5. Report lifecycle không thuộc community module
 
@@ -80,13 +80,14 @@ Community có nhiều điểm bắt đầu report nhưng repo đã có moderatio
 
 ### Decision
 - Community chỉ khởi tạo report request.
-- `moderationReports` ở moderation module mới là source of truth.
+- `moderationReports` ở moderation module mới là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
 - Community entity chỉ giữ summary fields phục vụ read path.
 
 ### Rationale
-- Boundary rõ.
+- boundary (ranh giới trách nhiệm) rõ.
 - Dễ tái dùng cùng một moderation flow cho post comments, community content, guestbook.
 
 ### Trade-off
 - Cần sync summary ngược về community entity.
 - Debugging phải nhìn cả community record lẫn moderation record.
+

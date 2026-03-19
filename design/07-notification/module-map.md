@@ -1,8 +1,8 @@
 # Notification Module
 
 > Ghi chú cho sinh viên:
-> Notification ở repo này là async-only.
-> Tức là request thường chỉ tạo job, còn gửi thật sẽ do worker làm sau.
+> Notification ở repo này là async-only (chỉ chạy ngầm, bất đồng bộ).
+> Tức là request thường chỉ tạo job, còn gửi thật sẽ do worker (tiến trình xử lý nền) làm sau.
 
 ---
 markmap:
@@ -13,8 +13,8 @@ markmap:
 # Notification Module
 
 ## Mục tiêu
-- mô tả control-plane notification hiện có
-- giữ notification là async-only
+- mô tả control-plane (lớp điều phối hệ thống) notification hiện có
+- giữ notification là async-only (chỉ chạy ngầm, bất đồng bộ)
 - tránh biến module này thành orchestration platform
 
 ## Current scope
@@ -25,9 +25,9 @@ markmap:
 ### Job control plane
 - `pushJobs`
 
-### Async delivery paths
-- push dispatch qua worker
-- email notification jobs qua worker/queue
+### async (bất đồng bộ) delivery paths
+- push dispatch qua worker (tiến trình xử lý nền)
+- email notification jobs qua worker (tiến trình xử lý nền)/queue (hàng đợi xử lý)
 
 ## Current responsibilities
 
@@ -63,5 +63,6 @@ markmap:
 
 ## Current rules
 - notification gửi bất đồng bộ
-- pushJobs là control-plane record, không phải inbox canonical
+- pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox canonical
 - self-send prevention có thể dùng include/exclude user ids
+

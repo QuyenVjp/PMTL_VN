@@ -12,45 +12,45 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
   - `save-sutra-progress.md`
 - Không trộn nhiều biến thể khác nhau vào cùng một file nếu write-path khác nhau.
 - Nếu một flow có nhiều nhánh lớn, tách thành:
-  - 1 file use-case chính
+  - 1 file use-case (kịch bản sử dụng) chính
   - 1 file state diagram `.mmd`
   - 1 file contracts nếu cần
 
 ## Cấu trúc chuẩn
 
 ```md
-# <Tên use-case>
+# <Tên use-case (kịch bản sử dụng)>
 
 ## Purpose
 - Chức năng này giải quyết việc gì.
 
-## Owner module
+## owner module (module sở hữu)
 - Module sở hữu canonical write-path.
 
 ## Actors
 - Ai được phép gọi.
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Bấm nút gì, route nào, job nào, hoặc hook nào khởi chạy.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Điều kiện phải đúng trước khi xử lý.
 
-## Input contract
-- Zod schema, route params, auth/session requirement.
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
+- Zod schema (lược đồ dữ liệu), route params, auth/session requirement.
 
 ## Read set
-- Những collection/table/service nào được đọc.
+- Những collection/table/service (lớp xử lý nghiệp vụ) nào được đọc.
 
-## Write path
-1. Bước ghi canonical record đầu tiên.
+## write path (thứ tự ghi dữ liệu chuẩn)
+1. Bước ghi canonical record (bản ghi chuẩn gốc) đầu tiên.
 2. Bước cập nhật summary field nếu có.
-3. Bước enqueue async work nếu có.
+3. Bước enqueue async (bất đồng bộ) work nếu có.
 
-## Async side-effects
-- Search sync, notification, email, revalidation, worker jobs.
+## async (bất đồng bộ) side-effects
+- Search sync, notification, email, revalidation, worker (tiến trình xử lý nền) jobs.
 
-## Success result
+## success result (kết quả thành công)
 - API trả gì, UI thấy gì, entity đổi trạng thái gì.
 
 ## Errors
@@ -75,12 +75,12 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 - Những điều tuyệt đối không được đoán sai.
 ```
 
-## Viết phần `Write path` như thế nào
+## Viết phần `write path (thứ tự ghi dữ liệu chuẩn)` như thế nào
 
-- Bước 1 luôn nói rõ canonical record nằm ở module nào.
-- Nếu có summary field, phải nói rõ đó là summary, không phải source of truth.
-- Nếu có queue/job, phải nói rõ sync path chỉ enqueue hay thực sự gửi ngay.
-- Nếu có fallback, phải nói rõ fallback được phép ở lớp nào.
+- Bước 1 luôn nói rõ canonical record (bản ghi chuẩn gốc) nằm ở module nào.
+- Nếu có summary field, phải nói rõ đó là summary, không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
+- Nếu có queue (hàng đợi xử lý)/job, phải nói rõ sync path chỉ enqueue hay thực sự gửi ngay.
+- Nếu có fallback (đường dự phòng), phải nói rõ fallback (đường dự phòng) được phép ở lớp nào.
 
 ## Viết phần `Errors` như thế nào
 
@@ -90,7 +90,7 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
   - entity không tồn tại
   - document chưa publish
   - duplicate submit/report
-  - queue unavailable nhưng request vẫn tiếp tục
+  - queue (hàng đợi xử lý) unavailable nhưng request vẫn tiếp tục
 
 ## Viết phần `Notes for AI/codegen` như thế nào
 
@@ -99,10 +99,11 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
   - field canonical
   - field summary
   - route publicId hay slug
-  - side-effect nào async-only
+  - side-effect nào là async-only (chỉ chạy ngầm, bất đồng bộ)
 
 ## Không nên làm
 
 - Không mô tả kiểu "thường sẽ", "có thể là", "đại khái".
-- Không gọi Redis, queue, search index là source of truth.
-- Không để UI text hoặc DTO public lẫn với raw Payload document nếu chưa map contract.
+- Không gọi Redis, queue (hàng đợi xử lý), search index là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
+- Không để UI text hoặc DTO public lẫn với raw Payload document nếu chưa map contract (hợp đồng dữ liệu/nghiệp vụ).
+

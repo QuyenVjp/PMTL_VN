@@ -3,20 +3,20 @@
 ## Purpose
 - Hỗ trợ người dùng quản lý `Practice Sheet / Bảng công phu` hằng ngày theo cách đơn giản, dễ dùng, phù hợp người lớn tuổi.
 
-## Owner module
+## owner module (module sở hữu)
 - `engagement`
 
 ## Actors
 - `member`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - User mở màn hình bảng công phu, tạo tờ mới hoặc cập nhật tờ đang làm.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - User có session hợp lệ.
 - Reference data cho bài niệm hoặc plan đã tồn tại trong content.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - payload phải chứa:
   - `sheetType`
   - `practiceDate`
@@ -28,7 +28,7 @@
 - chant plan / chant item references
 - self-owned `practiceSheets` của user
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Resolve user từ session.
 2. Tạo mới hoặc load tờ `practiceSheets` hiện có theo ngữ cảnh ngày/plan.
 3. Upsert các item state theo payload.
@@ -36,10 +36,10 @@
 5. Nếu đủ điều kiện, chuyển trạng thái sang `completed`.
 6. Append audit nhẹ cho create/complete nếu policy yêu cầu.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - có thể enqueue reminder sync nhẹ nếu user bật nhắc việc.
 
-## Success result
+## success result (kết quả thành công)
 - User thấy đúng bảng công phu đang làm và tiến độ tổng.
 
 ## Errors
@@ -47,8 +47,9 @@
 - `401`: chưa đăng nhập.
 - `404`: chant item / chant plan không tồn tại.
 - `409`: conflict do offline sync hoặc duplicate event.
-- `500`: lỗi service.
+- `500`: lỗi service (lớp xử lý nghiệp vụ).
 
 ## Notes for AI/codegen
 - Đây là personal practice sheet, không phải social post.
 - UI nên ít bước, rõ chữ, và không dùng hiệu ứng rối mắt.
+

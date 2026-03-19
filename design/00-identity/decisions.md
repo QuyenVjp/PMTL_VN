@@ -16,7 +16,7 @@ Design cần dừng việc ám chỉ có auth layer thứ hai.
 
 ### Rationale
 - Khớp implementation.
-- Giữ auth boundary đơn giản và reviewable.
+- Giữ auth boundary (ranh giới trách nhiệm) đơn giản và reviewable.
 - Tránh việc AI tách Google login thành một hệ auth riêng.
 
 ### Trade-off
@@ -34,7 +34,7 @@ Repo hiện chỉ có `users` làm owner cho account + profile nhẹ.
 
 ### Rationale
 - Đủ cho nhu cầu hiện tại.
-- Giảm join và drift contract giữa auth data với profile data.
+- Giảm join và drift contract (hợp đồng dữ liệu/nghiệp vụ) giữa auth data với profile data.
 
 ### Trade-off
 - Nếu public profile sau này phức tạp hơn, có thể cần sub-model hoặc module riêng.
@@ -64,14 +64,14 @@ Repo cần role đủ rõ để quản trị nhưng không nên phình ra quá n
 ## Decision 4. publicId chỉ dùng cho public-facing identity references
 
 ### Context
-Repo hiện dùng `publicId` ở nhiều public contract để tránh expose raw internal ids.
+Repo hiện dùng `publicId` ở nhiều public contract (hợp đồng dữ liệu/nghiệp vụ) để tránh expose raw internal ids.
 
 ### Decision
 - `users.publicId` tồn tại để phục vụ public-facing references khi cần.
-- Internal system relations vẫn có thể dùng internal document id ở service layer.
+- Internal system relations vẫn có thể dùng internal document id ở service (lớp xử lý nghiệp vụ) layer.
 
 ### Rationale
-- Đồng bộ với public contract style toàn repo.
+- Đồng bộ với public contract (hợp đồng dữ liệu/nghiệp vụ) style toàn repo.
 - Tách internal persistence id khỏi public API identity.
 
 ### Trade-off
@@ -93,3 +93,4 @@ Codebase hiện có Google callback route và field compatibility cho provider m
 
 ### Trade-off
 - Cần ghi rõ policy merge account theo email/provider id để tránh hiểu nhầm.
+

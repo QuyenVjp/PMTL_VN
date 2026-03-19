@@ -27,7 +27,7 @@
   - `approvalStatus`
   - `isHidden`
 
-## Decision contract
+## Decision contract (hợp đồng dữ liệu/nghiệp vụ)
 
 Actor:
 - `admin` (`Phụng sự viên`)
@@ -56,6 +56,7 @@ Expected decisions:
 
 ## Notes for AI/codegen
 
-- `moderationReports` mới là source of truth; summary field không phải lifecycle record.
+- `moderationReports` mới là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); summary field không phải lifecycle record.
 - Đừng expose full moderation internals cho route public/community.
-- Notify admin hoặc affected user là downstream async, không phải canonical decision record.
+- Notify admin hoặc affected user là downstream async (bất đồng bộ), không phải canonical decision record.
+

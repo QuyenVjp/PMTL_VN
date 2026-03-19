@@ -16,20 +16,20 @@ markmap:
 - mô tả dữ liệu lịch và sự kiện đang có trong repo
 - giữ ownership riêng cho event/lunar schedule data
 - không nhét notification orchestration vào module này
-- bổ sung read model cho `Lịch tu học cá nhân`
+- bổ sung read model (mô hình dữ liệu đọc) cho `Lịch tu học cá nhân`
 
 ## Collections thuộc module
 - `events`
 - `lunarEvents`
 - `lunarEventOverrides`
-- `personalPracticeCalendarReadModel` (service-owned read model)
+- `personalPracticeCalendarReadModel` (read model do service sở hữu và xây dựng)
 
 ## Current responsibilities
 
 ### Events
 - đăng sự kiện public
 - giữ thời gian, địa điểm, media, external links
-- giữ `eventStatus` phục vụ public read model
+- giữ `eventStatus` phục vụ public read model (mô hình dữ liệu đọc)
 
 ### Lunar schedule
 - định nghĩa recurrence dữ liệu âm lịch cơ sở
@@ -39,15 +39,17 @@ markmap:
 - gắn chant item cho lunar event
 - đặt target / max / priority / note cho event cụ thể
 
-### Personal practice calendar read model
+### Personal practice calendar read model (mô hình dữ liệu đọc)
 - ghép ngày âm lịch, ngày vía, ngày trai giới, giờ gợi ý, vow/life-release hooks
+- ghép `daily practice advisory (thông báo hoặc gói hướng dẫn)` dạng card ngắn cho người dùng
 - trả về lịch đọc được ngay cho user
 - không thay ownership của event/lunar canonical data
 
 ### `personalPracticeCalendarService`
-- service này không phải owner của event canonical data
+- service (lớp xử lý nghiệp vụ) này không phải owner của event canonical data
 - nhiệm vụ của nó là tính `Lịch tu học cá nhân` từ nhiều nguồn đã có sẵn
-- nó phải trả ra một read model ổn định, để web/notification đọc mà không phải tự ghép logic lại lần nữa
+- nó phải trả ra một read model (mô hình dữ liệu đọc) ổn định, để web/notification đọc mà không phải tự ghép logic lại lần nữa
+- nó cũng là nơi compose `daily practice advisory (thông báo hoặc gói hướng dẫn)`, nhưng không sở hữu bài gốc hay bản dịch gốc
 
 ## Step-by-step tính `Lịch tu học cá nhân`
 
@@ -98,6 +100,16 @@ markmap:
   - audio/text/guide refs cần cho màn hình lịch
 - không copy script đầy đủ vào calendar record
 
+### Step 5b. Ghép source-backed advisory rules (các quy tắc advisory có nguồn đối chiếu)
+- đọc source-backed rule refs từ `09-wisdom-qa`
+- chỉ lấy những thứ cần để compose advisory (thông báo hoặc gói hướng dẫn):
+  - source code / timestamp
+  - rule summary
+  - bản dịch Việt đã duyệt hoặc draft
+  - source URL
+  - review status (trạng thái kiểm duyệt)
+- không copy toàn bộ transcript dài vào calendar record
+
 ### Step 6. Ghép ngữ cảnh cá nhân của user
 - load summary từ:
   - `chantPreferences`
@@ -121,7 +133,7 @@ markmap:
   - `label`
 - đây là gợi ý thực hành, không phải scheduling job
 
-### Step 8. Tạo read model cuối cùng cho từng ngày
+### Step 8. Tạo read model (mô hình dữ liệu đọc) cuối cùng cho từng ngày
 - mỗi `day record` nên có tối thiểu:
   - `date`
   - `lunarLabel`
@@ -131,6 +143,8 @@ markmap:
   - `eventRefs`
   - `vowHooks`
   - `lifeReleaseHooks`
+  - `advisoryCards`
+  - `sourceRefs`
   - `practiceSheetSummary`
   - `notesVi`
   - `notesEn`
@@ -138,7 +152,7 @@ markmap:
 ### Step 9. Trả ra hoặc materialize
 - nếu là read tức thời:
   - trả danh sách `day record` ngay cho web
-- nếu là read model materialized:
+- nếu là read model (mô hình dữ liệu đọc) materialized:
   - upsert vào `personalPracticeCalendarReadModel`
 - notification module chỉ đọc output này, không tự tính lại logic lịch
 
@@ -146,13 +160,15 @@ markmap:
 - `events` và `lunarEvents` là lớp gốc
 - `lunarEventOverrides` ghi đè cách diễn giải lịch
 - `content references` chỉ bổ sung tài liệu/bài gợi ý
+- `source-backed advisory rules` chỉ bổ sung khai thị hoặc rule đã duyệt
 - `user context` chỉ cá nhân hóa phần gợi ý, không sửa lịch gốc
 - `notification` là downstream consumer, không phải owner
 
-## Những gì service này không được làm
+## Những gì service (lớp xử lý nghiệp vụ) này không được làm
 - không tự tạo push job
 - không ghi đè `events` hay `lunarEvents`
 - không copy nguyên script kinh/chú từ content sang calendar
+- không biến một bài cộng đồng thành source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) cho rule ngày đặc biệt
 - không biến `Lịch tu học cá nhân` thành social feed
 
 ## References ra ngoài module
@@ -173,5 +189,7 @@ markmap:
 - event ownership nằm ở calendar dù content có thể tham chiếu event
 - lunar recurrence base và override là hai lớp dữ liệu khác nhau
 - reminder logic không nằm trong current scope của calendar module
-- calendar được phép sở hữu `read model` cho lịch tu học cá nhân, nhưng không sở hữu push delivery
+- calendar được phép sở hữu `read model (mô hình dữ liệu đọc)` cho lịch tu học cá nhân, nhưng không sở hữu push delivery
 - calendar chỉ map ngày/sự kiện với bài niệm hoặc guide; không sao chép script nghi thức từ tài liệu PDF vào event record
+- `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output compose, không phải owner data mới
+

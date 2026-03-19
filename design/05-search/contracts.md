@@ -1,6 +1,6 @@
 # Search Contracts
 
-## Input schema
+## Input schema (lược đồ dữ liệu)
 
 - `searchQuerySchema` từ `packages/shared/src/schemas/search.ts`
 
@@ -30,11 +30,11 @@
 
 Search result phải nói rõ engine:
 - `meilisearch`
-- `payload-fallback`
+- `payload-fallback (đường dự phòng)`
 
 Status route nên phản ánh:
 - search engine health
-- queue state
+- queue (hàng đợi xử lý) state
 - index document count
 - index freshness / last successful sync
 
@@ -47,12 +47,13 @@ Status route nên phản ánh:
 - `403`
   - role không đủ cho reindex
 - `500`
-  - engine lỗi và fallback cũng lỗi
+  - engine lỗi và fallback (đường dự phòng) cũng lỗi
 
 ## Notes for AI/codegen
 
-- Public search read có fallback; index failure không được làm mất canonical content.
+- Public search read có fallback (đường dự phòng); index failure không được làm mất canonical content.
 - Batch reindex là operational action, nên có audit và status riêng.
 - Đừng dùng search index làm nơi quyết định publish state.
-- Worker chết giữa chừng phải dẫn đến retry/recovery, không được coi như sync đã hoàn tất.
+- worker (tiến trình xử lý nền) chết giữa chừng phải dẫn đến retry/recovery, không được coi như sync đã hoàn tất.
 - Current scope chưa bắt buộc outbox pattern; nếu drift tăng, nâng cấp này là hợp lệ.
+

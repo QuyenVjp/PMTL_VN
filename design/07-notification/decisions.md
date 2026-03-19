@@ -3,10 +3,10 @@
 > Ghi chú cho sinh viên:
 > `pushJobs` nhìn giống bảng notification, nhưng thực ra nó là bảng điều phối gửi, không phải hộp thư người dùng.
 
-## Decision 1. Notification là async-only trong current scope
+## Decision 1. Notification là async-only (chỉ chạy ngầm, bất đồng bộ) trong current scope
 
 ### Context
-Push dispatch và email notification đều có queue/worker path.
+Push dispatch và email notification đều có queue (hàng đợi xử lý)/worker (tiến trình xử lý nền) path.
 
 ### Decision
 - Notification delivery không chạy đồng bộ trong request path.
@@ -14,12 +14,12 @@ Push dispatch và email notification đều có queue/worker path.
 
 ### Rationale
 - Giảm latency.
-- Hợp với stack Redis + worker đã chốt.
+- Hợp với stack Redis + worker (tiến trình xử lý nền) đã chốt.
 
 ### Trade-off
 - Delivery có eventual consistency.
 
-## Decision 2. pushJobs là control-plane record, không phải inbox source-of-truth
+## Decision 2. pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox source-of-truth
 
 ### Context
 Repo đã có `pushJobs` với status, cursor, sentCount, failedCount.
@@ -30,10 +30,10 @@ Repo đã có `pushJobs` với status, cursor, sentCount, failedCount.
 
 ### Rationale
 - Phản ánh đúng implementation hiện tại.
-- Tránh AI generate inbox feature nhầm từ control-plane table.
+- Tránh AI generate inbox feature nhầm từ control-plane (lớp điều phối hệ thống) table.
 
 ### Trade-off
-- Nếu sau này cần in-app inbox, phải có module/schema riêng.
+- Nếu sau này cần in-app inbox, phải có module/schema (lược đồ dữ liệu) riêng.
 
 ## Decision 3. Subscription preferences nằm trên pushSubscriptions
 
@@ -45,13 +45,13 @@ Repo hiện lưu category prefs và quiet hours ngay trên `pushSubscriptions`.
 - Chưa tách bảng `notificationPreferences` riêng ở current scope.
 
 ### Rationale
-- Đơn giản và khớp schema hiện tại.
+- Đơn giản và khớp schema (lược đồ dữ liệu) hiện tại.
 - Đủ cho use case push hiện tại.
 
 ### Trade-off
 - Nếu preference mở rộng nhiều channel hoặc nhiều policy, sau này có thể cần tách model.
 
-## Decision 4. Role-targeting và include/exclude user ids là contract dispatch chính
+## Decision 4. Role-targeting và include/exclude user ids là contract (hợp đồng dữ liệu/nghiệp vụ) dispatch chính
 
 ### Context
 Notification hiện tạo internal push jobs với recipient roles và include/exclude user ids.
@@ -71,7 +71,7 @@ Notification hiện tạo internal push jobs với recipient roles và include/e
 - Policy targeting còn giới hạn.
 - Muốn segment phức tạp hơn sẽ cần decision mới.
 
-## Decision 5. Email notification là async side path, chưa có canonical history table
+## Decision 5. Email notification là async (bất đồng bộ) side path, chưa có canonical history table
 
 ### Context
 Repo hiện enqueue email notification jobs nhưng chưa có email history collection current scope.
@@ -82,7 +82,8 @@ Repo hiện enqueue email notification jobs nhưng chưa có email history colle
 
 ### Rationale
 - Tránh over-engineer.
-- Giữ focus vào control-plane hiện có.
+- Giữ focus vào control-plane (lớp điều phối hệ thống) hiện có.
 
 ### Trade-off
 - Audit email delivery sâu hơn sẽ cần log/job sink hoặc model riêng trong tương lai.
+

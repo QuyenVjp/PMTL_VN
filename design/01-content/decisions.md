@@ -1,13 +1,13 @@
 # Content Module Decisions
 
 > Ghi chú cho sinh viên:
-> Mỗi quyết định ở đây dùng để ngăn AI hoặc dev mới quay lại mô hình cũ sai boundary.
+> Mỗi quyết định ở đây dùng để ngăn AI hoặc dev mới quay lại mô hình cũ sai boundary (ranh giới trách nhiệm).
 
 ## Decision 1. Content dùng split collections, không dùng single posts table
 
 ### Context
 Design cũ giả định mọi loại content phải gộp vào một bảng `posts`.
-Repo hiện tại đã split collection rõ ràng theo trách nhiệm và public contract.
+Repo hiện tại đã split collection rõ ràng theo trách nhiệm và public contract (hợp đồng dữ liệu/nghiệp vụ).
 
 ### Decision
 - Giữ editorial content theo collection riêng:
@@ -48,7 +48,7 @@ Current collections editorial dùng `versions.drafts: true` và đã có logic `
 
 ### Trade-off
 - Editorial review workflow hiện tại không chi tiết như hệ thống CMS enterprise.
-- Nếu sau này cần review queue riêng thì phải thiết kế thêm, không tự suy từ file này.
+- Nếu sau này cần review queue (hàng đợi xử lý) riêng thì phải thiết kế thêm, không tự suy từ file này.
 
 ## Decision 3. Search fields nằm trên owner document
 
@@ -67,7 +67,7 @@ Search module cần source fields ổn định để build document.
 
 ### Trade-off
 - Mỗi collection owner phải giữ discipline khi cập nhật field tính toán.
-- Một số search fields là denormalized data trên canonical record.
+- Một số search fields là denormalized data trên canonical record (bản ghi chuẩn gốc).
 
 ## Decision 4. Taxonomy và media dùng reference rõ ràng
 
@@ -80,7 +80,7 @@ Editorial content hiện liên kết tới `categories`, `tags`, `media`, `relat
 - Event chỉ được tham chiếu từ content, ownership nằm ở calendar.
 
 ### Rationale
-- Giữ boundary rõ.
+- Giữ boundary (ranh giới trách nhiệm) rõ.
 - Tối ưu cho public mapping, admin editing, và incremental refactor.
 
 ### Trade-off
@@ -90,7 +90,7 @@ Editorial content hiện liên kết tới `categories`, `tags`, `media`, `relat
 ## Decision 5. Content không sở hữu user-state hoặc moderation source-of-truth
 
 ### Context
-Design cũ từng nhét bookmark và reading progress vào content schema.
+Design cũ từng nhét bookmark và reading progress vào content schema (lược đồ dữ liệu).
 Repo hiện tại đã có collection self-owned state riêng và moderation report riêng.
 
 ### Decision
@@ -102,7 +102,7 @@ Repo hiện tại đã có collection self-owned state riêng và moderation rep
 - `postComments` cũng không thuộc content ownership; content chỉ là entity được bình luận.
 
 ### Rationale
-- Khớp boundary module hiện tại.
+- Khớp boundary (ranh giới trách nhiệm) module hiện tại.
 - Tránh để content trở thành module “ôm tất cả”.
 
 ### Trade-off
@@ -130,7 +130,7 @@ Các tài liệu PDF niệm hằng ngày, thắp tâm hương, phát nguyện, p
 
 ### Rationale
 - Khớp repo thật trong `apps/cms`.
-- Giữ được boundary rất rõ giữa “nội dung chuẩn để mọi người đọc” và “trạng thái cá nhân của một user”.
+- Giữ được boundary (ranh giới trách nhiệm) rất rõ giữa “nội dung chuẩn để mọi người đọc” và “trạng thái cá nhân của một user”.
 - Dễ map bộ PDF hiện tại vào app mà không làm engagement phình to sai vai trò.
 
 ### Trade-off
@@ -138,3 +138,4 @@ Các tài liệu PDF niệm hằng ngày, thắp tâm hương, phát nguyện, p
   - content cho script/rule
   - engagement cho progress/log
 - Khi tài liệu PDF được cập nhật, cần review mapping sang `chantItems` / `chantPlans` thay vì sửa bừa ở UI.
+

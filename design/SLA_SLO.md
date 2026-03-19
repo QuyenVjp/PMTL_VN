@@ -11,7 +11,7 @@ Nhưng vẫn cần đủ rõ để:
 ## Nguyên tắc chung
 
 - Public read quan trọng hơn dashboard nội bộ hiếm dùng.
-- Search, notification, revalidation là async-first.
+- Search, notification, revalidation là async (bất đồng bộ)-first.
 - Nếu một mục tiêu chưa đo thật được, cứ coi đây là target thiết kế trước, rồi refine sau.
 
 ## Mục tiêu theo luồng
@@ -22,7 +22,7 @@ Nhưng vẫn cần đủ rõ để:
 
 ### Search
 - `GET /api/posts/search` nên trả kết quả trong `< 250ms` khi Meilisearch healthy.
-- Fallback Payload search có thể chậm hơn, nhưng mục tiêu là `< 1200ms`.
+- fallback (đường dự phòng) Payload search có thể chậm hơn, nhưng mục tiêu là `< 1200ms`.
 - Sau khi publish content, index search nên được cập nhật trong `< 10 giây`.
 
 ### Community submit
@@ -30,16 +30,16 @@ Nhưng vẫn cần đủ rõ để:
 - Moderation alert cho report mới nên được enqueue trong `< 2 giây`.
 
 ### Moderation
-- Từ lúc report được tạo đến lúc admin thấy report trong queue nên là `< 10 giây`.
+- Từ lúc report được tạo đến lúc admin thấy report trong queue (hàng đợi xử lý) nên là `< 10 giây`.
 - Quyết định moderation không được chờ push/email gửi xong mới trả response.
 
 ### Notification
 - Tạo `pushJobs` nên xong trong `< 500ms`.
-- Worker dispatch có thể eventual consistency, mục tiêu bắt đầu xử lý trong `< 30 giây` khi queue khỏe.
+- worker (tiến trình xử lý nền) dispatch có thể eventual consistency, mục tiêu bắt đầu xử lý trong `< 30 giây` khi queue (hàng đợi xử lý) khỏe.
 
 ### Auth
 - Login/register/profile update nên trả kết quả trong `< 800ms` khi CMS healthy.
-- Reset password email có thể async, nhưng request nhận thành công trong `< 1000ms`.
+- Reset password email có thể async (bất đồng bộ), nhưng request nhận thành công trong `< 1000ms`.
 
 ### Engagement
 - Upsert practice log, bookmark, reading progress nên trong `< 500ms`.
@@ -47,7 +47,7 @@ Nhưng vẫn cần đủ rõ để:
 
 ### Calendar
 - Query event công khai nên trong `< 500ms`.
-- Lunar override resolution nên nằm trong read model hoặc helper rõ ràng, không gây nổ latency quá `< 200ms` bổ sung.
+- Lunar override resolution nên nằm trong read model (mô hình dữ liệu đọc) hoặc helper rõ ràng, không gây nổ latency quá `< 200ms` bổ sung.
 
 ## Error budget thực dụng
 
@@ -75,3 +75,4 @@ Nhưng vẫn cần đủ rõ để:
   - ghi canonical trước
   - enqueue downstream work
   - trả response sớm
+

@@ -29,9 +29,9 @@
 
 ## Canonical write rules
 
-- submit post/comment/guestbook phải ghi canonical record vào collection owner trước
+- submit post/comment/guestbook phải ghi canonical record (bản ghi chuẩn gốc) vào collection owner trước
 - moderation report đi vào `moderationReports`, không nhét lifecycle report vào entity community
-- entity community chỉ giữ summary moderation/read model nếu flow cần
+- entity community chỉ giữ summary moderation/read model (mô hình dữ liệu đọc) nếu flow cần
 
 ## Public response rules
 
@@ -45,7 +45,7 @@
 
 - `400`
   - JSON không hợp lệ
-  - schema fail
+  - schema (lược đồ dữ liệu) fail
 - `401`
   - flow yêu cầu đăng nhập nhưng không có session
 - `403`
@@ -64,3 +64,4 @@
 - Community submit khác moderation report; đừng gộp chung canonical write-path.
 - Report endpoint chỉ tạo record ở moderation module rồi sync summary ngược.
 - Public routes phải ưu tiên `publicId`, không phụ thuộc internal document id ở client.
+

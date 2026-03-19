@@ -98,14 +98,14 @@ markmap:
 ### 06. Search (Tìm kiếm)
 - **Source fields live in owner collections (Các trường nguồn nằm trong bộ sưu tập chủ sở hữu)**
 - **Index (Chỉ mục)**: Meilisearch
-- **Queue (Hàng đợi)**: Redis + worker
+- **Queue (Hàng đợi)**: Redis + worker (tiến trình xử lý nền)
 - **Current public search contract (Hợp đồng tìm kiếm công khai hiện tại)**:
   - posts search (Tìm kiếm bài viết)
   - wisdom search (Tìm kiếm trí huệ)
   - search status (Trạng thái tìm kiếm)
   - reindex trigger (Kích hoạt lập lại chỉ mục)
 - **Responsibilities (Trách nhiệm)**:
-  - queue search sync (Đồng bộ tìm kiếm qua hàng đợi)
+  - queue (hàng đợi xử lý) search sync (Đồng bộ tìm kiếm qua hàng đợi)
   - build search document (Xây dựng tài liệu tìm kiếm)
   - serve unified `Kho Trí Huệ` query with fallback (Cung cấp truy vấn hợp nhất "Kho Trí Huệ" với cơ chế dự phòng)
 
@@ -153,14 +153,14 @@ markmap:
   - Huyền học vấn đáp (Metaphysics QA)
   - Phật học vấn đáp (Buddhism QA)
   - audio/video hỗ trợ đọc học (audio/video supporting reading and learning)
-  - offline bundle cho người lớn tuổi (offline bundle for the elderly)
+  - offline bundle (gói tải ngoại tuyến) cho người lớn tuổi (offline bundle (gói tải ngoại tuyến) for the elderly)
 
 ## Cross-Cutting Runtime (Giao thoa vận hành)
 
 ### Infrastructure (Hạ tầng)
 - PostgreSQL: canonical app data (Dữ liệu ứng dụng gốc)
-- Redis: cache + queue + coordination (Bộ nhớ đệm + hàng đợi + điều phối)
-- Worker: background processing (Xử lý nền)
+- Redis: cache + queue (hàng đợi xử lý) + coordination (Bộ nhớ đệm + hàng đợi + điều phối)
+- worker (tiến trình xử lý nền): background processing (Xử lý nền)
 - Meilisearch: search index (Chỉ mục tìm kiếm)
 - Caddy: reverse proxy / HTTPS (Proxy ngược / HTTPS)
 
@@ -194,7 +194,7 @@ markmap:
 ### Nguyên tắc gốc
 - không dùng DB-level cascade delete bừa bãi giữa các module owner
 - mặc định ưu tiên `soft delete`, `unpublish`, hoặc `archive` cho dữ liệu public/shared
-- nếu có `hard delete`, owner module phải kích hoạt cleanup contract rõ ràng để không tạo dữ liệu mồ côi
+- nếu có `hard delete`, owner module (module sở hữu) phải kích hoạt cleanup contract (hợp đồng dữ liệu/nghiệp vụ) rõ ràng để không tạo dữ liệu mồ côi
 
 ### Ví dụ bắt buộc
 - nếu `Content` hard delete một `post`:
@@ -211,21 +211,21 @@ markmap:
 
 ### Guarantee hiện tại
 - canonical write vào Postgres/Payload là bước quyết định
-- search sync là `at-least-once async projection`, không phải đồng bộ tức thì tuyệt đối
-- worker chết giữa chừng không được làm mất canonical write
+- search sync là `at-least-once async (bất đồng bộ) projection`, không phải đồng bộ tức thì tuyệt đối
+- worker (tiến trình xử lý nền) chết giữa chừng không được làm mất canonical write
 - job sync phải retry được và `reindex` thủ công phải tồn tại như recovery path
 
 ### Rule chống lệch
 - search document phải idempotent theo `document id + updatedAt/version`
 - status route phải cho thấy:
-  - queue lag
-  - worker health
+  - queue (hàng đợi xử lý) lag
+  - worker (tiến trình xử lý nền) health
   - index freshness
-- public search có fallback qua Payload khi Meilisearch không còn đáng tin
+- public search có fallback (đường dự phòng) qua Payload khi Meilisearch không còn đáng tin
 
 ### Outbox pattern
 - current scope chưa bắt buộc `outbox pattern`
-- lý do: repo đang đi theo Payload + queue + worker và cần giữ đơn giản
+- lý do: repo đang đi theo Payload + queue (hàng đợi xử lý) + worker (tiến trình xử lý nền) và cần giữ đơn giản
 - nhưng `outbox` là hướng nâng cấp hợp lệ nếu:
   - sync lệch xảy ra thường xuyên
   - nhiều downstream consumer cùng phụ thuộc một write
@@ -269,6 +269,7 @@ Chỉ là ứng viên tương lai, chưa phải current scope (Future candidates
 - in-app inbox nếu có owner data model riêng (hộp thư trong ứng dụng nếu có mô hình dữ liệu riêng)
 
 Future candidate chỉ được nâng lên current scope khi có (Future candidates are only promoted to current scope when):
-- owner collection hoặc owner service rõ ràng (có bộ sưu tập hoặc dịch vụ sở hữu rõ ràng)
-- API contract rõ (có hợp đồng API rõ ràng)
+- owner collection hoặc owner service (lớp xử lý nghiệp vụ) rõ ràng (có bộ sưu tập hoặc dịch vụ sở hữu rõ ràng)
+- API contract (hợp đồng dữ liệu/nghiệp vụ) rõ (có hợp đồng API rõ ràng)
 - runtime path rõ (có đường thực thi rõ ràng)
+

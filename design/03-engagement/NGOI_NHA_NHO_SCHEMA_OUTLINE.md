@@ -1,9 +1,9 @@
-# Ngoi Nha Nho Schema Outline
+# Ngoi Nha Nho schema (lược đồ dữ liệu) Outline
 
-File này mô tả schema logic đề xuất cho `Ngôi Nhà Nhỏ`.
-Đây chưa phải migration hay DBML cuối cùng, mà là design để AI/codegen bám đúng boundary.
+File này mô tả schema (lược đồ dữ liệu) logic đề xuất cho `Ngôi Nhà Nhỏ`.
+Đây chưa phải migration hay DBML cuối cùng, mà là design để AI/codegen bám đúng boundary (ranh giới trách nhiệm).
 
-## Owner module
+## owner module (module sở hữu)
 - `03-engagement`
 
 ## Collection candidate 1: `ngoiNhaNhoSheets`
@@ -89,9 +89,9 @@ Nhược điểm:
 - `status = offered` thì không được tăng counter nữa
 - `status = completed` khi và chỉ khi đủ 4 counters theo rule template
 
-## Service boundary
+## service (lớp xử lý nghiệp vụ) boundary (ranh giới trách nhiệm)
 
-- `ngoi-nha-nho.service.ts` nên xử lý:
+- `ngoi-nha-nho.service (lớp xử lý nghiệp vụ).ts` nên xử lý:
   - create sheet
   - mark counter
   - complete sheet
@@ -102,3 +102,4 @@ Nhược điểm:
 
 - Đây là self-owned practice inventory.
 - Không đặt ở content vì không phải public canonical reference.
+

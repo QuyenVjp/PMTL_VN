@@ -3,38 +3,38 @@
 ## Purpose
 - Cập nhật profile cơ bản của người dùng hiện tại mà không thay đổi auth authority hay role model.
 
-## Owner module
+## owner module (module sở hữu)
 - `identity`
 
 ## Actors
 - `member`
 - `admin` khi sửa profile theo scope quản trị
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Web gọi `PATCH /api/auth/profile`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Có session hợp lệ.
 - Body hợp lệ theo `updateProfileSchema`.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `updateProfileSchema`
 
 ## Read set
 - auth session
 - `users`
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Resolve current user từ session.
-2. Parse body theo schema.
+2. Parse body theo schema (lược đồ dữ liệu).
 3. Ghi canonical update vào `users`.
 4. Invalidate/cập nhật session cache nếu cần.
 5. Append audit `auth.profile.update`.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - không có side-effect nặng bắt buộc
 
-## Success result
+## success result (kết quả thành công)
 - Profile DTO mới được trả về.
 
 ## Errors
@@ -54,4 +54,5 @@
 
 ## Notes for AI/codegen
 - `users` là owner của account + profile cơ bản.
-- Role change là flow admin riêng, không nằm trong self-profile contract.
+- Role change là flow admin riêng, không nằm trong self-profile contract (hợp đồng dữ liệu/nghiệp vụ).
+

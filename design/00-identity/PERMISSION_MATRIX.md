@@ -46,7 +46,7 @@ Mục tiêu:
 | Đổi role admin/super-admin | Có | Không | Không |
 | Block / unblock account | Có | Có theo policy | Không |
 | Xem audit log nhạy cảm | Có | Có giới hạn | Không |
-| Trigger reindex / worker recovery | Có | Có | Không |
+| trigger (điểm kích hoạt) reindex / worker (tiến trình xử lý nền) recovery | Có | Có | Không |
 
 ## Rule sở hữu dữ liệu của người khác
 
@@ -66,7 +66,7 @@ Mục tiêu:
 ## Hard delete rule
 
 - `admin` mặc định không được hard delete record có downstream relations nhạy cảm
-- nếu cleanup contract chưa an toàn, chỉ `super-admin` mới được chạy hard delete
+- nếu cleanup contract (hợp đồng dữ liệu/nghiệp vụ) chưa an toàn, chỉ `super-admin` mới được chạy hard delete
 - flow thường ngày ưu tiên:
   - `soft delete`
   - `archive`
@@ -80,3 +80,4 @@ Mục tiêu:
   - `role gate`
   - `business rule`
   - `delete policy`
+

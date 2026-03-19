@@ -1,6 +1,6 @@
-# Practice Reminder Schema Outline
+# Practice Reminder schema (lược đồ dữ liệu) Outline
 
-## Owner module
+## owner module (module sở hữu)
 - `07-notification`
 
 ## Không cần collection canonical mới nếu `pushJobs` đủ
@@ -35,9 +35,10 @@ Collection candidate:
 - phase sau:
   - nếu reminder phức tạp hơn, thêm `reminderSchedules`
 
-## Service boundary
+## service (lớp xử lý nghiệp vụ) boundary (ranh giới trách nhiệm)
 
-- `practice-reminder.service.ts`
+- `practice-reminder.service (lớp xử lý nghiệp vụ).ts`
   - build reminder candidates
   - dedupe same-window reminders
   - create push jobs
+

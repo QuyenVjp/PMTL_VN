@@ -1,9 +1,9 @@
 # Content Contracts
 
 File này không thay `docs/api/contracts.md`.
-Mục đích của nó là chốt business contract của content module để AI biết:
+Mục đích của nó là chốt business contract (hợp đồng dữ liệu/nghiệp vụ) của content module để AI biết:
 
-- route nào là public contract
+- route nào là public contract (hợp đồng dữ liệu/nghiệp vụ)
 - input nào cần validate
 - field nào là canonical
 - side-effect nào không được làm đồng bộ
@@ -62,10 +62,10 @@ Ghi chú:
 
 ### Revalidation
 - `POST /api/revalidate`
-- chỉ là downstream invalidation contract
+- chỉ là downstream invalidation contract (hợp đồng dữ liệu/nghiệp vụ)
 - không thay cho canonical publish state
 
-## Status / workflow contract
+## Status / workflow contract (hợp đồng dữ liệu/nghiệp vụ)
 
 - Editorial workflow mặc định:
   - `draft`
@@ -86,10 +86,11 @@ Ghi chú:
 - `409`
   - slug/publicId conflict hoặc state conflict khi publish
 - `500`
-  - lỗi service/hook/search enqueue/revalidation webhook
+  - lỗi service (lớp xử lý nghiệp vụ)/hook/search enqueue/revalidation webhook
 
 ## Notes for AI/codegen
 
 - Public route đọc content đã map DTO, không trả raw Payload document nếu chưa lọc field.
 - Search index chỉ là derived document; canonical body vẫn nằm ở content collections.
 - Publish thành công không được phụ thuộc vào việc Meilisearch hay push notification hoàn tất ngay.
+

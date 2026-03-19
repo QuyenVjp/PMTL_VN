@@ -1,6 +1,6 @@
-# Wisdom & QA Schema Outline
+# Wisdom & QA schema (lược đồ dữ liệu) Outline
 
-## Owner module
+## owner module (module sở hữu)
 - `09-wisdom-qa`
 
 ## Collection candidate 1: `wisdomEntries`
@@ -71,18 +71,19 @@
 - `lastSyncedAt`
 - `deviceKey`
 
-## Service boundary
+## service (lớp xử lý nghiệp vụ) boundary (ranh giới trách nhiệm)
 
-- `wisdom.service.ts`
+- `wisdom.service (lớp xử lý nghiệp vụ).ts`
   - normalize source metadata
   - map bilingual reading model
-  - offline bundle build
-- `qa.service.ts`
+  - offline bundle (gói tải ngoại tuyến) build
+- `qa.service (lớp xử lý nghiệp vụ).ts`
   - keyword normalization
   - retrieval prep
   - answer excerpt mapping
 
 ## Notes for AI/codegen
 
-- Đây là retrieval/content-serving schema.
+- Đây là retrieval/content-serving schema (lược đồ dữ liệu).
 - Không để AI-generated answer trở thành canonical row.
+

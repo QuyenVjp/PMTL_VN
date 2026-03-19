@@ -3,7 +3,7 @@
 > Ghi chú cho sinh viên:
 > Hãy nhớ câu này: `moderationReports` là nguồn gốc, còn field trên comment/post chỉ là phần tóm tắt để đọc nhanh.
 
-## Decision 1. moderationReports là source of truth duy nhất
+## Decision 1. moderationReports là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất
 
 ### Context
 Nhiều entity có thể bị report nhưng repo đã có collection `moderationReports`.
@@ -13,7 +13,7 @@ Nhiều entity có thể bị report nhưng repo đã có collection `moderation
 - Không tạo report sub-table riêng trong từng module.
 
 ### Rationale
-- Boundary rõ.
+- boundary (ranh giới trách nhiệm) rõ.
 - Dễ thống nhất route và admin workflow.
 
 ### Trade-off
@@ -25,7 +25,7 @@ Nhiều entity có thể bị report nhưng repo đã có collection `moderation
 Entity bị report đang có các field như `reportCount`, `lastReportReason`, `moderationStatus`, `approvalStatus`, `isHidden`.
 
 ### Decision
-- Các field này chỉ là summary/read model.
+- Các field này chỉ là summary/read model (mô hình dữ liệu đọc).
 - Chúng không thay thế moderation report source record.
 
 ### Rationale
@@ -72,19 +72,20 @@ Không phải report nào cũng đến từ user đã đăng nhập.
 ### Trade-off
 - Một số forensic case cần log/hệ thống khác nếu muốn điều tra sâu hơn.
 
-## Decision 5. Chưa tạo moderation queue table riêng
+## Decision 5. Chưa tạo moderation queue (hàng đợi xử lý) table riêng
 
 ### Context
-Design cũ từng gợi ý queue/escalation table riêng.
+Design cũ từng gợi ý queue (hàng đợi xử lý)/escalation table riêng.
 Repo hiện tại chưa cần đến mức đó.
 
 ### Decision
 - Chưa thêm `moderationQueue` hoặc `escalationQueue` riêng vào current scope.
-- Queue hiển thị cho admin hiện suy ra từ report status + target summary.
+- queue (hàng đợi xử lý) hiển thị cho admin hiện suy ra từ report status + target summary.
 
 ### Rationale
 - Giữ thiết kế triển khai được cho current repo.
 - Tránh enterprise workflow thừa.
 
 ### Trade-off
-- Nếu moderation volume lớn hơn, sau này có thể cần queue/escalation model rõ hơn.
+- Nếu moderation volume lớn hơn, sau này có thể cần queue (hàng đợi xử lý)/escalation model rõ hơn.
+

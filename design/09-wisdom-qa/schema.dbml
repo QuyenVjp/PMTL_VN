@@ -10,6 +10,22 @@ Enum wisdom_source_type {
   program_video
 }
 
+Enum source_provenance_type {
+  official_origin
+  official_mirror
+  community_volunteer_site
+  community_translation
+  community_annotation
+  testimonial_or_claim
+}
+
+Enum review_status_type {
+  source_verified
+  translated_draft
+  translated_reviewed
+  human_review_required
+}
+
 Enum qa_type {
   metaphysics_qa
   buddhist_qa
@@ -25,13 +41,19 @@ Table wisdom_entries {
   id uuid [pk]
   public_id varchar(32) [not null, unique]
   source_url varchar(512) [not null]
+  source_site_label varchar(160)
   source_type wisdom_source_type [not null]
+  source_provenance source_provenance_type [not null, default: 'official_origin']
+  source_code varchar(64) [note: "Ma bai / timestamp, vi du shuohua20140808 08:56"]
   source_language varchar(16) [not null, default: 'zh']
   title_original varchar(255) [not null]
   title_vietnamese varchar(255)
   summary_vietnamese text
   body_original text
   body_vietnamese text
+  source_image_ref varchar(160)
+  translation_credit varchar(160)
+  review_status review_status_type [not null, default: 'source_verified']
   audio_ref varchar(64)
   video_ref varchar(64)
   speaker varchar(160)
@@ -55,14 +77,35 @@ Table qa_entries {
   id uuid [pk]
   public_id varchar(32) [not null, unique]
   source_url varchar(512) [not null]
+  source_site_label varchar(160)
   qa_type qa_type [not null]
+  source_provenance source_provenance_type [not null, default: 'official_origin']
+  source_code varchar(64) [note: "Ma bai / timestamp, vi du shuohua20140808 08:56"]
   question_original text [not null]
   question_vietnamese text
   answer_original text [not null]
   answer_vietnamese text
+  source_image_ref varchar(160)
+  translation_credit varchar(160)
+  review_status review_status_type [not null, default: 'source_verified']
   speaker varchar(160)
   is_official boolean [not null, default: true]
   published_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table authority_profiles {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  display_name_vi varchar(255) [not null]
+  display_name_original varchar(255)
+  source_url varchar(512)
+  source_provenance source_provenance_type [not null, default: 'official_origin']
+  official_fact_summary text [note: "Chi tom tat fact co nguon"]
+  translated_profile_summary text [note: "Ban gioi thieu tieng Viet cua cong dong"]
+  doctrinal_claims text [note: "Claim niem tin / doctrinal claims, tach rieng"]
+  review_status review_status_type [not null, default: 'human_review_required']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 }

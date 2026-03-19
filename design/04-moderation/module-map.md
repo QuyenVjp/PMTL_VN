@@ -60,6 +60,7 @@ markmap:
 - push delivery state
 
 ## Current rules
-- `moderationReports` là source of truth
+- `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 - target entity giữ summary fields để tối ưu read path
 - guestbook dùng approval workflow nhẹ hơn comment/community content
+

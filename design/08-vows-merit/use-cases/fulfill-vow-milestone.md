@@ -3,20 +3,20 @@
 ## Purpose
 - Ghi nhận một mốc hoàn thành của `Phát nguyện` mà không biến record này thành task list thông thường.
 
-## Owner module
+## owner module (module sở hữu)
 - `vows-merit`
 
 ## Actors
 - `member`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - User đánh dấu đã hoàn thành một phần hoặc toàn bộ mốc nguyện.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Vow record tồn tại và thuộc đúng user hiện tại.
 - Vow chưa ở trạng thái terminal bị khóa theo policy.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `vowPublicId`
 - `milestoneValue` hoặc `completedAmount`
 - `note` nếu có
@@ -26,7 +26,7 @@
 - `vows`
 - `vowProgressEntries`
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Resolve user từ session.
 2. Load canonical vow record.
 3. Validate mốc cập nhật không làm vượt rule bất hợp lý theo policy.
@@ -35,10 +35,10 @@
 6. Nếu đạt điều kiện hoàn thành, chuyển vow sang trạng thái `fulfilled`.
 7. Append audit `vow.fulfill`.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - có thể enqueue reminder update hoặc notification chúc mừng nhẹ nếu feature bật
 
-## Success result
+## success result (kết quả thành công)
 - User thấy tiến độ nguyện được cập nhật đúng và trang nghiêm.
 
 ## Errors
@@ -46,8 +46,9 @@
 - `401`: chưa đăng nhập.
 - `404`: vow không tồn tại hoặc không thuộc user.
 - `409`: vow đã hoàn thành/đã hủy hoặc milestone conflict.
-- `500`: lỗi service.
+- `500`: lỗi service (lớp xử lý nghiệp vụ).
 
 ## Notes for AI/codegen
 - `vowProgressEntries` là append-only source cho tiến độ.
 - Summary trên `vows` chỉ là dữ liệu đọc nhanh.
+

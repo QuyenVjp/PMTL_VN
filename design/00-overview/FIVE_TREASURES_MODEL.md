@@ -21,7 +21,7 @@ Owner modules:
 - hoàn nguyện
 - nhắc hạn và milestone
 
-Owner module:
+owner module (module sở hữu):
 - `08-vows-merit`
 
 ### 3. Phóng sanh
@@ -81,5 +81,6 @@ Owner modules:
 
 ## Notes for AI/codegen
 
-- Nếu một feature mới không map được vào bảng trên, phải xem lại owner module trước khi code.
+- Nếu một feature mới không map được vào bảng trên, phải xem lại owner module (module sở hữu) trước khi code.
 - Không để `02-community` nuốt mất các self-owned thực hành cốt lõi.
+

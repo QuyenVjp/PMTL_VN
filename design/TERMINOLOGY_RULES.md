@@ -49,6 +49,9 @@ Mục tiêu là:
 | 开示 | `Khai thị` | `开示` | Giữ sắc thái chỉ dạy, không đổi thành "blog post" |
 | 佛言佛语 | `Phật ngôn Phật ngữ` | `佛言佛语` | Thư viện trích dẫn ngắn |
 | 精彩反馈 | `Chia sẻ linh nghiệm` | `精彩反馈` | Dùng cho testimony/community reference |
+| 心香 | `Tâm hương` | `心香` | Dùng đúng ngữ cảnh khấn cầu khi không thắp hương chính thức |
+| 礼佛大忏悔文 | `Kinh Lễ Phật Đại Sám Hối Văn` | `礼佛大忏悔文` | Giữ nguyên tên đầy đủ khi nói về rule số biến / thời gian |
+| 圣无量寿决定光明王陀罗尼 | `Thánh Vô Lượng Thọ Quyết Định Quang Minh Vương Đà La Ni` | `圣无量寿决定光明王陀罗尼` | Dùng nguyên tên đầy đủ trong rule phóng sanh |
 
 ## Quy tắc đặc biệt cho `Ngôi Nhà Nhỏ`
 
@@ -81,6 +84,15 @@ Mục tiêu là:
   - `AI hỏi đáp`
   - `trợ lý bói toán`
   - `oracle`
+
+## Quy tắc đặc biệt cho bài thực hành ngày đặc biệt
+
+- `Tâm hương` là tên chuẩn trong app/docs tiếng Việt.
+- `Kinh Lễ Phật Đại Sám Hối Văn` phải dùng tên đầy đủ khi chốt:
+  - số biến
+  - giờ không nên tụng
+  - ngoại lệ cho phụ nữ mang thai / ở cữ
+- `Thánh Vô Lượng Thọ Quyết Định Quang Minh Vương Đà La Ni` không rút gọn tùy tiện trong rule gốc.
 
 ## Quy tắc đặt tên module
 

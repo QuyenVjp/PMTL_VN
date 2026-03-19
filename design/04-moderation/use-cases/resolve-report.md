@@ -3,22 +3,22 @@
 ## Purpose
 - Cho admin/super-admin ra quyết định trên một report đã được tạo và đồng bộ quyết định đó về entity đích.
 
-## Owner module
+## owner module (module sở hữu)
 - `moderation`
 
 ## Actors
 - `admin`
 - `super-admin`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Admin gọi `POST /api/moderation/reports/:publicId/decision`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Actor có role phù hợp.
 - Report tồn tại và chưa ở trạng thái terminal không cho sửa nữa theo policy.
 - Target entity của report vẫn resolve được.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - decision enum explicit ở server:
   - `approved`
   - `rejected`
@@ -30,7 +30,7 @@
 - target entity collection
 - identity của actor/admin
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Resolve report bằng `publicId`.
 2. Validate decision payload.
 3. Update canonical report record trong `moderationReports`.
@@ -41,11 +41,11 @@
 5. Append audit `moderation.report.resolve`.
 6. Enqueue notify affected user nếu flow bật.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - notify affected user
 - internal admin trail nếu policy cần
 
-## Success result
+## success result (kết quả thành công)
 - Report có decision state mới.
 - Target entity phản ánh đúng summary moderation để public filtering hoạt động.
 
@@ -70,3 +70,4 @@
 ## Notes for AI/codegen
 - Quyết định moderation ghi vào report source trước, rồi mới sync target summary.
 - Guestbook approval là biến thể state riêng, nhưng vẫn phải tôn trọng owner của target entity.
+

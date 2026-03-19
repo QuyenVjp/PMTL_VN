@@ -57,5 +57,6 @@ File này chốt hướng hỗ trợ `Bạch thoại Phật pháp` theo kiểu o
 
 ## Notes for AI/codegen
 
-- offline bundle là projection phục vụ đọc, không thay source canonical.
+- offline bundle (gói tải ngoại tuyến) là projection phục vụ đọc, không thay source canonical.
 - audio/video refs phải tôn trọng source mapping và storage policy.
+

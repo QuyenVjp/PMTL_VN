@@ -1,28 +1,28 @@
 # Register Member
 
 ## Purpose
-- Đăng ký một tài khoản thành viên mới bằng Payload auth, tạo session hợp lệ và trả auth contract đã map cho web.
+- Đăng ký một tài khoản thành viên mới bằng Payload auth, tạo session hợp lệ và trả auth contract (hợp đồng dữ liệu/nghiệp vụ) đã map cho web.
 
-## Owner module
+## owner module (module sở hữu)
 - `identity`
 
 ## Actors
 - `guest`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Web gọi `POST /api/auth/register`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Body hợp lệ theo `registerSchema`.
 - Email chưa tồn tại.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `registerSchema`
 
 ## Read set
 - `users`
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Parse body theo `registerSchema`.
 2. Gọi CMS auth register.
 3. Ghi canonical user record vào `users`.
@@ -30,10 +30,10 @@
 5. Set auth cookie ở web BFF.
 6. Append audit `auth.register`.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - có thể có email welcome hoặc verification về sau, nhưng không phải canonical path hiện tại
 
-## Success result
+## success result (kết quả thành công)
 - User mới được tạo.
 - Session hợp lệ được thiết lập cho web.
 
@@ -54,3 +54,4 @@
 ## Notes for AI/codegen
 - Session authority là Payload auth.
 - Đừng tự phát minh user table hoặc token issuance ở web.
+

@@ -27,12 +27,12 @@ Mục tiêu:
 
 ## Public input baseline
 
-- mọi input public phải qua schema validation
+- mọi input public phải qua schema (lược đồ dữ liệu) validation
 - comment, guestbook, search, report cần:
   - rate limit / request guard
   - anti-spam
   - structured logging
-- không tin dữ liệu từ client là source of truth
+- không tin dữ liệu từ client là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 
 ## Media / file baseline
 
@@ -66,11 +66,11 @@ Mục tiêu:
 - search index không chứa field nhạy cảm không cần public
 - DTO public không expose raw internal fields
 - moderation internals không đi ra route public
-- fallback read không được phá visibility policy
+- fallback (đường dự phòng) read không được phá visibility policy
 
 ## Failure-mode security rule
 
-- khi service phụ như Meilisearch hoặc Redis lỗi:
+- khi service (lớp xử lý nghiệp vụ) phụ như Meilisearch hoặc Redis lỗi:
   - không được trả lộ dữ liệu nhạy cảm
   - không được bỏ qua access control
   - có thể degrade feature, nhưng không được degrade security
@@ -89,9 +89,10 @@ Mục tiêu:
 ## Notes for AI/codegen
 
 - Đừng giả định media upload là chuyện phụ.
-- Đừng coi CDN hay object storage là chỉ chuyện infra; nó ảnh hưởng trực tiếp tới security boundary.
+- Đừng coi CDN hay object storage là chỉ chuyện infra; nó ảnh hưởng trực tiếp tới security boundary (ranh giới trách nhiệm).
 - Nếu feature có upload file, phải ghi rõ:
   - ai được upload
   - upload vào đâu
   - scan ở bước nào
   - publish public ở bước nào
+

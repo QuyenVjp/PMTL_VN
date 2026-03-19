@@ -8,7 +8,7 @@ Mục tiêu:
   - `continue` (tiếp tục chạy)
   - `degrade` (chạy suy giảm)
   - `fail closed` (dừng an toàn)
-  - `recover async` (phục hồi bất đồng bộ)
+  - `recover async (bất đồng bộ)` (phục hồi bất đồng bộ)
 - giúp AI/codegen không tự bịa failure behavior
 
 ## Quy ước đọc nhanh
@@ -22,22 +22,22 @@ Mục tiêu:
 
 - `Postgres down` (PostgreSQL ngừng hoạt động)
 - `Meilisearch down` (Search engine ngừng hoạt động)
-- `Redis/worker down` (Redis hoặc worker queue ngừng hoạt động)
+- `Redis/worker (tiến trình xử lý nền) down` (Redis hoặc worker (tiến trình xử lý nền) queue (hàng đợi xử lý) ngừng hoạt động)
 - `media storage down` (volume/CDN/media path lỗi)
 - `object storage/scan fail` (object storage hoặc bước scan/quarantine lỗi)
 
 ## Matrix theo module
 
-| Module | Postgres down | Meilisearch down | Redis/worker down | media storage down | object storage / scan fail |
+| Module | Postgres down | Meilisearch down | Redis/worker (tiến trình xử lý nền) down | media storage down | object storage / scan fail |
 |---|---|---|---|---|---|
 | Identity | `fail closed` | `continue` | `degrade` nếu email reset chậm | `degrade` avatar/media | `continue` nếu không có upload mới |
 | Content | `fail closed` cho canonical read/write | `continue` với public read, `degrade` search | `degrade` vì reindex/revalidation/notification trễ | `degrade` hoặc `fail partial` với bài có media | `fail closed` cho publish file mới; public file cũ còn thì continue |
 | Community | `fail closed` cho submit/read canonical | `continue` | `degrade` vì alert/report notify trễ | `continue` nếu text-only, `degrade` nếu có cover/media | `fail closed` cho upload mới |
 | Engagement | `fail closed` | `continue` | `continue` hoặc `degrade nhẹ` | `continue` trừ khi sheet phụ thuộc ảnh/file | `continue` nếu không upload |
 | Moderation | `fail closed` | `continue` | `degrade` vì notify/report fan-out trễ | `continue` | `continue` |
-| Search | `fail closed` cho fallback canonical nếu Postgres cũng chết | `degrade` sang payload-fallback | `degrade` vì sync lag tăng | `continue` | `continue` |
-| Calendar | `fail closed` cho canonical read model source | `continue` | `degrade` nếu reminder rebuild trễ | `degrade` khi event cần media | `continue` nếu không upload |
-| Notification | `degrade` nặng hoặc `fail closed` cho target resolution | `continue` | `fail closed` cho dispatch, `recover async` khi worker quay lại | `continue` trừ message có media | `continue` cho job cũ, `fail closed` với asset mới chưa scan |
+| Search | `fail closed` cho fallback (đường dự phòng) canonical nếu Postgres cũng chết | `degrade` sang payload-fallback (đường dự phòng) | `degrade` vì sync lag tăng | `continue` | `continue` |
+| Calendar | `fail closed` cho canonical read model (mô hình dữ liệu đọc) source | `continue` | `degrade` nếu reminder rebuild trễ | `degrade` khi event cần media | `continue` nếu không upload |
+| Notification | `degrade` nặng hoặc `fail closed` cho target resolution | `continue` | `fail closed` cho dispatch, `recover async (bất đồng bộ)` khi worker (tiến trình xử lý nền) quay lại | `continue` trừ message có media | `continue` cho job cũ, `fail closed` với asset mới chưa scan |
 | Vows & Merit | `fail closed` | `continue` | `degrade` nếu reminder trễ | `continue` | `continue` |
 | Wisdom & QA | `fail closed` cho canonical read nếu Postgres chết | `degrade` nếu search/retrieval index hỏng | `degrade` vì offline prep/reminder trễ | `degrade` mạnh với audio/video | `fail closed` cho bundle mới, `continue` cho bundle cũ đã publish |
 
@@ -46,20 +46,20 @@ Mục tiêu:
 ### 1. `Postgres down`
 
 #### Nguyên tắc
-- Postgres là `source of truth` nên current scope không hứa hẹn `read-only mode` giả từ Redis/Meilisearch
+- Postgres là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)` nên current scope không hứa hẹn `read-only mode` giả từ Redis/Meilisearch
 - các flow cần correctness phải `fail closed`
 
 #### Ảnh hưởng
 - auth/session canonical check hỏng
 - content/community/self-state canonical reads hỏng
-- search fallback qua Payload cũng không cứu được nếu DB chết
+- search fallback (đường dự phòng) qua Payload cũng không cứu được nếu DB chết
 
 #### Rule thiết kế
 - không dùng Redis hoặc Meilisearch để giả làm canonical read thay Postgres
 - public shell/UI có thể hiện maintenance mode (chế độ bảo trì), nhưng không được bịa dữ liệu hiện thời
 
 #### Recovery path
-- restart service
+- restart service (lớp xử lý nghiệp vụ)
 - failover/restore backup
 - khi Postgres hồi phục, downstream sync có thể reindex/rebuild lại
 
@@ -70,7 +70,7 @@ Mục tiêu:
 - vì vậy cho phép `degrade`
 
 #### Hành vi mong muốn
-- `GET /api/posts/search` fallback sang Payload query
+- `GET /api/posts/search` fallback (đường dự phòng) sang Payload query
 - kết quả có thể:
   - chậm hơn
   - ranking yếu hơn
@@ -82,25 +82,25 @@ Mục tiêu:
 - replay search sync jobs
 - nếu cần, chạy batch reindex
 
-### 3. `Redis/worker down`
+### 3. `Redis/worker (tiến trình xử lý nền) down`
 
 #### Nguyên tắc
-- canonical write không được phụ thuộc hoàn toàn vào queue
-- async side effects được phép trễ, nhưng không được mất âm thầm
+- canonical write không được phụ thuộc hoàn toàn vào queue (hàng đợi xử lý)
+- async (bất đồng bộ) side effects được phép trễ, nhưng không được mất âm thầm
 
 #### Hành vi mong muốn
-- content/community/engagement write vẫn ưu tiên commit canonical record trước
+- content/community/engagement write vẫn ưu tiên commit canonical record (bản ghi chuẩn gốc) trước
 - search sync, push dispatch, email, reminder build sẽ:
   - pending
-  - retry khi worker quay lại
-  - hoặc cần manual recovery nếu queue mất state
+  - retry khi worker (tiến trình xử lý nền) quay lại
+  - hoặc cần manual recovery nếu queue (hàng đợi xử lý) mất state
 
 #### Rule thiết kế
 - các job quan trọng phải idempotent
-- status/health phải phản ánh queue lag và worker health
+- status/health phải phản ánh queue (hàng đợi xử lý) lag và worker (tiến trình xử lý nền) health
 
 #### Recovery path
-- restart Redis/worker
+- restart Redis/worker (tiến trình xử lý nền)
 - replay pending jobs nếu có
 - reindex/manual dispatch nếu cần
 
@@ -146,7 +146,7 @@ Mục tiêu:
 ### Search-heavy features
 - `Kho Trí Huệ` phải có degraded mode rõ:
   - search engine tốt: dùng Meilisearch
-  - search engine hỏng: dùng payload-fallback
+  - search engine hỏng: dùng payload-fallback (đường dự phòng)
   - Postgres hỏng: fail closed
 
 ### Practice features
@@ -163,9 +163,9 @@ Mục tiêu:
 
 ### "Postgres chết thì có read-only mode không?"
 - Không trong current scope.
-- Lý do: Redis và Meilisearch không phải source of truth.
+- Lý do: Redis và Meilisearch không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
 
-### "Worker chết thì dữ liệu có lệch không?"
+### "worker (tiến trình xử lý nền) chết thì dữ liệu có lệch không?"
 - Có thể trễ projection/job, nhưng canonical write không được mất.
 - Recovery path là retry + reindex/manual replay.
 
@@ -179,6 +179,7 @@ Mục tiêu:
 
 ## Notes for AI/codegen
 
-- Khi viết use-case mới, phải ghi rõ failure behavior theo matrix này.
-- Nếu một flow phụ thuộc asset/file/search/queue, đừng chỉ mô tả happy path.
+- Khi viết use-case (kịch bản sử dụng) mới, phải ghi rõ failure behavior theo matrix này.
+- Nếu một flow phụ thuộc asset/file/search/queue (hàng đợi xử lý), đừng chỉ mô tả happy path.
 - Không được âm thầm đổi `fail closed` thành `best effort` nếu docs chưa chốt vậy.
+

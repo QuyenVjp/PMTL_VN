@@ -3,14 +3,14 @@
 ## Purpose
 - Cho user tra cứu nhanh một vấn đề thực tế và nhận lại bài/đoạn hỏi đáp chính thống đã được index.
 
-## Owner module
+## owner module (module sở hữu)
 - `wisdom-qa`
 
 ## Actors
 - `guest`
 - `member`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - User nhập từ khóa như:
   - mơ thấy gì
   - bệnh tật
@@ -19,7 +19,7 @@
   - phát nguyện
   - phóng sanh
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - keyword có ý nghĩa và được normalize.
 
 ## Read set
@@ -27,9 +27,10 @@
 - search index của module
 - alias/taxonomy chuẩn hóa
 
-## Success result
+## success result (kết quả thành công)
 - Trả danh sách bài/đoạn phù hợp từ nguồn chính thống.
 
 ## Notes for AI/codegen
 - Không generate "lời giải" mới.
 - Retrieval phải ưu tiên nguồn chính thức và bản dịch đã duyệt.
+

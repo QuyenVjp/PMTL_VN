@@ -65,10 +65,11 @@ markmap:
 - community chỉ giữ moderation summary fields trên entity
 
 ### Notification
-- submit/report flow có thể tạo async alert cho admin/super-admin
+- submit/report flow có thể tạo async (bất đồng bộ) alert cho admin/super-admin
 
 ## Current rules
 - UGC mặc định không trở thành canonical moderation record
 - report lifecycle thuộc moderation module
 - author snapshot được giữ ngay trên entity để ổn định public DTO
 - guestbook là flow nhẹ hơn community post/comment
+

@@ -182,4 +182,5 @@
   - `5. Nghi thức phóng sinh...`
   - `6. Phương pháp tụng niệm Ngôi Nhà Nhỏ...`
   - `7. Quy trình đốt ngôi nhà nhỏ không có bàn thờ...`
-- Nó là design/UI guidance, chưa phải contract API cuối cùng.
+- Nó là design/UI guidance, chưa phải contract (hợp đồng dữ liệu/nghiệp vụ) API cuối cùng.
+

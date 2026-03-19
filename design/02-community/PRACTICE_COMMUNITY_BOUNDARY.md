@@ -1,4 +1,4 @@
-# Practice Community Boundary
+# Practice Community boundary (ranh giới trách nhiệm)
 
 File này chốt ranh giới giữa:
 
@@ -62,5 +62,6 @@ File này chốt ranh giới giữa:
 
 ## Notes for AI/codegen
 
-- Nếu feature là "share to community", canonical record vẫn ở module gốc trước.
+- Nếu feature là "share to community", canonical record (bản ghi chuẩn gốc) vẫn ở module gốc trước.
 - Community post chỉ là bản export hoặc bài viết mới do user chủ động tạo.
+

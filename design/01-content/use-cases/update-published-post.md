@@ -3,41 +3,41 @@
 ## Purpose
 - Cập nhật một bài viết đã public mà vẫn giữ đúng canonical data, cache invalidation, và search projection.
 
-## Owner module
+## owner module (module sở hữu)
 - `content`
 
 ## Actors
 - `admin`
 - `super-admin`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Admin lưu thay đổi cho một `posts` document đang ở trạng thái `published`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Actor có quyền sửa bài.
 - Document tồn tại và đang public.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - Payload collection write cho `posts`.
-- Service chuẩn hóa lại plain text, excerpt và normalized search fields.
+- service (lớp xử lý nghiệp vụ) chuẩn hóa lại plain text, excerpt và normalized search fields.
 
 ## Read set
 - `posts`
 - relation taxonomy/media/event liên quan
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Đọc document hiện tại.
 2. Recompute derived source fields.
 3. Ghi canonical update vào `posts`.
 4. Append audit event `post.update.published`.
 5. Enqueue search sync update.
-6. Trigger revalidation cho route/tag liên quan.
+6. trigger (điểm kích hoạt) revalidation cho route/tag liên quan.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - search sync update hoặc remove nếu bài không còn public
 - cache invalidation
 
-## Success result
+## success result (kết quả thành công)
 - Bài public hiển thị phiên bản mới.
 - Search result eventual consistency theo phiên bản mới.
 
@@ -46,7 +46,7 @@
 - `401`: chưa đăng nhập.
 - `403`: không có quyền.
 - `404`: post không tồn tại.
-- `500`: lỗi service hoặc downstream.
+- `500`: lỗi service (lớp xử lý nghiệp vụ) hoặc downstream.
 
 ## Audit
 - log `post.update.published`
@@ -61,3 +61,4 @@
 ## Notes for AI/codegen
 - Document đã publish vẫn có write-path ở content owner.
 - Derived fields phải cập nhật cùng canonical write để search module đọc nguồn đúng.
+

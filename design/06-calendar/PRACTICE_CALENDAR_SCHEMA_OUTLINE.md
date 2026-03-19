@@ -1,6 +1,6 @@
-# Practice Calendar Schema Outline
+# Practice Calendar schema (lược đồ dữ liệu) Outline
 
-## Owner module
+## owner module (module sở hữu)
 - `06-calendar`
 
 ## Mục tiêu
@@ -13,7 +13,7 @@ Giữ:
 - `LunarEvents`
 - `LunarEventOverrides`
 
-Và build read model ở service:
+Và build read model (mô hình dữ liệu đọc) ở service (lớp xử lý nghiệp vụ):
 - `practiceDayTags`
 - `recommendedPracticeWindows`
 - `lifeReleaseSuggestion`
@@ -45,9 +45,10 @@ Và build read model ở service:
 - phase đầu dùng Option A
 - chỉ thêm collection rule khi business rule bắt đầu quá dày và khó maintain bằng code/config
 
-## Service boundary
+## service (lớp xử lý nghiệp vụ) boundary (ranh giới trách nhiệm)
 
-- `calendar-practice.service.ts`
+- `calendar-practice.service (lớp xử lý nghiệp vụ).ts`
   - resolve practice day tags
   - compose personal practice calendar
   - emit reminder candidates
+

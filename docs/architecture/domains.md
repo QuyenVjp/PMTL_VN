@@ -67,6 +67,7 @@
 - `chantPreferences` và `practiceLogs` là self-owned user state.
 - `practiceSheets` và `ngoiNhaNhoSheets` cũng là self-owned user state.
 - Merge logic cho lunar override, plan, preference vẫn nằm ở service layer.
+- `personalPracticeCalendarReadModel` được phép mang thêm `daily practice advisory` dạng read-model output.
 
 ## Vows / Merit
 
@@ -83,8 +84,13 @@
   - `wisdomEntries`
   - `qaEntries`
   - `offlineBundles`
+  - `authorityProfiles`
 - Mục tiêu là tra cứu đúng nguồn `Bạch thoại Phật pháp`, `Huyền học vấn đáp`, audio/video hỗ trợ đọc học.
 - Search phải index hợp nhất module này với `01-content` thành một bề mặt đọc `Kho Trí Huệ`.
+- Module này còn giữ `source provenance` để phân biệt:
+  - nguồn gốc chính thức
+  - official mirror
+  - web phụng sự viên / bản dịch cộng đồng
 
 ## Sutra
 

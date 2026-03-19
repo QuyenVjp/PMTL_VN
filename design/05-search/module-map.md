@@ -14,7 +14,7 @@ markmap:
 
 ## Mục tiêu
 - mô tả indexing pipeline hiện có
-- mô tả public search contract hiện có
+- mô tả public search contract (hợp đồng dữ liệu/nghiệp vụ) hiện có
 - giữ rõ ranh giới giữa source document và search index
 
 ## Current scope
@@ -24,8 +24,8 @@ markmap:
 - current public search chủ yếu cho `posts`
 
 ### Search runtime
-- Redis queue `search-sync`
-- worker processor search sync
+- Redis queue (hàng đợi xử lý) `search-sync`
+- worker (tiến trình xử lý nền) processor search sync
 - Meilisearch index `posts`
 
 ### Public contracts
@@ -45,17 +45,17 @@ markmap:
 
 ### Index lifecycle
 - enqueue reindex/update
-- worker upsert vào Meilisearch
+- worker (tiến trình xử lý nền) upsert vào Meilisearch
 - remove hoặc stop public indexing khi document không còn public
 
 ### Query lifecycle
 - ưu tiên Meilisearch
-- fallback qua Payload query khi cần
+- fallback (đường dự phòng) qua Payload query khi cần
 
 ## Current boundaries
 
 ### Search owns
-- search query contract
+- search query contract (hợp đồng dữ liệu/nghiệp vụ)
 - indexing pipeline
 - search status reporting
 
@@ -68,4 +68,5 @@ markmap:
 ## Current rules
 - Meilisearch chỉ là index
 - current public search chỉ index published content
-- fallback không được trở thành source of truth mới
+- fallback (đường dự phòng) không được trở thành source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) mới
+

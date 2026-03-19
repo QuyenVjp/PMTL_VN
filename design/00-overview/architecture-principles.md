@@ -17,14 +17,14 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - Web tiêu thụ compatibility routes từ CMS thay vì dựa trực tiếp vào raw Payload document.
 
 ### CMS + Auth
-- `apps/cms` là runtime host cho Payload admin UI, REST API, GraphQL, route compatibility, và worker bootstrap.
+- `apps/cms` là runtime host cho Payload admin UI, REST API, GraphQL, route compatibility, và worker (tiến trình xử lý nền) bootstrap.
 - Payload auth là auth authority duy nhất.
 - Không dùng auth layer thứ hai cho session hoặc đăng nhập ở current scope.
 
 ### Data & Runtime
-- PostgreSQL là source of truth duy nhất cho dữ liệu ứng dụng.
-- Redis chỉ dùng cho cache, queue, rate-limit coordination, và request guard coordination.
-- Worker xử lý background jobs cho search sync, push dispatch, email notification, và maintenance jobs.
+- PostgreSQL là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất cho dữ liệu ứng dụng.
+- Redis chỉ dùng cho cache, queue (hàng đợi xử lý), rate-limit coordination, và request guard coordination.
+- worker (tiến trình xử lý nền) xử lý background jobs cho search sync, push dispatch, email notification, và maintenance jobs.
 - Meilisearch là search index, không phải nơi ghi dữ liệu gốc.
 - Caddy là reverse proxy / TLS entrypoint.
 
@@ -67,12 +67,12 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
   - `chantItems`
   - `chantPlans`
   - các PDF/script hỗ trợ niệm đi qua `downloads`, `media`, hoặc `beginnerGuides`
-- Moderation report source of truth là `moderationReports`.
+- Moderation report source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) là `moderationReports`.
 - Notification control plane hiện có `pushSubscriptions` và `pushJobs`.
 
 ## Nguyên tắc kiến trúc cốt lõi
 
-### 1. PostgreSQL là source of truth duy nhất
+### 1. PostgreSQL là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất
 - Mọi write-path nghiệp vụ phải đi qua Postgres/Payload.
 - Redis và Meilisearch chỉ giữ computed state hoặc delivery state.
 - Không đọc Redis hoặc Meilisearch như nguồn dữ liệu chuẩn cho business logic.
@@ -82,23 +82,23 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - Web không tự sở hữu auth database riêng.
 - Không thêm auth provider thứ hai nếu không có migration rõ ràng.
 
-### 3. Async-first cho non-critical paths
+### 3. async (bất đồng bộ)-first cho non-critical paths
 - Background jobs là mặc định cho:
   - notification
   - search indexing
   - email
   - cleanup / maintenance
-- Sync path chỉ giữ phần cần phản hồi ngay cho user hoặc cần transaction boundary rõ ràng.
+- Sync path chỉ giữ phần cần phản hồi ngay cho user hoặc cần transaction boundary (ranh giới trách nhiệm) rõ ràng.
 
 ### 4. Chỉ published content mới được cache hoặc index
 - Editorial content đang dùng Payload drafts làm workflow gốc.
 - Chỉ document đã publish mới được đẩy sang Meilisearch và các shared cache.
 - Draft, pending UGC, hidden content, và user-state không đi vào shared cache/index.
 
-### 5. Search là computed read model
-- Meilisearch là read model tối ưu cho full-text search.
+### 5. Search là computed read model (mô hình dữ liệu đọc)
+- Meilisearch là read model (mô hình dữ liệu đọc) tối ưu cho full-text search.
 - Search source fields vẫn thuộc collection gốc ở Postgres.
-- Khi Meilisearch unavailable, hệ thống có thể fallback về query từ Payload cho các flow public quan trọng.
+- Khi Meilisearch unavailable, hệ thống có thể fallback (đường dự phòng) về query từ Payload cho các flow public quan trọng.
 
 ### 6. Visibility phải là dữ liệu tường minh khi feature cần audience scoping
 - Không hardcode access visibility vào middleware hoặc UI branches.
@@ -110,7 +110,7 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - `moderationReports` là nguồn dữ liệu gốc cho report/decision.
 - Các field như `reportCount`, `lastReportReason`, `isHidden`, `approvalStatus` chỉ là summary hoặc delivery fields trên entity đích.
 
-### 8. Boundary module phải rõ
+### 8. boundary (ranh giới trách nhiệm) module phải rõ
 - `identity` sở hữu user/auth data.
 - `content` sở hữu editorial documents, taxonomy, media, và content search fields.
 - `content` cũng sở hữu practice support content như `chantItems`, `chantPlans`, script file, ritual guide.
@@ -119,16 +119,16 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - `calendar` sở hữu event và lunar schedule data.
 - `moderation` sở hữu report lifecycle.
 - `notification` sở hữu delivery preferences và job control plane.
-- `search` sở hữu indexing flow và query contract, không sở hữu canonical business data.
+- `search` sở hữu indexing flow và query contract (hợp đồng dữ liệu/nghiệp vụ), không sở hữu canonical business data.
 
 ### 9. Denormalized field được phép, nhưng owner phải rõ
 - `commentCount`, `reportCount`, `lastReportReason`, `views`, `publishedAt`, `normalizedSearchText` là hợp lệ nếu có owner rõ ràng.
-- Summary field chỉ phục vụ read path, không thay thế canonical record của module gốc.
+- Summary field chỉ phục vụ read path, không thay thế canonical record (bản ghi chuẩn gốc) của module gốc.
 
 ### 10. Thiết kế phải AI-friendly và text-first
-- Design artifact phải đủ cụ thể để AI generate code đúng folder, đúng boundary, đúng DTO.
+- Design artifact phải đủ cụ thể để AI generate code đúng folder, đúng boundary (ranh giới trách nhiệm), đúng DTO.
 - Không dùng abstraction mơ hồ như `entity_meta`, `universal_table`, `generic_workflow`.
-- Mọi file design nên map trực tiếp về collection/service/route đang có trong repo.
+- Mọi file design nên map trực tiếp về collection/service (lớp xử lý nghiệp vụ)/route đang có trong repo.
 
 ## Quy tắc implementation cần giữ nguyên
 
@@ -144,7 +144,7 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
   - `fields.ts`
   - `access.ts`
   - `hooks.ts`
-  - `service.ts`
+  - `service (lớp xử lý nghiệp vụ).ts`
 - `packages/shared` chỉ chứa code framework-agnostic.
 
 ## Những gì không còn đúng và không nên giữ lại
@@ -162,7 +162,7 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - Public comments + community posts/comments + guestbook
 - Moderation reports + moderation summary sync
 - User-state cho sutra/practice
-- Search sync sang Meilisearch + payload fallback
+- Search sync sang Meilisearch + payload fallback (đường dự phòng)
 - Push subscriptions + push jobs
 - Events + lunar events + overrides
 
@@ -173,4 +173,5 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
 - Reputation / leaderboard
 - Public profile và follow graph sâu hơn
 
-Future candidate chỉ được thêm vào design current scope khi repo có owner, contract, và runtime path rõ ràng.
+Future candidate chỉ được thêm vào design current scope khi repo có owner, contract (hợp đồng dữ liệu/nghiệp vụ), và runtime path rõ ràng.
+

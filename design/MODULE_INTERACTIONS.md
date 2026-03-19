@@ -13,10 +13,10 @@ Mục tiêu là làm rõ:
 
 ## Quy tắc chung
 
-- Chỉ module owner mới được định nghĩa canonical schema và business write-path của dữ liệu đó.
+- Chỉ module owner mới được định nghĩa canonical schema (lược đồ dữ liệu) và business write-path của dữ liệu đó.
 - Module khác được tham chiếu bằng:
   - quan hệ document/ID
-  - DTO mapped qua route/service
+  - DTO mapped qua route/service (lớp xử lý nghiệp vụ)
   - event/job payload
 - Search và notification là downstream module.
 - Moderation là cross-cutting module nhưng không cướp ownership của entity bị report.
@@ -35,7 +35,7 @@ Mục tiêu là làm rõ:
   - notification
 - **Direct calls**:
   - web auth routes gọi CMS auth endpoints
-- **Async side effects**:
+- **async (bất đồng bộ) side effects**:
   - reset password email
   - moderation decision notification đến user
 
@@ -51,7 +51,7 @@ Mục tiêu là làm rõ:
 - **References**:
   - identity cho author/admin biên soạn refs
   - calendar cho `relatedEvent`
-- **Emits async work**:
+- **Emits async (bất đồng bộ) work**:
   - search reindex
   - webhook/revalidation
   - notification khi có feature cần announce
@@ -65,7 +65,7 @@ Mục tiêu là làm rõ:
 - **References**:
   - identity cho author snapshot / author user
   - content cho `postComments.post`
-- **Emits async work**:
+- **Emits async (bất đồng bộ) work**:
   - moderation alert
   - internal notification cho admin/super-admin
 
@@ -79,7 +79,7 @@ Mục tiêu là làm rõ:
   - identity cho `user`
   - content cho `sutras`, `sutraChapters`
   - content practice refs cho `chantItems`, `chantPlans`
-- **Emits async work**:
+- **Emits async (bất đồng bộ) work**:
   - hiện tại tối thiểu; không đẩy search
 
 ### Moderation
@@ -91,24 +91,24 @@ Mục tiêu là làm rõ:
   - identity cho reporter/admin actor
 - **Direct writes to other modules**:
   - sync summary fields lên entity đích
-- **Emits async work**:
+- **Emits async (bất đồng bộ) work**:
   - notify admin/super-admin
   - notify affected user sau decision
 
 ### Search
 - **Owns**:
-  - search query contract
+  - search query contract (hợp đồng dữ liệu/nghiệp vụ)
   - indexing pipeline
-  - runtime status contract
+  - runtime status contract (hợp đồng dữ liệu/nghiệp vụ)
 - **References**:
   - content source documents
-  - queue/job state
+  - queue (hàng đợi xử lý)/job state
 - **Direct calls**:
   - public search route
   - status route
-- **Async work**:
-  - queue search sync
-  - worker upsert/delete index documents
+- **async (bất đồng bộ) work**:
+  - queue (hàng đợi xử lý) search sync
+  - worker (tiến trình xử lý nền) upsert/delete index documents
 
 ### Calendar
 - **Owns**:
@@ -118,7 +118,7 @@ Mục tiêu là làm rõ:
 - **References**:
   - content cho related posts
   - engagement/practice refs cho override targets
-- **Emits async work**:
+- **Emits async (bất đồng bộ) work**:
   - notification producer có thể đọc event publish/update nhưng không owned tại đây
 
 ### Notification
@@ -128,29 +128,29 @@ Mục tiêu là làm rõ:
 - **References**:
   - identity cho target users
   - content/community/moderation/calendar cho message context
-- **Async only**:
+- **async (bất đồng bộ) only**:
   - push dispatch
   - email notification job
 
 ## Interaction details
 
-| From | To | Ownership model | Trigger | Mode | Side effects |
+| From | To | Ownership model | trigger (điểm kích hoạt) | Mode | Side effects |
 |---|---|---|---|---|---|
 | Web auth UI | Identity | Identity owns auth/session | register/login/logout/reset | direct call | cookie/session update |
-| Content | Search | Content owns source fields, Search owns index flow | publish/update post | async job | upsert/delete Meilisearch document |
+| Content | Search | Content owns source fields, Search owns index flow | publish/update post | async (bất đồng bộ) job | upsert/delete Meilisearch document |
 | Content | Calendar | Calendar owns event record, Content chỉ tham chiếu | admin chọn `relatedEvent` | direct reference | không có write ngược mặc định |
-| Content | Notification | Notification không sở hữu content | publish hoặc manual internal alert | async job | push/email announcement nếu feature bật |
-| Community | Moderation | Moderation owns report record | submit report | direct create + async notify | tạo `moderationReports`, sync summary, alert admin |
-| Community | Notification | Notification không sở hữu community data | submit post/comment/guestbook | async job | tạo push/email alert cho admin/super-admin |
+| Content | Notification | Notification không sở hữu content | publish hoặc manual internal alert | async (bất đồng bộ) job | push/email announcement nếu feature bật |
+| Community | Moderation | Moderation owns report record | submit report | direct create + async (bất đồng bộ) notify | tạo `moderationReports`, sync summary, alert admin |
+| Community | Notification | Notification không sở hữu community data | submit post/comment/guestbook | async (bất đồng bộ) job | tạo push/email alert cho admin/super-admin |
 | Community | Identity | Identity owns user | submit/comment/report | direct reference | snapshot author name trên entity để giảm phụ thuộc read path |
 | Engagement | Content | Content owns scripture/library và practice support content | bookmark/progress/log | direct reference | không write ngược vào content canonical data |
-| Content | Engagement | Engagement owns self-state | preference save / practice complete | direct call qua API contract | chỉ ghi user-state, không sửa script gốc |
+| Content | Engagement | Engagement owns self-state | preference save / practice complete | direct call qua API contract (hợp đồng dữ liệu/nghiệp vụ) | chỉ ghi user-state, không sửa script gốc |
 | Engagement | Identity | Identity owns user | read/write self state | direct reference | self-owned records theo user |
 | Moderation | Community | Community owns entity, Moderation owns report | admin decision | direct write-back | update `moderationStatus`, `isHidden`, `approvalStatus`, summary fields |
-| Moderation | Notification | Notification owns delivery control plane | decision / new report | async job | notify admin/super-admin hoặc affected user |
-| Search | Content | Content owns canonical documents | public query fallback | direct read | payload fallback khi Meilisearch unavailable |
+| Moderation | Notification | Notification owns delivery control plane | decision / new report | async (bất đồng bộ) job | notify admin/super-admin hoặc affected user |
+| Search | Content | Content owns canonical documents | public query fallback (đường dự phòng) | direct read | payload fallback (đường dự phòng) khi Meilisearch unavailable |
 | Calendar | Content | Content owns chant guide/script/downloads | event override cần map bài niệm hoặc guide | direct reference | calendar không copy ritual script vào event |
-| Calendar | Notification | Notification owns delivery | event-related notice | async job | push/email nếu có producer gọi |
+| Calendar | Notification | Notification owns delivery | event-related notice | async (bất đồng bộ) job | push/email nếu có producer gọi |
 | Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để enqueue delivery |
 
 ## Direct call vs event/job
@@ -160,7 +160,7 @@ Mục tiêu là làm rõ:
 - chỉ cần tham chiếu relation
 - chưa có side effect tốn thời gian
 
-### Nên dùng async job khi
+### Nên dùng async (bất đồng bộ) job khi
 - gửi push/email
 - sync search index
 - fan-out tới nhiều recipient
@@ -169,7 +169,7 @@ Mục tiêu là làm rõ:
 ## Delete / cleanup contracts
 
 ### Quy tắc chung
-- module owner nào xóa canonical record phải chịu trách nhiệm phát cleanup signal cho downstream modules
+- module owner nào xóa canonical record (bản ghi chuẩn gốc) phải chịu trách nhiệm phát cleanup signal cho downstream modules
 - downstream module không tự giả vờ target còn tồn tại khi relation đã mất
 - nếu cleanup chưa được tự động hóa an toàn, flow thường ngày chỉ được `soft delete`
 
@@ -194,13 +194,14 @@ Mục tiêu là làm rõ:
 
 ## Bảng tổng kết module
 
-| Module | Owns data | Chỉ tham chiếu | Sync hay async | Side effects chính |
+| Module | Owns data | Chỉ tham chiếu | Sync hay async (bất đồng bộ) | Side effects chính |
 |---|---|---|---|---|
 | Identity | `users`, auth/session | media avatar, audit refs | chủ yếu sync | reset password email, auth cookies |
-| Content | editorial docs, taxonomy, scripture, chant guides/plans, media links | users, events | sync write + async downstream | search sync, revalidation |
-| Community | comments, community posts/comments, guestbook | users, posts | sync write + async downstream | moderation alert, admin notification |
+| Content | editorial docs, taxonomy, scripture, chant guides/plans, media links | users, events | sync write + async (bất đồng bộ) downstream | search sync, revalidation |
+| Community | comments, community posts/comments, guestbook | users, posts | sync write + async (bất đồng bộ) downstream | moderation alert, admin notification |
 | Engagement | bookmarks, reading progress, chant prefs, practice logs, practice sheets, `Ngôi Nhà Nhỏ` | users, sutras, chapters, chant refs từ content | sync | rất ít side effects hiện tại |
-| Moderation | `moderationReports` | users, moderated entities | sync write + async notify | summary sync, admin/user notification |
-| Search | search contract, index flow | content source fields, queue state | async-first | index upsert/delete, status reporting |
+| Moderation | `moderationReports` | users, moderated entities | sync write + async (bất đồng bộ) notify | summary sync, admin/user notification |
+| Search | search contract (hợp đồng dữ liệu/nghiệp vụ), index flow | content source fields, queue state (trạng thái hàng đợi xử lý) | async-first (ưu tiên xử lý bất đồng bộ) | index upsert/delete, status reporting |
 | Calendar | events, lunar events, overrides | posts, chant refs từ content | sync | event data cho module khác dùng |
-| Notification | push subscriptions, push jobs | users, content/community/moderation/calendar context | async | push dispatch, email dispatch |
+| Notification | push subscriptions, push jobs | users, content/community/moderation/calendar context | async (bất đồng bộ) | push dispatch, email dispatch |
+

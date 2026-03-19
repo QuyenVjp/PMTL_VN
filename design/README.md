@@ -9,28 +9,32 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 3. `design/CORE_DECISIONS.md` (Các quyết định cốt lõi)
 4. `design/MODULE_INTERACTIONS.md` (Tương tác giữa các module)
 5. `design/TERMINOLOGY_RULES.md` (Quy chuẩn thuật ngữ)
-6. `design/SOURCE_NOTES_OFFICIAL.md` (Ghi chú nguồn chính thống)
-7. `design/00-overview/FEATURE_SURFACE_FROM_OFFICIAL_SITES.md` (Bề mặt tính năng từ trang chính hiệu)
-8. `design/ELDERLY_UX_RULES.md` (Quy tắc thiết kế cho người lớn tuổi)
-9. `design/AUDIT_POLICY.md` (Chính sách nhật ký kiểm định)
-10. `design/SLA_SLO.md` (Cam kết chất lượng vận hành)
-11. `design/SECURITY_BASELINE.md` (Tiêu chuẩn bảo mật cơ sở)
-12. `design/FAILURE_MODE_MATRIX.md` (Ma trận chế độ lỗi)
-13. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
-14. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
-15. `design/01-content/*` (Các nội dung biên tập)
+6. `design/EN_VI_NOTATION_RULES.md` (Quy tắc ghi tiếng Anh kèm giải thích tiếng Việt)
+7. `design/SOURCE_NOTES_OFFICIAL.md` (Ghi chú nguồn chính thống)
+8. `design/00-overview/FEATURE_SURFACE_FROM_OFFICIAL_SITES.md` (Bề mặt tính năng từ trang chính hiệu)
+9. `design/ELDERLY_UX_RULES.md` (Quy tắc thiết kế cho người lớn tuổi)
+10. `design/AUDIT_POLICY.md` (Chính sách nhật ký kiểm định)
+11. `design/SLA_SLO.md` (Cam kết chất lượng vận hành)
+12. `design/SECURITY_BASELINE.md` (Tiêu chuẩn bảo mật cơ sở)
+13. `design/FAILURE_MODE_MATRIX.md` (Ma trận chế độ lỗi)
+14. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
+15. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
+16. `design/01-content/*` (Các nội dung biên tập)
 
 - đọc thêm `design/01-content/practice-support-reference.md` nếu bạn đang làm phần niệm kinh / Ngôi Nhà Nhỏ / phóng sinh (practice support)
 
-16. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
-17. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
-18. `design/08-vows-merit/*` (Lời nguyện và Công đức)
-19. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
-20. `design/identity/*` (Định danh người dùng)
+17. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
+18. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
+19. `design/08-vows-merit/*` (Lời nguyện và Công đức)
+20. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
+21. `design/09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md` (Ma trận nguồn gốc bài gốc, bản dịch, web phụng sự viên)
+22. `design/09-wisdom-qa/INGESTION_PLAN.md` (Kế hoạch nhập dữ liệu có nguồn đối chiếu)
+23. `design/06-calendar/PRACTICE_ADVISORY_MODEL.md` (Mô hình thông báo tu học hằng ngày)
+24. `design/00-00-identity/*` (Định danh người dùng)
 
-- đọc thêm `design/identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
+- đọc thêm `design/00-00-identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
 
-21. các module còn lại (remaining modules)
+25. các module còn lại (remaining modules)
 
 ## Mỗi loại file dùng để làm gì? (What is each file type for?)
 
@@ -40,11 +44,15 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 - Hợp để mở bằng **Markdown Preview** trong VS Code.
 - Các file `module-map.md` thường xem bằng **markmap** extension sẽ dễ hiểu hơn.
 - Riêng `practice-support-reference.md` là nơi nối tài liệu PDF thực tế với thiết kế của app.
-- Các file `contracts.md` chốt **business contract** (hợp đồng nghiệp vụ) theo từng module.
+- Các file `contracts.md` chốt **business contract (hợp đồng dữ liệu/nghiệp vụ)** theo từng module.
 - Các file trong `use-cases/` chốt **write-path** (quy trình ghi dữ liệu) thực thi cho từng chức năng.
 - `TERMINOLOGY_RULES.md` chốt cách gọi đúng để không dịch lệch (to avoid mistranslation).
 - `SOURCE_NOTES_OFFICIAL.md` ghi lại cơ sở từ nguồn chính thống để định hướng module.
+- `EN_VI_NOTATION_RULES.md` chốt cách giữ tiếng Anh chuyên ngành kèm giải thích tiếng Việt.
+- `SOURCE_PROVENANCE_MATRIX.md` chốt tầng nguồn nào là gốc, tầng nào là bản dịch, tầng nào chỉ là support/community.
+- `INGESTION_PLAN.md` chốt record nhập dữ liệu thật phải điền field nào, theo thứ tự nào.
 - `ELDERLY_UX_RULES.md` chốt nguyên tắc giao diện cho người lớn tuổi (UX rules for elderly).
+- `PRACTICE_ADVISORY_MODEL.md` chốt cách bóc một bài thông báo tu học thành data blocks và logic.
 
 ### `.mmd` (Mermaid)
 
@@ -55,9 +63,9 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 ### `.dbml` (Database Markup Language)
 
-- Là file **schema logic** cho dbdiagram / DBML preview.
+- Là file **schema (lược đồ dữ liệu) logic** cho dbdiagram / DBML preview.
 - Dùng để nhìn quan hệ bảng (table relationships), nhóm bảng, enum, note.
-- Đây là **schema thiết kế** để hiểu hệ thống, không phải file SQL thô (Not raw SQL dump).
+- Đây là **schema (lược đồ dữ liệu) thiết kế** để hiểu hệ thống, không phải file SQL thô (Not raw SQL dump).
 
 ## Cách đọc nhanh cho sinh viên (Fast track for students)
 
@@ -90,17 +98,17 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 - Xem như “bản đặc tả để code” (Spec for coding).
 - Chỉ cần bám 5 câu hỏi (Follow 5 questions):
   - owner module (module sở hữu) là ai?
-  - **canonical record** (bản ghi chính thống) ghi ở đâu trước?
+  - **canonical record (bản ghi chuẩn gốc)** ghi ở đâu trước?
   - summary field nào chỉ là dữ liệu đọc nhanh (read-only data)?
-  - side effect nào là **async-only** (chỉ chạy ngầm)?
+  - side effect nào là **async-only (chỉ chạy ngầm, bất đồng bộ)**?
   - lỗi nào phải **fail fast** (ngắt ngay lập tức)?
 
 ### Khi mở `contracts.md` (Hợp đồng dữ liệu)
 
 - Xem như “ranh giới dữ liệu” (Data boundaries).
 - Hãy tìm (Look for):
-  - schema validate (lược đồ kiểm tra) nào đang dùng thật
-  - route public/BFF nào là contract hiện tại
+  - schema (lược đồ dữ liệu) validate (lược đồ kiểm tra) nào đang dùng thật
+  - route public/BFF nào là contract (hợp đồng dữ liệu/nghiệp vụ) hiện tại
   - field (trường dữ liệu) nào không được expose (tiết lộ) ra ngoài
 
 ### Khi mở `AUDIT_POLICY.md` (Chính sách kiểm định)
@@ -117,7 +125,7 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
   - tên gốc Hoa nào cần giữ để đối chiếu
   - từ nào tuyệt đối không được dùng bừa (must not be used carelessly)
 
-### Khi mở `schema.dbml` (Sơ đồ cơ sở dữ liệu)
+### Khi mở file `schema.dbml` (sơ đồ cơ sở dữ liệu)
 
 - Đừng cố đọc hết một lúc (Don't try to read everything at once).
 - Hãy tìm (Look for):
@@ -128,15 +136,15 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 ## Ký hiệu hay gặp (Common Symbols & Terms)
 
-- `source of truth` = nơi dữ liệu gốc được tin là đúng nhất (Reliable data source).
+- `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)` = nơi dữ liệu gốc được tin là đúng nhất (Reliable data source).
 - `canonical` = dữ liệu chuẩn, dữ liệu gốc.
 - `summary field` = trường tổng hợp để đọc nhanh, không phải nguồn gốc.
-- `owner module` = module có quyền định nghĩa và ghi dữ liệu gốc.
+- `owner module (module sở hữu)` = module có quyền định nghĩa và ghi dữ liệu gốc.
 - `reference` = chỉ tham chiếu sang dữ liệu module khác.
-- `async` = xử lý nền (Asynchronous), không chờ trả kết quả ngay.
-- `fallback` = đường dự phòng khi luồng chính lỗi.
-- `write-path` = thứ tự ghi dữ liệu chuẩn của use-case.
-- `control-plane` = bản ghi điều phối (như job/subscription), không phải dữ liệu nghiệp vụ gốc.
+- `async (bất đồng bộ)` = xử lý nền (Asynchronous), không chờ trả kết quả ngay.
+- `fallback (đường dự phòng)` = đường dự phòng khi luồng chính lỗi.
+- `write-path` = thứ tự ghi dữ liệu chuẩn của use-case (kịch bản sử dụng).
+- `control-plane (lớp điều phối hệ thống)` = bản ghi điều phối (như job/subscription), không phải dữ liệu nghiệp vụ gốc.
 - `retrieval-first` = tra đúng nguồn trước, không tự sinh nội dung mới trước.
 
 ## Mẹo preview trong VS Code (VS Code Preview Tips)
@@ -160,14 +168,14 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 ## Ghi nhớ quan trọng của repo này (Important Repo Notes)
 
-- **PostgreSQL** là **source of truth** (nguồn chính thống).
+- **PostgreSQL** là **source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)** (nguồn chính thống).
 - **Redis** không phải source of truth (chỉ là bộ nhớ đệm/hàng đợi).
 - **Meilisearch** chỉ là index (chỉ mục tìm kiếm).
 - **Payload auth** là auth authority (đơn vị xác thực) duy nhất.
 - Content (Nội dung) không được ôm **user-state** (trạng thái người dùng).
 - **Moderation** là first-class module (module hạng nhất).
-- **Notification** là async-only control-plane (hệ điều phối chạy ngầm).
-- **Search** là queue-first (ưu tiên hàng đợi) và có fallback.
+- **Notification** là async-only (chỉ chạy ngầm, bất đồng bộ) control-plane (lớp điều phối hệ thống).
+- **Search** là queue-first (ưu tiên hàng đợi xử lý) và có fallback (đường dự phòng).
 - App ưu tiên hỗ trợ tu tập thực tế (real-world practice), không ưu tiên tính năng "ảo".
 - **Người lớn tuổi** (Elderly) là nhóm sử dụng chính nên UI/logic phải đơn giản, rõ, dễ đọc.
 
@@ -201,13 +209,13 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 - Lập trường hiện tại (Current stance) của repo:
   - `Postgres down`:
     - không có chế độ chỉ đọc giả từ Redis/Meilisearch
-    - vì Redis và Meilisearch không phải source of truth
+    - vì Redis và Meilisearch không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
     - hệ thống coi đây là lỗi nghiêm trọng (critical failure) và ưu tiên recovery, không giả lập correctness từ dữ liệu phụ
   - `Meilisearch down`:
-    - tìm kiếm công khai (public search) được phép **fallback** về Payload query
-  - `Redis/worker down`:
+    - tìm kiếm công khai (public search) được phép **fallback (đường dự phòng)** về Payload query
+  - `Redis/worker (tiến trình xử lý nền) down`:
     - canonical write vẫn có thể thành công ở nhiều flow
-    - nhưng async side effects (tác dụng phụ chạy ngầm) sẽ trễ và cần recovery
+    - nhưng async (bất đồng bộ) side effects (tác dụng phụ chạy ngầm) sẽ trễ và cần recovery
 - Nếu muốn biết rõ hơn, đọc (read):
   - `design/00-overview/domain-map.md`
   - `design/CORE_DECISIONS.md`
@@ -217,12 +225,12 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 ### Hiệu năng (Performance SLA)
 
 - Đừng chỉ nói “hỗ trợ người lớn tuổi”; phải có mục tiêu thời gian phản hồi (response time targets).
-- PMTL_VN đã chốt SLA/SLO (Service Level Agreements) ở:
+- PMTL_VN đã chốt SLA/SLO (service (lớp xử lý nghiệp vụ) Level Agreements) ở:
   - `design/SLA_SLO.md`
 - Các con số quan trọng cần nhớ (Key numbers to remember):
   - public read (đọc công khai) `< 500ms`
   - search healthy (tìm kiếm khi ổn định) `< 250ms`
-  - fallback search (tìm kiếm dự phòng) `< 1200ms`
+  - fallback (đường dự phòng) search (tìm kiếm dự phòng) `< 1200ms`
   - comment/community submit (gửi bình luận/cộng đồng) `< 800ms`
   - push job create (tạo thông báo đẩy) `< 500ms`
 
@@ -239,23 +247,23 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 - Nếu muốn biết từng module phản ứng ra sao khi:
   - `Postgres down`
   - `Meilisearch down`
-  - `Redis/worker down`
+  - `Redis/worker (tiến trình xử lý nền) down`
   - `media storage down`
   - `object storage/scan fail`
   thì đọc:
   - `design/FAILURE_MODE_MATRIX.md`
 - File này đặc biệt quan trọng khi viết:
   - degraded mode
-  - fallback logic
+  - fallback (đường dự phòng) logic
   - maintenance mode
   - recovery path
 
 ## Một số điều README này cố tình chốt (Enforced Patterns)
 
 - Không có chế độ chỉ đọc "giả" khi Postgres chết.
-- Tìm kiếm có dự phòng (fallback), nhưng dự phòng không thay thế nguồn dữ liệu gốc (source of truth).
+- Tìm kiếm có dự phòng (fallback (đường dự phòng)), nhưng dự phòng không thay thế nguồn dữ liệu gốc (source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)).
 - SLA là yếu tố đầu vào thiết kế (design input), không phải tối ưu sau.
-- File/media/PDF là phần của ranh giới bảo mật (security boundary), không chỉ là “chuyện hạ tầng”.
+- File/media/PDF là phần của ranh giới bảo mật (security boundary (ranh giới trách nhiệm)), không chỉ là “chuyện hạ tầng”.
 
 ### Module execution files (Tài liệu triển khai module)
 
@@ -296,3 +304,5 @@ Sau khi hiểu 3 file đó, nếu muốn code một chức năng cụ thể thì
   - tài liệu nào nên map vào `chantPlans`
   - phần nào là checklist giao diện (UI checklist)
   - phần nào còn cần con người xem lại (human review)
+
+

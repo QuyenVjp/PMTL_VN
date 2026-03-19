@@ -39,7 +39,7 @@ Surface nên có:
 - `Giới thiệu ba đại pháp bảo / năm đại pháp bảo`
 - `Các bước khởi đầu cho người mới`
 
-Owner module:
+owner module (module sở hữu):
 - chủ yếu `01-content`
 
 ### 2. Thư viện trí huệ chính thống
@@ -56,8 +56,10 @@ Surface nên có:
 - `Huyền học vấn đáp`
 - `Phật học vấn đáp`
 - `Tra cứu theo vấn đề đời sống`
+- `Bài song ngữ gốc + dịch + link gốc`
+- `Trang hồ sơ / giới thiệu authority`
 
-Owner module:
+owner module (module sở hữu):
 - chủ yếu `09-wisdom-qa`
 - `01-content` chỉ giữ content/hub/reference bổ trợ
 
@@ -74,7 +76,7 @@ Surface nên có:
 - `Tiến độ đọc kinh`
 - `Checklist nghi thức`
 
-Owner module:
+owner module (module sở hữu):
 - `03-engagement`
 - đọc reference từ `01-content`
 
@@ -90,8 +92,9 @@ Surface nên có:
 - `Sổ tay phóng sanh`
 - `Checklist đọc trước khi phóng sanh`
 - `Liên kết với lịch và nhắc việc`
+- `Rule thực hành có source link`, ví dụ rule niệm sau phóng sanh
 
-Owner module:
+owner module (module sở hữu):
 - `08-vows-merit`
 
 ### 5. Lịch tu học cá nhân
@@ -108,7 +111,7 @@ Surface nên có:
 - `Hook phóng sanh`
 - `Hook bài tập hằng ngày`
 
-Owner module:
+owner module (module sở hữu):
 - `06-calendar`
 - notification chỉ đọc downstream
 
@@ -122,10 +125,10 @@ Surface nên có:
 - `Audio Bạch thoại Phật pháp`
 - `Video khai thị`
 - `Bài pháp hội`
-- `Offline bundle`
+- `offline bundle (gói tải ngoại tuyến)`
 - `Chế độ chữ lớn / nghe lại / đọc đêm`
 
-Owner module:
+owner module (module sở hữu):
 - `09-wisdom-qa`
 - content/media làm reference và hosting metadata
 
@@ -141,7 +144,7 @@ Surface nên có:
 - `Audio/video download hub`
 - `Thông báo lịch cộng tu / pháp hội / tưởng niệm`
 
-Owner module:
+owner module (module sở hữu):
 - `01-content`
 - `07-notification` chỉ phụ trách delivery
 
@@ -158,7 +161,7 @@ Surface nên có:
 - `Hỏi đáp cộng đồng`
 - `Bình luận dưới bài viết`
 
-Owner module:
+owner module (module sở hữu):
 - `02-community`
 - moderation là lớp bắt buộc
 
@@ -176,7 +179,7 @@ Surface nên có:
   - loại nội dung
   - media type
 
-Owner module:
+owner module (module sở hữu):
 - `05-search`
 
 ### 10. Liên hệ và trợ giúp
@@ -190,7 +193,7 @@ Surface nên có:
 - `Hướng dẫn dùng app/web`
 - `Nơi bắt đầu nếu chưa biết gì`
 
-Owner module:
+owner module (module sở hữu):
 - `01-content` hoặc `hubPages`
 
 ## Những gì không nên là trọng tâm
@@ -229,3 +232,4 @@ Owner module:
   - thực hành hằng ngày
   - nghe/đọc thuận tiện
   thì cần xem lại trước khi đưa vào roadmap.
+

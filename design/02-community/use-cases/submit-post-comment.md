@@ -3,23 +3,23 @@
 ## Purpose
 - Cho người dùng hoặc khách gửi bình luận vào bài viết public, sau đó để moderation/notification xử lý downstream.
 
-## Owner module
+## owner module (module sở hữu)
 - `community`
 
 ## Actors
 - `member`
 - `guest`
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Web gọi route submit comment cho `posts/:publicId/comments`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Post mục tiêu tồn tại và còn cho phép bình luận.
-- Payload body qua schema hợp lệ.
+- Payload body qua schema (lược đồ dữ liệu) hợp lệ.
 - Actor không bị request guard hoặc anti-spam chặn.
 
-## Input contract
-- `legacyCommentSubmitSchema` hoặc contract comment submit tương ứng.
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
+- `legacyCommentSubmitSchema` hoặc contract (hợp đồng dữ liệu/nghiệp vụ) comment submit tương ứng.
 - Nếu chưa đăng nhập, phải có author snapshot hợp lệ theo policy hiện tại.
 
 ## Read set
@@ -28,20 +28,20 @@
 - request guard / anti-spam state khi có
 - identity session nếu user đã đăng nhập
 
-## Write path
+## write path (thứ tự ghi dữ liệu chuẩn)
 1. Xác thực post target bằng `publicId` hoặc route context.
 2. Validate body và policy anti-spam.
 3. Ghi canonical comment record vào `postComments`.
-4. Cập nhật summary read model nếu cần như `commentCount` trên post.
+4. Cập nhật summary read model (mô hình dữ liệu đọc) nếu cần như `commentCount` trên post.
 5. Append audit event `community.comment.submit`.
 6. Enqueue moderation alert hoặc internal notification nếu policy bật.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - notification cho admin/super-admin
 - moderation alert nếu cần review
 
-## Success result
-- Comment canonical record được tạo.
+## success result (kết quả thành công)
+- Comment canonical record (bản ghi chuẩn gốc) được tạo.
 - Read path của thread có thể trả comment mới theo policy hiển thị.
 
 ## Errors
@@ -49,7 +49,7 @@
 - `404`: post không tồn tại.
 - `409`: duplicate submit rõ ràng hoặc parent comment invalid.
 - `429`: request guard chặn.
-- `500`: lỗi service hoặc downstream.
+- `500`: lỗi service (lớp xử lý nghiệp vụ) hoặc downstream.
 
 ## Audit
 - log `community.comment.submit`
@@ -65,3 +65,4 @@
 ## Notes for AI/codegen
 - `postComments` là owner của comment, không phải content module.
 - Moderation report là flow khác; submit comment không được tự tạo `moderationReports` trừ khi policy nói rõ.
+

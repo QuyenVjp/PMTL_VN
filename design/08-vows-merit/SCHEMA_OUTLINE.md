@@ -1,6 +1,6 @@
-# Vows & Merit Schema Outline
+# Vows & Merit schema (lược đồ dữ liệu) Outline
 
-## Owner module
+## owner module (module sở hữu)
 - `08-vows-merit`
 
 ## Collection candidate 1: `vows`
@@ -85,14 +85,14 @@
 - `chantRefs`
 - `contentGuideRefs`
 
-## Service boundary
+## service (lớp xử lý nghiệp vụ) boundary (ranh giới trách nhiệm)
 
-- `vows.service.ts`
+- `vows.service (lớp xử lý nghiệp vụ).ts`
   - create vow
   - pause/resume vow
   - fulfill vow
   - append progress
-- `life-release.service.ts`
+- `life-release.service (lớp xử lý nghiệp vụ).ts`
   - create journal
   - attach ritual snapshots
   - derive reminder candidates
@@ -101,3 +101,4 @@
 
 - `Vows` và `LifeReleaseJournal` là canonical self-owned records riêng.
 - Không nhét vào `practiceLogs` hay `communityPosts`.
+

@@ -2,8 +2,8 @@
 
 > Ghi chú cho sinh viên:
 > File này là spec riêng cho `Ngôi Nhà Nhỏ`.
-> Mục tiêu là để sau này làm UI, validation, collection fields, hoặc flow service mà không phải đọc lại PDF từ đầu.
-> Logic thực thi và schema self-owned mới nhất xem thêm ở:
+> Mục tiêu là để sau này làm UI, validation, collection fields, hoặc flow service (lớp xử lý nghiệp vụ) mà không phải đọc lại PDF từ đầu.
+> Logic thực thi và schema (lược đồ dữ liệu) self-owned mới nhất xem thêm ở:
 > - `design/03-engagement/NGOI_NHA_NHO_SCHEMA_OUTLINE.md`
 > - `design/03-engagement/use-cases/manage-ngoi-nha-nho-sheet.md`
 
@@ -26,7 +26,7 @@ markmap:
 
 ### Out of scope
 - viết code collection ngay
-- contract API cuối cùng
+- contract (hợp đồng dữ liệu/nghiệp vụ) API cuối cùng
 - OCR full của toàn bộ bản script gốc
 
 ## 2. Source of evidence
@@ -39,7 +39,7 @@ markmap:
 - `design/01-content/practice-pdf-extracts/6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.md`
 - `design/01-content/practice-pdf-extracts/7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.md`
 
-## 3. Owner boundary
+## 3. Owner boundary (ranh giới trách nhiệm)
 
 ### Content owns
 - prayer templates
@@ -193,7 +193,7 @@ markmap:
 - `ready_to_burn`
 - `burned`
 
-## 9. Schema hints
+## 9. schema (lược đồ dữ liệu) hints
 
 ### Content-side hints
 - `chantItems`
@@ -237,3 +237,4 @@ markmap:
 - Spec này ưu tiên phần tiếng Việt sạch và logic flow.
 - Chữ Hán và script gốc không được giữ làm nội dung chính trong spec.
 - Khi cần làm màn hình chuẩn cuối cùng, vẫn nên đối chiếu lại ảnh trang từ thư mục extract.
+

@@ -3,7 +3,7 @@
 File này là bản đồ hành động của lớp tài liệu mới trong `design/`.
 Nó trả lời câu hỏi:
 
-- muốn code chức năng mới thì đọc use-case nào trước
+- muốn code chức năng mới thì đọc use-case (kịch bản sử dụng) nào trước
 - mỗi module có canonical write-path nào quan trọng nhất
 - route nào chỉ là BFF/proxy, route nào gắn với business owner
 
@@ -12,22 +12,25 @@ Nó trả lời câu hỏi:
 1. Đọc `CORE_DECISIONS.md`
 2. Đọc `MODULE_INTERACTIONS.md`
 3. Đọc `TERMINOLOGY_RULES.md`
-4. Đọc `SOURCE_NOTES_OFFICIAL.md`
-5. Đọc `FEATURE_SURFACE_FROM_OFFICIAL_SITES.md`
-6. Đọc `ELDERLY_UX_RULES.md`
-7. Đọc `AUDIT_POLICY.md`
-8. Đọc `SLA_SLO.md`
-9. Đọc `SECURITY_BASELINE.md`
-10. Đọc `FAILURE_MODE_MATRIX.md`
-11. Đọc `CONTRACT_GUIDELINES.md`
-12. Chọn module owner bên dưới
-13. Mở `contracts.md` của module đó
-14. Mở file trong `use-cases/` tương ứng
+4. Đọc `EN_VI_NOTATION_RULES.md`
+5. Đọc `SOURCE_NOTES_OFFICIAL.md`
+6. Đọc `09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
+7. Đọc `09-wisdom-qa/INGESTION_PLAN.md`
+8. Đọc `FEATURE_SURFACE_FROM_OFFICIAL_SITES.md`
+9. Đọc `ELDERLY_UX_RULES.md`
+10. Đọc `AUDIT_POLICY.md`
+11. Đọc `SLA_SLO.md`
+12. Đọc `SECURITY_BASELINE.md`
+13. Đọc `FAILURE_MODE_MATRIX.md`
+14. Đọc `CONTRACT_GUIDELINES.md`
+15. Chọn module owner bên dưới
+16. Mở `contracts.md` của module đó
+17. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 
 ### Content
-- Contract: `design/01-content/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/01-content/contracts.md`
 - Use-cases:
   - `publish-post.md`
   - `publish-beginner-guide.md`
@@ -40,12 +43,12 @@ Khi đọc module này, hãy nhớ:
 - search sync và revalidation chỉ là downstream
 
 ### Community
-- Contract: `design/02-community/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/02-community/contracts.md`
 - Use-cases:
   - `submit-post-comment.md`
   - `submit-community-post.md`
   - `submit-guestbook-entry.md`
-- Boundary:
+- boundary (ranh giới trách nhiệm):
   - `PRACTICE_COMMUNITY_BOUNDARY.md`
 
 Khi đọc module này, hãy nhớ:
@@ -53,7 +56,7 @@ Khi đọc module này, hãy nhớ:
 - anti-spam/request guard là policy cắt ngang, không phải owner data
 
 ### Engagement
-- Contract: `design/03-engagement/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/03-engagement/contracts.md`
 - Use-cases:
   - `upsert-practice-log.md`
   - `save-sutra-progress.md`
@@ -68,7 +71,7 @@ Khi đọc module này, hãy nhớ:
 - `practiceSheets` và `ngoiNhaNhoSheets` là canonical self-owned records
 
 ### Moderation
-- Contract: `design/04-moderation/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/04-moderation/contracts.md`
 - Use-cases:
   - `report-comment.md`
   - `resolve-report.md`
@@ -77,36 +80,38 @@ Khi đọc module này, hãy nhớ:
   - `guestbook-approval-state.mmd`
 
 Khi đọc module này, hãy nhớ:
-- `moderationReports` là source of truth
+- `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 - field trên entity đích chỉ là summary
 
 ### Search
-- Contract: `design/05-search/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/05-search/contracts.md`
 - Use-cases:
   - `index-published-post.md`
   - `public-search-query.md`
 
 Khi đọc module này, hãy nhớ:
-- search là queue-first
-- fallback là để giữ service usable khi engine lỗi
+- search là queue-first (ưu tiên hàng đợi xử lý)
+- fallback (đường dự phòng) là để giữ service (lớp xử lý nghiệp vụ) usable khi engine lỗi
 
 ### Calendar
-- Contract: `design/06-calendar/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/06-calendar/contracts.md`
 - Use-cases:
   - `publish-event.md`
   - `apply-lunar-override.md`
   - `build-personal-practice-calendar.md`
   - `refresh-personal-practice-calendar.md`
-- Read model:
+  - `compose-daily-practice-advisory.md`
+- read model (mô hình dữ liệu đọc):
   - `PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md`
+  - `PRACTICE_ADVISORY_MODEL.md`
 
 Khi đọc module này, hãy nhớ:
 - event ownership nằm ở calendar
 - content chỉ tham chiếu
-- personal practice calendar là derived read model của calendar
+- personal practice calendar là derived read model (mô hình dữ liệu đọc) của calendar
 
 ### Notification
-- Contract: `design/07-notification/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/07-notification/contracts.md`
 - Use-cases:
   - `subscribe-push.md`
   - `dispatch-push-job.md`
@@ -115,11 +120,11 @@ Khi đọc module này, hãy nhớ:
   - `push-job-state.mmd`
 
 Khi đọc module này, hãy nhớ:
-- notification là async-only control-plane
+- notification là async-only (chỉ chạy ngầm, bất đồng bộ) control-plane (lớp điều phối hệ thống)
 - `pushJobs` không phải inbox canonical
 
 ### Identity
-- Contract: `design/identity/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-00-identity/contracts.md`
 - Use-cases:
   - `register-member.md`
   - `update-profile.md`
@@ -131,29 +136,33 @@ Khi đọc module này, hãy nhớ:
 - web route chỉ là BFF/compatibility layer
 
 ### Vows & Merit
-- Contract: `design/08-vows-merit/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/08-vows-merit/contracts.md`
 - Use-cases:
   - `create-vow.md`
   - `fulfill-vow-milestone.md`
   - `log-life-release.md`
-- Schema:
+- schema (lược đồ dữ liệu):
   - `SCHEMA_OUTLINE.md`
 
 Khi đọc module này, hãy nhớ:
-- phát nguyện là canonical record riêng
+- phát nguyện là canonical record (bản ghi chuẩn gốc) riêng
 - phóng sanh là sổ tay thực hành, không phải social feed
 
 ### Wisdom & QA
-- Contract: `design/09-wisdom-qa/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/09-wisdom-qa/contracts.md`
 - Use-cases:
   - `publish-wisdom-entry.md`
   - `study-baihua.md`
   - `search-qa-answer.md`
   - `download-offline-bundle.md`
-- Schema:
+- schema (lược đồ dữ liệu):
   - `SCHEMA_OUTLINE.md`
 - Offline:
   - `OFFLINE_BAIHUA_DIRECTION.md`
+- provenance (nguồn gốc dữ liệu):
+  - `SOURCE_PROVENANCE_MATRIX.md`
+- Ingestion:
+  - `INGESTION_PLAN.md`
 
 Khi đọc module này, hãy nhớ:
 - retrieval-first, không dùng AI bịa lời khai thị
@@ -162,10 +171,10 @@ Khi đọc module này, hãy nhớ:
 ## Nếu chuẩn bị thêm chức năng mới
 
 ### Hãy tự hỏi theo thứ tự này
-1. Owner module là ai?
-2. Canonical record phải ghi ở đâu trước?
+1. owner module (module sở hữu) là ai?
+2. canonical record (bản ghi chuẩn gốc) phải ghi ở đâu trước?
 3. Có summary field nào cần sync không?
-4. Có side-effect async nào cần enqueue không?
+4. Có side-effect async (bất đồng bộ) nào cần enqueue vào queue (hàng đợi xử lý) không?
 5. Có audit bắt buộc không?
 6. Route public đang dùng `publicId`, `slug`, hay session owner?
 7. Thuật ngữ có đúng `TERMINOLOGY_RULES.md` chưa?
@@ -174,3 +183,5 @@ Khi đọc module này, hãy nhớ:
 ### Nếu chưa trả lời được
 - đừng code vội
 - bổ sung một file mới trong `use-cases/` của module owner trước
+
+

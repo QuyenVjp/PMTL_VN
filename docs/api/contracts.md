@@ -379,6 +379,20 @@ type PracticeCalendarDayDTO = {
   recommendedWindows: Array<{ start: string; end: string; label?: string }>;
   vowHooks: string[];
   lifeReleaseHooks: string[];
+  advisoryCards: Array<{
+    title: string;
+    body: string;
+    tone?: "info" | "practice" | "warning";
+  }>;
+  sourceRefs: Array<{
+    label: string;
+    url: string;
+    provenance:
+      | "official_origin"
+      | "official_mirror"
+      | "community_volunteer_site"
+      | "community_translation";
+  }>;
   notesVi: string | null;
   notesEn: string | null;
 };

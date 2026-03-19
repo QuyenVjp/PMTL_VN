@@ -285,4 +285,5 @@ markmap:
   - repo truth hiện có về `chantItems`, `chantPlans`, `chantPreferences`, `practiceLogs`
   - phần nội dung anh đã xác nhận parse được
   - cấu trúc hóa lại để phục vụ design
-- Khi có pipeline đọc PDF/vision đầy đủ hơn, file này nên được update trước rồi mới lan sang schema/flow/UI.
+- Khi có pipeline đọc PDF/vision đầy đủ hơn, file này nên được update trước rồi mới lan sang schema (lược đồ dữ liệu)/flow/UI.
+

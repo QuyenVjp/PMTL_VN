@@ -1,24 +1,24 @@
 # Submit Community Post
 
 ## Purpose
-- Cho thành viên gửi bài cộng đồng để hiển thị trên không gian thảo luận mà vẫn giữ anti-spam và moderation boundary rõ ràng.
+- Cho thành viên gửi bài cộng đồng để hiển thị trên không gian thảo luận mà vẫn giữ anti-spam và moderation boundary (ranh giới trách nhiệm) rõ ràng.
 
-## Owner module
+## owner module (module sở hữu)
 - `community`
 
 ## Actors
 - `member`
 - có thể hỗ trợ `guest` nếu policy sau này mở, nhưng current flow nên ưu tiên user có session
 
-## Trigger
+## trigger (điểm kích hoạt)
 - Web gọi `POST /api/community/posts/submit`.
 
-## Preconditions
+## preconditions (điều kiện tiên quyết)
 - Actor có session hợp lệ hoặc flow cho phép guest rõ ràng.
 - Payload qua `communityPostSubmitSchema`.
 - Request guard không chặn.
 
-## Input contract
+## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 - `communityPostSubmitSchema`
 
 ## Read set
@@ -26,19 +26,19 @@
 - `communityPosts`
 - request guard / anti-spam state
 
-## Write path
-1. Parse body theo schema.
+## write path (thứ tự ghi dữ liệu chuẩn)
+1. Parse body theo schema (lược đồ dữ liệu).
 2. Xác thực actor và request guard.
-3. Ghi canonical record vào `communityPosts`.
+3. Ghi canonical record (bản ghi chuẩn gốc) vào `communityPosts`.
 4. Khởi tạo summary fields đọc nhanh nếu collection dùng.
 5. Append audit `community.post.submit`.
 6. Enqueue notification nội bộ cho admin/super-admin nếu policy yêu cầu.
 
-## Async side-effects
+## async (bất đồng bộ) side-effects
 - internal notification
 - moderation attention signal nếu policy cần
 
-## Success result
+## success result (kết quả thành công)
 - Community post được tạo ở module owner.
 - Public/community feed có thể hiển thị theo policy duyệt hiện tại.
 
@@ -60,4 +60,5 @@
 - submit path chỉ ghi record và enqueue downstream work.
 
 ## Notes for AI/codegen
-- `communityPosts` là canonical record; moderation và notification chỉ là downstream.
+- `communityPosts` là canonical record (bản ghi chuẩn gốc); moderation và notification chỉ là downstream.
+
