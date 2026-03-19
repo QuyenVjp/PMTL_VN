@@ -13,11 +13,13 @@ description: PMTL_VN automation skill for repeatable smoke and monitoring comman
 
 ## Script
 
-Run `scripts/run_smoke_suite.py`.
+Primary entrypoint: `py infra/tools/codex_actions.py smoke-suite ...`
+
+Compatibility wrapper: `scripts/run_smoke_suite.py`
 
 ```bash
-python .agents/skills/pmtl-automation-smoke-suite/scripts/run_smoke_suite.py --suite smoke
-python .agents/skills/pmtl-automation-smoke-suite/scripts/run_smoke_suite.py --suite monitoring
+py infra/tools/codex_actions.py smoke-suite --suite smoke
+py infra/tools/codex_actions.py smoke-suite --suite monitoring
 ```
 
 Use this skill when the command itself is the task or part of verification.

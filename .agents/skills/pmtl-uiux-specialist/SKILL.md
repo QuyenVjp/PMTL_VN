@@ -5,6 +5,8 @@ description: UI/UX behavioral specialist for PMTL_VN. Use when building or revie
 
 # PMTL UI/UX Specialist
 
+Legacy compatibility skill. Prefer `pmtl-ui-behavior` unless the prompt explicitly names this specialist pass.
+
 Use this skill for the “how it feels” layer of the product.
 
 ## Workflow

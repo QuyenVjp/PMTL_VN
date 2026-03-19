@@ -87,6 +87,22 @@ Hoac foreground:
 pnpm docker:dev
 ```
 
+Neu muon dung entrypoint ngan, determinist va than thien voi Codex/AI tooling:
+
+```bash
+just bootstrap
+just dev-core
+just dev-full
+just verify-web
+just verify-cms
+just verify-all
+just smoke
+just auth-check
+just search-check
+```
+
+Xem `TEAM_GUIDE.md` de biet khi nao nen dung Windows native, WSL, Docker, hay host-debug lane.
+
 ## Scripts quan trọng
 
 - `run-dev.bat`: entrypoint chinh tren Windows, cho phep chon `core` hoac `full`.

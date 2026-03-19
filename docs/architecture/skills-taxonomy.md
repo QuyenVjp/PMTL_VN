@@ -73,6 +73,8 @@ Reason:
 - avoid breaking older prompts and workflows
 - allow the new taxonomy to act as the primary routing layer without deleting trusted legacy entrypoints
 
+Compatibility skills are opt-in aliases, not the default routing target. Prefer the canonical taxonomy skill unless the user explicitly names the legacy skill or the task needs its preserved design/reference material.
+
 ## Windows-safe execution defaults
 
 - Prefer git grep -n for exact text search before falling back to the bundled rg.exe on Windows hosts where WindowsApps permissions can fail.
@@ -85,5 +87,6 @@ Reason:
 
 - Do not mix implementation guidance and verification checklists in the same PMTL skill unless the workflow is trivial.
 - Prefer executable scripts inside `scripts/` when the same verification or scaffolding logic would otherwise be rewritten.
+- Prefer repo-level deterministic entrypoints such as `py infra/tools/codex_actions.py ...` or `just <recipe>` when a skill needs runtime-aware execution.
 - Keep `SKILL.md` short and route variant-specific detail into `references/`.
 - When changing skill routing, update `AGENTS.md`, this file, and the affected local skill folders in the same task.

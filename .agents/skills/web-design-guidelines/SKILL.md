@@ -6,6 +6,7 @@ description: Review UI code for web interface quality, accessibility, and fronte
 # Web Interface Guidelines
 
 This legacy review skill remains available because older prompts still refer to it.
+Prefer `pmtl-review-web-ui` by default.
 
 ## Current role
 

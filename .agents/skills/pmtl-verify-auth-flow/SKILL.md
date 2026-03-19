@@ -15,10 +15,12 @@ description: PMTL_VN auth verification skill. Use when touching register, login,
 
 ## Script
 
-Run `scripts/run_auth_flow_check.py`. It wraps the repo smoke test and extracts the auth-relevant steps.
+Primary entrypoint: `py infra/tools/codex_actions.py auth-flow`
+
+Compatibility wrapper: `scripts/run_auth_flow_check.py`
 
 ```bash
-python .agents/skills/pmtl-verify-auth-flow/scripts/run_auth_flow_check.py
+py infra/tools/codex_actions.py auth-flow
 ```
 
 ## Read when needed

@@ -5,6 +5,8 @@ description: Advanced frontend craftsmanship skill for PMTL_VN. Use for frontend
 
 # PMTL Frontend Craftsmanship
 
+Legacy compatibility skill. Prefer `pmtl-fe-implementation` unless the task explicitly asks for this deeper craftsmanship pass.
+
 Use this skill when the task is not just “make the UI work”, but “make the frontend codebase stronger”.
 
 ## Workflow

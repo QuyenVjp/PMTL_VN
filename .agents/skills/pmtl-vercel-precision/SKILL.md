@@ -5,6 +5,8 @@ description: Precision refinement skill for PMTL_VN. Use when the user wants hom
 
 # PMTL Vercel Precision
 
+Legacy compatibility skill. Prefer `pmtl-ui-style-system` unless the task explicitly needs this precision refinement pass.
+
 Use this skill when the problem is not missing content, but inconsistent discipline.
 
 ## Workflow

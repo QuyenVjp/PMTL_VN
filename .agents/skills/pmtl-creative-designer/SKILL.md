@@ -5,6 +5,8 @@ description: Creative visual identity skill for PMTL_VN. Use when designing new 
 
 # PMTL Creative Designer
 
+Legacy compatibility skill. Prefer `pmtl-ui-style-system` unless the prompt explicitly asks for this design-identity pass.
+
 Use this skill for the visual “why” of PMTL, not just the CSS “how”.
 
 ## Workflow

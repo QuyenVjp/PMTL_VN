@@ -5,6 +5,8 @@ description: PMTL_VN production-ready operating skill. Use for implementation, d
 
 # PMTL Production Ready
 
+Legacy umbrella skill. Do not use by default when the canonical taxonomy skills already cover the task.
+
 Use this skill when the task is bigger than a local code tweak and has production implications.
 
 ## Operating model

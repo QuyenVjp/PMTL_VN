@@ -13,11 +13,13 @@ description: PMTL_VN search verification skill. Use when changing search schemas
 
 ## Script
 
-Run `scripts/run_search_sync_check.py`.
+Primary entrypoint: `py infra/tools/codex_actions.py search-sync ...`
+
+Compatibility wrapper: `scripts/run_search_sync_check.py`
 
 ```bash
-python .agents/skills/pmtl-verify-search-sync/scripts/run_search_sync_check.py --all-pages
-python .agents/skills/pmtl-verify-search-sync/scripts/run_search_sync_check.py --page 1 --limit 100
+py infra/tools/codex_actions.py search-sync --all-pages
+py infra/tools/codex_actions.py search-sync --page 1 --limit 100
 ```
 
 ## Read when needed
