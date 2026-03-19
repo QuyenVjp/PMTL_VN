@@ -24,18 +24,18 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 - đọc thêm `design/01-content/practice-support-reference.md` nếu bạn đang làm phần niệm kinh / Ngôi Nhà Nhỏ / phóng sinh (practice support)
 
-17. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
-18. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
-19. `design/08-vows-merit/*` (Lời nguyện và Công đức)
-20. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
-21. `design/09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md` (Ma trận nguồn gốc bài gốc, bản dịch, web phụng sự viên)
-22. `design/09-wisdom-qa/INGESTION_PLAN.md` (Kế hoạch nhập dữ liệu có nguồn đối chiếu)
-23. `design/06-calendar/PRACTICE_ADVISORY_MODEL.md` (Mô hình thông báo tu học hằng ngày)
-24. `design/00-identity/*` (Định danh người dùng)
+18. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
+19. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
+20. `design/08-vows-merit/*` (Lời nguyện và Công đức)
+21. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
+22. `design/09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md` (Ma trận nguồn gốc bài gốc, bản dịch, web phụng sự viên)
+23. `design/09-wisdom-qa/INGESTION_PLAN.md` (Kế hoạch nhập dữ liệu có nguồn đối chiếu)
+24. `design/06-calendar/PRACTICE_ADVISORY_MODEL.md` (Mô hình thông báo tu học hằng ngày)
+25. `design/00-identity/*` (Định danh người dùng)
 
 - đọc thêm `design/00-identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
 
-25. các module còn lại (remaining modules)
+26. các module còn lại (remaining modules)
 
 ## Mỗi loại file dùng để làm gì? (What is each file type for?)
 

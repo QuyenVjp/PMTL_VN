@@ -148,8 +148,14 @@ không còn mâu thuẫn với implementation đang chạy.
 
 ## File structure mục tiêu
 
+Ghi chú:
+- Cây dưới đây ưu tiên liệt kê file cốt lõi của từng module.
+- Các file bổ sung, tài liệu tham khảo, ví dụ, và thư mục support có thể tồn tại ngoài danh sách này.
+- Khi cần listing đầy đủ hơn, hãy đối chiếu với cây thư mục thực tế trong repo.
+
 ```text
 design/
+  ARCHITECTURE_GOVERNANCE.md
   00-overview/
     architecture-principles.md
     architecture.mmd
@@ -166,11 +172,18 @@ design/
     publish-state.mmd
     schema.dbml
     decisions.md
+    chant-items-catalog.md
+    little-house-spec.md
+    practice-support-reference.md
+    practice-support-flows.mmd
+    practice-ui-checklists.md
+    practice-pdf-extracts/
     use-cases/
   02-community/
     module-map.md
     contracts.md
     flows.mmd
+    PRACTICE_COMMUNITY_BOUNDARY.md
     schema.dbml
     decisions.md
     use-cases/
@@ -202,8 +215,11 @@ design/
     module-map.md
     contracts.md
     flows.mmd
+    PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md
+    PRACTICE_ADVISORY_MODEL.md
     schema.dbml
     decisions.md
+    examples/
     use-cases/
   07-notification/
     module-map.md
@@ -224,25 +240,32 @@ design/
     module-map.md
     contracts.md
     flows.mmd
+    INGESTION_PLAN.md
+    OFFLINE_BAIHUA_DIRECTION.md
+    SOURCE_PROVENANCE_MATRIX.md
     schema.dbml
     decisions.md
+    examples/
     use-cases/
   00-identity/
     module-map.md
     contracts.md
     flows.mmd
+    PERMISSION_MATRIX.md
     schema.dbml
     decisions.md
     use-cases/
   CORE_DECISIONS.md
   MODULE_INTERACTIONS.md
   README.md
+  SOURCE_NOTES_OFFICIAL.md
   TERMINOLOGY_RULES.md
   EN_VI_NOTATION_RULES.md
   AUDIT_POLICY.md
   SLA_SLO.md
   SECURITY_BASELINE.md
   FAILURE_MODE_MATRIX.md
+  infra/
 ```
 
 ## Success checklist

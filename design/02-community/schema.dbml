@@ -42,27 +42,27 @@ Table posts {
 Table community_posts {
   id uuid [pk]
   public_id varchar [unique]
-  title varchar [not null]
-  slug varchar [unique, not null]
-  content text [not null]
-  type varchar [not null] // story | question | reflection | feedback | video
-  category varchar
-  rating int
-  author_user_id uuid [ref: > users.id]
-  author_name_snapshot varchar
-  cover_media_id uuid
-  video_url varchar
-  moderation_status moderation_state [not null]
-  spam_score int [default: 0]
-  report_count int [default: 0]
-  last_report_reason varchar
-  pinned bool [default: false]
-  is_hidden bool [default: false]
-  likes int [default: 0]
-  views int [default: 0]
-  comments_count int [default: 0]
-  created_at timestamp
-  updated_at timestamp
+  title varchar [not null, note: "Tiêu đề bài cộng đồng / community post title"]
+  slug varchar [unique, not null, note: "Slug public route / slug dùng cho route công khai"]
+  content text [not null, note: "Nội dung chính / canonical body của bài cộng đồng"]
+  type varchar [not null, note: "Loại bài / story | question | reflection | feedback | video"]
+  category varchar [note: "Nhóm phân loại nhẹ / lightweight category label"]
+  rating int [note: "Điểm cảm nhận hoặc mức đánh giá nếu flow bật / optional rating"]
+  author_user_id uuid [ref: > users.id, note: "User owner nếu có session / tác giả dạng user"]
+  author_name_snapshot varchar [note: "Tên chụp lại để đọc nhanh / author display snapshot"]
+  cover_media_id uuid [note: "Ảnh bìa tham chiếu / cover media reference"]
+  video_url varchar [note: "Link video nếu bài dạng video / external or embedded video URL"]
+  moderation_status moderation_state [not null, note: "Trạng thái kiểm duyệt tổng / moderation state summary"]
+  spam_score int [default: 0, note: "Điểm anti-spam nội bộ / internal spam heuristic score"]
+  report_count int [default: 0, note: "Số report summary / denormalized report counter"]
+  last_report_reason varchar [note: "Lý do report gần nhất / latest report reason snapshot"]
+  pinned bool [default: false, note: "Có ghim lên đầu hay không / pinned summary flag"]
+  is_hidden bool [default: false, note: "Ẩn khỏi public read hay chưa / hidden summary flag"]
+  likes int [default: 0, note: "Lượt thích summary / likes counter"]
+  views int [default: 0, note: "Lượt xem summary / views counter"]
+  comments_count int [default: 0, note: "Số bình luận summary / comment count summary"]
+  created_at timestamp [note: "Thời điểm tạo / created timestamp"]
+  updated_at timestamp [note: "Thời điểm cập nhật gần nhất / updated timestamp"]
 }
 
 Table community_post_tags {
@@ -77,56 +77,56 @@ Table community_post_tags {
 Table community_comments {
   id uuid [pk]
   public_id varchar [unique]
-  post_id uuid [not null, ref: > community_posts.id]
-  parent_comment_id uuid [ref: > community_comments.id]
-  content text [not null]
-  author_user_id uuid [ref: > users.id]
-  author_name_snapshot varchar
-  moderation_status moderation_state [not null]
-  likes int [default: 0]
-  spam_score int [default: 0]
-  report_count int [default: 0]
-  last_report_reason varchar
-  is_hidden bool [default: false]
-  created_at timestamp
-  updated_at timestamp
+  post_id uuid [not null, ref: > community_posts.id, note: "Bài cộng đồng đích / target community post"]
+  parent_comment_id uuid [ref: > community_comments.id, note: "Bình luận cha nếu là reply / parent comment reference"]
+  content text [not null, note: "Nội dung bình luận / canonical comment body"]
+  author_user_id uuid [ref: > users.id, note: "User owner nếu có session / comment author user"]
+  author_name_snapshot varchar [note: "Tên hiển thị chụp lại / author display snapshot"]
+  moderation_status moderation_state [not null, note: "Trạng thái kiểm duyệt / moderation state summary"]
+  likes int [default: 0, note: "Lượt thích summary / likes counter"]
+  spam_score int [default: 0, note: "Điểm anti-spam nội bộ / internal spam heuristic score"]
+  report_count int [default: 0, note: "Số report summary / denormalized report counter"]
+  last_report_reason varchar [note: "Lý do report gần nhất / latest report reason snapshot"]
+  is_hidden bool [default: false, note: "Ẩn khỏi public thread hay chưa / hidden summary flag"]
+  created_at timestamp [note: "Thời điểm tạo / created timestamp"]
+  updated_at timestamp [note: "Thời điểm cập nhật gần nhất / updated timestamp"]
 }
 
 Table post_comments {
   id uuid [pk]
   public_id varchar [unique]
-  post_id uuid [not null, ref: > posts.id]
-  parent_comment_id uuid [ref: > post_comments.id]
-  content text [not null]
-  author_user_id uuid [ref: > users.id]
-  author_name_snapshot varchar
-  author_email varchar
-  moderation_status moderation_state [not null]
-  likes int [default: 0]
-  report_count int [default: 0]
-  last_report_reason varchar
-  is_hidden bool [default: false]
-  created_at timestamp
-  updated_at timestamp
+  post_id uuid [not null, ref: > posts.id, note: "Bài editorial đích / target editorial post"]
+  parent_comment_id uuid [ref: > post_comments.id, note: "Bình luận cha nếu là reply / parent comment reference"]
+  content text [not null, note: "Nội dung bình luận / canonical comment body"]
+  author_user_id uuid [ref: > users.id, note: "User owner nếu có session / comment author user"]
+  author_name_snapshot varchar [note: "Tên hiển thị chụp lại / author display snapshot"]
+  author_email varchar [note: "Email snapshot cho guest hoặc compat flow / guest or compatibility email snapshot"]
+  moderation_status moderation_state [not null, note: "Trạng thái kiểm duyệt / moderation state summary"]
+  likes int [default: 0, note: "Lượt thích summary / likes counter"]
+  report_count int [default: 0, note: "Số report summary / denormalized report counter"]
+  last_report_reason varchar [note: "Lý do report gần nhất / latest report reason snapshot"]
+  is_hidden bool [default: false, note: "Ẩn khỏi public read hay chưa / hidden summary flag"]
+  created_at timestamp [note: "Thời điểm tạo / created timestamp"]
+  updated_at timestamp [note: "Thời điểm cập nhật gần nhất / updated timestamp"]
 }
 
 Table guestbook_entries {
   id uuid [pk]
   public_id varchar [unique]
-  author_name varchar [not null]
-  message text [not null]
-  country varchar
-  avatar varchar
-  badge varchar
-  entry_type varchar
-  question_category varchar
-  submitted_by_user_id uuid [ref: > users.id]
-  submitted_by_ip_hash varchar
-  admin_reply text
-  is_answered bool [default: false]
-  approval_status guestbook_approval_state [not null]
-  created_at timestamp
-  updated_at timestamp
+  author_name varchar [not null, note: "Tên người gửi / guestbook author name"]
+  message text [not null, note: "Lời nhắn chính / canonical guestbook message"]
+  country varchar [note: "Quốc gia nếu có / optional country label"]
+  avatar varchar [note: "Avatar label hoặc asset hint / avatar hint or lightweight reference"]
+  badge varchar [note: "Nhãn hiển thị / badge label shown in UI"]
+  entry_type varchar [note: "Loại entry / greeting | question | sharing | support"]
+  question_category varchar [note: "Nhóm câu hỏi nếu entry là question / question category hint"]
+  submitted_by_user_id uuid [ref: > users.id, note: "User owner nếu có session / submitting user"]
+  submitted_by_ip_hash varchar [note: "IP hash nội bộ / internal anti-abuse IP hash"]
+  admin_reply text [note: "Phản hồi của admin / admin reply body"]
+  is_answered bool [default: false, note: "Đã có phản hồi hay chưa / answered summary flag"]
+  approval_status guestbook_approval_state [not null, note: "Trạng thái duyệt / approval state summary"]
+  created_at timestamp [note: "Thời điểm tạo / created timestamp"]
+  updated_at timestamp [note: "Thời điểm cập nhật gần nhất / updated timestamp"]
 }
 
 TableGroup "Community Core" [note: "Các bề mặt cộng đồng chính"] {

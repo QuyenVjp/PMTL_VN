@@ -97,6 +97,88 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 - `feature_flags`
 - `media_assets`
 
+## Preferred tooling choices
+
+### Queue / background jobs
+- Giữ baseline `Redis + execution queue`.
+- Preferred implementation là `BullMQ` thay vì hand-rolled queue semantics.
+- `Temporal` không phải baseline cho current phase:
+  - quá nặng cho `single VPS`
+  - chỉ cân nhắc nếu sau này cần workflow dài, nhiều bước, và durability rất cao
+- `QStash` chỉ là optional candidate cho webhook hoặc external callback fan-out, không phải primary queue của current architecture
+
+### Search
+- Giữ `Meilisearch` làm search engine chính.
+- Không đổi sang `Typesense` hoặc `Algolia` ở current phase chỉ vì “tool xịn hơn”.
+- Chỉ cân nhắc `Algolia` nếu mục tiêu là giảm gánh vận hành search bằng SaaS và chấp nhận external dependency rõ ràng.
+
+### Storage
+- Current phase:
+  - `local disk storage adapter`
+- Target phase ưu tiên:
+  - `Cloudflare R2` như lựa chọn `S3-compatible` đầu tiên
+- `MinIO` chỉ hợp khi muốn self-host object storage và chấp nhận tăng tải vận hành.
+
+### Edge / proxy / CDN
+- Giữ `Caddy` là reverse proxy origin hiện tại.
+- Có thể đặt `Cloudflare` free plan phía trước `Caddy` cho:
+  - CDN
+  - SSL edge
+  - DNS
+  - một phần rate limit / bot filtering
+- Không coi Cloudflare là lý do để bỏ app-layer rate limit hoặc bỏ Caddy trong current phase.
+
+### Observability
+- Current 1 VPS baseline nên lean:
+  - `Prometheus`
+  - `Grafana`
+  - `Pino`
+  - app `/metrics`
+  - health endpoints
+- `OTEL + Tempo` không nên là mặc định phải tự host ngay trên 1 VPS.
+- Nếu thực sự cần traces sớm, ưu tiên cân nhắc managed option như `Grafana Cloud` free tier trước khi tự host full tracing stack.
+
+### Auth
+- Giữ `Payload auth` là authority duy nhất.
+- Không chuyển sang `Clerk`, `Supabase Auth`, `Auth.js` trong current architecture baseline.
+
+### Database
+- Giữ `Postgres + PgBouncer`.
+- Managed Postgres là khả năng vận hành sau này, không phải lý do để đổi current design sang `Supabase` hoặc `Neon` ngay lúc này.
+
+## Tooling status
+
+### Accepted
+
+| Tool / option | Status | Ghi chú ngắn |
+|---|---|---|
+| `BullMQ` | accepted | Queue implementation ưu tiên trên nền `Redis + execution queue` hiện tại |
+| `Meilisearch` | accepted | Giữ làm public search engine chính |
+| `Payload auth` | accepted | Auth authority duy nhất |
+| `Cloudflare` trước `Caddy` | accepted | Edge option tốt cho CDN, SSL, DNS, basic protection |
+| `Cloudflare R2` | accepted | Target object storage ưu tiên sau local adapter |
+| `Prometheus + Grafana + Alertmanager + Pino` | accepted | Observability baseline cho current phase |
+
+### Deferred
+
+| Tool / option | Status | Ghi chú ngắn |
+|---|---|---|
+| `OpenTelemetry + Tempo` | deferred | Chỉ bật khi thật sự cần traces; ưu tiên managed backend nếu cần sớm |
+| `Grafana Cloud` | deferred | Hợp nếu muốn giảm tự host observability stack |
+| `pgvector` | deferred | Chỉ thêm khi related-content / recommendation đã chốt |
+| `MinIO` | deferred | Chỉ cân nhắc nếu muốn self-host object storage |
+| `QStash` | deferred | Chỉ hợp cho webhook/external callback fan-out, không phải primary queue |
+| `Supabase` / `Neon` | deferred | Chỉ cân nhắc khi có áp lực vận hành DB thật sự |
+
+### Rejected for current phase
+
+| Tool / option | Status | Ghi chú ngắn |
+|---|---|---|
+| Hand-rolled Redis queue semantics | rejected | Không ưu tiên tự build khi `BullMQ` đã giải bài toán tốt hơn |
+| `Temporal` | rejected | Quá nặng cho `single VPS` current phase |
+| `Typesense` / `Algolia` thay `Meilisearch` ngay | rejected | Chưa có lý do đủ mạnh để đổi search stack hiện tại |
+| `Clerk` / `Supabase Auth` / `Auth.js` thay `Payload auth` | rejected | Phá auth authority đã chốt |
+
 ## App-layer runtime controls
 
 ### Rate limit

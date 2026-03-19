@@ -95,16 +95,18 @@ Metadata canonical lưu trong Postgres
 
 ### 4. **Observability** (Khả năng quan sát & Giám sát)
 
-**Stack**: Prometheus + Grafana + Alertmanager + Pino + OpenTelemetry + Tempo
+**Stack theo pha**:
+- Baseline: Prometheus + Grafana + Alertmanager + Pino
+- Optional upgrade: OpenTelemetry + Tempo hoặc managed equivalent như Grafana Cloud
 
 | Tool | Chức năng | Tại sao chọn? | Lợi ích |
 |------|----------|--------|---------|
 | **Prometheus** | TSDB cho metrics | Giám sát host/service/runtime | Query và alert mạnh |
-| **Grafana** | Dashboard | Xem metrics và traces | Giao diện tổng hợp |
+| **Grafana** | Dashboard | Xem metrics và dashboard vận hành | Giao diện tổng hợp |
 | **Alertmanager** | Alert routing | Gửi cảnh báo tới Telegram/Slack/Email | Điều hướng cảnh báo |
 | **Pino** | Structured logs | Ghi log theo context nhất quán | Debug và audit tốt hơn |
-| **OpenTelemetry** | Distributed tracing instrumentation | Theo dõi request và job xuyên nhiều service | Thấy rõ bottleneck theo span |
-| **Tempo** | Trace storage backend | Lưu trace tập trung | Correlate metrics + logs + traces |
+| **OpenTelemetry** (optional) | Distributed tracing instrumentation | Theo dõi request và job xuyên nhiều service | Thấy rõ bottleneck theo span |
+| **Tempo** hoặc managed trace backend (optional) | Trace storage backend | Lưu trace tập trung | Correlate metrics + logs + traces |
 
 **Observability Flow**:
 ```txt
@@ -116,7 +118,7 @@ Grafana / Alertmanager
 
 Services emit traces qua OpenTelemetry
      ↓
-Tempo
+Tempo hoặc managed backend
      ↓
 Grafana
 
@@ -133,7 +135,7 @@ Log sink / console / future log pipeline
 |---------|----------|---|
 | **`outbox_events`** | Ghi business event trong cùng transaction với canonical write | Không mất event quan trọng |
 | **Outbox dispatcher** | Poll event chưa xử lý, phát sang execution queue hoặc handle trực tiếp | Retry, backoff, replay rõ |
-| **Execution queue** | Chạy workload nền như reindex, notify, email, webhook | Tách execution khỏi request path |
+| **Execution queue** (`BullMQ` preferred) | Chạy workload nền như reindex, notify, email, webhook | Tách execution khỏi request path |
 | **Reconciliation / replay jobs** | Soát drift giữa Postgres và downstream systems | Có recovery path chuẩn |
 
 **Chuẩn flow cần nhớ**:
@@ -167,16 +169,17 @@ Mark processed / failed / retryable
 |---------|----------|---|
 | Email (SMTP/SendGrid) | Email Delivery | Gửi password reset và downstream notifications |
 | Push (Firebase / Web Push) | Web Push | Gửi thông báo tới trình duyệt |
-| CDN (Cloudflare) | Content Delivery | Phân phối ảnh/audio/PDF nhanh hơn |
+| Cloudflare (free plan) | DNS + CDN + edge SSL + basic protection | Giảm tải origin, tăng tốc asset/public pages |
 | Local Disk Storage (current phase) | Media/File Storage trên 1 VPS | Đủ dùng trước mắt nếu có storage abstraction và backup rõ |
-| Object Storage (`S3` / `MinIO`) | Media/File Storage target phase | Nơi chuẩn khi cần nâng cấp binary asset production |
+| Cloudflare R2 (preferred target) | Media/File Storage target phase | `S3-compatible`, zero-egress oriented, hợp bài toán binary assets |
+| MinIO (optional self-host) | Media/File Storage target phase | Chỉ dùng khi muốn tự giữ object storage trong hạ tầng riêng |
 | Embedding Provider | Embedding generation | Dùng khi semantic retrieval / related-content được bật |
-| S3 Backup | Off-site Backup | Lưu snapshot và backup ngoài máy chủ app |
+| Off-site Backup | Snapshot/backup ngoài máy chủ app | Giảm rủi ro mất dữ liệu VPS |
 
 **Media/File note**:
 - current production fit có thể dùng local disk trên VPS
 - nhưng phải có storage abstraction và metadata canonical rõ
-- target phase là object storage rõ như `S3` hoặc `MinIO`
+- target phase ưu tiên `Cloudflare R2`; `MinIO` chỉ là self-host fallback
 - upload mới nên đi qua allowlist + size/mime validation + scan/quarantine
 - binary asset không nên là phần sống còn trong container filesystem
 
@@ -188,9 +191,11 @@ Cho current phase của PMTL_VN, baseline thực dụng là:
 
 - `single VPS`
 - `Postgres + PgBouncer + Redis + execution queue + Meilisearch + Caddy`
+- `BullMQ` là lựa chọn nên ưu tiên cho execution queue implementation
 - media/file dùng `local disk storage adapter`
 - binary metadata nằm trong Postgres
-- S3-compatible storage là hướng nâng cấp kế tiếp, không phải blocker để chạy production sớm
+- `Cloudflare` có thể đứng trước `Caddy` để lấy CDN/SSL/edge protection
+- `Cloudflare R2` là hướng nâng cấp storage kế tiếp, không phải blocker để chạy production sớm
 
 Những thứ nên làm ngay thay vì over-engineer:
 
@@ -201,6 +206,7 @@ Những thứ nên làm ngay thay vì over-engineer:
 - audit logs
 - `/health/*` + `/metrics`
 - feature flags đơn giản
+- ưu tiên tool có sẵn thay vì tự build thêm control-plane nếu `BullMQ` hoặc managed free-tier đã giải được bài toán
 
 ---
 
@@ -323,14 +329,16 @@ Xác định bottleneck thật
 
 - [ ] Cấu hình backup Postgres ngoài máy chủ app.
 - [ ] Chốt schema `outbox_events`, retry policy, replay policy, dead-letter policy.
+- [ ] Chốt `BullMQ` làm execution queue implementation mặc định nếu stack vẫn là Redis-based jobs.
 - [ ] Chốt storage abstraction, local adapter config, và metadata schema cho `media_assets`.
 - [ ] Chốt Zod boundary schemas và env contracts cho web/cms/worker.
 - [ ] Chốt Redis app-layer rate limit cho auth/search/write/upload.
 - [ ] Chốt `audit_logs` và `feature_flags` schema/helper.
 - [ ] Chốt `/health/live`, `/health/ready`, `/health/startup`, `/metrics`.
 - [ ] Thiết lập Prometheus + Grafana + Alertmanager.
-- [ ] Thiết lập OpenTelemetry + Tempo và propagate trace context qua web/cms/worker.
-- [ ] Chuẩn bị migration path từ local storage sang `S3-compatible` object storage.
+- [ ] Chỉ bật OTEL/tracing khi thực sự cần; nếu cần sớm, cân nhắc Grafana Cloud trước khi tự host Tempo.
+- [ ] Chuẩn bị migration path từ local storage sang `Cloudflare R2` hoặc `S3-compatible` object storage.
+- [ ] Chốt Cloudflare edge usage phía trước Caddy nếu team muốn lấy CDN/SSL/basic protection.
 - [ ] Chỉ bật `pgvector` nếu use case recommendation / related-content đã rõ.
 - [ ] Định nghĩa alert rules cho DB, queue, outbox lag, search health, object storage health.
 - [ ] Thực hiện load test và failure drill.

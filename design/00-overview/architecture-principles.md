@@ -2,7 +2,7 @@
 
 > Ghi chú cho sinh viên:
 > File này mô tả `repo truth (thực trạng repo)` và `implementation mapping (cách map sang code triển khai)`.
-> Các quyết định nền tảng như `Postgres là source of truth`, `Payload auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](C:\Users\ADMIN\DEV2\PMTL_VN\design\CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
+> Các quyết định nền tảng như `Postgres là source of truth`, `Payload auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](../CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
 > Đây là `canonical source (nguồn chuẩn duy nhất)` cho owner/responsibility mapping giữa các module.
 > Các file index như `domain-map.md` chỉ được dẫn link về đây, không được tự chốt lại ownership.
 
@@ -78,7 +78,7 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 
 ## Xem quyết định nền tảng ở đâu
 
-Đọc [CORE_DECISIONS.md](C:\Users\ADMIN\DEV2\PMTL_VN\design\CORE_DECISIONS.md) cho các quyết định sau:
+Đọc [CORE_DECISIONS.md](../CORE_DECISIONS.md) cho các quyết định sau:
 
 - PostgreSQL là source of truth
 - Payload auth là auth authority duy nhất
