@@ -1,9 +1,9 @@
-// Identity Module - logical schema aligned with current repo truth
+// Identity Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - Payload auth internal token/session storage là framework-managed, không mô hình hóa chi tiết ở đây.
-// - `public_id` chỉ là public-facing identifier khi cần expose user reference an toàn hơn id nội bộ.
-// - `google_sub` là provider linkage field cho Google login trong cùng auth authority,
-//   không phải auth system thứ hai.
+// - Payload auth internal token/session storage là framework-managed (do framework quản lý), không mô hình hóa chi tiết ở đây.
+// - `public_id` chỉ là public-facing identifier (mã công khai) khi cần expose user reference an toàn hơn id nội bộ.
+// - `google_sub` là provider linkage field (trường liên kết nhà cung cấp) cho Google login trong cùng auth authority,
+//   không phải auth system (hệ thống xác thực) thứ hai.
 
 Project identity_module {
   database_type: "PostgreSQL"
@@ -35,7 +35,7 @@ Table users {
   username varchar [unique]
   phone varchar
   dharma_name varchar
-  google_sub varchar [note: "Google provider subject / mã liên kết Google"]
+  google_sub varchar [note: "Google provider subject (mã định danh phía Google) / mã liên kết Google"]
   avatar_media_id uuid [ref: > media_assets.id]
   bio text
   role user_role [not null]

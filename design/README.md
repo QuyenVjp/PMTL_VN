@@ -30,9 +30,9 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 21. `design/09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md` (Ma trận nguồn gốc bài gốc, bản dịch, web phụng sự viên)
 22. `design/09-wisdom-qa/INGESTION_PLAN.md` (Kế hoạch nhập dữ liệu có nguồn đối chiếu)
 23. `design/06-calendar/PRACTICE_ADVISORY_MODEL.md` (Mô hình thông báo tu học hằng ngày)
-24. `design/00-00-identity/*` (Định danh người dùng)
+24. `design/00-identity/*` (Định danh người dùng)
 
-- đọc thêm `design/00-00-identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
+- đọc thêm `design/00-identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
 
 25. các module còn lại (remaining modules)
 

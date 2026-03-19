@@ -1,13 +1,13 @@
 stateDiagram-v2
     [*] --> Pending
-    Pending --> Processing: "Worker starts dispatch"
-    Processing --> Processing: "Advance cursor / next chunk"
-    Processing --> Completed: "All recipients handled"
-    Processing --> Failed: "Fatal dispatch failure"
-    Failed --> Processing: "Retry job"
+    Pending --> Processing: "Worker bắt đầu dispatch (Worker starts dispatch)"
+    Processing --> Processing: "Tiến cursor hoặc chunk tiếp theo (Advance cursor / next chunk)"
+    Processing --> Completed: "Đã xử lý hết recipients (All recipients handled)"
+    Processing --> Failed: "Dispatch lỗi nghiêm trọng (Fatal dispatch failure)"
+    Failed --> Processing: "Thử lại job (Retry job)"
     Completed --> [*]
 
     note right of Pending
-      pushJobs là control-plane record.
+      pushJobs là control-plane record (bản ghi điều phối).
       Subscription data nằm ở pushSubscriptions.
     end note

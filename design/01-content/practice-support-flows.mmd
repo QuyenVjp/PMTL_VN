@@ -1,14 +1,14 @@
 flowchart TD
-    subgraph F1["Daily Recitation Flow | Công khóa hằng ngày"]
-        F1A["Người mới chọn plan gợi ý"] --> F1B["Đọc opening prayer / hướng dẫn mở đầu"]
+    subgraph F1["Luồng công khóa hằng ngày (Daily Recitation Flow)"]
+        F1A["Người mới chọn plan gợi ý"] --> F1B["Đọc opening prayer hoặc hướng dẫn mở đầu"]
         F1B --> F1C["Thực hiện từng chant item theo target gợi ý"]
-        F1C --> F1D["Nếu cần: chỉnh target hoặc bật optional item"]
+        F1C --> F1D["Nếu cần thì chỉnh target hoặc bật optional item"]
         F1D --> F1E["Lưu practice log và trạng thái hoàn thành"]
     end
 
     F1E -.->|"tiếp"| F2A
 
-    subgraph F2["Mental Incense Flow | Thắp tâm hương"]
+    subgraph F2["Luồng thắp tâm hương (Mental Incense Flow)"]
         F2A["Mở checklist thắp tâm hương"] --> F2B["Quán tưởng / chỉnh tâm"]
         F2B --> F2C["Niệm thầm theo số lần hướng dẫn"]
         F2C --> F2D["Hoàn tất bước mở đầu trước công khóa"]
@@ -16,15 +16,15 @@ flowchart TD
 
     F2D -.->|"tiếp"| F3A
 
-    subgraph F3["Vow Making Flow | Phát nguyện"]
-        F3A["Mở mẫu khấn phát nguyện"] --> F3B["Điền nội dung ý nguyện theo guardrail"]
+    subgraph F3["Luồng phát nguyện (Vow Making Flow)"]
+        F3A["Mở mẫu khấn phát nguyện"] --> F3B["Điền nội dung ý nguyện theo guardrail (khung ràng buộc an toàn)"]
         F3B --> F3C["Kiểm tra phần không được cầu xin sai phạm vi"]
         F3C --> F3D["Đọc hoặc lưu script phát nguyện"]
     end
 
     F3D -.->|"tiếp"| F4A
 
-    subgraph F4["Life Release Flow | Phóng sinh"]
+    subgraph F4["Luồng phóng sinh (Life Release Flow)"]
         F4A["Xem checklist trước khi phóng sinh"] --> F4B["Cảm ân"]
         F4B --> F4C["Niệm kinh / cầu nguyện"]
         F4C --> F4D["Thực hiện phóng sinh"]
@@ -33,16 +33,16 @@ flowchart TD
 
     F4E -.->|"tiếp"| F5A
 
-    subgraph F5["Little House Recitation Flow | Tụng Ngôi Nhà Nhỏ"]
+    subgraph F5["Luồng tụng Ngôi Nhà Nhỏ (Little House Recitation Flow)"]
         F5A["Chuẩn bị thông tin người nhận"] --> F5B["Chọn kiểu ghi Kính Tặng / Tặng"]
         F5B --> F5C["Tụng theo cụm bài niệm"]
-        F5C --> F5D["Chấm hoàn thành theo đúng guideline"]
+        F5C --> F5D["Chấm hoàn thành theo đúng guideline (hướng dẫn chuẩn)"]
         F5D --> F5E["Lưu log hoặc trạng thái chuẩn bị đốt"]
     end
 
     F5E -.->|"tiếp"| F6A
 
-    subgraph F6["Little House Burning Without Altar | Đốt không có bàn thờ"]
+    subgraph F6["Luồng đốt Ngôi Nhà Nhỏ khi không có bàn thờ (Little House Burning Without Altar)"]
         F6A["Mở infographic / checklist từng bước"] --> F6B["Kiểm tra điều kiện trước khi đốt"]
         F6B --> F6C["Đọc lời khấn trước khi đốt"]
         F6C --> F6D["Thực hiện đốt theo flow không có bàn thờ"]

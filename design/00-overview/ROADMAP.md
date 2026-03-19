@@ -18,7 +18,7 @@ không còn mâu thuẫn với implementation đang chạy.
 ## Nguyên tắc thực hiện
 
 - Không phá implementation hiện tại.
-- Không rename folder hàng loạt.
+- Chỉ rename folder khi tăng được tính đồng nhất và đã sync mọi tham chiếu.
 - Không thêm module ngoài danh sách hiện có.
 - Không giữ decision cũ nếu repo đã đi hướng khác.
 - Mọi artifact phải text-based và AI-friendly.
@@ -73,10 +73,10 @@ không còn mâu thuẫn với implementation đang chạy.
 ## Phase 4. Identity Module
 
 ### Files
-- `design/00-00-identity/module-map.md`
-- `design/00-00-identity/flows.mmd`
-- `design/00-00-identity/schema.dbml`
-- `design/00-00-identity/decisions.md`
+- `design/00-identity/module-map.md`
+- `design/00-identity/flows.mmd`
+- `design/00-identity/schema.dbml`
+- `design/00-identity/decisions.md`
 
 ### Mục tiêu
 - ghi rõ auth model hiện tại
@@ -130,6 +130,8 @@ không còn mâu thuẫn với implementation đang chạy.
   - flows
   - schema (lược đồ dữ liệu)
   - decisions
+  - contracts (hợp đồng dữ liệu/nghiệp vụ)
+  - use-cases (kịch bản sử dụng)
 - các file phản ánh owner thật, contract (hợp đồng dữ liệu/nghiệp vụ) thật, side effects thật
 
 ## Sau khi hoàn tất design
@@ -152,60 +154,106 @@ design/
     architecture-principles.md
     architecture.mmd
     architecture-flows.mmd
+    execution-map.md
+    FEATURE_SURFACE_FROM_OFFICIAL_SITES.md
+    FIVE_TREASURES_MODEL.md
     domain-map.md
     ROADMAP.md
   01-content/
     module-map.md
+    contracts.md
     flows.mmd
+    publish-state.mmd
     schema.dbml
     decisions.md
+    use-cases/
   02-community/
     module-map.md
+    contracts.md
     flows.mmd
     schema.dbml
     decisions.md
+    use-cases/
   03-engagement/
     module-map.md
+    contracts.md
     flows.mmd
+    ngoi-nha-nho-state.mmd
     schema.dbml
     decisions.md
+    use-cases/
   04-moderation/
     module-map.md
+    contracts.md
     flows.mmd
+    report-state.mmd
+    guestbook-approval-state.mmd
     schema.dbml
     decisions.md
+    use-cases/
   05-search/
     module-map.md
+    contracts.md
     flows.mmd
     schema.dbml
     decisions.md
+    use-cases/
   06-calendar/
     module-map.md
+    contracts.md
     flows.mmd
     schema.dbml
     decisions.md
+    use-cases/
   07-notification/
     module-map.md
+    contracts.md
+    flows.mmd
+    push-job-state.mmd
+    schema.dbml
+    decisions.md
+    use-cases/
+  08-vows-merit/
+    module-map.md
+    contracts.md
     flows.mmd
     schema.dbml
     decisions.md
+    use-cases/
+  09-wisdom-qa/
+    module-map.md
+    contracts.md
+    flows.mmd
+    schema.dbml
+    decisions.md
+    use-cases/
   00-identity/
     module-map.md
+    contracts.md
     flows.mmd
     schema.dbml
     decisions.md
+    use-cases/
   CORE_DECISIONS.md
   MODULE_INTERACTIONS.md
+  README.md
+  TERMINOLOGY_RULES.md
+  EN_VI_NOTATION_RULES.md
+  AUDIT_POLICY.md
+  SLA_SLO.md
+  SECURITY_BASELINE.md
+  FAILURE_MODE_MATRIX.md
 ```
 
 ## Success checklist
 
 - [x] Overview phản ánh repo truth
-- [ ] Core decisions được chốt
-- [ ] Module interactions được chốt
-- [ ] Content refactor xong
-- [ ] Identity module được mô tả
-- [ ] Community / Moderation / Engagement / Search / Notification / Calendar được mô tả
-- [ ] Docs sync không còn mâu thuẫn
+- [x] Core decisions được chốt
+- [x] Module interactions được chốt
+- [x] Content refactor xong
+- [x] Identity module được mô tả
+- [x] Community / Moderation / Engagement / Search / Notification / Calendar được mô tả
+- [x] Vows & Merit / Wisdom & QA được mô tả
+- [x] Docs sync không còn mâu thuẫn ở lớp design hiện tại
 
 

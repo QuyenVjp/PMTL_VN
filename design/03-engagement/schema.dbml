@@ -1,16 +1,15 @@
-// Engagement Module - logical schema aligned with current repo truth
-// Assumption:
-// - chant_items và chant_plans là reference data dùng cho user-state;
-//   file này mô tả chúng ở mức ref tối thiểu để giữ quan hệ rõ ràng.
-// - practice support content gốc được mô tả thêm ở design/01-content/practice-support-reference.md.
+// Engagement Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
+// Giả định:
+// - chant_items và chant_plans là dữ liệu tham chiếu cho user-state (trạng thái cá nhân của người dùng).
+// - practice support content (nội dung hỗ trợ tu tập) gốc được mô tả thêm ở design/01-content/practice-support-reference.md.
 
 Project engagement_module {
   database_type: "PostgreSQL"
   Note: '''
-  Engagement module cho PMTL_VN.
+  Engagement module (module gắn kết và tự quản lý trạng thái cá nhân) cho PMTL_VN.
   Cách đọc nhanh:
-  - Nhóm Sutra State là bookmark và progress.
-  - Nhóm Practice State là preference và log.
+  - Nhóm Sutra State là bookmark và reading progress (tiến độ đọc).
+  - Nhóm Practice State là preference, practice log, practice sheet, và Ngôi Nhà Nhỏ.
   - Các bảng sutras, chapters, chant_items, chant_plans chỉ là dữ liệu tham chiếu.
   '''
 }
@@ -125,6 +124,126 @@ Table practice_log_item_states {
   count int
 }
 
+Enum practice_sheet_type {
+  daily_practice
+  event_preparation
+  vow_support
+}
+
+Enum practice_sheet_status {
+  draft
+  in_progress
+  completed
+  archived
+}
+
+Table practice_sheets {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique, note: "Public ID (mã công khai)"]
+  user_id uuid [not null, note: "Owner user (người sở hữu bản ghi)"]
+  sheet_type practice_sheet_type [not null, default: 'daily_practice']
+  title_vi varchar(160) [not null, note: "Tiêu đề tiếng Việt"]
+  title_en varchar(160) [note: "English title (tiêu đề tiếng Anh)"]
+  practice_date date
+  plan_ref varchar(64) [note: "Ref (tham chiếu) tới chant plan nếu có"]
+  status practice_sheet_status [not null, default: 'draft']
+  completion_percent int [not null, default: 0]
+  last_client_event_id varchar(64) [note: "Dùng cho offline sync (đồng bộ ngoại tuyến)"]
+  notes_vi text [note: "Ghi chú tiếng Việt"]
+  notes_en text [note: "English notes (ghi chú tiếng Anh)"]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table practice_sheet_items {
+  id uuid [pk]
+  sheet_id uuid [not null, ref: > practice_sheets.id]
+  chant_item_ref varchar(64) [note: "Ref (tham chiếu) tới chant item"]
+  label_vi varchar(160) [not null]
+  label_en varchar(160)
+  target_count int
+  current_count int [not null, default: 0]
+  is_completed boolean [not null, default: false]
+  sort_order int [not null, default: 0]
+}
+
+Enum ngoi_nha_nho_sheet_status {
+  draft
+  in_progress
+  completed
+  self_stored
+  offered
+}
+
+Enum ngoi_nha_nho_sheet_type {
+  standard
+  self_store
+  custom
+}
+
+Enum ngoi_nha_nho_counter_type {
+  great_compassion
+  heart_sutra
+  rebirth_mantra
+  seven_buddhas
+}
+
+Table ngoi_nha_nho_sheets {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  user_id uuid [not null, note: "Ref (tham chiếu) tới 00-identity.users"]
+  sheet_type ngoi_nha_nho_sheet_type [not null, default: 'standard']
+  title_snapshot varchar(160)
+  template_ref varchar(64) [note: "Ref (tham chiếu) tới chant item hoặc chant plan template (mẫu kế hoạch niệm)"]
+  dedication_target_snapshot text
+  practice_date date
+  status ngoi_nha_nho_sheet_status [not null, default: 'draft']
+  required_great_compassion_count int [not null, default: 0]
+  required_heart_sutra_count int [not null, default: 0]
+  required_rebirth_mantra_count int [not null, default: 0]
+  required_seven_buddhas_count int [not null, default: 0]
+  current_great_compassion_count int [not null, default: 0]
+  current_heart_sutra_count int [not null, default: 0]
+  current_rebirth_mantra_count int [not null, default: 0]
+  current_seven_buddhas_count int [not null, default: 0]
+  last_client_event_id varchar(64) [note: "Dùng để chống double-submit (gửi trùng) khi offline"]
+  notes text
+  started_at timestamptz
+  completed_at timestamptz
+  offered_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Note: "Canonical self-owned sheet record (bản ghi gốc của tờ Ngôi Nhà Nhỏ do người dùng tự sở hữu)."
+}
+
+Table ngoi_nha_nho_sheet_entries {
+  id uuid [pk]
+  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id]
+  client_event_id varchar(64) [not null]
+  counter_type ngoi_nha_nho_counter_type [not null]
+  delta int [not null, default: 1]
+  created_at timestamptz [not null]
+
+  Indexes {
+    (sheet_id, client_event_id) [unique]
+  }
+
+  Note: "Optional event table (bảng sự kiện tùy chọn) cho anti-duplicate (chống trùng) và audit-grade progress trace (lưu vết tiến độ mức kiểm định)."
+}
+
+Table ngoi_nha_nho_sheet_audit_snapshots {
+  id uuid [pk]
+  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id]
+  action varchar(64) [not null]
+  before_status ngoi_nha_nho_sheet_status
+  after_status ngoi_nha_nho_sheet_status
+  actor_user_id uuid
+  created_at timestamptz [not null]
+
+  Note: "Compact state milestones (mốc trạng thái gọn) cho Ngôi Nhà Nhỏ; audit chi tiết vẫn nằm ở auditLogs (nhật ký kiểm tra)."
+}
+
 TableGroup "Sutra State" [note: "Dữ liệu cá nhân khi đọc kinh"] {
   sutra_bookmarks
   sutra_reading_progress
@@ -137,9 +256,14 @@ TableGroup "Practice State" [note: "Dữ liệu cá nhân cho công phu"] {
   chant_preference_intentions
   practice_logs
   practice_log_item_states
+  practice_sheets
+  practice_sheet_items
+  ngoi_nha_nho_sheets
+  ngoi_nha_nho_sheet_entries
+  ngoi_nha_nho_sheet_audit_snapshots
 }
 
-TableGroup "Reference Data" [note: "Dùng để liên kết, không phải owner của engagement"] {
+TableGroup "Reference Data" [note: "Dùng để liên kết, không phải owner module (module sở hữu gốc) của engagement"] {
   users
   sutras
   sutra_chapters

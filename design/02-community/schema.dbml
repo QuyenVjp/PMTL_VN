@@ -1,4 +1,4 @@
-// Community Module - logical schema aligned with current repo truth
+// Community Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 
 Project community_module {
   database_type: "PostgreSQL"

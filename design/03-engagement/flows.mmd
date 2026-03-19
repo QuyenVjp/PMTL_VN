@@ -1,29 +1,29 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: Lưu sutra bookmark"]
-        E1A["Member đang đọc sutra"] --> E1B["Chọn chapter hoặc paragraph"]
-        E1B --> E1C["Nhấn bookmark"]
+    subgraph Flow1 ["Luồng 1: Lưu dấu trang khi đọc kinh"]
+        E1A["Thành viên đang đọc kinh (member reading sutra)"] --> E1B["Chọn chapter hoặc paragraph"]
+        E1B --> E1C["Nhấn lưu dấu trang (bookmark)"]
         E1C --> E1D["Lưu hoặc cập nhật sutraBookmarks"]
-        E1D --> E1E["Bookmark gắn user, sutra, location, excerpt, và note"]
+        E1D --> E1E["Bookmark gắn user, sutra, vị trí đọc, excerpt, và note"]
     end
 
-    subgraph Flow2 ["Luồng 2: Cập nhật reading progress"]
-        E2A["Member đọc sutra chapter"] --> E2B["Web gửi vị trí đọc"]
-        E2B --> E2C["CMS upsert sutraReadingProgress"]
+    subgraph Flow2 ["Luồng 2: Cập nhật tiến độ đọc"]
+        E2A["Thành viên đọc một chương kinh"] --> E2B["Web gửi vị trí đọc hiện tại"]
+        E2B --> E2C["CMS upsert sutraReadingProgress (tạo mới hoặc cập nhật)"]
         E2C --> E2D["Lưu chapter, paragraph, scrollPercent, và lastReadAt"]
-        E2D --> E2E["Progress được dùng cho lần đọc tiếp theo"]
+        E2D --> E2E["Tiến độ được dùng cho lần đọc tiếp theo"]
     end
 
-    subgraph Flow3 ["Luồng 3: Lưu chant preference"]
-        E3A["Member chọn chant plan"] --> E3B["Bật optional items"]
-        E3B --> E3C["Chỉnh target và intention"]
+    subgraph Flow3 ["Luồng 3: Lưu tùy chọn bài tập hằng ngày"]
+        E3A["Thành viên chọn chant plan (kế hoạch niệm)"] --> E3B["Bật optional items (mục tùy chọn)"]
+        E3B --> E3C["Chỉnh target và intention (mục tiêu và phát tâm)"]
         E3C --> E3D["Lưu chantPreferences theo user và plan"]
     end
 
-    subgraph Flow4 ["Luồng 4: Ghi practice log"]
-        E4A["Member bắt đầu buổi công phu"] --> E4B["Tạo hoặc mở practice log của ngày"]
-        E4B --> E4C["Cập nhật itemStates trong phiên"]
+    subgraph Flow4 ["Luồng 4: Ghi nhật ký công phu"]
+        E4A["Thành viên bắt đầu buổi công phu"] --> E4B["Tạo hoặc mở practice log của ngày"]
+        E4B --> E4C["Cập nhật itemStates (trạng thái từng mục niệm) trong phiên"]
         E4C --> E4D["Lưu startedAt, completedAt, notes, và isCompleted"]
-        E4D --> E4E["User xem lại lịch sử cá nhân"]
+        E4D --> E4E["Người dùng xem lại lịch sử cá nhân"]
     end
 
     E1E -.->|"tiếp"| E2A

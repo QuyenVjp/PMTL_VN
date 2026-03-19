@@ -1,37 +1,37 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Gửi bài cộng đồng"]
-        U1A["Member gửi community post"] --> U1B["CMS validate title, content, và type"]
-        U1B --> U1C["Chuẩn hóa publicId, slug, author snapshot, và spamScore"]
-        U1C --> U1D["Lưu communityPosts với moderationStatus mặc định pending"]
-        U1D --> U1E["Append audit log"]
-        U1E --> U1F["Enqueue alert cho admin hoặc super-admin"]
+        U1A["Thành viên gửi bài cộng đồng (Member submits community post)"] --> U1B["CMS kiểm tra tiêu đề, nội dung, và loại bài (validate title, content, type)"]
+        U1B --> U1C["Chuẩn hóa publicId, slug, ảnh chụp tác giả, và spamScore"]
+        U1C --> U1D["Lưu communityPosts với moderationStatus mặc định là pending"]
+        U1D --> U1E["Ghi audit log (nhật ký kiểm tra)"]
+        U1E --> U1F["Đưa cảnh báo vào hàng chờ cho admin hoặc super-admin (enqueue alert)"]
     end
 
     subgraph Flow2 ["Luồng 2: Bình luận vào bài cộng đồng"]
-        U2A["Member gửi bình luận"] --> U2B["Tìm community post đích"]
+        U2A["Thành viên gửi bình luận (Member submits comment)"] --> U2B["Tìm bài cộng đồng đích"]
         U2B --> U2C{"Có parent comment?"}
-        U2C -->|"Có"| U2D["Xác thực parent thuộc cùng post"]
-        U2C -->|"Không"| U2E["Tạo comment top-level"]
+        U2C -->|"Có"| U2D["Xác thực bình luận cha thuộc cùng bài"]
+        U2C -->|"Không"| U2E["Tạo bình luận cấp đầu (top-level comment)"]
         U2D --> U2E
-        U2E --> U2F["Lưu communityComments với moderationStatus pending"]
-        U2F --> U2G["Tính lại commentsCount khi comment được duyệt"]
-        U2G --> U2H["Enqueue alert moderation nếu cần"]
+        U2E --> U2F["Lưu communityComments với moderationStatus là pending"]
+        U2F --> U2G["Tính lại commentsCount khi bình luận được duyệt"]
+        U2G --> U2H["Đưa cảnh báo moderation vào hàng chờ nếu cần"]
     end
 
-    subgraph Flow3 ["Luồng 3: Bình luận vào bài viết editorial"]
-        U3A["Người dùng gửi post comment"] --> U3B["Tìm post theo publicId hoặc slug"]
+    subgraph Flow3 ["Luồng 3: Bình luận vào bài viết biên tập"]
+        U3A["Người dùng gửi bình luận dưới bài viết (post comment)"] --> U3B["Tìm post theo publicId hoặc slug"]
         U3B --> U3C["Tạo postComments"]
-        U3C --> U3D["Comment có moderationStatus pending"]
-        U3D --> U3E["Khi approved thì recompute commentCount cho post"]
+        U3C --> U3D["Bình luận có moderationStatus là pending"]
+        U3D --> U3E["Khi được approved thì tính lại commentCount cho post"]
     end
 
-    subgraph Flow4 ["Luồng 4: Guestbook submit và report"]
-        U4A["Khách hoặc member gửi guestbook entry"] --> U4B["Validate message"]
+    subgraph Flow4 ["Luồng 4: Gửi guestbook và report"]
+        U4A["Khách hoặc thành viên gửi guestbook entry"] --> U4B["Kiểm tra nội dung lời nhắn (validate message)"]
         U4B --> U4C["Chuẩn hóa publicId, ip hash, badge, và country nếu có"]
-        U4C --> U4D["Lưu guestbookEntries với approvalStatus pending"]
-        U4D --> U4E["Notify admin hoặc super-admin"]
-        U4E --> U4F{"Người dùng report entity?"}
-        U4F -->|"Có"| U4G["Tạo moderation report"]
+        U4C --> U4D["Lưu guestbookEntries với approvalStatus là pending"]
+        U4D --> U4E["Thông báo admin hoặc super-admin (notify)"]
+        U4E --> U4F{"Người dùng có report entity không?"}
+        U4F -->|"Có"| U4G["Tạo moderation report (phiếu báo cáo kiểm duyệt)"]
         U4F -->|"Không"| U4H["Kết thúc"]
     end
 

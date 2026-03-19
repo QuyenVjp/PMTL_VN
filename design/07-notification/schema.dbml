@@ -1,7 +1,7 @@
-// Notification Module - logical schema aligned with current repo truth
+// Notification Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - push_jobs là control-plane record cho async dispatch.
-// - Email delivery hiện đi qua queue/job path, chưa có canonical email history table trong current scope.
+// - push_jobs là control-plane record (bản ghi điều phối) cho async dispatch (gửi bất đồng bộ).
+// - Email delivery hiện đi qua queue/job path, chưa có canonical email history table (bảng lịch sử email gốc) trong current scope (phạm vi thiết kế hiện tại).
 
 Project notification_module {
   database_type: "PostgreSQL"
@@ -19,6 +19,13 @@ Enum push_job_status {
   active
   completed
   failed
+}
+
+Enum practice_reminder_source_type {
+  daily_practice
+  vow_milestone
+  life_release_day
+  baihua_night_reading
 }
 
 Table users {
@@ -69,6 +76,27 @@ Table push_jobs {
   updated_at timestamp
 }
 
+Table reminder_schedules {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  user_id uuid [not null, ref: > users.id, note: "Ref (tham chiếu) tới 00-identity.users"]
+  source_type practice_reminder_source_type [not null]
+  source_ref varchar(64)
+  schedule_key varchar(128) [not null]
+  timezone varchar(64) [not null]
+  next_run_at timestamptz
+  dedupe_window_minutes int [not null, default: 60]
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Indexes {
+    (user_id, schedule_key) [unique]
+  }
+
+  Note: "Reminder schedule (lịch nhắc việc) dùng khi pushJobs đơn thuần chưa đủ diễn đạt rule lặp lại."
+}
+
 TableGroup "Notification Recipients" [note: "Ai có thể được gửi tới"] {
   users
   push_subscriptions
@@ -76,4 +104,5 @@ TableGroup "Notification Recipients" [note: "Ai có thể được gửi tới"]
 
 TableGroup "Notification Control Plane" [note: "Điều phối gửi bất đồng bộ"] {
   push_jobs
+  reminder_schedules
 }

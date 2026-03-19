@@ -1,21 +1,21 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Đọc Bạch thoại Phật pháp"]
-        A1["User mở thư viện Bạch thoại"] --> A2["Chọn tập hoặc chủ đề"]
-        A2 --> A3["Render text lớn, rõ, dễ đọc"]
+        A1["Người dùng mở thư viện Bạch thoại"] --> A2["Chọn tập hoặc chủ đề"]
+        A2 --> A3["Hiển thị text lớn, rõ, dễ đọc (render text)"]
         A3 --> A4{"Có audio không?"}
         A4 -->|"Có"| A5["Phát audio hoặc video kèm text"]
         A4 -->|"Không"| A6["Đọc text thuần"]
     end
 
     subgraph Flow2 ["Luồng 2: Tra cứu Huyền học vấn đáp"]
-        B1["User nhập từ khóa vấn đề"] --> B2["Chuẩn hóa keyword tiếng Việt / tiếng Hoa"]
-        B2 --> B3["Search trong QA index"]
+        B1["Người dùng nhập từ khóa vấn đề"] --> B2["Chuẩn hóa keyword tiếng Việt hoặc tiếng Hoa"]
+        B2 --> B3["Tìm trong QA index (chỉ mục hỏi đáp)"]
         B3 --> B4["Trả bài hoặc đoạn liên quan nhất"]
         B4 --> B5["Mở bài gốc và các mục liên quan"]
     end
 
     subgraph Flow3 ["Luồng 3: Tải offline"]
-        C1["User chọn tải bài hoặc bộ sưu tập"] --> C2["Tạo offline bundle"]
-        C2 --> C3["Lưu text/audio/video metadata local"]
+        C1["Người dùng chọn tải bài hoặc bộ sưu tập"] --> C2["Tạo offline bundle (gói tải ngoại tuyến)"]
+        C2 --> C3["Lưu text, audio, video metadata vào local"]
         C3 --> C4["Đọc lại không cần mạng"]
     end

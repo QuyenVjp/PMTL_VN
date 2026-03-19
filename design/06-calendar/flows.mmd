@@ -1,23 +1,23 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Tạo và publish event"]
-        L1A["Editor tạo event"] --> L1B["Nhập title, date, location, links, và media"]
-        L1B --> L1C["Payload lưu event document"]
-        L1C --> L1D["System cập nhật eventStatus"]
-        L1D --> L1E["Public route trả event DTO"]
+        L1A["Biên tập viên tạo event"] --> L1B["Nhập title, date, location, links, và media"]
+        L1B --> L1C["Payload lưu event document (bản ghi sự kiện)"]
+        L1C --> L1D["Hệ thống cập nhật eventStatus"]
+        L1D --> L1E["Public route trả event DTO (dữ liệu trả ra cho web)"]
     end
 
     subgraph Flow2 ["Luồng 2: Tra cứu lunar event"]
         L2A["Web hoặc service cần tra ngày âm"] --> L2B["Đọc lunarEvents"]
-        L2B --> L2C["Match recurrenceData theo ngày âm"]
-        L2C --> L2D["Nếu có override thì merge theo priority"]
-        L2D --> L2E["Trả calendar result"]
+        L2B --> L2C["Đối chiếu recurrenceData theo ngày âm"]
+        L2C --> L2D["Nếu có override thì hợp nhất theo priority"]
+        L2D --> L2E["Trả calendar result (kết quả lịch)"]
     end
 
     subgraph Flow3 ["Luồng 3: Cập nhật lunar override"]
-        L3A["Admin tạo override cho lunar event"] --> L3B["Chọn lunarEvent và chantItem"]
+        L3A["Admin tạo override cho lunar event (sự kiện âm lịch)"] --> L3B["Chọn lunarEvent và chantItem"]
         L3B --> L3C["Nhập mode, target, max, priority, và note"]
         L3C --> L3D["Lưu lunarEventOverrides"]
-        L3D --> L3E["Practice layer có thể đọc override mới"]
+        L3D --> L3E["Practice layer (lớp logic tu học) có thể đọc override mới"]
     end
 
     L1E -.->|"tiếp"| L2A

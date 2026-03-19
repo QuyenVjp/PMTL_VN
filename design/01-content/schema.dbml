@@ -1,19 +1,19 @@
-// Content Module - logical schema aligned with current repo truth
+// Content Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - Đây là schema thiết kế ở mức logical, không phải dump DB vật lý từ Payload.
-// - Workflow publish hiện bám Payload drafts (_status) + published_at.
-// - Repo hiện chưa materialize một field visibility chung cho toàn bộ editorial collections.
-//   Nếu sau này cần gated content, field audience phải được thêm ở collection owner tương ứng.
+// - Đây là logical schema (lược đồ logic), không phải dump DB vật lý từ Payload.
+// - Workflow publish (luồng xuất bản) hiện bám Payload drafts (_status) + published_at.
+// - Repo hiện chưa materialize (kết tinh thành field riêng) một visibility field chung cho toàn bộ editorial collections.
+//   Nếu sau này cần gated content (nội dung giới hạn truy cập), field audience phải được thêm ở collection owner tương ứng.
 
 Project content_module {
   database_type: "PostgreSQL"
   Note: '''
   Content module cho PMTL_VN.
   Gợi ý đọc nhanh:
-  - Nhìn nhóm Editorial trước.
-  - Sau đó nhìn nhóm Practice Support nếu anh đang làm phần niệm kinh / nghi thức.
-  - Sau đó nhìn nhóm Scripture.
-  - Cuối cùng nhìn nhóm Taxonomy và Media.
+  - Nhìn nhóm Editorial Content (nội dung biên tập) trước.
+  - Sau đó nhìn nhóm Practice Support (nội dung hỗ trợ tu tập) nếu anh đang làm phần niệm kinh / nghi thức.
+  - Sau đó nhìn nhóm Scripture Library (thư viện kinh).
+  - Cuối cùng nhìn nhóm Taxonomy and Shared References (phân loại và tham chiếu dùng chung).
   '''
 }
 
@@ -194,9 +194,9 @@ Table chant_items {
   public_id varchar [unique]
   title varchar [not null]
   slug varchar [unique]
-  kind varchar [not null, note: "Ví dụ: chú, kinh, opening-ritual, prayer-template"]
+  kind varchar [not null, note: "Ví dụ: chú, kinh, opening-ritual (nghi thức mở đầu), prayer-template (mẫu lời khấn)"]
   opening_prayer text
-  content jsonb [note: "Script hoặc rich content chính"]
+  content jsonb [note: "Script (kịch bản / văn bản chuẩn) hoặc rich content (nội dung phong phú) chính"]
   audio_media_id uuid [ref: > media_assets.id]
   script_file_media_id uuid [ref: > media_assets.id]
   created_at timestamp
@@ -233,7 +233,7 @@ Table chant_plans {
   public_id varchar [unique]
   title varchar [not null]
   slug varchar [unique]
-  plan_type varchar [not null, note: "Ví dụ: daily-recitation, life-release, little-house"]
+  plan_type varchar [not null, note: "Ví dụ: daily-recitation (công khóa hằng ngày), life-release (phóng sanh), little-house (Ngôi Nhà Nhỏ)"]
   created_at timestamp
   updated_at timestamp
 }
@@ -319,7 +319,7 @@ TableGroup "Editorial Content" [note: "Nội dung biên tập công khai hoặc 
   downloads
 }
 
-TableGroup "Practice Support" [note: "Nội dung hỗ trợ niệm: bài niệm, plan, rule, media, ritual guide"] {
+TableGroup "Practice Support" [note: "Nội dung hỗ trợ tu tập: bài niệm, plan, rule, media, ritual guide (hướng dẫn nghi thức)"] {
   chant_items
   chant_item_preview_media
   chant_item_recommended_presets
@@ -328,7 +328,7 @@ TableGroup "Practice Support" [note: "Nội dung hỗ trợ niệm: bài niệm,
   chant_plan_items
 }
 
-TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ cho editorial"] {
+TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ cho editorial (nội dung biên tập)"] {
   post_tags
   post_related_posts
   post_gallery_media
@@ -344,7 +344,7 @@ TableGroup "Scripture Library" [note: "Thư viện kinh và cây đọc kinh"] {
   sutra_glossary
 }
 
-TableGroup "Taxonomy and Shared References" [note: "Dùng chung cho nhiều collection content"] {
+TableGroup "Taxonomy and Shared References" [note: "Dùng chung cho nhiều collection content (bộ sưu tập nội dung)"] {
   users
   media_assets
   categories

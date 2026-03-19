@@ -124,7 +124,7 @@ Khi đọc module này, hãy nhớ:
 - `pushJobs` không phải inbox canonical
 
 ### Identity
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-00-identity/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-identity/contracts.md`
 - Use-cases:
   - `register-member.md`
   - `update-profile.md`
@@ -142,7 +142,7 @@ Khi đọc module này, hãy nhớ:
   - `fulfill-vow-milestone.md`
   - `log-life-release.md`
 - schema (lược đồ dữ liệu):
-  - `SCHEMA_OUTLINE.md`
+  - `schema.dbml`
 
 Khi đọc module này, hãy nhớ:
 - phát nguyện là canonical record (bản ghi chuẩn gốc) riêng
@@ -156,7 +156,7 @@ Khi đọc module này, hãy nhớ:
   - `search-qa-answer.md`
   - `download-offline-bundle.md`
 - schema (lược đồ dữ liệu):
-  - `SCHEMA_OUTLINE.md`
+  - `schema.dbml`
 - Offline:
   - `OFFLINE_BAIHUA_DIRECTION.md`
 - provenance (nguồn gốc dữ liệu):

@@ -1,14 +1,14 @@
 stateDiagram-v2
     [*] --> Pending
-    Pending --> Approved: "Moderator approves"
-    Pending --> Rejected: "Moderator rejects"
-    Pending --> Hidden: "Hidden due to moderation policy"
-    Approved --> Hidden: "Later hidden after report/decision"
-    Hidden --> Approved: "Restore if admin decides"
+    Pending --> Approved: "Moderator duyệt (Moderator approves)"
+    Pending --> Rejected: "Moderator từ chối (Moderator rejects)"
+    Pending --> Hidden: "Bị ẩn theo moderation policy"
+    Approved --> Hidden: "Ẩn về sau sau report hoặc decision"
+    Hidden --> Approved: "Khôi phục nếu admin quyết định"
     Rejected --> [*]
     Approved --> [*]
 
     note right of Pending
       approvalStatus là summary state trên guestbook entry.
-      Nếu có report lifecycle riêng, source of truth vẫn ở moderationReports.
+      Nếu có report lifecycle riêng, source of truth (nguồn dữ liệu gốc) vẫn ở moderationReports.
     end note

@@ -1,8 +1,8 @@
-// Search Module - logical schema aligned with current repo truth
+// Search Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - `search_sync_jobs` là Redis/BullMQ runtime artifact, không phải source of truth.
-// - `meilisearch_posts_index` là computed index document.
-// - `posts_search_source` biểu diễn source fields thực lấy từ content module.
+// - `search_sync_jobs` là Redis/BullMQ runtime artifact (dấu vết chạy lúc runtime), không phải source of truth (nguồn dữ liệu gốc).
+// - `meilisearch_posts_index` là computed index document (bản ghi chỉ mục được tính ra).
+// - `posts_search_source` biểu diễn source fields (các trường nguồn) thực lấy từ content module.
 
 Project search_module {
   database_type: "PostgreSQL"
@@ -79,10 +79,10 @@ TableGroup "Search Source" [note: "Dữ liệu gốc được trích từ conten
   post_search_source_tags
 }
 
-TableGroup "Async Runtime" [note: "Artifact runtime cho worker và queue"] {
+TableGroup "Async Runtime" [note: "Artifact runtime (dấu vết chạy nền) cho worker và queue"] {
   search_sync_jobs
 }
 
-TableGroup "Computed Index" [note: "Bản sao để Meilisearch truy vấn nhanh"] {
+TableGroup "Computed Index" [note: "Bản sao được tính ra để Meilisearch truy vấn nhanh"] {
   meilisearch_posts_index
 }

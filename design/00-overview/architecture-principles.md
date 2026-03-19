@@ -1,134 +1,240 @@
 # PMTL_VN Architecture Principles
 
 > Ghi chú cho sinh viên:
-> File này là "luật chơi chung" của hệ thống.
-> Nếu hai file khác nhau mâu thuẫn nhau, hãy ưu tiên file này cùng với `CORE_DECISIONS.md`.
+> File này mô tả `repo truth (thực trạng repo)` và `implementation mapping (cách map sang code triển khai)`.
+> Các quyết định nền tảng như `Postgres là source of truth`, `Payload auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](C:\Users\ADMIN\DEV2\PMTL_VN\design\CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
 
 ## Mục tiêu của tài liệu này
 
-Tài liệu này mô tả các nguyên tắc kiến trúc đang được áp dụng trong repo hiện tại.
-Nó không phải wishlist và cũng không phải bản thiết kế greenfield.
-Mọi quyết định ở đây phải bám implementation thật trong `apps/web`, `apps/cms`, `packages/*`, và `infra/*`.
+Tài liệu này dùng để trả lời 3 câu hỏi:
 
-## Stack hiện tại đã chốt
+- repo hiện đang chạy theo stack nào
+- business logic nên nằm ở tầng nào trong monorepo
+- collection nào là owner, service nào nên ôm logic
+
+## Stack truth hiện tại
 
 ### Web
 - `apps/web` là frontend public dùng Next.js App Router.
-- Web tiêu thụ compatibility routes từ CMS thay vì dựa trực tiếp vào raw Payload document.
+- Web ưu tiên gọi compatibility routes từ CMS thay vì dùng raw Payload document.
 
 ### CMS + Auth
-- `apps/cms` là runtime host cho Payload admin UI, REST API, GraphQL, route compatibility, và worker (tiến trình xử lý nền) bootstrap.
-- Payload auth là auth authority duy nhất.
-- Không dùng auth layer thứ hai cho session hoặc đăng nhập ở current scope.
+- `apps/cms` là runtime host cho admin UI, REST API, GraphQL, compatibility routes, và worker bootstrap.
+- Payload auth là auth authority (đơn vị xác thực) duy nhất.
+- Google login được phép nếu vẫn map vào cùng authority này.
 
 ### Data & Runtime
-- PostgreSQL là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất cho dữ liệu ứng dụng.
+- PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
 - Redis chỉ dùng cho cache, queue (hàng đợi xử lý), rate-limit coordination, và request guard coordination.
-- worker (tiến trình xử lý nền) xử lý background jobs cho search sync, push dispatch, email notification, và maintenance jobs.
-- Meilisearch là search index, không phải nơi ghi dữ liệu gốc.
-- Caddy là reverse proxy / TLS entrypoint.
+- Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc.
+- Caddy là reverse proxy và TLS entrypoint.
 
-### Monitoring
-- Monitoring là optional theo môi trường.
-- Các thành phần có thể bật thêm:
-  - PgBouncer
-  - Prometheus
-  - Grafana
-  - Alertmanager
-  - Exporters
-  - Blackbox
+## Repo truth theo miền dữ liệu
 
-## Repo truth hiện tại
+### Editorial content
+- `posts`
+- `hubPages`
+- `beginnerGuides`
+- `downloads`
+- `sutras`
+- `sutraVolumes`
+- `sutraChapters`
+- `sutraGlossary`
+- `media`
+- `categories`
+- `tags`
 
-- Content không còn đi theo hướng "single posts table cho mọi loại nội dung".
-- Editorial content đang split theo collection phù hợp với implementation:
-  - `posts`
-  - `hubPages`
-  - `beginnerGuides`
-  - `downloads`
-  - `sutras`
-  - `sutraVolumes`
-  - `sutraChapters`
-  - `sutraGlossary`
-  - `media`
-  - `categories`
-  - `tags`
-- UGC và discussion nằm ở collection riêng:
-  - `postComments`
-  - `communityPosts`
-  - `communityComments`
-  - `guestbookEntries`
-- User-state không nằm trong content:
-  - `sutraBookmarks`
-  - `sutraReadingProgress`
-  - `chantPreferences`
-  - `practiceLogs`
-- Practice support content nằm ở lớp editorial/public:
-  - `chantItems`
-  - `chantPlans`
-  - các PDF/script hỗ trợ niệm đi qua `downloads`, `media`, hoặc `beginnerGuides`
-- Moderation report source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) là `moderationReports`.
-- Notification control plane hiện có `pushSubscriptions` và `pushJobs`.
+### Community / UGC
+- `postComments`
+- `communityPosts`
+- `communityComments`
+- `guestbookEntries`
 
-## Nguyên tắc kiến trúc cốt lõi
+### Self-owned practice state
+- `sutraBookmarks`
+- `sutraReadingProgress`
+- `chantPreferences`
+- `practiceLogs`
+- `practiceSheets`
+- `ngoiNhaNhoSheets`
 
-### 1. PostgreSQL là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất
-- Mọi write-path nghiệp vụ phải đi qua Postgres/Payload.
-- Redis và Meilisearch chỉ giữ computed state hoặc delivery state.
-- Không đọc Redis hoặc Meilisearch như nguồn dữ liệu chuẩn cho business logic.
+### Practice support / vows / merit
+- `vows`
+- `vowProgressEntries`
+- `lifeReleaseJournal`
 
-### 2. Payload auth là auth authority duy nhất
-- Session, cookie, JWT, forgot password, reset password đều đi qua Payload auth.
-- Web không tự sở hữu auth database riêng.
-- Không thêm auth provider thứ hai nếu không có migration rõ ràng.
+### Calendar / delivery / control plane
+- `events`
+- `lunarEvents`
+- `lunarEventOverrides`
+- `personalPracticeCalendarReadModel`
+- `pushSubscriptions`
+- `pushJobs`
 
-### 3. async (bất đồng bộ)-first cho non-critical paths
-- Background jobs là mặc định cho:
-  - notification
-  - search indexing
-  - email
-  - cleanup / maintenance
-- Sync path chỉ giữ phần cần phản hồi ngay cho user hoặc cần transaction boundary (ranh giới trách nhiệm) rõ ràng.
+## Xem quyết định nền tảng ở đâu
 
-### 4. Chỉ published content mới được cache hoặc index
-- Editorial content đang dùng Payload drafts làm workflow gốc.
-- Chỉ document đã publish mới được đẩy sang Meilisearch và các shared cache.
-- Draft, pending UGC, hidden content, và user-state không đi vào shared cache/index.
+Đọc [CORE_DECISIONS.md](C:\Users\ADMIN\DEV2\PMTL_VN\design\CORE_DECISIONS.md) cho các quyết định sau:
 
-### 5. Search là computed read model (mô hình dữ liệu đọc)
-- Meilisearch là read model (mô hình dữ liệu đọc) tối ưu cho full-text search.
-- Search source fields vẫn thuộc collection gốc ở Postgres.
-- Khi Meilisearch unavailable, hệ thống có thể fallback (đường dự phòng) về query từ Payload cho các flow public quan trọng.
+- PostgreSQL là source of truth
+- Payload auth là auth authority duy nhất
+- async-first cho non-critical paths
+- published-only cache/index
+- search là computed read model
+- moderation là first-class module
+- denormalized field policy
 
-### 6. Visibility phải là dữ liệu tường minh khi feature cần audience scoping
-- Không hardcode access visibility vào middleware hoặc UI branches.
-- Repo hiện tại chủ yếu đang public hóa editorial content theo publish state.
-- Nếu một collection cần `public / members-only / private` trong tương lai, trường đó phải được lưu trên collection sở hữu dữ liệu.
+File này không lặp lại 10 quyết định đó để tránh trùng lặp.
 
-### 7. Moderation là module hạng nhất
-- Report flow không phải side note của community.
-- `moderationReports` là nguồn dữ liệu gốc cho report/decision.
-- Các field như `reportCount`, `lastReportReason`, `isHidden`, `approvalStatus` chỉ là summary hoặc delivery fields trên entity đích.
+## Collection & service mapping
 
-### 8. boundary (ranh giới trách nhiệm) module phải rõ
-- `identity` sở hữu user/auth data.
-- `content` sở hữu editorial documents, taxonomy, media, và content search fields.
-- `content` cũng sở hữu practice support content như `chantItems`, `chantPlans`, script file, ritual guide.
-- `community` sở hữu discussion surfaces và guestbook.
-- `engagement` sở hữu self-owned user state.
-- `calendar` sở hữu event và lunar schedule data.
-- `moderation` sở hữu report lifecycle.
-- `notification` sở hữu delivery preferences và job control plane.
-- `search` sở hữu indexing flow và query contract (hợp đồng dữ liệu/nghiệp vụ), không sở hữu canonical business data.
+### 01-content
 
-### 9. Denormalized field được phép, nhưng owner phải rõ
-- `commentCount`, `reportCount`, `lastReportReason`, `views`, `publishedAt`, `normalizedSearchText` là hợp lệ nếu có owner rõ ràng.
-- Summary field chỉ phục vụ read path, không thay thế canonical record (bản ghi chuẩn gốc) của module gốc.
+Collection owners:
 
-### 10. Thiết kế phải AI-friendly và text-first
-- Design artifact phải đủ cụ thể để AI generate code đúng folder, đúng boundary (ranh giới trách nhiệm), đúng DTO.
-- Không dùng abstraction mơ hồ như `entity_meta`, `universal_table`, `generic_workflow`.
-- Mọi file design nên map trực tiếp về collection/service (lớp xử lý nghiệp vụ)/route đang có trong repo.
+- `Posts`
+- `BeginnerGuides`
+- `Downloads`
+- `ChantItems`
+- `ChantPlans`
+- `Sutras`
+- `SutraVolumes`
+- `SutraChapters`
+- `SutraGlossary`
+
+Service responsibilities:
+
+- slug/publicId/source field normalization
+- publish eligibility
+- DTO mapping
+- content-to-search projection source fields
+
+### 02-community
+
+Collection owners:
+
+- `PostComments`
+- `CommunityPosts`
+- `CommunityComments`
+- `GuestbookEntries`
+
+Service responsibilities:
+
+- submit validation orchestration
+- anti-spam / request guard coordination
+- author snapshot rules
+- summary counter updates
+
+### 03-engagement
+
+Collection owners:
+
+- `SutraBookmarks`
+- `SutraReadingProgress`
+- `ChantPreferences`
+- `PracticeLogs`
+- `PracticeSheets`
+- `NgoiNhaNhoSheets`
+
+Service responsibilities:
+
+- self-owned upsert
+- `Ngôi Nhà Nhỏ` counting rules
+- practice session state transitions
+- compose content refs into usable practice read model
+
+### 04-moderation
+
+Collection owners:
+
+- `ModerationReports`
+
+Service responsibilities:
+
+- report submit
+- duplicate report prevention
+- target summary sync
+- decision apply
+
+### 05-search
+
+Collection owners:
+
+- không cần collection canonical riêng nếu search chỉ là indexing và query layer
+
+Service responsibilities:
+
+- index document build
+- engine query
+- fallback read
+- batch reindex orchestration
+
+### 06-calendar
+
+Collection owners:
+
+- `Events`
+- `LunarEvents`
+- `LunarEventOverrides`
+- `PracticeCalendarRules`
+- `PersonalPracticeCalendarReadModel`
+
+Service responsibilities:
+
+- lunar resolution
+- important practice day tagging
+- daily advisory composition
+- reminder candidate generation
+
+### 07-notification
+
+Collection owners:
+
+- `PushSubscriptions`
+- `PushJobs`
+- `ReminderSchedules` nếu feature nhắc việc lặp lại đủ lớn
+
+Service responsibilities:
+
+- subscription upsert
+- job create
+- recipient resolution
+- chunk dispatch
+- reminder schedule dedupe
+
+### 08-vows-merit
+
+Collection owners:
+
+- `Vows`
+- `VowProgressEntries`
+- `LifeReleaseJournal`
+- `LifeReleaseChecklistSnapshots`
+
+Service responsibilities:
+
+- vow lifecycle
+- milestone calculation
+- fulfillment checks
+- life release journal create/update
+- merge with calendar reminder context
+
+### 09-wisdom-qa
+
+Collection owners:
+
+- `WisdomEntries`
+- `QaEntries`
+- `AuthorityProfiles`
+- `OfflineBundles`
+
+Service responsibilities:
+
+- source ingestion metadata
+- source provenance enforcement
+- tag normalization
+- retrieval ranking
+- offline bundle build
+- bilingual and translation mapping
 
 ## Quy tắc implementation cần giữ nguyên
 
@@ -144,34 +250,34 @@ Mọi quyết định ở đây phải bám implementation thật trong `apps/we
   - `fields.ts`
   - `access.ts`
   - `hooks.ts`
-  - `service (lớp xử lý nghiệp vụ).ts`
+  - `service.ts`
 - `packages/shared` chỉ chứa code framework-agnostic.
 
-## Những gì không còn đúng và không nên giữ lại
+## Những gì không nên giữ lại
 
-- Không giữ giả định "mọi loại content phải gộp vào một bảng posts".
-- Không giữ mô tả về một auth framework thứ hai như session/auth layer chính.
-- Không gộp bookmarks, reading progress, practice logs vào content module.
-- Không xem wishlist như `recommendations`, `leaderboard`, `permissions matrix` là current scope nếu repo chưa có owner rõ ràng.
+- giả định `single posts table`
+- auth layer thứ hai làm authority riêng
+- nhét bookmark, progress, practice logs vào content module
+- lấy Redis hoặc Meilisearch làm source of truth cho UI cần correctness cao
 
 ## Current scope vs future candidates
 
 ### Current scope
-- Identity với Payload auth
-- Editorial content split collections
-- Public comments + community posts/comments + guestbook
-- Moderation reports + moderation summary sync
-- User-state cho sutra/practice
-- Search sync sang Meilisearch + payload fallback (đường dự phòng)
-- Push subscriptions + push jobs
-- Events + lunar events + overrides
+- identity với Payload auth
+- editorial content split collections
+- public comments + community posts/comments + guestbook
+- moderation reports + moderation summary sync
+- user-state cho sutra/practice
+- search sync sang Meilisearch + payload fallback
+- push subscriptions + push jobs
+- events + lunar events + overrides
+- vows, life release journal, wisdom retrieval
 
 ### Future candidates
-- Gated membership content với audience visibility đầy đủ
-- Recommendation engine
-- Digest scheduling phong phú hơn
-- Reputation / leaderboard
-- Public profile và follow graph sâu hơn
+- gated membership content với audience visibility đầy đủ
+- recommendation engine
+- digest scheduling phong phú hơn
+- reputation / leaderboard
+- public profile và follow graph sâu hơn
 
-Future candidate chỉ được thêm vào design current scope khi repo có owner, contract (hợp đồng dữ liệu/nghiệp vụ), và runtime path rõ ràng.
-
+Future candidate chỉ được thêm vào current scope khi có owner module (module sở hữu), contract (hợp đồng dữ liệu/nghiệp vụ), và runtime path rõ ràng.

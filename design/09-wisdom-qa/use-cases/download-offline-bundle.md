@@ -1,25 +1,27 @@
 # Download Offline Wisdom Bundle
 
 ## Purpose
-- Cho phép người dùng tải về một gói `Bạch thoại Phật pháp` hoặc `Huyền học vấn đáp` để đọc/nghe khi không có mạng.
+- Cho phép người dùng tải về một gói `Bạch thoại Phật pháp` hoặc `Huyền học vấn đáp` để đọc hoặc nghe khi không có mạng.
 
-## owner module (module sở hữu)
+## Owner module
 - `wisdom-qa`
 
 ## Actors
 - `member`
 
-## trigger (điểm kích hoạt)
+## Trigger
 - User bấm tải offline trên một entry hoặc một bundle curated.
 
-## preconditions (điều kiện tiên quyết)
+## Preconditions
 - Bundle hoặc entry đã publish.
 - Asset nguồn hợp lệ và có metadata phiên bản.
+- Nếu flow lưu state theo user hoặc device thì khóa định danh phải hợp lệ.
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
+## Input contract
 - `bundlePublicId` hoặc `entryPublicId`
 - `deviceProfile`
 - `preferredLanguage`
+- optional `deviceKey`
 
 ## Read set
 - `wisdomEntries`
@@ -27,27 +29,41 @@
 - `offlineBundles`
 - media/audio/video refs
 
-## write path (thứ tự ghi dữ liệu chuẩn)
+## Write path
 1. Resolve bundle hoặc tạo derived bundle metadata từ entry được chọn.
 2. Validate quyền đọc.
 3. Trả manifest tải xuống và version hiện tại.
-4. Nếu cần lưu trạng thái cá nhân, append/update offline bundle (gói tải ngoại tuyến) state cho user.
+4. Nếu cần lưu trạng thái cá nhân, append hoặc update `offlineBundles` state cho user hoặc device.
 5. Append audit nhẹ `wisdom.bundle.download` nếu policy cần.
 
-## async (bất đồng bộ) side-effects
+## Async side-effects
 - prepare asset package
-- prefetch audio/text indexes nếu worker (tiến trình xử lý nền) flow bật
+- prefetch audio/text indexes nếu worker flow bật
+- cleanup bundle versions cũ nếu policy bật
 
-## success result (kết quả thành công)
+## Success result
 - User có thể mở đúng nội dung offline, chữ to, rõ, và không phụ thuộc mạng.
+- Bundle chỉ chứa nội dung đã duyệt từ nguồn chính thống hoặc official mirror hợp lệ.
 
 ## Errors
 - `400`: yêu cầu bundle không hợp lệ.
 - `401`: chưa đăng nhập nếu flow yêu cầu user-scoped download state.
-- `404`: bundle/entry không tồn tại hoặc chưa publish.
+- `404`: bundle hoặc entry không tồn tại hoặc chưa publish.
+- `409`: bundle version conflict hoặc device key conflict.
 - `500`: lỗi manifest hoặc media packaging.
 
-## Notes for AI/codegen
-- offline bundle (gói tải ngoại tuyến) chỉ chứa nội dung đã duyệt từ nguồn chính thống.
-- Không dùng AI tạo thêm tóm tắt hay câu trả lời mới trong offline package.
+## Audit
+- download thường ngày chỉ cần audit nhẹ nếu policy yêu cầu
+- nếu có cleanup hoặc repair bundle quản trị thì phải audit riêng
 
+## Idempotency / anti-spam
+- cùng `user + device + bundle version` không nên tạo trùng nhiều record
+- nên dedupe theo `bundleType + version + user/device`
+
+## Performance target
+- trả manifest nên `< 500ms`
+- prepare package nên là downstream async path nếu nặng
+
+## Notes
+- Không dùng AI tạo thêm tóm tắt hay câu trả lời mới trong offline package.
+- Bundle offline phải giữ quan hệ rõ giữa bản gốc, bản dịch, và asset media đi kèm.

@@ -1,6 +1,13 @@
 Project vows_merit_schema {
   database_type: "PostgreSQL"
-  Note: "Schema logic de xuat cho vow tracking va life release journal."
+  Note: '''
+  Vows & Merit schema (lược đồ dữ liệu) cho PMTL_VN.
+  Cách đọc nhanh:
+  - vows = lời nguyện canonical (bản ghi gốc) của người dùng.
+  - vow_progress_entries = mốc tiến độ hoặc điều chỉnh có ý nghĩa.
+  - life_release_journal = sổ tay phóng sanh canonical (bản ghi gốc).
+  - life_release_checklist_snapshots = snapshot checklist (ảnh chụp checklist) hoặc bài đọc đi kèm.
+  '''
 }
 
 Enum vow_type {
@@ -41,7 +48,7 @@ Enum life_release_status {
 Table vows {
   id uuid [pk]
   public_id varchar(32) [not null, unique]
-  user_id uuid [not null, note: "Refers to identity.users"]
+  user_id uuid [not null, note: "Ref (tham chiếu) tới 00-identity.users"]
   vow_type vow_type [not null]
   title varchar(160) [not null]
   description text
@@ -75,7 +82,7 @@ Table vow_progress_entries {
 Table life_release_journal {
   id uuid [pk]
   public_id varchar(32) [not null, unique]
-  user_id uuid [not null, note: "Refers to identity.users"]
+  user_id uuid [not null, note: "Ref (tham chiếu) tới 00-identity.users"]
   linked_vow_id uuid [ref: > vows.id]
   release_date date [not null]
   location_note varchar(255)
@@ -88,6 +95,8 @@ Table life_release_journal {
   notes text
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
+
+  Note: "Life release journal (sổ tay phóng sanh) canonical (bản ghi gốc), không phải social feed (luồng mạng xã hội)."
 }
 
 Table life_release_checklist_snapshots {
@@ -98,4 +107,6 @@ Table life_release_checklist_snapshots {
   chant_ref varchar(64)
   content_guide_ref varchar(64)
   sort_order int [not null, default: 0]
+
+  Note: "Checklist snapshot (ảnh chụp checklist) để xem lại bài đọc, lời khấn, hoặc ref (tham chiếu) hỗ trợ tại thời điểm phóng sanh."
 }

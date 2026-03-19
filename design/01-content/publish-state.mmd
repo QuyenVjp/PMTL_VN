@@ -1,10 +1,10 @@
 stateDiagram-v2
     [*] --> Draft
-    Draft --> Draft: "Save draft"
-    Draft --> Published: "Publish when required fields pass"
-    Published --> Published: "Update published content"
-    Published --> Draft: "Unpublish only if policy/implementation supports"
-    Published --> Archived: "Archive when collection adds explicit archive state"
+    Draft --> Draft: "Lưu bản nháp (Save draft)"
+    Draft --> Published: "Xuất bản khi đủ trường bắt buộc (Publish when required fields pass)"
+    Published --> Published: "Cập nhật nội dung đã xuất bản (Update published content)"
+    Published --> Draft: "Gỡ xuất bản nếu policy hoặc implementation hỗ trợ"
+    Published --> Archived: "Lưu trữ khi collection có archive state rõ"
     Archived --> [*]
 
     note right of Draft
@@ -14,5 +14,5 @@ stateDiagram-v2
 
     note right of Published
       publishedAt là timestamp public delivery.
-      Search sync và revalidation là downstream async.
+      Search sync và revalidation là downstream async (bất đồng bộ).
     end note

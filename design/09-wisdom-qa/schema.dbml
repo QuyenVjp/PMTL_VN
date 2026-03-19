@@ -1,6 +1,13 @@
 Project wisdom_qa_schema {
   database_type: "PostgreSQL"
-  Note: "Schema logic de xuat cho Bai Thoai, QA retrieval, va offline bundles."
+  Note: '''
+  Wisdom & QA schema (lược đồ dữ liệu) cho PMTL_VN.
+  Cách đọc nhanh:
+  - wisdom_entries = bài Bạch thoại, khai thị, Phật ngôn, bài pháp hội.
+  - qa_entries = bài hỏi đáp đã chuẩn hóa để tra cứu.
+  - authority_profiles = hồ sơ authority (chủ thể thẩm quyền nguồn) như Sư Phụ Lư Quân Hoành.
+  - offline_bundles = metadata (siêu dữ liệu) gói tải ngoại tuyến.
+  '''
 }
 
 Enum wisdom_source_type {
@@ -44,15 +51,15 @@ Table wisdom_entries {
   source_site_label varchar(160)
   source_type wisdom_source_type [not null]
   source_provenance source_provenance_type [not null, default: 'official_origin']
-  source_code varchar(64) [note: "Ma bai / timestamp, vi du shuohua20140808 08:56"]
+  source_code varchar(64) [note: "Mã bài hoặc timestamp (mốc thời gian), ví dụ shuohua20140808 08:56"]
   source_language varchar(16) [not null, default: 'zh']
   title_original varchar(255) [not null]
   title_vietnamese varchar(255)
   summary_vietnamese text
   body_original text
   body_vietnamese text
-  source_image_ref varchar(160)
-  translation_credit varchar(160)
+  source_image_ref varchar(160) [note: "Ảnh hoặc screenshot (ảnh chụp màn hình) nguồn nếu cần peer review (đối chiếu chéo)"]
+  translation_credit varchar(160) [note: "Người dịch hoặc nhóm dịch nếu policy (chính sách) cho phép"]
   review_status review_status_type [not null, default: 'source_verified']
   audio_ref varchar(64)
   video_ref varchar(64)
@@ -80,13 +87,13 @@ Table qa_entries {
   source_site_label varchar(160)
   qa_type qa_type [not null]
   source_provenance source_provenance_type [not null, default: 'official_origin']
-  source_code varchar(64) [note: "Ma bai / timestamp, vi du shuohua20140808 08:56"]
+  source_code varchar(64) [note: "Mã bài hoặc timestamp (mốc thời gian), ví dụ shuohua20140808 08:56"]
   question_original text [not null]
   question_vietnamese text
   answer_original text [not null]
   answer_vietnamese text
-  source_image_ref varchar(160)
-  translation_credit varchar(160)
+  source_image_ref varchar(160) [note: "Ảnh hoặc screenshot (ảnh chụp màn hình) nguồn nếu cần peer review (đối chiếu chéo)"]
+  translation_credit varchar(160) [note: "Người dịch hoặc nhóm dịch nếu policy (chính sách) cho phép"]
   review_status review_status_type [not null, default: 'source_verified']
   speaker varchar(160)
   is_official boolean [not null, default: true]
@@ -102,9 +109,9 @@ Table authority_profiles {
   display_name_original varchar(255)
   source_url varchar(512)
   source_provenance source_provenance_type [not null, default: 'official_origin']
-  official_fact_summary text [note: "Chi tom tat fact co nguon"]
-  translated_profile_summary text [note: "Ban gioi thieu tieng Viet cua cong dong"]
-  doctrinal_claims text [note: "Claim niem tin / doctrinal claims, tach rieng"]
+  official_fact_summary text [note: "Chỉ tóm tắt fact (sự kiện) có nguồn / official-source-backed facts"]
+  translated_profile_summary text [note: "Bản giới thiệu tiếng Việt của cộng đồng / translated profile summary (phần giới thiệu đã dịch)"]
+  doctrinal_claims text [note: "Claim tín ngưỡng hoặc doctrinal claims (khẳng định giáo nghĩa), tách riêng khỏi fact"]
   review_status review_status_type [not null, default: 'human_review_required']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
@@ -133,7 +140,7 @@ Table qa_entry_keyword_aliases {
 
 Table offline_bundles {
   id uuid [pk]
-  user_id uuid [note: "Null if device-only bundle is supported"]
+  user_id uuid [note: "Null nếu hỗ trợ device-only bundle (gói chỉ gắn với thiết bị)"]
   device_key varchar(64)
   bundle_type offline_bundle_type [not null]
   version varchar(32) [not null]
@@ -146,7 +153,7 @@ Table offline_bundles {
 Table offline_bundle_items {
   id uuid [pk]
   offline_bundle_id uuid [not null, ref: > offline_bundles.id]
-  entry_type varchar(16) [not null, note: "wisdom or qa"]
+  entry_type varchar(16) [not null, note: "wisdom hoặc qa"]
   entry_public_id varchar(32) [not null]
   local_asset_key varchar(160)
 

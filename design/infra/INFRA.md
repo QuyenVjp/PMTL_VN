@@ -8,9 +8,9 @@ Nếu cần đi sâu exporters, metrics, alerting và topology vận hành chi t
 
 ---
 
-## 🎯 4 Core Groups (4 Nhóm Chính)
+## 4 Core Groups (4 Nhóm Chính)
 
-### 1️⃣ **Business Layer** (Lớp ứng dụng chính)
+### 1. **Business Layer** (Lớp ứng dụng chính)
 
 | Component | Chức năng | Lợi ích mang lại |
 |-----------|----------|---------|
@@ -23,7 +23,7 @@ Nếu cần đi sâu exporters, metrics, alerting và topology vận hành chi t
 
 ---
 
-### 2️⃣ **Data Layer** (Lớp dữ liệu & Lưu trữ)
+### 2. **Data Layer** (Lớp dữ liệu & Lưu trữ)
 
 | Technology | Chức năng | Tại sao cần? | Lợi ích |
 |---|---|---|---|
@@ -48,7 +48,7 @@ Apps cũng truy vấn thêm:
 
 ---
 
-### 3️⃣ **Observability** (Khả năng quan sát & Giám sát)
+### 3. **Observability** (Khả năng quan sát & Giám sát)
 
 **Stack**: Prometheus + Grafana + Alertmanager + Exporters
 
@@ -81,7 +81,7 @@ TO Alertmanager → TO Telegram
 
 ---
 
-### 4️⃣ **External Services** (Các dịch vụ bên thứ ba)
+### 4. **External Services** (Các dịch vụ bên thứ ba)
 
 | service (lớp xử lý nghiệp vụ) | Chức năng | Lợi ích |
 |---------|----------|---|
@@ -96,9 +96,13 @@ TO Alertmanager → TO Telegram
   - production design nên chuẩn bị object storage rõ như `S3` hoặc `MinIO`
   - file nên đi qua allowlist, size/mime validation, và scan/quarantine flow nếu nguồn chưa trusted
 
+**Deep-dive note (ghi chú bản đào sâu)**:
+- `INFRA.md` là bản đọc nhanh để hiểu kiến trúc hạ tầng.
+- `INFRA_DEEP_DIVE.md` là bản đào sâu cho exporters, metrics, topology vận hành, và có thể được chuyển sang `docs/` sau này nếu phần runbook vận hành lớn hơn.
+
 ---
 
-## 🔀 Real-world Request Flows (Luồng yêu cầu thực tế)
+## Real-world Request Flows (Luồng yêu cầu thực tế)
 
 ### Case 1: User Loads Homepage
 ```
@@ -178,7 +182,7 @@ Prometheus kiểm tra các Alert Rules:
   ↓
 Alertmanager nhận tín hiệu
   ↓
-Gửi tin nhắn Telegram tới đội ngũ OPS 🚨
+Gửi tin nhắn Telegram tới đội ngũ OPS
   ↓
 Team kỹ thuật can thiệp kịp thời (Scale up)
 ```
@@ -187,7 +191,7 @@ Team kỹ thuật can thiệp kịp thời (Scale up)
 
 ---
 
-## ⚡ Failure Scenarios & Recovery (Các tình huống lỗi & Phục hồi)
+## Failure Scenarios & Recovery (Các tình huống lỗi & Phục hồi)
 
 | Component | Impact (Ảnh hưởng) | Recovery Action | Estimated Time |
 |-----------|-------------------|-----------------|----------------|
@@ -214,7 +218,7 @@ Team kỹ thuật can thiệp kịp thời (Scale up)
 
 ---
 
-## 💡 TL;DR
+## TL;DR
 
 **Cache + queue (hàng đợi xử lý) + Search + Monitoring = Fast, Reliable, Observable System**
 

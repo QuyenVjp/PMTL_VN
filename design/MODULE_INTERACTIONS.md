@@ -153,6 +153,20 @@ Mục tiêu là làm rõ:
 | Calendar | Notification | Notification owns delivery | event-related notice | async (bất đồng bộ) job | push/email nếu có producer gọi |
 | Notification | Identity | Identity owns user identity | target resolution | direct read | lấy email / user id / role để enqueue delivery |
 
+## Interaction details bổ sung cho lớp tu tập thực tế
+
+| From | To | Ownership model | Trigger | Mode | Side effects |
+|---|---|---|---|---|---|
+| Engagement | Content | Content owns bài đọc chuẩn | mở `Ngôi Nhà Nhỏ`, bài tập hằng ngày | direct read | không write ngược |
+| Engagement | Notification | Notification owns delivery | reminder đọc hoặc đếm bài | async (bất đồng bộ) job | push nhắc theo giờ |
+| Vows & Merit | Calendar | Calendar owns ngày tu học | gợi ý ngày phát nguyện hoặc phóng sanh | direct read | build reminder candidates |
+| Vows & Merit | Notification | Notification owns delivery | đến hạn vow, ngày phóng sanh | async (bất đồng bộ) job | push/email reminder |
+| Vows & Merit | Content | Content owns lời khấn và bài đọc | mở checklist phóng sanh | direct read | không write ngược |
+| Wisdom & QA | Content | Content owns beginner guides và hub điều hướng | đọc Bạch thoại hoặc khai thị | direct read | offline bundle (gói tải ngoại tuyến) build |
+| Wisdom & QA | Search | Search owns retrieval engine | tra cứu vấn đáp | direct read | query index |
+| Community | Vows & Merit | Vows & Merit owns journal | user muốn chia sẻ phóng sanh hoặc linh nghiệm | explicit export/share | tạo post mới, không lộ record riêng tư mặc định |
+| Calendar | Engagement | Engagement owns self-state | build lịch tu học cá nhân | direct read | không write ngược |
+
 ## Direct call vs event/job
 
 ### Nên dùng direct call/reference khi
@@ -190,6 +204,7 @@ Mục tiêu là làm rõ:
 - Notification tự suy ra canonical moderation status.
 - Community tự lưu report lifecycle đầy đủ ngoài `moderationReports`.
 - Engagement ghi bookmark/progress trực tiếp vào content collection.
+- Community tự sở hữu `phát nguyện` hoặc `phóng sanh` journal canonical.
 - Redis hoặc Meilisearch được dùng làm nguồn dữ liệu gốc cho UI cần correctness cao.
 
 ## Bảng tổng kết module

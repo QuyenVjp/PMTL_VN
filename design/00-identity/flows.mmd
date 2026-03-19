@@ -1,9 +1,9 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Đăng ký tài khoản"]
-        I1A["Người dùng gửi form đăng ký"] --> I1B["CMS validate payload"]
+        I1A["Người dùng gửi form đăng ký"] --> I1B["CMS kiểm tra payload"]
         I1B --> I1C["Tạo user trong Payload auth"]
-        I1C --> I1D["Set role mặc định member"]
-        I1D --> I1E["Trả auth session hoặc response contract"]
+        I1C --> I1D["Đặt role mặc định là member"]
+        I1D --> I1E["Trả auth session hoặc response contract (hợp đồng phản hồi)"]
     end
 
     subgraph Flow2 ["Luồng 2: Đăng nhập"]
@@ -20,7 +20,7 @@ flowchart TD
     subgraph Flow3 ["Luồng 3: Quên mật khẩu và đặt lại mật khẩu"]
         I3A["Người dùng yêu cầu quên mật khẩu"] --> I3B["Payload tạo reset token"]
         I3B --> I3C["Tạo reset URL"]
-        I3C --> I3D["Enqueue hoặc gửi email reset"]
+        I3C --> I3D["Đưa email reset vào hàng chờ hoặc gửi ngay"]
         I3D --> I3E["Người dùng mở reset URL"]
         I3E --> I3F["Gửi mật khẩu mới"]
         I3F --> I3G["Payload xác minh token và cập nhật mật khẩu"]

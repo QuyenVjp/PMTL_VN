@@ -1,12 +1,12 @@
 stateDiagram-v2
     [*] --> Submitted
-    Submitted --> UnderReview: "Moderator opens report"
-    Submitted --> HiddenByThreshold: "Auto-hide if policy threshold is reached"
-    UnderReview --> Approved: "Decision approved"
-    UnderReview --> Rejected: "Decision rejected"
-    UnderReview --> Flagged: "Need more attention"
-    UnderReview --> Hidden: "Force hidden on target"
-    HiddenByThreshold --> UnderReview: "Moderator confirms or changes outcome"
+    Submitted --> UnderReview: "Moderator mở report (Moderator opens report)"
+    Submitted --> HiddenByThreshold: "Tự ẩn khi chạm ngưỡng policy (Auto-hide if policy threshold is reached)"
+    UnderReview --> Approved: "Quyết định approved (Decision approved)"
+    UnderReview --> Rejected: "Quyết định rejected (Decision rejected)"
+    UnderReview --> Flagged: "Cần theo dõi thêm (Need more attention)"
+    UnderReview --> Hidden: "Buộc ẩn target (Force hidden on target)"
+    HiddenByThreshold --> UnderReview: "Moderator xác nhận hoặc đổi kết quả (Moderator confirms or changes outcome)"
     Approved --> [*]
     Rejected --> [*]
     Flagged --> [*]

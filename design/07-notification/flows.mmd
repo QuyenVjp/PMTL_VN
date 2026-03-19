@@ -1,31 +1,31 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: User subscribe push"]
-        N1A["Trình duyệt gửi push subscription"] --> N1B["CMS validate endpoint và keys"]
-        N1B --> N1C["Upsert pushSubscriptions"]
+    subgraph Flow1 ["Luồng 1: Người dùng đăng ký nhận push"]
+        N1A["Trình duyệt gửi push subscription (đăng ký nhận push)"] --> N1B["CMS kiểm tra endpoint và keys"]
+        N1B --> N1C["Upsert pushSubscriptions (tạo mới hoặc cập nhật)"]
         N1C --> N1D["Lưu user, timezone, prefs, và quiet hours"]
     end
 
-    subgraph Flow2 ["Luồng 2: Tạo internal push job"]
-        N2A["Module khác cần notify"] --> N2B["Gọi notification service"]
-        N2B --> N2C["Tạo pushJobs với status queued"]
-        N2C --> N2D["Lưu recipientRoles hoặc include and exclude user ids trong payload"]
+    subgraph Flow2 ["Luồng 2: Tạo push job nội bộ"]
+        N2A["Module khác cần notify (thông báo)"] --> N2B["Gọi notification service (dịch vụ thông báo)"]
+        N2B --> N2C["Tạo pushJobs với status là queued"]
+        N2C --> N2D["Lưu recipientRoles hoặc include và exclude user ids trong payload"]
         N2D --> N2E["Worker push-dispatch đọc job"]
     end
 
-    subgraph Flow3 ["Luồng 3: Worker dispatch push"]
-        N3A["Worker nhận push job"] --> N3B["Tải active subscriptions phù hợp"]
-        N3B --> N3C["Gửi từng chunk"]
+    subgraph Flow3 ["Luồng 3: Worker gửi push"]
+        N3A["Worker nhận push job"] --> N3B["Tải các active subscriptions phù hợp"]
+        N3B --> N3C["Gửi theo từng chunk (lô nhỏ)"]
         N3C --> N3D["Cập nhật sentCount hoặc failedCount"]
         N3D --> N3E{"Còn recipient?"}
         N3E -->|"Có"| N3C
         N3E -->|"Không"| N3F["Đánh dấu completed hoặc failed"]
     end
 
-    subgraph Flow4 ["Luồng 4: Notify moderation decision"]
-        N4A["Moderation ra quyết định"] --> N4B["Resolve target user"]
+    subgraph Flow4 ["Luồng 4: Thông báo quyết định kiểm duyệt"]
+        N4A["Moderation ra quyết định"] --> N4B["Resolve target user (xác định người nhận đích)"]
         N4B --> N4C["Tạo push job cho đúng user"]
-        N4C --> N4D["Enqueue email notification job nếu có email"]
-        N4D --> N4E["User nhận notification bất đồng bộ"]
+        N4C --> N4D["Đưa email notification job vào hàng chờ nếu có email"]
+        N4D --> N4E["Người dùng nhận notification bất đồng bộ"]
     end
 
     N1D -.->|"tiếp"| N2A

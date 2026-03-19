@@ -1,22 +1,22 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Phát nguyện mới"]
-        A1["User mở màn hình phát nguyện"] --> A2["Chọn loại nguyện và nội dung"]
-        A2 --> A3["Nhập target, thời hạn, ghi chú cần thiết"]
-        A3 --> A4["Validate lời nguyện và khả năng thực hiện"]
-        A4 --> A5["Tạo vow record canonical"]
-        A5 --> A6["Lên lịch nhắc theo milestone"]
+        A1["Người dùng mở màn hình phát nguyện"] --> A2["Chọn loại nguyện và nội dung"]
+        A2 --> A3["Nhập target, thời hạn, và ghi chú cần thiết"]
+        A3 --> A4["Kiểm tra lời nguyện và khả năng thực hiện (validate)"]
+        A4 --> A5["Tạo vow record canonical (bản ghi lời nguyện gốc)"]
+        A5 --> A6["Lên lịch nhắc theo milestone (mốc tiến độ)"]
     end
 
     subgraph Flow2 ["Luồng 2: Theo dõi tiến độ nguyện"]
-        B1["User cập nhật tiến độ"] --> B2["Sync progress vào vow record"]
+        B1["Người dùng cập nhật tiến độ"] --> B2["Đồng bộ progress vào vow record"]
         B2 --> B3{"Đã đạt target?"}
         B3 -->|"Chưa"| B4["Giữ trạng thái active"]
-        B3 -->|"Rồi"| B5["Mark fulfilled và chờ hoàn nguyện nếu cần"]
+        B3 -->|"Rồi"| B5["Đánh dấu fulfilled và chờ hoàn nguyện nếu cần"]
     end
 
     subgraph Flow3 ["Luồng 3: Ghi nhận phóng sanh"]
-        C1["User mở sổ tay phóng sanh"] --> C2["Nhập ngày, địa điểm, loại vật, số lượng"]
+        C1["Người dùng mở sổ tay phóng sanh"] --> C2["Nhập ngày, địa điểm, loại vật, và số lượng"]
         C2 --> C3["Gắn checklist bài đọc và nghi thức hỗ trợ"]
-        C3 --> C4["Tạo life release journal canonical"]
+        C3 --> C4["Tạo life release journal canonical (bản ghi sổ tay gốc)"]
         C4 --> C5["Tùy chọn liên kết ngày trai giới hoặc ngày vía"]
     end

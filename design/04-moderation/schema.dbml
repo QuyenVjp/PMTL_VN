@@ -1,8 +1,8 @@
-// Moderation Module - logical schema aligned with current repo truth
+// Moderation Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - moderation_reports là source of truth.
-// - Các table target bên dưới chỉ xuất hiện ở đây để mô tả summary sync,
-//   không chuyển ownership của chúng sang moderation module.
+// - moderation_reports là source of truth (nguồn dữ liệu gốc).
+// - Các table target bên dưới chỉ xuất hiện ở đây để mô tả summary sync (đồng bộ trường tóm tắt),
+//   không chuyển ownership (quyền sở hữu module) của chúng sang moderation module.
 
 Project moderation_module {
   database_type: "PostgreSQL"
@@ -82,7 +82,7 @@ TableGroup "Moderation Source of Truth" [note: "Bảng gốc cần đọc đầu
   moderation_reports
 }
 
-TableGroup "Moderated Targets" [note: "Entity bị ảnh hưởng bởi decision và summary sync"] {
+TableGroup "Moderated Targets" [note: "Entity bị ảnh hưởng bởi decision (quyết định kiểm duyệt) và summary sync"] {
   post_comments
   community_posts
   community_comments
