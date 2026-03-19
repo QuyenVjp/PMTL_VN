@@ -189,6 +189,66 @@ markmap:
 - canonical event/content/community data (dữ liệu sự kiện/nội dung/cộng đồng gốc)
 - moderation source-of-truth (nguồn gốc kiểm duyệt)
 
+## Cross-Module Delete Policy (Chính sách xóa liên module)
+
+### Nguyên tắc gốc
+- không dùng DB-level cascade delete bừa bãi giữa các module owner
+- mặc định ưu tiên `soft delete`, `unpublish`, hoặc `archive` cho dữ liệu public/shared
+- nếu có `hard delete`, owner module phải kích hoạt cleanup contract rõ ràng để không tạo dữ liệu mồ côi
+
+### Ví dụ bắt buộc
+- nếu `Content` hard delete một `post`:
+  - `Community` phải xóa hoặc tombstone toàn bộ `postComments` liên quan theo cleanup flow
+  - `Moderation` phải đóng hoặc tombstone `moderationReports` trỏ tới target đã mất
+  - `Search` phải xóa document khỏi index
+  - `Notification` phải bỏ qua job còn trỏ tới target không còn tồn tại
+
+### Rule thực dụng
+- `postComments`, `communityComments`, `moderationReports`, `search documents` không được phép thành orphan âm thầm
+- nếu chưa có cleanup automation hoàn chỉnh, không cho `hard delete` ở admin flow thường; chỉ cho `soft delete`
+
+## Search Sync Guarantee (Cam kết đồng bộ Search)
+
+### Guarantee hiện tại
+- canonical write vào Postgres/Payload là bước quyết định
+- search sync là `at-least-once async projection`, không phải đồng bộ tức thì tuyệt đối
+- worker chết giữa chừng không được làm mất canonical write
+- job sync phải retry được và `reindex` thủ công phải tồn tại như recovery path
+
+### Rule chống lệch
+- search document phải idempotent theo `document id + updatedAt/version`
+- status route phải cho thấy:
+  - queue lag
+  - worker health
+  - index freshness
+- public search có fallback qua Payload khi Meilisearch không còn đáng tin
+
+### Outbox pattern
+- current scope chưa bắt buộc `outbox pattern`
+- lý do: repo đang đi theo Payload + queue + worker và cần giữ đơn giản
+- nhưng `outbox` là hướng nâng cấp hợp lệ nếu:
+  - sync lệch xảy ra thường xuyên
+  - nhiều downstream consumer cùng phụ thuộc một write
+  - retry hiện tại không còn đủ tin cậy
+
+## Permission Boundary (Ranh giới phân quyền)
+
+### `super-admin`
+- toàn quyền cross-module
+- quản lý role và block state
+- xử lý hard delete hoặc recovery operation nhạy cảm
+
+### `admin` (`Phụng sự viên`)
+- được tạo, sửa, publish, unpublish, moderate phần dữ liệu thuộc scope vận hành
+- được xử lý bài/comment/report của người khác theo policy
+- không được đụng vào `super-admin` account
+- không được tự nâng quyền lên `super-admin`
+- không được hard delete dữ liệu protected nếu policy chỉ cho soft delete
+
+### `member`
+- chỉ sở hữu self-state và public/community action của chính mình
+- không có quyền moderation hay editorial
+
 ## Future Candidates (Ứng viên tương lai)
 
 Chỉ là ứng viên tương lai, chưa phải current scope (Future candidates only, not current scope yet).

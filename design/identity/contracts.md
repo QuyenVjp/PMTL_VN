@@ -26,6 +26,8 @@ Nguồn:
 - auth authority duy nhất là Payload auth trong `users`
 - web route chỉ là BFF/proxy hoặc compatibility layer
 - session authority không nằm ở frontend store
+- permission logic chi tiết xem thêm `PERMISSION_MATRIX.md`
+- `admin` trong current scope là role vận hành, không bị giới hạn kiểu `chỉ sửa record của chính mình`
 
 ## Response rules
 
@@ -60,3 +62,4 @@ Không expose:
 - Đừng thêm auth authority thứ hai.
 - `users` là canonical owner của account + profile cơ bản.
 - Public/client state phải theo session do CMS phát hành, không tự phát minh token model khác.
+- Đừng tự bịa role `editor` hoặc `moderator` trở lại nếu design hiện tại chưa tách.

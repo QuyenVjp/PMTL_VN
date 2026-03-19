@@ -15,6 +15,8 @@
 - search module không sở hữu canonical content body
 - source fields nằm trên content owner document
 - search document trong Meilisearch là computed projection
+- sync guarantee hiện tại là `at-least-once`
+- search update phải idempotent theo `document id + updatedAt/version`
 
 ## Unified wisdom retrieval rule
 
@@ -34,6 +36,7 @@ Status route nên phản ánh:
 - search engine health
 - queue state
 - index document count
+- index freshness / last successful sync
 
 ## Error expectations
 
@@ -51,3 +54,5 @@ Status route nên phản ánh:
 - Public search read có fallback; index failure không được làm mất canonical content.
 - Batch reindex là operational action, nên có audit và status riêng.
 - Đừng dùng search index làm nơi quyết định publish state.
+- Worker chết giữa chừng phải dẫn đến retry/recovery, không được coi như sync đã hoàn tất.
+- Current scope chưa bắt buộc outbox pattern; nếu drift tăng, nâng cấp này là hợp lệ.

@@ -16,10 +16,12 @@ Nó trả lời câu hỏi:
 5. Đọc `FEATURE_SURFACE_FROM_OFFICIAL_SITES.md`
 6. Đọc `ELDERLY_UX_RULES.md`
 7. Đọc `AUDIT_POLICY.md`
-8. Đọc `CONTRACT_GUIDELINES.md`
-9. Chọn module owner bên dưới
-10. Mở `contracts.md` của module đó
-11. Mở file trong `use-cases/` tương ứng
+8. Đọc `SLA_SLO.md`
+9. Đọc `SECURITY_BASELINE.md`
+10. Đọc `CONTRACT_GUIDELINES.md`
+11. Chọn module owner bên dưới
+12. Mở `contracts.md` của module đó
+13. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 
@@ -120,6 +122,8 @@ Khi đọc module này, hãy nhớ:
 - Use-cases:
   - `register-member.md`
   - `update-profile.md`
+- Permission:
+  - `PERMISSION_MATRIX.md`
 
 Khi đọc module này, hãy nhớ:
 - Payload auth là auth authority duy nhất

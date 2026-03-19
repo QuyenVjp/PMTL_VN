@@ -166,6 +166,24 @@ Mục tiêu là làm rõ:
 - fan-out tới nhiều recipient
 - side effect có thể retry
 
+## Delete / cleanup contracts
+
+### Quy tắc chung
+- module owner nào xóa canonical record phải chịu trách nhiệm phát cleanup signal cho downstream modules
+- downstream module không tự giả vờ target còn tồn tại khi relation đã mất
+- nếu cleanup chưa được tự động hóa an toàn, flow thường ngày chỉ được `soft delete`
+
+### Ví dụ chuẩn
+- `Content delete post`
+  - `Community`: xóa hoặc tombstone `postComments`
+  - `Moderation`: đóng/tombstone report liên quan
+  - `Search`: remove index document
+  - `Notification`: skip dangling jobs
+
+### Điều không được làm
+- để `postComments` mồ côi sau khi `post` đã bị xóa
+- để `moderationReports` tiếp tục trỏ về target không còn tồn tại mà không có trạng thái `target_removed`
+
 ## Những tương tác không nên làm
 
 - Search tự ghi ngược vào content canonical data.

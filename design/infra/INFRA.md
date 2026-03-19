@@ -90,6 +90,12 @@ TO Alertmanager → TO Telegram
 | CDN (Cloudflare) | Content Delivery | Phân phối tài nguyên (Images, Audio, PDF) nhanh nhất |
 | S3 Storage | Off-site Backup | Lưu trữ các bản Snapshot dự phòng của Postgres |
 
+**Media/File note**:
+- Với PDF, audio, video, image public:
+  - current local/dev có thể dùng media volume hiện tại
+  - production design nên chuẩn bị object storage rõ như `S3` hoặc `MinIO`
+  - file nên đi qua allowlist, size/mime validation, và scan/quarantine flow nếu nguồn chưa trusted
+
 ---
 
 ## 🔀 Real-world Request Flows (Luồng yêu cầu thực tế)
