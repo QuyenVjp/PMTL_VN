@@ -15,21 +15,22 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 9. `design/AUDIT_POLICY.md` (Chính sách nhật ký kiểm định)
 10. `design/SLA_SLO.md` (Cam kết chất lượng vận hành)
 11. `design/SECURITY_BASELINE.md` (Tiêu chuẩn bảo mật cơ sở)
-12. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
-13. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
-14. `design/01-content/*` (Các nội dung biên tập)
+12. `design/FAILURE_MODE_MATRIX.md` (Ma trận chế độ lỗi)
+13. `design/CONTRACT_GUIDELINES.md` (Hướng dẫn về hợp đồng dữ liệu)
+14. `design/USE_CASE_TEMPLATE.md` (Mẫu kịch bản sử dụng)
+15. `design/01-content/*` (Các nội dung biên tập)
 
 - đọc thêm `design/01-content/practice-support-reference.md` nếu bạn đang làm phần niệm kinh / Ngôi Nhà Nhỏ / phóng sinh (practice support)
 
-15. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
-16. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
-17. `design/08-vows-merit/*` (Lời nguyện và Công đức)
-18. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
-19. `design/identity/*` (Định danh người dùng)
+16. `design/03-engagement/module-map.md` (Bản đồ gắn kết/tu tập)
+17. `design/06-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md` (Mô hình đọc lịch tu tập cá nhân)
+18. `design/08-vows-merit/*` (Lời nguyện và Công đức)
+19. `design/09-wisdom-qa/*` (Trí huệ và Giải đáp)
+20. `design/identity/*` (Định danh người dùng)
 
 - đọc thêm `design/identity/PERMISSION_MATRIX.md` nếu bạn đang làm quyền (permissions), moderation (kiểm duyệt), hoặc admin actions (thao tác quản trị)
 
-20. các module còn lại (remaining modules)
+21. các module còn lại (remaining modules)
 
 ## Mỗi loại file dùng để làm gì? (What is each file type for?)
 
@@ -182,6 +183,8 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
   - chốt mục tiêu vận hành tối thiểu (operational targets) để không nhét việc nặng vào request path
 - `SECURITY_BASELINE.md`
   - chốt tiêu chuẩn bảo mật (security baseline) cho auth, public input, file/media, và public exposure
+- `FAILURE_MODE_MATRIX.md`
+  - chốt module nào continue / degrade / fail closed khi dependency hỏng
 - `CONTRACT_GUIDELINES.md`
   - chốt cách đọc hợp đồng (how to read contracts) và tránh nhầm raw Payload với public DTO
 - `USE_CASE_TEMPLATE.md`
@@ -231,6 +234,21 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
   - file phải qua danh sách cho phép (allowlist) + kiểm tra size/mime.
   - sản phẩm thực tế (production) nên chuẩn bị object storage rõ như `S3` / `MinIO`
   - file từ nguồn ngoài hoặc upload lại nên có quy trình quét/cách ly (scan/quarantine flow) trước khi công khai
+
+### Failure mode matrix
+- Nếu muốn biết từng module phản ứng ra sao khi:
+  - `Postgres down`
+  - `Meilisearch down`
+  - `Redis/worker down`
+  - `media storage down`
+  - `object storage/scan fail`
+  thì đọc:
+  - `design/FAILURE_MODE_MATRIX.md`
+- File này đặc biệt quan trọng khi viết:
+  - degraded mode
+  - fallback logic
+  - maintenance mode
+  - recovery path
 
 ## Một số điều README này cố tình chốt (Enforced Patterns)
 

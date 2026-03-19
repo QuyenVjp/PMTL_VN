@@ -18,10 +18,11 @@ Nó trả lời câu hỏi:
 7. Đọc `AUDIT_POLICY.md`
 8. Đọc `SLA_SLO.md`
 9. Đọc `SECURITY_BASELINE.md`
-10. Đọc `CONTRACT_GUIDELINES.md`
-11. Chọn module owner bên dưới
-12. Mở `contracts.md` của module đó
-13. Mở file trong `use-cases/` tương ứng
+10. Đọc `FAILURE_MODE_MATRIX.md`
+11. Đọc `CONTRACT_GUIDELINES.md`
+12. Chọn module owner bên dưới
+13. Mở `contracts.md` của module đó
+14. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 
