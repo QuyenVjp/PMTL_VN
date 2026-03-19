@@ -64,7 +64,7 @@ Notification hiện tạo internal push jobs với recipient roles và include/e
 - Self-send prevention nằm ở tầng job payload.
 
 ### Rationale
-- Phù hợp với notify moderator/admin và notify affected user flows.
+- Phù hợp với notify admin/super-admin và notify affected user flows.
 - Đủ rõ mà chưa cần orchestration engine phức tạp.
 
 ### Trade-off

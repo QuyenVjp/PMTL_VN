@@ -39,7 +39,7 @@ markmap:
 - lưu category preferences cho push
 
 ### Internal notification fan-out
-- notify moderator/admin
+- notify admin/super-admin
 - notify affected user
 - create push job record
 

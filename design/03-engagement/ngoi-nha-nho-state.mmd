@@ -1,0 +1,9 @@
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> InProgress: "Start chanting on a new sheet"
+    InProgress --> InProgress: "Mark one more circle"
+    InProgress --> Completed: "All required counts completed"
+    Completed --> SelfStored: "Keep as self-stored scripture sheet"
+    Completed --> Offered: "Burn/offer according to practice"
+    SelfStored --> Offered: "Offer later"
+    Offered --> [*]

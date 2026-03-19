@@ -16,6 +16,7 @@ markmap:
 - quản lý editorial content đang có thật trong repo
 - giữ taxonomy và media linkage rõ ràng
 - hỗ trợ publish workflow, public delivery, search source fields
+- hỗ trợ `giới thiệu pháp môn`, `sơ học`, hub chính thức, download hub
 - không ôm user-state hoặc moderation source-of-truth
 
 ## Collections thuộc module
@@ -77,7 +78,7 @@ markmap:
 ## References ra ngoài module
 
 ### Identity
-- author/editor refs
+- author/admin biên soạn refs
 - audit actor refs
 
 ### Calendar
@@ -116,10 +117,27 @@ markmap:
 ### Beginner guides
 - tài liệu nhập môn / hướng dẫn thực hành
 - thiên về rich educational content hơn bài blog ngắn
+- đây là nơi phù hợp cho:
+  - `Giới thiệu pháp môn`
+  - `Hướng dẫn sơ học`
+  - `Bắt đầu công khóa`
+  - `Cách lập Phật đài`
+  - `Các bước tu học đầu tiên`
 
 ### Downloads
 - tài nguyên tải về và metadata hiển thị
 - có thể liên kết media upload hoặc external URL
+- phù hợp làm:
+  - `Kinh văn và bản in`
+  - `audio/video download hub`
+  - resource hub cho người mới và người tu lâu năm
+
+### Official hubs and notices
+- `hubPages` nên giữ:
+  - giới thiệu pháp môn
+  - sơ đồ bắt đầu học
+  - chuyên đề download
+  - thông báo chính thức hoặc hub điều hướng
 
 ### Practice support
 - `chantItems` là owner của bài niệm / chú / script / audio / preview image
@@ -133,8 +151,8 @@ markmap:
 - `sutraGlossary` gắn term-level context vào sutra tree
 
 ## Key actors
-- `editor`
 - `admin`
+- `super-admin`
 - `member`
 - `guest`
 
@@ -145,3 +163,4 @@ markmap:
 - audience visibility không được hardcode ngoài owner collection
 - user-state phải nằm ngoài content
 - practice support content là public/editorial reference data, không phải user-state
+- `giới thiệu pháp môn` và `sơ học` là first-class content surface, không phải chỉ là vài post rời rạc

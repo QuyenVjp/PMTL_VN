@@ -65,7 +65,7 @@ markmap:
 - community chỉ giữ moderation summary fields trên entity
 
 ### Notification
-- submit/report flow có thể tạo async alert cho moderator/admin
+- submit/report flow có thể tạo async alert cho admin/super-admin
 
 ## Current rules
 - UGC mặc định không trở thành canonical moderation record

@@ -36,7 +36,8 @@ Design cũ còn nhắc một auth framework thứ hai, gây lệch với codebas
 ### Decision
 - Payload auth là authority duy nhất cho đăng ký, đăng nhập, session, reset mật khẩu và role.
 - Web tiêu thụ auth contract từ CMS.
-- Không thêm social login hoặc auth layer thứ hai vào design hiện tại.
+- Google login / OAuth provider được phép tồn tại nếu nó đi vào cùng `users` collection và cùng session authority của Payload.
+- Không thêm auth authority thứ hai, không tạo users store thứ hai, và không tách session sang framework khác.
 
 ### Rationale
 - Khớp repo truth.
@@ -45,7 +46,7 @@ Design cũ còn nhắc một auth framework thứ hai, gây lệch với codebas
 
 ### Trade-off
 - Auth flow phụ thuộc vào CMS runtime availability.
-- Muốn social login trong tương lai sẽ cần một quyết định mới, không tự suy ra từ design này.
+- Provider login làm auth flow phong phú hơn, nên contract mapping giữa callback provider và `users` phải được ghi rõ thay vì suy đoán.
 
 ## Decision 3. Editorial publish workflow bám Payload drafts + publishedAt
 
@@ -170,12 +171,14 @@ Design cũ từng để content ôm cả engagement và wishlist.
 Repo hiện tại đã split collections khá rõ.
 
 ### Decision
-- `content` chỉ giữ editorial content, taxonomy, media, scripture library, content search fields, và practice support content như `chantItems`, `chantPlans`, ritual guide.
+- `content` chỉ giữ editorial content, taxonomy, media, scripture library, content search fields, và practice support reference content như `chantItems`, `chantPlans`, ritual guide, bài khai thị gốc.
 - `community` giữ discussion surfaces.
-- `engagement` giữ self-owned user state.
-- `calendar` giữ event/lunar scheduling data.
+- `engagement` giữ self-owned user state, gồm cả `practiceSheets` và `ngoiNhaNhoSheets`.
+- `calendar` giữ event/lunar scheduling data và personal practice calendar read model.
 - `notification` giữ delivery control-plane.
 - `search` giữ indexing/query contract, không giữ canonical business data.
+- `08-vows-merit` giữ self-owned records cho `Phát nguyện` và `Phóng sanh`.
+- `09-wisdom-qa` giữ curated retrieval records cho `Bạch thoại Phật pháp`, `Huyền học vấn đáp`, audio/video hỗ trợ đọc học.
 
 ### Rationale
 - Khớp collection layout hiện tại.

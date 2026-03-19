@@ -10,7 +10,7 @@ markmap:
 
 > Ghi chú cho sinh viên:
 > File này giống như bản đồ thành phố.
-> Nó giúp bạn biết module nào đang tồn tại thật trong repo và module nào chỉ là ứng viên tương lai.
+> Nó giúp bạn biết module nào đang tồn tại thật trong repo và module nào đang là current scope cần triển khai.
 
 ## Current Scope
 
@@ -20,13 +20,12 @@ markmap:
 - **Responsibilities**:
   - đăng ký, đăng nhập, đăng xuất
   - reset mật khẩu
+  - Google login trong cùng auth authority
   - role + block state
   - profile cơ bản
 - **Current role set**:
   - `super-admin`
-  - `admin`
-  - `editor`
-  - `moderator`
+  - `admin` (`Phụng sự viên`)
   - `member`
 
 ### 02. Content
@@ -51,7 +50,9 @@ markmap:
   - taxonomy
   - media linking
   - content search fields
-  - practice support content cho niệm kinh / nghi thức / Ngôi Nhà Nhỏ
+  - giới thiệu pháp môn và sơ học
+  - official notices, hub pages, download hubs
+  - practice support reference content cho niệm kinh / nghi thức / Ngôi Nhà Nhỏ / bài khai thị
 
 ### 03. Community
 - **Discussion surfaces**:
@@ -65,17 +66,21 @@ markmap:
   - guestbook messages
   - report initiation toward moderation
 
-### 04. Engagement
+### 04. Engagement / Practice Support
 - **Self-owned user state**:
   - `sutraBookmarks`
   - `sutraReadingProgress`
   - `chantPreferences`
   - `practiceLogs`
+  - `practiceSheets`
+  - `ngoiNhaNhoSheets`
 - **Responsibilities**:
   - bookmark
   - reading progress
   - practice configuration
   - personal practice history
+  - daily practice sheets
+  - Ngôi Nhà Nhỏ inventory và tiến độ theo từng tờ
 
 ### 05. Moderation
 - **Owner**: `moderationReports`
@@ -87,7 +92,7 @@ markmap:
   - `moderationStatus`
 - **Responsibilities**:
   - accept report
-  - moderator decision
+  - admin/super-admin decision
   - sync moderation summary back to target entity
 
 ### 06. Search
@@ -96,35 +101,59 @@ markmap:
 - **Queue**: Redis + worker
 - **Current public search contract**:
   - posts search
+  - wisdom search
   - search status
   - reindex trigger
 - **Responsibilities**:
   - queue search sync
   - build search document
-  - serve search query with fallback
+  - serve unified `Kho Trí Huệ` query with fallback
 
 ### 07. Calendar
-- **Owner collections**:
+- **Owner collections / read models**:
   - `events`
   - `lunarEvents`
   - `lunarEventOverrides`
+  - `personalPracticeCalendarReadModel`
 - **Responsibilities**:
   - editorial event publishing
   - lunar recurrence base
   - per-event practice override mapping
+  - compose personal practice calendar read model
 
 ### 08. Notification
 - **Control plane**:
   - `pushSubscriptions`
   - `pushJobs`
-- **Async delivery paths**:
-  - push dispatch
-  - email notification jobs
+  - reminder candidates/materialized jobs
 - **Responsibilities**:
   - store browser subscription state
   - store notification preferences used for push delivery
   - enqueue internal jobs
-  - notify moderators or affected users asynchronously
+  - notify admins or affected users asynchronously
+
+### 09. Vows & Merit
+- **Self-owned records**:
+  - `vows`
+  - `vowProgressEntries`
+  - `lifeReleaseJournal`
+- **Responsibilities**:
+  - phát nguyện
+  - theo dõi tiến độ nguyện
+  - sổ tay phóng sanh
+
+### 10. Wisdom & QA
+- **Curated retrieval records**:
+  - `wisdomEntries`
+  - `qaEntries`
+  - `offlineBundles`
+- **Responsibilities**:
+  - Bạch thoại Phật pháp
+  - khai thị / Phật ngôn Phật ngữ
+  - Huyền học vấn đáp
+  - Phật học vấn đáp
+  - audio/video hỗ trợ đọc học
+  - offline bundle cho người lớn tuổi
 
 ## Cross-Cutting Runtime
 
@@ -135,27 +164,21 @@ markmap:
 - Meilisearch: search index
 - Caddy: reverse proxy / HTTPS
 
-### Optional Monitoring
-- PgBouncer
-- Prometheus
-- Grafana
-- Alertmanager
-- Exporters
-- Blackbox
-
 ## Current Scope Boundaries
 
 ### Content does not own
 - bookmarks
 - reading progress
 - practice logs
+- practice sheets
+- vow records
 - moderation reports
 - push jobs
 
-### Community does not own
+### Engagement does not own
+- canonical sutra content
+- canonical chant/reference content
 - moderation decisions
-- user identity authority
-- search index documents
 
 ### Search does not own
 - canonical content
@@ -171,13 +194,8 @@ markmap:
 Chỉ là ứng viên tương lai, chưa phải current scope.
 
 ### Identity
-- public profile pages hoàn chỉnh
-- social graph sâu hơn
-- mention/handle routing
-
-### Content
-- gated membership content với audience visibility đầy đủ
-- richer version comparison UI
+- richer public profile pages
+- account linking policy nhiều provider hơn Google
 
 ### Community
 - follows / subscriptions theo author hoặc thread
@@ -186,24 +204,9 @@ Chỉ là ứng viên tương lai, chưa phải current scope.
 ### Engagement
 - streaks
 - stats dashboard
-- article bookmarks nếu repo quyết định thêm collection riêng
-
-### Moderation
-- automated policy packs
-- escalation workflow nhiều cấp
-
-### Search
-- recommendations
-- search suggestions
-- discovery ranking nâng cao
 
 ### Notification
-- digest scheduling
 - in-app inbox nếu có owner data model riêng
-
-### Calendar
-- event registration
-- personalized reminder rules ngoài push subscription hiện tại
 
 Future candidate chỉ được nâng lên current scope khi có:
 - owner collection hoặc owner service rõ ràng

@@ -4,7 +4,7 @@ flowchart TD
         M1B --> M1C["Tạo moderationReports"]
         M1C --> M1D["Lưu entityType, entityPublicId, entityRef, reason, và reporter"]
         M1D --> M1E["Sync reportCount và lastReportReason lên entity đích"]
-        M1E --> M1F["Enqueue alert cho moderator hoặc admin"]
+        M1E --> M1F["Enqueue alert cho admin hoặc super-admin"]
     end
 
     subgraph Flow2 ["Luồng 2: Moderator ra quyết định"]

@@ -1,0 +1,18 @@
+stateDiagram-v2
+    [*] --> Submitted
+    Submitted --> UnderReview: "Moderator opens report"
+    Submitted --> HiddenByThreshold: "Auto-hide if policy threshold is reached"
+    UnderReview --> Approved: "Decision approved"
+    UnderReview --> Rejected: "Decision rejected"
+    UnderReview --> Flagged: "Need more attention"
+    UnderReview --> Hidden: "Force hidden on target"
+    HiddenByThreshold --> UnderReview: "Moderator confirms or changes outcome"
+    Approved --> [*]
+    Rejected --> [*]
+    Flagged --> [*]
+    Hidden --> [*]
+
+    note right of Submitted
+      Canonical record nằm ở moderationReports.
+      reportCount trên target chỉ là summary.
+    end note

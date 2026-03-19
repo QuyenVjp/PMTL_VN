@@ -2,8 +2,8 @@
 // Note:
 // - Payload auth internal token/session storage là framework-managed, không mô hình hóa chi tiết ở đây.
 // - `public_id` chỉ là public-facing identifier khi cần expose user reference an toàn hơn id nội bộ.
-// - Assumption: field `googleSub` hiện có trong code được xem là compatibility/system field,
-//   không phải auth flow current scope của module này.
+// - `google_sub` là provider linkage field cho Google login trong cùng auth authority,
+//   không phải auth system thứ hai.
 
 Project identity_module {
   database_type: "PostgreSQL"
@@ -17,11 +17,9 @@ Project identity_module {
 }
 
 Enum user_role {
-  super_admin [note: "Super admin"]
-  admin [note: "Quản trị viên"]
-  editor [note: "Biên tập viên"]
-  moderator [note: "Điều phối viên"]
-  member [note: "Thành viên"]
+  super_admin [note: "Super admin / Toàn quyền"]
+  admin [note: "Admin / Phụng sự viên"]
+  member [note: "Member / Thành viên"]
 }
 
 Table media_assets {
@@ -37,6 +35,7 @@ Table users {
   username varchar [unique]
   phone varchar
   dharma_name varchar
+  google_sub varchar [note: "Google provider subject / mã liên kết Google"]
   avatar_media_id uuid [ref: > media_assets.id]
   bio text
   role user_role [not null]

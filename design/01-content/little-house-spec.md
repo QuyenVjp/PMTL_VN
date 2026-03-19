@@ -3,6 +3,9 @@
 > Ghi chú cho sinh viên:
 > File này là spec riêng cho `Ngôi Nhà Nhỏ`.
 > Mục tiêu là để sau này làm UI, validation, collection fields, hoặc flow service mà không phải đọc lại PDF từ đầu.
+> Logic thực thi và schema self-owned mới nhất xem thêm ở:
+> - `design/03-engagement/NGOI_NHA_NHO_SCHEMA_OUTLINE.md`
+> - `design/03-engagement/use-cases/manage-ngoi-nha-nho-sheet.md`
 
 ---
 markmap:

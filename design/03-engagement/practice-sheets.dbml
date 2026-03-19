@@ -1,0 +1,57 @@
+Project practice_sheets_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Practice Sheets / Bang Cong Phu schema logic.
+  Muc tieu:
+  - ho tro bai tap hang ngay va checklist thuc hanh.
+  - uu tien offline-first, dong bo lai sau.
+  '''
+}
+
+Enum practice_sheet_type {
+  daily_practice
+  event_preparation
+  vow_support
+}
+
+Enum practice_sheet_status {
+  draft
+  in_progress
+  completed
+  archived
+}
+
+Table practice_sheets {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique, note: "Public ID / ma cong khai"]
+  user_id uuid [not null, note: "Owner user / nguoi so huu"]
+  sheet_type practice_sheet_type [not null, default: 'daily_practice']
+  title_vi varchar(160) [not null, note: "Tieu de tieng Viet"]
+  title_en varchar(160) [note: "English title / ten tieng Anh"]
+  practice_date date
+  plan_ref varchar(64) [note: "Ref toi chant plan neu co"]
+  status practice_sheet_status [not null, default: 'draft']
+  completion_percent int [not null, default: 0]
+  last_client_event_id varchar(64)
+  notes_vi text [note: "Ghi chu tieng Viet"]
+  notes_en text [note: "English notes / ghi chu tieng Anh"]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table practice_sheet_items {
+  id uuid [pk]
+  sheet_id uuid [not null, ref: > practice_sheets.id]
+  chant_item_ref varchar(64) [note: "Ref toi chant item"]
+  label_vi varchar(160) [not null]
+  label_en varchar(160)
+  target_count int
+  current_count int [not null, default: 0]
+  is_completed boolean [not null, default: false]
+  sort_order int [not null, default: 0]
+}
+
+TableGroup "Practice Sheets / Bang cong phu" [note: "Bang cong phu ca nhan, khong phai editorial content"] {
+  practice_sheets
+  practice_sheet_items
+}

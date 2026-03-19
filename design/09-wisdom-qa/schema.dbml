@@ -1,0 +1,113 @@
+Project wisdom_qa_schema {
+  database_type: "PostgreSQL"
+  Note: "Schema logic de xuat cho Bai Thoai, QA retrieval, va offline bundles."
+}
+
+Enum wisdom_source_type {
+  baihua
+  kaishi
+  program_audio
+  program_video
+}
+
+Enum qa_type {
+  metaphysics_qa
+  buddhist_qa
+}
+
+Enum offline_bundle_type {
+  baihua_series
+  qa_favorites
+  night_reading_pack
+}
+
+Table wisdom_entries {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  source_url varchar(512) [not null]
+  source_type wisdom_source_type [not null]
+  source_language varchar(16) [not null, default: 'zh']
+  title_original varchar(255) [not null]
+  title_vietnamese varchar(255)
+  summary_vietnamese text
+  body_original text
+  body_vietnamese text
+  audio_ref varchar(64)
+  video_ref varchar(64)
+  speaker varchar(160)
+  is_official boolean [not null, default: true]
+  published_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table wisdom_entry_tags {
+  id uuid [pk]
+  wisdom_entry_id uuid [not null, ref: > wisdom_entries.id]
+  tag varchar(64) [not null]
+
+  Indexes {
+    (wisdom_entry_id, tag) [unique]
+  }
+}
+
+Table qa_entries {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  source_url varchar(512) [not null]
+  qa_type qa_type [not null]
+  question_original text [not null]
+  question_vietnamese text
+  answer_original text [not null]
+  answer_vietnamese text
+  speaker varchar(160)
+  is_official boolean [not null, default: true]
+  published_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table qa_entry_tags {
+  id uuid [pk]
+  qa_entry_id uuid [not null, ref: > qa_entries.id]
+  tag varchar(64) [not null]
+
+  Indexes {
+    (qa_entry_id, tag) [unique]
+  }
+}
+
+Table qa_entry_keyword_aliases {
+  id uuid [pk]
+  qa_entry_id uuid [not null, ref: > qa_entries.id]
+  alias varchar(160) [not null]
+  language varchar(16) [not null, default: 'vi']
+
+  Indexes {
+    (qa_entry_id, alias) [unique]
+  }
+}
+
+Table offline_bundles {
+  id uuid [pk]
+  user_id uuid [note: "Null if device-only bundle is supported"]
+  device_key varchar(64)
+  bundle_type offline_bundle_type [not null]
+  version varchar(32) [not null]
+  downloaded_at timestamptz
+  last_synced_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table offline_bundle_items {
+  id uuid [pk]
+  offline_bundle_id uuid [not null, ref: > offline_bundles.id]
+  entry_type varchar(16) [not null, note: "wisdom or qa"]
+  entry_public_id varchar(32) [not null]
+  local_asset_key varchar(160)
+
+  Indexes {
+    (offline_bundle_id, entry_type, entry_public_id) [unique]
+  }
+}

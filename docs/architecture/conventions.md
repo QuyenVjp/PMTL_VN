@@ -99,8 +99,9 @@
 - Access rule nằm ở `access.ts`.
 - Hook không tự ý chặn quyền nếu logic đó là authorization.
 - Service có thể validate business rule sau khi access đã pass.
-- Quy ước role hiện tại: `super-admin`, `admin`, `editor`, `moderator`, `member`.
-- Guest chỉ xem public content; member dùng user feature; moderator trở lên xử lý moderation scope; admin và super-admin quản trị rộng hơn.
+- Quy ước role hiện tại: `super-admin`, `admin`, `member`.
+- `admin` là giá trị kỹ thuật; trong ngôn ngữ nghiệp vụ/UI có thể gọi là `Phụng sự viên`.
+- Guest chỉ xem public content; member dùng user feature; admin và super-admin xử lý editorial, moderation, vận hành theo policy.
 
 ## 8. Error handling
 

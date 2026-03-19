@@ -5,6 +5,8 @@
 - `users` là auth authority duy nhất.
 - Payload auth vẫn là nguồn session/cookie/JWT gốc.
 - Contract auth ra web vẫn map về `displayName` và `status`.
+- Google login được phép tồn tại như provider flow, nhưng vẫn map vào cùng `users` authority.
+- Role set chuẩn hiện tại của design là `super-admin`, `admin` (`Phụng sự viên`), `member`.
 
 ## Site Config / Globals
 
@@ -57,9 +59,32 @@
   - `lunarEventOverrides`
   - `chantPreferences`
   - `practiceLogs`
+- Practice support self-owned collections/read models:
+  - `practiceSheets`
+  - `ngoiNhaNhoSheets`
+  - `personalPracticeCalendarReadModel`
 - `chantItems` và `chantPlans` là editorial/public.
 - `chantPreferences` và `practiceLogs` là self-owned user state.
+- `practiceSheets` và `ngoiNhaNhoSheets` cũng là self-owned user state.
 - Merge logic cho lunar override, plan, preference vẫn nằm ở service layer.
+
+## Vows / Merit
+
+- Self-owned records:
+  - `vows`
+  - `vowProgressEntries`
+  - `lifeReleaseJournal`
+- Đây là lớp hỗ trợ `Phát nguyện` và `Phóng sanh`.
+- Không trộn các record này vào community feed canonical.
+
+## Wisdom / QA
+
+- Curated retrieval records:
+  - `wisdomEntries`
+  - `qaEntries`
+  - `offlineBundles`
+- Mục tiêu là tra cứu đúng nguồn `Bạch thoại Phật pháp`, `Huyền học vấn đáp`, audio/video hỗ trợ đọc học.
+- Search phải index hợp nhất module này với `01-content` thành một bề mặt đọc `Kho Trí Huệ`.
 
 ## Sutra
 
@@ -104,4 +129,4 @@
 - Source of truth vẫn là Postgres/Payload document.
 - Schema đã chuẩn bị sẵn `contentPlainText` và `normalizedSearchText`.
 - Search posts public hiện đi qua compatibility route `/api/posts/search`.
-- Search sync sang Meilisearch hiện đi qua Payload Jobs queue-first flow; route `/api/posts/search/reindex` cho phép editor/admin enqueue reindex batch.
+- Search sync sang Meilisearch hiện đi qua Payload Jobs queue-first flow; route `/api/posts/search/reindex` cho phép admin/super-admin enqueue reindex batch.

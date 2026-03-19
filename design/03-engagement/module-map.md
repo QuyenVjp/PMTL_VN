@@ -13,7 +13,7 @@ markmap:
 
 ## Mục tiêu
 - giữ toàn bộ self-owned user state ngoài content
-- mô tả bookmark, reading progress, practice preference, practice log
+- mô tả bookmark, reading progress, practice preference, practice log, practice sheets, và `Ngôi Nhà Nhỏ`
 - tránh để editorial module ôm dữ liệu cá nhân
 
 ## Current scope
@@ -25,6 +25,8 @@ markmap:
 ### Practice user state
 - `chantPreferences`
 - `practiceLogs`
+- `practiceSheets`
+- `ngoiNhaNhoSheets`
 
 ## Referenced supporting data
 
@@ -55,6 +57,16 @@ markmap:
 - ghi log buổi công phu theo ngày và plan
 - lưu item states, thời gian bắt đầu/kết thúc, notes
 
+### Practice sheets
+- lưu checklist/bài tập công phu hằng ngày theo dạng tờ thực hành
+- lưu các mục đã hoàn thành theo ngày hoặc theo kế hoạch
+- hỗ trợ app offline-first rồi đồng bộ sau
+
+### Ngoi Nha Nho
+- quản lý từng tờ `Ngôi Nhà Nhỏ` như inventory self-owned
+- lưu tiến độ 4 loại kinh trên từng tờ
+- lưu mốc `completed`, `self_stored`, `offered`
+
 ## Current boundaries
 
 ### Engagement owns
@@ -70,3 +82,4 @@ markmap:
 - `chantItems` và `chantPlans` là practice reference data hỗ trợ engagement flows.
 - Module này chỉ mô tả phần user-state và quan hệ với các reference đó.
 - các tài liệu PDF như niệm hằng ngày, phóng sinh, và Ngôi Nhà Nhỏ được chuẩn hóa trước ở `design/01-content/practice-support-reference.md`
+- canonical personal practice sheet và `Ngôi Nhà Nhỏ` nằm ở engagement, không nằm ở content

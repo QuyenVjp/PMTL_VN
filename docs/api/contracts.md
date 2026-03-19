@@ -54,7 +54,7 @@ type AuthUser = {
   email: string;
   displayName: string;
   bio: string;
-  role: "super-admin" | "admin" | "editor" | "moderator" | "member";
+  role: "super-admin" | "admin" | "member";
   status: "active" | "pending" | "suspended";
   avatarId: string | null;
   avatarUrl: string | null;
@@ -81,6 +81,8 @@ Auth endpoints:
 Ghi chú:
 - `users` nội bộ dùng `fullName` và `isBlocked`, nhưng contract ra web vẫn map về `displayName` và `status`.
 - `resetToken`/`resetUrl` chỉ dùng cho local/dev khi `PAYLOAD_AUTH_DISABLE_EMAIL=true`.
+- `admin` trong business/UI có thể hiển thị là `Phụng sự viên`.
+- Google login là provider flow hợp lệ nếu được map vào cùng Payload auth authority.
 
 ## Globals compatibility routes
 
@@ -305,6 +307,10 @@ Ghi chú:
 - `POST /api/chanting/preferences`
 - `GET /api/chanting/practice-log`
 - `POST /api/chanting/practice-log`
+- `GET /api/practice-sheets`
+- `POST /api/practice-sheets`
+- `GET /api/ngoi-nha-nho/sheets`
+- `POST /api/ngoi-nha-nho/sheets`
 
 ```ts
 type ChantPreferenceDTO = {
@@ -328,11 +334,55 @@ type PracticeLogDTO = {
   completedAt: string | null;
   isCompleted: boolean;
 };
+
+type PracticeSheetDTO = {
+  id: string | null;
+  sheetType: "daily_practice" | "event_preparation" | "vow_support";
+  practiceDate: string | null;
+  status: "draft" | "in_progress" | "completed" | "archived";
+  completionPercent: number;
+  items: Array<{
+    label: string;
+    targetCount: number | null;
+    currentCount: number;
+    isCompleted: boolean;
+  }>;
+};
+
+type NgoiNhaNhoSheetDTO = {
+  id: string | null;
+  sheetType: "standard" | "self_store" | "custom";
+  status: "draft" | "in_progress" | "completed" | "self_stored" | "offered";
+  practiceDate: string | null;
+  currentGreatCompassionCount: number;
+  currentHeartSutraCount: number;
+  currentRebirthMantraCount: number;
+  currentSevenBuddhasCount: number;
+};
 ```
 
 Ghi chú:
 - Hai route này dựa trên Payload auth session hiện tại.
 - `POST /api/chanting/practice-log` dùng semantics upsert theo `user + practiceDate + plan`.
+- `POST /api/practice-sheets` và `POST /api/ngoi-nha-nho/sheets` nên hỗ trợ idempotent/offline sync qua `clientEventId`.
+
+## Personal practice calendar route
+
+- `GET /api/practice-calendar`
+
+```ts
+type PracticeCalendarDayDTO = {
+  date: string;
+  lunarLabel: string | null;
+  dayTags: Array<"ngay_via" | "trai_gioi" | "ngay_phong_sanh_goi_y" | "golden_hour">;
+  recommendedItems: string[];
+  recommendedWindows: Array<{ start: string; end: string; label?: string }>;
+  vowHooks: string[];
+  lifeReleaseHooks: string[];
+  notesVi: string | null;
+  notesEn: string | null;
+};
+```
 
 ## Push routes
 
@@ -346,15 +396,15 @@ Ghi chú:
 - `POST /api/moderation/reports/:publicId/decision`
 
 Ghi chú:
-- Hai route này yêu cầu role `moderator` trở lên.
+- Hai route này yêu cầu role `admin` trở lên.
 - `decision` hiện hỗ trợ `approved | rejected | flagged | hidden`.
 
 ## Queue / worker notes
 
-- `POST /api/posts/search/reindex` yêu cầu role `editor` trở lên và enqueue search sync batch cho posts.
+- `POST /api/posts/search/reindex` yêu cầu role `admin` trở lên và enqueue search sync batch cho posts.
 - `GET /api/search/status` trả health của Meilisearch, queue counts và số document hiện có trong index posts.
 - `GET /api/push/stats` trả tổng subscription active/inactive và số push job đang chờ/lỗi.
-- Community submit/report, guestbook submit, post comment submit hiện vừa append audit log vừa enqueue notification cho moderator/admin.
+- Community submit/report, guestbook submit, post comment submit hiện vừa append audit log vừa enqueue notification cho admin/super-admin theo policy.
 - Self-send prevention hiện được áp dụng ở notification job bằng `excludeUserIds`.
 
 ## Error shape

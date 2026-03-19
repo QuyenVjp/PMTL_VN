@@ -4,7 +4,7 @@ flowchart TD
         U1B --> U1C["Chuẩn hóa publicId, slug, author snapshot, và spamScore"]
         U1C --> U1D["Lưu communityPosts với moderationStatus mặc định pending"]
         U1D --> U1E["Append audit log"]
-        U1E --> U1F["Enqueue alert cho moderator hoặc admin"]
+        U1E --> U1F["Enqueue alert cho admin hoặc super-admin"]
     end
 
     subgraph Flow2 ["Luồng 2: Bình luận vào bài cộng đồng"]
@@ -29,7 +29,7 @@ flowchart TD
         U4A["Khách hoặc member gửi guestbook entry"] --> U4B["Validate message"]
         U4B --> U4C["Chuẩn hóa publicId, ip hash, badge, và country nếu có"]
         U4C --> U4D["Lưu guestbookEntries với approvalStatus pending"]
-        U4D --> U4E["Notify moderator hoặc admin"]
+        U4D --> U4E["Notify admin hoặc super-admin"]
         U4E --> U4F{"Người dùng report entity?"}
         U4F -->|"Có"| U4G["Tạo moderation report"]
         U4F -->|"Không"| U4H["Kết thúc"]

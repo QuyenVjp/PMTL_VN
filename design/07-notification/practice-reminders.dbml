@@ -1,0 +1,30 @@
+Project practice_reminder_schema {
+  database_type: "PostgreSQL"
+  Note: "Optional reminder schedule table if pushJobs-only design becomes insufficient."
+}
+
+Enum practice_reminder_source_type {
+  daily_practice
+  vow_milestone
+  life_release_day
+  baihua_night_reading
+}
+
+Table reminder_schedules {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  user_id uuid [not null, note: "Refers to identity.users"]
+  source_type practice_reminder_source_type [not null]
+  source_ref varchar(64)
+  schedule_key varchar(128) [not null]
+  timezone varchar(64) [not null]
+  next_run_at timestamptz
+  dedupe_window_minutes int [not null, default: 60]
+  is_active boolean [not null, default: true]
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Indexes {
+    (user_id, schedule_key) [unique]
+  }
+}

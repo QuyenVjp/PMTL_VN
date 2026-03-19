@@ -34,7 +34,7 @@ markmap:
 - gắn entity type / entity publicId / entity ref
 
 ### Moderation decision
-- moderator xem report
+- admin xem report
 - cập nhật trạng thái report
 - áp dụng decision lên target entity
 
@@ -45,7 +45,7 @@ markmap:
 - cập nhật `isHidden` khi cần
 
 ### Notifications
-- alert moderator/admin khi có report mới
+- alert admin/super-admin khi có report mới
 - notify affected user khi có moderation decision nếu flow gọi notification module
 
 ## Current boundaries

@@ -1,0 +1,18 @@
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Draft: "Save draft"
+    Draft --> Published: "Publish when required fields pass"
+    Published --> Published: "Update published content"
+    Published --> Draft: "Unpublish only if policy/implementation supports"
+    Published --> Archived: "Archive when collection adds explicit archive state"
+    Archived --> [*]
+
+    note right of Draft
+      Canonical workflow hiện tại là Payload drafts.
+      Không giả định approval nhiều bước nếu repo chưa có.
+    end note
+
+    note right of Published
+      publishedAt là timestamp public delivery.
+      Search sync và revalidation là downstream async.
+    end note

@@ -1,6 +1,10 @@
 # PMTL Infrastructure: Why & What (Lý do & Mục đích)
 
 Tài liệu này giải thích các thành phần hạ tầng (Infrastructure) của hệ thống PMTL.
+Đây là bản chuẩn để đọc nhanh.
+
+Nếu cần đi sâu exporters, metrics, alerting và topology vận hành chi tiết hơn, đọc thêm:
+- `design/infra/INFRA_DEEP_DIVE.md`
 
 ---
 

@@ -1,0 +1,101 @@
+Project vows_merit_schema {
+  database_type: "PostgreSQL"
+  Note: "Schema logic de xuat cho vow tracking va life release journal."
+}
+
+Enum vow_type {
+  vegetarian
+  chanting_target
+  ngoihanho_target
+  life_release_target
+  custom
+}
+
+Enum vow_status {
+  active
+  fulfilled
+  paused
+  broken
+}
+
+Enum vow_target_metric_type {
+  count
+  days
+  sessions
+  custom
+}
+
+Enum vow_progress_source_type {
+  manual
+  practice_log
+  life_release_journal
+  system_adjustment
+}
+
+Enum life_release_status {
+  planned
+  completed
+  cancelled
+}
+
+Table vows {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  user_id uuid [not null, note: "Refers to identity.users"]
+  vow_type vow_type [not null]
+  title varchar(160) [not null]
+  description text
+  status vow_status [not null, default: 'active']
+  start_date date [not null]
+  due_date date
+  target_metric_type vow_target_metric_type
+  target_value numeric(12,2)
+  current_value numeric(12,2) [not null, default: 0]
+  fulfilled_at timestamptz
+  notes text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+
+  Indexes {
+    (user_id, status)
+  }
+}
+
+Table vow_progress_entries {
+  id uuid [pk]
+  vow_id uuid [not null, ref: > vows.id]
+  source_type vow_progress_source_type [not null, default: 'manual']
+  source_ref varchar(64)
+  delta_value numeric(12,2) [not null]
+  entry_date date [not null]
+  notes text
+  created_at timestamptz [not null]
+}
+
+Table life_release_journal {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  user_id uuid [not null, note: "Refers to identity.users"]
+  linked_vow_id uuid [ref: > vows.id]
+  release_date date [not null]
+  location_note varchar(255)
+  species varchar(160) [not null]
+  quantity numeric(12,2) [not null]
+  unit varchar(32)
+  dedication_note text
+  linked_practice_day_tag varchar(64)
+  status life_release_status [not null, default: 'completed']
+  notes text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table life_release_checklist_snapshots {
+  id uuid [pk]
+  journal_id uuid [not null, ref: > life_release_journal.id]
+  item_key varchar(64) [not null]
+  item_label varchar(255) [not null]
+  chant_ref varchar(64)
+  content_guide_ref varchar(64)
+  sort_order int [not null, default: 0]
+}

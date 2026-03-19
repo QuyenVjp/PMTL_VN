@@ -80,7 +80,7 @@ Repo hiện tại chưa cần đến mức đó.
 
 ### Decision
 - Chưa thêm `moderationQueue` hoặc `escalationQueue` riêng vào current scope.
-- Queue hiển thị cho moderator hiện suy ra từ report status + target summary.
+- Queue hiển thị cho admin hiện suy ra từ report status + target summary.
 
 ### Rationale
 - Giữ thiết kế triển khai được cho current repo.
