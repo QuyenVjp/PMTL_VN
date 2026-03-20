@@ -307,6 +307,26 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.17 Contact & Volunteers (Liên hệ & Phụng Sự Viên)
+
+| Field | Value |
+|---|---|
+| Route | `/lien-he` |
+| Title | Liên hệ |
+| Auth | `public` |
+| Module owner | Contact |
+
+**Nội dung:**
+- Hero section: "Liên hệ với chúng tôi" + tagline ấm áp
+- Thông tin liên hệ chung: cards icon (email, hotline, fanpage, Zalo OA)
+- Danh sách Phụng Sự Viên: grid responsive
+  - Mỗi card: avatar tròn + tên + vai trò + nút "Nhắn Zalo" (mở link Zalo trực tiếp)
+  - Responsive: 2 cột mobile, 3 cột tablet, 4 cột desktop
+
+**Elderly note**: Nút Zalo phải lớn (min 48px), icon Zalo rõ ràng, text "Nhắn Zalo". Avatar 64×64 trên mobile.
+
+---
+
 ## II. Auth Pages (Xác thực)
 
 ### 2.1 Login
@@ -417,7 +437,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | Module | Engagement |
 
 **Nội dung:**
-- Near-paper interface (xem `design/ops/elderly-ux.md` + `design/02-content/little-house-spec.md`)
+- Near-paper interface (xem `design/ui/ELDERLY_UX.md` + `design/02-content/little-house-spec.md`)
 - Hiển thị tên kinh và số biến cần niệm
 - Tally counter (gõ số hoặc +1 button)
 - Progress bar tới hoàn thành
@@ -714,15 +734,31 @@ Similar pattern cho:
 
 ---
 
+### 4.15 Volunteer Management (Quản lý Phụng Sự Viên)
+
+| Route | `/admin/he-thong/phung-su-vien` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Contact |
+
+**Nội dung:**
+- Data table: tên, vai trò, Zalo link, active/inactive, sort order
+- "Thêm PSV" button
+- Drag-and-drop sort order
+- Toggle active/inactive
+- Upload avatar
+- Click row → edit detail (modal hoặc inline)
+
+---
+
 ## V. Page Count Summary
 
 | Section | Count |
 |---|---|
-| Public pages | 16 |
+| Public pages | 17 |
 | Auth pages | 5 |
 | Member pages | 14 |
-| Admin pages | 14 |
-| **Total** | **49 pages** |
+| Admin pages | 15 |
+| **Total** | **51 pages** |
 
 ---
 

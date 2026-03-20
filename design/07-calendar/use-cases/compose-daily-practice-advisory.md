@@ -16,7 +16,8 @@
 ## trigger (điểm kích hoạt)
 
 - user mở `Lịch tu học`
-- worker (tiến trình xử lý nền) làm mới `personalPracticeCalendarReadModel`
+- **Phase 1**: sync compute khi route được gọi
+- **Phase 2+**: worker (tiến trình xử lý nền) làm mới `personalPracticeCalendarReadModel`
 - admin publish/update một rule special day
 
 ## preconditions (điều kiện tiên quyết)
@@ -59,9 +60,10 @@
 
 ## async (bất đồng bộ) side-effects
 
-- optional:
+- optional (**Phase 2+** khi outbox bật):
   - append outbox event cho reminder candidate refresh
   - refresh search/read cache nếu rule vừa được publish
+- **Phase 1**: không có async side effects — advisory được compute sync khi route được gọi
 
 ## success result (kết quả thành công)
 

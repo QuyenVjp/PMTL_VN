@@ -125,6 +125,20 @@ Mục tiêu:
 | `GET` | `/qa/search` | `wisdom-qa` + `search` | public |
 | `GET` | `/offline-bundles/:publicId` | `wisdom-qa` | member+ or public, per policy |
 
+## Contact
+
+| Method | Route | Owner | Auth |
+|---|---|---|---|
+| `GET` | `/contact-info` | `contact` | public |
+| `GET` | `/volunteers` | `contact` | public |
+| `GET` | `/admin/contact-info` | `contact` | super-admin |
+| `PATCH` | `/admin/contact-info` | `contact` | super-admin |
+| `GET` | `/admin/volunteers` | `contact` | admin+ |
+| `POST` | `/admin/volunteers` | `contact` | admin+ |
+| `PATCH` | `/admin/volunteers/:id` | `contact` | admin+ |
+| `DELETE` | `/admin/volunteers/:id` | `contact` | admin+ |
+| `PATCH` | `/admin/volunteers/sort` | `contact` | admin+ |
+
 ## Platform / Control Plane
 
 | Method | Route | Owner | Auth |

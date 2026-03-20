@@ -31,7 +31,7 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
      - `approvalStatus`
      - `isHidden`
 3. Async alerts (cảnh báo bất đồng bộ):
-   - admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`
+   - **Phase 2+**: admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`. **Phase 1**: sync hoặc fire-and-forget có log.
 4. Validation (kiểm tra đầu vào):
    - decision payload và reporter metadata phải có runtime schema rõ
 

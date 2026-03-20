@@ -1,27 +1,19 @@
 ---
 name: pmtl-runbook-cms-runtime-errors
-description: PMTL_VN CMS incident runbook. Use when debugging recurring CMS runtime failures around auth, search, monitoring, health checks, or request guards so the agent follows known diagnostics before patching code.
+description: "⛔ DEPRECATED. This skill referenced apps/cms (Payload CMS) runtime which is no longer the target architecture. The project now uses NestJS (apps/api) as backend authority. See AGENTS.md Design-First Direction. Do NOT use this skill for new issues."
 ---
 
-# PMTL Runbook CMS Runtime Errors
+# ⛔ DEPRECATED — PMTL Runbook CMS Runtime Errors
 
-## Read in this order
+> **Status**: Deprecated as of 2026-03-20.
+> **Reason**: Project architecture migrated from Payload CMS (`apps/cms`) to NestJS (`apps/api`).
+> **See**: `design/DECISIONS.md`, `AGENTS.md` Design-First Direction section.
 
-1. `docs/troubleshooting.md`
-2. `docs/runbooks.md`
-3. `apps/cms/src/routes/auth.ts` when the incident is auth-related
-4. `apps/cms/src/services/search.service.ts` when the incident is search-related
+This skill referenced `apps/cms/` file paths that no longer exist in the target architecture.
 
-## Incident approach
-
-- Reproduce or identify the failing endpoint.
-- Check health and logs before changing code.
-- Prefer the documented command path for reindex, monitoring, and rollback.
-- Capture exact failing command, route, and error message in the final note.
-
-## Typical incident buckets
-
-- auth cookie or session mismatches
-- OAuth callback or redirect mismatch
-- search reindex or Meilisearch sync failures
-- monitoring health or worker heartbeat issues
+For runtime incident debugging in the new NestJS backend:
+- Check `apps/api/src/` for route and service files
+- Auth issues: `apps/api/src/modules/auth/`
+- Search issues: `apps/api/src/modules/search/`
+- Health/monitoring: `apps/api/src/platform/health/`
+- Follow `design/baseline/infra.md` for infrastructure components

@@ -1,28 +1,38 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: Xuất bản nội dung và đưa đồng bộ tìm kiếm vào hàng chờ"]
+    subgraph Phase1 ["Phase 1: Sync Search (SQL/API — mặc định)"]
+        P1A["Content document được publish hoặc update"] --> P1B["Owner service chuẩn hóa search fields"]
+        P1B --> P1C["Gọi sync inline search service"]
+        P1C --> P1D["Update SQL tsvector / revalidate cache"]
+        P1D --> P1E["Log kết quả (fire-and-forget nếu lỗi)"]
+    end
+
+    subgraph Phase2 ["Phase 2+: Async Search (Meilisearch — khi feature flag bật)"]
         S1A["Content document được publish hoặc update (xuất bản hoặc cập nhật)"] --> S1B["Owner service chuẩn hóa search fields (các trường tìm kiếm)"]
-        S1B --> S1C["Đưa search-sync job vào queue (hàng chờ)"]
-        S1C --> S1D["Worker nhận job"]
-        S1D --> S1E["Build search document (tạo bản ghi tìm kiếm)"]
+        S1B --> S1C["Append outbox event cho search sync"]
+        S1C --> S1D["Dispatcher phát search-sync job vào queue"]
+        S1D --> S1E["Worker nhận job + build search document"]
         S1E --> S1F["Upsert vào Meilisearch posts index (chỉ mục bài viết)"]
     end
 
-    subgraph Flow2 ["Luồng 2: Tìm kiếm công khai"]
+    subgraph Flow2 ["Luồng 2: Tìm kiếm công khai (cả Phase 1 và 2)"]
         S2A["Web gọi posts search endpoint"] --> S2B["API parse query và limit"]
-        S2B --> S2C{"Meilisearch available? (Meilisearch có sẵn không?)"}
-        S2C -->|"Có"| S2D["Tìm trong search index của posts"]
-        S2C -->|"Không"| S2E["Fallback query qua SQL/API"]
-        S2D --> S2F["Map kết quả sang public DTO"]
-        S2E --> S2F
-        S2F --> S2G["Trả engine marker cùng kết quả"]
+        S2B --> S2C{"Phase nào?"}
+        S2C -->|"Phase 1"| S2E["SQL/API query (tsvector / ILIKE)"]
+        S2C -->|"Phase 2+ (Meilisearch bật)"| S2D{"Meilisearch available?"}
+        S2D -->|"Có"| S2F["Tìm trong search index của posts"]
+        S2D -->|"Không"| S2E
+        S2E --> S2G["Map kết quả sang public DTO"]
+        S2F --> S2G
+        S2G --> S2H["Trả engine marker cùng kết quả"]
     end
 
-    subgraph Flow3 ["Luồng 3: Đánh lại chỉ mục theo lô"]
-        S3A["Biên tập viên gọi reindex endpoint (điểm cuối đánh lại chỉ mục)"] --> S3B["API đọc batch posts"]
+    subgraph Flow3 ["Luồng 3: Đánh lại chỉ mục theo lô (Phase 2+ only)"]
+        S3A["Biên tập viên gọi reindex endpoint"] --> S3B["API đọc batch posts"]
         S3B --> S3C["Đưa nhiều search-sync jobs vào queue"]
         S3C --> S3D["Worker xử lý queue"]
-        S3D --> S3E["Status endpoint phản ánh queue counts và index health (sức khỏe chỉ mục)"]
+        S3D --> S3E["Status endpoint phản ánh queue counts và index health"]
     end
 
-    S1F -.->|"tiếp"| S2A
-    S2G -.->|"tiếp"| S3A
+    P1E -..->|"tiếp"| S2A
+    S1F -..->|"tiếp"| S2A
+    S2H -..->|"chỉ Phase 2+"| S3A

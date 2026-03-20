@@ -2,7 +2,7 @@
 
 ## Purpose
 
-- Trả kết quả tìm kiếm public theo query người dùng, ưu tiên Meilisearch nhưng có fallback (đường dự phòng) qua SQL/API khi engine gặp sự cố.
+- Trả kết quả tìm kiếm public theo query người dùng. **Phase 1**: SQL/API là read path mặc định. **Phase 2+** (khi `search.meilisearch.enabled` feature flag bật): ưu tiên Meilisearch với fallback (đường dự phòng) qua SQL/API khi engine gặp sự cố.
 
 ## owner module (module sở hữu)
 
@@ -27,8 +27,9 @@
 
 ## Read set
 
-- Meilisearch index
-- fallback (đường dự phòng) SQL/API query path
+- **Phase 1**: SQL/API query path (mặc định)
+- **Phase 2+**: Meilisearch index (ưu tiên khi feature flag bật)
+- fallback (đường dự phòng) SQL/API query path (luôn sẵn sàng)
 
 ## write path (thứ tự ghi dữ liệu chuẩn)
 
@@ -65,4 +66,5 @@
 ## Notes for AI/codegen
 
 - Search result là DTO đọc, không phải canonical content record.
-- fallback (đường dự phòng) là đường dự phòng correctness, không phải nhánh mặc định khi engine khỏe.
+- **Phase 1**: SQL/API là nhánh mặc định và duy nhất.
+- **Phase 2+**: khi Meilisearch đã bật và khỏe, nó là nhánh ưu tiên; SQL/API chỉ là fallback correctness.

@@ -30,7 +30,7 @@ Run `scripts/select_playbook.py --task "<user task>"` when the right lane is not
 
 - Keep logging structured with pino at real boundaries.
 - Validate user input and env contracts with Zod.
-- Preserve monorepo boundaries and the Payload 5-file collection pattern.
+- Preserve monorepo boundaries and NestJS module pattern (module + controller + service + dto + entities).
 - Treat verification as part of delivery, not an optional extra.
 - Update docs, skills, and project rules together when conventions change.
 
@@ -39,4 +39,4 @@ Run `scripts/select_playbook.py --task "<user task>"` when the right lane is not
 - `pmtl-production-baseline` for baseline repo rules
 - `pmtl-verify-quality-gate` after meaningful edits
 - `pmtl-verify-auth-flow` and `pmtl-verify-search-sync` for domain-specific checks
-- `pmtl-runbook-cms-runtime-errors` when the task is incident-oriented
+- `pmtl-runbook-docker-dev-recovery` when the task is Docker/infra incident-oriented

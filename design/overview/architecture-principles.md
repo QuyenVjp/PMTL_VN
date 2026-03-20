@@ -31,9 +31,9 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 ### Data & Runtime
 
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
-- `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng.
-- `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination.
-- Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc.
+- **Phase 2+**: `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng — chỉ bật khi side effect đủ chậm hoặc failure cost đủ cao (xem `DECISIONS.md` section 7). Phase 1 dùng sync hoặc fire-and-forget có log.
+- **Deferred**: `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination — chỉ bật khi có measured pain (xem `DECISIONS.md` section 3).
+- **Deferred**: Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc — chỉ bật khi search là core feature và SQL performance không đủ.
 - object storage là đích chuẩn cho media/file trong target phase production.
 - Caddy là reverse proxy và TLS entrypoint.
 - observability chuẩn là metrics + logs + traces.
@@ -251,13 +251,26 @@ Service responsibilities:
 - offline bundle build
 - bilingual and translation mapping
 
+### 10-contact
+
+Collection owners:
+
+- `ContactInfo` (singleton)
+- `Volunteers`
+
+Service responsibilities:
+
+- volunteer CRUD + sort order
+- contact info upsert (singleton pattern)
+- Zalo link validation (regex match)
+
 ## Quy tắc implementation cần giữ nguyên
 
 - Không phá monorepo boundaries:
   - `apps/web`
   - `apps/api`
   - `apps/admin`
-  - `apps/worker`
+  - `apps/worker` **(deferred — chỉ tạo khi outbox/queue đã bật)**
   - `packages/*`
   - `infra/*`
   - `docs/*`
@@ -286,8 +299,8 @@ Service responsibilities:
 - public comments + community posts/comments + guestbook
 - moderation reports + moderation summary sync
 - user-state cho sutra/practice
-- search sync sang Meilisearch + SQL/API fallback
-- push subscriptions + push jobs
+- **Phase 1**: search SQL/API fallback; **Phase 2+**: search sync sang Meilisearch (chỉ khi SQL performance không đủ)
+- push subscriptions + push jobs **(Phase 2+ — cần worker/outbox đã bật)**
 - events + lunar events + overrides
 - vows, life release journal, wisdom retrieval
 
@@ -303,6 +316,6 @@ Future candidate chỉ được thêm vào current scope khi có owner module (m
 
 ## Baseline bổ sung phải giữ
 
-- Boundary runtime phải có schema validation rõ cho request, queue payload, webhook payload, search document và env config.
-- Business event quan trọng phải đi qua outbox trước khi vào execution queue.
+- Boundary runtime phải có schema validation rõ cho request, webhook payload, search document và env config. Khi outbox/queue đã bật (Phase 2+), queue payload cũng phải validate.
+- **Phase 2+**: Business event quan trọng phải đi qua outbox trước khi vào execution queue — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. Phase 1 dùng sync hoặc fire-and-forget có log.
 - Recommendation/semantic retrieval chỉ thêm khi use case rõ; không ép `pgvector` thành mặc định của search.

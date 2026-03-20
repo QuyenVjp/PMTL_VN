@@ -18,7 +18,8 @@
 - event/lunar data thay đổi
 - preference summary thay đổi
 - vow milestone hoặc life-release summary thay đổi
-- replay hoặc recovery khi outbox/worker bị trễ
+- **Phase 2+**: replay hoặc recovery khi outbox/worker bị trễ
+- **Phase 1**: admin manual trigger hoặc sync recompute khi source data thay đổi
 
 ## preconditions (điều kiện tiên quyết)
 
@@ -58,8 +59,9 @@
 
 ## async (bất đồng bộ) side-effects
 
-- nếu flow bật, append outbox event cho reminder candidate rebuild rồi để dispatcher phát execution job
-- reminder candidate layer phải bám cùng nguyên tắc replace-window hoặc prune tương ứng, không giữ advice cũ âm thầm
+- **Phase 2+** (khi outbox bật): append outbox event cho reminder candidate rebuild rồi để dispatcher phát execution job
+- **Phase 2+**: reminder candidate layer phải bám cùng nguyên tắc replace-window hoặc prune tương ứng, không giữ advice cũ âm thầm
+- **Phase 1**: không có async side effects — read model được recompute sync khi route được gọi hoặc admin trigger
 
 ## success result (kết quả thành công)
 

@@ -18,7 +18,8 @@
 
 - subscription canonical record (bản ghi chuẩn gốc) nằm ở `pushSubscriptions`
 - dispatch control-plane (lớp điều phối hệ thống) canonical record (bản ghi chuẩn gốc) nằm ở `pushJobs`
-- gửi push/email thật là async (bất đồng bộ) worker (tiến trình xử lý nền) concern
+- **Phase 2+**: gửi push/email thật là async worker concern — cần `notification.push.enabled` feature flag bật
+- **Phase 1**: subscription và job records được ghi nhận nhưng delivery chưa tự động thực thi
 
 ## Permission baseline
 

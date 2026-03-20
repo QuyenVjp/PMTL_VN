@@ -11,7 +11,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Sẵn sàng | 10 modules đầy đủ contracts, schemas, use-cases |
+| Backend architecture | ✅ Sẵn sàng | 11 modules đầy đủ contracts, schemas, use-cases |
 | Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
@@ -27,7 +27,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `baseline/migration-strategy.md` |
 | Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
-| Skill/tool alignment | ⚠️ Conflict | `.agents/skills/` có 4 skills cũ reference Payload CMS — cần deprecate. 6 SEO/GEO skills mới đã ALIGNED |
+| Skill/tool alignment | ✅ Fixed | Payload CMS skills đã deprecated (`pmtl-scaffold-payload-collection`, `pmtl-runbook-cms-runtime-errors`) hoặc rewrite (`pmtl-vn-architecture`, `pmtl-production-ready`). 6 SEO/GEO skills ALIGNED |
 | OpenAPI spec | ❌ Thiếu | Phase 1 acceptable — auto-gen từ NestJS Swagger decorators |
 
 ---
@@ -69,7 +69,7 @@ Mọi domain module (01-10) đều có:
 
 ### Frontend strategies — ĐẦY ĐỦ
 - SEO: `generateMetadata()`, JSON-LD, sitemap, robots.txt
-- i18n: Phase 1 Vietnamese-only, Phase 2+ `next-intl`
+- Lỗi đã chốt: Vietnamese-only, không dùng i18n framework (xem `DECISIONS.md` section 12)
 - PWA/Offline: Service worker + IndexedDB + delta sync
 - Caching: CDN + ISR + TanStack Query + service worker
 - Ref: `baseline/frontend-architecture.md`
@@ -275,6 +275,10 @@ Bước 11 — Wisdom QA:
   - video_talk_entries
   - offline_bundles → offline_bundle_entries
   - offline_sync_states
+
+Bước 12 — Contact (reference users):
+  - contact_info
+  - volunteers
 ```
 
 ---

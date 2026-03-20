@@ -21,8 +21,8 @@ Mục tiêu là làm rõ:
   - event/job payload
 - Search và notification là downstream module.
 - Moderation là cross-cutting module nhưng không cướp ownership của entity bị report.
-- Business event quan trọng phải đi qua `outbox_events` trước khi được dispatcher phát sang execution queue hoặc downstream handler.
-- Mọi boundary giữa module phải có schema runtime rõ cho request, event payload, queue payload, webhook payload và env contract.
+- **Phase 2+**: Business event quan trọng phải đi qua `outbox_events` trước khi được dispatcher phát sang execution queue hoặc downstream handler — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. **Phase 1**: dùng sync hoặc fire-and-forget có log cho các event tương đương (xem `DECISIONS.md` section 7).
+- Mọi boundary giữa module phải có schema runtime rõ cho request, event payload, webhook payload và env contract. Khi outbox/queue đã bật, queue payload cũng phải validate.
 
 ## Theo module
 
@@ -144,6 +144,20 @@ Mục tiêu là làm rõ:
   - push dispatch
   - email notification job
 
+### Contact
+
+- **Owns**:
+  - `contactInfo` (singleton)
+  - `volunteers`
+- **References**:
+  - identity cho admin actor refs (audit)
+- **Direct calls**:
+  - public contact/volunteer routes
+  - admin CRUD routes
+- **async (bất đồng bộ) side effects**:
+  - **Phase 1**: không có
+  - **Phase 2+**: optional email notification cho admin khi có submission mới
+
 ## Interaction details
 
 | From         | To           | Ownership model                                            | trigger (điểm kích hoạt)                   | Mode                                                      | Side effects                                                            |
@@ -197,7 +211,8 @@ Mục tiêu là làm rõ:
 
 Ghi chú:
 
-- "async job" ở đây luôn nên được hiểu là `canonical write -> outbox_events -> dispatcher -> execution queue -> worker`, không phải request path tự phát queue theo kiểu best effort.
+- **Phase 2+**: "async job" luôn nên được hiểu là `canonical write -> outbox_events -> dispatcher -> execution queue -> worker`, không phải request path tự phát queue theo kiểu best effort.
+- **Phase 1**: khi outbox/queue chưa bật, các side effect tương đương dùng sync inline hoặc fire-and-forget có log — không được im lặng bỏ qua (xem `DECISIONS.md` section 7, `infra.md` section "Async Reliability").
 
 ## Delete / cleanup contracts
 

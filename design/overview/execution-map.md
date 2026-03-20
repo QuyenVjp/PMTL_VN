@@ -16,7 +16,7 @@ Nó trả lời câu hỏi:
 5. Đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
 6. Đọc `10-wisdom-qa/INGESTION_PLAN.md`
 7. Đọc `overview/feature-surface-from-official-sites.md`
-8. Đọc `ops/elderly-ux.md`
+8. Đọc `ui/ELDERLY_UX.md`
 9. Đọc `tracking/audit-policy.md`
 10. Đọc `baseline/sla-slo.md`
 11. Đọc `baseline/security.md`
@@ -204,7 +204,7 @@ Khi đọc module này, hãy nhớ:
 7. Boundary schema và env contract đã được chốt chưa?
 8. Route public đang dùng `publicId`, `slug`, hay session owner?
 9. Thuật ngữ có đúng `overview/terminology.md` chưa?
-10. Có phù hợp `ops/elderly-ux.md` chưa?
+10. Có phù hợp `ui/ELDERLY_UX.md` chưa?
 
 ### Nếu chưa trả lời được
 

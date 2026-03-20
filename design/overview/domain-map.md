@@ -84,6 +84,11 @@ markmap:
 - **Use when (Dùng khi)**: làm bạch thoại, hỏi đáp, authority profile, offline bundle
 - **Reference (Tài liệu chính)**: [module-map.md](../10-wisdom-qa/module-map.md), [INGESTION_PLAN.md](../10-wisdom-qa/INGESTION_PLAN.md)
 
+### 11-contact (Liên hệ & Phụng Sự Viên)
+- **Directory**: [11-contact](../11-contact/)
+- **Use when (Dùng khi)**: làm trang liên hệ, danh sách phụng sự viên, liên hệ qua Zalo
+- **Reference (Tài liệu chính)**: [module-map.md](../11-contact/module-map.md), [contracts.md](../11-contact/contracts.md)
+
 ---
 
 ## Cross-cutting references (Tài liệu xuyên mô-đun)

@@ -1,0 +1,22 @@
+flowchart TD
+    subgraph Flow1 ["Luồng 1: Xem trang liên hệ (public)"]
+        F1A["Guest/Member mở /lien-he"] --> F1B["Web fetch: GET /api/contact-info + GET /api/volunteers"]
+        F1B --> F1C["API đọc contact_info + volunteers WHERE is_active = true ORDER BY sort_order"]
+        F1C --> F1D["Trả DTO public (không có phoneNumber)"]
+        F1D --> F1E["Render: Hero + Thông tin chung + Grid PSV"]
+    end
+
+    subgraph Flow2 ["Luồng 2: Liên hệ qua Zalo"]
+        F2A["Guest/Member nhấn nút Nhắn Zalo trên card PSV"] --> F2B["Mở link Zalo (https://zalo.me/...)"]
+        F2B --> F2C["Chuyển sang app Zalo hoặc Zalo web"]
+    end
+
+    subgraph Flow3 ["Luồng 3: Admin quản lý PSV"]
+        F3A["Admin mở /admin/he-thong/phung-su-vien"] --> F3B["GET /api/admin/volunteers"]
+        F3B --> F3C["DataTable: tên, vai trò, Zalo, active, sort"]
+        F3C --> F3D{"Thao tác"}
+        F3D -->|"Tạo"| F3E["POST /api/admin/volunteers + validate"]
+        F3D -->|"Sửa"| F3F["PATCH /api/admin/volunteers/:id"]
+        F3D -->|"Xóa"| F3G["DELETE /api/admin/volunteers/:id (soft)"]
+        F3D -->|"Sắp xếp"| F3H["PATCH /api/admin/volunteers/sort (batch)"]
+    end

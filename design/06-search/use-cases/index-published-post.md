@@ -2,7 +2,9 @@
 
 ## Purpose
 
-- Đồng bộ một bài viết đã publish từ content owner sang search index theo flow `canonical write → outbox → dispatcher → execution queue → worker`.
+- Đồng bộ một bài viết đã publish từ content owner sang search index.
+  - **Phase 1**: sync inline — content publish trigger gọi trực tiếp search service để update SQL indexes / revalidate. Fire-and-forget có log nếu lỗi.
+  - **Phase 2+** (khi `outbox.enabled` + `search.meilisearch.enabled` bật): flow `canonical write → outbox → dispatcher → execution queue → worker → Meilisearch upsert`.
 
 ## owner module (module sở hữu)
 

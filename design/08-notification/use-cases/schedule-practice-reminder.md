@@ -40,14 +40,16 @@
 1. Resolve target user và reminder preference scope.
 2. Validate reminder payload hoặc downstream signal payload.
 3. Tạo hoặc cập nhật canonical control-plane state trên `pushJobs` hoặc reminder scheduling record tương ứng.
-4. Nếu cần delivery request quan trọng cho lần gửi tiếp theo, append `outbox_events` sau khi control-plane state đã ổn định.
-5. Dispatcher phát execution job cho push/email reminder theo quiet-hours và targeting policy.
+4. **Phase 2+** (khi `outbox.enabled` bật): Nếu cần delivery request quan trọng cho lần gửi tiếp theo, append `outbox_events` sau khi control-plane state đã ổn định.
+5. **Phase 2+**: Dispatcher phát execution job cho push/email reminder theo quiet-hours và targeting policy.
+6. **Phase 1**: reminder state được ghi nhưng delivery chưa thực thi cho đến khi notification feature flag bật. Admin có thể manual trigger nếu cần.
 
 ## async (bất đồng bộ) side-effects
 
-- push reminder dispatch
-- email reminder dispatch nếu channel bật
+- **Phase 2+**: push reminder dispatch
+- **Phase 2+**: email reminder dispatch nếu channel bật
 - recovery path chuẩn là replay outbox hoặc redrive reminder jobs từ control-plane state
+- **Phase 1**: side effects deferred — chỉ ghi reminder state, delivery chưa thực thi
 
 ## success result (kết quả thành công)
 

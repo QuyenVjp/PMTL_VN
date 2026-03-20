@@ -32,7 +32,7 @@
 - submit post/comment/guestbook phải ghi canonical record (bản ghi chuẩn gốc) vào collection owner trước
 - moderation report đi vào `moderationReports`, không nhét lifecycle report vào entity community
 - entity community chỉ giữ summary moderation/read model (mô hình dữ liệu đọc) nếu flow cần
-- notification hoặc moderation alert quan trọng nên đi qua `outbox_events`
+- **Phase 2+**: notification hoặc moderation alert quan trọng nên đi qua `outbox_events`. **Phase 1**: dùng sync hoặc fire-and-forget có log.
 - request payload, abuse metadata, webhook/proxy metadata và downstream event payload phải có schema runtime rõ
 
 ## Public response rules

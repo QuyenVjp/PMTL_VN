@@ -1,0 +1,60 @@
+// Contact Module - logical schema (Lược đồ logic Mô-đun Liên hệ) aligned with current repo truth (khớp với thực trạng repo)
+
+Project contact_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Liên hệ & Phụng Sự Viên (Contact module) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - contact_info: Singleton chứa thông tin liên hệ chung (email, hotline, Zalo OA, fanpage).
+  - volunteers: Danh sách phụng sự viên hiển thị công khai, mỗi người có link Zalo riêng.
+  Liên hệ qua Zalo link trực tiếp — không có form liên hệ.
+  '''
+}
+
+// Bảng tham chiếu — schema chuẩn nằm ở 01-identity/schema.dbml
+Table users {
+  id uuid [pk, note: "ID người dùng (tham chiếu)"]
+  public_id varchar [unique, note: "ID công khai"]
+  full_name varchar [note: "Họ và tên"]
+}
+
+Table contact_info {
+  id uuid [pk, note: "Khóa chính — singleton (chỉ 1 record)"]
+  email varchar(320) [note: "Email liên hệ chính"]
+  phone varchar(20) [note: "Hotline liên hệ"]
+  address text [note: "Địa chỉ vật lý (nếu có)"]
+  fanpage_url text [note: "Link Facebook fanpage"]
+  group_url text [note: "Link Facebook group"]
+  zalo_oa_url text [note: "Link Zalo Official Account"]
+  extra_links jsonb [note: "Các liên kết khác (key-value)"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+  updated_by_user_id uuid [ref: > users.id, note: "Admin cuối cùng chỉnh sửa"]
+}
+
+Table volunteers {
+  id uuid [pk, note: "Khóa chính phụng sự viên"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  display_name varchar(100) [not null, note: "Tên hiển thị"]
+  role varchar(100) [not null, default: 'Phụng sự viên', note: "Vai trò/chức danh"]
+  avatar_url text [note: "URL ảnh đại diện"]
+  zalo_link text [note: "Link Zalo cá nhân (https://zalo.me/...)"]
+  phone_number varchar(20) [note: "SĐT — chỉ admin thấy, không trả về public API"]
+  bio text [note: "Giới thiệu ngắn (max 500 chars)"]
+  sort_order int [not null, default: 0, note: "Thứ tự hiển thị (ascending)"]
+  is_active bool [not null, default: true, note: "Có hiển thị trên public hay không"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (is_active, sort_order) [name: 'idx_volunteers_active_sort']
+  }
+}
+
+TableGroup "Contact Core" [note: "Nhóm Liên hệ chính: thông tin liên hệ, phụng sự viên"] {
+  contact_info
+  volunteers
+}
+
+TableGroup "Contact References" [note: "Bảng tham chiếu dùng chung"] {
+  users
+}
