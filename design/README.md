@@ -37,6 +37,8 @@ Nếu bạn là sinh viên và muốn hiểu nhanh (If you are a student and wan
 
 26. các module còn lại (remaining modules)
 
+- nếu bạn đang mới học VPS/production theo kiểu thực chiến, đọc thêm `design/infra/STUDENT_VPS_PRODUCTION_ROADMAP.md`
+
 ## Mỗi loại file dùng để làm gì? (What is each file type for?)
 
 ### `.md` (Markdown)

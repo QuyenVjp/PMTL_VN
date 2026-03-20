@@ -22,13 +22,13 @@ Mục tiêu:
 
 - `Postgres down` (PostgreSQL ngừng hoạt động)
 - `Meilisearch down` (Search engine ngừng hoạt động)
-- `Redis/worker (tiến trình xử lý nền) down` (Redis hoặc worker (tiến trình xử lý nền) queue (hàng đợi xử lý) ngừng hoạt động)
+- `Valkey/worker (tiến trình xử lý nền) down` (Valkey hoặc worker (tiến trình xử lý nền) queue (hàng đợi xử lý) ngừng hoạt động)
 - `media storage down` (local volume/CDN/media path lỗi)
 - `object storage/scan fail` (S3-compatible storage hoặc bước scan/quarantine lỗi)
 
 ## Matrix theo module
 
-| Module | Postgres down | Meilisearch down | Redis/worker (tiến trình xử lý nền) down | media storage down | object storage / scan fail |
+| Module | Postgres down | Meilisearch down | Valkey/worker (tiến trình xử lý nền) down | media storage down | object storage / scan fail |
 |---|---|---|---|---|---|
 | Identity | `fail closed` | `continue` | `degrade` nếu email reset chậm | `degrade` avatar/media | `continue` nếu không có upload mới |
 | Content | `fail closed` cho canonical read/write | `continue` với public read, `degrade` search | `degrade` vì reindex/revalidation/notification trễ | `degrade` hoặc `fail partial` với bài có media | `fail closed` cho publish file mới; public file cũ còn thì continue |
@@ -46,7 +46,7 @@ Mục tiêu:
 ### 1. `Postgres down`
 
 #### Nguyên tắc
-- Postgres là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)` nên current scope không hứa hẹn `read-only mode` giả từ Redis/Meilisearch
+- Postgres là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)` nên current scope không hứa hẹn `read-only mode` giả từ Valkey/Meilisearch
 - các flow cần correctness phải `fail closed`
 
 #### Ảnh hưởng
@@ -55,7 +55,7 @@ Mục tiêu:
 - search fallback (đường dự phòng) qua Payload cũng không cứu được nếu DB chết
 
 #### Rule thiết kế
-- không dùng Redis hoặc Meilisearch để giả làm canonical read thay Postgres
+- không dùng Valkey/Redis-compatible store hoặc Meilisearch để giả làm canonical read thay Postgres
 - public shell/UI có thể hiện maintenance mode (chế độ bảo trì), nhưng không được bịa dữ liệu hiện thời
 
 #### Recovery path
@@ -82,7 +82,7 @@ Mục tiêu:
 - replay search sync jobs
 - nếu cần, chạy batch reindex
 
-### 3. `Redis/worker (tiến trình xử lý nền) down`
+### 3. `Valkey/worker (tiến trình xử lý nền) down`
 
 #### Nguyên tắc
 - canonical write không được phụ thuộc hoàn toàn vào queue (hàng đợi xử lý)
@@ -102,7 +102,7 @@ Mục tiêu:
 - status/health phải phản ánh cả outbox lag và số event retry/fail
 
 #### Recovery path
-- restart Redis/worker (tiến trình xử lý nền)
+- restart Valkey/worker (tiến trình xử lý nền)
 - replay pending jobs nếu có
 - reindex/manual dispatch nếu cần
 
@@ -166,7 +166,7 @@ Mục tiêu:
 
 ### "Postgres chết thì có read-only mode không?"
 - Không trong current scope.
-- Lý do: Redis và Meilisearch không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
+- Lý do: Valkey/Redis-compatible store và Meilisearch không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
 
 ### "worker (tiến trình xử lý nền) chết thì dữ liệu có lệch không?"
 - Có thể trễ projection/job, nhưng canonical write không được mất.

@@ -10,6 +10,7 @@ Tài liệu này giải thích kiến trúc hạ tầng chuẩn của PMTL_VN th
 
 Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
 - `design/infra/INFRA_DEEP_DIVE.md`
+- `design/infra/STUDENT_VPS_PRODUCTION_ROADMAP.md` nếu anh đang học production từ góc nhìn một người mới vận hành VPS bằng Docker Compose
 
 ---
 
@@ -34,7 +35,7 @@ Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
 |---|---|---|---|
 | **Postgres** | source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) | Lưu dữ liệu canonical | Reliable, ACID, backup rõ |
 | **`outbox_events` trong Postgres** | Transactional event log | Đảm bảo side effect quan trọng không bị rơi sau canonical write | Reliable handoff, replay, auditability |
-| **Redis** | Cache + execution queue (hàng đợi thực thi) | Tăng tốc read và chạy workload nền | Fast reads, async execution |
+| **Valkey** (`Redis-compatible`) | Cache + execution queue (hàng đợi thực thi) | Tăng tốc read và chạy workload nền | Fast reads, async execution |
 | **Meilisearch** | Public search engine | Full-text, typo tolerance, facets | Search nhanh và thân thiện |
 | **Storage abstraction + Local Disk adapter** | Current media/file runtime cho 1 VPS | Khớp hạ tầng hiện tại nhưng không khóa logic vào local path | Rẻ, dễ chạy, dễ nâng cấp |
 | **S3-compatible Object Storage** (target phase) | Binary asset storage nâng cấp | Tách file/media khỏi app runtime khi cần scale/backup tốt hơn | Backup dễ, scan/quarantine rõ |
@@ -50,7 +51,7 @@ PgBouncer
 Postgres
 
 Apps cũng truy vấn thêm:
-  - Redis (cache + execution queue)
+  - Valkey / Redis-compatible store (cache + execution queue)
   - Meilisearch (public search)
   - Storage adapter (current local disk, target S3-compatible)
 ```
@@ -135,7 +136,7 @@ Log sink / console / future log pipeline
 |---------|----------|---|
 | **`outbox_events`** | Ghi business event trong cùng transaction với canonical write | Không mất event quan trọng |
 | **Outbox dispatcher** | Poll event chưa xử lý, phát sang execution queue hoặc handle trực tiếp | Retry, backoff, replay rõ |
-| **Execution queue** (`BullMQ` preferred) | Chạy workload nền như reindex, notify, email, webhook | Tách execution khỏi request path |
+| **Execution queue** (`BullMQ` preferred) | Chạy workload nền như reindex, notify, email, webhook trên nền `Valkey` / Redis-compatible store | Tách execution khỏi request path |
 | **Reconciliation / replay jobs** | Soát drift giữa Postgres và downstream systems | Có recovery path chuẩn |
 
 **Chuẩn flow cần nhớ**:
@@ -157,7 +158,7 @@ Mark processed / failed / retryable
 - webhook/revalidation
 
 **Không nên dùng trực tiếp cho business event quan trọng**:
-- Redis pub/sub thuần
+- Redis/Valkey pub/sub thuần
 - fire-and-forget webhook từ request path
 - chỉ enqueue queue mà không có transactional handoff
 
@@ -190,7 +191,7 @@ Mark processed / failed / retryable
 Cho current phase của PMTL_VN, baseline thực dụng là:
 
 - `single VPS`
-- `Postgres + PgBouncer + Redis + execution queue + Meilisearch + Caddy`
+- `Postgres + PgBouncer + Valkey (Redis-compatible) + execution queue + Meilisearch + Caddy`
 - `BullMQ` là lựa chọn nên ưu tiên cho execution queue implementation
 - media/file dùng `local disk storage adapter`
 - binary metadata nằm trong Postgres
@@ -202,7 +203,7 @@ Những thứ nên làm ngay thay vì over-engineer:
 - storage abstraction
 - outbox pattern hoàn chỉnh
 - Zod boundary validation
-- Redis rate limit ở app layer
+- Valkey/Redis-compatible rate limit ở app layer
 - audit logs
 - `/health/*` + `/metrics`
 - feature flags đơn giản
@@ -222,9 +223,9 @@ Route / → apps/web
   ↓
 Web gọi CMS/BFF để lấy dữ liệu
   ↓
-Kiểm tra Redis cache
+Kiểm tra cache `Valkey` / Redis-compatible
   ✓ Hit: trả về nhanh
-  ✗ Miss: query Postgres → ghi Redis → trả về
+  ✗ Miss: query Postgres → ghi cache → trả về
 ```
 
 **Lợi ích của caching**: giảm tải read-path và giữ UX mượt hơn.
@@ -311,7 +312,7 @@ Xác định bottleneck thật
 | Component | Impact (Ảnh hưởng) | Recovery Action | Estimated Time |
 |-----------|-------------------|-----------------|----------------|
 | Postgres | Down toàn hệ thống | Restart hoặc restore backup | 5-30 phút |
-| Redis | Cache chậm, execution queue bị nghén | Restart; outbox giữ pending events để replay | < 1 phút |
+| Valkey / Redis-compatible store | Cache chậm, execution queue bị nghén | Restart; outbox giữ pending events để replay | < 1 phút |
 | Meilisearch | Search degrade / fallback | Rebuild index, replay sync, batch reindex | 5-30 phút |
 | Local Storage | Upload mới fail, asset serve có thể degrade | Khôi phục volume/path, retry upload/serve | 5-30 phút |
 | Object Storage (target) | Upload mới fail, asset serve có thể degrade | Retry upload/serve, fail closed cho upload mới | 5-30 phút |
@@ -329,10 +330,10 @@ Xác định bottleneck thật
 
 - [ ] Cấu hình backup Postgres ngoài máy chủ app.
 - [ ] Chốt schema `outbox_events`, retry policy, replay policy, dead-letter policy.
-- [ ] Chốt `BullMQ` làm execution queue implementation mặc định nếu stack vẫn là Redis-based jobs.
+- [ ] Chốt `Valkey` làm in-memory store ưu tiên và `BullMQ` làm execution queue implementation mặc định.
 - [ ] Chốt storage abstraction, local adapter config, và metadata schema cho `media_assets`.
 - [ ] Chốt Zod boundary schemas và env contracts cho web/cms/worker.
-- [ ] Chốt Redis app-layer rate limit cho auth/search/write/upload.
+- [ ] Chốt Valkey/Redis-compatible app-layer rate limit cho auth/search/write/upload.
 - [ ] Chốt `audit_logs` và `feature_flags` schema/helper.
 - [ ] Chốt `/health/live`, `/health/ready`, `/health/startup`, `/metrics`.
 - [ ] Thiết lập Prometheus + Grafana + Alertmanager.

@@ -13,7 +13,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 - Core runtime giữ nguyên:
   - `Postgres`
   - `PgBouncer`
-  - `Redis`
+  - `Valkey` (`Redis-compatible`)
   - `execution queue`
   - `Meilisearch`
   - `Caddy`
@@ -25,7 +25,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 ## Canonical rules
 
 - PostgreSQL là source of truth duy nhất cho dữ liệu ứng dụng.
-- Redis chỉ giữ cache, execution queue, rate-limit counters, coordination state.
+- `Valkey` (`Redis-compatible`) chỉ giữ cache, execution queue, rate-limit counters, coordination state.
 - Meilisearch chỉ là search projection.
 - Business event quan trọng phải đi qua:
   - `canonical write`
@@ -100,7 +100,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 ## Preferred tooling choices
 
 ### Queue / background jobs
-- Giữ baseline `Redis + execution queue`.
+- Giữ baseline `Valkey` (`Redis-compatible`) + execution queue.
 - Preferred implementation là `BullMQ` thay vì hand-rolled queue semantics.
 - `Temporal` không phải baseline cho current phase:
   - quá nặng cho `single VPS`
@@ -152,7 +152,8 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 
 | Tool / option | Status | Ghi chú ngắn |
 |---|---|---|
-| `BullMQ` | accepted | Queue implementation ưu tiên trên nền `Redis + execution queue` hiện tại |
+| `Valkey` | accepted | In-memory store ưu tiên cho cache, rate-limit, execution queue; giữ compatibility với hệ Redis |
+| `BullMQ` | accepted | Queue implementation ưu tiên trên nền `Valkey`/`Redis-compatible execution queue` hiện tại |
 | `Meilisearch` | accepted | Giữ làm public search engine chính |
 | `Payload auth` | accepted | Auth authority duy nhất |
 | `Cloudflare` trước `Caddy` | accepted | Edge option tốt cho CDN, SSL, DNS, basic protection |
@@ -163,6 +164,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 
 | Tool / option | Status | Ghi chú ngắn |
 |---|---|---|
+| `Redis OSS/managed Redis` | deferred | Vẫn tương thích, nhưng current preference nghiêng về `Valkey` cho OSS posture |
 | `OpenTelemetry + Tempo` | deferred | Chỉ bật khi thật sự cần traces; ưu tiên managed backend nếu cần sớm |
 | `Grafana Cloud` | deferred | Hợp nếu muốn giảm tự host observability stack |
 | `pgvector` | deferred | Chỉ thêm khi related-content / recommendation đã chốt |
@@ -174,7 +176,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 
 | Tool / option | Status | Ghi chú ngắn |
 |---|---|---|
-| Hand-rolled Redis queue semantics | rejected | Không ưu tiên tự build khi `BullMQ` đã giải bài toán tốt hơn |
+| Hand-rolled Redis/Valkey queue semantics | rejected | Không ưu tiên tự build khi `BullMQ` đã giải bài toán tốt hơn |
 | `Temporal` | rejected | Quá nặng cho `single VPS` current phase |
 | `Typesense` / `Algolia` thay `Meilisearch` ngay | rejected | Chưa có lý do đủ mạnh để đổi search stack hiện tại |
 | `Clerk` / `Supabase Auth` / `Auth.js` thay `Payload auth` | rejected | Phá auth authority đã chốt |
@@ -182,7 +184,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
 ## App-layer runtime controls
 
 ### Rate limit
-- Rate limit phải có ở app layer và dùng Redis.
+- Rate limit phải có ở app layer và dùng `Valkey` hoặc store `Redis-compatible`.
 - Tối thiểu cho:
   - login
   - register
@@ -199,7 +201,7 @@ Mục tiêu là giảm việc phải nhảy qua quá nhiều file chỉ để tr
   - `/health/startup`
 - `ready` phải check tối thiểu:
   - Postgres
-  - Redis
+  - `Valkey` / `Redis-compatible store`
   - Meilisearch
 
 ### Metrics

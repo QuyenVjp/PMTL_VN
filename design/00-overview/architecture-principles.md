@@ -28,7 +28,7 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 ### Data & Runtime
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
 - `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng.
-- Redis chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination.
+- `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination.
 - Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc.
 - object storage là đích chuẩn cho media/file trong production.
 - Caddy là reverse proxy và TLS entrypoint.
@@ -264,7 +264,7 @@ Service responsibilities:
 - giả định `single posts table`
 - auth layer thứ hai làm authority riêng
 - nhét bookmark, progress, practice logs vào content module
-- lấy Redis hoặc Meilisearch làm source of truth cho UI cần correctness cao
+- lấy `Valkey`/Redis-compatible store hoặc Meilisearch làm source of truth cho UI cần correctness cao
 
 ## Current scope vs future candidates
 
