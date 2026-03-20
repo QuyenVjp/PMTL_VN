@@ -106,11 +106,19 @@ PMTL_VN Content Hub
 
 | Trang | Route | Keyword |
 |---|---|---|
-| Phóng sanh là gì | `/huong-dan/phong-sanh/la-gi` | `phóng sanh là gì` |
-| Lưu ý khi phóng sanh | `/huong-dan/phong-sanh/luu-y` | `lưu ý khi phóng sanh` |
-| Các loài nên phóng sanh | `/huong-dan/phong-sanh/cac-loai` | `nên phóng sanh con gì` |
-| Địa điểm phóng sanh | `/huong-dan/phong-sanh/dia-diem` | `địa điểm phóng sanh` |
+| Nghi thức phóng sanh cơ bản | `/huong-dan/phong-sanh/nghi-thuc-co-ban` | `nghi thức phóng sanh` |
+| Mẫu khấn cho bản thân | `/huong-dan/phong-sanh/cho-ban-than` | `mẫu khấn phóng sanh cho bản thân` |
+| Mẫu khấn cho người khác | `/huong-dan/phong-sanh/cho-nguoi-khac` | `mẫu khấn phóng sanh cho người khác` |
+| Lưu ý và chuẩn bị | `/huong-dan/phong-sanh/luu-y-va-chuan-bi` | `lưu ý khi phóng sanh` |
+| Xử lý khi có loài vật tử vong | `/huong-dan/phong-sanh/xu-ly-khi-co-loai-vat-tu-vong` | `phóng sanh có con vật chết phải làm sao` |
+| Hỏi đáp | `/huong-dan/phong-sanh/hoi-dap` | `hỏi đáp phóng sanh` |
 | Ghi nhật ký phóng sanh | `/phong-sanh` (member) | — |
+
+**Liên kết internal**:
+- Pillar → tất cả guides P0
+- `nghi-thuc-co-ban` → `cho-ban-than` và `cho-nguoi-khac`
+- `luu-y-va-chuan-bi` → `nghi-thuc-co-ban`
+- tất cả guides → `/phong-sanh/ghi-lai` (CTA thực hành)
 
 ---
 

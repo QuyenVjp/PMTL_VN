@@ -7,15 +7,15 @@
 
 ## 1. Mapping nguồn thực tế -> route inventory
 
-| Nguồn / pattern | Route PMTL đề xuất | Priority |
+| Nguồn / pattern | Route PMTL đề xuất | Priority | Canonical doc |
 |---|---|---|
-| Nghi thức phóng sanh cơ bản | `/huong-dan/phong-sanh/nghi-thuc-co-ban` | P0 |
-| Mẫu khấn cho bản thân | `/huong-dan/phong-sanh/cho-ban-than` | P0 |
-| Mẫu khấn cho người khác | `/huong-dan/phong-sanh/cho-nguoi-khac` | P0 |
-| Lưu ý và checklist chuẩn bị | `/huong-dan/phong-sanh/luu-y-va-chuan-bi` | P0 |
-| Xử lý khi có loài vật tử vong | `/huong-dan/phong-sanh/xu-ly-khi-co-loai-vat-tu-vong` | P0 |
-| FAQ / hỏi đáp | `/huong-dan/phong-sanh/hoi-dap` | P1 |
-| PDF / checklist in ra | download panel trong hub/detail pages | P1 |
+| Nghi thức phóng sanh cơ bản | `/huong-dan/phong-sanh/nghi-thuc-co-ban` | P0 | `life-release-guide-nghi-thuc-co-ban.md` |
+| Mẫu khấn cho bản thân | `/huong-dan/phong-sanh/cho-ban-than` | P0 | `life-release-guide-cho-ban-than.md` |
+| Mẫu khấn cho người khác | `/huong-dan/phong-sanh/cho-nguoi-khac` | P0 | `life-release-guide-cho-nguoi-khac.md` |
+| Lưu ý và checklist chuẩn bị | `/huong-dan/phong-sanh/luu-y-va-chuan-bi` | P0 | `life-release-guide-luu-y-va-chuan-bi.md` |
+| Xử lý khi có loài vật tử vong | `/huong-dan/phong-sanh/xu-ly-khi-co-loai-vat-tu-vong` | P0 | `life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md` |
+| FAQ / hỏi đáp | `/huong-dan/phong-sanh/hoi-dap` | P1 | `life-release-guide-hoi-dap.md` |
+| PDF / checklist in ra | download panel trong hub/detail pages | P1 | derived from canonical guides |
 
 ---
 
@@ -225,3 +225,4 @@ Không nên chỉ nhét raw rich-text.
 - species-specific counts phải có matrix riêng
 - journal không lưu full script; chỉ giữ refs
 - warning đạo đức phải đứng sớm, không để cuối bài
+- P0 guides phải có file canonical riêng; admin/editor không publish chỉ dựa vào inventory này

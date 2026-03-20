@@ -134,6 +134,12 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [daily-practice-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/daily-practice-content-inventory.md) | Inventory canonical cho groups, guides, presets, FAQ, downloads |
 | [life-release-experience-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-experience-architecture.md) | Kiến trúc public/admin/journal bridge cho Phóng Sanh |
 | [life-release-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-content-inventory.md) | Inventory canonical cho nghi thức, variants, warnings, FAQ, downloads của Phóng Sanh |
+| [life-release-guide-nghi-thuc-co-ban.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-nghi-thuc-co-ban.md) | Canonical guide cho route nghi thức cơ bản của Phóng Sanh |
+| [life-release-guide-cho-ban-than.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-cho-ban-than.md) | Canonical guide cho variant Phóng Sanh hồi hướng cho bản thân |
+| [life-release-guide-cho-nguoi-khac.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-cho-nguoi-khac.md) | Canonical guide cho variant Phóng Sanh hồi hướng cho người khác |
+| [life-release-guide-luu-y-va-chuan-bi.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-luu-y-va-chuan-bi.md) | Checklist, guardrails, và warning đạo đức cho Phóng Sanh |
+| [life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md) | Guide nhạy cảm cho flow phát sinh khi có loài vật tử vong |
+| [life-release-guide-hoi-dap.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-hoi-dap.md) | FAQ seed cho Phóng Sanh |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
 ### UI/UX design (6 files)

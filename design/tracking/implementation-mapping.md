@@ -93,6 +93,12 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `02-content/use-cases/publish-little-house-guide.md` | Write-path chuẩn để publish guide Ngôi Nhà Nhỏ |
 | `02-content/life-release-experience-architecture.md` | Kiến trúc content/admin/journal bridge cho Phóng Sanh |
 | `02-content/life-release-content-inventory.md` | Inventory canonical cho nghi thức, variants, warnings, FAQ, downloads của Phóng Sanh |
+| `02-content/life-release-guide-nghi-thuc-co-ban.md` | Canonical content cho route nghi thức cơ bản của Phóng Sanh |
+| `02-content/life-release-guide-cho-ban-than.md` | Canonical content cho variant Phóng Sanh hồi hướng cho bản thân |
+| `02-content/life-release-guide-cho-nguoi-khac.md` | Canonical content cho variant Phóng Sanh hồi hướng cho người khác |
+| `02-content/life-release-guide-luu-y-va-chuan-bi.md` | Canonical content cho checklist, warning, và preparation guide của Phóng Sanh |
+| `02-content/life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md` | Canonical content cho flow xử lý phát sinh có species-specific counts |
+| `02-content/life-release-guide-hoi-dap.md` | FAQ seed và support content cho Phóng Sanh |
 | `02-content/use-cases/publish-life-release-guide.md` | Write-path chuẩn để publish guide Phóng Sanh |
 | `09-vows-merit/use-cases/create-assisted-life-release-entry.md` | Write-path assisted entry cho life release journal |
 | `11-contact/use-cases/update-contact-info.md` | Write-path cho singleton contact info |
