@@ -82,7 +82,7 @@ markmap:
 ### 10-wisdom-qa (Trí tuệ và hỏi đáp)
 - **Directory**: [10-wisdom-qa](../10-wisdom-qa/)
 - **Use when (Dùng khi)**: làm bạch thoại, hỏi đáp, authority profile, offline bundle
-- **Reference (Tài liệu chính)**: [module-map.md](../10-wisdom-qa/module-map.md), [INGESTION_PLAN.md](../10-wisdom-qa/INGESTION_PLAN.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../10-wisdom-qa/module-map.md), [INGESTION_PLAN.md](../10-wisdom-qa/INGESTION_PLAN.md), [baihua-audiobook-text-first-architecture.md](../10-wisdom-qa/baihua-audiobook-text-first-architecture.md), [baihua-audiobook-ingestion-inventory.md](../10-wisdom-qa/baihua-audiobook-ingestion-inventory.md), [ingest-baihua-audiobook-source.md](../10-wisdom-qa/use-cases/ingest-baihua-audiobook-source.md)
 
 ### 11-contact (Liên hệ & Phụng Sự Viên)
 - **Directory**: [11-contact](../11-contact/)

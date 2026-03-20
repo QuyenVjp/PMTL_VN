@@ -3,6 +3,9 @@
 ## Owner data dự kiến
 
 - `wisdomEntries`
+- `baihuaBooks`
+- `baihuaBookEntries`
+- `baihuaAudioTracks`
 - `qaEntries`
 - `offlineBundles`
 - `audioTalkEntries`
@@ -49,6 +52,11 @@
   - `khai thị`
   - `Phật ngôn Phật ngữ`
   - `bài pháp hội`
+- `Bạch thoại audiobook` phải support:
+  - book selector
+  - chapter ordering
+  - full-book audio ref
+  - chapter-level original text + translated text
 - QA entry nên có:
   - vấn đề chính
   - từ khóa alias
@@ -60,6 +68,15 @@
   - practice rule extraction nếu đây là bài có rule thực hành cụ thể
 - publish/search/offline-bundle refresh signal quan trọng nên đi qua `outbox_events`
 - ingest payload, publish payload, search payload, bundle-manifest payload và env/runtime config phải có schema runtime rõ
+
+## Audiobook-specific routes
+
+- `GET /api/wisdom/baihua/books`
+- `GET /api/wisdom/baihua/books/:bookSlug`
+- `GET /api/wisdom/baihua/books/:bookSlug/chapters/:chapterNumber`
+- `POST /api/admin/wisdom/baihua/books/import-source`
+- `PATCH /api/admin/wisdom/baihua/chapters/:publicId/translation`
+- `POST /api/admin/wisdom/baihua/chapters/:publicId/publish`
 
 ## Notes for AI/codegen
 

@@ -103,6 +103,9 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `02-content/media-library-content-inventory.md` | Inventory canonical cho hub, collections, featured slots, admin workspace của thư viện pháp môn |
 | `02-content/use-cases/publish-media-library-collection.md` | Write-path chuẩn để publish media collections |
 | `02-content/use-cases/publish-life-release-guide.md` | Write-path chuẩn để publish guide Phóng Sanh |
+| `10-wisdom-qa/baihua-audiobook-text-first-architecture.md` | Kiến trúc text-first cho nguồn audiobook Bạch thoại theo sách / chương / audio companion |
+| `10-wisdom-qa/baihua-audiobook-ingestion-inventory.md` | Inventory các lớp dữ liệu cần ingest từ source audiobook |
+| `10-wisdom-qa/use-cases/ingest-baihua-audiobook-source.md` | Write-path chuẩn để nhập source audiobook vào book/chapter records |
 | `09-vows-merit/use-cases/create-assisted-life-release-entry.md` | Write-path assisted entry cho life release journal |
 | `11-contact/use-cases/update-contact-info.md` | Write-path cho singleton contact info |
 | `11-contact/use-cases/manage-volunteer-directory.md` | Write-path cho CRUD + sort phụng sự viên |

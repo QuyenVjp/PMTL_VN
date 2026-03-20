@@ -209,8 +209,14 @@ Mục tiêu:
 |---|---|---|---|
 | `GET` | `/wisdom/entries` | `wisdom-qa` | public |
 | `GET` | `/wisdom/entries/:publicId` | `wisdom-qa` | public |
+| `GET` | `/wisdom/baihua/books` | `wisdom-qa` | public |
+| `GET` | `/wisdom/baihua/books/:bookSlug` | `wisdom-qa` | public |
+| `GET` | `/wisdom/baihua/books/:bookSlug/chapters/:chapterNumber` | `wisdom-qa` | public |
 | `GET` | `/qa/search` | `wisdom-qa` + `search` | public |
 | `GET` | `/offline-bundles/:publicId` | `wisdom-qa` | member+ or public, per policy |
+| `POST` | `/admin/wisdom/baihua/books/import-source` | `wisdom-qa` | admin+ |
+| `PATCH` | `/admin/wisdom/baihua/chapters/:publicId/translation` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/baihua/chapters/:publicId/publish` | `wisdom-qa` | admin+ |
 
 ## Contact
 

@@ -18,6 +18,7 @@ initialExpandLevel: 3
 
 - hỗ trợ tra cứu nhanh lời dạy chính thống
 - hỗ trợ đọc/nghe `Bạch thoại Phật pháp`
+- hỗ trợ `Bạch thoại audiobook` theo cấu trúc sách / chương / track
 - hỗ trợ tìm câu trả lời theo vấn đề đời sống, không cần AI tự bịa
 - hỗ trợ `khai thị`, `Phật ngôn Phật ngữ`, `Phật học vấn đáp`
 - hỗ trợ audio/video/offline cho người lớn tuổi
@@ -38,6 +39,13 @@ initialExpandLevel: 3
   - `source provenance (tầng nguồn gốc dữ liệu)`
   - `ảnh chụp / screenshot nguồn`
   - `review status (trạng thái kiểm duyệt)`
+
+### Baihua audiobook model
+
+- metadata cấp sách
+- danh sách chương theo thứ tự
+- full-book audio hoặc chapter audio refs
+- translation workflow `text-first`
 
 ### QA entries
 
@@ -112,6 +120,7 @@ initialExpandLevel: 3
 
 - nghe lại chương trình
 - mở audio Bạch thoại
+- mở `Bạch thoại audiobook` theo sách / chương
 - mở video khai thị
 - tải bundle offline
 - ưu tiên font lớn, nút rõ, ít thao tác
@@ -156,6 +165,7 @@ initialExpandLevel: 3
 - retrieval-first: tra đúng nguồn trước
 - không dùng AI sinh lời giải mới
 - audio/video là first-class learning surface, không phải phần phụ
+- audiobook source có text thì phải ingest chapter text trước, audio sau
 - offline là nhu cầu thật, không phải nice-to-have
 - bài song ngữ `gốc + dịch` là first-class format, không phải ghi chú phụ
 - canonical source record đi trước; search/bundle/reminder signal đi sau qua outbox

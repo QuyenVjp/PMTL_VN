@@ -17,6 +17,12 @@ Enum wisdom_source_type {
   program_video
 }
 
+Enum baihua_book_kind {
+  baihua_book
+  baihua_video_discourse
+  radio_lecture
+}
+
 Enum source_provenance_type {
   official_origin
   official_mirror
@@ -66,6 +72,52 @@ Table wisdom_entries {
   speaker varchar(160)
   is_official boolean [not null, default: true]
   published_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table baihua_books {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  slug varchar(160) [not null, unique]
+  source_url varchar(512) [not null]
+  source_site_label varchar(160)
+  source_provenance source_provenance_type [not null, default: 'official_origin']
+  book_kind baihua_book_kind [not null]
+  source_book_key varchar(160) [not null, unique]
+  title_original varchar(255) [not null]
+  title_vietnamese varchar(255)
+  description_vietnamese text
+  cover_image_ref varchar(160)
+  full_book_audio_url varchar(512)
+  review_status review_status_type [not null, default: 'source_verified']
+  published_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table baihua_book_entries {
+  id uuid [pk]
+  baihua_book_id uuid [not null, ref: > baihua_books.id]
+  wisdom_entry_id uuid [not null, ref: > wisdom_entries.id]
+  chapter_number int [not null]
+  source_chapter_label varchar(255)
+
+  Indexes {
+    (baihua_book_id, wisdom_entry_id) [unique]
+    (baihua_book_id, chapter_number) [unique]
+  }
+}
+
+Table baihua_audio_tracks {
+  id uuid [pk]
+  public_id varchar(32) [not null, unique]
+  baihua_book_id uuid [ref: > baihua_books.id]
+  wisdom_entry_id uuid [ref: > wisdom_entries.id]
+  track_type varchar(32) [not null, note: "full_book_mp3 | chapter_mp3 | future_vi_voice"]
+  source_audio_url varchar(512)
+  duration_seconds int
+  language varchar(16) [not null, default: 'zh']
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 }

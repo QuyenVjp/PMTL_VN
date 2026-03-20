@@ -141,6 +141,32 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
+## Flow 3a: Baihua Audiobook Reading (Sách nói Bạch thoại)
+
+**Actor**: Khách hoặc member
+**Trigger**: Muốn đọc theo cấu trúc sách / chương, audio là companion
+**Goal**: Chọn sách -> chọn chương -> đọc text gốc + bản dịch -> nghe nếu cần
+
+```
+[/bai-hoa/sach-noi]
+  ↓ Chọn sách
+[/bai-hoa/sach-noi/[bookSlug]]
+  - xem danh sách chương
+  - có link MP3 toàn sách nếu source có
+  ↓ Chọn chương
+[/bai-hoa/sach-noi/[bookSlug]/chuong/[chapterNumber]]
+  - đọc original text
+  - đọc bản dịch Việt
+  - mở audio companion nếu có
+```
+
+**Rules:**
+- chapter text là primary surface
+- audio không được che mất navigator chương
+- nếu chưa có bản dịch reviewed, phải hiện trạng thái rõ
+
+---
+
 ## Flow 4: Vow Lifecycle (Phát nguyện)
 
 **Actor**: Thành viên đã đăng nhập

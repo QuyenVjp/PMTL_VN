@@ -100,6 +100,33 @@ Hiển thị wisdom/QA entry.
 **Props**: `entry: WisdomSummary`, `showOfflineButton?: boolean`
 **Rule**: Luôn hiện source attribution. Không được hiện content không có source.
 
+### `BaihuaBookCard`
+Card đại diện một sách trong library `Sách nói Bạch thoại`.
+
+**Props**: `titleOriginal`, `titleVietnamese?`, `bookKind`, `chapterCount`, `coverHref`, `href`
+**States**: default / hover / loading
+
+### `BaihuaChapterNavigator`
+Navigator chương cho book detail và chapter detail.
+
+**Props**: `chapters`, `currentChapterNumber?`, `bookSlug`
+**States**: default / compact / loading
+**Rule**: luôn hiện số chương rõ; mobile ưu tiên list dọc.
+
+### `BaihuaParallelReader`
+Reader song song `nguyên văn / bản dịch`.
+
+**Props**: `titleOriginal`, `titleVietnamese?`, `bodyOriginal`, `bodyVietnamese?`, `audioRef?`
+**Modes**:
+- `translation-first`
+- `original-first`
+- `split`
+
+**Rule**:
+- text là primary
+- audio là companion
+- nếu bản dịch chỉ là draft, badge review state phải thấy ngay
+
 ---
 
 ### `ChantItemCard`

@@ -508,8 +508,61 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 **Nội dung:**
 - Search bar (tích hợp Wisdom-QA search)
 - Categories: Bạch thoại / Khai thị / Phật ngôn / Huyền học
+- Entry vào `Sách nói Bạch thoại`
 - Featured wisdom entries
 - Tags cloud
+
+---
+
+### 1.13a Baihua Audiobook Library
+
+| Field | Value |
+|---|---|
+| Route | `/bai-hoa/sach-noi` |
+| Title | Sách nói Bạch thoại Phật pháp |
+| Auth | `public` |
+| Module owner | Wisdom-QA |
+
+**Nội dung:**
+- book selector / grid
+- nhóm sách: `Bạch thoại`, `Video khai thị`, `Radio lecture`
+- featured books
+- note rõ `text-first`, audio là companion
+
+---
+
+### 1.13b Baihua Audiobook Book Detail
+
+| Field | Value |
+|---|---|
+| Route | `/bai-hoa/sach-noi/[bookSlug]` |
+| Title | Tên sách |
+| Auth | `public` |
+| Module owner | Wisdom-QA |
+
+**Nội dung:**
+- cover + metadata sách
+- full-book audio link nếu có
+- danh sách chương theo thứ tự
+- progress / recent chapter nếu member
+
+---
+
+### 1.13c Baihua Audiobook Chapter Detail
+
+| Field | Value |
+|---|---|
+| Route | `/bai-hoa/sach-noi/[bookSlug]/chuong/[chapterNumber]` |
+| Title | Tên chương |
+| Auth | `public` |
+| Module owner | Wisdom-QA |
+
+**Nội dung:**
+- original text
+- bản dịch Việt
+- chapter navigator
+- audio companion nếu có
+- source attribution
 
 ---
 
@@ -1077,6 +1130,7 @@ Similar pattern cho:
 - "Thêm bài" button
 - Ingestion status + trigger button
 - Offline bundle rebuild button
+- Baihua audiobook import queue / translation review
 
 ---
 

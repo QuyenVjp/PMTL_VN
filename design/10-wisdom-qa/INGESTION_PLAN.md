@@ -30,6 +30,10 @@ Chọn một trong ba loại:
 - `wisdom entry (bài trí huệ / khai thị / Bạch thoại)`
 - `qa entry (bài hỏi đáp / vấn đáp)`
 - `authority profile (hồ sơ authority / nhân vật được giới thiệu)`
+- nếu source là `Bạch thoại audiobook`, còn phải xác định:
+  - `book metadata`
+  - `chapter source text`
+  - `audio attachment`
 
 ### Step 2. Xác định tầng nguồn
 
@@ -154,6 +158,24 @@ Nếu nhập một bài `Bạch thoại Phật pháp`:
 - `bodyOriginal = nguyên văn`
 - `bodyVietnamese = bản dịch`
 - `sourceProvenance = official_origin` hoặc `official_mirror`
+
+## Mapping thêm: `Bạch thoại audiobook` source
+
+### Khi nào dùng
+
+Khi source có pattern:
+
+- chọn sách
+- danh sách chương
+- chapter text
+- audio toàn sách hoặc chapter audio
+
+### Rule nhập liệu
+
+- tạo `book record` trước
+- rồi mới tạo các `wisdomEntries` cấp chương
+- chapter translation đi theo `text-first`
+- audio là attachment layer, không phải canonical truth layer
 
 ## Mapping chi tiết: `qaEntries`
 
