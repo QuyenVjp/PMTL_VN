@@ -11,7 +11,7 @@ Không có doc này, developer không biết:
 
 ## Document types (Các loại tài liệu trong index)
 
-Unified index gồm **6 document types** từ 2 module source:
+Unified index gồm **8 document types** từ 2 module source:
 
 | docType | Module nguồn | Collection nguồn |
 |---|---|---|
@@ -19,8 +19,13 @@ Unified index gồm **6 document types** từ 2 module source:
 | `beginner_guide` | Content | `beginnerGuides` |
 | `chant_item` | Content | `chantItems` |
 | `sutra` | Content | `sutras` |
+| `little_house_guide` | Content | `beginnerGuides` (sub-type: little_house) |
+| `little_house_faq` | Content | `faqEntries` (little_house context) |
 | `wisdom_entry` | Wisdom-QA | `wisdomEntries` |
 | `qa_entry` | Wisdom-QA | `qaEntries` |
+
+> **Quy tắc bất biến**: chỉ đánh index tài liệu có `status = 'published'` hoặc `reviewStatus` đã được approved.
+> Search không được expose draft, hidden, hoặc quarantined content.
 
 > **Quy tắc bất biến**: chỉ đánh index tài liệu có `status = 'published'` hoặc `reviewStatus` đã được approved.
 > Search không được expose draft, hidden, hoặc quarantined content.
@@ -37,7 +42,7 @@ Phải có Zod schema runtime cho shape này.
 const SearchDocumentSchema = z.object({
   // Metadata
   docId:        z.string().uuid(),    // internal index ID (không expose ra public)
-  docType:      z.enum(['post', 'beginner_guide', 'chant_item', 'sutra', 'wisdom_entry', 'qa_entry']),
+  docType:      z.enum(['post', 'beginner_guide', 'chant_item', 'sutra', 'little_house_guide', 'little_house_faq', 'wisdom_entry', 'qa_entry']),
   moduleOwner:  z.enum(['content', 'wisdom-qa']),
   publicId:     z.string(),           // publicId của entity nguồn
   slug:         z.string().optional(), // nếu entity có slug
@@ -124,6 +129,41 @@ const SearchDocumentSchema = z.object({
 
 ---
 
+### `little_house_guide` (từ Content.beginnerGuides — sub-type little_house)
+
+| Search field | Source field | Ghi chú |
+|---|---|---|
+| `title` | `beginnerGuides.title` | |
+| `body` | `beginnerGuides.contentPlainText` | plain text stripped từ block content |
+| `excerpt` | `beginnerGuides.description` | |
+| `tags` | `beginnerGuides.tags[].name` + `['ngoi-nha-nho', 'little-house']` | luôn gắn tag định danh |
+| `categories` | `['ngoi-nha-nho']` | hardcode để filter cluster |
+| `language` | `'vi'` | hardcode |
+| `publishedAt` | `beginnerGuides.publishedAt` | |
+| `sourceVersion` | `beginnerGuides.updatedAt` → epoch | |
+
+> **Filter rule**: chỉ index `beginnerGuides` có `contentGroup = 'little_house'`.
+> Không index toàn bộ `beginnerGuides` chung vào type này — phải có discriminator field.
+
+---
+
+### `little_house_faq` (từ Content — FAQ entries trong Little House context)
+
+| Search field | Source field | Ghi chú |
+|---|---|---|
+| `title` | `faqEntries.question` | câu hỏi là tiêu đề để search match |
+| `body` | `faqEntries.answer` | |
+| `excerpt` | `faqEntries.answer` — first 200 chars | |
+| `tags` | `faqEntries.tags[].name` + `['ngoi-nha-nho', 'faq']` | |
+| `categories` | `['ngoi-nha-nho']` | |
+| `language` | `'vi'` | hardcode |
+| `publishedAt` | `faqEntries.publishedAt` | |
+
+> FAQ entries trong Little House context nên xuất hiện riêng biệt trong search filter tab "Hỏi đáp Ngôi Nhà Nhỏ".
+> Không cần source attribution vì FAQ là nội dung editorial của PMTL_VN.
+
+---
+
 ### `wisdom_entry` (từ Wisdom-QA.wisdomEntries)
 
 | Search field | Source field | Ghi chú |
@@ -162,7 +202,7 @@ const SearchDocumentSchema = z.object({
 
 | Module nguồn | Responsibility |
 |---|---|
-| Content module | Build `SearchDocumentDto` cho: post, beginner_guide, chant_item, sutra |
+| Content module | Build `SearchDocumentDto` cho: post, beginner_guide, chant_item, sutra, little_house_guide, little_house_faq |
 | Wisdom-QA module | Build `SearchDocumentDto` cho: wisdom_entry, qa_entry |
 | Search module | Nhận document (qua direct call phase 1, hoặc outbox phase 2+), upsert vào store |
 

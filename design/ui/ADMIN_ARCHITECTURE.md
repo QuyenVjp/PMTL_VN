@@ -150,6 +150,9 @@ src/routes/
 │       ├── feature-flags/
 │       ├── audit-logs/
 │       ├── lich/
+│       │   ├── index.tsx         # Events list + calendar tools
+│       │   ├── tao-moi.tsx       # Create event
+│       │   └── $eventId.tsx      # Event workspace: info/agenda/speakers/ctas/assets
 │       ├── thong-bao/
 │       └── health/
 └── auth/
@@ -386,6 +389,7 @@ Không dùng serif headings cho admin — professional density > contemplative m
 | `/he-thong/feature-flags` | Feature flags | Toggle list |
 | `/he-thong/audit-logs` | Audit logs | Searchable log stream |
 | `/he-thong/lich` | Lịch & Sự kiện | Event management |
+| `/he-thong/lich/$eventId` | Chi tiết sự kiện | Event workspace với tabs agenda/speakers/ctas/assets |
 | `/he-thong/thong-bao` | Thông báo | Notification management |
 | `/he-thong/health` | Health | System health dashboard |
 

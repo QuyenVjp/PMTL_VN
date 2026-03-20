@@ -84,6 +84,7 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `10-wisdom-qa/offline-bundle-delta-sync.md` | Schema versioning và delta sync cho offline bundles |
 | `09-vows-merit/assisted-entry-workflow.md` | Workflow + audit khi admin tạo record thay member |
 | `07-calendar/advisory-ownership.md` | Ranh giới Calendar vs Wisdom-QA trong advisory compose |
+| `07-calendar/organizational-events-architecture.md` | Nâng event baseline lên event tổ chức có agenda/speakers/ctas/assets |
 
 ## Review rule (Quy tắc rà soát)
 

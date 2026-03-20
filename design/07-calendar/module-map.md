@@ -15,9 +15,13 @@ markmap:
 - mô tả ownership của dữ liệu lịch, sự kiện, và recurrence âm lịch
 - giữ notification orchestration ở ngoài calendar
 - chốt rõ `personalPracticeCalendarReadModel` là derived read model (mô hình đọc được tính ra)
+- mở rộng event model đủ sâu cho `sự kiện tổ chức` có agenda, speakers, CTA, poster, gallery
 
 ## Module collections (Các collection thuộc mô-đun)
 - `events`
+- `eventAgendaItems`
+- `eventSpeakers`
+- `eventCtas`
 - `lunarEvents`
 - `lunarEventOverrides`
 - `personalPracticeCalendarReadModel`
@@ -28,6 +32,13 @@ markmap:
 - đăng sự kiện public
 - giữ thời gian, địa điểm, media ref, external link
 - giữ `eventStatus` cho public read model
+- hỗ trợ `organizational events` có timeline, speakers, CTA, poster, gallery, file chương trình
+
+### Organizational event details (Chi tiết sự kiện tổ chức)
+- giữ agenda theo khung giờ
+- giữ danh sách diễn giả/người thực hiện
+- giữ CTA như đăng ký, bản đồ, livestream, download chương trình
+- giữ poster, gallery, file đính kèm theo event
 
 ### Lunar schedule (Lịch âm)
 - định nghĩa recurrence base (lớp lặp lại cơ sở)
@@ -120,6 +131,7 @@ markmap:
 ### Content
 - `lunarEvents.relatedPosts`
 - `posts.eventContext.relatedEvent`
+- `organizational-events-architecture.md` mô tả event program sâu, nhưng ownership vẫn ở calendar
 
 ### Engagement / practice refs
 - `lunarEventOverrides.chantItem`
@@ -132,6 +144,7 @@ markmap:
 
 ## Current rules (Quy tắc hiện tại)
 - event ownership nằm ở calendar
+- `organizational event` vẫn là event calendar-owned, không tách module mới
 - lunar recurrence base và override là hai lớp dữ liệu khác nhau
 - reminder logic không nằm trong current scope của calendar
 - `personalPracticeCalendarReadModel` là read model do calendar compose, không phải owner data mới

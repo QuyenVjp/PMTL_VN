@@ -181,6 +181,33 @@ Enum ngoi_nha_nho_sheet_type {
   custom [note: "Tùy chỉnh"]
 }
 
+// Loại người nhận — dùng để load warning contextual và validate UI
+Enum ngoi_nha_nho_recipient_type {
+  living_person [note: "Người còn sống đang bệnh hoặc cần hỗ trợ"]
+  deceased [note: "Người đã mất"]
+  fetal [note: "Thai nhi / phá thai — xem hướng dẫn riêng"]
+  self_accumulate [note: "Tích lũy cho bản thân"]
+  household_member [note: "Người trong nhà cần kinh"]
+  karma_resolution [note: "Hóa giải oán kết"]
+  assist_other [note: "Niệm giúp người khác"]
+}
+
+// Mode đốt — ảnh hưởng đến quy trình hướng dẫn được deep-link
+Enum ngoi_nha_nho_burning_mode {
+  with_altar [note: "Có bàn thờ Phật"]
+  without_altar [note: "Không có bàn thờ Phật"]
+  not_set [note: "Chưa xác định"]
+}
+
+// Trạng thái chuẩn bị — chi tiết hơn lifecycle status
+Enum ngoi_nha_nho_preparation_state {
+  draft_preparation [note: "Đang điền thông tin chuẩn bị"]
+  guidance_acknowledged [note: "Đã đọc và xác nhận hướng dẫn"]
+  ready_to_recite [note: "Đã chuẩn bị xong, sẵn sàng niệm"]
+  reciting [note: "Đang niệm"]
+  ready_to_burn [note: "Đã niệm xong, sẵn sàng đốt"]
+}
+
 Enum ngoi_nha_nho_counter_type {
   great_compassion [note: "Chú Đại Bi"]
   heart_sutra [note: "Bát Nhã Tâm Kinh"]
@@ -194,8 +221,23 @@ Table ngoi_nha_nho_sheets {
   user_id uuid [not null, note: "Tham chiếu tới 00-identity.users"]
   sheet_type ngoi_nha_nho_sheet_type [not null, default: 'standard', note: "Loại tờ kinh"]
   title_snapshot varchar(160) [note: "Tên hiển thị chụp lại"]
+
+  // --- Structured recipient fields (Phase C+) ---
+  // Bổ sung thêm theo design/02-content/little-house-experience-architecture.md §7.3
+  // Giữ dedication_target_snapshot làm denormalized text vì vẫn cần cho hiển thị nhanh
+  recipient_type ngoi_nha_nho_recipient_type [note: "Loại người nhận — để load warning contextual đúng"]
+  recipient_label varchar(255) [note: "Họ tên đầy đủ người nhận (Kính Tặng)"]
+  giver_name varchar(255) [note: "Họ tên đầy đủ người tụng (Tặng)"]
+  case_variant_ref varchar(64) [note: "Ref tới Content case variant — để FE deep-link đúng guide và warning"]
+  burning_mode ngoi_nha_nho_burning_mode [not null, default: 'not_set', note: "Mode đốt: có/không bàn thờ"]
+  target_sheet_count int [note: "Tổng số tờ trong đợt này (hỗ trợ multi-sheet workflow)"]
+  template_version_ref varchar(64) [note: "Version nghi thức tại thời điểm tạo tờ — dùng cho audit khi nội dung thay đổi"]
+  preparation_state ngoi_nha_nho_preparation_state [note: "Trạng thái chi tiết trong phase chuẩn bị (granular hơn status)"]
+  last_guidance_acknowledged_at timestamptz [note: "Thời điểm user xác nhận đã đọc hướng dẫn — phòng case guidance thay đổi"]
+
+  // --- Legacy / core fields ---
   template_ref varchar(64) [note: "Tham chiếu tới mẫu bài niệm hoặc kế hoạch (Template ref)"]
-  dedication_target_snapshot text [note: "Thông tin thụ hưởng chụp lại trên bìa"]
+  dedication_target_snapshot text [note: "Thông tin thụ hưởng chụp lại dạng text — denormalized từ recipient_label + giver_name"]
   practice_date date [note: "Ngày thực hiện/hoàn thành"]
   status ngoi_nha_nho_sheet_status [not null, default: 'draft', note: "Trạng thái tờ kinh"]
   required_great_compassion_count int [not null, default: 0, note: "Số biến Chú Đại Bi yêu cầu"]
@@ -214,7 +256,13 @@ Table ngoi_nha_nho_sheets {
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 
-  Note: "Bản ghi chuẩn gốc của tờ Ngôi Nhà Nhỏ do người dùng tự sở hữu (Canonical self-owned record)."
+  Note: '''
+  Bản ghi chuẩn gốc của tờ Ngôi Nhà Nhỏ do người dùng tự sở hữu.
+  Fields mới (recipient_type, recipient_label, giver_name, case_variant_ref, burning_mode,
+  target_sheet_count, template_version_ref, preparation_state, last_guidance_acknowledged_at)
+  được thêm vào Phase C — nullable để backward compatible với data Phase A/B.
+  dedication_target_snapshot vẫn giữ làm denormalized display text.
+  '''
 }
 
 Table ngoi_nha_nho_sheet_entries {

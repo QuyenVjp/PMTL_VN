@@ -157,6 +157,83 @@ Advisory ngày từ Calendar.
 └────────────────────────────────┘
 ```
 
+### `EventProgramTimeline`
+Timeline theo khung giờ cho sự kiện tổ chức.
+
+```
+┌────────────────────────────────┐
+│ 07:00 - 07:15                  │
+│ Đón tiếp đại biểu              │
+│ Ban Tổ chức                    │
+├────────────────────────────────┤
+│ 08:00 - 11:00                  │
+│ Văn nghệ · chia sẻ · giao lưu │
+│ Ban Tổ chức + Phật hữu         │
+└────────────────────────────────┘
+```
+
+**Props**: `items: EventAgendaItem[]`
+**States**: default / loading / empty
+**Elderly rules**:
+- thời gian nổi bật, chữ to hơn nội dung
+- không nhồi quá nhiều badge nhỏ
+- mobile hiển thị vertical stack, không horizontal timeline phức tạp
+
+### `EventActionBar`
+Thanh CTA cho trang chi tiết sự kiện.
+
+**Buttons**:
+- `Đăng ký`
+- `Xem bản đồ`
+- `Xem livestream`
+- `Tải chương trình`
+
+**Rules**:
+- max 2 CTA primary cùng lúc
+- các CTA còn lại là secondary/ghost
+- mobile xếp dọc, full-width
+
+### `EventSpeakerCard`
+
+```
+┌────────────────────────────────┐
+│ [Avatar] Tên diễn giả          │
+│ Vai trò                        │
+│ Bio ngắn 2-3 dòng              │
+└────────────────────────────────┘
+```
+
+**Props**: `speaker: EventSpeaker`
+**States**: default / loading
+
+### `AdminEventAgendaEditor`
+Editor dạng table/list cho agenda items của admin.
+
+**Fields**:
+- start time
+- end time
+- title
+- description
+- host label
+- segment type
+- sort order
+
+**Rules**:
+- add/remove/reorder rows
+- validate overlap
+- inline error per row
+
+### `AdminEventCtaManager`
+Quản lý CTA links của sự kiện trong admin.
+
+**Fields**:
+- type
+- label
+- url
+- sort order
+
+**Rule**: URL validation inline, preview target domain.
+
 ---
 
 ## III. Practice UI Components (Critical - Elderly-friendly)

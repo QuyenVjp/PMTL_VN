@@ -78,7 +78,80 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.4 Beginner Guides (Hướng dẫn mới bắt đầu)
+### 1.4 Little House Hub (Ngôi Nhà Nhỏ — Tổng quan)
+
+| Field | Value |
+|---|---|
+| Route | `/ngoi-nha-nho` |
+| Title | Ngôi Nhà Nhỏ — Hướng Dẫn Toàn Diện |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung chính:**
+- Quick definition block: "Ngôi Nhà Nhỏ là gì?" (GEO-friendly, AI-extractable)
+- 5 cửa vào lớn theo nhóm IA (không phải 13 link phẳng)
+- Entry points: "Tôi mới bắt đầu", "Tôi cần xem quy trình đốt", "Tra cứu số lượng"...
+- FAQ ngắn 4-5 câu phổ biến nhất
+- CTA: "Bắt đầu thực hành" → `/tu-tap/nha-nho` (member+)
+
+**SEO**: Primary keyword `ngôi nhà nhỏ`. Schema: `WebPage` + `ItemList` (5 nhóm) + `BreadcrumbList`.
+**Mobile note**: 5 nhóm hiển thị dạng card 2 cột. CTA thực hành nổi bật.
+
+---
+
+### 1.4a Little House Group Landing Pages
+
+| Routes | Auth | Module owner |
+|---|---|---|
+| `/ngoi-nha-nho/bat-dau` | `public` | Content |
+| `/ngoi-nha-nho/tri-tung` | `public` | Content |
+| `/ngoi-nha-nho/dot-va-hau-xu-ly` | `public` | Content |
+| `/ngoi-nha-nho/tra-cuu` | `public` | Content |
+| `/ngoi-nha-nho/thuc-hanh` | `public` (tracker cần `member+`) | Content |
+
+**Mỗi group landing page có:**
+- Sticky section nav (scroll-spy)
+- Danh sách guide con trong nhóm (cards)
+- CTA "Đọc nhanh" / "Xem checklist" / "Tải mẫu"
+- CTA cuối: "Bắt đầu thực hành" → `/tu-tap/nha-nho`
+- Breadcrumb: Trang chủ > Ngôi Nhà Nhỏ > [Nhóm]
+
+**SEO**: Mỗi group page có H1, meta description, `Article` + `BreadcrumbList` schema.
+
+---
+
+### 1.4b Little House Guide Detail Pages
+
+| Route pattern | Auth | Module owner |
+|---|---|---|
+| `/ngoi-nha-nho/[group]/[slug]` | `public` | Content |
+
+**Ví dụ routes:**
+- `/ngoi-nha-nho/dot-va-hau-xu-ly/quy-trinh-dot`
+- `/ngoi-nha-nho/tri-tung/cham-do`
+- `/ngoi-nha-nho/tri-tung/cac-buoc`
+- `/ngoi-nha-nho/tra-cuu/so-luong`
+- `/ngoi-nha-nho/tra-cuu/hoi-dap`
+
+**Mỗi guide detail page có:**
+- Sticky TOC (table of contents)
+- Content blocks: step_sequence, warning_list, image_compare, faq_block, download_panel
+- "Đọc nhanh" summary box đầu trang (speakable)
+- Prev/Next guide navigation trong cùng nhóm
+- CTA sang tracker: "Bắt đầu thực hành"
+- Breadcrumb đầy đủ 4 cấp
+
+**SEO**:
+- `/quy-trinh-dot`: `HowTo` schema — cơ hội Featured Snippet cao nhất
+- Tất cả: `Article` + `BreadcrumbList`
+- Trang có FAQ: `FAQPage` schema
+- Ref: `design/seo-geo/little-house-seo.md`, `design/seo-geo/structured-data.md`
+
+**Mobile note**: Sticky TOC collapse thành dropdown. image_compare dạng side-by-side (không slider).
+
+---
+
+### 1.5 Beginner Guides (Hướng dẫn mới bắt đầu)
 
 | Field | Value |
 |---|---|
@@ -216,6 +289,45 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Advisory preview cho ngày hôm nay
 - Event listing bên dưới
 - Link sang `/lich-ca-nhan` (member+)
+
+### 1.11a Events Listing (Sự kiện & Chương trình)
+
+| Field | Value |
+|---|---|
+| Route | `/su-kien` |
+| Title | Sự kiện & Chương trình |
+| Auth | `public` |
+| Module owner | Calendar |
+
+**Nội dung:**
+- Featured upcoming event ở đầu trang
+- Filter theo loại: pháp hội / một ngày an lạc / gieo duyên / khóa tu / livestream
+- Tabs hoặc toggle: sắp diễn ra / đã diễn ra
+- Event cards với ngày, giờ, địa điểm, CTA cơ bản
+- Search nhẹ theo tên hoặc địa điểm
+
+**Mobile note**: Featured event chiếm full-width. Event card phải đọc được 3 dòng đầu không cần mở detail.
+
+### 1.11b Event Detail (Chi tiết sự kiện tổ chức)
+
+| Field | Value |
+|---|---|
+| Route | `/su-kien/[slug]` |
+| Title | Tên sự kiện |
+| Auth | `public` |
+| Module owner | Calendar |
+
+**Nội dung:**
+- Hero với poster/cover, badge loại sự kiện, trạng thái
+- Quick info: ngày giờ, địa điểm, hình thức offline/online/hybrid
+- CTA row: đăng ký / xem bản đồ / livestream / tải chương trình
+- Timeline chương trình theo khung giờ
+- Speakers / facilitators
+- Nội dung mô tả chi tiết
+- Gallery ảnh và files đính kèm
+- Related content nếu có
+
+**Mobile note**: Timeline hiển thị dọc từng card. CTA chính phải ở trên fold. Bản đồ mở external app dễ dàng.
 
 ---
 
@@ -703,6 +815,20 @@ Similar pattern cho:
 - Lunar override management
 - Trigger advisory refresh button
 
+### 4.12a Event Detail Workspace
+
+| Route | `/admin/he-thong/lich/[eventId]` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Calendar |
+
+**Nội dung:**
+- Tabs: Thông tin chung / Lịch trình / Diễn giả / CTA & liên kết / Ảnh & file / Xuất bản
+- Agenda table editor với sort order
+- Speaker roster editor
+- CTA manager: đăng ký, bản đồ, livestream, file chương trình
+- Preview public detail page
+- Publish action + audit summary
+
 ---
 
 ### 4.13 Wisdom-QA Management
@@ -754,11 +880,11 @@ Similar pattern cho:
 
 | Section | Count |
 |---|---|
-| Public pages | 17 |
+| Public pages | 19 |
 | Auth pages | 5 |
 | Member pages | 14 |
-| Admin pages | 15 |
-| **Total** | **51 pages** |
+| Admin pages | 16 |
+| **Total** | **54 pages** |
 
 ---
 

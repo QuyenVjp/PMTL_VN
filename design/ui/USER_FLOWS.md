@@ -267,6 +267,33 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
+## Flow 8: Event Attendance (Theo dõi và tham gia sự kiện)
+
+**Actor**: Khách hoặc thành viên
+**Trigger**: Muốn xem chương trình sắp diễn ra và quyết định tham gia
+**Goal**: Tìm sự kiện → đọc timeline → mở CTA phù hợp
+
+```
+[/su-kien]
+  ↓ Chọn event nổi bật hoặc lọc theo loại
+[/su-kien/[slug]]
+  - Xem ngày giờ, địa điểm, poster
+  - Xem timeline chương trình
+  - Xem diễn giả/người thực hiện
+  ↓ Chọn CTA
+  [Đăng ký] hoặc [Xem bản đồ] hoặc [Tải chương trình]
+  ↓ Nếu là member:
+[/thong-bao]
+  - Bật nhắc sự kiện nếu muốn
+```
+
+**Rules:**
+- CTA chính phải hiện phía trên fold
+- timeline phải đọc được nhanh trên mobile
+- event canceled phải có banner trạng thái rõ
+
+---
+
 ## Flow State: Error Recovery
 
 **Scenarios quan trọng:**

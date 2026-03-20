@@ -13,9 +13,43 @@ Project calendar_module {
 }
 
 Enum event_status_enum {
+  draft
   upcoming
   live
   past
+  canceled
+}
+
+Enum event_mode_enum {
+  simple
+  organizational
+}
+
+Enum event_delivery_mode_enum {
+  offline
+  online
+  hybrid
+}
+
+Enum event_agenda_segment_type_enum {
+  checkin
+  ritual
+  performance
+  opening
+  teaching
+  sharing
+  meal
+  closing
+  other
+}
+
+Enum event_cta_type_enum {
+  register
+  map
+  livestream
+  download_program
+  contact_zalo
+  external_page
 }
 
 Table media_assets {
@@ -49,19 +83,65 @@ Table events {
   public_id varchar [unique]
   title varchar [not null]
   slug varchar [unique, not null]
+  summary varchar(280)
   description text [not null]
   content jsonb
-  date timestamp [not null]
+  start_at timestamp [not null]
+  end_at timestamp
   time_string varchar
   location varchar
-  type varchar [not null] // ceremony | retreat | talk | livestream
-  speaker varchar
+  location_note text
+  type varchar [not null] // ceremony | retreat | talk | livestream | organizational-program
+  mode event_mode_enum [not null, default: 'simple']
+  delivery_mode event_delivery_mode_enum [not null, default: 'offline']
+  speaker varchar [note: "Legacy summary field; structured speakers should live in event_speakers"]
   language varchar
   external_link varchar
   youtube_id varchar
   embed_url varchar
   cover_image_id uuid [ref: > media_assets.id]
+  poster_image_id uuid [ref: > media_assets.id]
   event_status event_status_enum [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_agenda_items {
+  id uuid [pk]
+  public_id varchar [unique]
+  event_id uuid [not null, ref: > events.id]
+  start_time time [not null]
+  end_time time [not null]
+  title varchar(240) [not null]
+  description text
+  host_label varchar(240)
+  segment_type event_agenda_segment_type_enum [not null, default: 'other']
+  sort_order int [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_speakers {
+  id uuid [pk]
+  public_id varchar [unique]
+  event_id uuid [not null, ref: > events.id]
+  name varchar(200) [not null]
+  role_label varchar(200)
+  bio_short text
+  avatar_media_id uuid [ref: > media_assets.id]
+  sort_order int [not null, default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table event_ctas {
+  id uuid [pk]
+  public_id varchar [unique]
+  event_id uuid [not null, ref: > events.id]
+  cta_type event_cta_type_enum [not null]
+  label varchar(160) [not null]
+  url varchar [not null]
+  sort_order int [not null, default: 0]
   created_at timestamp
   updated_at timestamp
 }
@@ -165,6 +245,9 @@ Table personal_practice_calendar_read_model {
 
 TableGroup "Event Publishing" [note: "Nhóm sự kiện public"] {
   events
+  event_agenda_items
+  event_speakers
+  event_ctas
   event_gallery_media
   event_files
 }

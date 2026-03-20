@@ -129,6 +129,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Delta sync schema cho offline bundles |
 | [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow admin nhập liệu thay member |
 | [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA |
+| [organizational-events-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/organizational-events-architecture.md) | Kiến trúc sự kiện tổ chức: agenda, speakers, CTA, assets |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
 ### UI/UX design (6 files)

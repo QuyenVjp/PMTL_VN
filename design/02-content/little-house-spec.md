@@ -5,8 +5,12 @@
 > Mục tiêu là để sau này làm UI, validation, collection fields, hoặc flow service (lớp xử lý nghiệp vụ) mà không phải đọc lại PDF từ đầu.
 > Logic thực thi và schema (lược đồ dữ liệu) self-owned mới nhất xem thêm ở:
 >
-> - `design/04-engagement/schema.dbml`
+> - `design/04-engagement/schema.dbml` — schema đã có 9 fields mới + 3 enums (recipient_type, burning_mode, preparation_state)
 > - `design/04-engagement/use-cases/manage-ngoi-nha-nho-sheet.md`
+> - `design/02-content/little-house-experience-architecture.md` — kiến trúc trải nghiệm đầy đủ
+> - `design/02-content/little-house-content-inventory.md` — canonical content 13→5 nhóm
+> - `design/02-content/little-house-tech-features.md` — 8 tech features spec
+> - `design/seo-geo/little-house-seo.md` — SEO keyword strategy và schema markup
 
 ---
 

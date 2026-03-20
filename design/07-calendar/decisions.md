@@ -124,3 +124,35 @@ Event publish/update, lunar override đổi logic, và refresh `personalPractice
 ### Trade-off
 
 - Tăng thêm số path cần quan sát: outbox lag, refresh lag, stale window count.
+
+## Decision 7. Organizational events vẫn thuộc calendar, nhưng cần child records có cấu trúc
+
+### Context
+
+Một số sự kiện không chỉ là `title + date + location`.
+Chúng có:
+
+- lịch trình theo khung giờ
+- nhiều diễn giả/người thực hiện
+- CTA như đăng ký, bản đồ, livestream
+- poster, gallery, file chương trình
+
+### Decision
+
+- vẫn giữ owner là `calendar`
+- không tách module mới cho `sự kiện tổ chức`
+- bổ sung child records có cấu trúc cho:
+  - agenda
+  - speakers
+  - ctas
+
+### Rationale
+
+- tránh nổ thêm module không cần thiết
+- đủ sâu để admin nhập và FE render đẹp
+- giữ reminder flow downstream đơn giản hơn
+
+### Trade-off
+
+- event write-path phức tạp hơn
+- cần validation chặt hơn trước publish

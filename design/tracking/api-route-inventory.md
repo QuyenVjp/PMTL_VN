@@ -95,8 +95,18 @@ Mục tiêu:
 |---|---|---|---|
 | `GET` | `/calendar/events` | `calendar` | public |
 | `GET` | `/calendar/events/:publicId` | `calendar` | public |
+| `GET` | `/calendar/events/:publicId/agenda` | `calendar` | public |
 | `GET` | `/calendar/personal-practice` | `calendar` | member+ |
 | `GET` | `/calendar/advisory/daily` | `calendar` | member+ |
+| `POST` | `/admin/calendar/events` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:id` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/agenda-items` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:id/agenda-items/:agendaItemId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/speakers` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:id/speakers/:speakerId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/ctas` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:id/ctas/:ctaId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/publish` | `calendar` | admin+ |
 
 ## Notification
 
