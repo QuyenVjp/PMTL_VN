@@ -187,11 +187,12 @@ Mục tiêu là làm rõ:
 | Engagement   | Notification | Notification owns delivery                     | reminder đọc hoặc đếm bài                     | outbox event → async (bất đồng bộ) job | push nhắc theo giờ                              |
 | Vows & Merit | Calendar     | Calendar owns ngày tu học                      | gợi ý ngày phát nguyện hoặc phóng sanh        | direct read                            | build reminder candidates                       |
 | Vows & Merit | Notification | Notification owns delivery                     | đến hạn vow, ngày phóng sanh                  | outbox event → async (bất đồng bộ) job | push/email reminder                             |
-| Vows & Merit | Content      | Content owns lời khấn và bài đọc               | mở checklist phóng sanh                       | direct read                            | không write ngược                               |
+| Vows & Merit | Content      | Content owns lời khấn, ritual guide và variants | mở checklist phóng sanh hoặc companion guide | direct read                            | journal chỉ giữ refs, không write ngược         |
 | Wisdom & QA  | Content      | Content owns beginner guides và hub điều hướng | đọc Bạch thoại hoặc khai thị                  | direct read                            | offline bundle (gói tải ngoại tuyến) build      |
 | Wisdom & QA  | Search       | Search owns retrieval engine                   | tra cứu vấn đáp                               | direct read                            | query index                                     |
 | Community    | Vows & Merit | Vows & Merit owns journal                      | user muốn chia sẻ phóng sanh hoặc linh nghiệm | explicit export/share                  | tạo post mới, không lộ record riêng tư mặc định |
 | Calendar     | Engagement   | Engagement owns self-state                     | build lịch tu học cá nhân                     | direct read                            | không write ngược                               |
+| Calendar     | Content      | Content owns daily practice guides/presets     | compose advisory cho ngày đặc biệt            | direct read                            | chỉ mang refs/preset, không copy ritual truth   |
 
 ## Direct call vs event/job
 
@@ -254,5 +255,5 @@ Ghi chú:
 | Engagement   | bookmarks, reading progress, chant prefs, practice logs, practice sheets, `Ngôi Nhà Nhỏ` | users, sutras, chapters, chant refs từ content                 | sync                                        | rất ít side effects hiện tại          |
 | Moderation   | `moderationReports`                                                                      | users, moderated entities                                      | sync write + async (bất đồng bộ) notify     | summary sync, admin/user notification |
 | Search       | search contract (hợp đồng dữ liệu/nghiệp vụ), index flow                                 | content source fields, queue state (trạng thái hàng đợi xử lý) | async-first (ưu tiên xử lý bất đồng bộ)     | index upsert/delete, status reporting |
-| Calendar     | events, lunar events, overrides                                                          | posts, chant refs từ content                                   | sync                                        | event data cho module khác dùng       |
+| Calendar     | events, lunar events, overrides                                                          | posts, chant refs và daily practice refs từ content            | sync                                        | event data, advisory refs cho module khác dùng |
 | Notification | push subscriptions, push jobs                                                            | users, content/community/moderation/calendar context           | async (bất đồng bộ)                         | push dispatch, email dispatch         |

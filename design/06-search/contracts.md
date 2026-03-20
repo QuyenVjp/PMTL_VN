@@ -11,6 +11,9 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 - `GET /api/posts/search?q=<query>&limit=<n>`: primary search endpoint (điểm cuối tìm kiếm chính)
 - `POST /api/posts/search/reindex`: admin trigger cho full/partial reindex (kích hoạt lập chỉ mục lại)
 - `GET /api/search/status`: route báo engine health, queue depth, indexing progress
+- `GET /api/admin/search/status`: admin operations endpoint (điểm cuối vận hành) cho dashboard trạng thái
+- `POST /api/admin/search/reindex`: admin trigger chuẩn cho full reindex từ admin UI
+- `POST /api/admin/search/reindex/:source`: reindex theo nguồn như `posts`, `guides`, `wisdom`
 
 ## Canonical rules (Quy tắc chuẩn gốc)
 
@@ -53,6 +56,7 @@ Status route nên báo:
 - worker queue status nếu worker đã bật
 - document count
 - last successful sync / freshness
+- source-by-source freshness để admin biết `posts`, `guides`, `wisdom`, `little_house_guides` đang lệch ở đâu
 
 ### Expected errors (Lỗi dự kiến)
 
@@ -66,6 +70,7 @@ Status route nên báo:
 - Fallback integrity (tính toàn vẹn của fallback):
   - search fail không được làm hỏng source content
 - Batch reindex là administrative task (tác vụ hành chính), phải có logging và status tracking
+- Admin search operations page không được tự nghĩ logic index trong browser; UI chỉ gọi status/reindex endpoints và hiển thị source freshness rõ ràng
 - Không dùng search index như authority cho publish status
 - Nếu worker crash, recovery phải hỗ trợ replay/reindex; partial sync không được đánh dấu hoàn tất
 - `pgvector` là optional capability (khả năng tùy chọn), không thay vai trò chính của Meilisearch

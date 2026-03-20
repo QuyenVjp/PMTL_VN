@@ -42,6 +42,51 @@ Mục tiêu:
 | `GET` | `/content/guides` | `content` | public |
 | `GET` | `/content/downloads` | `content` | public |
 | `GET` | `/content/sutras` | `content` | public |
+| `GET` | `/content/hub-pages/ngoi-nha-nho` | `content` | public |
+| `GET` | `/content/little-house/guide-map` | `content` | public |
+| `GET` | `/content/little-house/guides` | `content` | public |
+| `GET` | `/content/little-house/guides/:slug` | `content` | public |
+| `GET` | `/content/little-house/case-variants` | `content` | public |
+| `GET` | `/content/little-house/faq` | `content` | public |
+| `GET` | `/content/little-house/downloads` | `content` | public |
+| `GET` | `/content/hub-pages/kinh-bai-tap` | `content` | public |
+| `GET` | `/content/daily-practice/guide-map` | `content` | public |
+| `GET` | `/content/daily-practice/guides` | `content` | public |
+| `GET` | `/content/daily-practice/guides/:slug` | `content` | public |
+| `GET` | `/content/daily-practice/scenario-presets` | `content` | public |
+| `GET` | `/content/daily-practice/faq` | `content` | public |
+| `GET` | `/content/daily-practice/downloads` | `content` | public |
+| `GET` | `/content/hub-pages/phong-sanh` | `content` | public |
+| `GET` | `/content/life-release/guide-map` | `content` | public |
+| `GET` | `/content/life-release/guides` | `content` | public |
+| `GET` | `/content/life-release/guides/:slug` | `content` | public |
+| `GET` | `/content/life-release/ritual-variants` | `content` | public |
+| `GET` | `/content/life-release/faq` | `content` | public |
+| `GET` | `/content/life-release/downloads` | `content` | public |
+| `GET` | `/admin/content/little-house/overview` | `content` | editor+ |
+| `POST` | `/admin/content/little-house/guides` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/guides/:id` | `content` | editor+ |
+| `POST` | `/admin/content/little-house/case-variants` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/case-variants/:id` | `content` | editor+ |
+| `POST` | `/admin/content/little-house/faq` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/faq/:id` | `content` | editor+ |
+| `POST` | `/admin/content/little-house/publish` | `content` | editor+ |
+| `GET` | `/admin/content/daily-practice/overview` | `content` | editor+ |
+| `POST` | `/admin/content/daily-practice/guides` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/guides/:id` | `content` | editor+ |
+| `POST` | `/admin/content/daily-practice/scenario-presets` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/scenario-presets/:id` | `content` | editor+ |
+| `POST` | `/admin/content/daily-practice/faq` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/faq/:id` | `content` | editor+ |
+| `POST` | `/admin/content/daily-practice/publish` | `content` | editor+ |
+| `GET` | `/admin/content/life-release/overview` | `content` | editor+ |
+| `POST` | `/admin/content/life-release/guides` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/guides/:id` | `content` | editor+ |
+| `POST` | `/admin/content/life-release/ritual-variants` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/ritual-variants/:id` | `content` | editor+ |
+| `POST` | `/admin/content/life-release/faq` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/faq/:id` | `content` | editor+ |
+| `POST` | `/admin/content/life-release/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
 | `DELETE` | `/content/media/:publicId` | `content` + `storage` | owner/admin |
 
@@ -70,6 +115,9 @@ Mục tiêu:
 | `POST` | `/engagement/practice-logs` | `engagement` | member+ |
 | `GET` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/practice-sheets` | `engagement` | member+ |
+| `GET` | `/engagement/practice-sheets/:publicId` | `engagement` | member+ |
+| `PATCH` | `/engagement/practice-sheets/:publicId` | `engagement` | member+ |
+| `POST` | `/engagement/practice-sheets/:publicId/complete` | `engagement` | member+ |
 | `GET` | `/engagement/ngoi-nha-nho-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets` | `engagement` | member+ |
 
@@ -88,6 +136,9 @@ Mục tiêu:
 | `GET` | `/search` | `search` | public |
 | `GET` | `/search/status` | `search` | admin+ |
 | `POST` | `/search/reindex` | `search` | admin+ |
+| `GET` | `/admin/search/status` | `search` | admin+ |
+| `POST` | `/admin/search/reindex` | `search` | admin+ |
+| `POST` | `/admin/search/reindex/:source` | `search` | admin+ |
 
 ## Calendar
 
@@ -102,10 +153,13 @@ Mục tiêu:
 | `PATCH` | `/admin/calendar/events/:id` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:id/agenda-items` | `calendar` | admin+ |
 | `PATCH` | `/admin/calendar/events/:id/agenda-items/:agendaItemId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/agenda-items/reorder` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:id/speakers` | `calendar` | admin+ |
 | `PATCH` | `/admin/calendar/events/:id/speakers/:speakerId` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:id/ctas` | `calendar` | admin+ |
 | `PATCH` | `/admin/calendar/events/:id/ctas/:ctaId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/reschedule` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:id/cancel` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:id/publish` | `calendar` | admin+ |
 
 ## Notification
@@ -115,6 +169,12 @@ Mục tiêu:
 | `POST` | `/notifications/push/subscribe` | `notification` | member+ |
 | `POST` | `/notifications/push/unsubscribe` | `notification` | member+ |
 | `GET` | `/notifications/push/stats` | `notification` | admin+ |
+| `GET` | `/admin/notifications/push/jobs` | `notification` | admin+ |
+| `GET` | `/admin/notifications/push/jobs/:publicId` | `notification` | admin+ |
+| `POST` | `/admin/notifications/push/jobs` | `notification` | admin+ |
+| `POST` | `/admin/notifications/push/jobs/:publicId/process` | `notification` | admin+ |
+| `POST` | `/admin/notifications/push/jobs/:publicId/redrive` | `notification` | admin+ |
+| `GET` | `/admin/notifications/push/status` | `notification` | admin+ |
 
 ## Vows & Merit
 
@@ -125,6 +185,11 @@ Mục tiêu:
 | `POST` | `/vows/:publicId/milestones` | `vows-merit` | member+ |
 | `GET` | `/life-release-journal` | `vows-merit` | member+ |
 | `POST` | `/life-release-journal` | `vows-merit` | member+ |
+| `GET` | `/life-release-journal/:publicId` | `vows-merit` | member+ |
+| `PATCH` | `/life-release-journal/:publicId` | `vows-merit` | member+ |
+| `POST` | `/admin/vows/assisted-entry/life-release` | `vows-merit` | admin+ |
+| `POST` | `/admin/vows/assisted-entry/progress` | `vows-merit` | admin+ |
+| `GET` | `/admin/vows/assisted-entry/history` | `vows-merit` | admin+ |
 
 ## Wisdom & QA
 

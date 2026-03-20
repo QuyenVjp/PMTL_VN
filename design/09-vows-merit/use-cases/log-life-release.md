@@ -35,6 +35,9 @@
   - `dedicationNote` nếu policy cho phép
   - `ritualChecklistRefs`
   - optional `practiceRuleRefs` cho các khai thị hoặc rule liên quan
+  - optional `guideContextRef`
+  - optional `ritualVariantRef`
+  - optional `advisoryContextRef`
   - optional `linkedVowId`
   - optional `linkedPracticeDayTag`
   - optional `ownerUserId` khi `admin` nhập giúp
@@ -70,17 +73,18 @@
    - không hard delete âm thầm
    - phải xác định deterministic rollback path cho mọi `vowProgressEntry` đã được áp dụng từ record này
 7. Gắn refs tới bài đọc hoặc nghi thức hỗ trợ nếu có.
-8. Nếu user chọn rule tham chiếu chính thống, gắn source-linked note vào record:
+8. Nếu user đi vào từ public guide hoặc advisory, lưu `guideContextRef`, `ritualVariantRef`, `advisoryContextRef` để FE mở lại đúng companion panel.
+9. Nếu user chọn rule tham chiếu chính thống, gắn source-linked note vào record:
    - original text
    - Vietnamese translation
    - source URL
    - source code hoặc timestamp nếu có
    - review status
-9. Nếu rule có `same-day` guidance thì lưu như `practiceRuleRef`, không hard-code thành logic bất biến của module.
-10. Nếu operation là `create` hoặc `correct` và record này đóng góp vào một vow, append hoặc recompute `vowProgressEntry` tương ứng qua owner flow của vows-merit.
-11. Nếu operation là `void`, rollback hoặc neutralize toàn bộ vow progress đã phát sinh từ record này theo đường deterministic.
-12. Append audit `life-release.log`.
-13. Nếu cần reminder follow-up, calendar refresh, hoặc notification downstream, append outbox event tương ứng sau khi canonical state đã ổn định.
+10. Nếu rule có `same-day` guidance thì lưu như `practiceRuleRef`, không hard-code thành logic bất biến của module.
+11. Nếu operation là `create` hoặc `correct` và record này đóng góp vào một vow, append hoặc recompute `vowProgressEntry` tương ứng qua owner flow của vows-merit.
+12. Nếu operation là `void`, rollback hoặc neutralize toàn bộ vow progress đã phát sinh từ record này theo đường deterministic.
+13. Append audit `life-release.log`.
+14. Nếu cần reminder follow-up, calendar refresh, hoặc notification downstream, append outbox event tương ứng sau khi canonical state đã ổn định.
 
 ## Async side-effects
 

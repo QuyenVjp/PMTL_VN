@@ -11,7 +11,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Sẵn sàng | 11 modules đầy đủ contracts, schemas, use-cases |
+| Backend architecture | ✅ Sẵn sàng | 11 modules có docs core; contact use-cases, Little House content/admin surface, Daily Practice content/admin surface, Life Release content/admin surface, search ops, notification ops, assisted-entry path đã được khóa trong design |
 | Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
@@ -21,13 +21,13 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
 | Rate-limit values | ✅ Sẵn sàng | 13 endpoints với exact limits — xem Phần 5 |
-| Migration order | ✅ Sẵn sàng | 11 bước chi tiết — xem Phần 6 |
+| Migration order | ✅ Sẵn sàng | 12 bước chi tiết — xem Phần 6 |
 | Testing strategy | ✅ Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `baseline/testing-strategy.md` |
 | Deploy runbook | ✅ Sẵn sàng | Docker Compose, deploy/rollback commands, SSL verify — `ops/deploy-runbook.md` |
 | Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `baseline/migration-strategy.md` |
 | Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
-| Skill/tool alignment | ✅ Fixed | Payload CMS skills đã deprecated (`pmtl-scaffold-payload-collection`, `pmtl-runbook-cms-runtime-errors`) hoặc rewrite (`pmtl-vn-architecture`, `pmtl-production-ready`). 6 SEO/GEO skills ALIGNED |
+| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills Payload legacy đã bị deprecate hoặc loại khỏi luồng code mới |
 | OpenAPI spec | ❌ Thiếu | Phase 1 acceptable — auto-gen từ NestJS Swagger decorators |
 
 ---
@@ -35,7 +35,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 ## Phần 1: Những gì ĐÃ ổn (Không cần sửa trước khi code)
 
 ### Backend design — ĐẦY ĐỦ
-Mọi domain module (01-10) đều có:
+Mọi domain module (01-11) đều có:
 - `module-map.md` — objectives, ownership, boundaries
 - `contracts.md` — routes, input/output, error codes
 - `schema.dbml` — DB schema per module
@@ -60,8 +60,8 @@ Mọi domain module (01-10) đều có:
 - Env variables: `tracking/env-inventory.md`
 
 ### UI/UX design — ĐẦY ĐỦ
-- 49 pages: `design/ui/PAGE_INVENTORY.md`
-- 7 user flows: `design/ui/USER_FLOWS.md`
+- Route inventory đầy đủ: `design/ui/PAGE_INVENTORY.md`
+- User flows public/member/admin: `design/ui/USER_FLOWS.md`
 - 30+ components: `design/ui/COMPONENT_SPECS.md`
 - Design principles: `design/ui/DESIGN_PRINCIPLES.md`
 - Admin architecture: `design/ui/ADMIN_ARCHITECTURE.md`
@@ -80,7 +80,7 @@ Mọi domain module (01-10) đều có:
 
 ### ✅ GAP 1: Prisma schema tổng hợp — FIXED
 
-**Đã tạo**: `tracking/prisma-schema-plan.md` — enums, FK dependency graph, naming conventions, merge process, 11-step migration order.
+**Đã tạo**: `tracking/prisma-schema-plan.md` — enums, FK dependency graph, naming conventions, merge process, 12-step migration order.
 
 ---
 
@@ -96,14 +96,15 @@ Mọi domain module (01-10) đều có:
 
 ---
 
-### ⚠️ GAP 4: Skill conflict — CÒN (cần deprecate khi bắt đầu code)
+### ✅ GAP 4: Skill conflict — FIXED ở routing layer
 
-**Vấn đề**: `.agents/skills/` có skills cũ reference Payload CMS:
-- `pmtl-vn-architecture` — Payload CMS, không phải NestJS
-- `pmtl-scaffold-payload-collection` — Payload collections
-- `pmtl-production-baseline` — có thể reference Payload
+**Trạng thái hiện tại**:
+- `AGENTS.md` đã chốt `design-first` + `apps/web + apps/api + apps/admin`
+- các skill Payload cũ đã được đánh dấu deprecated trong repo routing
+- không còn coi chúng là blocker cho design readiness
 
-**Action**: Update hoặc deprecate khi bắt đầu Wave 1. Xem "Skill Alignment" bên dưới.
+**Lưu ý**:
+- khi code thật, vẫn chỉ dùng skill/routing đã align với NestJS rebuild
 
 ---
 
@@ -256,6 +257,11 @@ Bước 7 — Search (projection):
 
 Bước 8 — Calendar:
   - events
+  - event_agenda_items
+  - event_speakers
+  - event_ctas
+  - event_gallery_media
+  - event_files
   - lunar_events → lunar_event_overrides
   - personal_practice_calendar_read_model
 
@@ -305,15 +311,14 @@ Bước 12 — Contact (reference users):
 - `geo-content-optimizer` ✅ — GEO optimization cho AI citation (ChatGPT, Perplexity, Google AI Overviews)
 - `svg-precision` ✅ — deterministic SVG cho icons, diagrams, charts, UI mockups tĩnh, technical drawings trong `design/`
 
-### Skills DEPRECATED / CONFLICT (không dùng):
+### Skills DEPRECATED / CONFLICT (không dùng cho code mới):
 | Skill | Vấn đề | Action |
 |---|---|---|
-| `pmtl-vn-architecture` | Describes **Payload CMS** architecture, not NestJS | **Deprecate / Update** |
 | `pmtl-scaffold-payload-collection` | Creates Payload collections | **Deprecate** |
 | `pmtl-production-baseline` | May reference Payload patterns | **Review & Update** |
 | `pmtl-runbook-cms-runtime-errors` | References CMS (Payload) runtime | **Deprecate** |
 
-**Action required**: Update `.agents/skills/pmtl-vn-architecture/SKILL.md` để reflect NestJS design, hoặc add deprecation notice rõ ràng.
+**Action required**: tiếp tục tránh route vào các skill deprecated; ưu tiên skills đã align trong `AGENTS.md`.
 
 ---
 
@@ -361,7 +366,7 @@ Wave 6 — Notifications + Offline
 - [ ] Đọc `baseline/startup-dependency-order.md`
 - [ ] Đọc `01-identity/use-cases/manage-auth-session.md` (launch blocker)
 - [ ] Đọc `02-content/use-cases/upload-media-asset.md` (launch blocker)
-- [ ] Verify `.agents/skills/pmtl-vn-architecture` đã được update hoặc deprecated
+- [ ] Verify skill routing đang dùng khớp `AGENTS.md` của repo
 - [ ] Tạo Prisma schema từ migration order ở trên
 - [ ] Seed `feature_flags` table với flags list ở Phần 5
 - [ ] Confirm rate-limit store: `rate_limit_records` Postgres table (phase 1)

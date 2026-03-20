@@ -14,6 +14,16 @@
 - `POST /api/push/send`
 - `POST /api/push/process`
 
+## Admin management routes
+
+- `GET /api/admin/push/jobs`
+- `GET /api/admin/push/jobs/:publicId`
+- `POST /api/admin/push/jobs`
+- `POST /api/admin/push/jobs/:publicId/process`
+- `POST /api/admin/push/jobs/:publicId/redrive`
+- `GET /api/admin/push/stats`
+- `GET /api/admin/push/status`
+
 ## Canonical rules
 
 - subscription canonical record (bản ghi chuẩn gốc) nằm ở `pushSubscriptions`
@@ -27,6 +37,7 @@
   - subscribe / unsubscribe device của chính mình
 - `admin`
   - được quản trị manual send/process/stats theo policy
+  - được xem delivery status, job history, redrive controls qua admin workspace
 - `super-admin`
   - giữ quyền override vận hành khi cần
 
@@ -55,11 +66,22 @@ Subscribe payload phải có:
 - `500`
   - create job hoặc worker (tiến trình xử lý nền) dispatch fail
 
+## Admin management expectations
+
+- admin page `/admin/he-thong/thong-bao` phải nhìn được:
+  - queue health
+  - pending / processing / failed job counts
+  - recent jobs
+  - error summary ngắn
+  - redrive action có audit
+- segmentation hay quiet-hours override nếu có phải là explicit admin action, không để UI tự sửa payload raw ngoài rule
+
 ## Notes for AI/codegen
 
 - `pushJobs` không phải inbox canonical của người dùng.
 - Notification là async-only (chỉ chạy ngầm, bất đồng bộ); request path nên tạo hoặc sửa job rồi trả sớm.
 - Self-send prevention nên xử lý ở job payload/rule, không hack ở UI.
+- `admin push jobs` là control-plane management surface, không phải inbox message center của người dùng.
 
 - `timezone`: Local device offset for quiet-hours calculation.
 - `notificationPrefs`: Granular category opt-ins.

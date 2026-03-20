@@ -313,3 +313,41 @@ initialExpandLevel: 3
   - phần nội dung anh đã xác nhận parse được
   - cấu trúc hóa lại để phục vụ design
 - Khi có pipeline đọc PDF/vision đầy đủ hơn, file này nên được update trước rồi mới lan sang schema (lược đồ dữ liệu)/flow/UI.
+
+## External benchmark notes (Quan sát web ngoài)
+
+Các site đã đối chiếu ngày `2026-03-20`:
+
+- Việt:
+  - [Hướng Dẫn Niệm Kinh Bài Tập - phapmontamlinh.vn](https://phapmontamlinh.vn/huong-dan-niem-kinh/)
+  - [Dành cho người mới - phapmontamlinh.com](https://phapmontamlinh.com/danh-cho-nguoi-moi/)
+  - [Kinh bài tập là gì? các vấn đề thường gặp... - phapmontamlinh.vn](https://phapmontamlinh.vn/kinh-bai-tap-la-gi-cac-van-de-thuong-gap-va-nhung-luu-y-khi-niem-kinh-bai-tap/)
+- Trung:
+  - [每日功课步骤 - Oriental Radio Singapore](https://orientalradio.com.sg/%E6%AF%8F%E6%97%A5%E5%8A%9F%E8%AF%BE%E6%AD%A5%E9%AA%A4/)
+  - [每日功课步骤（初学者）PDF - guanyincitta.info](https://www.guanyincitta.info/downloads/xlfm_chinese_guide.pdf)
+
+Pattern rút ra:
+
+- web Trung thiên về `PDF-first / manual-first`
+- web Việt thiên về:
+  - beginner hub
+  - article FAQ dài
+  - resource links
+- các site hiện tại chưa bridge tốt giữa:
+  - guide
+  - scenario presets
+  - daily tracker
+  - advisory theo ngày
+
+Hướng PMTL_VN nên giữ:
+
+- PDF companion chuẩn
+- FAQ / lưu ý
+- preset theo tình huống
+
+Nhưng làm tốt hơn ở:
+
+- grouped IA
+- typed content blocks
+- bridge sang `/tu-tap/bai-tap`
+- admin workspace riêng cho daily practice

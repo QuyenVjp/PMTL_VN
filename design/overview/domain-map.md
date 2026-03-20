@@ -42,7 +42,7 @@ markmap:
 ### 02-content (Nội dung)
 - **Directory**: [02-content](../02-content/)
 - **Use when (Dùng khi)**: làm bài viết, trang chủ đề, guide, download, chant items/plans, thư viện kinh
-- **Reference (Tài liệu chính)**: [module-map.md](../02-content/module-map.md), [contracts.md](../02-content/contracts.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../02-content/module-map.md), [contracts.md](../02-content/contracts.md), [little-house-experience-architecture.md](../02-content/little-house-experience-architecture.md), [daily-practice-experience-architecture.md](../02-content/daily-practice-experience-architecture.md), [daily-practice-content-inventory.md](../02-content/daily-practice-content-inventory.md), [life-release-experience-architecture.md](../02-content/life-release-experience-architecture.md), [life-release-content-inventory.md](../02-content/life-release-content-inventory.md), [publish-little-house-guide.md](../02-content/use-cases/publish-little-house-guide.md), [publish-life-release-guide.md](../02-content/use-cases/publish-life-release-guide.md)
 
 ### 03-community (Cộng đồng)
 - **Directory**: [03-community](../03-community/)
@@ -67,17 +67,17 @@ markmap:
 ### 07-calendar (Lịch tu học)
 - **Directory**: [07-calendar](../07-calendar/)
 - **Use when (Dùng khi)**: làm event, lịch âm, lịch tu học cá nhân, daily advisory
-- **Reference (Tài liệu chính)**: [module-map.md](../07-calendar/module-map.md), [PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md](../07-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../07-calendar/module-map.md), [PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md](../07-calendar/PERSONAL_PRACTICE_CALENDAR_READ_MODEL.md), [organizational-events-architecture.md](../07-calendar/organizational-events-architecture.md), [manage-organizational-event-agenda.md](../07-calendar/use-cases/manage-organizational-event-agenda.md), [reschedule-or-cancel-event.md](../07-calendar/use-cases/reschedule-or-cancel-event.md)
 
 ### 08-notification (Thông báo)
 - **Directory**: [08-notification](../08-notification/)
 - **Use when (Dùng khi)**: làm push subscriptions, notification jobs, reminder schedules
-- **Reference (Tài liệu chính)**: [module-map.md](../08-notification/module-map.md), [contracts.md](../08-notification/contracts.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../08-notification/module-map.md), [contracts.md](../08-notification/contracts.md), [dispatch-push-job.md](../08-notification/use-cases/dispatch-push-job.md)
 
 ### 09-vows-merit (Nguyện và công đức)
 - **Directory**: [09-vows-merit](../09-vows-merit/)
 - **Use when (Dùng khi)**: làm vow, tiến độ vow, life release journal
-- **Reference (Tài liệu chính)**: [module-map.md](../09-vows-merit/module-map.md), [contracts.md](../09-vows-merit/contracts.md), [log-life-release.md](../09-vows-merit/use-cases/log-life-release.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../09-vows-merit/module-map.md), [contracts.md](../09-vows-merit/contracts.md), [log-life-release.md](../09-vows-merit/use-cases/log-life-release.md), [assisted-entry-workflow.md](../09-vows-merit/assisted-entry-workflow.md), [create-assisted-life-release-entry.md](../09-vows-merit/use-cases/create-assisted-life-release-entry.md)
 
 ### 10-wisdom-qa (Trí tuệ và hỏi đáp)
 - **Directory**: [10-wisdom-qa](../10-wisdom-qa/)
@@ -87,7 +87,7 @@ markmap:
 ### 11-contact (Liên hệ & Phụng Sự Viên)
 - **Directory**: [11-contact](../11-contact/)
 - **Use when (Dùng khi)**: làm trang liên hệ, danh sách phụng sự viên, liên hệ qua Zalo
-- **Reference (Tài liệu chính)**: [module-map.md](../11-contact/module-map.md), [contracts.md](../11-contact/contracts.md)
+- **Reference (Tài liệu chính)**: [module-map.md](../11-contact/module-map.md), [contracts.md](../11-contact/contracts.md), [update-contact-info.md](../11-contact/use-cases/update-contact-info.md), [manage-volunteer-directory.md](../11-contact/use-cases/manage-volunteer-directory.md)
 
 ---
 

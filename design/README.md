@@ -130,14 +130,18 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow admin nhập liệu thay member |
 | [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA |
 | [organizational-events-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/organizational-events-architecture.md) | Kiến trúc sự kiện tổ chức: agenda, speakers, CTA, assets |
+| [daily-practice-experience-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/daily-practice-experience-architecture.md) | Kiến trúc public/admin/tracker cho Kinh Bài Tập Hằng Ngày |
+| [daily-practice-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/daily-practice-content-inventory.md) | Inventory canonical cho groups, guides, presets, FAQ, downloads |
+| [life-release-experience-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-experience-architecture.md) | Kiến trúc public/admin/journal bridge cho Phóng Sanh |
+| [life-release-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-content-inventory.md) | Inventory canonical cho nghi thức, variants, warnings, FAQ, downloads của Phóng Sanh |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
 ### UI/UX design (6 files)
 | File | Nội dung |
 |---|---|
-| [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | 49 trang/màn hình đầy đủ với routes, auth levels, module owners |
-| [USER_FLOWS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/USER_FLOWS.md) | 7 user journeys chính (onboarding, daily practice, wisdom search...) |
-| [COMPONENT_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/COMPONENT_SPECS.md) | Specs cho 30+ components kể cả elderly-specific rules |
+| [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | Route inventory đầy đủ cho public/member/admin surfaces, kể cả Little House, Kinh Bài Tập, Phóng Sanh, search ops, notification ops |
+| [USER_FLOWS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/USER_FLOWS.md) | Các user journeys chính cho onboarding, daily practice, event attendance, admin operations, assisted entry |
+| [COMPONENT_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/COMPONENT_SPECS.md) | Specs cho 30+ components kể cả elderly-specific rules và companion-guide patterns |
 | [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) | Color system, typography, spacing, interaction patterns, premium details |
 | [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin: Vite + React SPA, sidebar, DataTable, command palette |
 | [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md) | Elderly-specific UX rules per module |

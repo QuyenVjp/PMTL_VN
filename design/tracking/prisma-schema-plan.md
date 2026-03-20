@@ -1,9 +1,9 @@
 # Prisma Schema Plan (Kế hoạch hợp nhất schema)
 
-File này chốt kế hoạch merge 10 module `schema.dbml` thành 1 `prisma/schema.prisma` tổng.
+File này chốt kế hoạch merge 11 module `schema.dbml` thành 1 `prisma/schema.prisma` tổng.
 Không có file này, developer phải tự đoán thứ tự table, foreign keys, enums.
 
-> **Migration order**: xem `coding-readiness.md` Phần 6 cho 11 bước chi tiết
+> **Migration order**: xem `coding-readiness.md` Phần 6 cho 12 bước chi tiết
 > **Module schemas**: mỗi module có `schema.dbml` riêng trong `design/XX-module/`
 
 ---
@@ -19,10 +19,11 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 | 04-engagement | `04-engagement/schema.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `practice_logs`, `practice_sheets`, `ngoi_nha_nho_sheets` |
 | 05-moderation | `05-moderation/schema.dbml` | `moderation_reports` |
 | 06-search | `06-search/schema.dbml` | `search_index_metadata` (optional) |
-| 07-calendar | `07-calendar/schema.dbml` | `events`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
+| 07-calendar | `07-calendar/schema.dbml` | `events`, `event_agenda_items`, `event_speakers`, `event_ctas`, `event_gallery_media`, `event_files`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
 | 08-notification | `08-notification/schema.dbml` | `push_subscriptions`, `push_jobs` |
 | 09-vows-merit | `09-vows-merit/schema.dbml` | `vows`, `vow_progress_entries`, `life_release_journal` |
 | 10-wisdom-qa | `10-wisdom-qa/schema.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`, `video_talk_entries`, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
+| 11-contact | `11-contact/schema.dbml` | `contact_info`, `volunteers` |
 
 ---
 
@@ -151,6 +152,11 @@ sutras → sutra_volumes → sutra_chapters → sutra_glossary
 chant_items → chant_plans
 
 events (standalone)
+  ├── event_agenda_items
+  ├── event_speakers
+  ├── event_ctas
+  ├── event_gallery_media
+  └── event_files
 lunar_events → lunar_event_overrides
 
 vows → vow_progress_entries
@@ -161,7 +167,7 @@ offline_bundles → offline_bundle_entries
 
 ---
 
-## Migration execution order (11 steps)
+## Migration execution order (12 steps)
 
 Ref: `coding-readiness.md` Phần 6 cho chi tiết. Summary:
 
@@ -173,10 +179,11 @@ Ref: `coding-readiness.md` Phần 6 cho chi tiết. Summary:
 5. Engagement (bookmarks, progress, practice logs, sheets)
 6. Moderation (reports)
 7. Search (index metadata)
-8. Calendar (events, lunar, personal calendar)
+8. Calendar (events, agenda/speakers/ctas/assets, lunar, personal calendar)
 9. Notification (subscriptions, jobs)
 10. Vows & Merit (vows, progress, journal)
 11. Wisdom QA (authority profiles, entries, offline bundles)
+12. Contact (contact info, volunteers)
 ```
 
 ---

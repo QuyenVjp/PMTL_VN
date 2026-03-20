@@ -33,7 +33,8 @@
 - `lunarEventOverrides`
 - `practice_calendar_rules`
 - source-backed rule refs từ `09-wisdom-qa`
-- `beginnerGuides` hoặc support refs từ `01-content`
+- `beginnerGuides` hoặc support refs từ `02-content`
+- `daily practice scenario presets` từ `02-content`
 - optional community support refs cho địa phương
 
 ## write path (thứ tự ghi dữ liệu chuẩn)
@@ -53,6 +54,7 @@
    - time window rules
    - household conditions
    - exception rules
+   - recommended scenario preset ref
    - support refs
 6. Compose `advisoryCards` ngắn gọn cho UI người lớn tuổi.
 7. Gắn `sourceRefs` để user mở bài gốc hoặc bài dịch đã duyệt.
@@ -69,6 +71,7 @@
 
 - user nhìn thấy card ngắn, rõ, đúng ngày
 - bên dưới vẫn có source-backed refs để đối chiếu
+- nếu cần, FE có thể deep-link sang đúng preset hoặc `/tu-tap/bai-tap`
 - notification có thể đọc cùng một output mà không tự tính lại logic
 
 ## Errors

@@ -28,6 +28,8 @@
   - `sheetType`
   - `practiceDate`
   - danh sách item
+  - `scenarioPresetRef` hoặc `guideContextRef` nếu sheet được mở từ public guide
+  - `advisoryContextRef` nếu sheet được mở từ daily advisory
   - `clientEventId` nếu là sync/offline update
 
 ## Read set (Tập dữ liệu đọc)
@@ -42,8 +44,9 @@
 2. Tạo mới hoặc load `practiceSheets` hiện có theo ngày/plan.
 3. Upsert item state theo payload.
 4. Tính lại `completionPercent`.
-5. Nếu đủ điều kiện, chuyển trạng thái sang `completed`.
-6. Append audit nhẹ cho create/complete nếu policy yêu cầu.
+5. Lưu context refs để FE mở lại companion guide đúng.
+6. Nếu đủ điều kiện, chuyển trạng thái sang `completed`.
+7. Append audit nhẹ cho create/complete nếu policy yêu cầu.
 
 ## async (bất đồng bộ) side-effects
 
@@ -52,6 +55,7 @@
 ## success result (kết quả thành công)
 
 - user thấy đúng bảng công phu đang làm và tiến độ tổng
+- nếu vào từ preset/guide/advisory, user quay lại đúng companion context
 
 ## Errors (Lỗi dự kiến)
 
@@ -65,3 +69,4 @@
 
 - đây là personal practice sheet, không phải social post
 - projection/reminder downstream nếu lệch thì recovery path phải quay về canonical `practiceSheets`
+- nếu public guide đổi wording, `practiceSheets` vẫn chỉ giữ ref/context chứ không lưu script canonical.

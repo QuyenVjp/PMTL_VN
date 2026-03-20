@@ -151,6 +151,115 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.4c Daily Practice Hub (Kinh Bài Tập — Tổng quan)
+
+| Field | Value |
+|---|---|
+| Route | `/kinh-bai-tap` |
+| Title | Kinh Bài Tập Hằng Ngày |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung chính:**
+- Entry cards theo 5 nhóm: bắt đầu / các bước / lưu ý / theo tình huống / thực hành
+- Quick definition: `Kinh Bài Tập là gì`, khác gì với `Ngôi Nhà Nhỏ`
+- "Tôi là người mới" CTA dẫn vào luồng an toàn nhất
+- Download panel cho PDF chuẩn và sách kinh liên quan
+- CTA `Bắt đầu thực hành` → `/tu-tap/bai-tap` (member+)
+
+**SEO**: Primary keyword `kinh bài tập hằng ngày`. Schema: `WebPage` + `ItemList` + `BreadcrumbList`.
+**Mobile note**: Card IA hiển thị 1 cột, đọc được không cần mở accordion.
+
+---
+
+### 1.4d Daily Practice Group Landing Pages
+
+| Routes | Auth | Module owner |
+|---|---|---|
+| `/kinh-bai-tap/bat-dau` | `public` | Content |
+| `/kinh-bai-tap/cac-buoc` | `public` | Content |
+| `/kinh-bai-tap/luu-y` | `public` | Content |
+| `/kinh-bai-tap/theo-tinh-huong` | `public` | Content |
+| `/kinh-bai-tap/thuc-hanh` | `public` (tracker cần `member+`) | Content |
+
+**Mỗi group landing page có:**
+- Sticky section nav
+- Danh sách guide cards, FAQ highlights, related preset shortcuts
+- CTA tải PDF và CTA sang tracker
+- Breadcrumb: Trang chủ > Kinh Bài Tập > [Nhóm]
+
+**SEO**: `Article` + `BreadcrumbList`, nhóm `các bước` có thể dùng `HowTo` khi phù hợp.
+
+---
+
+### 1.4e Daily Practice Guide Detail Pages
+
+| Route pattern | Auth | Module owner |
+|---|---|---|
+| `/kinh-bai-tap/[group]/[slug]` | `public` | Content |
+
+**Ví dụ routes:**
+- `/kinh-bai-tap/cac-buoc/cho-nguoi-moi`
+- `/kinh-bai-tap/luu-y/thoi-gian-va-dia-diem`
+- `/kinh-bai-tap/theo-tinh-huong/benh-nang`
+- `/kinh-bai-tap/thuc-hanh/ghi-buoi-tu`
+
+**Mỗi guide detail page có:**
+- Sticky TOC
+- Block types: step_sequence, warning_list, chant_count_matrix, faq_block, download_panel
+- Summary box đầu trang
+- `Scenario preset` card nếu bài có preset liên quan
+- CTA `Mở bảng thực hành`
+
+**Mobile note**: TOC collapse thành dropdown. Step sequence ưu tiên dạng card dọc.
+
+---
+
+### 1.4f Life Release Hub (Phóng Sanh — Tổng quan)
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/phong-sanh` |
+| Title | Phóng Sanh — Hướng Dẫn Nghi Thức |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung chính:**
+- định nghĩa ngắn, khi nào nên dùng guide này
+- quick chooser: cho bản thân / cho người khác / nghi thức cơ bản / lưu ý
+- warning đạo đức và checklist chuẩn bị ngắn
+- download panel cho PDF và card mẫu khấn
+- CTA `Mở sổ tay phóng sanh` -> `/phong-sanh` (member+)
+
+**SEO**: Pillar page cho cluster `phóng sanh pháp môn tâm linh`.
+**Mobile note**: quick chooser hiển thị dạng card dọc, không accordion sâu.
+
+---
+
+### 1.4g Life Release Guide Detail Pages
+
+| Route pattern | Auth | Module owner |
+|---|---|---|
+| `/huong-dan/phong-sanh/[slug]` | `public` | Content |
+
+**Ví dụ routes:**
+- `/huong-dan/phong-sanh/nghi-thuc-co-ban`
+- `/huong-dan/phong-sanh/cho-ban-than`
+- `/huong-dan/phong-sanh/cho-nguoi-khac`
+- `/huong-dan/phong-sanh/luu-y-va-chuan-bi`
+- `/huong-dan/phong-sanh/xu-ly-khi-co-loai-vat-tu-vong`
+
+**Mỗi guide detail page có:**
+- summary box đầu trang
+- step sequence hoặc script block
+- ritual variant card
+- warning list
+- CTA `Ghi lại buổi phóng sanh`
+
+**Mobile note**: step sequence dạng card dọc; scripts có nút copy/expand nhưng không ẩn phần placeholder quan trọng.
+
+---
+
 ### 1.5 Beginner Guides (Hướng dẫn mới bắt đầu)
 
 | Field | Value |
@@ -533,9 +642,13 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Header: ngày hôm nay (âm lịch + dương lịch)
+- Advisory context card nếu vào từ `/lich-ca-nhan` hoặc ngày đặc biệt
+- Scenario preset card nếu user mở từ guide công khai hoặc preset route
 - Practice items list (từ chantPlans hoặc user preferences)
 - Mỗi item: checkbox + số biến / thời lượng + input điều chỉnh
+- Companion guide drawer: mở nhanh `các bước`, `lưu ý`, `thời gian/địa điểm`
 - "Lưu buổi tu" button
+- "Hoàn thành buổi tu" action khi đủ checklist
 - Note field (optional)
 
 **Elderly note**: Checkbox PHẢI lớn (min 44px). Font tối thiểu 17px. High contrast.
@@ -626,6 +739,8 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Journal entries list (date, loại vật, số lượng, địa điểm)
+- advisory/preset card nếu vào từ ngày đặc biệt hoặc từ guide công khai
+- quick links sang nghi thức cơ bản và variant đã dùng gần đây
 - "Ghi lại buổi phóng sanh" button
 - Monthly summary
 
@@ -643,6 +758,8 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Số lượng / quy mô
 - Địa điểm (optional)
 - Bài niệm liên quan (từ Wisdom-QA, auto-suggest)
+- guide context / ritual variant context nếu mở từ guide
+- companion panel cho mẫu khấn và checklist
 - Notes
 
 ---
@@ -739,9 +856,53 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 Similar pattern cho:
 - `/admin/noi-dung/huong-dan` — Beginner Guides
+- `/admin/noi-dung/kinh-bai-tap` — Daily Practice workspace
+- `/admin/noi-dung/ngoi-nha-nho` — Little House workspace
+- `/admin/noi-dung/phong-sanh` — Life Release workspace
 - `/admin/noi-dung/tai-lieu` — Downloads
 - `/admin/noi-dung/kinh-sach` — Sutras
 - `/admin/noi-dung/niem-kinh` — Chant Items
+
+### 4.3a Little House Content Workspace
+
+| Route | `/admin/noi-dung/ngoi-nha-nho` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Tổng quan / Nhóm hướng dẫn / Bài chi tiết / Case variants / FAQ / Downloads & in ấn / Ảnh minh họa / Version & nguồn
+- Block preview cho public guide pages và tracker companion cards
+- Validation cho warning blocks, script source refs, version notes
+- Publish action + audit summary
+
+---
+
+### 4.3b Daily Practice Content Workspace
+
+| Route | `/admin/noi-dung/kinh-bai-tap` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Tổng quan / Các bước / Lưu ý / Scenario presets / FAQ / Downloads / Version & nguồn
+- Preview guide map cho 5 nhóm IA
+- Validation cho time/place rules, count matrices, preset links
+- Preview companion cards cho member tracker
+- Publish action + audit summary
+
+---
+
+### 4.3c Life Release Content Workspace
+
+| Route | `/admin/noi-dung/phong-sanh` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Tổng quan / Nghi thức cơ bản / Variants / Lưu ý & chuẩn bị / FAQ / Downloads & nguồn / Version & review notes
+- Preview public guide pages và member companion panel
+- Validation cho script wording, species count matrix, warning blocks
+- Publish action + audit summary
 
 ---
 
@@ -829,6 +990,30 @@ Similar pattern cho:
 - Preview public detail page
 - Publish action + audit summary
 
+### 4.12b Search Operations
+
+| Route | `/admin/he-thong/tim-kiem` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Search |
+
+**Nội dung:**
+- Engine status: SQL fallback / Meilisearch / sync freshness
+- Source cards: posts / guides / wisdom / little-house guides
+- Reindex toàn bộ hoặc theo source
+- Recent reindex log + error summary
+
+### 4.12c Notification Operations
+
+| Route | `/admin/he-thong/thong-bao` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Notification |
+
+**Nội dung:**
+- Queue health, pending/processing/failed counts
+- Recent push jobs table
+- Job detail drawer: targeting, sent/failed counts, error summary
+- Actions: create manual job, process, redrive
+
 ---
 
 ### 4.13 Wisdom-QA Management
@@ -874,17 +1059,30 @@ Similar pattern cho:
 - Upload avatar
 - Click row → edit detail (modal hoặc inline)
 
+### 4.16 Assisted Entry Support (Nhập hộ phát nguyện / phóng sanh)
+
+| Route | `/admin/ho-tro/phat-nguyen/nhap-ho` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Vows-Merit |
+
+**Nội dung:**
+- Chọn member owner
+- Tabs: Ghi phóng sanh hộ / Ghi tiến độ nguyện hộ / Lịch sử nhập hộ
+- Form có `assistReason` bắt buộc
+- Confirmation step trước submit
+- Audit badge rõ actor/owner
+
 ---
 
 ## V. Page Count Summary
 
 | Section | Count |
 |---|---|
-| Public pages | 19 |
+| Public pages | 24 |
 | Auth pages | 5 |
 | Member pages | 14 |
-| Admin pages | 16 |
-| **Total** | **54 pages** |
+| Admin pages | 22 |
+| **Total** | **65 pages** |
 
 ---
 

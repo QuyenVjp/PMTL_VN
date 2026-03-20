@@ -79,6 +79,9 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 ### Calendar / delivery / control plane
 
 - `events`
+- `eventAgendaItems`
+- `eventSpeakers`
+- `eventCtas`
 - `lunarEvents`
 - `lunarEventOverrides`
 - `personalPracticeCalendarReadModel`
@@ -188,6 +191,9 @@ Service responsibilities:
 Collection owners:
 
 - `Events`
+- `EventAgendaItems`
+- `EventSpeakers`
+- `EventCtas`
 - `LunarEvents`
 - `LunarEventOverrides`
 - `PracticeCalendarRules`
@@ -199,6 +205,7 @@ Service responsibilities:
 - important practice day tagging
 - daily advisory composition
 - reminder candidate generation
+- organizational event composition (agenda, CTA, speaker roster)
 
 ### 07-notification
 

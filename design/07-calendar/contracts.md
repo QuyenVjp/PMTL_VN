@@ -24,10 +24,13 @@
 - `PATCH /api/admin/calendar/events/:id`
 - `POST /api/admin/calendar/events/:id/agenda-items`
 - `PATCH /api/admin/calendar/events/:id/agenda-items/:agendaItemId`
+- `POST /api/admin/calendar/events/:id/agenda-items/reorder`
 - `POST /api/admin/calendar/events/:id/speakers`
 - `PATCH /api/admin/calendar/events/:id/speakers/:speakerId`
 - `POST /api/admin/calendar/events/:id/ctas`
 - `PATCH /api/admin/calendar/events/:id/ctas/:ctaId`
+- `POST /api/admin/calendar/events/:id/reschedule`
+- `POST /api/admin/calendar/events/:id/cancel`
 - `POST /api/admin/calendar/events/:id/publish`
 
 ## Canonical rules
@@ -42,6 +45,7 @@
 - request payload, refresh job payload và advisory compose input nên có schema runtime rõ
 - event offline phải có `location`; event online phải có `externalLink` hoặc `embedUrl` phù hợp
 - event `type = organizational` phải có ít nhất một agenda item trước khi publish
+- reschedule/cancel là explicit lifecycle action; không patch mơ hồ qua field tự do rồi kỳ vọng FE tự suy ra trạng thái
 
 ## Error expectations
 
@@ -67,6 +71,7 @@
 - Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng các source-backed text gốc vẫn do `09-wisdom-qa` sở hữu.
 - Organizational event timeline phải trả dữ liệu có cấu trúc để FE render timeline/card view, không ép parse rich text.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
+- Hành động reschedule/cancel phải giữ audit + reason rõ để public FE và notification consumer có context đúng.
 
 - `409`: Conflict (Duplicate slug/PublicID or override collision).
 - `500`: Projection refresh failure or outbox dispatch error.

@@ -726,8 +726,10 @@ Sau file này, các bước tiếp theo hợp lý là:
 5. ✅ `design/06-search/unified-index-mapping.md` — đã thêm `little_house_guide` + `little_house_faq`
 6. ✅ `design/04-engagement/schema.dbml` — đã thêm 9 fields + 3 enums mới
 
-**Còn lại (chưa làm)**:
-- Scaffold API contracts cho `GET /content/little-house/guide-map` và các endpoints trong §8
-- Tạo `design/02-content/use-cases/publish-little-house-guide.md`
-- Cập nhật `design/tracking/api-route-inventory.md` khi API được scaffold
-- Cập nhật `design/tracking/prisma-schema-plan.md` để gộp 3 enums mới vào Prisma
+**Đã làm thêm sau đó**:
+- ✅ Scaffold content contracts cho `GET /content/little-house/guide-map` và các endpoints trong §8
+- ✅ Tạo `design/02-content/use-cases/publish-little-house-guide.md`
+- ✅ Cập nhật `design/tracking/api-route-inventory.md`
+
+**Còn lại nếu đi tiếp sang code thật**:
+- rà tiếp `design/tracking/prisma-schema-plan.md` để merge đầy đủ các enum mở rộng của `04-engagement` khi schema runtime được khóa

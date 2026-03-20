@@ -262,6 +262,110 @@ Daily practice tracking sheet.
 - Input số: lớn, numeric keyboard on mobile
 - "Lưu" button: fixed bottom, full-width on mobile, min height 52px
 - Không có animation trong quá trình điền
+- Nếu có context từ advisory hoặc preset, phải hiển thị `AdvisoryContextCard` hoặc `ScenarioPresetCard` ở đầu sheet
+- Companion guide drawer mở được từ sticky top action, không ép user rời tracker
+- Trước action complete phải hiện warning time/place rules nếu preset hoặc advisory yêu cầu
+
+---
+
+### `DailyPracticeHubCard`
+Card điều hướng cho hub `Kinh Bài Tập`.
+
+**Props**: `title`, `summary`, `href`, `group`, `readingTime?`, `isRecommended?`
+**States**: default / hover / featured
+**Rule**: summary phải đủ rõ để người mới chọn đúng nhóm mà không cần mở detail.
+
+---
+
+### `DailyPracticeScenarioPresetSelector`
+Selector cho preset theo tình huống: người mới, người cao tuổi, bệnh nặng, công việc/học hành, hóa giải oán kết.
+
+**Props**: `presets`, `selectedPresetId?`, `onSelect`
+**States**: default / selected / disabled
+**Rule**: không hiển thị quá nhiều jargon; mỗi preset phải có 1 dòng giải thích.
+
+---
+
+### `PracticeGuideCompanionDrawer`
+Drawer / sheet hiển thị guide đồng hành ngay trong tracker.
+
+**Props**: `guide`, `group`, `scenarioPreset?`
+**States**: closed / open / loading
+**Rule**: ưu tiên các block ngắn như step summary, warning list, quick checklist; không nhồi full article.
+
+---
+
+### `AdvisoryContextCard`
+Card tóm tắt advisory ngày hiện tại trước khi vào buổi tu.
+
+**Props**: `advisoryTitle`, `lunarLabel`, `recommendedActions`, `guideHref?`
+**States**: default / compact
+**Rule**: advisory chỉ gợi ý, không thay thế ritual truth từ content.
+
+---
+
+### `ScenarioPresetCard`
+Card tóm tắt preset đã chọn và lý do áp dụng.
+
+**Props**: `presetName`, `summary`, `focusItems`, `relatedGuideHref`
+**States**: default / warning / completed
+**Rule**: luôn link ngược về guide chuẩn để user kiểm chứng.
+
+---
+
+### `LifeReleaseGuideHubCard`
+Card điều hướng cho hub `Phóng Sanh`.
+
+**Props**: `title`, `summary`, `href`, `variant?`, `isRecommended?`
+**States**: default / hover / featured
+**Rule**: phải phân biệt rõ `cho bản thân` và `cho người khác`.
+
+---
+
+### `LifeReleaseRitualStepper`
+Stepper cho nghi thức phóng sanh.
+
+**Props**: `steps`, `variantKey?`, `warningList?`
+**States**: default / compact / print-friendly
+**Rule**: step text phải ngắn, không bury câu khấn dài trong từng card nếu đã có script block riêng.
+
+---
+
+### `LifeReleaseVariantCard`
+Card tóm tắt một biến thể nghi thức.
+
+**Props**: `variantKey`, `title`, `summary`, `placeholders`, `guideHref`
+**States**: default / selected
+**Rule**: placeholders quan trọng phải lộ rõ, không ẩn trong tooltip.
+
+---
+
+### `LifeReleaseCompanionPanel`
+Panel / drawer mở ngay trong form journal để xem lại script, biến thể và checklist.
+
+**Props**: `guide`, `variant`, `warnings`
+**States**: closed / open / loading
+**Rule**: chỉ hiển thị phần cần dùng tại thời điểm ghi journal; không render full article nặng.
+
+---
+
+### `LifeReleaseJournalForm`
+Form ghi lại buổi phóng sanh.
+
+**Fields**:
+- `releaseDate`
+- `species`
+- `quantity`
+- `unit`
+- `locationNote`
+- `guideContextRef`
+- `ritualVariantRef`
+- `notes`
+
+**Rules**:
+- nếu có `ritualVariantRef`, companion panel phải mở đúng variant
+- species-specific warning phải hiện nếu user đang ở flow xử lý tử vong
+- submit button không được che mất checklist quan trọng trên mobile
 
 ---
 

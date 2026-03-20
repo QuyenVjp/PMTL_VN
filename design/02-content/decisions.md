@@ -139,3 +139,63 @@ Các tài liệu PDF niệm hằng ngày, thắp tâm hương, phát nguyện, p
   - engagement cho progress/log
 - Khi tài liệu PDF được cập nhật, cần review mapping sang `chantItems` / `chantPlans` thay vì sửa bừa ở UI.
 
+## Decision 7. `Kinh Bài Tập Hằng Ngày` là first-class content surface
+
+### Context
+Ngoài thực tế, phần `Kinh Bài Tập Hằng Ngày` thường bị tách thành:
+- PDF bước niệm
+- bài FAQ/lưu ý
+- beginner hub
+- preset theo tình huống
+
+Nếu chỉ giữ ở dạng `chantItems` / `chantPlans`, FE và admin sẽ thiếu:
+- grouped IA
+- scenario presets
+- FAQ
+- companion downloads
+
+### Decision
+- `Kinh Bài Tập Hằng Ngày` được nâng thành first-class content surface.
+- Dùng:
+  - `hubPages` cho hub
+  - `beginnerGuides` cho guides / scenario pages / FAQ-style longform
+  - `downloads` cho PDF companion
+- `chantItems` và `chantPlans` vẫn là canonical registry cho bài niệm và plan.
+
+### Rationale
+- giữ chuẩn boundary
+- giúp public FE, admin FE, advisory, practice sheet dùng chung truth
+- vượt mô hình blog/PDF rời đang thấy trên web ngoài
+
+### Trade-off
+- content surface lớn hơn, cần editorial discipline mạnh hơn
+- API và admin workspace phải rõ hơn thay vì chỉ dùng generic guide editor
+
+## Decision 8. `Phóng Sanh` là first-class content surface, không chỉ là journal
+
+### Context
+Repo hiện đã có:
+- `life release journal` trong `09-vows-merit`
+- source mapping và checklist trong `02-content`
+
+Nhưng nếu chỉ dừng ở journal:
+- user không có public guide rõ
+- FE không có ritual variants
+- admin không có workspace chuẩn cho wording nhạy cảm
+
+### Decision
+- `Phóng Sanh` được nâng thành first-class content surface.
+- Dùng:
+  - `hubPages` cho pillar/hub
+  - `beginnerGuides` cho nghi thức, variant pages, FAQ
+  - `downloads` cho PDF nghi thức và printable checklists
+- `09-vows-merit` chỉ giữ journal canonical state.
+
+### Rationale
+- giữ đúng boundary giữa ritual truth và self-state
+- hỗ trợ public SEO + admin editing + member companion flow
+- khớp nhu cầu product thực tế tốt hơn mô hình article/PDF rời
+
+### Trade-off
+- cần thêm admin/editorial discipline
+- content và journal phải có context bridge rõ để không drift

@@ -55,6 +55,9 @@ initialExpandLevel: 3
 - số lượng
 - mục đích hồi hướng nếu policy cho phép lưu
 - checklist bài đọc và nghi thức hỗ trợ
+- `guideContextRef`
+- `ritualVariantRef`
+- `advisoryContextRef`
 
 ## References ra ngoài module
 
@@ -86,3 +89,5 @@ initialExpandLevel: 3
 - biến `phóng sanh` thành sổ tay thực hành, không phải feed xã hội
 - canonical record đi trước; reminder/progress signal đi sau qua outbox
 - progress summary phải replay/recompute được từ source records
+- `assisted entry` là support workflow có kiểm soát cho admin, không phải cross-user write mặc định
+- ritual truth cho `phóng sanh` nằm ở `02-content`; `09-vows-merit` chỉ giữ journal + progress effects

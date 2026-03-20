@@ -60,6 +60,8 @@ markmap:
 
 - quản lý bảng công phu điện tử hằng ngày
 - hỗ trợ offline-first completion và sync lại sau
+- lưu context user đang theo `daily practice preset` nào
+- nối từ public guide/advisory sang sheet cá nhân mà không copy ritual truth
 
 ### Little House (Ngôi Nhà Nhỏ)
 
@@ -83,3 +85,4 @@ markmap:
 - `chantItems` và `chantPlans` là reference content
 - practice-facing rules từ PDF/reference docs được chốt ở `01-content`
 - canonical self-owned sheets/houses luôn nằm trong Engagement, không nằm trong Content
+- `Kinh Bài Tập Hằng Ngày` public guide, preset, FAQ, time rules là content-owned; `practiceSheets` chỉ giữ self-state và context refs

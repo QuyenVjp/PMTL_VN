@@ -16,6 +16,9 @@
 - `GET/POST /api/sutra-progress`
 - `GET/POST /api/chanting/preferences`
 - `GET/POST /api/practice-sheets`
+- `GET /api/practice-sheets/:publicId`
+- `PATCH /api/practice-sheets/:publicId`
+- `POST /api/practice-sheets/:publicId/complete`
 - `GET/POST /api/ngoi-nha-nho/sheets`
 
 ## Auth & permissions (Xác thực & quyền hạn)
@@ -29,6 +32,9 @@
 
 1. Separation (tách biệt): self-state không được ghi ngược vào content canonical data.
 2. References (tham chiếu): engagement chỉ đọc `sutras`, `chantItems`, `chantPlans` qua reference.
+3. Context bridge (cầu nối ngữ cảnh):
+   - `practiceSheets` có thể giữ `scenarioPresetRef`, `guideContextRef`, `advisoryContextRef`
+   - các ref này chỉ để UI mở đúng companion guide, không biến engagement thành owner của rule text
 3. Immutability (tính bất biến) với một số state:
    - `ngoiNhaNhoSheet` đã `offered` thì không được mở lại progress fields bừa bãi.
 4. Idempotency (tính không đổi):
@@ -48,3 +54,4 @@
 - No backfilling into content (không được ghi ngược vào content)
 - Offline-first sync (đồng bộ ưu tiên offline-first) phải idempotent
 - Async side-effects không được chặn canonical self-state write path
+- `practiceSheets` không được tự giữ bản sao script kinh/chú; chỉ giữ completion state và context refs.

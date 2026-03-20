@@ -1,6 +1,6 @@
 # User Flows (Luồng người dùng)
 
-File này định nghĩa 7 journey chính của PMTL_VN.
+File này định nghĩa các journey chính của PMTL_VN.
 Mỗi journey có: actor, trigger, steps, screens involved, success state, failure states.
 
 > **Ref**: `ui/PAGE_INVENTORY.md` cho routes, `01-identity` → `10-wisdom-qa` cho backend contracts.
@@ -22,11 +22,12 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   ↓ Kiểm tra email, click link xác nhận
 [/xac-nhan-email] → Redirect sang /dashboard
 [/dashboard] — Lần đầu: hiện onboarding banner
-  ↓ Click "Khám phá hướng dẫn cho người mới"
-[/huong-dan] → Chọn bài đầu tiên
-[/huong-dan/[slug]]
-  ↓ Đọc xong → Click "Bắt đầu niệm kinh"
-[/niem-kinh/[slug]] → Niệm xong
+  ↓ Click "Khám phá công khóa cho người mới"
+[/kinh-bai-tap]
+  ↓ Chọn lộ trình người mới
+[/kinh-bai-tap/cac-buoc/cho-nguoi-moi]
+  ↓ Đọc xong → Click "Mở bảng thực hành"
+[/tu-tap/bai-tap] → Tracker mở với companion guide
   ↓ Click "Ghi lại buổi niệm"
 [/tu-tap/bai-tap] — Form ghi buổi tu đầu
   ↓ Submit
@@ -64,7 +65,9 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   - Chuỗi thực hành được gợi ý
   ↓ Click "Bắt đầu buổi tu"
 [/tu-tap/bai-tap]
+  - Advisory context card hoặc scenario preset card
   - Danh sách bài niệm hôm nay
+  - Companion guide drawer cho các bước/lưu ý
   - Check từng mục, nhập số biến
   ↓ Click "Lưu buổi tu"
   [Success toast: "Đã ghi lại ✓"]
@@ -81,6 +84,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 - Toàn bộ flow phải hoàn thành được với 1 tay, không cần scroll nhiều
 - Practice sheet nên fit 1 màn hình không cần scroll (max 5-6 items hiện)
 - "Lưu" button phải fixed bottom (không phải cuối form)
+- Nếu mở từ guide công khai, companion guide phải được xem lại mà không cần back nhiều lớp
 
 **Advisory card structure:**
 ```
@@ -291,6 +295,104 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 - CTA chính phải hiện phía trên fold
 - timeline phải đọc được nhanh trên mobile
 - event canceled phải có banner trạng thái rõ
+
+---
+
+## Flow 9: Life Release Ritual and Journal (Phóng sanh)
+
+**Actor**: Thành viên hoặc người mới đã đọc guide
+**Trigger**: Muốn thực hành phóng sanh đúng nghi thức và ghi lại journal
+**Goal**: Mở đúng guide -> chọn variant -> thực hiện -> ghi journal với context
+
+```
+[/huong-dan/phong-sanh]
+  ↓ Chọn quick chooser
+[/huong-dan/phong-sanh/cho-ban-than] hoặc [/huong-dan/phong-sanh/cho-nguoi-khac]
+  - Xem script, step sequence, warning
+  ↓ Click "Ghi lại buổi phóng sanh"
+[/phong-sanh/ghi-lai]
+  - Form factual data
+  - Companion panel giữ đúng variant/script
+  ↓ Submit
+[/phong-sanh]
+  - Entry mới xuất hiện trong journal
+```
+
+**Rules:**
+- public guide và member journal phải nối nhau bằng context refs
+- nếu có variant `cho người khác`, form phải giữ rõ `người được hồi hướng`
+- species-specific warning phải hiện trước submit nếu user mở đúng guide liên quan
+
+---
+
+## Flow 10: Admin Search Operations (Vận hành tìm kiếm)
+
+**Actor**: Admin
+**Trigger**: Search freshness lệch, cần kiểm tra status hoặc reindex
+**Goal**: Xem engine health → xác định source lệch → reindex đúng phạm vi
+
+```
+[/admin/he-thong/tim-kiem]
+  - Xem engine status
+  - Xem source freshness: posts / guides / wisdom / little-house guides
+  ↓ Chọn source bị lệch
+  [Reindex source]
+  ↓ Confirm
+  [Success toast + recent job log]
+```
+
+**Rules:**
+- Không reindex mù toàn hệ thống nếu chỉ một source lệch
+- UI phải hiển thị source freshness đủ rõ trước khi cho bấm reindex
+
+---
+
+## Flow 11: Admin Notification Operations (Vận hành thông báo)
+
+**Actor**: Admin
+**Trigger**: Cần gửi job thủ công hoặc xử lý/redrive push job lỗi
+**Goal**: Xem queue health → tạo/process/redrive job có audit
+
+```
+[/admin/he-thong/thong-bao]
+  - Xem queue health + recent jobs
+  ↓ Chọn job failed hoặc tạo manual job
+  [Job detail drawer]
+  - sent / failed counts
+  - error summary
+  ↓ Click [Process] hoặc [Redrive]
+  [Confirm modal]
+  ↓ Submit
+  [Success toast + audit append]
+```
+
+**Rules:**
+- `pushJobs` là control-plane records, không phải inbox UI
+- redrive phải là explicit action có confirmation
+
+---
+
+## Flow 12: Assisted Entry Support (Nhập hộ có kiểm soát)
+
+**Actor**: Admin hỗ trợ member
+**Trigger**: Member không có thiết bị hoặc báo cáo offline
+**Goal**: Tạo assisted entry đúng rule → member vẫn là owner cuối cùng
+
+```
+[/admin/ho-tro/phat-nguyen/nhap-ho]
+  ↓ Chọn member owner
+  ↓ Chọn loại hỗ trợ: life release / vow progress
+  ↓ Nhập dữ liệu + assistReason
+  [Confirmation step]
+  ↓ Submit
+  [Success toast]
+  → Audit append actor + owner + reason
+```
+
+**Rules:**
+- admin không sửa đè record cũ qua flow này
+- `assistReason` là bắt buộc
+- member phải nhìn thấy indicator "Được nhập bởi Phụng sự viên"
 
 ---
 

@@ -85,6 +85,18 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `09-vows-merit/assisted-entry-workflow.md` | Workflow + audit khi admin tạo record thay member |
 | `07-calendar/advisory-ownership.md` | Ranh giới Calendar vs Wisdom-QA trong advisory compose |
 | `07-calendar/organizational-events-architecture.md` | Nâng event baseline lên event tổ chức có agenda/speakers/ctas/assets |
+| `07-calendar/use-cases/manage-organizational-event-agenda.md` | Write-path cho agenda có cấu trúc và reorder |
+| `07-calendar/use-cases/reschedule-or-cancel-event.md` | Write-path lifecycle reschedule/cancel event |
+| `02-content/little-house-experience-architecture.md` | Kiến trúc content/admin/tracker cho Ngôi Nhà Nhỏ |
+| `02-content/daily-practice-experience-architecture.md` | Kiến trúc content/admin/tracker cho Kinh Bài Tập Hằng Ngày |
+| `02-content/daily-practice-content-inventory.md` | Inventory canonical cho groups, guides, presets, FAQ, downloads của daily practice |
+| `02-content/use-cases/publish-little-house-guide.md` | Write-path chuẩn để publish guide Ngôi Nhà Nhỏ |
+| `02-content/life-release-experience-architecture.md` | Kiến trúc content/admin/journal bridge cho Phóng Sanh |
+| `02-content/life-release-content-inventory.md` | Inventory canonical cho nghi thức, variants, warnings, FAQ, downloads của Phóng Sanh |
+| `02-content/use-cases/publish-life-release-guide.md` | Write-path chuẩn để publish guide Phóng Sanh |
+| `09-vows-merit/use-cases/create-assisted-life-release-entry.md` | Write-path assisted entry cho life release journal |
+| `11-contact/use-cases/update-contact-info.md` | Write-path cho singleton contact info |
+| `11-contact/use-cases/manage-volunteer-directory.md` | Write-path cho CRUD + sort phụng sự viên |
 
 ## Review rule (Quy tắc rà soát)
 

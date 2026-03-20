@@ -17,6 +17,7 @@ markmap:
 - giữ taxonomy và media linkage rõ ràng
 - hỗ trợ publish workflow, public delivery, search source fields
 - hỗ trợ `giới thiệu pháp môn`, `sơ học`, hub chính thức, download hub
+- hỗ trợ các `feature surface` content-first như `Ngôi Nhà Nhỏ` mà không lẫn với self-state
 - không ôm user-state hoặc moderation source-of-truth
 
 ## Collections thuộc module
@@ -66,6 +67,9 @@ markmap:
 - opening prayer / prayer template
 - time rules
 - PDF hướng dẫn và ảnh preview
+- `Kinh Bài Tập Hằng Ngày` hub, step-by-step guide, scenario presets, FAQ, download companions
+- `Little House` guide map, case variants, FAQ, download panels, image compare, version/source notes
+- `Phóng Sanh` hub, ritual guides, ritual variants, FAQ, download panels
 
 ### Audience visibility rule
 - current repo chủ yếu public hóa editorial content theo publish state
@@ -138,12 +142,27 @@ markmap:
   - sơ đồ bắt đầu học
   - chuyên đề download
   - thông báo chính thức hoặc hub điều hướng
+- `Kinh Bài Tập Hằng Ngày` hub và grouped landing pages
+- `Ngôi Nhà Nhỏ` hub và grouped landing pages
+- `Phóng Sanh` hub và ritual detail pages
 
 ### Practice support
 - `chantItems` là owner của bài niệm / chú / script / audio / preview image
 - `chantPlans` là owner của plan công khóa hoặc nghi thức
 - các tài liệu như niệm hằng ngày, thắp tâm hương, phát nguyện, phóng sinh, Ngôi Nhà Nhỏ nên map vào lớp này hoặc vào `downloads` / `beginnerGuides`
 - `practice-support-reference.md` là file nối giữa PDF thực tế và content model
+- `Kinh Bài Tập Hằng Ngày` là first-class content surface:
+  - `hubPages` giữ hub và group landing
+  - `beginnerGuides` giữ step guides, lưu ý, FAQ, scenario pages
+  - `downloads` giữ PDF companion, sách kinh, checklist in ra
+- `Phóng Sanh` là first-class content surface:
+  - `hubPages` giữ hub và route pillar
+  - `beginnerGuides` giữ nghi thức, variant pages, FAQ-style pages
+  - `downloads` giữ PDF nghi thức, checklist và card mẫu khấn
+- `Ngôi Nhà Nhỏ` là first-class content surface:
+  - `hubPages` giữ hub và group landing
+  - `beginnerGuides` giữ guide detail, FAQ-style longform, image-rich instruction pages
+  - `downloads` giữ mẫu in, PDF, assets tải xuống
 
 ### Sutra library
 - `sutras` là root document

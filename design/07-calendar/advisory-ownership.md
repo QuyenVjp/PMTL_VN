@@ -15,6 +15,7 @@ Advisory hằng ngày (`GET /api/practice-calendar`) cần trả về:
 1. Lịch ngày hôm nay (âm lịch, ngày đặc biệt)
 2. Chuỗi thực hành gợi ý (niệm kinh gì, bao nhiêu biến, làm lễ gì)
 3. Trích dẫn hoặc link tới khai thị / Bạch thoại phù hợp
+4. Gợi ý mở đúng `daily practice preset` hoặc companion guide khi cần
 
 → Câu hỏi: **Calendar hay Wisdom-QA sở hữu output này?**
 
@@ -29,6 +30,7 @@ Advisory hằng ngày (`GET /api/practice-calendar`) cần trả về:
 - composition của `advisoryCard` — assembly logic
 - scheduling của reminder notifications liên quan
 - `personalPracticeCalendarReadModel` — derived read model per user
+- chọn `recommendedScenarioPresetRef` nếu ngày đó phù hợp preset cụ thể
 
 Calendar **tự xác định** practice context dựa trên:
 - `lunarEvents` table
@@ -152,6 +154,7 @@ Khi Wisdom-QA entries thay đổi (update source text):
 - Calendar không own text của khai thị — chỉ own pointers (SourceRef)
 - `practiceSequence` là Calendar-authored strings — không phải quotes từ Wisdom-QA
 - `recitationRules` là operational rules (e.g., "37 biến") từ calendar/practice domain — không phải literal khai thị text
+- advisory có thể mang `recommendedScenarioPresetRef`, nhưng preset canonical vẫn do `Content` sở hữu.
 - `WisdomQueryService.findSourceRefsByTags` là internal call — không phải HTTP request giữa apps
 - nếu Wisdom-QA không có entry phù hợp với tags, advisoryCard vẫn valid với `sourceRefs: []`
 - không hardcode `publicId` của wisdom entries trong Calendar code

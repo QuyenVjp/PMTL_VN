@@ -67,6 +67,9 @@ const sidebarData = {
       items: [
         { title: 'Bài viết', url: '/noi-dung/bai-viet', icon: FileText },
         { title: 'Hướng dẫn', url: '/noi-dung/huong-dan', icon: BookOpen },
+        { title: 'Kinh Bài Tập', url: '/noi-dung/kinh-bai-tap', icon: NotebookPen },
+        { title: 'Ngôi Nhà Nhỏ', url: '/noi-dung/ngoi-nha-nho', icon: BookMarked },
+        { title: 'Phóng Sanh', url: '/noi-dung/phong-sanh', icon: Fish },
         { title: 'Kinh sách', url: '/noi-dung/kinh-sach', icon: Library },
         { title: 'Niệm kinh', url: '/noi-dung/niem-kinh', icon: Music },
         { title: 'Media', url: '/noi-dung/media', icon: Image },
@@ -99,8 +102,16 @@ const sidebarData = {
         { title: 'Feature flags', url: '/he-thong/feature-flags', icon: ToggleLeft },
         { title: 'Audit logs', url: '/he-thong/audit-logs', icon: ScrollText },
         { title: 'Lịch & Sự kiện', url: '/he-thong/lich', icon: Calendar },
+        { title: 'Tìm kiếm', url: '/he-thong/tim-kiem', icon: Search },
         { title: 'Thông báo', url: '/he-thong/thong-bao', icon: Bell },
+        { title: 'Phụng sự viên', url: '/he-thong/phung-su-vien', icon: HandHelping },
         { title: 'Health', url: '/he-thong/health', icon: Activity },
+      ],
+    },
+    {
+      title: 'Hỗ trợ',
+      items: [
+        { title: 'Nhập hộ phát nguyện', url: '/ho-tro/phat-nguyen/nhap-ho', icon: HeartHandshake },
       ],
     },
   ],
@@ -132,6 +143,9 @@ src/routes/
 │   │   │   ├── $postId.tsx       # Post detail / edit
 │   │   │   └── tao-moi.tsx       # Create post
 │   │   ├── huong-dan/
+│   │   ├── kinh-bai-tap/
+│   │   ├── ngoi-nha-nho/
+│   │   ├── phong-sanh/
 │   │   ├── kinh-sach/
 │   │   ├── niem-kinh/
 │   │   └── media/
@@ -146,15 +160,20 @@ src/routes/
 │   ├── nguoi-dung/
 │   │   ├── index.tsx             # User list
 │   │   └── $userId.tsx           # User detail
-│   └── he-thong/
-│       ├── feature-flags/
-│       ├── audit-logs/
-│       ├── lich/
-│       │   ├── index.tsx         # Events list + calendar tools
-│       │   ├── tao-moi.tsx       # Create event
-│       │   └── $eventId.tsx      # Event workspace: info/agenda/speakers/ctas/assets
-│       ├── thong-bao/
-│       └── health/
+│   ├── he-thong/
+│   │   ├── feature-flags/
+│   │   ├── audit-logs/
+│   │   ├── lich/
+│   │   │   ├── index.tsx         # Events list + calendar tools
+│   │   │   ├── tao-moi.tsx       # Create event
+│   │   │   └── $eventId.tsx      # Event workspace: info/agenda/speakers/ctas/assets
+│   │   ├── tim-kiem/
+│   │   ├── thong-bao/
+│   │   ├── phung-su-vien/
+│   │   └── health/
+│   └── ho-tro/
+│       └── phat-nguyen/
+│           └── nhap-ho/
 └── auth/
     └── dang-nhap.tsx             # Admin login
 ```
@@ -377,6 +396,9 @@ Không dùng serif headings cho admin — professional density > contemplative m
 | `/dashboard` | Dashboard | Stats cards, recent activity, pending items |
 | `/noi-dung/bai-viet` | Bài viết | DataTable CRUD |
 | `/noi-dung/huong-dan` | Hướng dẫn | DataTable CRUD |
+| `/noi-dung/kinh-bai-tap` | Kinh Bài Tập | Workspace quản lý steps, lưu ý, scenario presets, FAQ, downloads |
+| `/noi-dung/ngoi-nha-nho` | Ngôi Nhà Nhỏ | Workspace quản lý grouped guides, case variants, FAQ, downloads, assets |
+| `/noi-dung/phong-sanh` | Phóng Sanh | Workspace quản lý ritual guides, variants, FAQ, downloads, review notes |
 | `/noi-dung/kinh-sach` | Kinh sách | DataTable + nested volumes |
 | `/noi-dung/niem-kinh` | Niệm kinh | DataTable + audio management |
 | `/noi-dung/media` | Media | Gallery view + upload |
@@ -390,15 +412,18 @@ Không dùng serif headings cho admin — professional density > contemplative m
 | `/he-thong/audit-logs` | Audit logs | Searchable log stream |
 | `/he-thong/lich` | Lịch & Sự kiện | Event management |
 | `/he-thong/lich/$eventId` | Chi tiết sự kiện | Event workspace với tabs agenda/speakers/ctas/assets |
+| `/he-thong/tim-kiem` | Tìm kiếm | Search status, source freshness, reindex controls |
 | `/he-thong/thong-bao` | Thông báo | Notification management |
+| `/he-thong/phung-su-vien` | Phụng sự viên | Volunteer directory management |
 | `/he-thong/health` | Health | System health dashboard |
+| `/ho-tro/phat-nguyen/nhap-ho` | Nhập hộ phát nguyện | Assisted-entry workflow cho life release và vow progress |
 
 ---
 
 ## Notes for AI/codegen
 
 - Admin SPA served by Caddy at `/admin/*` — static files, client-side routing
-- API calls from admin use same REST contracts as web — no special admin API surface
+- Admin dùng cùng domain contracts với web nhưng có admin-only REST surface riêng dưới `/admin/*`
 - Admin-only endpoints protected by role guard at API level, not frontend
 - TanStack Router file-based routing — route files auto-generate route tree
 - DataTable pattern is composable — mỗi feature có columns + toolbar + row-actions riêng
