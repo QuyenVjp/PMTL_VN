@@ -1,6 +1,6 @@
 // Search Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - `outbox_events` thuộc platform control-plane ở 00-identity/schema.dbml; file này chỉ tham chiếu.
+// - `outbox_events` thuộc platform control-plane; file này chỉ tham chiếu tới luồng handoff chuẩn đó.
 // - `search_sync_jobs` là execution queue artifact (dấu vết chạy lúc runtime), không phải source of truth (nguồn dữ liệu gốc).
 // - `meilisearch_posts_index` là computed index document (bản ghi chỉ mục được tính ra).
 // - `posts_search_source` biểu diễn source fields (các trường nguồn) thực lấy từ content module.

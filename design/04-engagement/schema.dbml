@@ -1,7 +1,7 @@
 // Engagement Module - logical schema (Lược đồ logic Mô-đun Tương tác & Tu tập) aligned with current repo truth (khớp với thực trạng repo)
 // Giả định (Assumptions):
 // - chant_items và chant_plans là dữ liệu tham chiếu cho trạng thái cá nhân (user-state).
-// - Các nội dung hỗ trợ tu tập (practice support content) gốc được mô tả tại design/01-content/practice-support-reference.md.
+// - Các nội dung hỗ trợ tu tập (practice support content) gốc được mô tả tại design/02-content/practice-support-reference.md.
 
 Project engagement_module {
   database_type: "PostgreSQL"

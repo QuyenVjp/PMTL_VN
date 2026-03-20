@@ -11,7 +11,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
   - route/module/service (đường dẫn/mô-đun/lớp xử lý nghiệp vụ) tương ứng
   - schema/migration (lược đồ/di cư dữ liệu) tương ứng
   - runtime artifact (sản phẩm thực thi) tương ứng
-- File khóa sổ chuyện này là [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md).
+- File khóa sổ chuyện này là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
 
 ## First-launch scope (Phạm vi ra mắt lần đầu)
 
@@ -86,31 +86,53 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 
 ## Read in order (Thứ tự đọc)
 
-1. [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
-2. [CORE_DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_DECISIONS.md)
-3. [REPO_STRUCTURE_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/REPO_STRUCTURE_BASELINE.md)
-4. [PLATFORM_MODULES_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/PLATFORM_MODULES_BASELINE.md)
-5. [00-overview/domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/domain-map.md)
-6. [00-overview/execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/execution-map.md)
-7. [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
-8. [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
-9. [SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
-10. [BACKUP_RESTORE_RUNBOOK.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/BACKUP_RESTORE_RUNBOOK.md)
-11. [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
-12. [RESTORE_DRILL_LOG.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/RESTORE_DRILL_LOG.md)
+1. [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
+2. [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ROOT_DOC_OWNERSHIP.md)
+3. [domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/domain-map.md)
+4. [execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/execution-map.md)
+5. [architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/architecture-principles.md)
+6. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/repo-structure.md)
+7. [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/platform-modules.md)
+8. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
+9. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+10. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
+11. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
+12. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
+13. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
+14. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
+15. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
+16. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
+17. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
+18. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
+19. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
+20. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
+21. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
+22. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
+23. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
 
 ## Where each rule lives (Quy tắc nằm ở đâu)
 
-- Cross-cutting baseline (Nền tảng cắt ngang): [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
-- Repo structure baseline (Nền tảng cấu trúc thư mục): [REPO_STRUCTURE_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/REPO_STRUCTURE_BASELINE.md)
-- Platform/control-plane baseline (Nền tảng mô-đun hệ thống cốt lõi): [PLATFORM_MODULES_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/PLATFORM_MODULES_BASELINE.md)
-- Infra phase rules (Quy tắc phân pha hạ tầng): [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
-- NestJS app contract (Hợp đồng ứng dụng NestJS): [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
-- Security contract (Hợp đồng bảo mật): [SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
-- Failure behavior (Hành vi khi lỗi): [FAILURE_MODE_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/FAILURE_MODE_MATRIX.md)
-- SLO targets and how to measure them (Mục tiêu chất lượng dịch vụ và cách đo): [SLA_SLO.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SLA_SLO.md)
-- Recovery procedure (Quy trình phục hồi): [BACKUP_RESTORE_RUNBOOK.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/BACKUP_RESTORE_RUNBOOK.md)
-- Runtime mapping status (Trạng thái ánh xạ thực thi): [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
+- Decision baseline hợp nhất (Nền tảng quyết định hợp nhất): [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
+- Repo structure baseline (Nền tảng cấu trúc thư mục): [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/repo-structure.md)
+- Platform/control-plane baseline (Nền tảng mô-đun hệ thống cốt lõi): [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/platform-modules.md)
+- Root-doc ownership (Quyền sở hữu của file gốc): [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ROOT_DOC_OWNERSHIP.md)
+- Terminology + notation (Thuật ngữ và quy tắc ghi chú): [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
+- Source-derived feature surface (Bề mặt chức năng rút ra từ nguồn): [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
+- Writing standards (Chuẩn viết contract và use-case): [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
+- API route inventory (Danh mục route API): [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
+- Env inventory (Danh mục biến môi trường): [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
+- Error code registry (Danh mục mã lỗi): [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
+- Migration strategy (Chiến lược migration): [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
+- Testing strategy (Chiến lược kiểm thử): [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
+- Frontend architecture (Kiến trúc frontend): [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
+- Infra phase rules (Quy tắc phân pha hạ tầng): [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
+- NestJS app contract (Hợp đồng ứng dụng NestJS): [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
+- Security contract (Hợp đồng bảo mật): [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+- Deploy procedure (Quy trình triển khai): [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
+- Failure behavior (Hành vi khi lỗi): [failure-modes.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/failure-modes.md)
+- SLO targets and how to measure them (Mục tiêu chất lượng dịch vụ và cách đo): [sla-slo.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/sla-slo.md)
+- Recovery procedure (Quy trình phục hồi): [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
+- Runtime mapping status (Trạng thái ánh xạ thực thi): [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
 
 ## Module reading rule (Quy tắc đọc theo mô-đun)
 
@@ -119,18 +141,18 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 - Đọc `contracts.md` (hợp đồng nghiệp vụ).
 - Đọc use-case (kịch bản sử dụng) tương ứng.
 - Với flow (luồng) nguy hiểm, đọc thêm:
-  - [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-identity/use-cases/manage-auth-session.md)
-  - [upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-content/use-cases/upload-media-asset.md)
+  - [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-identity/use-cases/manage-auth-session.md)
+  - [upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/use-cases/upload-media-asset.md)
 
 ## First implementation wave (Làn sóng triển khai đầu tiên)
 
 Nếu đang rebuild (xây dựng lại) từ đầu một mình, mặc định chỉ ưu tiên 4 cụm trước:
 
 1. `apps/api` baseline + `platform modules`
-2. `00-identity`
-3. `01-content`
+2. `01-identity`
+3. `02-content`
 4. upload/media boundary (ranh giới tải lên/truyền thông)
-5. `02-community`
+5. `03-community`
 
 Các module còn lại tồn tại như target design (thiết kế mục tiêu), không phải lý do để code song song hết ngay.
 
@@ -145,7 +167,7 @@ Các module còn lại tồn tại như target design (thiết kế mục tiêu)
 
 - Không thêm service (lớp nghiệp vụ) chỉ vì sơ đồ trông enterprise (doanh nghiệp) hơn.
 - Không để docs dài tạo ảo giác runtime (môi trường thực thi) đã tồn tại.
-- Không dùng `design/` để suy ra implementation (triển khai) nếu chưa qua [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md).
+- Không dùng `design/` để suy ra implementation (triển khai) nếu chưa qua [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
 - Không coi validation (kiểm tra đầu vào) là thay thế security architecture (kiến trúc bảo mật).
 - Không coi backup (sao lưu) có cron (tự động theo giờ) là đủ nếu chưa restore pass (phục hồi thành công).
 

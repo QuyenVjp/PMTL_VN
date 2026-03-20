@@ -24,16 +24,16 @@ initialExpandLevel: 3
 ## Generated extract output
 
 - Pipeline local hiện đã xuất raw artifact vào:
-  - `design/01-content/practice-pdf-extracts/README.md`
-  - `design/01-content/practice-pdf-extracts/manifest.json`
+  - `design/02-content/practice-pdf-extracts/README.md`
+  - `design/02-content/practice-pdf-extracts/manifest.json`
 - Mỗi PDF có:
   - `document.md`
   - `document.json`
   - thư mục `images/` chứa ảnh từng trang
 - File đọc nhanh thêm:
-  - `design/01-content/chant-items-catalog.md`
-  - `design/01-content/practice-ui-checklists.md`
-  - `design/01-content/little-house-spec.md`
+  - `design/02-content/chant-items-catalog.md`
+  - `design/02-content/practice-ui-checklists.md`
+  - `design/02-content/little-house-spec.md`
 
 ## Quy ước nguồn trích xuất
 
@@ -150,7 +150,7 @@ initialExpandLevel: 3
 
 ## Business flows có thể đưa vào app
 
-> Xem sơ đồ nhanh ở `design/01-content/practice-support-flows.mmd`.
+> Xem sơ đồ nhanh ở `design/02-content/practice-support-flows.mmd`.
 
 ### daily-recitation-flow
 
@@ -299,11 +299,11 @@ initialExpandLevel: 3
 ## File nên đọc tiếp theo
 
 - nếu muốn nhập dữ liệu vào `chantItems`:
-  - đọc `design/01-content/chant-items-catalog.md`
+  - đọc `design/02-content/chant-items-catalog.md`
 - nếu muốn làm UI stepper/checklist:
-  - đọc `design/01-content/practice-ui-checklists.md`
+  - đọc `design/02-content/practice-ui-checklists.md`
 - nếu muốn làm riêng flow `Ngôi Nhà Nhỏ`:
-  - đọc `design/01-content/little-house-spec.md`
+  - đọc `design/02-content/little-house-spec.md`
 
 ## Assumption cần ghi nhớ
 

@@ -178,7 +178,7 @@ Not allowed:
 - Env public cho web phải prefix `NEXT_PUBLIC_`.
 - Không đọc `process.env` trực tiếp trong component.
 - `apps/api` phải validate env ngay khi boot.
-- Auth/security env phải map về policy đã chốt trong `design/SECURITY_BASELINE.md`.
+- Auth/security env phải map về policy đã chốt trong `design/baseline/security.md`.
 
 ## 10. AI synchronization rule
 

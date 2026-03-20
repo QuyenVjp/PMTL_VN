@@ -9,29 +9,28 @@ Nó trả lời câu hỏi:
 
 ## Cách đọc nhanh
 
-1. Đọc `CORE_DECISIONS.md`
-2. Đọc `MODULE_INTERACTIONS.md`
-3. Đọc `TERMINOLOGY_RULES.md`
-4. Đọc `EN_VI_NOTATION_RULES.md`
-5. Đọc `SOURCE_NOTES_OFFICIAL.md`
-6. Đọc `09-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
-7. Đọc `09-wisdom-qa/INGESTION_PLAN.md`
-8. Đọc `FEATURE_SURFACE_FROM_OFFICIAL_SITES.md`
-9. Đọc `ELDERLY_UX_RULES.md`
-10. Đọc `AUDIT_POLICY.md`
-11. Đọc `SLA_SLO.md`
-12. Đọc `SECURITY_BASELINE.md`
-13. Đọc `FAILURE_MODE_MATRIX.md`
-14. Đọc `CONTRACT_GUIDELINES.md`
-15. Chọn module owner bên dưới
-16. Mở `contracts.md` của module đó
-17. Mở file trong `use-cases/` tương ứng
+1. Đọc `DECISIONS.md`
+2. Đọc `tracking/module-interactions.md`
+3. Đọc `overview/terminology.md`
+4. Đọc `overview/source-analysis.md`
+5. Đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
+6. Đọc `10-wisdom-qa/INGESTION_PLAN.md`
+7. Đọc `overview/feature-surface-from-official-sites.md`
+8. Đọc `ops/elderly-ux.md`
+9. Đọc `tracking/audit-policy.md`
+10. Đọc `baseline/sla-slo.md`
+11. Đọc `baseline/security.md`
+12. Đọc `baseline/failure-modes.md`
+13. Đọc `baseline/writing-standards.md`
+14. Chọn module owner bên dưới
+15. Mở `contracts.md` của module đó
+16. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 
 ### Content
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/01-content/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/02-content/contracts.md`
 - Use-cases:
   - `publish-post.md`
   - `publish-beginner-guide.md`
@@ -47,7 +46,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Community
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/02-community/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/03-community/contracts.md`
 - Use-cases:
   - `submit-post-comment.md`
   - `submit-community-post.md`
@@ -62,7 +61,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Engagement
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/03-engagement/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/04-engagement/contracts.md`
 - Use-cases:
   - `upsert-practice-log.md`
   - `save-sutra-progress.md`
@@ -79,7 +78,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Moderation
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/04-moderation/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/05-moderation/contracts.md`
 - Use-cases:
   - `report-comment.md`
   - `resolve-report.md`
@@ -95,7 +94,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Search
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/05-search/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/06-search/contracts.md`
 - Use-cases:
   - `index-published-post.md`
   - `public-search-query.md`
@@ -108,7 +107,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Calendar
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/06-calendar/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/07-calendar/contracts.md`
 - Use-cases:
   - `publish-event.md`
   - `apply-lunar-override.md`
@@ -127,7 +126,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Notification
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/07-notification/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/08-notification/contracts.md`
 - Use-cases:
   - `subscribe-push.md`
   - `dispatch-push-job.md`
@@ -143,7 +142,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Identity
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-identity/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/01-identity/contracts.md`
 - Use-cases:
   - `register-member.md`
   - `update-profile.md`
@@ -157,7 +156,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Vows & Merit
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/08-vows-merit/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/09-vows-merit/contracts.md`
 - Use-cases:
   - `create-vow.md`
   - `fulfill-vow-milestone.md`
@@ -172,7 +171,7 @@ Khi đọc module này, hãy nhớ:
 
 ### Wisdom & QA
 
-- contract (hợp đồng dữ liệu/nghiệp vụ): `design/09-wisdom-qa/contracts.md`
+- contract (hợp đồng dữ liệu/nghiệp vụ): `design/10-wisdom-qa/contracts.md`
 - Use-cases:
   - `publish-wisdom-entry.md`
   - `study-baihua.md`
@@ -204,8 +203,8 @@ Khi đọc module này, hãy nhớ:
 6. Có audit bắt buộc không?
 7. Boundary schema và env contract đã được chốt chưa?
 8. Route public đang dùng `publicId`, `slug`, hay session owner?
-9. Thuật ngữ có đúng `TERMINOLOGY_RULES.md` chưa?
-10. Có phù hợp `ELDERLY_UX_RULES.md` chưa?
+9. Thuật ngữ có đúng `overview/terminology.md` chưa?
+10. Có phù hợp `ops/elderly-ux.md` chưa?
 
 ### Nếu chưa trả lời được
 

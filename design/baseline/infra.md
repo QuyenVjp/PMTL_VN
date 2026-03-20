@@ -11,11 +11,11 @@ Nó không phải nơi lặp lại toàn bộ security, failure matrix, hay gove
 
 Nếu cần topology vận hành và exporters chi tiết hơn, đọc thêm:
 
-- `design/infra/INFRA_DEEP_DIVE.md`
+- `docs/ops/infra-deep-dive.md`
 - `docs/learning/STUDENT_VPS_PRODUCTION_ROADMAP.md` nếu anh đang học production từ góc nhìn một người mới vận hành VPS bằng Docker Compose
-- `design/IMPLEMENTATION_MAPPING.md` để biết decision nào đã map sang code/runtime thật
-- `design/RESTORE_DRILL_LOG.md` để lưu evidence restore drill thay vì chỉ nói bằng policy
-- `design/ARCHITECTURE_GOVERNANCE.md` nếu cần cross-cutting rules tổng
+- `design/tracking/implementation-mapping.md` để biết decision nào đã map sang code/runtime thật
+- `design/ops/restore-drill-log.md` để lưu evidence restore drill thay vì chỉ nói bằng policy
+- `design/DECISIONS.md` nếu cần cross-cutting rules tổng
 
 ---
 
@@ -346,7 +346,7 @@ Nếu chưa chỉ ra được command hoặc script tương đương cho 4 nhóm
 - Tài liệu này giả định current direction là `apps/api` dùng `NestJS`.
 - Không dùng lại tư duy `apps/cms` hay `Payload runtime` làm backend authority.
 - Mỗi phần infra chỉ được coi là "đã có" khi đã được map trong:
-  - `design/IMPLEMENTATION_MAPPING.md`
+  - `design/tracking/implementation-mapping.md`
 
 ## Security posture tối thiểu cho phase hiện tại
 

@@ -28,8 +28,8 @@ File này chỉ mô tả:
 File này không được dùng để:
 
 - suy ra first-launch baseline
-- override [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
-- override [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
+- override [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
+- override [baseline/infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
 
 ## Cảnh báo thẳng cho người mới
 

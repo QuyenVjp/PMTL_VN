@@ -5,8 +5,8 @@
 > Mục tiêu là để sau này làm UI, validation, collection fields, hoặc flow service (lớp xử lý nghiệp vụ) mà không phải đọc lại PDF từ đầu.
 > Logic thực thi và schema (lược đồ dữ liệu) self-owned mới nhất xem thêm ở:
 >
-> - `design/03-engagement/schema.dbml`
-> - `design/03-engagement/use-cases/manage-ngoi-nha-nho-sheet.md`
+> - `design/04-engagement/schema.dbml`
+> - `design/04-engagement/use-cases/manage-ngoi-nha-nho-sheet.md`
 
 ---
 
@@ -43,8 +43,8 @@ initialExpandLevel: 3
 
 ### Generated extracts
 
-- `design/01-content/practice-pdf-extracts/6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.md`
-- `design/01-content/practice-pdf-extracts/7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.md`
+- `design/02-content/practice-pdf-extracts/6-phuong-phap-tung-niem-ngoi-nha-nho-va-nhung-ieu-can-luu-y/document.md`
+- `design/02-content/practice-pdf-extracts/7-quy-trinh-ot-ngoi-nha-nho-khong-co-ban-tho-pmtl/document.md`
 
 ## 3. Owner boundary (ranh giới trách nhiệm)
 

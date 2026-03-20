@@ -9,9 +9,9 @@ Mục tiêu là để:
 
 Nếu file này và một file docs cũ mâu thuẫn nhau, ưu tiên file này cùng:
 
-- [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
-- [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
+- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
+- [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
+- [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
 
 ## Monorepo baseline (Nền tảng monorepo)
 
@@ -145,7 +145,7 @@ apps/api/
 
 - `common/` giữ nền tảng kỹ thuật dùng bởi nhiều module.
 - `platform/` giữ control-plane và runtime modules cắt ngang.
-- `modules/` giữ domain modules theo owner đã chốt trong `design/00-overview/architecture-principles.md`.
+- `modules/` giữ domain modules theo owner đã chốt trong `design/overview/architecture-principles.md`.
 - Không tạo `shared business service` mơ hồ ở `common/`.
 - Không đẩy domain logic từ `modules/*` xuống `platform/*`.
 

@@ -104,4 +104,4 @@ Mỗi module backend tối thiểu nên có:
 - service giữ business logic
 - persistence không leak thẳng ra public DTO
 - không tạo source of truth thứ hai giữa Zod schema và DTO decorator model
-- mọi launch-blocker flow phải map vào [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
+- mọi launch-blocker flow phải map vào [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
