@@ -145,6 +145,60 @@ Các quyết định này từng không rõ — đã chốt và ghi vào doc ri�
 | Advisory ownership: Calendar hay Wisdom-QA? | Calendar owns composition + schedule; Wisdom-QA owns text + provenance | `07-calendar/advisory-ownership.md` |
 | Moderation summary drift xử lý thế nào? | On-demand recompute API — không phải real-time job | `05-moderation/module-map.md` |
 
+## 13. Library choices (Chọn thư viện — chốt)
+
+### Backend (`apps/api`)
+
+| Concern | Library | Lý do |
+|---|---|---|
+| Framework | NestJS | Module system, DI, guards, pipes |
+| ORM | Prisma | Type-safe, migration, schema-first |
+| Validation | Zod | Runtime validation, shared schemas |
+| Logger | Pino (nestjs-pino) | Structured, fast, JSON |
+| API docs | Swagger / OpenAPI | Auto-generated từ NestJS |
+| Password hash | Argon2id | OWASP recommended |
+| MIME detection | file-type (npm) | Magic bytes, không dựa extension |
+| UUID | crypto.randomUUID() | Built-in Node.js |
+
+### Frontend — Web (`apps/web`)
+
+| Concern | Library | Lý do |
+|---|---|---|
+| Framework | Next.js 15 App Router | SSR, Server Components, SEO |
+| UI | shadcn/ui | Composable, accessible, Tailwind-native |
+| Styling | Tailwind CSS 4 | Utility-first, design tokens |
+| Forms | React Hook Form + Zod | Shared validation schemas |
+| Server state | TanStack Query v5 | Cache, dedup, optimistic |
+| Client state | Zustand | Minimal, UI-only state |
+| Icons | Lucide React | Tree-shakable |
+| Toast | Sonner | Accessible stacking |
+| Date | date-fns | Lightweight |
+| Markdown | react-markdown + rehype-sanitize | Server-side safe |
+
+### Frontend — Admin (`apps/admin`)
+
+| Concern | Library | Lý do |
+|---|---|---|
+| Build | Vite | Fast SPA build |
+| Framework | React 19 | SPA, no SSR needed |
+| Router | TanStack Router | Type-safe, file-based |
+| Tables | TanStack Table | Sort, filter, paginate, column toggle |
+| UI | shadcn/ui | Shared design language |
+| Charts | Recharts (shadcn/ui charts) | Dashboard widgets |
+| Command | cmdk | ⌘K palette |
+| State/Forms/Query/Icons/Toast | Same as web | Consistency |
+
+### Shared (`packages/shared`)
+
+- Zod schemas — single source of truth cho validation FE + BE
+- TypeScript types inferred từ Zod
+- Pure utility functions — framework-agnostic
+
+> **Pattern ref**: Admin architecture based on [shadcn-admin](https://github.com/satnaing/shadcn-admin)
+> **Design ref**: `design/ui/DESIGN_PRINCIPLES.md`, `design/ui/ADMIN_ARCHITECTURE.md`
+
+---
+
 ## 10. Anti-goals (Những điều không làm)
 
 - không bật infra nặng chỉ để “trông enterprise”

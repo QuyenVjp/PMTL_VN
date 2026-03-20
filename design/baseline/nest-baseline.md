@@ -98,6 +98,96 @@ Mỗi module backend tối thiểu nên có:
 - `policy/guard helper` nếu module có authz phức tạp
 - `repository` hoặc Prisma-facing data layer khi query đủ lớn để tách
 
+## Cross-module communication (Bug 1 fix: chống circular dependency)
+
+### Nguyên tắc bất biến
+
+- **Không import toàn bộ module khác** để dùng 1 service.
+- Module A cần data từ Module B → B phải **export rõ ràng** 1 query service interface, A inject qua DI.
+- **Không có module nào import lẫn nhau** (circular). Nếu 2 modules cần nhau → tách shared interface ra `packages/shared` hoặc dùng event.
+
+### Pattern cho phép
+
+```
+✅ Calendar inject WisdomQueryService (Wisdom-QA export)
+✅ Moderation inject ContentQueryService (Content export)
+✅ Search nhận SearchDocumentDto từ source module qua direct call
+✅ Notification inject từ bất kỳ module nào qua exported interface
+```
+
+### Pattern CẤM
+
+```
+❌ Calendar import WisdomQaModule vào imports[] → circular risk
+❌ Module A gọi Module B qua internal repository (bypass service layer)
+❌ Module tự query DB table thuộc module khác
+❌ Shared package import từ apps/* (ngược chiều)
+```
+
+### Khi cần bidirectional communication
+
+- Dùng **event pattern** (phase 1: inline sync, phase 2+: outbox)
+- Hoặc tách interface vào `packages/shared/src/contracts/`
+- Ref: `tracking/outbox-event-taxonomy.md` cho event nào đi outbox
+
+---
+
+## Audit transaction enforcement (Bug 2 fix: audit phải block write-path)
+
+### Nguyên tắc bất biến
+
+- **Audit PHẢI nằm trong cùng database transaction** với canonical write.
+- Nếu audit fail → toàn bộ transaction rollback → write không xảy ra.
+- Không có trường hợp nào write thành công mà audit bị mất.
+
+### Pattern bắt buộc
+
+```typescript
+// ĐÚG — audit trong cùng transaction
+await prisma.$transaction(async (tx) => {
+  const entity = await tx.post.create({ data: payload });
+  await tx.auditLog.create({
+    data: {
+      eventType: 'content.post.created',
+      actorUserId,
+      targetId: entity.id,
+      // ...
+    },
+  });
+  return entity;
+});
+```
+
+### Pattern CẤM
+
+```typescript
+// SAI — audit ngoài transaction, có thể fail mà write vẫn xảy ra
+const entity = await prisma.post.create({ data: payload });
+await auditService.append({ ... }); // ← fire-and-forget, swallowed exception
+```
+
+### Khi nào được fire-and-forget audit
+
+- **Không bao giờ** cho write-path (create, update, delete, role change, auth event).
+- Chỉ được fire-and-forget cho **read-heavy analytics** không ảnh hưởng tới business integrity (ví dụ: view count).
+
+### AuditService contract
+
+```typescript
+interface AuditService {
+  // Dùng trong transaction — nhận Prisma transaction client
+  appendInTransaction(tx: PrismaTransactionClient, event: AuditEvent): Promise<void>;
+
+  // Dùng ngoài transaction — chỉ cho read analytics
+  appendAsync(event: AuditEvent): void; // fire-and-forget, có structured log
+}
+```
+
+- Mọi use-case có ghi `audit event` trong danh sách mandatory events (`tracking/audit-policy.md`) PHẢI dùng `appendInTransaction`.
+- Ref: `baseline/security.md` phần "Audit events bắt buộc"
+
+---
+
 ## Non-negotiables
 
 - controller mỏng
@@ -105,3 +195,5 @@ Mỗi module backend tối thiểu nên có:
 - persistence không leak thẳng ra public DTO
 - không tạo source of truth thứ hai giữa Zod schema và DTO decorator model
 - mọi launch-blocker flow phải map vào [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
+- cross-module communication phải qua exported service interface, không import toàn bộ module
+- audit mandatory events phải trong cùng DB transaction với write

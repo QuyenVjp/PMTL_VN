@@ -111,17 +111,35 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 23. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) ← **mới**
 24. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) ← **mới**
 25. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
+26. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) ← **mới**: color, typography, spacing, elderly UX
+27. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) ← **mới**: shadcn-admin pattern
+28. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md) ← **mới**: 8 bugs fixed, migration order, feature flags
 
 ## New gap-filling docs (Tài liệu lấp gap thiết kế — mới thêm)
 
+### Backend architecture gaps (đã fix)
 | File | Lấp gap gì |
 |---|---|
-| [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) | Thứ tự khởi động platform modules + fail behavior từng module |
-| [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) | Event nào đi outbox, event schema, idempotency requirement |
-| [unified-index-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/unified-index-mapping.md) | Field mapping từ Content + Wisdom-QA vào unified search index |
-| [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Schema versioning và delta sync API cho offline bundles |
-| [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow + audit khi admin nhập liệu thay cho member |
-| [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA trong advisory compose |
+| [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) | Thứ tự khởi động platform modules + fail behavior |
+| [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) | Event nào đi outbox, event schema, idempotency |
+| [unified-index-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/unified-index-mapping.md) | Field mapping Content + Wisdom-QA → search index |
+| [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Delta sync schema cho offline bundles |
+| [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow admin nhập liệu thay member |
+| [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA |
+
+### UI/UX design (mới thêm — trước đây THIẾU hoàn toàn)
+| File | Nội dung |
+|---|---|
+| [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | 49 trang/màn hình đầy đủ với routes, auth levels, module owners |
+| [USER_FLOWS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/USER_FLOWS.md) | 7 user journeys chính (onboarding, daily practice, wisdom search...) |
+| [COMPONENT_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/COMPONENT_SPECS.md) | Specs cho 30+ components kể cả elderly-specific rules |
+| [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) | Color system, typography, spacing, interaction patterns, elderly UX, premium details |
+| [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin architecture: Vite + React SPA, sidebar, DataTable, command palette |
+
+### Coding readiness
+| File | Nội dung |
+|---|---|
+| [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md) | Gap analysis, 8/8 bugs fixed, feature flags, rate-limits, migration order, skill alignment |
 
 ## Where each rule lives (Quy tắc nằm ở đâu)
 

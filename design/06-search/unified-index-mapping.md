@@ -198,6 +198,20 @@ Quy tắc:
 - Query chạy trên `normalizedSearchText` hoặc `tsvector` column trên từng bảng nguồn
 - Response trả về unified shape (subset của `SearchDocumentSchema`)
 
+> **Bug 4 fix — Search KHÔNG được trả draft/hidden content:**
+> Mọi search query phase 1 (SQL) PHẢI có:
+> ```sql
+> WHERE status = 'published'
+>   AND published_at IS NOT NULL
+>   AND published_at <= NOW()
+> ```
+> Với wisdom_entries còn phải thêm:
+> ```sql
+>   AND review_status IN ('translated_reviewed', 'source_verified')
+> ```
+> **Không có exception.** Nếu developer quên filter → draft content lọt ra public search.
+> Đây là `WHERE` clause bắt buộc ở tầng repository, không phải tầng service — để không ai bypass được.
+
 **Phase 2+ migration:**
 - khi Meilisearch bật, build lại toàn bộ index từ Postgres (full reindex)
 - fallback vẫn phải hoạt động khi Meilisearch down

@@ -66,11 +66,19 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - login (đăng nhập)
   - register (đăng ký)
   - forgot password (quên mật khẩu)
-  - verification resend (gửi lại xác minh)
+  - **refresh token** (làm mới token) — ⚠️ endpoint này dễ bị miss, attacker brute-force refresh tokens nếu không có guard
+  - reset password (đặt lại mật khẩu)
+  - email verification / resend (xác minh / gửi lại xác minh)
   - upload (tải lên)
   - create post (tạo bài viết)
   - create comment (tạo bình luận)
   - search (tìm kiếm)
+  - guestbook submit (gửi sổ lưu niệm)
+  - vow create (tạo nguyện)
+
+> **Bug fix note**: `/api/auth/refresh` PHẢI có rate-limit guard. Nếu thiếu, attacker có thể brute-force refresh tokens.
+> Limit: 30 requests / 15 phút / per-IP.
+> Xem `tracking/coding-readiness.md` Phần 5 cho exact values từng endpoint.
 
 ## Cookie / CSRF / CORS
 
@@ -150,9 +158,13 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 ### Hardening rules (Các quy tắc thắt chặt)
 
 - không chỉ tin vào `Content-Type` từ phía khách hàng (client)
-- phải có server-side MIME sniffing (kiểm tra loại tệp phía máy chủ)
-- object key (tên tệp lưu trữ) không dùng tên tệp gốc (raw filename)
-- checksum (mã kiểm tra toàn vẹn) nên được tính toán và lưu trữ khi khả thi
+- **phải có server-side MIME sniffing** bằng magic bytes, không phải extension check:
+  - Library bắt buộc: **`file-type`** (npm `file-type`) — detect MIME từ buffer magic bytes
+  - Flow: upload → `file-type.fromBuffer(buffer)` → so sánh với allowlist → reject nếu không match
+  - **SAI**: `if (filename.endsWith('.jpg'))` — attacker đổi tên `.exe` thành `.jpg`
+  - **ĐÚNG**: `const type = await fileTypeFromBuffer(buffer); if (!ALLOWED_MIMES.includes(type.mime)) reject()`
+- object key (tên tệp lưu trữ) không dùng tên tệp gốc (raw filename) — generate UUID + extension
+- checksum (mã kiểm tra toàn vẹn) nên được tính toán (`sha256`) và lưu trữ khi khả thi
 - cấm trong giai đoạn hiện tại:
   - executable files (tệp thực thi)
   - script files (tệp kịch bản)
