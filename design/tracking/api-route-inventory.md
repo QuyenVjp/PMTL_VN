@@ -63,6 +63,11 @@ Mục tiêu:
 | `GET` | `/content/life-release/ritual-variants` | `content` | public |
 | `GET` | `/content/life-release/faq` | `content` | public |
 | `GET` | `/content/life-release/downloads` | `content` | public |
+| `GET` | `/content/hub-pages/thu-vien-phap-mon` | `content` | public |
+| `GET` | `/content/media-library/collections` | `content` | public |
+| `GET` | `/content/media-library/collections/:slug` | `content` | public |
+| `GET` | `/content/media-library/featured` | `content` | public |
+| `GET` | `/content/media-library/tags` | `content` | public |
 | `GET` | `/admin/content/little-house/overview` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/guides` | `content` | editor+ |
 | `PATCH` | `/admin/content/little-house/guides/:id` | `content` | editor+ |
@@ -87,6 +92,13 @@ Mục tiêu:
 | `POST` | `/admin/content/life-release/faq` | `content` | editor+ |
 | `PATCH` | `/admin/content/life-release/faq/:id` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/publish` | `content` | editor+ |
+| `GET` | `/admin/content/media-library/overview` | `content` | editor+ |
+| `POST` | `/admin/content/media-library/collections` | `content` | editor+ |
+| `PATCH` | `/admin/content/media-library/collections/:id` | `content` | editor+ |
+| `POST` | `/admin/content/media-library/collections/:id/items` | `content` | editor+ |
+| `PATCH` | `/admin/content/media-library/collections/:id/items/:itemId` | `content` | editor+ |
+| `POST` | `/admin/content/media-library/featured` | `content` | editor+ |
+| `POST` | `/admin/content/media-library/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
 | `DELETE` | `/content/media/:publicId` | `content` + `storage` | owner/admin |
 

@@ -260,6 +260,42 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.4h Media Library Hub (Thư viện pháp môn)
+
+| Field | Value |
+|---|---|
+| Route | `/thu-vien/phap-mon` |
+| Title | Thư viện ảnh & video Pháp Môn |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung chính:**
+- featured collection
+- filter tabs: tất cả / video / hình ảnh / pháp hội / giới thiệu pháp môn / đồ đằng
+- collection grid
+- quick links sang event detail, bạch thoại, tài liệu tải xuống
+
+**Mobile note**: tabs dạng pill scroll ngang; collection cards full-width, caption rõ.
+
+---
+
+### 1.4i Media Library Collection Detail
+
+| Route pattern | Auth | Module owner |
+|---|---|---|
+| `/thu-vien/phap-mon/[slug]` | `public` | Content |
+
+**Mỗi collection detail page có:**
+- collection hero
+- metadata bar
+- media grid hoặc playlist panel
+- related links về `Calendar` hoặc `Wisdom-QA` nếu có
+- share / copy link secondary actions
+
+**Mobile note**: ảnh ưu tiên grid 2 cột; video ưu tiên list dọc, không autoplay.
+
+---
+
 ### 1.5 Beginner Guides (Hướng dẫn mới bắt đầu)
 
 | Field | Value |
@@ -859,6 +895,7 @@ Similar pattern cho:
 - `/admin/noi-dung/kinh-bai-tap` — Daily Practice workspace
 - `/admin/noi-dung/ngoi-nha-nho` — Little House workspace
 - `/admin/noi-dung/phong-sanh` — Life Release workspace
+- `/admin/noi-dung/thu-vien-phap-mon` — Media library workspace
 - `/admin/noi-dung/tai-lieu` — Downloads
 - `/admin/noi-dung/kinh-sach` — Sutras
 - `/admin/noi-dung/niem-kinh` — Chant Items
@@ -918,6 +955,18 @@ Similar pattern cho:
 - Filter: type / status (pending/approved/quarantined)
 - Delete button (với authorization check)
 - Scan status indicator
+
+### 4.8a Media Library Workspace
+
+| Route | `/admin/noi-dung/thu-vien-phap-mon` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Tổng quan / Collections / Items / Featured slots / Nguồn & quyền sử dụng / Publish
+- Preview hub `/thu-vien/phap-mon`
+- Validation cho item types, external video domains, owner refs
+- Publish action + audit summary
 
 ---
 

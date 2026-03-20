@@ -99,6 +99,9 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `02-content/life-release-guide-luu-y-va-chuan-bi.md` | Canonical content cho checklist, warning, và preparation guide của Phóng Sanh |
 | `02-content/life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md` | Canonical content cho flow xử lý phát sinh có species-specific counts |
 | `02-content/life-release-guide-hoi-dap.md` | FAQ seed và support content cho Phóng Sanh |
+| `02-content/media-library-experience-architecture.md` | Kiến trúc hub thư viện ảnh/video pháp môn và owner split với Wisdom-QA, Calendar |
+| `02-content/media-library-content-inventory.md` | Inventory canonical cho hub, collections, featured slots, admin workspace của thư viện pháp môn |
+| `02-content/use-cases/publish-media-library-collection.md` | Write-path chuẩn để publish media collections |
 | `02-content/use-cases/publish-life-release-guide.md` | Write-path chuẩn để publish guide Phóng Sanh |
 | `09-vows-merit/use-cases/create-assisted-life-release-entry.md` | Write-path assisted entry cho life release journal |
 | `11-contact/use-cases/update-contact-info.md` | Write-path cho singleton contact info |

@@ -17,6 +17,7 @@ markmap:
 - giữ taxonomy và media linkage rõ ràng
 - hỗ trợ publish workflow, public delivery, search source fields
 - hỗ trợ `giới thiệu pháp môn`, `sơ học`, hub chính thức, download hub
+- hỗ trợ `thư viện ảnh/video pháp môn` như một public surface curated, không chỉ là media upload grid
 - hỗ trợ các `feature surface` content-first như `Ngôi Nhà Nhỏ` mà không lẫn với self-state
 - không ôm user-state hoặc moderation source-of-truth
 
@@ -27,6 +28,7 @@ markmap:
 - `hubPages`
 - `beginnerGuides`
 - `downloads`
+- `mediaCollections`
 
 ### Practice support content
 - `chantItems`
@@ -42,6 +44,7 @@ markmap:
 - `categories`
 - `tags`
 - `media`
+- `mediaCollections` curated refs
 
 ## Current responsibilities
 
@@ -70,6 +73,7 @@ markmap:
 - `Kinh Bài Tập Hằng Ngày` hub, step-by-step guide, scenario presets, FAQ, download companions
 - `Little House` guide map, case variants, FAQ, download panels, image compare, version/source notes
 - `Phóng Sanh` hub, ritual guides, ritual variants, FAQ, download panels
+- `Thư viện pháp môn` hub, media collections, featured playlists/albums
 
 ### Audience visibility rule
 - current repo chủ yếu public hóa editorial content theo publish state
@@ -145,6 +149,7 @@ markmap:
 - `Kinh Bài Tập Hằng Ngày` hub và grouped landing pages
 - `Ngôi Nhà Nhỏ` hub và grouped landing pages
 - `Phóng Sanh` hub và ritual detail pages
+- `Thư viện pháp môn` hub và collection detail pages
 
 ### Practice support
 - `chantItems` là owner của bài niệm / chú / script / audio / preview image
@@ -163,6 +168,10 @@ markmap:
   - `hubPages` giữ hub và group landing
   - `beginnerGuides` giữ guide detail, FAQ-style longform, image-rich instruction pages
   - `downloads` giữ mẫu in, PDF, assets tải xuống
+- `Thư viện pháp môn` là first-class content surface:
+  - `hubPages` giữ hub `/thu-vien/phap-mon`
+  - `mediaCollections` giữ photo albums, video playlists, mixed galleries
+  - `media_assets` vẫn chỉ là asset-level owner, không thay collection owner
 
 ### Sutra library
 - `sutras` là root document

@@ -140,6 +140,8 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [life-release-guide-luu-y-va-chuan-bi.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-luu-y-va-chuan-bi.md) | Checklist, guardrails, và warning đạo đức cho Phóng Sanh |
 | [life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-xu-ly-khi-co-loai-vat-tu-vong.md) | Guide nhạy cảm cho flow phát sinh khi có loài vật tử vong |
 | [life-release-guide-hoi-dap.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/life-release-guide-hoi-dap.md) | FAQ seed cho Phóng Sanh |
+| [media-library-experience-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/media-library-experience-architecture.md) | Kiến trúc hub thư viện ảnh/video pháp môn và owner split với Wisdom-QA, Calendar |
+| [media-library-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/media-library-content-inventory.md) | Inventory canonical cho hub, collections, featured slots, và admin workspace của thư viện pháp môn |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
 ### UI/UX design (6 files)

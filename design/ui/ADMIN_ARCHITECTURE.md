@@ -70,6 +70,7 @@ const sidebarData = {
         { title: 'Kinh Bài Tập', url: '/noi-dung/kinh-bai-tap', icon: NotebookPen },
         { title: 'Ngôi Nhà Nhỏ', url: '/noi-dung/ngoi-nha-nho', icon: BookMarked },
         { title: 'Phóng Sanh', url: '/noi-dung/phong-sanh', icon: Fish },
+        { title: 'Thư viện pháp môn', url: '/noi-dung/thu-vien-phap-mon', icon: Clapperboard },
         { title: 'Kinh sách', url: '/noi-dung/kinh-sach', icon: Library },
         { title: 'Niệm kinh', url: '/noi-dung/niem-kinh', icon: Music },
         { title: 'Media', url: '/noi-dung/media', icon: Image },
@@ -146,6 +147,7 @@ src/routes/
 │   │   ├── kinh-bai-tap/
 │   │   ├── ngoi-nha-nho/
 │   │   ├── phong-sanh/
+│   │   ├── thu-vien-phap-mon/
 │   │   ├── kinh-sach/
 │   │   ├── niem-kinh/
 │   │   └── media/
@@ -399,6 +401,7 @@ Không dùng serif headings cho admin — professional density > contemplative m
 | `/noi-dung/kinh-bai-tap` | Kinh Bài Tập | Workspace quản lý steps, lưu ý, scenario presets, FAQ, downloads |
 | `/noi-dung/ngoi-nha-nho` | Ngôi Nhà Nhỏ | Workspace quản lý grouped guides, case variants, FAQ, downloads, assets |
 | `/noi-dung/phong-sanh` | Phóng Sanh | Workspace quản lý ritual guides, variants, FAQ, downloads, review notes |
+| `/noi-dung/thu-vien-phap-mon` | Thư viện pháp môn | Workspace quản lý curated photo albums, video playlists, featured collections |
 | `/noi-dung/kinh-sach` | Kinh sách | DataTable + nested volumes |
 | `/noi-dung/niem-kinh` | Niệm kinh | DataTable + audio management |
 | `/noi-dung/media` | Media | Gallery view + upload |

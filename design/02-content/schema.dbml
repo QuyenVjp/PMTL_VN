@@ -196,6 +196,39 @@ Table downloads {
   updated_at timestamp
 }
 
+Table media_collections {
+  id uuid [pk, note: "Khóa chính collection thư viện media"]
+  public_id varchar [unique]
+  title varchar [not null, note: "Tên collection"]
+  slug varchar [unique, not null]
+  description text
+  collection_type varchar [not null, note: "Loại: photo_album | video_playlist | mixed_gallery | featured_story_gallery"]
+  cover_media_id uuid [ref: > media_assets.id, note: "Ảnh cover nếu có"]
+  source_note text [note: "Ghi chú nguồn / provenance / curation"]
+  related_event_id uuid [note: "Ref event nếu collection đi từ Calendar"]
+  related_wisdom_public_id varchar [note: "Ref public wisdom entry nếu collection đi từ Wisdom-QA"]
+  featured bool [default: false]
+  sort_order int [default: 0]
+  _status content_publication_status [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table media_collection_items {
+  id uuid [pk, note: "Khóa chính item trong collection"]
+  collection_id uuid [ref: > media_collections.id]
+  item_type varchar [not null, note: "image | video_embed | uploaded_video | poster | external_playlist_link"]
+  media_id uuid [ref: > media_assets.id, note: "Ref media asset nếu dùng asset nội bộ"]
+  external_url varchar [note: "URL external nếu là embed hoặc playlist"]
+  title varchar [note: "Tiêu đề item"]
+  caption text [note: "Chú thích ngắn"]
+  owner_module varchar [note: "content | calendar | wisdom-qa"]
+  owner_public_ref varchar [note: "Public ref sang owner surface nếu item chỉ là curated reference"]
+  sort_order int [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
 Table chant_items {
   id uuid [pk, note: "Khóa chính bài niệm/kinh lẻ"]
   public_id varchar [unique]
@@ -324,6 +357,7 @@ TableGroup "Editorial Content" [note: "Nhóm Nội dung biên tập công khai"]
   hub_page_blocks
   beginner_guides
   downloads
+  media_collections
 }
 
 TableGroup "Practice Support" [note: "Nhóm Hỗ trợ tu tập: Bài niệm, kế hoạch, quy tắc, hướng dẫn nghi thức"] {
@@ -341,6 +375,7 @@ TableGroup "Editorial Relations" [note: "Các bảng quan hệ phụ trợ cho n
   post_gallery_media
   hub_page_curated_posts
   beginner_guide_media
+  media_collection_items
 }
 
 TableGroup "Scripture Library" [note: "Nhóm Thư viện kinh điển và cấu trúc đọc kinh"] {

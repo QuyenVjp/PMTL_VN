@@ -325,7 +325,29 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
-## Flow 10: Admin Search Operations (Vận hành tìm kiếm)
+## Flow 10: Media Library Discovery (Khám phá thư viện pháp môn)
+
+**Actor**: Khách hoặc member
+**Trigger**: Muốn xem ảnh/video pháp môn theo collection rõ ràng
+**Goal**: Mở hub -> lọc -> xem collection -> đi sâu sang event hoặc wisdom nếu cần
+
+```
+[/thu-vien/phap-mon]
+  ↓ Chọn tab hoặc featured collection
+[/thu-vien/phap-mon/[slug]]
+  - xem album ảnh hoặc playlist video
+  - xem caption và nguồn
+  ↓ Nếu muốn đọc sâu hơn
+[/su-kien/[slug]] hoặc [/bai-hoa/[slug]]
+```
+
+**Rules:**
+- hub thư viện là curated surface, không phải raw asset dump
+- collection detail phải link ngược về owner surface khi item đến từ `Calendar` hoặc `Wisdom-QA`
+
+---
+
+## Flow 11: Admin Search Operations (Vận hành tìm kiếm)
 
 **Actor**: Admin
 **Trigger**: Search freshness lệch, cần kiểm tra status hoặc reindex
@@ -347,7 +369,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
-## Flow 11: Admin Notification Operations (Vận hành thông báo)
+## Flow 12: Admin Notification Operations (Vận hành thông báo)
 
 **Actor**: Admin
 **Trigger**: Cần gửi job thủ công hoặc xử lý/redrive push job lỗi
@@ -372,7 +394,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
-## Flow 12: Assisted Entry Support (Nhập hộ có kiểm soát)
+## Flow 13: Assisted Entry Support (Nhập hộ có kiểm soát)
 
 **Actor**: Admin hỗ trợ member
 **Trigger**: Member không có thiết bị hoặc báo cáo offline

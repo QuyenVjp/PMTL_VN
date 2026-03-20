@@ -369,6 +369,75 @@ Form ghi lại buổi phóng sanh.
 
 ---
 
+### `MediaLibraryFeaturedCollection`
+Card lớn cho collection nổi bật trên `/thu-vien/phap-mon`.
+
+**Props**: `title`, `summary`, `cover`, `collectionType`, `href`
+**States**: default / loading
+**Rule**: phải đọc được đây là `album ảnh` hay `playlist video` ngay từ card.
+
+### `MediaLibraryFilterTabs`
+Tabs lọc collection theo loại/chủ đề.
+
+**Tabs**:
+- tất cả
+- video
+- hình ảnh
+- pháp hội
+- giới thiệu pháp môn
+- đồ đằng
+
+**Rule**: mobile dùng pill scroll ngang, không dropdown sâu.
+
+### `MediaCollectionCard`
+Card hiển thị một collection trong grid.
+
+**Props**: `title`, `cover`, `collectionType`, `itemCount`, `summary`, `href`
+**States**: default / hover / loading
+
+### `MediaCollectionViewer`
+Viewer cho collection detail.
+
+**Modes**:
+- `photo-grid`
+- `video-list`
+- `mixed-gallery`
+
+**Rule**:
+- không autoplay video
+- item nào là curated ref phải có link owner surface rõ
+
+### `AdminMediaCollectionEditor`
+Editor admin cho `media collections`.
+
+**Fields**:
+- title
+- slug
+- collection type
+- description
+- source note
+- featured
+
+### `AdminMediaCollectionItemsManager`
+Manager cho items bên trong collection.
+
+**Fields**:
+- item type
+- media ref hoặc external URL
+- caption
+- owner module
+- owner ref
+- sort order
+
+**Rule**: external URL validation inline; owner ref required nếu item là curated reference.
+
+**Rules**:
+- nếu có `ritualVariantRef`, companion panel phải mở đúng variant
+- species-specific warning phải hiện nếu user đang ở flow xử lý tử vong
+- submit button không được che mất checklist quan trọng trên mobile
+
+---
+
 ### `NgoiNhaNhoSheet`
 Ngôi Nhà Nhỏ completion tracker. "Near-paper" interface.
 

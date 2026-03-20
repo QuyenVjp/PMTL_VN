@@ -73,6 +73,13 @@ Search-related source fields:
 - `GET /api/life-release/faq`
 - `GET /api/life-release/downloads`
 
+### Media library content surface
+- `GET /api/hub-pages/thu-vien-phap-mon`
+- `GET /api/media-library/collections`
+- `GET /api/media-library/collections/:slug`
+- `GET /api/media-library/featured`
+- `GET /api/media-library/tags`
+
 Ghi chú:
 - `beginnerGuides` và `hubPages` nên là public surface chính cho:
   - giới thiệu pháp môn
@@ -134,6 +141,21 @@ Quy tắc:
 - ritual variants phải là first-class editorial records
 - species-specific counts và wording khấn nhạy cảm phải có `sourceReference` + `reviewNote`
 - warning đạo đức và checklist chuẩn bị phải là typed blocks, không bury trong rich text
+
+### Media library editorial workspace
+- `GET /api/admin/content/media-library/overview`
+- `POST /api/admin/content/media-library/collections`
+- `PATCH /api/admin/content/media-library/collections/:id`
+- `POST /api/admin/content/media-library/collections/:id/items`
+- `PATCH /api/admin/content/media-library/collections/:id/items/:itemId`
+- `POST /api/admin/content/media-library/featured`
+- `POST /api/admin/content/media-library/publish`
+
+Quy tắc:
+- `media library` là curated public surface, không phải raw media asset manager
+- album/playlist phải là first-class records
+- item nào ref sang `Calendar` hoặc `Wisdom-QA` phải giữ owner ref rõ
+- FE library page không tự ghép từ raw `media_assets`
 
 ### Revalidation
 - `POST /api/revalidate`
