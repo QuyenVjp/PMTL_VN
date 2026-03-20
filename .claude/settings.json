@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "claude-sonnet-4-6",
+  "effortLevel": "high",
+  "includeGitInstructions": true,
+  "outputStyle": "Explanatory",
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": [
+    "playwright",
+    "postgres-pmtl"
+  ],
+  "worktree": {
+    "symlinkDirectories": [
+      "node_modules",
+      ".pnpm-store"
+    ]
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(rg *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git grep*)",
+      "Bash(just *)",
+      "Bash(pnpm *)",
+      "Bash(py *)",
+      "Bash(node *)",
+      "Bash(tsx *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(Get-Content *)",
+      "Bash(Select-String *)",
+      "Bash(Test-Path *)",
+      "Bash(dir *)",
+      "Bash(ls *)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(*compose.prod.yml*)",
+      "Bash(*.env.prod*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./infra/docker/.env*)",
+      "Read(./**/secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/*.key)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean *)",
+      "Bash(rm -rf *)",
+      "Bash(del /f /s /q *)",
+      "Bash(Remove-Item -Recurse -Force *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-context.js\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous-bash.js\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-context.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-bash-verify.js\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop-guard.js\""
+          }
+        ]
+      }
+    ]
+  }
+}
