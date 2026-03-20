@@ -1,123 +1,198 @@
 # Conventions
 
-## 1. Quy tắc folder
+File này chốt `repo conventions (quy ước cấu trúc repo)` cho hướng `design-first rebuild`.
+Nếu docs cũ còn nhắc `apps/cms` hoặc `Payload-first`, coi đó là legacy note (ghi chú cũ), không phải baseline mới.
 
-### Web
+## 1. Top-level structure (Cấu trúc cấp cao)
 
-- `src/app`: route, layout, metadata; cache policy uu tien dat o data layer qua Cache Components.
-- `src/features/<feature>`: code đặc thù domain, gồm `api`, `components`, `hooks`, `utils`, `types.ts`.
-- `src/components/ui`: primitive UI tái sử dụng.
-- `src/components/common`: component dùng nhiều feature nhưng không phải primitive.
-- `src/lib`: integration layer như CMS client, search client, env, logger.
-- Với auth: `src/features/auth/*` chứa auth API wrapper, form, hook session, auth error parsing.
-- Guard route ưu tiên dùng server-side session check hoặc `src/proxy.ts` mỏng theo file convention của Next.js 16, không dồn business rule vào page file.
+- `apps/web`: public frontend, `Next.js App Router`
+- `apps/api`: backend authority, `NestJS + Prisma + Zod + Pino + OpenAPI`
+- `apps/admin`: custom admin frontend
+- `apps/worker`: optional background runtime, chỉ bật phase 2+
+- `packages/shared`: framework-agnostic code
+- `packages/ui`: shared visual primitives nếu thật sự cần dùng chung
+- `packages/api-client`: generated/maintained API client từ OpenAPI/contracts
+- `infra`: Docker, Caddy, scripts, backup, deploy
+- `docs`: implementation docs
+- `design`: target architecture + core rules + launch gates
 
-### CMS
+## 2. Web conventions
 
-- `src/app/(payload)`: lớp host Next-native cho Payload admin UI, REST API, GraphQL và route compatibility.
-- `src/app/(site)`: route public tối thiểu của app CMS, không chứa business logic domain.
-- `src/admin/components`: branding, intro, helper UI cho admin panel.
-- `src/admin/widgets`: dashboard widget cho admin panel.
-- `src/payload.config.ts`: trung tâm cấu hình Payload cho admin, API, collection và globals.
-- `src/collections/<CollectionName>/index.ts`: cấu hình collection.
-- `src/collections/<CollectionName>/fields.ts`: field definitions.
-- `src/collections/<CollectionName>/access.ts`: access rules.
-- `src/collections/<CollectionName>/hooks.ts`: hook binding.
-- `src/collections/<CollectionName>/service.ts`: business logic cho collection đó.
-- `src/services`: service dùng chung nhiều collection.
-- `src/integrations`: code ra ngoài hệ thống như Meilisearch, webhook.
-- `src/workers`: processor và bootstrap cho worker chay Payload Jobs cua CMS.
-- `src/routes`: helper cho route compatibility hoặc public adapter mỏng, gồm `public.ts`, `session.ts`, `request-metadata.ts`; không chứa business logic domain.
-- Với auth user collection: `index.ts` mô tả auth config, `access.ts` chỉ giữ RBAC/document access, `hooks.ts` chỉ orchestration nhẹ, `service.ts` giữ register/login/profile/reset-password flow.
+Preferred shape (cấu trúc ưu tiên):
 
-### Shared
+- `src/app`: route, layout, metadata, page composition
+- `src/features/<domain>`: domain UI, hook, local mapper, API adapter
+- `src/components/ui`: primitive UI
+- `src/components/common`: reusable component qua nhiều feature
+- `src/lib`: env, logger, fetch wrapper, API client bootstrap
+- `src/proxy.ts`: request boundary file cho `Next.js 16`
 
-- `constants`: constant dùng nhiều nơi.
-- `enums`: enum domain.
-- `schemas`: Zod schema dùng chung.
-- `types`: type domain thuần.
-- `validators`: helper validate thuần.
-- `mappers`: chuyển đổi shape giữa domain layers.
-- `utils`: util thuần không phụ thuộc framework.
+Rules:
 
-## 2. Naming conventions
+- Server Components by default.
+- Không nhét business rule chuẩn gốc vào page file.
+- Không để web gọi thẳng DB, storage, search engine.
+- Auth UI sống ở `src/features/auth/*`.
 
-- Folder feature dùng `kebab-case` hoặc `PascalCase` theo chuẩn framework hiện tại:
-  - Web feature: `posts`, `search`, `events`.
-  - Payload collection: `Posts`, `PostComments`, `Users`.
-- Type/interface domain đặt tên rõ nghĩa như `PostSummary`, `SearchResultItem`, `CommentCreateInput`.
-- Không dùng tên mơ hồ như `data`, `helper`, `common` nếu file chỉ làm một việc cụ thể.
+## 3. API conventions
 
-## 3. File nào chứa gì
+Preferred shape:
 
-- Sửa UI của feature `posts` -> `apps/web/src/features/posts/components/*`
-- Sửa UI/auth flow -> `apps/web/src/features/auth/*`
-- Sửa request từ web sang CMS -> `apps/web/src/features/posts/api/*` hoặc `apps/web/src/lib/cms/*`
-- Sửa request auth/session giữa web và CMS -> `apps/web/src/features/auth/api/*`
-- Sửa schema/content model của Payload -> `apps/cms/src/collections/*/fields.ts`
-- Sửa quyền -> `apps/cms/src/collections/*/access.ts`
-- Sửa auth/profile rule ở CMS -> `apps/cms/src/collections/Users/service.ts`
-- Sửa business rule -> `apps/cms/src/collections/*/service.ts` hoặc `apps/cms/src/services/*`
-- Sửa admin/API bootstrap của CMS -> `apps/cms/src/app/(payload)/*`
-- Sửa branding, dashboard widget, admin helper UI -> `apps/cms/src/admin/*`
-- Sửa route compatibility / adapter mỏng cho FE cũ -> `apps/cms/src/routes/*` và `apps/cms/src/app/(payload)/api/*`
-- Sửa queue producer / notification producer -> `apps/cms/src/services/queue.service.ts`, `apps/cms/src/services/notification.service.ts`
-- Sửa Payload task runner / background job -> `apps/cms/src/workers/*`, `apps/cms/src/jobs/*`
-- Sửa shape dùng chung -> `packages/shared/src/schemas/*`, `packages/shared/src/types/*`
+```txt
+apps/api/src/
+  common/
+  platform/
+  modules/
+```
 
-## 4. Cách thêm feature mới
+### `common/`
 
-### Web
+Chứa technical baseline (nền tảng kỹ thuật):
 
-1. Tạo `apps/web/src/features/<feature>`.
-2. Thêm `types.ts`, `api`, `components`, `utils`.
-3. Chỉ đưa code sang `src/components/common` nếu ít nhất 2 feature cùng dùng.
+- `config`
+- `logging`
+- `errors`
+- `validation`
+- `guards`
+- `decorators`
+- `auth`
+- `http`
 
-### CMS
+### `platform/`
 
-1. Tạo `apps/cms/src/collections/<FeatureName>`.
-2. Tách `index.ts`, `fields.ts`, `access.ts`, `hooks.ts`, `service.ts`.
-3. Nếu cần side effect ngoài hệ thống, gọi qua `src/integrations/*` thay vì gọi thẳng trong hook.
+Chứa control-plane/runtime modules (mô-đun điều phối và vận hành):
 
-## 5. Rules env
+- `sessions`
+- `audit`
+- `feature-flags`
+- `rate-limit`
+- `storage`
+- `health`
+- `metrics`
+
+### `modules/`
+
+Chứa domain modules:
+
+- `identity`
+- `content`
+- `community`
+- `engagement`
+- `moderation`
+- `search`
+- `calendar`
+- `notification`
+- `vows-merit`
+- `wisdom-qa`
+
+Per module, prefer:
+
+- `<domain>.module.ts`
+- `<domain>.controller.ts`
+- `<domain>.service.ts`
+- `<domain>.schemas.ts`
+- `<domain>.mapper.ts`
+- `<domain>.repository.ts`
+- `<domain>.policy.ts`
+
+Rules:
+
+- controller mỏng
+- service giữ business logic
+- repository chỉ giữ data access
+- schema là runtime source of truth cho boundary
+- mapper tách persistence shape khỏi API contract
+
+## 4. Admin conventions
+
+Preferred shape:
+
+- `src/app`
+- `src/features/<domain>`
+- `src/components/ui`
+- `src/components/common`
+- `src/lib`
+
+Rules:
+
+- `apps/admin` là management UI only.
+- Không giữ business authority ở admin.
+- Dashboard, editorial action, moderation queue, audit views đều phải gọi `apps/api`.
+
+## 5. Shared package conventions
+
+### `packages/shared`
+
+Allowed:
+
+- `contracts`
+- `schemas`
+- `types`
+- `enums`
+- `constants`
+- `mappers`
+- `validators`
+- pure `utils`
+
+Not allowed:
+
+- NestJS imports
+- Next.js imports
+- Prisma client trực tiếp
+- browser runtime glue
+
+### `packages/api-client`
+
+- Ưu tiên sinh từ OpenAPI
+- Dùng cho web/admin
+- Không chứa business policy
+
+## 6. Naming conventions
+
+- Folder domain dùng `kebab-case`: `vows-merit`, `wisdom-qa`
+- Type đặt rõ nghĩa: `AuthSessionView`, `PostSummaryItem`, `ModerationDecisionInput`
+- Tránh tên mơ hồ như `helpers.ts`, `common.ts`, `data.ts` nếu file chỉ làm 1 việc cụ thể
+
+## 7. Placement rules (Code nên sống ở đâu)
+
+- Sửa public UI -> `apps/web/src/features/*`
+- Sửa admin UI -> `apps/admin/src/features/*`
+- Sửa auth/session business rule -> `apps/api/src/modules/identity/*` + `apps/api/src/platform/sessions/*`
+- Sửa upload/storage -> `apps/api/src/platform/storage/*`
+- Sửa audit -> `apps/api/src/platform/audit/*`
+- Sửa feature flag -> `apps/api/src/platform/feature-flags/*`
+- Sửa limiter -> `apps/api/src/platform/rate-limit/*`
+- Sửa health/metrics -> `apps/api/src/platform/health/*`, `apps/api/src/platform/metrics/*`
+- Sửa shared contract -> `packages/shared/src/*`
+- Sửa infra/deploy -> `infra/*`
+
+## 8. Contract rules
+
+- Boundary validation dùng `Zod`.
+- API contract public/admin nên đi qua OpenAPI hoặc shared schemas, không tạo source of truth thứ hai.
+- Web/admin không dựa vào raw persistence model nếu chưa map.
+- `publicId` là public identity ưu tiên; `slug` phục vụ SEO/readability.
+
+## 9. Environment rules
 
 - Env public cho web phải prefix `NEXT_PUBLIC_`.
-- Không đọc `process.env` trực tiếp trong component. Luôn đi qua `lib/env`.
-- Compose env file ở `infra/docker`.
-- Auth env nền tảng hiện tại gồm `AUTH_RESET_PASSWORD_URL` và `PAYLOAD_AUTH_DISABLE_EMAIL`.
-- Queue/notification env runtime hiện có `VAPID_*`, `SMTP_*`, `WORKER_JOBS_INTERVAL_MS`, `WORKER_MAINTENANCE_INTERVAL_MS`; `REDIS_URL` chỉ cần khi feature khác dùng Redis cho rate-limit hoặc coordination.
-- `PAYLOAD_CONFIG_PATH` được dùng bởi script CLI của `apps/cms`, không phải env contract giữa services.
+- Không đọc `process.env` trực tiếp trong component.
+- `apps/api` phải validate env ngay khi boot.
+- Auth/security env phải map về policy đã chốt trong `design/SECURITY_BASELINE.md`.
 
-## 6. API contracts
+## 10. AI synchronization rule
 
-- Web không dựa vào raw Payload document nếu chưa map.
-- Mọi dữ liệu từ CMS đi qua mapper trước khi vào UI layer.
-- Contract chính được ghi ở `docs/api/contracts.md`.
+Khi đổi:
 
-## 7. Access control
+- kiến trúc
+- cấu trúc thư mục
+- security baseline
+- runtime contracts
 
-- Access rule nằm ở `access.ts`.
-- Hook không tự ý chặn quyền nếu logic đó là authorization.
-- Service có thể validate business rule sau khi access đã pass.
-- Quy ước role hiện tại: `super-admin`, `admin`, `member`.
-- `admin` là giá trị kỹ thuật; trong ngôn ngữ nghiệp vụ/UI có thể gọi là `Phụng sự viên`.
-- Guest chỉ xem public content; member dùng user feature; admin và super-admin xử lý editorial, moderation, vận hành theo policy.
+phải cập nhật cùng task:
 
-## 8. Error handling
-
-- Integration layer throw error typed hoặc error có message rõ nghĩa.
-- UI layer không parse lỗi mơ hồ từ hệ thống thấp hơn.
-- Logger chỉ log ở boundary như route handler, service, worker.
-
-## 9. AI synchronization rule
-
-- Khi thay đổi quy tắc kiến trúc, security baseline, runtime contract, hoặc convention codegen cho AI, phải cập nhật trong cùng task:
-  - `AGENTS.md`
-  - skill liên quan trong `.agents/skills/*/SKILL.md`
-  - docs tương ứng trong `docs/architecture/*`, `docs/security.md`, `docs/api/contracts.md`
-- Không tạo rule mới trong code mà bỏ quên docs/skill; repo này ưu tiên "code + rule + docs" đồng bộ.
-- Với Next.js 16, request boundary runtime của web nằm ở `apps/web/src/proxy.ts`, không tự động đổi về `middleware.ts` nếu không có lý do version-specific rõ ràng.
-- Skill nội bộ phải theo taxonomy ở `docs/architecture/skills-taxonomy.md`: `governance`, `knowledge`, `review`, `verification`, `automation`, `scaffolding`, `runbook`.
-- Verification skill phải ưu tiên script/checks lặp lại được thay vì chỉ lặp lại prose checklist.
-- Canonical skill nên có đủ 5 lớp tối thiểu theo vận hành: intent, knowledge, execution, verification, evolution; nếu chưa đủ thì phải ghi rõ là compatibility hoặc partial skill.
-- Nếu hai skill nội bộ bắt đầu chồng vai rõ rệt, gộp chúng hoặc tách vai cho rõ thay vì để routing mơ hồ.
+- `AGENTS.md`
+- `.agents/skills/pmtl-vn-architecture/references/repo-conventions.md`
+- `docs/architecture/*`
+- `docs/api/contracts.md`
+- `design/*` owner docs nếu rule gốc sống ở đó

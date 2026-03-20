@@ -5,7 +5,8 @@ These conventions keep PMTL_VN easy for a solo developer and AI assistants to ex
 
 ## Layering
 - `apps/web`: user-facing application code only
-- `apps/cms`: Payload runtime, collections, hooks, services, integrations
+- `apps/api`: NestJS backend authority, domain modules, platform modules, OpenAPI
+- `apps/admin`: custom management UI only
 - `packages/shared`: framework-agnostic domain code only
 - `infra/*`: deployment and runtime configuration only
 - `docs/*`: architecture and contract references
@@ -22,22 +23,25 @@ Preferred shape:
 
 Do not create broad top-level buckets that hide domain boundaries.
 
-## CMS Conventions
-Per collection/domain, prefer:
-- `index.ts`: schema registration and high-level config
-- `fields.ts`: field declarations and admin labels
-- `access.ts`: access rules only
-- `hooks.ts`: thin orchestration hooks only
-- `service.ts`: business logic and side effects
+## API Conventions
+Use explicit module ownership under `apps/api/src`.
 
-Shared CMS concerns:
-- reusable fields in `src/fields`
-- flexible content blocks in `src/blocks`
-- cross-collection access helpers in `src/access`
-- shared hooks in `src/hooks`
-- business logic in `src/services`
-- integrations in `src/integrations`
-- admin custom components/views/widgets in `src/admin`
+Preferred shape:
+- `src/common`: cross-cutting technical building blocks such as config, logging, validation, errors, auth helpers, HTTP helpers
+- `src/platform`: control-plane and runtime modules such as sessions, audit, feature flags, rate limit, storage, health, metrics
+- `src/modules/<domain>`: domain controllers, services, schemas, mappers, repositories, policy helpers
+- `src/prisma` or `prisma`: schema and migrations
+
+Per domain module, prefer:
+- `<domain>.module.ts`
+- `<domain>.controller.ts`
+- `<domain>.service.ts`
+- `<domain>.schemas.ts`
+- `<domain>.mapper.ts`
+- `<domain>.repository.ts` when query complexity justifies separation
+- `<domain>.policy.ts` when authz or business policy needs a dedicated helper
+
+Admin concerns belong in `apps/admin`, not `apps/api`.
 
 ## Shared Package Conventions
 Allowed:

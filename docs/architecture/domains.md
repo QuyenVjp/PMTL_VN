@@ -1,138 +1,171 @@
 # Domains
 
-## Identity / Auth
+File này tóm tắt `domain ownership (quyền sở hữu mô-đun)` theo hướng `apps/api` là backend authority.
+Canonical source (nguồn chuẩn) vẫn là:
 
-- `users` là auth authority duy nhất.
-- Payload auth vẫn là nguồn session/cookie/JWT gốc.
-- Contract auth ra web vẫn map về `displayName` và `status`.
-- Google login được phép tồn tại như provider flow, nhưng vẫn map vào cùng `users` authority.
-- Role set chuẩn hiện tại của design là `super-admin`, `admin` (`Phụng sự viên`), `member`.
+- [design/00-overview/architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/architecture-principles.md)
+- [design/MODULE_INTERACTIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/MODULE_INTERACTIONS.md)
 
-## Site Config / Globals
+## Identity
 
-- Globals hiện có:
-  - `site-settings`
-  - `navigation`
-  - `homepage`
-  - `sidebar-config`
-  - `chanting-settings`
-- `navigation` hiện vẫn được giữ cho compatibility với FE/BFF cũ.
+Owns:
 
-## Editorial Content
+- `users`
+- auth/session lifecycle
+- role and profile basics
 
-- Editorial collections:
-  - `posts`
-  - `categories`
-  - `tags`
-  - `events`
-  - `beginnerGuides`
-  - `downloads`
-  - `hubPages`
-  - `media`
-- `posts` là aggregate root chính của nội dung public.
-- `posts` đã có `publicId`, `postType`, source group, series group, event context, SEO group, search fields hệ thống.
+Notes:
 
-## Comments / Reader Interaction
+- `NestJS auth` là auth authority duy nhất.
+- Browser session đi qua access token + refresh rotation policy.
+- Google login được phép nếu vẫn map vào cùng authority này.
 
-- `postComments` thay cho `comments` cũ.
-- Route compatibility đã có:
-  - comment list theo post
-  - submit comment
-  - report comment
-- Sync `commentCount` vẫn đi qua service/hook, không nhét vào route handler.
+## Content
 
-## Community / Guestbook
+Owns:
 
-- Community collections:
-  - `communityPosts`
-  - `communityComments`
-  - `guestbookEntries`
-- `communityPosts` và `communityComments` là UGC domain có moderation foundation.
-- `guestbookEntries` là luồng public nhẹ hơn nhưng vẫn có approval workflow.
+- `posts`
+- `hubPages`
+- `beginnerGuides`
+- `downloads`
+- `sutras`
+- `sutraVolumes`
+- `sutraChapters`
+- `sutraGlossary`
+- `chantItems`
+- `chantPlans`
+- content media linkage
 
-## Chanting / Practice
+Notes:
 
-- Chanting collections:
-  - `chantItems`
-  - `chantPlans`
-  - `lunarEvents`
-  - `lunarEventOverrides`
-  - `chantPreferences`
-  - `practiceLogs`
-- Practice support self-owned collections/read models:
-  - `practiceSheets`
-  - `ngoiNhaNhoSheets`
-  - `personalPracticeCalendarReadModel`
-- `chantItems` và `chantPlans` là editorial/public.
-- `chantPreferences` và `practiceLogs` là self-owned user state.
-- `practiceSheets` và `ngoiNhaNhoSheets` cũng là self-owned user state.
-- Merge logic cho lunar override, plan, preference vẫn nằm ở service layer.
-- `personalPracticeCalendarReadModel` được phép mang thêm `daily practice advisory` dạng read-model output.
+- `content` giữ editorial/public support content.
+- search source fields nằm ở owner records này.
 
-## Vows / Merit
+## Community
 
-- Self-owned records:
-  - `vows`
-  - `vowProgressEntries`
-  - `lifeReleaseJournal`
-- Đây là lớp hỗ trợ `Phát nguyện` và `Phóng sanh`.
-- Không trộn các record này vào community feed canonical.
+Owns:
 
-## Wisdom / QA
+- `postComments`
+- `communityPosts`
+- `communityComments`
+- `guestbookEntries`
 
-- Curated retrieval records:
-  - `wisdomEntries`
-  - `qaEntries`
-  - `offlineBundles`
-  - `authorityProfiles`
-- Mục tiêu là tra cứu đúng nguồn `Bạch thoại Phật pháp`, `Huyền học vấn đáp`, audio/video hỗ trợ đọc học.
-- Search phải index hợp nhất module này với `01-content` thành một bề mặt đọc `Kho Trí Huệ`.
-- Module này còn giữ `source provenance` để phân biệt:
-  - nguồn gốc chính thức
-  - official mirror
-  - web phụng sự viên / bản dịch cộng đồng
+Notes:
 
-## Sutra
+- đây là UGC surface (bề mặt nội dung do người dùng tạo)
+- moderation report lifecycle không nằm ở đây
 
-- Sutra collections:
-  - `sutras`
-  - `sutraVolumes`
-  - `sutraChapters`
-  - `sutraGlossary`
-  - `sutraBookmarks`
-  - `sutraReadingProgress`
-- Public reading tree dùng `sutras -> sutraVolumes -> sutraChapters`.
-- `sutraBookmarks` và `sutraReadingProgress` là self-owned state.
+## Engagement
 
-## Push / Delivery
+Owns:
 
-- Push collections:
-  - `pushSubscriptions`
-  - `pushJobs`
-- `pushSubscriptions` là source of truth cho browser subscription state.
-- `pushJobs` là control-plane collection cho dispatch orchestration đang được worker xử lý qua Payload Jobs.
-- Self-send prevention hiện đi qua `includeUserIds` / `excludeUserIds` trong push job payload.
+- `sutraBookmarks`
+- `sutraReadingProgress`
+- `chantPreferences`
+- `practiceLogs`
+- `practiceSheets`
+- `ngoiNhaNhoSheets`
 
-## Moderation / Audit / Control Plane
+Notes:
 
-- System collections:
-  - `requestGuards`
-  - `moderationReports`
-  - `auditLogs`
-- `requestGuards` là audit/control-plane store; production runtime dùng Redis-backed adapter cho request guard và rate-limit coordination khi `REDIS_URL` được cấu hình.
-- `moderationReports` là luồng report source-of-truth, sau đó sync summary ngược lên entity.
-- `auditLogs` là append-only trail cho admin/system actions.
+- đây là `self-owned state (trạng thái cá nhân do người dùng sở hữu)`
+- không ghi ngược vào canonical content data
 
-## CMS Runtime Boundary
+## Moderation
 
-- `apps/cms` là Next-native Payload app riêng cho admin + API.
-- `apps/web` vẫn là public frontend riêng.
-- Compatibility routes nằm ở `apps/cms/src/app/(payload)/api/*`.
-- Route helper/adapters mỏng nằm ở `apps/cms/src/routes/*`.
+Owns:
+
+- `moderationReports`
+
+Notes:
+
+- report lifecycle source of truth nằm ở đây
+- entity đích chỉ giữ summary fields
 
 ## Search
 
-- Source of truth vẫn là Postgres/Payload document.
-- Schema đã chuẩn bị sẵn `contentPlainText` và `normalizedSearchText`.
-- Search posts public hiện đi qua compatibility route `/api/posts/search`.
-- Search sync sang Meilisearch hiện đi qua Payload Jobs queue-first flow; route `/api/posts/search/reindex` cho phép admin/super-admin enqueue reindex batch.
+Owns:
+
+- search query contract
+- indexing projection contract
+- search runtime status contract
+
+Notes:
+
+- không sở hữu canonical business data
+- phase 1 có thể Postgres-first
+- phase 2 mới bật Meilisearch nếu pain đủ rõ
+
+## Calendar
+
+Owns:
+
+- `events`
+- `lunarEvents`
+- `lunarEventOverrides`
+- `personalPracticeCalendarReadModel`
+
+Notes:
+
+- event ownership nằm ở calendar
+- advisory/read model là derived output, không phải user-owned canonical state
+
+## Notification
+
+Owns:
+
+- `pushSubscriptions`
+- `pushJobs`
+- reminder schedule khi feature đủ lớn
+
+Notes:
+
+- notification là async control-plane
+- không phải inbox canonical domain
+
+## Vows & Merit
+
+Owns:
+
+- `vows`
+- `vowProgressEntries`
+- `lifeReleaseJournal`
+- `lifeReleaseChecklistSnapshots`
+
+Notes:
+
+- đây là self-owned practice records
+- không trộn vào community feed mặc định
+
+## Wisdom & QA
+
+Owns:
+
+- `wisdomEntries`
+- `qaEntries`
+- `authorityProfiles`
+- `offlineBundles`
+
+Notes:
+
+- retrieval-first, source-provenance-first
+- không dùng AI để bịa authority content
+
+## Platform / Control Plane
+
+Không thuộc `00-09` business modules nhưng là owner thật:
+
+- `sessions`
+- `audit_logs`
+- `feature_flags`
+- `rate_limit_records`
+- `media_assets`
+- health endpoints
+- metrics endpoint
+- storage abstraction
+
+Các phần này nên sống ở:
+
+- `apps/api/src/platform/*`
+
+Không được để domain modules tự copy lại các năng lực này.

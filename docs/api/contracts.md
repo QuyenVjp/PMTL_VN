@@ -1,443 +1,167 @@
 # API Contracts
 
+File này là `high-level contract map (bản đồ hợp đồng API cấp cao)` cho hướng `apps/api`.
+Canonical source cho domain behavior vẫn là `design/*`.
+
 ## Runtime note
 
-- `apps/cms` hiện host Payload theo hướng Next-native.
-- Payload REST gốc vẫn còn qua catch-all `/api/[...slug]`.
-- Web/BFF phase đầu nên ưu tiên gọi compatibility routes dưới đây thay vì ăn raw Payload document.
-- Admin UI của CMS nằm tại `/admin`.
+- `apps/api` là HTTP authority cho web/admin/internal automation.
+- `apps/web` và `apps/admin` nên ưu tiên dùng typed API client hoặc OpenAPI-generated client.
+- Không dùng raw persistence model làm public contract.
 
-## Internal revalidation contract
-
-- `POST /api/revalidate`
-- Chỉ dành cho webhook nội bộ từ `apps/cms` sang `apps/web`
-- Header bắt buộc: `Authorization: Bearer <REVALIDATE_SECRET>`
+## Error envelope
 
 ```ts
-type RevalidationWebhookPayload = {
-  source: "payload";
-  entityType: "collection" | "global";
-  slug:
-    | "posts"
-    | "categories"
-    | "tags"
-    | "events"
-    | "hubPages"
-    | "communityPosts"
-    | "beginnerGuides"
-    | "downloads"
-    | "sutras"
-    | "homepage"
-    | "navigation"
-    | "site-settings"
-    | "sidebar-config"
-    | "chanting-settings";
-  operation: "create" | "update" | "delete";
-  document?: {
-    id?: string | number;
-    publicId?: string | null;
-    slug?: string | null;
+type ApiErrorResponse = {
+  error: {
+    code: string;
+    message: string;
+    status: number;
+    requestId: string;
+    details?: Record<string, unknown>;
   };
 };
 ```
 
-Ghi chú:
-- `INTERNAL_WEBHOOK_URL` nên trỏ từ CMS sang web nội bộ, ví dụ `http://web:3000/api/revalidate` trong Docker.
-- `REVALIDATE_SECRET` phải giống nhau ở cả `apps/cms` và `apps/web`.
-- Route này sẽ map `Payload` slugs sang cache tags và paths thực tế của frontend rồi gọi `revalidateTag` / `revalidatePath`.
-
 ## Auth contracts
+
+Core routes:
+
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/refresh`
+- `POST /auth/logout`
+- `POST /auth/logout-all`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
+- `GET /auth/me`
+- `PATCH /auth/profile`
+
+Example types:
 
 ```ts
 type AuthUser = {
   id: string;
   email: string;
   displayName: string;
-  bio: string;
-  role: "super-admin" | "admin" | "member";
+  role: "super-admin" | "admin" | "editor" | "moderator" | "member";
   status: "active" | "pending" | "suspended";
-  avatarId: string | null;
   avatarUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
-type AuthSession = {
-  token: string;
-  exp: number | null;
+type AuthSessionView = {
   user: AuthUser;
+  sessionId: string;
+  expiresAt: string;
 };
 ```
 
-Auth endpoints:
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `POST /api/auth/forgot-password`
-- `POST /api/auth/reset-password`
-- `GET /api/auth/me`
-- `PATCH /api/auth/profile`
+Notes:
 
-Ghi chú:
-- `users` nội bộ dùng `fullName` và `isBlocked`, nhưng contract ra web vẫn map về `displayName` và `status`.
-- `resetToken`/`resetUrl` chỉ dùng cho local/dev khi `PAYLOAD_AUTH_DISABLE_EMAIL=true`.
-- `admin` trong business/UI có thể hiển thị là `Phụng sự viên`.
-- Google login là provider flow hợp lệ nếu được map vào cùng Payload auth authority.
+- browser flow dùng secure `HttpOnly` cookies theo policy ở `design/SECURITY_BASELINE.md`
+- `admin` trong UI có thể hiện là `Phụng sự viên`
 
-## Globals compatibility routes
+## Content contracts
 
-- `GET /api/site-settings`
-- `GET /api/homepage`
-- `GET /api/sidebar`
-- `GET /api/chanting-settings`
+Core route groups:
 
-## Public content compatibility routes
+- `GET /content/posts`
+- `GET /content/posts/:publicIdOrSlug`
+- `POST /content/posts`
+- `PATCH /content/posts/:id`
+- `POST /content/posts/:id/publish`
+- `POST /content/media/upload`
 
-### Posts
+Public list/detail DTO phải là mapped view model, không lộ internal moderation/system fields.
 
-- `GET /api/posts`
-- `GET /api/posts/:slugOrPublicId`
-- `GET /api/posts/search?q=<query>&limit=<n>`
-- `POST /api/posts/search/reindex`
-- `GET /api/search/status`
-- `POST /api/posts/:publicId/view`
-- `GET /api/posts/:publicId/comments`
-- `POST /api/posts/:publicId/comments/submit`
-- `GET /api/comments/latest?limit=<n>`
-- `POST /api/comments/:publicId/like`
-- `POST /api/comments/:publicId/report`
+## Community contracts
 
-Ghi chú:
-- Web BFF đã bỏ compatibility layer `blog-comments/*`; frontend nên dùng trực tiếp nhóm route `posts/:id/comments` và `comments/:id/*`.
-- `GET /api/comments/latest` trả về top-level comment mới nhất đã được duyệt, có kèm slug/title bài viết để render widget sidebar.
+Core route groups:
 
-```ts
-type PostSummary = {
-  id: string | null;
-  sourceRef: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  publishedAt: string | null;
-  topic: string | number | null;
-  tags: Array<string | number>;
-  images: Array<string | number>;
-  viewCount: number;
-};
+- `GET /community/posts`
+- `GET /community/posts/:publicId`
+- `POST /community/posts`
+- `GET /community/posts/:publicId/comments`
+- `POST /community/posts/:publicId/comments`
+- `POST /community/comments/:publicId/report`
+- `GET /guestbook`
+- `POST /guestbook`
 
-type PostDetail = PostSummary & {
-  sourceUrl: string | null;
-  content: unknown;
-  contentPlainText: string;
-  normalizedSearchText: string;
-};
+## Engagement contracts
 
-type PostSearchResult = {
-  totalHits: number;
-  engine: "meilisearch" | "payload-fallback";
-  hits: Array<{
-    id: string;
-    type: "post";
-    title: string;
-    slug: string;
-    excerpt: string;
-    sourceRef: string;
-    publishedAt: string | null;
-    topic: string;
-    tags: string[];
-    viewCount: number;
-    thumbnail: {
-      url?: string | null;
-      alternativeText?: string | null;
-    } | null;
-  }>;
-};
+Core route groups:
 
-type PostCommentDTO = {
-  id: string | null;
-  post: string | null;
-  parent: string | null;
-  content: string;
-  authorName: string;
-  authorAvatar: string;
-  badge: string;
-  isOfficialReply: boolean;
-  createdAt: string | null;
-  updatedAt: string | null;
-};
-```
+- `GET /engagement/bookmarks`
+- `POST /engagement/bookmarks`
+- `GET /engagement/reading-progress`
+- `POST /engagement/reading-progress`
+- `GET /engagement/practice-logs`
+- `POST /engagement/practice-logs`
+- `GET /engagement/practice-sheets`
+- `POST /engagement/practice-sheets`
+- `GET /engagement/ngoi-nha-nho-sheets`
+- `POST /engagement/ngoi-nha-nho-sheets`
 
-### Events
+## Moderation contracts
 
-- `GET /api/events`
-- `GET /api/events/:publicId`
+Core route groups:
 
-```ts
-type EventDTO = {
-  id: string | null;
-  title: string;
-  slug: string;
-  description: string;
-  date: string | null;
-  location: string;
-  type: string;
-  eventStatus: string;
-};
-```
+- `GET /moderation/reports`
+- `POST /moderation/reports`
+- `POST /moderation/reports/:publicId/decision`
 
-### Guides / Downloads / Hub / Sutra / Chanting
+## Search contracts
 
-- `GET /api/guides`
-- `GET /api/guides/:publicId`
-- `GET /api/downloads`
-- `GET /api/downloads/:publicId`
-- `GET /api/hub-pages`
-- `GET /api/hub-pages/:slugOrPublicId`
-- `GET /api/sutras`
-- `GET /api/sutras/:publicId`
-- `GET /api/sutras/:sutraPublicId/chapters/:chapterPublicId`
-- `GET /api/chant-items`
-- `GET /api/chant-items/:publicId`
-- `GET /api/chant-plans`
-- `GET /api/chant-plans/:publicId`
+Phase 1:
 
-```ts
-type GuideDTO = {
-  id: string | null;
-  title: string;
-  description: string;
-  iconName: string;
-};
+- `GET /search?q=<query>&type=<optional>`
+- `GET /search/status`
 
-type DownloadDTO = {
-  id: string | null;
-  title: string;
-  description: string;
-  externalURL: string;
-  fileType: string;
-};
+Phase 2 when enabled:
 
-type HubPageDTO = {
-  id: string | null;
-  title: string;
-  slug: string;
-  description: string;
-};
+- `POST /search/reindex`
+- `GET /search/index-status`
 
-type SutraDTO = {
-  id: string | null;
-  title: string;
-  slug: string;
-  description: string;
-  shortExcerpt: string;
-};
+## Calendar contracts
 
-type ChantItemDTO = {
-  id: string | null;
-  title: string;
-  slug: string;
-  kind: string;
-};
+Core route groups:
 
-type ChantPlanDTO = {
-  id: string | null;
-  title: string;
-  slug: string;
-  planType: string;
-};
-```
+- `GET /calendar/events`
+- `GET /calendar/events/:publicId`
+- `GET /calendar/personal-practice`
+- `GET /calendar/advisory/daily`
 
-## Community / UGC routes
+## Notification contracts
 
-- `GET /api/community/posts`
-- `GET /api/community/posts/:publicId`
-- `POST /api/community/posts/submit`
-- `GET /api/community/posts/:publicId/comments`
-- `POST /api/community/posts/:publicId/comments`
-- `POST /api/community/posts/:publicId/report`
-- `GET /api/guestbook`
-- `POST /api/guestbook/submit`
-- `POST /api/community/comments/:publicId/report`
+Core route groups:
 
-```ts
-type CommunityPostDTO = {
-  id: string | null;
-  title: string;
-  content: string;
-  slug: string;
-  type: string;
-  authorName: string;
-  likes: number;
-  views: number;
-  commentsCount: number;
-  createdAt: string | null;
-  updatedAt: string | null;
-};
+- `POST /notifications/push/subscribe`
+- `POST /notifications/push/unsubscribe`
+- `GET /notifications/push/stats`
 
-type CommunityCommentDTO = {
-  id: string | null;
-  content: string;
-  authorName: string;
-  likes: number;
-  parent: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-};
+## Vows & Merit contracts
 
-type GuestbookEntryDTO = {
-  id: string | null;
-  authorName: string;
-  message: string;
-  country: string;
-  avatar: string;
-  badge: string;
-  adminReply: string;
-  createdAt: string | null;
-  updatedAt: string | null;
-};
-```
+Core route groups:
 
-Ghi chú:
-- Public/community routes không expose `spamScore`, `submittedByIpHash`, `reportCount`, `lastReportReason`.
-- Report endpoint hiện tạo `moderationReports` và sync summary cơ bản lên entity mục tiêu.
+- `GET /vows`
+- `POST /vows`
+- `POST /vows/:publicId/milestones`
+- `GET /life-release-journal`
+- `POST /life-release-journal`
 
-## User-state chanting routes
+## Wisdom & QA contracts
 
-- `GET /api/chanting/preferences`
-- `POST /api/chanting/preferences`
-- `GET /api/chanting/practice-log`
-- `POST /api/chanting/practice-log`
-- `GET /api/practice-sheets`
-- `POST /api/practice-sheets`
-- `GET /api/ngoi-nha-nho/sheets`
-- `POST /api/ngoi-nha-nho/sheets`
+Core route groups:
 
-```ts
-type ChantPreferenceDTO = {
-  id: string | null;
-  plan: string | number | null;
-  enabledOptionalItems: Array<{ chantItem: string | number | null }>;
-  targetsByItem: Array<{ chantItem: string | number | null; target: number }>;
-  intentionsByItem: Array<{ chantItem: string | number | null; intention: string }>;
-};
-
-type PracticeLogDTO = {
-  id: string | null;
-  plan: string | number | null;
-  practiceDate: string | null;
-  itemStates: unknown[];
-  sessionConfig: {
-    durationMinutes?: number | null;
-    notes?: string | null;
-  } | null;
-  startedAt: string | null;
-  completedAt: string | null;
-  isCompleted: boolean;
-};
-
-type PracticeSheetDTO = {
-  id: string | null;
-  sheetType: "daily_practice" | "event_preparation" | "vow_support";
-  practiceDate: string | null;
-  status: "draft" | "in_progress" | "completed" | "archived";
-  completionPercent: number;
-  items: Array<{
-    label: string;
-    targetCount: number | null;
-    currentCount: number;
-    isCompleted: boolean;
-  }>;
-};
-
-type NgoiNhaNhoSheetDTO = {
-  id: string | null;
-  sheetType: "standard" | "self_store" | "custom";
-  status: "draft" | "in_progress" | "completed" | "self_stored" | "offered";
-  practiceDate: string | null;
-  currentGreatCompassionCount: number;
-  currentHeartSutraCount: number;
-  currentRebirthMantraCount: number;
-  currentSevenBuddhasCount: number;
-};
-```
-
-Ghi chú:
-- Hai route này dựa trên Payload auth session hiện tại.
-- `POST /api/chanting/practice-log` dùng semantics upsert theo `user + practiceDate + plan`.
-- `POST /api/practice-sheets` và `POST /api/ngoi-nha-nho/sheets` nên hỗ trợ idempotent/offline sync qua `clientEventId`.
-
-## Personal practice calendar route
-
-- `GET /api/practice-calendar`
-
-```ts
-type PracticeCalendarDayDTO = {
-  date: string;
-  lunarLabel: string | null;
-  dayTags: Array<"ngay_via" | "trai_gioi" | "ngay_phong_sanh_goi_y" | "golden_hour">;
-  recommendedItems: string[];
-  recommendedWindows: Array<{ start: string; end: string; label?: string }>;
-  vowHooks: string[];
-  lifeReleaseHooks: string[];
-  advisoryCards: Array<{
-    title: string;
-    body: string;
-    tone?: "info" | "practice" | "warning";
-  }>;
-  sourceRefs: Array<{
-    label: string;
-    url: string;
-    provenance:
-      | "official_origin"
-      | "official_mirror"
-      | "community_volunteer_site"
-      | "community_translation";
-  }>;
-  notesVi: string | null;
-  notesEn: string | null;
-};
-```
-
-## Push routes
-
-- `POST /api/push/subscribe`
-- `POST /api/push/unsubscribe`
-- `GET /api/push/stats`
-
-## Moderation routes
-
-- `GET /api/moderation/reports`
-- `POST /api/moderation/reports/:publicId/decision`
-
-Ghi chú:
-- Hai route này yêu cầu role `admin` trở lên.
-- `decision` hiện hỗ trợ `approved | rejected | flagged | hidden`.
-
-## Queue / worker notes
-
-- `POST /api/posts/search/reindex` yêu cầu role `admin` trở lên và enqueue search sync batch cho posts.
-- `GET /api/search/status` trả health của Meilisearch, queue counts và số document hiện có trong index posts.
-- `GET /api/push/stats` trả tổng subscription active/inactive và số push job đang chờ/lỗi.
-- Community submit/report, guestbook submit, post comment submit hiện vừa append audit log vừa enqueue notification cho admin/super-admin theo policy.
-- Self-send prevention hiện được áp dụng ở notification job bằng `excludeUserIds`.
-
-## Error shape
-
-```ts
-type ApiError = {
-  message: string;
-  code?: string;
-};
-
-type ApiErrorResponse = {
-  error: ApiError;
-};
-```
+- `GET /wisdom/entries`
+- `GET /wisdom/entries/:publicId`
+- `GET /qa/search`
+- `GET /offline-bundles/:publicId`
 
 ## Contract rules
 
-- Web không dựa vào raw Payload document nếu chưa map.
-- Compatibility routes phải che field moderation/system nhạy cảm khỏi frontend public.
-- `publicId` là identity chính cho public/API/report/audit; `slug` chỉ phục vụ SEO.
-- Search và BFF có thể tiếp tục map từ compatibility DTO sang shape UI cũ trong phase đầu.
-- Payload REST gốc vẫn hữu ích cho admin/integration, nhưng không phải public contract mặc định cho web.
+- `publicId` là public identifier ưu tiên
+- `slug` phục vụ readability và SEO
+- mọi request/query/body/params phải được validate bằng `Zod`
+- web/admin không được phụ thuộc vào raw DB shape
+- OpenAPI nên là machine-readable contract layer cho Codex và generated clients

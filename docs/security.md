@@ -2,138 +2,87 @@
 
 ## Scope
 
-This project protects both runtimes:
+This repo now treats `apps/api` as the `security authority (quyền lực bảo mật)`.
+
+Request boundaries:
+
 - `apps/web/src/proxy.ts`
-- `apps/cms/src/proxy.ts`
+- `apps/api` global HTTP pipeline
+- `apps/admin` route/auth guards when admin UI exists
 
-Both proxies apply the baseline before requests reach route handlers or Payload internals. In this repo, `proxy.ts` is the request boundary file convention for Next.js 16.
+Canonical policy source:
 
-## Current Protection Stack
+- [design/SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
 
-### HTTP headers
-- Security headers are applied at the proxy/request-boundary layer.
-- Web applies them via `apps/web/src/lib/security/headers.ts`.
-- CMS applies its own API headers in `apps/cms/src/proxy.ts`.
-- Active headers include:
-  - `Content-Security-Policy`
-  - `Cross-Origin-Opener-Policy`
-  - `Cross-Origin-Resource-Policy`
-  - `X-Content-Type-Options: nosniff`
-  - `Referrer-Policy: strict-origin-when-cross-origin`
-  - `Permissions-Policy`
-  - `X-Frame-Options: DENY` on web
+## Security baseline
 
-### CORS
-- API traffic under `/api/*` is checked against explicit allowlists.
-- Allowed origins are built from:
-  - `NEXT_PUBLIC_SITE_URL`
-  - `PAYLOAD_PUBLIC_SERVER_URL`
-  - `CMS_PUBLIC_URL`
-  - `SECURITY_ALLOWED_ORIGINS`
-  - `CORS_ALLOWED_ORIGINS`
-- Requests outside the allowlist are rejected at the proxy layer.
-- Preflight requests return only the methods and headers the app actually supports.
+### Auth model
 
-### CSRF
-- Unsafe methods (`POST`, `PUT`, `PATCH`, `DELETE`) are blocked when the request is cross-site.
-- Validation uses:
-  - `Origin`
-  - `Referer`
-  - `Sec-Fetch-Site`
-  - double-submit token checks for fetch/XHR flows
-- Browser requests should send:
-  - `X-CSRF-Token`
-  - `X-Requested-With: fetch`
-- The web CSRF cookie is reused until expiry and is issued as `SameSite=Strict`.
-- Requests with no trusted `Origin`, no trusted `Referer`, and no trusted `Sec-Fetch-Site` must fail closed.
+- Browser flows use secure `HttpOnly` cookies.
+- Access token is short-lived.
+- Refresh token rotation is mandatory.
+- `logout` revokes current session.
+- `logout-all` revokes all sessions.
+
+### Validation
+
+- Runtime validation uses `Zod`.
+- Validation filters bad input, but does not replace:
+  - authn/authz
+  - CSRF protection
+  - replay protection
+  - upload hardening
+  - query cost control
 
 ### Rate limiting
-- Web and CMS use `rate-limiter-flexible`.
-- Supported stores:
-  - `memory` for local development or explicit single-instance mode
-  - `redis` for production multi-instance deployments
-- Environment contract:
-  - `SECURITY_RATE_LIMIT_MAX`
-  - `SECURITY_RATE_LIMIT_WINDOW_MS`
-  - `SECURITY_RATE_LIMIT_AUTH_MAX`
-  - `SECURITY_RATE_LIMIT_AUTH_WINDOW_MS`
-  - `SECURITY_RATE_LIMIT_UPLOAD_MAX`
-  - `SECURITY_RATE_LIMIT_UPLOAD_WINDOW_MS`
-  - `REDIS_URL`
-- Current route groups:
-  - general API traffic
-  - auth endpoints
-  - upload endpoints
-- Responses include rate-limit metadata and the active store (`memory` or `redis`).
-- Production rule:
-  - if Redis is expected and the limiter cannot talk to Redis, requests fail closed with `503`, not fail open.
 
-- If the deployment runs more than one `web` or `cms` instance, `REDIS_URL` is mandatory.
+- App-layer rate limiting is mandatory for:
+  - login
+  - register
+  - forgot password
+  - upload
+  - create post/comment
+  - search
+- Single-instance development may use in-memory counters.
+- Shared counter storage such as `Valkey` is for multi-instance or stricter production coordination.
 
-### Auth cookies
-- Auth cookie helpers are configured for:
-  - `HttpOnly: true`
-  - `SameSite: Lax`
-  - `Secure: true` in production
-  - `Path: /`
-- This applies to the current session cookies and legacy compatibility cookies.
+### Upload security
 
-### XSS strategy
-- Do not render raw user HTML.
-- Keep UGC as plain text or trusted structured rich text.
-- React escaping is the default defense for UI rendering.
-- Any future `dangerouslySetInnerHTML` usage must be sanitized and reviewed explicitly.
-- Search results and API responses must stay typed and mapped before hitting UI components.
-- `next/image` remote allowlists must stay explicit; wildcard `http://**` or `https://**` hosts are not allowed in production config.
+- File type allowlist is mandatory.
+- Size limit is mandatory.
+- Server-side MIME sniffing is mandatory.
+- Delete authorization is mandatory.
+- Public asset serving and private asset serving must be separated by policy.
 
-### Input validation
-- New input contracts must be defined with Zod at the boundary.
-- Parse before side effects.
-- Reject invalid payloads early and log the failure with context.
+### Headers and browser policy
 
-### Structured logging
-- Logging is standardized on `pino`.
-- Every error boundary should log:
-  - `message`
-  - `error`
-  - `timestamp`
-  - request or domain context such as `path`, `userId`, `postId`, `documentId`, `requestId`
-- Silent catches are not allowed.
+- CSP must be explicit.
+- `X-Content-Type-Options: nosniff` is required.
+- `Referrer-Policy: strict-origin-when-cross-origin` is required.
+- `Permissions-Policy` should default deny for unused capabilities.
+- CORS must use explicit allowlists, not `*` for authenticated routes.
 
-### Secrets management
-- Real secrets must not live in git.
-- Required production secrets include:
-  - `PAYLOAD_SECRET`
-  - `PAYLOAD_API_TOKEN`
-  - `REVALIDATE_SECRET`
-  - `POSTGRES_PASSWORD`
-  - `MEILI_MASTER_KEY`
-  - `REDIS_URL`
-  - `OPENAI_API_KEY`
-  - `VAPID_PRIVATE_KEY`
-  - SMTP credentials
-- `infra/docker/.env.prod` must stay outside source control.
+## Security ownership map
 
-Hard rule:
-- If a real secret file appears in git history or `git status`, rotate every secret inside it.
+- Web boundary helpers: `apps/web/src/proxy.ts`, `apps/web/src/lib/*`
+- API auth/session policy: `apps/api/src/modules/identity/*`, `apps/api/src/platform/sessions/*`
+- API rate limit: `apps/api/src/platform/rate-limit/*`
+- API audit: `apps/api/src/platform/audit/*`
+- API storage/upload policy: `apps/api/src/platform/storage/*`
+- API logging/error/validation baseline: `apps/api/src/common/*`
 
-## Operational Checklist
+## Operational checklist
 
-Before each production deploy:
-- Confirm `NEXT_PUBLIC_SITE_URL` and `SECURITY_ALLOWED_ORIGINS` match the canonical HTTPS domains.
-- Confirm `REDIS_URL` is set when multiple app instances are deployed.
-- Confirm `apps/web/next.config.ts` only allows explicit media origins.
-- Verify login, logout, profile update, upload, and search routes with the proxy enabled.
-- Watch logs for:
-  - `CSRF validation failed`
-  - `CORS origin not allowed`
-  - `Too many requests`
-  - `Rate limit service unavailable.`
-  - Redis connection failures in rate-limit services
+Before production deploy:
 
-## Security Ownership Map
-- Web proxy and web security helpers: `apps/web/src/lib/security/*`
-- CMS proxy and CMS security helpers: `apps/cms/src/services/security-*.service.ts`
-- Cookie policy: `apps/web/src/features/auth/utils/*`
-- Logging: `apps/web/src/lib/logger/index.ts`, `apps/cms/src/services/logger.service.ts`
-- Search indexing and semantic controls: `apps/cms/src/integrations/meilisearch/*`, `apps/cms/src/services/search.service.ts`
+- confirm allowed origins match canonical HTTPS domains
+- verify login/logout/profile/upload/search flows
+- verify health endpoints and logs are readable
+- verify audit events exist for auth and upload flows
+- verify restore drill evidence is current
+
+## Secrets management
+
+- real secrets must not live in git
+- production secret injection path must be documented
+- rotate secrets if exposure is suspected

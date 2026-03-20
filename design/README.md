@@ -88,18 +88,22 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 
 1. [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
 2. [CORE_DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_DECISIONS.md)
-3. [00-overview/domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/domain-map.md)
-4. [00-overview/execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/execution-map.md)
-5. [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
-6. [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
-7. [SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
-8. [BACKUP_RESTORE_RUNBOOK.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/BACKUP_RESTORE_RUNBOOK.md)
-9. [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
-10. [RESTORE_DRILL_LOG.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/RESTORE_DRILL_LOG.md)
+3. [REPO_STRUCTURE_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/REPO_STRUCTURE_BASELINE.md)
+4. [PLATFORM_MODULES_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/PLATFORM_MODULES_BASELINE.md)
+5. [00-overview/domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/domain-map.md)
+6. [00-overview/execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-overview/execution-map.md)
+7. [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
+8. [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
+9. [SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
+10. [BACKUP_RESTORE_RUNBOOK.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/BACKUP_RESTORE_RUNBOOK.md)
+11. [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)
+12. [RESTORE_DRILL_LOG.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/RESTORE_DRILL_LOG.md)
 
 ## Where each rule lives (Quy tắc nằm ở đâu)
 
 - Cross-cutting baseline (Nền tảng cắt ngang): [ARCHITECTURE_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ARCHITECTURE_GOVERNANCE.md)
+- Repo structure baseline (Nền tảng cấu trúc thư mục): [REPO_STRUCTURE_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/REPO_STRUCTURE_BASELINE.md)
+- Platform/control-plane baseline (Nền tảng mô-đun hệ thống cốt lõi): [PLATFORM_MODULES_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/PLATFORM_MODULES_BASELINE.md)
 - Infra phase rules (Quy tắc phân pha hạ tầng): [infra/INFRA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/infra/INFRA.md)
 - NestJS app contract (Hợp đồng ứng dụng NestJS): [NEST_APPLICATION_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/NEST_APPLICATION_BASELINE.md)
 - Security contract (Hợp đồng bảo mật): [SECURITY_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SECURITY_BASELINE.md)
@@ -122,10 +126,11 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 
 Nếu đang rebuild (xây dựng lại) từ đầu một mình, mặc định chỉ ưu tiên 4 cụm trước:
 
-1. `00-identity`
-2. `01-content`
-3. upload/media boundary (ranh giới tải lên/truyền thông)
-4. `02-community`
+1. `apps/api` baseline + `platform modules`
+2. `00-identity`
+3. `01-content`
+4. upload/media boundary (ranh giới tải lên/truyền thông)
+5. `02-community`
 
 Các module còn lại tồn tại như target design (thiết kế mục tiêu), không phải lý do để code song song hết ngay.
 
@@ -149,4 +154,3 @@ Các module còn lại tồn tại như target design (thiết kế mục tiêu)
 Roadmap (lộ trình) học VPS/production cho người mới đã được tách khỏi `design/` và đặt ở:
 
 - [docs/learning/STUDENT_VPS_PRODUCTION_ROADMAP.md](C:/Users/ADMIN/DEV2/PMTL_VN/docs/learning/STUDENT_VPS_PRODUCTION_ROADMAP.md)
-

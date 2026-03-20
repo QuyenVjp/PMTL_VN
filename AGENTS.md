@@ -4,7 +4,8 @@
 - This file is the PMTL_VN root guide. Keep it focused on repo routing, boundaries, and standard commands.
 - Put app-specific rules in:
   - `apps/web/AGENTS.override.md`
-  - `apps/cms/AGENTS.override.md`
+  - `apps/api/AGENTS.override.md`
+  - `apps/admin/AGENTS.override.md`
   - `infra/AGENTS.override.md`
 - Put repeatable workflows in `.agents/skills/*`.
 
@@ -17,13 +18,15 @@
 ## Monorepo Boundaries
 - Preserve package boundaries:
   - `apps/web`: Next.js frontend, feature-first
-  - `apps/cms`: Payload CMS and worker runtime
+  - `apps/api`: NestJS backend authority, auth, OpenAPI, domain modules
+  - `apps/admin`: custom admin frontend, no business authority
   - `packages/shared`: framework-agnostic code only
   - `packages/ui`: shared UI components
   - `infra`: Docker, Caddy, monitoring, repo scripts
   - `docs`: architecture, contracts, runbooks
 - Do not move business logic into page files, collection configs, or `packages/shared`.
-- Payload collections stay split into `index.ts`, `fields.ts`, `access.ts`, `hooks.ts`, `service.ts`.
+- `apps/api` keeps business logic in services, not controllers.
+- `apps/api/src/platform/*` owns control-plane and runtime modules such as sessions, audit, feature flags, rate limit, storage, health, and metrics.
 
 ## Project Rules
 - Full implementations over stubs.
@@ -59,3 +62,8 @@
 
 ## Verification Rule
 - After meaningful changes, run the strongest relevant checks for the touched area rather than defaulting to repo-wide commands.
+
+## Design-First Direction
+- Current target architecture is `apps/web + apps/api + apps/admin` with NestJS as backend authority.
+- Treat `design/` as the architecture source of truth for the rebuild direction.
+- If old docs or runtime folders still reference `apps/cms` or Payload-first ownership, do not copy that direction forward without explicit confirmation.
