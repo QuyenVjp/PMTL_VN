@@ -237,6 +237,31 @@ Page: 300ms ease — route transitions (nếu dùng)
 
 ---
 
+## SVG asset discipline
+
+### Khi nào dùng `svg-precision`
+
+Trong `design/ui/`, dùng `svg-precision` cho:
+- icon studies
+- component anatomy diagrams
+- wireframe hoặc mockup tĩnh cần commit dưới dạng text
+- chart hoặc visual explainer cần geometry chính xác
+
+Không dùng `svg-precision` để thay cho toàn bộ visual exploration. Các quyết định về mood, rhythm, premium finish, và typography vẫn chốt ở level design system trước.
+
+### SVG rules cho PMTL
+
+- icon canvas mặc định: `24x24` hoặc `32x32`
+- icon stroke: `1.5` hoặc `2`, `round` linecap/join
+- luôn có `viewBox`
+- ưu tiên absolute coordinates
+- giữ `spec.json` song song với `svg`
+- nếu preview cần cho review, render thêm `.preview.png`
+
+Ref workflow: `design/SVG_PRECISION_WORKFLOW.md`
+
+---
+
 ## Elderly UX rules (chốt — xem chi tiết ở COMPONENT_SPECS.md)
 
 | Rule | Value | Áp dụng cho |

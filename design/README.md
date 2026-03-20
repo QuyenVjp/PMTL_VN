@@ -116,6 +116,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 28. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
 29. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
 30. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
+31. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -140,6 +141,11 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin: Vite + React SPA, sidebar, DataTable, command palette |
 | [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md) | Elderly-specific UX rules per module |
 
+### Deterministic SVG assets
+| File | Nội dung |
+|---|---|
+| [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md) | Khi nào dùng `svg-precision`, output path nào trong `design/`, và quy tắc spec JSON + SVG + preview |
+
 ### Coding readiness
 | File | Nội dung |
 |---|---|
@@ -163,6 +169,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 - Infra phase rules (Quy tắc phân pha hạ tầng): [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
 - NestJS app contract (Hợp đồng ứng dụng NestJS): [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
 - Security contract (Hợp đồng bảo mật): [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+- Deterministic SVG workflow (Quy trình SVG có cấu trúc ổn định): [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
 - Deploy procedure (Quy trình triển khai): [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
 - Failure behavior (Hành vi khi lỗi): [failure-modes.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/failure-modes.md)
 - SLO targets and how to measure them (Mục tiêu chất lượng dịch vụ và cách đo): [sla-slo.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/sla-slo.md)
