@@ -417,7 +417,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | Module | Engagement |
 
 **Nội dung:**
-- Near-paper interface (xem `design/baseline/elderly-ux.md` + `design/02-content/little-house-spec.md`)
+- Near-paper interface (xem `design/ops/elderly-ux.md` + `design/02-content/little-house-spec.md`)
 - Hiển thị tên kinh và số biến cần niệm
 - Tally counter (gõ số hoặc +1 button)
 - Progress bar tới hoàn thành
@@ -577,7 +577,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ### 4.1 Admin Dashboard
 
-| Route | `/admin` | Auth | `admin+` |
+| Route | `/admin/dashboard` | Auth | `admin+` |
 |---|---|---|---|
 
 **Nội dung:**
@@ -590,7 +590,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ### 4.2 Post Management
 
-| Route | `/admin/bai-viet` | Auth | `admin+` |
+| Route | `/admin/noi-dung/bai-viet` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Content |
 
@@ -606,16 +606,16 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 ### 4.3–4.7 Other Content Management
 
 Similar pattern cho:
-- `/admin/huong-dan` — Beginner Guides
-- `/admin/tai-lieu` — Downloads
-- `/admin/kinh-sach` — Sutras
-- `/admin/niem-kinh` — Chant Items
+- `/admin/noi-dung/huong-dan` — Beginner Guides
+- `/admin/noi-dung/tai-lieu` — Downloads
+- `/admin/noi-dung/kinh-sach` — Sutras
+- `/admin/noi-dung/niem-kinh` — Chant Items
 
 ---
 
 ### 4.8 Media Management
 
-| Route | `/admin/media` | Auth | `admin+` |
+| Route | `/admin/noi-dung/media` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Content |
 
@@ -630,7 +630,7 @@ Similar pattern cho:
 
 ### 4.9 Community Management
 
-| Route | `/admin/cong-dong` | Auth | `admin+` |
+| Route | `/admin/cong-dong/bai-dang` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Community + Moderation |
 
@@ -644,7 +644,7 @@ Similar pattern cho:
 
 ### 4.10 Moderation Queue
 
-| Route | `/admin/kiem-duyet` | Auth | `admin+` |
+| Route | `/admin/kiem-duyet/bao-cao` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Moderation |
 
@@ -673,7 +673,7 @@ Similar pattern cho:
 
 ### 4.12 Calendar Management
 
-| Route | `/admin/lich` | Auth | `admin+` |
+| Route | `/admin/he-thong/lich` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Calendar |
 
@@ -687,7 +687,7 @@ Similar pattern cho:
 
 ### 4.13 Wisdom-QA Management
 
-| Route | `/admin/bai-hoa` | Auth | `admin+` |
+| Route | `/admin/noi-dung/bai-hoa` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Wisdom-QA |
 

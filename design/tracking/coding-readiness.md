@@ -14,17 +14,20 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Backend architecture | ✅ Sẵn sàng | 10 modules đầy đủ contracts, schemas, use-cases |
 | Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
-| DB schema | ⚠️ Cần hợp nhất | Mỗi module có schema.dbml riêng, chưa có Prisma schema tổng |
-| UI/UX design | ✅ Sẵn sàng | `design/ui/` có 5 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE |
-| Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, admin (shadcn-admin) — `baseline/frontend-architecture.md` |
-| Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 13 |
+| DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
+| UI/UX design | ✅ Sẵn sàng | `design/ui/` có 6 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE, ELDERLY_UX |
+| Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, i18n, PWA, caching — `baseline/frontend-architecture.md` |
+| Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14 |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
 | Rate-limit values | ✅ Sẵn sàng | 13 endpoints với exact limits — xem Phần 5 |
 | Migration order | ✅ Sẵn sàng | 11 bước chi tiết — xem Phần 6 |
-| Skill/tool alignment | ⚠️ Conflict | `.agents/skills/` có skills cũ reference Payload CMS — cần deprecate |
+| Testing strategy | ✅ Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `baseline/testing-strategy.md` |
+| Deploy runbook | ✅ Sẵn sàng | Docker Compose, deploy/rollback commands, SSL verify — `ops/deploy-runbook.md` |
+| Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `baseline/migration-strategy.md` |
+| Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
+| Skill/tool alignment | ⚠️ Conflict | `.agents/skills/` có 4 skills cũ reference Payload CMS — cần deprecate. 6 SEO/GEO skills mới đã ALIGNED |
 | OpenAPI spec | ❌ Thiếu | Phase 1 acceptable — auto-gen từ NestJS Swagger decorators |
-| Prisma schema tổng | ❌ Thiếu | Cần merge từ module schemas — migration order đã có |
 
 ---
 
@@ -55,76 +58,57 @@ Mọi domain module (01-10) đều có:
 - API route inventory: `tracking/api-route-inventory.md`
 - Env variables: `tracking/env-inventory.md`
 
-### UI/UX design — MỚI THÊM (2026-03-20)
+### UI/UX design — ĐẦY ĐỦ
 - 49 pages: `design/ui/PAGE_INVENTORY.md`
 - 7 user flows: `design/ui/USER_FLOWS.md`
-- Component specs: `design/ui/COMPONENT_SPECS.md`
-- Design tokens: `docs/design/DESIGN_SYSTEM.md`
+- 30+ components: `design/ui/COMPONENT_SPECS.md`
+- Design principles: `design/ui/DESIGN_PRINCIPLES.md`
+- Admin architecture: `design/ui/ADMIN_ARCHITECTURE.md`
+- Elderly UX: `design/ui/ELDERLY_UX.md`
+
+### Frontend strategies — ĐẦY ĐỦ
+- SEO: `generateMetadata()`, JSON-LD, sitemap, robots.txt
+- i18n: Phase 1 Vietnamese-only, Phase 2+ `next-intl`
+- PWA/Offline: Service worker + IndexedDB + delta sync
+- Caching: CDN + ISR + TanStack Query + service worker
+- Ref: `baseline/frontend-architecture.md`
 
 ---
 
-## Phần 2: Những gì CÒN THIẾU (Cần trước khi code)
+## Phần 2: Gaps còn lại (ít)
 
-### ⚠️ GAP 1: Không có Prisma schema tổng hợp
+### ✅ GAP 1: Prisma schema tổng hợp — FIXED
 
-**Vấn đề**: Mỗi module có `schema.dbml` riêng lẻ. Chưa có file Prisma `schema.prisma` tổng hợp.
-
-**Tại sao nguy hiểm**:
-- Developer phải tự merge 10 schema.dbml → dễ miss foreign key, conflict tên table
-- Migration order chưa rõ (Identity trước, rồi Content, rồi gì tiếp?)
-- Chưa có enum definitions
-
-**Fix cần làm**: Tạo `design/tracking/prisma-schema-plan.md` với migration order và consolidated table list.
+**Đã tạo**: `tracking/prisma-schema-plan.md` — enums, FK dependency graph, naming conventions, merge process, 11-step migration order.
 
 ---
 
-### ⚠️ GAP 2: Feature flags — có table nhưng chưa có danh sách flags
+### ✅ GAP 2: Feature flags — FIXED
 
-**Vấn đề**: `feature_flags` table là launch blocker nhưng không ai biết cần tạo flags nào.
-
-**Fix**: Xem section "Feature Flags Plan" bên dưới.
+8 flags cụ thể — xem Phần 4 bên dưới.
 
 ---
 
-### ⚠️ GAP 3: Rate-limit values chưa cụ thể per endpoint
+### ✅ GAP 3: Rate-limit values — FIXED
 
-**Vấn đề**: Design nói "phải có rate-limit" nhưng không có exact numbers.
-Developer sẽ hardcode numbers tùy ý → không nhất quán.
-
-**Fix**: Xem section "Rate-limit Values" bên dưới.
+13 endpoints với exact limits — xem Phần 5 bên dưới.
 
 ---
 
-### ⚠️ GAP 4: Skill conflict — `.agents/skills/` có skills cũ reference Payload CMS
+### ⚠️ GAP 4: Skill conflict — CÒN (cần deprecate khi bắt đầu code)
 
-**Vấn đề NGHIÊM TRỌNG**: Repository có `.agents/skills/` với nhiều skills cũ:
-- `pmtl-vn-architecture` — nói về **Payload CMS**, không phải NestJS
-- `pmtl-scaffold-payload-collection` — scaffold Payload collections (sai framework)
-- `pmtl-production-baseline` — có thể reference Payload patterns
+**Vấn đề**: `.agents/skills/` có skills cũ reference Payload CMS:
+- `pmtl-vn-architecture` — Payload CMS, không phải NestJS
+- `pmtl-scaffold-payload-collection` — Payload collections
+- `pmtl-production-baseline` — có thể reference Payload
 
-**Nguy hiểm**: Nếu developer dùng `/pmtl-vn-architecture` skill, Claude sẽ làm theo Payload CMS thay vì NestJS. **Toàn bộ backend sẽ sai kiến trúc.**
-
-**Fix ngay**: Cần update hoặc deprecate các skills này. Xem section "Skill Alignment" bên dưới.
+**Action**: Update hoặc deprecate khi bắt đầu Wave 1. Xem "Skill Alignment" bên dưới.
 
 ---
 
-### ❌ GAP 5: Không có OpenAPI/Swagger spec
+### ❌ GAP 5: OpenAPI spec — ACCEPTABLE
 
-**Vấn đề**: `tracking/api-route-inventory.md` chỉ là text list. Không có:
-- Request/response schemas dạng OpenAPI
-- Auto-generated docs
-- Client SDK generation
-
-**Impact**: Developer phải đọc từng `contracts.md` per module → chậm, dễ miss.
-
-**Fix**: Phase 1 acceptable — dùng Swagger decorator tự động từ NestJS code.
-Không cần viết thêm design doc cho cái này.
-
----
-
-### ❌ GAP 6: Không có consolidated migration order
-
-**Fix**: Xem section "Migration Order" bên dưới.
+Phase 1: auto-gen từ NestJS Swagger decorators. Không cần design doc riêng.
 
 ---
 
@@ -308,6 +292,12 @@ Bước 11 — Wisdom QA:
 - `.agents/skills/pmtl-verify-quality-gate` ✅ — quality checks
 - `.agents/skills/pmtl-creative-designer` ✅ — visual identity
 - `.agents/skills/shadcn/ui` ✅ — component library
+- `seo-content-writer` ✅ — viết nội dung chuẩn SEO tiếng Việt
+- `on-page-seo-auditor` ✅ — audit on-page SEO cho từng route
+- `technical-seo-checker` ✅ — kiểm tra technical SEO (Core Web Vitals, structured data)
+- `meta-tags-optimizer` ✅ — tối ưu meta tags, OG tags, `og:locale: vi_VN`
+- `schema-markup-generator` ✅ — tạo Schema.org JSON-LD (Article, FAQPage, HowTo, Book, Event)
+- `geo-content-optimizer` ✅ — GEO optimization cho AI citation (ChatGPT, Perplexity, Google AI Overviews)
 
 ### Skills DEPRECATED / CONFLICT (không dùng):
 | Skill | Vấn đề | Action |

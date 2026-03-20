@@ -30,7 +30,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   ↓ Click "Ghi lại buổi niệm"
 [/tu-tap/bai-tap] — Form ghi buổi tu đầu
   ↓ Submit
-[/dashboard] — Hiện "Chúc mừng buổi tu đầu tiên! 🙏"
+[/dashboard] — Hiện "Chúc mừng buổi tu đầu tiên"
 ```
 
 **Failure states:**
@@ -151,7 +151,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   - Chọn loại nguyện
   - Nhập nội dung nguyện
   - Thiết lập target (optional)
-  ↓ Submit → Confirmation screen: "Nguyện của bạn đã được ghi lại 🙏"
+  ↓ Submit → Confirmation screen: "Nguyện của bạn đã được ghi lại"
   ↓ Hàng ngày:
 [/phat-nguyen/[id]] — Xem chi tiết + ghi tiến độ
   ↓ Click "Ghi tiến độ"
@@ -195,7 +195,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 **Admin flow (report side):**
 ```
-[Admin nhận notification / vào /admin/kiem-duyet]
+[Admin nhận notification / vào /admin/kiem-duyet/bao-cao]
   → Xem report + target content
   → Action: Hide / Resolve / Ignore
   → Audit log ghi lại
@@ -213,7 +213,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 ```
 [/admin] → Thấy badge "X báo cáo chưa xử lý"
   ↓
-[/admin/kiem-duyet] — Report queue
+[/admin/kiem-duyet/bao-cao] — Report queue
   - Pending reports sorted by date
   ↓ Click vào report
   [Report detail view]

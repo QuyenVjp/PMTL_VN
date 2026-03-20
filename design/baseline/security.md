@@ -76,7 +76,7 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - guestbook submit (gửi sổ lưu niệm)
   - vow create (tạo nguyện)
 
-> **Bug fix note**: `/api/auth/refresh` PHẢI có rate-limit guard. Nếu thiếu, attacker có thể brute-force refresh tokens.
+> `/api/auth/refresh` PHẢI có rate-limit guard. Nếu thiếu, attacker có thể brute-force refresh tokens.
 > Limit: 30 requests / 15 phút / per-IP.
 > Xem `tracking/coding-readiness.md` Phần 5 cho exact values từng endpoint.
 

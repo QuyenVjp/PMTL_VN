@@ -108,17 +108,19 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 20. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
 21. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
 22. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
-23. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) ← **mới**
-24. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) ← **mới**
+23. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md)
+24. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md)
 25. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
-26. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) ← **mới**: color, typography, spacing, elderly UX
-27. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) ← **mới**: shadcn-admin pattern
-28. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md) ← **mới**: 8 bugs fixed, migration order, feature flags
+26. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
+27. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md)
+28. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
+29. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
+30. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
 
-## New gap-filling docs (Tài liệu lấp gap thiết kế — mới thêm)
+## Key docs by purpose (Nhóm tài liệu chính)
 
-### Backend architecture gaps (đã fix)
-| File | Lấp gap gì |
+### Backend baseline
+| File | Nội dung |
 |---|---|
 | [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) | Thứ tự khởi động platform modules + fail behavior |
 | [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) | Event nào đi outbox, event schema, idempotency |
@@ -126,20 +128,22 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Delta sync schema cho offline bundles |
 | [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow admin nhập liệu thay member |
 | [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA |
+| [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
-### UI/UX design (mới thêm — trước đây THIẾU hoàn toàn)
+### UI/UX design (6 files)
 | File | Nội dung |
 |---|---|
 | [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | 49 trang/màn hình đầy đủ với routes, auth levels, module owners |
 | [USER_FLOWS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/USER_FLOWS.md) | 7 user journeys chính (onboarding, daily practice, wisdom search...) |
 | [COMPONENT_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/COMPONENT_SPECS.md) | Specs cho 30+ components kể cả elderly-specific rules |
-| [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) | Color system, typography, spacing, interaction patterns, elderly UX, premium details |
-| [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin architecture: Vite + React SPA, sidebar, DataTable, command palette |
+| [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) | Color system, typography, spacing, interaction patterns, premium details |
+| [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin: Vite + React SPA, sidebar, DataTable, command palette |
+| [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md) | Elderly-specific UX rules per module |
 
 ### Coding readiness
 | File | Nội dung |
 |---|---|
-| [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md) | Gap analysis, 8/8 bugs fixed, feature flags, rate-limits, migration order, skill alignment |
+| [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md) | 8/8 bugs fixed, feature flags, rate-limits, migration order, coding waves |
 
 ## Where each rule lives (Quy tắc nằm ở đâu)
 

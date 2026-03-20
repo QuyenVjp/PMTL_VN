@@ -24,7 +24,7 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 
 | Layer | Library | Lý do chọn |
 |---|---|---|
-| Framework | **Next.js 15 App Router** | Server Components, SEO, streaming |
+| Framework | **Next.js 16 App Router** | Server Components, SEO, streaming |
 | UI components | **shadcn/ui** | Composable, accessible, Tailwind-native |
 | Styling | **Tailwind CSS 4** | Utility-first, design token integration |
 | Forms | **React Hook Form + Zod** | Performant validation, shared schemas |
@@ -121,10 +121,10 @@ src/app/
 └── layout.tsx
 ```
 
-### Middleware
+### Request boundary
 
 ```typescript
-// src/middleware.ts
+// src/proxy.ts
 // 1. Check auth cookie cho (member) routes → redirect /dang-nhap nếu expired
 // 2. Add security headers (CSP, X-Content-Type-Options, etc.)
 // 3. Locale detection nếu cần
@@ -201,9 +201,9 @@ src/
 
 ### Admin data fetching
 
-- Admin SPA gọi `apps/api` qua **bearer token** (không dùng cookie auth)
-- Token lưu trong memory (Zustand), refresh qua `/api/auth/admin/refresh`
-- Hoặc: admin dùng cookie auth giống web nhưng với `ADMIN_ORIGIN` CORS — quyết định cuối nằm ở implementation
+- Admin SPA dùng cookie auth cùng security baseline với web
+- Session authority vẫn nằm ở `apps/api`; `apps/admin` chỉ forward credentials tới REST endpoints
+- Nếu cần refresh flow, refresh token vẫn ở `HttpOnly` cookie và rotation do `apps/api` quản lý
 - **Admin KHÔNG bypass API contracts** — mọi action đều qua REST endpoints
 - Admin routes phải có guard riêng (idle timeout 30 phút, max session 12 giờ)
 
@@ -284,6 +284,179 @@ Nếu cần shared UI primitives giữa web và admin:
 
 ---
 
+## SEO strategy (Vietnam-focused)
+
+> **Skills**: `seo-content-writer`, `on-page-seo-auditor`, `technical-seo-checker`, `meta-tags-optimizer`, `schema-markup-generator`, `geo-content-optimizer`
+
+### Target audience
+
+- **Chỉ người Việt Nam** — không cần i18n, không cần multi-language
+- Tìm kiếm bằng tiếng Việt trên Google Vietnam (google.com.vn)
+- Social sharing: Zalo, Facebook Vietnam
+- AI citation: cần tối ưu cho ChatGPT, Perplexity, Google AI Overviews
+
+### Server-rendered pages (Next.js)
+
+- Mọi public page phải server-rendered cho SEO
+- `<html lang="vi">` trên toàn bộ app
+- URL slugs tiếng Việt: `/bai-viet`, `/niem-kinh`, `/phat-nguyen`, `/bai-hoa`
+- `generateMetadata()` per page: title, description, og:image, canonical URL
+
+### Meta tags (skill: `meta-tags-optimizer`)
+
+```typescript
+// Mỗi public page phải có:
+export async function generateMetadata({ params }): Promise<Metadata> {
+  return {
+    title: `${post.title} | Pháp Môn Tâm Linh`,
+    description: post.excerpt,  // 150-160 chars, tiếng Việt
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: 'article',
+      locale: 'vi_VN',
+      siteName: 'Pháp Môn Tâm Linh',
+      images: [{ url: post.thumbnailUrl || '/og-default.jpg' }],
+    },
+    alternates: {
+      canonical: `https://pmtl.vn/bai-viet/${post.slug}`,
+    },
+  };
+}
+```
+
+### Schema markup / Structured data (skill: `schema-markup-generator`)
+
+JSON-LD cho từng loại content:
+
+| Content type | Schema.org type | Fields |
+|---|---|---|
+| Bài viết | `Article` | headline, datePublished, author, description, image |
+| Hướng dẫn | `HowTo` | name, step[].text, totalTime |
+| Bạch thoại Q&A | `FAQPage` | question, acceptedAnswer |
+| Kinh sách | `Book` | name, author, description |
+| Sự kiện lịch | `Event` | name, startDate, description |
+| Trang chủ | `Organization` | name, url, logo, description |
+| Breadcrumb | `BreadcrumbList` | itemListElement per route depth |
+
+```typescript
+// Ví dụ: Article JSON-LD
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Hướng dẫn niệm kinh cho người mới",
+  "datePublished": "2026-03-20",
+  "author": { "@type": "Organization", "name": "Pháp Môn Tâm Linh" },
+  "publisher": { "@type": "Organization", "name": "Pháp Môn Tâm Linh" },
+  "inLanguage": "vi",
+  "description": "..."
+}
+</script>
+```
+
+### Technical SEO (skill: `technical-seo-checker`)
+
+- `sitemap.xml` auto-generated từ published content (Next.js `sitemap.ts`)
+- `robots.txt`: allow public, disallow `/dashboard`, `/tu-tap`, `/tai-khoan`, `/admin`
+- Core Web Vitals targets: LCP < 2.5s, CLS < 0.1, INP < 200ms
+- Mobile-first indexing: responsive design, no separate mobile site
+- HTTPS enforced (Caddy + Cloudflare)
+- Canonical URLs trên mọi page
+
+### GEO — AI citation optimization (skill: `geo-content-optimizer`)
+
+Tối ưu content để được AI (ChatGPT, Perplexity, Google AI Overviews) trích dẫn:
+
+- **Quotable statements**: Mỗi bài viết có 2-3 câu tóm tắt rõ ràng, dễ trích
+- **Structured Q&A**: Bạch thoại / Q&A format tự nhiên phù hợp AI extraction
+- **Source attribution rõ ràng**: "Theo Pháp Sư Tịnh Không" — AI cần nguồn để cite
+- **Expert authority (E-E-A-T)**: Nội dung từ nguồn uy tín, có provenance rõ
+- **FAQ sections**: Cuối bài viết có FAQ → tăng khả năng xuất hiện trong AI answers
+
+### On-page SEO (skill: `on-page-seo-auditor`)
+
+- H1 unique per page, H2-H3 hierarchy rõ ràng
+- Image alt text tiếng Việt mô tả nội dung
+- Internal linking giữa bài viết liên quan
+- Content length: bài viết chính ≥ 800 từ
+- Keyword placement tự nhiên trong title, H1, first paragraph
+
+### Social sharing (Vietnam-specific)
+
+- Open Graph optimized cho Facebook Vietnam + Zalo
+- `og:locale` = `vi_VN`
+- OG image: 1200×630px, có tiêu đề tiếng Việt trên hình
+- Phase 1: static fallback OG image per content type
+- Phase 2+: dynamic OG images via `@vercel/og`
+
+---
+
+## Language policy (Chỉ tiếng Việt)
+
+- **Dự án chỉ dành cho người Việt Nam** — không cần i18n framework
+- UI text: hardcoded tiếng Việt
+- URL slugs: tiếng Việt (`/bai-viet`, `/niem-kinh`, `/phat-nguyen`)
+- Date format: `DD/MM/YYYY` + âm lịch display
+- Nội dung Phật pháp: tiếng Việt + tiếng Hoa gốc (bilingual content ở tầng data, không phải UI i18n)
+- **Không cần**: `next-intl`, `next-i18next`, hreflang, locale routing, language switcher
+
+---
+
+## PWA / Offline strategy
+
+### Phase 1 — Minimal offline
+
+- Service worker cho asset caching (CSS, JS, fonts)
+- Offline banner khi mất mạng (`OfflineBanner` component)
+- Wisdom-QA offline bundles: download → IndexedDB → read offline
+- Ref: `10-wisdom-qa/offline-bundle-delta-sync.md` cho delta sync protocol
+
+### Phase 2+ — Full PWA
+
+- `next-pwa` hoặc custom service worker
+- Cache-first cho public content pages đã visited
+- Background sync cho practice logs (ghi offline → sync khi có mạng)
+- App install prompt cho mobile users
+- Push notifications qua service worker
+
+### Offline data storage
+
+```
+IndexedDB (via idb library):
+  - wisdom_entries: downloaded bundles
+  - practice_drafts: unsaved practice logs
+  - user_preferences: cached settings
+
+NOT offline:
+  - Auth state (phải online để verify)
+  - Upload (phải online)
+  - Community actions (phải online)
+```
+
+---
+
+## Caching strategy (canonical)
+
+| Layer | What | TTL | Invalidation |
+|---|---|---|---|
+| **CDN (Cloudflare)** | Static assets (JS, CSS, images, fonts) | Long (1 year with hash) | Content hash change |
+| **CDN (Cloudflare)** | Public pages (ISR) | Short (60s–5min) | Revalidate on publish |
+| **Next.js** | Server Component data | `revalidate` tag | On-demand revalidation after write |
+| **TanStack Query** | Client-side server state | `staleTime: 30s` (default) | `invalidateQueries` after mutation |
+| **Browser** | Service worker cache | Cache-first for assets | Service worker update |
+| **NOT cached** | User-private state | Never | Always fresh from API |
+| **NOT cached** | Admin data | TanStack Query only (30s stale) | Invalidate after action |
+
+**Rules:**
+- Public published content: cacheable
+- User-private state: never shared cache
+- Admin actions: optimistic update + invalidate
+- Upload responses: no-cache
+- Auth endpoints: no-cache, no-store
+
+---
+
 ## Performance budget (Phase 1)
 
 | Metric | Target |
@@ -303,4 +476,4 @@ Nếu cần shared UI primitives giữa web và admin:
 - Browser không bao giờ biết `API_INTERNAL_URL` — chỉ gọi qua proxy hoặc server actions
 - Admin SPA không bypass API contracts — admin actions = REST calls giống web
 - Zod schemas trong `packages/shared` là shared validation — cả FE và BE dùng
-- Ref: `DECISIONS.md` section 13 cho library choices rationale
+- Ref: `DECISIONS.md` section 14 cho library choices rationale
