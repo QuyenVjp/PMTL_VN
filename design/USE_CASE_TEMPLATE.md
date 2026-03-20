@@ -116,5 +116,5 @@ Mục tiêu là để AI, dev mới, hoặc người review nhìn vào là biế
 - Không mô tả kiểu "thường sẽ", "có thể là", "đại khái".
 - Không gọi Redis, queue (hàng đợi xử lý), search index là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
 - Không coi event là "đã giao" nếu mới chỉ append outbox hoặc mới chỉ dispatch execution job.
-- Không để UI text hoặc DTO public lẫn với raw Payload document nếu chưa map contract (hợp đồng dữ liệu/nghiệp vụ).
+- Không để UI text hoặc DTO public lẫn với raw persistence document nếu chưa map contract (hợp đồng dữ liệu/nghiệp vụ).
 

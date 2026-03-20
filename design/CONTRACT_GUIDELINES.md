@@ -3,7 +3,7 @@
 PMTL_VN đã có hợp đồng route ở `docs/api/contracts.md`.
 File này bổ sung quy tắc thiết kế contract (hợp đồng dữ liệu/nghiệp vụ) trong lớp `design/` để AI không bị lệch giữa:
 
-- raw Payload document
+- raw persistence document
 - compatibility DTO
 - use-case (kịch bản sử dụng) write-path
 
@@ -12,7 +12,7 @@ File này bổ sung quy tắc thiết kế contract (hợp đồng dữ liệu/n
 1. `packages/shared/src/schemas/*` hoặc schema design tương đương cho input validation
 2. `docs/api/contracts.md` cho route và DTO public/BFF
 3. `design/*/contracts.md` cho business meaning của contract (hợp đồng dữ liệu/nghiệp vụ) theo module
-4. raw Payload REST chỉ là implementation detail, không phải public contract (hợp đồng dữ liệu/nghiệp vụ) mặc định
+4. raw persistence response chỉ là implementation detail, không phải public contract (hợp đồng dữ liệu/nghiệp vụ) mặc định
 
 ## Quy tắc bắt buộc
 
@@ -61,7 +61,7 @@ Mọi contract (hợp đồng dữ liệu/nghiệp vụ) write quan trọng nên
 
 ## Notes for AI/codegen
 
-- Đừng lấy raw Payload document rồi coi như public contract (hợp đồng dữ liệu/nghiệp vụ) ổn định.
+- Đừng lấy raw persistence document rồi coi như public contract (hợp đồng dữ liệu/nghiệp vụ) ổn định.
 - Đừng expose field moderation hoặc audit nội bộ cho route public.
 - Đừng dùng search document làm response source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) nếu route cần correctness cao.
 - Đừng coi TypeScript type là đủ cho boundary runtime.

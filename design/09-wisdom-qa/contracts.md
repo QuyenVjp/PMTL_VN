@@ -69,4 +69,3 @@
 - Format `nguyên văn + bản dịch + link gốc + ảnh nguồn` là format ưu tiên cho bài thực tế cần cộng đồng cùng kiểm duyệt.
 - Với web phụng sự viên Việt Nam, chỉ dùng như `community_volunteer_site` hoặc `community_translation` nếu không phải source gốc.
 - Nếu search/offline drift xảy ra, recovery path chuẩn là replay signal, reindex hoặc rebuild bundle từ source records đã duyệt.
-

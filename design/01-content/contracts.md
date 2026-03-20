@@ -31,7 +31,7 @@ Mục đích của nó là chốt business contract (hợp đồng dữ liệu/n
 - `GET /api/posts/:publicId/comments`
 
 Canonical content source:
-- `posts` collection trong Postgres/Payload
+- `posts` collection trong Postgres
 
 Search-related source fields:
 - `contentPlainText`
@@ -56,7 +56,7 @@ Ghi chú:
 ## Write contracts
 
 ### Editorial authoring
-- canonical write đi qua Payload collection owner
+- canonical write đi qua backend owner module
 - admin (`Phụng sự viên`) hoặc super-admin là actor chính
 - `_status` và `publishedAt` là cặp field quyết định public delivery
 
@@ -78,7 +78,7 @@ Ghi chú:
   - dữ liệu biên soạn không hợp lệ
   - thiếu field bắt buộc để publish
 - `401`
-  - chưa đăng nhập vào CMS/web auth
+  - chưa đăng nhập vào admin/web auth
 - `403`
   - không có role admin/super-admin phù hợp
 - `404`
@@ -90,7 +90,7 @@ Ghi chú:
 
 ## Notes for AI/codegen
 
-- Public route đọc content đã map DTO, không trả raw Payload document nếu chưa lọc field.
+- Public route đọc content đã map DTO, không trả raw persistence document nếu chưa lọc field.
 - Search index chỉ là derived document; canonical body vẫn nằm ở content collections.
 - Publish thành công không được phụ thuộc vào việc Meilisearch hay push notification hoàn tất ngay.
 

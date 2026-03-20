@@ -1,188 +1,100 @@
-# FAILURE_MODE_MATRIX
+# FAILURE_MODE_MATRIX (Ma trận chế độ thất bại)
 
-Tài liệu này chốt cách hệ thống PMTL_VN phản ứng khi các dependency (phụ thuộc hạ tầng) gặp lỗi.
-Mục tiêu:
+File này chỉ chốt `failure behavior (hành vi khi thất bại)` cho current phase (giai đoạn hiện tại) và optional future phase (giai đoạn tương lai tùy chọn).
+Không coi dependency (phụ thuộc) chưa bật là baseline incident (sự cố nền tảng).
 
-- giúp design trả lời được câu hỏi "hỏng cái này thì module nào còn sống?"
-- chốt rõ module nào:
-  - `continue` (tiếp tục chạy)
-  - `degrade` (chạy suy giảm)
-  - `fail closed` (dừng an toàn)
-  - `recover async (bất đồng bộ)` (phục hồi bất đồng bộ)
-- giúp AI/codegen không tự bịa failure behavior
+## Current-phase dependencies (Các phụ thuộc giai đoạn hiện tại)
 
-## Quy ước đọc nhanh
+- `Postgres`
+- local media storage (lưu trữ truyền thông nội bộ)
+- `Caddy`
+- `apps/api`
 
-- `continue`: vẫn chạy bình thường hoặc gần bình thường
-- `degrade`: vẫn phục vụ được một phần, nhưng giảm trải nghiệm/chức năng
-- `fail closed`: dừng để giữ đúng dữ liệu hoặc bảo mật
-- `recovery path`: đường phục hồi chính
+## Optional future dependencies (Các phụ thuộc tương lai tùy chọn)
 
-## Failure modes cần xét
+- `Valkey`
+- `BullMQ`
+- `apps/worker` (tiến trình xử lý nền)
+- `Meilisearch`
+- object storage (lưu trữ đối tượng) / scan pipeline (quy trình quét tệp)
 
-- `Postgres down` (PostgreSQL ngừng hoạt động)
-- `Meilisearch down` (Search engine ngừng hoạt động)
-- `Valkey/worker (tiến trình xử lý nền) down` (Valkey hoặc worker (tiến trình xử lý nền) queue (hàng đợi xử lý) ngừng hoạt động)
-- `media storage down` (local volume/CDN/media path lỗi)
-- `object storage/scan fail` (S3-compatible storage hoặc bước scan/quarantine lỗi)
+## Operator contract tối thiểu (Hợp đồng vận hành tối thiểu)
 
-## Matrix theo module
+Mỗi incident type (loại sự cố) phải trả lời được:
 
-| Module | Postgres down | Meilisearch down | Valkey/worker (tiến trình xử lý nền) down | media storage down | object storage / scan fail |
+- user thấy gì (user visibility)
+- API trả lớp lỗi nào (API error class)
+- log level (mức độ nhật ký) nào tối thiểu phải có
+- bước manual (thủ công) đầu tiên là gì
+- điều kiện nào được coi là `healthy again (khỏe mạnh trở lại)`
+
+## Phase 1 matrix (Ma trận giai đoạn 1)
+
+| Dependency failure (Thất bại phụ thuộc) | User-facing behavior (Hành vi phía người dùng) | API behavior (Hành vi API) | Log level (Mức nhật ký) | First manual step (Bước thủ công đầu tiên) | Healthy again when (Khỏe lại khi nào) |
 |---|---|---|---|---|---|
-| Identity | `fail closed` | `continue` | `degrade` nếu email reset chậm | `degrade` avatar/media | `continue` nếu không có upload mới |
-| Content | `fail closed` cho canonical read/write | `continue` với public read, `degrade` search | `degrade` vì reindex/revalidation/notification trễ | `degrade` hoặc `fail partial` với bài có media | `fail closed` cho publish file mới; public file cũ còn thì continue |
-| Community | `fail closed` cho submit/read canonical | `continue` | `degrade` vì alert/report notify trễ | `continue` nếu text-only, `degrade` nếu có cover/media | `fail closed` cho upload mới |
-| Engagement | `fail closed` | `continue` | `continue` hoặc `degrade nhẹ` | `continue` trừ khi sheet phụ thuộc ảnh/file | `continue` nếu không upload |
-| Moderation | `fail closed` | `continue` | `degrade` vì notify/report fan-out trễ | `continue` | `continue` |
-| Search | `fail closed` cho fallback (đường dự phòng) canonical nếu Postgres cũng chết | `degrade` sang payload-fallback (đường dự phòng) | `degrade` vì sync lag tăng | `continue` | `continue` |
-| Calendar | `fail closed` cho canonical read model (mô hình dữ liệu đọc) source | `continue` | `degrade` nếu reminder rebuild trễ | `degrade` khi event cần media | `continue` nếu không upload |
-| Notification | `degrade` nặng hoặc `fail closed` cho target resolution | `continue` | `fail closed` cho dispatch, `recover async (bất đồng bộ)` khi worker (tiến trình xử lý nền) quay lại | `continue` trừ message có media | `continue` cho job cũ, `fail closed` với asset mới chưa scan |
-| Vows & Merit | `fail closed` | `continue` | `degrade` nếu reminder trễ | `continue` | `continue` |
-| Wisdom & QA | `fail closed` cho canonical read nếu Postgres chết | `degrade` nếu search/retrieval index hỏng | `degrade` vì offline prep/reminder trễ | `degrade` mạnh với audio/video | `fail closed` cho bundle mới, `continue` cho bundle cũ đã publish |
+| `Postgres down` | trang công khai (public shell) có thể hiện degraded/maintenance (xuống cấp/bảo trì); không bịa dữ liệu mới | các luồng đọc/ghi chuẩn (canonical read/write) thất bại lỗi server; bộ dò sẵn sàng (readiness) thất bại | `error` (lỗi) | dừng thay đổi gây hại thêm, kiểm tra sức khỏe DB, xác định khởi động lại (restart) hay phục hồi (restore) | truy vấn DB vượt qua + bộ dò sẵn sàng (readiness) vượt qua + trạng thái di cư (migration) đúng |
+| local media storage down (lưu trữ nội bộ hỏng) | các bề mặt ưu tiên văn bản (text-first surfaces) vẫn sống; tài sản lỗi thì hiện placeholder (hình giữ chỗ)/xuống cấp | việc tải lên (upload) mới thất bại đóng (fail closed); việc đọc siêu dữ liệu (metadata read) có thể còn sống | `warn` (cảnh báo) cho tệp thiếu, `error` (lỗi) cho luồng tải lên thất bại | kiểm tra phân vùng (volume)/đường dẫn (path)/lưu trữ vĩnh viễn (persistence) trước, tránh xóa bừa | phục vụ tệp nhị phân (binary serve) vượt qua hoặc tỉ lệ thiếu (missing rate) về ngưỡng chấp nhận |
+| `Caddy down` | người dùng không vào được web/admin/api | các dịch vụ phía sau có thể vẫn sống nhưng không thể truy cập (reachable) từ ngoài | `error` (lỗi) | xác định tiến trình proxy (proxy process)/cấu hình (config)/xung đột cổng (port collision) | luồng đi vào (ingress route) vượt qua trở lại |
+| `apps/api` unhealthy (không khỏe) | web/admin không làm được luồng động (dynamic flow) | bộ dò sống (live) có thể còn vượt qua, bộ dò sẵn sàng (ready) thất bại; luồng xác thực/ghi (auth/write path) thất bại | `error` (lỗi) | kiểm tra nhật ký (logs) theo mã yêu cầu (request id) / lỗi khởi động (startup error) / sai lệch môi trường (env mismatch) | khởi động thành công + kiểm tra sức khỏe (health) vượt qua |
 
-## Chi tiết theo dependency
+## Phase 1 module stance (Quan điểm mô-đun giai đoạn 1)
 
-### 1. `Postgres down`
+| Module (Mô-đun) | `Postgres down` | local media storage down |
+|---|---|---|
+| Identity | `fail closed` (thất bại đóng) | `degrade` (xuống cấp) với avatar (ảnh đại diện) |
+| Content | `fail closed` (thất bại đóng) cho đọc/ghi chuẩn | `degrade` (xuống cấp) nếu bài có media; văn bản vẫn sống |
+| Community | `fail closed` (thất bại đóng) | `continue` (tiếp tục) với chỉ văn bản, `degrade` (xuống cấp) nếu có tài sản (asset) |
+| Engagement | `fail closed` (thất bại đóng) | `continue` (tiếp tục) trừ các luồng phụ thuộc vào tài sản (asset) |
+| Moderation | `fail closed` (thất bại đóng) | `continue` (tiếp tục) |
+| Calendar | `fail closed` (thất bại đóng) | `degrade` (xuống cấp) nếu sự kiện cần media |
+| Notification | `fail closed` (thất bại đóng) cho việc xác định mục tiêu chuẩn | `continue` (tiếp tục) nếu thông điệp không cần tài sản (asset) |
+| Vows & Merit | `fail closed` (thất bại đóng) | `continue` (tiếp tục) |
+| Wisdom & QA | `fail closed` (thất bại đóng) | `degrade` (xuống cấp) mạnh với audio/video |
 
-#### Nguyên tắc
-- Postgres là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)` nên current scope không hứa hẹn `read-only mode` giả từ Valkey/Meilisearch
-- các flow cần correctness phải `fail closed`
+## Optional future matrix (Ma trận tương lai tùy chọn)
 
-#### Ảnh hưởng
-- auth/session canonical check hỏng
-- content/community/self-state canonical reads hỏng
-- search fallback (đường dự phòng) qua Payload cũng không cứu được nếu DB chết
+Chỉ dùng phần này nếu dependency (phụ thuộc) tương ứng đã được kích hoạt thật sự.
 
-#### Rule thiết kế
-- không dùng Valkey/Redis-compatible store hoặc Meilisearch để giả làm canonical read thay Postgres
-- public shell/UI có thể hiện maintenance mode (chế độ bảo trì), nhưng không được bịa dữ liệu hiện thời
+| Dependency failure (Thất bại phụ thuộc) | Expected stance (Quan điểm dự kiến) | Recovery path (Đường phục hồi) |
+|---|---|---|
+| `Meilisearch down` | `degrade` (xuống cấp) về đường dự phòng SQL/API | khởi động lại + xây dựng lại/đánh chỉ mục lại (rebuild/reindex) khi cần |
+| `Valkey` / worker down | ghi dữ liệu chuẩn vẫn ưu tiên sống; các tác động phụ bất đồng bộ (async side effects) bị trễ | khởi động lại + phát lại/thử lại (replay/retry) theo hàng đợi/sự kiện chờ phát (queue/outbox) |
+| object storage (lưu trữ đối tượng) / scan fail (quét lỗi) | việc tải lên (upload) mới thất bại đóng (fail closed); tài sản (asset) cũ có thể còn phục vụ | thử lại việc tải lên, chạy lại quy trình quét, giải quyết trạng thái cách ly (quarantine) |
 
-#### Recovery path
-- restart service (lớp xử lý nghiệp vụ)
-- failover/restore backup
-- khi Postgres hồi phục, downstream sync có thể reindex/rebuild lại
+## Special rules (Các quy tắc đặc biệt)
 
-### 2. `Meilisearch down`
+### `Postgres down`
 
-#### Nguyên tắc
-- search là projection (bản chiếu), không phải canonical data
-- vì vậy cho phép `degrade`
+- không có chế độ chỉ đọc giả (fake read-only mode) từ bộ nhớ đệm (cache)/tìm kiếm (search)
+- không dùng projection (phản chiếu) để giả làm canonical data (dữ liệu chuẩn gốc)
+- nếu phải bảo trì (maintenance), hãy nói rõ là đang xuống cấp (degraded), không giả vờ khỏe mạnh
 
-#### Hành vi mong muốn
-- `GET /api/posts/search` fallback (đường dự phòng) sang Payload query
-- kết quả có thể:
-  - chậm hơn
-  - ranking yếu hơn
-  - typo tolerance kém hơn
-- content/public read thông thường không được chết theo search
+### local media storage down (Lưu trữ nội bộ hỏng)
 
-#### Recovery path
-- restart Meilisearch
-- replay search sync jobs
-- nếu cần, chạy batch reindex
+- các trang ưu tiên văn bản (text-first pages) không được hỏng toàn bộ trang
+- tài sản bị thiếu (missing asset) phải có hình giữ chỗ (placeholder) hoặc trạng thái rõ ràng
+- việc tải lên (upload) mới phải thất bại đóng (fail closed), không ghi dữ liệu nửa vời
 
-### 3. `Valkey/worker (tiến trình xử lý nền) down`
+### Optional future search failure (Lỗi tìm kiếm tương lai tùy chọn)
 
-#### Nguyên tắc
-- canonical write không được phụ thuộc hoàn toàn vào queue (hàng đợi xử lý)
-- async (bất đồng bộ) side effects được phép trễ, nhưng không được mất âm thầm
+- nếu `Meilisearch` đã được bật và bị chết:
+  - tìm kiếm công khai (public search) được chuyển sang đường dự phòng (fallback) về SQL/API nếu chính sách hiển thị (visibility policy) vẫn được đảm bảo
+  - sự xuống cấp của tìm kiếm (search degrade) không được kéo sập việc đọc nội dung/công khai
 
-#### Hành vi mong muốn
-- content/community/engagement write vẫn ưu tiên commit canonical record (bản ghi chuẩn gốc) trước
-- business event quan trọng được giữ trong `outbox_events`
-- search sync, push dispatch, email, reminder build sẽ:
-  - pending trong outbox hoặc execution queue
-  - retry khi dispatcher/worker (tiến trình xử lý nền) quay lại
-  - replay được theo outbox nếu execution queue mất state
+### Optional future async failure (Lỗi bất đồng bộ tương lai tùy chọn)
 
-#### Rule thiết kế
-- các job quan trọng phải idempotent
-- status/health phải phản ánh queue (hàng đợi xử lý) lag và worker (tiến trình xử lý nền) health
-- status/health phải phản ánh cả outbox lag và số event retry/fail
+- nếu hàng đợi/sự kiện chờ phát (queue/outbox) đã được bật:
+  - việc ghi dữ liệu chuẩn (canonical write) vẫn là bước ưu tiên hàng đầu
+  - tác động phụ (side effect) chưa được coi là đã phân phát (delivered) khi hàng đợi/xử lý nền (queue/worker) hỏng
+  - đường phục hồi (recovery path) là phát lại/thử lại (replay/retry) chuẩn, không đánh dấu đã xong (done) thủ công cho có lệ
 
-#### Recovery path
-- restart Valkey/worker (tiến trình xử lý nền)
-- replay pending jobs nếu có
-- reindex/manual dispatch nếu cần
+## Asset-state expectation (Kỳ vọng trạng thái tài sản) nếu sau này bật scan/quarantine (quét/cách ly)
 
-### 4. `media storage down`
+- `uploaded` (đã tải lên)
+- `pending_scan` (chờ quét)
+- `quarantined` (bị cách ly)
+- `approved` (đã phê duyệt)
+- `rejected` (bị từ chối)
+- `published` (đã xuất bản)
 
-#### Nguyên tắc
-- media là `supporting asset` (tài nguyên phụ trợ), không phải mọi lúc cũng là canonical text
-- system nên `degrade` chứ không đổ sập toàn bộ nếu bài text vẫn còn
-- current phase phải giả định media storage chính có thể là local disk trên VPS
-
-#### Hành vi mong muốn
-- bài text vẫn mở được nếu media path lỗi
-- audio/video/image có thể:
-  - hiện placeholder
-  - hiện lỗi rõ ràng
-  - cho retry
-- event/content/community không được nổ 500 toàn trang chỉ vì một asset mất
-
-#### Recovery path
-- phục hồi volume/CDN
-- làm mới signed URL/link mapping nếu có
-- rerender cache nếu cần
-
-### 5. `object storage / scan fail`
-
-#### Nguyên tắc
-- upload mới phải `fail closed`
-- file chưa scan xong không được public
-
-#### Hành vi mong muốn
-- publish PDF/audio/video mới bị chặn nếu:
-  - upload fail
-  - scan fail
-  - quarantine chưa clear
-- file cũ đã publish trước đó vẫn phục vụ bình thường nếu source còn sống
-
-#### Recovery path
-- retry upload
-- rerun scan
-- admin review/quarantine resolution
-
-## Rule đặc biệt cho từng loại feature
-
-### Search-heavy features
-- `Kho Trí Huệ` phải có degraded mode rõ:
-  - search engine tốt: dùng Meilisearch
-  - search engine hỏng: dùng payload-fallback (đường dự phòng)
-  - Postgres hỏng: fail closed
-
-### Practice features
-- `Ngôi Nhà Nhỏ`, `Practice Sheets`, `Phát nguyện`, `Phóng sanh` không được ghi giả khi canonical DB chết
-- nếu cần offline-first ở client, dữ liệu đó chỉ là local pending state, không phải canonical commit
-
-### File-centric features
-- `Bạch thoại` text có thể sống nếu audio/video chết
-- `downloads` và `offlineBundles` phải tách rõ:
-  - metadata canonical
-  - binary asset delivery
-
-## Questions Senior hay hỏi và câu trả lời thiết kế
-
-### "Postgres chết thì có read-only mode không?"
-- Không trong current scope.
-- Lý do: Valkey/Redis-compatible store và Meilisearch không phải source of truth (nguồn dữ liệu gốc đáng tin cậy nhất).
-
-### "worker (tiến trình xử lý nền) chết thì dữ liệu có lệch không?"
-- Có thể trễ projection/job, nhưng canonical write không được mất.
-- Recovery path là retry + replay outbox + reindex/manual replay.
-
-### "Media chết có sập cả app không?"
-- Không nên.
-- Text-first surfaces phải degrade, không được đổ toàn trang.
-
-### "Scan fail thì sao?"
-- File mới không được public.
-- Đây là `fail closed`, không thỏa hiệp.
-
-## Notes for AI/codegen
-
-- Khi viết use-case (kịch bản sử dụng) mới, phải ghi rõ failure behavior theo matrix này.
-- Nếu một flow phụ thuộc asset/file/search/queue (hàng đợi xử lý), đừng chỉ mô tả happy path.
-- Không được âm thầm đổi `fail closed` thành `best effort` nếu docs chưa chốt vậy.
-
+Không được nối tắt trực tiếp từ upload (tải lên) sang public (công khai) nếu chính sách quét/cách ly (scan/quarantine policy) đã được kích hoạt.

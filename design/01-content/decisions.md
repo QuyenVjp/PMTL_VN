@@ -30,10 +30,10 @@ Repo hiện tại đã split collection rõ ràng theo trách nhiệm và public
 - Có nhiều collection hơn để quản lý.
 - Search/discovery cần mapping từ nhiều owner collections thay vì một nguồn duy nhất.
 
-## Decision 2. Workflow publish dùng Payload drafts + publishedAt
+## Decision 2. Workflow publish dùng explicit status + publishedAt
 
 ### Context
-Current collections editorial dùng `versions.drafts: true` và đã có logic `publishedAt`.
+Current direction đã chốt workflow explicit ở backend và giữ `publishedAt` làm canonical timestamp.
 
 ### Decision
 - Workflow gốc của editorial content là:
@@ -43,7 +43,7 @@ Current collections editorial dùng `versions.drafts: true` và đã có logic `
 - Không giữ workflow approval nhiều bước cho content nếu code hiện tại chưa dùng.
 
 ### Rationale
-- Khớp repo truth.
+- Khớp current direction.
 - Đủ rõ cho cache, search, public route và SEO.
 
 ### Trade-off
@@ -129,7 +129,7 @@ Các tài liệu PDF niệm hằng ngày, thắp tâm hương, phát nguyện, p
   - progress/bookmark cá nhân
 
 ### Rationale
-- Khớp repo thật trong `apps/cms`.
+- Khớp current direction ở `apps/api`.
 - Giữ được boundary (ranh giới trách nhiệm) rất rõ giữa “nội dung chuẩn để mọi người đọc” và “trạng thái cá nhân của một user”.
 - Dễ map bộ PDF hiện tại vào app mà không làm engagement phình to sai vai trò.
 

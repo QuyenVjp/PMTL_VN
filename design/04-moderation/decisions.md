@@ -1,108 +1,110 @@
-# Moderation Module Decisions
+# Moderation Module Decisions (Các quyết định của mô-đun Kiểm duyệt)
 
 > Ghi chú cho sinh viên:
-> Hãy nhớ câu này: `moderationReports` là nguồn gốc, còn field trên comment/post chỉ là phần tóm tắt để đọc nhanh.
+> `moderationReports` mới là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất). Các cờ trên comment/post chỉ là summary fields (trường tóm tắt) để đọc nhanh.
 
-## Decision 1. moderationReports là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) duy nhất
+---
 
-### Context
-Nhiều entity có thể bị report nhưng repo đã có collection `moderationReports`.
+## Decision 1. Dùng một moderation report source (nguồn báo cáo kiểm duyệt) thống nhất
 
-### Decision
-- Mọi report lifecycle phải đi qua `moderationReports`.
-- Không tạo report sub-table riêng trong từng module.
+### Context (Ngữ cảnh)
+Nhiều loại thực thể có thể bị báo cáo: bài cộng đồng, bình luận, guestbook entry. Nếu mỗi chỗ tự giữ report riêng thì admin flow sẽ rất rối.
 
-### Rationale
-- boundary (ranh giới trách nhiệm) rõ.
-- Dễ thống nhất route và admin workflow.
+### Decision (Quyết định)
+Toàn bộ vòng đời của report (báo cáo vi phạm) đi qua `moderationReports`.
+Không tạo report table riêng cho từng mô-đun nội dung/cộng đồng.
 
-### Trade-off
-- Muốn xem full moderation state của một entity phải nhìn cả report record và summary field.
+### Rationale (Lý do)
+- giữ admin workflow thống nhất
+- giữ canonical record (bản ghi chuẩn gốc) ở một nơi duy nhất
 
-## Decision 2. Target entity chỉ giữ moderation summary
+---
 
-### Context
-Entity bị report đang có các field như `reportCount`, `lastReportReason`, `moderationStatus`, `approvalStatus`, `isHidden`.
+## Decision 2. Thực thể đích chỉ giữ summary fields (trường tóm tắt)
 
-### Decision
-- Các field này chỉ là summary/read model (mô hình dữ liệu đọc).
-- Chúng không thay thế moderation report source record.
+### Context (Ngữ cảnh)
+Public read path và admin listing thường cần biết nhanh nội dung có bị report nhiều không, có đang bị ẩn không.
 
-### Rationale
-- Public/community read path nhanh hơn.
-- Admin có thể lọc nhanh entity cần chú ý.
+### Decision (Quyết định)
+Các field như:
+- `reportCount`
+- `lastReportReason`
+- `moderationStatus`
+- `approvalStatus`
+- `isHidden`
 
-### Trade-off
-- Cần sync summary sau khi tạo report hoặc ra quyết định.
+chỉ là read-model summaries (phần tóm tắt cho đường đọc), không thay cho `moderationReports`.
 
-## Decision 3. Decision flow áp dụng trực tiếp lên target entity
+### Rationale (Lý do)
+- tăng tốc bề mặt đọc dữ liệu
+- không làm mất lịch sử quyết định thực sự
 
-### Context
-Moderator cần action rõ trên entity đích sau khi ra quyết định.
+---
 
-### Decision
-- Với comment/community entity:
-  - cập nhật `moderationStatus`
-  - cập nhật `isHidden` khi cần
-- Với guestbook:
-  - cập nhật `approvalStatus`
+## Decision 3. Resolution effect (hiệu lực xử lý) được áp lên target entity
 
-### Rationale
-- Khớp implementation hiện tại.
-- Giữ public filtering đơn giản.
+### Context (Ngữ cảnh)
+Moderator cần hành động có hiệu lực rõ ràng lên nội dung bị báo cáo.
 
-### Trade-off
-- Target module phải chấp nhận một số summary field do moderation điều khiển.
+### Decision (Quyết định)
+Khi report được resolve (xử lý xong):
+- comment/community target có thể đổi `moderationStatus`, `isHidden`
+- guestbook target có thể đổi `approvalStatus`
 
-## Decision 4. Reporter identity có thể là user hoặc hashed IP
+Nhưng các thay đổi này luôn phải có thể truy ngược về `moderationReports`.
 
-### Context
-Không phải report nào cũng đến từ user đã đăng nhập.
+### Rationale (Lý do)
+- bề mặt public cần đọc trạng thái nhanh
+- admin vẫn cần root record (bản ghi gốc) để audit/review
 
-### Decision
-- Report có thể lưu:
-  - `reporterUser`
-  - `reporterIpHash`
-- Không lưu IP thô làm canonical moderation field.
+---
 
-### Rationale
-- An toàn hơn cho dữ liệu nhạy cảm.
-- Vẫn đủ phục vụ abuse investigation cơ bản.
+## Decision 4. Reporter identity (định danh người báo cáo) phải được giảm lộ danh tính
 
-### Trade-off
-- Một số forensic case cần log/hệ thống khác nếu muốn điều tra sâu hơn.
+### Context (Ngữ cảnh)
+Không phải report nào cũng đến từ user đã đăng nhập. Nhưng lưu raw IP làm canonical field là cách làm kém an toàn.
 
-## Decision 5. Chưa tạo moderation queue (hàng đợi xử lý) table riêng
+### Decision (Quyết định)
+Report chỉ lưu:
+- `reporterUser` nếu có user hợp lệ
+- hoặc `reporterIpHash` nếu là anonymous report
 
-### Context
-Design cũ từng gợi ý queue (hàng đợi xử lý)/escalation table riêng.
-Repo hiện tại chưa cần đến mức đó.
+Không lưu raw IP làm canonical moderation field.
 
-### Decision
-- Chưa thêm `moderationQueue` hoặc `escalationQueue` riêng vào current scope.
-- queue (hàng đợi xử lý) hiển thị cho admin hiện suy ra từ report status + target summary.
+### Rationale (Lý do)
+- giảm rủi ro lộ dữ liệu nhạy cảm
+- vẫn đủ dữ liệu để điều tra abuse cơ bản
 
-### Rationale
-- Giữ thiết kế triển khai được cho current repo.
-- Tránh enterprise workflow thừa.
+---
 
-### Trade-off
-- Nếu moderation volume lớn hơn, sau này có thể cần queue (hàng đợi xử lý)/escalation model rõ hơn.
+## Decision 5. Không tạo moderation queue riêng ở current scope (phạm vi hiện tại)
 
-## Decision 6. Moderation signal quan trọng đi qua outbox và summary phải recompute được
+### Context (Ngữ cảnh)
+Hệ thống solo-dev không nên đẻ thêm escalation table (bảng leo thang) hay moderation queue riêng khi admin workspace đã có thể suy ra danh sách việc cần làm từ report status.
 
-### Context
-Report mới, decision resolve, notify affected user, và admin attention đều là downstream side effect quan trọng.
+### Decision (Quyết định)
+Current scope không có:
+- `moderationQueue`
+- `escalationQueue`
 
-### Decision
-- Canonical report write hoặc decision update phải commit vào `moderationReports` trước.
-- Alert/notify signal quan trọng đi qua `outbox_events`.
-- Summary trên target entity phải recompute được từ `moderationReports` nếu bị lệch.
+Admin work queue (hàng chờ công việc quản trị) sẽ được suy ra từ trạng thái report và summary của target.
 
-### Rationale
-- Giữ moderation cùng ngôn ngữ reliability với search, community, notification.
-- Dễ recovery khi summary hoặc notify downstream bị mất.
+### Rationale (Lý do)
+- tránh enterprise process bloat (phình to quy trình kiểu doanh nghiệp) quá sớm
+- giảm bề mặt vận hành
 
-### Trade-off
-- Tăng thêm outbox lag và summary recompute path cần quan sát.
+---
 
+## Decision 6. Tín hiệu quan trọng đi qua outbox; summary phải recompute được
+
+### Context (Ngữ cảnh)
+Báo cáo mới, quyết định xử lý, và thông báo kết quả đều là side-effect quan trọng với nhiều mô-đun khác.
+
+### Decision (Quyết định)
+- ghi `moderationReports` trước
+- signal quan trọng như admin alert hoặc user notification phải đi qua `outbox_events`
+- summary trên target phải recompute được từ `moderationReports` khi drift xảy ra
+
+### Rationale (Lý do)
+- giữ reliability (độ tin cậy) cho tín hiệu quan trọng
+- có recovery path (đường phục hồi) rõ nếu summary bị lệch

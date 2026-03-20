@@ -1,50 +1,48 @@
 flowchart TD
-    subgraph F1["Luồng công khóa hằng ngày (Daily Recitation Flow)"]
-        F1A["Người mới chọn plan gợi ý"] --> F1B["Đọc opening prayer hoặc hướng dẫn mở đầu"]
-        F1B --> F1C["Thực hiện từng chant item theo target gợi ý"]
-        F1C --> F1D["Nếu cần thì chỉnh target hoặc bật optional item"]
-        F1D --> F1E["Lưu practice log và trạng thái hoàn thành"]
+    subgraph F1["Luồng bài tập hằng ngày (Daily Recitation Flow)"]
+        F1A["Chọn kế hoạch gợi ý (Pick suggested plan)"] --> F1B["Đọc lời khấn mở đầu (Opening prayer/rituals)"]
+        F1B --> F1C["Tụng từng bài theo mục tiêu (Chant items per target)"]
+        F1C --> F1D["Chỉnh mục tiêu hoặc bài tùy chọn (Adjust target/optional)"]
+        F1D --> F1E["Lưu nhật ký và trạng thái (Save log & status)"]
     end
 
-    F1E -.->|"tiếp"| F2A
+    F1E -.->|"tiếp (then)"| F2A
 
     subgraph F2["Luồng thắp tâm hương (Mental Incense Flow)"]
-        F2A["Mở checklist thắp tâm hương"] --> F2B["Quán tưởng / chỉnh tâm"]
-        F2B --> F2C["Niệm thầm theo số lần hướng dẫn"]
-        F2C --> F2D["Hoàn tất bước mở đầu trước công khóa"]
+        F2A["Mở danh mục thắp tâm hương (Open incense checklist)"] --> F2B["Quán tưởng và chỉnh tâm (Visualization/Alignment)"]
+        F2B --> F2C["Niệm thầm theo số lần (Silent chanting counts)"]
+        C2D["Hoàn tất bước mở đầu (Complete opening step)"]
     end
 
-    F2D -.->|"tiếp"| F3A
+    C2D -.->|"tiếp (then)"| F3A
 
     subgraph F3["Luồng phát nguyện (Vow Making Flow)"]
-        F3A["Mở mẫu khấn phát nguyện"] --> F3B["Điền nội dung ý nguyện theo guardrail (khung ràng buộc an toàn)"]
-        F3B --> F3C["Kiểm tra phần không được cầu xin sai phạm vi"]
-        F3C --> F3D["Đọc hoặc lưu script phát nguyện"]
+        F3A["Mở mẫu khấn phát nguyện (Open vow template)"] --> F3B["Điền ý nguyện theo rào chắn (Fill vow with guardrails)"]
+        F3B --> F3C["Kiểm tra nội dung phù hợp (Validate scope)"]
+        C3D["Thực hiện phát nguyện (Execute/Save vow)"]
     end
 
-    F3D -.->|"tiếp"| F4A
+    C3D -.->|"tiếp (then)"| F4A
 
     subgraph F4["Luồng phóng sinh (Life Release Flow)"]
-        F4A["Xem checklist trước khi phóng sinh"] --> F4B["Cảm ân"]
-        F4B --> F4C["Niệm kinh / cầu nguyện"]
-        F4C --> F4D["Thực hiện phóng sinh"]
-        F4D --> F4E["Cảm ân kết thúc"]
+        F4A["Xem danh mục chuẩn bị (Pre-departure checklist)"] --> F4B["Cảm ân và Niệm kinh (Gratitude & Chanting)"]
+        F4B --> F4C["Cầu nguyện theo bối cảnh (Contextual prayer)"]
+        F4C --> F4D["Thực hiện phóng sinh (Actual release)"]
+        F4E["Cảm ân kết thúc (Closing gratitude)"]
     end
 
-    F4E -.->|"tiếp"| F5A
+    F4E -.->|"tiếp (then)"| F5A
 
     subgraph F5["Luồng tụng Ngôi Nhà Nhỏ (Little House Recitation Flow)"]
-        F5A["Chuẩn bị thông tin người nhận"] --> F5B["Chọn kiểu ghi Kính Tặng / Tặng"]
-        F5B --> F5C["Tụng theo cụm bài niệm"]
-        F5C --> F5D["Chấm hoàn thành theo đúng guideline (hướng dẫn chuẩn)"]
-        F5D --> F5E["Lưu log hoặc trạng thái chuẩn bị đốt"]
+        F5A["Chuẩn bị người nhận/tụng (Prepare recipient/giver)"] --> F5B["Chọn kiểu ghi Kính Tặng (Select label type)"]
+        F5B --> F5C["Tụng theo cụm bài niệm (Chant in clusters)"]
+        F5D["Chấm hoàn thành đúng chuẩn (Mark per guidelines)"] --> F5E["Sẵn sàng hóa/đốt (Ready for burning)"]
     end
 
-    F5E -.->|"tiếp"| F6A
+    F5E -.->|"tiếp (then)"| F6A
 
-    subgraph F6["Luồng đốt Ngôi Nhà Nhỏ khi không có bàn thờ (Little House Burning Without Altar)"]
-        F6A["Mở infographic / checklist từng bước"] --> F6B["Kiểm tra điều kiện trước khi đốt"]
-        F6B --> F6C["Đọc lời khấn trước khi đốt"]
-        F6C --> F6D["Thực hiện đốt theo flow không có bàn thờ"]
-        F6D --> F6E["Đọc lời khấn sau khi đốt và hoàn tất"]
+    subgraph F6["Luồng hóa Ngôi Nhà Nhỏ không bàn thờ (Burning Without Altar Flow)"]
+        F6A["Mở chỉ dẫn từng bước (Open step-by-step checklist)"] --> F6B["Kiểm tra điều kiện đốt (Check burning conditions)"]
+        F6B --> F6C["Đọc lời khấn thỉnh cầu (Invocation prayer)"]
+        F6D["Hóa/đốt đúng quy trình (Burn per flow)"] --> F6E["Lời khấn kết thúc (Closing prayer)"]
     end

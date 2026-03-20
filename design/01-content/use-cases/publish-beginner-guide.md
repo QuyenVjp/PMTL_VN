@@ -1,50 +1,49 @@
-# Publish Beginner Guide
+# Publish Beginner Guide (Xuất bản Hướng dẫn Sơ học)
 
-## Purpose
-- Xuất bản một `Hướng dẫn sơ học` hoặc `Giới thiệu pháp môn` để người mới có thể đọc như một cửa vào chính thức của hệ thống.
+## Mục đích (Purpose)
+Xuất bản một bài "Hướng dẫn sơ học" hoặc "Giới thiệu pháp môn" để người mới có thể tìm hiểu như một cửa ngõ chính thức của hệ thống.
 
-## owner module (module sở hữu)
-- `content`
+## Mô-đun sở hữu (Owner module)
+- `content` (Nội dung)
 
-## Actors
-- `admin`
-- `super-admin`
+## Các đối tượng thực hiện (Actors)
+- Quản trị viên (`admin`)
+- Quản trị viên cấp cao (`super-admin`)
 
-## trigger (điểm kích hoạt)
-- Admin lưu một `beginnerGuides` document và chuyển sang `published`.
+## Điểm kích hoạt (Trigger)
+Quản trị viên lưu một tài liệu hướng dẫn sơ học (`beginnerGuides`) và chuyển trạng thái sang "Đã xuất bản" (`published`).
 
-## preconditions (điều kiện tiên quyết)
-- Guide có tiêu đề, slug/publicId, nội dung chính, và block điều hướng cơ bản.
-- Nếu guide đóng vai trò `entry guide`, metadata phải chỉ rõ vị trí điều hướng.
+## Điều kiện tiên quyết (Preconditions)
+- Tài liệu có đầy đủ tiêu đề, định danh ID công khai, nội dung chính và khối điều hướng cơ bản.
+- Nếu tài liệu đóng vai trò là "hướng dẫn gia nhập" (entry guide), dữ liệu đặc tả (metadata) phải chỉ rõ vị trí điều hướng tương ứng.
 
-## Read set
-- `beginnerGuides`
-- relation media/download/hub nếu có
+## Tập hợp dữ liệu đọc (Read Set)
+- Tài liệu hướng dẫn sơ học (`beginnerGuides`).
+- Các mối quan hệ với phương tiện/tải về/trang trung tâm (nếu có).
 
-## write path (thứ tự ghi dữ liệu chuẩn)
-1. Validate guide payload.
-2. Chuẩn hóa `slug`, excerpt, search fields nếu dùng.
-3. Ghi canonical record (bản ghi chuẩn gốc) vào `beginnerGuides`.
-4. Thiết lập `_status = published` và `publishedAt`.
-5. Append audit `guide.publish`.
-6. Enqueue search sync và revalidation nếu cần.
+## Thứ tự ghi dữ liệu chuẩn (Write Path)
+1. Xác thực gói dữ liệu của hướng dẫn (Validate guide payload).
+2. Chuẩn hóa đường dẫn (`slug`), tóm tắt và các trường tìm kiếm nếu có sử dụng.
+3. Ghi bản ghi chuẩn gốc (canonical record) vào bộ sưu tập `beginnerGuides`.
+4. Thiết lập trạng thái `_status = published` và thời điểm xuất bản (`publishedAt`).
+5. Thêm sự kiện nhật ký kiểm toán hành động `guide.publish`.
+6. Đưa yêu cầu đồng bộ tìm kiếm và làm mới trang web vào hàng đợi (nếu cần).
 
-## async (bất đồng bộ) side-effects
-- search sync
-- revalidation
+## Tác động phụ bất đồng bộ (Async Side-effects)
+- Đồng bộ hóa tìm kiếm (Search sync).
+- Làm mới trang web (Revalidation).
 
-## success result (kết quả thành công)
-- Người mới có thể mở guide như một bề mặt chính thức để bắt đầu học.
+## Kết quả thành công (Success Result)
+- Người mới có thể truy cập và tìm hiểu hướng dẫn như một bề mặt công khai chính thức để bắt đầu tu học.
 
-## Errors
-- `400`: guide thiếu nội dung hoặc metadata điều hướng cần thiết.
-- `401`: chưa đăng nhập.
-- `403`: không đủ quyền.
-- `404`: relation ref không tồn tại.
-- `409`: slug/publicId conflict.
-- `500`: lỗi service (lớp xử lý nghiệp vụ) hoặc downstream.
+## Các lỗi có thể xảy ra (Errors)
+- `400`: Hướng dẫn thiếu nội dung hoặc dữ liệu điều hướng cần thiết.
+- `401`: Chưa đăng nhập.
+- `403`: Không đủ quyền thực hiện.
+- `404`: Các mối quan hệ tham chiếu không tồn tại.
+- `409`: Xung đột đường dẫn ID công khai.
+- `500`: Lỗi dịch vụ nghiệp vụ hoặc hệ thống hạ nguồn.
 
-## Notes for AI/codegen
-- `beginnerGuides` không phải blog post thường.
-- Với entry guide, ưu tiên clarity hơn SEO/campaign style.
-
+## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
+- `beginnerGuides` không phải là một bài viết nhật ký (blog) thông thường.
+- Đối với hướng dẫn gia nhập (entry guide), ưu tiên tính rõ ràng (clarity) hơn là phong cách tối ưu hóa tìm kiếm (SEO) hay quảng bá (campaign).

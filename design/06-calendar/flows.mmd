@@ -1,7 +1,7 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Tạo và publish event"]
         L1A["Biên tập viên tạo event"] --> L1B["Nhập title, date, location, links, và media"]
-        L1B --> L1C["Payload lưu event document (bản ghi sự kiện)"]
+        L1B --> L1C["apps/api lưu event document (bản ghi sự kiện)"]
         L1C --> L1D["Hệ thống cập nhật eventStatus"]
         L1D --> L1E["Public route trả event DTO (dữ liệu trả ra cho web)"]
     end

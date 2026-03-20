@@ -8,17 +8,17 @@ flowchart TD
     end
 
     subgraph Flow2 ["Luồng 2: Tìm kiếm công khai"]
-        S2A["Web gọi posts search endpoint"] --> S2B["CMS parse query và limit"]
+        S2A["Web gọi posts search endpoint"] --> S2B["API parse query và limit"]
         S2B --> S2C{"Meilisearch available? (Meilisearch có sẵn không?)"}
         S2C -->|"Có"| S2D["Tìm trong search index của posts"]
-        S2C -->|"Không"| S2E["Fallback query qua Payload"]
+        S2C -->|"Không"| S2E["Fallback query qua SQL/API"]
         S2D --> S2F["Map kết quả sang public DTO"]
         S2E --> S2F
         S2F --> S2G["Trả engine marker cùng kết quả"]
     end
 
     subgraph Flow3 ["Luồng 3: Đánh lại chỉ mục theo lô"]
-        S3A["Biên tập viên gọi reindex endpoint (điểm cuối đánh lại chỉ mục)"] --> S3B["CMS đọc batch posts"]
+        S3A["Biên tập viên gọi reindex endpoint (điểm cuối đánh lại chỉ mục)"] --> S3B["API đọc batch posts"]
         S3B --> S3C["Đưa nhiều search-sync jobs vào queue"]
         S3C --> S3D["Worker xử lý queue"]
         S3D --> S3E["Status endpoint phản ánh queue counts và index health (sức khỏe chỉ mục)"]

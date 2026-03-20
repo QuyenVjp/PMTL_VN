@@ -30,6 +30,7 @@ Nó trả lời câu hỏi:
 ## Theo module
 
 ### Content
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/01-content/contracts.md`
 - Use-cases:
   - `publish-post.md`
@@ -39,11 +40,13 @@ Nó trả lời câu hỏi:
   - `publish-state.mmd`
 
 Khi đọc module này, hãy nhớ:
+
 - canonical content nằm ở owner collection
 - search sync, notification, webhook/revalidation là downstream
 - business event quan trọng nên đi qua outbox trước khi vào execution queue
 
 ### Community
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/02-community/contracts.md`
 - Use-cases:
   - `submit-post-comment.md`
@@ -53,10 +56,12 @@ Khi đọc module này, hãy nhớ:
   - `PRACTICE_COMMUNITY_BOUNDARY.md`
 
 Khi đọc module này, hãy nhớ:
+
 - submit UGC và report moderation là hai write-path khác nhau
 - anti-spam/request guard là policy cắt ngang, không phải owner data
 
 ### Engagement
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/03-engagement/contracts.md`
 - Use-cases:
   - `upsert-practice-log.md`
@@ -67,11 +72,13 @@ Khi đọc module này, hãy nhớ:
   - `ngoi-nha-nho-state.mmd`
 
 Khi đọc module này, hãy nhớ:
+
 - đây là self-owned state
 - không ghi ngược sang content canonical data
 - `practiceSheets` và `ngoiNhaNhoSheets` là canonical self-owned records
 
 ### Moderation
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/04-moderation/contracts.md`
 - Use-cases:
   - `report-comment.md`
@@ -81,22 +88,26 @@ Khi đọc module này, hãy nhớ:
   - `guestbook-approval-state.mmd`
 
 Khi đọc module này, hãy nhớ:
+
 - `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
 - field trên entity đích chỉ là summary
 - notify downstream quan trọng nên phát từ outbox event thay vì fire-and-forget
 
 ### Search
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/05-search/contracts.md`
 - Use-cases:
   - `index-published-post.md`
   - `public-search-query.md`
 
 Khi đọc module này, hãy nhớ:
+
 - search là outbox-driven projection trước khi vào execution queue
 - fallback (đường dự phòng) là để giữ service (lớp xử lý nghiệp vụ) usable khi engine lỗi
 - `pgvector` chỉ là capability bổ sung khi module recommendation / related-content đã được chốt
 
 ### Calendar
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/06-calendar/contracts.md`
 - Use-cases:
   - `publish-event.md`
@@ -109,11 +120,13 @@ Khi đọc module này, hãy nhớ:
   - `PRACTICE_ADVISORY_MODEL.md`
 
 Khi đọc module này, hãy nhớ:
+
 - event ownership nằm ở calendar
 - content chỉ tham chiếu
 - personal practice calendar là derived read model (mô hình dữ liệu đọc) của calendar
 
 ### Notification
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/07-notification/contracts.md`
 - Use-cases:
   - `subscribe-push.md`
@@ -123,11 +136,13 @@ Khi đọc module này, hãy nhớ:
   - `push-job-state.mmd`
 
 Khi đọc module này, hãy nhớ:
+
 - notification là async-only (chỉ chạy ngầm, bất đồng bộ) control-plane (lớp điều phối hệ thống)
 - `pushJobs` không phải inbox canonical
 - delivery request quan trọng nên đến notification qua outbox event
 
 ### Identity
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/00-identity/contracts.md`
 - Use-cases:
   - `register-member.md`
@@ -136,10 +151,12 @@ Khi đọc module này, hãy nhớ:
   - `PERMISSION_MATRIX.md`
 
 Khi đọc module này, hãy nhớ:
-- Payload auth là auth authority duy nhất
+
+- NestJS auth là auth authority duy nhất
 - web route chỉ là BFF/compatibility layer
 
 ### Vows & Merit
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/08-vows-merit/contracts.md`
 - Use-cases:
   - `create-vow.md`
@@ -149,10 +166,12 @@ Khi đọc module này, hãy nhớ:
   - `schema.dbml`
 
 Khi đọc module này, hãy nhớ:
+
 - phát nguyện là canonical record (bản ghi chuẩn gốc) riêng
 - phóng sanh là sổ tay thực hành, không phải social feed
 
 ### Wisdom & QA
+
 - contract (hợp đồng dữ liệu/nghiệp vụ): `design/09-wisdom-qa/contracts.md`
 - Use-cases:
   - `publish-wisdom-entry.md`
@@ -169,12 +188,14 @@ Khi đọc module này, hãy nhớ:
   - `INGESTION_PLAN.md`
 
 Khi đọc module này, hãy nhớ:
+
 - retrieval-first, không dùng AI bịa lời khai thị
 - phù hợp đọc/nghe offline cho người lớn tuổi
 
 ## Nếu chuẩn bị thêm chức năng mới
 
 ### Hãy tự hỏi theo thứ tự này
+
 1. owner module (module sở hữu) là ai?
 2. canonical record (bản ghi chuẩn gốc) phải ghi ở đâu trước?
 3. Có summary field nào cần sync không?
@@ -187,7 +208,6 @@ Khi đọc module này, hãy nhớ:
 10. Có phù hợp `ELDERLY_UX_RULES.md` chưa?
 
 ### Nếu chưa trả lời được
+
 - đừng code vội
 - bổ sung một file mới trong `use-cases/` của module owner trước
-
-

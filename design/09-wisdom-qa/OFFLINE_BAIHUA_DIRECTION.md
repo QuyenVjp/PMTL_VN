@@ -12,14 +12,17 @@ File này chốt hướng hỗ trợ `Bạch thoại Phật pháp` theo kiểu o
 ## Gói offline nên hỗ trợ
 
 ### 1. Single entry
+
 - tải từng bài
 - phù hợp khi user chỉ học một bài cụ thể
 
 ### 2. Series pack
+
 - tải theo tập hoặc nhóm chủ đề
 - phù hợp cho cộng tu hoặc học theo đợt
 
 ### 3. Night reading pack
+
 - gói các bài hay dùng ban đêm
 - có thể kèm audio chậm, rõ
 
@@ -59,4 +62,3 @@ File này chốt hướng hỗ trợ `Bạch thoại Phật pháp` theo kiểu o
 
 - offline bundle (gói tải ngoại tuyến) là projection phục vụ đọc, không thay source canonical.
 - audio/video refs phải tôn trọng source mapping và storage policy.
-

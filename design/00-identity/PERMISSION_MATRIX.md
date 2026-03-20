@@ -1,87 +1,92 @@
-# Permission Matrix
+# Permission Matrix (Ma trận Phân quyền)
 
-File này chốt logic phân quyền thực dụng cho PMTL_VN.
-Mục tiêu:
+Tài liệu này chốt practical authorization logic (logic phân quyền thực dụng) cho PMTL_VN.
 
-- tránh leo thang đặc quyền mơ hồ
-- trả lời rõ `admin` được làm gì với dữ liệu của người khác
-- giúp AI/codegen không tự bịa permission model
+## Objectives (Mục tiêu)
 
-## Vai trò
+- prevent ambiguous privilege escalation (ngăn leo quyền mơ hồ)
+- define what `admin` can do with third-party data (xác định rõ admin được làm gì với dữ liệu người khác)
+- keep AI/codegen inside the established permission model (giữ AI/codegen không bẻ lệch mô hình phân quyền)
 
-### `super-admin`
-- toàn quyền cross-module
-- quản trị role, block state, recovery operation
-- được xử lý hard delete nhạy cảm khi policy cho phép
+## Roles (Các vai trò)
 
-### `admin` (`Phụng sự viên`)
-- vai trò vận hành
-- ôm editorial, moderation, support, operational actions trong current scope
+### `super-admin` (Quản trị viên cấp cao)
 
-### `member`
-- người dùng thường
-- chỉ được self-state và public/community action của chính mình
+- full cross-module authority (toàn quyền xuyên mô-đun)
+- manages roles, block state, recovery operations (quản lý vai trò, trạng thái khóa, thao tác cứu hộ)
+- authorized for hard delete when policy permits (được xóa cứng khi policy cho phép)
 
-## Nguyên tắc phân quyền
+### `admin` (Quản trị viên / Phụng sự viên)
 
-- `admin` không đồng nghĩa với `owner-only editor`
-- current scope không tách `editor` và `moderator` thành role riêng
-- vì vậy `admin` được phép xử lý record của người khác trong scope vận hành
-- nhưng `admin` không được chạm vào mọi thứ như `super-admin`
+- operational role (vai trò vận hành)
+- chịu editorial, moderation, support, và system operations trong current scope
 
-## Matrix theo hành động
+### `member` (Thành viên)
 
-| Hành động | super-admin | admin | member |
+- standard user (người dùng chuẩn)
+- chỉ quản lý self-state và hành động công khai/cộng đồng của chính mình
+
+## Authorization principles (Nguyên tắc phân quyền)
+
+- `admin` không bị khóa vào logic `edit-own-only`
+- current scope chưa tách `editor` và `moderator` thành role riêng
+- `admin` được phép xử lý record của người khác khi đó là operational duty
+- `super-admin` vẫn có protected scope riêng mà `admin` không được vượt qua
+
+## Action matrix (Ma trận hành động)
+
+| Action (Hành động) | super-admin | admin | member |
 |---|---|---|---|
-| Tạo/sửa/publish content | Có | Có | Không |
-| Unpublish content | Có | Có | Không |
-| Soft delete content | Có | Có nếu policy cho phép | Không |
-| Hard delete content protected | Có | Không mặc định | Không |
-| Xử lý moderation report | Có | Có | Không |
-| Re-resolve decision của admin khác | Có | Có | Không |
-| Resolve report trong super-admin protected scope | Có | Không | Không |
-| Ẩn comment/post vi phạm | Có | Có | Không |
-| Xóa comment/post của user khác theo moderation policy | Có | Có | Không |
-| Sửa self-profile | Có | Có | Có |
-| Sửa profile người khác | Có | Có theo support scope | Không |
-| Đổi role member -> admin | Có | Không mặc định | Không |
-| Đổi role admin/super-admin | Có | Không | Không |
-| Block / unblock account | Có | Có theo policy | Không |
-| Xem audit log nhạy cảm | Có | Có giới hạn | Không |
-| trigger (điểm kích hoạt) reindex / worker (tiến trình xử lý nền) recovery | Có | Có | Không |
+| Create/edit/publish content (Tạo/sửa/xuất bản nội dung) | Yes | Yes | No |
+| Unpublish content (Hủy xuất bản nội dung) | Yes | Yes | No |
+| Soft delete content (Xóa mềm nội dung) | Yes | Policy-based | No |
+| Hard delete protected content (Xóa cứng nội dung nhạy cảm) | Yes | No by default | No |
+| Resolve moderation reports (Xử lý báo cáo kiểm duyệt) | Yes | Yes | No |
+| Re-resolve other admin decisions (Xử lý lại quyết định admin khác) | Yes | Yes | No |
+| Access super-admin protected scope (Vào phạm vi bảo vệ của super-admin) | Yes | No | No |
+| Hide violating content (Ẩn nội dung vi phạm) | Yes | Yes | No |
+| Delete other's content via moderation (Xóa nội dung người khác qua moderation) | Yes | Yes | No |
+| Edit self-profile (Sửa hồ sơ của mình) | Yes | Yes | Yes |
+| Edit other's profile (Sửa hồ sơ người khác) | Yes | Support-based | No |
+| Promote member to admin (Nâng member thành admin) | Yes | No by default | No |
+| Modify admin/super-admin roles (Đổi vai trò admin/super-admin) | Yes | No | No |
+| Block / unblock accounts (Khóa / mở khóa tài khoản) | Yes | Policy-based | No |
+| View sensitive audit logs (Xem audit log nhạy cảm) | Yes | Limited | No |
+| Trigger reindex / worker recovery (Kích hoạt reindex / phục hồi worker) | Yes | Yes | No |
 
-## Rule sở hữu dữ liệu của người khác
+## Rules for third-party data (Quy tắc với dữ liệu người khác)
 
-### Với `admin`
-- được sửa hoặc ẩn bài/comment/report của người khác trong scope vận hành
-- không bị giới hạn kiểu `chỉ sửa bài của mình` ở current scope
-- lý do: current role model gộp editorial + moderation + support vào `admin`
-- được re-resolve decision của admin khác nếu policy nghiệp vụ cho phép
-- không được override action hoặc target nằm trong `super-admin protected scope`
+### For `admin` (Đối với admin)
 
-### Với `super-admin`
-- được vượt qua các giới hạn support thông thường
-- dùng cho recovery, role change, hard delete, và incident response
+- được edit hoặc hide post/comment/report của người khác theo operational capacity
+- không bị giới hạn bởi `own-content` filter ở current phase
+- có thể re-resolve decision của admin khác nếu business policy cho phép
+- không được override target nằm trong protected scope của `super-admin`
 
-### Với `member`
-- không được sửa record của user khác
-- không được gọi moderation/admin routes
+### For `super-admin` (Đối với super-admin)
 
-## Hard delete rule
+- có thể bypass standard support constraints
+- dùng cho recovery, role change, hard delete, emergency response
 
-- `admin` mặc định không được hard delete record có downstream relations nhạy cảm
-- nếu cleanup contract (hợp đồng dữ liệu/nghiệp vụ) chưa an toàn, chỉ `super-admin` mới được chạy hard delete
-- flow thường ngày ưu tiên:
-  - `soft delete`
-  - `archive`
-  - `unpublish`
+### For `member` (Đối với member)
 
-## Notes for AI/codegen
+- không được sửa record của người khác
+- không được gọi route hành chính hoặc route kiểm duyệt
 
-- Đừng tự thêm logic `admin chỉ sửa bài của mình` nếu docs không ghi vậy.
-- Đừng cho `admin` đổi hoặc tạo `super-admin`.
-- Permission check phải tách:
-  - `role gate`
-  - `business rule`
-  - `delete policy`
+## Hard delete rules (Quy tắc xóa cứng)
 
+- `admin` mặc định không được hard-delete record có downstream relation nhạy cảm
+- chỉ `super-admin` mới được hard-delete khi cleanup contract chưa fully automated hoặc chưa verified safe
+- workflow priority (thứ tự ưu tiên):
+  1. soft delete (xóa mềm)
+  2. archive (lưu trữ)
+  3. unpublish (hủy xuất bản)
+
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
+
+- không implement `edit-own-only` cho `admin` nếu design không yêu cầu
+- không cho `admin` tạo hoặc sửa `super-admin`
+- permission check phải tách rõ:
+  1. role gate (cổng vai trò)
+  2. business rule (quy tắc nghiệp vụ)
+  3. deletion policy (chính sách xóa)

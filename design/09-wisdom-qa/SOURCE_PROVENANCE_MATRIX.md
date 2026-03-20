@@ -174,4 +174,3 @@ Nên tách thành:
   - `link gốc`
   - `ảnh nguồn`
   - `review status (trạng thái kiểm duyệt)`
-

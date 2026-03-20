@@ -51,7 +51,7 @@ markmap:
 - biên tập metadata public
 
 ### Publish
-- dùng Payload drafts cho workflow gốc
+- dùng explicit status machine cho workflow gốc
 - public delivery dựa trên publish state
 - giữ `publishedAt` cho read/search contract (hợp đồng dữ liệu/nghiệp vụ)
 
@@ -102,7 +102,7 @@ markmap:
 - push subscriptions
 - request guard / rate-limit state
 
-## Current shape by area
+## Current shape by area (Cấu trúc hiện tại theo từng mảng)
 
 ### Posts
 - bài viết editorial
@@ -156,7 +156,7 @@ markmap:
 - `member`
 - `guest`
 
-## Current rules
+## Current rules (Quy tắc hiện tại)
 - published content mới được public cache/index
 - search source fields nằm trên owner document
 - content model split collections, không dùng single mega-table
@@ -164,4 +164,3 @@ markmap:
 - user-state phải nằm ngoài content
 - practice support content là public/editorial reference data, không phải user-state
 - `giới thiệu pháp môn` và `sơ học` là first-class content surface, không phải chỉ là vài post rời rạc
-

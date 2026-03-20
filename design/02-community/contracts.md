@@ -59,7 +59,7 @@
 - `429`
   - request guard / anti-spam chặn
 - `500`
-  - lỗi proxy, CMS, append outbox, hoặc execution dispatch downstream work
+  - lỗi proxy, API, append outbox, hoặc execution dispatch downstream work
 
 ## Notes for AI/codegen
 
@@ -67,4 +67,3 @@
 - Report endpoint chỉ tạo record ở moderation module rồi sync summary ngược.
 - Public routes phải ưu tiên `publicId`, không phụ thuộc internal document id ở client.
 - Không coi notification alert là bằng chứng canonical rằng submit đã thành công; canonical record luôn ở community collections trước.
-

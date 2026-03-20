@@ -18,7 +18,7 @@
 - Document tồn tại và đang public.
 
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- Payload collection write cho `posts`.
+- Backend owner write cho `posts`.
 - service (lớp xử lý nghiệp vụ) chuẩn hóa lại plain text, excerpt và normalized search fields.
 
 ## Read set

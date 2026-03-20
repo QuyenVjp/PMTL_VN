@@ -1,61 +1,78 @@
-# Update Profile
+# Use Case: Update Profile (Cập nhật Hồ sơ)
 
-## Purpose
-- Cập nhật profile cơ bản của người dùng hiện tại mà không thay đổi auth authority hay role model.
+## Purpose (Mục đích)
+
+- Update basic profile data (cập nhật hồ sơ cơ bản)
+- without changing auth authority or role model (không làm thay đổi quyền lực xác thực hay mô hình vai trò)
 
 ## owner module (module sở hữu)
+
 - `identity`
 
-## Actors
-- `member`
-- `admin` khi sửa profile theo scope quản trị
+## Actors (Tác nhân)
 
-## trigger (điểm kích hoạt)
-- Web gọi `PATCH /api/auth/profile`.
+- `member`: cập nhật hồ sơ của chính mình
+- `admin`: cập nhật hồ sơ người khác trong phạm vi admin policy
 
-## preconditions (điều kiện tiên quyết)
-- Có session hợp lệ.
-- Body hợp lệ theo `updateProfileSchema`.
+## Trigger (Điểm kích hoạt)
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
+- client calls `PATCH /api/auth/profile`
+
+## Preconditions (Điều kiện tiên quyết)
+
+- có active session (phiên đang hoạt động) hợp lệ
+- body hợp lệ theo `updateProfileSchema`
+
+## Input contract (Hợp đồng đầu vào)
+
 - `updateProfileSchema`
-- nếu có downstream profile signal thì payload phải có schema runtime rõ
+- downstream profile signal nếu có phải có runtime schema rõ
 
-## Read set
-- auth session
+## Read set (Tập dữ liệu đọc)
+
+- `sessions`
 - `users`
 
 ## write path (thứ tự ghi dữ liệu chuẩn)
+
 1. Resolve current user từ session.
-2. Parse body theo schema (lược đồ dữ liệu).
-3. Ghi canonical update vào `users`.
-4. Invalidate/cập nhật session cache nếu cần.
-5. Append audit `auth.profile.update`.
-6. Nếu có downstream signal như avatar processing hoặc profile-notify, append outbox event sau canonical update.
+2. Validate request body theo schema.
+3. Commit canonical update vào `users`.
+4. Nếu cần, cập nhật session-derived display data hoặc invalidate cache liên quan.
+5. Append audit log `auth.profile.update`.
+6. Nếu policy bật avatar processing hoặc profile downstream signal, append `outbox_events`.
 
 ## async (bất đồng bộ) side-effects
-- không có side-effect nặng bắt buộc
+
+- avatar processing
+- downstream profile refresh signal
 
 ## success result (kết quả thành công)
-- Profile DTO mới được trả về.
 
-## Errors
-- `400`: body không hợp lệ.
-- `401`: chưa đăng nhập.
-- `403`: cố sửa profile ngoài phạm vi cho phép.
-- `500`: lỗi auth/CMS.
+- trả về sanitized profile DTO đã cập nhật
 
-## Audit
-- log `auth.profile.update`
+## Errors (Lỗi dự kiến)
 
-## Idempotency / anti-spam
-- update cùng payload chỉ ghi lại profile hiện tại, không tạo record mới.
-- replay outbox không được tạo duplicate downstream profile signal cho cùng update event.
+- `400`: body sai schema
+- `401`: session thiếu hoặc không hợp lệ
+- `403`: cố sửa hồ sơ ngoài phạm vi cho phép
+- `500`: persistence hoặc system runtime lỗi
 
-## Performance target
-- profile update `< 800ms`.
+## Audit (Kiểm toán)
 
-## Notes for AI/codegen
-- `users` là owner của account + profile cơ bản.
-- Role change là flow admin riêng, không nằm trong self-profile contract (hợp đồng dữ liệu/nghiệp vụ).
+- action: `auth.profile.update`
+- log context: actorId, targetId, updatedFields, requestId
 
+## Idempotency & anti-spam (Tính không đổi & chống thư rác)
+
+- cùng một payload lặp lại nên là NOOP hợp lệ
+- replay outbox không được tạo duplicate downstream signal cho cùng một update event
+
+## Performance target (Mục tiêu hiệu năng)
+
+- profile update nên hoàn tất trong `< 800ms`
+
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
+
+- `users` là canonical owner cho account và basic profile
+- role change là flow riêng, không nằm trong self-profile update

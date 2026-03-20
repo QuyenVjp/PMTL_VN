@@ -1,119 +1,229 @@
-# SECURITY_BASELINE
+# SECURITY_BASELINE (Nền tảng bảo mật)
 
-Tài liệu này chốt baseline bảo mật ở mức design cho PMTL_VN.
-Mục tiêu:
+File này chốt `security contract (hợp đồng bảo mật)` cho phase 1 (giai đoạn 1) của PMTL_VN.
+Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đây chưa được implement (triển khai), trạng thái đúng phải là `required before launch (yêu cầu trước khi ra mắt)`.
 
-- không đợi đến lúc code mới nghĩ về bảo mật
-- giúp AI/codegen biết giới hạn tối thiểu phải giữ
-- đặc biệt rõ với auth, upload file, media, và public surfaces
+## 1 truth phải giữ (Một sự thật phải tuân thủ)
 
-## Nguyên tắc gốc
+- `apps/api` là security authority (quyền lực bảo mật).
+- Browser (trình duyệt) không được tự giữ session authority (quyền quản lý phiên) ở local storage (bộ nhớ nội bộ trình duyệt).
+- Validation (kiểm tra tính hợp lệ) giúp lọc input bẩn (dữ liệu đầu vào không sạch), nhưng không thay thế cho:
+  - authn/authz (xác thực và ủy quyền)
+  - CSRF protection (bảo vệ chống giả mạo yêu cầu từ phía trang khác)
+  - replay protection (bảo vệ chống phát lại yêu cầu)
+  - upload hardening (thắt chặt bảo mật tải lên)
+  - query cost control (kiểm soát chi phí truy vấn)
 
-- bảo mật ở repo này theo hướng `simple but explicit`
-- không over-engineer, nhưng không để khoảng trống mơ hồ
-- mọi public input phải validate
-- mọi file upload/media phải đi qua pipeline kiểm tra rõ ràng
+## Auth model (Mô hình xác thực)
 
-## Auth & access baseline
+### Session model mặc định (Mô hình phiên đăng nhập)
 
-- Payload auth là auth authority duy nhất
-- role gate phải rõ:
-  - `super-admin`
-  - `admin`
-  - `member`
-- `admin` không được tự nâng quyền thành `super-admin`
-- `member` không được gọi editorial/moderation/admin routes
-- session authority không nằm ở frontend local state
+- Browser flows (luồng trình duyệt) dùng:
+  - access token ngắn hạn trong `HttpOnly` cookie
+  - refresh token rotation (xoay vòng token làm mới) trong `HttpOnly` cookie riêng
+- Non-browser automation/internal API (tự động hóa ngoài trình duyệt hoặc API nội bộ):
+  - chỉ dùng bearer token (token mang theo) khi route (đường dẫn) đó được thiết kế riêng
+  - không reuse (tái sử dụng) browser cookie contract (hợp đồng cookie trình duyệt) cho webhook/automation
 
-## Public input baseline
+### Token contract (Hợp đồng Token)
 
-- mọi input public phải qua schema (lược đồ dữ liệu) validation
-- comment, guestbook, search, report cần:
-  - rate limit / request guard
-  - anti-spam
-  - structured logging
-- không tin dữ liệu từ client là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
-- env/runtime config cũng phải qua env contract validation từ lúc boot
-- queue payload, outbox payload, webhook payload không được tin chỉ vì "nội bộ hệ thống gọi nhau"
+- access token TTL (thời gian sống của token truy cập): `15 phút`
+- refresh token TTL (thời gian sống của token làm mới): `30 ngày`
+- refresh rotation (xoay vòng làm mới): `bắt buộc`
+- revoke semantics (ý nghĩa của việc thu hồi):
+  - `logout`: revoke (thu hồi) phiên hiện tại
+  - `logout-all`: revoke (thu hồi) toàn bộ phiên của người dùng
+- refresh token store (kho lưu trữ token làm mới):
+  - lưu server-side (phía máy chủ) bằng token hash (mã băm token) hoặc session record (bản ghi phiên) tương đương
+  - không coi refresh token stateless (không lưu trạng thái) là baseline phase 1 (nền tảng giai đoạn 1)
 
-## Media / file baseline
+### Admin session (Phiên quản trị)
 
-### Allowed model
-- file PDF, audio, image, video phải đi qua `content/media` owner flow
-- metadata file phải tách khỏi file binary
-- file public không được coi là trusted chỉ vì user upload thành công
+- idle timeout (thời gian chờ khi không hoạt động): `30 phút`
+- absolute max session age (tuổi thọ tối đa tuyệt đối của phiên): `12 giờ`
+- admin route (đường dẫn quản trị) phải có guard (bộ canh phòng) riêng, không dùng chung assumption (giả định) với member route (đường dẫn thành viên)
 
-### Security requirements
-- file upload phải kiểm tra:
-  - mime type
-  - extension allowlist
-  - size limit
-  - scan malware/virus nếu pipeline upload cho phép file từ người hoặc nguồn chưa trusted
-- không render hoặc execute file trực tiếp như code
-- không cho upload tùy ý loại file chạy được
+## Password / reset / verification (Mật khẩu / Thiết lập lại / Xác minh)
 
-### Storage rule
-- current phase được phép dùng local disk trên VPS nếu:
-  - có storage abstraction rõ
-  - metadata file nằm trong Postgres
-  - business logic không phụ thuộc trực tiếp local filesystem path
-- target phase nên chuyển sang object storage rõ ràng:
-  - `S3`
-  - `MinIO`
-  - hoặc dịch vụ object storage tương đương
-- object key phải an toàn, không dùng trực tiếp raw filename từ user upload
-- local storage cũng phải tách thư mục rõ như:
-  - `uploads/avatars/`
-  - `uploads/posts/`
-  - `uploads/attachments/`
-- lý do:
-  - dễ scan/quarantine
-  - dễ backup
-  - tách app runtime khỏi binary assets
-  - tránh mất file khi rebuild container hoặc đổi chiến lược deploy
+- password min length (độ dài mật khẩu tối thiểu): `12`
+- hash algorithm (thuật toán mã băm): `Argon2id`
+- reset token TTL (thời gian sống của token thiết lập lại): `15 phút`
+- reset token: `one-time use (sử dụng một lần)`
+- reset success (khi thiết lập lại thành công):
+  - revoke (thu hồi) các session (phiên) cũ
+  - ghi audit event (sự kiện kiểm tra)
+- email verification token TTL (thời gian sống của token xác minh email): `24 giờ`
+- verification resend cooldown (thời gian chờ gửi lại xác minh): `60 giây`
+- anti-enumeration (chống dò quét thông tin):
+  - login (đăng nhập), reset request (yêu cầu thiết lập lại), verification resend (gửi lại xác minh) đều trả response (phản hồi) trung tính
+  - không tiết lộ email/account (tài khoản) có tồn tại hay không
 
-## Search & data exposure baseline
+## Rate limit / abuse control (Giới hạn tần suất / Kiểm soát lạm dụng)
 
-- search index không chứa field nhạy cảm không cần public
-- DTO public không expose raw internal fields
-- moderation internals không đi ra route public
-- fallback (đường dự phòng) read không được phá visibility policy
-- semantic retrieval hoặc recommendation không được bypass visibility hoặc publish policy chỉ vì query theo vector
+- brute-force guard (bảo vệ chống dò mật khẩu) theo `IP`
+- brute-force guard (bảo vệ chống dò mật khẩu) theo `account/email`
+- bắt buộc cho các hành động:
+  - login (đăng nhập)
+  - register (đăng ký)
+  - forgot password (quên mật khẩu)
+  - verification resend (gửi lại xác minh)
+  - upload (tải lên)
+  - create post (tạo bài viết)
+  - create comment (tạo bình luận)
+  - search (tìm kiếm)
 
-## Failure-mode security rule
+## Cookie / CSRF / CORS
 
-- khi service (lớp xử lý nghiệp vụ) phụ như Meilisearch hoặc Redis lỗi:
-  - không được trả lộ dữ liệu nhạy cảm
-  - không được bỏ qua access control
-  - có thể degrade feature, nhưng không được degrade security
-- khi outbox hoặc dispatcher lỗi:
-  - canonical write có thể commit
-  - nhưng event chưa được coi là delivered
-  - recovery phải đi theo replay/retry chuẩn, không được bỏ qua audit trail
+### Cookie policy (Chính sách Cookie)
 
-## PDF / official resources rule
+- production cookies (cookie trên môi trường chạy thật) bắt buộc có:
+  - `HttpOnly` (chỉ máy chủ đọc được)
+  - `Secure` (chỉ gửi qua HTTPS)
+  - `SameSite=Lax` mặc định
+- cookie path (đường dẫn cookie):
+  - access token cookie: `/`
+  - refresh token cookie: `/api/auth/refresh`
+- cookie domain (tên miền cookie):
+  - chỉ đặt ở domain (tên miền) thật dùng cho web/admin, không dùng wildcard (ký tự đại diện) tùy tiện
 
-- tài liệu chính thống nên ưu tiên:
-  - nguồn official
-  - checksum hoặc source mapping nếu có
-  - metadata version rõ
-- PDF tải từ nguồn ngoài hoặc được upload lại nên có:
-  - scan step
-  - quarantine/fail state nếu scan lỗi
-  - không publish public ngay khi chưa qua pipeline
+### CSRF strategy (Chiến lược chống giả mạo yêu cầu)
 
-## Notes for AI/codegen
+- Với browser mutation (các thay đổi từ trình duyệt) dùng cookie auth:
+  - dùng `double-submit CSRF token (token CSRF gửi hai lần)`
+  - token phải được kiểm tra ở `apps/api` cho các state-changing routes (đường dẫn thay đổi trạng thái)
+- `SameSite` chỉ là lớp giảm thiểu rủi ro, không được coi là CSRF defense (phòng thủ CSRF) duy nhất
+- Bearer-only endpoints (các điểm cuối chỉ dùng token bearer) có thể được miễn (exempt) CSRF, nhưng phải tách route contract (hợp đồng đường dẫn) rõ ràng
 
-- Đừng giả định media upload là chuyện phụ.
-- Đừng coi CDN hay object storage là chỉ chuyện infra; nó ảnh hưởng trực tiếp tới security boundary (ranh giới trách nhiệm).
-- Nếu feature có upload file, phải ghi rõ:
-  - ai được upload
-  - upload vào đâu
-  - scan ở bước nào
-  - publish public ở bước nào
-- Nếu feature có webhook hoặc worker payload, phải ghi rõ:
-  - schema runtime nào validate
-  - ai phát sự kiện
-  - ai tiêu thụ
-  - idempotency key là gì
+### CORS policy (Chính sách chia sẻ tài nguyên giữa các nguồn)
 
+- chỉ cho phép (allow) các explicit origins (nguồn gốc rõ ràng) từ môi trường (env):
+  - `WEB_ORIGIN`
+  - `ADMIN_ORIGIN`
+- không dùng `*` cho authenticated routes (đường dẫn yêu cầu xác thực)
+- chỉ cho phép credentials (thông tin xác thực) cho origin (nguồn) thật sự cần cookie auth (xác thực bằng cookie)
+
+## CSP / security headers (Chính sách bảo mật nội dung / Tiêu đề bảo mật)
+
+### Baseline CSP (Chính sách bảo mật nội dung nền tảng)
+
+- `default-src 'self'`
+- `base-uri 'self'`
+- `object-src 'none'`
+- `frame-ancestors 'none'`
+- `img-src 'self' https: data:`
+- `media-src 'self' https:`
+- `connect-src 'self'` cộng thêm origin (nguồn) API/search/edge thật sự cần thiết
+- `script-src 'self'` và chỉ nới lỏng bằng nonce/hash (mã dùng một lần/mã băm) nếu framework (khung phần mềm) bắt buộc
+- `style-src 'self' 'unsafe-inline'` chỉ khi chưa thoát khỏi các hạn chế của framework; nếu thoát được thì bỏ `unsafe-inline`
+
+### Other headers (Các tiêu đề khác)
+
+- `X-Content-Type-Options: nosniff` (ngăn trình duyệt đoán kiểu nội dung)
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy`: deny (từ chối) mặc định các capability (khả năng phần cứng/phần mềm) không sử dụng
+
+## Rich text / HTML policy (Chính sách văn bản giàu nội dung / HTML)
+
+- raw HTML (HTML thô) không được tin tưởng mặc định
+- current phase (giai đoạn hiện tại):
+  - member input (đầu vào của thành viên) không được phép lưu raw HTML
+  - admin/editor HTML nếu có phải được sanitize (làm sạch) phía server (server-side) trước khi render (hiển thị)
+- `SVG` hiển thị công cộng bị cấm ở giai đoạn hiện tại nếu chưa có sanitize pipeline (quy trình làm sạch) riêng
+
+## Upload / media contract (Hợp đồng tải lên / truyền thông)
+
+### Allowed file types (Các loại tệp được phép)
+
+- avatar (ảnh đại diện): `jpg`, `jpeg`, `png`, `webp`
+- post image (ảnh bài viết): `jpg`, `jpeg`, `png`, `webp`
+- document (tài liệu): `pdf`
+- audio (âm thanh): `mp3`, `m4a`
+- video (phim): `mp4` chỉ ở route được kích hoạt thật
+
+### Max size (Dung lượng tối đa)
+
+- avatar: `5 MB`
+- image nội dung: `10 MB`
+- document/audio: `25 MB`
+- video: `100 MB`
+
+### Hardening rules (Các quy tắc thắt chặt)
+
+- không chỉ tin vào `Content-Type` từ phía khách hàng (client)
+- phải có server-side MIME sniffing (kiểm tra loại tệp phía máy chủ)
+- object key (tên tệp lưu trữ) không dùng tên tệp gốc (raw filename)
+- checksum (mã kiểm tra toàn vẹn) nên được tính toán và lưu trữ khi khả thi
+- cấm trong giai đoạn hiện tại:
+  - executable files (tệp thực thi)
+  - script files (tệp kịch bản)
+  - raw HTML upload public (tải HTML thô công khai)
+  - SVG public render (hiển thị SVG công khai)
+
+### Public/private asset rule (Quy tắc tài sản công khai/nội bộ)
+
+- avatar và ảnh nội dung đã được approved (phê duyệt) có thể công khai (public)
+- tài sản ở trạng thái `pending_scan (đang quét)`, `quarantined (bị cách ly)`, `rejected (bị từ chối)`, hoặc private attachment (tệp đính kèm riêng tư) không được phục vụ công khai trực tiếp
+- signed URL (địa chỉ có chữ ký) chỉ dùng cho private asset (tài sản riêng tư) hoặc địa chỉ có thời hạn
+- missing file (tệp bị thiếu) phải được hạ cấp (degrade) rõ ràng, không làm hỏng toàn bộ luồng yêu cầu
+
+### Delete authorization (Ủy quyền xóa)
+
+- owner (chủ sở hữu) chỉ xóa tài sản do chính mình sở hữu
+- admin xóa theo chính sách hành động của quản trị viên (admin action policy)
+- nondestructive delete (xóa không phá hủy) phải:
+  - ghi nhật ký kiểm tra (audit log)
+  - đi qua bước xác nhận (confirm step) ở giao diện quản trị
+
+## Webhook contract (Hợp đồng Webhook)
+
+- chỉ các đường dẫn (route) khai báo rõ ràng mới được nhận webhook
+- bắt buộc phải có:
+  - schema validation (kiểm tra lược đồ dữ liệu)
+  - signature verification (xác thực chữ ký)
+  - replay window (cửa sổ chống phát lại) `5 phút`
+- nonce/event id store (kho lưu trữ mã dùng một lần/mã sự kiện):
+  - giai đoạn 1 có thể dùng bảng Postgres hoặc lưu trữ vĩnh viễn tương đương
+  - khi `Valkey` được kích hoạt thì có thể chuyển sang kho dùng chung (shared store)
+- invalid signature (chữ ký không hợp lệ):
+  - log structured event (ghi nhật ký sự kiện có cấu trúc)
+  - trả về phản hồi trung tính
+  - không tạo ra tác động phụ nghiệp vụ (business side effect)
+
+## Secret handling (Quản lý bí mật)
+
+- production secrets (bí mật môi trường chạy thật) không được commit vào kho mã nguồn (repo)
+- local/dev (môi trường nội bộ/phát triển) có thể dùng tệp env
+- production (môi trường thật) phải dùng đường dẫn tiêm bí mật (secret injection path) đã chốt
+- rotation trigger (điểm kích hoạt xoay vòng) tối thiểu:
+  - nghi ngờ lộ bí mật
+  - người giữ bí mật rời bỏ vai trò
+  - thay đổi nhà cung cấp / môi trường
+- bí mật cần có quy trình (procedure) xoay vòng:
+  - JWT/access secret
+  - refresh secret
+  - webhook secret
+  - SMTP/API credentials (thông tin đăng ký dịch vụ)
+
+## Audit events bắt buộc (Các sự kiện kiểm tra bắt buộc)
+
+- login success (đăng nhập thành công)
+- login fail (đăng nhập thất bại)
+- logout (đăng xuất)
+- logout-all (đăng xuất tất cả)
+- password reset requested (yêu cầu thiết lập lại mật khẩu)
+- password reset completed (hoàn tất thiết lập lại mật khẩu)
+- email verification sent (gửi xác minh email)
+- email verification completed (hoàn tất xác minh email)
+- role changed (thay đổi quyền hạn)
+- admin destructive action (hành động phá hủy của quản trị viên)
+- file upload (tải tệp lên)
+- file delete (xóa tệp)
+- webhook signature fail (xác thực chữ ký webhook thất bại)
+
+## Implementation note (Ghi chú triển khai)
+
+Những quyết định trên phải được ánh xạ (map) tiếp vào:
+
+- [00-identity/use-cases/manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-identity/use-cases/manage-auth-session.md)
+- [01-content/use-cases/upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-content/use-cases/upload-media-asset.md)
+- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/IMPLEMENTATION_MAPPING.md)

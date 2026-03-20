@@ -1,86 +1,86 @@
-// Engagement Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
-// Giả định:
-// - chant_items và chant_plans là dữ liệu tham chiếu cho user-state (trạng thái cá nhân của người dùng).
-// - practice support content (nội dung hỗ trợ tu tập) gốc được mô tả thêm ở design/01-content/practice-support-reference.md.
+// Engagement Module - logical schema (Lược đồ logic Mô-đun Tương tác & Tu tập) aligned with current repo truth (khớp với thực trạng repo)
+// Giả định (Assumptions):
+// - chant_items và chant_plans là dữ liệu tham chiếu cho trạng thái cá nhân (user-state).
+// - Các nội dung hỗ trợ tu tập (practice support content) gốc được mô tả tại design/01-content/practice-support-reference.md.
 
 Project engagement_module {
   database_type: "PostgreSQL"
   Note: '''
-  Engagement module (module gắn kết và tự quản lý trạng thái cá nhân) cho PMTL_VN.
-  Cách đọc nhanh:
-  - Nhóm Sutra State là bookmark và reading progress (tiến độ đọc).
-  - Nhóm Practice State là preference, practice log, practice sheet, và Ngôi Nhà Nhỏ.
-  - Các bảng sutras, chapters, chant_items, chant_plans chỉ là dữ liệu tham chiếu.
+  Mô-đun Tương tác & Tu tập (Engagement module) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - Nhóm Sutra State: Lưu trữ đánh dấu (bookmark) và tiến độ đọc kinh (reading progress).
+  - Nhóm Practice State: Lưu trữ sở thích, nhật ký thực hành, tờ thực hành và Ngôi Nhà Nhỏ.
+  - Các bảng sutras, chapters, chant_items, chant_plans: Chỉ đóng vai trò là dữ liệu tham chiếu (reference data).
   '''
 }
 
 Table users {
-  id uuid [pk]
+  id uuid [pk, note: "ID người dùng (tham chiếu)"]
   public_id varchar [unique]
 }
 
 Table sutras {
-  id uuid [pk]
+  id uuid [pk, note: "ID bộ kinh (tham chiếu)"]
   public_id varchar [unique]
-  title varchar
+  title varchar [note: "Tiêu đề bộ kinh"]
 }
 
 Table sutra_chapters {
-  id uuid [pk]
+  id uuid [pk, note: "ID chương kinh (tham chiếu)"]
   public_id varchar [unique]
-  sutra_id uuid [ref: > sutras.id]
-  title varchar
+  sutra_id uuid [ref: > sutras.id, note: "Mã bộ kinh"]
+  title varchar [note: "Tiêu đề chương"]
 }
 
 Table chant_items {
-  id uuid [pk]
+  id uuid [pk, note: "ID bài niệm (tham chiếu)"]
   public_id varchar [unique]
-  title varchar
+  title varchar [note: "Tiêu đề bài niệm"]
 }
 
 Table chant_plans {
-  id uuid [pk]
+  id uuid [pk, note: "ID kế hoạch niệm (tham chiếu)"]
   public_id varchar [unique]
-  title varchar
+  title varchar [note: "Tiêu đề kế hoạch"]
 }
 
 Table sutra_bookmarks {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính đánh dấu kinh điển"]
   public_id varchar [unique]
-  user_id uuid [not null, ref: > users.id]
-  sutra_id uuid [not null, ref: > sutras.id]
-  chapter_id uuid [ref: > sutra_chapters.id]
-  paragraph varchar
-  excerpt text
-  note text
+  user_id uuid [not null, ref: > users.id, note: "Người sở hữu đánh dấu (Owner user)"]
+  sutra_id uuid [not null, ref: > sutras.id, note: "Bộ kinh được đánh dấu"]
+  chapter_id uuid [ref: > sutra_chapters.id, note: "Chương được đánh dấu"]
+  paragraph varchar [note: "Đoạn văn được đánh dấu"]
+  excerpt text [note: "Đoạn trích dẫn nội dung (Excerpt)"]
+  note text [note: "Ghi chú cá nhân cho đoạn trích"]
   created_at timestamp
   updated_at timestamp
 }
 
 Table sutra_reading_progress {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính tiến độ đọc kinh"]
   public_id varchar [unique]
-  user_id uuid [not null, ref: > users.id]
-  sutra_id uuid [not null, ref: > sutras.id]
-  chapter_id uuid [ref: > sutra_chapters.id]
-  paragraph varchar
-  scroll_percent int [default: 0]
-  last_read_at timestamp
+  user_id uuid [not null, ref: > users.id, note: "Người dùng (Owner user)"]
+  sutra_id uuid [not null, ref: > sutras.id, note: "Bộ kinh đang đọc"]
+  chapter_id uuid [ref: > sutra_chapters.id, note: "Chương đang đọc dở"]
+  paragraph varchar [note: "Đoạn văn đang đọc dở"]
+  scroll_percent int [default: 0, note: "Tỷ lệ cuộn trang (%)"]
+  last_read_at timestamp [note: "Thời điểm đọc cuối cùng"]
   updated_at timestamp
 }
 
 Table chant_preferences {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính sở thích tụng niệm"]
   public_id varchar [unique]
-  user_id uuid [not null, ref: > users.id]
-  plan_id uuid [not null, ref: > chant_plans.id]
+  user_id uuid [not null, ref: > users.id, note: "Người dùng sở hữu cấu hình"]
+  plan_id uuid [not null, ref: > chant_plans.id, note: "Kế hoạch tu học tương ứng"]
   created_at timestamp
   updated_at timestamp
 }
 
 Table chant_preference_optional_items {
-  chant_preference_id uuid [ref: > chant_preferences.id]
-  chant_item_id uuid [ref: > chant_items.id]
+  chant_preference_id uuid [ref: > chant_preferences.id, note: "Mã cấu hình sở thích"]
+  chant_item_id uuid [ref: > chant_items.id, note: "Mã bài niệm tùy chọn"]
 
   indexes {
     (chant_preference_id, chant_item_id) [pk]
@@ -91,27 +91,27 @@ Table chant_preference_targets {
   id uuid [pk]
   chant_preference_id uuid [ref: > chant_preferences.id]
   chant_item_id uuid [ref: > chant_items.id]
-  target int
+  target int [note: "Mục tiêu số biến cần đạt (Target count)"]
 }
 
 Table chant_preference_intentions {
   id uuid [pk]
   chant_preference_id uuid [ref: > chant_preferences.id]
   chant_item_id uuid [ref: > chant_items.id]
-  intention varchar
+  intention varchar [note: "Nội dung phát tâm/ý nguyện (Intention)"]
 }
 
 Table practice_logs {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính nhật ký thực hành"]
   public_id varchar [unique]
-  user_id uuid [not null, ref: > users.id]
-  plan_id uuid [not null, ref: > chant_plans.id]
-  practice_date date [not null]
-  started_at timestamp
-  completed_at timestamp
-  is_completed bool [default: false]
-  duration_minutes int
-  notes varchar
+  user_id uuid [not null, ref: > users.id, note: "Người dùng sở hữu nhật ký"]
+  plan_id uuid [not null, ref: > chant_plans.id, note: "Kế hoạch thực hành"]
+  practice_date date [not null, note: "Ngày thực hành"]
+  started_at timestamp [note: "Thời điểm bắt đầu"]
+  completed_at timestamp [note: "Thời điểm kết thúc"]
+  is_completed bool [default: false, note: "Đã hoàn thành hay chưa"]
+  duration_minutes int [note: "Tổng thời gian thực hành (phút)"]
+  notes varchar [note: "Ghi chú buổi tu tập"]
   created_at timestamp
   updated_at timestamp
 }
@@ -120,136 +120,136 @@ Table practice_log_item_states {
   id uuid [pk]
   practice_log_id uuid [ref: > practice_logs.id]
   chant_item_id uuid [ref: > chant_items.id]
-  completed bool [default: false]
-  count int
+  completed bool [default: false, note: "Mục này đã hoàn thành chưa"]
+  count int [note: "Số biến thực tế đã niệm"]
 }
 
 Enum practice_sheet_type {
-  daily_practice
-  event_preparation
-  vow_support
+  daily_practice [note: "Công phu hằng ngày"]
+  event_preparation [note: "Chuẩn bị sự kiện"]
+  vow_support [note: "Hỗ trợ phát nguyện"]
 }
 
 Enum practice_sheet_status {
-  draft
-  in_progress
-  completed
-  archived
+  draft [note: "Bản nháp"]
+  in_progress [note: "Đang thực hiện"]
+  completed [note: "Đã hoàn thành"]
+  archived [note: "Đã lưu trữ"]
 }
 
 Table practice_sheets {
-  id uuid [pk]
-  public_id varchar(32) [not null, unique, note: "Public ID (mã công khai)"]
-  user_id uuid [not null, note: "Owner user (người sở hữu bản ghi)"]
-  sheet_type practice_sheet_type [not null, default: 'daily_practice']
+  id uuid [pk, note: "Khóa chính tờ thực hành"]
+  public_id varchar(32) [not null, unique, note: "Mã công khai (Public ID)"]
+  user_id uuid [not null, note: "Người sở hữu bản ghi (Owner user)"]
+  sheet_type practice_sheet_type [not null, default: 'daily_practice', note: "Loại tờ thực hành"]
   title_vi varchar(160) [not null, note: "Tiêu đề tiếng Việt"]
-  title_en varchar(160) [note: "English title (tiêu đề tiếng Anh)"]
-  practice_date date
-  plan_ref varchar(64) [note: "Ref (tham chiếu) tới chant plan nếu có"]
-  status practice_sheet_status [not null, default: 'draft']
-  completion_percent int [not null, default: 0]
-  last_client_event_id varchar(64) [note: "Dùng cho offline sync (đồng bộ ngoại tuyến)"]
+  title_en varchar(160) [note: "Tiêu đề tiếng Anh"]
+  practice_date date [note: "Ngày thực hành"]
+  plan_ref varchar(64) [note: "Tham chiếu tới kế hoạch niệm (Chant plan ref)"]
+  status practice_sheet_status [not null, default: 'draft', note: "Trạng thái tờ thực hành"]
+  completion_percent int [not null, default: 0, note: "Tỷ lệ hoàn thành (%)"]
+  last_client_event_id varchar(64) [note: "Dùng cho đồng bộ ngoại tuyến (Offline sync)"]
   notes_vi text [note: "Ghi chú tiếng Việt"]
-  notes_en text [note: "English notes (ghi chú tiếng Anh)"]
+  notes_en text [note: "Ghi chú tiếng Anh"]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 }
 
 Table practice_sheet_items {
   id uuid [pk]
-  sheet_id uuid [not null, ref: > practice_sheets.id]
-  chant_item_ref varchar(64) [note: "Ref (tham chiếu) tới chant item"]
-  label_vi varchar(160) [not null]
-  label_en varchar(160)
-  target_count int
-  current_count int [not null, default: 0]
-  is_completed boolean [not null, default: false]
-  sort_order int [not null, default: 0]
+  sheet_id uuid [not null, ref: > practice_sheets.id, note: "Mã tờ thực hành cha"]
+  chant_item_ref varchar(64) [note: "Tham chiếu tới bài niệm (Chant item ref)"]
+  label_vi varchar(160) [not null, note: "Nhãn hiển thị tiếng Việt"]
+  label_en varchar(160) [note: "Nhãn hiển thị tiếng Anh"]
+  target_count int [note: "Mục tiêu số biến"]
+  current_count int [not null, default: 0, note: "Số biến hiện tại đã đạt"]
+  is_completed boolean [not null, default: false, note: "Đã hoàn tất mục này chưa"]
+  sort_order int [not null, default: 0, note: "Thứ tự sắp xếp"]
 }
 
 Enum ngoi_nha_nho_sheet_status {
-  draft
-  in_progress
-  completed
-  self_stored
-  offered
+  draft [note: "Bản nháp"]
+  in_progress [note: "Đang thực hiện"]
+  completed [note: "Đã hoàn thành (đã chấm đủ)"]
+  self_stored [note: "Đã lưu kho tự tồn"]
+  offered [note: "Đã chuyển tặng/hóa thực tế"]
 }
 
 Enum ngoi_nha_nho_sheet_type {
-  standard
-  self_store
-  custom
+  standard [note: "Tiêu chuẩn"]
+  self_store [note: "Để lưu kho"]
+  custom [note: "Tùy chỉnh"]
 }
 
 Enum ngoi_nha_nho_counter_type {
-  great_compassion
-  heart_sutra
-  rebirth_mantra
-  seven_buddhas
+  great_compassion [note: "Chú Đại Bi"]
+  heart_sutra [note: "Bát Nhã Tâm Kinh"]
+  rebirth_mantra [note: "Vãng Sanh Quyết"]
+  seven_buddhas [note: "Thất Phật Diệt Tội"]
 }
 
 Table ngoi_nha_nho_sheets {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính tờ Ngôi Nhà Nhỏ"]
   public_id varchar(32) [not null, unique]
-  user_id uuid [not null, note: "Ref (tham chiếu) tới 00-identity.users"]
-  sheet_type ngoi_nha_nho_sheet_type [not null, default: 'standard']
-  title_snapshot varchar(160)
-  template_ref varchar(64) [note: "Ref (tham chiếu) tới chant item hoặc chant plan template (mẫu kế hoạch niệm)"]
-  dedication_target_snapshot text
-  practice_date date
-  status ngoi_nha_nho_sheet_status [not null, default: 'draft']
-  required_great_compassion_count int [not null, default: 0]
-  required_heart_sutra_count int [not null, default: 0]
-  required_rebirth_mantra_count int [not null, default: 0]
-  required_seven_buddhas_count int [not null, default: 0]
-  current_great_compassion_count int [not null, default: 0]
-  current_heart_sutra_count int [not null, default: 0]
-  current_rebirth_mantra_count int [not null, default: 0]
-  current_seven_buddhas_count int [not null, default: 0]
-  last_client_event_id varchar(64) [note: "Dùng để chống double-submit (gửi trùng) khi offline"]
-  notes text
-  started_at timestamptz
-  completed_at timestamptz
-  offered_at timestamptz
+  user_id uuid [not null, note: "Tham chiếu tới 00-identity.users"]
+  sheet_type ngoi_nha_nho_sheet_type [not null, default: 'standard', note: "Loại tờ kinh"]
+  title_snapshot varchar(160) [note: "Tên hiển thị chụp lại"]
+  template_ref varchar(64) [note: "Tham chiếu tới mẫu bài niệm hoặc kế hoạch (Template ref)"]
+  dedication_target_snapshot text [note: "Thông tin thụ hưởng chụp lại trên bìa"]
+  practice_date date [note: "Ngày thực hiện/hoàn thành"]
+  status ngoi_nha_nho_sheet_status [not null, default: 'draft', note: "Trạng thái tờ kinh"]
+  required_great_compassion_count int [not null, default: 0, note: "Số biến Chú Đại Bi yêu cầu"]
+  required_heart_sutra_count int [not null, default: 0, note: "Số biến Tâm Kinh yêu cầu"]
+  required_rebirth_mantra_count int [not null, default: 0, note: "Số biến Vãng Sanh yêu cầu"]
+  required_seven_buddhas_count int [not null, default: 0, note: "Số biến Thất Phật yêu cầu"]
+  current_great_compassion_count int [not null, default: 0, note: "Số biến Chú Đại Bi hiện tại"]
+  current_heart_sutra_count int [not null, default: 0, note: "Số biến Tâm Kinh hiện tại"]
+  current_rebirth_mantra_count int [not null, default: 0, note: "Số biến Vãng Sanh hiện tại"]
+  current_seven_buddhas_count int [not null, default: 0, note: "Số biến Thất Phật hiện tại"]
+  last_client_event_id varchar(64) [note: "Dùng để chống gửi trùng khi ngoại tuyến (Anti double-submit)"]
+  notes text [note: "Ghi chú"]
+  started_at timestamptz [note: "Thời điểm bắt đầu tờ mới"]
+  completed_at timestamptz [note: "Thời điểm chấm đủ"]
+  offered_at timestamptz [note: "Thời điểm hỏa hóa/chuyển tặng"]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 
-  Note: "Canonical self-owned sheet record (bản ghi gốc của tờ Ngôi Nhà Nhỏ do người dùng tự sở hữu)."
+  Note: "Bản ghi chuẩn gốc của tờ Ngôi Nhà Nhỏ do người dùng tự sở hữu (Canonical self-owned record)."
 }
 
 Table ngoi_nha_nho_sheet_entries {
   id uuid [pk]
-  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id]
-  client_event_id varchar(64) [not null]
-  counter_type ngoi_nha_nho_counter_type [not null]
-  delta int [not null, default: 1]
+  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id, note: "Mã tờ kinh cha"]
+  client_event_id varchar(64) [not null, note: "ID sự kiện từ máy khách để chống trùng"]
+  counter_type ngoi_nha_nho_counter_type [not null, note: "Loại kinh được chấm"]
+  delta int [not null, default: 1, note: "Số lượng thay đổi (thường là +1)"]
   created_at timestamptz [not null]
 
   Indexes {
     (sheet_id, client_event_id) [unique]
   }
 
-  Note: "Optional event table (bảng sự kiện tùy chọn) cho anti-duplicate (chống trùng) và audit-grade progress trace (lưu vết tiến độ mức kiểm định)."
+  Note: "Bảng sự kiện tùy chọn để chống trùng và lưu vết tiến độ mức kiểm định (Audit-grade trace)."
 }
 
 Table ngoi_nha_nho_sheet_audit_snapshots {
   id uuid [pk]
-  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id]
-  action varchar(64) [not null]
-  before_status ngoi_nha_nho_sheet_status
-  after_status ngoi_nha_nho_sheet_status
-  actor_user_id uuid
+  sheet_id uuid [not null, ref: > ngoi_nha_nho_sheets.id, note: "Mã tờ kinh"]
+  action varchar(64) [not null, note: "Hành động (ví dụ: move_to_offered)"]
+  before_status ngoi_nha_nho_sheet_status [note: "Trạng thái trước"]
+  after_status ngoi_nha_nho_sheet_status [note: "Trạng thái sau"]
+  actor_user_id uuid [note: "Người thực hiện"]
   created_at timestamptz [not null]
 
-  Note: "Compact state milestones (mốc trạng thái gọn) cho Ngôi Nhà Nhỏ; audit chi tiết vẫn nằm ở auditLogs (nhật ký kiểm tra)."
+  Note: "Các mốc trạng thái quan trọng rút gọn (Compact state milestones)."
 }
 
-TableGroup "Sutra State" [note: "Dữ liệu cá nhân khi đọc kinh"] {
+TableGroup "Sutra State" [note: "Dữ liệu cá nhân khi đọc kinh (Personal reading state)"] {
   sutra_bookmarks
   sutra_reading_progress
 }
 
-TableGroup "Practice State" [note: "Dữ liệu cá nhân cho công phu"] {
+TableGroup "Practice State" [note: "Dữ liệu cá nhân cho tu tập và công phu (Personal practice state)"] {
   chant_preferences
   chant_preference_optional_items
   chant_preference_targets
@@ -263,7 +263,7 @@ TableGroup "Practice State" [note: "Dữ liệu cá nhân cho công phu"] {
   ngoi_nha_nho_sheet_audit_snapshots
 }
 
-TableGroup "Reference Data" [note: "Dùng để liên kết, không phải owner module (module sở hữu gốc) của engagement"] {
+TableGroup "Reference Data" [note: "Dữ liệu tham chiếu, không thuộc sở hữu của mô-đun này (Reference only)"] {
   users
   sutras
   sutra_chapters

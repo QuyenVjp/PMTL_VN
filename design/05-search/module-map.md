@@ -1,8 +1,7 @@
-# Search Module
+# Search Module (Mô-đun Tìm kiếm)
 
 > Ghi chú cho sinh viên:
-> Search không giữ dữ liệu gốc.
-> Nó chỉ dựng "bản sao để tìm kiếm nhanh" từ dữ liệu thật ở Postgres.
+> Search không giữ dữ liệu gốc. Nó giữ search projection (bản chiếu tìm kiếm) để người dùng tìm nhanh hơn, còn dữ liệu đúng vẫn nằm ở `Postgres`.
 
 ---
 markmap:
@@ -10,68 +9,60 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# Search Module
+# Search Module (Mô-đun Tìm kiếm)
 
-## Mục tiêu
-- mô tả indexing pipeline hiện có
-- mô tả public search contract (hợp đồng dữ liệu/nghiệp vụ) hiện có
-- giữ rõ ranh giới giữa source document và search index
+## Objectives (Mục tiêu)
+- mô tả boundary (ranh giới trách nhiệm) của search
+- chốt query path (đường truy vấn) công khai và đường fallback
+- giữ rõ ràng ranh giới giữa canonical content (nội dung chuẩn gốc) và search projection
 
-## Current scope
+## Current scope (Phạm vi hiện tại)
 
-### Search source
-- search fields nằm trên owner content documents
-- current public search chủ yếu cho `posts`
+### Search sources (Nguồn tìm kiếm)
+- field có thể search nằm trên owner document (tài liệu do mô-đun gốc sở hữu)
+- phase hiện tại ưu tiên `posts`
 
-### Search runtime
-- `outbox_events` cho business event search quan trọng
-- dispatcher phát search-sync
-- Redis execution queue (hàng đợi thực thi) `search-sync`
-- worker (tiến trình xử lý nền) processor search sync
-- Meilisearch index `posts`
-- `pgvector` chỉ là capability optional khi module recommendation được chốt
+### Search runtime (Môi trường chạy)
+- phase 1: `SQL/API fallback` là read path mặc định
+- phase search projection: `outbox_events` + dispatcher + queue + worker + `Meilisearch`
+- `pgvector` chỉ là optional capability (khả năng tùy chọn) cho giai đoạn sau
 
-### Public contracts
+### Public contracts (Hợp đồng công khai)
 - `GET /api/posts/search`
-- `POST /api/posts/search/reindex`
+- `POST /api/posts/search/reindex` cho admin/rebuild
 - `GET /api/search/status`
 
-## Current responsibilities
+## Current responsibilities (Trách nhiệm hiện tại)
 
-### Build search documents
-- đọc `title`
-- đọc `excerptComputed`
-- đọc `contentPlainText`
-- đọc `normalizedSearchText`
-- đọc taxonomy summary
-- đọc counters/public metadata
+### Search document construction (Dựng search document)
+- lấy `title`, `excerptComputed`, `contentPlainText`, `normalizedSearchText`
+- gom taxonomy summary (tóm tắt phân loại) và các public signals cần thiết
 
-### Index lifecycle
-- append outbox event cho publish/update quan trọng
-- dispatcher phát reindex/update
-- worker (tiến trình xử lý nền) upsert vào Meilisearch
-- remove hoặc stop public indexing khi document không còn public
+### Index lifecycle management (Quản lý vòng đời chỉ mục)
+- khi phase projection đã bật, signal quan trọng đi qua `outbox_events`
+- hỗ trợ reindex batch và reindex theo từng item
+- gỡ document khỏi chỉ mục khi nội dung không còn public
 
-### Query lifecycle
-- ưu tiên Meilisearch
-- fallback (đường dự phòng) qua Payload query khi cần
+### Query management (Quản lý truy vấn)
+- ưu tiên `SQL/API fallback` trong phase đầu
+- khi engine riêng đã bật và đủ xứng đáng, ưu tiên `Meilisearch`
+- luôn giữ metadata đủ để biết request đang dùng engine nào
 
-## Current boundaries
+## Boundaries & external references (Ranh giới và tham chiếu ngoài)
 
-### Search owns
-- search query contract (hợp đồng dữ liệu/nghiệp vụ)
-- indexing pipeline
-- search status reporting
+### Relationships (Quan hệ)
+- **Search owns (Search sở hữu)**:
+  - query contract
+  - indexing pipeline
+  - search status reporting
+- **Search does NOT own (Search không sở hữu)**:
+  - canonical content data
+  - taxonomy authority
+  - moderation authority
+  - publish workflow gốc
 
-### Search does not own
-- canonical content data
-- taxonomy authority
-- moderation authority
-- notification logic
-
-## Current rules
-- Meilisearch chỉ là index
-- current public search chỉ index published content
-- business event quan trọng của search không phát thẳng bằng pub/sub thuần
-- fallback (đường dự phòng) không được trở thành source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) mới
-
+## Current rules (Quy tắc hiện tại)
+- `Meilisearch` chỉ là index (chỉ mục), không phải primary data store (kho dữ liệu gốc)
+- chỉ nội dung `published` mới được phép xuất hiện trong public search
+- event tìm kiếm quan trọng không được fire-and-forget nếu phase reliability đã bật
+- fallback chỉ là đường dự phòng cho availability (khả năng sẵn sàng phục vụ), không phải nguồn dữ liệu mới của hệ thống

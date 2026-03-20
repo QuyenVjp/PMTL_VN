@@ -1,65 +1,66 @@
-# Moderation Contracts
+# Moderation Contracts (Hợp đồng Mô-đun Kiểm duyệt)
 
-## Owner data
+Tài liệu này chốt data contract (hợp đồng dữ liệu) và business contract (hợp đồng nghiệp vụ) cho Moderation module (mô-đun Kiểm duyệt).
 
-- `moderationReports`
+## Data ownership (Quyền sở hữu dữ liệu)
 
-## Input schemas chính
+- `moderationReports`: primary source of truth (nguồn dữ liệu gốc chính) cho report lifecycle và resolution
 
-- `commentReportSchema` từ `packages/shared/src/schemas/comment.ts`
-- các route decision của admin phải validate explicit decision enum ở server
+## Input schemas (Lược đồ đầu vào)
 
-## Routes chính
+- `commentReportSchema`: lược đồ báo cáo comment
+- admin decision payload phải dùng explicit enum cho resolution action
 
-- `POST /api/comments/:publicId/report`
-- `POST /api/community/posts/:publicId/report`
-- `POST /api/community/comments/:publicId/report`
-- `GET /api/moderation/reports`
-- `POST /api/moderation/reports/:publicId/decision`
+## Public & admin routes (Tuyến đường public & admin)
 
-## Canonical write rules
+- `POST /api/comments/:publicId/report`: report editorial comment
+- `POST /api/community/posts/:publicId/report`: report community thread
+- `POST /api/community/comments/:publicId/report`: report community reply
+- `GET /api/moderation/reports`: list moderation reports cho admin
+- `POST /api/moderation/reports/:publicId/decision`: submit resolution cho admin
 
-- report lifecycle chỉ ghi vào `moderationReports`
-- target entity chỉ nhận summary fields:
-  - `reportCount`
-  - `lastReportReason`
-  - `moderationStatus`
-  - `approvalStatus`
-  - `isHidden`
-- alert admin hoặc notify affected user quan trọng nên đi qua `outbox_events`
-- request payload, decision payload, protected-scope metadata và downstream event payload phải có schema runtime rõ
+## Canonical write rules (Quy tắc ghi chuẩn gốc)
 
-## Decision contract (hợp đồng dữ liệu/nghiệp vụ)
+1. Source of truth (nguồn chuẩn gốc):
+   - full lifecycle của violation/report chỉ nằm ở `moderationReports`
+2. Target summaries (tóm tắt trên đối tượng đích):
+   - article/post/comment chỉ giữ read-only summary fields như:
+     - `reportCount`
+     - `lastReportReason`
+     - `moderationStatus`
+     - `approvalStatus`
+     - `isHidden`
+3. Async alerts (cảnh báo bất đồng bộ):
+   - admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`
+4. Validation (kiểm tra đầu vào):
+   - decision payload và reporter metadata phải có runtime schema rõ
 
-Actor:
-- `admin` (`Phụng sự viên`)
+## Decision contract (Hợp đồng ra quyết định)
+
+### Actors (Tác nhân)
+
+- `admin`
 - `super-admin`
 
-Expected decisions:
-- `approved`
-- `rejected`
-- `flagged`
-- `hidden`
+### Expected statuses (Trạng thái mong đợi)
 
-## Error expectations
+- `approved`: content an toàn
+- `rejected`: report không hợp lệ hoặc bị bỏ qua
+- `flagged`: content bị đánh dấu theo dõi
+- `hidden`: content bị ẩn khỏi public view
 
-- `400`
-  - reason hoặc decision không hợp lệ
-- `401`
-  - chưa có session
-- `403`
-  - role không đủ
-- `404`
-  - report hoặc target entity không tồn tại
-- `409`
-  - duplicate unresolved report hoặc state conflict
-- `500`
-  - lỗi sync summary, append outbox, hoặc notify downstream
+## Expected errors (Lỗi dự kiến)
 
-## Notes for AI/codegen
+- `400`: report reason hoặc decision enum không hợp lệ
+- `401`: không có session
+- `403`: role không đủ
+- `404`: report hoặc target entity không tồn tại
+- `409`: duplicate pending report hoặc invalid state transition
+- `500`: sync error, outbox dispatch fail, hoặc notification error
 
-- `moderationReports` mới là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); summary field không phải lifecycle record.
-- Đừng expose full moderation internals cho route public/community.
-- Notify admin hoặc affected user là downstream async (bất đồng bộ), không phải canonical decision record.
-- Nếu summary drift xảy ra, recovery path chuẩn là recompute summary từ `moderationReports`, không vá tay mơ hồ trên target entity.
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
 
+- `moderationReports` là source of truth duy nhất; target flags chỉ là derived read model
+- không expose moderation note nội bộ hoặc reporter identity nhạy cảm ra community/public route
+- outcome notification là downstream side-effect, không phải primary decision record
+- khi summary bị drift, recovery path chuẩn là recompute từ `moderationReports`

@@ -1,8 +1,7 @@
-# Moderation Module
+# Moderation Module (Mô-đun Kiểm duyệt)
 
 > Ghi chú cho sinh viên:
-> Moderation không chỉ là nút "ẩn bài".
-> Nó có record nguồn riêng để sau này còn audit và giải thích vì sao đã xử lý.
+> Moderation không chỉ là nút "ẩn bài". Nó phải giữ source record (bản ghi nguồn) riêng để sau này biết ai báo cáo, ai xử lý, xử lý vì lý do gì.
 
 ---
 markmap:
@@ -10,64 +9,60 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# Moderation Module
+# Moderation Module (Mô-đun Kiểm duyệt)
 
-## Mục tiêu
-- giữ report lifecycle ở một owner duy nhất
-- mô tả decision flow hiện có
-- mô tả cách sync moderation summary về entity đích
+## Objectives (Mục tiêu)
+- gom toàn bộ report lifecycle (vòng đời báo cáo) vào một owner module rõ ràng
+- giữ decision flow (luồng ra quyết định) của moderator/admin
+- đồng bộ summary về target entity mà không làm mất canonical report history
 
-## Collection thuộc module
-- `moderationReports`
+## Module collections (Các collection thuộc mô-đun)
+- `moderationReports`: source of truth cho báo cáo vi phạm và quyết định xử lý
 
-## Target entity hiện được hỗ trợ
+## Supported target entities (Các thực thể đích được hỗ trợ)
 - `postComments`
 - `communityPosts`
 - `communityComments`
 - `guestbookEntries`
 
-## Current responsibilities
+## Current responsibilities (Trách nhiệm hiện tại)
 
-### Report intake
-- nhận lý do report
-- lưu reporter user hoặc reporter IP hash
-- gắn entity type / entity publicId / entity ref
+### Report intake (Tiếp nhận báo cáo)
+- nhận reason/category
+- lưu reporter identity ở dạng user hoặc IP hash
+- link report vào target type và `publicId`
 
-### Moderation decision
-- admin xem report
-- cập nhật trạng thái report
-- áp dụng decision lên target entity
-- admin được re-resolve decision của admin khác nếu policy cho phép
-- scope có bảo vệ `super-admin`; chỉ `super-admin` mới được override phần protected này
+### Moderation decision (Ra quyết định kiểm duyệt)
+- điều phối admin review workflow
+- cập nhật report status như `pending`, `resolved`, `ignored`
+- áp resolution effect lên target entity nếu cần
+- hỗ trợ re-resolution (xử lý lại) với audit trail bắt buộc
+- giữ super-admin protection (vùng bảo vệ của cấp quản trị cao)
 
-### Summary sync
-- cập nhật `reportCount`
-- cập nhật `lastReportReason`
-- cập nhật `moderationStatus` hoặc `approvalStatus`
-- cập nhật `isHidden` khi cần
+### Summary synchronization (Đồng bộ tóm tắt)
+- cập nhật `reportCount`, `lastReportReason`
+- cập nhật `moderationStatus`, `approvalStatus`, `isHidden`
 
-### Notifications
-- alert admin/super-admin khi có report mới
-- notify affected user khi có moderation decision nếu flow gọi notification module
-- signal quan trọng nên phát qua `outbox_events`
+### Administrative notifications (Thông báo quản trị)
+- báo admin/super-admin khi có report nghiêm trọng
+- báo user bị ảnh hưởng khi có quyết định cuối
+- signal quan trọng đi qua `outbox_events`
 
-## Current boundaries
+## Boundaries & external references (Ranh giới và tham chiếu ngoài)
 
-### Moderation owns
-- report records
-- decision state của report
+### Relationships (Quan hệ)
+- **Moderation owns (Moderation sở hữu)**:
+  - `moderationReports`
+  - report state transition logic (logic chuyển trạng thái)
+  - resolution audit trail (dấu vết kiểm toán cho quyết định)
+- **Moderation does NOT own (Moderation không sở hữu)**:
+  - nội dung gốc của target entity
+  - user authority
+  - push/email delivery infra
 
-### Moderation does not own
-- content/community entity canonical fields ngoài phần moderation summary
-- user identity authority
-- push delivery state
-
-## Current rules
-- `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)
-- target entity giữ summary fields để tối ưu read path
-- guestbook dùng approval workflow nhẹ hơn comment/community content
-- re-resolve hợp lệ phải để lại audit trail mới, không xóa lịch sử cũ
-- `admin` không được thao tác trong `super-admin protected scope`
-- canonical report/decision đi trước; alert/notify đi sau qua outbox
-- target summary phải recompute được từ report source khi recovery
-
+## Current rules (Quy tắc hiện tại)
+- `moderationReports` là nguồn chuẩn gốc duy nhất
+- summary field trên target chỉ là read model
+- re-resolve không được xóa lịch sử cũ
+- canonical write phải chạy trước; alert/notification đi async phía sau
+- summary trên target phải rebuild được từ source report khi cần recovery

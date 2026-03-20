@@ -1,30 +1,37 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: Tạo phiếu báo cáo kiểm duyệt"]
-        M1A["Người dùng report một entity"] --> M1B["Tìm entity đích theo publicId"]
-        M1B --> M1C["Tạo moderationReports"]
-        M1C --> M1D["Lưu entityType, entityPublicId, entityRef, lý do, và người report"]
-        M1D --> M1E["Đồng bộ reportCount và lastReportReason lên entity đích"]
-        M1E --> M1F["Đưa cảnh báo vào hàng chờ cho admin hoặc super-admin"]
+    subgraph Flow1 ["Luồng 1: Tạo phiếu báo cáo kiểm duyệt (Create Moderation Report)"]
+        M1A["Người dùng trình báo thực thể (User reports entity)"] --> M1B["Tìm thực thể đích (Find target by publicId)"]
+        M1B --> M1C["Khởi tạo báo cáo (Create moderationReports)"]
+        M1D["Lưu loại, ID, lý do & người báo (Save type, ID, reason & reporter)"]
+        M1C --> M1D
+        M1E["Đồng bộ số lượng & lý do lên đích (Sync count & reason to target)"]
+        M1D --> M1E
+        M1F["Thêm cảnh báo cho quản trị viên (Append alert for admin)"]
+        M1E --> M1F
     end
 
-    subgraph Flow2 ["Luồng 2: Người kiểm duyệt ra quyết định"]
-        M2A["Moderator mở report"] --> M2B["Chọn decision (quyết định)"]
-        M2B --> M2C["Cập nhật status của moderation report"]
-        M2C --> M2D{"Loại target"}
-        M2D -->|"comment hoặc community post"| M2E["Đặt moderationStatus và isHidden"]
-        M2D -->|"guestbook"| M2F["Đặt approvalStatus"]
-        M2E --> M2G["Thông báo người dùng liên quan nếu có"]
+    M1F -.->|"tiếp (then)"| M2A
+
+    subgraph Flow2 ["Luồng 2: Người thực hiện ra quyết định (Moderator Decision)"]
+        M2A["Mở phiếu báo cáo (Moderator opens report)"] --> M2B["Lựa chọn quyết định (Select decision)"]
+        M2B --> M2C["Cập nhật trạng thái báo cáo (Update report status)"]
+        M2C --> M2D{"Phân loại thực thể (Target type?)"}
+        M2D -->|"Bình luận/Cộng đồng (Comment/Community)"| M2E["Đặt trạng thái & tính ẩn (Set status & isHidden)"]
+        M2D -->|"Lưu niệm (Guestbook)"| M2F["Đặt trạng thái phê duyệt (Set approvalStatus)"]
+        M2G["Thông báo cho người liên quan (Notify affected users)"]
+        M2E --> M2G
         M2F --> M2G
     end
 
-    subgraph Flow3 ["Luồng 3: Đường kiểm duyệt guestbook"]
-        M3A["Guestbook entry đang pending hoặc bị report"] --> M3B["Moderator xem entry"]
-        M3B --> M3C{"Decision"}
-        M3C -->|"approved"| M3D["approvalStatus = approved"]
-        M3C -->|"rejected"| M3E["approvalStatus = rejected"]
-        M3D --> M3F["Entry được hiển thị public"]
-        M3E --> M3G["Entry không hiển thị public"]
-    end
+    M2G -.->|"tiếp (then)"| M3A
 
-    M1F -.->|"tiếp"| M2A
-    M2G -.->|"tiếp"| M3A
+    subgraph Flow3 ["Luồng 3: Quy trình duyệt sổ lưu niệm (Guestbook Approval)"]
+        M3A["Lời nhắn đang chờ hoặc bị báo cáo (Entry pending or reported)"] --> M3B["Xem nội dung lời nhắn (Moderator views entry)"]
+        M3B --> M3C{"Quyết định? (Decision?)"}
+        M3C -->|"Chấp nhận (Approved)"| M3D["Cập nhật trạng thái Chấp nhận (Set approved)"]
+        M3C -->|"Từ chối (Rejected)"| M3E["Cập nhật trạng thái Từ chối (Set rejected)"]
+        M3F["Hiển thị công khai (Publicly visible)"]
+        M3D --> M3F
+        M3G["Không hiển thị công khai (Hidden from public)"]
+        M3E --> M3G
+    end

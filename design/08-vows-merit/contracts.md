@@ -69,3 +69,15 @@
 - Assisted entry là support workflow có kiểm soát, không phải quyền cross-user viết bừa.
 - Nếu reminder/progress downstream bị lệch, recovery path phải là replay signal hoặc recompute summary, không sửa tay âm thầm.
 
+- `403`: Forbidden (Unauthorized attempt at cross-user writes).
+- `409`: Conflict (e.g., duplicate active vow of the same type if disallowed).
+- `500`: Dispatcher/Queue failure or re-calculation error.
+
+---
+
+## Notes for AI/codegen (Ghi chú cho AI & Sinh mã)
+
+- **Not a Todo List**: Vows are spiritual commitments with lifecycle states; do not treat them as simple tasks.
+- **Assisted Entry**: This is a strictly audited support workflow, not a blanket permission to write data across users.
+- **Recovery Path**: If progress summaries drift, the canonical fix is to recalculate from the source logs, never to manually patch the summary fields in isolation.
+- **Social vs. Private**: Ensure the life release journal remains a private spiritual record unless explicitly shared as a community post.

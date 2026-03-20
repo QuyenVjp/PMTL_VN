@@ -2,7 +2,7 @@ flowchart TD
     subgraph Flow1 ["Luồng 1: Biên tập và xuất bản bài viết"]
         C1A["Biên tập viên tạo hoặc mở bài viết trong posts"] --> C1B["Nhập title, content, taxonomy, và media"]
         C1B --> C1C["Chuẩn hóa slug, excerpt, plain text, và normalized search text"]
-        C1C --> C1D{"Payload _status"}
+        C1C --> C1D{"status"}
         C1D -->|"draft"| C1E["Lưu bản nháp"]
         C1D -->|"published"| C1F["Thiết lập publishedAt nếu chưa có"]
         C1E --> C1G["Biên tập viên tiếp tục chỉnh sửa"]
@@ -34,15 +34,15 @@ flowchart TD
 
     subgraph Flow4 ["Luồng 4: Public đọc nội dung và tìm kiếm"]
         C4A["Web gọi compatibility route"] --> C4B{"Loại nội dung"}
-        C4B -->|"Post hoặc Hub hoặc Guide hoặc Download"| C4C["CMS ánh xạ document sang public DTO"]
-        C4B -->|"Sutra tree"| C4D["CMS trả root hoặc chapter DTO"]
+        C4B -->|"Post hoặc Hub hoặc Guide hoặc Download"| C4C["API ánh xạ document sang public DTO"]
+        C4B -->|"Sutra tree"| C4D["API trả root hoặc chapter DTO"]
         C4C --> C4E["Web render"]
         C4D --> C4E
         C4E --> C4F{"Người dùng có tìm kiếm post không?"}
         C4F -->|"Có"| C4G["Search module thực hiện truy vấn Meilisearch"]
         C4G --> C4H{"Meilisearch khả dụng không?"}
         C4H -->|"Có"| C4I["Trả kết quả từ index"]
-        C4H -->|"Không"| C4J["Fallback query qua Payload"]
+        C4H -->|"Không"| C4J["Fallback query qua SQL/API"]
         C4F -->|"Không"| C4K["Kết thúc"]
     end
 

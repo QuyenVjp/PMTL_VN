@@ -1,6 +1,6 @@
 // Search Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
 // Note:
-// - `outbox_events` là transactional handoff log cho business event quan trọng.
+// - `outbox_events` thuộc platform control-plane ở 00-identity/schema.dbml; file này chỉ tham chiếu.
 // - `search_sync_jobs` là execution queue artifact (dấu vết chạy lúc runtime), không phải source of truth (nguồn dữ liệu gốc).
 // - `meilisearch_posts_index` là computed index document (bản ghi chỉ mục được tính ra).
 // - `posts_search_source` biểu diễn source fields (các trường nguồn) thực lấy từ content module.
@@ -11,7 +11,7 @@ Project search_module {
   Search module cho PMTL_VN.
   Cách đọc:
   - posts_search_source = dữ liệu gốc đem đi index.
-  - outbox_events = event log chuẩn cho handoff khỏi canonical write.
+  - outbox_events = event log chuẩn cho handoff khỏi canonical write, được định nghĩa ở schema control-plane.
   - search_sync_jobs = hàng chờ thực thi, không phải dữ liệu nghiệp vụ gốc.
   - meilisearch_posts_index = bản sao để tìm kiếm nhanh.
   '''
@@ -22,14 +22,6 @@ Enum search_job_status {
   active
   completed
   failed
-}
-
-Enum outbox_status {
-  pending
-  processing
-  processed
-  failed
-  dead_letter
 }
 
 Table posts_search_source {
@@ -56,26 +48,10 @@ Table post_search_source_tags {
   }
 }
 
-Table outbox_events {
-  event_id uuid [pk]
-  aggregate_type varchar [not null] // post
-  aggregate_id uuid [not null]
-  event_type varchar [not null] // post.published | post.updated
-  event_version int [not null, default: 1]
-  idempotency_key varchar [not null, unique]
-  payload json [not null]
-  status outbox_status [not null, default: 'pending']
-  available_at timestamp
-  attempts int [default: 0]
-  created_at timestamp [not null]
-  processed_at timestamp
-  last_error text
-}
-
 Table search_sync_jobs {
   job_id varchar [pk]
   queue_name varchar [not null] // search-sync
-  outbox_event_id uuid [ref: > outbox_events.event_id]
+  outbox_event_id uuid [note: "Ref (tham chiếu) tới 00-identity.outbox_events.event_id"]
   document_id uuid
   public_id varchar
   status search_job_status [not null]
@@ -107,7 +83,6 @@ TableGroup "Search Source" [note: "Dữ liệu gốc được trích từ conten
 }
 
 TableGroup "Async Runtime" [note: "Artifact runtime (dấu vết chạy nền) cho worker và queue"] {
-  outbox_events
   search_sync_jobs
 }
 

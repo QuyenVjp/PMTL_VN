@@ -1,113 +1,135 @@
-# Identity Module Decisions
+# Identity Module Decisions (Quyết định Mô-đun Định danh)
 
-> Ghi chú cho sinh viên:
-> Nếu bạn chỉ muốn hiểu nhanh auth của repo, hãy đọc Decision 1 và Decision 3 trước.
+> Note for students (Ghi chú cho sinh viên):
+> Đọc `Decision 1` và `Decision 3` trước nếu anh muốn nắm nhanh auth authority (quyền lực xác thực) và role model (mô hình vai trò).
 
-## Decision 1. Payload auth là auth authority duy nhất
+## Decision 1. NestJS is the sole authentication authority (NestJS là quyền lực xác thực duy nhất)
 
-### Context
-Repo hiện tại đã dùng Payload auth trong `users` collection.
-Design cần dừng việc ám chỉ có auth layer thứ hai.
+### Context (Bối cảnh)
 
-### Decision
-- Đăng ký, đăng nhập, đăng xuất, reset password, session đều đi qua Payload auth.
-- Web không sở hữu auth database hay session authority riêng.
-- Google login được phép tồn tại như provider flow, nhưng phải đi vào cùng `users` collection và cùng session authority.
+Current direction (hướng hiện tại) đã chốt `NestJS` làm backend authority (quyền lực backend).
+Vì vậy tài liệu không được gợi ý bất kỳ secondary auth layer (lớp xác thực thứ hai) nào.
 
-### Rationale
-- Khớp implementation.
-- Giữ auth boundary (ranh giới trách nhiệm) đơn giản và reviewable.
-- Tránh việc AI tách Google login thành một hệ auth riêng.
+### Decision (Quyết định)
 
-### Trade-off
-- Auth phụ thuộc vào availability của CMS runtime.
-- Provider login cần callback mapping rõ để tránh duplicate account.
+- Registration, login, logout, password reset, và session lifecycle (vòng đời phiên) đều thuộc `NestJS auth`.
+- Web/Admin chỉ consume auth contract (tiêu thụ hợp đồng xác thực), không giữ auth database hoặc session authority riêng.
+- Google login được phép tồn tại như provider flow (luồng nhà cung cấp), nhưng phải map về cùng `users` table và cùng session authority.
 
-## Decision 2. Một users collection giữ cả account và profile cơ bản
+### Rationale (Lý do)
 
-### Context
-Repo hiện chỉ có `users` làm owner cho account + profile nhẹ.
+- Keeps auth boundary simple (giữ ranh giới xác thực đơn giản).
+- Makes auditability clearer (giúp kiểm toán rõ hơn).
+- Prevents AI from inventing a second auth system (ngăn AI bịa ra hệ xác thực thứ hai).
 
-### Decision
-- Giữ account data và profile cơ bản trong `users`.
-- Không tạo thêm `profiles` table/module riêng ở current scope.
+### Trade-off (Đánh đổi)
 
-### Rationale
-- Đủ cho nhu cầu hiện tại.
-- Giảm join và drift contract (hợp đồng dữ liệu/nghiệp vụ) giữa auth data với profile data.
+- Auth availability phụ thuộc hoàn toàn vào backend runtime.
+- Provider callback cần mapping rõ để tránh duplicate account (trùng tài khoản).
 
-### Trade-off
-- Nếu public profile sau này phức tạp hơn, có thể cần sub-model hoặc module riêng.
+## Decision 2. One users table for account and basic profile (Một bảng users cho tài khoản và hồ sơ cơ bản)
 
-## Decision 3. Role model cố định, explicit, và nằm trên user
+### Context (Bối cảnh)
 
-### Context
-Repo cần role đủ rõ để quản trị nhưng không nên phình ra quá nhiều tầng gây rối cho solo/community project.
+Current scope (phạm vi hiện tại) chưa cần tách profile thành module riêng.
 
-### Decision
-- Role set chuẩn trong design là:
-  - `super-admin`
+### Decision (Quyết định)
+
+- `users` là canonical owner (bảng sở hữu chuẩn gốc) cho account và basic profile.
+- Không tạo `profiles` table riêng ở current phase.
+
+### Rationale (Lý do)
+
+- Enough for current feature scope (đủ cho phạm vi tính năng hiện tại).
+- Giảm joins và giảm drift giữa auth data với profile data.
+
+### Trade-off (Đánh đổi)
+
+- Nếu public profile sau này phức tạp hơn nhiều, có thể phải tách sub-model hoặc module riêng.
+
+## Decision 3. Fixed role model on the user record (Mô hình vai trò cố định trên bản ghi user)
+
+### Context (Bối cảnh)
+
+PMTL_VN cần role model (mô hình vai trò) đủ rõ cho admin, nhưng không nên overbuild như enterprise IAM.
+
+### Decision (Quyết định)
+
+- Role set (tập vai trò) chuẩn hiện tại:
+  - `super_admin`
   - `admin`
-    - business/UI label: `Phụng sự viên`
   - `member`
-- `role` là explicit field trên user document.
-- `isBlocked` là explicit field để khóa account.
+- `role` là explicit field (trường tường minh) trên `users`.
+- `is_blocked` và `blocked_at` là explicit fields cho account suspension (treo tài khoản).
 
-### Rationale
-- Phù hợp mục tiêu hiện tại của dự án.
-- Giữ access control đơn giản hơn và dễ đồng bộ design hơn.
+### Rationale (Lý do)
 
-### Trade-off
-- Một role `admin` phải ôm cả biên tập, kiểm duyệt, vận hành trong current scope.
-- Nếu sau này team thật sự lớn hơn, có thể cần permission matrix chi tiết hơn, nhưng chưa cần tách thành role mới lúc này.
+- Access control (kiểm soát truy cập) rõ và dễ code.
+- Hợp với current project size (quy mô dự án hiện tại).
 
-## Decision 4. publicId chỉ dùng cho public-facing identity references
+### Trade-off (Đánh đổi)
 
-### Context
-Repo hiện dùng `publicId` ở nhiều public contract (hợp đồng dữ liệu/nghiệp vụ) để tránh expose raw internal ids.
+- `admin` đang phải ôm nhiều nhiệm vụ hơn mô hình phân quyền cực chi tiết.
+- Fine-grained permission (quyền chi tiết hơn) chỉ thêm khi thật sự cần.
 
-### Decision
-- `users.publicId` tồn tại để phục vụ public-facing references khi cần.
-- Internal system relations vẫn có thể dùng internal document id ở service (lớp xử lý nghiệp vụ) layer.
+## Decision 4. public_id is the public-safe identifier (public_id là định danh an toàn để lộ ra ngoài)
 
-### Rationale
-- Đồng bộ với public contract (hợp đồng dữ liệu/nghiệp vụ) style toàn repo.
-- Tách internal persistence id khỏi public API identity.
+### Context (Bối cảnh)
 
-### Trade-off
-- Cần giữ mapper rõ giữa internal id và public id.
+Public contract (hợp đồng công khai) không nên để lộ raw internal id (ID nội bộ thô).
 
-## Decision 5. Provider login được phép, nhưng không tạo auth authority thứ hai
+### Decision (Quyết định)
 
-### Context
-Codebase hiện có Google callback route và field compatibility cho provider mapping.
+- `users.public_id` là public-facing identifier (định danh đối ngoại).
+- Internal relation (quan hệ nội bộ) vẫn có thể dùng internal uuid ở service layer.
 
-### Decision
-- Current design mô tả rõ Google login như một provider flow hợp lệ.
-- Current design không thêm auth framework thứ hai cho session hoặc đăng nhập.
-- Provider identity chỉ là input để resolve hoặc create `users` record trong authority hiện tại.
+### Rationale (Lý do)
 
-### Rationale
-- Khớp repo truth.
-- Tránh tài liệu nói sai rằng repo "không OAuth" trong khi implementation đã có.
+- Giữ API contract nhất quán.
+- Tách persistence id khỏi public-facing identity.
 
-### Trade-off
-- Cần ghi rõ policy merge account theo email/provider id để tránh hiểu nhầm.
+### Trade-off (Đánh đổi)
 
-## Decision 6. Auth side-effect quan trọng đi qua outbox, còn session authority vẫn ở auth source gốc
+- Cần mapping rõ giữa internal id và `public_id`.
 
-### Context
-Register, reset-password, welcome email, provider callback follow-up và account event downstream đều là side effect quan trọng nhưng không phải source of truth.
+## Decision 5. Provider login does not create a second authority (Đăng nhập qua provider không tạo authority thứ hai)
 
-### Decision
-- Canonical auth/account write phải commit vào `users` và auth state trước.
-- Email hoặc downstream auth signal quan trọng đi qua `outbox_events`.
-- Không coi client cookie/local state là nơi recovery auth truth.
+### Context (Bối cảnh)
 
-### Rationale
-- Giữ auth cùng ngôn ngữ reliability với toàn hệ thống.
-- Tránh nhầm lẫn giữa session authority và side-effect delivery.
+Repo có provider flow như Google login, nhưng direction hiện tại không cho phép secondary authority.
 
-### Trade-off
-- Cần quan sát thêm outbox cho auth-related downstream work.
+### Decision (Quyết định)
 
+- Provider login là input flow (luồng đầu vào), không phải auth authority riêng.
+- Provider identity chỉ dùng để resolve hoặc create user trong cùng authority hiện có.
+- Không thêm framework xác thực thứ hai cho session lifecycle.
+
+### Rationale (Lý do)
+
+- Phản ánh đúng direction của backend.
+- Tránh docs vô tình mô tả OAuth như một hệ riêng.
+
+### Trade-off (Đánh đổi)
+
+- Cần account merge policy (chính sách gộp tài khoản) rõ, ví dụ qua email.
+
+## Decision 6. Auth side-effects follow outbox when needed (Tác động phụ của auth đi qua outbox khi thật sự cần)
+
+### Context (Bối cảnh)
+
+Registration, reset password, verification email là auth flows có downstream side-effects (tác động phụ phía sau), nhưng side-effects đó không phải source of truth.
+
+### Decision (Quyết định)
+
+- Canonical auth write-path (luồng ghi xác thực chuẩn gốc) phải commit vào `users` và `sessions` trước.
+- Email hoặc downstream auth signal quan trọng đi qua `outbox_events` khi async reliability được bật.
+- Client cookie hay local state không bao giờ là source of truth cho auth recovery.
+
+### Rationale (Lý do)
+
+- Giữ auth reliability nhất quán với toàn hệ.
+- Tách session authority khỏi side-effect delivery.
+
+### Trade-off (Đánh đổi)
+
+- Nếu bật outbox thật, phải theo dõi backlog và replay path.

@@ -1,6 +1,6 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Người dùng đăng ký nhận push"]
-        N1A["Trình duyệt gửi push subscription (đăng ký nhận push)"] --> N1B["CMS kiểm tra endpoint và keys"]
+        N1A["Trình duyệt gửi push subscription (đăng ký nhận push)"] --> N1B["API kiểm tra endpoint và keys"]
         N1B --> N1C["Upsert pushSubscriptions (tạo mới hoặc cập nhật)"]
         N1C --> N1D["Lưu user, timezone, prefs, và quiet hours"]
     end

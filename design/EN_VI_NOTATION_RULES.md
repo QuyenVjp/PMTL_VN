@@ -1,51 +1,68 @@
-# English-Vietnamese Notation Rules
+# English-Vietnamese Notation Rules (Quy tắc ghi chú Anh-Việt)
 
-File này chốt cách giữ `tiếng Anh chuyên ngành + giải thích tiếng Việt` trong `design/`.
+File này chốt cách viết `English (Việt)` trong toàn bộ `design/`.
 
-Mục tiêu:
+## Mục tiêu
+- giúp người đọc vừa học thuật ngữ kỹ thuật, vừa hiểu nghĩa tiếng Việt ngay tại chỗ
+- giữ khả năng map sang code, schema, API contract và tài liệu kỹ thuật bên ngoài
+- tránh tình trạng chỗ thì toàn tiếng Anh, chỗ thì toàn tiếng Việt, dẫn tới khó đọc và khó học
 
-- anh đọc tài liệu hiểu cặn kẽ hơn
-- vẫn giữ được tiếng Anh để sau này map sang code, docs kỹ thuật, và schema (lược đồ dữ liệu)
-- tránh kiểu tài liệu chỗ thì toàn Anh, chỗ thì toàn Việt
+## Quy tắc bắt buộc
 
-## Nguyên tắc viết
+### 1. Thuật ngữ kỹ thuật quan trọng phải theo mẫu `English (Việt)`
 
-### 1. Nếu là thuật ngữ kỹ thuật quan trọng, viết theo mẫu:
-
-- `owner module (module sở hữu)`
+Ví dụ:
+- `owner module (mô-đun sở hữu)`
 - `canonical record (bản ghi chuẩn gốc)`
 - `read model (mô hình dữ liệu đọc)`
 - `fallback (đường dự phòng)`
 - `async (bất đồng bộ)`
 
-### 2. Nếu là tên field hoặc code identifier
+### 2. Đoạn diễn giải dài phải ưu tiên tiếng Việt
 
-Giữ nguyên identifier, giải thích ở sau nếu cần:
+Không viết cả đoạn dài toàn tiếng Anh rồi thêm một câu tiếng Việt ngắn phía sau.
+Tiếng Anh giữ ở mức:
+- tên khái niệm
+- tên pattern
+- tên runtime component
+- tên field/route/identifier
 
-- `sourceProvenance` = tầng nguồn
-- `reviewStatus` = trạng thái kiểm duyệt
-- `personalPracticeCalendarReadModel` = mô hình đọc lịch tu học cá nhân
-
-### 3. Nếu là heading thuần Việt đã rõ nghĩa
-
-Không cần nhồi tiếng Anh vào mọi chỗ.
+### 3. Tên field, route, enum, code identifier giữ nguyên
 
 Ví dụ:
+- `sourceProvenance`
+- `reviewStatus`
+- `personalPracticeCalendarReadModel`
+- `GET /api/posts/search`
 
-- `Quy tắc đặc biệt cho bài thực hành ngày đặc biệt`
+Nếu cần, giải thích ngay sau identifier.
 
-### 4. Ưu tiên tiếng Việt ở câu diễn giải
+### 4. Heading có thể là song ngữ, nhưng không được “dịch máy”
 
-Không viết cả đoạn văn dài toàn tiếng Anh nếu có thể diễn đạt rõ bằng tiếng Việt.
+Ưu tiên kiểu:
+- `Objectives (Mục tiêu)`
+- `Write path (Thứ tự ghi dữ liệu chuẩn)`
+- `Current rules (Quy tắc hiện tại)`
+
+Tránh heading nửa Anh nửa Việt khó đọc hoặc dịch cứng.
+
+### 5. DBML note được phép ngắn gọn hơn
+
+Trong `schema.dbml`, `note` có thể:
+- giữ tiếng Việt là chính
+- chen thuật ngữ tiếng Anh nếu cần
+
+Ví dụ:
+- `"Nguồn dữ liệu gốc đáng tin cậy nhất (source of truth)"`
+- `"Mô hình đọc được tính ra (derived read model)"`
 
 ## Bộ thuật ngữ chuẩn nên dùng lặp lại
-
-- `owner module (module sở hữu)`
+- `owner module (mô-đun sở hữu)`
 - `canonical (chuẩn gốc)`
 - `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`
 - `read model (mô hình dữ liệu đọc)`
 - `derived read model (mô hình đọc được tính ra từ dữ liệu gốc)`
-- `contract (hợp đồng dữ liệu hoặc hợp đồng nghiệp vụ)`
+- `contract (hợp đồng dữ liệu/nghiệp vụ)`
 - `schema (lược đồ dữ liệu)`
 - `service (lớp xử lý nghiệp vụ)`
 - `boundary (ranh giới trách nhiệm)`
@@ -58,15 +75,18 @@ Không viết cả đoạn văn dài toàn tiếng Anh nếu có thể diễn đ
 - `preconditions (điều kiện tiên quyết)`
 - `write path (thứ tự ghi dữ liệu chuẩn)`
 - `success result (kết quả thành công)`
-- `error expectations (kỳ vọng lỗi)`
+- `error contract (hợp đồng lỗi)`
 - `offline bundle (gói tải ngoại tuyến)`
 - `review status (trạng thái kiểm duyệt)`
-- `source provenance (tầng nguồn gốc dữ liệu)`
+- `source provenance (nguồn gốc dữ liệu)`
 
-## Scope
-
+## Scope (Phạm vi áp dụng)
 File này áp cho toàn bộ `design/*.md`.
 
-Nó không bắt buộc sửa tên file, tên enum, hay code identifier.
-Nó chỉ chốt cách viết diễn giải trong tài liệu.
+Nó không bắt buộc đổi:
+- tên file
+- tên enum
+- tên table
+- code identifier
 
+Nó chỉ chốt cách diễn giải trong tài liệu.

@@ -325,4 +325,3 @@ Phải tách:
   - rule extraction
   - review
 - `source-backed content` phải nhập một lần đúng, còn `daily advisory (thông báo hoặc gói hướng dẫn)` là lớp downstream được tính ra.
-

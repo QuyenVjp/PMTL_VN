@@ -1,7 +1,7 @@
-# Engagement Module
+# Engagement Module (Mô-đun Tương tác & Tu tập)
 
-> Ghi chú cho sinh viên:
-> Engagement ở đây chủ yếu là dữ liệu cá nhân của người dùng, không phải dữ liệu nội dung công khai.
+> Note for students (Ghi chú cho sinh viên):
+> Engagement chỉ giữ self-owned user state (trạng thái cá nhân của người dùng), không giữ public editorial content (nội dung biên tập công khai).
 
 ---
 markmap:
@@ -9,77 +9,77 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# Engagement Module
+# Engagement Module (Mô-đun Tương tác & Tu tập)
 
-## Mục tiêu
-- giữ toàn bộ self-owned user state ngoài content
-- mô tả bookmark, reading progress, practice preference, practice log, practice sheets, và `Ngôi Nhà Nhỏ`
-- tránh để editorial module ôm dữ liệu cá nhân
+## Objectives (Mục tiêu)
 
-## Current scope
+- Store self-owned state outside content (tách dữ liệu cá nhân khỏi content)
+- Manage bookmarks, reading progress, practice preferences, practice logs, practice sheets, và `Ngôi Nhà Nhỏ`
+- Prevent editorial module bloat (ngăn content phình lên vì telemetry/private state)
 
-### Sutra reading state
-- `sutraBookmarks`
-- `sutraReadingProgress`
+## Module collections (Các tập dữ liệu của mô-đun)
 
-### Practice user state
-- `chantPreferences`
-- `practiceLogs`
-- `practiceSheets`
-- `ngoiNhaNhoSheets`
+### Scripture state (Trạng thái đọc kinh)
 
-## Referenced supporting data
+- `sutraBookmarks`: saved points and notes (điểm đánh dấu và ghi chú cá nhân)
+- `sutraReadingProgress`: last-read position and reading telemetry (vị trí đọc gần nhất và tín hiệu tiến độ đọc)
 
-### Scripture references
-- `sutras`
-- `sutraChapters`
+### Practice state (Trạng thái tu tập)
 
-### Practice references
-- `chantItems`
-- `chantPlans`
-- các rule/script/checklist này do content sở hữu, engagement chỉ đọc qua reference
+- `chantPreferences`: user-specific plan settings (cấu hình kế hoạch niệm riêng của user)
+- `practiceLogs`: historical practice sessions (các buổi công phu đã diễn ra)
+- `practiceSheets`: daily electronic practice sheets (bảng công phu điện tử theo ngày)
+- `ngoiNhaNhoSheets`: little-house progress records (bản ghi tiến độ Ngôi Nhà Nhỏ)
 
-## Current responsibilities
+## Referenced supporting data (Dữ liệu hỗ trợ được tham chiếu)
 
-### Bookmark
-- lưu điểm đánh dấu trong sutra
-- lưu excerpt/note cá nhân
+- `sutras`, `sutraChapters` từ Content
+- `chantItems`, `chantPlans` từ Content
+- Boundary rule (quy tắc ranh giới):
+  - Content owns rules/scripts (Nội dung sở hữu luật và kịch bản)
+  - Engagement owns personal progress (Tương tác sở hữu tiến độ cá nhân)
 
-### Reading progress
-- lưu chapter/paragraph gần nhất
-- lưu scroll percent và last read time
+## Current responsibilities (Trách nhiệm hiện tại)
 
-### Practice configuration
-- user bật/tắt optional items
-- set target hoặc intention theo chant item
+### Bookmarking & progress (Đánh dấu & tiến độ)
 
-### Practice history
-- ghi log buổi công phu theo ngày và plan
-- lưu item states, thời gian bắt đầu/kết thúc, notes
+- lưu bookmark, note, đoạn trích cá nhân
+- lưu recent chapter và progress telemetry
 
-### Practice sheets
-- lưu checklist/bài tập công phu hằng ngày theo dạng tờ thực hành
-- lưu các mục đã hoàn thành theo ngày hoặc theo kế hoạch
-- hỗ trợ app offline-first rồi đồng bộ sau
+### Practice customization (Cá nhân hóa tu tập)
 
-### Ngoi Nha Nho
-- quản lý từng tờ `Ngôi Nhà Nhỏ` như inventory self-owned
-- lưu tiến độ 4 loại kinh trên từng tờ
-- lưu mốc `completed`, `self_stored`, `offered`
+- bật/tắt chant item tùy user
+- đặt goal hoặc intention cá nhân cho một số plan
 
-## Current boundaries
+### Session history (Lịch sử buổi tu)
 
-### Engagement owns
-- self-owned user state
+- log buổi công phu theo ngày/plan
+- lưu status, start/end time, notes
 
-### Engagement does not own
-- canonical sutra content
-- editorial content
+### Practice sheets (Bảng công phu)
+
+- quản lý bảng công phu điện tử hằng ngày
+- hỗ trợ offline-first completion và sync lại sau
+
+### Little House (Ngôi Nhà Nhỏ)
+
+- quản lý từng house như một inventory item (đơn vị tồn kho riêng)
+- theo dõi tiến độ 4 thành phần niệm bắt buộc
+- theo dõi lifecycle như `completed`, `self_stored`, `offered`
+
+## Engagement owns (Tương tác sở hữu)
+
+- mọi data gắn với `userId` cho private progress
+
+## Engagement does not own (Tương tác không sở hữu)
+
+- canonical scripture text
+- editorial posts
 - moderation reports
-- notification delivery
+- notification delivery infrastructure
 
-## Assumption
-- `chantItems` và `chantPlans` là practice reference data hỗ trợ engagement flows.
-- Module này chỉ mô tả phần user-state và quan hệ với các reference đó.
-- các tài liệu PDF như niệm hằng ngày, phóng sinh, và Ngôi Nhà Nhỏ được chuẩn hóa trước ở `design/01-content/practice-support-reference.md`
-- canonical personal practice sheet và `Ngôi Nhà Nhỏ` nằm ở engagement, không nằm ở content
+## Assumptions (Giả định)
+
+- `chantItems` và `chantPlans` là reference content
+- practice-facing rules từ PDF/reference docs được chốt ở `01-content`
+- canonical self-owned sheets/houses luôn nằm trong Engagement, không nằm trong Content

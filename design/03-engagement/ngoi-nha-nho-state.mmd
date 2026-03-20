@@ -1,9 +1,9 @@
 stateDiagram-v2
-    [*] --> Draft
-    Draft --> InProgress: "Bắt đầu tụng trên một tờ mới (Start chanting on a new sheet)"
-    InProgress --> InProgress: "Chấm thêm một vòng (Mark one more circle)"
-    InProgress --> Completed: "Đã đủ tất cả số lượng yêu cầu (All required counts completed)"
-    Completed --> SelfStored: "Giữ lại làm tự tồn kinh văn (Keep as self-stored scripture sheet)"
-    Completed --> Offered: "Đốt hoặc hóa theo thực hành (Burn/offer according to practice)"
+    [*] --> Draft: "Lên thông tin bìa tờ kinh (Fill cover information)"
+    Draft --> InProgress: "Bắt đầu tụng tờ mới (Start chanting on new sheet)"
+    InProgress --> InProgress: "Chấm thêm một bài (Mark one more circle)"
+    InProgress --> Completed: "Đã đủ số lượng yêu cầu (All counts completed)"
+    Completed --> SelfStored: "Giữ lại làm tự tồn (Keep as self-stored)"
+    Completed --> Offered: "Đốt hoặc hóa thực tế (Burn or offer physically)"
     SelfStored --> Offered: "Hóa vào lúc khác (Offer later)"
-    Offered --> [*]
+    Offered --> [*]: "Kết thúc vòng đời tờ kinh (End of sheet lifecycle)"

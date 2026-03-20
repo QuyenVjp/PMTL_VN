@@ -1,98 +1,98 @@
-// Content Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
+// Content Module - logical schema (Lược đồ logic Mô-đun Nội dung) aligned with current repo truth (khớp với thực trạng repo)
 // Note:
-// - Đây là logical schema (lược đồ logic), không phải dump DB vật lý từ Payload.
-// - Workflow publish (luồng xuất bản) hiện bám Payload drafts (_status) + published_at.
-// - Repo hiện chưa materialize (kết tinh thành field riêng) một visibility field chung cho toàn bộ editorial collections.
-//   Nếu sau này cần gated content (nội dung giới hạn truy cập), field audience phải được thêm ở collection owner tương ứng.
+// - Đây là lược đồ logic (logical schema), không phải bản sao vật lý của cơ sở dữ liệu.
+// - Quy trình xuất bản (publish workflow) hiện bám sát trạng thái tường minh (status) và thời điểm xuất bản (published_at).
+// - Hiện tại các bộ sưu tập nội dung biên tập (editorial collections) chưa có trường phân quyền hiển thị (visibility field) chung.
+//   Nếu sau này cần tính năng nội dung giới hạn (gated content), trường `audience` (đối tượng) phải được thêm ở thực thể sở hữu tương ứng.
 
 Project content_module {
   database_type: "PostgreSQL"
   Note: '''
-  Content module cho PMTL_VN.
-  Gợi ý đọc nhanh:
-  - Nhìn nhóm Editorial Content (nội dung biên tập) trước.
-  - Sau đó nhìn nhóm Practice Support (nội dung hỗ trợ tu tập) nếu anh đang làm phần niệm kinh / nghi thức.
-  - Sau đó nhìn nhóm Scripture Library (thư viện kinh).
-  - Cuối cùng nhìn nhóm Taxonomy and Shared References (phân loại và tham chiếu dùng chung).
+  Content module cho PMTL_VN (Mô-đun Nội dung PMTL_VN).
+  Gợi ý đọc nhanh (Quick guide):
+  - Nhìn nhóm Editorial Content (Nội dung biên tập) trước.
+  - Sau đó nhìn nhóm Practice Support (Hỗ trợ tu tập) nếu đang làm phần niệm kinh / nghi thức.
+  - Sau đó nhìn nhóm Scripture Library (Thư viện kinh điển).
+  - Cuối cùng nhìn nhóm Taxonomy and Shared References (Phân loại và Tham chiếu dùng chung).
   '''
 }
 
 Enum content_publication_status {
-  draft
-  published
+  draft [note: "Bản nháp"]
+  published [note: "Đã xuất bản"]
 }
 
 Table users {
-  id uuid [pk]
-  public_id varchar [unique]
-  full_name varchar
+  id uuid [pk, note: "Khóa chính người dùng (tham chiếu)"]
+  public_id varchar [unique, note: "ID công khai"]
+  full_name varchar [note: "Họ tên đầy đủ"]
 }
 
 Table media_assets {
-  id uuid [pk]
-  public_id varchar [unique]
-  storage_provider varchar [not null, note: "local | s3-compatible"]
-  object_key varchar [unique, not null]
-  original_filename varchar
-  filename varchar
-  mime_type varchar
-  content_type varchar
-  size_bytes bigint
-  checksum_sha256 varchar
-  owner_id uuid [ref: > users.id]
-  created_at timestamp
-  updated_at timestamp
+  id uuid [pk, note: "Khóa chính phương tiện"]
+  public_id varchar [unique, note: "ID công khai"]
+  storage_provider varchar [not null, note: "Bên cung cấp: local | s3-compatible"]
+  object_key varchar [unique, not null, note: "Khóa đối tượng lưu trữ"]
+  original_filename varchar [note: "Tên tệp gốc"]
+  filename varchar [note: "Tên tệp lưu trữ"]
+  mime_type varchar [note: "Loại tệp chuẩn"]
+  content_type varchar [note: "Loại nội dung"]
+  size_bytes bigint [note: "Kích thước tệp (bytes)"]
+  checksum_sha256 varchar [note: "Mã kiểm tra tính toàn vẹn"]
+  owner_id uuid [ref: > users.id, note: "Người tải lên"]
+  created_at timestamp [note: "Thời điểm tạo"]
+  updated_at timestamp [note: "Thời điểm cập nhật"]
 }
 
 Table categories {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính danh mục"]
   public_id varchar [unique]
-  name varchar [not null]
-  slug varchar [unique]
-  description text
+  name varchar [not null, note: "Tên danh mục"]
+  slug varchar [unique, note: "Đường dẫn thân thiện cho SEO"]
+  description text [note: "Mô tả danh mục"]
   created_at timestamp
   updated_at timestamp
 }
 
 Table tags {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính thẻ"]
   public_id varchar [unique]
-  name varchar [not null]
+  name varchar [not null, note: "Tên thẻ"]
   slug varchar [unique]
   created_at timestamp
   updated_at timestamp
 }
 
 Table posts {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính bài viết"]
   public_id varchar [unique]
-  title varchar [not null]
-  slug varchar [unique, not null]
-  post_type varchar [not null] // article | transcript | source-note | event-recap
-  source_ref varchar
-  author_id uuid [ref: > users.id]
+  title varchar [not null, note: "Tiêu đề bài viết"]
+  slug varchar [unique, not null, note: "Đường dẫn thân thiện"]
+  post_type varchar [not null, note: "Loại bài: article | transcript | source-note | event-recap"]
+  source_ref varchar [note: "Tham chiếu nguồn chính thống nếu có"]
+  author_id uuid [ref: > users.id, note: "Mã biên tập viên"]
   primary_category_id uuid [ref: > categories.id]
-  cover_media_id uuid [ref: > media_assets.id]
-  _status content_publication_status [not null]
-  published_at timestamp
-  excerpt_override text
-  excerpt_computed text
-  content jsonb
-  content_plain_text text
-  normalized_search_text text
-  featured bool [default: false]
-  allow_comments bool [default: true]
-  comment_count int [default: 0]
-  views int [default: 0]
-  unique_views int [default: 0]
-  likes int [default: 0]
+  cover_media_id uuid [ref: > media_assets.id, note: "Ảnh bìa"]
+  _status content_publication_status [not null, note: "Trạng thái xuất bản"]
+  published_at timestamp [note: "Thời điểm xuất bản thực tế"]
+  excerpt_override text [note: "Tóm tắt thủ công"]
+  excerpt_computed text [note: "Tóm tắt tự động tính toán"]
+  content jsonb [note: "Nội dung phong phú (Rich content)"]
+  content_plain_text text [note: "Nội dung văn bản thô phục vụ tìm kiếm"]
+  normalized_search_text text [note: "Văn bản đã chuẩn hóa phục vụ tìm kiếm"]
+  featured bool [default: false, note: "Đánh dấu bài nổi bật"]
+  allow_comments bool [default: true, note: "Cho phép bình luận"]
+  comment_count int [default: 0, note: "Số lượng bình luận tổng hợp"]
+  views int [default: 0, note: "Lượt xem tổng"]
+  unique_views int [default: 0, note: "Lượt xem duy nhất"]
+  likes int [default: 0, note: "Số lượt thích"]
   created_at timestamp
   updated_at timestamp
 }
 
 Table post_tags {
-  post_id uuid [ref: > posts.id]
-  tag_id uuid [ref: > tags.id]
+  post_id uuid [ref: > posts.id, note: "Mã bài viết"]
+  tag_id uuid [ref: > tags.id, note: "Mã thẻ"]
 
   indexes {
     (post_id, tag_id) [pk]
@@ -118,26 +118,26 @@ Table post_gallery_media {
 }
 
 Table hub_pages {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính trang trung tâm"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tiêu đề trang"]
   slug varchar [unique, not null]
-  description text
+  description text [note: "Mô tả ngắn"]
   cover_media_id uuid [ref: > media_assets.id]
-  visual_theme varchar
-  show_in_menu bool [default: false]
-  sort_order int [default: 0]
+  visual_theme varchar [note: "Giao diện hiển thị"]
+  show_in_menu bool [default: false, note: "Hiển thị trên trình đơn"]
+  sort_order int [default: 0, note: "Thứ tự sắp xếp"]
   _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp
 }
 
 Table hub_page_blocks {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính khối nội dung"]
   hub_page_id uuid [ref: > hub_pages.id]
-  block_type varchar [not null]
-  title varchar
-  content text
+  block_type varchar [not null, note: "Loại khối: text | post-grid | download-list..."]
+  title varchar [note: "Tiêu đề khối"]
+  content text [note: "Nội dung khối"]
   sort_order int [default: 0]
 }
 
@@ -151,14 +151,14 @@ Table hub_page_curated_posts {
 }
 
 Table beginner_guides {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính hướng dẫn sơ học"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tiêu đề hướng dẫn"]
   description text
   content jsonb
-  guide_type varchar [not null] // starter | practice | faq
-  duration varchar
-  step_number int
+  guide_type varchar [not null, note: "Loại: starter | practice | faq"]
+  duration varchar [note: "Thời gian ước tính để hoàn thành"]
+  step_number int [note: "Thứ tự bước (nếu có)"]
   order_no int [default: 0]
   _status content_publication_status [not null]
   created_at timestamp
@@ -168,7 +168,7 @@ Table beginner_guides {
 Table beginner_guide_media {
   guide_id uuid [ref: > beginner_guides.id]
   media_id uuid [ref: > media_assets.id]
-  usage_role varchar // image | attachment
+  usage_role varchar [note: "Vai trò sử dụng: image | attachment"]
 
   indexes {
     (guide_id, media_id, usage_role) [pk]
@@ -176,20 +176,20 @@ Table beginner_guide_media {
 }
 
 Table downloads {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính tài nguyên tải về"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tiêu đề tài nguyên"]
   description text
-  file_media_id uuid [ref: > media_assets.id]
-  thumbnail_media_id uuid [ref: > media_assets.id]
-  external_url varchar
-  file_type varchar
-  file_size_mb numeric
-  category varchar
-  group_year int
-  group_label varchar
-  is_updating bool [default: false]
-  is_new bool [default: false]
+  file_media_id uuid [ref: > media_assets.id, note: "Tệp tin thực tế"]
+  thumbnail_media_id uuid [ref: > media_assets.id, note: "Ảnh thu nhỏ"]
+  external_url varchar [note: "Đường dẫn bên ngoài (nếu có)"]
+  file_type varchar [note: "Loại tệp: pdf | mp3 | mp4..."]
+  file_size_mb numeric [note: "Kích thước tệp (MB)"]
+  category varchar [note: "Phân loại tải về"]
+  group_year int [note: "Năm phát hành (phục vụ gom nhóm)"]
+  group_label varchar [note: "Nhãn gom nhóm (ví dụ: Pháp hội Sydney)"]
+  is_updating bool [default: false, note: "Đánh dấu đang cập nhật"]
+  is_new bool [default: false, note: "Đánh dấu tài liệu mới"]
   sort_order int [default: 0]
   _status content_publication_status [not null]
   created_at timestamp
@@ -197,15 +197,15 @@ Table downloads {
 }
 
 Table chant_items {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính bài niệm/kinh lẻ"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tiêu đề bài niệm"]
   slug varchar [unique]
-  kind varchar [not null, note: "Ví dụ: chú, kinh, opening-ritual (nghi thức mở đầu), prayer-template (mẫu lời khấn)"]
-  opening_prayer text
-  content jsonb [note: "Script (kịch bản / văn bản chuẩn) hoặc rich content (nội dung phong phú) chính"]
-  audio_media_id uuid [ref: > media_assets.id]
-  script_file_media_id uuid [ref: > media_assets.id]
+  kind varchar [not null, note: "Loại: chú, kinh, nghi thức mở đầu, mẫu lời khấn..."]
+  opening_prayer text [note: "Lời khấn nguyện trước khi tụng"]
+  content jsonb [note: "Kịch bản (script) hoặc nội dung văn bản chính"]
+  audio_media_id uuid [ref: > media_assets.id, note: "Tệp âm thanh chuẩn"]
+  script_file_media_id uuid [ref: > media_assets.id, note: "Tệp kịch bản (ví dụ PDF)"]
   created_at timestamp
   updated_at timestamp
 }
@@ -220,49 +220,49 @@ Table chant_item_preview_media {
 }
 
 Table chant_item_recommended_presets {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính bộ số biến gợi ý"]
   chant_item_id uuid [ref: > chant_items.id]
-  label varchar
-  target int
+  label varchar [note: "Nhãn gợi ý (ví dụ: Bình thường, Trọng bệnh)"]
+  target int [note: "Số biến mục tiêu"]
 }
 
 Table chant_item_time_rules {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính quy tắc thời gian"]
   chant_item_id uuid [ref: > chant_items.id]
-  date_from date
-  date_to date
-  lunar_day int
-  notes varchar
+  date_from date [note: "Áp dụng từ ngày"]
+  date_to date [note: "Áp dụng đến ngày"]
+  lunar_day int [note: "Áp dụng cho ngày âm lịch cụ thể"]
+  notes varchar [note: "Ghi chú quy tắc"]
 }
 
 Table chant_plans {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính nghi thức/kế hoạch"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tiêu đề nghi thức"]
   slug varchar [unique]
-  plan_type varchar [not null, note: "Ví dụ: daily-recitation (công khóa hằng ngày), life-release (phóng sanh), little-house (Ngôi Nhà Nhỏ)"]
+  plan_type varchar [not null, note: "Loại: công khóa hằng ngày, phóng sinh, Ngôi Nhà Nhỏ..."]
   created_at timestamp
   updated_at timestamp
 }
 
 Table chant_plan_items {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính thành phần nghi thức"]
   chant_plan_id uuid [ref: > chant_plans.id]
   chant_item_id uuid [ref: > chant_items.id]
-  target int
-  is_optional bool [default: false]
+  target int [note: "Số biến quy định trong nghi thức"]
+  is_optional bool [default: false, note: "Dấu đánh thành phần tùy chọn"]
 }
 
 Table sutras {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính kinh văn gốc"]
   public_id varchar [unique]
-  title varchar [not null]
+  title varchar [not null, note: "Tên bộ kinh"]
   slug varchar [unique, not null]
   description text
-  short_excerpt text
+  short_excerpt text [note: "Đoạn trích ngắn"]
   cover_media_id uuid [ref: > media_assets.id]
-  translator varchar
-  reviewer varchar
+  translator varchar [note: "Tên dịch giả"]
+  reviewer varchar [note: "Tên người hiệu đính"]
   is_featured bool [default: false]
   sort_order int [default: 0]
   _status content_publication_status [not null]
@@ -280,45 +280,45 @@ Table sutra_tags {
 }
 
 Table sutra_volumes {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính quyển kinh"]
   public_id varchar [unique]
   sutra_id uuid [not null, ref: > sutras.id]
-  title varchar [not null]
-  volume_number int [not null]
+  title varchar [not null, note: "Tên quyển"]
+  volume_number int [not null, note: "Số thứ tự quyển"]
   description text
-  book_start varchar
-  book_end varchar
+  book_start varchar [note: "Trang bắt đầu (để đối soát bản in)"]
+  book_end varchar [note: "Trang kết thúc"]
   sort_order int [default: 0]
 }
 
 Table sutra_chapters {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính chương kinh"]
   public_id varchar [unique]
   sutra_id uuid [not null, ref: > sutras.id]
   volume_id uuid [ref: > sutra_volumes.id]
-  title varchar [not null]
+  title varchar [not null, note: "Tên chương"]
   slug varchar [unique, not null]
   chapter_number int [not null]
-  opening_text text
-  ending_text text
-  content jsonb
-  estimated_read_minutes int
+  opening_text text [note: "Lời dẫn đầu chương"]
+  ending_text text [note: "Lời kết chương"]
+  content jsonb [note: "Nội dung văn bản chương kinh"]
+  estimated_read_minutes int [note: "Thời gian đọc ước tính"]
   sort_order int [default: 0]
 }
 
 Table sutra_glossary {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính thuật ngữ"]
   public_id varchar [unique]
   sutra_id uuid [not null, ref: > sutras.id]
   volume_id uuid [ref: > sutra_volumes.id]
   chapter_id uuid [ref: > sutra_chapters.id]
-  term varchar [not null]
-  meaning text [not null]
-  marker_key varchar
+  term varchar [not null, note: "Từ vựng/Thuật ngữ"]
+  meaning text [not null, note: "Ý nghĩa giải thích"]
+  marker_key varchar [note: "Mã định danh để neo trong văn bản"]
   sort_order int [default: 0]
 }
 
-TableGroup "Editorial Content" [note: "Nội dung biên tập công khai hoặc bán công khai"] {
+TableGroup "Editorial Content" [note: "Nhóm Nội dung biên tập công khai"] {
   posts
   hub_pages
   hub_page_blocks
@@ -326,7 +326,7 @@ TableGroup "Editorial Content" [note: "Nội dung biên tập công khai hoặc 
   downloads
 }
 
-TableGroup "Practice Support" [note: "Nội dung hỗ trợ tu tập: bài niệm, plan, rule, media, ritual guide (hướng dẫn nghi thức)"] {
+TableGroup "Practice Support" [note: "Nhóm Hỗ trợ tu tập: Bài niệm, kế hoạch, quy tắc, hướng dẫn nghi thức"] {
   chant_items
   chant_item_preview_media
   chant_item_recommended_presets
@@ -335,7 +335,7 @@ TableGroup "Practice Support" [note: "Nội dung hỗ trợ tu tập: bài niệ
   chant_plan_items
 }
 
-TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ cho editorial (nội dung biên tập)"] {
+TableGroup "Editorial Relations" [note: "Các bảng quan hệ phụ trợ cho nội dung biên tập"] {
   post_tags
   post_related_posts
   post_gallery_media
@@ -343,7 +343,7 @@ TableGroup "Editorial Relations" [note: "Bảng nối và quan hệ phụ trợ 
   beginner_guide_media
 }
 
-TableGroup "Scripture Library" [note: "Thư viện kinh và cây đọc kinh"] {
+TableGroup "Scripture Library" [note: "Nhóm Thư viện kinh điển và cấu trúc đọc kinh"] {
   sutras
   sutra_tags
   sutra_volumes
@@ -351,7 +351,7 @@ TableGroup "Scripture Library" [note: "Thư viện kinh và cây đọc kinh"] {
   sutra_glossary
 }
 
-TableGroup "Taxonomy and Shared References" [note: "Dùng chung cho nhiều collection content (bộ sưu tập nội dung)"] {
+TableGroup "Taxonomy and Shared References" [note: "Nhóm tham chiếu dùng chung cho toàn bộ mô-đun"] {
   users
   media_assets
   categories

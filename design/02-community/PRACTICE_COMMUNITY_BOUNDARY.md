@@ -1,67 +1,73 @@
-# Practice Community boundary (ranh giới trách nhiệm)
+# Practice Community Boundary (Ranh giới giữa Tu tập và Cộng đồng)
 
-File này chốt ranh giới giữa:
+Tài liệu này chốt boundary (ranh giới) giữa:
 
-- thực hành cá nhân
-- chia sẻ cộng đồng
-- testimony / linh nghiệm
-- hỗ trợ hỏi nhau trong diễn đàn
+- private individual practice (tu tập cá nhân riêng tư)
+- shared community interaction (tương tác cộng đồng được chia sẻ)
+- spiritual testimonies (bài chia sẻ linh nghiệm/cảm ứng)
+- peer/forum support (hỗ trợ đồng tu trên diễn đàn)
 
-## Quy tắc gốc
+## Core rules (Quy tắc gốc)
 
-- thứ gì là self-owned practice record thì không tự public ra community
-- community chỉ nhận:
-  - bài chia sẻ chủ động
-  - câu hỏi thảo luận
-  - phản hồi linh nghiệm user tự nguyện đăng
+- personal practice record (`self-owned`) không được tự động sync ra community surface
+- Community module chỉ nhận:
+  - proactive user-initiated sharing (nội dung người dùng chủ động chia sẻ)
+  - discussion thread và question
+  - spiritual testimony người dùng tự nguyện đăng
 
-## Những thứ không nên canonical ở community
+## Non-canonical at community (Dữ liệu không được lấy Community làm nơi giữ gốc)
 
-- `Ngôi Nhà Nhỏ` inventory
-- tiến độ vow riêng tư
-- sổ tay phóng sanh đầy đủ
-- lịch sử đọc Bạch thoại
-- full QA search history
+Những thứ sau không được nằm ở Community như primary record (bản ghi gốc):
 
-## Những thứ có thể export sang community
+- little-house inventory hoặc private sheet
+- private vow progress hoặc merit log cá nhân
+- full life-release journal hoặc session history
+- Baihua reading log hoặc QA search log
 
-### Từ `08-vows-merit`
-- một câu chuyện chia sẻ về phóng sanh
-- một bài chia sẻ về hoàn nguyện
+## Exportable to community (Dữ liệu có thể xuất/chia sẻ sang cộng đồng)
 
-### Từ `03-engagement`
-- trải nghiệm học bài tập hằng ngày
-- chia sẻ cách duy trì công phu
+User có thể voluntarily export (tự nguyện chia sẻ lại) hoặc viết bài về:
 
-### Từ `09-wisdom-qa`
-- trích dẫn bài đã học kèm cảm nhận cá nhân
+### From Vows & Merit (`08-vows-merit`)
 
-## Recommended community surfaces
+- personal story về life release hoặc fulfilling vow
 
-### Diễn đàn chia sẻ
-- kinh nghiệm tu học
-- chia sẻ phóng sanh
-- chia sẻ linh nghiệm
-- động viên nhau giữ công phu
+### From Engagement (`03-engagement`)
 
-### Hỏi nhau
-- hỏi cách dùng app
-- hỏi chỗ tìm tài liệu
-- hỏi kinh nghiệm thực hành cơ bản
+- experience với daily practice
+- mẹo giữ consistency trong tu tập
 
-### Không nên để community thay thế
-- `Huyền học vấn đáp` chính thống
-- `Bạch thoại Phật pháp` chính thống
-- hướng dẫn nghi thức chuẩn
+### From Wisdom & QA (`09-wisdom-qa`)
 
-## Moderation guidance
+- quote từ teaching kèm personal reflection
 
-- bài community có thể tham chiếu experience cá nhân
-- nhưng không được trở thành nguồn giáo lý chính thức
-- post chứa hướng dẫn thực hành cần có link về nguồn chính thống nếu nhạy cảm
+## Recommended surfaces (Bề mặt khuyến nghị)
 
-## Notes for AI/codegen
+### Sharing forum (Diễn đàn chia sẻ)
 
-- Nếu feature là "share to community", canonical record (bản ghi chuẩn gốc) vẫn ở module gốc trước.
-- Community post chỉ là bản export hoặc bài viết mới do user chủ động tạo.
+- practical study experience
+- life-release story
+- spiritual encouragement thread
 
+### Peer support (Hỗ trợ đồng tu)
+
+- app usage question
+- resource location question
+- basic practice experience sharing
+
+## What community should not replace (Những gì Community không thay thế)
+
+- official Metaphysics QA hoặc teaching của thầy
+- official Baihua content
+- canonical ritual guide và liturgical script
+
+## Moderation guidance (Hướng dẫn kiểm duyệt)
+
+- community post có thể nhắc trải nghiệm cá nhân, nhưng không được coi là official doctrine
+- post có guidance nhạy cảm nên link về official source trong intro/beginner surfaces
+
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
+
+- nếu có feature `share to community`, canonical record phải commit ở source module trước
+- community post hoặc là data export đã qua mapping, hoặc là bài mới hoàn toàn do user chủ động viết
+- không được trộn individual progress record với public thread

@@ -1,66 +1,65 @@
-# Submit Community Post
+# Submit Community Post (Gửi Bài đăng Cộng đồng)
 
-## Purpose
-- Cho thành viên gửi bài cộng đồng để hiển thị trên không gian thảo luận mà vẫn giữ anti-spam và moderation boundary (ranh giới trách nhiệm) rõ ràng.
+## Mục đích (Purpose)
+Cho phép thành viên gửi bài viết lên không gian thảo luận cộng đồng trong khi vẫn đảm bảo các rào chắn chống thư rác (anti-spam) và phân định ranh giới trách nhiệm kiểm duyệt (moderation boundary) rõ ràng.
 
-## owner module (module sở hữu)
-- `community`
+## Mô-đun sở hữu (Owner module)
+- `community` (Cộng đồng)
 
-## Actors
-- `member`
-- có thể hỗ trợ `guest` nếu policy sau này mở, nhưng current flow nên ưu tiên user có session
+## Các đối tượng thực hiện (Actors)
+- Thành viên (`member`).
+- Có thể hỗ trợ khách (`guest`) nếu chính sách sau này cho phép, nhưng luồng hiện tại ưu tiên người dùng có phiên làm việc (session).
 
-## trigger (điểm kích hoạt)
-- Web gọi `POST /api/community/posts/submit`.
+## Điểm kích hoạt (Trigger)
+Trang web gửi yêu cầu đến `POST /api/community/posts/submit`.
 
-## preconditions (điều kiện tiên quyết)
-- Actor có session hợp lệ hoặc flow cho phép guest rõ ràng.
-- Payload qua `communityPostSubmitSchema`.
-- Request guard không chặn.
+## Điều kiện tiên quyết (Preconditions)
+- Đối tượng thực hiện có phiên làm việc hợp lệ hoặc luồng cho phép khách.
+- Thân yêu cầu (request body) tuân thủ cấu trúc `communityPostSubmitSchema`.
+- Chốt chặn yêu cầu (request guard) không chặn hành động này.
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- `communityPostSubmitSchema`
-- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
+## Hợp đồng dữ liệu đầu vào (Input Contract)
+- `communityPostSubmitSchema` (Cấu trúc gửi bài đăng cộng đồng).
+- Nếu có tín hiệu hạ nguồn, gói dữ liệu outbox phải bao gồm loại sự kiện (event type), phiên bản sự kiện (event version) và mã tính không đổi (idempotency key).
 
-## Read set
-- identity session
-- `communityPosts`
-- request guard / anti-spam state
+## Tập hợp dữ liệu đọc (Read Set)
+- Phiên làm việc định danh (identity session).
+- Tài liệu bài đăng cộng đồng (`communityPosts`).
+- Trạng thái chốt chặn yêu cầu / chống thư rác.
 
-## write path (thứ tự ghi dữ liệu chuẩn)
-1. Parse body theo schema (lược đồ dữ liệu).
-2. Xác thực actor và request guard.
-3. Ghi canonical record (bản ghi chuẩn gốc) vào `communityPosts`.
-4. Khởi tạo summary fields đọc nhanh nếu collection dùng.
-5. Append audit `community.post.submit`.
-6. Nếu policy yêu cầu attention nội bộ, append outbox event cho admin/super-admin notification hoặc moderation review signal.
+## Thứ tự ghi dữ liệu chuẩn (Write Path)
+1. Phân tích thân yêu cầu theo cấu trúc dữ liệu (schema).
+2. Xác thực đối tượng thực hiện và kiểm tra chốt chặn yêu cầu.
+3. Ghi bản ghi chuẩn gốc (canonical record) vào bộ sưu tập `communityPosts`.
+4. Khởi tạo các trường tóm tắt đọc nhanh nếu bộ sưu tập yêu cầu.
+5. Thêm sự kiện nhật ký kiểm toán hành động `community.post.submit`.
+6. Nếu chính sách yêu cầu sự chú ý nội bộ, nạp thêm sự kiện outbox để tạo thông báo cho quản trị viên hoặc tín hiệu đánh giá kiểm duyệt.
 
-## async (bất đồng bộ) side-effects
-- internal notification
-- moderation attention signal nếu policy cần
+## Tác động phụ bất đồng bộ (Async Side-effects)
+- Gửi thông báo nội bộ.
+- Tín hiệu yêu cầu sự chú ý kiểm duyệt nếu chính sách quy định.
 
-## success result (kết quả thành công)
-- Community post được tạo ở module owner.
-- Public/community feed có thể hiển thị theo policy duyệt hiện tại.
+## Kết quả thành công (Success Result)
+- Bài đăng cộng đồng được tạo thành công tại mô-đun sở hữu.
+- Dòng tin tức cộng đồng (community feed) có thể hiển thị bài đăng theo chính sách phê duyệt hiện hành.
 
-## Errors
-- `400`: body không hợp lệ.
-- `401`: thiếu session khi flow yêu cầu login.
-- `403`: actor bị block.
-- `429`: anti-spam chặn.
-- `500`: lỗi hệ thống.
+## Các lỗi có thể xảy ra (Errors)
+- `400`: Thân yêu cầu không hợp lệ.
+- `401`: Thiếu phiên làm việc khi luồng xử lý yêu cầu đăng nhập.
+- `403`: Đối tượng thực hiện bị chặn.
+- `429`: Bị chặn bởi hệ thống chống thư rác.
+- `500`: Lỗi hệ thống.
 
-## Audit
-- log `community.post.submit`
+## Kiểm toán (Audit)
+- Ghi nhật ký hành động `community.post.submit`.
 
-## Idempotency / anti-spam
-- request guard là lớp chống flood chính.
-- không dùng notification job làm dấu hiệu canonical rằng bài đã được tạo.
-- replay outbox không được tạo duplicate alert rõ ràng.
+## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
+- Chốt chặn yêu cầu là lớp bảo vệ chính chống lại việc gửi tin hàng loạt (flood).
+- Không sử dụng tiến trình thông báo làm dấu hiệu chuẩn gốc cho việc bài đăng đã được tạo.
+- Việc phát lại hàng đợi outbox không được tạo ra các cảnh báo trùng lặp rõ ràng.
 
-## Performance target
-- submit path chỉ ghi canonical record và append outbox event cho downstream work.
+## Mục tiêu hiệu năng (Performance Target)
+- Luồng gửi bài chỉ ghi bản ghi chuẩn gốc và nạp sự kiện outbox cho các công việc hạ nguồn.
 
-## Notes for AI/codegen
-- `communityPosts` là canonical record (bản ghi chuẩn gốc); moderation và notification chỉ là downstream.
-
+## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
+- `communityPosts` là bản ghi chuẩn gốc (canonical record); quy trình kiểm duyệt và thông báo chỉ là các tác vụ hạ nguồn.

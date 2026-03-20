@@ -1,9 +1,9 @@
 flowchart TD
     subgraph Flow1 ["Luồng 1: Đọc nội dung công khai"]
-        F1A["Người dùng tải trang công khai"] --> F1B["apps/web gọi luồng tương thích của CMS"]
+        F1A["Người dùng tải trang công khai"] --> F1B["apps/web gọi apps/api"]
         F1B --> F1C{"Nội dung đã xuất bản?"}
         F1C -->|"Không"| F1D["Trả về 404 hoặc 403 theo giao ước"]
-        F1C -->|"Có"| F1E["CMS đọc Postgres"]
+        F1C -->|"Có"| F1E["apps/api đọc Postgres"]
         F1E --> F1F{"Bộ nhớ đệm dùng chung khả dụng?"}
         F1F -->|"Có"| F1G["Trả về mẫu dữ liệu đã đệm"]
         F1F -->|"Không"| F1H["Xây dựng phản hồi từ tài liệu chuẩn"]
@@ -12,7 +12,7 @@ flowchart TD
     end
 
     subgraph Flow2 ["Luồng 2: Biên tập xuất bản, làm mới dữ liệu và đồng bộ tìm kiếm"]
-        F2A["Biên tập viên xuất bản tài liệu trong CMS"] --> F2B["Payload ghi tài liệu chuẩn vào Postgres"]
+        F2A["Biên tập viên xuất bản tài liệu trong admin"] --> F2B["apps/api ghi tài liệu chuẩn vào Postgres"]
         F2B --> F2C["Cập nhật publishedAt và các trường tìm kiếm"]
         F2C --> F2D["Đưa việc đồng bộ tìm kiếm vào hàng đợi"]
         F2C --> F2E["Kích hoạt làm mới web hoặc thu hồi bộ nhớ đệm"]
@@ -21,7 +21,7 @@ flowchart TD
     end
 
     subgraph Flow3 ["Luồng 3: Cộng đồng gửi nội dung và cảnh báo kiểm duyệt"]
-        F3A["Người dùng gửi bài viết, bình luận hoặc mục lưu bút"] --> F3B["CMS kiểm tra và lưu trữ thực thể chuẩn"]
+        F3A["Người dùng gửi bài viết, bình luận hoặc mục lưu bút"] --> F3B["apps/api kiểm tra và lưu trữ thực thể chuẩn"]
         F3B --> F3C["Thực thể bắt đầu ở trạng thái chờ kiểm duyệt"]
         F3C --> F3D["Ghi nhật ký kiểm toán (audit log) nếu cần"]
         F3D --> F3E["Tạo việc gửi thông báo/email cho kiểm duyệt viên và admin"]
@@ -37,20 +37,20 @@ flowchart TD
         F4G --> F4H["Tạo thông báo bất đồng bộ nếu cần"]
     end
 
-    subgraph Flow5 ["Luồng 5: Đăng nhập bằng Payload auth"]
-        F5A["Người dùng gửi thông tin đăng nhập"] --> F5B["Payload auth xác thực thông tin"]
+    subgraph Flow5 ["Luồng 5: Đăng nhập bằng NestJS auth"]
+        F5A["Người dùng gửi thông tin đăng nhập"] --> F5B["NestJS auth xác thực thông tin"]
         F5B --> F5C{"Hợp lệ?"}
         F5C -->|"Không"| F5D["Trả về 401"]
-        F5C -->|"Có"| F5E["Tạo phiên hoặc cookie qua Payload auth"]
+        F5C -->|"Có"| F5E["Tạo phiên hoặc cookie qua NestJS auth"]
         F5E --> F5F["Cập nhật lastLoginAt nếu cần"]
         F5F --> F5G["Web sử dụng giao ước phiên cho các yêu cầu kế tiếp"]
     end
 
     subgraph Flow6 ["Luồng 6: Truy vấn tìm kiếm có phương án dự phòng"]
-        F6A["Web gọi điểm cuối tìm kiếm bài viết"] --> F6B["CMS phân tích truy vấn và giới hạn"]
+        F6A["Web gọi điểm cuối tìm kiếm bài viết"] --> F6B["apps/api phân tích truy vấn và giới hạn"]
         F6B --> F6C{"Meilisearch khả dụng?"}
         F6C -->|"Có"| F6D["Tìm kiếm trên chỉ mục Meilisearch"]
-        F6C -->|"Không"| F6E["Tìm kiếm dự phòng qua Payload"]
+        F6C -->|"Không"| F6E["Tìm kiếm dự phòng qua SQL/API"]
         F6D --> F6F["Ánh xạ kết quả sang DTO công khai"]
         F6E --> F6F
         F6F --> F6G["Trả về kết quả kèm đánh dấu engine"]
@@ -65,7 +65,7 @@ flowchart TD
     end
 
     subgraph Flow8 ["Luồng 8: Vòng lặp giám sát"]
-        F8A["Web, CMS và Worker phát nhật ký và thông số"] --> F8B["Prometheus thu thập dữ liệu"]
+        F8A["Web, API và Worker phát nhật ký và thông số"] --> F8B["Prometheus thu thập dữ liệu"]
         F8B --> F8C["Grafana hiển thị bảng điều khiển"]
         F8B --> F8D["Alertmanager đánh giá ngưỡng cảnh báo"]
         F8D --> F8E["Kênh cảnh báo nhận thông báo"]

@@ -1,69 +1,68 @@
-# Submit Post Comment
+# Submit Post Comment (Gửi Bình luận Bài viết)
 
-## Purpose
-- Cho người dùng hoặc khách gửi bình luận vào bài viết public, sau đó để moderation/notification xử lý downstream.
+## Mục đích (Purpose)
+Cho phép người dùng hoặc khách gửi bình luận vào một bài viết công khai, sau đó quy trình kiểm duyệt và thông báo sẽ xử lý các tác vụ hạ nguồn.
 
-## owner module (module sở hữu)
-- `community`
+## Mô-đun sở hữu (Owner module)
+- `community` (Cộng đồng)
 
-## Actors
-- `member`
-- `guest`
+## Các đối tượng thực hiện (Actors)
+- Thành viên (`member`)
+- Khách (`guest`)
 
-## trigger (điểm kích hoạt)
-- Web gọi route submit comment cho `posts/:publicId/comments`.
+## Điểm kích hoạt (Trigger)
+Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `posts/:publicId/comments`.
 
-## preconditions (điều kiện tiên quyết)
-- Post mục tiêu tồn tại và còn cho phép bình luận.
-- Payload body qua schema (lược đồ dữ liệu) hợp lệ.
-- Actor không bị request guard hoặc anti-spam chặn.
+## Điều kiện tiên quyết (Preconditions)
+- Bài viết mục tiêu tồn tại trong hệ thống và vẫn cho phép nhận bình luận.
+- Thân yêu cầu (request body) tuân thủ cấu trúc dữ liệu hợp lệ.
+- Đối tượng thực hiện không bị hệ thống chốt chặn yêu cầu (request guard) hoặc chống thư rác (anti-spam) chặn lại.
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- `legacyCommentSubmitSchema` hoặc contract (hợp đồng dữ liệu/nghiệp vụ) comment submit tương ứng.
-- Nếu chưa đăng nhập, phải có author snapshot hợp lệ theo policy hiện tại.
+## Hợp đồng dữ liệu đầu vào (Input Contract)
+- `legacyCommentSubmitSchema` hoặc hợp đồng gửi bình luận tương ứng.
+- Nếu người gửi chưa đăng nhập, phải có bộ thông tin tác giả chụp lại (author snapshot) hợp lệ theo chính sách hiện hành.
 
-## Read set
-- `posts`
-- `postComments`
-- request guard / anti-spam state khi có
-- identity session nếu user đã đăng nhập
+## Tập hợp dữ liệu đọc (Read Set)
+- Tài liệu bài viết (`posts`).
+- Tài liệu bình luận (`postComments`).
+- Trạng thái chốt chặn yêu cầu / chống thư rác (nếu có).
+- Phiên làm việc định danh (identity session) nếu người dùng đã đăng nhập.
 
-## write path (thứ tự ghi dữ liệu chuẩn)
-1. Xác thực post target bằng `publicId` hoặc route context.
-2. Validate body và policy anti-spam.
-3. Ghi canonical comment record vào `postComments`.
-4. Cập nhật summary read model (mô hình dữ liệu đọc) nếu cần như `commentCount` trên post.
-5. Append audit event `community.comment.submit`.
-6. Nếu policy bật attention/review, append outbox event cho moderation alert hoặc internal notification.
+## Thứ tự ghi dữ liệu chuẩn (Write Path)
+1. Xác thực bài viết mục tiêu bằng cách sử dụng ID công khai (`publicId`) hoặc bối cảnh tuyến đường.
+2. Xác thực nội dung yêu cầu và chính sách chống thư rác.
+3. Ghi bản ghi bình luận chuẩn gốc (canonical comment record) vào bộ sưu tập `postComments`.
+4. Cập nhật mô hình dữ liệu đọc (read model) tóm tắt nếu cần thiết (ví dụ: số lượng bình luận - `commentCount` trên bài viết).
+5. Thêm sự kiện nhật ký kiểm toán hành động `community.comment.submit`.
+6. Nếu chính sách kích hoạt yêu cầu xem xét, nạp sự kiện outbox để tạo cảnh báo kiểm duyệt hoặc thông báo nội bộ.
 
-## async (bất đồng bộ) side-effects
-- notification cho admin/super-admin
-- moderation alert nếu cần review
+## Tác động phụ bất đồng bộ (Async Side-effects)
+- Gửi thông báo cho quản trị viên.
+- Cảnh báo kiểm duyệt nếu cần rà soát lại nội dung.
 
-## success result (kết quả thành công)
-- Comment canonical record (bản ghi chuẩn gốc) được tạo.
-- Read path của thread có thể trả comment mới theo policy hiển thị.
+## Kết quả thành công (Success Result)
+- Bản ghi chuẩn gốc của bình luận được tạo thành công.
+- Luồng đọc của bài viết có thể trả về bình luận mới tùy theo chính sách hiển thị hiện tại.
 
-## Errors
-- `400`: body không hợp lệ hoặc comment quá ngắn/dài.
-- `404`: post không tồn tại.
-- `409`: duplicate submit rõ ràng hoặc parent comment invalid.
-- `429`: request guard chặn.
-- `500`: lỗi service (lớp xử lý nghiệp vụ) hoặc downstream.
+## Các lỗi có thể xảy ra (Errors)
+- `400`: Thân yêu cầu không hợp lệ hoặc nội dung bình luận quá ngắn/dài.
+- `404`: Bài viết mục tiêu không tồn tại.
+- `409`: Gửi trùng lặp rõ ràng hoặc bình luận cha không hợp lệ.
+- `429`: Bị chặn bởi chốt chặn yêu cầu.
+- `500`: Lỗi dịch vụ nghiệp vụ hoặc hệ thống hạ nguồn.
 
-## Audit
-- log `community.comment.submit`
-- metadata nên có post publicId, actor type, correlationId
+## Kiểm toán (Audit)
+- Ghi nhật ký hành động `community.comment.submit`.
+- Dữ liệu đặc tả (metadata) nên bao gồm ID công khai của bài viết, loại đối tượng thực hiện và mã tương quan (`correlationId`).
 
-## Idempotency / anti-spam
-- request guard chịu trách nhiệm chống spam burst.
-- Nếu retry từ client do timeout, server nên tránh tạo duplicate rõ ràng khi có fingerprint phù hợp.
-- replay outbox không được tạo duplicate alert cho cùng canonical comment.
+## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
+- Chốt chặn yêu cầu chịu trách nhiệm chống lại hành động gửi tin hàng loạt (flood).
+- Nếu máy khách gửi lại yêu cầu do hết thời gian (timeout), máy chủ nên tránh tạo ra các bản ghi trùng lặp khi có dấu hiệu nhận diện (fingerprint) phù hợp.
+- Việc phát lại hàng đợi outbox không được phép tạo ra các cảnh báo trùng lặp cho cùng một bình luận chuẩn gốc.
 
-## Performance target
-- Ghi canonical comment + append outbox alert nên hoàn tất trong `< 800ms`.
+## Mục tiêu hiệu năng (Performance Target)
+- Việc ghi bình luận chuẩn gốc và nạp sự kiện outbox nên hoàn tất trong vòng dưới 800ms.
 
-## Notes for AI/codegen
-- `postComments` là owner của comment, không phải content module.
-- Moderation report là flow khác; submit comment không được tự tạo `moderationReports` trừ khi policy nói rõ.
-
+## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
+- Bộ sưu tập `postComments` là chủ sở hữu của bình luận, không phải mô-đun nội dung (content module).
+- Báo cáo kiểm duyệt là một luồng xử lý khác; việc gửi bình luận không được tự động tạo bản ghi trong `moderationReports` trừ khi chính sách quy định rõ ràng.

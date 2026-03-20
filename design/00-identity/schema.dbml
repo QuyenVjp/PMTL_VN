@@ -1,18 +1,18 @@
-// Identity Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
-// Note:
-// - Payload auth internal token/session storage là framework-managed (do framework quản lý), không mô hình hóa chi tiết ở đây.
-// - `public_id` chỉ là public-facing identifier (mã công khai) khi cần expose user reference an toàn hơn id nội bộ.
-// - `google_sub` là provider linkage field (trường liên kết nhà cung cấp) cho Google login trong cùng auth authority,
-//   không phải auth system (hệ thống xác thực) thứ hai.
+// Identity + platform control schema (Lược đồ định danh + bảng điều khiển nền tảng)
+// Note (Ghi chú):
+// - File này giữ cả auth core (lõi xác thực) lẫn cross-cutting tables (các bảng dùng chung) cần cho phase 1 launch (ra mắt giai đoạn 1).
+// - sessions, audit_logs, feature_flags, rate_limit_records là bảng nền tảng, không thuộc riêng UI module nào.
+// - outbox_events là planned phase-2 table (bảng dự kiến giai đoạn 2) nhưng được chốt schema logic ngay từ bây giờ để tránh drift (lệch thiết kế).
 
 Project identity_module {
   database_type: "PostgreSQL"
   Note: '''
-  Identity module cho PMTL_VN.
-  Cách đọc nhanh:
-  - users là bảng quan trọng nhất.
-  - Payload auth là authority duy nhất.
-  - File này là schema logic để học kiến trúc, không phải dump DB thật của Payload.
+  Identity module cho PMTL_VN (Mô-đun định danh cho PMTL_VN).
+  Cách đọc nhanh (Quick guide):
+  - users là canonical identity record (bản ghi định danh chuẩn gốc).
+  - sessions là auth runtime source (nguồn vận hành xác thực) cho việc thu hồi/xoay vòng (revoke/rotation).
+  - audit_logs / feature_flags / rate_limit_records là platform control-plane (bảng điều khiển nền tảng).
+  - outbox_events là transactional handoff log (nhật ký bàn giao giao dịch) cho độ tin cậy bất đồng bộ tương lai (future async reliability).
   '''
 }
 
@@ -22,42 +22,174 @@ Enum user_role {
   member [note: "Member / Thành viên"]
 }
 
+Enum session_status {
+  active [note: "Session đang hợp lệ / valid session"]
+  revoked [note: "Session đã bị thu hồi / revoked"]
+  expired [note: "Session hết hạn / expired"]
+  compromised [note: "Session bị nghi reuse/replay / nghi ngờ bị lộ"]
+}
+
+Enum feature_flag_status {
+  enabled [note: "Bật / enabled"]
+  disabled [note: "Tắt / disabled"]
+}
+
+Enum audit_result {
+  success [note: "Thành công / success"]
+  failure [note: "Thất bại / failure"]
+  blocked [note: "Bị chặn bởi policy / blocked by policy"]
+}
+
+Enum rate_limit_scope_type {
+  ip [note: "Theo địa chỉ IP"]
+  account [note: "Theo tài khoản/email"]
+  user [note: "Theo ID người dùng"]
+  route [note: "Theo khóa tuyến đường (route key)"]
+}
+
+Enum outbox_status {
+  pending [note: "Chờ xử lý / pending"]
+  processing [note: "Đang xử lý / processing"]
+  processed [note: "Đã xử lý / processed"]
+  failed [note: "Lỗi, còn thử lại / failed, retriable"]
+  dead_letter [note: "Lỗi vĩnh viễn / dead letter"]
+}
+
 Table media_assets {
-  id uuid [pk]
-  public_id varchar [unique]
-  storage_provider varchar [not null, note: "local | s3-compatible"]
-  object_key varchar [unique, not null]
-  original_filename varchar
-  content_type varchar
-  size_bytes bigint
-  checksum_sha256 varchar
-  owner_id uuid [ref: > users.id]
-  created_at timestamp
-  updated_at timestamp
+  id uuid [pk, note: "Khóa chính media asset (tài sản truyền thông)"]
+  public_id varchar [unique, note: "Mã công khai để expose (lộ ra ngoài) an toàn hơn id nội bộ"]
+  storage_provider varchar [not null, note: "Bên cung cấp lưu trữ: local | s3-compatible"]
+  object_key varchar [unique, not null, note: "Khóa đối tượng an toàn, không dùng tên file thô (raw filename)"]
+  original_filename varchar [note: "Tên file gốc người dùng tải lên"]
+  content_type varchar [note: "MIME type chuẩn sau khi kiểm tra (sniffing)"]
+  size_bytes bigint [note: "Kích thước file tính theo bytes"]
+  checksum_sha256 varchar [note: "Mã kiểm tra (checksum) phục vụ tính toàn vẹn/đối soát"]
+  owner_id uuid [ref: > users.id, note: "Người dùng sở hữu asset"]
+  created_at timestamptz [note: "Thời điểm tạo dữ liệu đặc tả (metadata)"]
+  updated_at timestamptz [note: "Thời điểm cập nhật dữ liệu đặc tả"]
 }
 
 Table users {
-  id uuid [pk]
-  public_id varchar [unique]
-  email varchar [not null, unique]
-  full_name varchar [not null]
-  username varchar [unique]
-  phone varchar
-  dharma_name varchar
-  google_sub varchar [note: "Google provider subject (mã định danh phía Google) / mã liên kết Google"]
-  avatar_media_id uuid [ref: > media_assets.id]
-  bio text
-  role user_role [not null]
-  is_blocked bool [default: false]
-  last_login_at timestamp
-  created_at timestamp
-  updated_at timestamp
+  id uuid [pk, note: "Khóa chính người dùng"]
+  public_id varchar [unique, note: "Mã công khai an toàn để hiển thị ra ngoài"]
+  email varchar [not null, unique, note: "Email đăng nhập duy nhất"]
+  password_hash varchar [note: "Mã băm mật khẩu Argon2id; để trống nếu chỉ dùng đăng nhập qua bên cung cấp"]
+  email_verified_at timestamptz [note: "Trống nếu email chưa xác minh"]
+  full_name varchar [not null, note: "Tên hiển thị đầy đủ"]
+  username varchar [unique, note: "Tên đăng nhập nếu tính năng yêu cầu"]
+  phone varchar [note: "Số điện thoại nếu có"]
+  dharma_name varchar [note: "Pháp danh nếu có"]
+  google_sub varchar [note: "Mã định danh Google (subject) / liên kết tài khoản Google"]
+  avatar_media_id uuid [ref: > media_assets.id, note: "Mã ảnh đại diện hiện tại"]
+  bio text [note: "Tiểu sử ngắn"]
+  role user_role [not null, note: "Vai trò chính để phân quyền (Authz)"]
+  is_blocked bool [not null, default: false, note: "Cờ chặn nhanh tài khoản"]
+  blocked_at timestamptz [note: "Thời điểm bị khóa"]
+  blocked_reason varchar [note: "Lý do khóa ngắn gọn"]
+  last_login_at timestamptz [note: "Thời điểm đăng nhập gần nhất"]
+  created_at timestamptz [not null, note: "Thời điểm tạo người dùng"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật người dùng"]
 }
 
-TableGroup "Identity Core" [note: "Nhóm lõi cho đăng nhập, role, và hồ sơ cơ bản"] {
+Table sessions {
+  id uuid [pk, note: "Khóa chính phiên làm việc"]
+  user_id uuid [not null, ref: > users.id, note: "Người dùng sở hữu phiên"]
+  refresh_token_hash varchar [not null, unique, note: "Mã băm của refresh token để xoay vòng/thu hồi"]
+  status session_status [not null, default: 'active', note: "Trạng thái phiên làm việc"]
+  device_label varchar [note: "Nhãn thiết bị hoặc thông tin phiên"]
+  ip_address varchar [note: "Địa chỉ IP gần nhất sử dụng phiên"]
+  user_agent varchar [note: "Thông tin trình duyệt (User-Agent) gần nhất"]
+  issued_at timestamptz [not null, note: "Thời điểm cấp phiên"]
+  last_used_at timestamptz [not null, note: "Thời điểm sử dụng gần nhất"]
+  expires_at timestamptz [not null, note: "Thời điểm hết hạn của refresh token"]
+  revoked_at timestamptz [note: "Thời điểm bị thu hồi"]
+  revoke_reason varchar [note: "Lý do thu hồi: logout | logout_all | password_reset | compromised"]
+  created_at timestamptz [not null, note: "Thời điểm tạo bản ghi"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật bản ghi"]
+
+  Indexes {
+    (user_id, status)
+  }
+}
+
+Table audit_logs {
+  id uuid [pk, note: "Khóa chính nhật ký kiểm duyệt"]
+  actor_user_id uuid [ref: > users.id, note: "Người dùng thực hiện hành động"]
+  actor_role user_role [note: "Vai trò tại thời điểm thực hiện hành động"]
+  action varchar [not null, note: "Ví dụ: login.success, file.deleted, role.changed"]
+  target_type varchar [note: "Loại thực thể bị tác động (entity type)"]
+  target_id uuid [note: "ID của thực thể bị tác động"]
+  request_id varchar [note: "Mã tương quan yêu cầu (Correlation/request id)"]
+  surface varchar [note: "Bề mặt ứng dụng: web | admin | api | worker"]
+  result audit_result [not null, default: 'success', note: "Kết quả cuối cùng của hành động"]
+  ip_address varchar [note: "Địa chỉ IP thực hiện yêu cầu"]
+  user_agent varchar [note: "Thông tin trình duyệt (User-Agent)"]
+  metadata jsonb [note: "Ngữ cảnh có cấu trúc tối thiểu, không chứa thông tin định danh cá nhân (PII) bừa bãi"]
+  created_at timestamptz [not null, note: "Thời điểm ghi nhật ký"]
+
+  Indexes {
+    (action, created_at)
+    (target_type, target_id)
+  }
+}
+
+Table feature_flags {
+  id uuid [pk, note: "Khóa chính cờ tính năng"]
+  flag_key varchar [not null, unique, note: "Khóa cờ tính năng duy nhất"]
+  description text [note: "Mô tả ngắn gọn mục đích của cờ"]
+  status feature_flag_status [not null, default: 'disabled', note: "Trạng thái bật/tắt cờ"]
+  rollout_rules jsonb [note: "Quy tắc triển khai tối thiểu nều cần theo vai trò/nhóm"]
+  created_by_user_id uuid [ref: > users.id, note: "Người tạo cờ"]
+  updated_by_user_id uuid [ref: > users.id, note: "Người cập nhật cờ gần nhất"]
+  created_at timestamptz [not null, note: "Thời điểm tạo cờ"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật cờ"]
+}
+
+Table rate_limit_records {
+  id uuid [pk, note: "Khóa chính bản ghi giới hạn tốc độ"]
+  scope_type rate_limit_scope_type [not null, note: "Phạm vi: ip | account | user | route"]
+  scope_key varchar [not null, note: "Giá trị nhận diện phạm vi"]
+  route_key varchar [not null, note: "Phím tuyến đường/luồng đang được đếm"]
+  window_started_at timestamptz [not null, note: "Thời điểm bắt đầu cửa sổ đếm"]
+  window_ends_at timestamptz [not null, note: "Thời điểm kết thúc cửa sổ đếm"]
+  hit_count int [not null, default: 0, note: "Số lượt truy cập trong cửa sổ"]
+  blocked_until timestamptz [note: "Hạn bị chặn nếu có chính sách chặn tạm thời"]
+  created_at timestamptz [not null, note: "Thời điểm tạo bản ghi"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật bản ghi"]
+
+  Indexes {
+    (scope_type, scope_key, route_key)
+  }
+}
+
+Table outbox_events {
+  event_id uuid [pk, note: "Khóa chính sự kiện hàng đợi (event)"]
+  aggregate_type varchar [not null, note: "Loại thực thể tổng hợp nguồn (aggregate type)"]
+  aggregate_id uuid [not null, note: "ID bản ghi nguồn chuẩn gốc (canonical source)"]
+  event_type varchar [not null, note: "Loại sự kiện nghiệp vụ"]
+  event_version int [not null, default: 1, note: "Phiên bản của dữ liệu (payload)"]
+  idempotency_key varchar [not null, unique, note: "Khóa chống phân phát lặp (double-delivery)"]
+  payload jsonb [not null, note: "Dữ liệu sự kiện chuẩn hóa"]
+  status outbox_status [not null, default: 'pending', note: "Trạng thái xử lý sự kiện"]
+  available_at timestamptz [note: "Thời điểm sự kiện được phép xử lý"]
+  attempts int [not null, default: 0, note: "Số lần đã thử xử lý"]
+  created_at timestamptz [not null, note: "Thời điểm ghi sự kiện vào hàng đợi (append)"]
+  processed_at timestamptz [note: "Thời điểm đã xử lý xong"]
+  last_error text [note: "Lỗi gần nhất nếu có"]
+}
+
+TableGroup "Identity Core" [note: "Nhóm cốt lõi (Core) cho đăng nhập, vai trò, hồ sơ, và phiên làm việc"] {
   users
+  sessions
 }
 
-TableGroup "Shared Reference" [note: "Bảng tham chiếu từ module khác"] {
+TableGroup "Platform Control Plane" [note: "Nhóm điều khiển nền tảng (Platform control-plane) cho vận hành và độ tin cậy"] {
+  audit_logs
+  feature_flags
+  rate_limit_records
+  outbox_events
+}
+
+TableGroup "Shared Reference" [note: "Tham chiếu dùng chung cho phương tiện/tệp tin (media/file)"] {
   media_assets
 }

@@ -1,46 +1,46 @@
-// Moderation Module - logical schema (lược đồ logic) aligned with current repo truth (hiện trạng repo)
-// Note:
-// - moderation_reports là source of truth (nguồn dữ liệu gốc).
-// - Các table target bên dưới chỉ xuất hiện ở đây để mô tả summary sync (đồng bộ trường tóm tắt),
-//   không chuyển ownership (quyền sở hữu module) của chúng sang moderation module.
+// Moderation Module - logical schema (Lược đồ logic Mô-đun Kiểm duyệt) aligned with current repo truth (khớp với thực trạng repo)
+// Lưu ý (Note):
+// - moderation_reports là nguồn dữ liệu chuẩn gốc (source of truth).
+// - Các bảng mục tiêu (target tables) bên dưới chỉ xuất hiện để mô tả việc đồng bộ tóm tắt (summary sync),
+//   không chuyển quyền sở hữu (ownership) của chúng sang mô-đun kiểm duyệt.
 
 Project moderation_module {
   database_type: "PostgreSQL"
   Note: '''
-  Moderation module cho PMTL_VN.
-  Ghi nhớ:
-  - moderation_reports là record gốc.
-  - các bảng comment, community_posts, guestbook_entries bên dưới chỉ được nhắc tới để mô tả field summary.
+  Mô-đun Kiểm duyệt (Moderation module) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - moderation_reports là bản ghi gốc (source record).
+  - Các bảng bình luận, bài đăng cộng đồng, sổ lưu niệm bên dưới chỉ được nhắc tới để mô tả các trường tóm tắt (summary fields).
   '''
 }
 
 Enum moderation_report_status {
-  pending
-  approved
-  rejected
-  flagged
-  hidden
+  pending [note: "Chờ duyệt"]
+  approved [note: "Đã phê duyệt"]
+  rejected [note: "Bị bác bỏ"]
+  flagged [note: "Bị đánh dấu"]
+  hidden [note: "Đã ẩn"]
 }
 
 Table users {
-  id uuid [pk]
+  id uuid [pk, note: "ID người dùng (tham chiếu)"]
   public_id varchar [unique]
-  full_name varchar
-  email varchar
+  full_name varchar [note: "Họ tên"]
+  email varchar [note: "Địa chỉ email"]
 }
 
 Table moderation_reports {
-  id uuid [pk]
+  id uuid [pk, note: "Khóa chính báo cáo"]
   public_id varchar [unique]
-  entity_type varchar [not null] // postComments | communityPosts | communityComments | guestbookEntries
-  entity_public_id varchar [not null]
-  entity_collection varchar
-  entity_document_id varchar
-  reason varchar [not null]
-  notes text
-  status moderation_report_status [not null]
-  reporter_user_id uuid [ref: > users.id]
-  reporter_ip_hash varchar
+  entity_type varchar [not null, note: "Loại thực thể bị báo cáo (ví dụ: communityPosts)"]
+  entity_public_id varchar [not null, note: "ID công khai của thực thể đó"]
+  entity_collection varchar [note: "Bộ sưu tập cơ sở dữ liệu tương ứng"]
+  entity_document_id varchar [note: "ID tài liệu nội bộ (nếu cần)"]
+  reason varchar [not null, note: "Lý do báo cáo vi phạm"]
+  notes text [note: "Ghi chú bổ sung từ người báo cáo hoặc quản trị viên"]
+  status moderation_report_status [not null, note: "Trạng thái báo cáo hiện tại"]
+  reporter_user_id uuid [ref: > users.id, note: "Người báo cáo (nếu có tài khoản)"]
+  reporter_ip_hash varchar [note: "Mã băm IP người báo cáo (anti-abuse)"]
   created_at timestamp
   updated_at timestamp
 }
@@ -48,47 +48,47 @@ Table moderation_reports {
 Table post_comments {
   id uuid [pk]
   public_id varchar [unique]
-  moderation_status varchar
-  report_count int
-  last_report_reason varchar
-  is_hidden bool
+  moderation_status varchar [note: "Trạng thái kiểm duyệt tóm tắt"]
+  report_count int [note: "Tổng số báo cáo nhận được"]
+  last_report_reason varchar [note: "Lý do báo cáo gần nhất"]
+  is_hidden bool [note: "Cờ đánh dấu ẩn nội dung"]
 }
 
 Table community_posts {
   id uuid [pk]
   public_id varchar [unique]
-  moderation_status varchar
-  report_count int
-  last_report_reason varchar
-  is_hidden bool
+  moderation_status varchar [note: "Trạng thái kiểm duyệt tóm tắt"]
+  report_count int [note: "Tổng số báo cáo nhận được"]
+  last_report_reason varchar [note: "Lý do báo cáo gần nhất"]
+  is_hidden bool [note: "Cờ đánh dấu ẩn nội dung"]
 }
 
 Table community_comments {
   id uuid [pk]
   public_id varchar [unique]
-  moderation_status varchar
-  report_count int
-  last_report_reason varchar
-  is_hidden bool
+  moderation_status varchar [note: "Trạng thái kiểm duyệt tóm tắt"]
+  report_count int [note: "Tổng số báo cáo nhận được"]
+  last_report_reason varchar [note: "Lý do báo cáo gần nhất"]
+  is_hidden bool [note: "Cờ đánh dấu ẩn nội dung"]
 }
 
 Table guestbook_entries {
   id uuid [pk]
   public_id varchar [unique]
-  approval_status varchar
+  approval_status varchar [note: "Trạng thái phê duyệt tóm tắt"]
 }
 
-TableGroup "Moderation Source of Truth" [note: "Bảng gốc cần đọc đầu tiên khi điều tra report"] {
+TableGroup "Moderation Source of Truth" [note: "Nguồn dữ liệu chuẩn (Bảng gốc cần đọc đầu tiên)"] {
   moderation_reports
 }
 
-TableGroup "Moderated Targets" [note: "Entity bị ảnh hưởng bởi decision (quyết định kiểm duyệt) và summary sync"] {
+TableGroup "Moderated Targets" [note: "Thực thể đích bị ảnh hưởng bởi quyết định kiểm duyệt và đồng bộ tóm tắt"] {
   post_comments
   community_posts
   community_comments
   guestbook_entries
 }
 
-TableGroup "Actor Reference" [note: "Người report hoặc người bị ảnh hưởng"] {
+TableGroup "Actor Reference" [note: "Tham chiếu người thực hiện báo cáo hoặc người bị ảnh hưởng"] {
   users
 }

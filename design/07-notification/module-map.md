@@ -1,8 +1,7 @@
-# Notification Module
+# Notification Module (Mô-đun Thông báo)
 
 > Ghi chú cho sinh viên:
-> Notification ở repo này là async-only (chỉ chạy ngầm, bất đồng bộ).
-> Tức là request thường chỉ append outbox event cho delivery request quan trọng, còn dispatcher/worker (tiến trình xử lý nền) sẽ tạo và xử lý execution job phía sau.
+> Notification là async-only module (mô-đun chỉ chạy bất đồng bộ). Request path thông thường không tự gửi push/email trực tiếp nếu side-effect đó cần reliability (độ tin cậy) cao.
 
 ---
 markmap:
@@ -10,49 +9,49 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# Notification Module
+# Notification Module (Mô-đun Thông báo)
 
-## Mục tiêu
-- mô tả control-plane (lớp điều phối hệ thống) notification hiện có
-- giữ notification là async-only (chỉ chạy ngầm, bất đồng bộ)
-- tránh biến module này thành orchestration platform
+## Objectives (Mục tiêu)
+- mô tả control-plane notification hiện có
+- giữ notification đúng vai trò async-only
+- tránh biến mô-đun này thành orchestration platform quá nặng
 
-## Current scope
+## Current scope (Phạm vi hiện tại)
 
-### Subscription state
+### Subscription state (Trạng thái đăng ký)
 - `pushSubscriptions`
 
-### Job control plane
+### Job control plane (Lớp điều phối công việc)
 - `pushJobs`
 - `outbox_events` cho delivery request quan trọng
 
-### async (bất đồng bộ) delivery paths
-- dispatcher phát push/email/webhook jobs từ outbox
-- push dispatch qua worker (tiến trình xử lý nền)
-- email notification jobs qua worker (tiến trình xử lý nền)/queue (hàng đợi xử lý)
+### Async delivery paths (Đường gửi bất đồng bộ)
+- dispatcher phát push/email/webhook job từ outbox
+- worker xử lý push dispatch
+- email notification jobs đi qua queue/worker khi phase đó được bật
 
-## Current responsibilities
+## Current responsibilities (Trách nhiệm hiện tại)
 
-### Subscription management
+### Subscription management (Quản lý đăng ký)
 - subscribe
 - unsubscribe
 - mark active/inactive
 - lưu quiet hours
 - lưu category preferences cho push
 
-### Internal notification fan-out
+### Internal notification fan-out (Phát tán thông báo nội bộ)
 - notify admin/super-admin
 - notify affected user
-- create push job record ở lớp dispatcher/execution
+- tạo push job record ở lớp dispatcher/execution
 
-### Delivery tracking
+### Delivery tracking (Theo dõi quá trình gửi)
 - `status`
 - `cursor`
 - `sentCount`
 - `failedCount`
 - `errorSummary`
 
-## References ra ngoài module
+## External references (Tham chiếu ngoài mô-đun)
 
 ### Identity
 - user target
@@ -61,12 +60,11 @@ markmap:
 
 ### Content / Community / Moderation / Calendar
 - context cho message, URL, metadata
-- owner data vẫn nằm ở module gốc
+- owner data vẫn nằm ở mô-đun gốc
 
-## Current rules
+## Current rules (Quy tắc hiện tại)
 - notification gửi bất đồng bộ
-- pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox canonical
+- `pushJobs` là control-plane record, không phải inbox canonical
 - self-send prevention có thể dùng include/exclude user ids
 - delivery request quan trọng không phát thẳng từ request path nếu cần reliability cao
-- recovery path chuẩn là replay outbox hoặc redrive execution jobs từ control-plane state
-
+- recovery path chuẩn là replay outbox hoặc redrive execution job từ control-plane state

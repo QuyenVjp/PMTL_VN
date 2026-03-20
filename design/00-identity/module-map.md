@@ -1,7 +1,7 @@
-# Identity Module
+# Identity Module (Mô-đun Định danh)
 
-> Ghi chú cho sinh viên:
-> File này chốt auth authority, user ownership, và role model thật của repo.
+> Note for students (Ghi chú cho sinh viên):
+> File này chốt auth authority (quyền lực xác thực), user ownership (quyền sở hữu user), và role model (mô hình vai trò) của hệ.
 
 ---
 markmap:
@@ -9,83 +9,87 @@ markmap:
   initialExpandLevel: 3
 ---
 
-# Identity Module
+# Identity Module (Mô-đun Định danh)
 
-## Mục tiêu
-- mô tả auth authority hiện tại của repo
-- làm rõ ownership của `users`
-- làm rõ role model, block state, profile cơ bản
-- chốt rõ Google login chỉ là provider, không phải auth authority thứ hai
+## Objectives (Mục tiêu)
 
-## Authority
-- Payload auth là auth authority duy nhất
-- `apps/cms` sở hữu login/register/logout/reset-password/session flow
-- Google login được phép tồn tại nhưng phải map về cùng `users` collection và cùng session authority của Payload
-- Web chỉ tiêu thụ auth contract (hợp đồng dữ liệu/nghiệp vụ) từ CMS
+- Define auth authority (xác định quyền lực xác thực).
+- Clarify ownership of `users` and `sessions` (làm rõ quyền sở hữu bảng users và sessions).
+- Define role model and account block state (xác định mô hình vai trò và trạng thái chặn tài khoản).
+- Keep provider login inside the same auth authority (giữ đăng nhập qua provider trong cùng authority).
 
-## Collection thuộc module
+## Authentication authority (Quyền lực xác thực)
+
+- `NestJS auth` là sole authentication authority (quyền lực xác thực duy nhất).
+- `apps/api` sở hữu login, register, logout, password reset, refresh, và session flows.
+- Google login được phép, nhưng phải map về cùng `users` table và cùng session authority.
+- Web/Admin chỉ consume auth contract từ API.
+
+## Module data (Dữ liệu mô-đun)
+
 - `users`
+- `sessions`
+- `media_assets` cho avatar reference
+- cross-cutting references:
+  - `audit_logs`
+  - `feature_flags`
+  - `rate_limit_records`
 
-## Current responsibilities
+## Current responsibilities (Trách nhiệm hiện tại)
 
-### Auth lifecycle
-- đăng ký bằng email/password
-- đăng nhập bằng email/password
-- đăng nhập bằng Google
-- đăng xuất
-- quên mật khẩu
-- đặt lại mật khẩu
-- lấy session hiện tại
+### Authentication lifecycle (Vòng đời xác thực)
 
-### Identity data
+- Registration via email/password (đăng ký qua email/mật khẩu)
+- Login via email/password (đăng nhập qua email/mật khẩu)
+- Login via Google provider flow (đăng nhập qua provider Google)
+- Logout và logout-all
+- Forgot password và reset password
+- Current-session retrieval (lấy phiên hiện tại)
+
+### Identity data (Dữ liệu định danh)
+
 - email
-- full name
-- username
-- phone
-- pháp danh / dharma name
-- avatar
-- bio
-- `publicId` cho public-facing references khi cần
-- provider compatibility fields như `googleSub`
+- full name / username
+- phone / dharma name
+- avatar / bio
+- `public_id`
+- provider linkage fields như `google_sub`
 
-### Authorization data
-- role
-- block state
+### Authorization data (Dữ liệu phân quyền)
 
-## Current role model
-- `super-admin`
-- `admin`
-  - business/UI label: `Phụng sự viên`
-- `member`
+- `role`
+- `is_blocked`
+- `blocked_at`
+- `blocked_reason`
 
-## Current boundaries
+## Identity owns (Định danh sở hữu)
 
-### Identity owns
-- user account
+- user accounts
 - auth/session lifecycle
-- role assignment
+- role assignments
 - account block state
-- provider linkage vào cùng account nếu có
+- provider linkages vào cùng account
 
-### Identity does not own
+## Identity does not own (Định danh không sở hữu)
+
+- editorial content
 - community content
-- bookmarks / progress / practice sheets
+- engagement progress
 - moderation reports
-- push subscriptions
-- content authorship records ngoài user ref
+- push delivery records
 
-## References từ module khác
-- content tham chiếu user làm author hoặc người phụ trách biên soạn
-- community tham chiếu user hoặc snapshot author name
-- engagement tham chiếu user làm owner
-- moderation tham chiếu reporter, actor xử lý, target user
-- notification tham chiếu user để resolve recipient
+## References from other modules (Tham chiếu từ mô-đun khác)
 
-## Current rules
-- không dùng auth framework thứ hai cho session hoặc đăng nhập
-- không tạo users store thứ hai ngoài `users`
-- role thay đổi bởi `super-admin` hoặc `admin` theo scope quản trị, không bởi public self-service (lớp xử lý nghiệp vụ) flow
-- public profile chỉ nên lộ field đã map qua contract (hợp đồng dữ liệu/nghiệp vụ), không trả raw user document
-- canonical auth/account write đi trước; email/provider follow-up signal đi sau qua outbox nếu có
-- recovery auth truth luôn quay về `users` + auth authority, không quay về client state
+- Content tham chiếu user làm author/editor.
+- Community tham chiếu user làm actor hoặc author snapshot.
+- Engagement tham chiếu user làm owner của self-state.
+- Moderation tham chiếu reporter/admin/target user.
+- Notification tham chiếu user để resolve recipient.
 
+## Current rules (Quy tắc hiện tại)
+
+- No secondary auth framework (không có framework xác thực thứ hai).
+- No secondary user store (không có kho user thứ hai).
+- Role change chỉ đi qua admin path có audit.
+- Public profile chỉ expose sanitized fields (trường đã làm sạch) qua contract.
+- Canonical auth write-path luôn ưu tiên hơn mọi side-effects.

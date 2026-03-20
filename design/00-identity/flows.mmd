@@ -1,39 +1,39 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: Đăng ký tài khoản"]
-        I1A["Người dùng gửi form đăng ký"] --> I1B["CMS kiểm tra payload"]
-        I1B --> I1C["Tạo user trong Payload auth"]
-        I1C --> I1D["Đặt role mặc định là member"]
-        I1D --> I1E["Trả auth session hoặc response contract (hợp đồng phản hồi)"]
+    subgraph Flow1 ["Luồng 1: Đăng ký tài khoản (Register Account)"]
+        I1A["Người dùng gửi form đăng ký (User submits register form)"] --> I1B["API kiểm tra dữ liệu (API validates payload)"]
+        I1B --> I1C["Tạo người dùng trong NestJS auth (Create user in NestJS auth)"]
+        I1C --> I1D["Đặt vai trò mặc định là member (Set default role to member)"]
+        I1D --> I1E["Trả phiên làm việc hoặc hợp đồng phản hồi (Return auth session or response contract)"]
     end
 
-    subgraph Flow2 ["Luồng 2: Đăng nhập"]
-        I2A["Người dùng gửi email và mật khẩu"] --> I2B["Payload auth kiểm tra credentials"]
-        I2B --> I2C{"Hợp lệ?"}
-        I2C -->|"Không"| I2D["Trả lỗi 401"]
-        I2C -->|"Có"| I2E["Kiểm tra isBlocked"]
-        I2E --> I2F{"Bị khóa?"}
-        I2F -->|"Có"| I2G["Từ chối đăng nhập"]
-        I2F -->|"Không"| I2H["Cập nhật lastLoginAt"]
-        I2H --> I2I["Trả session hoặc cookie"]
+    subgraph Flow2 ["Luồng 2: Đăng nhập (Login)"]
+        I2A["Người dùng gửi email và mật khẩu (User submits email/password)"] --> I2B["NestJS auth kiểm tra thông tin (NestJS auth validates credentials)"]
+        I2B --> I2C{"Hợp lệ (Valid)?"}
+        I2C -->|"Không (No)"| I2D["Trả lỗi 401 (Return 401 Error)"]
+        I2C -->|"Có (Yes)"| I2E["Kiểm tra trạng thái khóa (Check isBlocked)"]
+        I2E --> I2F{"Bị khóa (Blocked)?"}
+        I2F -->|"Có (Yes)"| I2G["Từ chối đăng nhập (Reject login)"]
+        I2F -->|"Không (No)"| I2H["Cập nhật thời gian đăng nhập (Update lastLoginAt)"]
+        I2H --> I2I["Trả thông tin phiên hoặc cookie (Return session or cookie)"]
     end
 
-    subgraph Flow3 ["Luồng 3: Quên mật khẩu và đặt lại mật khẩu"]
-        I3A["Người dùng yêu cầu quên mật khẩu"] --> I3B["Payload tạo reset token"]
-        I3B --> I3C["Tạo reset URL"]
-        I3C --> I3D["Đưa email reset vào hàng chờ hoặc gửi ngay"]
-        I3D --> I3E["Người dùng mở reset URL"]
-        I3E --> I3F["Gửi mật khẩu mới"]
-        I3F --> I3G["Payload xác minh token và cập nhật mật khẩu"]
-        I3G --> I3H["Trả kết quả thành công"]
+    subgraph Flow3 ["Luồng 3: Quên mật khẩu và đặt lại (Forgot & Reset Password)"]
+        I3A["Người dùng yêu cầu quên mật khẩu (User requests forgot password)"] --> I3B["API tạo mã thông báo đặt lại (API generates reset token)"]
+        I3B --> I3C["Tạo đường dẫn đặt lại mật khẩu (Create reset URL)"]
+        I3C --> I3D["Đưa email đặt lại vào hàng chờ hoặc gửi ngay (Queue or send reset email)"]
+        I3D --> I3E["Người dùng mở đường dẫn đặt lại (User opens reset URL)"]
+        I3E --> I3F["Gửi mật khẩu mới (Submit new password)"]
+        I3F --> I3G["API xác minh mã và cập nhật mật khẩu (API validates token & updates password)"]
+        I3G --> I3H["Trả kết quả thành công (Return success)"]
     end
 
-    subgraph Flow4 ["Luồng 4: Admin cập nhật role hoặc block state"]
-        I4A["Admin mở user trong CMS"] --> I4B["Cập nhật role hoặc isBlocked"]
-        I4B --> I4C["Payload access kiểm tra quyền"]
-        I4C --> I4D["Lưu user document"]
-        I4D --> I4E["Các module khác đọc role hoặc block state mới ở request tiếp theo"]
+    subgraph Flow4 ["Luồng 4: Admin cập nhật vai trò hoặc trạng thái (Admin updates role/block)"]
+        I4A["Quản trị viên mở người dùng trong Admin (Admin views user in Admin UI)"] --> I4B["Cập nhật vai trò hoặc trạng thái khóa (Update role or isBlocked)"]
+        I4B --> I4C["Kiểm tra quyền truy cập (API access checks permission)"]
+        I4C --> I4D["Lưu thông tin người dùng (Save user document)"]
+        I4D --> I4E["Các mô-đun khác áp dụng quyền/trạng thái mới (Other modules apply new role/block state)"]
     end
 
-    I1E -.->|"tiếp"| I2A
-    I2I -.->|"tiếp"| I3A
-    I3H -.->|"tiếp"| I4A
+    I1E -.->|"tiếp (then)"| I2A
+    I2I -.->|"tiếp (then)"| I3A
+    I3H -.->|"tiếp (then)"| I4A

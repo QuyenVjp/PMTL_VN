@@ -1,18 +1,20 @@
 stateDiagram-v2
-    [*] --> Submitted
-    Submitted --> UnderReview: "Moderator mở report (Moderator opens report)"
-    Submitted --> HiddenByThreshold: "Tự ẩn khi chạm ngưỡng policy (Auto-hide if policy threshold is reached)"
-    UnderReview --> Approved: "Quyết định approved (Decision approved)"
-    UnderReview --> Rejected: "Quyết định rejected (Decision rejected)"
-    UnderReview --> Flagged: "Cần theo dõi thêm (Need more attention)"
-    UnderReview --> Hidden: "Buộc ẩn target (Force hidden on target)"
-    HiddenByThreshold --> UnderReview: "Moderator xác nhận hoặc đổi kết quả (Moderator confirms or changes outcome)"
+    [*] --> Submitted: "Tiếp nhận báo cáo (Report submitted)"
+    Submitted --> UnderReview: "Rà soát báo cáo (Moderator opens report)"
+    Submitted --> HiddenByThreshold: "Tự ẩn khi chạm ngưỡng chính sách (Auto-hide per policy threshold)"
+    UnderReview --> Approved: "Đồng ý/Hợp lệ (Decision approved)"
+    UnderReview --> Rejected: "Bác bỏ/Không lỗi (Decision rejected)"
+    UnderReview --> Flagged: "Gắn cờ theo dõi (Need more attention)"
+    UnderReview --> Hidden: "Buộc ẩn thực thể bài (Force hidden on target)"
+    HiddenByThreshold --> UnderReview: "Xác nhận hoặc đổi kết quả (Confirm or changes outcome)"
     Approved --> [*]
     Rejected --> [*]
     Flagged --> [*]
     Hidden --> [*]
 
     note right of Submitted
-      Canonical record nằm ở moderationReports.
-      reportCount trên target chỉ là summary.
+      Bản ghi chuẩn gốc nằm ở moderationReports.
+      (Canonical record in moderationReports)
+      Số lượng báo cáo (`reportCount`) trên thực thể đích chỉ là phần tóm tắt.
+      (Count on target is summary only)
     end note

@@ -1,72 +1,50 @@
-# Engagement Contracts
+# Engagement Contracts (Hợp đồng Mô-đun Tương tác)
 
-## Owner data
+## Data ownership (Quyền sở hữu dữ liệu)
 
-- `sutraBookmarks`
-- `sutraReadingProgress`
-- `chantPreferences`
-- `practiceLogs`
-- `practiceSheets`
-- `ngoiNhaNhoSheets`
+- `sutraBookmarks`: personal bookmark state (trạng thái đánh dấu cá nhân)
+- `sutraReadingProgress`: reading progress state (trạng thái tiến độ đọc)
+- `chantPreferences`: personal practice preferences (cấu hình tu tập cá nhân)
+- `practiceLogs`: historical practice log (nhật ký công phu)
+- `practiceSheets`: daily practice sheet (bảng công phu hằng ngày)
+- `ngoiNhaNhoSheets`: self-owned little-house records (bản ghi Ngôi Nhà Nhỏ cá nhân)
 
-## BFF routes đang có
+## API / BFF routes (Tuyến đường API)
 
-- `GET /api/practice-log`
-- `PUT /api/practice-log`
-- `GET /api/sutra-bookmarks`
-- `POST /api/sutra-bookmarks`
-- `GET /api/sutra-progress`
-- `POST /api/sutra-progress`
-- `GET /api/chanting/preferences`
-- `POST /api/chanting/preferences`
-- `GET /api/practice-sheets`
-- `POST /api/practice-sheets`
-- `GET /api/ngoi-nha-nho/sheets`
-- `POST /api/ngoi-nha-nho/sheets`
+- `GET/PUT /api/practice-log`
+- `GET/POST /api/sutra-bookmarks`
+- `GET/POST /api/sutra-progress`
+- `GET/POST /api/chanting/preferences`
+- `GET/POST /api/practice-sheets`
+- `GET/POST /api/ngoi-nha-nho/sheets`
 
-## Auth contract (hợp đồng dữ liệu/nghiệp vụ)
+## Auth & permissions (Xác thực & quyền hạn)
 
-- engagement là self-owned state
-- mọi write contract (hợp đồng dữ liệu/nghiệp vụ) mặc định gắn với user từ Payload auth session
-- client không được tự chỉ định owner user khác
+- Individual ownership (quyền sở hữu cá nhân): engagement data mặc định là `self-owned`
+- Contextual auth (xác thực theo ngữ cảnh): write operation lấy `userId` từ NestJS auth session
+- `member`: full read/write trên dữ liệu của chính mình
+- `admin`: có thể có support access theo policy, nhưng không trở thành owner của workflow cá nhân
 
-## Permission baseline
+## Canonical write rules (Quy tắc ghi chuẩn gốc)
 
-- `member`
-  - được ghi self-state của chính mình
-- `admin`
-  - chỉ nên có support access có kiểm soát, không trở thành owner flow thường
+1. Separation (tách biệt): self-state không được ghi ngược vào content canonical data.
+2. References (tham chiếu): engagement chỉ đọc `sutras`, `chantItems`, `chantPlans` qua reference.
+3. Immutability (tính bất biến) với một số state:
+   - `ngoiNhaNhoSheet` đã `offered` thì không được mở lại progress fields bừa bãi.
+4. Idempotency (tính không đổi):
+   - `practiceLogs` nên support `clientEventId` hoặc composite key kiểu `user + date + plan`.
 
-## Canonical write rules
+## Expected errors (Lỗi dự kiến)
 
-- practice log canonical record (bản ghi chuẩn gốc) nằm ở `practiceLogs`
-- practice sheet canonical record (bản ghi chuẩn gốc) nằm ở `practiceSheets`
-- `Ngôi Nhà Nhỏ` canonical record (bản ghi chuẩn gốc) nằm ở `ngoiNhaNhoSheets`
-- bookmark canonical record (bản ghi chuẩn gốc) nằm ở `sutraBookmarks`
-- reading progress canonical record (bản ghi chuẩn gốc) nằm ở `sutraReadingProgress`
-- chant preference canonical record (bản ghi chuẩn gốc) nằm ở `chantPreferences`
-- content module chỉ được tham chiếu để lấy `sutra`, `chapter`, `chantItem`, `chantPlan`
+- `400`: field bắt buộc thiếu hoặc schema sai
+- `401`: thiếu session hoặc token hết hạn
+- `403`: cố đọc/ghi dữ liệu cá nhân của người khác
+- `404`: content reference không tồn tại
+- `409`: duplicate record hoặc invalid state transition
+- `500`: internal service/runtime error
 
-## Error expectations
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
 
-- `400`
-  - thiếu `date`, `planSlug`, target chapter, hoặc body fail schema (lược đồ dữ liệu)
-- `401`
-  - không có auth token/session
-- `403`
-  - cố ghi self-state cho user khác
-- `404`
-  - sutra/chapter/plan/item tham chiếu không tồn tại
-- `409`
-  - state conflict hiếm, ví dụ duplicate record không merge được
-- `500`
-  - lỗi proxy/CMS/service (lớp xử lý nghiệp vụ)
-
-## Notes for AI/codegen
-
-- Self-state không được ghi ngược vào content canonical collections.
-- Upsert practice log có thể dùng semantics `user + practiceDate + plan`.
-- `practiceSheets` nên ưu tiên offline-first idempotent sync bằng `clientEventId`.
-- `ngoiNhaNhoSheets` nên khóa write khi status đã là `offered`.
-- Engagement không được block bởi search sync hay notification dispatch.
-
+- No backfilling into content (không được ghi ngược vào content)
+- Offline-first sync (đồng bộ ưu tiên offline-first) phải idempotent
+- Async side-effects không được chặn canonical self-state write path

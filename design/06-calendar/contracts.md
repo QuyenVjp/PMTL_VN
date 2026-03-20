@@ -47,3 +47,15 @@
 - Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng các source-backed text gốc vẫn do `09-wisdom-qa` sở hữu.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
 
+- `409`: Conflict (Duplicate slug/PublicID or override collision).
+- `500`: Projection refresh failure or outbox dispatch error.
+
+---
+
+## Notes for AI/codegen (Ghi chú for AI & Sinh mã)
+
+- **Referential Integrity**: Do not duplicate ritual scripts into event records; link to the Content module via ID.
+- **Consumer Role**: Use the Notification module only for delivery; it should consume calendar context, not own it.
+- **Read Model Composition**: The `GET /api/practice-calendar` endpoint aggregates `advisoryCards`, `sourceRefs` (from Wisdom), and `recitationRules`, but it must remain the authoritative service for this combined result.
+- **Recovery Path**: If the Read Model drifts from source data, the standard fix is to **Recalculate the Window** or **Replay the Signal**, never manual point-edits to the read model.
+- **Instructional Accuracy**: Any teaching snippets in the advisory must correspond to an approved source in the Wisdom module (`09-wisdom-qa`).

@@ -2,7 +2,7 @@
 
 > Ghi chú cho sinh viên:
 > File này mô tả `repo truth (thực trạng repo)` và `implementation mapping (cách map sang code triển khai)`.
-> Các quyết định nền tảng như `Postgres là source of truth`, `Payload auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](../CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
+> Các quyết định nền tảng như `Postgres là source of truth`, `NestJS auth duy nhất`, `async-first` đã được chốt ở [CORE_DECISIONS.md](../CORE_DECISIONS.md). Không lặp lại toàn văn ở đây.
 > Đây là `canonical source (nguồn chuẩn duy nhất)` cho owner/responsibility mapping giữa các module.
 > Các file index như `domain-map.md` chỉ được dẫn link về đây, không được tự chốt lại ownership.
 
@@ -12,31 +12,36 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 
 - repo hiện đang chạy theo stack nào
 - business logic nên nằm ở tầng nào trong monorepo
-- collection nào là owner, service nào nên ôm logic
+- module nào là owner, service nào nên ôm logic
 
 ## Stack truth hiện tại
 
 ### Web
-- `apps/web` là frontend public dùng Next.js App Router.
-- Web ưu tiên gọi compatibility routes từ CMS thay vì dùng raw Payload document.
 
-### CMS + Auth
-- `apps/cms` là runtime host cho admin UI, REST API, GraphQL, compatibility routes, và worker bootstrap.
-- Payload auth là auth authority (đơn vị xác thực) duy nhất.
+- `apps/web` là frontend public dùng Next.js App Router.
+- Web ưu tiên gọi API contracts từ backend thay vì đụng trực tiếp persistence model.
+
+### API + Admin + Auth
+
+- `apps/api` là runtime host cho REST API, OpenAPI docs, auth, domain modules, search/storage orchestration, và worker bootstrap contracts.
+- `apps/admin` là custom management UI riêng, không phải generated admin panel.
+- Auth authority duy nhất nằm ở backend `NestJS`.
 - Google login được phép nếu vẫn map vào cùng authority này.
 
 ### Data & Runtime
+
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
 - `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng.
 - `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination.
 - Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc.
-- object storage là đích chuẩn cho media/file trong production.
+- object storage là đích chuẩn cho media/file trong target phase production.
 - Caddy là reverse proxy và TLS entrypoint.
 - observability chuẩn là metrics + logs + traces.
 
 ## Repo truth theo miền dữ liệu
 
 ### Editorial content
+
 - `posts`
 - `hubPages`
 - `beginnerGuides`
@@ -50,12 +55,14 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 - `tags`
 
 ### Community / UGC
+
 - `postComments`
 - `communityPosts`
 - `communityComments`
 - `guestbookEntries`
 
 ### Self-owned practice state
+
 - `sutraBookmarks`
 - `sutraReadingProgress`
 - `chantPreferences`
@@ -64,11 +71,13 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 - `ngoiNhaNhoSheets`
 
 ### Practice support / vows / merit
+
 - `vows`
 - `vowProgressEntries`
 - `lifeReleaseJournal`
 
 ### Calendar / delivery / control plane
+
 - `events`
 - `lunarEvents`
 - `lunarEventOverrides`
@@ -81,7 +90,7 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 Đọc [CORE_DECISIONS.md](../CORE_DECISIONS.md) cho các quyết định sau:
 
 - PostgreSQL là source of truth
-- Payload auth là auth authority duy nhất
+- NestJS auth là auth authority duy nhất
 - async-first cho non-critical paths
 - published-only cache/index
 - search là computed read model
@@ -246,17 +255,19 @@ Service responsibilities:
 
 - Không phá monorepo boundaries:
   - `apps/web`
-  - `apps/cms`
+  - `apps/api`
+  - `apps/admin`
+  - `apps/worker`
   - `packages/*`
   - `infra/*`
   - `docs/*`
 - `apps/web` tiếp tục feature-first.
-- Payload collections tiếp tục giữ pattern:
-  - `index.ts`
-  - `fields.ts`
-  - `access.ts`
-  - `hooks.ts`
-  - `service.ts`
+- `apps/api` nên chia module rõ theo:
+  - `controller`
+  - `service`
+  - `dto` hoặc `contracts`
+  - `entity` hoặc `repository`
+  - `module`
 - `packages/shared` chỉ chứa code framework-agnostic.
 
 ## Những gì không nên giữ lại
@@ -266,20 +277,22 @@ Service responsibilities:
 - nhét bookmark, progress, practice logs vào content module
 - lấy `Valkey`/Redis-compatible store hoặc Meilisearch làm source of truth cho UI cần correctness cao
 
-## Current scope vs future candidates
+## Current scope vs future candidates (Phạm vi hiện tại và các hướng mở rộng sau này)
 
-### Current scope
-- identity với Payload auth
+### Current scope (Phạm vi hiện tại)
+
+- identity với NestJS auth
 - editorial content split collections
 - public comments + community posts/comments + guestbook
 - moderation reports + moderation summary sync
 - user-state cho sutra/practice
-- search sync sang Meilisearch + payload fallback
+- search sync sang Meilisearch + SQL/API fallback
 - push subscriptions + push jobs
 - events + lunar events + overrides
 - vows, life release journal, wisdom retrieval
 
 ### Future candidates
+
 - gated membership content với audience visibility đầy đủ
 - recommendation engine
 - digest scheduling phong phú hơn

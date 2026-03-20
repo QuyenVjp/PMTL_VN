@@ -1,63 +1,62 @@
-# Submit Guestbook Entry
+# Submit Guestbook Entry (Gửi Tin nhắn Sổ lưu niệm)
 
-## Purpose
-- Ghi một lời lưu bút hoặc câu hỏi của cộng đồng vào `guestbookEntries` với boundary (ranh giới trách nhiệm) approval/moderation rõ ràng.
+## Mục đích (Purpose)
+Ghi lại một lời nhắn lưu bút hoặc một câu hỏi từ cộng đồng vào bộ sưu tập `guestbookEntries` với sự phân định ranh giới trách nhiệm (boundary) về phê duyệt và kiểm duyệt một cách rõ ràng.
 
-## owner module (module sở hữu)
-- `community`
+## Mô-đun sở hữu (Owner module)
+- `community` (Cộng đồng)
 
-## Actors
-- `guest`
-- `member`
+## Các đối tượng thực hiện (Actors)
+- Khách (`guest`)
+- Thành viên (`member`)
 
-## trigger (điểm kích hoạt)
-- Web gọi `POST /api/guestbook/submit`.
+## Điểm kích hoạt (Trigger)
+Trang web gọi yêu cầu đến `POST /api/guestbook/submit`.
 
-## preconditions (điều kiện tiên quyết)
-- Body JSON hợp lệ.
-- `guestbookSubmitSchema` pass.
-- Request guard và policy nội dung không chặn.
+## Điều kiện tiên quyết (Preconditions)
+- Thân yêu cầu (body) JSON hợp lệ.
+- Vượt qua kiểm tra cấu trúc dữ liệu `guestbookSubmitSchema`.
+- Chốt chặn yêu cầu (request guard) và chính sách nội dung không chặn hành động này.
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- `guestbookSubmitSchema`
-- route proxy forward correlation id và IP forwarding metadata theo policy hiện tại
-- nếu có downstream review signal thì outbox payload phải có schema runtime rõ
+## Hợp đồng dữ liệu đầu vào (Input Contract)
+- `guestbookSubmitSchema` (Cấu trúc gửi tin nhắn sổ lưu niệm).
+- Dữ liệu proxy tuyến đường phải chuyển tiếp mã tương quan (`correlationId`) và dữ liệu đặc tả truy cập (IP forwarding metadata) theo chính sách hiện hành.
+- Nếu có tín hiệu xem xét hạ nguồn, gói dữ liệu outbox phải có cấu trúc dữ liệu thực thi (runtime schema) rõ ràng.
 
-## Read set
-- request guard
-- `guestbookEntries`
+## Tập hợp dữ liệu đọc (Read Set)
+- Hệ thống chốt chặn yêu cầu (request guard).
+- Bộ sưu tập tệp tin lưu niệm (`guestbookEntries`).
 
-## write path (thứ tự ghi dữ liệu chuẩn)
-1. Parse JSON body.
-2. Validate schema (lược đồ dữ liệu).
-3. Ghi canonical entry vào `guestbookEntries`.
-4. Gán approval/moderation summary theo policy hiện tại.
-5. Append audit `guestbook.submit`.
-6. Nếu cần duyệt hoặc attention nội bộ, append outbox event cho admin/super-admin notification.
+## Thứ tự ghi dữ liệu chuẩn (Write Path)
+1. Phân tích nội dung JSON của thân yêu cầu.
+2. Xác thực cấu trúc dữ liệu (validate schema).
+3. Ghi bản ghi tin nhắn chuẩn gốc (canonical entry) vào bộ sưu tập `guestbookEntries`.
+4. Gán tóm tắt trạng thái phê duyệt/kiểm duyệt theo chính sách hiện hành.
+5. Thêm sự kiện nhật ký kiểm toán hành động `guestbook.submit`.
+6. Nếu cần phê duyệt hoặc có sự chú ý nội bộ, nạp thêm sự kiện outbox để tạo thông báo cho quản trị viên hoặc cấp cao.
 
-## async (bất đồng bộ) side-effects
-- internal moderation notification
+## Tác động phụ bất đồng bộ (Async Side-effects)
+- Gửi thông báo kiểm duyệt nội bộ.
 
-## success result (kết quả thành công)
-- Guestbook record được tạo thành công.
-- Entry hiển thị ngay hoặc chờ approval tùy policy.
+## Kết quả thành công (Success Result)
+- Bản ghi sổ lưu niệm được tạo thành công.
+- Tin nhắn hiển thị ngay lập tức hoặc chờ phê duyệt tùy theo chính sách hiện hành.
 
-## Errors
-- `400`: JSON/body không hợp lệ.
-- `429`: request guard chặn.
-- `500`: proxy/CMS/service (lớp xử lý nghiệp vụ) lỗi.
+## Các lỗi có thể xảy ra (Errors)
+- `400`: Nội dung JSON hoặc thân yêu cầu không hợp lệ.
+- `429`: Bị chặn bởi chốt chặn yêu cầu.
+- `500`: Lỗi proxy, API hoặc dịch vụ nghiệp vụ.
 
-## Audit
-- log `guestbook.submit`
+## Kiểm toán (Audit)
+- Ghi nhật ký hành động `guestbook.submit`.
 
-## Idempotency / anti-spam
-- request guard là lớp chặn spam chính.
-- hashed IP hoặc fingerprint chỉ là abuse context, không là public contract (hợp đồng dữ liệu/nghiệp vụ).
-- replay outbox không được tạo duplicate review signal cho cùng entry.
+## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
+- Chốt chặn yêu cầu là lớp bảo vệ chính chống lại thư rác.
+- Mã băm địa chỉ IP (hashed IP) hoặc dấu vân tay định danh (fingerprint) chỉ là dữ liệu đặc tả chống lạm dụng, không phải là dữ liệu công khai.
+- Việc phát lại hàng đợi outbox không được phép tạo ra các tín hiệu xem xét trùng lặp cho cùng một tin nhắn.
 
-## Performance target
-- submit nên trả nhanh, không đợi notification gửi xong.
+## Mục tiêu hiệu năng (Performance Target)
+- Yêu cầu gửi nội dung nên được phản hồi nhanh chóng, không phải chờ quy trình gửi thông báo hoàn tất.
 
-## Notes for AI/codegen
-- Guestbook approval summary không thay thế moderation source record nếu entry bị report sau này.
-
+## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
+- Tóm tắt phê duyệt sổ lưu niệm (Guestbook approval summary) không thay thế bản ghi kiểm duyệt gốc (moderation source record) nếu tin nhắn đó bị báo cáo vi phạm sau này.

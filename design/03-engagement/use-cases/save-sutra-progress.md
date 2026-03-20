@@ -1,58 +1,56 @@
-# Save Sutra Reading Progress
+# Save Sutra Reading Progress (Lưu tiến độ đọc kinh)
 
-## Purpose
-- Lưu tiến độ đọc kinh cá nhân theo user và chapter/sutra target.
+## Purpose (Mục đích)
+- lưu tiến độ đọc kinh cá nhân theo user và target `sutra/chapter`
 
-## owner module (module sở hữu)
+## Owner module (Mô-đun sở hữu)
 - `engagement`
 
-## Actors
+## Actors (Tác nhân)
 - `member`
 
-## trigger (điểm kích hoạt)
-- Web gọi route tiến độ đọc kinh.
+## Trigger (Điểm kích hoạt)
+- web gọi route lưu tiến độ đọc kinh
 
-## preconditions (điều kiện tiên quyết)
-- Có session hợp lệ.
-- Target sutra/chapter tồn tại.
+## Preconditions (Điều kiện tiên quyết)
+- có session hợp lệ
+- target `sutra` hoặc `chapter` tồn tại
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- BFF/CMS route tiến độ đọc kinh hiện có.
-- Body phải chứa target hợp lệ và progress value trong giới hạn policy.
+## Input contract (Hợp đồng dữ liệu/nghiệp vụ)
+- API route nhận target hợp lệ và progress value trong giới hạn policy
 
-## Read set
+## Read set (Dữ liệu cần đọc)
 - auth session
 - `sutraReadingProgress`
 - `sutras`
 - `sutraChapters`
 
-## write path (thứ tự ghi dữ liệu chuẩn)
+## Write path (Thứ tự ghi dữ liệu chuẩn)
 1. Resolve user từ session.
 2. Resolve target `sutra` hoặc `chapter`.
-3. Upsert canonical record (bản ghi chuẩn gốc) trong `sutraReadingProgress`.
-4. Update derived summary trên chính record progress nếu collection dùng.
+3. Upsert canonical record trong `sutraReadingProgress`.
+4. Update derived summary trên chính record nếu schema dùng.
 5. Append audit `sutra-progress.upsert`.
 
-## async (bất đồng bộ) side-effects
-- không có side-effect bắt buộc ở current scope
+## Async side-effects (Tác động phụ bất đồng bộ)
+- current scope không có side-effect bắt buộc
 
-## success result (kết quả thành công)
-- Reader mở lại kinh sẽ thấy đúng vị trí/tiến độ cá nhân của mình.
+## Success result (Kết quả thành công)
+- reader mở lại kinh sẽ thấy đúng vị trí/tiến độ cá nhân của mình
 
-## Errors
-- `401`: chưa đăng nhập.
-- `404`: sutra hoặc chapter không tồn tại.
-- `500`: lỗi service (lớp xử lý nghiệp vụ)/proxy.
+## Errors (Lỗi dự kiến)
+- `401`: chưa đăng nhập
+- `404`: `sutra` hoặc `chapter` không tồn tại
+- `500`: lỗi service/proxy
 
-## Audit
+## Audit (Dấu vết kiểm tra)
 - log `sutra-progress.upsert`
 
-## Idempotency / anti-spam
-- Upsert theo user + target để tránh duplicate progress row.
+## Idempotency / anti-spam (Chống lặp/chống spam)
+- upsert theo `user + target` để tránh duplicate progress row
 
-## Performance target
-- self-state update `< 500ms`.
+## Performance target (Mục tiêu hiệu năng)
+- self-state update `< 500ms`
 
-## Notes for AI/codegen
-- Tiến độ đọc là user-state; content tree chỉ được đọc tham chiếu.
-
+## Notes for AI/codegen (Ghi chú cho AI/codegen)
+- tiến độ đọc là user-state (trạng thái cá nhân); content tree chỉ được đọc tham chiếu

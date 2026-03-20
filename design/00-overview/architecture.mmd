@@ -1,56 +1,56 @@
 graph TD
-    subgraph "Điều phối truy cập (Ingress)"
-        Caddy["Caddy<br/>proxy đảo / HTTPS"]
+    subgraph "Điều phối truy cập (Ingress & Reverse Proxy)"
+        Caddy["Caddy<br/>Proxy đảo / HTTPS (Reverse Proxy)"]
     end
 
     subgraph "Giao diện (Frontend)"
-        Web["apps/web<br/>Next.js App Router"]
+        Web["apps/web<br/>Next.js App Router (User UI)"]
     end
 
-    subgraph "Môi trường CMS (CMS Runtime)"
-        CMS["apps/cms<br/>Payload admin + API + định danh"]
-        Compat["Các luồng tương thích<br/>ánh xạ dữ liệu (DTO) công khai"]
-        Proxy["Ranh giới web proxy<br/>kiểm soát yêu cầu/phiên"]
+    subgraph "Môi trường API (Backend Runtime)"
+        API["apps/api<br/>NestJS API + Định danh (Auth & Domain)"]
+        Compat["Lớp tương thích & Ánh xạ DTO<br/>(Compatibility & DTO Layer)"]
+        Proxy["Ranh giới Web Proxy / Phiên<br/>(Request & Session Boundary)"]
     end
 
-    subgraph "Xử lý bất đồng bộ (Async Runtime)"
-        Redis["Redis<br/>bộ nhớ đệm + hàng đợi + điều phối"]
-        Worker["Worker<br/>đồng bộ tìm kiếm / thông báo / email / bảo trì"]
+    subgraph "Xử lý bất đồng bộ (Async & Queue Runtime)"
+        Valkey["Valkey<br/>Bộ nhớ đệm + Hàng đợi (Cache & Queue)"]
+        Worker["Worker<br/>Tìm kiếm / Thông báo / Email / Bảo trì"]
     end
 
-    subgraph "Dữ liệu (Data)"
-        Postgres["PostgreSQL<br/>nguồn dữ liệu chuẩn"]
-        Meili["Meilisearch<br/>chỉ dành cho chỉ mục tìm kiếm"]
+    subgraph "Dữ liệu (Data & Persistence)"
+        Postgres["PostgreSQL<br/>Nguồn dữ liệu chuẩn (Source of Truth)"]
+        Meili["Meilisearch<br/>Chỉ dành cho tìm kiếm (Search indexing)"]
     end
 
-    subgraph "Giám sát (Tùy chọn)"
-        PgBouncer["PgBouncer"]
-        Prometheus["Prometheus"]
-        Grafana["Grafana"]
-        Alertmanager["Alertmanager"]
+    subgraph "Giám sát & Điều phối (Optional Ops Stack)"
+        PgBouncer["PgBouncer<br/>(Connection Pooling)"]
+        Prometheus["Prometheus<br/>(Metrics Collection)"]
+        Grafana["Grafana<br/>(Visualization)"]
+        Alertmanager["Alertmanager<br/>(Alert Routing)"]
     end
 
     Caddy --> Web
-    Caddy --> CMS
+    Caddy --> API
 
     Web --> Proxy
     Proxy --> Compat
-    Compat --> CMS
+    Compat --> API
 
-    CMS -->|đọc/ghi dữ liệu chuẩn| Postgres
-    CMS -->|đệm / đưa việc vào hàng đợi| Redis
-    Worker -->|lấy việc| Redis
-    Worker -->|đọc/ghi dữ liệu chuẩn khi cần| Postgres
-    Worker -->|cập nhật tài liệu tìm kiếm| Meili
+    API -->|Đọc/Ghi dữ liệu chuẩn (Read/Write Canonical)| Postgres
+    API -->|Đệm / Hàng đợi (Cache / Queue push)| Valkey
+    Worker -->|Lấy việc (Pull jobs)| Valkey
+    Worker -->|Mục tiêu dữ liệu chuẩn (Canonical Update)| Postgres
+    Worker -->|Đẩy chỉ mục (Push indices)| Meili
 
-    CMS -->|truy vấn tìm kiếm / trạng thái| Meili
-    Web -->|tìm kiếm công khai qua CMS| Compat
+    API -->|Truy vấn tìm kiếm (Search query)| Meili
+    Web -->|Tìm kiếm qua API (Public Search via API)| Compat
 
-    CMS -. tùy chọn .-> PgBouncer
-    PgBouncer -. pool .-> Postgres
+    API -. Tùy chọn .-> PgBouncer
+    PgBouncer -. Điều phối kết nối .-> Postgres
 
-    Web -. thông số/nhật ký .-> Prometheus
-    CMS -. thông số/nhật ký .-> Prometheus
-    Worker -. thông số/nhật ký .-> Prometheus
+    Web -. Chỉ số/Nhật ký (Metrics/Logs) .-> Prometheus
+    API -. Chỉ số/Nhật ký (Metrics/Logs) .-> Prometheus
+    Worker -. Chỉ số/Nhật ký (Metrics/Logs) .-> Prometheus
     Prometheus --> Grafana
     Prometheus --> Alertmanager

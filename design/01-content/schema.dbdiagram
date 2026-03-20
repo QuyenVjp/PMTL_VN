@@ -1,0 +1,687 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "users",
+      "schemaName": "public",
+      "x": 0,
+      "y": 50
+    },
+    {
+      "name": "media_assets",
+      "schemaName": "public",
+      "x": 407.5,
+      "y": 50
+    },
+    {
+      "name": "categories",
+      "schemaName": "public",
+      "x": 815,
+      "y": 50
+    },
+    {
+      "name": "tags",
+      "schemaName": "public",
+      "x": 1095.5,
+      "y": 50
+    },
+    {
+      "name": "posts",
+      "schemaName": "public",
+      "x": 1503,
+      "y": 50
+    },
+    {
+      "name": "post_tags",
+      "schemaName": "public",
+      "x": 0,
+      "y": 228
+    },
+    {
+      "name": "post_related_posts",
+      "schemaName": "public",
+      "x": 407.5,
+      "y": 548
+    },
+    {
+      "name": "post_gallery_media",
+      "schemaName": "public",
+      "x": 815,
+      "y": 356
+    },
+    {
+      "name": "hub_pages",
+      "schemaName": "public",
+      "x": 1095.5,
+      "y": 324
+    },
+    {
+      "name": "hub_page_blocks",
+      "schemaName": "public",
+      "x": 1503,
+      "y": 900
+    },
+    {
+      "name": "hub_page_curated_posts",
+      "schemaName": "public",
+      "x": 0,
+      "y": 374
+    },
+    {
+      "name": "beginner_guides",
+      "schemaName": "public",
+      "x": 407.5,
+      "y": 694
+    },
+    {
+      "name": "beginner_guide_media",
+      "schemaName": "public",
+      "x": 815,
+      "y": 502
+    },
+    {
+      "name": "downloads",
+      "schemaName": "public",
+      "x": 1095.5,
+      "y": 790
+    },
+    {
+      "name": "chant_items",
+      "schemaName": "public",
+      "x": 1503,
+      "y": 1174
+    },
+    {
+      "name": "chant_item_preview_media",
+      "schemaName": "public",
+      "x": 0,
+      "y": 520
+    },
+    {
+      "name": "chant_item_recommended_presets",
+      "schemaName": "public",
+      "x": 407.5,
+      "y": 1160
+    },
+    {
+      "name": "chant_item_time_rules",
+      "schemaName": "public",
+      "x": 815,
+      "y": 680
+    },
+    {
+      "name": "chant_plans",
+      "schemaName": "public",
+      "x": 1095.5,
+      "y": 1448
+    },
+    {
+      "name": "chant_plan_items",
+      "schemaName": "public",
+      "x": 1503,
+      "y": 1608
+    },
+    {
+      "name": "sutras",
+      "schemaName": "public",
+      "x": 0,
+      "y": 666
+    },
+    {
+      "name": "sutra_tags",
+      "schemaName": "public",
+      "x": 407.5,
+      "y": 1370
+    },
+    {
+      "name": "sutra_volumes",
+      "schemaName": "public",
+      "x": 815,
+      "y": 954
+    },
+    {
+      "name": "sutra_chapters",
+      "schemaName": "public",
+      "x": 1095.5,
+      "y": 1754
+    },
+    {
+      "name": "sutra_glossary",
+      "schemaName": "public",
+      "x": 1503,
+      "y": 1850
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "owner_id"
+      ],
+      "secondTableName": "media_assets",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "author_id"
+      ],
+      "secondTableName": "posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "categories",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "primary_category_id"
+      ],
+      "secondTableName": "posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "cover_media_id"
+      ],
+      "secondTableName": "posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "posts",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "post_id"
+      ],
+      "secondTableName": "post_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "tags",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "tag_id"
+      ],
+      "secondTableName": "post_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "posts",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "post_id"
+      ],
+      "secondTableName": "post_related_posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "posts",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "related_post_id"
+      ],
+      "secondTableName": "post_related_posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "posts",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "post_id"
+      ],
+      "secondTableName": "post_gallery_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "media_id"
+      ],
+      "secondTableName": "post_gallery_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "cover_media_id"
+      ],
+      "secondTableName": "hub_pages",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "hub_pages",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "hub_page_id"
+      ],
+      "secondTableName": "hub_page_blocks",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "hub_pages",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "hub_page_id"
+      ],
+      "secondTableName": "hub_page_curated_posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "posts",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "post_id"
+      ],
+      "secondTableName": "hub_page_curated_posts",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "beginner_guides",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "guide_id"
+      ],
+      "secondTableName": "beginner_guide_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "media_id"
+      ],
+      "secondTableName": "beginner_guide_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "file_media_id"
+      ],
+      "secondTableName": "downloads",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "thumbnail_media_id"
+      ],
+      "secondTableName": "downloads",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "audio_media_id"
+      ],
+      "secondTableName": "chant_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "script_file_media_id"
+      ],
+      "secondTableName": "chant_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "chant_items",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chant_item_id"
+      ],
+      "secondTableName": "chant_item_preview_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "media_id"
+      ],
+      "secondTableName": "chant_item_preview_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "chant_items",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chant_item_id"
+      ],
+      "secondTableName": "chant_item_recommended_presets",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "chant_items",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chant_item_id"
+      ],
+      "secondTableName": "chant_item_time_rules",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "chant_plans",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chant_plan_id"
+      ],
+      "secondTableName": "chant_plan_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "chant_items",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chant_item_id"
+      ],
+      "secondTableName": "chant_plan_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "media_assets",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "cover_media_id"
+      ],
+      "secondTableName": "sutras",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutras",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "sutra_id"
+      ],
+      "secondTableName": "sutra_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "tags",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "tag_id"
+      ],
+      "secondTableName": "sutra_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutras",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "sutra_id"
+      ],
+      "secondTableName": "sutra_volumes",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutras",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "sutra_id"
+      ],
+      "secondTableName": "sutra_chapters",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutra_volumes",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "volume_id"
+      ],
+      "secondTableName": "sutra_chapters",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutras",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "sutra_id"
+      ],
+      "secondTableName": "sutra_glossary",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutra_volumes",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "volume_id"
+      ],
+      "secondTableName": "sutra_glossary",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sutra_chapters",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "chapter_id"
+      ],
+      "secondTableName": "sutra_glossary",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    }
+  ]
+}

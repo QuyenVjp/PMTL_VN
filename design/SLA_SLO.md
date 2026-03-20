@@ -1,79 +1,68 @@
-# SLA_SLO
+# SLA_SLO (Thỏa thuận và Mục tiêu mức độ dịch vụ)
 
-Tài liệu này chốt mục tiêu vận hành tối thiểu cho PMTL_VN.
-Vì đây là dự án cộng đồng phi lợi nhuận, mục tiêu không cần kiểu ngân hàng hay big tech.
-Nhưng vẫn cần đủ rõ để:
+File này định nghĩa `design targets (các mục tiêu thiết kế)`, không phải bằng chứng đã đạt SLO (Mục tiêu mức độ dịch vụ).
+Nếu chưa có metric (chỉ số đo lường), probe (bộ dò sức khỏe), load check (kiểm tra tải), hoặc incident evidence (bằng chứng sự cố) thì trạng thái đúng là:
 
-- ưu tiên phần nào trước
-- biết luồng nào chấp nhận eventual consistency
-- để AI không thiết kế side-effect nặng trên request path
+- `targeted (đang đặt mục tiêu)`
+- chưa được `certified (chứng nhận)`
 
-## Nguyên tắc chung
+## Cách đọc file này (Reading guide)
 
-- Public read quan trọng hơn dashboard nội bộ hiếm dùng.
-- Search, notification, revalidation là async (bất đồng bộ)-first.
-- Nếu một mục tiêu chưa đo thật được, cứ coi đây là target thiết kế trước, rồi refine sau.
+- phase 1 (giai đoạn 1) chỉ giữ các target (mục tiêu) thật sự cần cho first launch (ra mắt lần đầu)
+- mọi con số phải đi kèm:
+  - áp dụng cho flow (luồng) nào
+  - đo bằng gì
+  - hiện đã đo hay chưa
 
-## Mục tiêu theo luồng
+## Certification rule (Quy tắc chứng nhận)
 
-### Public content read
-- Trang bài viết hoặc guide đã publish nên phản hồi trong `< 500ms` ở điều kiện dev/prod bình thường, chưa tính mạng người dùng cuối quá xa.
-- TTFB public route không nên bị block bởi search sync hoặc notification.
+- Không target (mục tiêu) nào trong file này được coi là `đã đạt` nếu chưa có ít nhất một trong các evidence (bằng chứng) sau:
+  - app metric (chỉ số ứng dụng)
+  - health/readiness probe (bộ dò sức khỏe/sẵn sàng) tương ứng
+  - structured timing log (nhật ký thời gian có cấu trúc)
+  - load test (kiểm tra tải) hoặc smoke timing record (nhật ký thời gian kiểm thử khói)
 
-### Search
-- `GET /api/posts/search` nên trả kết quả trong `< 250ms` khi Meilisearch healthy.
-- fallback (đường dự phòng) Payload search có thể chậm hơn, nhưng mục tiêu là `< 1200ms`.
-- Sau khi publish content, index search nên được cập nhật trong `< 10 giây`.
+## Phase 1 targets (Các mục tiêu giai đoạn 1)
 
-### Community submit
-- Submit comment / community post / guestbook nên phản hồi trong `< 800ms` cho nhánh canonical write + append outbox event.
-- Moderation alert cho report mới nên được append vào `outbox_events` trong `< 2 giây`, còn dispatch downstream được phép trễ theo execution queue.
+| Flow (Luồng xử lý) | Target (Mục tiêu) | Measure from (Đo lường từ) | Status today (Trạng thái) | Notes (Ghi chú) |
+|---|---|---|---|---|
+| public content read (đọc nội dung công khai) | p95 `< 500ms` | app timing log hoặc `/metrics` latency bucket | targeted | ưu tiên hơn dashboard (bảng điều khiển) nội bộ |
+| auth login/register/profile update (đăng nhập/đăng ký/cập nhật hồ sơ) | p95 `< 800ms` | auth route timing log + `/metrics` | targeted | không tính external email delivery (gửi email ra bên ngoài) |
+| upload metadata accept path (luồng chấp nhận siêu dữ liệu tải lên) | p95 `< 1000ms` | upload route timing log | targeted | chỉ cho canonical accept path (luồng chấp nhận chuẩn), không bao gồm scan (quét) dài |
+| community submit (gửi bài cộng đồng) | p95 `< 800ms` | submit route timing log | targeted | canonical write (ghi dữ liệu chuẩn) phải xong nhanh |
+| calendar public query (truy vấn lịch công khai) | p95 `< 500ms` | route timing log | targeted | không phụ thuộc async downstream (luồng bất đồng bộ phía dưới) |
+| restore DB to clean machine (phục hồi cơ sở dữ liệu sang máy sạch) | `<= 30 phút` | restore drill log (nhật ký diễn tập phục hồi) | targeted | đây là ops SLO (mục tiêu vận hành) quan trọng hơn nhiều con số đẹp khác |
 
-### Moderation
-- Từ lúc report được tạo đến lúc admin thấy report trong queue (hàng đợi xử lý) nên là `< 10 giây`.
-- Quyết định moderation không được chờ push/email gửi xong mới trả response.
+## Deferred targets (Các mục tiêu tạm hoãn)
 
-### Notification
-- Tạo `pushJobs` nên xong trong `< 500ms`.
-- worker (tiến trình xử lý nền) dispatch có thể eventual consistency, mục tiêu bắt đầu xử lý trong `< 30 giây` khi queue (hàng đợi xử lý) khỏe.
+Các target (mục tiêu) dưới đây chỉ có nghĩa khi component (thành phần) tương ứng thật sự được bật.
 
-### Auth
-- Login/register/profile update nên trả kết quả trong `< 800ms` khi CMS healthy.
-- Reset password email có thể async (bất đồng bộ), nhưng request nhận thành công trong `< 1000ms`.
+| Flow (Luồng xử lý) | Target (Mục tiêu) | Applies only when (Chỉ áp dụng khi) | Measure from (Đo lường từ) |
+|---|---|---|---|
+| search API (API tìm kiếm) | p95 `< 1200ms` | phase 1 SQL/API fallback (đường dự phòng SQL giai đoạn 1) | route timing log |
+| search API (API tìm kiếm) | p95 `< 250ms` | Meilisearch đã bật | route timing log + search health |
+| search freshness (độ tươi mới của tìm kiếm) | `< 10 giây` | Meilisearch + sync path (đường đồng bộ) đã bật | index sync lag metric (chỉ số trễ đồng bộ chỉ mục) |
+| notification dispatch start (bắt đầu phân phát thông báo) | `< 30 giây` | queue/worker (hàng đợi/xử lý nền) đã bật | queue lag metric (chỉ số trễ hàng đợi) |
+| async side-effect enqueue/handoff (đưa vào hàng đợi/bàn giao tác động phụ bất đồng bộ) | `< 2 giây` | outbox/queue đã bật | outbox lag / dispatch metric (chỉ số trễ/phân phát) |
 
-### Engagement
-- Upsert practice log, bookmark, reading progress nên trong `< 500ms`.
-- Self-state không được đợi shared cache invalidation hay search sync.
+## Error-budget stance (Quan điểm về ngân sách lỗi)
 
-### Calendar
-- Query event công khai nên trong `< 500ms`.
-- Lunar override resolution nên nằm trong read model (mô hình dữ liệu đọc) hoặc helper rõ ràng, không gây nổ latency quá `< 200ms` bổ sung.
+- eventual consistency (tính nhất quán sau cùng) chấp nhận được với:
+  - search projection (phản chiếu tìm kiếm)
+  - notification dispatch (phân phát thông báo)
+  - revalidation (xác thực lại)
+- eventual consistency (tính nhất quán sau cùng) không chấp nhận được với:
+  - auth authority (quyền lực xác thực)
+  - canonical publish state (trạng thái xuất bản chuẩn)
+  - moderation source record (bản ghi nguồn kiểm duyệt)
+  - self-owned practice log (nhật ký tu tập cá nhân) sau khi request đã trả thành công
 
-## Error budget thực dụng
+## Review rule (Quy tắc rà soát)
 
-- Eventual consistency của search và notification là chấp nhận được nếu:
-  - canonical write thành công
-  - có khả năng retry
-  - có status/health để quan sát
-- Không chấp nhận eventual consistency với:
-  - auth authority
-  - canonical publish state
-  - moderation report source record
-  - self-owned practice log sau khi request trả thành công
+Mỗi khi thêm target (mục tiêu) mới, phải thêm cùng lúc:
 
-## Khi nào cần nâng chuẩn
+- measurement source (nguồn đo lường)
+- phase (giai đoạn) áp dụng
+- điều kiện để coi là certified (đã chứng nhận)
 
-- khi community volume tăng mạnh
-- khi bắt đầu có moderation pressure thật
-- khi push/email trở thành luồng quan trọng cho nhắc tu tập
-- khi cần cam kết rõ với cộng đồng về độ mới của search hoặc event schedule
-
-## Notes for AI/codegen
-
-- Không nhét gửi email, push dispatch, reindex đồng bộ vào request path chỉ để "chắc ăn".
-- Nếu một flow có target latency thấp, hãy ưu tiên:
-  - ghi canonical trước
-  - append `outbox_events` cho side effect quan trọng
-  - để dispatcher/execution queue xử lý phần downstream
-  - trả response sớm
-
+Nếu không thêm 3 ý đó, target mới chỉ là wish list (danh sách mong muốn).

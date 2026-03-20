@@ -1,119 +1,99 @@
-# Engagement Module Decisions
+# Engagement Module Decisions (Quyết định Mô-đun Tương tác & Tu tập)
 
-> Ghi chú cho sinh viên:
-> Nếu bạn đang phân vân "bookmark nên để ở content hay engagement", file này chính là câu trả lời.
+> Note for students (Ghi chú cho sinh viên):
+> Nếu anh đang phân vân bookmark/progress có nên nằm ở Content không, file này chốt câu trả lời.
 
-## Decision 1. Engagement chỉ sở hữu self-owned user state
+## Decision 1. Engagement owns self-owned state only (Tương tác chỉ sở hữu trạng thái cá nhân)
 
-### Context
-Design cũ từng để content ôm bookmark và progress.
-Repo hiện đã có collection riêng cho user-state.
+### Context (Bối cảnh)
 
-### Decision
-- Bookmark, reading progress, chant preference, practice log thuộc engagement module.
-- Editorial content và scripture content chỉ được tham chiếu.
+Legacy designs (thiết kế cũ) từng trộn bookmark và progress vào Content.
 
-### Rationale
-- boundary (ranh giới trách nhiệm) rõ.
-- Tránh content trở thành module chứa cả canonical document và personal state.
+### Decision (Quyết định)
 
-### Trade-off
-- Read flow cần join/reference sang content hoặc sutra tree.
+- bookmarks, reading progress, practice preferences, practice logs đều thuộc Engagement
+- editorial/scripture content chỉ được reference, không được đồng sở hữu
 
-## Decision 2. Bookmark và progress tách thành hai model riêng
+### Rationale (Lý do)
 
-### Context
-Bookmark và progress có ý nghĩa khác nhau:
-- bookmark là điểm lưu chủ động
-- progress là trạng thái đọc gần nhất
+- boundary rõ hơn
+- content không phải gánh hàng nghìn private telemetry records
 
-### Decision
-- Giữ `sutraBookmarks` và `sutraReadingProgress` là hai collection riêng.
+## Decision 2. Bookmarks and progress are separate models (Bookmark và progress là hai model tách biệt)
 
-### Rationale
-- Dễ hiểu.
-- Tránh một table phải chứa hai ý nghĩa nghiệp vụ khác nhau.
+### Context (Bối cảnh)
 
-### Trade-off
-- Có thể cần đọc hai collection trong cùng màn hình reader.
+Bookmark là user-saved point (điểm người dùng chủ động lưu), còn progress là automatic telemetry (tiến độ tự động).
 
-## Decision 3. Practice preference tách khỏi practice log
+### Decision (Quyết định)
 
-### Context
-Preference là cấu hình bền theo plan.
-Practice log là bản ghi từng ngày hoặc từng buổi.
+- giữ `sutraBookmarks` và `sutraReadingProgress` thành hai collection riêng
 
-### Decision
-- `chantPreferences` giữ cấu hình mong muốn.
-- `practiceLogs` giữ lịch sử thực tế.
+### Rationale (Lý do)
 
-### Rationale
-- Khớp fields hiện có.
-- Hỗ trợ upsert config và append/update log tách biệt.
+- tránh nhét hai business meaning khác nhau vào một bảng
 
-### Trade-off
-- Cần service (lớp xử lý nghiệp vụ) layer để compose preference với log khi render experience hoàn chỉnh.
+## Decision 3. Preferences and logs are different things (Preferences và logs là hai loại dữ liệu khác nhau)
 
-## Decision 4. Upsert theo owner + context khi hợp lý
+### Context (Bối cảnh)
 
-### Context
-Reading progress và chant preference đều là state hiện thời hơn là immutable ledger.
+Preference là cấu hình bền vững; log là dấu vết của từng buổi thực hành.
 
-### Decision
-- Progress nên được cập nhật theo user + sutra.
-- Preference nên được cập nhật theo user + plan.
-- Practice log giữ semantics theo user + practiceDate + plan.
+### Decision (Quyết định)
 
-### Rationale
-- Bám API contract (hợp đồng dữ liệu/nghiệp vụ) hiện tại.
-- Giảm duplicate records vô nghĩa.
+- `chantPreferences` giữ configured goals/toggles (cấu hình mục tiêu/bật tắt)
+- `practiceLogs` giữ execution history (lịch sử thực hiện)
 
-### Trade-off
-- Cần service (lớp xử lý nghiệp vụ) layer giữ uniqueness discipline.
+### Rationale (Lý do)
 
-## Decision 5. Chưa đưa leaderboard, streaks, stats vào current scope
+- phù hợp với physical data model (mô hình dữ liệu vật lý) dự kiến
+- dễ update độc lập hơn
 
-### Context
-Wishlist cũ có đề cập leaderboard và gamification.
-Repo hiện chưa có owner data model rõ cho phần đó.
+## Decision 4. Upsert based on identity + context (Upsert dựa trên định danh + ngữ cảnh)
 
-### Decision
-- Current scope chỉ giữ bookmark, progress, preference, practice log.
-- Streaks/stats/leaderboard là future candidate, không đưa vào current schema (lược đồ dữ liệu).
+### Context (Bối cảnh)
 
-### Rationale
-- Tránh over-engineer.
-- Thiết kế bám repo thật.
+Progress và preference đại diện cho current state (trạng thái hiện tại), không phải immutable ledger (sổ cái bất biến).
 
-### Trade-off
-- Nếu sau này cần gamification, phải thêm decision và schema (lược đồ dữ liệu) riêng.
+### Decision (Quyết định)
 
-## Decision 6. Ngôi Nhà Nhỏ và nghi thức niệm dùng content làm reference, engagement chỉ giữ state
+- sutra progress upsert theo `user + sutraId`
+- practice preference upsert theo `user + planSlug`
+- practice log định danh theo `user + practiceDate + planSlug`
 
-### Context
-Bộ tài liệu PDF cho thấy phần niệm hằng ngày, phóng sinh, và đặc biệt Ngôi Nhà Nhỏ chứa nhiều:
-- script
-- lời khấn
-- số biến
-- checklist nghi thức
-- guardrail thao tác
+### Rationale (Lý do)
 
-Các phần này là nội dung chuẩn để nhiều người cùng đọc, không phải dữ liệu cá nhân của một user.
+- giảm duplicate record
+- hợp với API contract hiện tại
 
-### Decision
-- Engagement không sở hữu script hay rule gốc của nghi thức.
-- Engagement chỉ lưu:
-  - preference của user
-  - practice log
-  - progress cá nhân
-- Script/rule/checklist gốc phải được tham chiếu từ content-side practice support data.
+## Decision 5. No gamification in current phase (Chưa đưa gamification vào giai đoạn hiện tại)
 
-### Rationale
-- Giữ boundary (ranh giới trách nhiệm) đúng với repo.
-- Tránh việc một thay đổi ở practice screen vô tình sửa “chân lý nội dung” của nghi thức.
-- Hợp với hướng dùng `chantItems` và `chantPlans` làm reference data công khai.
+### Context (Bối cảnh)
 
-### Trade-off
-- Practice UI cần compose dữ liệu từ content và engagement cùng lúc.
-- Cần review kỹ wording ở các flow nhạy cảm như Ngôi Nhà Nhỏ trước khi biến thành validation copy hoặc checklist UI.
+Leaderboard, streaks, và global stats chưa có owner model đủ rõ.
 
+### Decision (Quyết định)
+
+- leaderboards, streaks, global statistics là out of scope (ngoài phạm vi) ở current phase
+- chỉ tập trung vào core state management (quản lý trạng thái cốt lõi)
+
+### Rationale (Lý do)
+
+- tránh over-engineering
+
+## Decision 6. Ritual truth lives in content; personal progress lives in engagement (Sự thật nghi thức ở Content; tiến độ cá nhân ở Engagement)
+
+### Context (Bối cảnh)
+
+Ritual guides, scripts, prayer templates, count rules là instructional truth (sự thật hướng dẫn), không phải self-state.
+
+### Decision (Quyết định)
+
+- Engagement không sở hữu scripts hay ritual rules canonical
+- Engagement chỉ lưu user preference và user progress đối với các rule đó
+- Canonical scripts, `chantItems`, checklist phải được reference từ Content
+
+### Rationale (Lý do)
+
+- tránh việc UI change vô tình sửa lệch ritual truth
+- giữ ranh giới giữa liturgical truth và personal state

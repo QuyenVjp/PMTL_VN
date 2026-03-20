@@ -168,4 +168,3 @@ Nó là lớp compose từ:
 - Đừng hard-code text dài vào calendar service (lớp xử lý nghiệp vụ).
 - Hãy coi `advisory (thông báo hoặc gói hướng dẫn)` là output được compose từ nhiều record nhỏ.
 - Một card hiển thị cho người dùng có thể ngắn, nhưng source-backed data ở dưới phải đầy đủ.
-

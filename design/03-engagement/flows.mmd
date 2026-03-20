@@ -1,31 +1,39 @@
 flowchart TD
-    subgraph Flow1 ["Luồng 1: Lưu dấu trang khi đọc kinh"]
-        E1A["Thành viên đang đọc kinh (member reading sutra)"] --> E1B["Chọn chapter hoặc paragraph"]
-        E1B --> E1C["Nhấn lưu dấu trang (bookmark)"]
-        E1C --> E1D["Lưu hoặc cập nhật sutraBookmarks"]
-        E1D --> E1E["Bookmark gắn user, sutra, vị trí đọc, excerpt, và note"]
+    subgraph Flow1 ["Luồng 1: Lưu dấu trang (Save Bookmark)"]
+        E1A["Thành viên đang đọc kinh (Member reading sutra)"] --> E1B["Chọn chương hoặc đoạn (Pick chapter or paragraph)"]
+        E1B --> E1C["Nhấn lưu dấu trang (Click save bookmark)"]
+        E1C --> E1D["Lưu đánh dấu kinh điển (Create/Update sutraBookmarks)"]
+        E1E["Gắn người dùng, bộ kinh, vị trí, đoạn trích & ghi chú (Tag user, sutra, pos, excerpt & note)"]
+        E1D --> E1E
     end
 
-    subgraph Flow2 ["Luồng 2: Cập nhật tiến độ đọc"]
-        E2A["Thành viên đọc một chương kinh"] --> E2B["Web gửi vị trí đọc hiện tại"]
-        E2B --> E2C["CMS upsert sutraReadingProgress (tạo mới hoặc cập nhật)"]
-        E2C --> E2D["Lưu chapter, paragraph, scrollPercent, và lastReadAt"]
-        E2D --> E2E["Tiến độ được dùng cho lần đọc tiếp theo"]
+    E1E -.->|"tiếp (then)"| E2A
+
+    subgraph Flow2 ["Luồng 2: Cập nhật tiến độ đọc (Update Reading Progress)"]
+        E2A["Thành viên đọc chương kinh (Member reads chapter)"] --> E2B["Gửi vị trí đọc hiện tại (Send current position)"]
+        E2B --> E2C["Cập nhật tiến độ đọc kinh văn (Upsert sutraReadingProgress)"]
+        E2D["Lưu chương, đoạn, tỷ lệ cuộn & lần đọc cuối (Save chapter, pos, scroll & last read)"]
+        E2C --> E2D
+        E2E["Sử dụng cho lần đọc tiếp theo (Use for next session)"]
+        E2D --> E2E
     end
 
-    subgraph Flow3 ["Luồng 3: Lưu tùy chọn bài tập hằng ngày"]
-        E3A["Thành viên chọn chant plan (kế hoạch niệm)"] --> E3B["Bật optional items (mục tùy chọn)"]
-        E3B --> E3C["Chỉnh target và intention (mục tiêu và phát tâm)"]
-        E3C --> E3D["Lưu chantPreferences theo user và plan"]
+    E2E -.->|"tiếp (then)"| E3A
+
+    subgraph Flow3 ["Luồng 3: Lưu sở thích tụng niệm (Save Chanting Preferences)"]
+        E3A["Chọn kế hoạch niệm (Pick chant plan)"] --> E3B["Bật/tắt các mục tùy chọn (Toggle optional items)"]
+        E3B --> E3C["Chỉnh mục tiêu & ý nguyện (Adjust target & intention)"]
+        E3D["Lưu sở thích theo người dùng & kế hoạch (Save preferences per user & plan)"]
+        E3C --> E3D
     end
 
-    subgraph Flow4 ["Luồng 4: Ghi nhật ký công phu"]
-        E4A["Thành viên bắt đầu buổi công phu"] --> E4B["Tạo hoặc mở practice log của ngày"]
-        E4B --> E4C["Cập nhật itemStates (trạng thái từng mục niệm) trong phiên"]
-        E4C --> E4D["Lưu startedAt, completedAt, notes, và isCompleted"]
-        E4D --> E4E["Người dùng xem lại lịch sử cá nhân"]
-    end
+    E3D -.->|"tiếp (then)"| E4A
 
-    E1E -.->|"tiếp"| E2A
-    E2E -.->|"tiếp"| E3A
-    E3D -.->|"tiếp"| E4A
+    subgraph Flow4 ["Luồng 4: Ghi nhật ký công phu (Record Practice Log)"]
+        E4A["Bắt đầu buổi công phu (Start practice session)"] --> E4B["Mở nhật ký trong ngày (Open daily log)"]
+        E4B --> E4C["Cập nhật trạng thái từng bài niệm (Update item states)"]
+        E4D["Lưu thời gian & ghi chú hoàn thành (Save time, notes & completion)"]
+        E4C --> E4D
+        E4E["Xem lại lịch sử cá nhân (Review personal history)"]
+        E4D --> E4E
+    end

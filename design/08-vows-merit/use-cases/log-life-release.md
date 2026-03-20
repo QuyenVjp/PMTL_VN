@@ -1,25 +1,31 @@
 # Log Life Release
 
 ## Purpose
+
 - Ghi lại một lần `Phóng sanh` như một thực hành cá nhân có ngữ cảnh, không chỉ là log rời rạc.
 
 ## Owner module
+
 - `vows-merit`
 
 ## Actors
+
 - `member`
 - `admin` khi nhập giúp hoặc sửa giúp cho `member`
 
 ## Trigger
+
 - User bấm lưu một mục trong `Sổ tay Phóng sanh`.
 
 ## Preconditions
+
 - Có session hợp lệ.
 - Dữ liệu ngày, loại vật, và số lượng hợp lệ.
 - Nếu có source-backed rule refs thì link nguồn phải rõ.
 - Nếu là cross-user action thì actor phải có quyền `admin` trở lên và phải chỉ rõ owner record.
 
 ## Input contract
+
 - body nên gồm:
   - `releaseDate`
   - `locationNote`
@@ -38,6 +44,7 @@
     - `void`
 
 ## Read set
+
 - auth session
 - actor role / permission context
 - content references cho bài đọc và nghi thức hỗ trợ
@@ -46,6 +53,7 @@
 - source-backed entries từ `09-wisdom-qa` nếu user gắn rule refs
 
 ## Write path
+
 1. Resolve `actor` từ session và resolve `owner`:
    - mặc định `owner = actor`
    - nếu có `ownerUserId`, chỉ `admin` hoặc `super-admin` mới được phép ghi giúp
@@ -75,14 +83,17 @@
 13. Nếu cần reminder follow-up, calendar refresh, hoặc notification downstream, append outbox event tương ứng sau khi canonical state đã ổn định.
 
 ## Async side-effects
+
 - optional reminder follow-up
 - optional update reminder candidates cho ngày phóng sanh
 
 ## Success result
+
 - User có một bản ghi phóng sanh rõ ràng, có thể xem lại và đối chiếu theo ngày quan trọng.
 - Nếu có rule đi kèm, user xem lại được cả nguyên văn + bản dịch + link gốc để tự kiểm duyệt.
 
 ## Errors
+
 - `400`: thiếu `releaseDate`, `species`, hoặc `quantity`.
 - `401`: chưa đăng nhập.
 - `404`: linked vow hoặc source ref không tồn tại.
@@ -91,6 +102,7 @@
 - `500`: lỗi service.
 
 ## Audit
+
 - bắt buộc append `life-release.log`
 - audit nên giữ:
   - actor user
@@ -103,16 +115,19 @@
   - source refs được gắn thêm nếu có
 
 ## Idempotency / anti-spam
+
 - nếu UI có `clientEventId`, service nên dedupe theo `user + clientEventId`
 - nếu không có `clientEventId`, UI vẫn nên chặn double-submit trong thời gian ngắn
 - record phóng sanh không được tự biến thành community post nếu user chưa explicit share
 - replay outbox không được tạo duplicate progress/reminder cho cùng canonical journal entry.
 
 ## Performance target
+
 - create journal nên hoàn tất `< 700ms`
 - phần prepare reminder hoặc sync sang notification phải ở downstream async path
 
 ## Notes
+
 - `lifeReleaseJournal` là canonical self-owned record.
 - Community share, nếu có, phải là export flow riêng; không dùng record này làm social post mặc định.
 - Assisted entry được phép, nhưng luôn phải tách rõ `actor` và `owner`.

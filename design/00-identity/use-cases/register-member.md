@@ -1,60 +1,84 @@
-# Register Member
+# Use Case: Register Member (Đăng ký Thành viên)
 
-## Purpose
-- Đăng ký một tài khoản thành viên mới bằng Payload auth, tạo session hợp lệ và trả auth contract (hợp đồng dữ liệu/nghiệp vụ) đã map cho web.
+## Purpose (Mục đích)
+
+- Register a new member account (đăng ký tài khoản thành viên mới)
+- establish a valid session (thiết lập phiên hợp lệ)
+- return the mapped auth contract (trả về hợp đồng xác thực đã chuẩn hóa)
 
 ## owner module (module sở hữu)
+
 - `identity`
 
-## Actors
-- `guest`
+## Actors (Tác nhân)
 
-## trigger (điểm kích hoạt)
-- Web gọi `POST /api/auth/register`.
+- `guest`: anonymous visitor (khách chưa đăng nhập)
 
-## preconditions (điều kiện tiên quyết)
-- Body hợp lệ theo `registerSchema`.
-- Email chưa tồn tại.
+## Trigger (Điểm kích hoạt)
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
+- web calls `POST /api/auth/register`
+
+## Preconditions (Điều kiện tiên quyết)
+
+- body phải hợp lệ theo `registerSchema`
+- email chưa tồn tại trong `users`
+
+## Input contract (Hợp đồng đầu vào)
+
 - `registerSchema`
-- nếu có downstream email/signal thì outbox payload phải có event type, event version và idempotency key
+- nếu có downstream welcome/verification signal thì outbox payload phải có event type, version, và idempotency key
 
-## Read set
+## Read set (Tập dữ liệu đọc)
+
 - `users`
+- `rate_limit_records` hoặc shared limiter state
 
 ## write path (thứ tự ghi dữ liệu chuẩn)
-1. Parse body theo `registerSchema`.
-2. Gọi CMS auth register.
-3. Ghi canonical user record vào `users`.
-4. Tạo auth session/token theo Payload auth.
-5. Set auth cookie ở web BFF.
-6. Append audit `auth.register`.
-7. Nếu có welcome email hoặc verification follow-up, append outbox event downstream.
+
+1. Parse và validate body theo `registerSchema`.
+2. Check rate limit / anti-abuse guard.
+3. Kiểm tra email đã tồn tại hay chưa.
+4. Tạo canonical `users` record.
+5. Tạo canonical `sessions` record.
+6. Cấp access token + refresh token theo auth contract.
+7. Set secure cookie nếu là browser flow.
+8. Append audit log `auth.register`.
+9. Nếu policy cần, append `outbox_events` cho welcome/verification email.
 
 ## async (bất đồng bộ) side-effects
-- có thể có email welcome hoặc verification về sau, nhưng không phải canonical path hiện tại
+
+- welcome email
+- email verification send
 
 ## success result (kết quả thành công)
-- User mới được tạo.
-- Session hợp lệ được thiết lập cho web.
 
-## Errors
-- `400`: body không hợp lệ.
-- `409`: email đã tồn tại.
-- `500`: CMS auth lỗi.
+- user mới được tạo
+- session hợp lệ được thiết lập
+- client nhận sanitized auth response
 
-## Audit
-- log `auth.register`
+## Errors (Lỗi dự kiến)
 
-## Idempotency / anti-spam
-- Retry cùng email sau khi user đã tạo phải trả conflict, không tạo nhiều user.
-- replay outbox không được tạo duplicate welcome/verification signal cho cùng user create event.
+- `400`: body sai schema
+- `409`: email đã đăng ký
+- `429`: rate limit / anti-abuse guard chặn
+- `500`: auth runtime hoặc persistence lỗi
 
-## Performance target
-- register nên `< 800ms` khi CMS khỏe.
+## Audit (Kiểm toán)
 
-## Notes for AI/codegen
-- Session authority là Payload auth.
-- Đừng tự phát minh user table hoặc token issuance ở web.
+- action: `auth.register`
+- log context: email, IP, requestId, timestamp
 
+## Idempotency & anti-spam (Tính không đổi & chống thư rác)
+
+- retry với cùng email sau khi tạo thành công phải trả `409`
+- replay outbox không được tạo duplicate welcome/verification email
+
+## Performance target (Mục tiêu hiệu năng)
+
+- register path nên hoàn tất trong `< 800ms` ở điều kiện bình thường
+
+## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
+
+- session authority nằm ở backend
+- không tạo secondary user store
+- không phát token ở web layer

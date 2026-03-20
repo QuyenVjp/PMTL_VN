@@ -2,26 +2,30 @@
 
 > Ghi chú cho sinh viên:
 > File này không thay thế collection thật `chantItems`.
-> Nó là bản design dễ đọc để biết nên đổ những bài niệm nào vào CMS và field nào cần điền.
+> Nó là bản design dễ đọc để biết nên đổ những bài niệm nào vào hệ quản trị mới và field nào cần điền.
 
 ---
+
 markmap:
-  colorFreezeLevel: 2
-  initialExpandLevel: 3
+colorFreezeLevel: 2
+initialExpandLevel: 3
+
 ---
 
 # Chant Items Catalog
 
 ## Cách đọc nhanh
+
 - `kind`: loại bài niệm / mẫu khấn / nghi thức mở đầu
 - `recommended_count`: số gợi ý nên hiện ở preset
 - `openingPrayer`: lời nguyện mở đầu hoặc mục đích dùng bài
 - `timeRules`: luật thời gian hoặc ngữ cảnh nên nhắc user
-- `needs_review`: chỗ nào cần rà lại wording hoặc số biến trước khi nhập CMS
+- `needs_review`: chỗ nào cần rà lại wording hoặc số biến trước khi nhập hệ quản trị mới
 
 ## Nhóm công khóa hằng ngày
 
 ### 1. Tịnh Khẩu Nghiệp Chân Ngôn
+
 - `kind`: `mantra`
 - `purpose`: làm sạch khẩu nghiệp trước thời công phu hoặc nghi thức
 - `recommended_count`:
@@ -39,6 +43,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 2. Chú Đại Bi
+
 - `kind`: `mantra`
 - `purpose`: hộ thân, tăng công lực, hỗ trợ tiêu tai giải nạn
 - `recommended_count`:
@@ -46,7 +51,7 @@ markmap:
   - `21` hoặc `49+` biến: trường hợp nặng theo tài liệu hằng ngày
   - `1` biến: trong nghi thức phóng sinh
 - `openingPrayer`:
-  - “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát phù hộ cho con __(tên)__ thân thể khỏe mạnh, tăng cường công lực.”
+  - “Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát phù hộ cho con **(tên)** thân thể khỏe mạnh, tăng cường công lực.”
 - `timeRules`:
   - có thể niệm trong khung `5h sáng -> 12h đêm` theo tài liệu hằng ngày
   - khi đi phóng sinh có thể bắt đầu niệm ngay trên đường
@@ -56,13 +61,14 @@ markmap:
 - `needs_review`: `false`
 
 ### 3. Tâm Kinh
+
 - `kind`: `sutra`
 - `purpose`: khai mở trí tuệ, giữ đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não
 - `recommended_count`:
   - `3-7` biến: công khóa hằng ngày
   - `1` biến: trong nghi thức phóng sinh
 - `openingPrayer`:
-  - “Thỉnh cầu ... phù hộ cho con __(tên)__ khai mở trí tuệ, đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não.”
+  - “Thỉnh cầu ... phù hộ cho con **(tên)** khai mở trí tuệ, đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não.”
 - `timeRules`:
   - có thể niệm trước `10h tối` và ban ngày theo tài liệu hằng ngày
 - `source_docs`:
@@ -71,6 +77,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 4. Lễ Phật Đại Sám Hối Văn
+
 - `kind`: `sutra`
 - `purpose`: sám hối, tiêu trừ nghiệp chướng
 - `recommended_count`:
@@ -84,6 +91,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 5. Tiêu Tai Cát Tường Thần Chú
+
 - `kind`: `mantra`
 - `purpose`: cầu bình an thuận lợi, tiêu tai cát tường
 - `recommended_count`:
@@ -91,7 +99,7 @@ markmap:
   - `27`
   - `49`
 - `openingPrayer`:
-  - “Thỉnh cầu ... phù hộ cho con __(tên)__ tiêu tai cát tường, bình an thuận lợi.”
+  - “Thỉnh cầu ... phù hộ cho con **(tên)** tiêu tai cát tường, bình an thuận lợi.”
 - `timeRules`:
   - dùng như bài bổ sung trong công khóa
 - `source_docs`:
@@ -99,6 +107,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 6. Chuẩn Đề Thần Chú
+
 - `kind`: `mantra`
 - `purpose`: cầu tâm tưởng sự thành
 - `recommended_count`:
@@ -106,7 +115,7 @@ markmap:
   - `27`
   - `49`
 - `openingPrayer`:
-  - “Thỉnh cầu ... phù hộ cho con __(tên)__ tâm tưởng sự thành...”
+  - “Thỉnh cầu ... phù hộ cho con **(tên)** tâm tưởng sự thành...”
 - `timeRules`:
   - dùng như bài bổ sung trong công khóa
 - `source_docs`:
@@ -114,6 +123,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 7. Bổ Khuyết Chân Ngôn
+
 - `kind`: `closing-mantra`
 - `purpose`: khép lại phần niệm, dùng sau công khóa
 - `recommended_count`:
@@ -129,6 +139,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 8. Thất Phật Diệt Tội Chân Ngôn
+
 - `kind`: `mantra`
 - `purpose`: dùng trong bước thanh tịnh, sám hối, và một số nghi thức
 - `recommended_count`:
@@ -148,13 +159,14 @@ markmap:
 ## Nhóm ritual templates
 
 ### 9. Mẫu khấn phát nguyện
+
 - `kind`: `prayer-template`
 - `purpose`: dùng cho flow phát nguyện
 - `recommended_count`:
   - `1` lần đọc theo mỗi lần phát nguyện
 - `openingPrayer`:
   - bắt đầu bằng phần cảm tạ chư vị Bồ Tát
-  - sau đó mới vào câu “Con __(tên)__ xin phát nguyện...”
+  - sau đó mới vào câu “Con **(tên)** xin phát nguyện...”
 - `timeRules`:
   - dùng trong flow phát nguyện
   - cần guardrail “chỉ nên cầu 2-3 việc, nói cụ thể”
@@ -163,6 +175,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 10. Mẫu khấn phóng sinh
+
 - `kind`: `prayer-template`
 - `purpose`: dùng cho flow phóng sinh cho bản thân hoặc thay người khác
 - `recommended_count`:
@@ -178,6 +191,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 11. Mẫu thỉnh cầu trước khi tụng Ngôi Nhà Nhỏ
+
 - `kind`: `prayer-template`
 - `purpose`: mở đầu trước khi tụng Ngôi Nhà Nhỏ
 - `recommended_count`:
@@ -193,6 +207,7 @@ markmap:
 - `needs_review`: `false`
 
 ### 12. Mẫu khấn trước và sau khi đốt Ngôi Nhà Nhỏ
+
 - `kind`: `prayer-template`
 - `purpose`: hỗ trợ flow đốt Ngôi Nhà Nhỏ không có bàn thờ
 - `recommended_count`:
@@ -212,6 +227,7 @@ markmap:
 ## Gợi ý `chantPlans`
 
 ### Daily beginner plan
+
 - mở đầu:
   - `Tịnh Khẩu Nghiệp Chân Ngôn`
 - cốt lõi:
@@ -226,6 +242,7 @@ markmap:
   - `Thất Phật Diệt Tội Chân Ngôn`
 
 ### Life release ritual plan
+
 - cảm ân mở đầu
 - `Chú Đại Bi` `1`
 - `Tâm Kinh` `1`
@@ -233,6 +250,7 @@ markmap:
 - mẫu khấn phóng sinh
 
 ### Little House support plan
+
 - phần chuẩn bị `Kính Tặng / Tặng`
 - mẫu thỉnh cầu trước khi tụng
 - cụm các bài niệm cấu thành Ngôi Nhà Nhỏ
@@ -240,6 +258,7 @@ markmap:
 - flow đốt theo ngữ cảnh
 
 ## Assumption
+
 - Phần `recommended_count` ở đây chỉ ghi những con số đã thấy khá rõ trong tài liệu hiện có.
 - Với cấu phần nội bộ của Ngôi Nhà Nhỏ, file này chưa chốt chi tiết từng bài + từng số biến nếu extract chưa đủ sạch.
 - Nếu cần chốt sâu hơn cho Ngôi Nhà Nhỏ, nên tạo một file spec riêng chỉ cho `little-house`.

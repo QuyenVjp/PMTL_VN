@@ -1,73 +1,72 @@
-# Report Comment
+# Report Comment (Báo cáo Vi phạm Bình luận)
 
-## Purpose
-- Cho phép người dùng báo cáo một bình luận không phù hợp, đồng thời giữ source of truth (nguồn dữ liệu gốc đáng tin cậy nhất) tập trung ở moderation module.
+## Mục đích (Purpose)
+Cho phép người dùng báo cáo một bình luận không phù hợp, đồng thời duy trì nguồn dữ liệu chuẩn gốc (source of truth) tập trung tại mô-đun kiểm duyệt.
 
-## owner module (module sở hữu)
-- `moderation`
+## Mô-đun sở hữu (Owner module)
+- `moderation` (Kiểm duyệt)
 
-## Actors
-- `member`
-- `guest` nếu route hiện tại cho phép theo policy
+## Các đối tượng thực hiện (Actors)
+- Thành viên (`member`).
+- Khách (`guest`) nếu chính sách tuyến đường (route policy) hiện tại cho phép.
 
-## trigger (điểm kích hoạt)
-- Web gọi `POST /api/comments/:publicId/report` hoặc route report comment tương đương.
+## Điểm kích hoạt (Trigger)
+Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc tuyến đường báo cáo bình luận tương đương.
 
-## preconditions (điều kiện tiên quyết)
-- Target comment tồn tại.
-- `reason` hợp lệ theo `commentReportSchema`.
-- Actor chưa bị anti-spam/request guard chặn.
+## Điều kiện tiên quyết (Preconditions)
+- Bình luận mục tiêu (target comment) tồn tại trong hệ thống.
+- Lý do báo cáo (`reason`) hợp lệ theo cấu trúc `commentReportSchema`.
+- Đối tượng thực hiện chưa bị các hệ thống chống thư rác (anti-spam) hoặc chốt chặn yêu cầu (request guard) chặn lại.
 
-## Input contract (hợp đồng dữ liệu/nghiệp vụ)
-- `commentReportSchema`
-- route param dùng `publicId`
-- nếu có downstream alert thì outbox payload phải có event type, event version và idempotency key
+## Hợp đồng dữ liệu đầu vào (Input Contract)
+- `commentReportSchema` (Cấu trúc báo cáo bình luận).
+- Tham số tuyến đường (route param) sử dụng ID công khai (`publicId`).
+- Nếu có cảnh báo hạ nguồn, gói dữ liệu outbox phải có loại sự kiện, phiên bản sự kiện và mã tính không đổi (idempotency key).
 
-## Read set
-- `postComments` hoặc comment target collection tương ứng
-- `moderationReports`
-- identity session nếu có
-- request guard nếu policy dùng
+## Tập hợp dữ liệu đọc (Read Set)
+- Bộ sưu tập bình luận bài viết (`postComments`) hoặc bộ sưu tập bình luận mục tiêu tương ứng.
+- Bộ sưu tập các báo cáo kiểm duyệt (`moderationReports`).
+- Phiên làm việc định danh (identity session) nếu có.
+- Chốt chặn yêu cầu (request guard) nếu chính sách có sử dụng.
 
-## write path (thứ tự ghi dữ liệu chuẩn)
-1. Resolve target comment bằng `publicId`.
-2. Validate payload report.
-3. Kiểm tra duplicate unresolved report theo policy.
-4. Ghi canonical record (bản ghi chuẩn gốc) vào `moderationReports`.
-5. Sync summary fields lên entity đích:
-   - `reportCount`
-   - `lastReportReason`
-   - `moderationStatus` hoặc `isHidden` nếu policy tự động kích hoạt
-6. Append audit `moderation.report.submit`.
-7. Append outbox event cho admin/super-admin alert nếu policy cần.
+## Thứ tự ghi dữ liệu chuẩn (Write Path)
+1. Xác định bình luận mục tiêu bằng ID công khai (`publicId`).
+2. Xác thực nội dung báo cáo (payload).
+3. Kiểm tra các báo cáo trùng lặp chưa giải quyết theo chính sách.
+4. Ghi bản ghi chuẩn gốc (canonical record) vào bộ sưu tập `moderationReports`.
+5. Đồng bộ hóa các trường tóm tắt (summary fields) lên thực thể đích:
+   - Số lượng báo cáo (`reportCount`).
+   - Lý do báo cáo gần nhất (`lastReportReason`).
+   - Trạng thái kiểm duyệt hoặc trạng thái ẩn (nếu chính sách tự động kích hoạt).
+6. Thêm sự kiện nhật ký kiểm toán hành động `moderation.report.submit`.
+7. Nạp sự kiện outbox để tạo cảnh báo cho quản trị viên nếu chính sách yêu cầu.
 
-## async (bất đồng bộ) side-effects
-- admin/super-admin notification
+## Tác động phụ bất đồng bộ (Async Side-effects)
+- Gửi thông báo cho quản trị viên hoặc quản trị viên cấp cao.
 
-## success result (kết quả thành công)
-- Report source record được tạo.
-- Target entity có summary fields mới để admin/public filtering dùng.
+## Kết quả thành công (Success Result)
+- Bản ghi báo cáo chuẩn gốc được tạo thành công.
+- Thực thể đích cập nhật các trường tóm tắt mới phục vụ cho việc lọc nội dung của quản trị viên hoặc công chúng.
 
-## Errors
-- `400`: reason không hợp lệ.
-- `404`: comment không tồn tại.
-- `409`: duplicate unresolved report hoặc state conflict.
-- `429`: anti-spam chặn.
-- `500`: lỗi sync summary hoặc downstream.
+## Các lỗi có thể xảy ra (Errors)
+- `400`: Lý do báo cáo không hợp lệ.
+- `404`: Bình luận mục tiêu không tồn tại.
+- `409`: Báo cáo chưa giải quyết bị trùng lặp hoặc xung đột trạng thái.
+- `429`: Bị hệ thống chống thư rác chặn.
+- `500`: Lỗi đồng bộ hóa tóm tắt hoặc lỗi hệ thống hạ nguồn.
 
-## Audit
-- log `moderation.report.submit`
-- metadata nên có report id, target publicId, actor type, reason
+## Kiểm toán (Audit)
+- Ghi nhật ký hành động `moderation.report.submit`.
+- Dữ liệu đặc tả nên bao gồm: ID báo cáo, ID công khai của mục tiêu, loại đối tượng thực hiện và lý do báo cáo.
 
-## Idempotency / anti-spam
-- Không cho cùng actor spam report cùng một target trong cửa sổ ngắn nếu policy đã xác định.
-- Retry do lỗi mạng không được tạo nhiều unresolved report giống hệt nhau.
-- replay outbox không được tạo duplicate alert cho cùng canonical report.
+## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
+- Không cho phép cùng một đối tượng thực hiện gửi báo cáo liên tục cho cùng một mục tiêu trong khoảng thời gian ngắn.
+- Việc gửi lại yêu cầu do lỗi mạng không được tạo ra nhiều báo cáo chưa giải quyết giống hệt nhau.
+- Việc phát lại hàng đợi outbox không được tạo báo cáo trùng lặp cho cùng một báo cáo chuẩn gốc.
 
-## Performance target
-- Canonical report create + append outbox alert nên `< 800ms`.
+## Mục tiêu hiệu năng (Performance Target)
+- Việc tạo báo cáo chuẩn gốc và nạp cảnh báo outbox nên hoàn tất trong vòng dưới 800ms.
 
-## Notes for AI/codegen
-- `moderationReports` là source of truth (nguồn dữ liệu gốc đáng tin cậy nhất); đừng nhét full report lifecycle vào `postComments`.
-- Summary fields trên target chỉ là read model (mô hình dữ liệu đọc).
-
+## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
+- `moderationReports` là nguồn dữ liệu chuẩn gốc; tuyệt đối không nhét toàn bộ vòng đời báo cáo vào bộ sưu tập `postComments`.
+- Các trường tóm tắt trên mục tiêu chỉ là mô hình dữ liệu đọc (read model).

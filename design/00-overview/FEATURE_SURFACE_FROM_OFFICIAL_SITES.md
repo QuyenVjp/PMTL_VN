@@ -26,11 +26,13 @@ Mục tiêu:
 ### 1. Giới thiệu pháp môn và sơ học
 
 Mục tiêu:
+
 - giúp người mới hiểu pháp môn là gì
 - biết bắt đầu từ đâu
 - không bị lạc giữa quá nhiều bài viết
 
 Surface nên có:
+
 - `Giới thiệu pháp môn`
 - `Hướng dẫn sơ học`
 - `Bắt đầu công khóa`
@@ -40,16 +42,19 @@ Surface nên có:
 - `Các bước khởi đầu cho người mới`
 
 owner module (module sở hữu):
+
 - chủ yếu `01-content`
 
 ### 2. Thư viện trí huệ chính thống
 
 Mục tiêu:
+
 - tra cứu đúng nguồn chỉ dạy
 - đọc học có cấu trúc
 - không để AI tự bịa câu trả lời
 
 Surface nên có:
+
 - `Bạch thoại Phật pháp`
 - `Khai thị`
 - `Phật ngôn Phật ngữ`
@@ -60,15 +65,18 @@ Surface nên có:
 - `Trang hồ sơ / giới thiệu authority`
 
 owner module (module sở hữu):
+
 - chủ yếu `09-wisdom-qa`
 - `01-content` chỉ giữ content/hub/reference bổ trợ
 
 ### 3. Hỗ trợ tu học thực tế hằng ngày
 
 Mục tiêu:
+
 - hỗ trợ người dùng thật sự đang niệm kinh, làm công khóa, theo dõi tiến độ
 
 Surface nên có:
+
 - `Bài tập hằng ngày`
 - `Practice Sheets / Bảng công phu`
 - `Ngôi Nhà Nhỏ`
@@ -77,15 +85,18 @@ Surface nên có:
 - `Checklist nghi thức`
 
 owner module (module sở hữu):
+
 - `03-engagement`
 - đọc reference từ `01-content`
 
 ### 4. Nguyện lực và công đức
 
 Mục tiêu:
+
 - biến `phát nguyện` và `phóng sanh` thành support surfaces nghiêm túc
 
 Surface nên có:
+
 - `Phát nguyện`
 - `Tiến độ nguyện`
 - `Hoàn nguyện`
@@ -95,14 +106,17 @@ Surface nên có:
 - `Rule thực hành có source link`, ví dụ rule niệm sau phóng sanh
 
 owner module (module sở hữu):
+
 - `08-vows-merit`
 
 ### 5. Lịch tu học cá nhân
 
 Mục tiêu:
+
 - biến lịch âm và ngày đặc biệt thành lịch tu học có ý nghĩa thực hành
 
 Surface nên có:
+
 - `Ngày vía`
 - `Ngày trai giới`
 - `Khung giờ gợi ý`
@@ -112,15 +126,18 @@ Surface nên có:
 - `Hook bài tập hằng ngày`
 
 owner module (module sở hữu):
+
 - `06-calendar`
 - notification chỉ đọc downstream
 
 ### 6. Nghe và xem để tu học
 
 Mục tiêu:
+
 - hỗ trợ người lớn tuổi và người thích nghe hơn đọc
 
 Surface nên có:
+
 - `Thu âm chương trình`
 - `Audio Bạch thoại Phật pháp`
 - `Video khai thị`
@@ -129,15 +146,18 @@ Surface nên có:
 - `Chế độ chữ lớn / nghe lại / đọc đêm`
 
 owner module (module sở hữu):
+
 - `09-wisdom-qa`
 - content/media làm reference và hosting metadata
 
 ### 7. Thông báo và tài nguyên chính thức
 
 Mục tiêu:
+
 - giữ cho người dùng biết thông báo quan trọng, tài liệu tải về, cập nhật chính thức
 
 Surface nên có:
+
 - `Thông báo chính thức`
 - `Tài nguyên tải về`
 - `Kinh văn và bản in`
@@ -145,16 +165,19 @@ Surface nên có:
 - `Thông báo lịch cộng tu / pháp hội / tưởng niệm`
 
 owner module (module sở hữu):
+
 - `01-content`
 - `07-notification` chỉ phụ trách delivery
 
 ### 8. Cộng đồng và chia sẻ linh nghiệm
 
 Mục tiêu:
+
 - tạo không gian chia sẻ kinh nghiệm thật
 - không đè lên lớp tri thức chính thống
 
 Surface nên có:
+
 - `Guestbook`
 - `Chia sẻ linh nghiệm`
 - `Cảm nhận tu học`
@@ -162,15 +185,18 @@ Surface nên có:
 - `Bình luận dưới bài viết`
 
 owner module (module sở hữu):
+
 - `02-community`
 - moderation là lớp bắt buộc
 
 ### 9. Search hợp nhất
 
 Mục tiêu:
+
 - người dùng tìm một chỗ ra đúng tài liệu, bài dạy, hỏi đáp, audio, video, hướng dẫn
 
 Surface nên có:
+
 - `Kho Trí Huệ` hợp nhất
 - search theo:
   - từ khóa
@@ -180,20 +206,24 @@ Surface nên có:
   - media type
 
 owner module (module sở hữu):
+
 - `05-search`
 
 ### 10. Liên hệ và trợ giúp
 
 Mục tiêu:
+
 - người dùng có nơi tìm hỗ trợ chính thức, đặc biệt khi mới học
 
 Surface nên có:
+
 - `Liên hệ`
 - `Câu hỏi thường gặp cho người mới`
 - `Hướng dẫn dùng app/web`
 - `Nơi bắt đầu nếu chưa biết gì`
 
 owner module (module sở hữu):
+
 - `01-content` hoặc `hubPages`
 
 ## Những gì không nên là trọng tâm
@@ -206,21 +236,21 @@ owner module (module sở hữu):
 
 ## Mapping nhanh sang module
 
-| Surface | Module owner chính |
-|---|---|
-| Giới thiệu pháp môn | `01-content` |
-| Sơ học | `01-content` |
-| Bạch thoại Phật pháp | `09-wisdom-qa` |
-| Khai thị / Phật ngôn | `09-wisdom-qa` |
-| Huyền học vấn đáp | `09-wisdom-qa` |
-| Bài tập hằng ngày | `03-engagement` + `01-content` refs |
-| Ngôi Nhà Nhỏ | `03-engagement` + `01-content` refs |
-| Phát nguyện / Phóng sanh | `08-vows-merit` |
-| Lịch tu học cá nhân | `06-calendar` |
-| Thông báo | `07-notification` |
-| Download hub | `01-content` |
-| Guestbook / chia sẻ linh nghiệm | `02-community` |
-| Kho Trí Huệ search | `05-search` |
+| Surface                         | Module owner chính                  |
+| ------------------------------- | ----------------------------------- |
+| Giới thiệu pháp môn             | `01-content`                        |
+| Sơ học                          | `01-content`                        |
+| Bạch thoại Phật pháp            | `09-wisdom-qa`                      |
+| Khai thị / Phật ngôn            | `09-wisdom-qa`                      |
+| Huyền học vấn đáp               | `09-wisdom-qa`                      |
+| Bài tập hằng ngày               | `03-engagement` + `01-content` refs |
+| Ngôi Nhà Nhỏ                    | `03-engagement` + `01-content` refs |
+| Phát nguyện / Phóng sanh        | `08-vows-merit`                     |
+| Lịch tu học cá nhân             | `06-calendar`                       |
+| Thông báo                       | `07-notification`                   |
+| Download hub                    | `01-content`                        |
+| Guestbook / chia sẻ linh nghiệm | `02-community`                      |
+| Kho Trí Huệ search              | `05-search`                         |
 
 ## Notes for AI/codegen
 
@@ -231,5 +261,4 @@ owner module (module sở hữu):
   - tra đúng nguồn
   - thực hành hằng ngày
   - nghe/đọc thuận tiện
-  thì cần xem lại trước khi đưa vào roadmap.
-
+    thì cần xem lại trước khi đưa vào roadmap.
