@@ -108,7 +108,20 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 20. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
 21. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
 22. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
-23. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
+23. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) ← **mới**
+24. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) ← **mới**
+25. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
+
+## New gap-filling docs (Tài liệu lấp gap thiết kế — mới thêm)
+
+| File | Lấp gap gì |
+|---|---|
+| [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) | Thứ tự khởi động platform modules + fail behavior từng module |
+| [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) | Event nào đi outbox, event schema, idempotency requirement |
+| [unified-index-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/unified-index-mapping.md) | Field mapping từ Content + Wisdom-QA vào unified search index |
+| [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Schema versioning và delta sync API cho offline bundles |
+| [assisted-entry-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/09-vows-merit/assisted-entry-workflow.md) | Workflow + audit khi admin nhập liệu thay cho member |
+| [advisory-ownership.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/advisory-ownership.md) | Ranh giới Calendar vs Wisdom-QA trong advisory compose |
 
 ## Where each rule lives (Quy tắc nằm ở đâu)
 

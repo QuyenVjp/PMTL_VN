@@ -40,7 +40,7 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 | `audit_logs` (nhật ký kiểm tra) | migration/schema (di cư/lược đồ) + append helper (hàm ghi nhật ký) + first audited routes (các đường dẫn được kiểm tra đầu tiên) | required before launch | ít nhất auth/admin/upload actions (các hành động xác thực/quản trị/tải lên) đã được append audit (ghi nhật ký kiểm tra) thật |
 | `feature_flags` (cờ tính năng) | migration/schema (di cư/lược đồ) + evaluation service (lớp đánh giá tính năng) + first flag consumer (thành phần sử dụng cờ đầu tiên) | required before launch | có ít nhất 1 feature (tính năng) thật đi qua flag (cờ) |
 | `sessions` (phiên đăng nhập) | migration/schema (di cư/lược đồ) + session persistence service (lớp lưu trữ phiên) | required before launch | logout/logout-all/revoke (đăng xuất/đăng xuất hết/thu hồi) không được là giả lập |
-| `rate_limit_records` hoặc shared limiter equivalent (giới hạn tần suất) | migration/schema hoặc shared limiter store (kho giới hạn dùng chung) + guard | required before launch | auth/search/write/upload phải có limiter path (đường dẫn giới hạn) rõ ràng |
+| `rate_limit_records` Postgres table (giới hạn tần suất) — **phase 1 đã chốt dùng Postgres table, không phải Valkey** | migration/schema + rate-limit guard | required before launch | auth/search/write/upload phải có limiter path rõ ràng; migrate sang Valkey khi volume gây lock contention đo được |
 | local storage abstraction (lớp trừu tượng lưu trữ nội bộ) | storage interface (giao diện lưu trữ) + local adapter (bộ chuyển đổi nội bộ) + media metadata schema (lược đồ dữ liệu truyền thông) | required before launch | upload/delete/url logic (lý thuyết tải/xóa/địa chỉ) không phụ thuộc trực tiếp vào đường dẫn nội bộ (local path) |
 | upload hardening (thắt chặt bảo mật tải lên) | upload controller/service + MIME sniffing (kiểm tra loại tệp) + allowlist (danh sách cho phép) + delete auth (ủy quyền xóa) | required before launch | từ chối (reject) file sai loại/dung lượng, ủy quyền xóa (delete auth) rõ ràng, nhật ký (audit) có ghi lại |
 | `/health/live`, `/health/ready`, `/health/startup` (kiểm tra sức khỏe hệ thống) | health module/routes | required before launch | các đường dẫn live/ready/startup trả đúng contract (hợp đồng nghiệp vụ) giai đoạn 1 |
@@ -71,6 +71,19 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 | tracing backend (hệ thống truy vết phía sau) | forbidden for now | chưa vượt qua các tiêu chuẩn về logs/restore/runbook |
 | queue (hàng đợi) trước khi có idempotency policy (chính sách bất biến) | forbidden for now | tránh tự tạo ra các tác động phụ bị trùng lặp (duplicate side effects) |
 | public upload (tải lên công khai) thiếu sniffing/delete auth (kiểm tra/ủy quyền xóa) | forbidden for now | vi phạm ranh giới bảo mật (security boundary) |
+
+## New design docs added (Tài liệu thiết kế mới)
+
+Các file sau đã được thêm để lấp gap thiết kế — phải review trước khi code module tương ứng:
+
+| File | Lấp gap gì |
+|---|---|
+| `baseline/startup-dependency-order.md` | Thứ tự khởi động platform modules + fail behavior |
+| `tracking/outbox-event-taxonomy.md` | Event nào đi outbox, event nào sync/fire-and-forget |
+| `06-search/unified-index-mapping.md` | Field mapping từ Content + Wisdom-QA vào unified index |
+| `10-wisdom-qa/offline-bundle-delta-sync.md` | Schema versioning và delta sync cho offline bundles |
+| `09-vows-merit/assisted-entry-workflow.md` | Workflow + audit khi admin tạo record thay member |
+| `07-calendar/advisory-ownership.md` | Ranh giới Calendar vs Wisdom-QA trong advisory compose |
 
 ## Review rule (Quy tắc rà soát)
 

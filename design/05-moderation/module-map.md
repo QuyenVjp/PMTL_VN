@@ -66,3 +66,52 @@ markmap:
 - re-resolve không được xóa lịch sử cũ
 - canonical write phải chạy trước; alert/notification đi async phía sau
 - summary trên target phải rebuild được từ source report khi cần recovery
+
+## Summary drift prevention (Ngăn ngừa lệch tóm tắt)
+
+Summary fields (`reportCount`, `isHidden`, `moderationStatus`) trên target entity có thể drift khỏi `moderationReports` source of truth theo thời gian.
+
+### Recovery là recompute, không phải patch tay
+
+Khi drift được phát hiện:
+1. **Không được** sửa tay summary field trực tiếp
+2. **Recovery path chuẩn**: chạy recompute function từ `moderationReports`
+
+```sql
+-- recompute summary cho 1 target entity
+SELECT
+  COUNT(*)                                          AS report_count,
+  MAX(created_at)                                   AS last_report_at,
+  (SELECT reason FROM moderation_reports
+   WHERE target_public_id = :id ORDER BY created_at DESC LIMIT 1) AS last_report_reason,
+  MAX(status) FILTER (WHERE status = 'hidden')      AS moderation_status,
+  EXISTS(SELECT 1 FROM moderation_reports
+         WHERE target_public_id = :id AND status = 'hidden') AS is_hidden
+FROM moderation_reports
+WHERE target_public_id = :id AND target_type = :type;
+```
+
+### Khi nào trigger recompute
+
+| Trigger | Cách thực hiện |
+|---|---|
+| Admin yêu cầu thủ công | `POST /api/admin/moderation/recompute-summary` (admin+ only) |
+| Sau mỗi migration có liên quan tới report tables | Chạy recompute batch trong migration script |
+| Sau restore drill | Bước bắt buộc trong `ops/backup-restore.md` |
+| Scheduled maintenance | Cron hàng tuần hoặc on-demand — **không phải real-time job** |
+
+> **Quy tắc**: recompute không phải real-time background job. Nó là on-demand recovery tool.
+> Real-time sync vẫn là: moderation module update summary sau mỗi report resolution.
+
+### Admin API cho recompute
+
+```
+POST /api/admin/moderation/recompute-summary
+Body: { targetPublicId: string, targetType: string }
+  hoặc
+Body: { all: true }  -- recompute toàn bộ (cần super-admin)
+
+Response: { recomputed: number, driftedFixed: number }
+```
+
+Audit event bắt buộc: `moderation.summary.recomputed` với actor + scope.

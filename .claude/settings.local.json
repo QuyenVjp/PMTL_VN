@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\ADMIN\\\\DEV2\\\\PMTL_VN\\\\.claude\\\\skills\\\\arch-check\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\ADMIN\\\\DEV2\\\\PMTL_VN\\\\.claude\\\\skills\\\\module-scaffold\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\ADMIN\\\\DEV2\\\\PMTL_VN\\\\.claude\\\\skills\\\\use-case-write\")"
+    ]
+  }
+}

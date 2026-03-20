@@ -106,6 +106,9 @@ Phải có:
 canonical write -> outbox_events -> dispatcher -> execution queue -> worker
 ```
 
+- taxonomy đầy đủ của event nào đi outbox: xem `tracking/outbox-event-taxonomy.md`
+- khi outbox chưa bật (phase 1), event "outbox required" phải dùng inline sync hoặc fire-and-forget có log — không được im lặng bỏ qua
+
 ## 8. Repo structure rule (Quy tắc cấu trúc repo)
 
 - `apps/web`: public frontend
@@ -126,6 +129,21 @@ canonical write -> outbox_events -> dispatcher -> execution queue -> worker
 - `/health/live`, `/health/ready`, `/health/startup`
 - `/metrics`
 - restore drill pass
+
+## 12. Resolved ambiguities (Các điểm mơ hồ đã được chốt)
+
+Các quyết định này từng không rõ — đã chốt và ghi vào doc riêng:
+
+| Câu hỏi | Quyết định | Doc |
+|---|---|---|
+| Rate-limit store phase 1 là gì? | `rate_limit_records` Postgres table — không phải Valkey | `baseline/startup-dependency-order.md` |
+| Platform modules khởi động thứ tự nào? | config → logging → errors/validation → sessions → feature-flags/rate-limit/storage → audit → health/metrics | `baseline/startup-dependency-order.md` |
+| Event nào đủ quan trọng để đi outbox? | Xem taxonomy đầy đủ per module | `tracking/outbox-event-taxonomy.md` |
+| Search unified index field mapping từ đâu? | Content (post/guide/chant/sutra) + Wisdom-QA (wisdom/qa) với shape chuẩn | `06-search/unified-index-mapping.md` |
+| Offline bundle delta sync như thế nào? | BundleVersion integer + offlineBundleEntries table + delta API | `10-wisdom-qa/offline-bundle-delta-sync.md` |
+| Assisted entry workflow cụ thể ra sao? | Schema riêng + audit bắt buộc + immutable flag + member rights rõ | `09-vows-merit/assisted-entry-workflow.md` |
+| Advisory ownership: Calendar hay Wisdom-QA? | Calendar owns composition + schedule; Wisdom-QA owns text + provenance | `07-calendar/advisory-ownership.md` |
+| Moderation summary drift xử lý thế nào? | On-demand recompute API — không phải real-time job | `05-moderation/module-map.md` |
 
 ## 10. Anti-goals (Những điều không làm)
 

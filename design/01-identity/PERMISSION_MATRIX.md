@@ -82,6 +82,102 @@ Tài liệu này chốt practical authorization logic (logic phân quyền thự
   2. archive (lưu trữ)
   3. unpublish (hủy xuất bản)
 
+## Per-module permission scope (Phân quyền theo từng module)
+
+Bảng này map role vào các action cụ thể từng module — dùng khi implement guard.
+
+### Content module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Read published content | Yes | Yes | Yes (public) |
+| Create/edit draft | Yes | Yes | No |
+| Publish content | Yes | Yes | No |
+| Unpublish content | Yes | Yes | No |
+| Soft delete content | Yes | Yes (non-protected) | No |
+| Hard delete content | Yes | No | No |
+| Upload media | Yes | Yes | No |
+| Delete media | Yes | Yes (own upload) | No |
+
+### Community module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Submit post/comment | Yes | Yes | Yes |
+| Edit own post/comment | Yes | Yes | Yes (own only) |
+| Edit other's post/comment | Yes | Yes (operational) | No |
+| Delete own post/comment | Yes | Yes | Yes (soft delete own) |
+| Delete other's content | Yes | Yes (via moderation) | No |
+| Submit guestbook | Yes | Yes | Yes (public) |
+| Approve guestbook | Yes | Yes | No |
+
+### Engagement module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Read own practice data | Yes | No (privacy) | Yes |
+| Write own practice data | Yes | No | Yes |
+| Read other's practice data | Yes | No (privacy default) | No |
+| Admin-assisted write (with audit) | N/A | Yes (assisted-entry workflow) | No |
+
+> Lưu ý: admin không được đọc practice data của member mà không có lý do support rõ ràng.
+
+### Moderation module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Submit report | Yes | Yes | Yes |
+| View reports list | Yes | Yes (non-sensitive) | No |
+| Resolve report | Yes | Yes | No |
+| Re-resolve other admin's decision | Yes | Yes | No |
+| View sensitive report details (IP hash, etc.) | Yes | Limited | No |
+| Trigger recompute-summary | Yes | Yes | No |
+| Full recompute (all=true) | Yes | No | No |
+
+### Calendar module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Read public events | Yes | Yes | Yes (public) |
+| Read personal calendar | Yes | Yes (own) | Yes (own) |
+| Create/edit events | Yes | Yes | No |
+| Publish events | Yes | Yes | No |
+| Apply lunar override | Yes | Yes | No |
+
+### Vows & Merit module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Create own vow | Yes | Yes | Yes |
+| View own vows | Yes | Yes (own) | Yes (own) |
+| View other's vows | Yes | No (privacy) | No |
+| Create assisted entry | N/A | Yes (assisted-entry workflow) | No |
+| Void own vow | Yes | Yes (own) | Yes (own) |
+| Hard delete vow | Yes | No | No |
+
+### Notification module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Subscribe push | Yes | Yes | Yes |
+| Unsubscribe own push | Yes | Yes (own) | Yes (own) |
+| View delivery stats | Yes | Yes | No |
+| Trigger push job | Yes | Yes | No |
+| Disable push delivery | Yes | Yes | No |
+
+### Wisdom-QA module
+
+| Action | super-admin | admin | member |
+|---|---|---|---|
+| Search wisdom entries | Yes | Yes | Yes (public) |
+| Read wisdom entry | Yes | Yes | Yes (published only) |
+| Create/edit wisdom entry | Yes | Yes | No |
+| Publish wisdom entry | Yes | Yes | No |
+| Download offline bundle | Yes | Yes | Yes (member+) |
+| Manage ingestion / provenance | Yes | Yes | No |
+
+---
+
 ## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
 
 - không implement `edit-own-only` cho `admin` nếu design không yêu cầu
@@ -90,3 +186,5 @@ Tài liệu này chốt practical authorization logic (logic phân quyền thự
   1. role gate (cổng vai trò)
   2. business rule (quy tắc nghiệp vụ)
   3. deletion policy (chính sách xóa)
+- Engagement và Vows data là **private by default** — admin cần lý do support rõ để access
+- per-module scope bảng trên là **implementation target**, không phải aspirational — implement đúng từ đầu
