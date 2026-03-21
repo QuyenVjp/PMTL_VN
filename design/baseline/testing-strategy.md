@@ -105,7 +105,7 @@ afterAll(async () => {
 # docker-compose.test.yml
 services:
   test-db:
-    image: postgres:16
+    image: postgres:18
     environment:
       POSTGRES_DB: pmtl_test
       POSTGRES_USER: pmtl_test
@@ -165,7 +165,7 @@ jobs:
   test:
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_DB: pmtl_test
           POSTGRES_USER: pmtl_test

@@ -46,7 +46,7 @@ services:
     # Static SPA — served by Caddy directly or own nginx
 
   db:
-    image: postgres:16
+    image: postgres:18
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

@@ -144,8 +144,10 @@ apps/api/
 ### Rules
 
 - `common/` giữ nền tảng kỹ thuật dùng bởi nhiều module.
+- `common/auth/` chỉ giữ cross-module auth primitives: guards, decorators, strategy, request-user extraction.
 - `platform/` giữ control-plane và runtime modules cắt ngang.
 - `modules/` giữ domain modules theo owner đã chốt trong `design/overview/architecture-principles.md`.
+- `modules/identity/` giữ auth business logic: register, login, refresh, logout, session management, password reset.
 - Không tạo `shared business service` mơ hồ ở `common/`.
 - Không đẩy domain logic từ `modules/*` xuống `platform/*`.
 

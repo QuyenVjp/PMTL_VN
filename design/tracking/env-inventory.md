@@ -74,14 +74,14 @@ Nó không thay file `.env.example`, nhưng giúp tránh quên nhóm env khi sca
 
 | Env | Owner | Required | Purpose |
 |---|---|---|---|
-| `SMTP_HOST` | notification | yes | SMTP server hostname (e.g., `smtp-relay.brevo.com`) |
-| `SMTP_PORT` | notification | yes | SMTP port (587 for STARTTLS, 465 for TLS) |
-| `SMTP_SECURE` | notification | no | `true` for port 465, `false` for 587 (default) |
-| `SMTP_USER` | notification | yes | SMTP auth username |
-| `SMTP_PASS` | notification | yes | SMTP auth password / API key |
-| `SMTP_FROM_NAME` | notification | yes | Sender display name (e.g., `PMTL_VN`) |
-| `SMTP_FROM_EMAIL` | notification | yes | Sender email address (e.g., `noreply@pmtl.vn`) |
-| `EMAIL_HASH_SALT` | notification | yes | Salt for hashing emails in audit logs — **never rotate** |
+| `SMTP_HOST` | platform/notification | yes | SMTP server hostname (e.g., `smtp-relay.brevo.com`) |
+| `SMTP_PORT` | platform/notification | yes | SMTP port (587 for STARTTLS, 465 for TLS) |
+| `SMTP_SECURE` | platform/notification | no | `true` for port 465, `false` for 587 (default) |
+| `SMTP_USER` | platform/notification | yes | SMTP auth username |
+| `SMTP_PASS` | platform/notification | yes | SMTP auth password / API key |
+| `SMTP_FROM_NAME` | platform/notification | yes | Sender display name (e.g., `PMTL_VN`) |
+| `SMTP_FROM_EMAIL` | platform/notification | yes | Sender email address (e.g., `noreply@pmtl.vn`) |
+| `EMAIL_HASH_SALT` | platform/notification | yes | Salt for hashing emails in audit logs — **never rotate** |
 
 ### Web (apps/web)
 

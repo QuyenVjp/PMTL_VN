@@ -39,9 +39,9 @@ on:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: pnpm/action-setup@v3
+  - uses: pnpm/action-setup@v5
   - uses: actions/setup-node@v4
-    with: { node-version: '20.18.0' }
+    with: { node-version: '24.x' }
   - run: pnpm install --frozen-lockfile
   - run: pnpm lint
   - run: pnpm typecheck
@@ -52,7 +52,7 @@ steps:
 ```yaml
 services:
   postgres:
-    image: postgres:16
+    image: postgres:18
     env:
       POSTGRES_DB: pmtl_test
       POSTGRES_USER: pmtl
@@ -78,6 +78,8 @@ steps:
 ```
 **Gate**: Fail → block merge, block deploy.
 **Coverage target**: ≥ 70% statement coverage (see `baseline/testing-strategy.md`)
+
+**Version note**: examples in this file target current stable/LTS majors as of `2026-03-21` to reduce design drift.
 
 #### Job 3: `build-check`
 ```yaml

@@ -270,6 +270,7 @@ Các module còn lại tồn tại như target design (thiết kế mục tiêu)
 - `required before launch`: launch blocker (vật cản ngăn chặn ra mắt)
 - `planned`: hướng đã chốt, chưa bật
 - `forbidden for now`: bị cấm ở hiện tại
+- `explicit exclusion`: bị loại khỏi hướng hiện tại; chỉ reconsider khi trigger trong decision doc được đáp ứng
 
 ## Anti-junior traps (Chặn các "cái bẫy" của người mới)
 

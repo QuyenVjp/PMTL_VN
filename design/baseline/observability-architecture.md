@@ -46,6 +46,11 @@ Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
 - Raw client IP nếu policy dùng hash
 - CSRF tokens
 
+**Pino hardening bắt buộc:**
+- Bật `redact` cho các path nhạy cảm như `req.headers.authorization`, `req.headers.cookie`, `*.password`, `*.token`, `*.refreshToken`
+- Dùng custom serializers cho `req`, `res`, và `err` — không log raw object nguyên khối
+- Mọi logger factory phải fail-closed với redact list mặc định; không để từng module tự chọn có redact hay không
+
 **Log file rotation** (Docker + JSON):
 - Stdout/stderr → Docker logging driver
 - Rotation: `max-size=100m, max-file=5` trong docker-compose

@@ -29,7 +29,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
 | Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills Payload legacy đã bị deprecate hoặc loại khỏi luồng code mới |
 | OpenAPI spec | ✅ Sẵn sàng | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới |
-| Deferred tech design | ✅ Sẵn sàng | 10 deferred components có full design doc — xem `DECISIONS.md` section 15 |
+| Deferred/excluded advanced tech design | ✅ Sẵn sàng | Các component `planned` / `explicit exclusion` đều có design doc rõ — xem `DECISIONS.md` section 15 |
 | Email provider decision | ✅ Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `baseline/email-provider-decision.md` |
 | Storage lifecycle | ✅ Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `baseline/storage-lifecycle.md` |
 | Cache topology | ✅ Sẵn sàng | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime — `baseline/cache-topology.md` |

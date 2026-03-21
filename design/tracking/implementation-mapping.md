@@ -10,7 +10,7 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 - Current direction (Hướng đi hiện tại) là `rebuild backend (xây dựng lại hệ thống phía sau)` với NestJS.
 - Runtime (môi trường thực thi) cũ trong repo không được tính là implementation (triển khai) hợp lệ cho direction (hướng đi) mới chỉ vì nó đang tồn tại.
 - Ở thời điểm docs (tài liệu) này được viết, baseline rebuild (nền tảng xây dựng lại) chưa có artifact runtime (môi trường thực thi thực tế) thật để đánh dấu là `implemented (đã triển khai)`.
-- Vì vậy bảng dưới đây chủ yếu liệt kê các `launch blockers (vật cản ngăn chặn ra mắt)` và `planned targets (mục tiêu đã lập kế hoạch)`, nhưng từng dòng đều chỉ rõ artifact (thành phần mã nguồn) sẽ phải xuất hiện ở đâu.
+- Vì vậy bảng dưới đây chủ yếu liệt kê các `launch blockers (vật cản ngăn chặn ra mắt)`, `planned targets (mục tiêu đã lập kế hoạch)`, và `explicit exclusions (các phần bị loại rõ ràng)`, nhưng từng dòng đều chỉ rõ artifact (thành phần mã nguồn) sẽ phải xuất hiện ở đâu.
 
 ## Status semantics (Ý nghĩa các trạng thái)
 
@@ -22,6 +22,8 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
   - hướng đi đã chốt nhưng chưa phải là baseline phase 1 (nền tảng giai đoạn 1)
 - `forbidden for now`: hiện đang bị cấm
   - không được tự ý kích hoạt
+- `explicit exclusion`: loại rõ ràng khỏi hướng hiện tại
+  - không phải `planned`; chỉ được xem xét lại khi decision doc nêu trigger reconsideration rõ ràng
 
 ## Không được đánh dấu implemented (đã triển khai) nếu thiếu:
 
@@ -54,9 +56,10 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 | [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-identity/use-cases/manage-auth-session.md) | auth controller + auth service + session/token tables + audit append + rate limit | required before launch | Lỗi bảo mật (Auth bug) là vật cản ra mắt (launch blocker) |
 | [upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/use-cases/upload-media-asset.md) | upload controller + media service + storage adapter + media_assets table + asset status handling | required before launch | Ranh giới tải lên (Upload boundary) là vật cản ra mắt (launch blocker) |
 
-## Deferred components (Các thành phần tạm hoãn)
+## Deferred and explicitly excluded advanced components (Các thành phần nâng cao đang tạm hoãn hoặc bị loại rõ ràng)
 
-Full architecture docs exist for all deferred components — a coding agent can activate them without inventing architecture.
+Full architecture docs exist cho toàn bộ các component `planned`, và decision doc rõ ràng tồn tại cho component `explicit exclusion`.
+Coding agent có thể activate phần `planned` mà không cần phát minh lại kiến trúc, nhưng không được tự ý bật phần `explicit exclusion` trước khi trigger reconsideration được đáp ứng.
 
 | Decision | Expected code location | Status | Trigger | Design doc |
 |---|---|---|---|---|

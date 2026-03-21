@@ -135,7 +135,7 @@ stats_users = pgbouncer_stats
 # infra/docker/docker-compose.pgbouncer.yml (override file)
 services:
   pgbouncer:
-    image: pgbouncer/pgbouncer:1.23
+    image: pgbouncer/pgbouncer:1.25.1
     volumes:
       - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
       - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro

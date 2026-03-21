@@ -467,7 +467,7 @@ meilisearch: await this.meili.health().catch(() => ({ status: 'unavailable' })),
 # infra/docker/docker-compose.meilisearch.yml (override file)
 services:
   meilisearch:
-    image: getmeili/meilisearch:v1.9
+    image: getmeili/meilisearch:v1.39.0
     env_file: /etc/pmtl/secrets/.env.production
     environment:
       MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY}

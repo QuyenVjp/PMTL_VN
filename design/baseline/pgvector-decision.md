@@ -7,7 +7,7 @@ Không phải "chưa nghĩ tới" — là quyết định có lý do và có tri
 
 ## Quyết định: LOẠI KHỎI PHASE 1 và PHASE 2
 
-**Status**: `forbidden until trigger condition met`
+**Status**: `explicit exclusion`
 **Owner**: `apps/api` sẽ là nơi implement nếu được kích hoạt
 **Reviewed**: 2026-03-21
 
@@ -42,9 +42,9 @@ Nếu trigger được đáp ứng, artifact runtime cần có:
 
 ---
 
-## Trigger condition để include
+## Trigger condition để reconsider
 
-pgvector được xem xét lại khi **tất cả** các điều kiện sau đúng:
+pgvector chỉ được xem xét lại khi **tất cả** các điều kiện sau đúng:
 
 1. Meilisearch đã được bật và đang hoạt động ổn định ≥ 3 tháng
 2. Có use case cụ thể: "tìm nội dung liên quan" hoặc "semantic search" được member yêu cầu nhiều

@@ -35,8 +35,9 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/sla-slo.md` | service objectives owner | latency, availability, measurement notes | không lặp implementation status |
 | `baseline/failure-modes.md` | failure behavior owner | degrade/fail-closed/fail-open matrix | không lặp full infra tutorial |
 | `ops/backup-restore.md` | restore procedure owner | backup/restore commands, acceptance criteria | không phát minh policy security mới |
+| `ops/health-contract.md` | health endpoint contract owner | `/health/live`, `/health/ready`, `/health/startup` exact checks | không lặp metrics/logging strategy |
 | `ops/restore-drill-log.md` | drill evidence log | dated drill records | không chứa rule mới |
-| `tracking/implementation-mapping.md` | implementation truth owner | status `implemented/planned/required before launch` | không lặp rationale dài |
+| `tracking/implementation-mapping.md` | implementation truth owner | status `implemented/required before launch/planned/forbidden for now/explicit exclusion` | không lặp rationale dài |
 | `tracking/module-interactions.md` | cross-module interaction owner | ownership boundaries, direct vs async interaction | không lặp repo structure |
 | `tracking/api-route-inventory.md` | API route inventory owner | route groups, auth scope, owner module | không thay use-case detail |
 | `tracking/env-inventory.md` | env inventory owner | env names, scope, required/optional, owner app | không lặp full deploy steps |
