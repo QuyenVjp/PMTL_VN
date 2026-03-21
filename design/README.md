@@ -117,6 +117,10 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 29. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
 30. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
 31. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
+32. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_PRACTICE_CONSTITUTION.md)
+33. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
+34. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
+35. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 

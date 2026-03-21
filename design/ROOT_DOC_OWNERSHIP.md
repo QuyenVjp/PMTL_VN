@@ -48,6 +48,10 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `overview/terminology.md` | terminology owner | PMTL terms + `English (Việt)` notation | không lặp qua nhiều root files |
 | `overview/source-analysis.md` | source-derived feature surface owner | official source notes + feature implications | không lặp source summaries |
 | `baseline/writing-standards.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
+| `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |
+| `ui/LANDING_PAGE_DESIGN.md` | landing page visual spec owner | 7 sections layout, typography, interaction, animation, SEO, performance targets | không là route owner; route authority vẫn là PAGE_INVENTORY.md |
+| `ui/SPIRITUAL_APP_SCREENS.md` | app screen design spec owner | screen-by-screen layout, component behavior, elderly UX rules, states | không là route owner; không override module contracts |
+| `ui/NAVIGATION_ARCHITECTURE.md` | IA + navigation structure owner | full URL scheme, nav patterns, gating rules, deep linking, a11y | routes phải khớp PAGE_INVENTORY.md — PAGE_INVENTORY.md là route canon |
 
 ## Duplication rule (Quy tắc chống trùng)
 
