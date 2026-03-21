@@ -39,7 +39,10 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 - `PgBouncer`
 - Prometheus/Grafana/Alertmanager (bộ công cụ giám sát và cảnh báo)
 - tracing (truy vết thực thi)
-- `pgvector`
+
+### Explicitly excluded for current direction (Loại khỏi hướng hiện tại một cách rõ ràng)
+
+- `pgvector` — không phải deferred; chỉ xem xét lại khi trigger trong `baseline/pgvector-decision.md` được đáp ứng
 
 ### Forbidden for now (Bị cấm ở hiện tại)
 
@@ -122,6 +125,23 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 34. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
 35. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
 36. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
+37. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
+38. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
+39. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
+40. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
+41. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
+42. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
+43. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
+44. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
+45. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
+46. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
+47. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
+48. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
+49. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
+50. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
+51. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
+52. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
+53. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -151,7 +171,31 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [baihua-audiobook-ingestion-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/baihua-audiobook-ingestion-inventory.md) | Inventory các lớp dữ liệu cần ingest từ source audiobook |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 
-### UI/UX design (6 files)
+### Infra & Ops — Phase 2+ ready design docs
+| File | Nội dung |
+|---|---|
+| [valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md) | Valkey topology, key namespaces, rate-limit migration, failure modes, rollback |
+| [bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md) | Queue definitions, job schemas, idempotency, dead-letter, worker entrypoint |
+| [outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md) | outbox_events schema, dispatcher cron, retry/dead-letter, redrive API |
+| [meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md) | Index settings, sync strategy, SQL fallback contract, monitoring |
+| [pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md) | Pool mode, trigger threshold, Docker Compose config, rollback |
+| [r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md) | Storage adapter interface, 8-step migration, dual-read period, rollback |
+| [push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md) | VAPID Web Push, subscription lifecycle, worker handler, admin ops |
+| [observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md) | Phase 1 health+metrics, Phase 2 Prometheus+Grafana+Alertmanager, Phase 3 OTEL |
+| [pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md) | Explicit exclusion with boundary, trigger conditions, artifact list if activated |
+
+### Security & Ops — Phase 1 required
+| File | Nội dung |
+|---|---|
+| [email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md) | Brevo SMTP, delivery failure policy, retry semantics, anti-enumeration |
+| [storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md) | Asset state machine, 5 cleanup jobs, upload quota, disk monitoring |
+| [cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md) | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime, Valkey cache |
+| [secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md) | Secret inventory, rotation procedures, compromise response, .gitignore enforcement |
+| [cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md) | GitHub Actions CI/CD, 4 automated gates + 1 human gate, auto-rollback |
+| [waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md) | Cloudflare WAF rules, Bot Fight Mode, honeypot, CSP nonce, security headers |
+| [health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md) | Exact check lists for /health/live, /health/ready, /health/startup |
+
+### UI/UX design (7 files)
 | File | Nội dung |
 |---|---|
 | [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | Route inventory đầy đủ cho public/member/admin surfaces, kể cả Little House, Kinh Bài Tập, Phóng Sanh, search ops, notification ops |
@@ -160,6 +204,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 | [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md) | Color system, typography, spacing, interaction patterns, premium details |
 | [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin: Vite + React SPA, sidebar, DataTable, command palette |
 | [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md) | Elderly-specific UX rules per module |
+| [ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md) | 24 admin workspaces với filters, bulk actions, states, query invalidation rules |
 
 ### Deterministic SVG assets
 | File | Nội dung |

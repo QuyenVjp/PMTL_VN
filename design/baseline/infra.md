@@ -33,7 +33,7 @@ Chỉ chứa những gì UNIQUE so với các file owner khác.
 | Valkey | Cache + rate-limit + queue | Deferred |
 | Meilisearch | Public search engine | Deferred |
 | PgBouncer | Connection pooling | Deferred |
-| pgvector | Semantic retrieval | Deferred |
+| pgvector | Semantic retrieval | **Explicitly excluded** — see `baseline/pgvector-decision.md` |
 
 **Local storage warning**: disk đầy, volume mount sai, restore lệch DB/file đều là failure mode thật. Phải coi là điểm yếu đã biết.
 
@@ -70,8 +70,8 @@ Ref: `tracking/outbox-event-taxonomy.md` cho taxonomy đầy đủ.
 
 | Service | Chức năng | Phase |
 |---|---|---|
-| SendGrid / SMTP | Email delivery | Phase 1 |
-| Firebase / Web Push | Push notifications | Phase 2+ |
+| Brevo SMTP | Email delivery (SMTP-first, Brevo provider) | Phase 1 |
+| Web Push (VAPID) | Push notifications — W3C standard, no Firebase SDK | Phase 2+ |
 | Cloudflare (free) | DNS + CDN + edge SSL | Phase 1 |
 | Off-site backup | Snapshot ngoài VPS | Phase 1 |
 
@@ -161,7 +161,7 @@ docker compose logs -f web --tail 100
 | Meilisearch | Search là core feature + SQL performance không đủ | `06-search/unified-index-mapping.md` |
 | PgBouncer | Connection exhaustion measured | `baseline/failure-modes.md` |
 | Prometheus stack | Có metric + alert use case cụ thể | N/A |
-| pgvector | Related-content / recommendation feature cần | N/A |
+| pgvector | **Explicitly excluded** — not deferred. Trigger conditions required before reconsideration. | `baseline/pgvector-decision.md` |
 
 ---
 

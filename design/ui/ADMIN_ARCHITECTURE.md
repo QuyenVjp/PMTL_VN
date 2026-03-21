@@ -105,6 +105,7 @@ const sidebarData = {
         { title: 'Lịch & Sự kiện', url: '/he-thong/lich', icon: Calendar },
         { title: 'Tìm kiếm', url: '/he-thong/tim-kiem', icon: Search },
         { title: 'Thông báo', url: '/he-thong/thong-bao', icon: Bell },
+        { title: 'Queue ops', url: '/he-thong/queue-ops', icon: GitBranch },
         { title: 'Phụng sự viên', url: '/he-thong/phung-su-vien', icon: HandHelping },
         { title: 'Health', url: '/he-thong/health', icon: Activity },
       ],

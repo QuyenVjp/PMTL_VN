@@ -3,7 +3,7 @@
 File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nào sẽ xảy ra?"**
 
 > Cập nhật khi có thay đổi lớn về design hoặc khi một phần chuyển sang `implemented`.
-> Date: 2026-03-20
+> Date: 2026-03-21
 
 ---
 
@@ -15,7 +15,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
-| UI/UX design | ✅ Sẵn sàng | `design/ui/` có 6 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE, ELDERLY_UX |
+| UI/UX design | ✅ Sẵn sàng | `design/ui/` có 7 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE, ELDERLY_UX, ADMIN_MODULE_SPECS |
 | Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, i18n, PWA, caching — `baseline/frontend-architecture.md` |
 | Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14 |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
@@ -28,7 +28,23 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
 | Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills Payload legacy đã bị deprecate hoặc loại khỏi luồng code mới |
-| OpenAPI spec | ❌ Thiếu | Phase 1 acceptable — auto-gen từ NestJS Swagger decorators |
+| OpenAPI spec | ✅ Sẵn sàng | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới |
+| Deferred tech design | ✅ Sẵn sàng | 10 deferred components có full design doc — xem `DECISIONS.md` section 15 |
+| Email provider decision | ✅ Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `baseline/email-provider-decision.md` |
+| Storage lifecycle | ✅ Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `baseline/storage-lifecycle.md` |
+| Cache topology | ✅ Sẵn sàng | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime — `baseline/cache-topology.md` |
+| Secret management | ✅ Sẵn sàng | Rotation procedures per secret, compromise response, .gitignore — `baseline/secret-management.md` |
+| CI/CD gates | ✅ Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback — `baseline/cicd-deploy-gates.md` |
+| WAF + anti-bot | ✅ Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `baseline/waf-antibot-strategy.md` |
+| Health contract | ✅ Sẵn sàng | Exact check lists per endpoint, failure runbook — `ops/health-contract.md` |
+| Admin module specs | ✅ Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/ui/ADMIN_MODULE_SPECS.md` |
+| Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `tracking/env-inventory.md` |
+| pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `baseline/pgvector-decision.md` |
+| Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |
+| Observability architecture | ✅ Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `baseline/observability-architecture.md` |
+
+**VERDICT**: `NO REMAINING DESIGN GAPS — READY FOR FULL-STACK IMPLEMENTATION PLANNING`
+Tất cả hạng mục design đều ✅. OpenAPI strategy đã được chốt ở mức design. Coding agent có thể bắt đầu Wave 1 ngay, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass và OpenAPI coverage proof sau khi code.
 
 ---
 
@@ -59,13 +75,14 @@ Mọi domain module (01-11) đều có:
 - API route inventory: `tracking/api-route-inventory.md`
 - Env variables: `tracking/env-inventory.md`
 
-### UI/UX design — ĐẦY ĐỦ
+### UI/UX design — ĐẦY ĐỦ (7 docs)
 - Route inventory đầy đủ: `design/ui/PAGE_INVENTORY.md`
 - User flows public/member/admin: `design/ui/USER_FLOWS.md`
 - 30+ components: `design/ui/COMPONENT_SPECS.md`
 - Design principles: `design/ui/DESIGN_PRINCIPLES.md`
 - Admin architecture: `design/ui/ADMIN_ARCHITECTURE.md`
 - Elderly UX: `design/ui/ELDERLY_UX.md`
+- Admin module specs (24 workspaces): `design/ui/ADMIN_MODULE_SPECS.md`
 
 ### Frontend strategies — ĐẦY ĐỦ
 - SEO: `generateMetadata()`, JSON-LD, sitemap, robots.txt
@@ -108,9 +125,32 @@ Mọi domain module (01-11) đều có:
 
 ---
 
-### ❌ GAP 5: OpenAPI spec — ACCEPTABLE
+### ✅ GAP 5: OpenAPI spec — CLOSED IN DESIGN
 
-Phase 1: auto-gen từ NestJS Swagger decorators. Không cần design doc riêng.
+**Strategy**: auto-gen từ NestJS `@nestjs/swagger` decorators. Không cần viết spec bằng tay.
+
+**Ownership**: `apps/api` — mọi controller và DTO trong `apps/api` chịu trách nhiệm decorator coverage.
+
+**Decorator standard** (bắt buộc cho tất cả public routes):
+- `@ApiTags('module-name')` — trên mỗi controller class
+- `@ApiOperation({ summary: '...' })` — trên mỗi route handler
+- `@ApiResponse({ status: 200, type: ResponseDto })` — success case
+- `@ApiResponse({ status: 400/401/403/404 })` — error cases liên quan
+- `@ApiProperty()` hoặc `@ApiPropertyOptional()` — trên mọi field trong request/response DTO
+
+**Source of truth cho schema**: Zod schemas trong `packages/shared` → infer TypeScript types → dùng `nestjs-zod` (`createZodDto()`) để tự động extract `@ApiProperty` từ Zod, hoặc annotate thủ công DTO nếu không dùng `nestjs-zod`.
+
+**Generated output**:
+- Swagger UI: `GET /api/docs` (disabled in production, enabled in dev + staging)
+- Raw JSON spec: `GET /api/docs-json` (có thể export ra `docs/openapi.json` khi build)
+
+**Completion criteria** (what counts as implemented):
+- Tất cả routes public trong `api-route-inventory.md` có `@ApiOperation` + `@ApiTags`
+- Tất cả request/response DTOs có `@ApiProperty` coverage đầy đủ
+- `GET /api/docs` trả 200 OK trong môi trường dev
+- Không có route nào hiện là `{}` (empty schema) trong Swagger UI
+
+**Note**: OpenAPI spec là runtime artifact — nó không thể được hoàn chỉnh hoàn toàn trong design phase. Gap này được đóng ở design level bằng cách chốt strategy, ownership, và completion criteria. Coding agent biết chính xác phải làm gì.
 
 ---
 

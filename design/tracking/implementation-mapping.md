@@ -56,13 +56,20 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 
 ## Deferred components (Các thành phần tạm hoãn)
 
-| Decision / requirement (Quyết định / Yêu cầu) | Expected artifact in rebuild (Thành phần dự kiến) | Status (Trạng thái) | Trigger (Điểm kích hoạt) |
-|---|---|---|---|
-| `Valkey` | cache/rate-limit/queue infra module (mô-đun hạ tầng bộ nhớ đệm/giới hạn/hàng đợi) | planned | trạng thái dùng chung (shared state) hoặc nỗi đau bộ nhớ đệm (cache pain) đo lường được |
-| `BullMQ` + worker (tiến trình nền) | queue module (mô-đun hàng đợi) + worker process (tiến trình xử lý nền) | planned | công việc chạy nền (background work) đủ chậm hoặc đủ quan trọng |
-| `outbox_events` (sự kiện chờ phát) | migration (di cư) + dispatcher (lớp phân phát) + replay flow (luồng phát lại) | planned | các tác động phụ (side effect) quan trọng cần bàn giao có tính giao dịch (transactional handoff) |
-| `Meilisearch` | index schema (lược đồ chỉ mục) + sync path (đường đồng bộ) + fallback route (đường dự phòng) | planned | tìm kiếm bằng SQL (search SQL) không còn đủ đáp ứng |
-| `PgBouncer` | deploy config (cấu hình triển khai) + DB connection settings (cấu hình kết nối cơ sở dữ liệu) | planned | áp lực kết nối (connection pressure) có số liệu chứng minh |
+Full architecture docs exist for all deferred components — a coding agent can activate them without inventing architecture.
+
+| Decision | Expected code location | Status | Trigger | Design doc |
+|---|---|---|---|---|
+| `Valkey` | `apps/api/src/platform/valkey/` — `ValkeyModule`, `ValkeyService` | planned | rate_limit_records Postgres table shows lock contention OR cache miss rate measured | `baseline/valkey-architecture.md` |
+| `BullMQ` + `apps/worker` | producer: `apps/api/src/platform/queue/`; consumer: `apps/worker/src/handlers/` | planned | background work makes request > 2s OR manual retry unacceptable | `baseline/bullmq-worker-architecture.md` |
+| `outbox_events` + dispatcher | `apps/api/src/platform/outbox/` — `OutboxService`, `OutboxDispatcherCron` | planned | side effect failure cost > complexity cost | `baseline/outbox-dispatcher-model.md` |
+| `Meilisearch` | `apps/api/src/modules/search/adapters/meilisearch.adapter.ts`; feature flag: `search.meilisearch.enabled` | planned | SQL search p95 > 500ms OR Meilisearch is core feature | `06-search/meilisearch-architecture.md` |
+| `PgBouncer` | `infra/pgbouncer/pgbouncer.ini`; `infra/docker/docker-compose.pgbouncer.yml` | planned | db_connection_count > 80% of max_connections sustained | `baseline/pgbouncer-strategy.md` |
+| Cloudflare R2 | `apps/api/src/platform/storage/adapters/r2.adapter.ts`; `STORAGE_ADAPTER=r2` | planned | local disk > 70% OR restore drift > 5% | `baseline/r2-migration-plan.md` |
+| Web Push (VAPID) | `apps/api/src/modules/notification/push.service.ts`; `apps/web/public/sw.js` | planned | PWA active + feature flag `notification.push.enabled` | `08-notification/push-notification-architecture.md` |
+| Prometheus + Grafana | `infra/prometheus/`, `infra/grafana/`, `infra/alertmanager/` | planned | specific metric use case + team needs shared visibility | `baseline/observability-architecture.md` |
+| OpenTelemetry | `apps/api/src/platform/telemetry/otel.ts`; `OTEL_ENABLED=true` | planned | cross-service latency diagnosis needed | `baseline/observability-architecture.md` |
+| pgvector | `apps/api/src/platform/embedding/`; `prisma/schema.prisma` extension | **explicit exclusion** | Meilisearch stable 3+ months AND specific semantic search use case measured | `baseline/pgvector-decision.md` |
 
 ## Forbidden for current phase (Bị cấm trong giai đoạn hiện tại)
 
@@ -109,6 +116,30 @@ Các file sau đã được thêm để lấp gap thiết kế — phải review
 | `09-vows-merit/use-cases/create-assisted-life-release-entry.md` | Write-path assisted entry cho life release journal |
 | `11-contact/use-cases/update-contact-info.md` | Write-path cho singleton contact info |
 | `11-contact/use-cases/manage-volunteer-directory.md` | Write-path cho CRUD + sort phụng sự viên |
+
+## New design docs added — 2026-03-21 batch (Tài liệu thiết kế mới — đợt 2026-03-21)
+
+Các file sau được thêm để lấp gap deferred tech, ops, security, và admin completeness:
+
+| File | Lấp gap gì | Phase |
+|---|---|---|
+| `baseline/valkey-architecture.md` | Full Valkey topology, key namespaces, rate-limit migration, failure modes, rollback | Phase 2+ |
+| `baseline/bullmq-worker-architecture.md` | Queue definitions, job schemas, idempotency, dead-letter, worker entrypoint | Phase 2+ |
+| `baseline/outbox-dispatcher-model.md` | outbox_events schema, dispatcher cron, retry/dead-letter model, redrive | Phase 2+ |
+| `06-search/meilisearch-architecture.md` | Index settings, sync strategy, SQL fallback contract, admin reindex ops | Phase 2+ |
+| `baseline/pgbouncer-strategy.md` | Pool mode, config, trigger threshold, Docker Compose setup, rollback | Phase 2+ |
+| `baseline/observability-architecture.md` | Phase 1 health/metrics, Phase 2 Prometheus/Grafana/Alertmanager, Phase 3 OTEL | All phases |
+| `baseline/pgvector-decision.md` | Explicit exclusion with boundary, trigger conditions, artifact list if activated | Excluded |
+| `baseline/r2-migration-plan.md` | Migration steps, dual-read period, storage adapter interface, rollback | Phase 2+ |
+| `08-notification/push-notification-architecture.md` | VAPID Web Push, subscription lifecycle, worker handler, service worker, admin ops | Phase 2+ |
+| `baseline/email-provider-decision.md` | Brevo SMTP config, delivery failure policy, retry semantics, anti-enumeration | Phase 1 |
+| `baseline/storage-lifecycle.md` | Asset states, cleanup jobs (orphan/rejected/soft-delete), upload quota, disk monitoring | Phase 1+ |
+| `baseline/cache-topology.md` | Cloudflare edge, Next.js ISR, TanStack Query staleTime, Valkey cache, invalidation rules | All phases |
+| `baseline/secret-management.md` | Secret inventory, rotation procedures per secret type, compromise response, .gitignore | Phase 1 |
+| `baseline/cicd-deploy-gates.md` | GitHub Actions CI pipeline, deploy gates, CD pipeline, branch protection, rollback | Phase 1+ |
+| `baseline/waf-antibot-strategy.md` | Cloudflare WAF rules, Bot Fight Mode, Turnstile, honeypot, security headers, CSP nonce | Phase 1+ |
+| `ops/health-contract.md` | Per-endpoint health check specification, check list, failure runbook, admin dashboard | Phase 1 |
+| `design/ui/ADMIN_MODULE_SPECS.md` | Per-module admin workspace: 24 modules with filters/bulk/states/query-invalidation | Phase 1+ |
 
 ## Review rule (Quy tắc rà soát)
 
