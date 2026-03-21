@@ -14,6 +14,19 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 - File khóa sổ chuyện này là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
 - Các rule cho major versions hiện hành đã được rà lại ở mức design vào `2026-03-21`; nếu audit cũ mâu thuẫn, ưu tiên các root docs hiện hành thay vì audit notes.
 
+## Orientation in 2 files
+
+- Muốn hiểu kiến trúc trong 1 phút: [architecture-at-a-glance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/architecture-at-a-glance.md)
+- Muốn biết tech nào được bật khi nào: [phase-activation-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/phase-activation-matrix.md)
+
+## Readiness semantics
+
+- `design-ready`: design đủ rõ để bắt đầu implementation planning
+- `implementation-ready`: artifact runtime dự kiến và owner code path đã được map đủ cụ thể
+- `launch-ready`: launch blockers thật đã pass, gồm runtime evidence như restore drill
+
+Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
+
 ## First-launch scope (Phạm vi ra mắt lần đầu)
 
 ### In scope (Nằm trong phạm vi)

@@ -101,7 +101,8 @@ Khi đọc module này, hãy nhớ:
 
 Khi đọc module này, hãy nhớ:
 
-- search là outbox-driven projection trước khi vào execution queue
+- phase 1 search là `Postgres-first`, không mặc định queue/outbox-driven
+- phase 2+ mới dùng outbox/BullMQ/worker cho search-sync khi trigger được đáp ứng
 - fallback (đường dự phòng) là để giữ service (lớp xử lý nghiệp vụ) usable khi engine lỗi
 - `pgvector` chỉ là capability bổ sung khi module recommendation / related-content đã được chốt
 

@@ -160,6 +160,22 @@ deploy:
 **GitHub Environment**: `production` environment requires 1 manual approver.
 This is the human gate — automated only after explicit approval.
 
+## Release artifact discipline
+
+- Không rollback production bằng `git checkout HEAD~1` như default mental model nếu deploy artifact không được pin rõ.
+- Phase 1 tối thiểu phải chốt một trong hai:
+  - image tag / build artifact immutable theo commit SHA
+  - release bundle/version manifest immutable theo commit SHA
+- Deploy log phải ghi rõ:
+  - commit SHA
+  - artifact version hoặc image tag
+  - migration revision áp dụng
+  - backup artifact id / timestamp dùng trước deploy
+- Backup artifact naming nên khớp contract trong `ops/backup-restore.md`
+- Retention của release artifact và backup artifact phải được ghi rõ trong deploy pipeline notes hoặc runbook liên quan
+
+Nếu chưa có artifact pinning rõ, rollback chỉ được coi là `best effort manual rollback`, chưa phải rollback contract mạnh.
+
 ---
 
 ## Deploy gates summary
@@ -216,9 +232,14 @@ If health check fails post-deploy:
 - name: Auto-rollback on health failure
   if: failure()
   run: |
-    ssh deploy@pmtl.vn 'cd /opt/pmtl && git checkout HEAD~1 && just dev-rebuild'
+    ssh deploy@pmtl.vn 'cd /opt/pmtl && ./scripts/deploy-rollback.sh <last-known-good-artifact>'
     curl -f https://api.pmtl.vn/health/ready || echo "CRITICAL: Rollback also failed"
 ```
+
+**Design note**:
+- `git checkout HEAD~1` chỉ là placeholder cho local recovery reasoning, không phải rollback contract production-grade
+- rollback chuẩn phải target `last known good artifact` hoặc pinned image, không phụ thuộc working tree state trên server
+- nếu `deploy-rollback.sh` chưa tồn tại, CD rollback hiện chỉ là design intent, chưa phải implementation proof
 
 ---
 

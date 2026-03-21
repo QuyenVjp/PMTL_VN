@@ -36,6 +36,10 @@ Chỉ chứa những gì UNIQUE so với các file owner khác.
 | pgvector | Semantic retrieval | **Explicitly excluded** — see `baseline/pgvector-decision.md` |
 
 **Local storage warning**: disk đầy, volume mount sai, restore lệch DB/file đều là failure mode thật. Phải coi là điểm yếu đã biết.
+Media local disk chỉ được coi là operational nếu:
+- backup artifact naming + retention được chốt trong `ops/backup-restore.md`
+- restore drill log ghi được missing/orphan/mismatch rate
+- có media consistency check sau restore, không chỉ DB health
 
 ### 3. Boundary Validation
 
@@ -146,10 +150,15 @@ docker compose logs -f web --tail 100
 ./scripts/backup-db.sh        # pg_dump → compressed → off-site
 ./scripts/verify-backup.sh     # Check backup exists + integrity
 
+# Media consistency
+./scripts/check-media-consistency.sh <manifest_or_sample_source>
+
 # Restore
 ./scripts/restore-db.sh <backup_file>    # Restore to isolated env
 ./scripts/verify-restore.sh              # Boot app + smoke test
 ```
+
+**Phase 1 note**: off-site destination và retention policy không được để implicit; phải được ghi trong `ops/backup-restore.md`.
 
 ---
 

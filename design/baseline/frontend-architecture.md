@@ -56,6 +56,7 @@ Client Component (khi cần interactivity)
 - `after()` chỉ dùng cho side effects không-authoritative như logging, analytics, soft counters; **không** dùng cho canonical write, auth, audit, rate-limit, hay security enforcement
 - `use cache: remote` không bật ở phase 1; chỉ xem xét khi default runtime cache không đủ và đã có measured pain / cost justification
 - `use cache: private` không dùng làm mặc định; chỉ dùng khi có compliance/runtime requirement thật sự không thể refactor
+- Tooling/debugging nên ưu tiên Next.js DevTools + MCP workflow khi team cần inspect App Router behavior thay vì tự phát minh debug flow riêng
 
 ### Proxy boundary — Bug 8 fix (CRITICAL)
 

@@ -88,6 +88,8 @@ def run_copilot(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | N
         cwd=str(cwd),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
     if result.returncode != 0:
@@ -153,6 +155,8 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
         cwd=str(cwd),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         check=False,
     )
     if result.returncode != 0:
@@ -175,6 +179,12 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
 
 
 def main() -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
     args = parse_args()
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
 

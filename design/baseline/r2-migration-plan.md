@@ -96,8 +96,11 @@ Step 7 — Validate and cutover
   → Remove LOCAL_STORAGE_ROOT dependency
 
 Step 8 — Backup update
-  → Update backup-restore.md: R2 assets do not need separate backup (R2 has 99.999999999% durability)
-  → Media restore = just point DATABASE_URL to backup DB + keep R2 env vars
+  → Update backup-restore.md: R2 improves durability but does NOT remove need for deletion/recovery policy
+  → Keep versioning / deletion recovery / export policy explicit
+  → Media restore = restore DB metadata + verify R2 object presence + keep R2 env vars
+
+**Important**: R2 durability does not protect against accidental deletion, bad writes, or wrong lifecycle policy. Do not write “no backup needed” as if durability solved recovery.
 ```
 
 ---

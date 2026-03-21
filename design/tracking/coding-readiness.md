@@ -43,8 +43,18 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |
 | Observability architecture | ✅ Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `baseline/observability-architecture.md` |
 
-**VERDICT**: `NO REMAINING DESIGN GAPS — READY FOR FULL-STACK IMPLEMENTATION PLANNING`
-Tất cả hạng mục design đều ✅. OpenAPI strategy đã được chốt ở mức design. Coding agent có thể bắt đầu Wave 1 ngay, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass và OpenAPI coverage proof sau khi code.
+**VERDICT**: `DESIGN-READY FOR FULL-STACK IMPLEMENTATION PLANNING`
+Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. File này **không** có nghĩa runtime đã sẵn sàng hoặc launch đã an toàn.
+
+### Readiness split bắt buộc
+
+| Readiness | Ý nghĩa | Owner file |
+|---|---|---|
+| `design-ready` | design đủ rõ để bắt đầu implementation planning | file này |
+| `implementation-ready` | artifact runtime cụ thể đã được map đủ rõ để bắt đầu code module đó | `tracking/implementation-mapping.md` |
+| `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `README.md` + `tracking/implementation-mapping.md` |
+
+Coding agent có thể bắt đầu Wave 1, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass, implementation proof, và post-code OpenAPI coverage proof.
 
 ---
 

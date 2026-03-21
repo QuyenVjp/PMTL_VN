@@ -38,6 +38,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - nếu cần OpenAPI sync:
   - route contract phải được map rõ từ schema sang docs
   - không dùng decorator DTO riêng chỉ để tạo ra source of truth thứ hai
+- nếu OpenAPI surface lớn, ưu tiên Nest Swagger CLI plugin để giảm decorator boilerplate nhưng vẫn giữ source of truth ở Nest route contract
 
 ## Guard decision
 

@@ -22,7 +22,10 @@ Bật Meilisearch khi **ít nhất 1** điều kiện sau:
 | Multi-type search needed (posts + wisdom + chants combined) | Feature requirement from product |
 | Vietnamese full-text ranking unacceptable with tsvector | User search relevance feedback |
 
-**Prerequisite**: BullMQ + Valkey both active (outbox-driven sync requires queue).
+**Prerequisite**:
+- nếu dùng outbox-driven sync path của Phase 2+, BullMQ + Valkey phải active
+- nếu chỉ đang đánh giá feasibility ở design level, không được viết như thể queue là source of truth
+- Phase 1 baseline vẫn là SQL-first; không được backport prerequisite này sang Phase 1
 
 ---
 
@@ -229,6 +232,20 @@ async querySql(dto: SearchQueryDto): Promise<SearchResultDto> {
 
 **Draft/hidden enforcement**: `status = 'published' AND publishedAt IS NOT NULL AND publishedAt <= NOW()` is applied at Prisma where clause level — no bypass possible.
 
+## Search parity contract
+
+Phase 1 và Phase 2 không cần identical implementation, nhưng phải giữ các contract sau:
+
+| Concern | Phase 1 SQL fallback | Phase 2 Meilisearch |
+|---|---|---|
+| Public API shape | `SearchResultDto` unified | `SearchResultDto` unified |
+| Published-only enforcement | bắt buộc | bắt buộc |
+| Doc types covered | tối thiểu `post`; mở rộng dần khi cần trước Phase 2 | unified index cho các doc types đã được map |
+| Empty/error behavior | trả kết quả rỗng an toàn, không lộ internals | fallback sang SQL khi engine lỗi |
+| Ranking parity | chấp nhận đơn giản hơn | relevance tốt hơn, nhưng không phá API contract |
+
+**Rule**: nếu product cần multi-type parity thật trước khi Meilisearch được bật, Phase 1 SQL path phải được mở rộng rõ thay vì ngầm giả định Meilisearch.
+
 ---
 
 ## SearchService routing
@@ -261,6 +278,12 @@ export class SearchService {
   }
 }
 ```
+
+## Backup / migration policy
+
+- Snapshot dùng cho operational safeguard nhanh khi chạy Meilisearch lâu dài
+- Dump dùng cho migration/export/import giữa environments hoặc version transitions
+- Không coi Meilisearch là source of truth; nếu mất index thì canonical recovery path vẫn là rebuild từ Postgres
 
 ---
 

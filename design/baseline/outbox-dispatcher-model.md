@@ -190,15 +190,14 @@ Events not in this map → `warn` log, no dispatch, status stays PENDING.
 | Attempt | Action | Status after |
 |---|---|---|
 | 1 | Dispatch to BullMQ | `DISPATCHED` on success, `FAILED` on error |
-| 2 (next cron) | Retry dispatch | `DISPATCHED` or `FAILED` |
-| 3 | Final retry | `DISPATCHED` or `DEAD` |
+| 2 (next cron) | Retry dispatch for `FAILED` | `DISPATCHED` or `FAILED` |
+| 3 | Final retry for `FAILED` | `DISPATCHED` or `DEAD` |
 | > 3 | No more retries | Stays `DEAD` |
 
-**FAILED events** are retried by the next cron execution automatically (status = PENDING → picked up again).
-Wait — actually FAILED status events are NOT PENDING. Let me fix this:
+`FAILED` events are retried by the next cron execution only if the dispatcher queries both `PENDING` and `FAILED`.
 
 ```typescript
-// Dispatcher queries PENDING and FAILED events:
+// Dispatcher MUST query both PENDING and FAILED events:
 const events = await prisma.outboxEvent.findMany({
   where: {
     status: { in: ['PENDING', 'FAILED'] },
@@ -220,9 +219,23 @@ Dead events (`status = 'DEAD'`):
   - Requires `admin+` role
   - Audit: `outbox.event.redriven`
 - Admin can **discard**: `DELETE /api/admin/outbox/dead-events/:eventId`
-  - Soft-delete: update status to cancelled
+  - Keep row for auditability; record discard via audit event and optional `discardedAt` metadata
+  - Do **not** invent a `cancelled` status unless enum + query semantics are updated everywhere
   - Requires `super-admin` role
   - Audit: `outbox.event.discarded`
+
+### Minimal sealed state machine
+
+```txt
+PENDING -> DISPATCHED
+PENDING -> FAILED
+FAILED -> DISPATCHED
+FAILED -> DEAD
+DEAD -> PENDING   (admin redrive only)
+DEAD -> DEAD      (admin discard keeps terminal state; audit separately)
+```
+
+`DISPATCHED` và `DEAD` là terminal states cho dispatcher loop.
 
 ---
 
