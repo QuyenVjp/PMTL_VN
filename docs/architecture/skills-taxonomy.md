@@ -13,6 +13,7 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 ## Active local taxonomy
 
 ### Governance
+- `pmtl-workflow-router`
 - `pmtl-skill-governance`
 - `output-skill`
 - `pmtl-ui-style-system`
@@ -92,3 +93,7 @@ Compatibility skills are opt-in aliases, not the default routing target. Prefer 
 - Keep `SKILL.md` short and route variant-specific detail into `references/`.
 - Canonical PMTL skills should aim to include purpose, trigger, execution, verification, and evolution notes, even if compatibility skills stay lighter.
 - When changing skill routing, update `AGENTS.md`, this file, and the affected local skill folders in the same task.
+- Routing order is `pmtl-workflow-router` -> canonical PMTL taxonomy skill -> Superpowers workflow skill -> global tool skill.
+- Repo-local PMTL skills are the canonical source of repo behavior for both Codex and Claude Code when working inside this repository.
+- Superpowers is the preferred generic workflow engine, not the source of PMTL repo policy.
+- Global platform skills should stay tool-oriented and generic rather than duplicating repo policy.

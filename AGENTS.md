@@ -14,6 +14,7 @@
 - `TEAM_GUIDE.md`
 - `.vscode/.instructions.md`
 - `docs/architecture/skills-taxonomy.md`
+- `docs/agent-cheatsheet.md` for fast human and agent routing
 
 ## Monorepo Boundaries
 - Preserve package boundaries:
@@ -36,6 +37,7 @@
 - If you change project rules, skill routing, or architecture conventions, update this file, the relevant skill docs, and the affected docs in the same task.
 
 ## Skill Routing
+- Workflow routing and skill selection order: `.agents/skills/pmtl-workflow-router/SKILL.md`
 - Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
 - Production defaults, logging, validation, runtime guidance: `.agents/skills/pmtl-production-baseline/SKILL.md`
@@ -45,6 +47,13 @@
 - UI review: `.agents/skills/pmtl-review-web-ui/SKILL.md`
 - Verification: `.agents/skills/pmtl-verify-quality-gate/SKILL.md`, `.agents/skills/pmtl-verify-auth-flow/SKILL.md`, `.agents/skills/pmtl-verify-search-sync/SKILL.md`
 - Runbooks: `.agents/skills/pmtl-runbook-docker-dev-recovery/SKILL.md`, `.agents/skills/pmtl-runbook-cms-runtime-errors/SKILL.md`
+
+## Skill Routing Order
+- Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
+- Use `pmtl-workflow-router` first when the task spans multiple phases such as planning, implementation, review, or verification.
+- Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
+- Use global Codex or Claude Code skills only for platform tooling or external integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
+- Prefer canonical PMTL skills over compatibility aliases and design-library entrypoints unless the user explicitly names the older skill.
 
 ## Windows-Safe Execution
 - Prefer `rg`, then `git grep -n`, then PowerShell search.
