@@ -1,92 +1,338 @@
-# Agent Cheatsheet
+# Agent Skills Catalog
 
-This repo uses a three-layer model so users and agents do not have to remember every installed skill.
+File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy cho PMTL. Mục tiêu của nó là: dễ đọc bằng Markmap, có bản đồ theo chủ đề thực chiến, và vẫn giữ inventory đầy đủ để không mất skill nào.
 
-## Priority order
+## Cách đọc file này
 
-1. Repo-local PMTL skills in `.agents/skills`
-2. Superpowers for generic workflow discipline
-3. Global Codex or Claude Code skills for tooling only
+- `Repo-local`: skill nằm trong chính repo PMTL. Đây là lớp chuẩn và phải được ưu tiên đầu tiên khi làm việc trong repo này.
+- `Global home`: skill trong `~/.agents/skills`, dùng chung giữa nhiều công cụ hoặc nhiều repo.
+- `Codex core/generic`: skill trong `~/.codex/skills` nhưng mang tính phổ thông, không chỉ dành cho PMTL.
+- `Codex full-stack gap fillers`: skill mới kéo về để bù khoảng trống backend, database, observability, API contracts, infra, NestJS.
+- `Trail of Bits`: gói skill chuyên sâu về security, static analysis, fuzzing, crypto, blockchain, reverse engineering.
 
-## Ask by intent, not by exact skill name
+## Snapshot hiện tại
 
-You can describe the job in plain language:
+- Repo-local: 65
+- Global home: 29
+- Codex core/generic: 13
+- Codex full-stack gap fillers: 18
+- Trail of Bits: 61
+- Tổng số skill đang được index: 186
 
-- "Brainstorm this feature before coding."
-- "Write a plan, then execute it with subagents."
-- "Debug this systematically and verify the fix."
-- "Review this UI before we ship it."
-- "Use the PMTL frontend rules for this screen."
+## Thứ tự ưu tiên khi dùng
 
-The routing layer should map that intent to the right skill stack.
+1. PMTL repo-local skills
+2. Superpowers workflow skills
+3. Codex full-stack gap fillers nếu PMTL chưa có skill canonical tương ứng
+4. Global generic tool skills
+5. Trail of Bits hoặc các specialist pack khi task thuộc security hoặc niche tooling
 
-## Fast map
+## Bản đồ chủ đề thực chiến
 
-### Planning and delivery
+### 1. Workflow và delivery
 
-- Clarify scope before code:
-  - `brainstorming`
-- Break into explicit tasks:
-  - `writing-plans`
-- Execute with subagents:
-  - `subagent-driven-development`
-- Review before accepting:
-  - `requesting-code-review`
+- `pmtl-workflow-router`: điểm vào mặc định khi chưa biết nên gọi skill nào.
+- `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`: bộ Superpowers để làm rõ spec, chia plan, rồi thực thi.
+- `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
+- `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
+- `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
 
-### PMTL repo policy
+### 2. PMTL core
 
-- Routing and skill choice:
-  - `pmtl-workflow-router`
-- Architecture and domain boundaries:
-  - `pmtl-vn-architecture`
-- Production defaults:
-  - `pmtl-production-baseline`
-- Frontend implementation:
-  - `pmtl-fe-implementation`
-- UI behavior:
-  - `pmtl-ui-behavior`
-- UI style and visual direction:
-  - `pmtl-ui-style-system`
+- `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
+- `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
+- `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL.
+- `pmtl-ui-behavior`, `pmtl-ui-style-system`, `pmtl-review-web-ui`: behavior, style, UI review.
+- `pmtl-verify-quality-gate`, `pmtl-verify-auth-flow`, `pmtl-verify-search-sync`: verify chất lượng, auth, search.
+- `pmtl-automation-smoke-suite`, `pmtl-runbook-docker-dev-recovery`: smoke test và recovery cho local/dev stack.
 
-### Verification
+### 3. Frontend, UI, design
 
-- General quality gate:
-  - `pmtl-verify-quality-gate`
-- Auth flows:
-  - `pmtl-verify-auth-flow`
-- Search sync:
-  - `pmtl-verify-search-sync`
-- Confirm a fix actually holds:
-  - `verification-before-completion`
+- `frontend-design`, `ui-ux-pro-max`, `taste-skill`, `soft-skill`, `minimalist-skill`, `redesign-skill`: thiết kế và nâng cấp UI theo nhiều phong cách.
+- `ckm-ui-styling`, `ckm-design-system`, `ckm-brand`, `ckm-design`, `ckm-banner-design`, `ckm-slides`: branding, token, banner, slide, design system.
+- `pmtl-creative-designer`, `pmtl-vercel-precision`, `pmtl-uiux-specialist`: tinh chỉnh visual vocabulary và UX của PMTL.
+- `shadcn`, `vercel-react-best-practices`, `next`, `nextjs-app-router-fundamentals`: framework support cho React/Next.js/shadcn.
 
-### Tool skills
+### 4. Backend, database, API contracts, infra
 
-- Browser automation:
-  - `playwright`, `agent-browser`
-- Next.js reference:
-  - `next`
-- shadcn UI work:
-  - `shadcn`
-- Auth.js specifics:
-  - `auth-js`
+- `kadajett-nestjs-best-practices`: NestJS generic best practices, dùng làm tài liệu tham khảo kỹ thuật cho NestJS.
+- `fastagent-schema-designer`, `fastagent-database-migration-helper`, `fastagent-query-optimizer`: schema, migration, query tuning.
+- `fastagent-rest-api-designer`, `fastagent-api-documentation-generator`, `levnik-ln-643-api-contract-auditor`, `levnik-ln-775-api-docs-generator`: API contracts, docs, boundary checks.
+- `levnik-ln-650-persistence-performance-auditor`, `levnik-ln-651-query-efficiency-auditor`, `levnik-ln-652-transaction-correctness-auditor`: audit persistence, transaction, query, performance.
+- `levnik-ln-627-observability-auditor`, `levnik-ln-771-logging-configurator`, `levnik-ln-774-healthcheck-setup`, `fastagent-infrastructure-monitor`: observability, logging, health checks, alerts, dashboards.
+- `fastagent-kubernetes-best-practices`, `docker-compose-production`, `docker-configuration-validator`, `nginx-config-optimizer`, `ssh`, `sentry`: infra, container, reverse proxy, remote ops.
 
-## Recommended defaults
+### 5. Security
 
-- New feature:
-  - Use `pmtl-workflow-router`, `pmtl-vn-architecture`, `pmtl-production-baseline`
-  - Pair `brainstorming`, `writing-plans`, `subagent-driven-development`
-- Frontend task:
-  - Use `pmtl-workflow-router`, `pmtl-fe-implementation`, `pmtl-ui-behavior`, `pmtl-ui-style-system`
-- Bug fix:
-  - Use `pmtl-workflow-router`, `pmtl-production-baseline`, `systematic-debugging`
-- Final check:
-  - Always end with the appropriate PMTL verification skill
+- `security-best-practices`, `fastagent-api-security-checker`, `fastagent-image-security-scanner`: app/API/container security cơ bản và thực chiến.
+- `trailofbits-differential-review`, `trailofbits-insecure-defaults`, `trailofbits-sharp-edges`: review security cho web/backend/app.
+- `trailofbits-semgrep`, `trailofbits-codeql`, `trailofbits-sarif-parsing`: static analysis và xử lý kết quả scanner.
+- `trailofbits-supply-chain-risk-auditor`, `trailofbits-agentic-actions-auditor`: supply chain risk và CI/CD security.
+- `trailofbits-fp-check`, `trailofbits-variant-analysis`, `trailofbits-second-opinion`: verify false positive, tìm bug variant, cross-review.
+- `trailofbits-constant-time-analysis`, `trailofbits-zeroize-audit`, `trailofbits-wycheproof`: crypto/security review cho code nhạy cảm.
 
-## Rule of thumb
+### 6. Testing, fuzzing, audit sâu
 
-If a skill teaches PMTL-specific repo behavior, it belongs in this repo.
+- `trailofbits-property-based-testing`: property-based testing đa ngôn ngữ.
+- `trailofbits-address-sanitizer`, `trailofbits-libfuzzer`, `trailofbits-aflpp`, `trailofbits-cargo-fuzz`, `trailofbits-atheris`, `trailofbits-ruzzy`, `trailofbits-libafl`: fuzzing theo engine và ngôn ngữ.
+- `trailofbits-coverage-analysis`, `trailofbits-fuzzing-dictionary`, `trailofbits-fuzzing-obstacles`, `trailofbits-harness-writing`, `trailofbits-ossfuzz`: cải thiện hiệu quả fuzzing.
+- `trailofbits-audit-context-building`, `trailofbits-audit-prep-assistant`, `trailofbits-code-maturity-assessor`: dựng context và đánh giá độ chín codebase.
 
-If a skill teaches workflow discipline, keep it in Superpowers.
+### 7. SEO, content, reporting
 
-If a skill teaches a tool or framework that is useful across many repos, keep it global.
+- `keyword-research`, `competitor-analysis`, `content-gap-analysis`, `serp-analysis`, `rank-tracker`, `alert-manager`: nghiên cứu keyword, SERP, đối thủ, alert.
+- `seo-content-writer`, `content-refresher`, `content-quality-auditor`, `geo-content-optimizer`: viết, làm mới, audit chất lượng, tối ưu AI citation.
+- `backlink-analyzer`, `internal-linking-optimizer`, `domain-authority-auditor`, `entity-optimizer`: off-page, internal linking, authority, entity.
+- `on-page-seo-auditor`, `technical-seo-checker`, `meta-tags-optimizer`, `schema-markup-generator`, `performance-reporter`: tech SEO, schema, meta, reporting.
 
+### 8. Plugin, agent, command, skill authoring
+
+- `agent-development`, `command-development`, `hook-development`, `plugin-structure`, `plugin-settings`, `mcp-integration`, `skill-development`: làm agent/plugin/command/skill.
+- `pmtl-skill-governance`, `trailofbits-designing-workflow-skills`, `trailofbits-skill-improver`, `writing-skills`: governance, workflow design, cải tiến skill.
+- `using-superpowers`: skill gốc của Superpowers.
+
+### 9. Specialist packs và niche domains
+
+- `trailofbits-entry-point-analyzer`, `trailofbits-spec-to-code-compliance`, `trailofbits-token-integration-analyzer`: blockchain/protocol audit.
+- `trailofbits-solana-vulnerability-scanner`, `trailofbits-ton-vulnerability-scanner`, `trailofbits-cosmos-vulnerability-scanner`, `trailofbits-cairo-vulnerability-scanner`, `trailofbits-substrate-vulnerability-scanner`, `trailofbits-algorand-vulnerability-scanner`: chain-specific smart contract scanning.
+- `trailofbits-firebase-apk-scanner`, `trailofbits-yara-rule-authoring`, `trailofbits-dwarf-expert`, `trailofbits-burpsuite-project-parser`: mobile security, malware, reverse engineering, Burp analysis.
+- `trailofbits-debug-buttercup`, `trailofbits-seatbelt-sandboxer`, `trailofbits-devcontainer-setup`, `trailofbits-gh-cli`, `trailofbits-git-cleanup`: tooling chuyên biệt.
+
+## Đánh giá độ phủ full-stack hiện tại
+
+### Đang mạnh
+
+- Frontend, UI, design system, UX review.
+- Workflow delivery: plan, subagent execution, review, debug, verify.
+- Security review và security analysis rất mạnh nhờ Trail of Bits.
+- Browser automation, search admin, Sentry, Docker recovery, auth verification.
+- SEO/GEO/content/reporting sâu hơn đa số codebase khác.
+- Database, API contracts, observability, persistence audit đã được bù khá nhiều bằng `fastagent-*`, `levnik-*`, và `kadajett-*`.
+
+### Còn mỏng hoặc rời rạc
+
+- Chưa có một skill canonical riêng cho triển khai backend NestJS theo style PMTL như frontend đã có `pmtl-fe-implementation`.
+- `kadajett-nestjs-best-practices` chỉ là generic NestJS guidance, không thay thế skill PMTL design-first.
+- Nếu tạo skill backend nội bộ cho PMTL thì source of truth phải là `design/` trước, rồi mới map xuống code hiện trạng.
+- Chưa có skill repo-local riêng cho queue/background jobs, cron workers, event-driven pipelines.
+- Chưa có observability/SRE canonical riêng của PMTL; hiện đang dùng nhiều skill ngoài để bù.
+- Chưa có skill riêng cho payments, billing, file/media pipeline, API client SDK generation.
+
+### Nếu muốn lấp tiếp bằng skill nội bộ PMTL
+
+- `pmtl-be-implementation`: NestJS service/controller/module/use-case theo design-first.
+- `pmtl-db-contracts`: migration, schema ownership, transaction rules, query review.
+- `pmtl-observability-runtime`: logs, metrics, traces, alerting, rollback, incident flow.
+- `pmtl-jobs-and-events`: queue workers, cron, idempotency, retry/dead-letter patterns.
+- `pmtl-api-contracts`: OpenAPI, SDK generation, error envelopes, schema evolution.
+
+## Repo-local skills (.agents/skills)
+
+Tổng số: 65
+
+- `agent-development` (Việt: agent phát triển): This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when to use description", "agent examples", "agent tools", "agent colors", "autonomous agent", or needs guidance on agent structure, system prompts, triggering conditions, or agent development best practices for Claude Code plugins.
+- `alert-manager` (Việt: cảnh báo quản lý): This skill should be used when the user asks to "set up SEO alerts", "monitor rankings", "notify me when rankings drop", "traffic alerts", "watch competitor changes", "alert me if rankings drop", "notify me of traffic changes", or "watch my keywords for changes". Sets up and manages alerts for critical SEO and GEO metrics including ranking drops, traffic changes, technical issues, and competitor movements. Enables proactive monitoring and quick response to issues. For detailed rank analysis, see rank-tracker. For comprehensive reporting, see performance-reporter.
+- `backlink-analyzer` (Việt: backlink phân tích): This skill should be used when the user asks to "analyze backlinks", "check link profile", "find toxic links", "link building opportunities", "off-page SEO", "who links to me", "I have spammy links", "how do I get more backlinks", or "disavow links". Analyzes backlink profiles to understand link authority, identify toxic links, discover link building opportunities, and monitor competitor link acquisition. Essential for off-page SEO strategy. For internal link analysis, see internal-linking-optimizer. For competitor link profiles, see competitor-analysis.
+- `ckm-banner-design` (Việt: ckm banner thiết kế): Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills.
+- `ckm-brand` (Việt: ckm thương hiệu): Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides.
+- `ckm-design` (Việt: ckm thiết kế): Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML->screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads.
+- `ckm-design-system` (Việt: ckm thiết kế hệ thống): Token architecture, component specifications, and slide generation. Three-layer tokens (primitive->semantic->component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations.
+- `ckm-slides` (Việt: ckm slide): Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies.
+- `ckm-ui-styling` (Việt: ckm UI style): Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user interfaces, implementing design systems, creating responsive layouts, adding accessible components (dialogs, dropdowns, forms, tables), customizing themes and colors, implementing dark mode, generating visual designs and posters, or establishing consistent styling patterns across applications.
+- `claude-opus-4-5-migration` (Việt: claude opus 4 5 migration): Migrate prompts and code from Claude Sonnet 4.0, Sonnet 4.5, or Opus 4.1 to Opus 4.5. Use when the user wants to update their codebase, prompts, or API calls to use Opus 4.5. Handles model string updates and prompt adjustments for known Opus 4.5 behavioral differences. Does NOT migrate Haiku 4.5.
+- `command-development` (Việt: lệnh phát triển): This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define command arguments", "use command frontmatter", "organize commands", "create command with file references", "interactive command", "use AskUserQuestion in command", or needs guidance on slash command structure, YAML frontmatter fields, dynamic arguments, bash execution in commands, user interaction patterns, or command development best practices for Claude Code.
+- `competitor-analysis` (Việt: đối thủ phân tích): This skill should be used when the user asks to "analyze competitors", "competitor SEO", "who ranks for", "competitive analysis", "what are my competitors doing", "what are they doing differently", "why do they rank higher", or "spy on competitor SEO". Analyzes competitor SEO and GEO strategies including their ranking keywords, content approaches, backlink profiles, and AI citation patterns. Reveals opportunities to outperform competition. For content-focused gap analysis, see content-gap-analysis. For link profile specifics, see backlink-analyzer.
+- `content-gap-analysis` (Việt: nội dung gap phân tích): This skill should be used when the user asks to "find content gaps", "what am I missing", "topics to cover", "content opportunities", "what do competitors write about that I do not", "what topics am I missing", "topics my competitors cover that I lack", or "where are my content blind spots". Identifies content opportunities by finding topics and keywords your competitors cover that you do not. Reveals untapped content potential and strategic gaps in your content strategy. For broader competitive intelligence, see competitor-analysis. For general keyword discovery, see keyword-research.
+- `content-quality-auditor` (Việt: nội dung chất lượng kiểm toán): This skill should be used when the user asks to "audit content quality", "EEAT score", "E-E-A-T audit", "content quality check", "CORE-EEAT audit", "helpful content assessment", "experience expertise authoritativeness trust", "how good is my content", "is my content AI-citation worthy", "content improvement plan", "helpful content update impact", or "GEO quality score". Runs the full 80-item CORE-EEAT audit across 8 dimensions: Contextual Clarity, Organization, Referenceability, Exclusivity (CORE, GEO-focused) plus Experience, Expertise, Authoritativeness, Trust (EEAT, SEO-focused). Produces a GEO Score, SEO Score, content-type weighted total, per-item pass/partial/fail, and prioritized fix plan with veto item checks. For SEO page element audits, see on-page-seo-auditor. For domain-level authority, see domain-authority-auditor.
+- `content-refresher` (Việt: nội dung làm mới): This skill should be used when the user asks to "update old content", "refresh content", "content is outdated", "improve declining rankings", "revive old blog posts", "this post is outdated", "traffic is declining on this page", or "rankings dropped for this article". Identifies and updates outdated content to restore and improve search rankings. Analyzes content freshness, adds new information, updates statistics, and optimizes for current SEO and GEO best practices. For writing new content from scratch, see seo-content-writer. For auditing without rewriting, see on-page-seo-auditor.
+- `domain-authority-auditor` (Việt: tên miền thẩm quyền kiểm toán): This skill should be used when the user asks to "audit domain authority", "domain trust score", "CITE audit", "how authoritative is my site", "domain credibility check", "is my domain trustworthy", or "domain credibility score". Runs a full CITE 40-item domain authority audit, scoring domains across 4 dimensions with weighted scoring by domain type. Produces a detailed report with per-item scores, dimension analysis, veto checks, and a prioritized action plan. For content-level assessment, see content-quality-auditor. For link profile details, see backlink-analyzer.
+- `entity-optimizer` (Việt: thực thể tối ưu): This skill should be used when the user asks to "optimize entity presence", "build knowledge graph", "improve knowledge panel", "entity audit", "establish brand entity", "Google does not know my brand", "no knowledge panel", or "establish my brand as an entity". Works standalone with public search and AI query testing; supercharged when you connect ~~knowledge graph + ~~SEO tool + ~~AI monitor for automated entity analysis. For structured data implementation, see schema-markup-generator. For content-level AI optimization, see geo-content-optimizer.
+- `frontend-design` (Việt: frontend thiết kế): Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.
+- `geo-content-optimizer` (Việt: geo nội dung tối ưu): This skill should be used when the user asks to "optimize for AI", "get cited by ChatGPT", "appear in AI answers", "GEO optimization", "generative engine optimization", "Google AI Overview optimization", "get mentioned by Perplexity AI", "appear in Gemini answers", "AI does not mention my brand", "make content AI-quotable", or "increase AI citation frequency". Optimizes content to increase citation frequency across AI systems: ChatGPT (Browse), Claude, Perplexity AI, Google AI Overviews, and Google Gemini. Adds quotable statements, structured Q&A, precise statistics with sources, expert attribution, and FAQ schema. Uses CORE-EEAT GEO-First items (C02, C09, O03, R01-R05, E01) as optimization targets. Produces a GEO score, rewritten content sections, and a citation-optimization checklist. For SEO-focused writing, see seo-content-writer. For entity and brand AI presence, see entity-optimizer.
+- `hook-development` (Việt: hook phát triển): This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "implement prompt-based hooks", "use ${CLAUDE_PLUGIN_ROOT}", "set up event-driven automation", "block dangerous commands", or mentions hook events (PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification). Provides comprehensive guidance for creating and implementing Claude Code plugin hooks with focus on advanced prompt-based hooks API.
+- `internal-linking-optimizer` (Việt: nội bộ liên kết tối ưu): This skill should be used when the user asks to "fix internal links", "improve site architecture", "link structure", "distribute page authority", "internal linking strategy", "orphan pages", "site architecture is messy", or "pages have no links pointing to them". Analyzes and optimizes internal link structure to improve site architecture, distribute page authority, and help search engines understand content relationships. Creates strategic internal linking plans. For a broader on-page audit, see on-page-seo-auditor. For external link analysis, see backlink-analyzer.
+- `keyword-research` (Việt: từ khóa nghiên cứu): This skill should be used when the user asks to "find keywords", "keyword research", "what should I write about", "keyword difficulty score", "search volume data", "identify ranking opportunities", "topic ideas", "what are people searching for", "which keywords to target", "content ideas for [topic]", or "long-tail keyword suggestions". Discovers high-value keywords with search intent classification (informational/commercial/transactional/navigational), keyword difficulty (KD) scoring, monthly search volume (MSV), CPC estimates, and AI citation potential. Produces ranked keyword lists, topic clusters with pillar + cluster page assignments, and priority-scored content calendars. Works with Ahrefs, SEMrush, Google Keyword Planner, Google Search Console, or manual data input. For competitor keyword gaps, see competitor-analysis. For topic coverage gaps, see content-gap-analysis.
+- `mcp-integration` (Việt: mcp tích hợp): This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "set up Model Context Protocol", "connect external service", mentions "${CLAUDE_PLUGIN_ROOT} with MCP", or discusses MCP server types (SSE, stdio, HTTP, WebSocket). Provides comprehensive guidance for integrating Model Context Protocol servers into Claude Code plugins for external tool and service integration.
+- `memory-management` (Việt: ghi nhớ management): This skill should be used when the user asks to "remember project context", "save SEO data", "track campaign progress", "store keyword data", "manage project memory", "remember this for next time", "save my keyword data", or "keep track of this campaign". Manages a two-layer memory system (hot cache + cold storage) for SEO/GEO project context, tracking keywords, competitors, metrics, and campaign status with intelligent promotion/demotion.
+- `meta-tags-optimizer` (Việt: meta tags tối ưu): This skill should be used when the user asks to "optimize title tag", "write meta description", "improve CTR", "Open Graph tags", "social media preview", "my title tag needs work", "low click-through rate", "fix my meta tags", or "OG tags not showing". Creates and optimizes meta tags including title tags, meta descriptions, Open Graph tags, and Twitter cards for maximum click-through rates and social sharing engagement. For a broader on-page audit, see on-page-seo-auditor. For structured data markup, see schema-markup-generator.
+- `minimalist-skill` (Việt: tối giản skill): Clean editorial-style interfaces. Warm monochrome palette, typographic contrast, flat bento grids, muted pastels. No gradients, no heavy shadows.
+- `on-page-seo-auditor` (Việt: on trang SEO kiểm toán): This skill should be used when the user asks to "audit page SEO", "on-page SEO check", "SEO score", "page optimization", "what SEO issues does this page have", "what is wrong with this page SEO", "score my page", or "why is this page not ranking". Performs comprehensive on-page SEO audits to identify optimization opportunities including title tags, meta descriptions, headers, content quality, internal linking, and image optimization. For server, speed, and crawl issues, see technical-seo-checker. For full EEAT content quality scoring, see content-quality-auditor.
+- `output-skill` (Việt: đầu ra skill): Overrides default LLM truncation behavior. Enforces complete code generation, bans placeholder patterns, and handles token-limit splits cleanly. Apply to any task requiring exhaustive, unabridged output.
+- `performance-reporter` (Việt: hiệu năng reporter): This skill should be used when the user asks to "generate SEO report", "performance report", "traffic report", "SEO dashboard", "report to stakeholders", "show me the numbers", "monthly SEO report", or "present SEO results to my boss". Generates comprehensive SEO and GEO performance reports combining rankings, traffic, backlinks, and AI visibility metrics. Creates executive summaries and detailed analyses for stakeholder reporting. For detailed rank tracking, see rank-tracker. For link-specific analysis, see backlink-analyzer.
+- `plugin-settings` (Việt: plugin cấu hình): This skill should be used when the user asks about "plugin settings", "store plugin configuration", "user-configurable plugin", ".local.md files", "plugin state files", "read YAML frontmatter", "per-project plugin settings", or wants to make plugin behavior configurable. Documents the .claude/plugin-name.local.md pattern for storing plugin-specific configuration with YAML frontmatter and markdown content.
+- `plugin-structure` (Việt: plugin cấu trúc): This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize plugin components", "set up plugin.json", "use ${CLAUDE_PLUGIN_ROOT}", "add commands/agents/skills/hooks", "configure auto-discovery", or needs guidance on plugin directory layout, manifest configuration, component organization, file naming conventions, or Claude Code plugin architecture best practices.
+- `pmtl-automation-smoke-suite` (Việt: PMTL tự động hóa smoke suite): PMTL_VN automation skill for repeatable smoke and monitoring commands. Use when the task needs to run repo-backed smoke tests, monitoring drills, or Telegram alert checks through a stable wrapper instead of ad hoc shell typing.
+- `pmtl-creative-designer` (Việt: PMTL sáng tạo thiết kế): Creative visual identity skill for PMTL_VN. Use when designing new sections, shaping editorial hierarchy, choosing typography and color direction, or protecting the warm Buddhist premium identity across the product.
+- `pmtl-fe-craft` (Việt: PMTL frontend chất lượng cao): Advanced frontend craftsmanship skill for PMTL_VN. Use for frontend implementation, refactoring, or code review when the goal is code that feels senior-written: clean boundaries, strong component shape, server-first logic, and zero AI-slop shortcuts.
+- `pmtl-fe-implementation` (Việt: PMTL frontend triển khai): Frontend implementation rules for PMTL_VN. Use for React or Next.js feature work, UI refactors, and frontend code reviews that should follow repo conventions, human-like code quality, and strict production-ready discipline.
+- `pmtl-production-baseline` (Việt: PMTL production baseline): PMTL_VN production-grade coding and runtime baseline. Use when implementing or refactoring features that need repo-specific defaults for logging, validation, security posture, caching, monitoring, deployment boundaries, and documentation sync.
+- `pmtl-production-ready` (Việt: PMTL production sẵn sàng): PMTL_VN production-ready operating skill. Use for implementation, debugging, hardening, monitoring, deployment-impacting changes, or release-minded code review. This is the high-agency umbrella skill for turning PMTL work into production-safe work with explicit verification and documented recovery paths.
+- `pmtl-review-web-ui` (Việt: PMTL review web UI): PMTL_VN frontend review skill. Use when reviewing UI, accessibility, interaction quality, redesign opportunities, or web interface compliance. Prioritize findings over summaries and anchor review comments in PMTL visual and behavioral standards.
+- `pmtl-runbook-cms-runtime-errors` (Việt: PMTL runbook cms runtime errors): [DEPRECATED] DEPRECATED. This skill referenced apps/cms (Payload CMS) runtime which is no longer the target architecture. The project now uses NestJS (apps/api) as backend authority. See AGENTS.md Design-First Direction. Do NOT use this skill for new issues.
+- `pmtl-runbook-docker-dev-recovery` (Việt: PMTL runbook Docker dev recovery): PMTL_VN Docker recovery runbook. Use when Docker Desktop, compose-backed dev services, or local infrastructure stop booting correctly and the agent needs the documented recovery path instead of trial-and-error.
+- `pmtl-scaffold-payload-collection` (Việt: PMTL scaffold payload collection): [DEPRECATED] DEPRECATED. This skill referenced Payload CMS collection scaffolding which is no longer the target architecture. The project now uses NestJS (apps/api) as backend authority. See AGENTS.md Design-First Direction and design/DECISIONS.md for current architecture. Do NOT use this skill.
+- `pmtl-skill-governance` (Việt: PMTL skill quản trị): PMTL_VN governance skill for designing, auditing, and evolving repo-local skills so they behave like reusable operational modules instead of one-off prompt notes.
+- `pmtl-ui-behavior` (Việt: PMTL UI hành vi): PMTL_VN interaction and accessibility discipline. Use when building or reviewing forms, navigation, dialogs, loading states, empty states, error handling, and interactive components.
+- `pmtl-ui-style-system` (Việt: PMTL UI style hệ thống): PMTL_VN visual system and style variants. Use for new frontend UI, redesigns, typography, layout rhythm, premium polish, and explicit style directions such as default, soft, minimalist, or redesign mode.
+- `pmtl-uiux-specialist` (Việt: PMTL UI/UX chuyên gia): UI/UX behavioral specialist for PMTL_VN. Use when building or reviewing forms, interactive components, navigation, accessibility, state feedback, and user flows that must feel disciplined rather than merely functional.
+- `pmtl-vercel-precision` (Việt: PMTL Vercel độ chính xác): Precision refinement skill for PMTL_VN. Use when the user wants homepage or frontend UI to feel more exact, disciplined, and premium through tighter spacing, surface vocabulary, hierarchy, card anatomy, and restrained motion.
+- `pmtl-verify-auth-flow` (Việt: PMTL xác minh xác thực luồng): PMTL_VN auth verification skill. Use when touching register, login, logout, forgot-password, reset-password, profile, session cookies, proxy auth guards, or OAuth callbacks so auth behavior is verified instead of assumed.
+- `pmtl-verify-quality-gate` (Việt: PMTL xác minh chất lượng gate): PMTL_VN verification skill for code quality gates. Use after meaningful changes to run the strongest relevant checks, usually targeted tests, typecheck, lint, and build-oriented validation, instead of relying on manual confidence.
+- `pmtl-verify-search-sync` (Việt: PMTL xác minh tìm kiếm đồng bộ): PMTL_VN search verification skill. Use when changing search schemas, Meilisearch integration, indexing, fallback search behavior, or search result mapping so index sync is checked with commands and health probes.
+- `pmtl-vn-architecture` (Việt: PMTL VN kiến trúc): architecture and implementation guide for the pmtl_vn stack using next.js 16, nestjs, postgres, caddy, docker compose, and session-based auth. use when creating, extending, reviewing, refactoring, or deploying this monorepo; when adding auth, roles, access control, search, docker/caddy setup, or domain features; and when the agent must preserve the repo's ai-friendly conventions, boundaries, and file placement rules.
+- `pmtl-workflow-router` (Việt: PMTL quy trình điều hướng): PMTL_VN workflow routing layer. Use when a task needs the right combination of repo-local PMTL skills, Superpowers workflow skills, and generic tool skills without making the user remember the skill names.
+- `rank-tracker` (Việt: xếp hạng theo dõi): This skill should be used when the user asks to "track rankings", "check keyword positions", "ranking changes", "monitor SERP positions", "how am I ranking", "where do I rank for this keyword", "did my rankings change", or "keyword position tracking". Tracks and analyzes keyword ranking positions over time for both traditional search results and AI-generated responses. Monitors ranking changes, identifies trends, and alerts on significant movements. For automated alerting, see alert-manager. For comprehensive reports, see performance-reporter.
+- `redesign-skill` (Việt: thiết kế lại skill): Upgrades existing websites and apps to premium quality. Audits current design, identifies generic AI patterns, and applies high-end design standards without breaking functionality. Works with any CSS framework or vanilla CSS.
+- `schema-markup-generator` (Việt: schema markup tạo sinh): This skill should be used when the user asks to "add schema markup", "generate structured data", "JSON-LD", "rich snippets", "FAQ schema", "HowTo schema", "Product schema", "Article schema", "LocalBusiness schema", "Organization schema", "BreadcrumbList", "I want star ratings in Google", "rich results", "voice search optimization", "event markup", or "structured data validation errors". Generates Schema.org JSON-LD for FAQPage, HowTo, Article/BlogPosting, Product, AggregateRating, LocalBusiness, Organization, BreadcrumbList, Event, and Recipe types. Produces validated markup targeting Google Rich Results, Bing structured data, and AI system understanding (FAQ schema improves AI citation chances). Validates against Google Rich Results Test requirements. For broader technical SEO, see technical-seo-checker. For meta tag optimization, see meta-tags-optimizer.
+- `seo-content-writer` (Việt: SEO nội dung viết): This skill should be used when the user asks to "write SEO content", "create a blog post", "write an article", "content writing for SEO", "draft optimized content", "write a how-to guide", "create a product description", "write a landing page", "SEO copywriting", "draft content targeting [keyword]", or "write 2000-word article about [topic]". Creates keyword-optimized content using a 12-step workflow: CORE-EEAT pre-write checklist, keyword integration, title optimization (5 formula options), meta description, H1/H2/H3 hierarchy, featured snippet targeting, internal/external linking, and readability enhancement. Produces full drafts with embedded SEO elements, title variants, meta description, FAQ section with schema, and a self-scored CORE-EEAT checklist. For AI-citation optimization, see geo-content-optimizer. For updating existing content, see content-refresher.
+- `serp-analysis` (Việt: SERP phân tích): This skill should be used when the user asks to "analyze search results", "SERP analysis", "what ranks for", "SERP features", "why does this page rank", "what is on page one for this query", "who ranks for this keyword", or "what does Google show for". Analyzes search engine results pages (SERPs) to understand ranking factors, SERP features, user intent patterns, and AI overview triggers. Essential for understanding what it takes to rank. For tracking rankings over time, see rank-tracker. For keyword discovery, see keyword-research.
+- `shadcn` (Việt: shadcn): Manages shadcn components and projects - adding, searching, fixing, debugging, styling, and composing UI. Provides project context, component docs, and usage examples. Applies when working with shadcn/ui, component registries, presets, --preset codes, or any project with a components.json file. Also triggers for "shadcn init", "create an app with --preset", or "switch to --preset".
+- `skill-development` (Việt: skill phát triển): This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill description", "organize skill content", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.
+- `soft-skill` (Việt: mềm skill): Teaches the AI to design like a high-end agency. Defines the exact fonts, spacing, shadows, card structures, and animations that make a website feel expensive. Blocks all the common defaults that make AI designs look cheap or generic.
+- `taste-skill` (Việt: gu skill): Senior UI/UX Engineer. Architect digital interfaces overriding default LLM biases. Enforces metric-based rules, strict component architecture, CSS hardware acceleration, and balanced design engineering.
+- `technical-seo-checker` (Việt: technical SEO checker): This skill should be used when the user asks to "technical SEO audit", "check page speed", "Core Web Vitals", "LCP is slow", "CLS problem", "INP issues", "crawl errors", "indexing problems", "robots.txt check", "XML sitemap errors", "hreflang issues", "canonical tag problems", "HTTPS not working", "mobile SEO", "JavaScript rendering", or "site health check". Performs comprehensive technical SEO audits: Core Web Vitals (LCP/CLS/INP/TTFB), crawlability, indexability, mobile-friendliness, HTTPS/HSTS security, URL structure, redirect chains, robots.txt, XML sitemaps, hreflang, canonical tags, and structured data validation. Produces a scored technical health report (0-100) with critical/high/medium issue triage and a prioritized implementation roadmap. Works with Google PageSpeed Insights, Google Search Console, crawl tools, or manual audit. For content element issues, see on-page-seo-auditor. For link architecture, see internal-linking-optimizer.
+- `ui-ux-pro-max` (Việt: UI UX pro max): UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples.
+- `vercel-react-best-practices` (Việt: Vercel react tốt nhất thực hành tốt): React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.
+- `web-design-guidelines` (Việt: web thiết kế guidelines): Review UI code for web interface quality, accessibility, and frontend best practices. Compatibility skill kept for existing workflows. Use when asked to review UI, audit design, review UX, or check a PMTL surface against web guidelines.
+- `writing-hookify-rules` (Việt: writing hookify rules): This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify rule", or needs guidance on hookify rule syntax and patterns.
+
+## Global home skills (~/.agents/skills)
+
+Tổng số: 29
+
+- `agent-development` (Việt: agent phát triển): This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when to use description", "agent examples", "agent tools", "agent colors", "autonomous agent", or needs guidance on agent structure, system prompts, triggering conditions, or agent development best practices for Claude Code plugins.
+- `auth-js` (Việt: xác thực js): Production-ready Auth.js v5 setup for Next.js and Cloudflare Workers.
+- `auth-module-builder` (Việt: xác thực module builder): Implements secure authentication patterns including login/registration, session management, JWT tokens, password hashing, cookie settings, and CSRF protection. Provides auth routes, middleware, security configurations, and threat model documentation. Use when building "authentication", "login system", "JWT auth", or "session management".
+- `claude-opus-4-5-migration` (Việt: claude opus 4 5 migration): Migrate prompts and code from Claude Sonnet 4.0, Sonnet 4.5, or Opus 4.1 to Opus 4.5. Use when the user wants to update their codebase, prompts, or API calls to use Opus 4.5. Handles model string updates and prompt adjustments for known Opus 4.5 behavioral differences. Does NOT migrate Haiku 4.5.
+- `command-development` (Việt: lệnh phát triển): This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define command arguments", "use command frontmatter", "organize commands", "create command with file references", "interactive command", "use AskUserQuestion in command", or needs guidance on slash command structure, YAML frontmatter fields, dynamic arguments, bash execution in commands, user interaction patterns, or command development best practices for Claude Code.
+- `design-md` (Việt: thiết kế md): Analyze Stitch projects and synthesize a semantic design system into DESIGN.md files
+- `docker-compose-production` (Việt: Docker compose production): Use when deploying Docker Compose applications to production including security hardening, resource management, health checks, logging, monitoring, and high-availability patterns.
+- `docker-configuration-validator` (Việt: Docker configuration validator): Comprehensive Docker and Docker Compose validation following best practices and security standards. Use this skill when users ask to validate Dockerfiles, review Docker configurations, check Docker Compose files, verify multi-stage builds, audit Docker security, or ensure compliance with Docker best practices. Validates syntax, security, multi-stage builds, and modern Docker Compose requirements.
+- `enhance-prompt` (Việt: enhance prompt): Transforms vague UI ideas into polished, Stitch-optimized prompts. Enhances specificity, adds UI/UX keywords, injects design system context, and structures output for better generation results.
+- `eraser-diagrams` (Việt: eraser diagrams): Generates architecture diagrams from code, infrastructure, or descriptions. Use when user asks to visualize, diagram, or document system architecture.
+- `find-skills` (Việt: find skills): Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+- `frontend-design` (Việt: frontend thiết kế): Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.
+- `hook-development` (Việt: hook phát triển): This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "implement prompt-based hooks", "use ${CLAUDE_PLUGIN_ROOT}", "set up event-driven automation", "block dangerous commands", or mentions hook events (PreToolUse, PostToolUse, Stop, SubagentStop, SessionStart, SessionEnd, UserPromptSubmit, PreCompact, Notification). Provides comprehensive guidance for creating and implementing Claude Code plugin hooks with focus on advanced prompt-based hooks API.
+- `mcp-integration` (Việt: mcp tích hợp): This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "set up Model Context Protocol", "connect external service", mentions "${CLAUDE_PLUGIN_ROOT} with MCP", or discusses MCP server types (SSE, stdio, HTTP, WebSocket). Provides comprehensive guidance for integrating Model Context Protocol servers into Claude Code plugins for external tool and service integration.
+- `meilisearch-admin` (Việt: meilisearch admin): Check Meilisearch index status, tasks, health, and settings. Use for debugging search issues, monitoring indexing tasks, and inspecting index configuration. Read-only admin operations.
+- `next` (Việt: next): Next.js framework for building React applications with App Router, Server Components, and optimized performance. Use when working with Next.js apps, routing, data fetching, caching, Server Actions, or building full-stack React applications.
+- `nextjs-app-router-fundamentals` (Việt: nextjs app điều hướng fundamentals): Guide for working with Next.js App Router (Next.js 13+). Use when migrating from Pages Router to App Router, creating layouts, implementing routing, handling metadata, or building Next.js 13+ applications. Activates for App Router migration, layout creation, routing patterns, or Next.js 13+ development tasks.
+- `nginx-config-optimizer` (Việt: nginx config tối ưu): Optimizes Nginx configurations for performance, security, caching, and load balancing with modern best practices. Use when users request "Nginx setup", "reverse proxy", "load balancer", "web server config", or "Nginx optimization".
+- `plugin-settings` (Việt: plugin cấu hình): This skill should be used when the user asks about "plugin settings", "store plugin configuration", "user-configurable plugin", ".local.md files", "plugin state files", "read YAML frontmatter", "per-project plugin settings", or wants to make plugin behavior configurable. Documents the .claude/plugin-name.local.md pattern for storing plugin-specific configuration with YAML frontmatter and markdown content.
+- `plugin-structure` (Việt: plugin cấu trúc): This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize plugin components", "set up plugin.json", "use ${CLAUDE_PLUGIN_ROOT}", "add commands/agents/skills/hooks", "configure auto-discovery", or needs guidance on plugin directory layout, manifest configuration, component organization, file naming conventions, or Claude Code plugin architecture best practices.
+- `react-components` (Việt: react components): Converts Stitch designs into modular Vite and React components using system-level networking and AST-based validation.
+- `redis-best-practices` (Việt: redis tốt nhất thực hành tốt): Redis development best practices for caching, data structures, and high-performance key-value operations
+- `remotion` (Việt: remotion): Generate walkthrough videos from Stitch projects using Remotion with smooth transitions, zooming, and text overlays
+- `skill-development` (Việt: skill phát triển): This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill description", "organize skill content", or needs guidance on skill structure, progressive disclosure, or skill development best practices for Claude Code plugins.
+- `ssh` (Việt: ssh): Establish and manage SSH connections to remote machines, including key generation, configuration, and file transfers. Use when connecting to remote servers, executing remote commands, or transferring files via SCP.
+- `stitch-loop` (Việt: stitch loop): Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern
+- `superpowers` (Việt: superpowers): Missing SKILL.md.
+- `ui-ux-pro-max` (Việt: UI UX pro max): UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples.
+- `writing-hookify-rules` (Việt: writing hookify rules): This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify rule", or needs guidance on hookify rule syntax and patterns.
+
+## Global Codex skills (~/.codex/skills) - Core and generic
+
+Tổng số: 13
+
+- `.system` (Việt: .system): Missing SKILL.md.
+- `agent-browser` (Việt: agent trình duyệt): Browser automation CLI for AI agents. Use when the user needs to interact with websites, including navigating pages, filling forms, clicking buttons, taking screenshots, extracting data, testing web apps, or automating any browser task. Triggers include requests to "open a website", "fill out a form", "click a button", "take a screenshot", "scrape data from a page", "test this web app", "login to a site", "automate browser actions", or any task requiring programmatic web interaction.
+- `docker-compose-production` (Việt: Docker compose production): Use when deploying Docker Compose applications to production including security hardening, resource management, health checks, logging, monitoring, and high-availability patterns.
+- `meilisearch-admin` (Việt: meilisearch admin): Check Meilisearch index status, tasks, health, and settings. Use for debugging search issues, monitoring indexing tasks, and inspecting index configuration. Read-only admin operations.
+- `minimalist-skill` (Việt: tối giản skill): Clean editorial-style interfaces. Warm monochrome palette, typographic contrast, flat bento grids, muted pastels. No gradients, no heavy shadows.
+- `output-skill` (Việt: đầu ra skill): Overrides default LLM truncation behavior. Enforces complete code generation, bans placeholder patterns, and handles token-limit splits cleanly. Apply to any task requiring exhaustive, unabridged output.
+- `playwright` (Việt: Playwright): Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script.
+- `redesign-skill` (Việt: thiết kế lại skill): Upgrades existing websites and apps to premium quality. Audits current design, identifies generic AI patterns, and applies high-end design standards without breaking functionality. Works with any CSS framework or vanilla CSS.
+- `security-best-practices` (Việt: bảo mật tốt nhất thực hành tốt): Perform language and framework specific security best-practice reviews and suggest improvements. Trigger only when the user explicitly requests security best practices guidance, a security review/report, or secure-by-default coding help. Trigger only for supported languages (python, javascript/typescript, go). Do not trigger for general code review, debugging, or non-security tasks.
+- `sentry` (Việt: Sentry): Use when the user asks to inspect Sentry issues or events, summarize recent production errors, or pull basic Sentry health data via the Sentry API; perform read-only queries with the bundled script and require `SENTRY_AUTH_TOKEN`.
+- `soft-skill` (Việt: mềm skill): Teaches the AI to design like a high-end agency. Defines the exact fonts, spacing, shadows, card structures, and animations that make a website feel expensive. Blocks all the common defaults that make AI designs look cheap or generic.
+- `taste-skill` (Việt: gu skill): Senior UI/UX Engineer. Architect digital interfaces overriding default LLM biases. Enforces metric-based rules, strict component architecture, CSS hardware acceleration, and balanced design engineering.
+- `ui-ux-pro-max` (Việt: UI UX pro max): UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples.
+
+## Global Codex skills (~/.codex/skills) - Full-stack gap fillers
+
+Tổng số: 18
+
+- `fastagent-api-documentation-generator` (Việt: fastagent API tài liệu tạo sinh): Generate OpenAPI/Swagger specifications and API documentation from code or design. Use when creating API docs, generating OpenAPI specs, or documenting REST APIs.
+- `fastagent-api-security-checker` (Việt: fastagent API bảo mật checker): Audit API security for OWASP Top 10 vulnerabilities, authentication issues, and authorization flaws. Use when securing APIs, fixing security vulnerabilities, or implementing security best practices.
+- `fastagent-database-migration-helper` (Việt: fastagent cơ sở dữ liệu migration helper): Create and manage database migrations safely with rollback support. Use when modifying database schema, adding indexes, or managing database changes.
+- `fastagent-image-security-scanner` (Việt: fastagent image bảo mật scanner): Scans Docker images for security vulnerabilities, outdated packages, and misconfigurations. Use when checking image security, finding vulnerabilities, or hardening containers.
+- `fastagent-infrastructure-monitor` (Việt: fastagent infrastructure monitor): Set up monitoring, logging, and alerting for infrastructure and applications. Use when implementing observability, creating dashboards, or configuring alerts.
+- `fastagent-kubernetes-best-practices` (Việt: fastagent Kubernetes tốt nhất thực hành tốt): Provides production-ready Kubernetes manifest guidance including resource management, security, high availability, and configuration best practices. This skill should be used when working with Kubernetes YAML files, deployments, pods, services, or when users mention k8s, container orchestration, or cloud-native applications.
+- `fastagent-query-optimizer` (Việt: fastagent truy vấn tối ưu): Optimize SQL queries for performance with indexing strategies, query rewriting, and execution plan analysis. Use when queries are slow, optimizing database performance, or analyzing query execution.
+- `fastagent-rest-api-designer` (Việt: fastagent REST API thiết kế): Design RESTful API endpoints with proper resource modeling, HTTP methods, and URL structure. Use when creating REST APIs, designing endpoints, or structuring API resources.
+- `fastagent-schema-designer` (Việt: fastagent schema thiết kế): Design database schemas with proper normalization, relationships, constraints, and indexes. Use when creating database tables, modeling data relationships, or designing database structure.
+- `kadajett-nestjs-best-practices` (Việt: kadajett NestJS tốt nhất thực hành tốt): NestJS best practices and architecture patterns for building production-ready applications. This skill should be used when writing, reviewing, or refactoring NestJS code to ensure proper patterns for modules, dependency injection, security, and performance.
+- `levnik-ln-627-observability-auditor` (Việt: levnik ln 627 observability kiểm toán): Checks structured logging, health checks, metrics collection, request tracing, log levels. Use when auditing observability.
+- `levnik-ln-643-api-contract-auditor` (Việt: levnik ln 643 API contract kiểm toán): Checks layer leakage in method signatures, missing DTOs, entity leakage to API, inconsistent error contracts. Use when auditing API contracts.
+- `levnik-ln-650-persistence-performance-auditor` (Việt: levnik ln 650 persistence hiệu năng kiểm toán): Coordinates persistence and performance audit across queries, transactions, runtime, and resource lifecycle. Use when auditing data layer performance.
+- `levnik-ln-651-query-efficiency-auditor` (Việt: levnik ln 651 truy vấn efficiency kiểm toán): Checks redundant fetches, N+1 loops, over-fetching, missing bulk operations, wrong caching scope. Use when auditing query efficiency.
+- `levnik-ln-652-transaction-correctness-auditor` (Việt: levnik ln 652 giao dịch đúng đắn kiểm toán): Checks transaction scope, missing rollback handling, long-held transactions, trigger/notify interaction. Use when auditing transaction correctness.
+- `levnik-ln-771-logging-configurator` (Việt: levnik ln 771 logging configurator): Configures structured JSON logging with Serilog (.NET) or structlog (Python). Use when adding logging to backend projects.
+- `levnik-ln-774-healthcheck-setup` (Việt: levnik ln 774 healthcheck setup): Configures health check endpoints for Kubernetes readiness/liveness/startup probes. Use when deploying to Kubernetes.
+- `levnik-ln-775-api-docs-generator` (Việt: levnik ln 775 API docs tạo sinh): Configures Swagger/OpenAPI documentation for backend APIs. Use when adding interactive API docs to a project.
+
+## Global Codex skills (~/.codex/skills) - Trail of Bits
+
+Tổng số: 61
+
+- `trailofbits-address-sanitizer` (Việt: Trail of Bits địa chỉ sanitizer): AddressSanitizer detects memory errors during fuzzing. Use when fuzzing C/C++ code to find buffer overflows and use-after-free bugs.
+- `trailofbits-aflpp` (Việt: Trail of Bits aflpp): AFL++ is a fork of AFL with better fuzzing performance and advanced features. Use for multi-core fuzzing of C/C++ projects.
+- `trailofbits-agentic-actions-auditor` (Việt: Trail of Bits agentic actions kiểm toán): Audits GitHub Actions workflows for security vulnerabilities in AI agent integrations including Claude Code Action, Gemini CLI, OpenAI Codex, and GitHub AI Inference. Detects attack vectors where attacker-controlled input reaches AI agents running in CI/CD pipelines, including env var intermediary patterns, direct expression injection, dangerous sandbox configurations, and wildcard user allowlists. Use when reviewing workflow files that invoke AI coding agents, auditing CI/CD pipeline security for prompt injection risks, or evaluating agentic action configurations.
+- `trailofbits-algorand-vulnerability-scanner` (Việt: Trail of Bits algorand vulnerability scanner): Scans Algorand smart contracts for 11 common vulnerabilities including rekeying attacks, unchecked transaction fees, missing field validations, and access control issues. Use when auditing Algorand projects (TEAL/PyTeal).
+- `trailofbits-ask-questions-if-underspecified` (Việt: Trail of Bits ask questions if underspecified): Clarify requirements before implementing. Use when serious doubts arise.
+- `trailofbits-atheris` (Việt: Trail of Bits atheris): Atheris is a coverage-guided Python fuzzer based on libFuzzer. Use for fuzzing pure Python code and Python C extensions.
+- `trailofbits-audit-context-building` (Việt: Trail of Bits audit context building): Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or bug finding.
+- `trailofbits-audit-prep-assistant` (Việt: Trail of Bits audit prep assistant): Prepares codebases for security review using Trail of Bits' checklist. Helps set review goals, runs static analysis tools, increases test coverage, removes dead code, ensures accessibility, and generates documentation (flowcharts, user stories, inline comments).
+- `trailofbits-burpsuite-project-parser` (Việt: Trail of Bits burpsuite project parser): Searches and explores Burp Suite project files (.burp) from the command line. Use when searching response headers or bodies with regex patterns, extracting security audit findings, dumping proxy history or site map data, or analyzing HTTP traffic captured in a Burp project.
+- `trailofbits-cairo-vulnerability-scanner` (Việt: Trail of Bits cairo vulnerability scanner): Scans Cairo/StarkNet smart contracts for 6 critical vulnerabilities including felt252 arithmetic overflow, L1-L2 messaging issues, address conversion problems, and signature replay. Use when auditing StarkNet projects.
+- `trailofbits-cargo-fuzz` (Việt: Trail of Bits cargo fuzz): cargo-fuzz is the de facto fuzzing tool for Rust projects using Cargo. Use for fuzzing Rust code with libFuzzer backend.
+- `trailofbits-claude-in-chrome-troubleshooting` (Việt: Trail of Bits claude in chrome troubleshooting): Diagnose and fix Claude in Chrome MCP extension connectivity issues. Use when mcp**claude-in-chrome**\* tools fail, return "Browser extension is not connected", or behave erratically.
+- `trailofbits-code-maturity-assessor` (Việt: Trail of Bits code maturity assessor): Systematic code maturity assessment using Trail of Bits' 9-category framework. Analyzes codebase for arithmetic safety, auditing practices, access controls, complexity, decentralization, documentation, MEV risks, low-level code, and testing. Produces professional scorecard with evidence-based ratings and actionable recommendations.
+- `trailofbits-codeql` (Việt: Trail of Bits CodeQL): Scans a codebase for security vulnerabilities using CodeQL's interprocedural data flow and taint tracking analysis. Triggers on "run codeql", "codeql scan", "codeql analysis", "build codeql database", or "find vulnerabilities with codeql". Supports "run all" (security-and-quality suite) and "important only" (high-precision security findings) scan modes. Also handles creating data extension models and processing CodeQL SARIF output.
+- `trailofbits-constant-time-analysis` (Việt: Trail of Bits constant time phân tích): Detects timing side-channel vulnerabilities in cryptographic code. Use when implementing or reviewing crypto code, encountering division on secrets, secret-dependent branches, or constant-time programming questions in C, C++, Go, Rust, Swift, Java, Kotlin, C#, PHP, JavaScript, TypeScript, Python, or Ruby.
+- `trailofbits-constant-time-testing` (Việt: Trail of Bits constant time kiểm thử): Constant-time testing detects timing side channels in cryptographic code. Use when auditing crypto implementations for timing vulnerabilities.
+- `trailofbits-cosmos-vulnerability-scanner` (Việt: Trail of Bits cosmos vulnerability scanner): Scans Cosmos SDK blockchains for 9 consensus-critical vulnerabilities including non-determinism, incorrect signers, ABCI panics, and rounding errors. Use when auditing Cosmos chains or CosmWasm contracts.
+- `trailofbits-coverage-analysis` (Việt: Trail of Bits coverage phân tích): Coverage analysis measures code exercised during fuzzing. Use when assessing harness effectiveness or identifying fuzzing blockers.
+- `trailofbits-debug-buttercup` (Việt: Trail of Bits debug buttercup): Debugs the Buttercup CRS (Cyber Reasoning System) running on Kubernetes. Use when diagnosing pod crashes, restart loops, Redis failures, resource pressure, disk saturation, DinD issues, or any service misbehavior in the crs namespace. Covers triage, log analysis, queue inspection, and common failure patterns for: redis, fuzzer-bot, coverage-bot, seed-gen, patcher, build-bot, scheduler, task-server, task-downloader, program-model, litellm, dind, tracer-bot, merger-bot, competition-api, pov-reproducer, scratch-cleaner, registry-cache, image-preloader, ui.
+- `trailofbits-designing-workflow-skills` (Việt: Trail of Bits designing quy trình skills): Guides the design and structuring of workflow-based Claude Code skills with multi-step phases, decision trees, subagent delegation, and progressive disclosure. Use when creating skills that involve sequential pipelines, routing patterns, safety gates, task tracking, phased execution, or any multi-step workflow. Also applies when reviewing or refactoring existing workflow skills for quality.
+- `trailofbits-devcontainer-setup` (Việt: Trail of Bits devcontainer setup): Creates devcontainers with Claude Code, language-specific tooling (Python/Node/Rust/Go), and persistent volumes. Use when adding devcontainer support to a project, setting up isolated development environments, or configuring sandboxed Claude Code workspaces.
+- `trailofbits-differential-review` (Việt: Trail of Bits differential review): Performs security-focused differential review of code changes (PRs, commits, diffs). Adapts analysis depth to codebase size, uses git history for context, calculates blast radius, checks test coverage, and generates comprehensive markdown reports. Automatically detects and prevents security regressions.
+- `trailofbits-dwarf-expert` (Việt: Trail of Bits dwarf expert): Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5). Triggers when understanding DWARF information, interacting with DWARF files, answering DWARF-related questions, or working with code that parses DWARF data.
+- `trailofbits-entry-point-analyzer` (Việt: Trail of Bits entry point phân tích): Analyzes smart contract codebases to identify state-changing entry points for security auditing. Detects externally callable functions that modify state, categorizes them by access level (public, admin, role-restricted, contract-only), and generates structured audit reports. Excludes view/pure/read-only functions. Use when auditing smart contracts (Solidity, Vyper, Solana/Rust, Move, TON, CosmWasm) or when asked to find entry points, audit flows, external functions, access control patterns, or privileged operations.
+- `trailofbits-firebase-apk-scanner` (Việt: Trail of Bits firebase apk scanner): Scans Android APKs for Firebase security misconfigurations including open databases, storage buckets, authentication issues, and exposed cloud functions. Use when analyzing APK files for Firebase vulnerabilities, performing mobile app security audits, or testing Firebase endpoint security. For authorized security research only.
+- `trailofbits-fp-check` (Việt: Trail of Bits fp check): Systematically verifies suspected security bugs to eliminate false positives. Produces TRUE POSITIVE or FALSE POSITIVE verdicts with documented evidence for each bug.
+- `trailofbits-fuzzing-dictionary` (Việt: Trail of Bits fuzzing dictionary): Fuzzing dictionaries guide fuzzers with domain-specific tokens. Use when fuzzing parsers, protocols, or format-specific code.
+- `trailofbits-fuzzing-obstacles` (Việt: Trail of Bits fuzzing obstacles): Techniques for patching code to overcome fuzzing obstacles. Use when checksums, global state, or other barriers block fuzzer progress.
+- `trailofbits-gh-cli` (Việt: Trail of Bits gh cli): Enforces authenticated gh CLI workflows over unauthenticated curl/WebFetch patterns. Use when working with GitHub URLs, API access, pull requests, or issues.
+- `trailofbits-git-cleanup` (Việt: Trail of Bits git cleanup): Safely analyzes and cleans up local git branches and worktrees by categorizing them as merged, squash-merged, superseded, or active work.
+- `trailofbits-guidelines-advisor` (Việt: Trail of Bits guidelines advisor): Smart contract development advisor based on Trail of Bits' best practices. Analyzes codebase to generate documentation/specifications, review architecture, check upgradeability patterns, assess implementation quality, identify pitfalls, review dependencies, and evaluate testing. Provides actionable recommendations.
+- `trailofbits-harness-writing` (Việt: Trail of Bits harness writing): Techniques for writing effective fuzzing harnesses across languages. Use when creating new fuzz targets or improving existing harness code.
+- `trailofbits-insecure-defaults` (Việt: Trail of Bits insecure defaults): Detects fail-open insecure defaults (hardcoded secrets, weak auth, permissive security) that allow apps to run insecurely in production. Use when auditing security, reviewing config management, or analyzing environment variable handling.
+- `trailofbits-interpreting-culture-index` (Việt: Trail of Bits interpreting culture index): Interprets Culture Index (CI) surveys, behavioral profiles, and personality assessment data. Supports individual profile interpretation, team composition analysis (gas/brake/glue), burnout detection, profile comparison, hiring profiles, manager coaching, interview transcript analysis for trait prediction, candidate debrief, onboarding planning, and conflict mediation. Accepts extracted JSON or PDF input via OpenCV extraction script.
+- `trailofbits-let-fate-decide` (Việt: Trail of Bits let fate decide): Draws 4 Tarot cards using os.urandom() to inject entropy into planning when prompts are vague or underspecified. Interprets the spread to guide next steps. Use when the user is nonchalant, feeling lucky, says 'let fate decide', makes Yu-Gi-Oh references ('heart of the cards'), demonstrates indifference about approach, or says 'try again' on a system with no changes. Also triggers on sufficiently ambiguous prompts where multiple approaches are equally valid.
+- `trailofbits-libafl` (Việt: Trail of Bits libafl): LibAFL is a modular fuzzing library for building custom fuzzers. Use for advanced fuzzing needs, custom mutators, or non-standard fuzzing targets.
+- `trailofbits-libfuzzer` (Việt: Trail of Bits libfuzzer): Coverage-guided fuzzer built into LLVM for C/C++ projects. Use for fuzzing C/C++ code that can be compiled with Clang.
+- `trailofbits-modern-python` (Việt: Trail of Bits modern python): Configures Python projects with modern tooling (uv, ruff, ty). Use when creating projects, writing standalone scripts, or migrating from pip/Poetry/mypy/black.
+- `trailofbits-ossfuzz` (Việt: Trail of Bits ossfuzz): OSS-Fuzz provides free continuous fuzzing for open source projects. Use when setting up continuous fuzzing infrastructure or enrolling projects.
+- `trailofbits-property-based-testing` (Việt: Trail of Bits thuộc tính based kiểm thử): Provides guidance for property-based testing across multiple languages and smart contracts. Use when writing tests, reviewing code with serialization/validation/parsing patterns, designing features, or when property-based testing would provide stronger coverage than example-based tests.
+- `trailofbits-ruzzy` (Việt: Trail of Bits ruzzy): Ruzzy is a coverage-guided Ruby fuzzer by Trail of Bits. Use for fuzzing pure Ruby code and Ruby C extensions.
+- `trailofbits-sarif-parsing` (Việt: Trail of Bits SARIF parsing): Parses and processes SARIF files from static analysis tools like CodeQL, Semgrep, or other scanners. Triggers on "parse sarif", "read scan results", "aggregate findings", "deduplicate alerts", or "process sarif output". Handles filtering, deduplication, format conversion, and CI/CD integration of SARIF data. Does NOT run scans - use the Semgrep or CodeQL skills for that.
+- `trailofbits-seatbelt-sandboxer` (Việt: Trail of Bits seatbelt sandboxer): Generates minimal macOS Seatbelt sandbox configurations. Use when sandboxing, isolating, or restricting macOS applications with allowlist-based profiles.
+- `trailofbits-second-opinion` (Việt: Trail of Bits second opinion): Runs external LLM code reviews (OpenAI Codex or Google Gemini CLI) on uncommitted changes, branch diffs, or specific commits. Use when the user asks for a second opinion, external review, codex review, gemini review, or mentions /second-opinion.
+- `trailofbits-secure-workflow-guide` (Việt: Trail of Bits secure quy trình guide): Guides through Trail of Bits' 5-step secure development workflow. Runs Slither scans, checks special features (upgradeability/ERC conformance/token integration), generates visual security diagrams, helps document security properties for fuzzing/verification, and reviews manual security areas.
+- `trailofbits-semgrep` (Việt: Trail of Bits Semgrep): Run Semgrep static analysis scan on a codebase using parallel subagents. Supports two scan modes - "run all" (full ruleset coverage) and "important only" (high-confidence security vulnerabilities). Automatically detects and uses Semgrep Pro for cross-file taint analysis when available. Use when asked to scan code for vulnerabilities, run a security audit with Semgrep, find bugs, or perform static analysis. Spawns parallel workers for multi-language codebases.
+- `trailofbits-semgrep-rule-creator` (Việt: Trail of Bits Semgrep rule creator): Creates custom Semgrep rules for detecting security vulnerabilities, bug patterns, and code patterns. Use when writing Semgrep rules or building custom static analysis detections.
+- `trailofbits-semgrep-rule-variant-creator` (Việt: Trail of Bits Semgrep rule biến thể creator): Creates language variants of existing Semgrep rules. Use when porting a Semgrep rule to specified target languages. Takes an existing rule and target languages as input, produces independent rule+test directories for each language.
+- `trailofbits-sharp-edges` (Việt: Trail of Bits sharp edges): Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes. Use when reviewing API designs, configuration schemas, cryptographic library ergonomics, or evaluating whether code follows 'secure by default' and 'pit of success' principles. Triggers: footgun, misuse-resistant, secure defaults, API usability, dangerous configuration.
+- `trailofbits-skill-improver` (Việt: Trail of Bits skill improver): Iteratively reviews and fixes Claude Code skill quality issues until they meet standards. Runs automated fix-review cycles using the skill-reviewer agent. Use to fix skill quality issues, improve skill descriptions, run automated skill review loops, or iteratively refine a skill. Triggers on 'fix my skill', 'improve skill quality', 'skill improvement loop'. NOT for one-time reviews-use /skill-reviewer directly.
+- `trailofbits-solana-vulnerability-scanner` (Việt: Trail of Bits solana vulnerability scanner): Scans Solana programs for 6 critical vulnerabilities including arbitrary CPI, improper PDA validation, missing signer/ownership checks, and sysvar spoofing. Use when auditing Solana/Anchor programs.
+- `trailofbits-spec-to-code-compliance` (Việt: Trail of Bits spec to code compliance): Verifies code implements exactly what documentation specifies for blockchain audits. Use when comparing code against whitepapers, finding gaps between specs and implementation, or performing compliance checks for protocol implementations.
+- `trailofbits-substrate-vulnerability-scanner` (Việt: Trail of Bits substrate vulnerability scanner): Scans Substrate/Polkadot pallets for 7 critical vulnerabilities including arithmetic overflow, panic DoS, incorrect weights, and bad origin checks. Use when auditing Substrate runtimes or FRAME pallets.
+- `trailofbits-supply-chain-risk-auditor` (Việt: Trail of Bits chuỗi cung ứng chuỗi rủi ro kiểm toán): Identifies dependencies at heightened risk of exploitation or takeover. Use when assessing supply chain attack surface, evaluating dependency health, or scoping security engagements.
+- `trailofbits-testing-handbook-generator` (Việt: Trail of Bits kiểm thử handbook tạo sinh): Meta-skill that analyzes the Trail of Bits Testing Handbook (appsec.guide) and generates Claude Code skills for security testing tools and techniques. Use when creating new skills based on handbook content.
+- `trailofbits-token-integration-analyzer` (Việt: Trail of Bits token tích hợp phân tích): Token integration and implementation analyzer based on Trail of Bits' token integration checklist. Analyzes token implementations for ERC20/ERC721 conformity, checks for 20+ weird token patterns, assesses contract composition and owner privileges, performs on-chain scarcity analysis, and evaluates how protocols handle non-standard tokens. Context-aware for both token implementations and token integrations.
+- `trailofbits-ton-vulnerability-scanner` (Việt: Trail of Bits ton vulnerability scanner): Scans TON (The Open Network) smart contracts for 3 critical vulnerabilities including integer-as-boolean misuse, fake Jetton contracts, and forward TON without gas checks. Use when auditing FunC contracts.
+- `trailofbits-variant-analysis` (Việt: Trail of Bits biến thể phân tích): Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants, building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing systematic code audits after finding an initial issue.
+- `trailofbits-wycheproof` (Việt: Trail of Bits wycheproof): Wycheproof provides test vectors for validating cryptographic implementations. Use when testing crypto code for known attacks and edge cases.
+- `trailofbits-yara-rule-authoring` (Việt: Trail of Bits yara rule authoring): Guides authoring of high-quality YARA-X detection rules for malware identification. Use when writing, reviewing, or optimizing YARA rules. Covers naming conventions, string selection, performance optimization, migration from legacy YARA, and false positive reduction. Triggers on: YARA, YARA-X, malware detection, threat hunting, IOC, signature, crx module, dex module.
+- `trailofbits-zeroize-audit` (Việt: Trail of Bits xóa sạch audit): Detects missing zeroization of sensitive data in source code and identifies zeroization removed by compiler optimizations, with assembly-level analysis, and control-flow verification. Use for auditing C/C++/Rust code handling secrets, keys, passwords, or other sensitive data.
