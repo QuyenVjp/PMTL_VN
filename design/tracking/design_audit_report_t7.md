@@ -7,11 +7,13 @@
 
 ## TL;DR
 
-Design tổng thể **rất tốt** — ownership rõ, phase-gating nghiêm túc, không over-engineer. Tuy nhiên có **8 version cần nâng**, **7 nhóm chưa tận dụng hết thư viện/infra**, và **11 vùng logic trùng/lặp** cần consolidate.
+Design tổng thể **rất tốt** — ownership rõ, phase-gating nghiêm túc, không over-engineer. Tuy nhiên báo cáo này chỉ còn giá trị như **review checklist/hypothesis list**. Nhiều claim version/web-check ban đầu đã được xác minh là stale hoặc sai; phần actionable phải đối chiếu với root docs hiện hành sau khi fix.
 
 ---
 
 ## PHẦN 1 — VERSION CHECK & CẦN NÂNG
+
+> **Status sau verify/fix:** Bảng bên dưới là nội dung audit gốc, **không còn authoritative**. Một số dòng đã được sửa ở root docs hoặc bị bác bỏ vì sai thực tế. Không dùng bảng này làm source of truth cho version decisions.
 
 ### 1.1 Các version cũ được pin cứng trong design docs
 

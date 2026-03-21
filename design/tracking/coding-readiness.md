@@ -16,8 +16,8 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
 | UI/UX design | ✅ Sẵn sàng | `design/ui/` có 7 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE, ELDERLY_UX, ADMIN_MODULE_SPECS |
-| Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, i18n, PWA, caching — `baseline/frontend-architecture.md` |
-| Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14 |
+| Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `baseline/frontend-architecture.md` |
+| Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
 | Rate-limit values | ✅ Sẵn sàng | 13 endpoints với exact limits — xem Phần 5 |
@@ -34,7 +34,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Storage lifecycle | ✅ Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `baseline/storage-lifecycle.md` |
 | Cache topology | ✅ Sẵn sàng | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime — `baseline/cache-topology.md` |
 | Secret management | ✅ Sẵn sàng | Rotation procedures per secret, compromise response, .gitignore — `baseline/secret-management.md` |
-| CI/CD gates | ✅ Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback — `baseline/cicd-deploy-gates.md` |
+| CI/CD gates | ✅ Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback, concurrency + least-privilege permissions + cache guidance — `baseline/cicd-deploy-gates.md` |
 | WAF + anti-bot | ✅ Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `baseline/waf-antibot-strategy.md` |
 | Health contract | ✅ Sẵn sàng | Exact check lists per endpoint, failure runbook — `ops/health-contract.md` |
 | Admin module specs | ✅ Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/ui/ADMIN_MODULE_SPECS.md` |

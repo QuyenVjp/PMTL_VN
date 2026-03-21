@@ -88,6 +88,15 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
   - `action`
 - không log password, raw token, secret, raw refresh token
 
+## Prisma safety defaults
+
+- Prisma client nên bật **global `omit`** cho các field nhạy cảm như `passwordHash`, `refreshTokenHash`, `resetTokenHash` nếu model có các field này
+- Query local có thể dùng `omit` thay vì `select` khi mục tiêu là loại một vài field nhạy cảm khỏi payload
+- Bật `strictUndefinedChecks` để chặn query nguy hiểm với `undefined`
+- TypeScript config phải bật `exactOptionalPropertyTypes` để hỗ trợ rule trên ở compile time
+- Khi `strictUndefinedChecks` bật, code phải dùng `Prisma.skip` thay vì truyền `undefined` vào query data/where object
+- Không để mapper/controller tự tin rằng field nhạy cảm đã bị loại nếu Prisma query chưa `omit` hoặc `select` rõ
+
 ## Module anatomy
 
 Mỗi module backend tối thiểu nên có:

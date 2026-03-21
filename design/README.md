@@ -12,6 +12,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
   - schema/migration (lược đồ/di cư dữ liệu) tương ứng
   - runtime artifact (sản phẩm thực thi) tương ứng
 - File khóa sổ chuyện này là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
+- Các rule cho major versions hiện hành đã được rà lại ở mức design vào `2026-03-21`; nếu audit cũ mâu thuẫn, ưu tiên các root docs hiện hành thay vì audit notes.
 
 ## First-launch scope (Phạm vi ra mắt lần đầu)
 

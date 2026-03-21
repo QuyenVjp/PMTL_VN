@@ -100,6 +100,15 @@ Env vars:
 
 ## Layer 2: Next.js ISR / Route Handler Cache
 
+### Next.js 16 Cache Components rule
+
+- `apps/web` bật `cacheComponents: true`
+- Public deterministic route segments ưu tiên `use cache`
+- Cached loaders phải gắn `cacheTag()` ở đúng aggregate/tag boundary
+- `revalidateTag()` là cơ chế chính cho invalidation theo domain event; `revalidatePath()` chỉ dùng khi route-specific và không có tag phù hợp
+- Không đưa `cookies()` / `headers()` trực tiếp vào cached scope; đọc ngoài rồi truyền vào argument
+- `after()` chỉ dùng cho post-response side effects không-authoritative
+
 ### ISR strategy per page type
 
 | Page | Revalidation | Strategy |
@@ -134,9 +143,28 @@ export async function POST(req: Request) {
 - `calendar-events` — calendar pages
 - `homepage` — homepage only
 
+### Invalidation chain per event
+
+| Event | Next.js | Cloudflare | TanStack Query | Valkey Phase 2+ |
+|---|---|---|---|---|
+| `content.post.published` | `revalidateTag('posts')`, `revalidateTag('post:{publicId}')`, `revalidateTag('homepage')` khi có featured slot | purge post detail URL + affected list URLs nếu public | không broadcast sang browser; client tự thấy data mới khi refetch | `del cache:content:post:{publicId}` + related list keys |
+| `content.post.unpublished` | same tags as publish | purge public post/detail/list URLs | invalidate public search/list queries nếu user đang ở client island | delete same keys |
+| `calendar.event.published` | `revalidateTag('calendar-events')`, path detail nếu có slug | purge public calendar URLs | invalidate advisory/calendar queries ở member surfaces | delete advisory/date keys |
+| `feature.flag.updated` | không revalidate public ISR mặc định | none | invalidate `['feature-flags']` ở web/admin | delete `cache:feature-flags` |
+| `search.reindex.completed` | none | none | invalidate client search status/admin ops queries | purge `cache:search:*` nếu active |
+
+**Rule**: invalidation chain phải chạy từ canonical event taxonomy trong `tracking/outbox-event-taxonomy.md`; không tự nghĩ thêm event string ở từng layer cache.
+
 ---
 
 ## Layer 3: TanStack Query (browser cache)
+
+### Query option discipline
+
+- Mọi query phải đi qua query key factory + `queryOptions()` / `infiniteQueryOptions()`
+- Conditional query dùng `skipToken` nếu không cần `refetch()` thủ công
+- Feed/search/list dài dùng `useInfiniteQuery()` với cursor contract khi UX là infinite scroll / load-more
+- Suspense mode chỉ bật ở component có fallback UI được thiết kế rõ
 
 ### staleTime policy per query type
 

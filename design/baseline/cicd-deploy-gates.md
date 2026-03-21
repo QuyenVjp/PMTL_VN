@@ -31,6 +31,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 ```
 
 ### Jobs
@@ -41,12 +45,21 @@ steps:
   - uses: actions/checkout@v4
   - uses: pnpm/action-setup@v5
   - uses: actions/setup-node@v4
-    with: { node-version: '24.x' }
+    with:
+      node-version: '24.x'
+      cache: 'pnpm'
   - run: pnpm install --frozen-lockfile
   - run: pnpm lint
   - run: pnpm typecheck
 ```
 **Gate**: Fail → block merge, block deploy.
+
+**Workflow permissions**:
+```yaml
+permissions:
+  contents: read
+```
+Chỉ nâng quyền ở job nào thật sự cần deploy/comment.
 
 #### Job 2: `unit-and-integration-tests`
 ```yaml
@@ -80,6 +93,7 @@ steps:
 **Coverage target**: ≥ 70% statement coverage (see `baseline/testing-strategy.md`)
 
 **Version note**: examples in this file target current stable/LTS majors as of `2026-03-21` to reduce design drift.
+**Cache note**: dependency cache không được chứa secret-bearing files; chỉ cache package-manager artifacts theo GitHub guidance.
 
 #### Job 3: `build-check`
 ```yaml

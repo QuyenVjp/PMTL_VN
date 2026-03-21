@@ -73,6 +73,8 @@ Ref: `tracking/outbox-event-taxonomy.md` cho taxonomy đầy đủ.
 | Brevo SMTP | Email delivery (SMTP-first, Brevo provider) | Phase 1 |
 | Web Push (VAPID) | Push notifications — W3C standard, no Firebase SDK | Phase 2+ |
 | Cloudflare (free) | DNS + CDN + edge SSL | Phase 1 |
+| Cloudflare Web Analytics | Privacy-first web analytics, available on all plans | Optional Phase 1 |
+| Cloudflare Image Transform | Bitmap image resize/format optimization at edge; not for SVG resize | Phase 2+ |
 | Off-site backup | Snapshot ngoài VPS | Phase 1 |
 
 ---

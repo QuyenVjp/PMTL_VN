@@ -48,6 +48,15 @@ Client Component (khi cần interactivity)
   → Dùng cho: practice sheets, forms, real-time interactions
 ```
 
+### Next.js 16 rules cần tận dụng
+
+- Bật `cacheComponents: true` trong `next.config.ts` cho `apps/web`
+- Public deterministic reads phải ưu tiên `use cache` + `cacheTag()` thay vì chỉ dựa vào `revalidate` số giây
+- Runtime values như `cookies()` và `headers()` phải đọc **ngoài** cached scope rồi truyền vào như argument
+- `after()` chỉ dùng cho side effects không-authoritative như logging, analytics, soft counters; **không** dùng cho canonical write, auth, audit, rate-limit, hay security enforcement
+- `use cache: remote` không bật ở phase 1; chỉ xem xét khi default runtime cache không đủ và đã có measured pain / cost justification
+- `use cache: private` không dùng làm mặc định; chỉ dùng khi có compliance/runtime requirement thật sự không thể refactor
+
 ### Proxy boundary — Bug 8 fix (CRITICAL)
 
 **Nguyên tắc bất biến**: Browser KHÔNG BAO GIỜ gọi `apps/api` trực tiếp.
@@ -85,7 +94,7 @@ Browser → apps/web (Next.js)
 ```
 Server state (canonical):
   → TanStack Query cache cho reads
-  → Server Actions hoặc mutations qua proxy cho writes
+  → Writes vẫn đi qua apps/api authority; web chỉ dùng Server Actions như transport helper hoặc revalidation helper
   → Invalidation sau mutation
 
 Client state (UI only):
@@ -93,6 +102,29 @@ Client state (UI only):
   → Không giữ business data trong client state
   → Không dùng Redux, MobX, hoặc global store nặng
 ```
+
+### Server Actions policy
+
+- `apps/api` vẫn là backend authority; Server Actions **không** được giữ business logic chuẩn gốc
+- Được phép dùng Server Actions cho:
+  - form transport helper ở web server runtime
+  - gọi internal `apps/api`
+  - trigger `revalidateTag()` / `revalidatePath()`
+  - UX glue code không làm thay đổi domain ownership
+- Không dùng Server Actions để bypass:
+  - auth policy
+  - audit append
+  - rate-limit
+  - validation authority ở `apps/api`
+
+### TanStack Query v5 rules cần tận dụng
+
+- Dùng `queryOptions()` / `infiniteQueryOptions()` để co-locate `queryKey`, `queryFn`, `staleTime`, và type inference
+- Dùng `useSuspenseQuery()` / `useSuspenseInfiniteQuery()` chỉ ở các client islands đã có `Suspense` boundary rõ; không ép toàn app sang suspense nếu UX loading chưa được thiết kế
+- Dùng `skipToken` cho conditional query kiểu TypeScript-safe; nếu cần `refetch()` thủ công thì giữ `enabled: false`
+- List/search/feed phải ưu tiên `useInfiniteQuery()` với cursor contract; không default offset pagination cho community/search nếu route có thể scroll dài
+- `queryFn` phải tôn trọng `AbortSignal` để cancellation hoạt động đúng khi route đổi nhanh
+- Mutation invalidation phải đi qua query key factory dùng chung; không hardcode query key string rải rác
 
 ### Route structure (Next.js App Router)
 
@@ -206,6 +238,8 @@ src/
 - Nếu cần refresh flow, refresh token vẫn ở `HttpOnly` cookie và rotation do `apps/api` quản lý
 - **Admin KHÔNG bypass API contracts** — mọi action đều qua REST endpoints
 - Admin routes phải có guard riêng (idle timeout 30 phút, max session 12 giờ)
+- Admin query layer cũng phải dùng `queryOptions()` / `mutationOptions()` để gom query key và tránh drift giữa table view / detail view / edit view
+- Admin lists có khả năng dài (`users`, `reports`, `community posts`, `search ops`) nên ưu tiên cursor-capable contract ngay từ đầu, kể cả UI tạm render kiểu paginated table
 
 ### Command palette (⌘K)
 
