@@ -230,11 +230,11 @@ Validation bắt buộc:
 
 - `GET /admin/content/life-release/overview`
 - `POST /admin/content/life-release/guides`
-- `PATCH /admin/content/life-release/guides/:id`
+- `PATCH /admin/content/life-release/guides/:publicId`
 - `POST /admin/content/life-release/ritual-variants`
-- `PATCH /admin/content/life-release/ritual-variants/:id`
+- `PATCH /admin/content/life-release/ritual-variants/:publicId`
 - `POST /admin/content/life-release/faq`
-- `PATCH /admin/content/life-release/faq/:id`
+- `PATCH /admin/content/life-release/faq/:publicId`
 - `POST /admin/content/life-release/publish`
 
 ## 8.3. Member journal bridge

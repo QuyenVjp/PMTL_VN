@@ -14,9 +14,9 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 |---|---|---|
 | Platform | `baseline/platform-modules.md` | `feature_flags`, `audit_logs`, `rate_limit_records` |
 | 01-identity | `01-identity/schema.dbml` | `users`, `sessions` |
-| 02-content | `02-content/schema.dbml` | `posts`, `media_assets`, `categories`, `tags`, `hub_pages`, `beginner_guides`, `downloads`, `chant_items`, `chant_plans`, `sutras`, `sutra_volumes`, `sutra_chapters`, `sutra_glossary` |
+| 02-content | `02-content/schema.dbml` | `posts`, `media_assets`, `categories`, `tags`, `hub_pages`, `hub_page_blocks`, `beginner_guides`, `downloads`, `media_collections`, `media_collection_items`, `chant_items`, `chant_plans`, `chant_plan_items`, `sutras`, `sutra_volumes`, `sutra_chapters`, `sutra_glossary` |
 | 03-community | `03-community/schema.dbml` | `post_comments`, `community_posts`, `community_comments`, `guestbook_entries` |
-| 04-engagement | `04-engagement/schema.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `practice_logs`, `practice_sheets`, `ngoi_nha_nho_sheets` |
+| 04-engagement | `04-engagement/schema.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `chant_preference_optional_items`, `chant_preference_targets`, `chant_preference_intentions`, `practice_logs`, `practice_log_item_states`, `practice_sheets`, `practice_sheet_items`, `ngoi_nha_nho_sheets`, `ngoi_nha_nho_sheet_entries`, `ngoi_nha_nho_sheet_audit_snapshots` |
 | 05-moderation | `05-moderation/schema.dbml` | `moderation_reports` |
 | 06-search | `06-search/schema.dbml` | `search_index_metadata` (optional) |
 | 07-calendar | `07-calendar/schema.dbml` | `events`, `event_agenda_items`, `event_speakers`, `event_ctas`, `event_gallery_media`, `event_files`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
@@ -38,10 +38,9 @@ enum Role {
   super_admin
 }
 
-enum PostStatus {
+enum ContentPublicationStatus {
   draft
   published
-  unpublished
 }
 
 enum MediaStatus {
@@ -90,10 +89,62 @@ enum ProvenanceType {
   annotation
 }
 
-enum NgoiNhaNhoStatus {
+enum PracticeSheetType {
+  daily_practice
+  event_preparation
+  vow_support
+}
+
+enum PracticeSheetStatus {
+  draft
   in_progress
   completed
+  archived
+}
+
+enum NgoiNhaNhoSheetStatus {
+  draft
+  in_progress
+  completed
+  self_stored
   offered
+}
+
+enum NgoiNhaNhoSheetType {
+  standard
+  self_store
+  custom
+}
+
+enum NgoiNhaNhoRecipientType {
+  living_person
+  deceased
+  fetal
+  self_accumulate
+  household_member
+  karma_resolution
+  assist_other
+}
+
+enum NgoiNhaNhoBurningMode {
+  with_altar
+  without_altar
+  not_set
+}
+
+enum NgoiNhaNhoPreparationState {
+  draft_preparation
+  guidance_acknowledged
+  ready_to_recite
+  reciting
+  ready_to_burn
+}
+
+enum NgoiNhaNhoCounterType {
+  great_compassion
+  heart_sutra
+  rebirth_mantra
+  seven_buddhas
 }
 ```
 
@@ -104,7 +155,9 @@ enum NgoiNhaNhoStatus {
 ```prisma
 // Mọi table phải có:
 id          Int       @id @default(autoincrement())
-publicId    String    @unique @default(uuid())  // exposed ra API, never expose `id`
+publicId    String    @unique @default(uuid()) @db.VarChar(36)  // exposed ra API, never expose `id`
+// Lưu ý: một số module schema.dbml dùng varchar (unbounded), một số dùng varchar(32).
+// Khi merge sang Prisma, chuẩn hóa tất cả publicId thành VarChar(36) cho UUID format.
 createdAt   DateTime  @default(now())
 updatedAt   DateTime  @updatedAt
 
@@ -132,24 +185,43 @@ users (root — no FK dependencies)
   ├── sutra_bookmarks
   ├── sutra_reading_progress
   ├── chant_preferences
-  ├── practice_logs
-  ├── practice_sheets
-  ├── ngoi_nha_nho_sheets
+  ├── practice_logs → practice_log_item_states
+  ├── practice_sheets → practice_sheet_items
+  ├── ngoi_nha_nho_sheets → ngoi_nha_nho_sheet_entries, ngoi_nha_nho_sheet_audit_snapshots
+  ├── chant_preference_optional_items
+  ├── chant_preference_targets
+  ├── chant_preference_intentions
   ├── moderation_reports
   ├── push_subscriptions
   ├── vows
   ├── life_release_journal
   └── offline_sync_states
 
-posts (depends on: users, categories)
+posts (depends on: users, categories, media_assets)
   ├── post_comments
+  ├── post_tags → tags
+  ├── post_related_posts
+  ├── post_gallery_media → media_assets
   └── (search index source)
 
 categories / tags (standalone lookup tables)
 
+hub_pages → media_assets
+  ├── hub_page_blocks
+  └── hub_page_curated_posts → posts
+
+beginner_guides
+  └── beginner_guide_media → media_assets
+
+downloads → media_assets
+
+media_collections → media_assets
+  └── media_collection_items → media_assets
+
 sutras → sutra_volumes → sutra_chapters → sutra_glossary
 
-chant_items → chant_plans
+chant_items → chant_item_preview_media, chant_item_recommended_presets, chant_item_time_rules
+chant_plans → chant_plan_items → chant_items
 
 events (standalone)
   ├── event_agenda_items
@@ -185,6 +257,19 @@ Ref: `coding-readiness.md` Phần 6 cho chi tiết. Summary:
 11. Wisdom QA (authority profiles, entries, offline bundles)
 12. Contact (contact info, volunteers)
 ```
+
+---
+
+## Reference table stubs (quan trọng khi merge)
+
+> Các table `users` và `media_assets` xuất hiện trong nhiều file `schema.dbml` (01-identity, 02-content, 04-engagement, 07-calendar...).
+> Đây là **reference stubs** chỉ chứa `id` + `public_id` để DBML visualizer render được FK arrows.
+> Khi merge sang Prisma, chỉ lấy **1 bản canonical** từ module owner:
+> - `users` → `01-identity/schema.dbml`
+> - `media_assets` → `02-content/schema.dbml`
+> - `sutras`, `sutra_chapters`, `chant_items`, `chant_plans` → `02-content/schema.dbml`
+>
+> Các module khác chỉ tạo `@relation` tới bản canonical, không duplicate model.
 
 ---
 

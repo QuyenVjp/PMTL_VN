@@ -9,6 +9,12 @@ Mục tiêu:
 - chặn việc quên route khi scaffold `NestJS`
 - giúp web/admin biết owner module nào cho từng group route
 
+## URL prefix convention
+
+> Routes trong file này **không có** prefix `/api/` — chúng là controller-level paths trong NestJS.
+> Khi deploy, global prefix `/api` được thêm tự động → `/content/posts` trở thành `/api/content/posts`.
+> Các file `contracts.md` của từng module dùng full path `/api/...` vì mô tả từ góc nhìn consumer.
+
 ## Route group principles
 
 - public read routes ưu tiên `GET`
@@ -37,8 +43,8 @@ Mục tiêu:
 | `GET` | `/content/posts` | `content` | public |
 | `GET` | `/content/posts/:publicIdOrSlug` | `content` | public |
 | `POST` | `/content/posts` | `content` | editor+ |
-| `PATCH` | `/content/posts/:id` | `content` | editor+ |
-| `POST` | `/content/posts/:id/publish` | `content` | editor+ |
+| `PATCH` | `/content/posts/:publicId` | `content` | editor+ |
+| `POST` | `/content/posts/:publicId/publish` | `content` | editor+ |
 | `GET` | `/content/guides` | `content` | public |
 | `GET` | `/content/downloads` | `content` | public |
 | `GET` | `/content/sutras` | `content` | public |
@@ -70,33 +76,33 @@ Mục tiêu:
 | `GET` | `/content/media-library/tags` | `content` | public |
 | `GET` | `/admin/content/little-house/overview` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/guides` | `content` | editor+ |
-| `PATCH` | `/admin/content/little-house/guides/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/guides/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/case-variants` | `content` | editor+ |
-| `PATCH` | `/admin/content/little-house/case-variants/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/case-variants/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/faq` | `content` | editor+ |
-| `PATCH` | `/admin/content/little-house/faq/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/little-house/faq/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/publish` | `content` | editor+ |
 | `GET` | `/admin/content/daily-practice/overview` | `content` | editor+ |
 | `POST` | `/admin/content/daily-practice/guides` | `content` | editor+ |
-| `PATCH` | `/admin/content/daily-practice/guides/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/guides/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/daily-practice/scenario-presets` | `content` | editor+ |
-| `PATCH` | `/admin/content/daily-practice/scenario-presets/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/scenario-presets/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/daily-practice/faq` | `content` | editor+ |
-| `PATCH` | `/admin/content/daily-practice/faq/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/daily-practice/faq/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/daily-practice/publish` | `content` | editor+ |
 | `GET` | `/admin/content/life-release/overview` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/guides` | `content` | editor+ |
-| `PATCH` | `/admin/content/life-release/guides/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/guides/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/ritual-variants` | `content` | editor+ |
-| `PATCH` | `/admin/content/life-release/ritual-variants/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/ritual-variants/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/faq` | `content` | editor+ |
-| `PATCH` | `/admin/content/life-release/faq/:id` | `content` | editor+ |
+| `PATCH` | `/admin/content/life-release/faq/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/publish` | `content` | editor+ |
 | `GET` | `/admin/content/media-library/overview` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/collections` | `content` | editor+ |
-| `PATCH` | `/admin/content/media-library/collections/:id` | `content` | editor+ |
-| `POST` | `/admin/content/media-library/collections/:id/items` | `content` | editor+ |
-| `PATCH` | `/admin/content/media-library/collections/:id/items/:itemId` | `content` | editor+ |
+| `PATCH` | `/admin/content/media-library/collections/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/media-library/collections/:publicId/items` | `content` | editor+ |
+| `PATCH` | `/admin/content/media-library/collections/:publicId/items/:itemPublicId` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/featured` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
@@ -132,6 +138,12 @@ Mục tiêu:
 | `POST` | `/engagement/practice-sheets/:publicId/complete` | `engagement` | member+ |
 | `GET` | `/engagement/ngoi-nha-nho-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets` | `engagement` | member+ |
+| `GET` | `/engagement/ngoi-nha-nho-sheets/:publicId` | `engagement` | member+ |
+| `PATCH` | `/engagement/ngoi-nha-nho-sheets/:publicId` | `engagement` | member+ |
+| `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/entries` | `engagement` | member+ |
+| `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/complete` | `engagement` | member+ |
+| `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-self-stored` | `engagement` | member+ |
+| `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-offered` | `engagement` | member+ |
 
 ## Moderation
 
@@ -162,17 +174,17 @@ Mục tiêu:
 | `GET` | `/calendar/personal-practice` | `calendar` | member+ |
 | `GET` | `/calendar/advisory/daily` | `calendar` | member+ |
 | `POST` | `/admin/calendar/events` | `calendar` | admin+ |
-| `PATCH` | `/admin/calendar/events/:id` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/agenda-items` | `calendar` | admin+ |
-| `PATCH` | `/admin/calendar/events/:id/agenda-items/:agendaItemId` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/agenda-items/reorder` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/speakers` | `calendar` | admin+ |
-| `PATCH` | `/admin/calendar/events/:id/speakers/:speakerId` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/ctas` | `calendar` | admin+ |
-| `PATCH` | `/admin/calendar/events/:id/ctas/:ctaId` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/reschedule` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/cancel` | `calendar` | admin+ |
-| `POST` | `/admin/calendar/events/:id/publish` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:publicId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/agenda-items` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:publicId/agenda-items/:agendaItemPublicId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/agenda-items/reorder` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/speakers` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:publicId/speakers/:speakerPublicId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/ctas` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/events/:publicId/ctas/:ctaPublicId` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/reschedule` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/cancel` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/events/:publicId/publish` | `calendar` | admin+ |
 
 ## Notification
 
@@ -228,8 +240,8 @@ Mục tiêu:
 | `PATCH` | `/admin/contact-info` | `contact` | super-admin |
 | `GET` | `/admin/volunteers` | `contact` | admin+ |
 | `POST` | `/admin/volunteers` | `contact` | admin+ |
-| `PATCH` | `/admin/volunteers/:id` | `contact` | admin+ |
-| `DELETE` | `/admin/volunteers/:id` | `contact` | admin+ |
+| `PATCH` | `/admin/volunteers/:publicId` | `contact` | admin+ |
+| `DELETE` | `/admin/volunteers/:publicId` | `contact` | admin+ |
 | `PATCH` | `/admin/volunteers/sort` | `contact` | admin+ |
 
 ## Platform / Control Plane

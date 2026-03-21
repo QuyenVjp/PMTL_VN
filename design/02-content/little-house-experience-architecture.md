@@ -359,11 +359,11 @@ Admin không cần route owner mới, nhưng nên có surface editorial rõ:
 
 - `GET /admin/content/little-house/overview`
 - `POST /admin/content/little-house/guides`
-- `PATCH /admin/content/little-house/guides/:id`
+- `PATCH /admin/content/little-house/guides/:publicId`
 - `POST /admin/content/little-house/case-variants`
-- `PATCH /admin/content/little-house/case-variants/:id`
+- `PATCH /admin/content/little-house/case-variants/:publicId`
 - `POST /admin/content/little-house/faq`
-- `PATCH /admin/content/little-house/faq/:id`
+- `PATCH /admin/content/little-house/faq/:publicId`
 - `POST /admin/content/little-house/assets`
 - `POST /admin/content/little-house/publish`
 

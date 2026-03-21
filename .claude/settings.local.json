@@ -9,7 +9,18 @@
       "Bash(gh api:*)",
       "WebFetch(domain:phapmontamlinh.vn)",
       "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_take_screenshot"
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(curl -s -L --max-time 30 https://phapmontamlinh.vn/)",
+      "Bash(curl -s -L --max-time 30 https://phapmontamlinh.vn/ngoi-nha-nho/)",
+      "Bash(curl -s -L --max-time 30 https://phapmontamlinh.vn/kinh-bai-tap/)",
+      "Bash(curl -s -L --max-time 30 https://phapmontamlinh.vn/tra-cuu/)",
+      "Bash(curl -s -L --max-time 30 https://phapmontamlinh.vn/bach-thoai-phat-phap/)",
+      "WebSearch",
+      "WebFetch(domain:blog.xinlingfamen.info)",
+      "WebFetch(domain:orientalradio.com.sg)",
+      "WebFetch(domain:xinlingfamen.info)",
+      "WebFetch(domain:www.guanyincitta.info)",
+      "Bash(grep:*)"
     ]
   }
 }

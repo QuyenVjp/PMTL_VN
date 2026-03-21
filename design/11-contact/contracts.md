@@ -18,8 +18,8 @@
 - `PATCH /api/admin/contact-info` — cập nhật thông tin liên hệ chung
 - `GET /api/admin/volunteers` — danh sách toàn bộ PSV (bao gồm inactive)
 - `POST /api/admin/volunteers` — tạo PSV mới
-- `PATCH /api/admin/volunteers/:id` — sửa PSV
-- `DELETE /api/admin/volunteers/:id` — xóa PSV (soft delete)
+- `PATCH /api/admin/volunteers/:publicId` — sửa PSV
+- `DELETE /api/admin/volunteers/:publicId` — xóa PSV (soft delete)
 - `PATCH /api/admin/volunteers/sort` — cập nhật thứ tự sắp xếp (batch)
 
 ## Permission baseline

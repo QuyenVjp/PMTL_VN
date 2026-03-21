@@ -20,7 +20,7 @@ Unified index gồm **8 document types** từ 2 module source:
 | `chant_item` | Content | `chantItems` |
 | `sutra` | Content | `sutras` |
 | `little_house_guide` | Content | `beginnerGuides` (sub-type: little_house) |
-| `little_house_faq` | Content | `faqEntries` (little_house context) |
+| `little_house_faq` | Content | `beginnerGuides` (guide_type='faq', content_group='little_house') |
 | `wisdom_entry` | Wisdom-QA | `wisdomEntries` |
 | `qa_entry` | Wisdom-QA | `qaEntries` |
 
@@ -147,17 +147,21 @@ const SearchDocumentSchema = z.object({
 
 ---
 
-### `little_house_faq` (từ Content — FAQ entries trong Little House context)
+### `little_house_faq` (từ Content — beginnerGuides với guide_type='faq', content_group='little_house')
+
+> **Lưu ý nguồn**: Phase 1 dùng `beginnerGuides` với discriminator `content_group = 'little_house'` và `guide_type = 'faq'`.
+> Nếu Phase 2 tách `faq_entries` thành bảng riêng, cập nhật mapping tương ứng.
 
 | Search field | Source field | Ghi chú |
 |---|---|---|
-| `title` | `faqEntries.question` | câu hỏi là tiêu đề để search match |
-| `body` | `faqEntries.answer` | |
-| `excerpt` | `faqEntries.answer` — first 200 chars | |
-| `tags` | `faqEntries.tags[].name` + `['ngoi-nha-nho', 'faq']` | |
+| `title` | `beginnerGuides.title` | câu hỏi FAQ là tiêu đề để search match |
+| `body` | `beginnerGuides.content` (extracted plain text) | |
+| `excerpt` | `beginnerGuides.description` hoặc content first 200 chars | |
+| `tags` | `beginnerGuides.tags` + `['ngoi-nha-nho', 'faq']` | |
 | `categories` | `['ngoi-nha-nho']` | |
+| `contentGroup` | `beginnerGuides.content_group` | discriminator cho filter |
 | `language` | `'vi'` | hardcode |
-| `publishedAt` | `faqEntries.publishedAt` | |
+| `publishedAt` | `beginnerGuides.created_at` (hoặc `published_at` nếu có) | |
 
 > FAQ entries trong Little House context nên xuất hiện riêng biệt trong search filter tab "Hỏi đáp Ngôi Nhà Nhỏ".
 > Không cần source attribution vì FAQ là nội dung editorial của PMTL_VN.

@@ -12,8 +12,8 @@ Mục tiêu là tránh tình trạng mỗi phần rơi rác ở một module mà
 - audio/video hỗ trợ đọc đúng
 
 Owner modules:
-- `01-content`
-- `03-engagement`
+- `02-content`
+- `04-engagement`
 
 ### 2. Phát nguyện
 - tạo nguyện
@@ -22,7 +22,7 @@ Owner modules:
 - nhắc hạn và milestone
 
 owner module (module sở hữu):
-- `08-vows-merit`
+- `09-vows-merit`
 
 ### 3. Phóng sanh
 - sổ tay phóng sanh
@@ -30,9 +30,9 @@ owner module (module sở hữu):
 - gắn với ngày tu học quan trọng
 
 Owner modules:
-- `08-vows-merit`
-- `01-content`
-- `06-calendar`
+- `09-vows-merit`
+- `02-content`
+- `07-calendar`
 
 ### 4. Bạch thoại Phật pháp
 - đọc
@@ -41,8 +41,8 @@ Owner modules:
 - học theo chủ đề
 
 Owner modules:
-- `09-wisdom-qa`
-- `01-content`
+- `10-wisdom-qa`
+- `02-content`
 
 ### 5. Hỏi đáp / khai thị / tra cứu
 - `Huyền học vấn đáp`
@@ -51,8 +51,8 @@ Owner modules:
 - retrieval theo vấn đề
 
 Owner modules:
-- `09-wisdom-qa`
-- `05-search`
+- `10-wisdom-qa`
+- `06-search`
 
 ## Những gì app nên hỗ trợ
 
@@ -73,14 +73,14 @@ Owner modules:
 
 | Pháp bảo | Module owner chính | Module phụ trợ |
 |---|---|---|
-| Niệm kinh | `03-engagement` | `01-content`, `07-notification` |
-| Phát nguyện | `08-vows-merit` | `06-calendar`, `07-notification` |
-| Phóng sanh | `08-vows-merit` | `01-content`, `06-calendar`, `07-notification`, `02-community` |
-| Bạch thoại Phật pháp | `09-wisdom-qa` | `01-content`, `05-search` |
-| Hỏi đáp / khai thị | `09-wisdom-qa` | `05-search`, `01-content` |
+| Niệm kinh | `02-content` (editorial), `04-engagement` (user-state) | `08-notification` |
+| Phát nguyện | `09-vows-merit` | `07-calendar`, `08-notification` |
+| Phóng sanh | `09-vows-merit` | `02-content`, `07-calendar`, `08-notification`, `03-community` |
+| Bạch thoại Phật pháp | `10-wisdom-qa` | `02-content`, `06-search` |
+| Hỏi đáp / khai thị | `10-wisdom-qa` | `06-search`, `02-content` |
 
 ## Notes for AI/codegen
 
 - Nếu một feature mới không map được vào bảng trên, phải xem lại owner module (module sở hữu) trước khi code.
-- Không để `02-community` nuốt mất các self-owned thực hành cốt lõi.
+- Không để `03-community` nuốt mất các self-owned thực hành cốt lõi.
 

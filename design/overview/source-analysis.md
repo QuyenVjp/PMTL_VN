@@ -29,58 +29,58 @@ Mục tiêu:
 
 Owner:
 
-- `01-content`
+- `02-content`
 
 ### 2. Thư viện trí huệ chính thống
 
 Owner:
 
-- `09-wisdom-qa`
-- `01-content` chỉ giữ hub/reference bổ trợ
+- `10-wisdom-qa`
+- `02-content` chỉ giữ hub/reference bổ trợ
 
 ### 3. Hỗ trợ tu học thực tế hằng ngày
 
 Owner:
 
-- `03-engagement`
-- đọc reference từ `01-content`
+- `04-engagement`
+- đọc reference từ `02-content`
 
 ### 4. Nguyện lực và công đức
 
 Owner:
 
-- `08-vows-merit`
+- `09-vows-merit`
 
 ### 5. Lịch tu học cá nhân
 
 Owner:
 
-- `06-calendar`
+- `07-calendar`
 
 ### 6. Nghe và xem để tu học
 
 Owner:
 
-- `09-wisdom-qa`
+- `10-wisdom-qa`
 
 ### 7. Thông báo và tài nguyên chính thức
 
 Owner:
 
-- `01-content`
-- `07-notification` chỉ phụ trách delivery
+- `02-content`
+- `08-notification` chỉ phụ trách delivery
 
 ### 8. Cộng đồng và chia sẻ linh nghiệm
 
 Owner:
 
-- `02-community`
+- `03-community`
 
 ### 9. Search hợp nhất
 
 Owner:
 
-- `05-search`
+- `06-search`
 
 ## What should not become the product center (Những gì không được thành trung tâm sản phẩm)
 

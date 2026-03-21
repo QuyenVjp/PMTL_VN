@@ -254,14 +254,14 @@ Tabs đề xuất:
 ## Admin write
 
 - `POST /admin/calendar/events`
-- `PATCH /admin/calendar/events/:id`
-- `POST /admin/calendar/events/:id/agenda-items`
-- `PATCH /admin/calendar/events/:id/agenda-items/:agendaItemId`
-- `POST /admin/calendar/events/:id/speakers`
-- `PATCH /admin/calendar/events/:id/speakers/:speakerId`
-- `POST /admin/calendar/events/:id/ctas`
-- `PATCH /admin/calendar/events/:id/ctas/:ctaId`
-- `POST /admin/calendar/events/:id/publish`
+- `PATCH /admin/calendar/events/:publicId`
+- `POST /admin/calendar/events/:publicId/agenda-items`
+- `PATCH /admin/calendar/events/:publicId/agenda-items/:agendaItemPublicId`
+- `POST /admin/calendar/events/:publicId/speakers`
+- `PATCH /admin/calendar/events/:publicId/speakers/:speakerPublicId`
+- `POST /admin/calendar/events/:publicId/ctas`
+- `PATCH /admin/calendar/events/:publicId/ctas/:ctaPublicId`
+- `POST /admin/calendar/events/:publicId/publish`
 
 # 8. Reminder / notification interplay
 

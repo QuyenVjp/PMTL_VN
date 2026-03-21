@@ -345,11 +345,11 @@ Quy tắc:
 
 - `GET /admin/content/daily-practice/overview`
 - `POST /admin/content/daily-practice/guides`
-- `PATCH /admin/content/daily-practice/guides/:id`
+- `PATCH /admin/content/daily-practice/guides/:publicId`
 - `POST /admin/content/daily-practice/scenario-presets`
-- `PATCH /admin/content/daily-practice/scenario-presets/:id`
+- `PATCH /admin/content/daily-practice/scenario-presets/:publicId`
 - `POST /admin/content/daily-practice/faq`
-- `PATCH /admin/content/daily-practice/faq/:id`
+- `PATCH /admin/content/daily-practice/faq/:publicId`
 - `POST /admin/content/daily-practice/publish`
 
 # 10. Admin FE đề xuất

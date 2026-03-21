@@ -173,7 +173,7 @@ Nếu app mất mạng giữa chừng → trải nghiệm hỏng.
 
 - Dùng Next.js PWA (next-pwa hoặc Workbox trực tiếp)
 - Service Worker cache: Cache-First cho static guides, Stale-While-Revalidate cho content
-- Tracker entries: IndexedDB local → sync với `POST /engagement/ngoi-nha-nho-sheets/:id/entries` khi online
+- Tracker entries: IndexedDB local → sync với `POST /engagement/ngoi-nha-nho-sheets/:publicId/entries` khi online
 - `clientEventId` đã có trong schema → dùng cho idempotency khi sync
 - Hiển thị offline indicator banner nhỏ khi user đang offline
 

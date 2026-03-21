@@ -20,6 +20,12 @@
 - `PATCH /api/practice-sheets/:publicId`
 - `POST /api/practice-sheets/:publicId/complete`
 - `GET/POST /api/ngoi-nha-nho/sheets`
+- `GET /api/ngoi-nha-nho/sheets/:publicId`
+- `PATCH /api/ngoi-nha-nho/sheets/:publicId`
+- `POST /api/ngoi-nha-nho/sheets/:publicId/entries`
+- `POST /api/ngoi-nha-nho/sheets/:publicId/complete`
+- `POST /api/ngoi-nha-nho/sheets/:publicId/mark-self-stored`
+- `POST /api/ngoi-nha-nho/sheets/:publicId/mark-offered`
 
 ## Auth & permissions (Xác thực & quyền hạn)
 

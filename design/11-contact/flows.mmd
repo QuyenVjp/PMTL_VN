@@ -16,7 +16,7 @@ flowchart TD
         F3B --> F3C["DataTable: tên, vai trò, Zalo, active, sort"]
         F3C --> F3D{"Thao tác"}
         F3D -->|"Tạo"| F3E["POST /api/admin/volunteers + validate"]
-        F3D -->|"Sửa"| F3F["PATCH /api/admin/volunteers/:id"]
-        F3D -->|"Xóa"| F3G["DELETE /api/admin/volunteers/:id (soft)"]
+        F3D -->|"Sửa"| F3F["PATCH /api/admin/volunteers/:publicId"]
+        F3D -->|"Xóa"| F3G["DELETE /api/admin/volunteers/:publicId (soft)"]
         F3D -->|"Sắp xếp"| F3H["PATCH /api/admin/volunteers/sort (batch)"]
     end

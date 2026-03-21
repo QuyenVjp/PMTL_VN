@@ -100,11 +100,11 @@ Ghi chú:
 ### Little House editorial workspace
 - `GET /api/admin/content/little-house/overview`
 - `POST /api/admin/content/little-house/guides`
-- `PATCH /api/admin/content/little-house/guides/:id`
+- `PATCH /api/admin/content/little-house/guides/:publicId`
 - `POST /api/admin/content/little-house/case-variants`
-- `PATCH /api/admin/content/little-house/case-variants/:id`
+- `PATCH /api/admin/content/little-house/case-variants/:publicId`
 - `POST /api/admin/content/little-house/faq`
-- `PATCH /api/admin/content/little-house/faq/:id`
+- `PATCH /api/admin/content/little-house/faq/:publicId`
 - `POST /api/admin/content/little-house/publish`
 
 Quy tắc:
@@ -115,11 +115,11 @@ Quy tắc:
 ### Daily practice editorial workspace
 - `GET /api/admin/content/daily-practice/overview`
 - `POST /api/admin/content/daily-practice/guides`
-- `PATCH /api/admin/content/daily-practice/guides/:id`
+- `PATCH /api/admin/content/daily-practice/guides/:publicId`
 - `POST /api/admin/content/daily-practice/scenario-presets`
-- `PATCH /api/admin/content/daily-practice/scenario-presets/:id`
+- `PATCH /api/admin/content/daily-practice/scenario-presets/:publicId`
 - `POST /api/admin/content/daily-practice/faq`
-- `PATCH /api/admin/content/daily-practice/faq/:id`
+- `PATCH /api/admin/content/daily-practice/faq/:publicId`
 - `POST /api/admin/content/daily-practice/publish`
 
 Quy tắc:
@@ -130,11 +130,11 @@ Quy tắc:
 ### Life release editorial workspace
 - `GET /api/admin/content/life-release/overview`
 - `POST /api/admin/content/life-release/guides`
-- `PATCH /api/admin/content/life-release/guides/:id`
+- `PATCH /api/admin/content/life-release/guides/:publicId`
 - `POST /api/admin/content/life-release/ritual-variants`
-- `PATCH /api/admin/content/life-release/ritual-variants/:id`
+- `PATCH /api/admin/content/life-release/ritual-variants/:publicId`
 - `POST /api/admin/content/life-release/faq`
-- `PATCH /api/admin/content/life-release/faq/:id`
+- `PATCH /api/admin/content/life-release/faq/:publicId`
 - `POST /api/admin/content/life-release/publish`
 
 Quy tắc:
@@ -145,9 +145,9 @@ Quy tắc:
 ### Media library editorial workspace
 - `GET /api/admin/content/media-library/overview`
 - `POST /api/admin/content/media-library/collections`
-- `PATCH /api/admin/content/media-library/collections/:id`
-- `POST /api/admin/content/media-library/collections/:id/items`
-- `PATCH /api/admin/content/media-library/collections/:id/items/:itemId`
+- `PATCH /api/admin/content/media-library/collections/:publicId`
+- `POST /api/admin/content/media-library/collections/:publicId/items`
+- `PATCH /api/admin/content/media-library/collections/:publicId/items/:itemPublicId`
 - `POST /api/admin/content/media-library/featured`
 - `POST /api/admin/content/media-library/publish`
 

@@ -143,9 +143,9 @@ Thay vì render media rời, public FE nên đọc theo `media collections`.
 
 - `GET /admin/content/media-library/overview`
 - `POST /admin/content/media-library/collections`
-- `PATCH /admin/content/media-library/collections/:id`
-- `POST /admin/content/media-library/collections/:id/items`
-- `PATCH /admin/content/media-library/collections/:id/items/:itemId`
+- `PATCH /admin/content/media-library/collections/:publicId`
+- `POST /admin/content/media-library/collections/:publicId/items`
+- `PATCH /admin/content/media-library/collections/:publicId/items/:itemPublicId`
 - `POST /admin/content/media-library/featured`
 - `POST /admin/content/media-library/publish`
 

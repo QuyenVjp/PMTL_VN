@@ -110,7 +110,7 @@ User → apps/web → /api/proxy/search → apps/api
 
 ### Editor Publish Post
 ```
-Editor → apps/admin → POST /api/content/posts/:id/publish → apps/api
+Editor → apps/admin → POST /api/content/posts/:publicId/publish → apps/api
   → Prisma $transaction: update status + audit log
   Phase 1: sync revalidate
   Phase 2+: outbox → dispatcher → reindex + notify + revalidate

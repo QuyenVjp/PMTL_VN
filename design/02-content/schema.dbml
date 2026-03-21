@@ -154,12 +154,16 @@ Table beginner_guides {
   id uuid [pk, note: "Khóa chính hướng dẫn sơ học"]
   public_id varchar [unique]
   title varchar [not null, note: "Tiêu đề hướng dẫn"]
+  slug varchar [unique, note: "Đường dẫn thân thiện SEO — dùng cho public route /little-house/guides/:slug"]
   description text
   content jsonb
   guide_type varchar [not null, note: "Loại: starter | practice | faq"]
+  content_group varchar [note: "Discriminator cho feature surface: little_house | daily_practice | life_release | general"]
   duration varchar [note: "Thời gian ước tính để hoàn thành"]
   step_number int [note: "Thứ tự bước (nếu có)"]
   order_no int [default: 0]
+  source_reference text [note: "Tham chiếu nguồn chính thống — bắt buộc cho little_house và daily_practice"]
+  version_note text [note: "Ghi chú phiên bản khi thay wording nhạy cảm"]
   _status content_publication_status [not null]
   created_at timestamp
   updated_at timestamp

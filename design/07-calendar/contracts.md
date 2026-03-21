@@ -21,17 +21,17 @@
 ## Admin routes
 
 - `POST /api/admin/calendar/events`
-- `PATCH /api/admin/calendar/events/:id`
-- `POST /api/admin/calendar/events/:id/agenda-items`
-- `PATCH /api/admin/calendar/events/:id/agenda-items/:agendaItemId`
-- `POST /api/admin/calendar/events/:id/agenda-items/reorder`
-- `POST /api/admin/calendar/events/:id/speakers`
-- `PATCH /api/admin/calendar/events/:id/speakers/:speakerId`
-- `POST /api/admin/calendar/events/:id/ctas`
-- `PATCH /api/admin/calendar/events/:id/ctas/:ctaId`
-- `POST /api/admin/calendar/events/:id/reschedule`
-- `POST /api/admin/calendar/events/:id/cancel`
-- `POST /api/admin/calendar/events/:id/publish`
+- `PATCH /api/admin/calendar/events/:publicId`
+- `POST /api/admin/calendar/events/:publicId/agenda-items`
+- `PATCH /api/admin/calendar/events/:publicId/agenda-items/:agendaItemPublicId`
+- `POST /api/admin/calendar/events/:publicId/agenda-items/reorder`
+- `POST /api/admin/calendar/events/:publicId/speakers`
+- `PATCH /api/admin/calendar/events/:publicId/speakers/:speakerPublicId`
+- `POST /api/admin/calendar/events/:publicId/ctas`
+- `PATCH /api/admin/calendar/events/:publicId/ctas/:ctaPublicId`
+- `POST /api/admin/calendar/events/:publicId/reschedule`
+- `POST /api/admin/calendar/events/:publicId/cancel`
+- `POST /api/admin/calendar/events/:publicId/publish`
 
 ## Canonical rules
 
