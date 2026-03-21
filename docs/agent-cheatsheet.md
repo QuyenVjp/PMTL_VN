@@ -36,11 +36,19 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
+- `pmtl-multi-cli-orchestrator`: điều phối Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI theo đúng lane thay vì gọi bừa cả bốn.
 - External CLI workers: dùng `py infra/tools/external_agent.py --provider claude|codex|copilot|gemini --prompt "..."` khi cần second opinion từ Claude Code CLI, Codex CLI, Copilot CLI, hoặc Gemini CLI.
+- Claude-side fast path: dùng `/multi-cli-router <task>` để nó tự route worker thay vì bắt người dùng nhớ provider.
+- Repo wrapper nhanh trên Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
+- `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Claude/Copilot và chỉ gọi Gemini/Codex khi tín hiệu đủ rõ.
+- `--speed balanced`: giữ routing trung tính hơn.
+- `--speed deep`: ưu tiên review/context sâu hơn tốc độ.
+- Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast`.
 
 ### 2. PMTL core
 
 - `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
+- `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, bao gồm docs research, second opinion, và task split theo thế mạnh từng CLI.
 - `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
 - `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL.
 - `pmtl-ui-behavior`, `pmtl-ui-style-system`, `pmtl-review-web-ui`: behavior, style, UI review.

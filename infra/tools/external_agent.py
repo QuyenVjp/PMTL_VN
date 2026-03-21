@@ -74,15 +74,19 @@ def run_copilot(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | N
         "copilot.exe",
         "-p",
         prompt,
+        "--model",
+        model or "claude-haiku-4.5",
         "--allow-all-tools",
         "--allow-all-paths",
         "--allow-all-urls",
         "--no-ask-user",
+        "--no-custom-instructions",
+        "--disable-builtin-mcps",
+        "--stream",
+        "off",
         "--output-format",
         "json",
     ]
-    if model:
-        command.extend(["--model", model])
 
     result = subprocess.run(
         command,
@@ -142,6 +146,8 @@ def run_claude(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
         claude_script,
         "-p",
         prompt,
+        "--effort",
+        "low",
         "--output-format",
         "text",
         "--permission-mode",
@@ -191,6 +197,8 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
             gemini_script,
             "-p",
             prompt,
+            "--model",
+            model or "gemini-2.5-flash-lite",
             "--approval-mode",
             "yolo",
             "--output-format",
@@ -201,13 +209,13 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
             gemini_script,
             "-p",
             prompt,
+            "--model",
+            model or "gemini-2.5-flash-lite",
             "--approval-mode",
             "yolo",
             "--output-format",
             "json",
         ]
-    if model:
-        command.extend(["--model", model])
 
     result = subprocess.run(
         command,
@@ -256,15 +264,19 @@ def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | Non
     if not codex_script:
         raise RuntimeError("Codex CLI executable was not found on PATH.")
 
-    resolved_model = model or load_codex_default_model() or "unknown"
+    resolved_model = model or "gpt-5.4-mini"
     command = [
         codex_script,
+        "-m",
+        resolved_model,
         "-a",
         "never",
         "-c",
         "features.multi_agent=false",
         "-c",
         "project_doc_max_bytes=8192",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
         "exec",
         "-C",
         str(cwd),
@@ -273,8 +285,6 @@ def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | Non
         "--json",
         prompt,
     ]
-    if model:
-        command[2:2] = ["-m", model]
 
     result = subprocess.run(
         command,

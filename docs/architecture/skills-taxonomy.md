@@ -15,6 +15,7 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 ### Governance
 - `pmtl-workflow-router`
 - `pmtl-skill-governance`
+- `pmtl-multi-cli-orchestrator`
 - `output-skill`
 - `pmtl-ui-style-system`
 

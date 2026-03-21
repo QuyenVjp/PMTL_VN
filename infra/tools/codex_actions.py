@@ -17,6 +17,7 @@ COMPOSE_FILE = ROOT / "infra" / "docker" / "compose.dev.yml"
 ENV_FILE = ROOT / "infra" / "docker" / ".env.dev"
 SKILLS_DIR = ROOT / ".agents" / "skills"
 TAXONOMY_PATH = ROOT / "docs" / "architecture" / "skills-taxonomy.md"
+MULTI_CLI_ROUTER_PATH = ROOT / "infra" / "tools" / "multi_cli_router.py"
 
 SMOKE_DOCKER_ENV = {
     "CMS_PUBLIC_URL": "http://cms:3001",
@@ -432,6 +433,43 @@ def bootstrap() -> int:
     return 0 if ok else 1
 
 
+def multi_cli_router(task: str, provider: str | None, compare: bool, route_only: bool, speed: str) -> int:
+    command = [sys.executable, str(MULTI_CLI_ROUTER_PATH), "--task", task, "--json", "--speed", speed]
+    if provider:
+        command.extend(["--provider", provider])
+    if compare:
+        command.append("--compare")
+    if route_only:
+        command.append("--route-only")
+
+    completed = subprocess.run(
+        command,
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    ok = completed.returncode == 0
+    payload: dict[str, object]
+    if ok:
+        try:
+            payload = json.loads(completed.stdout)
+        except json.JSONDecodeError:
+            payload = {"ok": False, "error": "Router returned invalid JSON", "stdout": completed.stdout}
+            ok = False
+    else:
+        payload = {
+            "ok": False,
+            "command": command,
+            "stdout": completed.stdout.strip(),
+            "stderr": completed.stderr.strip(),
+        }
+
+    emit_json(payload)
+    return 0 if ok else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="action", required=True)
@@ -467,6 +505,16 @@ def build_parser() -> argparse.ArgumentParser:
     skill_parser = subparsers.add_parser("skill-audit")
     skill_parser.add_argument("--include-legacy", action="store_true")
     skill_parser.set_defaults(handler=lambda args: skill_audit(args.include_legacy))
+
+    router_parser = subparsers.add_parser("multi-cli-router")
+    router_parser.add_argument("--task", required=True)
+    router_parser.add_argument("--provider", choices=["claude", "codex", "copilot", "gemini"])
+    router_parser.add_argument("--compare", action="store_true")
+    router_parser.add_argument("--route-only", action="store_true")
+    router_parser.add_argument("--speed", choices=["fast", "balanced", "deep"], default="fast")
+    router_parser.set_defaults(
+        handler=lambda args: multi_cli_router(args.task, args.provider, args.compare, args.route_only, args.speed)
+    )
 
     return parser
 

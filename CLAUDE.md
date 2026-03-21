@@ -70,6 +70,11 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - `gemini-worker`: external Gemini CLI opinion for compare/validate tasks.
 
 ## External Worker Wrapper
+- Use `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md` first when the task is deciding which external worker should own research, review, or a narrow implementation pass.
+- Use `/multi-cli-router <task>` for the fast path in new Claude Code chats.
+- Preferred repo wrapper on Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast [--compare]`
+- Use `--speed balanced` for a less latency-biased lane and `--speed deep` when deeper review matters more than speed.
+- Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast [--compare]`
 - Use `py infra/tools/external_agent.py --provider claude --prompt "<prompt>" --debug` for Claude Code CLI.
 - Use `py infra/tools/external_agent.py --provider codex --prompt "<prompt>" --debug` for Codex CLI.
 - Use `py infra/tools/external_agent.py --provider copilot --prompt "<prompt>"` for Copilot CLI.
