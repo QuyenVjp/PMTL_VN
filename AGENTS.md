@@ -70,8 +70,8 @@
 - Monitoring drills: `pnpm monitoring:test`, `pnpm telegram:test`
 
 ## External Workers
-- Codex may consult external CLI workers when the user explicitly asks for Copilot or Gemini input, or when a second opinion is materially useful.
-- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <copilot|gemini> --prompt "<prompt>"`
+- Codex may consult external CLI workers when the user explicitly asks for Claude Code, Codex CLI, Copilot, or Gemini input, or when a second opinion is materially useful.
+- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini> --prompt "<prompt>"`
 - Keep external-worker prompts compact and reference repo file paths instead of pasting long code blocks.
 - Treat external workers as advisory reviewers, not the source of truth for repo policy.
 

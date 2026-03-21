@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -14,7 +15,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         required=True,
-        choices=("copilot", "gemini"),
+        choices=("claude", "codex", "copilot", "gemini"),
         help="External CLI to run.",
     )
     parser.add_argument(
@@ -117,6 +118,61 @@ def run_copilot(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | N
     return response.strip(), resolved_model
 
 
+def load_claude_default_model(cwd: Path) -> str | None:
+    settings_path = cwd / ".claude" / "settings.json"
+    if not settings_path.exists():
+        return None
+
+    try:
+        payload = json.loads(settings_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+    model = payload.get("model")
+    return model if isinstance(model, str) else None
+
+
+def run_claude(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+    claude_script = shutil.which("claude.cmd") or shutil.which("claude")
+    if not claude_script:
+        raise RuntimeError("Claude Code CLI executable was not found on PATH.")
+
+    resolved_model = model or load_claude_default_model(cwd) or "unknown"
+    command = [
+        claude_script,
+        "-p",
+        prompt,
+        "--output-format",
+        "text",
+        "--permission-mode",
+        "dontAsk",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--add-dir",
+        str(cwd),
+    ]
+    if model:
+        command.extend(["--model", model])
+
+    result = subprocess.run(
+        command,
+        cwd=str(cwd),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
+
+    response = result.stdout.strip()
+    if not response:
+        raise RuntimeError("Claude Code CLI returned no assistant message.")
+
+    return response, resolved_model
+
+
 def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
     gemini_script = shutil.which("gemini.cmd") or shutil.which("gemini.ps1") or shutil.which("gemini")
     if not gemini_script:
@@ -178,6 +234,76 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
     return response, resolved_model
 
 
+def load_codex_default_model() -> str | None:
+    config_path = Path.home() / ".codex" / "config.toml"
+    if not config_path.exists():
+        return None
+
+    try:
+        content = config_path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+
+    match = re.search(r'^\s*model\s*=\s*"([^"]+)"', content, re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+    codex_script = shutil.which("codex.cmd") or shutil.which("codex")
+    if not codex_script:
+        raise RuntimeError("Codex CLI executable was not found on PATH.")
+
+    resolved_model = model or load_codex_default_model() or "unknown"
+    command = [
+        codex_script,
+        "-a",
+        "never",
+        "exec",
+        "-C",
+        str(cwd),
+        "-s",
+        "read-only",
+        "--json",
+        prompt,
+    ]
+    if model:
+        command[2:2] = ["-m", model]
+
+    result = subprocess.run(
+        command,
+        cwd=str(cwd),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
+
+    response = None
+    for line in result.stdout.splitlines():
+        line = line.strip()
+        if not line or not line.startswith("{"):
+            continue
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+
+        if payload.get("type") != "item.completed":
+            continue
+
+        item = payload.get("item", {})
+        if item.get("type") == "agent_message":
+            response = item.get("text")
+
+    if not response:
+        raise RuntimeError("Codex CLI returned no assistant message.")
+
+    return response.strip(), resolved_model
+
+
 def main() -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -189,7 +315,11 @@ def main() -> int:
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
 
     try:
-        if args.provider == "copilot":
+        if args.provider == "claude":
+            response, resolved_model = run_claude(args.prompt, args.model, cwd)
+        elif args.provider == "codex":
+            response, resolved_model = run_codex(args.prompt, args.model, cwd)
+        elif args.provider == "copilot":
             response, resolved_model = run_copilot(args.prompt, args.model, cwd)
         else:
             response, resolved_model = run_gemini(args.prompt, args.model, cwd)
