@@ -27,6 +27,8 @@
       "Bash(py *)",
       "Bash(node *)",
       "Bash(tsx *)",
+      "Bash(copilot.exe *)",
+      "Bash(gemini *)",
       "Bash(Get-ChildItem *)",
       "Bash(Get-Content *)",
       "Bash(Select-String *)",

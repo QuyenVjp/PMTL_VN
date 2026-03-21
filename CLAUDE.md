@@ -64,6 +64,13 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - `pmtl-web-builder`: Next.js, UI behavior, feature implementation, style fidelity.
 - `pmtl-quality-gate`: verification planning, targeted checks, review findings.
 - `pmtl-ops-debugger`: Docker, runtime failures, monitoring, incident-style debugging.
+- `copilot-worker`: external GitHub Copilot CLI opinion for compare/validate tasks.
+- `gemini-worker`: external Gemini CLI opinion for compare/validate tasks.
+
+## External Worker Wrapper
+- Use `py infra/tools/external_agent.py --provider copilot --prompt "<prompt>"` for Copilot CLI.
+- Use `py infra/tools/external_agent.py --provider gemini --prompt "<prompt>" --debug` for Gemini CLI.
+- Keep prompts compact; point to repo file paths instead of pasting long code blocks.
 
 ## Verification Mapping
 - `apps/web`, `packages/ui`: start with `just verify-web`

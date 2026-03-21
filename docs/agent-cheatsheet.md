@@ -36,6 +36,7 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
+- External CLI workers: dùng `py infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Copilot CLI hoặc Gemini CLI.
 
 ### 2. PMTL core
 
