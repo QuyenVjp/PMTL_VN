@@ -30,12 +30,12 @@
 2. Recompute derived source fields.
 3. Ghi canonical update vào `posts`.
 4. Append audit event `post.update.published`.
-5. Enqueue search sync update.
-6. trigger (điểm kích hoạt) revalidation cho route/tag liên quan.
+5. **Phase 1**: chạy search sync/revalidation theo đường sync hoặc best-effort có log + recovery path rõ, nhưng không được biến downstream failure thành mất canonical update nếu policy của route không yêu cầu fail-closed.
+6. **Phase 2+**: append signal tương ứng qua `outbox_events` rồi để dispatcher/worker xử lý search sync và revalidation.
 
 ## async (bất đồng bộ) side-effects
-- search sync update hoặc remove nếu bài không còn public
-- cache invalidation
+- **Phase 1**: search sync update/remove và cache invalidation qua sync hoặc best-effort path.
+- **Phase 2+**: search sync/revalidation quan trọng đi qua outbox/dispatcher path.
 
 ## success result (kết quả thành công)
 - Bài public hiển thị phiên bản mới.
@@ -46,7 +46,7 @@
 - `401`: chưa đăng nhập.
 - `403`: không có quyền.
 - `404`: post không tồn tại.
-- `500`: lỗi service (lớp xử lý nghiệp vụ) hoặc downstream.
+- `500`: lỗi service, sync/revalidation phase 1, hoặc downstream/outbox phase 2+.
 
 ## Audit
 - log `post.update.published`
@@ -56,9 +56,9 @@
 - Lưu lại cùng payload nhiều lần chỉ cập nhật canonical document, không tạo record mới.
 
 ## Performance target
-- Không block response vì search hoặc revalidation.
+- Không block response vì search/revalidation nặng; phase 1 chỉ giữ minimal correctness path, phase 2+ mới giao dispatcher xử lý bền vững hơn.
 
 ## Notes for AI/codegen
 - Document đã publish vẫn có write-path ở content owner.
 - Derived fields phải cập nhật cùng canonical write để search module đọc nguồn đúng.
-
+- `platform/cache` là owner của revalidation chain; content service chỉ phát canonical event + aggregate metadata cần invalidate.

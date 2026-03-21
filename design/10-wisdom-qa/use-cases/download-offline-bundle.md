@@ -36,12 +36,12 @@
 3. Trả manifest tải xuống và version hiện tại.
 4. Nếu cần lưu trạng thái cá nhân, append hoặc update `offlineBundles` state cho user hoặc device.
 5. Append audit nhẹ `wisdom.bundle.download` nếu policy cần.
-6. Nếu package cần build hoặc repair, append outbox event cho bundle prepare/rebuild thay vì làm fire-and-forget không kiểm soát.
+6. **Phase 1**: không dùng outbox. Nếu package cần build hoặc repair, canonical route chỉ được trả manifest/state và để admin/manual rebuild path xử lý.
+7. **Phase 2+**: nếu bundle prepare/rebuild đã có worker reliability path, append outbox event thay vì fire-and-forget không kiểm soát.
 
 ## Async side-effects
-- prepare asset package
-- prefetch audio/text indexes nếu worker flow bật
-- cleanup bundle versions cũ nếu policy bật
+- **Phase 1**: prepare/repair bundle là manual hoặc admin-triggered operation nếu nặng.
+- **Phase 2+**: prepare asset package, prefetch index, và cleanup bundle versions cũ đi qua outbox/worker flow.
 
 ## Success result
 - User có thể mở đúng nội dung offline, chữ to, rõ, và không phụ thuộc mạng.
@@ -61,7 +61,7 @@
 ## Idempotency / anti-spam
 - cùng `user + device + bundle version` không nên tạo trùng nhiều record
 - nên dedupe theo `bundleType + version + user/device`
-- replay outbox không được tạo duplicate package job cho cùng bundle version và cùng target scope.
+- replay outbox không được tạo duplicate package job cho cùng bundle version và cùng target scope khi phase 2+ đã bật.
 
 ## Performance target
 - trả manifest nên `< 500ms`

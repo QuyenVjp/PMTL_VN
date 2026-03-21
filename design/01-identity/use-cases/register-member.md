@@ -26,7 +26,8 @@
 ## Input contract (Hợp đồng đầu vào)
 
 - `registerSchema`
-- nếu có downstream welcome/verification signal thì outbox payload phải có event type, version, và idempotency key
+- Phase 1 không dùng outbox cho register path mặc định.
+- nếu `welcome/verification` được kích hoạt theo đường outbox của phase 2+, payload phải có `eventType`, `eventVersion`, và `idempotencyKey`
 
 ## Read set (Tập dữ liệu đọc)
 
@@ -43,12 +44,13 @@
 6. Cấp access token + refresh token theo auth contract.
 7. Set secure cookie nếu là browser flow.
 8. Append audit log `auth.register`.
-9. Nếu policy cần, append `outbox_events` cho welcome/verification email.
+9. **Phase 1**: email welcome/verification là optional side-effect; nếu chạy thì theo sync/best-effort path có log + retry/manual recovery rõ.
+10. **Phase 2+**: nếu reliability cho email đã bật, append `outbox_events` cho welcome/verification signal.
 
 ## async (bất đồng bộ) side-effects
 
-- welcome email
-- email verification send
+- **Phase 1**: welcome/verification send là optional, không được làm hỏng canonical register path nếu side-effect tắt.
+- **Phase 2+**: welcome/verification signal đi qua outbox để bảo toàn reliability.
 
 ## success result (kết quả thành công)
 
@@ -71,7 +73,7 @@
 ## Idempotency & anti-spam (Tính không đổi & chống thư rác)
 
 - retry với cùng email sau khi tạo thành công phải trả `409`
-- replay outbox không được tạo duplicate welcome/verification email
+- replay outbox không được tạo duplicate welcome/verification email khi phase 2+ đã bật
 
 ## Performance target (Mục tiêu hiệu năng)
 

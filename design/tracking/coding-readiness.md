@@ -55,6 +55,7 @@ Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. 
 | `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `README.md` + `tracking/implementation-mapping.md` |
 
 Coding agent có thể bắt đầu Wave 1, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass, implementation proof, và post-code OpenAPI coverage proof.
+Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md) để tránh dựng sai từ commit đầu.
 
 ---
 

@@ -18,8 +18,8 @@
 - event/lunar data thay đổi
 - preference summary thay đổi
 - vow milestone hoặc life-release summary thay đổi
-- **Phase 2+**: replay hoặc recovery khi outbox/worker bị trễ
-- **Phase 1**: admin manual trigger hoặc sync recompute khi source data thay đổi
+- **Phase 1**: admin manual trigger hoặc sync recompute khi source data thay đổi; không có outbox/worker path mặc định
+- **Phase 2+**: outbox-driven async recovery path hoặc replay signal khi queue/worker flow đã bật
 
 ## preconditions (điều kiện tiên quyết)
 
@@ -55,7 +55,8 @@
    - không được giữ row cũ chỉ vì chúng đã tồn tại trước đó
 6. Nếu window mới nhỏ hơn window cũ, toàn bộ rows nằm ngoài window mới nhưng thuộc scope refresh phải bị remove.
 7. Append audit `practice-calendar.refresh` nếu là manual/admin run.
-8. Nếu downstream reminder hoặc advisory consumer cần biết có refresh, append outbox event sau khi window mới đã ổn định.
+8. **Phase 1**: không emit outbox; nếu downstream reminder/advisory cần refresh thì dùng sync recompute hoặc manual trigger cùng recovery path rõ.
+9. **Phase 2+**: nếu downstream reminder hoặc advisory consumer cần biết có refresh, append outbox event sau khi window mới đã ổn định.
 
 ## async (bất đồng bộ) side-effects
 

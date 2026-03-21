@@ -33,7 +33,8 @@
   - `targetMetricType` nếu có
   - `targetValue` nếu có
   - `notes` nếu có
-- nếu có downstream reminder signal thì outbox payload phải có event type, event version và idempotency key
+- Phase 1 không cần outbox payload contract cho create-vow write path.
+- nếu phase 2+ bật reminder signal qua outbox thì payload phải có `eventType`, `eventVersion`, và `idempotencyKey`
 
 ## Read set
 
@@ -49,12 +50,13 @@
 4. Tạo canonical record vào `vows`.
 5. Nếu payload có mốc tiến độ ban đầu, append một `vowProgressEntry` khởi tạo.
 6. Append audit `vow.create`.
-7. Nếu user bật nhắc việc, append outbox event cho notification/reminder candidate layer.
+7. **Phase 1**: nếu reminder feature đang active cho loại vow này, chỉ cập nhật reminder candidate/read-model theo sync hoặc manual refresh path; không giả định outbox.
+8. **Phase 2+**: nếu reminder delivery/rebuild đã bật reliability path, append outbox event cho notification/reminder candidate layer.
 
 ## Async side-effects
 
-- reminder candidate generation
-- optional push/email setup nếu feature reminder bật
+- **Phase 1**: reminder candidate generation chỉ là sync/manual refresh concern nếu feature đã mở.
+- **Phase 2+**: push/email setup hoặc reminder candidate rebuild đi qua outbox/downstream path.
 
 ## Success result
 
@@ -83,12 +85,12 @@
 - không cần idempotency key phức tạp ở phase đầu
 - nhưng UI nên chặn double-submit
 - service nên chống tạo trùng rõ ràng khi cùng user gửi payload gần như giống hệt trong cửa sổ thời gian ngắn
-- replay outbox không được tạo duplicate reminder candidate cho cùng vow mới.
+- replay outbox không được tạo duplicate reminder candidate cho cùng vow mới khi phase 2+ đã bật.
 
 ## Performance target
 
 - create vow nên hoàn tất `< 500ms`
-- reminder candidate generation phải ở downstream async path, không kéo dài request chính
+- canonical create path không được kéo dài vì reminder logic; phase 1 dùng minimal sync/manual path, phase 2+ mới giao downstream async path
 
 ## Notes
 

@@ -87,6 +87,12 @@ Browser → apps/web (Next.js)
 // KHÔNG thêm business logic — chỉ proxy
 ```
 
+**Trusted proxy notes**:
+- `apps/web` proxy route không được tự bịa chuỗi `X-Forwarded-For`; chỉ forward thông tin request hiện có theo contract đã trust
+- canonical client IP phải được resolve ở `apps/api` sau Caddy/proxy trust configuration
+- nếu có Cloudflare trước Caddy, trusted proxy chain phải được chốt ở infra/Caddy, không phải ở client fetch helper
+- `apps/web` proxy route không phải security authority cho IP; kể cả khi forward header, `apps/api` chỉ tin giá trị đó nếu upstream Caddy/trusted proxy chain đã được cấu hình đúng
+
 **Rules:**
 - `apps/web/src/lib/api-client.ts` là single entry point cho mọi API call
 - Server Components dùng `serverFetch()` — internal fetch với cookie forwarding
@@ -245,6 +251,7 @@ src/
 - Admin routes phải có guard riêng (idle timeout 30 phút, max session 12 giờ)
 - Admin query layer cũng phải dùng `queryOptions()` / `mutationOptions()` để gom query key và tránh drift giữa table view / detail view / edit view
 - Admin lists có khả năng dài (`users`, `reports`, `community posts`, `search ops`) nên ưu tiên cursor-capable contract ngay từ đầu, kể cả UI tạm render kiểu paginated table
+- Admin mutations làm đổi feature flag hoặc publish status phải invalidate query cache ngay trong client và trigger server-side revalidation path nếu public surface bị ảnh hưởng
 
 ### Command palette (⌘K)
 

@@ -102,6 +102,19 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - `SameSite` chỉ là lớp giảm thiểu rủi ro, không được coi là CSRF defense (phòng thủ CSRF) duy nhất
 - Bearer-only endpoints (các điểm cuối chỉ dùng token bearer) có thể được miễn (exempt) CSRF, nhưng phải tách route contract (hợp đồng đường dẫn) rõ ràng
 
+### CSRF transport contract (Hợp đồng vận chuyển CSRF)
+
+- cookie name mặc định: `pmtl_csrf`
+- header name mặc định: `X-CSRF-Token`
+- browser flow:
+  - server cấp non-HttpOnly CSRF cookie riêng cho same-origin web/admin
+  - client đọc cookie này và gửi lại qua `X-CSRF-Token` trên mọi mutation dùng cookie auth
+- route exempt rõ ràng:
+  - `GET`, `HEAD`, `OPTIONS`
+  - bearer-only automation/webhook routes có contract riêng
+- browser mutation còn phải check `Origin`/`Referer` thuộc allowlist `WEB_ORIGIN` hoặc `ADMIN_ORIGIN`; thiếu cả hai thì reject mặc định
+- CSRF failure trả `security.csrf_failed`, không làm rõ token nào sai
+
 ### CORS policy (Chính sách chia sẻ tài nguyên giữa các nguồn)
 
 - chỉ cho phép (allow) các explicit origins (nguồn gốc rõ ràng) từ môi trường (env):
@@ -109,6 +122,13 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - `ADMIN_ORIGIN`
 - không dùng `*` cho authenticated routes (đường dẫn yêu cầu xác thực)
 - chỉ cho phép credentials (thông tin xác thực) cho origin (nguồn) thật sự cần cookie auth (xác thực bằng cookie)
+
+## Trusted proxy / client IP contract
+
+- `apps/api` chỉ tin `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` khi request đi qua proxy đã được trust
+- nếu có Cloudflare đứng trước Caddy, phải cấu hình trusted proxies ở Caddy/server layer thay vì tin thẳng mọi `X-Forwarded-*`
+- rate limit, audit IP, abuse detection phải dùng cùng một resolved client IP source; không để mỗi middleware tự parse khác nhau
+- nếu trusted proxy chain chưa được cấu hình đúng, hệ thống phải fail về local remote addr hoặc reject security-sensitive assumptions; không được tự tin dùng header spoofable
 
 ## CSP / security headers (Chính sách bảo mật nội dung / Tiêu đề bảo mật)
 

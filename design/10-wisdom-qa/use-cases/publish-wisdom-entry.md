@@ -36,7 +36,8 @@
   - `videoRef`
   - `speaker`
   - `publishedAt`
-- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
+- Phase 1 không dùng outbox cho publish path mặc định; search/offline refresh nếu có chỉ là sync/manual path.
+- nếu phase 2+ bật downstream signal qua outbox thì payload phải có `eventType`, `eventVersion`, và `idempotencyKey`
 
 ## Read set
 - `wisdomEntries`
@@ -51,13 +52,13 @@
 4. Ghi canonical record vào `wisdomEntries`.
 5. Chuyển trạng thái publish theo implementation hiện tại.
 6. Append audit `wisdom.entry.publish`.
-7. Append outbox event cho search sync của `Kho Trí Huệ`.
+7. **Phase 1**: nếu entry thuộc public/searchable surface theo policy hiện hành, chạy search sync/revalidation theo sync hoặc best-effort path; nếu chưa thuộc surface đó thì không tạo side-effect thừa.
 8. Nếu có audio/video liên quan, sync relation metadata.
-9. Nếu policy bật offline refresh, append outbox event cho bundle rebuild/downstream refresh.
+9. **Phase 2+**: append outbox event cho search sync hoặc bundle rebuild khi search/offline downstream reliability đã bật.
 
 ## Async side-effects
-- search sync
-- optional offline bundle refresh
+- **Phase 1**: search/offline refresh đi theo sync hoặc manual rebuild path nếu feature đã mở.
+- **Phase 2+**: search sync và offline bundle refresh quan trọng đi qua outbox/downstream path.
 
 ## Success result
 - Entry xuất hiện ở surface đọc hoặc nghe đúng nhóm.
@@ -83,7 +84,7 @@
 ## Idempotency / anti-spam
 - publish lại cùng `publicId` nên là update flow, không tạo record mới
 - không cho import cùng một source nhiều lần dưới hai record publish trùng rõ ràng nếu policy không cho
-- replay outbox không được tạo duplicate search/bundle signal cho cùng publish event.
+- replay outbox không được tạo duplicate search/bundle signal cho cùng publish event khi phase 2+ đã bật.
 
 ## Performance target
 - canonical publish path nên hoàn tất `< 800ms`

@@ -32,6 +32,7 @@
   - manual
   - practice log
   - life release journal
+- optional `idempotencyKey` khi không có `sourceRef` nhưng flow vẫn cần chống double-submit hoặc retry-safe
 
 ## Read set
 
@@ -49,12 +50,13 @@
 5. Recompute progress summary trên `vows`.
 6. Nếu đạt điều kiện hoàn thành, chuyển vow sang trạng thái `fulfilled` và set `fulfilledAt`.
 7. Append audit `vow.fulfill`.
-8. Nếu cần nhắc việc/chúc mừng/cập nhật lịch cá nhân, append outbox event downstream tương ứng.
+8. **Phase 1**: nếu cần nhắc việc/chúc mừng/cập nhật lịch cá nhân, dùng sync hoặc manual refresh path có recovery rõ.
+9. **Phase 2+**: nếu downstream reminder/notification reliability đã bật, append outbox event tương ứng, tối thiểu gồm các signal `vow.milestone.fulfilled` hoặc `vow.reminder.rebuild_requested` theo taxonomy owner.
 
 ## Async side-effects
 
-- update reminder candidates
-- optional notification chúc mừng hoặc nhắc hoàn nguyện nếu feature bật
+- **Phase 1**: update reminder candidates hoặc calendar summaries theo sync/manual recompute path.
+- **Phase 2+**: notification/reminder downstream đi qua outbox/dispatcher path.
 
 ## Success result
 
@@ -88,7 +90,7 @@
 ## Performance target
 
 - append progress + recompute summary nên hoàn tất `< 600ms`
-- phần thông báo hoặc reminder update phải ở downstream async path
+- phần thông báo hoặc reminder update không được kéo dài canonical request; phase 1 dùng minimal sync/manual path, phase 2+ dùng downstream async path
 
 ## Notes
 

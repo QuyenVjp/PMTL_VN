@@ -65,6 +65,7 @@ File này tồn tại để AI/dev không tự đoán auth/session behavior (hà
 - refresh token còn hạn
 - refresh token chưa revoke
 - refresh token chưa bị reuse
+- rate limit bắt buộc theo exact contract đã chốt ở `tracking/coding-readiness.md` Phần 5: `30 requests / 15 phút / per-IP`
 
 ### Canonical write path (Luồng ghi chuẩn gốc)
 
@@ -76,10 +77,25 @@ File này tồn tại để AI/dev không tự đoán auth/session behavior (hà
 4. Cấp access token mới.
 5. Ghi audit event nếu policy yêu cầu.
 
+### Rotation integrity rules (Quy tắc toàn vẹn khi xoay vòng)
+
+- refresh rotation phải là **single canonical write transaction**
+- flow refresh dùng interactive transaction khi cần read-modify-write trên session record
+- nếu concurrent refresh gây write conflict/deadlock, retry transaction hữu hạn; không cấp hai refresh token mới cho cùng một phiên
+- retry budget mặc định: tối đa `3` lần cho conflict/deadlock class; vượt ngưỡng thì fail closed với `503` an toàn
+- reuse detection:
+  - refresh token đã bị rotate mà xuất hiện lại = suspicious replay
+  - hệ thống phải revoke current session hoặc cả session family theo policy, không âm thầm bỏ qua
+- session record tối thiểu phải phân biệt:
+  - current valid refresh credential
+  - revoked/replaced state
+  - revokedAt / replacedBy hoặc equivalent linkage để điều tra replay
+
 ### Recovery / failure (Phục hồi / lỗi)
 
 - token replay hoặc reuse bất thường phải trigger revoke path
 - không cấp token mới nếu refresh record không hợp lệ
+- nếu transaction retry vượt ngưỡng hoặc auth store conflict không giải được, fail closed và clear cookie transport hiện tại
 
 ## Logout (Đăng xuất)
 
@@ -94,6 +110,13 @@ File này tồn tại để AI/dev không tự đoán auth/session behavior (hà
 2. Revoke toàn bộ `sessions` records của user.
 3. Clear current cookie/token transport.
 4. Ghi audit log `logout_all`.
+
+## Browser cookie transport contract
+
+- access cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, path `/`
+- refresh cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, path `/api/auth/refresh`
+- csrf cookie: non-HttpOnly, same-site, path `/`
+- login thành công phải set đủ browser cookies trong cùng response; logout/logout-all/reset success phải clear đúng cả access/refresh/csrf transport liên quan
 
 ## Reset password (Đặt lại mật khẩu)
 

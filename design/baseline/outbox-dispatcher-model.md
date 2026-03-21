@@ -85,6 +85,21 @@ enum OutboxEventStatus {
 }
 ```
 
+### Event envelope discipline
+
+- mọi event "đáng tin cậy" phải có envelope tối thiểu:
+  - `eventType`
+  - `eventVersion`
+  - `aggregateType`
+  - `aggregateId`
+  - `correlationId`
+  - `idempotencyKey`
+- `idempotencyKey` nên được tính quyết định từ business fact, ví dụ:
+  - `${eventType}:${aggregateId}:${aggregateVersion}`
+  - hoặc `${eventType}:${aggregateId}:${occurredAt}` nếu aggregate chưa có version rõ
+- producer không tự random key cho cùng một business fact nếu muốn replay/dedupe có nghĩa
+- consumer phải dedupe theo `idempotencyKey` hoặc business-equivalent key, không chỉ theo BullMQ job id
+
 ---
 
 ## Dispatcher design
@@ -250,6 +265,15 @@ When outbox is NOT enabled, events marked "outbox required" in taxonomy must use
 
 **NEVER** silently ignore "outbox required" events.
 **NEVER** create empty outbox table just to "have it" — deferred means not activated.
+
+### Consumer ergonomics
+
+- queue consumer chuẩn phải có helper dùng chung cho:
+  - dedupe processed event
+  - structured retry logging
+  - dead-letter metadata
+  - audit append khi bỏ cuộc
+- không để từng worker tự phát minh processed-key format riêng
 
 ---
 

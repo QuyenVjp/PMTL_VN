@@ -21,7 +21,7 @@ Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc t
 ## Hợp đồng dữ liệu đầu vào (Input Contract)
 - `commentReportSchema` (Cấu trúc báo cáo bình luận).
 - Tham số tuyến đường (route param) sử dụng ID công khai (`publicId`).
-- Nếu có cảnh báo hạ nguồn, gói dữ liệu outbox phải có loại sự kiện, phiên bản sự kiện và mã tính không đổi (idempotency key).
+- Nếu phase 2+ bật cảnh báo hạ nguồn qua outbox, payload phải có loại sự kiện, phiên bản sự kiện và mã tính không đổi (idempotency key).
 
 ## Tập hợp dữ liệu đọc (Read Set)
 - Bộ sưu tập bình luận bài viết (`postComments`) hoặc bộ sưu tập bình luận mục tiêu tương ứng.
@@ -39,10 +39,12 @@ Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc t
    - Lý do báo cáo gần nhất (`lastReportReason`).
    - Trạng thái kiểm duyệt hoặc trạng thái ẩn (nếu chính sách tự động kích hoạt).
 6. Thêm sự kiện nhật ký kiểm toán hành động `moderation.report.submit`.
-7. Nạp sự kiện outbox để tạo cảnh báo cho quản trị viên nếu chính sách yêu cầu.
+7. **Phase 1**: cảnh báo quản trị có thể đi theo sync hoặc best-effort path có log intent + log outcome + manual recovery rõ.
+8. **Phase 2+**: nếu alert reliability đã bật, append `outbox_events` để tạo cảnh báo cho quản trị viên.
 
 ## Tác động phụ bất đồng bộ (Async Side-effects)
-- Gửi thông báo cho quản trị viên hoặc quản trị viên cấp cao.
+- **Phase 1**: admin alert là optional sync/best-effort side-effect.
+- **Phase 2+**: admin alert quan trọng đi qua outbox/dispatcher.
 
 ## Kết quả thành công (Success Result)
 - Bản ghi báo cáo chuẩn gốc được tạo thành công.
@@ -53,7 +55,7 @@ Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc t
 - `404`: Bình luận mục tiêu không tồn tại.
 - `409`: Báo cáo chưa giải quyết bị trùng lặp hoặc xung đột trạng thái.
 - `429`: Bị hệ thống chống thư rác chặn.
-- `500`: Lỗi đồng bộ hóa tóm tắt hoặc lỗi hệ thống hạ nguồn.
+- `500`: Lỗi đồng bộ hóa tóm tắt, lỗi alert sync ở phase 1, hoặc lỗi hạ nguồn/outbox ở phase 2+.
 
 ## Kiểm toán (Audit)
 - Ghi nhật ký hành động `moderation.report.submit`.
@@ -62,10 +64,10 @@ Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc t
 ## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
 - Không cho phép cùng một đối tượng thực hiện gửi báo cáo liên tục cho cùng một mục tiêu trong khoảng thời gian ngắn.
 - Việc gửi lại yêu cầu do lỗi mạng không được tạo ra nhiều báo cáo chưa giải quyết giống hệt nhau.
-- Việc phát lại hàng đợi outbox không được tạo báo cáo trùng lặp cho cùng một báo cáo chuẩn gốc.
+- Việc phát lại hàng đợi outbox không được tạo cảnh báo trùng lặp cho cùng một báo cáo chuẩn gốc khi phase 2+ đã bật.
 
 ## Mục tiêu hiệu năng (Performance Target)
-- Việc tạo báo cáo chuẩn gốc và nạp cảnh báo outbox nên hoàn tất trong vòng dưới 800ms.
+- Việc tạo báo cáo chuẩn gốc và trigger downstream tối thiểu nên hoàn tất trong vòng dưới 800ms.
 
 ## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
 - `moderationReports` là nguồn dữ liệu chuẩn gốc; tuyệt đối không nhét toàn bộ vòng đời báo cáo vào bộ sưu tập `postComments`.

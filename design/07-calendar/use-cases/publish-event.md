@@ -25,7 +25,8 @@
 ## Input contract (hợp đồng dữ liệu/nghiệp vụ)
 
 - Backend owner write cho `events`.
-- nếu có downstream signal thì outbox payload phải có event type, event version và idempotency key
+- Phase 1 không yêu cầu outbox payload cho event publish.
+- nếu phase 2+ bật downstream signal qua outbox thì payload phải có `eventType`, `eventVersion`, và `idempotencyKey`
 
 ## Read set
 
@@ -38,12 +39,13 @@
 1. Validate event data.
 2. Ghi canonical record (bản ghi chuẩn gốc) vào `events`.
 3. Append audit `event.publish`.
-4. Nếu event được content tham chiếu, notification dùng, hoặc read model cần refresh, append outbox event downstream phù hợp.
+4. **Phase 1**: nếu content/read-model cần refresh, chạy sync hoặc best-effort signal có log + recovery path rõ.
+5. **Phase 2+**: nếu notification hoặc projection reliability đã bật, append downstream outbox event phù hợp.
 
 ## async (bất đồng bộ) side-effects
 
-- notification producer có thể nhận outbox signal rồi mới dispatch execution job nếu flow nhắc sự kiện bật
-- personal practice calendar refresh signal nếu event ảnh hưởng cửa sổ lịch
+- **Phase 1**: refresh signal cho read model có thể chạy sync/manual trigger.
+- **Phase 2+**: notification producer hoặc calendar refresh pipeline nhận outbox signal rồi dispatch execution job.
 
 ## success result (kết quả thành công)
 
@@ -72,4 +74,6 @@
 ## Notes for AI/codegen
 
 - Calendar sở hữu event record; content chỉ giữ relation `relatedEvent`.
-- Nếu signal downstream bị rơi, recovery path là replay outbox hoặc recompute window, không ghi tay notification state.
+- Nếu signal downstream bị rơi:
+  - **Phase 1**: recompute window hoặc manual refresh.
+  - **Phase 2+**: replay outbox hoặc recompute window.

@@ -1,7 +1,7 @@
 # Publish Post (Xuất bản Bài viết)
 
 ## Mục đích (Purpose)
-Xuất bản một bài viết biên tập (editorial post) để trang web công khai có thể hiển thị, bộ nhớ đệm (cache) được làm mới chính xác và dữ liệu tìm kiếm (search) được cập nhật theo luồng bất đồng bộ (async).
+Xuất bản một bài viết biên tập (editorial post) để trang web công khai có thể hiển thị, bộ nhớ đệm (cache) được làm mới chính xác và dữ liệu tìm kiếm (search) được cập nhật theo cơ chế đang được kích hoạt ở phase hiện tại.
 
 ## Mô-đun sở hữu (Owner module)
 - `content` (Nội dung)
@@ -35,14 +35,15 @@ Quản trị viên chuyển trạng thái (`status`) của bài viết (`posts`)
 3. Ghi bản ghi chuẩn gốc (canonical record) vào bộ sưu tập `posts` với trạng thái `_status = published`.
 4. Thiết lập thời điểm xuất bản (`publishedAt`) nếu chưa có.
 5. Thêm sự kiện nhật ký kiểm toán (audit event) cho hành động `post.publish`.
-6. Thêm các sự kiện hàng đợi (`outbox_events`) phục vụ đồng bộ tìm kiếm, làm mới trang web (revalidation) và thông báo nếu tính năng được bật.
-7. Bộ điều phối (Dispatcher) thực hiện công việc (job) hoặc các trình xử lý hạ nguồn tương ứng từ hàng đợi outbox.
+6. **Phase 1**: gọi search sync/revalidation theo đường sync hoặc best-effort có log intent + log outcome + recovery path rõ; không giả định `outbox_events` đã bật.
+7. **Phase 2+**: nếu `outbox`/dispatcher đã được activate cho search, revalidation, hoặc notification, append `outbox_events` trong cùng canonical transaction rồi để dispatcher xử lý downstream work.
 
 ## Tác động phụ bất đồng bộ (Async Side-effects)
-- Đồng bộ hóa tìm kiếm (Search sync).
-- Gọi Webhook làm mới trang (Revalidation webhook).
-- Phát thông báo nếu luồng này được bật sau này.
-- Quy trình phục hồi chuẩn: Phát lại hàng đợi outbox hoặc thực hiện lập lại chỉ mục hàng loạt từ bản ghi chuẩn gốc `posts`.
+- **Phase 1**: search sync/revalidation có thể chạy sync hoặc best-effort với log + manual recovery path.
+- **Phase 2+**: search sync, revalidation, và notification quan trọng đi qua `outbox_events`.
+- Quy trình phục hồi chuẩn:
+  - **Phase 1**: re-run revalidation hoặc reindex từ canonical `posts`.
+  - **Phase 2+**: replay outbox hoặc full reindex từ canonical `posts`.
 
 ## Kết quả thành công (Success Result)
 - Tài liệu trở thành nội dung công khai hợp lệ.
@@ -55,7 +56,7 @@ Quản trị viên chuyển trạng thái (`status`) của bài viết (`posts`)
 - `403`: Không có quyền biên tập bài viết.
 - `404`: Tài liệu hoặc các mối quan hệ quan trọng không tồn tại.
 - `409`: Xung đột đường dẫn (`slug`)/ID công khai hoặc trạng thái xuất bản không hợp lệ.
-- `500`: Lỗi dịch vụ nghiệp vụ, lỗi nạp dữ liệu vào hàng đợi outbox hoặc lỗi điều phối hạ nguồn.
+- `500`: Lỗi dịch vụ nghiệp vụ, lỗi sync/revalidation ở phase 1, hoặc lỗi append outbox/điều phối hạ nguồn ở phase 2+.
 
 ## Kiểm toán (Audit)
 - Bắt buộc ghi nhật ký hành động `post.publish`.
@@ -67,7 +68,7 @@ Quản trị viên chuyển trạng thái (`status`) của bài viết (`posts`)
 
 ## Mục tiêu hiệu năng (Performance Target)
 - Yêu cầu xuất bản không phải chờ quy trình lập chỉ mục tìm kiếm hoàn tất.
-- Phản hồi nên hoàn tất trong vòng dưới 800ms cho việc ghi dữ liệu chuẩn và nạp vào hàng đợi outbox.
+- Phản hồi nên hoàn tất trong vòng dưới 800ms cho canonical write và trigger downstream tối thiểu của phase hiện tại.
 
 ## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
 - `posts` mới là chủ sở hữu chuẩn gốc; chỉ mục tìm kiếm không phải là nguồn dữ liệu gốc.

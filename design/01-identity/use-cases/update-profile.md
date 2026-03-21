@@ -40,12 +40,13 @@
 3. Commit canonical update vào `users`.
 4. Nếu cần, cập nhật session-derived display data hoặc invalidate cache liên quan.
 5. Append audit log `auth.profile.update`.
-6. Nếu policy bật avatar processing hoặc profile downstream signal, append `outbox_events`.
+6. **Phase 1**: avatar processing hoặc profile refresh downstream chỉ chạy khi policy bật và phải có best-effort/recovery path rõ; không giả định outbox.
+7. **Phase 2+**: nếu profile downstream signal cần reliability, append `outbox_events`.
 
 ## async (bất đồng bộ) side-effects
 
-- avatar processing
-- downstream profile refresh signal
+- **Phase 1**: avatar processing/profile refresh là optional side-effects theo sync hoặc best-effort path.
+- **Phase 2+**: downstream profile signal đi qua outbox khi cần reliability.
 
 ## success result (kết quả thành công)
 
@@ -66,7 +67,7 @@
 ## Idempotency & anti-spam (Tính không đổi & chống thư rác)
 
 - cùng một payload lặp lại nên là NOOP hợp lệ
-- replay outbox không được tạo duplicate downstream signal cho cùng một update event
+- replay outbox không được tạo duplicate downstream signal cho cùng một update event khi phase 2+ đã bật
 
 ## Performance target (Mục tiêu hiệu năng)
 

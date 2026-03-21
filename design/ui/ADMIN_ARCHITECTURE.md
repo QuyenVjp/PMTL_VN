@@ -214,6 +214,20 @@ feature/
 | Loading | Skeleton rows matching column count |
 | Empty | EmptyState component với action button |
 
+### CRUD generation boundary
+
+- admin được phép tái sử dụng shell chung cho list/filter/pagination/form wiring để giảm code lặp
+- admin **không** được tự sinh business write logic vượt qua API contracts của `apps/api`
+- pattern cho phép:
+  - shared table shell
+  - shared form scaffold từ schema metadata
+  - shared query key factory và mutation wrappers
+- pattern cấm:
+  - generic "save anything" endpoint
+  - UI tự lắp payload không qua schema contract
+  - bypass route/module-specific audit, policy, hoặc cache invalidation rules
+- mục tiêu là giảm code UI lặp lại 70-80%, không biến admin thành source of truth thứ hai
+
 ---
 
 ## Key admin pages

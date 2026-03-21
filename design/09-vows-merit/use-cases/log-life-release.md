@@ -84,12 +84,13 @@
 11. Nếu operation là `create` hoặc `correct` và record này đóng góp vào một vow, append hoặc recompute `vowProgressEntry` tương ứng qua owner flow của vows-merit.
 12. Nếu operation là `void`, rollback hoặc neutralize toàn bộ vow progress đã phát sinh từ record này theo đường deterministic.
 13. Append audit `life-release.log`.
-14. Nếu cần reminder follow-up, calendar refresh, hoặc notification downstream, append outbox event tương ứng sau khi canonical state đã ổn định.
+14. **Phase 1**: reminder follow-up, calendar refresh, hoặc notification downstream chỉ đi theo sync/manual path có recovery rõ; không giả định outbox.
+15. **Phase 2+**: nếu downstream reliability đã bật, append outbox event tương ứng sau khi canonical state đã ổn định.
 
 ## Async side-effects
 
-- optional reminder follow-up
-- optional update reminder candidates cho ngày phóng sanh
+- **Phase 1**: optional reminder follow-up hoặc update reminder candidates theo sync/manual path
+- **Phase 2+**: reminder/calendar/notification downstream đi qua outbox path khi feature tương ứng đã bật
 
 ## Success result
 
@@ -123,12 +124,12 @@
 - nếu UI có `clientEventId`, service nên dedupe theo `user + clientEventId`
 - nếu không có `clientEventId`, UI vẫn nên chặn double-submit trong thời gian ngắn
 - record phóng sanh không được tự biến thành community post nếu user chưa explicit share
-- replay outbox không được tạo duplicate progress/reminder cho cùng canonical journal entry.
+- replay outbox không được tạo duplicate progress/reminder cho cùng canonical journal entry khi phase 2+ đã bật.
 
 ## Performance target
 
 - create journal nên hoàn tất `< 700ms`
-- phần prepare reminder hoặc sync sang notification phải ở downstream async path
+- phần prepare reminder hoặc sync sang notification không được kéo dài canonical request; phase 1 dùng minimal sync/manual path, phase 2+ dùng downstream async path
 
 ## Notes
 

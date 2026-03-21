@@ -51,7 +51,7 @@ model MediaAsset {
   originalFilename String       // stored for audit, never used as storageKey
   mimeType         String
   sizeBytes        Int
-  checksum         String?      // sha256 of file content
+  checksum         String?      // sha256 of file content — canonical integrity field, không dựa vào ETag object store; phase 1 cho phép null ở legacy/sample assets nhưng new upload flow nên cố gắng populate
   status           MediaStatus  @default(UPLOADED)
   uploadedBy       String       @db.Uuid  // FK to users.publicId
   linkedEntityType String?      // post | guide | event | etc.
@@ -184,6 +184,27 @@ After DB restore:
 - Run missing file detection job manually
 - Accept expected mismatch if backup timestamps differ
 - Document mismatch in restore-drill-log.md
+
+### Integrity verification rule
+
+- local disk và object storage đều phải coi `checksum` + `sizeBytes` là integrity baseline
+- không dùng riêng ETag làm bằng chứng integrity vì multipart/object-store behavior có thể làm ETag không còn đồng nghĩa với content hash
+- restore drill hoặc repair flow nên verify theo thứ tự:
+  1. `storage.exists(storageKey)`
+  2. `sizeBytes` khớp
+  3. checksum khớp khi asset nằm trong sample hoặc suspicious set
+
+### Media consistency manifest rule
+
+- mọi backup/restore drill nên ưu tiên đối chiếu bằng manifest tối thiểu thay vì chỉ kiểm ngẫu nhiên bằng mắt
+- manifest tối thiểu cho sample verify nên gồm:
+  - `publicId`
+  - `storageKey`
+  - `checksum` nếu đã có
+  - `sizeBytes`
+  - `status`
+- nếu chưa có full manifest export job, phase 1 vẫn phải có sample manifest generator cho restore drill và missing/orphan checks
+- mục tiêu của manifest không phải tạo source of truth mới, mà giảm code kiểm tra lặp lại và giúp restore verification có thể tự động hóa
 
 ---
 

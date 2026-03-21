@@ -96,6 +96,11 @@ Env vars:
 **Phase 1 fallback** (no Cloudflare API token): Call `revalidatePath()` in Next.js only.
 **Phase 2**: Add Cloudflare purge as inline sync call after publish.
 
+**Canonical owner**:
+- invalidation dispatcher owner = `platform/cache`
+- source module chỉ phát canonical event + affected aggregate metadata
+- `platform/cache` quyết định gọi Next.js revalidation, Cloudflare purge, hoặc cả hai theo mapping đã khai báo
+
 ---
 
 ## Layer 2: Next.js ISR / Route Handler Cache
@@ -106,6 +111,8 @@ Env vars:
 - Public deterministic route segments ưu tiên `use cache`
 - Cached loaders phải gắn `cacheTag()` ở đúng aggregate/tag boundary
 - `revalidateTag()` là cơ chế chính cho invalidation theo domain event; `revalidatePath()` chỉ dùng khi route-specific và không có tag phù hợp
+- `updateTag()` chỉ dùng cho read-your-own-writes trong Next.js Server Actions hoặc mutation path chạy ngay trong `apps/web`; không dùng nó như cross-service invalidation primitive từ `apps/api`
+- invalidation từ `apps/api` sang `apps/web` phải mặc định dùng `revalidateTag(tag, 'max')` hoặc `revalidatePath()` qua internal endpoint để semantics luôn nhất quán
 - Không đưa `cookies()` / `headers()` trực tiếp vào cached scope; đọc ngoài rồi truyền vào argument
 - `after()` chỉ dùng cho post-response side effects không-authoritative
 
@@ -130,7 +137,7 @@ Env vars:
 export async function POST(req: Request) {
   const { path, tag, secret } = await req.json();
   if (secret !== process.env.REVALIDATE_SECRET) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  if (tag) revalidateTag(tag);
+  if (tag) revalidateTag(tag, 'max');
   if (path) revalidatePath(path);
   return Response.json({ revalidated: true });
 }
@@ -150,10 +157,37 @@ export async function POST(req: Request) {
 | `content.post.published` | `revalidateTag('posts')`, `revalidateTag('post:{publicId}')`, `revalidateTag('homepage')` khi có featured slot | purge post detail URL + affected list URLs nếu public | không broadcast sang browser; client tự thấy data mới khi refetch | `del cache:content:post:{publicId}` + related list keys |
 | `content.post.unpublished` | same tags as publish | purge public post/detail/list URLs | invalidate public search/list queries nếu user đang ở client island | delete same keys |
 | `calendar.event.published` | `revalidateTag('calendar-events')`, path detail nếu có slug | purge public calendar URLs | invalidate advisory/calendar queries ở member surfaces | delete advisory/date keys |
-| `feature.flag.updated` | không revalidate public ISR mặc định | none | invalidate `['feature-flags']` ở web/admin | delete `cache:feature-flags` |
+| `calendar.advisory.refreshed` | none mặc định nếu advisory chỉ là member/private read-model | none | invalidate advisory/calendar queries ở member surfaces | delete `cache:calendar:advisory:{date}` keys thuộc window được refresh khi Valkey active |
+| `feature.flag.updated` | mặc định không revalidate public ISR; **nếu flag điều khiển public route/component**, phải revalidate tag/path liên quan ngay trong cùng admin action | none | invalidate `['feature-flags']` ở web/admin ngay sau mutation success | delete `cache:feature-flags` |
 | `search.reindex.completed` | none | none | invalidate client search status/admin ops queries | purge `cache:search:*` nếu active |
 
 **Rule**: invalidation chain phải chạy từ canonical event taxonomy trong `tracking/outbox-event-taxonomy.md`; không tự nghĩ thêm event string ở từng layer cache.
+
+### Dispatcher contract
+
+- source module không gọi Cloudflare purge API trực tiếp từ business service nếu đã có `platform/cache` dispatcher
+- dispatcher order mặc định:
+  1. Next.js revalidation
+  2. Cloudflare purge nếu token/config hiện diện
+  3. browser/server cache invalidation liên quan
+- nếu Cloudflare purge không cấu hình ở phase 1, operation vẫn hợp lệ nếu Next.js revalidation pass
+- nếu Next.js revalidation fail ở publish path mà public correctness phụ thuộc revalidation, mutation phải được coi là failed hoặc degraded theo doc owner; không được giả vờ publish đã fully propagated
+- mỗi canonical write event phải map về:
+  - tag list
+  - optional path list
+  - fail policy (`fail_closed` hoặc `degraded_with_log`)
+- mapping phải nằm ở module owner hoặc `platform/cache` registry, không hard-code rải rác trong controller/service
+
+### Invalidation registry rule
+
+- mọi public invalidation phải đi qua một registry/manifest chung do `platform/cache` đọc được, thay vì hard-code tag/path ở từng service
+- mỗi module owner khai báo:
+  - canonical event
+  - affected tags
+  - affected paths nếu có
+  - Cloudflare purge URLs nếu khác tag/path mặc định
+- admin UI, controller, và worker không được tự suy luận invalidation targets bằng string rời rạc
+- nếu một event chưa có registry entry thì mutation không được tự ý gọi revalidate/purge theo cảm tính; phải bổ sung mapping trước
 
 ---
 
@@ -189,6 +223,15 @@ After mutation, invalidate related queries:
 | `POST /vows` | `['vows']`, `['dashboard-stats']` |
 | `PATCH /engagement/ngoi-nha-nho-sheets/:id` | `['ngoi-nha-nho-sheets']`, `['ngoi-nha-nho-sheets', id]` |
 | `POST /notifications/push/subscribe` | `['push-subscription-status']` |
+| `PATCH /admin/feature-flags/:key` | `['feature-flags']`, `['feature-flags', key]` và query screen phụ thuộc trực tiếp vào flag đó |
+
+### Feature-flag update contract
+
+- admin toggle feature flag phải coi là mutation cần consistency ngay, không chờ staleTime hết
+- nếu flag chỉ ảnh hưởng admin/member dynamic surfaces, query invalidation là đủ
+- nếu flag ảnh hưởng public cached surface, admin mutation vẫn phải gọi `platform/cache` dispatcher trong cùng operation thay vì tự revalidate trực tiếp
+- owner của mapping `flag -> affected public tags/paths` là module bật flag đó; không để admin UI tự đoán
+- mapping này phải sống cùng module owner doc hoặc seed metadata của feature flag; `platform/cache` chỉ thực thi registry đó, không tự suy luận bằng tên flag
 
 ### Optimistic updates (allowed for)
 

@@ -253,8 +253,22 @@ Mục tiêu:
 | `GET` | `/health/startup` | `health` | internal/public per deploy policy |
 | `GET` | `/metrics` | `metrics` | internal only |
 | `GET` | `/feature-flags/:key` | `feature-flags` | internal/admin |
+| `PATCH` | `/admin/feature-flags/:key` | `feature-flags` | admin+ |
+| `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
 
 ## Notes
 
+- Route inventory này là consumer-facing surface, không phải nơi lặp lại toàn bộ validation schema.
+- Admin/reference-data routes có thể scaffold nhanh hơn từ contract registry hoặc resource template.
+- Các route sau bắt buộc hand-authored service logic, không được coi là generated CRUD:
+  - `/auth/*`
+  - `/moderation/reports/*`
+  - `/search/reindex*`
+  - `/internal/revalidate`
+  - publish/unpublish flows
+  - storage/media lifecycle routes
+
 - Tồn kho route này là `planning inventory`, không có nghĩa mọi route đã được implement.
 - Khi thêm route mới, cập nhật file này cùng `contracts.md` của module owner.
+- webhook/internal callback routes như `/internal/revalidate` phải có schema + shared-secret/signature contract rõ ở doc owner tương ứng; không được thêm ngầm trong code
+- `/auth/refresh` là route bắt buộc có rate-limit, transaction-safe rotation, và replay handling theo `01-identity/use-cases/manage-auth-session.md`; không được scaffold như route auth public đơn giản

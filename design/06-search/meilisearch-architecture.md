@@ -300,6 +300,17 @@ export class SearchService {
 6. Meilisearch.index.addOrUpdateDocuments([doc])
 ```
 
+### Task tracking ergonomics
+
+- search sync handler không nên coi HTTP `202 accepted` từ Meilisearch là "done"
+- mỗi indexing operation nên giữ:
+  - `outboxEventId` hoặc `idempotencyKey`
+  - `meilisearch taskUid`
+  - `document publicId`
+  - `operation` (`upsert` | `delete` | `reindex`)
+- admin/status surface nên đọc được task state từ Meilisearch tasks API thay vì chỉ nhìn log text
+- replay cùng `idempotencyKey` phải map về một business outcome rõ: `duplicate_skipped`, `task_rechecked`, hoặc `reissued_after_failure`
+
 ### SearchSyncHandler
 
 ```typescript
@@ -308,10 +319,10 @@ export class SearchService {
 @Injectable()
 export class SearchSyncHandler {
   async handle(job: Job<SearchSyncJobData>): Promise<void> {
-    const { eventId, eventType, aggregateId, aggregateType } = job.data;
+    const { eventId, eventType, aggregateId, aggregateType, idempotencyKey } = job.data;
 
     // Idempotency check
-    const key = `search-sync:${eventId}`;
+    const key = `search-sync:${idempotencyKey ?? eventId}`;
     const alreadyDone = await this.prisma.processedJobLog.findUnique({
       where: { jobKey: key }
     });

@@ -25,7 +25,7 @@ Quản trị viên gửi yêu cầu đến `POST /api/moderation/reports/:public
   - `rejected` (Đã bác bỏ).
   - `flagged` (Đã đánh dấu theo dõi).
   - `hidden` (Đã ẩn thực thể).
-- Nếu có tín hiệu hạ nguồn, gói dữ liệu outbox phải bao gồm loại sự kiện, phiên bản sự kiện và mã tính không đổi (idempotency key).
+- Nếu phase 2+ bật tín hiệu hạ nguồn qua outbox, payload phải bao gồm loại sự kiện, phiên bản sự kiện và mã tính không đổi (idempotency key).
 
 ## Tập hợp dữ liệu đọc (Read Set)
 - Bộ sưu tập các báo cáo kiểm duyệt (`moderationReports`).
@@ -47,11 +47,12 @@ Quản trị viên gửi yêu cầu đến `POST /api/moderation/reports/:public
    - Trạng thái phê duyệt (`approvalStatus`).
    - Trạng thái ẩn (`isHidden`).
 6. Thêm sự kiện nhật ký kiểm toán hành động `moderation.report.resolve`.
-7. Nạp sự kiện outbox hạ nguồn tương ứng (nếu có thông báo hoặc ghi vết nội bộ).
+7. **Phase 1**: thông báo/ghi vết nội bộ đi theo sync hoặc best-effort path có recovery rõ nếu policy cần.
+8. **Phase 2+**: append outbox signal hạ nguồn tương ứng khi notification/internal handoff cần reliability.
 
 ## Tác động phụ bất đồng bộ (Async Side-effects)
-- Thông báo cho người dùng bị ảnh hưởng.
-- Ghi vết quản trị nội bộ nếu chính sách yêu cầu.
+- **Phase 1**: user/internal notifications là optional sync hoặc best-effort side-effects.
+- **Phase 2+**: notification/handoff quan trọng đi qua outbox path.
 
 ## Kết quả thành công (Success Result)
 - Báo cáo cập nhật trạng thái quyết định mới.
@@ -63,7 +64,7 @@ Quản trị viên gửi yêu cầu đến `POST /api/moderation/reports/:public
 - `403`: Vai trò không đủ quyền hoặc xâm phạm phạm vi bảo vệ của Quản trị viên cấp cao.
 - `404`: Báo cáo vi phạm hoặc mục tiêu không tồn tại.
 - `409`: Báo cáo đã ở trạng thái không cho phép giải quyết lại.
-- `500`: Lỗi đồng bộ hóa tóm tắt hoặc lỗi thông báo hạ nguồn.
+- `500`: Lỗi đồng bộ hóa tóm tắt, lỗi notification sync ở phase 1, hoặc lỗi thông báo/outbox ở phase 2+.
 
 ## Kiểm toán (Audit)
 - Ghi nhật ký hành động `moderation.report.resolve`.
