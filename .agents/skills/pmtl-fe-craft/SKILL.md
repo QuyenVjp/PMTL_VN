@@ -1,6 +1,6 @@
 ---
 name: pmtl-fe-craft
-description: Advanced frontend craftsmanship skill for PMTL_VN. Use for frontend implementation, refactoring, or code review when the goal is code that feels senior-written: clean boundaries, strong component shape, server-first logic, and zero AI-slop shortcuts.
+description: "Advanced frontend craftsmanship skill for PMTL_VN. Use for frontend implementation, refactoring, or code review when the goal is code that feels senior-written: clean boundaries, strong component shape, server-first logic, and zero AI-slop shortcuts."
 ---
 
 # PMTL Frontend Craftsmanship

@@ -36,11 +36,15 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 - `apps/admin`
 - `Postgres`
 - `Caddy`
+- structured logs
+- `/health/*`
+- `/metrics`
 - local storage abstraction (lớp trừu tượng lưu trữ nội bộ)
 - auth/session hardening (thắt chặt bảo mật phiên đăng nhập)
 - upload hardening (thắt chặt bảo mật tải tập tin)
 - audit logs (nhật ký kiểm tra)
 - feature flags (cờ tính năng)
+- app-layer rate limit
 - backup + restore discipline (kỷ luật sao lưu và phục hồi)
 
 ### Explicitly deferred (Tạm hoãn rõ ràng)
@@ -95,9 +99,13 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 
 - [ ] auth/session policy finalized (chốt xong chính sách phiên đăng nhập)
 - [ ] upload/media policy finalized (chốt xong chính sách truyền thông/tải lên)
-- [ ] restore drill passed (diễn tập phục hồi đã vượt qua)
 - [ ] `audit_logs` implemented (đã triển khai nhật ký kiểm tra)
 - [ ] `feature_flags` implemented (đã triển khai cờ tính năng)
+- [ ] rate-limit path implemented (đã triển khai rõ đường đi giới hạn tần suất)
+- [ ] local storage abstraction implemented (đã triển khai lớp trừu tượng lưu trữ nội bộ)
+- [ ] `/health/live`, `/health/ready`, `/health/startup` implemented (đã triển khai đầy đủ các đường kiểm tra sức khỏe)
+- [ ] `/metrics` implemented (đã triển khai endpoint chỉ số tối thiểu)
+- [ ] restore drill passed (diễn tập phục hồi đã vượt qua)
 - [ ] first incident runbook written (đã viết xong tài liệu xử lý sự cố đầu tiên)
 - [ ] first risky write-path reviewed end-to-end (đã rà soát xong luồng ghi dữ liệu rủi ro đầu tiên từ đầu đến cuối)
 

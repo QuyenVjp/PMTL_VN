@@ -256,7 +256,7 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 | REVALIDATE_SECRET | Shared secret between api and web for on-demand ISR revalidation | `baseline/cache-topology.md` |
 | API_INTERNAL_URL | Server-to-server URL, never exposed to browser — server components only | `baseline/frontend-architecture.md` |
 
-## 10. Anti-goals (Những điều không làm)
+## 17. Anti-goals (Những điều không làm)
 
 - không bật infra nặng chỉ để “trông enterprise”
 - không dùng search/cache/queue làm source of truth
@@ -264,7 +264,7 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 - không để business logic bám vào local file path
 - không gọi là production-safe nếu chưa restore pass
 
-## 11. Student note (Ghi chú cho sinh viên)
+## 18. Student note (Ghi chú cho sinh viên)
 
 Điều quan trọng nhất không phải “có nhiều service”.
 Điều quan trọng nhất là:

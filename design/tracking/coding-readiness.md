@@ -52,7 +52,7 @@ Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. 
 |---|---|---|
 | `design-ready` | design đủ rõ để bắt đầu implementation planning | file này |
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ rõ để bắt đầu code module đó | `tracking/implementation-mapping.md` |
-| `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `README.md` + `tracking/implementation-mapping.md` |
+| `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `DECISIONS.md` section 9 + `tracking/implementation-mapping.md` |
 
 Coding agent có thể bắt đầu Wave 1, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass, implementation proof, và post-code OpenAPI coverage proof.
 Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md) để tránh dựng sai từ commit đầu.
@@ -419,5 +419,5 @@ Wave 6 — Notifications + Offline
 - [ ] Đọc `02-content/use-cases/upload-media-asset.md` (launch blocker)
 - [ ] Verify skill routing đang dùng khớp `AGENTS.md` của repo
 - [ ] Tạo Prisma schema từ migration order ở trên
-- [ ] Seed `feature_flags` table với flags list ở Phần 5
+- [ ] Seed `feature_flags` table với flags list ở Phần 4
 - [ ] Confirm rate-limit store: `rate_limit_records` Postgres table (phase 1)
