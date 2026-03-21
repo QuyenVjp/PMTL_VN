@@ -22,5 +22,11 @@
       "WebFetch(domain:www.guanyincitta.info)",
       "Bash(grep:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "playwright",
+    "postgres-pmtl",
+    "shadcn"
+  ],
+  "enableAllProjectMcpServers": true
 }

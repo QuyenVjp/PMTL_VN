@@ -1,5 +1,8 @@
 # Landing Page Design — PMTL_VN
 
+> Companion art direction: see [HOMEPAGE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/HOMEPAGE_CONSTITUTION.md) for the homepage palette, atmosphere, and composition laws.
+> `LANDING_PAGE_DESIGN.md` remains the landing-page owner. The companion file sharpens tone; it does not replace route or navigation canon.
+
 > **Triết lý**: Landing page không phải trang bán hàng. Đây là **cổng vào không gian tu học** — người đến đây đang tìm sự tĩnh lặng, hướng dẫn, và cộng đồng.
 > **Không bắt chước**: tránh SaaS generic, tránh app store screenshot dump, tránh countdown timer.
 > **Hướng đến**: Editorial premium — tương tự Kinfolk magazine, nhưng kỹ thuật số và Phật giáo Việt.

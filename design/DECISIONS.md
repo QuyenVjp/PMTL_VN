@@ -21,6 +21,7 @@ Nếu một file khác mô tả khác file này, ưu tiên file này trước, r
 - backend authority là `NestJS`
 - database source of truth là `Postgres`
 - auth authority duy nhất là `apps/api`
+- external scaffold registries như `Servercn` chỉ được dùng làm `design reference`, không phải runtime source of truth
 
 ## 2. Phase 1 baseline (Nền tảng giai đoạn 1)
 
@@ -53,6 +54,7 @@ Phải có:
 - `Prometheus/Grafana/Alertmanager`
 - tracing
 - `pgvector`
+- `Servercn` như runtime scaffold source
 
 ## 4. Canonical ownership rules (Quy tắc sở hữu chuẩn gốc)
 
