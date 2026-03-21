@@ -68,14 +68,25 @@ healthcheck:
 
 **Purpose**: Is the app ready to accept and correctly process requests?
 
+**Activation rule**:
+- baseline checks luôn chạy cho phase 1
+- optional dependency chỉ được coi là `required` khi feature path chính đã activate thật sự
+- nếu env/config của optional dependency không hiện diện và feature chưa activate, check phải hiện `skipped` hoặc không xuất hiện; đây là `not activated`, không phải incident
+- nếu feature đã route qua dependency đó nhưng env/config bắt buộc thiếu hoặc dependency unhealthy, `/health/ready` phải trả `503`
+
+**Operational definition of activated**:
+- `Valkey` = `VALKEY_URL` hiện diện **và** ít nhất một path chính đang route qua Valkey (`RATE_LIMIT_STORE=valkey`, cache path đã bật thật, hoặc BullMQ active)
+- `Meilisearch` = `SEARCH_ENGINE=meilisearch` **và** `MEILISEARCH_URL` hiện diện
+- chỉ có env var mà chưa route traffic/feature sang dependency đó thì chưa tính là `activated`
+
 **Checks (always)**:
 1. **Postgres connectivity**: `SELECT 1` within 2s timeout
 2. **Pending migrations**: `prisma migrate status` — must be 0 pending migrations
 3. **Feature flags table**: `SELECT COUNT(*) FROM feature_flags` — table must be readable
 
-**Checks (when env var set)**:
-4. **Valkey connectivity** (when `VALKEY_URL` set): `PING` → `PONG` within 500ms
-5. **Meilisearch health** (when `MEILI_HOST` set): `GET /health` → `{"status":"available"}`
+**Checks (when activated)**:
+4. **Valkey connectivity** (when `VALKEY_URL` set and rate-limit/cache/queue path is routed to Valkey): `PING` → `PONG` within 500ms
+5. **Meilisearch health** (when `SEARCH_ENGINE=meilisearch` and `MEILISEARCH_URL` set): `GET /health` → `{"status":"available"}`
 
 **Response 200 (all checks pass)**:
 ```json
@@ -119,6 +130,9 @@ curl -f https://api.pmtl.vn/health/ready || exit 1
 
 **Purpose**: Have all platform modules completed their initialization sequence?
 
+`/health/startup` chỉ track **11 baseline platform modules** từ `baseline/startup-dependency-order.md`.
+Optional phase-2+ services như `Valkey`, `Meilisearch`, `BullMQ`, `apps/worker` không chen vào danh sách này; nếu đã activate thì report ở phần riêng như `optionalServices`.
+
 **Checks**:
 Verifies all platform modules initialized (in startup order):
 1. `ConfigModule` — env validated
@@ -150,6 +164,10 @@ Verifies all platform modules initialized (in startup order):
     "health": "initialized",
     "metrics": "initialized"
   },
+  "optionalServices": {
+    "valkey": "not_activated",
+    "meilisearch": "not_activated"
+  },
   "startupDurationMs": 1243,
   "timestamp": "2026-03-21T10:00:00.000Z"
 }
@@ -164,11 +182,18 @@ Verifies all platform modules initialized (in startup order):
     "logging": "initialized",
     "sessions": "pending"
   },
+  "optionalServices": {},
   "timestamp": "2026-03-21T10:00:00.000Z"
 }
 ```
 
 **Startup timeout**: If startup not complete within 30s → mark `StorageModule` or blocking module as `failed`.
+
+**State mapping**:
+- critical baseline module `failed` hoặc `pending` sau timeout → `/health/startup` trả `503`
+- critical baseline module `failed` → `/health/ready` cũng phải trả `503`
+- optional service `not_activated` không làm fail startup
+- optional service `activated` nhưng unhealthy làm `/health/ready` fail khi traffic thực sự đang route qua nó
 
 ---
 

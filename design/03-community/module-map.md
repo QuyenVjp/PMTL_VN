@@ -76,6 +76,8 @@ initialExpandLevel: 3
 
 - community không sở hữu report source-of-truth
 - community chỉ giữ moderation summary fields trên entity
+- community chỉ phát report/review signal; moderation mới sở hữu report entity và decision lifecycle
+- signal path mặc định là append handoff event rồi để moderation intake xử lý; không coi community là owner của moderation record
 
 ### Notification
 
@@ -89,3 +91,4 @@ initialExpandLevel: 3
 - author snapshot được giữ ngay trên entity để ổn định public DTO
 - guestbook là flow nhẹ hơn community post/comment
 - canonical submit đi trước; alert/notify/review signal đi sau qua outbox
+- report submission từ community phải được hiểu là signal/snapshot handoff, không phải community tự giữ canonical moderation record

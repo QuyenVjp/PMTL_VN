@@ -24,14 +24,15 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 1. Source of truth (nguồn chuẩn gốc):
    - full lifecycle của violation/report chỉ nằm ở `moderationReports`
 2. Target summaries (tóm tắt trên đối tượng đích):
-   - article/post/comment chỉ giữ read-only summary fields như:
+   - article/post/comment chỉ giữ read-only summary fields khi surface thật sự cần lọc/render theo moderation state, ví dụ:
      - `reportCount`
      - `lastReportReason`
      - `moderationStatus`
      - `approvalStatus`
      - `isHidden`
+   - `moderationReports` vẫn là canonical source of truth; summary fields là optional read-model/cache layer, không bắt buộc tồn tại trên mọi entity
 3. Async alerts (cảnh báo bất đồng bộ):
-   - **Phase 2+**: admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`. **Phase 1**: sync hoặc fire-and-forget có log.
+   - **Phase 2+**: admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`. **Phase 1**: sync hoặc fire-and-forget có log intent + log outcome + retry/alert/manual-recovery path rõ.
 4. Validation (kiểm tra đầu vào):
    - decision payload và reporter metadata phải có runtime schema rõ
 

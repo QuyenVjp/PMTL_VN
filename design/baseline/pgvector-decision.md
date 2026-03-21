@@ -32,12 +32,12 @@ Nếu trigger được đáp ứng, artifact runtime cần có:
 
 | Artifact | Location | Mô tả |
 |---|---|---|
-| Postgres extension | `prisma/schema.prisma` | `extensions = [vector]` |
+| Postgres extension | `prisma/schema.prisma` | `extensions = [vector]`; extension hỗ trợ Postgres 13+, nhưng PMTL chỉ nên activate trên **Postgres major còn được support** tại thời điểm rollout (review hiện tại: 17/18), và phải verify `CREATE EXTENSION vector`/`SELECT extname FROM pg_extension WHERE extname='vector'` |
 | Embedding dimension decision | `design/baseline/pgvector-decision.md` (updated) | Chốt 1536 (OpenAI) hoặc 768 (PhoBERT) |
 | Migration | `prisma/migrations/` | Add vector column + HNSW index |
 | EmbeddingService | `apps/api/src/platform/embedding/` | Calls embedding model API |
 | Vector search adapter | `apps/api/src/modules/search/adapters/vector.adapter.ts` | pgvector similarity query |
-| Feature flag | `pgvector.semantic_search.enabled` | Guard semantic search path |
+| Feature flag | `pgvector.semantic_search.enabled` | Guard semantic search path; owner = Search module |
 | Env vars | `EMBEDDING_MODEL_URL`, `EMBEDDING_API_KEY`, `VECTOR_DIMENSIONS` | AI inference config |
 
 ---
@@ -51,6 +51,11 @@ pgvector chỉ được xem xét lại khi **tất cả** các điều kiện sa
 3. Embedding model đã được chọn và chi phí inference đã được ước tính
 4. Team đã test restore procedure với pgvector extension bật
 5. Vector dimension đã được chốt (không thể thay đổi sau khi có data)
+
+`Meilisearch stable ≥ 3 tháng` nghĩa là:
+- không có downtime ngoài kế hoạch làm mất public search
+- không có incident drift/index consistency ở mức cần ticket/runbook follow-up mà chưa được giải quyết
+- đã có ít nhất một restore/rebuild evidence cho search path liên quan, không chỉ design intent
 
 ---
 

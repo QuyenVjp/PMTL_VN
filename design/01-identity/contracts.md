@@ -27,9 +27,19 @@ Source (Nguồn): `packages/shared/src/schemas/auth.ts` hoặc schema Zod tươn
 - Sole auth authority (quyền lực xác thực duy nhất) là `NestJS auth` backed by `users` + `sessions`.
 - Web/Admin là client surfaces (bề mặt client), không giữ authority.
 - Session authority nằm ở backend, không nằm ở frontend store.
+- Frontend có thể cache sanitized session metadata cho UX ngắn hạn, nhưng không được persist raw token, refresh token, hoặc tự tạo auth authority mới.
 - `admin` là operational role (vai trò vận hành), không bị bó vào `own-records-only`.
 - Mọi request payload, provider callback payload, env contract đều phải có runtime schema rõ.
 - email/reset/provider notification signal nếu có nên đi qua `outbox_events`.
+- Provider signal ở đây chỉ các downstream internal events sau auth callback hoặc security notification; không dùng từ này để làm mơ hồ OAuth callback contract.
+
+## Reset token rules
+
+- reset token phải có expiry window rõ
+- reset token phải bị invalidated ngay khi đổi mật khẩu thành công
+- cùng một token không được dùng lại
+- request reset mới phải làm token cũ hết hiệu lực nếu flow chọn single-active-reset-token
+- replay hoặc token đã dùng phải trả lỗi an toàn, không lộ nội bộ
 
 ## Response rules (Quy tắc phản hồi)
 
@@ -61,4 +71,4 @@ Do not expose (Tuyệt đối không để lộ):
 - Không thêm secondary auth authority.
 - `users` + `sessions` là canonical owner cho account và session lifecycle.
 - Public client state phải bám theo session/token do backend cấp.
-- Không tự thêm role mới như `editor` hoặc `moderator` nếu design chưa chốt.
+- Không tự thêm role mới như `editor` hoặc `moderator` nếu design chưa chốt. Role mới chỉ được thêm khi có doc explicit trong `design/01-identity/decisions.md` hoặc decision owner tương đương của identity.

@@ -21,7 +21,7 @@ Mục tiêu là làm rõ:
   - event/job payload
 - Search và notification là downstream module.
 - Moderation là cross-cutting module nhưng không cướp ownership của entity bị report.
-- **Phase 2+**: Business event quan trọng phải đi qua `outbox_events` trước khi được dispatcher phát sang execution queue hoặc downstream handler — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. **Phase 1**: dùng sync hoặc fire-and-forget có log cho các event tương đương (xem `DECISIONS.md` section 7).
+- **Phase 2+**: Business event quan trọng phải đi qua `outbox_events` trước khi được dispatcher phát sang execution queue hoặc downstream handler — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. **Phase 1**: dùng sync hoặc fire-and-forget có log intent + log outcome + retry/alert/manual-recovery path rõ cho các event tương đương (xem `DECISIONS.md` section 7).
 - Mọi boundary giữa module phải có schema runtime rõ cho request, event payload, webhook payload và env contract. Khi outbox/queue đã bật, queue payload cũng phải validate.
 
 ## Theo module
@@ -98,7 +98,7 @@ Mục tiêu là làm rõ:
   - `postComments`
   - identity cho reporter/admin actor
 - **Direct writes to other modules**:
-  - sync summary fields lên entity đích
+  - sync summary fields lên entity đích khi entity đó thật sự cần moderation-aware filtering/rendering
 - **Emits async (bất đồng bộ) work**:
   - notify admin/super-admin
   - notify affected user sau decision
@@ -116,8 +116,8 @@ Mục tiêu là làm rõ:
   - public search route
   - status route
 - **async (bất đồng bộ) work**:
-  - dispatcher phát search-sync job từ outbox
-  - worker (tiến trình xử lý nền) upsert/delete index documents
+  - phase 2+ khi `Meilisearch` + outbox/queue active: dispatcher phát search-sync job từ outbox
+  - phase 2+ khi worker active: worker (tiến trình xử lý nền) upsert/delete index documents
   - optional semantic retrieval sync khi feature `pgvector` đã được chốt
 
 ### Calendar
@@ -166,13 +166,13 @@ Mục tiêu là làm rõ:
 | Content      | Search       | Content owns source fields, Search owns index flow         | publish/update post                        | outbox event → async (bất đồng bộ) job                    | upsert/delete Meilisearch document                                      |
 | Content      | Calendar     | Calendar owns event record, Content chỉ tham chiếu         | admin chọn `relatedEvent`                  | direct reference                                          | không có write ngược mặc định                                           |
 | Content      | Notification | Notification không sở hữu content                          | publish hoặc manual internal alert         | outbox event → async (bất đồng bộ) job                    | push/email announcement nếu feature bật                                 |
-| Community    | Moderation   | Moderation owns report record                              | submit report                              | direct create + outbox event                              | tạo `moderationReports`, sync summary, alert admin                      |
+| Community    | Moderation   | Moderation owns report record                              | submit report                              | direct create + outbox event                              | tạo `moderationReports`, sync summary nếu target surface cần, alert admin                      |
 | Community    | Notification | Notification không sở hữu community data                   | submit post/comment/guestbook              | outbox event → async (bất đồng bộ) job                    | tạo push/email alert cho admin/super-admin                              |
 | Community    | Identity     | Identity owns user                                         | submit/comment/report                      | direct reference                                          | snapshot author name trên entity để giảm phụ thuộc read path            |
 | Engagement   | Content      | Content owns scripture/library và practice support content | bookmark/progress/log                      | direct reference                                          | không write ngược vào content canonical data                            |
 | Content      | Engagement   | Engagement owns self-state                                 | preference save / practice complete        | direct call qua API contract (hợp đồng dữ liệu/nghiệp vụ) | chỉ ghi user-state, không sửa script gốc                                |
 | Engagement   | Identity     | Identity owns user                                         | read/write self state                      | direct reference                                          | self-owned records theo user                                            |
-| Moderation   | Community    | Community owns entity, Moderation owns report              | admin decision                             | direct write-back                                         | update `moderationStatus`, `isHidden`, `approvalStatus`, summary fields |
+| Moderation   | Community    | Community owns entity, Moderation owns report              | admin decision                             | direct write-back                                         | update optional `moderationStatus`, `isHidden`, `approvalStatus`, summary fields khi surface cần |
 | Moderation   | Notification | Notification owns delivery control plane                   | decision / new report                      | outbox event → async (bất đồng bộ) job                    | notify admin/super-admin hoặc affected user                             |
 | Search       | Content      | Content owns canonical documents                           | public query fallback (đường dự phòng)     | direct read                                               | payload fallback (đường dự phòng) khi Meilisearch unavailable           |
 | Calendar     | Content      | Content owns chant guide/script/downloads                  | event override cần map bài niệm hoặc guide | direct reference                                          | calendar không copy ritual script vào event                             |
@@ -193,6 +193,7 @@ Mục tiêu là làm rõ:
 | Community    | Vows & Merit | Vows & Merit owns journal                      | user muốn chia sẻ phóng sanh hoặc linh nghiệm | explicit export/share                  | tạo post mới, không lộ record riêng tư mặc định |
 | Calendar     | Engagement   | Engagement owns self-state                     | build lịch tu học cá nhân                     | direct read                            | không write ngược                               |
 | Calendar     | Content      | Content owns daily practice guides/presets     | compose advisory cho ngày đặc biệt            | direct read                            | chỉ mang refs/preset, không copy ritual truth   |
+| Calendar     | Wisdom & QA  | Calendar owns advisory composition; Wisdom-QA owns teaching text + provenance | compose daily advisory/source refs | direct internal query                  | advisory chỉ mang source refs/excerpts, không copy canonical teaching text |
 
 ## Direct call vs event/job
 
@@ -213,7 +214,15 @@ Mục tiêu là làm rõ:
 Ghi chú:
 
 - **Phase 2+**: "async job" luôn nên được hiểu là `canonical write -> outbox_events -> dispatcher -> execution queue -> worker`, không phải request path tự phát queue theo kiểu best effort.
-- **Phase 1**: khi outbox/queue chưa bật, các side effect tương đương dùng sync inline hoặc fire-and-forget có log — không được im lặng bỏ qua (xem `DECISIONS.md` section 7, `infra.md` section "Async Reliability").
+- **Phase 1**: khi outbox/queue chưa bật, các side effect tương đương dùng sync inline hoặc fire-and-forget có log intent + log outcome + recovery path rõ — không được im lặng bỏ qua (xem `DECISIONS.md` section 7, `infra.md` section "Async Reliability").
+
+## Boundary inventory owner
+
+- route/request boundary owner: `tracking/api-route-inventory.md`
+- env contract owner: `tracking/env-inventory.md`
+- outbox event envelope + payload taxonomy owner: `tracking/outbox-event-taxonomy.md`
+- queue payload owner: `baseline/bullmq-worker-architecture.md`
+- webhook boundary owner: doc sở hữu integration tương ứng; không được tạo webhook path ngầm mà không update doc owner
 
 ## Delete / cleanup contracts
 

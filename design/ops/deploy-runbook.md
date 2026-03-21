@@ -43,7 +43,8 @@ services:
 
   admin:
     build: ./apps/admin
-    # Static SPA — served by Caddy directly or own nginx
+    # Static SPA build artifact only — served by Caddy, not a separate nginx layer
+    # If kept in Compose, this service exists to produce static assets consumed by Caddy via shared artifact path or multi-stage image build
 
   db:
     image: postgres:18
@@ -118,6 +119,23 @@ curl -f https://admin.pmtl.vn/               || echo "WARN: admin down"
 # 9. Monitor logs (keep watching for 5 minutes)
 docker compose -f docker-compose.prod.yml logs -f --tail 50
 ```
+
+### Minimum smoke gate
+
+Deploy chỉ được coi là `pass` khi tối thiểu các check sau đều pass:
+
+- `GET /health/live`
+- `GET /health/ready`
+- `GET /health/startup`
+- public homepage load
+- admin homepage load
+- một auth-adjacent path hoặc protected route check không bị 500
+- một canonical business read path không bị 500 sau migration
+
+Nếu migration đã đổi schema một phần nhưng smoke gate fail:
+- đánh giá backward compatibility trước
+- nếu schema change breaking hoặc app boot không ổn định, rollback trước khi tiếp tục restore reasoning
+- không coi `git pull && rebuild` là deploy pass chỉ vì container đã lên
 
 ---
 

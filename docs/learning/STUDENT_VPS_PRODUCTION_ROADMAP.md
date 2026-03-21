@@ -1,7 +1,6 @@
 ---
 markmap:
   colorFreezeLevel: 2
-  initialExpandLevel: 3
 ---
 
 # Student VPS Production Roadmap

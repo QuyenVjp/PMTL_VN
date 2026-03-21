@@ -95,7 +95,8 @@ markmap:
 
 ### Community
 - `postComments.post` tham chiếu post
-- content không sở hữu comment thread
+- content không sở hữu comment thread hoặc comment write-path
+- content chỉ sở hữu post identity + public read surface mà comment thread bám vào
 
 ### Search
 - content chỉ sở hữu source fields
@@ -191,4 +192,6 @@ markmap:
 - audience visibility không được hardcode ngoài owner collection
 - user-state phải nằm ngoài content
 - practice support content là public/editorial reference data, không phải user-state
+- `chantPlans` là editorial/practice reference data; việc user chọn, theo, hoặc hoàn thành plan thuộc user-state module khác
 - `giới thiệu pháp môn` và `sơ học` là first-class content surface, không phải chỉ là vài post rời rạc
+- search source fields là content-owned because they describe editorial documents; bookmark/progress/practice projections không vì thế mà chuyển ownership vào content

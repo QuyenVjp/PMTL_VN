@@ -31,6 +31,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/nest-baseline.md` | NestJS app pipeline owner | request pipeline, Zod, Pino, guards, error envelope | không lặp full infra policy |
 | `baseline/security.md` | security policy owner | auth, CSRF, CORS, cookies, upload security, webhook, secrets | không lặp infra topology |
 | `baseline/infra.md` | infra phase owner | phase baseline, optional components, trigger rules | không biến thành deep ops tutorial |
+| `baseline/startup-dependency-order.md` | startup/init owner | bootstrap order, per-module init dependency, baseline fail behavior | không lặp health response payload chi tiết |
 | `tracking/audit-policy.md` | audit event taxonomy owner | what to log, actor/action/resource baseline | không lặp auth policy |
 | `baseline/sla-slo.md` | service objectives owner | latency, availability, measurement notes | không lặp implementation status |
 | `baseline/failure-modes.md` | failure behavior owner | degrade/fail-closed/fail-open matrix | không lặp full infra tutorial |

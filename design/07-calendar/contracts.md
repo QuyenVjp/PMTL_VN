@@ -44,6 +44,7 @@
 - event publish/update hoặc calendar refresh signal quan trọng nên đi qua `outbox_events` trước khi xuống notification/rebuild downstream
 - request payload, refresh job payload và advisory compose input nên có schema runtime rõ
 - event offline phải có `location`; event online phải có `externalLink` hoặc `embedUrl` phù hợp
+- hybrid event phải có cả `location` và `externalLink`/`embedUrl`
 - event `type = organizational` phải có ít nhất một agenda item trước khi publish
 - reschedule/cancel là explicit lifecycle action; không patch mơ hồ qua field tự do rồi kỳ vọng FE tự suy ra trạng thái
 
@@ -68,20 +69,10 @@
 - Calendar không copy ritual script vào event record nếu content đã sở hữu dữ liệu đó.
 - Nếu có thông báo nhắc sự kiện, notification chỉ đọc context, không sở hữu event data.
 - Route `GET /api/practice-calendar` có thể ghép thêm preference/vow context, nhưng vẫn phải coi calendar là owner của read composition.
-- Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng các source-backed text gốc vẫn do `09-wisdom-qa` sở hữu.
+- Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng:
+  - `sourceRefs` chỉ nên trỏ sang canonical IDs / public refs, không copy full source-backed text
+  - `recitationRules` là rule composition cho calendar read-model; `chantItems` và source-backed ritual text vẫn thuộc content/wisdom owners
+- user preference/vow context phải được inject như read inputs đã sanitize từ module owner tương ứng; calendar không trở thành owner của user-state chỉ vì nó compose read-model
 - Organizational event timeline phải trả dữ liệu có cấu trúc để FE render timeline/card view, không ép parse rich text.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
 - Hành động reschedule/cancel phải giữ audit + reason rõ để public FE và notification consumer có context đúng.
-
-- `409`: Conflict (Duplicate slug/PublicID or override collision).
-- `500`: Projection refresh failure or outbox dispatch error.
-
----
-
-## Notes for AI/codegen (Ghi chú for AI & Sinh mã)
-
-- **Referential Integrity**: Do not duplicate ritual scripts into event records; link to the Content module via ID.
-- **Consumer Role**: Use the Notification module only for delivery; it should consume calendar context, not own it.
-- **Read Model Composition**: The `GET /api/practice-calendar` endpoint aggregates `advisoryCards`, `sourceRefs` (from Wisdom), and `recitationRules`, but it must remain the authoritative service for this combined result.
-- **Recovery Path**: If the Read Model drifts from source data, the standard fix is to **Recalculate the Window** or **Replay the Signal**, never manual point-edits to the read model.
-- **Instructional Accuracy**: Any teaching snippets in the advisory must correspond to an approved source in the Wisdom module (`09-wisdom-qa`).

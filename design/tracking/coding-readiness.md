@@ -368,7 +368,7 @@ Bước 12 — Contact (reference users):
 | `pmtl-production-baseline` | May reference Payload patterns | **Review & Update** |
 | `pmtl-runbook-cms-runtime-errors` | References CMS (Payload) runtime | **Deprecate** |
 
-**Action required**: tiếp tục tránh route vào các skill deprecated; ưu tiên skills đã align trong `AGENTS.md`.
+**Action required**: coi các skill deprecated ở trên là historical/no-route entries; không dùng chúng cho chat mới, không giữ chúng trong checklist active của rebuild.
 
 ---
 

@@ -490,7 +490,7 @@ meilisearch: await this.meili.health().catch(() => ({ status: 'unavailable' })),
 # infra/docker/docker-compose.meilisearch.yml (override file)
 services:
   meilisearch:
-    image: getmeili/meilisearch:v1.39.0
+    image: getmeili/meilisearch:v1.32.1
     env_file: /etc/pmtl/secrets/.env.production
     environment:
       MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY}
@@ -510,6 +510,10 @@ services:
 volumes:
   meilisearch_data:
 ```
+
+**Pinning rule**:
+- không đoán trước image tag tương lai trong design doc
+- ví dụ ở đây dùng `v1.32.1` vì đó là release stable mới nhất đã review tại thời điểm cập nhật doc; khi rollout thật phải re-check upstream release notes rồi ghi lại tag đã chọn trong deploy artifact / runbook
 
 ---
 

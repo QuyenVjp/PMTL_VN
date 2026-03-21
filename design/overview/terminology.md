@@ -81,3 +81,4 @@ Ví dụ:
 - UI chính phải ưu tiên tiếng Việt có dấu, dễ hiểu
 - thuật ngữ gốc dùng để đối chiếu và search
 - không startup-hoá, game-hoá, mạng xã hội hoá thuật ngữ tu học
+- nếu cần giải thích feature surface lấy từ source chính thức, dùng thêm `overview/source-analysis.md`; file này chỉ chốt terminology, không thay file source-analysis

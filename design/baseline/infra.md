@@ -60,7 +60,7 @@ Media local disk chỉ được coi là operational nếu:
 
 ### 5. Async Reliability
 
-**Phase 1**: Sync hoặc fire-and-forget có log. Không cần outbox/queue.
+**Phase 1**: Sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ. Không cần outbox/queue.
 **Phase 2+**: Outbox + dispatcher + BullMQ + worker khi side effect đủ quan trọng.
 
 ```

@@ -31,7 +31,7 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 ### Data & Runtime
 
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
-- **Phase 2+**: `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng — chỉ bật khi side effect đủ chậm hoặc failure cost đủ cao (xem `DECISIONS.md` section 7). Phase 1 dùng sync hoặc fire-and-forget có log.
+- **Phase 2+**: `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng — chỉ bật khi side effect đủ chậm hoặc failure cost đủ cao (xem `DECISIONS.md` section 7). Phase 1 dùng sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ.
 - **Deferred**: `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination — chỉ bật khi có measured pain (xem `DECISIONS.md` section 3).
 - **Deferred**: Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc — chỉ bật khi search là core feature và SQL performance không đủ.
 - object storage là đích chuẩn cho media/file trong target phase production.
@@ -324,5 +324,5 @@ Future candidate chỉ được thêm vào current scope khi có owner module (m
 ## Baseline bổ sung phải giữ
 
 - Boundary runtime phải có schema validation rõ cho request, webhook payload, search document và env config. Khi outbox/queue đã bật (Phase 2+), queue payload cũng phải validate.
-- **Phase 2+**: Business event quan trọng phải đi qua outbox trước khi vào execution queue — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. Phase 1 dùng sync hoặc fire-and-forget có log.
+- **Phase 2+**: Business event quan trọng phải đi qua outbox trước khi vào execution queue — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. Phase 1 dùng sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ.
 - Recommendation/semantic retrieval chỉ thêm khi use case rõ; không ép `pgvector` thành mặc định của search.

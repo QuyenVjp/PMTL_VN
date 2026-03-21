@@ -53,10 +53,14 @@ Client Component (khi cần interactivity)
 - Bật `cacheComponents: true` trong `next.config.ts` cho `apps/web`
 - Public deterministic reads phải ưu tiên `use cache` + `cacheTag()` thay vì chỉ dựa vào `revalidate` số giây
 - Runtime values như `cookies()` và `headers()` phải đọc **ngoài** cached scope rồi truyền vào như argument
-- `after()` chỉ dùng cho side effects không-authoritative như logging, analytics, soft counters; **không** dùng cho canonical write, auth, audit, rate-limit, hay security enforcement
+- `after()` chỉ dùng cho side effects không-authoritative, nghĩa là **không thuộc request-response contract và chỉ best-effort**, như logging, analytics, soft counters; **không** dùng cho canonical write, auth, audit, rate-limit, cache invalidation mang tính correctness, hay security enforcement
 - `use cache: remote` không bật ở phase 1; chỉ xem xét khi default runtime cache không đủ và đã có measured pain / cost justification
 - `use cache: private` không dùng làm mặc định; chỉ dùng khi có compliance/runtime requirement thật sự không thể refactor
 - Tooling/debugging nên ưu tiên Next.js DevTools + MCP workflow khi team cần inspect App Router behavior thay vì tự phát minh debug flow riêng
+
+Ví dụ sai:
+- dùng `after()` để append `audit_logs` cho write-path
+- dùng `after()` để revoke session hoặc enforce rate-limit sau response
 
 ### Proxy boundary — Bug 8 fix (CRITICAL)
 

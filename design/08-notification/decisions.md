@@ -3,25 +3,28 @@
 > Ghi chú cho sinh viên:
 > `pushJobs` nhìn giống bảng notification, nhưng thực ra nó là bảng điều phối gửi, không phải hộp thư người dùng.
 
-## Decision 1. Notification là async-only (chỉ chạy ngầm, bất đồng bộ) trong current scope
+## Decision 1. Notification delivery là async-first; Phase 1 có thể chỉ ghi record điều phối
 
 ### Context
 
-Push dispatch và email notification đều có queue (hàng đợi xử lý)/worker (tiến trình xử lý nền) path.
+Push dispatch và email notification đều có queue (hàng đợi xử lý)/worker (tiến trình xử lý nền) path ở phase đầy đủ.
 
 ### Decision
 
 - Notification delivery không chạy đồng bộ trong request path.
-- Request path chỉ append outbox event cho delivery request quan trọng; dispatcher mới tạo execution job điều phối.
+- Phase 1 có thể mới dừng ở mức ghi subscription / push job / delivery request record mà chưa bật auto-dispatch đầy đủ.
+- Khi Phase 2+ delivery active, request path chỉ append outbox event cho delivery request quan trọng; dispatcher mới tạo execution job điều phối.
+- readiness cho delivery activation phải đi qua feature-flag / phase gate rõ, không suy ngầm từ việc đã có control-plane records.
 
 ### Rationale
 
 - Giảm latency.
-- Hợp với stack outbox + execution queue + worker đã chốt.
+- Hợp với stack outbox + execution queue + worker khi feature đã được activate.
 
 ### Trade-off
 
-- Delivery có eventual consistency.
+- Delivery có eventual consistency khi dispatch active.
+- Phase 1 có thể có control-plane records mà chưa có full async delivery execution.
 
 ## Decision 2. pushJobs là control-plane (lớp điều phối hệ thống) record, không phải inbox source-of-truth
 
@@ -97,6 +100,7 @@ Repo hiện có email notification execution path nhưng chưa có email history
 
 - Email notification là downstream side effect.
 - Current design không tạo thêm bảng email history riêng nếu repo chưa có owner rõ.
+- Idempotency của email dispatch phải dựa trên event key / dispatch key ở outbox + job payload, không dựa vào email history table.
 
 ### Rationale
 
@@ -106,6 +110,7 @@ Repo hiện có email notification execution path nhưng chưa có email history
 ### Trade-off
 
 - Audit email delivery sâu hơn sẽ cần log/job sink hoặc model riêng trong tương lai.
+- Nếu duplicate email trở thành risk thực tế, phải thêm owner model hoặc sink reviewed rõ ràng, không vá tạm ở consumer.
 
 ## Decision 6. Delivery request quan trọng phải đi qua outbox trước khi dispatch
 

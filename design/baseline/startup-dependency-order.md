@@ -113,13 +113,14 @@ Quy tắc: fail-safe là tắt feature, không phải bật feature.
 
 | Trường | Giá trị |
 |---|---|
-| **Depends on** | config, logging, sessions (cho per-account scoping) |
+| **Depends on** | config, logging, sessions (cho per-account scoping), Postgres table ở phase 1 hoặc Valkey ở phase 2+ |
 | **Provides** | rate limit guard, per-IP và per-account counting |
 | **Fail behavior** | **FAIL OPEN với log** — nếu limiter store unavailable, cho qua nhưng log rõ |
 | **Phase 1 store** | `rate_limit_records` Postgres table (xem quyết định cuối bên dưới) |
 
 **Quyết định phase 1**: dùng `rate_limit_records` Postgres table, không phải Valkey.
-Trigger migrate sang Valkey khi: volume đủ lớn hoặc lock contention trên table đo được.
+Trigger migrate sang Valkey khi: volume đủ lớn hoặc lock contention trên table đo được theo ngưỡng trong `baseline/valkey-architecture.md`.
+Per-account scoping cần auth context từ `sessions`; per-IP scoping không cần session nhưng vẫn đi chung guard path.
 
 ---
 
@@ -198,6 +199,14 @@ Hành vi:
 - `onModuleInit()` trên platform services cần connect + verify, không delay sang runtime
 - startup probe (`/health/startup`) chỉ trả `200` khi tất cả `onModuleInit` đã pass
 - không dùng lazy init cho config, logging, sessions, audit
+
+## Optional phase-2+ services
+
+- `Valkey`, `BullMQ`, `Meilisearch`, `apps/worker` không nằm trong baseline 11 platform modules của phase 1
+- chúng chỉ tham gia startup contract khi:
+  - feature path chính đã được activate thật sự
+  - env/config bắt buộc đã hiện diện
+- nếu env không được set và feature chưa activate, trạng thái đúng là `not activated`, không phải startup failure giả
 
 ## Notes for AI/codegen
 

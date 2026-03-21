@@ -15,10 +15,15 @@ Bật Valkey khi **ít nhất 1** điều kiện sau:
 
 | Trigger | Measurement |
 |---|---|
-| rate_limit_records Postgres table shows lock contention | `pg_locks` + slow query log showing rate-limit table locks |
+| rate_limit_records Postgres table shows lock contention | `pg_locks` hoặc DB wait events cho thấy lock waits lặp lại trên `rate_limit_records`, hoặc p95 của limiter query > 100ms sustained trong 15 phút dù index/cleanup đã đúng |
 | Cache miss causing > 300ms p95 on frequently-read routes | Pino logs showing repeated identical DB queries |
 | BullMQ is being activated (requires Valkey as backend) | BullMQ activation trigger met |
 | Shared state needed across multiple API instances (horizontal scale) | Horizontal scale decision made |
+
+**Không coi là đủ trigger**:
+- một slow query đơn lẻ
+- table chưa được index/cleanup đúng mà đã vội migrate
+- contention chỉ xuất hiện trong local dev noise, không lặp lại ở môi trường gần production
 
 ---
 

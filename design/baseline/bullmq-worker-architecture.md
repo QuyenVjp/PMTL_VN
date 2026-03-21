@@ -22,6 +22,7 @@ Bật BullMQ + worker khi **ít nhất 1** điều kiện:
 | Meilisearch reindex causing request timeout | Post-publish reindex slows publish API call |
 
 **Prerequisite**: Valkey must be active (`VALKEY_URL` set and healthy).
+Queue storage phải dùng split đúng theo `baseline/valkey-architecture.md`: cache/rate-limit ở DB 0, BullMQ ở DB 1. Không dùng chung DB mặc định cho queue và rate-limit nếu chưa chứng minh eviction policy an toàn.
 
 ---
 
