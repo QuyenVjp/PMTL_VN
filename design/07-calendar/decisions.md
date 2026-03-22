@@ -156,3 +156,32 @@ Chúng có:
 
 - event write-path phức tạp hơn
 - cần validation chặt hơn trước publish
+
+## Decision 8. `六齋日` là rule family first-class của calendar, không chỉ là content snippet
+
+### Context
+
+Các advisory thực tế cho `mùng 8 / 14 / 15 / 23 / 29 / 30` không chỉ là một đoạn text.
+Chúng chứa:
+
+- day role khác nhau
+- khuyến nghị tu tập khác nhau
+- warning profile
+- fallback semantics nếu lỡ ngày chính
+
+### Decision
+
+- `luc_trai_days` là canonical rule family của `calendar`
+- `calendar` sở hữu `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions`
+- `wisdom-qa` vẫn sở hữu transcript/discourse/source-backed wording và provenance
+
+### Rationale
+
+- tránh hardcode advisory dài trong FE hoặc service
+- cho admin có thể preview, override, và audit rõ từng layer
+- giữ boundary sạch giữa rule composition và doctrinal source ownership
+
+### Trade-off
+
+- admin/calendar contracts phải sâu hơn mức event CRUD
+- read-model preview/status cũng phải có shape rõ để debug

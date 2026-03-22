@@ -20,7 +20,14 @@
 
 ## Admin routes
 
+- `GET /api/admin/calendar/lunar-overrides`
+- `GET /api/admin/calendar/lunar-overrides/:publicId`
 - `POST /api/admin/calendar/lunar-overrides`
+- `PATCH /api/admin/calendar/lunar-overrides/:publicId`
+- `DELETE /api/admin/calendar/lunar-overrides/:publicId`
+- `GET /api/admin/calendar/status`
+- `POST /api/admin/calendar/advisory/preview`
+- `GET /api/admin/calendar/personal-practice/inspect`
 - `POST /api/admin/calendar/personal-practice/refresh`
 - `POST /api/admin/calendar/events`
 - `PATCH /api/admin/calendar/events/:publicId`
@@ -43,14 +50,20 @@
 - transcript/pháp hội discourse text vẫn thuộc `wisdom-qa`, không được copy full text vào event record
 - content chỉ tham chiếu event qua relation như `relatedEvent`
 - lunar override chỉ sửa cách lịch được diễn giải/hiển thị, không chuyển ownership sang module khác
+- `luc_trai_days` là rule family canonical của calendar; source-backed wording và transcript vẫn thuộc `wisdom-qa`
 - personal practice calendar là `derived read model (mô hình dữ liệu đọc)`, không phải canonical owner của event/lunar data
 - `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output read-model của calendar, không phải canonical owner của bài gốc hoặc bản dịch gốc
 - event publish/update hoặc calendar refresh signal quan trọng nên đi qua `outbox_events` trước khi xuống notification/rebuild downstream
 - request payload, refresh job payload và advisory compose input nên có schema runtime rõ
+- `GET /api/admin/calendar/lunar-overrides` trả lifecycle list cho admin, không bắt FE đoán từ event list
+- `POST /api/admin/calendar/advisory/preview` là read-only preview lane cho admin; route này không mutate canonical data
+- `GET /api/admin/calendar/personal-practice/inspect` là inspect lane cho read-model freshness/debug, không phải public member read route
+- `GET /api/admin/calendar/status` phải trả freshness + projection health + last refresh summary tối thiểu
 - `POST /api/admin/calendar/personal-practice/refresh` là deterministic rebuild lane, không phải patch tay read-model
   - request phải chỉ rõ `scope` như `user`, `date-window`, hoặc `full-member-window`
   - concurrent refresh cùng target phải idempotent theo refresh key hoặc coalesce về một running job/business outcome
   - response nên là `accepted` nếu chỉ trigger downstream rebuild, hoặc `single` nếu refresh sync nhỏ và đã hoàn tất thật
+  - response metadata tối thiểu nên có `scope`, `window`, `rowsRebuilt`, `rowsPruned`, `sourceVersion`, `completedAt`, `refreshMode`
   - recovery path chuẩn là replay/recompute cùng input window; không mutate thủ công từng advisory row
 - event offline phải có `location`; event online phải có `externalLink` hoặc `embedUrl` phù hợp
 - hybrid event phải có cả `location` và `externalLink`/`embedUrl`
@@ -91,4 +104,5 @@
   - `sourceUrl?`
   rồi để FE mở canonical wisdom detail khi cần.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
+- Nếu admin preview `luc_trai_days` advisory, response nên trả `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions`, và `sourceRefs` thay vì 1 blob text duy nhất.
 - Hành động reschedule/cancel phải giữ audit + reason rõ để public FE và notification consumer có context đúng.

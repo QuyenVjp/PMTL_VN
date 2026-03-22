@@ -68,6 +68,14 @@
 
 - read model (mô hình dữ liệu đọc) sẵn sàng cho route `GET /api/calendar/personal-practice`.
 - Nếu admin chạy manual refresh ở phase 1, route trigger tương ứng là `POST /api/admin/calendar/personal-practice/refresh`.
+- Nếu manual refresh thành công, admin status panel phải đọc được result summary tối thiểu:
+  - `scope`
+  - `window`
+  - `rowsRebuilt`
+  - `rowsPruned`
+  - `sourceVersion`
+  - `completedAt`
+  - `refreshMode`
 
 ## Errors
 
@@ -81,3 +89,5 @@
 - Không dùng partial upsert không prune cho flow này.
 - Mục tiêu là `fully derived, window-based projection (mô hình chiếu theo cửa sổ ngày, tính lại hoàn toàn)`.
 - Recovery path chuẩn là recompute window hoặc replay signal, không patch từng row kiểu best effort.
+- Admin inspect/debug route canon đi kèm là `GET /api/admin/calendar/personal-practice/inspect`.
+- Admin preview lane nên dùng `POST /api/admin/calendar/advisory/preview`; đừng bắt FE đoán advisory state từ raw rows.

@@ -43,6 +43,7 @@ markmap:
 ### Lunar schedule (Lịch âm)
 - định nghĩa recurrence base (lớp lặp lại cơ sở)
 - liên kết bài viết hoặc practice reference nếu có
+- giữ `rule families` như `luc_trai_days` để advisory layer không phải hardcode từng ngày đặc biệt
 
 ### Overrides (Lớp ghi đè)
 - gắn chant item hoặc note đặc biệt cho ngày/sự kiện cụ thể
@@ -146,6 +147,7 @@ markmap:
 - event ownership nằm ở calendar
 - `organizational event` vẫn là event calendar-owned, không tách module mới
 - lunar recurrence base và override là hai lớp dữ liệu khác nhau
+- `luc_trai_days` là first-class monthly lunar rule family của calendar; wording doctrinal gốc vẫn đọc từ `wisdom-qa`
 - reminder logic không nằm trong current scope của calendar
 - `personalPracticeCalendarReadModel` là read model do calendar compose, không phải owner data mới
 - refresh/rebuild quan trọng phải có replay/recompute path rõ

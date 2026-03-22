@@ -16,6 +16,7 @@
 ## trigger (điểm kích hoạt)
 
 - Admin tạo hoặc cập nhật `lunarEventOverrides`.
+- Admin archive/delete override cũ khi nó không còn nên tác động tới advisory projection.
 
 ## preconditions (điều kiện tiên quyết)
 
@@ -46,6 +47,7 @@
 ## success result (kết quả thành công)
 
 - read model (mô hình dữ liệu đọc) lịch âm giải được rule override mới.
+- admin có thể preview lại advisory bị ảnh hưởng qua `POST /api/admin/calendar/advisory/preview`.
 
 ## Errors
 
@@ -69,3 +71,10 @@
 ## Notes for AI/codegen
 
 - Override là canonical của module calendar, không đẩy logic này sang content hay engagement.
+- Admin lifecycle canon không dừng ở create:
+  - `GET /api/admin/calendar/lunar-overrides`
+  - `GET /api/admin/calendar/lunar-overrides/:publicId`
+  - `POST /api/admin/calendar/lunar-overrides`
+  - `PATCH /api/admin/calendar/lunar-overrides/:publicId`
+  - `DELETE /api/admin/calendar/lunar-overrides/:publicId`
+- Với rule family như `luc_trai_days`, payload nên giữ field có cấu trúc cho `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions`, không chỉ 1 đoạn note text.

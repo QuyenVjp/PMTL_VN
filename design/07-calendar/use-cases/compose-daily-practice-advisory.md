@@ -23,7 +23,7 @@
 ## preconditions (điều kiện tiên quyết)
 
 - đã có `lunarEvents` hoặc `dayTags` nền
-- đã có source-backed rule refs trong `09-wisdom-qa`
+- đã có source-backed rule refs trong `10-wisdom-qa`
 - user timezone hợp lệ nếu advisory (thông báo hoặc gói hướng dẫn) là personal view
 
 ## Read set
@@ -32,7 +32,7 @@
 - `lunarEvents`
 - `lunarEventOverrides`
 - `practice_calendar_rules`
-- source-backed rule refs từ `09-wisdom-qa`
+- source-backed rule refs từ `10-wisdom-qa`
 - `beginnerGuides` hoặc support refs từ `02-content`
 - `daily practice scenario presets` từ `02-content`
 - optional community support refs cho địa phương
@@ -42,6 +42,7 @@
 1. Resolve ngày dương và ngày âm cần hiển thị.
 2. Tính `dayTags` nền.
 3. Chọn bộ `special day rules` phù hợp với ngày đó.
+   - nếu là `luc_trai_days`, resolve thêm `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions`
 4. Đọc source-backed entries liên quan:
    - bài gốc
    - bài dịch

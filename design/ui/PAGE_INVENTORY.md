@@ -1123,6 +1123,8 @@ Similar pattern cho:
 - Events table (title, date, type, status)
 - "Tạo sự kiện" button
 - Lunar override management
+- Advisory preview theo ngày/rule family
+- Projection status + inspect panel cho read-model
 - Trigger advisory refresh button
 
 ### 4.12a Event Detail Workspace

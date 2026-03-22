@@ -499,12 +499,60 @@ Row expand → full metadata JSON viewer
 ## 19. Lịch & Sự kiện (`/he-thong/lich`)
 
 **Role**: `admin+`
-**API deps**: `GET /api/calendar/events`, `POST /api/admin/calendar/events`
+**API deps**: `GET /api/calendar/events`, `POST /api/admin/calendar/events`, `GET /api/admin/calendar/lunar-overrides`, `GET /api/admin/calendar/status`, `POST /api/admin/calendar/advisory/preview`, `GET /api/admin/calendar/personal-practice/inspect`, `POST /api/admin/calendar/personal-practice/refresh`
 
 DataTable columns: Tên sự kiện, Type, Status chip, Date, Location
 Filter: Status (All / Draft / Published / Cancelled), Type, Month
 Sort: Date asc (upcoming first)
 Row actions: Edit, View agenda, Publish/Cancel
+
+Tabs: [Sự kiện] [Lunar overrides] [Advisory preview] [Projection status]
+
+**Tab 1 — Sự kiện**:
+- giữ DataTable event như hiện tại
+- quick actions: Create event, publish, cancel, reschedule
+
+**Tab 2 — Lunar overrides**:
+- DataTable columns: Target family/day, Priority, Status, Effective window, Last updated
+- Filter: rule family / lunar day / status / source family
+- Row actions: View detail, Edit, Archive/Delete
+- Create flow phải hỗ trợ:
+  - chọn `rule family` như `luc_trai_days`
+  - chọn target day hoặc recurrence target
+  - warning profile
+  - recommended action families
+  - source refs/link preview
+- Detail drawer/page phải hiện:
+  - affected dates preview
+  - day-role summary
+  - fallback suggestions
+  - audit trail ngắn
+
+**Tab 3 — Advisory preview**:
+- Admin chọn ngày dương hoặc ngày âm
+- Preview card phải hiện:
+  - `dayTags`
+  - `dayRole`
+  - `recommendedActions`
+  - `warningProfile`
+  - `fallbackSuggestions`
+  - `sourceRefs`
+- Nếu advisory thuộc `luc_trai_days`, preview phải giải nghĩa rõ `8 / 14 / 15 / 23 / 29 / 30`, không render thành 1 blob text không cấu trúc
+
+**Tab 4 — Projection status**:
+- status cards:
+  - last refresh completed at
+  - freshness window
+  - rows rebuilt / pruned
+  - stale window count nếu có
+- inspect panel cho `personalPracticeCalendarReadModel` theo `user/date-window`
+- manual refresh button với result panel:
+  - `scope`
+  - `window`
+  - `rowsRebuilt`
+  - `rowsPruned`
+  - `sourceVersion`
+  - `completedAt`
 
 ### Event workspace (`/he-thong/lich/$eventId`)
 

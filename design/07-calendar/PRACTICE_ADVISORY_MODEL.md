@@ -106,7 +106,7 @@ Mỗi advisory (thông báo hoặc gói hướng dẫn) package phải có sourc
 
 ## Module ownership
 
-### `06-calendar`
+### `07-calendar`
 
 Sở hữu:
 
@@ -121,7 +121,7 @@ Không sở hữu:
 - bản dịch gốc của Q&A
 - community support directory canonical data
 
-### `09-wisdom-qa`
+### `10-wisdom-qa`
 
 Sở hữu:
 
@@ -129,7 +129,7 @@ Sở hữu:
 - bài gốc / bài dịch / bài Q&A / bài khai thị
 - review status (trạng thái kiểm duyệt)
 
-### `01-content`
+### `02-content`
 
 Sở hữu:
 
@@ -137,7 +137,7 @@ Sở hữu:
 - guide hỗ trợ đọc / hành trì
 - hub điều hướng
 
-### `07-notification`
+### `08-notification`
 
 Không tự chế advisory (thông báo hoặc gói hướng dẫn).
 

@@ -250,7 +250,14 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/calendar/events/:publicId/agenda` | `calendar` | public |
 | `GET` | `/calendar/personal-practice` | `calendar` | member+ |
 | `GET` | `/calendar/advisory/daily` | `calendar` | member+ |
+| `GET` | `/admin/calendar/lunar-overrides` | `calendar` | admin+ |
+| `GET` | `/admin/calendar/lunar-overrides/:publicId` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/lunar-overrides` | `calendar` | admin+ |
+| `PATCH` | `/admin/calendar/lunar-overrides/:publicId` | `calendar` | admin+ |
+| `DELETE` | `/admin/calendar/lunar-overrides/:publicId` | `calendar` | admin+ |
+| `GET` | `/admin/calendar/status` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/advisory/preview` | `calendar` | admin+ |
+| `GET` | `/admin/calendar/personal-practice/inspect` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/personal-practice/refresh` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events` | `calendar` | admin+ |
 | `PATCH` | `/admin/calendar/events/:publicId` | `calendar` | admin+ |
@@ -264,6 +271,9 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/admin/calendar/events/:publicId/reschedule` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:publicId/cancel` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:publicId/publish` | `calendar` | admin+ |
+
+> Admin calendar surface không dừng ở event CRUD. Canon E2E cho lunar/advisory gồm 4 lane:
+> `lunar-overrides lifecycle`, `status`, `advisory preview`, `personal-practice inspect`, và `refresh`.
 
 ## Notification
 

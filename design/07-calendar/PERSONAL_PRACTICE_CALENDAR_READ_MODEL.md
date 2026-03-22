@@ -7,7 +7,7 @@
 
 ## Canonical owner
 
-- `06-calendar`
+- `07-calendar`
 
 ## read model (mô hình dữ liệu đọc) name
 

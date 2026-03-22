@@ -82,6 +82,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `ui/ELDERLY_UX.md` | elderly accommodation owner | readability, touch, motion, cognition accommodations | không override phase scope nếu DESIGN_PRINCIPLES đã chốt khác |
 | `ui/ADMIN_ARCHITECTURE.md` | admin SPA structure owner | SPA shells, layout, workspace patterns, query/state conventions | không override backend authority |
 | `ui/ADMIN_MODULE_SPECS.md` | admin workspace owner | filters, bulk actions, table states, invalidation rules | không đổi route canon một mình |
+| `07-calendar/luc-trai-days-canon.md` | `六齋日` canon owner | day-role matrix, fallback semantics, warning families, advisory obligations cho ngày mùng 8/14/15/23/29/30 | không thay source-backed doctrine owner của Wisdom-QA |
 | `10-wisdom-qa/btpp-library-canon.md` | BTPP library owner | public route slug, hub IA, glossary, source taxonomy, FAQ, warning policy cho BTPP/Little House cross-surface | không thay data schema chi tiết một mình |
 | `tracking/wisdom-qa-family-audit.md` | Wisdom-QA audit owner | family inventory, taxonomy drift, unresolved gaps, next audit order cho `10-wisdom-qa` | không tự override canon route nếu `btpp-library-canon.md` đã chốt |
 | `tracking/xlch-official-alignment.md` | official XLCH alignment owner | official family map signals, what PMTL must preserve from `xlch.org`, alignment backlog | không tự override canon route nếu owner docs đã chốt |
