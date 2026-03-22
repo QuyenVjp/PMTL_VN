@@ -64,6 +64,8 @@
 - `POST /api/admin/vows/assisted-entry/life-release`
 - `POST /api/admin/vows/assisted-entry/progress`
 - `GET /api/admin/vows/assisted-entry/history`
+- `GET /api/admin/vows/assisted-entry/members/search`
+- `GET /api/admin/vows/assisted-entry/members/:memberPublicId/vows`
 
 Quy tắc:
 - admin chỉ được tạo assisted entry theo doc `assisted-entry-workflow.md`

@@ -43,8 +43,20 @@ Local runtime snapshot verified on 2026-03-21:
 - `gemini --version` -> `0.34.0`
 - `gemini --help` exposes `mcp`, `extensions`, `skills`, `hooks`, sandbox modes, policies, and JSON output
 
+## Aider
+
+- Aider GitHub repo: <https://github.com/Aider-AI/aider>
+- Aider install docs: <https://aider.chat/docs/install.html>
+- Aider usage docs: <https://aider.chat/docs/usage.html>
+
+Local runtime snapshot verified on 2026-03-22:
+
+- `git -C tmp/aider log -1 --date=iso --pretty=format:"%H %ad %s"` -> `bdb4d9ff8ef88c3015a9845119bff37f49c93d7b 2026-03-16 18:21:33 -0700 copy`
+- `aider --version` -> `aider 0.86.2`
+- `aider --help` exposes `--message`, `--architect`, `--dry-run`, `--yes-always`, `--no-auto-commits`, `--no-dirty-commits`, `--show-repo-map`, `--file`, and `--read`
+
 ## PMTL wrapper
 
-- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini> --prompt "<prompt>"`
+- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
 - Wrapper behavior must stay aligned with repo docs in `AGENTS.md`, `CLAUDE.md`, and `docs/agent-cheatsheet.md`
 - `py infra/tools/codex_actions.py skill-audit` was verified locally on 2026-03-21 and should be treated as an audit report, not a repo-wide pass gate for older skills

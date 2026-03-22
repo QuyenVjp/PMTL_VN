@@ -11,7 +11,7 @@ Ghi lại một lời nhắn lưu bút hoặc một câu hỏi từ cộng đồ
 - Thành viên (`member`)
 
 ## Điểm kích hoạt (Trigger)
-Trang web gọi yêu cầu đến `POST /api/guestbook/submit`.
+Trang web gọi yêu cầu đến `POST /api/guestbook`.
 
 ## Điều kiện tiên quyết (Preconditions)
 - Thân yêu cầu (body) JSON hợp lệ.

@@ -4,7 +4,7 @@
 
 - Fan-out một notification đã được tạo tới các subscription phù hợp qua worker/process flow.
   - **Phase 2+**: dùng outbox → dispatcher → worker pipeline.
-  - **Phase 1**: notification delivery chưa thực thi tự động — admin có thể manual trigger qua route `/api/push/process` nếu cần.
+  - **Phase 1**: notification delivery chưa thực thi tự động — admin có thể manual trigger qua route `POST /api/admin/notifications/push/jobs/:publicId/process` nếu cần.
 
 ## owner module (module sở hữu)
 

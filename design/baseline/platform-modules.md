@@ -295,7 +295,7 @@ Theo [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/imp
 
 Nếu các module này chưa có folder owner rõ ràng, trạng thái đúng phải là:
 
-- `planned` hoặc `required before launch`
+- `required before launch`
 
 không được tự nhận là `implemented`.
 

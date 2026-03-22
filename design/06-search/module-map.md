@@ -28,8 +28,8 @@ markmap:
 - `pgvector` chỉ là optional capability (khả năng tùy chọn) cho giai đoạn sau
 
 ### Public contracts (Hợp đồng công khai)
-- `GET /api/posts/search`
-- `POST /api/posts/search/reindex` cho admin/rebuild
+- `GET /api/search`
+- `POST /api/search/reindex` cho admin/rebuild
 - `GET /api/search/status`
 
 ## Current responsibilities (Trách nhiệm hiện tại)

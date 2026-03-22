@@ -165,9 +165,15 @@ Ví dụ:
 - Job log có thể được dọn theo retention ngắn hơn nếu vẫn giữ được audit event cốt lõi.
 - Khi có tranh chấp cộng đồng hoặc sai nội dung public, audit trail phải đủ để reconstruct ai đã đổi gì.
 
+## Enforcement tối thiểu
+
+- Mọi PR thêm canonical write-path mới phải cập nhật file này hoặc domain use-case liên quan nếu action audit thay đổi.
+- Mọi test cho write-path bắt buộc audit phải chứng minh được audit append xảy ra ở service boundary, không chỉ ở UI.
+- Không được xem write-path là implementation-ready nếu chưa map được action name tương ứng sang `audit_logs` hoặc helper owner trong `apps/api/src/platform/audit/*`.
+- Review checklist cho auth, upload, moderation, publish, assisted-entry phải có câu hỏi riêng: "audit event nào được append và append ở đâu?"
+
 ## Notes for AI/codegen
 
 - Đừng thêm audit ở UI rồi tưởng là đủ.
 - Đừng log secret, token, raw password, IP thô khi policy đang dùng hash.
 - Đừng bỏ audit ở các flow "chỉ là submit form" nếu flow đó tạo canonical record (bản ghi chuẩn gốc).
-

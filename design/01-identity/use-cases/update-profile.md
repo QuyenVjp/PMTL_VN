@@ -16,7 +16,8 @@
 
 ## Trigger (Điểm kích hoạt)
 
-- client calls `PATCH /api/auth/profile`
+- member tự sửa hồ sơ: `PATCH /api/auth/profile`
+- admin sửa hồ sơ người khác theo policy: `PATCH /api/admin/users/:publicId/profile`
 
 ## Preconditions (Điều kiện tiên quyết)
 

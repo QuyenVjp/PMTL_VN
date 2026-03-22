@@ -20,6 +20,16 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 2. file owner chuyên biệt bên dưới
 3. `README.md` và các file overview/tóm tắt
 
+## Ownership rules by pattern
+
+- `overview/*.md` là tài liệu orientation (định hướng đọc) và summary (tóm tắt), không phải nơi chốt policy mới.
+- `NN-domain/decisions.md` là canonical decision owner trong boundary của domain đó. Nếu mâu thuẫn với `DECISIONS.md`, `DECISIONS.md` thắng và file domain phải được sửa lại.
+- `NN-domain/module-map.md` là owner cho module boundaries, responsibilities, và inbound/outbound interactions của domain đó.
+- `NN-domain/contracts.md` là owner cho contract mức domain: route groups, DTO shapes mức design, error mapping, invariants.
+- `NN-domain/schema.dbml` là owner cho shape dữ liệu mức domain ở phase design; merge thực tế sang runtime schema đi qua `tracking/prisma-schema-plan.md`.
+- `NN-domain/flows.mmd` và `NN-domain/*state.mmd` là owner cho state transition diagrams; không tự phát minh policy mới ngoài owner docs của domain.
+- `NN-domain/use-cases/*.md` là owner cho write-path behavior của từng flow; route string vẫn phải khớp `ui/PAGE_INVENTORY.md` và `tracking/api-route-inventory.md` khi có bề mặt web/API liên quan.
+
 ## Root file ownership map
 
 | File | Vai trò duy nhất | Được phép chứa | Không được làm |
@@ -41,6 +51,9 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `tracking/implementation-mapping.md` | implementation truth owner | status `implemented/required before launch/planned/forbidden for now/explicit exclusion` | không lặp rationale dài |
 | `tracking/module-interactions.md` | cross-module interaction owner | ownership boundaries, direct vs async interaction | không lặp repo structure |
 | `tracking/api-route-inventory.md` | API route inventory owner | route groups, auth scope, owner module | không thay use-case detail |
+| `tracking/admin-page-api-mapping.md` | admin page-to-data mapping owner | admin page route -> API group -> query keys -> invalidation rules | không thay visual layout hay API canon |
+| `tracking/apps-admin-scaffold-backlog.md` | admin scaffold backlog owner | feature rollout order, queries.ts/mutations.ts plan, blockers before admin coding | không thay API canon hay page route canon |
+| `tracking/admin-feature-query-plan.md` | admin query/mutation factory owner | feature folder -> query keys -> query exports -> mutation exports -> invalidation graph | không thay API canon hay visual IA |
 | `tracking/env-inventory.md` | env inventory owner | env names, scope, required/optional, owner app | không lặp full deploy steps |
 | `tracking/error-code-registry.md` | error code owner | canonical error codes and meanings | không lặp route contracts |
 | `baseline/migration-strategy.md` | DB/schema evolution owner | naming, rollout, rollback, seed rules | không lặp infra topology |
@@ -49,11 +62,26 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `ops/deploy-runbook.md` | deploy/rollback procedure owner | deploy, rollback, migration-fail handling | không thay backup runbook |
 | `overview/terminology.md` | terminology owner | PMTL terms + `English (Việt)` notation | không lặp qua nhiều root files |
 | `overview/source-analysis.md` | source-derived feature surface owner | official source notes + feature implications | không lặp source summaries |
+| `overview/architecture-at-a-glance.md` | 1-minute architecture orientation owner | entrypoint tóm tắt đúng current direction | không chốt rule mới thay owner docs |
+| `overview/domain-map.md` | domain index owner | domain grouping, quick pointers | không override module ownership |
+| `overview/execution-map.md` | execution-path orientation owner | read order, implementation orientation, cross-link map | không thay implementation truth |
+| `overview/phase-activation-matrix.md` | phase activation summary owner | phase summary, activation checklist tóm tắt | không thay decision trigger gốc |
+| `overview/roadmap.md` | roadmap summary owner | planning narrative, sequencing note | không đổi launch blocker semantics |
 | `baseline/writing-standards.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
 | `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |
+| `deep-research-report.md` | research appendix owner | research notes, source synthesis, rationale backlog | không là canonical policy owner nếu chưa được promote sang owner file |
+| `SVG_PRECISION_WORKFLOW.md` | deterministic SVG workflow owner | SVG asset generation rules, output discipline | không là launch gate hay route owner |
 | `ui/LANDING_PAGE_DESIGN.md` | landing page visual spec owner | 7 sections layout, typography, interaction, animation, SEO, performance targets | không là route owner; route authority vẫn là PAGE_INVENTORY.md |
+| `ui/HOMEPAGE_CONSTITUTION.md` | homepage intent/spec owner | homepage content hierarchy, narrative, section obligations | không override route canon hay landing visual rules |
 | `ui/SPIRITUAL_APP_SCREENS.md` | app screen design spec owner | screen-by-screen layout, component behavior, elderly UX rules, states | không là route owner; không override module contracts |
-| `ui/NAVIGATION_ARCHITECTURE.md` | IA + navigation structure owner | full URL scheme, nav patterns, gating rules, deep linking, a11y | routes phải khớp PAGE_INVENTORY.md — PAGE_INVENTORY.md là route canon |
+| `ui/PAGE_INVENTORY.md` | route canon owner | URL string, auth level, module owner, mobile notes, page-level purpose | không redefine IA hierarchy hay nav interaction rules |
+| `ui/NAVIGATION_ARCHITECTURE.md` | IA + navigation structure owner | IA hierarchy, nav patterns, gating rules, deep linking, a11y | route strings phải khớp PAGE_INVENTORY.md; khi conflict về URL string thì PAGE_INVENTORY.md thắng |
+| `ui/USER_FLOWS.md` | journey owner | step-by-step user flows, branching states, success/failure path | không tự phát minh route canon |
+| `ui/COMPONENT_SPECS.md` | component behavior owner | component anatomy, states, props-level behavior, accessibility expectations | không override visual system owner docs |
+| `ui/DESIGN_PRINCIPLES.md` | visual system owner | tokens, typography, spacing, surfaces, motion baseline, phase-scoped visual rules | không tự đổi route hoặc data ownership |
+| `ui/ELDERLY_UX.md` | elderly accommodation owner | readability, touch, motion, cognition accommodations | không override phase scope nếu DESIGN_PRINCIPLES đã chốt khác |
+| `ui/ADMIN_ARCHITECTURE.md` | admin SPA structure owner | SPA shells, layout, workspace patterns, query/state conventions | không override backend authority |
+| `ui/ADMIN_MODULE_SPECS.md` | admin workspace owner | filters, bulk actions, table states, invalidation rules | không đổi route canon một mình |
 
 ## Duplication rule (Quy tắc chống trùng)
 

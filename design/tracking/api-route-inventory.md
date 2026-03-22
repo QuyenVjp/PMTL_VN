@@ -22,6 +22,59 @@ Mục tiêu:
 - admin-only route không trộn vào public namespace nếu không cần
 - `publicId` là public identity ưu tiên
 
+## Auth scope semantics
+
+| Scope | Meaning |
+|---|---|
+| `public` | Không cần đăng nhập |
+| `browser session` | Yêu cầu transport hợp lệ cho browser auth flow, không dùng như public POST đơn giản |
+| `member+` | Member hoặc admin có session hợp lệ |
+| `admin+` | Admin hoặc super-admin |
+| `editor+` | Narrow API role trong admin surface; UI page có thể mở cho `admin+`, nhưng backend guard chỉ cho editor/admin phù hợp |
+| `moderator+` | Narrow API role trong admin surface; UI page có thể mở cho `admin+`, nhưng backend guard chỉ cho moderator/admin phù hợp |
+| `internal shared-secret` | Không dùng browser session; route nội bộ có shared secret hoặc signature contract |
+
+`PAGE_INVENTORY.md` là page auth canon. File này được phép chi tiết hơn ở mức backend role scope cho cùng một admin page.
+
+## Response envelope convention
+
+Trừ các route `204`, file/binary, hoặc health/metrics đặc biệt, JSON success response nên đi theo một trong các profile sau:
+
+| Profile | Shape | Dùng cho |
+|---|---|---|
+| `single` | `{ "data": {...} }` | detail read, self-state read, action trả object |
+| `list` | `{ "data": [...], "meta": { "pagination"?: ..., "filters"?: ... } }` | listing, admin tables, inventories |
+| `created` | `{ "data": {...}, "meta": { "created": true } }` | `201 Created` cho create route |
+| `accepted` | `{ "data": {...}, "meta": { "jobAccepted": true } }` | trigger job/manual process/reindex |
+| `empty` | no body | `204 No Content` cho delete/unsubscribe/clear action |
+| `manifest` | `{ "data": { "manifest": ..., "version": ... }, "meta"?: {...} }` | offline bundle / download manifest |
+
+Error response dùng canonical error envelope từ `baseline/nest-baseline.md` và `tracking/error-code-registry.md`:
+
+```json
+{
+  "error": {
+    "code": "domain.error_code",
+    "message": "Thông điệp an toàn cho client",
+    "status": 400,
+    "requestId": "req_123"
+  }
+}
+```
+
+## Status-code matrix
+
+| Route class | Success | Common errors | Notes |
+|---|---|---|---|
+| Public/member `GET` detail | `200` | `400`, `401` nếu protected, `403`, `404`, `429`, `500` | profile `single` |
+| Public/member `GET` list | `200` | `400`, `401` nếu protected, `403`, `429`, `500` | profile `list` |
+| Create canonical record | `201` | `400`, `401`, `403`, `404`, `409`, `429`, `500` | profile `created` |
+| Update canonical record | `200` | `400`, `401`, `403`, `404`, `409`, `429`, `500` | profile `single` |
+| Action / state transition | `200` hoặc `202` | `400`, `401`, `403`, `404`, `409`, `429`, `500` | `202` nếu chỉ trigger downstream/manual job |
+| Delete / unsubscribe | `204` | `400`, `401`, `403`, `404`, `409`, `500` | profile `empty` |
+| Health | `200` khi pass | `503` cho readiness/startup fail | route-specific payload owner là `ops/health-contract.md` |
+| Metrics | `200` | `401`, `403`, `500` | không dùng JSON envelope |
+
 ## Identity
 
 | Method | Route | Owner | Auth |
@@ -33,8 +86,23 @@ Mục tiêu:
 | `POST` | `/auth/logout-all` | `identity` + `sessions` | member+ |
 | `POST` | `/auth/forgot-password` | `identity` | public |
 | `POST` | `/auth/reset-password` | `identity` | public |
+| `POST` | `/auth/verify-email` | `identity` | public |
+| `POST` | `/auth/resend-verification` | `identity` | public |
 | `GET` | `/auth/me` | `identity` | member+ |
 | `PATCH` | `/auth/profile` | `identity` | member+ |
+| `GET` | `/admin/users` | `identity` | admin+ |
+| `GET` | `/admin/users/:publicId` | `identity` | admin+ |
+| `PATCH` | `/admin/users/:publicId/profile` | `identity` | admin+ |
+| `PATCH` | `/admin/users/:publicId/role` | `identity` | admin+ |
+| `POST` | `/admin/users/:publicId/block` | `identity` | admin+ |
+| `POST` | `/admin/users/:publicId/unblock` | `identity` | admin+ |
+| `GET` | `/admin/users/:publicId/audit-history` | `identity` + `audit` | admin+ |
+| `GET` | `/admin/users/:publicId/practice-stats` | `identity` + `engagement` | admin+ |
+| `GET` | `/admin/sessions` | `identity` + `sessions` | super-admin |
+| `GET` | `/admin/sessions/:sessionId` | `identity` + `sessions` | super-admin |
+| `DELETE` | `/admin/sessions/:sessionId` | `identity` + `sessions` | super-admin |
+| `POST` | `/admin/sessions/revoke-bulk` | `identity` + `sessions` | super-admin |
+| `POST` | `/admin/users/:publicId/sessions/revoke-all` | `identity` + `sessions` | super-admin |
 
 ## Content
 
@@ -45,10 +113,13 @@ Mục tiêu:
 | `POST` | `/content/posts` | `content` | editor+ |
 | `PATCH` | `/content/posts/:publicId` | `content` | editor+ |
 | `POST` | `/content/posts/:publicId/publish` | `content` | editor+ |
+| `GET` | `/content/beginner-guides` | `content` | public |
+| `GET` | `/content/beginner-guides/:slug` | `content` | public |
 | `GET` | `/content/guides` | `content` | public |
 | `GET` | `/content/downloads` | `content` | public |
 | `GET` | `/content/sutras` | `content` | public |
 | `GET` | `/content/hub-pages/ngoi-nha-nho` | `content` | public |
+| `GET` | `/content/little-house/groups/:groupKey` | `content` | public |
 | `GET` | `/content/little-house/guide-map` | `content` | public |
 | `GET` | `/content/little-house/guides` | `content` | public |
 | `GET` | `/content/little-house/guides/:slug` | `content` | public |
@@ -56,6 +127,7 @@ Mục tiêu:
 | `GET` | `/content/little-house/faq` | `content` | public |
 | `GET` | `/content/little-house/downloads` | `content` | public |
 | `GET` | `/content/hub-pages/kinh-bai-tap` | `content` | public |
+| `GET` | `/content/daily-practice/groups/:groupKey` | `content` | public |
 | `GET` | `/content/daily-practice/guide-map` | `content` | public |
 | `GET` | `/content/daily-practice/guides` | `content` | public |
 | `GET` | `/content/daily-practice/guides/:slug` | `content` | public |
@@ -119,7 +191,7 @@ Mục tiêu:
 | `POST` | `/community/posts/:publicId/comments` | `community` | member+ |
 | `POST` | `/community/comments/:publicId/report` | `moderation` | member+ |
 | `GET` | `/guestbook` | `community` | public |
-| `POST` | `/guestbook` | `community` | public or member+, per policy |
+| `POST` | `/guestbook` | `community` | public |
 
 ## Engagement
 
@@ -131,6 +203,8 @@ Mục tiêu:
 | `POST` | `/engagement/reading-progress` | `engagement` | member+ |
 | `GET` | `/engagement/practice-logs` | `engagement` | member+ |
 | `POST` | `/engagement/practice-logs` | `engagement` | member+ |
+| `GET` | `/engagement/practice-logs/self` | `engagement` | member+ |
+| `PUT` | `/engagement/practice-logs/self` | `engagement` | member+ |
 | `GET` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `GET` | `/engagement/practice-sheets/:publicId` | `engagement` | member+ |
@@ -150,8 +224,8 @@ Mục tiêu:
 | Method | Route | Owner | Auth |
 |---|---|---|---|
 | `POST` | `/moderation/reports` | `moderation` | member+ |
-| `GET` | `/moderation/reports` | `moderation` | moderator+ |
-| `POST` | `/moderation/reports/:publicId/decision` | `moderation` | moderator+ |
+| `GET` | `/moderation/reports` | `moderation` | admin+ |
+| `POST` | `/moderation/reports/:publicId/decision` | `moderation` | admin+ |
 
 ## Search
 
@@ -173,6 +247,8 @@ Mục tiêu:
 | `GET` | `/calendar/events/:publicId/agenda` | `calendar` | public |
 | `GET` | `/calendar/personal-practice` | `calendar` | member+ |
 | `GET` | `/calendar/advisory/daily` | `calendar` | member+ |
+| `POST` | `/admin/calendar/lunar-overrides` | `calendar` | admin+ |
+| `POST` | `/admin/calendar/personal-practice/refresh` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events` | `calendar` | admin+ |
 | `PATCH` | `/admin/calendar/events/:publicId` | `calendar` | admin+ |
 | `POST` | `/admin/calendar/events/:publicId/agenda-items` | `calendar` | admin+ |
@@ -190,6 +266,10 @@ Mục tiêu:
 
 | Method | Route | Owner | Auth |
 |---|---|---|---|
+| `GET` | `/notifications/preferences` | `notification` | member+ |
+| `PATCH` | `/notifications/preferences` | `notification` | member+ |
+| `GET` | `/notifications/reminders/practice` | `notification` | member+ |
+| `PATCH` | `/notifications/reminders/practice` | `notification` | member+ |
 | `POST` | `/notifications/push/subscribe` | `notification` | member+ |
 | `POST` | `/notifications/push/unsubscribe` | `notification` | member+ |
 | `GET` | `/notifications/push/stats` | `notification` | admin+ |
@@ -206,14 +286,19 @@ Mục tiêu:
 |---|---|---|---|
 | `GET` | `/vows` | `vows-merit` | member+ |
 | `POST` | `/vows` | `vows-merit` | member+ |
+| `GET` | `/vows/:publicId` | `vows-merit` | member+ |
 | `POST` | `/vows/:publicId/milestones` | `vows-merit` | member+ |
 | `GET` | `/life-release-journal` | `vows-merit` | member+ |
 | `POST` | `/life-release-journal` | `vows-merit` | member+ |
 | `GET` | `/life-release-journal/:publicId` | `vows-merit` | member+ |
 | `PATCH` | `/life-release-journal/:publicId` | `vows-merit` | member+ |
+| `POST` | `/life-release-journal/:publicId/correct` | `vows-merit` | member+ |
+| `POST` | `/life-release-journal/:publicId/void` | `vows-merit` | member+ |
 | `POST` | `/admin/vows/assisted-entry/life-release` | `vows-merit` | admin+ |
 | `POST` | `/admin/vows/assisted-entry/progress` | `vows-merit` | admin+ |
 | `GET` | `/admin/vows/assisted-entry/history` | `vows-merit` | admin+ |
+| `GET` | `/admin/vows/assisted-entry/members/search` | `vows-merit` + `identity` | admin+ |
+| `GET` | `/admin/vows/assisted-entry/members/:memberPublicId/vows` | `vows-merit` | admin+ |
 
 ## Wisdom & QA
 
@@ -225,7 +310,21 @@ Mục tiêu:
 | `GET` | `/wisdom/baihua/books/:bookSlug` | `wisdom-qa` | public |
 | `GET` | `/wisdom/baihua/books/:bookSlug/chapters/:chapterNumber` | `wisdom-qa` | public |
 | `GET` | `/qa/search` | `wisdom-qa` + `search` | public |
-| `GET` | `/offline-bundles/:publicId` | `wisdom-qa` | member+ or public, per policy |
+| `GET` | `/offline-bundles` | `wisdom-qa` | member+ |
+| `GET` | `/offline-bundles/:publicId` | `wisdom-qa` | member+ |
+| `GET` | `/offline-bundles/:publicId/status` | `wisdom-qa` | member+ |
+| `POST` | `/offline-bundles/:publicId/check-updates` | `wisdom-qa` | member+ |
+| `GET` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
+| `PATCH` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/entries/:publicId/publish` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/entries/ingestion-jobs` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/offline-bundles` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/offline-bundles/rebuild` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/import-jobs` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/baihua/books` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/baihua/chapters/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/baihua/books/import-source` | `wisdom-qa` | admin+ |
 | `PATCH` | `/admin/wisdom/baihua/chapters/:publicId/translation` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/baihua/chapters/:publicId/publish` | `wisdom-qa` | admin+ |
@@ -239,6 +338,7 @@ Mục tiêu:
 | `GET` | `/admin/contact-info` | `contact` | super-admin |
 | `PATCH` | `/admin/contact-info` | `contact` | super-admin |
 | `GET` | `/admin/volunteers` | `contact` | admin+ |
+| `GET` | `/admin/volunteers/:publicId` | `contact` | admin+ |
 | `POST` | `/admin/volunteers` | `contact` | admin+ |
 | `PATCH` | `/admin/volunteers/:publicId` | `contact` | admin+ |
 | `DELETE` | `/admin/volunteers/:publicId` | `contact` | admin+ |
@@ -252,14 +352,18 @@ Mục tiêu:
 | `GET` | `/health/ready` | `health` | internal/public per deploy policy |
 | `GET` | `/health/startup` | `health` | internal/public per deploy policy |
 | `GET` | `/metrics` | `metrics` | internal only |
+| `GET` | `/admin/feature-flags` | `feature-flags` | super-admin |
+| `GET` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
 | `GET` | `/feature-flags/:key` | `feature-flags` | internal/admin |
-| `PATCH` | `/admin/feature-flags/:key` | `feature-flags` | admin+ |
+| `PATCH` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
+| `GET` | `/admin/system/health-extended` | `health` + `platform` | admin+ |
 | `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
 
 ## Notes
 
 - Route inventory này là consumer-facing surface, không phải nơi lặp lại toàn bộ validation schema.
 - Admin/reference-data routes có thể scaffold nhanh hơn từ contract registry hoặc resource template.
+- Khi page route và API route khác ngôn ngữ (`/admin/noi-dung/*` vs `/admin/content/*`), page route vẫn theo `PAGE_INVENTORY.md`, còn controller grouping ở đây là API canon cho scaffold `apps/api`.
 - Các route sau bắt buộc hand-authored service logic, không được coi là generated CRUD:
   - `/auth/*`
   - `/moderation/reports/*`

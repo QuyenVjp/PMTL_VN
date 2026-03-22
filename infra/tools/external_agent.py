@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -15,7 +16,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         required=True,
-        choices=("claude", "codex", "copilot", "gemini"),
+        choices=("claude", "codex", "copilot", "gemini", "aider"),
         help="External CLI to run.",
     )
     parser.add_argument(
@@ -259,6 +260,82 @@ def load_codex_default_model() -> str | None:
     return match.group(1) if match else None
 
 
+def load_aider_default_model() -> str | None:
+    explicit = os.environ.get("AIDER_MODEL")
+    if explicit:
+        return explicit
+
+    if os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY"):
+        return "gemini/gemini-2.5-flash-lite"
+
+    return None
+
+
+def find_aider_executable() -> str:
+    for candidate in ("aider.exe", "aider.cmd", "aider"):
+        resolved = shutil.which(candidate)
+        if resolved:
+            return resolved
+
+    fallback = Path.home() / ".local" / "bin" / ("aider.exe" if os.name == "nt" else "aider")
+    if fallback.exists():
+        return str(fallback)
+
+    raise RuntimeError("Aider executable was not found on PATH or in ~/.local/bin.")
+
+
+def run_aider(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+    aider_script = find_aider_executable()
+    resolved_model = model or load_aider_default_model()
+    runtime_dir = cwd / "tmp" / "aider-runtime"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+
+    command = [
+        aider_script,
+        "--message",
+        prompt,
+        "--yes-always",
+        "--dry-run",
+        "--no-auto-commits",
+        "--no-dirty-commits",
+        "--no-gitignore",
+        "--no-pretty",
+        "--no-stream",
+        "--no-show-model-warnings",
+        "--no-check-update",
+        "--analytics-disable",
+        "--encoding",
+        "utf-8",
+        "--input-history-file",
+        str(runtime_dir / "input.history"),
+        "--chat-history-file",
+        str(runtime_dir / "chat.history.md"),
+        "--llm-history-file",
+        str(runtime_dir / "llm.history.log"),
+        "--subtree-only",
+    ]
+    if resolved_model:
+        command.extend(["--model", resolved_model])
+
+    result = subprocess.run(
+        command,
+        cwd=str(cwd),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
+
+    response = result.stdout.strip()
+    if not response:
+        raise RuntimeError("Aider returned no assistant message.")
+
+    return response, resolved_model or "configured-by-aider"
+
+
 def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
     codex_script = shutil.which("codex.cmd") or shutil.which("codex")
     if not codex_script:
@@ -338,6 +415,8 @@ def main() -> int:
             response, resolved_model = run_codex(args.prompt, args.model, cwd)
         elif args.provider == "copilot":
             response, resolved_model = run_copilot(args.prompt, args.model, cwd)
+        elif args.provider == "aider":
+            response, resolved_model = run_aider(args.prompt, args.model, cwd)
         else:
             response, resolved_model = run_gemini(args.prompt, args.model, cwd)
     except Exception as exc:  # pragma: no cover - wrapper should fail loudly

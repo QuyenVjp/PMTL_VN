@@ -8,10 +8,9 @@ Cho phép người dùng báo cáo một bình luận không phù hợp, đồng
 
 ## Các đối tượng thực hiện (Actors)
 - Thành viên (`member`).
-- Khách (`guest`) nếu chính sách tuyến đường (route policy) hiện tại cho phép.
 
 ## Điểm kích hoạt (Trigger)
-Trang web gọi yêu cầu đến `POST /api/comments/:publicId/report` hoặc tuyến đường báo cáo bình luận tương đương.
+Trang web gọi yêu cầu đến `POST /api/community/comments/:publicId/report`.
 
 ## Điều kiện tiên quyết (Preconditions)
 - Bình luận mục tiêu (target comment) tồn tại trong hệ thống.

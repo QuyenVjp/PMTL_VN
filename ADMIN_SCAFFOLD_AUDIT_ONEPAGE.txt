@@ -1,0 +1,219 @@
+═══════════════════════════════════════════════════════════════════════════════
+                     ADMIN SCAFFOLD AUDIT — ONE-PAGE SUMMARY
+═══════════════════════════════════════════════════════════════════════════════
+
+AUDIT SCOPE: /admin/noi-dung/*, /admin/cong-dong/* (9 features, 5 canon docs)
+
+═══════════════════════════════════════════════════════════════════════════════
+FEATURE INVENTORY & STATUS
+═══════════════════════════════════════════════════════════════════════════════
+
+CONTENT GROUP (7 features):
+  ✓ Posts                 /admin/noi-dung/bai-viet              UNBLOCKED
+  ✓ Beginner Guides       /admin/noi-dung/huong-dan             UNBLOCKED
+  🚫 Daily Practice       /admin/noi-dung/kinh-bai-tap          BLOCKED (API)
+  🚫 Little House         /admin/noi-dung/ngoi-nha-nho          BLOCKED (API)
+  🚫 Life Release         /admin/noi-dung/phong-sanh            BLOCKED (API)
+  🚫 Media Library        /admin/noi-dung/thu-vien-phap-mon     BLOCKED (API)
+  ⚠️  Media               /admin/noi-dung/media                 NEEDS COORDINATION
+
+COMMUNITY GROUP (2 features):
+  ⚠️  Community Posts     /admin/cong-dong/bai-dang             FLAG REQUIRED
+  ⚠️  Guestbook           /admin/cong-dong/so-luu-niem          FLAG REQUIRED
+
+═══════════════════════════════════════════════════════════════════════════════
+CRITICAL BLOCKERS (STOP & UNBLOCK FIRST)
+═══════════════════════════════════════════════════════════════════════════════
+
+#1 API COVERAGE
+   Problem:    /api/admin/content/{daily-practice,little-house,life-release,
+               media-library}/* routes NOT defined in api-route-inventory.md
+   Blocks:     4 features (Phase 2)
+   Owner:      Content module
+   Action:     Add CRUD route definitions for each workspace
+   Timeline:   ASAP
+
+#2 PUBLIC CACHE INVALIDATION
+   Problem:    /internal/revalidate webhook not defined (platform/cache module)
+   Blocks:     All content publish mutations (Phase 3)
+   Impact:     Public pages serve stale content after admin publish
+   Owner:      Platform/cache module
+   Action:     Define webhook route + contract; implement client in mutations
+   Timeline:   Before go-live
+
+#3 DASHBOARD INVALIDATION
+   Problem:    Recent posts & pending reports widget mutation triggers undocumented
+   Blocks:     Dashboard freshness
+   Impact:     Widgets become stale after publish/moderation
+   Owner:      Dashboard owner (coordinates with content + moderation)
+   Action:     Document cascade rules in admin-page-api-mapping.md
+   Timeline:   Before beta testing
+
+═══════════════════════════════════════════════════════════════════════════════
+HIGH-IMPACT CONSTRAINTS (MUST FOLLOW IN IMPLEMENTATION)
+═══════════════════════════════════════════════════════════════════════════════
+
+C1: Query keys MUST be factory functions, never hardcoded strings
+    ✓ {feature}Keys.list(filters)  vs  ✗ ['admin-posts', 'list']
+
+C2: Publish mutations MUST trigger /internal/revalidate webhook for public cache
+
+C3: Guestbook mutations.ts must NOT include updateEntry() — spec forbids edit
+
+C4: Media delete must check if asset is linked in media-library collections
+
+C5: All mutations must follow canonical invalidation rules (per admin-page-api-mapping.md)
+
+C6: API enforces editor+/moderator+ role even though page is admin+ (role narrowing)
+
+C7: Community pages require feature flags: community.post.enabled, community.guestbook.enabled
+
+═══════════════════════════════════════════════════════════════════════════════
+IMPLEMENTATION ROADMAP
+═══════════════════════════════════════════════════════════════════════════════
+
+PHASE 1 (START NOW — 1–2 weeks)
+  Features: posts, beginner-guides, community-posts, guestbook
+  Status:   All API routes defined; no blockers
+  Output:   queries.ts + mutations.ts for 4 features
+  Checklist: See ADMIN_SCAFFOLD_AUDIT_SUMMARY.txt
+
+PHASE 2 (BLOCKED — 2–3 weeks after API definitions)
+  Features: daily-practice, little-house, life-release, media-library
+  Blocker:  Content module must define /api/admin/content/{workspace}/* routes
+  Output:   queries.ts + mutations.ts for 4 features
+
+PHASE 3 (BLOCKED — 1 week after webhook defined)
+  Features: Publish mutation invalidation (all content features)
+  Blocker:  Platform module must define /internal/revalidate webhook
+  Output:   Updated mutations.ts with public cache trigger
+
+═══════════════════════════════════════════════════════════════════════════════
+QUICK DECISION MATRIX
+═══════════════════════════════════════════════════════════════════════════════
+
+Q: Should media delete warn about media-library collections?
+A: YES. Check asset linkage; show warning if linked; require confirmation.
+
+Q: Does guestbook need edit mutation?
+A: NO. Spec explicitly forbids. Only approve/reject/delete.
+
+Q: Do feature flags block Phase 1 implementation?
+A: NO. Implement queries/mutations regardless. Flags gate UI rendering only.
+
+Q: Must publish mutations trigger public cache webhook?
+A: YES. Required per canonical rules (admin-page-api-mapping.md).
+
+Q: Should queries/mutations include audit trail?
+A: YES. Per ADMIN_MODULE_SPECS.md audit events (e.g., post.publish, daily-practice.update).
+
+═══════════════════════════════════════════════════════════════════════════════
+QUERY/MUTATION PATTERN (For All Features)
+═══════════════════════════════════════════════════════════════════════════════
+
+// query-keys.ts — Factory functions (REQUIRED)
+export const {feature}Keys = {
+  all: ['{feature}'] as const,
+  lists: () => [{feature}, 'list'] as const,
+  list: (filters) => [{feature}, 'list', filters] as const,
+  details: () => [{feature}, 'detail'] as const,
+  detail: (id) => [{feature}, 'detail', id] as const,
+};
+
+// queries.ts — Read operations
+export const use{Feature}List = (filters?) => useQuery({
+  queryKey: {feature}Keys.list(filters),
+  queryFn: () => api.get('/api/...'),
+});
+
+// mutations.ts — Write operations + invalidation
+export const useCreate{Feature} = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => api.post('/api/...', data),
+    onSuccess: (data) => {
+      // Per canonical rules from admin-page-api-mapping.md
+      queryClient.invalidateQueries({ queryKey: {feature}Keys.lists() });
+      queryClient.invalidateQueries({ queryKey: {feature}Keys.detail(data.id) });
+      // Dashboard cascade if applicable
+      queryClient.invalidateQueries({ queryKey: ['admin-dashboard', 'recent-posts'] });
+      // Public cache trigger if publish
+      if (data.isPublished) {
+        await api.post('/internal/revalidate', { source: 'feature-publish', id: data.id });
+      }
+    },
+  });
+};
+
+═══════════════════════════════════════════════════════════════════════════════
+DELIVERABLES (All in Repo Root)
+═══════════════════════════════════════════════════════════════════════════════
+
+📄 ADMIN_SCAFFOLD_AUDIT_INDEX.md
+   Navigation guide; start here for orientation
+
+👨‍💻 ADMIN_SCAFFOLD_AUDIT_SUMMARY.txt
+   Quick reference checklist for developers (use daily)
+
+🏗️  ADMIN_SCAFFOLD_FINDINGS_MATRIX.txt
+   Visual findings matrix for architects & tech leads
+
+📖 ADMIN_SCAFFOLD_AUDIT.md
+   Complete specification (24 KB); detailed per-feature requirements
+
+⚙️  ADMIN_SCAFFOLD_AUDIT.json
+   Structured data export (for CI/CD, code generators, dashboards)
+
+═══════════════════════════════════════════════════════════════════════════════
+WHO DOES WHAT NEXT
+═══════════════════════════════════════════════════════════════════════════════
+
+Developers
+  → Read ADMIN_SCAFFOLD_AUDIT_SUMMARY.txt § Phase 1
+  → Reference ADMIN_SCAFFOLD_AUDIT.md for detailed spec
+  → Follow query/mutation skeleton pattern above
+  → Validate against invalidation rules matrix
+
+Tech Leads
+  → Review ADMIN_SCAFFOLD_FINDINGS_MATRIX.txt § CRITICAL BLOCKERS
+  → Schedule Phase 2 & 3 unblocking (API routes, webhook)
+  → Coordinate module owner tasks below
+
+Content Module Owner
+  → Define /api/admin/content/daily-practice/* routes in api-route-inventory.md
+  → Define /api/admin/content/little-house/* routes
+  → Define /api/admin/content/life-release/* routes
+  → Define /api/admin/content/media-library/* routes
+  → Timeline: ASAP (blocks Phase 2)
+
+Platform Module Owner
+  → Define POST /internal/revalidate webhook route in api-route-inventory.md
+  → Document request/response schema in contracts.md
+  → Timeline: Before go-live (blocks Phase 3)
+
+Dashboard Owner
+  → Document mutation-to-invalidation rules for recent-posts & pending-reports widgets
+  → Coordinate with content + moderation module owners
+  → Timeline: Before beta (blocks dashboard freshness)
+
+═══════════════════════════════════════════════════════════════════════════════
+METRICS
+═══════════════════════════════════════════════════════════════════════════════
+
+Features Audited:              9
+  - Unblocked (Phase 1):       4 (ready to implement immediately)
+  - Blocked on API routes:     4 (Phase 2, waiting for definitions)
+  - Blocked on webhook:        ∞ (Phase 3, all publish mutations)
+
+Query Key Families:            15 total
+Mutation Operations:           48 total (across 9 features)
+Canon Documents Verified:      5/5 ✓
+
+CRITICAL Blockers:             3
+HIGH Constraints:              9
+MEDIUM Findings:               3
+Total Actionable Items:        15
+
+═══════════════════════════════════════════════════════════════════════════════
+END OF SUMMARY — See ADMIN_SCAFFOLD_AUDIT_INDEX.md for navigation
+═══════════════════════════════════════════════════════════════════════════════

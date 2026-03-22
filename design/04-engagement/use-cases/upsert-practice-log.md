@@ -15,7 +15,7 @@
 
 ## trigger (điểm kích hoạt)
 
-- web calls `PUT /api/practice-log`
+- web calls `PUT /api/engagement/practice-logs/self`
 
 ## preconditions (điều kiện tiên quyết)
 
@@ -25,8 +25,8 @@
 
 ## Input contract (Hợp đồng đầu vào)
 
-- BFF route `/api/practice-log`
-- API route `practice-logs/my`
+- BFF route `/api/engagement/practice-logs/self`
+- API route `PUT /engagement/practice-logs/self`
 - semantics upsert theo `user + practiceDate + plan`
 
 ## Read set (Tập dữ liệu đọc)

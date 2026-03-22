@@ -12,14 +12,16 @@
 
 ## Public routes
 
-- `GET /api/events`
-- `GET /api/events/:publicId`
-- `GET /api/events/:publicId/agenda`
-- `GET /api/lunar-events`
-- `GET /api/practice-calendar`
+- `GET /api/calendar/events`
+- `GET /api/calendar/events/:publicId`
+- `GET /api/calendar/events/:publicId/agenda`
+- `GET /api/calendar/advisory/daily`
+- `GET /api/calendar/personal-practice`
 
 ## Admin routes
 
+- `POST /api/admin/calendar/lunar-overrides`
+- `POST /api/admin/calendar/personal-practice/refresh`
 - `POST /api/admin/calendar/events`
 - `PATCH /api/admin/calendar/events/:publicId`
 - `POST /api/admin/calendar/events/:publicId/agenda-items`
@@ -68,8 +70,8 @@
 
 - Calendar không copy ritual script vào event record nếu content đã sở hữu dữ liệu đó.
 - Nếu có thông báo nhắc sự kiện, notification chỉ đọc context, không sở hữu event data.
-- Route `GET /api/practice-calendar` có thể ghép thêm preference/vow context, nhưng vẫn phải coi calendar là owner của read composition.
-- Route `GET /api/practice-calendar` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng:
+- Route `GET /api/calendar/personal-practice` có thể ghép thêm preference/vow context, nhưng vẫn phải coi calendar là owner của read composition.
+- Route `GET /api/calendar/personal-practice` được phép trả `advisoryCards`, `sourceRefs`, `recitationRules`, nhưng:
   - `sourceRefs` chỉ nên trỏ sang canonical IDs / public refs, không copy full source-backed text
   - `recitationRules` là rule composition cho calendar read-model; `chantItems` và source-backed ritual text vẫn thuộc content/wisdom owners
 - user preference/vow context phải được inject như read inputs đã sanitize từ module owner tương ứng; calendar không trở thành owner của user-state chỉ vì nó compose read-model

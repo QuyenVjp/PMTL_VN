@@ -66,7 +66,8 @@
 
 ## success result (kết quả thành công)
 
-- read model (mô hình dữ liệu đọc) sẵn sàng cho route `GET /api/practice-calendar`.
+- read model (mô hình dữ liệu đọc) sẵn sàng cho route `GET /api/calendar/personal-practice`.
+- Nếu admin chạy manual refresh ở phase 1, route trigger tương ứng là `POST /api/admin/calendar/personal-practice/refresh`.
 
 ## Errors
 

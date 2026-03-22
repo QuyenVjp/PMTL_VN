@@ -11,7 +11,7 @@ Không có doc này, ambiguity dẫn đến:
 
 ## Vấn đề cần giải quyết
 
-Advisory hằng ngày (`GET /api/practice-calendar`) cần trả về:
+Advisory hằng ngày (`GET /api/calendar/personal-practice`) cần trả về:
 1. Lịch ngày hôm nay (âm lịch, ngày đặc biệt)
 2. Chuỗi thực hành gợi ý (niệm kinh gì, bao nhiêu biến, làm lễ gì)
 3. Trích dẫn hoặc link tới khai thị / Bạch thoại phù hợp

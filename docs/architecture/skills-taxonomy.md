@@ -98,3 +98,4 @@ Compatibility skills are opt-in aliases, not the default routing target. Prefer 
 - Repo-local PMTL skills are the canonical source of repo behavior for both Codex and Claude Code when working inside this repository.
 - Superpowers is the preferred generic workflow engine, not the source of PMTL repo policy.
 - Global platform skills should stay tool-oriented and generic rather than duplicating repo policy.
+- External worker routing keeps `aider` as an opt-in dry-run patch lane; the default auto-routing baseline remains Claude, Codex, Copilot, and Gemini unless the task explicitly asks for Aider-like behavior.

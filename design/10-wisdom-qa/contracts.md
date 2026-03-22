@@ -74,9 +74,23 @@
 - `GET /api/wisdom/baihua/books`
 - `GET /api/wisdom/baihua/books/:bookSlug`
 - `GET /api/wisdom/baihua/books/:bookSlug/chapters/:chapterNumber`
+- `GET /api/admin/wisdom/baihua/books`
+- `GET /api/admin/wisdom/baihua/chapters/:publicId`
 - `POST /api/admin/wisdom/baihua/books/import-source`
 - `PATCH /api/admin/wisdom/baihua/chapters/:publicId/translation`
 - `POST /api/admin/wisdom/baihua/chapters/:publicId/publish`
+
+## Admin workspace routes
+
+- `GET /api/admin/wisdom/entries`
+- `GET /api/admin/wisdom/entries/:publicId`
+- `POST /api/admin/wisdom/entries`
+- `PATCH /api/admin/wisdom/entries/:publicId`
+- `POST /api/admin/wisdom/entries/:publicId/publish`
+- `POST /api/admin/wisdom/entries/ingestion-jobs`
+- `GET /api/admin/wisdom/offline-bundles`
+- `POST /api/admin/wisdom/offline-bundles/rebuild`
+- `GET /api/admin/wisdom/import-jobs`
 
 ## Notes for AI/codegen
 

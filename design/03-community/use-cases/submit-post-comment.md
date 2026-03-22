@@ -1,17 +1,16 @@
 # Submit Post Comment (Gửi Bình luận Bài viết)
 
 ## Mục đích (Purpose)
-Cho phép người dùng hoặc khách gửi bình luận vào một bài viết công khai, sau đó quy trình kiểm duyệt và thông báo sẽ xử lý các tác vụ hạ nguồn.
+Cho phép thành viên gửi bình luận vào một bài viết công khai, sau đó quy trình kiểm duyệt và thông báo sẽ xử lý các tác vụ hạ nguồn.
 
 ## Mô-đun sở hữu (Owner module)
 - `community` (Cộng đồng)
 
 ## Các đối tượng thực hiện (Actors)
 - Thành viên (`member`)
-- Khách (`guest`)
 
 ## Điểm kích hoạt (Trigger)
-Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `posts/:publicId/comments`.
+Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `POST /api/community/posts/:publicId/comments`.
 
 ## Điều kiện tiên quyết (Preconditions)
 - Bài viết mục tiêu tồn tại trong hệ thống và vẫn cho phép nhận bình luận.
@@ -20,13 +19,12 @@ Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `p
 
 ## Hợp đồng dữ liệu đầu vào (Input Contract)
 - `legacyCommentSubmitSchema` hoặc hợp đồng gửi bình luận tương ứng.
-- Nếu người gửi chưa đăng nhập, phải có bộ thông tin tác giả chụp lại (author snapshot) hợp lệ theo chính sách hiện hành.
 
 ## Tập hợp dữ liệu đọc (Read Set)
 - Tài liệu bài viết (`posts`).
 - Tài liệu bình luận (`postComments`).
 - Trạng thái chốt chặn yêu cầu / chống thư rác (nếu có).
-- Phiên làm việc định danh (identity session) nếu người dùng đã đăng nhập.
+- Phiên làm việc định danh (identity session) của thành viên đang đăng nhập.
 
 ## Thứ tự ghi dữ liệu chuẩn (Write Path)
 1. Xác thực bài viết mục tiêu bằng cách sử dụng ID công khai (`publicId`) hoặc bối cảnh tuyến đường.

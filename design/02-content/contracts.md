@@ -24,9 +24,9 @@ Mục đích của nó là chốt business contract (hợp đồng dữ liệu/n
 ## Public read contracts
 
 ### Posts
-- `GET /api/posts`
-- `GET /api/posts/:slugOrPublicId`
-- `GET /api/posts/search?q=<query>&limit=<n>`
+- `GET /api/content/posts`
+- `GET /api/content/posts/:slugOrPublicId`
+- `GET /api/search?q=<query>&limit=<n>`
 - `POST /api/posts/:publicId/view`
 - `GET /api/posts/:publicId/comments`
 
@@ -39,45 +39,46 @@ Search-related source fields:
 - `excerptComputed`
 
 ### Guides / Downloads / Hub / Sutras / Chanting
-- `GET /api/guides`
-- `GET /api/downloads`
-- `GET /api/hub-pages`
-- `GET /api/sutras`
-- `GET /api/chant-items`
-- `GET /api/chant-plans`
+- `GET /api/content/beginner-guides`
+- `GET /api/content/downloads`
+- `GET /api/content/hub-pages/*`
+- `GET /api/content/sutras`
+- `GET /api/content/guides`
 
 ### Little House content surface
-- `GET /api/hub-pages/ngoi-nha-nho`
-- `GET /api/little-house/guide-map`
-- `GET /api/little-house/guides`
-- `GET /api/little-house/guides/:slug`
-- `GET /api/little-house/case-variants`
-- `GET /api/little-house/faq`
-- `GET /api/little-house/downloads`
+- `GET /api/content/hub-pages/ngoi-nha-nho`
+- `GET /api/content/little-house/groups/:groupKey`
+- `GET /api/content/little-house/guide-map`
+- `GET /api/content/little-house/guides`
+- `GET /api/content/little-house/guides/:slug`
+- `GET /api/content/little-house/case-variants`
+- `GET /api/content/little-house/faq`
+- `GET /api/content/little-house/downloads`
 
 ### Daily practice content surface
-- `GET /api/hub-pages/kinh-bai-tap`
-- `GET /api/daily-practice/guide-map`
-- `GET /api/daily-practice/guides`
-- `GET /api/daily-practice/guides/:slug`
-- `GET /api/daily-practice/scenario-presets`
-- `GET /api/daily-practice/faq`
-- `GET /api/daily-practice/downloads`
+- `GET /api/content/hub-pages/kinh-bai-tap`
+- `GET /api/content/daily-practice/groups/:groupKey`
+- `GET /api/content/daily-practice/guide-map`
+- `GET /api/content/daily-practice/guides`
+- `GET /api/content/daily-practice/guides/:slug`
+- `GET /api/content/daily-practice/scenario-presets`
+- `GET /api/content/daily-practice/faq`
+- `GET /api/content/daily-practice/downloads`
 
 ### Life release content surface
-- `GET /api/hub-pages/phong-sanh`
-- `GET /api/life-release/guide-map`
-- `GET /api/life-release/guides`
-- `GET /api/life-release/guides/:slug`
-- `GET /api/life-release/ritual-variants`
-- `GET /api/life-release/faq`
-- `GET /api/life-release/downloads`
+- `GET /api/content/hub-pages/phong-sanh`
+- `GET /api/content/life-release/guide-map`
+- `GET /api/content/life-release/guides`
+- `GET /api/content/life-release/guides/:slug`
+- `GET /api/content/life-release/ritual-variants`
+- `GET /api/content/life-release/faq`
+- `GET /api/content/life-release/downloads`
 
 ### Media library content surface
-- `GET /api/hub-pages/thu-vien-phap-mon`
-- `GET /api/media-library/collections`
-- `GET /api/media-library/collections/:slug`
-- `GET /api/media-library/featured`
+- `GET /api/content/hub-pages/thu-vien-phap-mon`
+- `GET /api/content/media-library/collections`
+- `GET /api/content/media-library/collections/:slug`
+- `GET /api/content/media-library/featured`
 - `GET /api/media-library/tags`
 
 Ghi chú:

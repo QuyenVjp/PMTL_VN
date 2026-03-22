@@ -7,22 +7,22 @@
 
 ## Routes chính
 
-- `POST /api/push/subscribe`
-- `POST /api/push/unsubscribe`
-- `GET /api/push/stats`
-- `GET /api/push/status`
-- `POST /api/push/send`
-- `POST /api/push/process`
+- `GET /api/notifications/preferences`
+- `PATCH /api/notifications/preferences`
+- `GET /api/notifications/reminders/practice`
+- `PATCH /api/notifications/reminders/practice`
+- `POST /api/notifications/push/subscribe`
+- `POST /api/notifications/push/unsubscribe`
+- `GET /api/notifications/push/stats`
 
 ## Admin management routes
 
-- `GET /api/admin/push/jobs`
-- `GET /api/admin/push/jobs/:publicId`
-- `POST /api/admin/push/jobs`
-- `POST /api/admin/push/jobs/:publicId/process`
-- `POST /api/admin/push/jobs/:publicId/redrive`
-- `GET /api/admin/push/stats`
-- `GET /api/admin/push/status`
+- `GET /api/admin/notifications/push/jobs`
+- `GET /api/admin/notifications/push/jobs/:publicId`
+- `POST /api/admin/notifications/push/jobs`
+- `POST /api/admin/notifications/push/jobs/:publicId/process`
+- `POST /api/admin/notifications/push/jobs/:publicId/redrive`
+- `GET /api/admin/notifications/push/status`
 
 ## Canonical rules
 

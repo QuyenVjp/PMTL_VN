@@ -1,0 +1,186 @@
+ADMIN SCAFFOLD AUDIT — FINDINGS MATRIX
+======================================
+
+CRITICAL BLOCKERS (Stop Implementations)
+======================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. API COVERAGE GAP                                                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Issue:    /api/admin/content/{workspace}/* routes not defined               │
+│ Blocks:   daily-practice, little-house, life-release, media-library        │
+│ Impact:   Cannot implement queries.ts/mutations.ts                          │
+│ Owner:    Content module                                                    │
+│ Action:   Add CRUD routes + contracts to api-route-inventory.md            │
+│ Target:   BEFORE Phase 2                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. PUBLIC CACHE INVALIDATION                                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Issue:    /internal/revalidate webhook not defined                          │
+│ Blocks:   All content publish mutations                                     │
+│ Impact:   Public pages serve stale content after admin publish              │
+│ Owner:    Platform/cache module                                             │
+│ Action:   Define webhook route + contract; implement client in mutations   │
+│ Target:   BEFORE go-live                                                    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. DASHBOARD INVALIDATION RULES                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Issue:    Recent posts & pending reports widgets lack mutation triggers     │
+│ Blocks:   Dashboard widget freshness                                        │
+│ Impact:   Widgets become stale after content publish/moderation decision    │
+│ Owner:    Dashboard owner (coordinates with content + moderation)           │
+│ Action:   Document cascade rules in admin-page-api-mapping.md              │
+│ Target:   BEFORE beta testing                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+HIGH-IMPACT CONSTRAINTS (Implementation Must Follow)
+===================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C1. QUERY KEY FACTORY PATTERN                                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Rule:     All query keys → factory functions in apps/admin/src/features/   │
+│           {feature}/query-keys.ts                                           │
+│ Why:      TanStack Query v5 best practice; prevents string key drift       │
+│ Violates: Hardcoded keys in components → maintenance burden                 │
+│ Example:  ✓ {feature}Keys.list(filters)                                    │
+│           ✗ ['admin-posts', 'list']                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C2. INVALIDATION SPECIFICITY                                                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Rule:     Invalidate only affected keys, never broad queryClient invalidate │
+│ Why:      Stale cache; performance degradation on partial updates          │
+│ Pattern:  invalidateQueries({ queryKey: {feature}Keys.lists() })          │
+│           + {feature}Keys.detail(id)                                        │
+│           + dashboard cascade if applicable                                 │
+│ Violates: queryClient.invalidateQueries() (no params)                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C3. PUBLISH → PUBLIC CACHE TRIGGER                                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Rule:     All content publish mutations must call platform/cache webhook    │
+│ When:     After onSuccess (list + detail cache invalidated client-side)    │
+│ Route:    POST /internal/revalidate                                        │
+│ Payload:  { source: 'post-publish' | 'guide-publish' | ... , id }         │
+│ Violates: Skipping webhook → public pages serve cached old content         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C4. GUESTBOOK — NO EDIT ALLOWED                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Rule:     guestbook mutations.ts must NOT include updateEntry()            │
+│ Detail:   Approve/reject/delete only; content is immutable                 │
+│ UI:       Detail view read-only (except status action buttons)             │
+│ Why:      Audit trail integrity; guestbook entries are permanent records   │
+│ Violates: Creating updateEntry() mutation function                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C5. MEDIA DELETION COORDINATION                                             │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Rule:     Media deleteAsset() must check linkage in media-library before    │
+│ Action:   Query /api/admin/content/media-library/collections?assetId=:id   │
+│ Behavior: If linked → throw error with collection preview                  │
+│           If unlinked → delete + invalidate media + media-library          │
+│ Violates: Deleting without check → orphaned asset references               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C6. ROLE NARROWING ENFORCEMENT                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Issue:    Page auth is admin+ but API auth is editor+/moderator+           │
+│ Fix:      Backend /api/* routes enforce narrower role at endpoint          │
+│ Backend:  POST /api/content/posts → check user.role includes 'editor'     │
+│ Result:   User with admin+ but no editor+ role → 403 Forbidden             │
+│ Why:      Admin UI should not grant broader permissions than API allows    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ C7. FEATURE FLAG GUARDS (Community Only)                                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Required: community.post.enabled                                            │
+│ Required: community.guestbook.enabled                                       │
+│ Location: Wrap admin page component in useFeatureFlag() guard              │
+│ Note:     Queries/mutations still defined (not gated); only UI visibility   │
+│ Verify:   Flags exist in feature-flags module before implementation         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+FEATURE STATUS MATRIX
+====================
+
+┌──────────────────────┬──────────────────────┬──────────────┬────────────────┐
+│ Feature              │ Route                │ Status       │ Dependencies   │
+├──────────────────────┼──────────────────────┼──────────────┼────────────────┤
+│ Posts                │ /admin/noi-dung/...  │ ✓ READY      │ None           │
+│ Beginner Guides      │ /admin/noi-dung/...  │ ✓ READY      │ None           │
+│ Daily Practice       │ /admin/noi-dung/...  │ 🚫 BLOCKED   │ API routes     │
+│ Little House         │ /admin/noi-dung/...  │ 🚫 BLOCKED   │ API routes     │
+│ Life Release         │ /admin/noi-dung/...  │ 🚫 BLOCKED   │ API routes     │
+│ Media Library        │ /admin/noi-dung/...  │ 🚫 BLOCKED   │ API routes     │
+│ Media                │ /admin/noi-dung/...  │ ⚠️  CAUTION  │ Media-lib coord│
+│ Community Posts      │ /admin/cong-dong/... │ ⚠️  CAUTION  │ Feature flag   │
+│ Guestbook            │ /admin/cong-dong/... │ ⚠️  CAUTION  │ Feature flag   │
+└──────────────────────┴──────────────────────┴──────────────┴────────────────┘
+
+
+IMPLEMENTATION PHASES
+====================
+
+PHASE 1: IMMEDIATE (Start Now)
+─────────────────────────────
+Features: posts, beginner-guides, community-posts, guestbook
+Time:     1–2 weeks
+Blockers: None
+Output:   queries.ts + mutations.ts for 4 features
+API:      All routes already defined
+
+PHASE 2: API DEFINITIONS (Blocked)
+──────────────────────────────────
+Features: daily-practice, little-house, life-release, media-library
+Time:     2–3 weeks (after API routes defined)
+Blockers: CRITICAL — Content module must define /api/admin/content/{ws}/*
+Waiting:  api-route-inventory.md route definitions
+
+PHASE 3: WEBHOOK INTEGRATION (Blocked)
+──────────────────────────────────────
+Features: All content publish mutations
+Time:     1 week
+Blockers: CRITICAL — Platform/cache must define /internal/revalidate
+Waiting:  Platform webhook route + contract definition
+
+
+QUICK DECISIONS
+==============
+
+? Are workspace pages (daily-practice, little-house, life-release) shipped?
+  → Check ADMIN_MODULE_SPECS.md for feature-flag definitions
+  → If no flag → unclear status (shipped or staged?)
+  → Recommend: Add feature flags or clarify rollout status
+
+? Should media detail page cascade invalidate media-library collections?
+  → YES. Media asset deletion may affect featured/collection previews
+  → Invalidate ['admin-media-library', 'collections'] + ['admin-media-library', 'featured']
+
+? Does community post list need real-time pending report count badge?
+  → UI per spec shows report count per row
+  → Moderation decisions should invalidate post list (reports count changes)
+  → Dashboard pending-reports widget separate concern (moderation owner)
+
+? Do workspace publish mutations require audit trail?
+  → YES. Per ADMIN_MODULE_SPECS.md audit events:
+     - daily-practice.publish
+     - daily-practice.guide.update
+     - (similar for other workspaces)
+  → Include in mutation success callback
+
+
+EOF AUDIT MATRIX

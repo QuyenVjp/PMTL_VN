@@ -20,12 +20,10 @@
 
 ## Public/BFF routes chính
 
-- `POST /api/community/posts/submit`
+- `POST /api/community/posts`
 - `POST /api/community/posts/:publicId/comments`
-- `POST /api/community/posts/:publicId/report`
-- `POST /api/comments/:publicId/report`
 - `POST /api/community/comments/:publicId/report`
-- `POST /api/guestbook/submit`
+- `POST /api/guestbook`
 
 ## Canonical write rules
 

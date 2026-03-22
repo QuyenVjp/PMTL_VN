@@ -15,7 +15,7 @@
 
 ## trigger (điểm kích hoạt)
 
-- Web gọi `GET /api/posts/search?q=<query>&limit=<n>`.
+- Web gọi `GET /api/search?q=<query>&limit=<n>`.
 
 ## preconditions (điều kiện tiên quyết)
 

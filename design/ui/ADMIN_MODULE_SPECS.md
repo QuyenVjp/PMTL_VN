@@ -379,7 +379,7 @@ Row actions: Hide, Restore, View post
 ## 15. Người dùng (`/nguoi-dung`)
 
 **Role**: `admin+`
-**API deps**: `GET /api/admin/users`, `PATCH /api/admin/users/:id/role`, `POST /api/admin/users/:id/block`
+**API deps**: `GET /api/admin/users`, `GET /api/admin/users/:publicId`, `PATCH /api/admin/users/:publicId/profile`, `PATCH /api/admin/users/:publicId/role`, `POST /api/admin/users/:publicId/block`, `POST /api/admin/users/:publicId/unblock`, `GET /api/admin/users/:publicId/audit-history`, `GET /api/admin/users/:publicId/practice-stats`, `POST /api/admin/users/:publicId/sessions/revoke-all`
 
 DataTable columns: Avatar, Display name, Email (partial), Role chip, Status, Join date, Last active
 Filter: Role (All / Member / Editor / Moderator / Admin), Status (Active / Blocked)
@@ -404,7 +404,7 @@ Tabs: [Profile] [Sessions] [Audit history] [Practice stats]
 ## 16. Phiên đăng nhập (`/nguoi-dung/phien`)
 
 **Role**: `super-admin`
-**API deps**: `GET /api/admin/sessions`, `DELETE /api/admin/sessions/:id`
+**API deps**: `GET /api/admin/sessions`, `GET /api/admin/sessions/:sessionId`, `DELETE /api/admin/sessions/:sessionId`, `POST /api/admin/sessions/revoke-bulk`
 
 DataTable columns: User, Device (truncated UA), IP (hashed), Created, Last active, Expires
 Filter: Active (Yes/No), Date range
@@ -419,7 +419,7 @@ Row actions: Revoke
 ## 17. Feature flags (`/he-thong/feature-flags`)
 
 **Role**: `super-admin`
-**API deps**: `GET /api/feature-flags`, `PATCH /api/feature-flags/:key`
+**API deps**: `GET /api/admin/feature-flags`, `GET /api/admin/feature-flags/:key`, `PATCH /api/admin/feature-flags/:key`
 
 List view (not DataTable — simple toggle list):
 ```
@@ -582,7 +582,7 @@ Displays: Live/Ready/Startup status chips + uptime + memory + disk + DB connecti
 ## 24. Nhập hộ phát nguyện (`/ho-tro/phat-nguyen/nhap-ho`)
 
 **Role**: `admin+`
-**API deps**: `POST /api/admin/vows/assisted-entry/life-release`, `POST /api/admin/vows/assisted-entry/progress`, `GET /api/admin/vows/assisted-entry/history`
+**API deps**: `POST /api/admin/vows/assisted-entry/life-release`, `POST /api/admin/vows/assisted-entry/progress`, `GET /api/admin/vows/assisted-entry/history`, `GET /api/admin/vows/assisted-entry/members/search`, `GET /api/admin/vows/assisted-entry/members/:memberPublicId/vows`
 **Feature flag**: `vow.assisted_entry.enabled`
 
 Tabs: [Nhập journal phóng sanh] [Nhập tiến độ phát nguyện] [Lịch sử nhập hộ]

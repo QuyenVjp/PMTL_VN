@@ -11,7 +11,7 @@ Cho phép thành viên gửi bài viết lên không gian thảo luận cộng �
 - Có thể hỗ trợ khách (`guest`) nếu chính sách sau này cho phép, nhưng luồng hiện tại ưu tiên người dùng có phiên làm việc (session).
 
 ## Điểm kích hoạt (Trigger)
-Trang web gửi yêu cầu đến `POST /api/community/posts/submit`.
+Trang web gửi yêu cầu đến `POST /api/community/posts`.
 
 ## Điều kiện tiên quyết (Preconditions)
 - Đối tượng thực hiện có phiên làm việc hợp lệ hoặc luồng cho phép khách.

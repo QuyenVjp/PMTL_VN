@@ -13,9 +13,8 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 
 ## Public & admin routes (Tuyến đường public & admin)
 
-- `POST /api/comments/:publicId/report`: report editorial comment
-- `POST /api/community/posts/:publicId/report`: report community thread
 - `POST /api/community/comments/:publicId/report`: report community reply
+- `POST /api/moderation/reports`: canonical moderation report create route
 - `GET /api/moderation/reports`: list moderation reports cho admin
 - `POST /api/moderation/reports/:publicId/decision`: submit resolution cho admin
 

@@ -9,7 +9,7 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 
 - Current direction (Hướng đi hiện tại) là `rebuild backend (xây dựng lại hệ thống phía sau)` với NestJS.
 - Runtime (môi trường thực thi) cũ trong repo không được tính là implementation (triển khai) hợp lệ cho direction (hướng đi) mới chỉ vì nó đang tồn tại.
-- Ở thời điểm docs (tài liệu) này được viết, baseline rebuild (nền tảng xây dựng lại) chưa có artifact runtime (môi trường thực thi thực tế) thật để đánh dấu là `implemented (đã triển khai)`.
+- Last verified ở mức design vào `2026-03-21`; cho tới khi xuất hiện artifact runtime thật có đường dẫn rõ trong `apps/api`, `apps/web`, `apps/admin`, bảng này vẫn phải mặc định nghiêng về `required before launch` hoặc `planned`, không được tự suy ra `implemented`.
 - Vì vậy bảng dưới đây chủ yếu liệt kê các `launch blockers (vật cản ngăn chặn ra mắt)`, `planned targets (mục tiêu đã lập kế hoạch)`, và `explicit exclusions (các phần bị loại rõ ràng)`, nhưng từng dòng đều chỉ rõ artifact (thành phần mã nguồn) sẽ phải xuất hiện ở đâu.
 
 ## Status semantics (Ý nghĩa các trạng thái)

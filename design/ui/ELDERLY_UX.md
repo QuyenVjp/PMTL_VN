@@ -20,7 +20,7 @@ File này chốt nguyên tắc UX cho nhóm người dùng lớn tuổi.
 ### Bài tập hằng ngày
 - thứ tự bài đọc rõ
 - một màn hình tập trung
-- có chế độ đọc đêm
+- phase 1 dùng light mode tương phản cao; `chế độ đọc đêm` chỉ cân nhắc ở phase 2+ theo `ui/DESIGN_PRINCIPLES.md`
 
 ### Bạch thoại Phật pháp
 - font to

@@ -17,6 +17,8 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | `admin+` | Phải là admin hoặc super-admin |
 | `super-admin` | Chỉ super-admin |
 
+`editor+` hoặc `moderator+` nếu xuất hiện ở API docs là backend role narrowing bên trong admin surface; page-level gating ở file này vẫn dùng `admin+` hoặc `super-admin`.
+
 ---
 
 ## I. Public Pages (Trang công khai)

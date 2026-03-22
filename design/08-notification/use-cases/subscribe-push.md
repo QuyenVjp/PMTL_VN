@@ -15,7 +15,7 @@
 
 ## trigger (điểm kích hoạt)
 
-- Web gọi `POST /api/push/subscribe`.
+- Web gọi `POST /api/notifications/push/subscribe`.
 
 ## preconditions (điều kiện tiên quyết)
 

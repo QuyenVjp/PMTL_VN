@@ -3,7 +3,7 @@
 File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nào sẽ xảy ra?"**
 
 > Cập nhật khi có thay đổi lớn về design hoặc khi một phần chuyển sang `implemented`.
-> Date: 2026-03-21
+> Date: 2026-03-22
 
 ---
 
@@ -15,7 +15,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
 | Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
-| UI/UX design | ✅ Sẵn sàng | `design/ui/` có 7 docs: PAGE_INVENTORY, USER_FLOWS, COMPONENT_SPECS, DESIGN_PRINCIPLES, ADMIN_ARCHITECTURE, ELDERLY_UX, ADMIN_MODULE_SPECS |
+| UI/UX design | ✅ Sẵn sàng | `design/ui/` đã có core baseline docs + owner docs cho IA/navigation, landing, homepage, và app screens; xem `ROOT_DOC_OWNERSHIP.md` |
 | Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `baseline/frontend-architecture.md` |
 | Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
@@ -38,6 +38,9 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | WAF + anti-bot | ✅ Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `baseline/waf-antibot-strategy.md` |
 | Health contract | ✅ Sẵn sàng | Exact check lists per endpoint, failure runbook — `ops/health-contract.md` |
 | Admin module specs | ✅ Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/ui/ADMIN_MODULE_SPECS.md` |
+| Admin page/API/query mapping | ✅ Sẵn sàng | page route -> API group -> query keys -> invalidation rules — `tracking/admin-page-api-mapping.md` |
+| Admin scaffold backlog | ✅ Sẵn sàng | rollout order + `queries.ts` / `mutations.ts` plan cho từng feature — `tracking/apps-admin-scaffold-backlog.md` |
+| Admin feature query plan | ✅ Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `tracking/admin-feature-query-plan.md` |
 | Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `tracking/env-inventory.md` |
 | pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `baseline/pgvector-decision.md` |
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |
@@ -86,7 +89,7 @@ Mọi domain module (01-11) đều có:
 - API route inventory: `tracking/api-route-inventory.md`
 - Env variables: `tracking/env-inventory.md`
 
-### UI/UX design — ĐẦY ĐỦ (7 docs)
+### UI/UX design — ĐẦY ĐỦ
 - Route inventory đầy đủ: `design/ui/PAGE_INVENTORY.md`
 - User flows public/member/admin: `design/ui/USER_FLOWS.md`
 - 30+ components: `design/ui/COMPONENT_SPECS.md`
@@ -94,6 +97,8 @@ Mọi domain module (01-11) đều có:
 - Admin architecture: `design/ui/ADMIN_ARCHITECTURE.md`
 - Elderly UX: `design/ui/ELDERLY_UX.md`
 - Admin module specs (24 workspaces): `design/ui/ADMIN_MODULE_SPECS.md`
+- IA + URL/navigation owner: `design/ui/NAVIGATION_ARCHITECTURE.md`
+- Landing/homepage/app-screen specs: `design/ui/LANDING_PAGE_DESIGN.md`, `design/ui/HOMEPAGE_CONSTITUTION.md`, `design/ui/SPIRITUAL_APP_SCREENS.md`
 
 ### Frontend strategies — ĐẦY ĐỦ
 - SEO: `generateMetadata()`, JSON-LD, sitemap, robots.txt
@@ -253,11 +258,11 @@ Cộng thêm 1 flag test để verify feature_flags table hoạt động.
 | `POST /api/auth/verify-email` | 5 | 15 phút | per-IP |
 | `POST /api/media/upload` | 20 | 1 giờ | per-account |
 | `POST /api/community/posts` | 10 | 1 giờ | per-account |
-| `POST /api/community/comments` | 30 | 1 giờ | per-account |
-| `POST /api/community/guestbook` | 5 | 1 giờ | per-IP |
+| `POST /api/community/posts/:publicId/comments` | 30 | 1 giờ | per-account |
+| `POST /api/guestbook` | 5 | 1 giờ | per-IP |
 | `GET /api/search` | 100 | 1 phút | per-IP |
 | `POST /api/vows` | 10 | 1 giờ | per-account |
-| `POST /api/practice-logs` | 50 | 1 giờ | per-account |
+| `PUT /api/engagement/practice-logs/self` | 50 | 1 giờ | per-account |
 
 ---
 

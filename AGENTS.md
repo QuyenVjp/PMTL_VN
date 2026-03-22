@@ -80,13 +80,14 @@
 - Monitoring drills: `pnpm monitoring:test`, `pnpm telegram:test`
 
 ## External Workers
-- Codex may consult external CLI workers when the user explicitly asks for Claude Code, Codex CLI, Copilot, or Gemini input, or when a second opinion is materially useful.
+- Codex may consult external CLI workers when the user explicitly asks for Claude Code, Codex CLI, Copilot, Gemini, or Aider input, or when a second opinion is materially useful.
 - Use `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md` when deciding which worker should search, review, or implement a narrow subtask.
 - Phrases such as `use multi-cli router` or `dung multi-cli router` mean: apply `pmtl-multi-cli-orchestrator` and dispatch the smallest correct worker set without asking the user to pick a provider.
 - Preferred repo wrapper: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast [--compare]`
 - Use `--speed balanced` when you specifically want Codex/Gemini to stay more competitive.
 - Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast [--compare]`
-- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini> --prompt "<prompt>"`
+- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
+- `aider` is an opt-in git-aware patch lane. Keep it advisory dry-run by default, with no auto-commits, and do not make it the primary auto-route unless the task explicitly asks for Aider or that exact workflow.
 - Keep external-worker prompts compact and reference repo file paths instead of pasting long code blocks.
 - Treat external workers as advisory reviewers, not the source of truth for repo policy.
 

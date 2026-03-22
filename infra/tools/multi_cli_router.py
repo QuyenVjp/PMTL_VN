@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXTERNAL_AGENT = ROOT / "infra" / "tools" / "external_agent.py"
-PROVIDERS = ("claude", "codex", "copilot", "gemini")
+PROVIDERS = ("claude", "codex", "copilot", "gemini", "aider")
 
 
 def parse_args() -> argparse.Namespace:
@@ -148,6 +148,17 @@ def score_task(task: str) -> tuple[dict[str, int], list[str]]:
         scores["codex"] += 4
         reasons.append("Focused scripting or review wording pushes priority to Codex.")
 
+    aider_keywords = (
+        "aider",
+        "pair programming",
+        "git-aware patch",
+        "dry-run patch",
+        "repo map",
+    )
+    if any(keyword in text for keyword in aider_keywords):
+        scores["aider"] += 6
+        reasons.append("Explicit aider or git-aware patch wording enables the optional Aider lane.")
+
     path_hits = re.findall(r"(?:^|\s)(?:[A-Za-z]:)?[\\/.\w-]+(?:/[.\w-]+)+(?:\.[A-Za-z0-9]+)?", task)
     if len(path_hits) >= 3:
         scores["claude"] += 2
@@ -174,6 +185,7 @@ def pick_secondary(primary: str, scores: dict[str, int]) -> str:
         "claude": "codex",
         "codex": "claude",
         "copilot": "claude",
+        "aider": "claude",
     }
     candidate = preferred[primary]
     if candidate != primary:
@@ -195,6 +207,7 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
         explicit_gemini = any(token in text for token in ("latest", "official docs", "version drift", "research", "what changed"))
         explicit_copilot = any(token in text for token in ("github", "pull request", "actions", "workflow", "copilot"))
         explicit_codex = any(token in text for token in ("codex", "exec", "jsonl", "non-interactive"))
+        explicit_aider = any(token in text for token in ("aider", "pair programming", "dry-run patch", "git-aware patch"))
 
         if not explicit_gemini:
             scores["gemini"] -= 2
@@ -204,6 +217,10 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
             scores["codex"] -= 3
         else:
             scores["codex"] += 1
+        if not explicit_aider:
+            scores["aider"] -= 3
+        else:
+            scores["aider"] += 1
         if not explicit_copilot:
             scores["copilot"] -= 1
         scores["claude"] += 1
@@ -218,11 +235,11 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
 
 def provider_rank(provider: str, speed: str) -> int:
     if speed == "fast":
-        order = ("claude", "copilot", "gemini", "codex")
+        order = ("claude", "copilot", "gemini", "codex", "aider")
     elif speed == "deep":
-        order = ("claude", "codex", "gemini", "copilot")
+        order = ("claude", "codex", "gemini", "copilot", "aider")
     else:
-        order = ("claude", "gemini", "codex", "copilot")
+        order = ("claude", "gemini", "codex", "copilot", "aider")
     return order.index(provider)
 
 

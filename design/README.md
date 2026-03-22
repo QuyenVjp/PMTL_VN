@@ -128,43 +128,46 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 15. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
 16. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
 17. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
-18. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
-19. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
-20. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
-21. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
-22. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
-23. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
-24. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md)
-25. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md)
-26. [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md)
-27. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
-28. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
-29. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md)
-30. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
-31. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
-32. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
-33. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
-34. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_PRACTICE_CONSTITUTION.md)
-35. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
-36. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
-37. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
-38. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
-39. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
-40. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
-41. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
-42. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
-43. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
-44. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
-45. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
-46. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
-47. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
-48. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
-49. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
-50. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
-51. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
-52. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
-53. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
-54. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
+18. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-page-api-mapping.md)
+19. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
+20. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
+21. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
+22. [apps-admin-scaffold-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-admin-scaffold-backlog.md)
+23. [admin-feature-query-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-feature-query-plan.md)
+24. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
+25. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
+26. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
+27. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md)
+28. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md)
+29. [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md)
+30. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
+31. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
+32. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md)
+33. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
+34. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
+35. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
+36. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
+37. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_PRACTICE_CONSTITUTION.md)
+38. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
+39. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
+40. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
+41. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
+42. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
+43. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
+44. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
+45. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
+46. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
+47. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
+48. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
+49. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
+50. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
+51. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
+52. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
+53. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
+54. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
+55. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
+56. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
+57. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -218,7 +221,7 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md) | Cloudflare WAF rules, Bot Fight Mode, honeypot, CSP nonce, security headers |
 | [health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md) | Exact check lists for /health/live, /health/ready, /health/startup |
 
-### UI/UX design (7 files)
+### UI/UX baseline docs
 | File | Nội dung |
 |---|---|
 | [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PAGE_INVENTORY.md) | Route inventory đầy đủ cho public/member/admin surfaces, kể cả Little House, Kinh Bài Tập, Phóng Sanh, search ops, notification ops |
@@ -228,6 +231,8 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md) | shadcn-admin: Vite + React SPA, sidebar, DataTable, command palette |
 | [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md) | Elderly-specific UX rules per module |
 | [ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md) | 24 admin workspaces với filters, bulk actions, states, query invalidation rules |
+
+Các visual spec bổ sung như `ui/LANDING_PAGE_DESIGN.md`, `ui/HOMEPAGE_CONSTITUTION.md`, `ui/SPIRITUAL_APP_SCREENS.md`, và `ui/NAVIGATION_ARCHITECTURE.md` là owner docs riêng; quyền ưu tiên được chốt ở `ROOT_DOC_OWNERSHIP.md`.
 
 ### Deterministic SVG assets
 | File | Nội dung |

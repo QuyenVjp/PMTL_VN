@@ -8,8 +8,9 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 
 ## Public & admin routes (Tuyến đường public & admin)
 
-- `GET /api/posts/search?q=<query>&limit=<n>`: primary search endpoint (điểm cuối tìm kiếm chính)
-- `POST /api/posts/search/reindex`: admin trigger cho full/partial reindex (kích hoạt lập chỉ mục lại)
+- `GET /api/search?q=<query>&limit=<n>`: federated search endpoint (điểm cuối tìm kiếm chính cho web public)
+- `GET /api/qa/search?q=<query>&limit=<n>`: specialized wisdom/QA search endpoint khi FE cần surface hẹp hơn
+- `POST /api/search/reindex`: admin trigger cho full/partial reindex (kích hoạt lập chỉ mục lại)
 - `GET /api/search/status`: route báo engine health, queue depth, indexing progress
 - `GET /api/admin/search/status`: admin operations endpoint (điểm cuối vận hành) cho dashboard trạng thái
 - `POST /api/admin/search/reindex`: admin trigger chuẩn cho full reindex từ admin UI

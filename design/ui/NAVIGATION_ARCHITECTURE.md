@@ -2,7 +2,7 @@
 
 > **Mục đích**: Chốt cấu trúc điều hướng, information architecture, và URL scheme cho toàn bộ app.
 > **Ref**: `ui/PAGE_INVENTORY.md` (route list), `ui/USER_FLOWS.md` (journeys), `ui/SPIRITUAL_APP_SCREENS.md` (screen specs)
-> **Rule**: Mọi thay đổi URL scheme phải cập nhật file này trước, rồi mới sửa code.
+> **Rule**: Khi đổi route string, cập nhật `ui/PAGE_INVENTORY.md` trước. File này chốt IA, nav behavior, deep-linking, và gating rules bám theo route canon đó.
 
 ---
 

@@ -1,0 +1,72 @@
+# ADMIN_FEATURE_QUERY_PLAN
+
+File này chốt `query key factory plan` cho `apps/admin/src/features/*/queries.ts` và `mutations.ts`.
+
+Mục tiêu:
+
+- không phải đoán tên key family khi scaffold
+- gom query exports, mutation exports, invalidation graph, và readiness status vào 1 chỗ
+- làm cầu nối giữa `tracking/admin-page-api-mapping.md` và `tracking/apps-admin-scaffold-backlog.md`
+
+> Canon refs:
+> - `design/tracking/admin-page-api-mapping.md`
+> - `design/tracking/apps-admin-scaffold-backlog.md`
+> - `design/tracking/api-route-inventory.md`
+
+---
+
+## Conventions
+
+- Mỗi feature có 1 `keys` object với `all`, `list`, `detail`, `aux` khi cần.
+- `queries.ts` export query key factory + query option builders.
+- `mutations.ts` export mutation option builders + `onSuccess` invalidation choreography.
+- Status:
+  - `ready`: có thể scaffold ngay
+  - `conditional`: scaffold được nhưng phải giữ note permission/data-shape đặc biệt
+  - `blocked`: chưa scaffold cho tới khi route canon hoặc mapping owner được chốt thêm
+
+## Feature plan
+
+| Feature folder | Query key factory plan | `queries.ts` exports tối thiểu | `mutations.ts` exports tối thiểu | Minimum invalidation | Status |
+|---|---|---|---|---|---|
+| `dashboard` | `dashboardKeys.stats()`, `dashboardKeys.recentPosts(filters)`, `dashboardKeys.pendingReports(filters)`, `dashboardKeys.auditStream(filters)` | `dashboardKeys`, `getDashboardStatsQuery`, `getRecentPostsQuery`, `getPendingReportsQuery`, `getAuditStreamQuery` | none | n/a | `ready` |
+| `posts` | `postAdminKeys.list(filters)`, `postAdminKeys.detail(publicId)`, `postAdminKeys.aux.statuses()` | `postAdminKeys`, `getAdminPostsQuery`, `getAdminPostQuery`, `getPostStatusesQuery` | `createPostMutation`, `updatePostMutation`, `publishPostMutation` | posts list/detail + dashboard recent-posts + public cache owner | `ready` |
+| `beginner-guides` | `beginnerGuideAdminKeys.list(filters)`, `beginnerGuideAdminKeys.detail(slugOrId)` | `beginnerGuideAdminKeys`, `getAdminBeginnerGuidesQuery`, `getAdminBeginnerGuideQuery` | `createBeginnerGuideMutation`, `updateBeginnerGuideMutation`, `publishBeginnerGuideMutation` | guide list/detail + related public guide loaders | `ready` |
+| `daily-practice-admin` | `dailyPracticeAdminKeys.overview()`, `dailyPracticeAdminKeys.guides(filters)`, `dailyPracticeAdminKeys.presets(filters)`, `dailyPracticeAdminKeys.faq(filters)`, `dailyPracticeAdminKeys.downloads()` | `dailyPracticeAdminKeys`, `getDailyPracticeOverviewQuery`, `getDailyPracticeGuidesQuery`, `getDailyPracticePresetsQuery`, `getDailyPracticeFaqQuery`, `getDailyPracticeDownloadsQuery` | `createDailyPracticeGuideMutation`, `updateDailyPracticeGuideMutation`, `createScenarioPresetMutation`, `updateScenarioPresetMutation`, `createDailyPracticeFaqMutation`, `updateDailyPracticeFaqMutation`, `publishDailyPracticeWorkspaceMutation` | whole workspace + public grouped loaders | `ready` |
+| `little-house-admin` | `littleHouseAdminKeys.overview()`, `littleHouseAdminKeys.guides(filters)`, `littleHouseAdminKeys.caseVariants(filters)`, `littleHouseAdminKeys.faq(filters)`, `littleHouseAdminKeys.downloads()` | `littleHouseAdminKeys`, `getLittleHouseOverviewQuery`, `getLittleHouseGuidesQuery`, `getLittleHouseCaseVariantsQuery`, `getLittleHouseFaqQuery`, `getLittleHouseDownloadsQuery` | `createLittleHouseGuideMutation`, `updateLittleHouseGuideMutation`, `createLittleHouseCaseVariantMutation`, `updateLittleHouseCaseVariantMutation`, `createLittleHouseFaqMutation`, `updateLittleHouseFaqMutation`, `publishLittleHouseWorkspaceMutation` | whole workspace + public grouped loaders | `ready` |
+| `life-release-admin` | `lifeReleaseAdminKeys.overview()`, `lifeReleaseAdminKeys.guides(filters)`, `lifeReleaseAdminKeys.variants(filters)`, `lifeReleaseAdminKeys.faq(filters)`, `lifeReleaseAdminKeys.downloads()` | `lifeReleaseAdminKeys`, `getLifeReleaseOverviewQuery`, `getLifeReleaseGuidesQuery`, `getLifeReleaseVariantsQuery`, `getLifeReleaseFaqQuery`, `getLifeReleaseDownloadsQuery` | `createLifeReleaseGuideMutation`, `updateLifeReleaseGuideMutation`, `createLifeReleaseVariantMutation`, `updateLifeReleaseVariantMutation`, `createLifeReleaseFaqMutation`, `updateLifeReleaseFaqMutation`, `publishLifeReleaseWorkspaceMutation` | whole workspace + public guide surfaces | `ready` |
+| `media-library-admin` | `mediaLibraryAdminKeys.overview()`, `mediaLibraryAdminKeys.collections(filters)`, `mediaLibraryAdminKeys.collection(publicId)`, `mediaLibraryAdminKeys.featured()`, `mediaLibraryAdminKeys.tags()` | `mediaLibraryAdminKeys`, `getMediaLibraryOverviewQuery`, `getMediaCollectionsQuery`, `getMediaCollectionQuery`, `getFeaturedCollectionsQuery`, `getMediaTagsQuery` | `createMediaCollectionMutation`, `updateMediaCollectionMutation`, `addCollectionItemMutation`, `updateCollectionItemMutation`, `updateFeaturedCollectionsMutation`, `publishMediaLibraryMutation` | collections list/detail + featured + tags | `ready` |
+| `sutras-admin` | `sutraAdminKeys.list(filters)`, `sutraAdminKeys.detail(publicId)` | `sutraAdminKeys`, `getSutrasQuery`, `getSutraQuery` | `createSutraMutation`, `updateSutraMutation`, `publishSutraMutation` | list/detail + dependent grouped loaders | `conditional` |
+| `chant-admin` | `chantAdminKeys.items(filters)`, `chantAdminKeys.item(publicId)`, `chantAdminKeys.plans(filters)`, `chantAdminKeys.plan(publicId)` | `chantAdminKeys`, `getChantItemsQuery`, `getChantItemQuery`, `getChantPlansQuery`, `getChantPlanQuery` | `createChantItemMutation`, `updateChantItemMutation`, `createChantPlanMutation`, `updateChantPlanMutation`, `publishChantMutation` | list/detail + dependent grouped loaders | `conditional` |
+| `media-admin` | `mediaAdminKeys.assets(filters)`, `mediaAdminKeys.detail(publicId)` | `mediaAdminKeys`, `getMediaAssetsQuery`, `getMediaAssetQuery` | `uploadMediaMutation`, `updateMediaAssetMutation`, `deleteMediaAssetMutation` | asset list/detail + embedding workspace keys | `ready` |
+| `wisdom-baihoa` | `wisdomAdminKeys.list(filters)`, `wisdomAdminKeys.detail(publicId)`, `wisdomAdminKeys.offlineBundles()`, `wisdomAdminKeys.importJobs()`, `baihuaAdminKeys.books(filters)`, `baihuaAdminKeys.chapter(publicId)` | `wisdomAdminKeys`, `baihuaAdminKeys`, `getAdminWisdomEntriesQuery`, `getAdminWisdomEntryQuery`, `getAdminOfflineBundlesQuery`, `getAdminImportJobsQuery`, `getAdminBaihuaBooksQuery`, `getAdminBaihuaChapterQuery` | `createWisdomEntryMutation`, `updateWisdomEntryMutation`, `publishWisdomEntryMutation`, `triggerWisdomIngestionMutation`, `importBaihuaSourceMutation`, `updateBaihuaTranslationMutation`, `publishBaihuaChapterMutation`, `rebuildOfflineBundlesMutation` | wisdom list/detail + bundles + import jobs + baihua chapter + freshness widgets | `ready` |
+| `community-posts-admin` | `communityPostAdminKeys.list(filters)`, `communityPostAdminKeys.detail(publicId)` | `communityPostAdminKeys`, `getCommunityPostsQuery`, `getCommunityPostQuery` | `moderateCommunityPostMutation`, `hideCommunityPostMutation`, `restoreCommunityPostMutation` | list/detail + dashboard widgets | `conditional` |
+| `guestbook-admin` | `guestbookAdminKeys.list(filters)`, `guestbookAdminKeys.detail(publicId)` | `guestbookAdminKeys`, `getGuestbookEntriesQuery`, `getGuestbookEntryQuery` | `approveGuestbookEntryMutation`, `rejectGuestbookEntryMutation` | list/detail + moderation/dashboard widgets | `conditional` |
+| `moderation-reports` | `moderationReportKeys.list(filters)`, `moderationReportKeys.detail(publicId)` | `moderationReportKeys`, `getModerationReportsQuery`, `getModerationReportQuery` | `resolveModerationReportMutation` | report list/detail + affected target workspace + dashboard pending-reports | `ready` |
+| `moderated-comments` | `moderatedCommentKeys.list(filters)`, `moderatedCommentKeys.detail(publicId)` | `moderatedCommentKeys`, `getModeratedCommentsQuery`, `getModeratedCommentQuery` | `hideCommentMutation`, `restoreCommentMutation`, `resolveCommentModerationMutation` | comment list/detail + report list + target content detail | `blocked` |
+| `users-admin` | `userAdminKeys.list(filters)`, `userAdminKeys.detail(publicId)`, `userAdminKeys.audit(publicId, filters)`, `userAdminKeys.practiceStats(publicId)` | `userAdminKeys`, `getAdminUsersQuery`, `getAdminUserQuery`, `getAdminUserAuditQuery`, `getAdminUserPracticeStatsQuery` | `updateAdminUserProfileMutation`, `changeAdminUserRoleMutation`, `blockAdminUserMutation`, `unblockAdminUserMutation` | users list/detail + audit/practice-stats + sessions + dashboard | `ready` |
+| `sessions-admin` | `sessionAdminKeys.list(filters)`, `sessionAdminKeys.detail(sessionId)`, `sessionAdminKeys.byUser(userPublicId)` | `sessionAdminKeys`, `getAdminSessionsQuery`, `getAdminSessionQuery`, `getAdminSessionsByUserQuery` | `revokeAdminSessionMutation`, `revokeAdminSessionsBulkMutation`, `revokeAllUserSessionsMutation` | sessions list/detail/by-user + affected user detail | `ready` |
+| `feature-flags-admin` | `featureFlagKeys.list()`, `featureFlagKeys.detail(key)` | `featureFlagKeys`, `getFeatureFlagsQuery`, `getFeatureFlagQuery` | `updateFeatureFlagMutation` | flag list/detail + directly bound screens | `conditional` |
+| `audit-logs-admin` | `auditLogKeys.list(filters)`, `auditLogKeys.detail(id)` | `auditLogKeys`, `getAuditLogsQuery`, `getAuditLogQuery` | none | n/a | `blocked` |
+| `events-admin` | `eventKeys.list(filters)`, `eventKeys.detail(eventId)`, `eventKeys.agenda(eventId)`, `eventKeys.speakers(eventId)`, `eventKeys.ctas(eventId)`, `eventKeys.overrides()`, `eventKeys.status()` | `eventKeys`, `getEventsQuery`, `getEventQuery`, `getEventAgendaQuery`, `getEventSpeakersQuery`, `getEventCtasQuery`, `getCalendarOverridesQuery`, `getCalendarStatusQuery` | `createEventMutation`, `updateEventMutation`, `publishEventMutation`, `rescheduleEventMutation`, `cancelEventMutation`, `createAgendaItemMutation`, `updateAgendaItemMutation`, `reorderAgendaMutation`, `createSpeakerMutation`, `updateSpeakerMutation`, `createEventCtaMutation`, `updateEventCtaMutation`, `createLunarOverrideMutation`, `refreshPersonalPracticeMutation` | event list/detail + touched child keys + calendar status + public event surfaces | `ready` |
+| `search-admin` | `searchAdminKeys.status()`, `searchAdminKeys.freshness()`, `searchAdminKeys.reindexJobs()` | `searchAdminKeys`, `getSearchStatusQuery`, `getSearchFreshnessQuery`, `getReindexJobsQuery` | `reindexAllMutation`, `reindexSourceMutation` | status/freshness + optionally surfaced content freshness keys | `ready` |
+| `notifications-admin` | `notificationAdminKeys.status()`, `notificationAdminKeys.pushJobs(filters)`, `notificationAdminKeys.pushJob(publicId)`, `notificationAdminKeys.preferences()`, `notificationAdminKeys.practiceReminders()` | `notificationAdminKeys`, `getNotificationStatusQuery`, `getPushJobsQuery`, `getPushJobQuery`, `getNotificationPreferencesQuery`, `getPracticeReminderSettingsQuery` | `updateNotificationPreferencesMutation`, `updatePracticeReminderMutation`, `createPushJobMutation`, `processPushJobMutation`, `redrivePushJobMutation` | push jobs list/detail + status + preference/reminder keys | `ready` |
+| `volunteers-admin` | `volunteerKeys.list()`, `volunteerKeys.detail(publicId)`, `contactInfoKeys.detail()` | `volunteerKeys`, `contactInfoKeys`, `getVolunteersQuery`, `getVolunteerQuery`, `getAdminContactInfoQuery` | `createVolunteerMutation`, `updateVolunteerMutation`, `deleteVolunteerMutation`, `sortVolunteersMutation`, `updateContactInfoMutation` | volunteers list/detail + contact-info | `conditional` |
+| `health-admin` | `healthAdminKeys.summary()`, `healthAdminKeys.checks()` | `healthAdminKeys`, `getHealthExtendedQuery` | none | polling only | `ready` |
+| `assisted-entry-admin` | `assistedEntryKeys.history(filters)`, `assistedEntryKeys.memberSearch(filters)`, `assistedEntryKeys.memberVows(memberPublicId)` | `assistedEntryKeys`, `getAssistedEntryHistoryQuery`, `searchAssistedEntryMembersQuery`, `getAssistedEntryMemberVowsQuery` | `createAssistedLifeReleaseMutation`, `createAssistedVowProgressMutation` | history + affected member detail + affected vow detail + dashboard support widget | `ready` |
+
+## Blocked features phải giữ nguyên trạng
+
+- `moderated-comments`: chờ admin comment moderation route group canon rõ.
+- `audit-logs-admin`: đọc được ở level mapping nhưng route group vẫn future-facing, chưa nên scaffold mù DTO/detail shape.
+- `queue-ops`: không nằm trong plan này.
+
+## Generator order
+
+1. shared query infra
+2. `dashboard`, `feature-flags-admin`, `health-admin`
+3. editorial features
+4. moderation + events + notifications
+5. `users-admin`, `sessions-admin`, `wisdom-baihoa`, `assisted-entry-admin`, `volunteers-admin`
+
+Nếu có xung đột giữa file này và `tracking/api-route-inventory.md`, route inventory thắng; file này phải được cập nhật theo.

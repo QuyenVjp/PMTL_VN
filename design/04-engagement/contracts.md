@@ -11,21 +11,21 @@
 
 ## API / BFF routes (Tuyến đường API)
 
-- `GET/PUT /api/practice-log`
-- `GET/POST /api/sutra-bookmarks`
-- `GET/POST /api/sutra-progress`
-- `GET/POST /api/chanting/preferences`
-- `GET/POST /api/practice-sheets`
-- `GET /api/practice-sheets/:publicId`
-- `PATCH /api/practice-sheets/:publicId`
-- `POST /api/practice-sheets/:publicId/complete`
-- `GET/POST /api/ngoi-nha-nho/sheets`
-- `GET /api/ngoi-nha-nho/sheets/:publicId`
-- `PATCH /api/ngoi-nha-nho/sheets/:publicId`
-- `POST /api/ngoi-nha-nho/sheets/:publicId/entries`
-- `POST /api/ngoi-nha-nho/sheets/:publicId/complete`
-- `POST /api/ngoi-nha-nho/sheets/:publicId/mark-self-stored`
-- `POST /api/ngoi-nha-nho/sheets/:publicId/mark-offered`
+- `GET/POST /api/engagement/bookmarks`
+- `GET/POST /api/engagement/reading-progress`
+- `GET /api/engagement/practice-logs`
+- `GET/PUT /api/engagement/practice-logs/self`
+- `GET/POST /api/engagement/practice-sheets`
+- `GET /api/engagement/practice-sheets/:publicId`
+- `PATCH /api/engagement/practice-sheets/:publicId`
+- `POST /api/engagement/practice-sheets/:publicId/complete`
+- `GET/POST /api/engagement/ngoi-nha-nho-sheets`
+- `GET /api/engagement/ngoi-nha-nho-sheets/:publicId`
+- `PATCH /api/engagement/ngoi-nha-nho-sheets/:publicId`
+- `POST /api/engagement/ngoi-nha-nho-sheets/:publicId/entries`
+- `POST /api/engagement/ngoi-nha-nho-sheets/:publicId/complete`
+- `POST /api/engagement/ngoi-nha-nho-sheets/:publicId/mark-self-stored`
+- `POST /api/engagement/ngoi-nha-nho-sheets/:publicId/mark-offered`
 
 ## Auth & permissions (Xác thực & quyền hạn)
 

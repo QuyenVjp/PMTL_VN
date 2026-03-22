@@ -13,6 +13,8 @@ Cho phép quản trị viên hoặc quản trị viên cấp cao đưa ra quyế
 ## Điểm kích hoạt (Trigger)
 Quản trị viên gửi yêu cầu đến `POST /api/moderation/reports/:publicId/decision`.
 
+Route này thuộc admin surface; page auth vẫn là `admin+`, còn backend có thể gắn thêm moderator/editorial sub-role nếu module owner chốt sau ở policy helper.
+
 ## Điều kiện tiên quyết (Preconditions)
 - Đối tượng thực hiện có vai trò (role) phù hợp.
 - Báo cáo tồn tại và chưa ở trạng thái cuối (terminal status) không cho phép chỉnh sửa theo chính sách.
