@@ -35,7 +35,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 const DEFAULT_SHARE_CATEGORIES = ['Tâm Linh', 'Sức Khoẻ', 'Gia Đình', 'Sự Nghiệp', 'Hôn Nhân', 'Thi Cử', 'Kinh Doanh', 'Mất Ngủ', 'Mối Quan Hệ'];
 const REPORT_REASON_OPTIONS = ['spam', 'abuse', 'off-topic', 'unsafe'] as const;
-
 function getPostKey(post: CommunityPost, index: number) {
   if (post.documentId) return post.documentId;
   if (post.slug) return post.slug;

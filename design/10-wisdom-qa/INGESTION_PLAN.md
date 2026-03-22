@@ -20,6 +20,18 @@ Mục tiêu:
 - Nếu dùng web phụng sự viên Việt Nam, phải ghi rõ nó là:
   - `community_volunteer_site (web cộng đồng hỗ trợ)`
   - hoặc `community_translation (bản dịch cộng đồng)`
+- Nếu đi qua lane automation, phải chạy `duplicate guard` trước khi tạo draft entry mới.
+
+## Automation lane (luồng tự động hóa)
+
+- `chatgpt.com/gpts/...` custom GPT chỉ là lane hỗ trợ biên tập; không coi là API canonical để batch ingest.
+- Hướng automation canonical:
+  - workflow orchestrator
+  - translation provider profile
+  - PMTL duplicate check
+  - PMTL slug preview
+  - PMTL import job
+- Machine translation output chỉ được tạo ở trạng thái draft; không auto-publish.
 
 ## Ingestion flow (luồng nhập dữ liệu) tổng quát
 
@@ -80,6 +92,20 @@ Nếu đã có bản dịch:
 - `topicTags`
 - `problemTags`
 - `keywordAliases`
+
+### Step 6a. Slug preview và duplicate guard
+
+Trước khi ghi draft:
+
+- check duplicate theo `entryType + sourceFamily + sourceCode`
+- fallback check theo `sourceUrl`
+- preview `slug`
+
+Kết quả mong muốn:
+
+- `duplicate_found`
+- hoặc `slug_ready`
+- hoặc `slug_collision_but_not_duplicate`
 
 ### Step 7. Trích xuất rule thực hành nếu có
 
@@ -412,3 +438,4 @@ Phải tách:
   - rule extraction
   - review
 - `source-backed content` phải nhập một lần đúng, còn `daily advisory (thông báo hoặc gói hướng dẫn)` là lớp downstream được tính ra.
+- Với lane automation, duplicate guard phải chạy trước translation persistence nếu canonical key đã có record.

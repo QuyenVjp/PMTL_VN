@@ -107,6 +107,30 @@ curl -f https://api.pmtl.vn/health/ready
 # Note rotation date in this file (see Rotation log below)
 ```
 
+### Rotate refresh secret only
+
+**Phase 1 baseline**:
+- refresh secret rotation là `invalidate-all-sessions event`, không dùng dual-key grace phức tạp làm baseline
+- nếu rotate riêng `JWT_REFRESH_SECRET`, mọi refresh token hiện tại phải bị coi là invalid sau deploy mới
+- access token đang sống có thể hết hạn tự nhiên theo TTL `15 phút`, nhưng flow refresh bằng secret cũ không được chấp nhận nữa
+
+```bash
+# Step 1 — Generate new refresh secret
+NEW_REFRESH=$(openssl rand -base64 64)
+
+# Step 2 — Update JWT_REFRESH_SECRET in env file
+sudo nano /etc/pmtl/secrets/.env.production
+
+# Step 3 — Restart API
+docker compose -f docker-compose.prod.yml restart api
+
+# Step 4 — Revoke server-side session/refresh records if schema stores them separately
+# Expected: existing browser sessions are forced to login again when access token expires
+
+# Step 5 — Verify
+curl -f https://api.pmtl.vn/health/ready
+```
+
 ### Rotate DB password
 
 ```bash
@@ -144,6 +168,24 @@ NEW_CSRF=$(openssl rand -base64 64)
 # Step 2 — Update SMTP_PASS in env file
 # Step 3 — Restart API
 # Step 4 — Test: trigger a password reset email
+```
+
+### Rotate webhook / revalidate secrets
+
+**Applies to**: `REVALIDATE_SECRET`, webhook shared secrets tương đương
+
+```bash
+# Step 1 — Generate new secret
+NEW_WEBHOOK=$(openssl rand -hex 32)
+
+# Step 2 — Update secret in all participating services
+sudo nano /etc/pmtl/secrets/.env.production
+
+# Step 3 — Restart services receiving or emitting webhook callbacks
+docker compose -f docker-compose.prod.yml restart api web
+
+# Step 4 — Verify one signed callback against staging or safe internal route
+# Expected: old secret rejected, new secret accepted
 ```
 
 ### Rotate VAPID keys (Web Push)

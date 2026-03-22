@@ -25,6 +25,16 @@ Bật Valkey khi **ít nhất 1** điều kiện sau:
 - table chưa được index/cleanup đúng mà đã vội migrate
 - contention chỉ xuất hiện trong local dev noise, không lặp lại ở môi trường gần production
 
+### Measurement discipline
+
+- `p95 limiter query > 100ms sustained trong 15 phút` nghĩa là:
+  - measurement lấy từ app timing log hoặc metric bucket cùng key `rate_limit_records`
+  - ít nhất `3` sample windows liên tiếp, mỗi window `5 phút`
+  - không dùng một request bất thường để kích hoạt migration
+- lock contention phải được chứng minh bằng:
+  - `pg_locks` / wait events lặp lại trên `rate_limit_records`
+  - hoặc app log cho thấy rate-limit path là bottleneck thật, không phải DB chung đang quá tải vì lý do khác
+
 ---
 
 ## Purpose (3 responsibilities)
@@ -78,6 +88,15 @@ bull:{prefix}:{queueName}:*   → BullMQ internal keys
 **Solution**: Separate databases (`SELECT` index) OR separate Valkey instances if queues grow large.
 - Phase 2 default: DB 0 = cache + rate-limit, DB 1 = BullMQ queues
 - Phase 3: Separate Valkey instances if needed
+
+### Split-instance trigger
+
+Đánh giá tách thành instance riêng khi có một trong các dấu hiệu:
+
+- combined memory usage giữ trên `80%` allocation dù TTL/eviction đã đúng
+- queue keys tăng nhanh làm DB 1 cạnh tranh rõ với cache/rate-limit path
+- BullMQ backlog cần `noeviction` nhưng cache path lại cần aggressive eviction
+- recovery/maintenance của queue không còn muốn ảnh hưởng cache path
 
 ```typescript
 // ValkeyService — separate clients per purpose
@@ -137,6 +156,11 @@ When Valkey is down:
 1. **Rate limiting**: Fall back to Postgres `rate_limit_records` table (same logic, slower)
 2. **Cache**: Fall back to direct DB query (cache miss penalty, not hard failure)
 3. **BullMQ**: Jobs cannot be enqueued → return error to caller, log `warn`
+
+**Fallback budget**:
+- rate-limit fallback được chấp nhận khi vẫn giữ được request latency trong budget route hiện tại
+- nếu Postgres fallback làm security-sensitive path vượt budget nghiêm trọng hoặc DB đã quá tải, service phải `fail closed` thay vì giả vờ degrade an toàn
+- queue path không có graceful fallback tương đương canonical; nếu BullMQ cần Valkey mà Valkey chết, async producer phải trả lỗi rõ hoặc giữ lại bằng outbox/pending artifact theo contract liên quan
 
 ```typescript
 // Graceful degradation pattern

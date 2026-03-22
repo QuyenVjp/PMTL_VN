@@ -298,6 +298,7 @@ platform/metrics/
 
 - startup state bám đúng `baseline/startup-dependency-order.md`
 - `/health/ready` kiểm tra được Postgres connectivity, migration status, feature flags readability, và storage readiness theo phase 1
+- health responses bám `ops/health-contract.md`, gồm readiness matrix và rule public probe không cache stale state
 - optional phase-2 dependencies không được chen vào baseline 11 modules
 
 ### Do not move on until
@@ -355,7 +356,7 @@ common/auth/
 ### Do not move on until
 
 - `manage-auth-session.md` happy paths + failure behavior map được vào code layout
-- refresh rate-limit exact value đã được cắm vào implementation plan
+- refresh rate-limit exact value đã được cắm theo `tracking/coding-readiness.md` Phần 5 và `baseline/security.md`
 - auth routes không bị coi là “public simple controller”
 
 ### Common traps
@@ -449,6 +450,19 @@ Thứ tự sau `identity + content + upload boundary`:
 
 Nếu 7 bước đầu chưa đứng vững, scaffold song song phần sau chỉ làm tăng drift.
 
+### Phase 2+ activation order (do not pull forward)
+
+Khi trigger phase 2+ thật sự được đáp ứng, thứ tự đúng là:
+
+1. `platform/valkey/`
+2. `platform/queue/` hoặc module queue tương đương
+3. `platform/outbox/`
+4. `modules/search` advanced runtime adapters (`Meilisearch`)
+5. phase-2 admin/control-plane routes liên quan (`/admin/search/*`, `/admin/outbox/*`, queue/dead-letter ops)
+6. `apps/worker` chỉ sau khi producer contract + idempotency + admin recovery surface đã rõ
+
+Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, outbox contract, và dead-letter recovery semantics đã đứng vững ở `apps/api`.
+
 ---
 
 ## Exact blockers that must be solved before broad scaffold
@@ -475,6 +489,12 @@ Nếu 7 bước đầu chưa đứng vững, scaffold song song phần sau chỉ
 - Valkey adapter
 - PgBouncer-specific config in app layer
 - pgvector anything
+
+### Conditional routes phải hiểu đúng
+
+- `api-route-inventory.md` có thể liệt kê route `Phase 2+` để tránh quên contract
+- sự hiện diện trong inventory **không** có nghĩa route đó được scaffold ở Wave 1
+- nếu route là `conditional` hoặc `phase 2+`, scaffold order file này thắng
 
 Nếu cần chỗ để “để dành”, chỉ được để trong `design/` hoặc `implementation-mapping.md`, không được tạo runtime artifact giả.
 

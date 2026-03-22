@@ -20,6 +20,8 @@ Mục tiêu:
 - `Giới thiệu pháp môn` và `sơ học` là cửa vào bắt buộc
 - `Bạch thoại Phật pháp`, `khai thị`, `Huyền học vấn đáp`, `Phật học vấn đáp` là lõi tri thức
 - `Ngôi Nhà Nhỏ`, `bài tập hằng ngày`, `phát nguyện`, `phóng sanh` là lõi thực hành
+- `佛台供设` và `各类升文` là hai beginner-family signals thật, không nên xem như note phụ nếu muốn bám official PMTL surface
+- `精选开示` là curated surface; `现场图腾` và `同修分享` là family riêng có độ nhạy cảm khác nhau
 - `audio / video / offline / chữ lớn` là nhu cầu thật
 - `community` chỉ là lớp hỗ trợ, không phải trung tâm
 
@@ -88,6 +90,19 @@ Owner:
 - gamification kiểu streak/challenge
 - chatbot tự sinh `khai thị`
 - AI trả lời thay nguồn chính thống
+- browser automation bám một GPT web riêng như canonical ingest path
+
+## AI automation note
+
+- AI hợp lý nhất khi làm:
+  - source normalization
+  - translation draft
+  - tag/alias suggestion
+  - duplicate-check assist
+- AI không được làm:
+  - doctrinal answer engine
+  - auto-publish machine translation
+  - canonical truth owner
 
 ## Student note (Ghi chú cho sinh viên)
 

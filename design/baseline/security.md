@@ -42,6 +42,10 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - idle timeout (thời gian chờ khi không hoạt động): `30 phút`
 - absolute max session age (tuổi thọ tối đa tuyệt đối của phiên): `12 giờ`
 - admin route (đường dẫn quản trị) phải có guard (bộ canh phòng) riêng, không dùng chung assumption (giả định) với member route (đường dẫn thành viên)
+- route scope mặc định:
+  - mọi route dưới `/api/admin/**` phải đi qua `AdminGuard`
+  - chỉ được exempt (miễn) bằng decorator/contract explicit, có audit note rõ
+  - không cho phép “admin page nhưng member token cũng vào được” theo kiểu suy diễn từ UI
 
 ## Password / reset / verification (Mật khẩu / Thiết lập lại / Xác minh)
 
@@ -112,7 +116,11 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - route exempt rõ ràng:
   - `GET`, `HEAD`, `OPTIONS`
   - bearer-only automation/webhook routes có contract riêng
-- browser mutation còn phải check `Origin`/`Referer` thuộc allowlist `WEB_ORIGIN` hoặc `ADMIN_ORIGIN`; thiếu cả hai thì reject mặc định
+- browser mutation còn phải check `Origin`/`Referer` thuộc allowlist `WEB_ORIGIN` hoặc `ADMIN_ORIGIN`
+- rule reject cụ thể:
+  - nếu `Origin` hiện diện và không match allowlist → reject `403 security.csrf_failed`
+  - nếu `Origin` vắng nhưng `Referer` hiện diện và không match allowlist → reject `403 security.csrf_failed`
+  - nếu thiếu cả `Origin` lẫn `Referer` → reject mặc định `403 security.csrf_failed`
 - CSRF failure trả `security.csrf_failed`, không làm rõ token nào sai
 
 ### CORS policy (Chính sách chia sẻ tài nguyên giữa các nguồn)
@@ -142,6 +150,7 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - `media-src 'self' https:`
 - `connect-src 'self'` cộng thêm origin (nguồn) API/search/edge thật sự cần thiết
 - `script-src 'self'` và chỉ nới lỏng bằng nonce/hash (mã dùng một lần/mã băm) nếu framework (khung phần mềm) bắt buộc
+- nếu current runtime/framework cần `unsafe-eval` trong môi trường dev thì phải ghi rõ là `dev-only concession (nới lỏng chỉ cho môi trường phát triển)`, không coi đó là production baseline
 - `style-src 'self' 'unsafe-inline'` chỉ khi chưa thoát khỏi các hạn chế của framework; nếu thoát được thì bỏ `unsafe-inline`
 
 ### Other headers (Các tiêu đề khác)
@@ -216,6 +225,10 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - nonce/event id store (kho lưu trữ mã dùng một lần/mã sự kiện):
   - giai đoạn 1 có thể dùng bảng Postgres hoặc lưu trữ vĩnh viễn tương đương
   - khi `Valkey` được kích hoạt thì có thể chuyển sang kho dùng chung (shared store)
+- baseline artifact bắt buộc cho phase 1:
+  - `webhook_delivery_dedup` table hoặc artifact persistence tương đương
+  - unique key theo `provider + event_id`
+  - created_at/index đủ để enforce replay window `5 phút`
 - invalid signature (chữ ký không hợp lệ):
   - log structured event (ghi nhật ký sự kiện có cấu trúc)
   - trả về phản hồi trung tính

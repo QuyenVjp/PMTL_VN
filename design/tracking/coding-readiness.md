@@ -21,6 +21,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
 | Rate-limit values | ✅ Sẵn sàng | 13 endpoints với exact limits — xem Phần 5 |
+| Webhook replay protection | ✅ Sẵn sàng | signature verify + dedup persistence đã chốt ở `baseline/security.md` + `tracking/implementation-mapping.md` |
 | Migration order | ✅ Sẵn sàng | 12 bước chi tiết — xem Phần 6 |
 | Testing strategy | ✅ Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `baseline/testing-strategy.md` |
 | Deploy runbook | ✅ Sẵn sàng | Docker Compose, deploy/rollback commands, SSL verify — `ops/deploy-runbook.md` |
@@ -42,6 +43,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Admin scaffold backlog | ✅ Sẵn sàng | rollout order + `queries.ts` / `mutations.ts` plan cho từng feature — `tracking/apps-admin-scaffold-backlog.md` |
 | Admin feature query plan | ✅ Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `tracking/admin-feature-query-plan.md` |
 | Wisdom naming & IA canon | ✅ Sẵn sàng | route slug, hub IA, glossary, source taxonomy, FAQ/warnings cho BTPP và Little House cross-surface — `10-wisdom-qa/btpp-library-canon.md` |
+| Wisdom translation automation | ✅ Sẵn sàng | auto-ingest/auto-translate lane đã có orchestrator + duplicate guard + slug preview + import-job lifecycle ở design level — `10-wisdom-qa/translation-automation-architecture.md` |
 | Wisdom-QA family audit | ✅ Sẵn sàng | audit theo family, anti-drift rules, và gap list để scaffold không đoán taxonomy — `tracking/wisdom-qa-family-audit.md` |
 | XLCH official alignment | ✅ Sẵn sàng | official family map và alignment backlog từ `xlch.org` đã được ghi riêng để tránh gộp sai BTPP/Hỏi đáp/Khai thị — `tracking/xlch-official-alignment.md` |
 | Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `tracking/env-inventory.md` |

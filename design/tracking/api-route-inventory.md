@@ -21,6 +21,7 @@ Mục tiêu:
 - mutation route phải có auth/policy rõ
 - admin-only route không trộn vào public namespace nếu không cần
 - `publicId` là public identity ưu tiên
+- route `Phase 2+` hoặc `conditional` được phép xuất hiện trong inventory để khóa canon, nhưng không được hiểu là Wave 1 scaffold target mặc định
 
 ## Auth scope semantics
 
@@ -72,7 +73,7 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | Update canonical record | `200` | `400`, `401`, `403`, `404`, `409`, `429`, `500` | profile `single` |
 | Action / state transition | `200` hoặc `202` | `400`, `401`, `403`, `404`, `409`, `429`, `500` | `202` nếu chỉ trigger downstream/manual job |
 | Delete / unsubscribe | `204` | `400`, `401`, `403`, `404`, `409`, `500` | profile `empty` |
-| Health | `200` khi pass | `503` cho readiness/startup fail | route-specific payload owner là `ops/health-contract.md` |
+| Health | `200` khi pass | `503` cho readiness/startup fail | route-specific payload owner là `ops/health-contract.md`; response phải `Cache-Control: no-store` |
 | Metrics | `200` | `401`, `403`, `500` | không dùng JSON envelope |
 
 ## Identity
@@ -240,6 +241,9 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/admin/search/status` | `search` | admin+ |
 | `POST` | `/admin/search/reindex` | `search` | admin+ |
 | `POST` | `/admin/search/reindex/:source` | `search` | admin+ |
+| `GET` | `/admin/search/index-settings` | `search` | admin+ |
+| `PUT` | `/admin/search/index-settings` | `search` | super-admin |
+| `DELETE` | `/admin/search/documents/:docId` | `search` | admin+ |
 
 ## Calendar
 
@@ -333,6 +337,8 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/admin/wisdom/authority-profiles/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
 | `PATCH` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/entries/duplicate-check` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/entries/slug-preview` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/authority-profiles` | `wisdom-qa` | admin+ |
 | `PATCH` | `/admin/wisdom/authority-profiles/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/entries/:publicId/publish` | `wisdom-qa` | admin+ |
@@ -340,6 +346,8 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/admin/wisdom/offline-bundles` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/offline-bundles/rebuild` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/import-jobs` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/import-jobs/:publicId` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/import-jobs/:publicId/retry` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/baihua/books` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/baihua/chapters/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/baihua/books/import-source` | `wisdom-qa` | admin+ |
@@ -379,6 +387,20 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/admin/system/health-extended` | `health` + `platform` | admin+ |
 | `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
 
+## Platform / Control Plane — Phase 2+ conditional routes
+
+Các route dưới đây chỉ canon hóa contract cho phase sau.
+Không được scaffold sớm nếu `apps-api-scaffold-order.md` chưa cho phép.
+
+| Method | Route | Owner | Auth |
+|---|---|---|---|
+| `GET` | `/admin/outbox/dead-events` | `platform/outbox` | admin+ |
+| `POST` | `/admin/outbox/dead-events/:eventId/redrive` | `platform/outbox` | admin+ |
+| `DELETE` | `/admin/outbox/dead-events/:eventId` | `platform/outbox` | super-admin |
+| `GET` | `/admin/queue/dead-letter` | `platform/queue` | admin+ |
+| `POST` | `/admin/queue/dead-letter/:jobId/redrive` | `platform/queue` | admin+ |
+| `POST` | `/admin/queue/dead-letter/:jobId/discard` | `platform/queue` | super-admin |
+
 ## Notes
 
 - Route inventory này là consumer-facing surface, không phải nơi lặp lại toàn bộ validation schema.
@@ -396,3 +418,7 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 - Khi thêm route mới, cập nhật file này cùng `contracts.md` của module owner.
 - webhook/internal callback routes như `/internal/revalidate` phải có schema + shared-secret/signature contract rõ ở doc owner tương ứng; không được thêm ngầm trong code
 - `/auth/refresh` là route bắt buộc có rate-limit, transaction-safe rotation, và replay handling theo `01-identity/use-cases/manage-auth-session.md`; không được scaffold như route auth public đơn giản
+- `/auth/refresh` exact limit tham chiếu `tracking/coding-readiness.md` Phần 5 + `baseline/security.md`
+- `/internal/revalidate` phải đi với `Cache-Control`/revalidation contract rõ và replay/shared-secret handling; không coi là route nội bộ “tự hiểu”
+- `/admin/system/health-extended` response contract owner là `ops/health-contract.md`, không tự bịa shape ở controller khi scaffold
+- route search/admin queue/outbox thuộc `Phase 2+` chỉ được bật khi trigger trong các doc owner tương ứng đã được đáp ứng

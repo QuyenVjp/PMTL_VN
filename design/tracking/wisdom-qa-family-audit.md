@@ -78,6 +78,28 @@
   - auto-sync policy
   - stale manifest policy
 
+### 3.7 Curated highlights vs canonical entries
+
+- `精选开示` trên source official là một kiểu curated surface, không phải tín hiệu đủ mạnh để tạo owner data class mới
+- Nếu PMTL mở curated highlights, nó nên là projection/read-model từ `wisdomEntries` đã duyệt
+- Không được ingest `精选开示` như family doctrine mới nếu canonical source vẫn là `Khai thị` hoặc `Pháp hội`
+
+### 3.8 Sensitive family: `现场图腾`
+
+- Đây là family nhạy cảm hơn `Wenda` hoặc `BTPP`
+- Chưa đủ policy trong design hiện tại để mở public surface an toàn
+- Nếu muốn đưa vào hệ thống, cần chốt trước:
+  - source provenance rules
+  - moderation / disclaimer policy
+  - search exposure policy
+  - admin review gate riêng
+
+### 3.9 Testimony / `同修分享`
+
+- Official source có `同修分享`, nhưng loại này không nên trở thành canonical doctrine owner
+- Nếu PMTL nhận family này, owner hợp lý thiên về `03-community` hoặc curated support surface
+- Không được gộp `同修分享` vào `wisdomEntries` chỉ vì nó nằm gần `法会开示`
+
 ---
 
 ## 4. Anti-drift rules
@@ -98,3 +120,5 @@
 3. `aphorism / Phật ngôn`
 4. offline bundle control model
 5. search API/query param parity across `06-search` + UI docs + route inventory
+6. taxonomy/policy cho `现场图腾`
+7. owner decision cho `同修分享`

@@ -253,7 +253,7 @@ Chapter detail page:
 ## 8a. Bạch thoại / Hỏi đáp (`/noi-dung/bach-thoai`)
 
 **Role**: `editor+`
-**API deps**: `/api/admin/wisdom/entries*`, `/api/admin/wisdom/baihua/*`, `/api/admin/wisdom/offline-bundles*`, `/api/admin/wisdom/import-jobs`
+**API deps**: `/api/admin/wisdom/entries*`, `/api/admin/wisdom/entries/duplicate-check`, `/api/admin/wisdom/entries/slug-preview`, `/api/admin/wisdom/baihua/*`, `/api/admin/wisdom/offline-bundles*`, `/api/admin/wisdom/import-jobs*`
 
 Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [Offline bundles] [Import jobs]
 
@@ -261,6 +261,18 @@ Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [O
 - DataTable: Tiêu đề, Entry type, Source family, Review status, Published at
 - Filters: Entry type (`BTPP` / `Khai thị` / `Phật ngôn` / `Pháp hội`), Source family, Review status
 - Row actions: View, Edit translation, Publish, Unpublish
+- current canonical create flow:
+  - editor nhập tay source + bản dịch
+  - bấm `Kiểm tra trùng`
+  - bấm `Xem trước slug`
+  - bấm `Lưu draft`
+  - review rồi mới publish
+- create/edit form tối thiểu phải có:
+  - `entryType`, `sourceFamily`, `sourceCode`, `sourceUrl`
+  - `titleOriginal`, `titleVietnamese`
+  - `rawOriginalText`
+  - `translatedText` hoặc `question/answer` pair
+  - `summaryVietnamese`, `keywordAliases`, `editorNotes`
 
 **Tab 2 — Hỏi đáp**:
 - DataTable: Câu hỏi, QA type, Source family (`Wenda` / `Mail Q&A`), Source code, Review status
@@ -287,12 +299,24 @@ Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [O
 - Job list: source import, translation import, rebuild trigger
 - Columns: job type, source family, status, created by, created at
 - Actions: Retry, Open logs, Open affected entry/book
+- tab này là `phase-later convenience lane`, không phải owner create flow hiện tại
+- current phase:
+  - dùng chủ yếu để xem job history nếu bật lane import hỗ trợ
+  - không ép editor đi qua import job để tạo entry bình thường
+- Detail phải hiện:
+  - dedupe status
+  - candidate slug
+  - provider profile
+  - result entry publicId
+  - error summary nếu fail
 
 **Rules**:
 - `posts` không được sửa từ workspace này
 - `Wenda/Hỏi đáp` không được nhập như `BTPP`
 - `bài pháp hội` vẫn là Wisdom-QA entry; event workspace chỉ được reference sang entry này
 - mọi record phải hiện rõ `entryType` + `sourceFamily`; admin không được đoán từ title
+- machine translation chỉ tạo draft; workspace này không được auto-publish translation chưa review
+- `manual-first editor workflow` là canon hiện tại; `import jobs` chỉ được coi là lane mở rộng về sau
 
 ---
 

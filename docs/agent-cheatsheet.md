@@ -55,7 +55,11 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
 - `pmtl-multi-cli-orchestrator`: điều phối Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, và Aider theo đúng lane thay vì gọi bừa.
 - External CLI workers: dùng `py infra/tools/external_agent.py --provider claude|codex|copilot|gemini|aider --prompt "..."` khi cần second opinion từ Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, hoặc Aider.
-- Gemini wrapper hiện mặc định giữ `sticky workspace session` tại `tmp/gemini-runtime/session.json`; dùng `--session-mode fresh` nếu muốn cắt ngữ cảnh cũ, hoặc `--session-mode resume-latest` nếu muốn bám phiên Gemini CLI gần nhất của project.
+- Wrapper hiện giữ `sticky workspace session` cho Claude, Copilot, và Gemini tại `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json`.
+- Wrapper còn lưu `conversation.jsonl` cùng thư mục runtime để tự bơm lại vài lượt chat gần nhất khi provider resume không ổn định.
+- `--interaction-mode auto` là mặc định: prompt dạng chat chạy trong runtime dir sạch để tránh nạp repo MCP/skills không cần thiết; prompt có dấu hiệu code/repo sẽ giữ workspace context.
+- Ép mode bằng `--interaction-mode chat` hoặc `--interaction-mode repo` khi cần kiểm soát rõ hơn.
+- Dùng `--session-mode fresh` nếu muốn cắt ngữ cảnh cũ, hoặc `--session-mode resume-latest` nếu muốn bám phiên CLI gần nhất của provider khi được hỗ trợ.
 - Claude-side fast path: dùng `/multi-cli-router <task>` để nó tự route worker thay vì bắt người dùng nhớ provider.
 - Repo wrapper nhanh trên Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
 - `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Claude/Copilot và chỉ gọi Gemini/Codex khi tín hiệu đủ rõ.

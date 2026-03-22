@@ -75,6 +75,24 @@ PMTL có thể dùng label Việt `Khai thị` cho presentation/public understan
 
 PMTL nên tiếp tục coi search là route và workflow riêng, không chỉ là filter phụ của một hub nội dung.
 
+### 2.5 `法会开示`, `精选开示`, `现场图腾`, `同修分享` không phải cùng một lớp owner
+
+Official video surface đang cho thấy ít nhất 4 lớp khác nhau:
+
+- `法会开示`
+- `精选开示`
+- `现场图腾`
+- `同修分享`
+
+PMTL không nên gom cả 4 vào một bucket `video`.
+
+Hướng preserve hợp lý:
+
+- `法会开示` -> canonical `wisdomEntries`
+- `精选开示` -> curated subset / presentational surface, không phải canonical data class mới
+- `现场图腾` -> family nhạy cảm, cần policy riêng trước khi mở public surface
+- `同修分享` -> testimony/community-support surface, không được ngụy trang thành doctrinal canon
+
 ---
 
 ## 3. Concrete PMTL updates triggered by this audit
@@ -93,3 +111,6 @@ PMTL nên tiếp tục coi search là route và workflow riêng, không chỉ l�
 2. Quyết định public IA cho `佛台供设`
 3. Quyết định public IA cho `各类升文`
 4. Bổ sung route/API/search/admin doc parity sau khi route `/hoi-dap` được chốt ở toàn bộ owner docs
+5. Quyết định taxonomy và policy cho `现场图腾`
+6. Quyết định `同修分享` đi vào `03-community` hay giữ ngoài launch scope
+7. Chốt `精选开示` là curated view của `wisdomEntries`, không phải owner class mới

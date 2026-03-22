@@ -107,6 +107,14 @@ enum OutboxEventStatus {
 The dispatcher is a **NestJS cron job** in `apps/api` (not in worker).
 It bridges: Postgres `outbox_events` → BullMQ queues.
 
+### Poll interval and batch tuning
+
+- `OUTBOX_POLL_INTERVAL_MS=5000` là default an toàn, không phải số thần thánh
+- giảm xuống `1000-2000ms` chỉ khi freshness SLA thực sự cần và DB chịu được extra polling
+- tăng lên `10000ms` nếu DB load tăng mà event freshness chưa bị ảnh hưởng product-wise
+- `OUTBOX_BATCH_SIZE=50` là safe default cho phase đầu của queue activation
+- không vượt `500` nếu chưa có evidence rõ về Valkey memory, worker throughput, và downstream capacity
+
 ```typescript
 // apps/api/src/platform/outbox/outbox-dispatcher.cron.ts
 
@@ -198,6 +206,14 @@ const OUTBOX_QUEUE_MAP: Record<string, string> = {
 
 Events not in this map → `warn` log, no dispatch, status stays PENDING.
 
+### Ordering rule
+
+- outbox chỉ bảo toàn ordering theo `createdAt` ở tầng dispatcher fetch
+- cross-queue ordering **không được đảm bảo**
+- nếu 2 event có quan hệ nhân quả bắt buộc, phải:
+  - đi cùng queue, hoặc
+  - consumer đọc canonical DB state và chấp nhận eventual consistency rõ ràng
+
 ---
 
 ## Retry model
@@ -274,6 +290,12 @@ When outbox is NOT enabled, events marked "outbox required" in taxonomy must use
   - dead-letter metadata
   - audit append khi bỏ cuộc
 - không để từng worker tự phát minh processed-key format riêng
+
+### Dead-letter operational policy
+
+- dead-letter backlog không được tự dọn ngầm
+- nếu `DEAD` count > `0` phải có visibility ở admin/runtime dashboard
+- nếu `DEAD` count > `100` hoặc một event type bị lặp dead-letter liên tục, coi là operational incident chứ không phải noise
 
 ---
 

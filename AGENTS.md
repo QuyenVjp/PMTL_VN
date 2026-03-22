@@ -103,7 +103,11 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Use `--speed balanced` when you specifically want Codex/Gemini to stay more competitive.
 - Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast [--compare]`
 - Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
-- Gemini wrapper default is now a sticky per-workspace session under `tmp/gemini-runtime/session.json`; use `--session-mode fresh` to force a clean run or `--session-mode resume-latest` to attach to Gemini CLI's latest project session.
+- External worker wrapper now keeps sticky per-workspace sessions under `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json` for Claude, Copilot, and Gemini.
+- Wrapper also keeps a lightweight local conversation memory at `~/.codex/subagent-runtime/<provider>/<workspace-key>/conversation.jsonl` so chat context survives even when provider resume quality is uneven.
+- Default wrapper behavior is `--interaction-mode auto`: chat-style prompts run in a clean runtime dir so repo MCP/skills are not loaded unnecessarily; repo-aware prompts keep workspace context.
+- Use `--interaction-mode repo` when the worker must read repo context, or `--interaction-mode chat` when you want a lightweight answer lane.
+- Use `--session-mode fresh` to force a clean run or `--session-mode resume-latest` to attach to the provider's latest project session when supported.
 - `aider` is an opt-in git-aware patch lane. Keep it advisory dry-run by default, with no auto-commits, and do not make it the primary auto-route unless the task explicitly asks for Aider or that exact workflow.
 - Keep external-worker prompts compact and reference repo file paths instead of pasting long code blocks.
 - Treat external workers as advisory reviewers, not the source of truth for repo policy.

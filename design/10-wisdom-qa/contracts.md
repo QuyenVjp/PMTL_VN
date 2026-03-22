@@ -79,6 +79,14 @@
   - `Calendar` không được trở thành owner của transcript/discourse text
 - publish/search/offline-bundle refresh signal quan trọng nên đi qua `outbox_events`
 - ingest payload, publish payload, search payload, bundle-manifest payload và env/runtime config phải có schema runtime rõ
+- lane automation phải phân biệt:
+  - canonical duplicate detection
+  - slug collision handling
+  - machine translation draft
+- current owner flow là `manual-first editor workflow`
+  - duplicate-check + slug-preview + draft creation là canonical helpers
+  - `import jobs` và provider automation là phase-later convenience lane, không phải default create flow
+- custom GPT web link không phải canonical programmatic surface; backend phải bám API/tool lane do PMTL sở hữu
 
 ## Audiobook-specific routes
 
@@ -99,6 +107,8 @@
 - `GET /api/admin/wisdom/authority-profiles/:publicId`
 - `POST /api/admin/wisdom/entries`
 - `PATCH /api/admin/wisdom/entries/:publicId`
+- `POST /api/admin/wisdom/entries/duplicate-check`
+- `POST /api/admin/wisdom/entries/slug-preview`
 - `POST /api/admin/wisdom/authority-profiles`
 - `PATCH /api/admin/wisdom/authority-profiles/:publicId`
 - `POST /api/admin/wisdom/entries/:publicId/publish`
@@ -106,6 +116,8 @@
 - `GET /api/admin/wisdom/offline-bundles`
 - `POST /api/admin/wisdom/offline-bundles/rebuild`
 - `GET /api/admin/wisdom/import-jobs`
+- `GET /api/admin/wisdom/import-jobs/:publicId`
+- `POST /api/admin/wisdom/import-jobs/:publicId/retry`
 
 ## Route-level contract notes
 
@@ -132,6 +144,44 @@
 - `POST /api/admin/wisdom/offline-bundles/rebuild`
   - profile: `accepted`
   - request phải chỉ rõ target bundle family hoặc rebuild scope; không dùng trigger mơ hồ không payload
+- `POST /api/admin/wisdom/entries/duplicate-check`
+  - profile: `single`
+  - required fields tối thiểu:
+    - `entryType`
+    - `sourceFamily`
+    - ít nhất một trong `sourceCode`, `sourceUrl`
+  - response nên trả:
+    - `duplicateFound`
+    - `matchedPublicId?`
+    - `matchedReason`
+  - current admin create/edit flow phải gọi lane này trước `draft create` nếu source payload có đủ canonical source fields
+- `POST /api/admin/wisdom/entries/slug-preview`
+  - profile: `single`
+  - required fields tối thiểu:
+    - `entryType`
+    - `titleVietnamese?`
+    - `titleOriginal?`
+    - `sourceCode?`
+  - response nên trả:
+    - `slug`
+    - `exists`
+    - `conflictWithPublicId?`
+    - `dedupeStatus`
+  - current admin create/edit flow phải coi đây là helper trước `draft save`, không phải authority quyết định duplicate
+- `GET /api/admin/wisdom/import-jobs/:publicId`
+  - profile: `single`
+  - phải trả:
+    - `jobType`
+    - `status`
+    - `sourceFamily`
+    - `sourceCode?`
+    - `providerProfile`
+    - `candidateSlug?`
+    - `resultEntryPublicId?`
+    - `errorSummary?`
+- `POST /api/admin/wisdom/import-jobs/:publicId/retry`
+  - profile: `accepted`
+  - chỉ retry cùng canonical source payload hoặc patch input có audit rõ
 
 ## Notes for AI/codegen
 
@@ -141,3 +191,4 @@
 - Format `nguyên văn + bản dịch + link gốc + ảnh nguồn` là format ưu tiên cho bài thực tế cần cộng đồng cùng kiểm duyệt.
 - Với web phụng sự viên Việt Nam, chỉ dùng như `community_volunteer_site` hoặc `community_translation` nếu không phải source gốc.
 - Nếu search/offline drift xảy ra, recovery path chuẩn là replay signal, reindex hoặc rebuild bundle từ source records đã duyệt.
+- Machine translation chỉ tạo `draft`; review gate của PMTL mới quyết định publish.

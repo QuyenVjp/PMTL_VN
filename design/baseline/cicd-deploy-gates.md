@@ -160,6 +160,18 @@ deploy:
 **GitHub Environment**: `production` environment requires 1 manual approver.
 This is the human gate — automated only after explicit approval.
 
+### Human gate checklist
+
+Người approve production deploy phải xác nhận tối thiểu:
+
+- artifact/image tag đúng commit SHA dự kiến deploy
+- backup artifact mới nhất đã tạo và verify pass
+- migration risk đã được đọc; nếu destructive thì rollback plan/link runbook đã có
+- `/health/*` contract cho service bị ảnh hưởng không đổi ngầm hoặc đã có verification note
+- nếu deploy đụng auth/upload/audit/rate-limit/search path thì reviewer biết rõ surface nào cần smoke sau deploy
+
+Không được approve theo kiểu “CI xanh là bấm” nếu 5 điểm trên chưa rõ.
+
 ## Release artifact discipline
 
 - Không rollback production bằng `git checkout HEAD~1` như default mental model nếu deploy artifact không được pin rõ.

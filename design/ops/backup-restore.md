@@ -126,6 +126,26 @@ Nếu chưa có đủ script thật, phải ghi rõ script nào mới là placeh
   - cách xử lý
   - kết luận pass/fail
 
+### Restore drill record tối thiểu
+
+Mỗi lần drill trong `restore-drill-log.md` phải có các field tối thiểu sau:
+
+- `startedAt`
+- `finishedAt`
+- `executedBy`
+- `backupArtifactId`
+- `mediaArtifactId` hoặc `not_available`
+- `restoreTarget`
+- `dbRestoreDurationMinutes`
+- `healthChecks`
+- `sampleReadChecks`
+- `mediaSampleSize`
+- `missingCount`
+- `orphanCount`
+- `mismatchRate`
+- `result`
+- `followUpActions`
+
 ## Restore procedure tối thiểu
 
 ### 1. Stop doing damage first
@@ -185,7 +205,14 @@ Nếu chưa có đủ script thật, phải ghi rõ script nào mới là placeh
 
 - `missing rate > 1%` -> fail
 - `orphan rate > 2%` -> fail nếu chưa có cleanup/recovery plan rõ
+- `mismatch rate > 0%` -> require explicit triage note; với canonical public asset thì mặc định fail
 - bất kỳ missing nào trên asset thuộc public canonical content -> require explicit triage note
+
+### Term definitions
+
+- `missing`: có metadata record nhưng không tìm thấy binary/object tương ứng
+- `orphan`: có binary/object nhưng không còn metadata record canonical
+- `mismatch`: metadata và binary cùng tồn tại nhưng lệch checksum/size/path contract
 
 ### 7. Close drill
 
@@ -202,6 +229,7 @@ Một restore drill chỉ được tính `pass` khi:
 - sample canonical reads pass
 - migration state đúng
 - sample media verification pass hoặc đã ghi rõ mismatch rate chấp nhận được
+- record drill ở `restore-drill-log.md` đầy đủ các field bắt buộc ở trên
 
 ## Fail criteria
 
@@ -226,3 +254,4 @@ Drill phải bị coi là `fail` nếu:
 ## Current evidence status
 
 - Nếu `restore-drill-log.md` chưa có bản ghi `pass` thật, current phase chỉ được coi là `restore policy drafted`, chưa được coi là `restore evidence complete`.
+- nếu runbook đang trỏ tới script/command chưa tồn tại thật trong repo hoặc ops environment, drill phải được ghi là `blocked`, không được ghi `pass`

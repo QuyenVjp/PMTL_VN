@@ -17,7 +17,7 @@ Bật Meilisearch khi **ít nhất 1** điều kiện sau:
 
 | Trigger | Measurement |
 |---|---|
-| SQL search p95 > 500ms | Pino logs showing `search.query.duration_ms > 500` |
+| SQL search p95 vượt SLO | Pino logs / metrics showing public search p95 vượt SLO trong `baseline/sla-slo.md` |
 | ILIKE queries cause table scans on posts > 10k rows | `EXPLAIN ANALYZE` shows Seq Scan on posts |
 | Multi-type search needed (posts + wisdom + chants combined) | Feature requirement from product |
 | Vietnamese full-text ranking unacceptable with tsvector | User search relevance feedback |
@@ -54,6 +54,14 @@ Phase 2+ (Meilisearch active):
 
 `SEARCH_ENGINE` env var controls routing: `sql` (default) or `meilisearch`.
 SearchService reads this at startup — no runtime toggle.
+
+## Freshness and failover budget
+
+- freshness SLA khi Meilisearch đã active:
+  - published/unpublished content phải phản ánh vào search trong `<= 30 giây`
+- query failover budget:
+  - fallback sang SQL là degradation path, không phải parity path hoàn hảo
+  - nếu fallback path vượt budget route hoặc chỉ trả subset doc types theo contract phase hiện tại, UI/admin phải report `engine=sql-fallback` rõ thay vì giả vờ full parity
 
 ---
 
@@ -311,6 +319,17 @@ export class SearchService {
 - admin/status surface nên đọc được task state từ Meilisearch tasks API thay vì chỉ nhìn log text
 - replay cùng `idempotencyKey` phải map về một business outcome rõ: `duplicate_skipped`, `task_rechecked`, hoặc `reissued_after_failure`
 
+### Reindex progress contract
+
+- full reindex phải có visibility tối thiểu:
+  - `documentsIndexed`
+  - `estimatedTotal`
+  - `progressPercent`
+  - `lastTaskUid`
+  - `startedAt`
+  - `updatedAt`
+- admin status surface không được chỉ show “reindex started”; phải đọc được tiến độ hoặc trạng thái `queued/running/failed/completed`
+
 ### SearchSyncHandler
 
 ```typescript
@@ -492,6 +511,17 @@ MeilisearchModule.forRootAsync({
 ```typescript
 meilisearch: await this.meili.health().catch(() => ({ status: 'unavailable' })),
 ```
+
+### Corruption / drift detection
+
+Ít nhất phải có 2 cách bắt drift:
+
+- document count mismatch:
+  - so sánh Meilisearch stats với expected published rows từ Postgres
+  - mismatch đáng kể phải tạo admin warning / reindex recommendation
+- sample lookup mismatch:
+  - spot-check các published records ngẫu nhiên
+  - nếu doc canonical không xuất hiện ở index dù đã qua freshness SLA, coi như sync drift
 
 ---
 

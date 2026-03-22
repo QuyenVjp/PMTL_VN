@@ -93,6 +93,18 @@ Mục tiêu là để mọi hành động quan trọng đều trả lời đư�
 - `metadata`
   - context gọn nhưng đủ điều tra
 
+### Metadata minimums
+
+`metadata` không được là blob mơ hồ kiểu `{ note: "updated" }`.
+Tối thiểu phải ưu tiên các trường sau khi có liên quan:
+
+- request origin (`web`, `admin`, `system`, `worker`, `webhook`)
+- route key hoặc use-case key
+- moderation reason / publish reason / support reason
+- source family / source code / import job id với wisdom-ingestion
+- feature flag key nếu action đụng rollout
+- dependency fallback context nếu action là degraded path (ví dụ search fallback)
+
 ## Snapshot trước/sau
 
 - Với các thay đổi nội dung quan trọng, nên lưu:
@@ -100,6 +112,12 @@ Mục tiêu là để mọi hành động quan trọng đều trả lời đư�
   - `after`
   - `changedFields`
 - Không cần copy toàn bộ document nếu quá lớn; ưu tiên field thay đổi có ý nghĩa.
+- field ưu tiên khi chọn `before` / `after` / `changedFields`:
+  - status / publish state
+  - owner / actor-sensitive fields
+  - slug / route-facing identifiers
+  - permissions / role / visibility
+  - linked entity refs có ảnh hưởng public surface
 - Với dữ liệu nhạy cảm:
   - không log password
   - không log token reset
@@ -164,6 +182,10 @@ Ví dụ:
 - Audit log nên giữ lâu hơn application job logs.
 - Job log có thể được dọn theo retention ngắn hơn nếu vẫn giữ được audit event cốt lõi.
 - Khi có tranh chấp cộng đồng hoặc sai nội dung public, audit trail phải đủ để reconstruct ai đã đổi gì.
+- retention baseline:
+  - `0-30 ngày`: full-fidelity queryable
+  - `31-365 ngày`: vẫn giữ full audit row, nhưng analytics/reporting chỉ nên đọc qua index/filter phù hợp
+  - `< 1 năm`: không được xoá audit_logs chuẩn nếu chưa có policy superseding rõ
 
 ## Enforcement tối thiểu
 

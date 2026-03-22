@@ -26,6 +26,12 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
   - `/qa/search` là specialized wisdom/search path
   Cần giữ rõ ở service boundary để web không gọi sai endpoint
 - offline bundle flow mới chỉ chốt route surface; nếu cần worker/build pipeline thì phải bám `10-wisdom-qa/use-cases/download-offline-bundle.md` và optional phase docs
+- lane auto-ingest/auto-translate cho wisdom đã có design canon, nhưng runtime vẫn còn thiếu:
+  - `duplicate-check` DTO/service
+  - `slug-preview` DTO/service
+  - import-job persistence + retry contract
+  - translation provider profile registry
+  - MCP tool server hoặc API wrapper tương ứng
 
 ## Còn thiếu cho `apps/web`
 
@@ -38,6 +44,10 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
 - `tracking/admin-page-api-mapping.md`, `tracking/apps-admin-scaffold-backlog.md`, và `tracking/admin-feature-query-plan.md` đã chốt route group + query key family + invalidation baseline
 - moderation comment routes và audit-log detail DTO vẫn chưa đủ canon để scaffold blind
 - wisdom, assisted-entry, và identity admin surfaces đã có route canon, nhưng vẫn cần DTO field picks cụ thể trước khi generate table/form layer
+- wisdom import workspace giờ đã có duplicate/slug/import-job canon, nhưng vẫn cần:
+  - import-job detail DTO
+  - provider profile options DTO
+  - draft translation review form field picks
 
 ## Domain-by-domain lỗ hổng cần để mắt khi scaffold
 

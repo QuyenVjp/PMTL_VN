@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
 import argparse
+import hashlib
 import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
-DEFAULT_TIMEOUT_SECONDS = 120
+DEFAULT_TIMEOUT_SECONDS = 240
 DEFAULT_RETRIES = 2
+SESSION_MODES = ("auto", "fresh", "sticky", "resume-latest")
+INTERACTION_MODES = ("auto", "chat", "repo")
+MAX_MEMORY_TURNS = 6
+MAX_MEMORY_CHARS = 600
 
 
 def parse_args() -> argparse.Namespace:
@@ -55,22 +61,29 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--session-mode",
-        choices=("auto", "fresh", "sticky", "resume-latest"),
+        choices=SESSION_MODES,
         default="auto",
-        help="Gemini session strategy. auto/sticky keep a per-workspace wrapper session; fresh starts clean; resume-latest attaches to the CLI's latest project session.",
+        help="Session strategy. auto/sticky keep a per-workspace wrapper session; fresh starts clean; resume-latest attaches to the provider's latest project session when supported.",
+    )
+    parser.add_argument(
+        "--interaction-mode",
+        choices=INTERACTION_MODES,
+        default="auto",
+        help="auto classifies the prompt as chat or repo-aware. chat avoids loading repo context by default; repo keeps workspace-aware behavior.",
     )
     return parser.parse_args()
 
 
-def extract_first_json_blob(text: str) -> dict:
-    start = text.find("{")
+def extract_first_json_blob(*texts: str) -> dict:
+    merged = "\n".join(text for text in texts if text)
+    start = merged.find("{")
     if start == -1:
         raise ValueError("No JSON object found in Gemini output.")
 
     depth = 0
     in_string = False
     escape = False
-    for index, char in enumerate(text[start:], start=start):
+    for index, char in enumerate(merged[start:], start=start):
         if in_string:
             if escape:
                 escape = False
@@ -87,15 +100,81 @@ def extract_first_json_blob(text: str) -> dict:
         elif char == "}":
             depth -= 1
             if depth == 0:
-                return json.loads(text[start : index + 1])
+                return json.loads(merged[start : index + 1])
 
     raise ValueError("Incomplete JSON object in Gemini output.")
 
 
+def workspace_slug(cwd: Path) -> str:
+    normalized = cwd.resolve().as_posix().lower()
+    digest = hashlib.sha1(normalized.encode("utf-8")).hexdigest()[:10]
+    stem = re.sub(r"[^a-z0-9]+", "-", cwd.name.lower()).strip("-") or "workspace"
+    return f"{stem}-{digest}"
+
+
 def provider_runtime_dir(cwd: Path, provider: str) -> Path:
-    runtime_dir = cwd / "tmp" / f"{provider}-runtime"
+    runtime_dir = Path.home() / ".codex" / "subagent-runtime" / provider / workspace_slug(cwd)
     runtime_dir.mkdir(parents=True, exist_ok=True)
     return runtime_dir
+
+
+def provider_state_path(cwd: Path, provider: str) -> Path:
+    return provider_runtime_dir(cwd, provider) / "session.json"
+
+
+def provider_memory_path(cwd: Path, provider: str) -> Path:
+    return provider_runtime_dir(cwd, provider) / "conversation.jsonl"
+
+
+def classify_interaction_mode(prompt: str, mode: str) -> str:
+    if mode != "auto":
+        return mode
+
+    text = prompt.lower()
+    path_pattern = re.compile(r"(?:[A-Za-z]:)?[\\/][\w .-]+|(?:^|\s)[\w.-]+\.(?:ts|tsx|js|jsx|json|md|py|yaml|yml)\b")
+    repo_signals = (
+        "apps/",
+        "packages/",
+        "design/",
+        "repo",
+        "repository",
+        "codebase",
+        "code",
+        "module",
+        "endpoint",
+        "schema",
+        "dto",
+        "nestjs",
+        "nextjs",
+        "file",
+        "read ",
+        "review ",
+        "diff",
+        "patch",
+        "implement",
+        "scaffold",
+    )
+    if path_pattern.search(prompt):
+        return "repo"
+    return "repo" if any(signal in text for signal in repo_signals) else "chat"
+
+
+def shape_prompt(prompt: str, interaction_mode: str) -> str:
+    if interaction_mode != "chat":
+        return prompt
+    prefix = "Treat this as a normal chat reply. Do not inspect repository files, tools, MCP servers, or local docs unless the prompt explicitly requires them. Answer directly and concisely. "
+    return prefix + prompt.strip()
+
+
+def command_cwd(cwd: Path, provider: str, interaction_mode: str) -> Path:
+    return provider_runtime_dir(cwd, provider) if interaction_mode == "chat" else cwd
+
+
+def trim_memory_text(value: str) -> str:
+    compact = re.sub(r"\s+", " ", value.strip())
+    if len(compact) <= MAX_MEMORY_CHARS:
+        return compact
+    return compact[: MAX_MEMORY_CHARS - 3].rstrip() + "..."
 
 
 def load_json_file(path: Path) -> dict | None:
@@ -112,6 +191,135 @@ def load_json_file(path: Path) -> dict | None:
 def save_json_file(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def load_recent_turns(cwd: Path, provider: str) -> list[dict]:
+    path = provider_memory_path(cwd, provider)
+    if not path.exists():
+        return []
+
+    turns: list[dict] = []
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict):
+            turns.append(payload)
+    return turns[-MAX_MEMORY_TURNS:]
+
+
+def append_turn(cwd: Path, provider: str, user_prompt: str, response: str) -> None:
+    payload = {
+        "user": trim_memory_text(user_prompt),
+        "assistant": trim_memory_text(response),
+    }
+    path = provider_memory_path(cwd, provider)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+
+def inject_memory(prompt: str, cwd: Path, provider: str, session_mode: str, interaction_mode: str) -> str:
+    if interaction_mode != "chat" or session_mode == "fresh":
+        return prompt
+
+    turns = load_recent_turns(cwd, provider)
+    if not turns:
+        return prompt
+
+    memory_lines = []
+    for turn in turns:
+        user = turn.get("user")
+        assistant = turn.get("assistant")
+        if isinstance(user, str):
+            memory_lines.append(f"User: {user}")
+        if isinstance(assistant, str):
+            memory_lines.append(f"Assistant: {assistant}")
+
+    if not memory_lines:
+        return prompt
+
+    memory_block = (
+        "Use the following local transcript as authoritative recent conversation context. "
+        "If the user refers to earlier replies, use this transcript instead of guessing.\n"
+        + "\n".join(memory_lines)
+    )
+    return f"{memory_block}\nCurrent user message: {prompt}"
+
+
+def answer_from_local_memory(cwd: Path, provider: str, prompt: str, session_mode: str, interaction_mode: str) -> str | None:
+    if interaction_mode != "chat" or session_mode == "fresh":
+        return None
+
+    text = prompt.lower()
+    recall_phrases = (
+        "previous reply",
+        "last reply",
+        "what did you just say",
+        "what was your previous reply",
+        "what was your last reply",
+    )
+    if not any(phrase in text for phrase in recall_phrases):
+        return None
+
+    turns = load_recent_turns(cwd, provider)
+    if not turns:
+        return None
+
+    last_reply = next(
+        (
+            turn.get("assistant")
+            for turn in reversed(turns)
+            if isinstance(turn, dict) and isinstance(turn.get("assistant"), str) and turn.get("assistant").strip()
+        ),
+        None,
+    )
+    if not isinstance(last_reply, str):
+        return None
+
+    answer = last_reply.strip()
+    if "one word" in text:
+        match = re.search(r"[A-Za-z0-9À-ỹ-]+", answer)
+        return match.group(0) if match else answer
+    return answer
+
+
+def load_provider_session(cwd: Path, provider: str) -> dict | None:
+    return load_json_file(provider_state_path(cwd, provider))
+
+
+def store_provider_session(cwd: Path, provider: str, payload: dict) -> str | None:
+    session_id = payload.get("session_id")
+    if not isinstance(session_id, str) or not session_id.strip():
+        return None
+
+    save_json_file(
+        provider_state_path(cwd, provider),
+        {
+            "session_id": session_id.strip(),
+            "model": payload.get("model"),
+            "workspace_cwd": str(cwd),
+        },
+    )
+    return session_id.strip()
+
+
+def resolve_cli_script(*candidates: str) -> str | None:
+    for candidate in candidates:
+        resolved = shutil.which(candidate)
+        if not resolved:
+            continue
+        path = Path(resolved)
+        if path.suffix.lower() == ".cmd":
+            ps1_sibling = path.with_suffix(".ps1")
+            if ps1_sibling.exists():
+                return str(ps1_sibling)
+        return resolved
+    return None
 
 
 def run_command_with_retries(
@@ -142,6 +350,7 @@ def run_command_with_retries(
             )
             if attempt == max_attempts:
                 raise last_error
+            time.sleep(min(5, attempt))
             continue
 
         if completed.returncode == 0:
@@ -151,6 +360,7 @@ def run_command_with_retries(
         last_error = RuntimeError(f"{message} (attempt {attempt}/{max_attempts})")
         if attempt == max_attempts:
             raise last_error
+        time.sleep(min(5, attempt))
 
     assert last_error is not None
     raise last_error
@@ -163,7 +373,11 @@ def run_copilot(
     *,
     timeout_seconds: int,
     retries: int,
+    session_mode: str,
+    interaction_mode: str,
 ) -> tuple[str, str | None]:
+    state = load_provider_session(cwd, "copilot") if session_mode in {"auto", "sticky"} else None
+    execution_cwd = command_cwd(cwd, "copilot", interaction_mode)
     command = [
         "copilot.exe",
         "-p",
@@ -181,16 +395,21 @@ def run_copilot(
         "--output-format",
         "json",
     ]
+    if session_mode == "resume-latest":
+        command.append("--continue")
+    elif state and isinstance(state.get("session_id"), str):
+        command.append(f"--resume={state['session_id']}")
 
     result = run_command_with_retries(
         command,
-        cwd=cwd,
+        cwd=execution_cwd,
         timeout_seconds=timeout_seconds,
         retries=retries,
     )
 
     response = None
     resolved_model = None
+    session_id = None
     for line in result.stdout.splitlines():
         line = line.strip()
         if not line:
@@ -205,9 +424,17 @@ def run_copilot(
             response = payload.get("data", {}).get("content")
         elif payload_type == "session.tools_updated":
             resolved_model = payload.get("data", {}).get("model", resolved_model)
+        elif payload_type == "result":
+            session_id = payload.get("sessionId", session_id)
 
     if not response:
         raise RuntimeError("Copilot CLI returned no assistant message.")
+    if session_mode in {"auto", "sticky", "resume-latest"} and isinstance(session_id, str) and session_id.strip():
+        store_provider_session(
+            cwd,
+            "copilot",
+            {"session_id": session_id.strip(), "model": resolved_model},
+        )
     return response.strip(), resolved_model
 
 
@@ -222,7 +449,12 @@ def load_claude_default_model(cwd: Path) -> str | None:
         return None
 
     model = payload.get("model")
-    return model if isinstance(model, str) else None
+    if not isinstance(model, str):
+        return None
+    normalized = model.strip()
+    if not normalized or "[" in normalized or "]" in normalized:
+        return None
+    return normalized
 
 
 def run_claude(
@@ -232,52 +464,89 @@ def run_claude(
     *,
     timeout_seconds: int,
     retries: int,
+    session_mode: str,
+    interaction_mode: str,
 ) -> tuple[str, str | None]:
-    claude_script = shutil.which("claude.cmd") or shutil.which("claude")
+    claude_script = resolve_cli_script("claude.ps1", "claude.cmd", "claude")
     if not claude_script:
         raise RuntimeError("Claude Code CLI executable was not found on PATH.")
 
-    resolved_model = model or load_claude_default_model(cwd) or "unknown"
-    command = [
-        claude_script,
-        "-p",
-        prompt,
-        "--effort",
-        "low",
-        "--output-format",
-        "text",
-        "--permission-mode",
-        "dontAsk",
-        "--disable-slash-commands",
-        "--allowedTools",
-        "Read,Grep,Glob,Bash",
-        "--setting-sources",
-        "project",
-        "--add-dir",
-        str(cwd),
-    ]
-    if model:
-        command.extend(["--model", model])
+    state = load_provider_session(cwd, "claude") if session_mode in {"auto", "sticky"} else None
+    execution_cwd = command_cwd(cwd, "claude", interaction_mode)
+    default_model = "claude-haiku-4-5" if interaction_mode == "chat" else "sonnet"
+    resolved_model = model or load_claude_default_model(cwd) or default_model
+    if claude_script.lower().endswith(".ps1"):
+        command = [
+            "pwsh",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            claude_script,
+            "-p",
+            prompt,
+            "--effort",
+            "low",
+            "--output-format",
+            "json",
+            "--permission-mode",
+            "dontAsk",
+            "--disable-slash-commands",
+            "--tools",
+            "" if interaction_mode == "chat" else "Read,Grep,Glob,Bash",
+        ]
+    else:
+        command = [
+            claude_script,
+            "-p",
+            prompt,
+            "--effort",
+            "low",
+            "--output-format",
+            "json",
+            "--permission-mode",
+            "dontAsk",
+            "--disable-slash-commands",
+            "--tools",
+            "" if interaction_mode == "chat" else "Read,Grep,Glob,Bash",
+        ]
+    if interaction_mode == "repo":
+        command.extend(["--setting-sources", "project", "--add-dir", str(cwd)])
+    if session_mode == "resume-latest":
+        command.append("--continue")
+    elif state and isinstance(state.get("session_id"), str):
+        command.extend(["--resume", state["session_id"]])
+    command.extend(["--model", resolved_model])
 
     result = run_command_with_retries(
         command,
-        cwd=cwd,
+        cwd=execution_cwd,
         timeout_seconds=timeout_seconds,
         retries=retries,
     )
 
-    response = result.stdout.strip()
+    try:
+        payload = json.loads(result.stdout.strip())
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("Claude Code CLI returned invalid JSON.") from exc
+
+    response = payload.get("result", "").strip()
     if not response:
         raise RuntimeError("Claude Code CLI returned no assistant message.")
+    session_id = payload.get("session_id")
+    resolved_model = next(iter(payload.get("modelUsage", {}).keys()), resolved_model)
+    if session_mode in {"auto", "sticky", "resume-latest"} and isinstance(session_id, str) and session_id.strip():
+        store_provider_session(
+            cwd,
+            "claude",
+            {"session_id": session_id.strip(), "model": resolved_model},
+        )
 
     return response, resolved_model
 
 
 def resolve_gemini_resume_arg(cwd: Path, session_mode: str) -> str | None:
-    runtime_dir = provider_runtime_dir(cwd, "gemini")
-    state_path = runtime_dir / "session.json"
-    state = load_json_file(state_path)
-
+    state = load_provider_session(cwd, "gemini")
     if session_mode == "resume-latest":
         return "latest"
     if session_mode == "fresh":
@@ -290,20 +559,7 @@ def resolve_gemini_resume_arg(cwd: Path, session_mode: str) -> str | None:
 
 
 def store_gemini_session(cwd: Path, payload: dict, model: str | None) -> str | None:
-    session_id = payload.get("session_id")
-    if not isinstance(session_id, str) or not session_id.strip():
-        return None
-
-    state_path = provider_runtime_dir(cwd, "gemini") / "session.json"
-    save_json_file(
-        state_path,
-        {
-            "session_id": session_id.strip(),
-            "model": model,
-            "cwd": str(cwd),
-        },
-    )
-    return session_id.strip()
+    return store_provider_session(cwd, "gemini", {"session_id": payload.get("session_id"), "model": model})
 
 
 def run_gemini(
@@ -314,13 +570,15 @@ def run_gemini(
     timeout_seconds: int,
     retries: int,
     session_mode: str,
+    interaction_mode: str,
 ) -> tuple[str, str | None, str | None]:
-    gemini_script = shutil.which("gemini.cmd") or shutil.which("gemini.ps1") or shutil.which("gemini")
+    gemini_script = resolve_cli_script("gemini.ps1", "gemini.cmd", "gemini")
     if not gemini_script:
         raise RuntimeError("Gemini CLI executable was not found on PATH.")
 
     resolved_resume = resolve_gemini_resume_arg(cwd, session_mode)
     resolved_model = model or "gemini-2.5-flash-lite"
+    execution_cwd = command_cwd(cwd, "gemini", interaction_mode)
 
     if gemini_script.lower().endswith(".ps1"):
         command = [
@@ -357,12 +615,12 @@ def run_gemini(
 
     result = run_command_with_retries(
         command,
-        cwd=cwd,
+        cwd=execution_cwd,
         timeout_seconds=timeout_seconds,
         retries=retries,
     )
 
-    payload = extract_first_json_blob(result.stdout)
+    payload = extract_first_json_blob(result.stdout, result.stderr)
     response = payload.get("response", "").strip()
     if not response:
         raise RuntimeError("Gemini CLI returned no response field.")
@@ -547,53 +805,77 @@ def main() -> int:
 
     args = parse_args()
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
+    interaction_mode = classify_interaction_mode(args.prompt, args.interaction_mode)
+    local_memory_answer = answer_from_local_memory(
+        cwd,
+        args.provider,
+        args.prompt,
+        args.session_mode,
+        interaction_mode,
+    )
+    prompt = inject_memory(
+        shape_prompt(args.prompt, interaction_mode),
+        cwd,
+        args.provider,
+        args.session_mode,
+        interaction_mode,
+    )
     gemini_session_id: str | None = None
-
-    try:
-        if args.provider == "claude":
-            response, resolved_model = run_claude(
-                args.prompt,
-                args.model,
-                cwd,
-                timeout_seconds=args.timeout_seconds,
-                retries=args.retries,
-            )
-        elif args.provider == "codex":
-            response, resolved_model = run_codex(
-                args.prompt,
-                args.model,
-                cwd,
-                timeout_seconds=args.timeout_seconds,
-                retries=args.retries,
-            )
-        elif args.provider == "copilot":
-            response, resolved_model = run_copilot(
-                args.prompt,
-                args.model,
-                cwd,
-                timeout_seconds=args.timeout_seconds,
-                retries=args.retries,
-            )
-        elif args.provider == "aider":
-            response, resolved_model = run_aider(
-                args.prompt,
-                args.model,
-                cwd,
-                timeout_seconds=args.timeout_seconds,
-                retries=args.retries,
-            )
-        else:
-            response, resolved_model, gemini_session_id = run_gemini(
-                args.prompt,
-                args.model,
-                cwd,
-                timeout_seconds=args.timeout_seconds,
-                retries=args.retries,
-                session_mode=args.session_mode,
-            )
-    except Exception as exc:  # pragma: no cover - wrapper should fail loudly
-        print(f"[external-agent:{args.provider}] {exc}", file=sys.stderr)
-        return 1
+    resolved_model: str | None = None
+    if local_memory_answer is not None:
+        response = local_memory_answer
+        resolved_model = "local-memory"
+    else:
+        try:
+            if args.provider == "claude":
+                response, resolved_model = run_claude(
+                    prompt,
+                    args.model,
+                    cwd,
+                    timeout_seconds=args.timeout_seconds,
+                    retries=args.retries,
+                    session_mode=args.session_mode,
+                    interaction_mode=interaction_mode,
+                )
+            elif args.provider == "codex":
+                response, resolved_model = run_codex(
+                    prompt,
+                    args.model,
+                    cwd,
+                    timeout_seconds=args.timeout_seconds,
+                    retries=args.retries,
+                )
+            elif args.provider == "copilot":
+                response, resolved_model = run_copilot(
+                    prompt,
+                    args.model,
+                    cwd,
+                    timeout_seconds=args.timeout_seconds,
+                    retries=args.retries,
+                    session_mode=args.session_mode,
+                    interaction_mode=interaction_mode,
+                )
+            elif args.provider == "aider":
+                response, resolved_model = run_aider(
+                    prompt,
+                    args.model,
+                    cwd,
+                    timeout_seconds=args.timeout_seconds,
+                    retries=args.retries,
+                )
+            else:
+                response, resolved_model, gemini_session_id = run_gemini(
+                    prompt,
+                    args.model,
+                    cwd,
+                    timeout_seconds=args.timeout_seconds,
+                    retries=args.retries,
+                    session_mode=args.session_mode,
+                    interaction_mode=interaction_mode,
+                )
+        except Exception as exc:  # pragma: no cover - wrapper should fail loudly
+            print(f"[external-agent:{args.provider}] {exc}", file=sys.stderr)
+            return 1
 
     if args.debug:
         model_value = resolved_model or args.model or "unknown"
@@ -603,8 +885,10 @@ def main() -> int:
             print(f"session_mode={args.session_mode}")
             if gemini_session_id:
                 print(f"session_id={gemini_session_id}")
+        print(f"interaction_mode={interaction_mode}")
         print("---")
 
+    append_turn(cwd, args.provider, args.prompt, response)
     print(response)
     return 0
 

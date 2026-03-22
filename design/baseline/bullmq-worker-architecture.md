@@ -58,6 +58,16 @@ Same monorepo, shares `packages/shared` schemas.
 
 **Queue name convention**: `{BULLMQ_PREFIX}:{queue-slug}` — prefix from env.
 
+## Queue pressure doctrine
+
+- queue depth tự nó chưa đủ để kết luận incident
+- queue pressure chỉ được coi là bất thường khi:
+  - depth cao **và**
+  - tuổi job lớn nhất (`queue age max`) vượt ngưỡng cho queue đó
+- warmup grace:
+  - bỏ qua spike ngắn trong `30 giây` đầu sau worker start
+  - bỏ qua spike ngắn trong `60 giây` đầu sau bulk publish/reindex trigger hợp lệ
+
 ---
 
 ## Job data schemas (Zod — in packages/shared)
@@ -117,6 +127,11 @@ const defaultJobOptions: JobsOptions = {
 
 **After 3 failures**: Job moves to dead-letter queue `pmtl:dead-letter`.
 Dead-letter jobs are visible in admin (`/he-thong/queue-ops` — see below).
+
+**Retry classification guidance**:
+- network/transient downstream error → retry bình thường
+- validation/business invariant error → đừng retry vô hạn; đi dead-letter sớm nếu handler xác định là non-retryable
+- idempotency conflict do duplicate replay → log `duplicate_skipped`, không coi là failure
 
 ---
 
@@ -254,17 +269,33 @@ process.on('SIGTERM', async () => {
 
 **Shutdown timeout**: 30s — if jobs don't complete, force-exit with warning.
 
+Sau `30s`:
+- log `error` kèm queue/job ids còn active
+- process exit code `1`
+- không tự mark completed giả
+- BullMQ sẽ re-deliver/retry các job chưa hoàn tất khi worker khởi động lại
+
 ---
 
 ## Monitoring
 
 | Metric | Type | Alert |
 |---|---|---|
-| `pmtl_queue_depth{queue="search-sync"}` | Gauge | > 100 stale > 5 min |
+| `pmtl_queue_depth{queue="search-sync"}` | Gauge | > 100 **và** `pmtl_queue_age_max_seconds > 300` |
 | `pmtl_queue_processed_total{queue}` | Counter | — |
 | `pmtl_queue_failed_total{queue}` | Counter | > 5 failures/10 min |
-| `pmtl_queue_dead_letter_count` | Gauge | > 0 → warn |
+| `pmtl_queue_dead_letter_count` | Gauge | > 0 → warn, > 500 → escalate |
 | `pmtl_worker_active_jobs{queue}` | Gauge | — |
+
+### Scaling guidance
+
+- nếu queue depth > `500` trong `2` poll liên tiếp và queue age max tiếp tục tăng:
+  - tăng concurrency qua env trước nếu handler còn IO-bound và DB/downstream budget cho phép
+  - nếu concurrency đã gần ngưỡng an toàn thì scale thêm worker instance
+- không tăng concurrency mù khi bottleneck là downstream API/DB; phải nhìn cùng lúc:
+  - `pmtl_worker_active_jobs`
+  - downstream latency
+  - DB connection pressure
 
 Worker exposes `/metrics` on port 3002 (separate from API port 3001).
 
@@ -283,6 +314,8 @@ docker compose stop worker
 # No data loss for canonical DB writes
 # Side effects (reindex, push) will need manual trigger or wait for next publish
 ```
+
+Dead-letter backlog không block canonical writes, nhưng backlog lớn phải được coi là operational debt có owner rõ; không được để queue-ops thành chỗ “để đó sau”.
 
 ---
 

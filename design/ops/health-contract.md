@@ -94,6 +94,14 @@ healthcheck:
 4. **Valkey connectivity** (when `VALKEY_URL` set and rate-limit/cache/queue path is routed to Valkey): `PING` → `PONG` within 500ms
 5. **Meilisearch health** (when `SEARCH_ENGINE=meilisearch` and `MEILISEARCH_URL` set): `GET /health` → `{"status":"available"}`
 
+**Ready decision rule**:
+- `/health/ready` chỉ trả `200` khi:
+  - mọi baseline check đều `ok`
+  - và mọi optional dependency đã `activated` đều `ok`
+- bất kỳ dependency optional nào ở trạng thái `not_activated` hoặc `skipped` không làm fail readiness
+- bất kỳ dependency optional nào đã `activated` nhưng `error` hoặc `timeout` đều làm `/health/ready` trả `503`
+- không có khái niệm `partially ready for traffic` ở public readiness probe phase 1; partial state chỉ được phản ánh ở payload/admin health page
+
 **Response 200 (all checks pass)**:
 ```json
 {
@@ -124,6 +132,10 @@ healthcheck:
 
 **Timeout policy**: Each individual check has 2s timeout. Total endpoint timeout: 5s.
 **On timeout**: Return 503 with check that timed out marked as `"status": "timeout"`.
+
+**Startup/readiness timing note**:
+- `start_period=15s` chỉ là baseline cho phase 1 khi chỉ cần Postgres + platform modules
+- nếu activation path đã kéo thêm dependency nặng lúc boot, deploy owner phải tăng startup grace period tương ứng thay vì giữ mặc định một cách mù quáng
 
 **Deploy gate usage**:
 ```bash

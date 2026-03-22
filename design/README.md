@@ -153,22 +153,24 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 40. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
 41. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
 42. [luc-trai-days-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/luc-trai-days-canon.md)
-43. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
-44. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
-45. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
-46. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
-47. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
-48. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
-49. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
-50. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
-51. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
-52. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
-53. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
-54. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
-55. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
-56. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
-57. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
-58. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
+43. [manual-translation-editor-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/manual-translation-editor-workflow.md)
+44. [translation-automation-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/translation-automation-architecture.md)
+45. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
+46. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
+47. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
+48. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
+49. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
+50. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
+51. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
+52. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
+53. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
+54. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
+55. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
+56. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
+57. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
+58. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
+59. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
+60. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -197,6 +199,8 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [media-library-content-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/media-library-content-inventory.md) | Inventory canonical cho hub, collections, featured slots, và admin workspace của thư viện pháp môn |
 | [baihua-audiobook-text-first-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/baihua-audiobook-text-first-architecture.md) | Kiến trúc text-first cho nguồn audiobook Bạch thoại theo sách / chương / audio companion |
 | [btpp-library-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/btpp-library-canon.md) | Canon route/IA/glossary/source taxonomy/FAQ/warnings cho Bạch thoại Phật pháp |
+| [manual-translation-editor-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/manual-translation-editor-workflow.md) | Workflow editor hiện tại: dịch tay, duplicate-check, slug-preview, draft gate, review trước publish |
+| [translation-automation-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/translation-automation-architecture.md) | Kiến trúc auto-ingest/auto-translate: orchestrator, duplicate guard, slug preview, import job lifecycle, MCP/API stance |
 | [wisdom-qa-family-audit.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/wisdom-qa-family-audit.md) | Audit inventory theo từng family của module Wisdom-QA, gồm gaps còn mở và anti-drift rules |
 | [xlch-official-alignment.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/xlch-official-alignment.md) | Những family và ranh giới nội dung PMTL phải preserve từ site official `xlch.org` |
 | [baihua-audiobook-ingestion-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/baihua-audiobook-ingestion-inventory.md) | Inventory các lớp dữ liệu cần ingest từ source audiobook |
