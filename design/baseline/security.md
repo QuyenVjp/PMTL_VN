@@ -100,6 +100,39 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - Cloudflare rule/challenge/throttle
   - app-layer rate limit fallback
 
+### Edge crawler/search rate-limit matrix
+
+Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế app-layer rate limit canon ở `tracking/coding-readiness.md`.
+
+| Traffic class | Surface | Edge action | Threshold | Window | Notes |
+|---|---|---|---|---|---|
+| verified search crawler | public content read | allow | `240` req | `1 phút` | user-agent + verification hợp lệ |
+| verified search crawler | `/api/search` | managed challenge khi vượt ngưỡng | `120` req | `1 phút` | crawl budget có kiểm soát |
+| anonymous browser-ish traffic | public content read | managed challenge | `180` req | `1 phút` | giảm scrape burst |
+| anonymous browser-ish traffic | `/api/search` | managed challenge | `60` req | `1 phút` | tuyến dễ abuse nhất |
+| authenticated member search | `/api/search` | edge không challenge mặc định | `100` req | `1 phút` | vẫn chịu app-layer fallback |
+| unknown bot / low-reputation traffic | public read + `/api/search` | managed challenge rồi block nếu lặp lại | `30` req | `1 phút` | bóp bot lạ từ sớm |
+| auth endpoints | `/api/auth/*` mutation | challenge / temporary block | `20` req | `1 phút` | brute-force gate ở edge |
+
+### App-layer fallback matrix
+
+| Endpoint group | Limit | Window | Scope |
+|---|---|---|---|
+| `GET /api/search` | `100` | `1 phút` | per-IP |
+| `POST /api/auth/login` | `10` | `15 phút` | per-IP + per-email |
+| `POST /api/auth/register` | `5` | `1 giờ` | per-IP |
+| `POST /api/auth/forgot-password` | `5` | `1 giờ` | per-IP + per-email |
+| `POST /api/auth/refresh` | `30` | `15 phút` | per-IP |
+| `POST /api/media/upload` | `20` | `1 giờ` | per-account |
+| `POST /api/community/posts` | `10` | `1 giờ` | per-account |
+| `POST /api/community/posts/:publicId/comments` | `30` | `1 giờ` | per-account |
+| `POST /api/guestbook` | `5` | `1 giờ` | per-IP |
+
+**Rule**:
+- edge matrix là lớp giảm tải đầu tiên
+- app-layer matrix là canonical fallback và audit source
+- nếu 2 lớp khác nhau, request sẽ bị chặn bởi lớp chặt hơn đang áp dụng
+
 ## Cookie / CSRF / CORS
 
 ### Cookie policy (Chính sách Cookie)

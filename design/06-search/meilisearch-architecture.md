@@ -90,13 +90,40 @@ SearchService reads this at startup — no runtime toggle.
 ## Query bounds and abuse guard
 
 - public search query phải có guard tối thiểu:
-  - max query length
-  - max term count hợp lệ
-  - limit/offset cap
+  - `q` sau khi trim: `min 2`, `max 256` ký tự
+  - max term count hợp lệ: `8`
+  - `limit/offset` cap
+  - max filter/tag values trong 1 request: `10`
 - không cho search path trở thành amplification vector chỉ vì endpoint đọc công khai
+- reject thẳng:
+  - control chars / null bytes
+  - query toàn punctuation hoặc wildcard noise
+  - query string tổng vượt `2048 bytes`
 - nếu query bị reject bởi complexity guard:
   - trả `400` với error code chuẩn
   - log `search.query.rejected`
+
+### Exact search guard contract
+
+| Input | Value |
+|---|---|
+| `q` min length | `2` ký tự sau trim |
+| `q` max length | `256` ký tự |
+| `termCount` max | `8` |
+| `limit` default | `20` |
+| `limit` max | `50` |
+| `offset` max | `200` |
+| filter/tag values max | `10` |
+| full query-string budget | `<= 2048 bytes` |
+
+**Reject code**: `search.query.invalid`
+
+**Reject log fields**:
+- `action: 'search.query.rejected'`
+- `reason: 'length' | 'term_count' | 'offset' | 'pattern' | 'query_budget'`
+- `engineRequested`
+- `clientType`
+- `queryHash`
 
 ---
 
@@ -204,7 +231,7 @@ async queryMeilisearch(dto: SearchQueryDto): Promise<SearchResultDto> {
 
   const result = await index.search(dto.q, {
     limit: Math.min(dto.limit ?? 20, 50),   // max 50 per request
-    offset: dto.offset ?? 0,
+    offset: Math.min(dto.offset ?? 0, 200),
     filter: filter.join(' AND ') || undefined,
     sort: dto.sort === 'newest' ? ['publishedAt:desc'] : undefined,
     attributesToHighlight: ['title', 'excerpt'],
@@ -247,7 +274,7 @@ async querySql(dto: SearchQueryDto): Promise<SearchResultDto> {
     },
     orderBy: { publishedAt: 'desc' },
     take: Math.min(dto.limit ?? 20, 50),
-    skip: dto.offset ?? 0,
+    skip: Math.min(dto.offset ?? 0, 200),
     select: {
       publicId: true, slug: true, title: true,
       excerptComputed: true, tags: { select: { name: true } },

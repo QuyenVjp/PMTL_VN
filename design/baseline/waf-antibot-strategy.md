@@ -33,7 +33,9 @@ Internet
 | IP blocking | Security → Tools → IP Access Rules | ✅ Phase 1 |
 | Country blocking | Not needed (VN-only, but don't block non-VN) | ❌ Not applied |
 
-### Cloudflare WAF rules (Phase 1 — configure in dashboard)
+### Cloudflare WAF rules (Phase 1 — exact policy)
+
+Canonical IaC/doc plan: `infra/cloudflare/waf-rules.md`
 
 **Rule 1: Block known bad bots**
 ```
@@ -65,6 +67,22 @@ Condition: cf.waf.score lt 30  (OWASP score)
 Action: Managed Challenge
 Condition: http.request.uri.path matches "^/api/search" AND rate > 60/min from single IP
 ```
+
+### Exact edge matrix
+
+| Rule family | Path/surface | Action | Threshold | Window |
+|---|---|---|---|---|
+| verified crawler read budget | public content read | allow, then managed challenge if exceeded | `240` req | `1 phút` |
+| verified crawler search budget | `/api/search` | managed challenge | `120` req | `1 phút` |
+| anonymous public read budget | public content read | managed challenge | `180` req | `1 phút` |
+| anonymous search budget | `/api/search` | managed challenge | `60` req | `1 phút` |
+| unknown bot search budget | `/api/search` | block after challenge repeat | `30` req | `1 phút` |
+| auth mutation budget | `/api/auth/login`, `/api/auth/register`, `/api/auth/forgot-password` | challenge / temporary block | `20` req | `1 phút` |
+| oversized request guard | all non-upload API routes | block | `> 256 KB` body | immediate |
+
+**Why body guard differs from upload**:
+- WAF/body rule chỉ áp dụng cho non-upload API surfaces
+- upload/media routes phải đi qua allowlist riêng, không dùng chung edge body block
 
 ### Bot Management (Cloudflare Pro+)
 - Phase 2+: Upgrade to Pro if bot traffic measurably impacts DB
@@ -224,6 +242,14 @@ All responses must include these headers. Set in `Caddyfile`:
 | Upload abuse | Suspend account via admin | Check if storage quota exceeded |
 | DDoS | Cloudflare auto-mitigates | Enable "Under Attack" mode in CF if needed |
 | SQLi/XSS attempt | Cloudflare WAF blocks | Review if any payload got through + patch |
+
+## Drift control
+
+- mọi thay đổi edge rule phải được phản ánh ở:
+  - file này
+  - `infra/cloudflare/waf-rules.md`
+  - nếu app fallback cũng đổi, cập nhật thêm `baseline/security.md`
+- không chấp nhận dashboard-only drift không có doc/IaC plan kèm theo
 
 ---
 

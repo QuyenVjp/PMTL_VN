@@ -123,6 +123,39 @@ Rule:
   - default read/search routes phải có body/query budget rõ
   - upload routes có budget riêng, không dùng chung defaults của read/search
 
+### Proxy/query/body/timeout budgets
+
+| Budget | Value | Applies to |
+|---|---|---|
+| full request line + query-string budget | `<= 2048 bytes` | public read/search routes |
+| strict read/search body limit | `16 KB` | `GET`/search/read routes |
+| default JSON body limit | `256 KB` | đa số API mutation |
+| editorial/admin rich-text body limit | `1 MB` | admin/editor save draft/update |
+| upload streaming budget | `<= 110 MB` | upload/media routes có contract riêng |
+| header read timeout | `5 giây` | mọi request |
+| body read timeout | `15 giây` | non-upload routes |
+| upstream response header timeout | `30 giây` | read/search routes |
+| upstream mutation timeout | `60 giây` | auth/admin/community writes |
+| upload timeout | `180 giây` | upload/media routes |
+| idle keepalive timeout | `90 giây` | upstream pooled connections |
+
+**Rule**:
+- `GET`/search/read routes không được dựa vào request body
+- query budget bị vượt phải bị reject trước business logic
+- timeout ở proxy không được để implicit default
+
+### Proxy retry and backpressure stance
+
+- chỉ retry tự động cho `GET`, `HEAD`, `OPTIONS`
+- không retry mù `POST`, `PATCH`, `PUT`, `DELETE`
+- upstream health check interval target: `5 giây`
+- upstream health timeout target: `2 giây`
+- unhealthy threshold target: `3` lần fail liên tiếp
+- healthy threshold target: `2` lần pass liên tiếp
+- khi upstream pressure tăng rõ:
+  - ưu tiên `429` hoặc `503`
+  - không giữ connection treo dài để “cố cứu” request
+
 ## Session and Horizontal Scale Rule
 
 - Auth/session authority nằm ở `apps/api` + shared server-side session/refresh store
