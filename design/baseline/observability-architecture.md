@@ -11,6 +11,17 @@ Mọi quyết định ở đây là binding — không được tự ý bật la
 
 ## Phase 1 — Logging + Health + Metrics endpoint (REQUIRED BEFORE LAUNCH)
 
+### Phase 1 external monitors (recommended)
+
+- external uptime monitor như `Uptime Kuma` hoặc equivalent nên check:
+  - public site
+  - admin URL
+  - `GET /health/live`
+  - `GET /health/ready`
+  - SSL expiry
+- error tracking như `Sentry` hoặc equivalent nên bật sớm cho web/api/admin nếu team cần thấy production exceptions nhanh hơn log tail
+- các tool này không thay `/health/*` và structured logs; chúng chỉ thêm visibility ngoài host
+
 ### Pino structured logging
 
 Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
@@ -126,6 +137,8 @@ Auth: **Internal only** — Caddy không expose ra internet
 | `upload_bytes_total` | Counter | `file_type` | Bytes uploaded |
 | `db_query_duration_seconds` | Histogram | `operation` | DB query latency |
 | `feature_flag_evaluations_total` | Counter | `flag_key, result` | Flag checks |
+| `search_requests_total` | Counter | `endpoint, engine, user_agent_class, status_code` | Search/crawl pressure visibility |
+| `search_request_duration_seconds` | Histogram | `endpoint, engine, user_agent_class` | Distinguish human vs crawler pressure |
 
 **Impl**: `prom-client` npm package (Prometheus compatible). NestJS custom metrics provider.
 

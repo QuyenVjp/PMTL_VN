@@ -36,7 +36,7 @@ Không mở rộng sang `apps/web`, `apps/admin`, hay `apps/worker`, trừ khi m
   - `BullMQ`
   - `apps/worker`
   - `outbox_events`
-  - `Meilisearch`
+  - `Meilisearch` trừ khi project explicit chọn `Search-first launch` và đã chốt guardrails ở `06-search/meilisearch-architecture.md` + `baseline/high-traffic-resilience-plan.md`
 - mọi boundary runtime phải có schema rõ:
   - request/query/params
   - env
@@ -419,7 +419,8 @@ modules/content/
   - audit
   - cache/revalidation owner
   - search fallback semantics phase 1
-- chưa được kéo `Meilisearch`, `outbox`, `worker` vào path này
+- chưa được kéo `outbox`, `worker` vào path này
+- `Meilisearch` chỉ được kéo vào sớm nếu đi theo profile `Search-first launch`
 
 ### Phase 1 search rule at this step
 
@@ -427,6 +428,22 @@ modules/content/
   - SQL/index/read-model update inline hoặc fire-and-forget theo contract phase 1
   - không scaffold search-sync queue/outbox trước
   - chưa được giả định search publish side effect cần notification/search-runtime phase 2
+
+### Search-first launch exception
+
+Nếu project chọn `Search-first launch`, được phép thêm sau bước này:
+
+1. SQL search adapter (always-on)
+2. Meilisearch query adapter
+3. startup fallback logic `meilisearch -> sql`
+4. admin reindex/status surface tối thiểu
+
+Nhưng vẫn chưa được kéo:
+
+- `Valkey`
+- `BullMQ`
+- `outbox`
+- `apps/worker`
 
 ### Do not move on until
 
@@ -485,10 +502,11 @@ Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, ou
 - `apps/worker`
 - BullMQ producers/consumers
 - outbox dispatcher
-- Meilisearch adapter
 - Valkey adapter
 - PgBouncer-specific config in app layer
 - pgvector anything
+
+`Meilisearch adapter` chỉ bị cấm nếu project chưa explicit chọn `Search-first launch`.
 
 ### Conditional routes phải hiểu đúng
 

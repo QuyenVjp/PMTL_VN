@@ -79,10 +79,26 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - search (tìm kiếm)
   - guestbook submit (gửi sổ lưu niệm)
   - vow create (tạo nguyện)
+  - public crawl/search heavy routes (đường tìm kiếm/crawl dễ bị scrape)
 
 > `/api/auth/refresh` PHẢI có rate-limit guard. Nếu thiếu, attacker có thể brute-force refresh tokens.
 > Limit: 30 requests / 15 phút / per-IP.
 > Xem `tracking/coding-readiness.md` Phần 5 cho exact values từng endpoint.
+
+### Crawl/search abuse guard
+
+- search và public discovery routes không được đối xử như traffic vô hạn chỉ vì có SEO/GEO
+- phải có budget riêng cho:
+  - anonymous search
+  - authenticated search
+  - crawler/search-engine traffic
+- query guard tối thiểu cho search:
+  - max query string length
+  - max term count hợp lệ
+  - reject query pattern có nguy cơ amplification rõ
+- crawler/search traffic phải được kiểm soát ở 2 lớp:
+  - Cloudflare rule/challenge/throttle
+  - app-layer rate limit fallback
 
 ## Cookie / CSRF / CORS
 

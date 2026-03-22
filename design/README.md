@@ -53,7 +53,7 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 - `BullMQ`
 - `apps/worker` (tiến trình xử lý nền)
 - `outbox_events` (sự kiện chờ phát đi)
-- `Meilisearch`
+- `Meilisearch` theo mặc định là deferred, nhưng được phép bật sớm theo `Search-first launch` nếu đúng guardrails ở `baseline/high-traffic-resilience-plan.md`
 - `PgBouncer`
 - Prometheus/Grafana/Alertmanager (bộ công cụ giám sát và cảnh báo)
 - tracing (truy vết thực thi)
@@ -65,7 +65,7 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 ### Forbidden for now (Bị cấm ở hiện tại)
 
 - bật queue (hàng đợi) trước khi có idempotency (tính lặp lại không đổi kết quả) + retry policy (chính sách thử lại)
-- bật Meilisearch trước khi search SQL (tìm kiếm bằng cơ sở dữ liệu) đo được là đau (chậm)
+- bật Meilisearch mà không có SQL fallback + reindex/recovery path + startup fallback contract
 - public upload (tải lên công khai) trước khi chốt MIME sniffing (kiểm tra loại tập tin) + delete authorization (ủy quyền xóa)
 - tự host stack observability (hệ thống giám sát) nặng khi chưa từng restore DB (phục hồi cơ sở dữ liệu) thành công
 - gọi là production-safe (an toàn vận hành) nếu chưa có restore drill pass (buổi diễn tập phục hồi thành công)
@@ -121,8 +121,9 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 8. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
 9. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
 10. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
-11. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
-12. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
+11. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/high-traffic-resilience-plan.md)
+12. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
+13. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
 13. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
 14. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
 15. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)

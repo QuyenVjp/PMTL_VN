@@ -137,9 +137,17 @@ Nó không thay file `.env.example`, nhưng giúp tránh quên nhóm env khi sca
 
 | Env | Owner | Required when | Purpose |
 |---|---|---|---|
-| `MEILI_HOST` | search | yes | Meilisearch host URL |
-| `MEILI_MASTER_KEY` | search | yes | Meilisearch master key |
+| `MEILI_HOST` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch host URL |
+| `MEILI_MASTER_KEY` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch master key |
 | `MEILI_INDEX_NAME` | search | no | index name (default: `pmtl_content`) |
+
+### Error tracking / external monitoring
+
+| Env | Owner | Required when | Purpose |
+|---|---|---|---|
+| `SENTRY_DSN_WEB` | web | no | public web error tracking DSN |
+| `SENTRY_DSN_API` | api | no | API/server error tracking DSN |
+| `SENTRY_DSN_ADMIN` | admin | no | admin SPA error tracking DSN |
 
 ### Cloudflare R2 (object storage)
 > Design: `baseline/r2-migration-plan.md`

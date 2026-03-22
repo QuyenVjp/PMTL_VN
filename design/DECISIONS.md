@@ -49,7 +49,7 @@ Phải có:
 - `BullMQ`
 - `apps/worker`
 - `outbox_events`
-- `Meilisearch`
+- `Meilisearch` theo mặc định là deferred; exception hợp lệ là `Search-first launch` nếu search là public/core surface và guardrails trong `baseline/high-traffic-resilience-plan.md` đã được chốt
 - `PgBouncer`
 - `Prometheus/Grafana/Alertmanager`
 - tracing
@@ -102,7 +102,13 @@ Phải có:
 - phase 1 ưu tiên sync/simple path nếu còn dễ hiểu và đủ an toàn
 - chỉ bật `outbox + dispatcher + queue + worker` khi side effect đủ chậm hoặc failure cost đủ cao
 - search phase 1 có thể `Postgres-first`
-- chỉ bật `Meilisearch` khi SQL-first path không còn đủ về latency hoặc scope tìm kiếm
+- `Meilisearch` chỉ được bật khi:
+  - SQL-first path không còn đủ về latency hoặc scope tìm kiếm, hoặc
+  - sản phẩm chọn `Search-first launch` vì public search là core surface từ ngày đầu
+- nếu bật `Meilisearch` sớm:
+  - vẫn phải giữ `SQL fallback`
+  - vẫn không được coi `Meilisearch` là source of truth
+  - không được kéo theo `outbox/BullMQ/apps/worker` một cách ngầm định
 - nếu async reliability đã bật, business event quan trọng phải đi theo:
 
 ```txt
@@ -233,7 +239,7 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 | Valkey | planned | rate_limit Postgres table shows lock contention | `baseline/valkey-architecture.md` |
 | BullMQ + apps/worker | planned | request > 2s due to background work | `baseline/bullmq-worker-architecture.md` |
 | outbox + dispatcher | planned | side effect failure cost > complexity cost | `baseline/outbox-dispatcher-model.md` |
-| Meilisearch | planned | SQL search p95 > 500ms hoặc multi-type search scope rõ | `06-search/meilisearch-architecture.md` |
+| Meilisearch | planned | SQL search p95 vượt SLO public search trong `baseline/sla-slo.md`, multi-type search scope rõ, hoặc project explicit chọn `Search-first launch` | `06-search/meilisearch-architecture.md` |
 | PgBouncer | planned | db connections > 80% max_connections | `baseline/pgbouncer-strategy.md` |
 | Cloudflare R2 | planned | local disk > 70% OR restore drift > 5% | `baseline/r2-migration-plan.md` |
 | Web Push (VAPID) | planned | PWA active + feature flag | `08-notification/push-notification-architecture.md` |

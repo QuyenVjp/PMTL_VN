@@ -330,6 +330,7 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/offline-bundles` | `wisdom-qa` | member+ |
 | `GET` | `/offline-bundles/:publicId` | `wisdom-qa` | member+ |
 | `GET` | `/offline-bundles/:publicId/status` | `wisdom-qa` | member+ |
+| `GET` | `/offline-bundles/:publicId/delta` | `wisdom-qa` | member+ |
 | `POST` | `/offline-bundles/:publicId/check-updates` | `wisdom-qa` | member+ |
 | `GET` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
@@ -422,3 +423,4 @@ Không được scaffold sớm nếu `apps-api-scaffold-order.md` chưa cho phé
 - `/internal/revalidate` phải đi với `Cache-Control`/revalidation contract rõ và replay/shared-secret handling; không coi là route nội bộ “tự hiểu”
 - `/admin/system/health-extended` response contract owner là `ops/health-contract.md`, không tự bịa shape ở controller khi scaffold
 - route search/admin queue/outbox thuộc `Phase 2+` chỉ được bật khi trigger trong các doc owner tương ứng đã được đáp ứng
+- `/offline-bundles/:publicId/delta` là canonical delta sync route; không drift sang `/offline/bundles/*` nếu chưa có migration decision rõ

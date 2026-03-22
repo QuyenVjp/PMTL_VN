@@ -15,9 +15,18 @@
 
 ## Preconditions
 - Entry có `sourceUrl` rõ ràng.
-- Có `sourceProvenance` rõ.
+- Có `sourceProvenance` rõ và phải thuộc matrix canon:
+  - `official_origin`
+  - `official_mirror`
+  - `community_volunteer_site`
+  - `community_translation`
+  - `community_annotation`
 - Có title gốc và metadata tối thiểu theo policy.
 - Nếu có bản dịch Việt thì `reviewStatus` phải nhất quán với mức duyệt hiện tại.
+- Nếu public surface sẽ hiển thị bản dịch Việt, `reviewStatus` không được là:
+  - `translated_draft`
+  - `human_review_required`
+- Không publish entry machine-assisted translation như thể đã duyệt; publish path chỉ được đi tiếp khi bản dịch public-facing đã ở `translated_reviewed`.
 
 ## Input contract
 - `publicId`
@@ -55,6 +64,7 @@
 7. **Phase 1**: nếu entry thuộc public/searchable surface theo policy hiện hành, chạy search sync/revalidation theo sync hoặc best-effort path; nếu chưa thuộc surface đó thì không tạo side-effect thừa.
 8. Nếu có audio/video liên quan, sync relation metadata.
 9. **Phase 2+**: append outbox event cho search sync hoặc bundle rebuild khi search/offline downstream reliability đã bật.
+10. Nếu phase 1 side-effect không hoàn tất trong route budget, canonical publish vẫn phải commit trước; recovery path chuẩn là manual rebuild/replay theo owner docs, không block publish vô hạn.
 
 ## Async side-effects
 - **Phase 1**: search/offline refresh đi theo sync hoặc manual rebuild path nếu feature đã mở.
@@ -85,11 +95,25 @@
 - publish lại cùng `publicId` nên là update flow, không tạo record mới
 - không cho import cùng một source nhiều lần dưới hai record publish trùng rõ ràng nếu policy không cho
 - replay outbox không được tạo duplicate search/bundle signal cho cùng publish event khi phase 2+ đã bật.
+- nếu phase 2+ bật outbox, `idempotencyKey` của publish signal nên theo business fact ổn định, ví dụ:
+  - `wisdom.entry.published:${publicId}:${publishedAt}`
+  - không random key khác nhau cho cùng một lần publish canonical
 
 ## Performance target
 - canonical publish path nên hoàn tất `< 800ms`
 - search sync và offline bundle refresh phải ở downstream async path
+- route này phải log tối thiểu:
+  - `action = wisdom.entry.publish`
+  - `duration_ms`
+  - `entryType`
+  - `sourceFamily`
+  - `sourceProvenance`
+  - `reviewStatus`
+  - `searchSyncMode = sync | best_effort | outbox | skipped`
+  - `offlineBundleMode = manual | outbox | skipped`
+- nếu p95 publish path vượt budget ổn định, owner phải coi đó là activation signal để xem lại downstream split, không được tiếp tục nhét side-effect vào canonical request path
 
 ## Notes
 - Không publish entry nếu chưa rõ nguồn chính thức hoặc official mirror hợp lệ.
+- `sourceProvenance` semantics phải bám `SOURCE_PROVENANCE_MATRIX.md`, không tự invent source class mới trong publish handler.
 - Search alias phải phục vụ cả tiếng Việt và tiếng Hoa gốc.

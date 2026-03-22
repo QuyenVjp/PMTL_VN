@@ -37,6 +37,31 @@ Không được ghi "pass" nếu chưa chạy thật.
 - auth smoke check:
 - media sample check:
 - migration state check:
+- wisdom sample check:
+- offline bundle delta check:
+
+### Wisdom / offline verification checklist
+
+- published wisdom sample size:
+- QA sample size:
+- verified fields checked:
+  - `sourceUrl`
+  - `sourceProvenance`
+  - `reviewStatus`
+  - `publishedAt`
+- offline bundle checked:
+  - `yes`
+  - `no`
+- offline bundle version before/after restore:
+- offline delta route result:
+  - `pass`
+  - `fail`
+- manifest vs DB entry count match:
+  - `yes`
+  - `no`
+- deleted/tombstone sample checked:
+  - `yes`
+  - `no`
 
 ### Media consistency checklist
 
@@ -77,3 +102,4 @@ Mỗi issue phải ghi rõ:
 - Ít nhất phải có `1` drill record thật trước first public launch.
 - Nếu record gần nhất là `fail`, hệ không được gọi là `production-safe`.
 - Nếu media consistency checklist vượt ngưỡng fail mà vẫn ghi `pass`, record đó không hợp lệ.
+- Nếu wisdom/offline verification bị bỏ trống trong khi module này đã public, record đó không được coi là full restore evidence.

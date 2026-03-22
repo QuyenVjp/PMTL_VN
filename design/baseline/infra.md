@@ -31,7 +31,7 @@ Chỉ chứa những gì UNIQUE so với các file owner khác.
 | Local disk + storage abstraction | Media/file current runtime | Phase 1 |
 | Cloudflare R2 | Target media storage | Phase 2+ |
 | Valkey | Cache + rate-limit + queue | Deferred |
-| Meilisearch | Public search engine | Deferred |
+| Meilisearch | Public search engine | Deferred by default / Search-first launch exception |
 | PgBouncer | Connection pooling | Deferred |
 | pgvector | Semantic retrieval | **Explicitly excluded** — see `baseline/pgvector-decision.md` |
 
@@ -80,6 +80,8 @@ Ref: `tracking/outbox-event-taxonomy.md` cho taxonomy đầy đủ.
 | Cloudflare Web Analytics | Privacy-first web analytics, available on all plans | Optional Phase 1 |
 | Cloudflare Image Transform | Bitmap image resize/format optimization at edge; not for SVG resize | Phase 2+ |
 | Off-site backup | Snapshot ngoài VPS | Phase 1 |
+| Uptime monitor (Uptime Kuma or equivalent) | external uptime checks for web/api/admin/SSL | Recommended Phase 1 |
+| Error tracking (Sentry or equivalent) | external error capture and alerting | Recommended Phase 1 |
 
 ---
 
@@ -97,6 +99,17 @@ Caddy → apps/web + apps/api + apps/admin
 
 Cloudflare đứng trước Caddy cho CDN/SSL/edge protection.
 
+## Growth-safe launch profiles
+
+- baseline launch profile: xem `baseline/high-traffic-resilience-plan.md`
+- `Simple launch`: SQL-first search, tối thiểu stack
+- `Search-first launch`: bật `Meilisearch` ngay từ đầu nhưng vẫn giữ SQL fallback
+
+Rule:
+- PMTL không bắt buộc bật `Meilisearch` từ ngày đầu
+- nhưng nếu public search là acquisition surface quan trọng cho SEO/GEO thì được phép bật sớm
+- dù bật sớm, `Meilisearch` vẫn là projection, không phải canonical source
+
 ## Reverse Proxy and Load-Balancer Policy
 
 - Phase 1 canon = `single ingress Caddy` trên một VPS; đây là simplicity baseline, chưa phải HA claim
@@ -106,6 +119,9 @@ Cloudflare đứng trước Caddy cho CDN/SSL/edge protection.
   - request body limits, upload buffering, và timeout budget phải được chốt ở proxy layer thay vì để default ngầm
   - websocket/SSE forwarding nếu có phải được khai báo riêng; không giả định reverse proxy default đủ đúng
 - PMTL không được tự nhận `high availability` chỉ vì có thêm replica; chỉ được gọi là HA khi ingress, data recovery, và failover contract đã được chốt ở owner docs tương ứng
+- request body/time budget phải được chốt ngay từ phase đầu:
+  - default read/search routes phải có body/query budget rõ
+  - upload routes có budget riêng, không dùng chung defaults của read/search
 
 ## Session and Horizontal Scale Rule
 
@@ -123,6 +139,19 @@ Cloudflare đứng trước Caddy cho CDN/SSL/edge protection.
 - Phase 1 single VPS chấp nhận restart/restore oriented recovery, không claim automatic failover
 - Database baseline hiện là single primary + restore discipline; read replica hoặc automatic failover chỉ là Phase 2+ concern khi owner docs đã chốt
 - Ingress failover, DB failover, search failover, và worker failover phải được nêu tường minh ở owner doc trước khi dùng ngôn ngữ như `high availability`, `self-healing`, hoặc `multi-region`
+
+## Supporting tech order
+
+Thứ tự bổ trợ hợp lý cho dự án:
+
+1. Cloudflare protection + rules thật
+2. external uptime monitor
+3. external error tracking
+4. `Meilisearch` nếu chọn `Search-first launch`
+5. `PgBouncer`
+6. Prometheus/Grafana/Alertmanager hoặc managed equivalent
+7. `Valkey`
+8. `BullMQ` + `outbox` + `apps/worker`
 
 ---
 

@@ -81,6 +81,24 @@ Chỉ dùng phần này nếu dependency (phụ thuộc) tương ứng đã đư
   - tìm kiếm công khai (public search) được chuyển sang đường dự phòng (fallback) về SQL/API nếu chính sách hiển thị (visibility policy) vẫn được đảm bảo
   - sự xuống cấp của tìm kiếm (search degrade) không được kéo sập việc đọc nội dung/công khai
 
+### Crawl / scrape surge
+
+- nếu crawl/bot/search pressure tăng:
+  - ưu tiên bảo toàn content read và auth/write chuẩn
+  - search có thể:
+    - throttle
+    - challenge ở edge
+    - degrade về SQL fallback
+  - không để crawler pressure âm thầm kéo sập DB mà vẫn tự báo là healthy
+
+### Single VPS death
+
+- baseline hiện là restart/restore oriented recovery
+- nếu host chết hoàn toàn:
+  - trạng thái đúng là outage
+  - recovery path là boot host mới + restore artifacts + verify health
+- không gọi scenario này là automatic failover nếu chưa có owner doc HA tương ứng
+
 ### Optional future async failure (Lỗi bất đồng bộ tương lai tùy chọn)
 
 - nếu hàng đợi/sự kiện chờ phát (queue/outbox) đã được bật:

@@ -27,6 +27,30 @@ Bật Meilisearch khi **ít nhất 1** điều kiện sau:
 - nếu chỉ đang đánh giá feasibility ở design level, không được viết như thể queue là source of truth
 - Phase 1 baseline vẫn là SQL-first; không được backport prerequisite này sang Phase 1
 
+## Search-first launch profile
+
+PMTL có thể bật `Meilisearch` ngay từ launch nếu:
+
+- search là public/core surface cho SEO/GEO và content discovery
+- team chấp nhận thêm một optional dependency sớm hơn mặc định
+- vẫn giữ đủ các guardrails:
+  - `SQL fallback`
+  - admin reindex/recovery surface
+  - startup không fail cứng chỉ vì Meilisearch tạm unavailable
+
+Search-first launch không đồng nghĩa bật luôn:
+
+- `Valkey`
+- `BullMQ`
+- `outbox`
+- `apps/worker`
+
+Ở profile này, sync path hợp lệ là:
+
+- write canonical record
+- inline/direct search sync khi còn đủ budget
+- manual reindex/recovery path khi Meilisearch drift
+
 ---
 
 ## Architecture overview
@@ -62,6 +86,17 @@ SearchService reads this at startup — no runtime toggle.
 - query failover budget:
   - fallback sang SQL là degradation path, không phải parity path hoàn hảo
   - nếu fallback path vượt budget route hoặc chỉ trả subset doc types theo contract phase hiện tại, UI/admin phải report `engine=sql-fallback` rõ thay vì giả vờ full parity
+
+## Query bounds and abuse guard
+
+- public search query phải có guard tối thiểu:
+  - max query length
+  - max term count hợp lệ
+  - limit/offset cap
+- không cho search path trở thành amplification vector chỉ vì endpoint đọc công khai
+- nếu query bị reject bởi complexity guard:
+  - trả `400` với error code chuẩn
+  - log `search.query.rejected`
 
 ---
 
@@ -286,6 +321,15 @@ export class SearchService {
   }
 }
 ```
+
+### Startup fallback rule
+
+- startup luôn phải init được SQL adapter trước
+- nếu `SEARCH_ENGINE=meilisearch` nhưng Meilisearch unavailable ở boot:
+  - app không được crash mù nếu product policy cho phép degraded search
+  - phải log rõ `search.engine.bootstrap_fallback`
+  - runtime chuyển sang `sql-fallback`
+- chỉ được coi Meilisearch failure là startup blocker nếu owner doc của env/profile đã chốt launch phụ thuộc tuyệt đối vào nó
 
 ## Backup / migration policy
 

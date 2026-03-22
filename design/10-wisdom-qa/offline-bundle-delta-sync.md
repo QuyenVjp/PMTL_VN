@@ -69,7 +69,7 @@ CREATE TABLE offline_sync_states (
 ### Request
 
 ```
-GET /api/offline/bundles/:bundlePublicId/delta?sinceVersion=N&deviceFingerprint=<string>
+GET /api/offline-bundles/:publicId/delta?sinceVersion=N&deviceFingerprint=<string>
 Authorization: Bearer <access_token>
 ```
 
@@ -77,6 +77,9 @@ Authorization: Bearer <access_token>
 |---|---|
 | `sinceVersion` | version client đang có (0 = full download) |
 | `deviceFingerprint` | identifier thiết bị do client generate (UUID hoặc hash) |
+
+Route này là canonical public delta surface cho bundle sync.
+Không tự invent thêm `/api/offline/bundles/*` ở inventory/runtime nếu chưa migrate canon tương ứng.
 
 ---
 
@@ -111,6 +114,19 @@ const OfflineEntrySchema = z.object({
 });
 ```
 
+### Delivery bounds
+
+- delta response không được grow vô hạn:
+  - target budget: `<= 1000` changed entries mỗi response
+  - payload budget: ưu tiên `<= 10 MB` sau gzip nếu transport hỗ trợ compression
+- nếu delta vượt budget an toàn:
+  - server có thể trả `isFullSync: true` để ép client tải lại theo full-sync path
+  - hoặc trả degraded status có note rõ để client không merge mù
+- response nên có thêm metadata delivery:
+  - `Content-Encoding: gzip` nếu platform support
+  - `X-Payload-Items`
+  - `X-Payload-Bytes` khi có thể tính được
+
 ---
 
 ## Sync flow (Luồng đồng bộ)
@@ -118,7 +134,7 @@ const OfflineEntrySchema = z.object({
 ```
 Client                              Server
   |                                   |
-  |-- GET /delta?sinceVersion=N ----> |
+  |-- GET /offline-bundles/:publicId/delta?sinceVersion=N ----> |
   |                                   |-- query: entries added/updated since N
   |                                   |-- query: entries removed since N
   |                                   |-- build delta response
@@ -159,6 +175,16 @@ Khi nào rebuild bundle (increment `bundle_version`):
 | Admin trigger manual rebuild | Force-rebuild toàn bộ snapshot, increment version |
 
 Rebuild nên đi qua **outbox event** `wisdom.bundle.rebuild_requested` → worker → rebuild job.
+
+### Rebuild concurrency rule
+
+- rebuild là operation idempotent theo `bundle_id + target_version_window`
+- một bundle chỉ được có `1` rebuild active tại một thời điểm
+- nếu admin trigger khi rebuild cùng bundle đang chạy:
+  - không queue thêm duplicate rebuild mù
+  - trả `202 Accepted` + current job identity/status
+- nếu phase 1 chưa bật queue/worker:
+  - manual rebuild vẫn phải giữ same rule ở service layer, không chạy song song nhiều job cho cùng bundle
 
 ---
 
