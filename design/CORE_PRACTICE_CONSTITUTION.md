@@ -312,8 +312,8 @@ Ref chi tiết: PHASE_GOVERNOR.md (nếu tồn tại) hoặc baseline/infra.md
 
 | Màn hình | Route (canonical) | Bước |
 |---|---|---|
-| Wisdom Reader (Bạch Thoại) | `/bai-hoa/[slug]` | 5 |
-| Wisdom Library hub | `/bai-hoa` | 5 |
+| Wisdom Reader (Bạch Thoại) | `/bach-thoai/[slug]` | 5 |
+| Wisdom Library hub | `/bach-thoai` | 5 |
 | Vow Tracker | `/phat-nguyen` | 6 |
 | Create Vow | `/phat-nguyen/tao-moi` | 6 |
 | Phóng Sanh guide (public) | `/huong-dan/phong-sanh` | 7 |

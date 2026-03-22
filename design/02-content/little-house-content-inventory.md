@@ -297,16 +297,30 @@ Cách hủy:
 
 Danh sách FAQ ưu tiên (tối thiểu 10 câu):
 
-1. Có thể tự niệm Ngôi Nhà Nhỏ cho bản thân không?
-2. Mua tờ Ngôi Nhà Nhỏ ở đâu?
-3. Niệm Ngôi Nhà Nhỏ mỗi ngày được không?
-4. Có thể đốt Ngôi Nhà Nhỏ không có bàn thờ không?
-5. Xử lý tro sau khi đốt như thế nào?
-6. Đốt bao nhiêu tờ mỗi lần?
-7. Phải niệm bao lâu mới xong một tờ?
-8. Kính Tặng và Tặng có bắt buộc không?
-9. Tờ viết sai có thể sửa không?
-10. Ngôi Nhà Nhỏ có hiệu dụng cho người không theo Phật giáo không?
+1. Ngôi Nhà Nhỏ là gì?
+2. Ngôi Nhà Nhỏ dùng khi nào?
+3. Có thể tự niệm Ngôi Nhà Nhỏ cho bản thân không?
+4. Có những loại / số biến nào?
+5. Mua tờ Ngôi Nhà Nhỏ ở đâu?
+6. Niệm Ngôi Nhà Nhỏ mỗi ngày được không?
+7. Có thể đốt Ngôi Nhà Nhỏ không có bàn thờ không?
+8. Xử lý tro sau khi đốt như thế nào?
+9. Đốt bao nhiêu tờ mỗi lần?
+10. Phải niệm bao lâu mới xong một tờ?
+11. Kính Tặng và Tặng có bắt buộc không?
+12. Khi viết sai hoặc chấm sai thì xử lý như thế nào?
+13. Ngôi Nhà Nhỏ có hiệu dụng cho người không theo Phật giáo không?
+
+### 5.4 Warning policy — bắt buộc cho mọi block nhạy cảm
+
+- không tự suy diễn rule từ bản cộng đồng hoặc kinh nghiệm truyền miệng
+- không trộn nguồn không chính thống vào canonical wording
+- mọi wording nhạy cảm phải có:
+  - `sourceReference`
+  - `sourceUrl` hoặc source code
+  - `versionNote`
+- case selector hoặc tool tính toán không được tự sinh rule nếu source-backed matrix chưa đủ
+- FAQ ngắn không thay thế guide/warning riêng cho các case đặc biệt
 
 ---
 

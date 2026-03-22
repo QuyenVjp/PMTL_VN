@@ -41,6 +41,8 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Admin page/API/query mapping | ✅ Sẵn sàng | page route -> API group -> query keys -> invalidation rules — `tracking/admin-page-api-mapping.md` |
 | Admin scaffold backlog | ✅ Sẵn sàng | rollout order + `queries.ts` / `mutations.ts` plan cho từng feature — `tracking/apps-admin-scaffold-backlog.md` |
 | Admin feature query plan | ✅ Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `tracking/admin-feature-query-plan.md` |
+| Wisdom naming & IA canon | ✅ Sẵn sàng | route slug, hub IA, glossary, source taxonomy, FAQ/warnings cho BTPP và Little House cross-surface — `10-wisdom-qa/btpp-library-canon.md` |
+| Wisdom-QA family audit | ✅ Sẵn sàng | audit theo family, anti-drift rules, và gap list để scaffold không đoán taxonomy — `tracking/wisdom-qa-family-audit.md` |
 | Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `tracking/env-inventory.md` |
 | pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `baseline/pgvector-decision.md` |
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |

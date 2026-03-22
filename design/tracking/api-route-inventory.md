@@ -316,8 +316,12 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/offline-bundles/:publicId/check-updates` | `wisdom-qa` | member+ |
 | `GET` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/authority-profiles` | `wisdom-qa` | admin+ |
+| `GET` | `/admin/wisdom/authority-profiles/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/entries` | `wisdom-qa` | admin+ |
 | `PATCH` | `/admin/wisdom/entries/:publicId` | `wisdom-qa` | admin+ |
+| `POST` | `/admin/wisdom/authority-profiles` | `wisdom-qa` | admin+ |
+| `PATCH` | `/admin/wisdom/authority-profiles/:publicId` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/entries/:publicId/publish` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/entries/ingestion-jobs` | `wisdom-qa` | admin+ |
 | `GET` | `/admin/wisdom/offline-bundles` | `wisdom-qa` | admin+ |
@@ -328,6 +332,9 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/admin/wisdom/baihua/books/import-source` | `wisdom-qa` | admin+ |
 | `PATCH` | `/admin/wisdom/baihua/chapters/:publicId/translation` | `wisdom-qa` | admin+ |
 | `POST` | `/admin/wisdom/baihua/chapters/:publicId/publish` | `wisdom-qa` | admin+ |
+
+> `authority-profiles` hiện là admin-first surface.
+> Chưa mở public route canon trong `PAGE_INVENTORY` thì không tự thêm `/wisdom/authority-profiles*` public read routes.
 
 ## Contact
 

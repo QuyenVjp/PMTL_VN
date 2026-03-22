@@ -24,6 +24,9 @@ Unified index gồm **8 document types** từ 2 module source:
 | `wisdom_entry` | Wisdom-QA | `wisdomEntries` |
 | `qa_entry` | Wisdom-QA | `qaEntries` |
 
+> `authority_profiles` hiện chưa nằm trong public unified index.
+> Chỉ mở index/search card cho authority profile khi `PAGE_INVENTORY` chốt public route canon riêng.
+
 > **Quy tắc bất biến**: chỉ đánh index tài liệu có `status = 'published'` hoặc `reviewStatus` đã được approved.
 > Search không được expose draft, hidden, hoặc quarantined content.
 
@@ -46,6 +49,8 @@ const SearchDocumentSchema = z.object({
   moduleOwner:  z.enum(['content', 'wisdom-qa']),
   publicId:     z.string(),           // publicId của entity nguồn
   slug:         z.string().optional(), // nếu entity có slug
+  entryType:    z.enum(['baihua_teaching', 'qa_retrieval', 'exposition', 'aphorism', 'event_discourse']).optional(),
+  sourceFamily: z.enum(['btpp_video', 'btpp_radio', 'wenda', 'mail_qa', 'zongshu', 'guide_manual']).optional(),
 
   // Searchable fields
   title:        z.string(),           // field chính cho matching tiêu đề
@@ -175,6 +180,8 @@ const SearchDocumentSchema = z.object({
 | `title` | `wisdomEntries.title` | |
 | `body` | `wisdomEntries.translatedText` + `' '` + `wisdomEntries.originalText` | tiếng Việt ưu tiên, giữ cả bản gốc để match |
 | `excerpt` | `wisdomEntries.translatedText` — first 200 chars | |
+| `entryType` | derive từ `wisdomEntries.sourceType` + editorial subtype | `baihua_teaching` / `exposition` / `aphorism` / `event_discourse` |
+| `sourceFamily` | `wisdomEntries.sourceFamily` | |
 | `tags` | `wisdomEntries.tags` | |
 | `language` | `'bilingual'` | vì có cả gốc + dịch |
 | `sourceName` | `wisdomEntries.authorityProfile.name` | |
@@ -184,6 +191,7 @@ const SearchDocumentSchema = z.object({
 
 > **Quan trọng**: chỉ index `wisdomEntries` khi `reviewStatus` là `translated_reviewed` hoặc `source_verified`.
 > Draft hoặc `translated_draft` không được xuất hiện trong public search.
+> `event_discourse` là subtype filter/index nội bộ; public web phase hiện tại map nó vào label `Khai thị`, không mở tab riêng.
 
 ---
 
@@ -194,6 +202,8 @@ const SearchDocumentSchema = z.object({
 | `title` | `qaEntries.question` | câu hỏi là tiêu đề |
 | `body` | `qaEntries.answerText` | |
 | `excerpt` | `qaEntries.answerText` — first 200 chars | |
+| `entryType` | hardcode `qa_retrieval` | |
+| `sourceFamily` | `qaEntries.sourceFamily` | `wenda` / `mail_qa` |
 | `tags` | `qaEntries.tags` | |
 | `language` | `'vi'` | |
 | `sourceName` | `qaEntries.sourceName` | |
@@ -238,7 +248,7 @@ Quy tắc:
 | Phase 2+ | Meilisearch với outbox-driven sync | Meilisearch + outbox |
 
 **Phase 1 query contract:**
-- `GET /api/search?q=<term>&type=<docType>&lang=<language>&limit=20&offset=0`
+- `GET /api/search?q=<term>&type=<docType>&entryType=<entryType>&sourceFamily=<sourceFamily>&lang=<language>&limit=20&offset=0`
 - Query chạy trên `normalizedSearchText` hoặc `tsvector` column trên từng bảng nguồn
 - Response trả về unified shape (subset của `SearchDocumentSchema`)
 

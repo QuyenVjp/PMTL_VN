@@ -37,7 +37,43 @@ Search có thể aggregate result (tổng hợp kết quả) từ:
 - `09-wisdom-qa`: Baihua entries
 - `09-wisdom-qa`: Metaphysics QA entries
 
+Hiện chưa aggregate public search từ:
+
+- `authorityProfiles`
+
+cho đến khi public route canon của authority profile được chốt trong `PAGE_INVENTORY`.
+
 Frontend presentation (cách trình bày phía giao diện) có thể hiển thị như unified wisdom repository (kho trí huệ hợp nhất), dù owner module vẫn tách riêng.
+
+Khi search trả document thuộc Wisdom-QA, response phải đủ để FE không đoán:
+
+- `docType`: `wisdom_entry` | `qa_entry`
+- `entryType`:
+  - `baihua_teaching`
+  - `qa_retrieval`
+  - `exposition`
+  - `aphorism`
+  - `event_discourse`
+- `sourceFamily` nếu có:
+  - `btpp_video`
+  - `btpp_radio`
+  - `wenda`
+  - `mail_qa`
+  - `zongshu`
+  - `guide_manual`
+
+Search query contract nên cho filter hẹp thêm:
+
+- `type=<docType>`
+- `entryType=<entryType>`
+- `sourceFamily=<sourceFamily>`
+
+Quy tắc:
+
+- `type` lọc ở tầng index document (`post`, `wisdom_entry`, `qa_entry`, ...)
+- `entryType` và `sourceFamily` chỉ áp dụng cho Wisdom-QA search documents
+- FE public `/tim-kiem` và hub `/bach-thoai` không được tự suy luận loại entry từ title string
+- `event_discourse` là subtype nội bộ cho retrieval/index; public UI phase hiện tại hiển thị dưới nhóm `Khai thị`, không mở tab public riêng
 
 ## Response & error handling (Phản hồi & xử lý lỗi)
 

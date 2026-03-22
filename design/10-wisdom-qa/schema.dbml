@@ -17,6 +17,18 @@ Enum wisdom_source_type {
   program_video
 }
 
+Enum wisdom_source_family {
+  btpp_video
+  btpp_radio
+  zongshu
+  guide_manual
+}
+
+Enum qa_source_family {
+  wenda
+  mail_qa
+}
+
 Enum baihua_book_kind {
   baihua_book
   baihua_video_discourse
@@ -50,12 +62,18 @@ Enum offline_bundle_type {
   night_reading_pack
 }
 
+Enum offline_entry_type {
+  wisdom
+  qa
+}
+
 Table wisdom_entries {
   id uuid [pk]
   public_id varchar(32) [not null, unique]
   source_url varchar(512) [not null]
   source_site_label varchar(160)
   source_type wisdom_source_type [not null]
+  source_family wisdom_source_family [not null, note: "Nhóm nguồn canonical: btpp_video | btpp_radio | zongshu | guide_manual"]
   source_provenance source_provenance_type [not null, default: 'official_origin']
   source_code varchar(64) [note: "Mã bài hoặc timestamp (mốc thời gian), ví dụ shuohua20140808 08:56"]
   source_language varchar(16) [not null, default: 'zh']
@@ -138,6 +156,7 @@ Table qa_entries {
   source_url varchar(512) [not null]
   source_site_label varchar(160)
   qa_type qa_type [not null]
+  source_family qa_source_family [not null, note: "Nhóm nguồn canonical: wenda | mail_qa"]
   source_provenance source_provenance_type [not null, default: 'official_origin']
   source_code varchar(64) [note: "Mã bài hoặc timestamp (mốc thời gian), ví dụ shuohua20140808 08:56"]
   question_original text [not null]
@@ -205,7 +224,7 @@ Table offline_bundles {
 Table offline_bundle_items {
   id uuid [pk]
   offline_bundle_id uuid [not null, ref: > offline_bundles.id]
-  entry_type varchar(16) [not null, note: "wisdom hoặc qa"]
+  entry_type offline_entry_type [not null]
   entry_public_id varchar(32) [not null]
   local_asset_key varchar(160)
 

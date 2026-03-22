@@ -145,7 +145,7 @@ src/app/
 │   ├── page.tsx        # Landing / Homepage
 │   ├── bai-viet/       # Posts
 │   ├── kinh-sach/      # Sutras
-│   ├── bai-hoa/        # Wisdom (Bạch thoại)
+│   ├── bach-thoai/     # Wisdom (Bạch thoại Phật pháp)
 │   ├── tim-kiem/       # Search
 │   └── huong-dan/      # Beginner guides
 ├── (auth)/             # Auth screens
@@ -345,7 +345,7 @@ Nếu cần shared UI primitives giữa web và admin:
 
 - Mọi public page phải server-rendered cho SEO
 - `<html lang="vi">` trên toàn bộ app
-- URL slugs tiếng Việt: `/bai-viet`, `/niem-kinh`, `/phat-nguyen`, `/bai-hoa`
+- URL slugs tiếng Việt: `/bai-viet`, `/niem-kinh`, `/phat-nguyen`, `/bach-thoai`
 - `generateMetadata()` per page: title, description, og:image, canonical URL
 
 ### Meta tags (skill: `meta-tags-optimizer`)

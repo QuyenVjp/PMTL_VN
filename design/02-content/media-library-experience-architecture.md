@@ -102,7 +102,7 @@ Nhưng vẫn thiếu:
 ├─ collection grid
 └─ related deep links
    ├─ /su-kien/[slug]
-   ├─ /bai-hoa/[slug]
+   ├─ /bach-thoai/[slug]
    └─ /tai-lieu
 ```
 
@@ -170,4 +170,3 @@ Thay vì render media rời, public FE nên đọc theo `media collections`.
 - event recap albums nên xuất hiện ở library, nhưng owner vẫn là `Calendar`
 - video bài giảng doctrinal có thể teaser ở library, nhưng detail canonical vẫn là `Wisdom-QA`
 - `Content` library là cửa vào, không phải owner của mọi transcript/provenance sâu
-

@@ -7,6 +7,7 @@
 - `baihuaBookEntries`
 - `baihuaAudioTracks`
 - `qaEntries`
+- `authorityProfiles`
 - `offlineBundles`
 - `audioTalkEntries`
 - `videoTalkEntries`
@@ -59,6 +60,7 @@
   - chapter-level original text + translated text
 - QA entry nên có:
   - vấn đề chính
+  - source family: `wenda` | `mail_qa`
   - từ khóa alias
   - đoạn trả lời index được
   - link bài gốc
@@ -66,6 +68,15 @@
   - question/answer original nếu source có
   - bản dịch Việt song song nếu đã duyệt
   - practice rule extraction nếu đây là bài có rule thực hành cụ thể
+- `qaEntries` và `wisdomEntries` không được publish lại như `posts` để làm canonical public record
+  - `posts` chỉ được dùng làm editorial layer, bài dẫn nhập, bài giải thích, hoặc bài tổng hợp có link ngược về canonical source-backed entry
+  - nếu một nội dung có `sourceCode/timestamp`, `question/answer`, hoặc transcript nguồn rõ thì owner chuẩn phải là `qaEntries` hoặc `wisdomEntries`, không phải `posts`
+- `authorityProfiles` là profile authority/source context, không phải `post`, không phải `wisdomEntry`, và chưa là public route canon riêng nếu `PAGE_INVENTORY` chưa mở route
+  - search public không được tự expose `authorityProfiles` như result card nếu chưa có route canon riêng
+  - event page hoặc wisdom entry chỉ được reference `authorityProfile`, không được copy/merge mọi profile claim vào body text
+- `bài pháp hội` hoặc `event discourse` vẫn là `wisdomEntries`
+  - `Calendar` có thể deep-link hoặc giữ `relatedWisdomPublicIds`
+  - `Calendar` không được trở thành owner của transcript/discourse text
 - publish/search/offline-bundle refresh signal quan trọng nên đi qua `outbox_events`
 - ingest payload, publish payload, search payload, bundle-manifest payload và env/runtime config phải có schema runtime rõ
 

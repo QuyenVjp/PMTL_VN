@@ -15,7 +15,7 @@ PMTL_VN Content Hub
 ├─ Cluster 2: Niệm Kinh              [Pillar: /niem-kinh]
 ├─ Cluster 3: Phát Nguyện            [Pillar: /huong-dan/phat-nguyen]
 ├─ Cluster 4: Phóng Sanh             [Pillar: /huong-dan/phong-sanh]
-├─ Cluster 5: Bạch Thoại Phật Pháp  [Pillar: /bai-hoa]
+├─ Cluster 5: Bạch Thoại Phật Pháp  [Pillar: /bach-thoai]
 ├─ Cluster 6: Đại Sám Hối           [Pillar: /huong-dan/dai-sam-hoi]
 └─ Cross-cluster: Tra Cứu / Hỏi Đáp [/tim-kiem + Wisdom-QA]
 ```
@@ -124,25 +124,26 @@ PMTL_VN Content Hub
 
 ## 6. Cluster 5: Bạch Thoại Phật Pháp
 
-**Pillar**: `/bai-hoa`
+**Pillar**: `/bach-thoai`
 **Keyword chính**: `bạch thoại phật pháp`
 
 ### Spoke pages (theo Quyển)
 
 | Trang | Route | Keyword |
 |---|---|---|
-| Tổng quan BHFF | `/bai-hoa` | `bạch thoại phật pháp là gì` |
-| Quyển 1 | `/bai-hoa/quyen-1` | `bạch thoại phật pháp quyển 1` |
-| Quyển 2 | `/bai-hoa/quyen-2` | `bạch thoại phật pháp quyển 2` |
+| Tổng quan BTPP | `/bach-thoai` | `bạch thoại phật pháp là gì` |
+| Quyển 1 | `/bach-thoai/sach-noi/bach-thoai-quyen-1` | `bạch thoại phật pháp quyển 1` |
+| Quyển 2 | `/bach-thoai/sach-noi/bach-thoai-quyen-2` | `bạch thoại phật pháp quyển 2` |
 | ... | ... | ... |
-| Hỏi đáp (Wenda) | `/bai-hoa/hoi-dap` | `hỏi đáp pháp môn tâm linh` |
+| Hỏi đáp (Wenda) | `/bach-thoai` | `hỏi đáp pháp môn tâm linh` |
 
-> **URL chuẩn hóa quan trọng**: Competitor dùng `/bach-thoai-phat-phap/` với URL percent-encoding cho quyển/tập.
-> PMTL_VN phải dùng `/bai-hoa/quyen-1/tap-01` — ASCII hoàn toàn.
+> **URL chuẩn hóa quan trọng**: competitor có thể dùng `/bach-thoai-phat-phap/` hoặc slug dài.
+> PMTL_VN phải dùng `/bach-thoai/sach-noi/[bookSlug]` và `/bach-thoai/sach-noi/[bookSlug]/chuong/[chapterNumber]` — ASCII hoàn toàn, ngắn, dễ hiểu với người Việt.
+> `Hỏi đáp` là tab/filter trong hub `/bach-thoai`, không phải route public riêng ở canon hiện tại.
 
 **Liên kết ngang**:
-- BHFF → Wisdom-QA search (tìm theo chủ đề)
-- BHFF → Offline bundles (tải về đọc offline)
+- BTPP → Wisdom-QA search (tìm theo chủ đề)
+- BTPP → Offline bundles (tải về đọc offline)
 
 ---
 
@@ -179,8 +180,10 @@ Competitor có **30 chủ đề tra cứu** cấp 1. PMTL_VN nên có taxonomy t
 | Kinh điển | Kinh văn, Thần chú, Mật tông |
 
 Mỗi chủ đề nên là 1 trang `/tra-cuu/[topic-slug]` với:
+
+> Route này hiện là hướng Phase 2, chưa phải canon đã chốt trong `PAGE_INVENTORY`.
 - FAQPage schema
-- Filter theo loại nội dung (Q&A / Bạch thoại / Blog)
+- Filter theo loại nội dung (Hỏi đáp / Bạch thoại / Blog)
 - Liên kết sang cluster liên quan
 
 ---
@@ -200,6 +203,14 @@ Mỗi bài blog phải có:
 - 1-2 internal link sang pillar/spoke page liên quan
 - CTA cuối bài gợi ý hành động (đọc guide, bắt đầu thực hành)
 
+Không dùng blog để làm canonical owner cho:
+
+- `Wenda` / `Hỏi đáp`
+- `Bạch thoại Phật pháp`
+- `Khai thị`
+
+Các loại này thuộc `10-wisdom-qa`; blog chỉ là editorial layer dẫn nhập, giải thích, hoặc tổng hợp có link ngược về entry canonical.
+
 ---
 
 ## 10. Homepage — Junction Point
@@ -212,7 +223,7 @@ Homepage không phải cluster mà là **junction** kết nối các clusters:
 ├─ → /niem-kinh            [Cluster 2 entry]
 ├─ → /huong-dan/phat-nguyen [Cluster 3 entry]
 ├─ → /huong-dan/phong-sanh  [Cluster 4 entry]
-├─ → /bai-hoa              [Cluster 5 entry]
+├─ → /bach-thoai           [Cluster 5 entry]
 ├─ → /huong-dan/dai-sam-hoi [Cluster 6 entry]
 ├─ → /tim-kiem             [Cross-cluster search]
 └─ → /bai-viet             [Blog entry]

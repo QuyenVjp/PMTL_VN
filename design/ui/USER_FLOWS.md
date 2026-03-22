@@ -104,7 +104,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 
 ---
 
-## Flow 3: Wisdom Search (Tìm kiếm Bạch thoại)
+## Flow 3: Wisdom Search (Tìm kiếm Bạch thoại / Hỏi đáp)
 
 **Actor**: Thành viên hoặc khách
 **Trigger**: Muốn tìm giải thích về một vấn đề Phật pháp
@@ -114,9 +114,11 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 [Bất kỳ trang nào] → Search icon / /tim-kiem
 [/tim-kiem]
   ↓ Nhập từ khóa ("phóng sanh bao nhiêu biến")
-  [Results với tab filter: Bạch thoại / Q&A / Bài viết]
-  ↓ Chọn kết quả Bạch thoại phù hợp
-[/bai-hoa/[slug]]
+  [Results với tab filter: Bạch thoại / Hỏi đáp / Khai thị / Bài viết]
+  ↓ Chọn kết quả đúng loại content
+[/bach-thoai/[slug]]
+  - Loại entry hiện rõ: Bạch thoại / Hỏi đáp / Khai thị
+  - Source code/timestamp hiện rõ nếu là Q&A kiểu Wenda
   - Original text (nếu có)
   - Bản dịch tiếng Việt
   - Source attribution rõ ràng
@@ -148,13 +150,13 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 **Goal**: Chọn sách -> chọn chương -> đọc text gốc + bản dịch -> nghe nếu cần
 
 ```
-[/bai-hoa/sach-noi]
+[/bach-thoai/sach-noi]
   ↓ Chọn sách
-[/bai-hoa/sach-noi/[bookSlug]]
+[/bach-thoai/sach-noi/[bookSlug]]
   - xem danh sách chương
   - có link MP3 toàn sách nếu source có
   ↓ Chọn chương
-[/bai-hoa/sach-noi/[bookSlug]/chuong/[chapterNumber]]
+[/bach-thoai/sach-noi/[bookSlug]/chuong/[chapterNumber]]
   - đọc original text
   - đọc bản dịch Việt
   - mở audio companion nếu có
@@ -276,7 +278,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 **Goal**: Download bundle Bạch thoại → đọc offline
 
 ```
-[/bai-hoa] hoặc /ngoai-tuyen
+[/bach-thoai] hoặc /ngoai-tuyen
   ↓ Click "Tải về đọc offline"
 [/ngoai-tuyen]
   - List available bundles
@@ -286,7 +288,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   ↓ Complete → Toast: "Đã tải xong. Bạn có thể đọc khi không có mạng."
   ---
   Offline:
-  [/bai-hoa] — Hiện offline indicator
+  [/bach-thoai] — Hiện offline indicator
   - Browse downloaded entries normally
   - Entries không download: "Cần kết nối mạng"
   ---
@@ -364,7 +366,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   - xem album ảnh hoặc playlist video
   - xem caption và nguồn
   ↓ Nếu muốn đọc sâu hơn
-[/su-kien/[slug]] hoặc [/bai-hoa/[slug]]
+[/su-kien/[slug]] hoặc [/bach-thoai/[slug]]
 ```
 
 **Rules:**

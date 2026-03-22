@@ -1,0 +1,196 @@
+════════════════════════════════════════════════════════════════════════════════
+WISDOM-QA ROUTING: KEEP/MERGE/SPLIT DECISIONS (Concise Matrix)
+════════════════════════════════════════════════════════════════════════════════
+
+PUBLIC ROUTES (apps/web)
+────────────────────────────────────────────────────────────────────────────────
+
+Route                                 │ Decision │ Mismatches / Clarifications
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/bach-thoai                           │ KEEP     │ Hub for Bạch thoại + Hỏi đáp + Khai thị
+                                      │          │ [FIX] Add ?type=hoi-dap query param
+                                      │          │ [FIX] Search bar label: "Search Bạch thoại"
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/bach-thoai/[slug]                    │ KEEP     │ Entry detail (all 3 types)
+                                      │          │ [FIX] API must return { entryType }
+                                      │          │ [FIX] Render type badge in UI
+                                      │          │ [FIX] Include { offlineAvailable } flag
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/bach-thoai/sach-noi                  │ KEEP     │ Audiobook hub (separate from entry types)
+/bach-thoai/sach-noi/[bookSlug]       │ KEEP     │ Book detail
+/bach-thoai/sach-noi/[bookSlug]/...   │ KEEP     │ Chapter reader
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/tim-kiem                             │ KEEP     │ Universal search (posts + wisdom + guides)
+                                      │          │ Tab set: [Tất cả][Bài viết][Kinh][Bạch][Hỏi][Khai]
+                                      │          │ [FIX] Clarify: separate API call per type OR unified?
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/ngoi-nha-nho/tra-cuu                 │ KEEP     │ Guide group landing (NOT generic lookup route)
+/ngoi-nha-nho/tra-cuu/so-luong        │ KEEP     │ Lookup guide (e.g., quantity reference)
+/ngoi-nha-nho/tra-cuu/hoi-dap         │ KEEP     │ Lookup guide (Q&A format)
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/tra-cuu (proposed)                   │ DELETE   │ Overlaps with /ngoi-nha-nho/tra-cuu
+                                      │          │ ❌ DO NOT CREATE
+
+
+ADMIN ROUTES (apps/admin)
+────────────────────────────────────────────────────────────────────────────────
+
+Route                                 │ Decision │ Mismatches / Clarifications
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/admin/noi-dung/bach-thoai            │ KEEP     │ Single workspace, 3-tab structure:
+                                      │ + SPLIT  │ 
+                                      │          │ Tab 1: Wisdom Entries
+                                      │          │   - List/Edit Bạch thoại | Hỏi đáp | Khai thị
+                                      │          │   - Filters: entryType, publishStatus, language
+                                      │          │   - Preview: "Appears in: /bach-thoai, /tim-kiem"
+                                      │          │
+                                      │          │ Tab 2: Baihua Books (audiobook metadata)
+                                      │          │   - List/Upload chapter translations
+                                      │          │   - Trigger audio sync
+                                      │          │   - ADMIN-ONLY, not member-exposed
+                                      │          │
+                                      │          │ Tab 3: Offline Bundles
+                                      │          │   - View manifest, sync status
+                                      │          │   - Trigger refresh (admin-only)
+                                      │          │
+                                      │ [FIX] Query keys per tab:
+                                      │   ['admin-wisdom', 'list', filters]
+                                      │   ['admin-wisdom', 'detail', id]
+                                      │   ['admin-baihua-books', 'list', filters]
+                                      │   ['admin-offline-bundles', 'status']
+──────────────────────────────────────┼──────────┼────────────────────────────────────
+/admin/he-thong/tim-kiem              │ KEEP     │ Search operations monitor (NOT content editor)
+                                      │          │ [FIX] Label: "Search Index Operations"
+                                      │          │ [FIX] Show: Reindex status, freshness, queue
+                                      │          │ [FIX] Add workflow: publish entry → index signal
+
+
+CRITICAL BLOCKERS FOR SCAFFOLD
+────────────────────────────────────────────────────────────────────────────────
+
+BLOCKER 1: EntryType enum not defined
+  Status: 🔴 CRITICAL
+  Action: Define in Prisma schema or 10-wisdom-qa/contracts.md
+  Values: BAIHUA_TEACHING | QA_RETRIEVAL | EXPOSITION
+  Note: "Sách nói" is NOT an entryType; it's a mediaFormat
+
+BLOCKER 2: Search index ownership unclear
+  Status: 🔴 CRITICAL
+  Action: Update 06-search/contracts.md
+  Question: Unified API GET /api/search/query OR separate calls?
+  Impact: Affects implementation of both /tim-kiem and /bach-thoai search bars
+
+BLOCKER 3: Offline bundle logic not specified
+  Status: 🟡 HIGH
+  Action: Clarify in 10-wisdom-qa/OFFLINE_BAIHUA_DIRECTION.md
+  Question: Admin-curated vs member-selected vs auto-synced?
+  Impact: Affects /bach-thoai/[slug] UI (show download button? For all or flagged entries?)
+
+BLOCKER 4: Member+ API response shape undefined
+  Status: 🟡 HIGH
+  Action: Specify response contract for /api/wisdom/entries/[slug]?auth=true|false
+  Question: Which fields (offlineAvailable, bookmarked, savedAt) only in auth response?
+  Impact: Affects server-side rendering and client-side gating
+
+
+ROUTE NAMING CONFLICTS (Resolved by This Review)
+────────────────────────────────────────────────────────────────────────────────
+
+Conflict A: Single /bach-thoai/[slug] serves 3 doc types
+  Issue: No URL-level type distinction
+  Fix: Query param /bach-thoai?type=hoi-dap OR fetch detail type from API
+  ✅ RESOLVED in this review
+
+Conflict B: /bach-thoai search bar vs /tim-kiem global search
+  Issue: Overlapping scope, unclear which to use
+  Fix: Label clearly ("Search Bạch thoại" vs "Search all"), clarify API pattern
+  ✅ RESOLVED in this review (pending blocker 2)
+
+Conflict C: /ngoi-nha-nho/tra-cuu is guide group landing, not generic lookup
+  Issue: Potential future /tra-cuu route would duplicate
+  Fix: Never create /tra-cuu as separate route; keep nested under Little House
+  ✅ RESOLVED in this review
+
+
+ADMIN/PUBLIC CLARITY (Query Type Expectations)
+────────────────────────────────────────────────────────────────────────────────
+
+Distinction                           │ Public Surface          │ Admin Control
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Which entries visible?                │ /bach-thoai/[slug]      │ Filter by publishStatus
+                                      │ (all published types)   │ Filter by entryType
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Type filtering                        │ ?type=hoi-dap query     │ Checkbox/dropdown entryType
+                                      │ (member sees all types) │ (admin sees all types)
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Offline availability                  │ Download button         │ Checkbox offlineAvailable
+                                      │ (shown if true)         │ (controls public button)
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Search indexing                       │ Appears in /tim-kiem    │ Trigger reindex on publish
+                                      │ per type (tabs)         │ Monitor status at /admin/he-thong/tim-kiem
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Baihua translation/upload             │ Read-only text/audio    │ Drag/upload chapter at
+                                      │ on /bach-thoai/[slug]   │ /admin/noi-dung/bach-thoai Tab 2
+                                      │ (no member edit)        │ (admin/editor only)
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Bundle refresh                        │ Member downloads latest │ Trigger manifest refresh at
+                                      │ public bundle           │ /admin/noi-dung/bach-thoai Tab 3
+                                      │ (no member control)     │ (admin-only)
+
+
+INVALIDATION SIGNALS (For Cache & Search)
+────────────────────────────────────────────────────────────────────────────────
+
+Action                                │ Invalidate (Admin)      │ Invalidate (Public)
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Publish wisdom entry                  │ ['admin-wisdom', '*']   │ Search index (via outbox)
+                                      │ Invalidate list + detail│ /bach-thoai cache
+                                      │                         │ /tim-kiem cache
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Update Baihua chapter translation     │ ['admin-baihua-*']      │ /bach-thoai/sach-noi/* cache
+                                      │ ['admin-wisdom', 'detail']
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Refresh offline bundle manifest       │ ['admin-offline-bundles']│ Member bundle sync (opt-in)
+                                      │ (no public invalidation)│ 
+──────────────────────────────────────┼─────────────────────────┼──────────────────────────
+Reindex search                        │ ['admin-search', '*']   │ /tim-kiem fresh results
+                                      │ (status only, read-only)│
+
+
+FILE CHANGES NEEDED
+────────────────────────────────────────────────────────────────────────────────
+
+✅ DONE (this review):
+  design/
+    └── WISDOM_QA_ROUTING_REVIEW.md
+    └── WISDOM_QA_ROUTING_DECISIONS.txt (this file)
+
+🔴 BEFORE SCAFFOLD (blockers):
+  design/10-wisdom-qa/
+    └── contracts.md — Add EntryType enum, API response shape
+  design/10-wisdom-qa/
+    └── OFFLINE_BAIHUA_DIRECTION.md — Add bundle sync logic
+  design/06-search/
+    └── contracts.md — Add unified vs separate query pattern
+
+🟡 DURING SCAFFOLD (feature specs):
+  design/ui/
+    └── PAGE_INVENTORY.md — Update /bach-thoai section to include ?type param
+  design/ui/
+    └── ADMIN_MODULE_SPECS.md — Create for /admin/noi-dung/bach-thoai (3 tabs)
+  design/tracking/
+    └── admin-page-api-mapping.md — Update row for bach-thoai, add tim-kiem clarity
+
+
+SUMMARY: SCAFFOLD READINESS
+────────────────────────────────────────────────────────────────────────────────
+
+Route Structure:  ✅ CLEAR (no new routes needed, conflicts resolved)
+Doc Types:        🔴 BLOCKED (EntryType enum missing)
+Search Pattern:   🔴 BLOCKED (unified vs separate API unclear)
+Offline Logic:    🔴 BLOCKED (admin vs member sync undefined)
+Admin Workspace:  🟡 READY (3-tab design finalized, awaiting blockers)
+Public Pages:     🟡 READY (designs exist, awaiting search pattern clarification)
+
+Next step: Resolve 3 critical blockers, then hand off to scaffold phase.
+────────────────────────────────────────────────────────────────────────────────

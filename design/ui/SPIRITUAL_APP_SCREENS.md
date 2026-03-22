@@ -20,7 +20,7 @@
 | Practice Sheet | `/tu-tap/bai-tap` | member+ | Engagement | P0 |
 | Ngôi Nhà Nhỏ | `/tu-tap/nha-nho` | member+ | Engagement | P0 |
 | Personal Calendar | `/lich-ca-nhan` | member+ | Calendar | P0 |
-| Wisdom Reader | `/bai-hoa/[slug]` | public | Wisdom-QA | P0 |
+| Wisdom Reader | `/bach-thoai/[slug]` | public | Wisdom-QA | P0 |
 | Vow Tracker | `/phat-nguyen` | member+ | Vows-Merit | P1 |
 | Search | `/tim-kiem` | public | Search | P1 |
 | Practice Guide | `/kinh-bai-tap/[slug]` | public | Content | P1 |
@@ -508,7 +508,7 @@ Right:
 
 ---
 
-## Screen 5 — Wisdom Reader (`/bai-hoa/[slug]`)
+## Screen 5 — Wisdom Reader (`/bach-thoai/[slug]`)
 
 ### Vai trò
 Đọc bài Bạch Thoại Phật Pháp — immersive, distraction-free.

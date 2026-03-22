@@ -3,6 +3,14 @@
 ## Mục đích (Purpose)
 Xuất bản một bài viết biên tập (editorial post) để trang web công khai có thể hiển thị, bộ nhớ đệm (cache) được làm mới chính xác và dữ liệu tìm kiếm (search) được cập nhật theo cơ chế đang được kích hoạt ở phase hiện tại.
 
+`posts` không phải owner canonical cho:
+
+- `Wenda` / `Hỏi đáp`
+- `Bạch thoại Phật pháp`
+- `Khai thị`
+
+Nếu nội dung có `sourceCode/timestamp`, cấu trúc `question/answer`, hoặc là transcript/source-backed doctrinal entry, phải đi qua `10-wisdom-qa`, không publish như `posts`.
+
 ## Mô-đun sở hữu (Owner module)
 - `content` (Nội dung)
 

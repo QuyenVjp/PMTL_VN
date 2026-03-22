@@ -55,6 +55,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Danh sách bài viết (cards với title, excerpt, date, tags, author)
+- Chỉ chứa editorial posts; không làm owner canonical cho Bạch thoại / Hỏi đáp / Khai thị
 - Filter theo tag / category
 - Pagination hoặc load more
 - Search mini (link sang /tim-kiem)
@@ -73,6 +74,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 **Nội dung:**
 - Header: title, date, author, tags, reading time
 - Article body (rich text)
+- Nếu bài trích doctrinal source hoặc Q&A, phải có link ngược về entry canonical thuộc Wisdom-QA
 - Related content sidebar
 - Comment section (load lazy)
 - Report button trên từng comment (member+)
@@ -473,6 +475,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Nội dung mô tả chi tiết
 - Gallery ảnh và files đính kèm
 - Related content nếu có
+- Nếu có `bài pháp hội / khai thị liên quan`, chỉ hiện ref card/link sang canonical Wisdom-QA entry; event page không render full discourse text
 
 **Mobile note**: Timeline hiển thị dọc từng card. CTA chính phải ở trên fold. Bản đồ mở external app dễ dàng.
 
@@ -489,7 +492,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Search bar lớn (prominent)
-- Filter tabs: Tất cả / Bài viết / Kinh sách / Bạch thoại / Hỏi đáp
+- Filter tabs: Tất cả / Bài viết / Kinh sách / Bạch thoại / Hỏi đáp / Khai thị
 - Result cards với source attribution
 - No results state với suggestions
 - Recent searches (local storage)
@@ -498,21 +501,22 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.13 Wisdom Library (Bạch thoại / Hỏi đáp)
+### 1.13 Wisdom Library (Bạch thoại Phật pháp / Hỏi đáp / Khai thị / Sách nói)
 
 | Field | Value |
 |---|---|
-| Route | `/bai-hoa` |
+| Route | `/bach-thoai` |
 | Title | Bạch thoại Phật pháp |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
 
 **Nội dung:**
 - Search bar (tích hợp Wisdom-QA search)
-- Categories: Bạch thoại / Khai thị / Phật ngôn / Huyền học
+- Visible tabs: `Bạch thoại` / `Hỏi đáp` / `Khai thị` / `Sách nói`
 - Entry vào `Sách nói Bạch thoại`
 - Featured wisdom entries
 - Tags cloud
+- Subtitle giải nghĩa rõ: `Thư viện Bạch thoại, Hỏi đáp, Khai thị, Sách nói`
 
 ---
 
@@ -520,7 +524,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 | Field | Value |
 |---|---|
-| Route | `/bai-hoa/sach-noi` |
+| Route | `/bach-thoai/sach-noi` |
 | Title | Sách nói Bạch thoại Phật pháp |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
@@ -537,7 +541,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 | Field | Value |
 |---|---|
-| Route | `/bai-hoa/sach-noi/[bookSlug]` |
+| Route | `/bach-thoai/sach-noi/[bookSlug]` |
 | Title | Tên sách |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
@@ -554,7 +558,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 | Field | Value |
 |---|---|
-| Route | `/bai-hoa/sach-noi/[bookSlug]/chuong/[chapterNumber]` |
+| Route | `/bach-thoai/sach-noi/[bookSlug]/chuong/[chapterNumber]` |
 | Title | Tên chương |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
@@ -568,22 +572,40 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.14 Wisdom Entry Detail
+### 1.14 Wisdom / QA Entry Detail
 
 | Field | Value |
 |---|---|
-| Route | `/bai-hoa/[slug]` |
-| Title | Tên bài |
+| Route | `/bach-thoai/[slug]` |
+| Title | Tên bài / câu hỏi |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
 
 **Nội dung:**
+- Entry type chip: `Bạch thoại` / `Hỏi đáp` / `Khai thị`
+- subtype chip phụ nếu cần: `Phật ngôn` / `Pháp hội`
+- Source code / timestamp nếu là entry Q&A kiểu `Wenda20180624A 06:45`
 - Original text (Hán/Pali nếu có)
 - Vietnamese translation
 - Source attribution (author, URL, screenshot)
 - Related entries
 - Download for offline button (member+)
 - Audio player nếu có
+
+---
+
+### 1.14a Authority Profile Public Surface
+
+| Field | Value |
+|---|---|
+| Route | chưa mở public route canon ở phase hiện tại |
+| Title | Authority profile |
+| Auth | n/a |
+| Module owner | Wisdom-QA |
+
+**Ghi chú:**
+- `authorityProfiles` hiện là admin-first/source-attribution surface
+- public FE không được tự render result card riêng cho authority profile nếu chưa có route canon ở `PAGE_INVENTORY`
 
 ---
 
@@ -1122,7 +1144,7 @@ Similar pattern cho:
 
 ### 4.13 Wisdom-QA Management
 
-| Route | `/admin/noi-dung/bai-hoa` | Auth | `admin+` |
+| Route | `/admin/noi-dung/bach-thoai` | Auth | `admin+` |
 |---|---|---|---|
 | Module | Wisdom-QA |
 

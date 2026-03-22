@@ -45,6 +45,8 @@ Ví dụ đúng:
 | Khái niệm | Tên chuẩn trong app/docs | Thuật ngữ gốc | Ghi chú |
 |---|---|---|---|
 | 小房子 | `Ngôi Nhà Nhỏ` | `小房子` | Không dùng `Tiểu Phòng Tử` làm tên chính |
+| 要经者 | `Người cần kinh` | `要经者` | Giữ đúng nghĩa nghi thức, không dịch máy móc |
+| 自存小房子 | `Ngôi Nhà Nhỏ tự tồn` | `自存小房子` | Dùng cho ngữ cảnh để dành/tích lũy hợp lệ |
 | 心灵法门 | `Pháp môn Tâm Linh` | `心灵法门` | Dùng cho phần giới thiệu pháp môn |
 | 初学者须知 | `Hướng dẫn sơ học` | `初学者须知` | Surface cho người mới |
 | 功课 | `Bài tập hằng ngày` | `功课` | Không đổi thành `habit`/`challenge` |
@@ -52,6 +54,7 @@ Ví dụ đúng:
 | 还愿 | `Hoàn nguyện` | `还愿` | Không gộp với phát nguyện |
 | 放生 | `Phóng sanh` | `放生` | Thực hành và sổ tay thực hành |
 | 白话佛法 | `Bạch thoại Phật pháp` | `白话佛法` | Có thể thêm mô tả dễ hiểu |
+| 问答 / Wenda | `Hỏi đáp` | `问答` | Dùng cho surface Q&A; không gộp mù vào BTPP |
 | 玄学问答 | `Huyền học vấn đáp` | `玄学问答` | Không đổi thành chatbot |
 | 开示 | `Khai thị` | `开示` | Giữ sắc thái chỉ dạy |
 | 心香 | `Tâm hương` | `心香` | Dùng đúng ngữ cảnh khấn cầu |
@@ -67,13 +70,18 @@ Search nên index cả:
 Ví dụ:
 
 - `Ngôi Nhà Nhỏ`, `小房子`
+- `Người cần kinh`, `要经者`
+- `Ngôi Nhà Nhỏ tự tồn`, `自存小房子`
 - `Bạch thoại Phật pháp`, `白话佛法`
+- `Hỏi đáp`, `Wenda`, `问答`
 - `Huyền học vấn đáp`, `玄学问答`
 
 ## Naming anti-rules (Những tên không được dùng)
 
 - không gọi `Ngôi Nhà Nhỏ` là `paper card`, `ritual sheet`, `Tiểu Phòng Tử`
 - không gọi `Bạch thoại Phật pháp` là `blog`
+- không dùng acronym `BHFF` trong docs tiếng Việt; nếu cần viết tắt dùng `BTPP`
+- không dùng slug public kiểu `/bai-hoa`; route public chuẩn cho hub là `/bach-thoai`
 - không gọi `Huyền học vấn đáp` là `AI hỏi đáp`
 
 ## Notes for AI/codegen

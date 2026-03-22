@@ -66,6 +66,25 @@ Là phần cộng đồng thêm vào để giải thích, tóm lược, hoặc h
 
 Là các nội dung chứng nghiệm, nhận định, hoặc claim không phải bài gốc chuẩn hóa.
 
+## Source taxonomy / Nhóm nguồn hiển thị ra sản phẩm
+
+Ngoài source tier, PMTL_VN phải gắn thêm `source family` để FE/search/filter không lẫn loại nội dung:
+
+| Source family | Label hiển thị | Ví dụ |
+|---|---|---|
+| `btpp_video` | `BTPP video` | `白话佛法视频开示*` |
+| `btpp_radio` | `BTPP radio` | `白话佛法广播讲座*`, radio discourse cùng family |
+| `wenda` | `Hỏi đáp` | `问答`, `玄学问答`, `佛学问答` |
+| `zongshu` | `Tổng thuật / Zongshu` | transcript có mã/timestamp kiểu tổng hợp |
+| `mail_qa` | `Hỏi đáp thư tín` | thư giải đáp, editorial correspondence |
+| `guide_manual` | `Hướng dẫn / nghi thức` | PDF/manual chuẩn như Ngôi Nhà Nhỏ, phóng sanh |
+
+Quy tắc:
+
+- Không trộn `wenda` vào `btpp_video`
+- Không gắn `guide_manual` thành `BTPP`
+- `Sách nói` là presentation surface; source family vẫn phải giữ đúng loại gốc
+
 ## Required fields theo loại nguồn
 
 ### Với `official_origin` hoặc `official_mirror`
@@ -168,6 +187,7 @@ Nên tách thành:
 
 - Đừng để một `community_volunteer_site` thay thế `official_origin`.
 - Đừng gộp `bài gốc`, `bản dịch`, `annotation`, `testimony` vào cùng một field text.
+- Với `Ngôi Nhà Nhỏ` và wording nghi thức nhạy cảm, mọi câu trả lời canonical phải có `sourceReference` + `reviewStatus` + `versionNote`.
 - Với bài thực tế, ưu tiên format:
   - `nguyên văn gốc`
   - `bản dịch Việt`

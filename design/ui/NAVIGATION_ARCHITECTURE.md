@@ -44,11 +44,11 @@ PMTL_VN
 │   ├── /                          Landing page
 │   ├── /bai-viet                  Danh sách bài viết
 │   │   └── /bai-viet/[slug]       Chi tiết bài viết
-│   ├── /bai-hoa                   Hub: Bạch Thoại + Hỏi Đáp (Wisdom Library)
-│   │   ├── /bai-hoa/[slug]        Wisdom entry detail (Bạch Thoại / Hỏi Đáp / Khai Thị)
-│   │   ├── /bai-hoa/sach-noi      Audiobook library
-│   │   │   ├── /bai-hoa/sach-noi/[bookSlug]             Book detail
-│   │   │   └── /bai-hoa/sach-noi/[bookSlug]/chuong/[n]  Chapter reader
+│   ├── /bach-thoai                Hub: Bạch thoại Phật pháp / Hỏi đáp / Khai thị / Sách nói
+│   │   ├── /bach-thoai/[slug]     Wisdom entry detail (Bạch thoại / Hỏi đáp / Khai thị)
+│   │   ├── /bach-thoai/sach-noi   Audiobook library
+│   │   │   ├── /bach-thoai/sach-noi/[bookSlug]             Book detail
+│   │   │   └── /bach-thoai/sach-noi/[bookSlug]/chuong/[n]  Chapter reader
 │   ├── /su-kien                   Danh sách sự kiện
 │   │   └── /su-kien/[slug]        Chi tiết sự kiện
 │   ├── /tim-kiem                  Tìm kiếm
@@ -88,7 +88,7 @@ PMTL_VN
 
 ```
 ✅ Slug từ content: ASCII slug, no diacritics
-   e.g., "Vô thường là gì?" → /bai-hoa/vo-thuong-la-gi
+   e.g., "Vô thường là gì?" → /bach-thoai/vo-thuong-la-gi
 
 ✅ Route segments: lowercase, hyphen-separated, no diacritics
    e.g., /phat-nguyen, /tu-tap/bai-tap, /lich-ca-nhan
@@ -103,7 +103,7 @@ PMTL_VN
 ```
 Content (public, SEO-important): SLUG
   /bai-viet/[slug]
-  /bai-hoa/[slug]
+  /bach-thoai/[slug]
   /su-kien/[slug]
 
 Member data (private, no SEO): CUID or UUID
@@ -146,7 +146,7 @@ Tab 2: Tu tập
 
 Tab 3: Pháp bảo
   icon: BookOpen (Lucide)
-  route: /bai-hoa
+  route: /bach-thoai
   badge: none
 
 Tab 4: Lịch
@@ -202,8 +202,8 @@ Sidebar sections — collapsed header + nav items:
     □  Lịch cá nhân     → /lich-ca-nhan
 
   PHÁP BẢO
-    ▣  Bạch Thoại       → /bai-hoa
-    ?  Hỏi Đáp          → /bai-hoa (filter tab)
+    ▣  Bạch Thoại       → /bach-thoai
+    ?  Hỏi Đáp          → /bach-thoai (filter tab)
     ♦  Phóng Sanh       → /phong-sanh (member journal) / /huong-dan/phong-sanh (public guide)
 
   CỘNG ĐỒNG
@@ -288,7 +288,7 @@ Scenario: guest cố mở /dashboard, /tu-tap/bai-tap
 ```
 Location: /tim-kiem (dedicated page)
 Shortcut: Cmd/Ctrl+K → opens search modal trên desktop
-Mobile: tap search icon trong bottom nav của /bai-hoa
+Mobile: tap search icon trong bottom nav của /bach-thoai
 
 Scope: searches across
   1. Bạch Thoại (title + content excerpt)
@@ -319,7 +319,7 @@ Results grouped by type nếu "Tất cả" tab:
   HỎI ĐÁP (3 kết quả)
   [card 1] [card 2] [card 3]
 
-Tabs filter to single type: [Tất cả] [Bài viết] [Bạch Thoại] [Hỏi Đáp]
+Tabs filter to single type: [Tất cả] [Bài viết] [Bạch Thoại] [Hỏi Đáp] [Khai Thị]
 ```
 
 ---
@@ -331,8 +331,8 @@ Tabs filter to single type: [Tất cả] [Bài viết] [Bạch Thoại] [Hỏi �
 Mọi content page có URL đầy đủ để share:
 
 ```
-Bạch Thoại / Hỏi Đáp: /bai-hoa/[slug]
-Audiobook chapter:     /bai-hoa/sach-noi/[bookSlug]/chuong/[n]
+Bạch Thoại / Hỏi Đáp: /bach-thoai/[slug]
+Audiobook chapter:     /bach-thoai/sach-noi/[bookSlug]/chuong/[n]
 Bài viết:              /bai-viet/[slug]
 Sự kiện:               /su-kien/[slug]
 ```

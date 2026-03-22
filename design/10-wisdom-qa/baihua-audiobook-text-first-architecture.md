@@ -117,9 +117,9 @@ Nên thêm 3 bảng:
 
 ## 6. Public routes
 
-- `/bai-hoa/sach-noi`
-- `/bai-hoa/sach-noi/[bookSlug]`
-- `/bai-hoa/sach-noi/[bookSlug]/chuong/[chapterNumber]`
+- `/bach-thoai/sach-noi`
+- `/bach-thoai/sach-noi/[bookSlug]`
+- `/bach-thoai/sach-noi/[bookSlug]/chuong/[chapterNumber]`
 
 ---
 

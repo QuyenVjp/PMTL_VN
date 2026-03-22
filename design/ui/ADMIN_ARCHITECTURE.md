@@ -149,6 +149,7 @@ src/routes/
 │   │   ├── ngoi-nha-nho/
 │   │   ├── phong-sanh/
 │   │   ├── thu-vien-phap-mon/
+│   │   ├── bach-thoai/
 │   │   ├── kinh-sach/
 │   │   ├── niem-kinh/
 │   │   └── media/

@@ -39,6 +39,8 @@
 
 - event ownership nằm ở calendar
 - `organizational events` vẫn là event records thuộc calendar; agenda/speakers/ctas là child records, không phải owner mới
+- nếu event có bài pháp hội / khai thị / wisdom content liên quan, `calendar` chỉ giữ relation refs như `relatedWisdomPublicIds` hoặc `sourceRefs`
+- transcript/pháp hội discourse text vẫn thuộc `wisdom-qa`, không được copy full text vào event record
 - content chỉ tham chiếu event qua relation như `relatedEvent`
 - lunar override chỉ sửa cách lịch được diễn giải/hiển thị, không chuyển ownership sang module khác
 - personal practice calendar là `derived read model (mô hình dữ liệu đọc)`, không phải canonical owner của event/lunar data
@@ -76,5 +78,12 @@
   - `recitationRules` là rule composition cho calendar read-model; `chantItems` và source-backed ritual text vẫn thuộc content/wisdom owners
 - user preference/vow context phải được inject như read inputs đã sanitize từ module owner tương ứng; calendar không trở thành owner của user-state chỉ vì nó compose read-model
 - Organizational event timeline phải trả dữ liệu có cấu trúc để FE render timeline/card view, không ép parse rich text.
+- Nếu event detail muốn hiện phần `Bài liên quan / Khai thị liên quan`, response chỉ nên trả lightweight refs:
+  - `publicId`
+  - `entryType`
+  - `title`
+  - `excerpt`
+  - `sourceUrl?`
+  rồi để FE mở canonical wisdom detail khi cần.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
 - Hành động reschedule/cancel phải giữ audit + reason rõ để public FE và notification consumer có context đúng.

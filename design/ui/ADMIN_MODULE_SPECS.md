@@ -250,6 +250,52 @@ Chapter detail page:
 
 ---
 
+## 8a. Bạch thoại / Hỏi đáp (`/noi-dung/bach-thoai`)
+
+**Role**: `editor+`
+**API deps**: `/api/admin/wisdom/entries*`, `/api/admin/wisdom/baihua/*`, `/api/admin/wisdom/offline-bundles*`, `/api/admin/wisdom/import-jobs`
+
+Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [Offline bundles] [Import jobs]
+
+**Tab 1 — Entries**:
+- DataTable: Tiêu đề, Entry type, Source family, Review status, Published at
+- Filters: Entry type (`BTPP` / `Khai thị` / `Phật ngôn` / `Pháp hội`), Source family, Review status
+- Row actions: View, Edit translation, Publish, Unpublish
+
+**Tab 2 — Hỏi đáp**:
+- DataTable: Câu hỏi, QA type, Source family (`Wenda` / `Mail Q&A`), Source code, Review status
+- Filters: QA type, Source family, Topic tags, Review status
+- Detail drawer/page: question original, answer original, bản dịch, practice-rule extraction, source screenshot
+
+**Tab 3 — Authority profiles**:
+- DataTable: Tên hiển thị, Provenance, Review status, Last updated
+- Fields: official fact summary, translated profile summary, doctrinal claims
+- Rule: không trộn fact / translated profile / doctrinal claims vào một text block duy nhất
+- Rule: tab này chưa imply public profile page nếu public route canon chưa mở
+
+**Tab 4 — Bạch thoại audiobook**:
+- DataTable: Book title, Chapter count, Translation status, Last updated
+- Filter: Translation status (Untranslated / In progress / Reviewed / Published)
+- Row actions: View chapters, Import source, Edit translation
+
+**Tab 5 — Offline bundles**:
+- DataTable: Bundle type, Scope (curated / member-derived), Version, Freshness, Last rebuild
+- Actions: Rebuild bundle, Inspect manifest, View stale items
+- Rule: offline bundle là projection; không chỉnh text canonical ở tab này
+
+**Tab 6 — Import jobs**:
+- Job list: source import, translation import, rebuild trigger
+- Columns: job type, source family, status, created by, created at
+- Actions: Retry, Open logs, Open affected entry/book
+
+**Rules**:
+- `posts` không được sửa từ workspace này
+- `Wenda/Hỏi đáp` không được nhập như `BTPP`
+- `bài pháp hội` vẫn là Wisdom-QA entry; event workspace chỉ được reference sang entry này
+- mọi record phải hiện rõ `entryType` + `sourceFamily`; admin không được đoán từ title
+
+---
+
 ## 9. Niệm kinh (`/noi-dung/niem-kinh`)
 
 **Role**: `editor+`
@@ -469,6 +515,7 @@ Fields: Tên*, Date/Time*, Location*, Description (rich text), Type, Cover image
 Actions: [Lưu] [Xuất bản] [Reschedule] [Cancel]
 Cancel: requires confirm dialog + reason input
 Reschedule: requires new date + reason
+Rule: nếu event có `related wisdom entries`, tab này chỉ quản relation refs/link preview; không chỉnh canonical discourse/transcript text tại đây
 
 **Tab 2 — Agenda**:
 Ordered list of agenda items (drag-to-reorder)
@@ -479,6 +526,7 @@ Save order: `POST /admin/calendar/events/:id/agenda-items/reorder`
 **Tab 3 — Speakers**:
 List of speakers with photo, name, title, bio
 Add/Edit/Remove speakers
+Không dùng field `speaker` string làm canonical source khi đã có structured roster
 
 **Tab 4 — CTAs**:
 Up to 5 call-to-action buttons

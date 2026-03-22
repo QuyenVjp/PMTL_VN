@@ -27,7 +27,7 @@ Phân tích `design/deep-research-report.md` xác nhận phapmontamlinh.vn:
 | Điểm yếu đối thủ | PMTL_VN làm tốt hơn |
 |---|---|
 | 2 hệ menu riêng biệt (hub vs blog) gây lỗi navigation | 1 hệ điều hướng thống nhất, nhất quán |
-| URL percent-encoding tiếng Việt trong BHFF (lỗi SEO) | URL ASCII chuẩn hóa hoàn toàn |
+| URL percent-encoding tiếng Việt trong BTPP (lỗi SEO) | URL ASCII chuẩn hóa hoàn toàn |
 | Không có breadcrumb rõ ràng | BreadcrumbList Schema.org trên mọi trang |
 | Không xác định được schema markup | HowTo / FAQ / Article / Breadcrumb đầy đủ |
 | Phụ thuộc Google Drive cho tài liệu | CDN nội bộ, versioning riêng |
@@ -56,7 +56,7 @@ Phân tích `design/deep-research-report.md` xác nhận phapmontamlinh.vn:
 /huong-dan/[slug]               → Beginner Guides
 /kinh-sach/[slug]               → Sutras
 /niem-kinh/[slug]               → Chant Items
-/bai-hoa/[slug]                 → Wisdom-QA
+/bach-thoai/[slug]              → Wisdom-QA
 /tim-kiem                       → Search
 /lich                           → Calendar
 /so-luu-niem                    → Guestbook
@@ -157,7 +157,7 @@ Sitemap phân cấp (sitemap index):
 - `sitemap-posts.xml` — bài viết
 - `sitemap-guides.xml` — hướng dẫn và Ngôi Nhà Nhỏ guides
 - `sitemap-sutras.xml` — kinh sách
-- `sitemap-wisdom.xml` — Bạch thoại / Hỏi đáp
+- `sitemap-wisdom.xml` — Bạch thoại Phật pháp / Hỏi đáp / Khai thị
 - `sitemap-static.xml` — trang tĩnh (liên hệ, sổ lưu niệm, v.v.)
 
 Mỗi entry phải có:

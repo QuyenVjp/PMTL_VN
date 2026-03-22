@@ -4,7 +4,7 @@
 
 Website phapmontamlinh.vn là một cổng nội dung tiếng Việt (kèm nhiều đoạn song ngữ Việt–Hoa) tập trung vào việc giới thiệu, hướng dẫn tu học và tra cứu theo chủ đề của “Pháp Môn Tâm Linh (心灵法门)”, nổi bật với cấu trúc “Năm Đại Pháp Bảo” (Niệm Kinh, Phát nguyện, Phóng sinh, Đọc Bạch Thoại Phật Pháp, Đại Sám Hối). citeturn42search3turn26view4
 
-Về nền tảng, website thể hiện dấu hiệu rất rõ của WordPress (thư mục `/wp-content/uploads/` trong URL ảnh). citeturn15view0turn15view1turn15view2 Kiến trúc thông tin hiện tại chia thành các “hub” hướng dẫn (Kinh Bài Tập, Ngôi Nhà Nhỏ), khối “Tra Cứu” gồm 30 trang chủ đề mức 1 (ví dụ: Ăn chay, Bệnh tật, Giấc mơ…), một khu riêng cho BHFF (Bạch Thoại Phật Pháp) với phân nhánh “Đọc/Nghe”, cùng hệ thống blog/archives theo tác giả và chuyên mục. citeturn34view0turn51view1turn22view0turn47view0
+Về nền tảng, website thể hiện dấu hiệu rất rõ của WordPress (thư mục `/wp-content/uploads/` trong URL ảnh). citeturn15view0turn15view1turn15view2 Kiến trúc thông tin hiện tại chia thành các “hub” hướng dẫn (Kinh Bài Tập, Ngôi Nhà Nhỏ), khối “Tra Cứu” gồm 30 trang chủ đề mức 1 (ví dụ: Ăn chay, Bệnh tật, Giấc mơ…), một khu riêng cho BTPP (Bạch Thoại Phật Pháp) với phân nhánh “Đọc/Nghe”, cùng hệ thống blog/archives theo tác giả và chuyên mục. citeturn34view0turn51view1turn22view0turn47view0
 
 Điểm mạnh chính là “độ phủ nội dung” và trải nghiệm điều hướng nội bộ dày đặc (menu đa tầng lặp lại trên nhiều trang) giúp người dùng đi từ hướng dẫn tổng quan sang tra cứu chủ đề nhanh. citeturn34view0turn36view0turn37view0 Điểm yếu chính (để rút kinh nghiệm khi làm site mới) là sự phân tán IA (có ít nhất hai “hệ menu” khác nhau giữa cụm trang hướng dẫn/tra cứu và cụm blog), một số URL chứa ký tự tiếng Việt dạng percent-encoding (khó đọc/khó chuẩn hóa SEO), và nhiều thông tin kỹ thuật SEO (meta description/canonical/schema/robots/sitemap) không thể xác minh ổn định trong phiên phân tích này. citeturn31view0turn39view0turn23search3turn33view0
 
@@ -12,17 +12,17 @@ Bộ khuyến nghị cho website “Pháp Môn Tâm Linh Việt Nam” nên tái
 
 ## Phạm vi, phương pháp thu thập và giới hạn
 
-Phạm vi phân tích dựa trên các URL công khai có thể truy cập thông qua: (a) điều hướng nội bộ từ các trang hub (Tra Cứu, Kinh Bài Tập, Ngôi Nhà Nhỏ, BHFF), (b) các trang archive WordPress (tác giả/chuyên mục), và (c) kết quả lập chỉ mục công khai (snippet) để đối chiếu sự tồn tại của một số URL và nội dung chính. citeturn34view0turn22view0turn47view0turn50search0
+Phạm vi phân tích dựa trên các URL công khai có thể truy cập thông qua: (a) điều hướng nội bộ từ các trang hub (Tra Cứu, Kinh Bài Tập, Ngôi Nhà Nhỏ, BTPP), (b) các trang archive WordPress (tác giả/chuyên mục), và (c) kết quả lập chỉ mục công khai (snippet) để đối chiếu sự tồn tại của một số URL và nội dung chính. citeturn34view0turn22view0turn47view0turn50search0
 
 Giới hạn quan trọng: trong quá trình truy cập một số URL, hệ thống thu thập gặp lỗi liên quan kiểm tra robots.txt/timeout, dẫn tới không thể đảm bảo thu thập “toàn bộ URL công khai” theo nghĩa crawl 100% tất cả trang con (đặc biệt là các nhánh có thể chỉ được liên kết sâu, hoặc không nằm trong điều hướng). Ví dụ: một số lần mở URL báo lỗi “Error checking robots.txt…” hoặc timeout. citeturn33view0turn38view0turn45view0turn45view1 Vì vậy, mọi thông tin không xác định được một cách chắc chắn sẽ được ghi “không xác định” đúng theo yêu cầu.
 
 ## Cấu trúc menu, sitemap hiện tại và liên kết nội bộ
 
-Cụm trang hướng dẫn/tra cứu (khác với cụm Blog) dùng một menu đa tầng kiểu “Close/Open” và lặp lại trên hầu hết trang trong cụm này, gồm các khối chính: Kinh Bài Tập, Ngôi Nhà Nhỏ, Tra Cứu (Danh mục tra cứu 30 mục), và BHFF (Home/Đọc/Nghe). citeturn34view0turn51view1turn29view0 Trong đó, trang `Tra Cứu` đóng vai trò hub điều hướng, hiển thị đầy đủ cây danh mục và liên kết nhanh sang các nhánh hướng dẫn khác. citeturn34view0
+Cụm trang hướng dẫn/tra cứu (khác với cụm Blog) dùng một menu đa tầng kiểu “Close/Open” và lặp lại trên hầu hết trang trong cụm này, gồm các khối chính: Kinh Bài Tập, Ngôi Nhà Nhỏ, Tra Cứu (Danh mục tra cứu 30 mục), và BTPP (Home/Đọc/Nghe). citeturn34view0turn51view1turn29view0 Trong đó, trang `Tra Cứu` đóng vai trò hub điều hướng, hiển thị đầy đủ cây danh mục và liên kết nhanh sang các nhánh hướng dẫn khác. citeturn34view0
 
 “Danh mục tra cứu” hiện tại là một danh sách 30 trang chủ đề cấp 1 (mỗi chủ đề là một URL riêng), ví dụ: `/an-chay/`, `/benh-tat/`, `/giac-mo/`, `/hoc-tap/`, `/phong-thuy/`, `/thang-van-khuyen-dao/`… Các chủ đề này được liệt kê rõ ràng trong menu và trong hub danh mục. citeturn34view0turn51view1
 
-Về breadcrumb: trên các trang thuộc cụm hướng dẫn/tra cứu, không thấy breadcrumb dạng “Home > … > …” hiển thị xuyên suốt; thay vào đó có các khối điều hướng nội bộ và footer link. Riêng trong cụm BHFF, có một khối điều hướng dạng “1. Home (BHFF) / 2. Đọc / 3. Nghe” xuất hiện như breadcrumb/sidenav chuyên biệt. citeturn51view1turn26view2
+Về breadcrumb: trên các trang thuộc cụm hướng dẫn/tra cứu, không thấy breadcrumb dạng “Home > … > …” hiển thị xuyên suốt; thay vào đó có các khối điều hướng nội bộ và footer link. Riêng trong cụm BTPP, có một khối điều hướng dạng “1. Home (BTPP) / 2. Đọc / 3. Nghe” xuất hiện như breadcrumb/sidenav chuyên biệt. citeturn51view1turn26view2
 
 Liên kết nội bộ được triển khai dày đặc dưới dạng: (a) menu lặp lại trên mọi trang hub, (b) liên kết “Mục lục (Truy cập)” trong các bài hướng dẫn, và (c) “Điều hướng bài viết” kiểu trước/sau trên một số trang chủ đề (ví dụ trang “câu cá” có “Trước đó” và “Kế tiếp”). citeturn29view0turn45view4
 
@@ -68,7 +68,7 @@ Sitemap ở góc nhìn “cây thư mục” (tổng hợp từ điều hướng
 └─ Các trang khác: /gioi-thieu-phap-mon-tam-linh/ ; /tai-xuong/ ; /gioi-thieu/ ; /tai-ve/ ; /video-do-dang/
 ```
 
-Các nhánh trên được xác nhận qua điều hướng và nội dung hiển thị của từng hub (Kinh Bài Tập, Ngôi Nhà Nhỏ, Tra Cứu, BHFF) và qua phân trang tác giả. citeturn34view0turn29view0turn37view0turn51view1turn22view0
+Các nhánh trên được xác nhận qua điều hướng và nội dung hiển thị của từng hub (Kinh Bài Tập, Ngôi Nhà Nhỏ, Tra Cứu, BTPP) và qua phân trang tác giả. citeturn34view0turn29view0turn37view0turn51view1turn22view0
 
 ## Phân tích theo nhóm trang và mẫu trang
 
@@ -82,7 +82,7 @@ Nhóm hub “Ngôi Nhà Nhỏ” (`/ngoi-nha-nho/`) hoạt động như một �
 
 Nhóm hub “Tra Cứu” (`/tra-cuu/`, `/danh-muc-tra-cuu/`) là danh mục 30 chủ đề. Mỗi chủ đề là một trang cấp 1, thường có cấu trúc: H1 là tên chủ đề, bên dưới là “Mục lục tra cứu” và nội dung dạng hỏi–đáp/trích dẫn khai thị. Ví dụ trang `tết trung thu` hiển thị mục lục và một Q&A cụ thể. citeturn39view4 Ví dụ trang `câu cá` có thông điệp chính “Câu cá không phải là bộ môn thể thao”, kèm phần hỏi/đáp và điều hướng trước/sau. citeturn45view4
 
-Nhóm “BHFF” (`/bach-thoai-phat-phap/`, `/doc-bach-thoai-phat-phap/`, `/nghe-bach-thoai-phat-phap/`) có phân nhánh đọc/nghe, và trong trang “Đọc” có danh sách nhiều “quyển” (bộ 4 quyển video và bộ 12 quyển). citeturn51view1turn26view6turn38view1 Một điểm kỹ thuật đáng lưu ý: có URL BHFF chứa ký tự tiếng Việt dạng percent-encoding (ví dụ đường dẫn “quyển-2-tập-08”), nên trong site mới cần chuẩn hóa URL để đồng nhất, dễ đọc và dễ chia sẻ. citeturn23search3
+Nhóm “BTPP” (`/bach-thoai-phat-phap/`, `/doc-bach-thoai-phat-phap/`, `/nghe-bach-thoai-phat-phap/`) có phân nhánh đọc/nghe, và trong trang “Đọc” có danh sách nhiều “quyển” (bộ 4 quyển video và bộ 12 quyển). citeturn51view1turn26view6turn38view1 Một điểm kỹ thuật đáng lưu ý: có URL BTPP chứa ký tự tiếng Việt dạng percent-encoding (ví dụ đường dẫn “quyển-2-tập-08”), nên trong site mới cần chuẩn hóa URL để đồng nhất, dễ đọc và dễ chia sẻ. citeturn23search3
 
 Nhóm “Thư viện/Kinh sách” (`/kinh-sach/`, `/kinh-sach-phap-mon-tam-linh/`) có dạng catalog: mỗi mục sách có ảnh đại diện (“Image”) và liên kết “Đọc Online”/“Download Ebook” (nhiều liên kết trỏ Google Drive). citeturn26view2turn26view3 Trích đoạn mẫu (≤25 từ) thể hiện guideline biên tập: “Kinh Phật là Pháp bảo… nên phải cung kính tôn trọng…” citeturn26view3
 
@@ -94,7 +94,7 @@ Nhóm “Phát nguyện/Đại sám hối/Chủ đề thực hành” là các t
 
 Về SEO on-page: hệ thống tiêu đề trang (title hiển thị) nhất quán theo mẫu “<Tên trang> - Pháp Môn Tâm Linh (心灵法门)” trên nhiều URL, hỗ trợ nhận diện thương hiệu. citeturn39view3turn39view2turn46view0 Cấu trúc heading trong nội dung thường dùng H1 cho tiêu đề trang và H2/H3 cho mục lục/tiểu mục (ví dụ `Kinh Bài Tập` có các khối (1)(2)(3)(4) và “Mục lục”, còn `Học tập` có “Mục lục tra cứu” và các heading theo số). citeturn29view0turn46view0 Tuy nhiên, không thể xác định meta description/canonical/alt ảnh/schema markup trong phiên này ⇒ ghi “không xác định” cho các mục đó.
 
-Về cấu trúc URL: đa số URL là slug ASCII có gạch nối (tốt), nhưng vẫn tồn tại đường dẫn có ký tự tiếng Việt mã hóa (percent-encoding) trong nhánh BHFF—đây là rủi ro cho chuẩn hóa SEO và UX chia sẻ link. citeturn23search3 Ngoài ra, có dấu hiệu không đồng nhất slug ở một số trang BHFF (“bac-thoai…” thay vì “bach-thoai…”), dễ gây lỗi chuẩn hóa/redirect trong hệ thống mới. citeturn38view1
+Về cấu trúc URL: đa số URL là slug ASCII có gạch nối (tốt), nhưng vẫn tồn tại đường dẫn có ký tự tiếng Việt mã hóa (percent-encoding) trong nhánh BTPP—đây là rủi ro cho chuẩn hóa SEO và UX chia sẻ link. citeturn23search3 Ngoài ra, có dấu hiệu không đồng nhất slug ở một số trang BTPP (“bac-thoai…” thay vì “bach-thoai…”), dễ gây lỗi chuẩn hóa/redirect trong hệ thống mới. citeturn38view1
 
 Về UX/UI: do giới hạn truy cập dạng text-only, các yếu tố màu sắc/font/spacing/responsive chỉ đánh giá được ở mức “không xác định”. Điểm chắc chắn quan sát được là website dùng menu đa tầng với trạng thái “Close/Open”, nhiều khả năng hỗ trợ mobile (hamburger/accordion menu). citeturn34view0turn39view0 CTA hiện diện dưới dạng “Download” trỏ Google Drive trong các hub hướng dẫn. citeturn29view0turn26view1
 
@@ -168,7 +168,7 @@ Bảng so sánh sitemap hiện tại vs đề xuất (tóm lược cấp cao):
 |---|---|---|
 | Điều hướng | Ít nhất 2 hệ menu: cụm hub hướng dẫn/tra cứu và cụm blog (Home/Blog/Video/About/Download). citeturn31view0turn34view0 | 1 hệ menu thống nhất, phân nhóm rõ: Onboarding – Hướng dẫn – Tra cứu – Thư viện – Blog – Media – Cộng tu. |
 | Tra cứu chủ đề | 30 trang chủ đề cấp 1 (mỗi chủ đề là 1 URL). citeturn34view0turn51view1 | Giữ 30 chủ đề nhưng triển khai như taxonomy (Category/Topic) + landing page cho từng topic, có filter theo loại nguồn (wenda/zongshu/thu…). |
-| BHFF | Có nhánh Đọc/Nghe và danh sách quyển; tồn tại URL percent-encoding cho tập/quyển. citeturn51view1turn23search3 | Chuẩn hóa URL ASCII (vd: `/bhff/quyen-2/tap-08/`), triển khai breadcrumb + schema, phân trang + tìm kiếm theo quyển/tập. |
+| BTPP | Có nhánh Đọc/Nghe và danh sách quyển; tồn tại URL percent-encoding cho tập/quyển. citeturn51view1turn23search3 | Chuẩn hóa URL ASCII (vd: `/bach-thoai/quyen-2/tap-08/`), triển khai breadcrumb + schema, phân trang + tìm kiếm theo quyển/tập. |
 | Thư viện | Link out Google Drive/Jumpshare khá nhiều. citeturn29view0turn45view5turn26view2 | Thư viện nội bộ có versioning, metadata (file type/size/ngày cập nhật), mirror storage (S3/R2) để giảm phụ thuộc. |
 | Blog/Archive | Có category/tác giả phân trang tới 33 trang. citeturn22view0turn47view0 | Giữ archive nhưng thêm tag, author page chuẩn, sitemap XML, và bộ lọc nâng cao + liên kết “Related by topic”. |
 | SEO kỹ thuật | Không xác định được canonical/schema/sitemap/robots trong phiên này; có lỗi check robots ở một số URL. citeturn33view0turn45view0turn45view1 | Thiết lập rõ: robots.txt, sitemap.xml, canonical, schema (Article/Breadcrumb/FAQ), redirect map và monitoring. |
@@ -176,7 +176,7 @@ Bảng so sánh sitemap hiện tại vs đề xuất (tóm lược cấp cao):
 Template trang khuyến nghị (mẫu bắt buộc khi xây site mới):
 
 - Home: hero + entry points (5 pháp bảo, tra cứu chủ đề, thư viện, bài mới), search nổi bật.
-- Hub page (Onboarding / Kinh Bài Tập / Ngôi Nhà Nhỏ / BHFF / Thư viện): có mô tả ngắn, CTA rõ, mục lục, liên kết subpages.
+- Hub page (Onboarding / Kinh Bài Tập / Ngôi Nhà Nhỏ / BTPP / Thư viện): có mô tả ngắn, CTA rõ, mục lục, liên kết subpages.
 - Topic landing (ví dụ “Ăn chay”): mô tả, mục lục, filter theo loại nội dung, danh sách bài theo độ liên quan.
 - Article page: H1, breadcrumb, TOC tự động, khối trích dẫn/nguồn, related posts, prev/next, schema Article.
 - Author page: bio + list bài + filter theo topic.
@@ -218,6 +218,6 @@ File output đã tạo (gồm danh sách URL đã phát hiện + metadata mức 
 - CSV: [Download](sandbox:/mnt/data/phapmontamlinhvn_urls_metadata.csv)  
 - JSON: [Download](sandbox:/mnt/data/phapmontamlinhvn_urls_metadata.json)
 
-Tập dữ liệu hiện bao gồm 111 URL (các hub chính, 30 trang tra cứu, các trang hướng dẫn con, BHFF, thư viện, archives và phân trang tác giả 1..33 suy diễn). Nguồn xác thực phân trang tác giả đến “33” dựa trên hiển thị “Phân trang bài đăng … 1 … 33”. citeturn22view0
+Tập dữ liệu hiện bao gồm 111 URL (các hub chính, 30 trang tra cứu, các trang hướng dẫn con, BTPP, thư viện, archives và phân trang tác giả 1..33 suy diễn). Nguồn xác thực phân trang tác giả đến “33” dựa trên hiển thị “Phân trang bài đăng … 1 … 33”. citeturn22view0
 
 Các mục kỹ thuật sau không xác định được ổn định trong phiên này: robots.txt nội dung cụ thể, sitemap.xml/sitemap_index.xml, canonical tags, schema markup, server headers, và các chỉ số LCP/CLS/INP cho chính phapmontamlinh.vn (một số URL gặp lỗi robots/timeout). citeturn33view0turn45view0turn45view1

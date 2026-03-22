@@ -153,11 +153,35 @@ Dùng cho:
 Nếu nhập một bài `Bạch thoại Phật pháp`:
 
 - `sourceType = baihua`
+- `sourceFamily = btpp_video` hoặc `btpp_radio`
 - `titleOriginal = tên bài gốc`
 - `titleVietnamese = tên bài dịch`
 - `bodyOriginal = nguyên văn`
 - `bodyVietnamese = bản dịch`
 - `sourceProvenance = official_origin` hoặc `official_mirror`
+
+### Ví dụ mapping — `Khai thị`
+
+- `sourceType = kaishi`
+- `sourceFamily = btpp_video` hoặc `btpp_radio` tùy nguồn thực tế
+- `titleOriginal = tên khai thị gốc`
+- `titleVietnamese = tên bản dịch`
+- `bodyOriginal = nguyên văn`
+- `bodyVietnamese = bản dịch`
+- `sourceProvenance = official_origin` hoặc `official_mirror`
+
+### Ví dụ mapping — `Bài pháp hội`
+
+- `sourceType = program_video` hoặc `program_audio`
+- `sourceFamily = btpp_video` hoặc `btpp_radio` tùy nguồn thực tế
+- `titleOriginal = tên bài pháp hội gốc`
+- `titleVietnamese = tên bản dịch`
+- `bodyOriginal = transcript hoặc excerpt đã duyệt`
+- `bodyVietnamese = bản dịch`
+- `speaker = authority display name`
+- Nếu event page cùng tồn tại:
+  - `Calendar` chỉ giữ `relatedWisdomPublicIds`
+  - canonical transcript vẫn ở `wisdomEntries`
 
 ## Mapping thêm: `Bạch thoại audiobook` source
 
@@ -265,6 +289,15 @@ Dùng cho:
 
 Không được trộn 3 lớp này thành một đoạn văn duy nhất.
 
+### Route / surface rule
+
+- `authorityProfiles` chưa là public route canon riêng nếu `PAGE_INVENTORY` chưa chốt route
+- Có thể dùng cho:
+  - source attribution
+  - speaker/teacher profile card
+  - admin review workspace
+- Không tự index ra public search như card riêng khi chưa có route public hợp lệ
+
 ## Ingestion checklist (danh sách kiểm trước khi nhập dữ liệu) cho phụng sự viên
 
 Trước khi bấm lưu một bài, kiểm:
@@ -312,6 +345,38 @@ thì phải nhập theo 2 lớp:
 - `ruleSummaryVi = Sau khi phóng sanh có thể niệm 37 biến ... trong ngày hôm đó`
 - `scope = same_day_after_event`
 - `countCap = 37`
+
+## Example 1b: `Wenda20180624A 06:45`
+
+Nếu source có pattern:
+
+- `thính giả hỏi` / `Đài Trưởng trả lời`
+- source code kiểu `Wenda20180624A 06:45`
+- câu trả lời cho một tình huống cụ thể như `369`
+
+thì phải map vào:
+
+### Into `qaEntries`
+
+- `qaType = metaphysics_qa` hoặc `buddhist_qa` tùy bản chất câu hỏi
+- `sourceCode = Wenda20180624A 06:45`
+- `source family = wenda`
+- `questionOriginal = ...`
+- `answerOriginal = ...`
+- `questionVietnamese = ...`
+- `answerVietnamese = ...`
+
+### Into `practiceRuleExtraction` nếu có rule rõ
+
+- `ruleType = karmic_cycle_window`
+- `ruleSummaryVi = Kiếp nạn 369 thường rơi vào khoảng 3 tháng trước hoặc 3 tháng sau sinh nhật; cần đặc biệt cẩn thận trong nửa năm đó`
+- `timeWindow = birthday_minus_3_months_to_plus_3_months`
+
+Không map ví dụ này vào:
+
+- `posts`
+- `Bạch thoại Phật pháp`
+- `Bạch thoại audiobook`
 
 ## Example 2: bài thông báo `mùng 1 tháng 2 âm lịch`
 
