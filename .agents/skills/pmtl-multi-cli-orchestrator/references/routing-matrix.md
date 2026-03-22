@@ -40,3 +40,9 @@ py infra/tools/external_agent.py --provider copilot --prompt "<prompt>"
 py infra/tools/external_agent.py --provider gemini --prompt "<prompt>" --debug
 py infra/tools/external_agent.py --provider aider --prompt "<prompt>" --debug
 ```
+
+Gemini wrapper note:
+
+- Default behavior is a sticky per-workspace session stored in `tmp/gemini-runtime/session.json`.
+- Use `--session-mode fresh` when the task should ignore prior wrapper context.
+- Use `--session-mode resume-latest` only when you intentionally want the wrapper to attach to Gemini CLI's latest project session.

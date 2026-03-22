@@ -38,18 +38,16 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 - `pmtl-automation-smoke-suite`
 
 ### Scaffolding
-- `pmtl-scaffold-payload-collection`
 - `shadcn`
 
 ### Runbook
 - `pmtl-runbook-docker-dev-recovery`
-- `pmtl-runbook-cms-runtime-errors`
 
 ## Migration map
 
 These old repo-local skills were intentionally consolidated into the new taxonomy, but some are still preserved as compatibility or design-library entrypoints so older prompts do not break:
 
-- `pmtl-production-ready` -> `pmtl-production-baseline` + `pmtl-verify-quality-gate` + `pmtl-runbook-cms-runtime-errors`
+- `pmtl-production-ready` -> `pmtl-production-baseline` + `pmtl-verify-quality-gate`
 - `pmtl-fe-craft` -> `pmtl-fe-implementation`
 - `pmtl-uiux-specialist` -> `pmtl-ui-behavior`
 - `pmtl-creative-designer` + `pmtl-vercel-precision` + `taste-skill` + `soft-skill` + `minimalist-skill` + `redesign-skill` -> `pmtl-ui-style-system`
@@ -69,6 +67,9 @@ The following local skills are intentionally kept alive even after the taxonomy 
 - `pmtl-creative-designer`
 - `pmtl-vercel-precision`
 - `web-design-guidelines`
+- deprecated NestJS-predecessor lanes:
+  - `pmtl-runbook-cms-runtime-errors`
+  - `pmtl-scaffold-payload-collection`
 
 Reason:
 
@@ -77,6 +78,25 @@ Reason:
 - allow the new taxonomy to act as the primary routing layer without deleting trusted legacy entrypoints
 
 Compatibility skills are opt-in aliases, not the default routing target. Prefer the canonical taxonomy skill unless the user explicitly names the legacy skill or the task needs its preserved design/reference material.
+
+## Current canonical gaps and approved fallback lanes
+
+The PMTL taxonomy is still asymmetric. Frontend/UI is canonized strongly; backend/runtime/security/scaling is not yet fully covered by repo-local PMTL skills.
+
+Until repo-local canonical skills are added, use these fallback lanes on purpose:
+
+| Need | Current canonical PMTL anchor | Approved fallback class |
+|---|---|---|
+| Backend NestJS implementation | `pmtl-vn-architecture` + `pmtl-production-baseline` | `nestjs-best-practices`, API/database/transaction auditors, and repo design docs |
+| API contracts and DTO/error-envelope rigor | `pmtl-vn-architecture` | `ln-643-api-contract-auditor`, `rest-api-designer`, `api-documentation-generator` |
+| DB schema/query/transaction discipline | `pmtl-production-baseline` | `database-migration-helper`, `query-optimizer`, `ln-650/651/652-*` auditors |
+| Runtime health, observability, scaling, rollback | `pmtl-production-baseline` + PMTL runbooks | `ln-627-observability-auditor`, `infrastructure-monitor`, `docker-compose-production` |
+| Security and hardening outside auth/search | `pmtl-production-baseline` + `pmtl-verify-auth-flow` + `pmtl-verify-search-sync` | `security-best-practices`, `api-security-checker`, Trail of Bits review packs |
+
+Do not pretend these fallback classes are equal to missing PMTL-native skills. They are temporary operating lanes, not a completed taxonomy.
+
+Backlog owner for the missing PMTL-native lanes:
+- `docs/architecture/pmtl-skill-backlog.md`
 
 ## Windows-safe execution defaults
 
@@ -99,3 +119,4 @@ Compatibility skills are opt-in aliases, not the default routing target. Prefer 
 - Superpowers is the preferred generic workflow engine, not the source of PMTL repo policy.
 - Global platform skills should stay tool-oriented and generic rather than duplicating repo policy.
 - External worker routing keeps `aider` as an opt-in dry-run patch lane; the default auto-routing baseline remains Claude, Codex, Copilot, and Gemini unless the task explicitly asks for Aider-like behavior.
+- Read `docs/agent-operating-model.md` when the task changes Codex role framing, local subagent usage, or external-worker governance.

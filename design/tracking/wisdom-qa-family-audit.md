@@ -10,8 +10,8 @@
 | Family | Canonical owner | Canonical data class | Public surface |
 |---|---|---|---|
 | `Bạch thoại Phật pháp` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` + detail `/bach-thoai/[slug]` |
-| `Wenda / Hỏi đáp` | `10-wisdom-qa` | `qaEntries` | `/bach-thoai` tab/filter `Hỏi đáp` + detail `/bach-thoai/[slug]` |
-| `Khai thị` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` tab/filter `Khai thị` + detail `/bach-thoai/[slug]` |
+| `Wenda / Hỏi đáp` | `10-wisdom-qa` | `qaEntries` | `/hoi-dap` + detail `/hoi-dap/[slug]` |
+| `Khai thị` | `10-wisdom-qa` | `wisdomEntries` | search filter / related cards / detail labels; chưa mở public top-level route canon |
 | `Phật ngôn / aphorism` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail |
 | `Pháp hội / event discourse` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail; có thể deep-link từ event surface |
 | `Authority profile` | `10-wisdom-qa` | `authorityProfiles` | chưa mở public route canon riêng |
@@ -24,6 +24,7 @@
 ## 2. Fixed in this pass
 
 - route canon đã bỏ `/bai-hoa`, dùng `/bach-thoai`
+- official alignment pass từ `xlch.org` đã chốt `Hỏi đáp` là family riêng, không còn treo như tab của `/bach-thoai`
 - `BHFF` đã bỏ khỏi docs tiếng Việt, dùng `BTPP`
 - `qaEntries` vs `wisdomEntries` đã được anti-duplication hóa: không publish lại như `posts`
 - `sourceFamily` đã được chốt trong schema/search/contracts:
@@ -61,7 +62,15 @@
 - Search docs đã có `entryType` + `sourceFamily`, nhưng API route inventory chưa mô tả query params này đủ rõ
 - Cần chắc `apps/web` scoped search và global search dùng cùng filter vocabulary
 
-### 3.5 Offline control model
+### 3.5 Official XLCH alignment outside Wisdom-QA
+
+- Source official đang nhấn rất mạnh `初学入门` với 6 trụ cột
+- PMTL hiện còn gap chưa owner đủ sâu ở:
+  - `佛台供设`
+  - `各类升文`
+- Cần quyết định hai family này nằm ở module public nào trước khi scaffold tiếp
+
+### 3.6 Offline control model
 
 - Hiện đã rõ projection/bundle direction, nhưng còn cần chốt rõ hơn:
   - curated bundle
@@ -73,7 +82,8 @@
 
 ## 4. Anti-drift rules
 
-- Không route-invent riêng `/bach-thoai/hoi-dap` nếu canon chưa đổi
+- Không route `qaEntries` qua `/bach-thoai/[slug]`
+- Không route-invent riêng `/bach-thoai/hoi-dap`; family này có route canon riêng là `/hoi-dap`
 - Không route-invent `/bach-thoai/quyen-*`; audiobook đi qua `/bach-thoai/sach-noi/[bookSlug]`
 - `posts` không được làm owner canonical cho doctrine/Q&A
 - Search results phải trả đủ `docType` + `entryType` + `sourceFamily`

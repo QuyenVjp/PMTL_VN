@@ -47,6 +47,11 @@
 - `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output read-model của calendar, không phải canonical owner của bài gốc hoặc bản dịch gốc
 - event publish/update hoặc calendar refresh signal quan trọng nên đi qua `outbox_events` trước khi xuống notification/rebuild downstream
 - request payload, refresh job payload và advisory compose input nên có schema runtime rõ
+- `POST /api/admin/calendar/personal-practice/refresh` là deterministic rebuild lane, không phải patch tay read-model
+  - request phải chỉ rõ `scope` như `user`, `date-window`, hoặc `full-member-window`
+  - concurrent refresh cùng target phải idempotent theo refresh key hoặc coalesce về một running job/business outcome
+  - response nên là `accepted` nếu chỉ trigger downstream rebuild, hoặc `single` nếu refresh sync nhỏ và đã hoàn tất thật
+  - recovery path chuẩn là replay/recompute cùng input window; không mutate thủ công từng advisory row
 - event offline phải có `location`; event online phải có `externalLink` hoặc `embedUrl` phù hợp
 - hybrid event phải có cả `location` và `externalLink`/`embedUrl`
 - event `type = organizational` phải có ít nhất một agenda item trước khi publish

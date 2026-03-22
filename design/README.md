@@ -196,6 +196,7 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [baihua-audiobook-text-first-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/baihua-audiobook-text-first-architecture.md) | Kiến trúc text-first cho nguồn audiobook Bạch thoại theo sách / chương / audio companion |
 | [btpp-library-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/btpp-library-canon.md) | Canon route/IA/glossary/source taxonomy/FAQ/warnings cho Bạch thoại Phật pháp |
 | [wisdom-qa-family-audit.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/wisdom-qa-family-audit.md) | Audit inventory theo từng family của module Wisdom-QA, gồm gaps còn mở và anti-drift rules |
+| [xlch-official-alignment.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/xlch-official-alignment.md) | Những family và ranh giới nội dung PMTL phải preserve từ site official `xlch.org` |
 | [baihua-audiobook-ingestion-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/baihua-audiobook-ingestion-inventory.md) | Inventory các lớp dữ liệu cần ingest từ source audiobook |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
 

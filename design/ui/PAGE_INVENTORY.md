@@ -501,7 +501,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.13 Wisdom Library (Bạch thoại Phật pháp / Hỏi đáp / Khai thị / Sách nói)
+### 1.13 BTPP Library (Bạch thoại Phật pháp / Sách nói)
 
 | Field | Value |
 |---|---|
@@ -512,15 +512,34 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Search bar (tích hợp Wisdom-QA search)
-- Visible tabs: `Bạch thoại` / `Hỏi đáp` / `Khai thị` / `Sách nói`
+- Visible tabs: `Bạch thoại` / `Sách nói`
+- Related entry links sang `Hỏi đáp` nếu query/context phù hợp
 - Entry vào `Sách nói Bạch thoại`
 - Featured wisdom entries
 - Tags cloud
-- Subtitle giải nghĩa rõ: `Thư viện Bạch thoại, Hỏi đáp, Khai thị, Sách nói`
+- Subtitle giải nghĩa rõ: `Bài giảng Bạch thoại và sách nói`
 
 ---
 
-### 1.13a Baihua Audiobook Library
+### 1.13a Q&A Library (Hỏi đáp)
+
+| Field | Value |
+|---|---|
+| Route | `/hoi-dap` |
+| Title | Hỏi đáp |
+| Auth | `public` |
+| Module owner | Wisdom-QA |
+
+**Nội dung:**
+- Search bar retrieval-first
+- tabs/filter: `Tất cả` / `Wenda` / `Chủ đề phổ biến`
+- result cards ưu tiên question + answer excerpt + source code/timestamp
+- related links sang `Bạch thoại` hoặc `Khai thị` nếu có entry liên quan
+- subtitle: `Wenda, Huyền học vấn đáp, và tra cứu theo tình huống`
+
+---
+
+### 1.13b Baihua Audiobook Library
 
 | Field | Value |
 |---|---|
@@ -537,7 +556,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.13b Baihua Audiobook Book Detail
+### 1.13c Baihua Audiobook Book Detail
 
 | Field | Value |
 |---|---|
@@ -554,7 +573,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
-### 1.13c Baihua Audiobook Chapter Detail
+### 1.13d Baihua Audiobook Chapter Detail
 
 | Field | Value |
 |---|---|
@@ -576,7 +595,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 | Field | Value |
 |---|---|
-| Route | `/bach-thoai/[slug]` |
+| Route | `/bach-thoai/[slug]` hoặc `/hoi-dap/[slug]` |
 | Title | Tên bài / câu hỏi |
 | Auth | `public` |
 | Module owner | Wisdom-QA |
@@ -591,6 +610,10 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Related entries
 - Download for offline button (member+)
 - Audio player nếu có
+
+**Route rule:**
+- `Hỏi đáp / Wenda` canonical detail dùng `/hoi-dap/[slug]`
+- `Bạch thoại`, `Khai thị`, `Phật ngôn`, `Pháp hội` detail dùng `/bach-thoai/[slug]`
 
 ---
 
@@ -1205,11 +1228,11 @@ Similar pattern cho:
 
 | Section | Count |
 |---|---|
-| Public pages | 24 |
+| Public pages | 25 |
 | Auth pages | 5 |
 | Member pages | 14 |
 | Admin pages | 22 |
-| **Total** | **65 pages** |
+| **Total** | **66 pages** |
 
 ---
 

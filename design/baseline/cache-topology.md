@@ -178,6 +178,21 @@ export async function POST(req: Request) {
   - fail policy (`fail_closed` hoặc `degraded_with_log`)
 - mapping phải nằm ở module owner hoặc `platform/cache` registry, không hard-code rải rác trong controller/service
 
+### Propagation failure policy matrix
+
+| Event family | Failure case | Canonical policy |
+|---|---|---|
+| `content.post.published` / `content.post.unpublished` | Next.js revalidation fail | `degraded_with_log` chỉ khi source of truth đã commit và affected page có bounded stale window rõ; nếu route owner đánh dấu correctness phụ thuộc revalidation ngay, mutation phải `fail_closed` |
+| `content.post.published` / `content.post.unpublished` | Cloudflare purge fail nhưng Next.js revalidation pass | `degraded_with_log`; không rollback canonical write, nhưng phải log affected URLs/tags để replay purge |
+| `calendar.event.published` | public calendar/detail revalidation fail | `degraded_with_log` nếu event source of truth đã commit và stale window chấp nhận được; nếu launch-critical event publish yêu cầu immediate public correctness, owner route phải nâng thành `fail_closed` |
+| `feature.flag.updated` có ảnh hưởng public cached surface | public revalidation/purge fail | `fail_closed`; không được coi admin mutation hoàn tất nếu public gate flag vẫn có nguy cơ render state sai |
+| member/private query invalidation | browser invalidation miss | `degraded_with_log`; next successful refetch phải tự hội tụ lại từ canonical API |
+
+Rule:
+- mỗi registry entry phải ghi rõ `fail_closed` hay `degraded_with_log`
+- không để controller/service tự chọn fail policy theo cảm tính
+- replay path cho failed purge/revalidation phải tìm được từ event log hoặc dispatcher log
+
 ### Invalidation registry rule
 
 - mọi public invalidation phải đi qua một registry/manifest chung do `platform/cache` đọc được, thay vì hard-code tag/path ở từng service

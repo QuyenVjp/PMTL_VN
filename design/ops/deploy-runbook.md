@@ -16,6 +16,19 @@ Deploy runbook không thay backup/restore runbook — đọc cả hai.
 - `apps/web`, `apps/api`, `apps/admin`, Postgres, Caddy
 - Cloudflare trước Caddy (DNS + CDN + edge SSL)
 
+## Release artifact rule
+
+- production deploy phải gắn với `commit SHA` và một `artifact identity` rõ:
+  - immutable image tag theo commit SHA
+  - hoặc release bundle/version manifest immutable theo commit SHA
+- `git pull && build lại` chỉ được coi là phase-1 delivery shortcut, không phải rollback contract mạnh
+- nếu chưa pin artifact rõ, rollback production chỉ được coi là `best effort manual rollback`
+- deploy log tối thiểu phải ghi:
+  - commit SHA
+  - artifact/image tag
+  - migration revision
+  - backup artifact id hoặc timestamp
+
 ---
 
 ## Docker Compose structure
@@ -147,14 +160,17 @@ Nếu migration đã đổi schema một phần nhưng smoke gate fail:
 # 1. Stop damage
 docker compose -f docker-compose.prod.yml stop web admin
 
-# 2. Roll back to previous image
-git checkout <previous_commit>
-docker compose -f docker-compose.prod.yml build api web admin
-docker compose -f docker-compose.prod.yml up -d
+# 2. Roll back to last known good artifact/image
+./scripts/deploy-rollback.sh <last-known-good-artifact>
 
 # 3. Verify
 curl -f https://api.pmtl.vn/health/live
 ```
+
+Nếu `deploy-rollback.sh` hoặc artifact pinning chưa tồn tại:
+- không tự nhận đây là rollback contract production-grade
+- chỉ được làm `best effort manual rollback`
+- phải ghi rõ trong incident/deploy note rằng server đang chạy recovery lane yếu
 
 ### Full rollback (schema incompatible)
 
@@ -165,10 +181,8 @@ docker compose -f docker-compose.prod.yml stop api web admin
 # 2. Restore DB from backup
 ./scripts/restore-db.sh /backups/latest/pmtl_backup.sql.gz
 
-# 3. Deploy previous version
-git checkout <previous_commit>
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
+# 3. Deploy previous pinned artifact/version
+./scripts/deploy-rollback.sh <last-known-good-artifact>
 
 # 4. Verify
 ./scripts/smoke-test.sh
@@ -245,3 +259,4 @@ ls -lt /backups/ | head -5
 - Deploy runbook không thay backup/restore runbook
 - Mọi deploy phải có backup trước
 - Zero-downtime deploy không bắt buộc phase 1 — acceptable downtime < 5 phút
+- `git checkout <previous_commit>` chỉ là local recovery reasoning, không phải production rollback contract canon

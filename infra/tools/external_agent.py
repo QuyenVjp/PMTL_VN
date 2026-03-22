@@ -9,6 +9,10 @@ import sys
 from pathlib import Path
 
 
+DEFAULT_TIMEOUT_SECONDS = 120
+DEFAULT_RETRIES = 2
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run external AI CLIs in a repo-safe, non-interactive wrapper."
@@ -36,6 +40,24 @@ def parse_args() -> argparse.Namespace:
         "--debug",
         action="store_true",
         help="Print provider and model metadata before the response.",
+    )
+    parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=DEFAULT_TIMEOUT_SECONDS,
+        help="Subprocess timeout in seconds. Default keeps external worker runs bounded.",
+    )
+    parser.add_argument(
+        "--retries",
+        type=int,
+        default=DEFAULT_RETRIES,
+        help="Retry count for timeout or transient wrapper failures.",
+    )
+    parser.add_argument(
+        "--session-mode",
+        choices=("auto", "fresh", "sticky", "resume-latest"),
+        default="auto",
+        help="Gemini session strategy. auto/sticky keep a per-workspace wrapper session; fresh starts clean; resume-latest attaches to the CLI's latest project session.",
     )
     return parser.parse_args()
 
@@ -70,7 +92,78 @@ def extract_first_json_blob(text: str) -> dict:
     raise ValueError("Incomplete JSON object in Gemini output.")
 
 
-def run_copilot(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+def provider_runtime_dir(cwd: Path, provider: str) -> Path:
+    runtime_dir = cwd / "tmp" / f"{provider}-runtime"
+    runtime_dir.mkdir(parents=True, exist_ok=True)
+    return runtime_dir
+
+
+def load_json_file(path: Path) -> dict | None:
+    if not path.exists():
+        return None
+
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def save_json_file(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def run_command_with_retries(
+    command: list[str],
+    *,
+    cwd: Path,
+    timeout_seconds: int,
+    retries: int,
+) -> subprocess.CompletedProcess[str]:
+    last_error: Exception | None = None
+    max_attempts = max(1, retries + 1)
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            completed = subprocess.run(
+                command,
+                cwd=str(cwd),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                check=False,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired as exc:
+            last_error = RuntimeError(
+                f"Command timed out after {timeout_seconds}s (attempt {attempt}/{max_attempts})."
+            )
+            if attempt == max_attempts:
+                raise last_error
+            continue
+
+        if completed.returncode == 0:
+            return completed
+
+        message = completed.stderr.strip() or completed.stdout.strip() or "Unknown external worker failure."
+        last_error = RuntimeError(f"{message} (attempt {attempt}/{max_attempts})")
+        if attempt == max_attempts:
+            raise last_error
+
+    assert last_error is not None
+    raise last_error
+
+
+def run_copilot(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+) -> tuple[str, str | None]:
     command = [
         "copilot.exe",
         "-p",
@@ -89,17 +182,12 @@ def run_copilot(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | N
         "json",
     ]
 
-    result = subprocess.run(
+    result = run_command_with_retries(
         command,
-        cwd=str(cwd),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
+        cwd=cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
     )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
 
     response = None
     resolved_model = None
@@ -137,7 +225,14 @@ def load_claude_default_model(cwd: Path) -> str | None:
     return model if isinstance(model, str) else None
 
 
-def run_claude(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+def run_claude(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+) -> tuple[str, str | None]:
     claude_script = shutil.which("claude.cmd") or shutil.which("claude")
     if not claude_script:
         raise RuntimeError("Claude Code CLI executable was not found on PATH.")
@@ -164,17 +259,12 @@ def run_claude(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
     if model:
         command.extend(["--model", model])
 
-    result = subprocess.run(
+    result = run_command_with_retries(
         command,
-        cwd=str(cwd),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
+        cwd=cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
     )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
 
     response = result.stdout.strip()
     if not response:
@@ -183,10 +273,54 @@ def run_claude(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
     return response, resolved_model
 
 
-def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+def resolve_gemini_resume_arg(cwd: Path, session_mode: str) -> str | None:
+    runtime_dir = provider_runtime_dir(cwd, "gemini")
+    state_path = runtime_dir / "session.json"
+    state = load_json_file(state_path)
+
+    if session_mode == "resume-latest":
+        return "latest"
+    if session_mode == "fresh":
+        return None
+    if session_mode in {"auto", "sticky"} and state:
+        session_id = state.get("session_id")
+        if isinstance(session_id, str) and session_id.strip():
+            return session_id.strip()
+    return None
+
+
+def store_gemini_session(cwd: Path, payload: dict, model: str | None) -> str | None:
+    session_id = payload.get("session_id")
+    if not isinstance(session_id, str) or not session_id.strip():
+        return None
+
+    state_path = provider_runtime_dir(cwd, "gemini") / "session.json"
+    save_json_file(
+        state_path,
+        {
+            "session_id": session_id.strip(),
+            "model": model,
+            "cwd": str(cwd),
+        },
+    )
+    return session_id.strip()
+
+
+def run_gemini(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+    session_mode: str,
+) -> tuple[str, str | None, str | None]:
     gemini_script = shutil.which("gemini.cmd") or shutil.which("gemini.ps1") or shutil.which("gemini")
     if not gemini_script:
         raise RuntimeError("Gemini CLI executable was not found on PATH.")
+
+    resolved_resume = resolve_gemini_resume_arg(cwd, session_mode)
+    resolved_model = model or "gemini-2.5-flash-lite"
 
     if gemini_script.lower().endswith(".ps1"):
         command = [
@@ -199,7 +333,7 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
             "-p",
             prompt,
             "--model",
-            model or "gemini-2.5-flash-lite",
+            resolved_model,
             "--approval-mode",
             "yolo",
             "--output-format",
@@ -211,24 +345,22 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
             "-p",
             prompt,
             "--model",
-            model or "gemini-2.5-flash-lite",
+            resolved_model,
             "--approval-mode",
             "yolo",
             "--output-format",
             "json",
         ]
 
-    result = subprocess.run(
+    if resolved_resume:
+        command.extend(["--resume", resolved_resume])
+
+    result = run_command_with_retries(
         command,
-        cwd=str(cwd),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
+        cwd=cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
     )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
 
     payload = extract_first_json_blob(result.stdout)
     response = payload.get("response", "").strip()
@@ -243,7 +375,11 @@ def run_gemini(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | No
             key=lambda item: item[1].get("api", {}).get("totalRequests", 0),
         )[0]
 
-    return response, resolved_model
+    stored_session_id = None
+    if session_mode in {"auto", "sticky", "resume-latest"}:
+        stored_session_id = store_gemini_session(cwd, payload, resolved_model)
+
+    return response, resolved_model, stored_session_id
 
 
 def load_codex_default_model() -> str | None:
@@ -284,7 +420,14 @@ def find_aider_executable() -> str:
     raise RuntimeError("Aider executable was not found on PATH or in ~/.local/bin.")
 
 
-def run_aider(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+def run_aider(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+) -> tuple[str, str | None]:
     aider_script = find_aider_executable()
     resolved_model = model or load_aider_default_model()
     runtime_dir = cwd / "tmp" / "aider-runtime"
@@ -317,17 +460,12 @@ def run_aider(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | Non
     if resolved_model:
         command.extend(["--model", resolved_model])
 
-    result = subprocess.run(
+    result = run_command_with_retries(
         command,
-        cwd=str(cwd),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
+        cwd=cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
     )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
 
     response = result.stdout.strip()
     if not response:
@@ -336,7 +474,14 @@ def run_aider(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | Non
     return response, resolved_model or "configured-by-aider"
 
 
-def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | None]:
+def run_codex(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+) -> tuple[str, str | None]:
     codex_script = shutil.which("codex.cmd") or shutil.which("codex")
     if not codex_script:
         raise RuntimeError("Codex CLI executable was not found on PATH.")
@@ -363,17 +508,12 @@ def run_codex(prompt: str, model: str | None, cwd: Path) -> tuple[str, str | Non
         prompt,
     ]
 
-    result = subprocess.run(
+    result = run_command_with_retries(
         command,
-        cwd=str(cwd),
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        check=False,
+        cwd=cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
     )
-    if result.returncode != 0:
-        raise RuntimeError(result.stderr.strip() or result.stdout.strip())
 
     response = None
     for line in result.stdout.splitlines():
@@ -407,18 +547,50 @@ def main() -> int:
 
     args = parse_args()
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
+    gemini_session_id: str | None = None
 
     try:
         if args.provider == "claude":
-            response, resolved_model = run_claude(args.prompt, args.model, cwd)
+            response, resolved_model = run_claude(
+                args.prompt,
+                args.model,
+                cwd,
+                timeout_seconds=args.timeout_seconds,
+                retries=args.retries,
+            )
         elif args.provider == "codex":
-            response, resolved_model = run_codex(args.prompt, args.model, cwd)
+            response, resolved_model = run_codex(
+                args.prompt,
+                args.model,
+                cwd,
+                timeout_seconds=args.timeout_seconds,
+                retries=args.retries,
+            )
         elif args.provider == "copilot":
-            response, resolved_model = run_copilot(args.prompt, args.model, cwd)
+            response, resolved_model = run_copilot(
+                args.prompt,
+                args.model,
+                cwd,
+                timeout_seconds=args.timeout_seconds,
+                retries=args.retries,
+            )
         elif args.provider == "aider":
-            response, resolved_model = run_aider(args.prompt, args.model, cwd)
+            response, resolved_model = run_aider(
+                args.prompt,
+                args.model,
+                cwd,
+                timeout_seconds=args.timeout_seconds,
+                retries=args.retries,
+            )
         else:
-            response, resolved_model = run_gemini(args.prompt, args.model, cwd)
+            response, resolved_model, gemini_session_id = run_gemini(
+                args.prompt,
+                args.model,
+                cwd,
+                timeout_seconds=args.timeout_seconds,
+                retries=args.retries,
+                session_mode=args.session_mode,
+            )
     except Exception as exc:  # pragma: no cover - wrapper should fail loudly
         print(f"[external-agent:{args.provider}] {exc}", file=sys.stderr)
         return 1
@@ -427,6 +599,10 @@ def main() -> int:
         model_value = resolved_model or args.model or "unknown"
         print(f"provider={args.provider}")
         print(f"model={model_value}")
+        if args.provider == "gemini":
+            print(f"session_mode={args.session_mode}")
+            if gemini_session_id:
+                print(f"session_id={gemini_session_id}")
         print("---")
 
     print(response)

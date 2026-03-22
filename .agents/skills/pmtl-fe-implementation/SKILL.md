@@ -15,10 +15,23 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 - Updating client/server boundaries, component structure, or fetch flows.
 - Reviewing whether a frontend change follows PMTL implementation habits.
 
+## Required Inputs
+
+- touched route, feature folder, or component boundary
+- current owner docs when the surface already exists
+- verification scope expected after the edit
+
 ## Expected Output
 
 - Frontend code placed in the right layer with clear domain ownership.
 - No placeholder branches, weak typing, or accidental client-side sprawl.
+
+## Read First
+
+1. `AGENTS.md`
+2. `design/ui/PAGE_INVENTORY.md` when route or page purpose matters
+3. `design/ui/USER_FLOWS.md` when the work changes journey behavior
+4. `design/ui/COMPONENT_SPECS.md` or module owner docs when component or domain rules already exist
 
 ## Execution Approach
 
@@ -49,6 +62,8 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 
 - Run `py infra/tools/codex_actions.py quality-gate --scope web` after meaningful changes.
 - Recheck that the final file placement still respects feature-first boundaries.
+- If the change touched route behavior, compare the implemented surface against the relevant `design/ui/*` owner docs.
+- If the change touched auth/search/runtime boundaries, pair with the narrower verification skill instead of relying on web-only checks.
 
 ## Edge Cases
 
@@ -59,6 +74,9 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 
 - `AGENTS.md`
 - `docs/architecture/conventions.md`
+- `design/ui/PAGE_INVENTORY.md`
+- `design/ui/USER_FLOWS.md`
+- `design/ui/COMPONENT_SPECS.md`
 - `apps/web/src/features`
 
 ## Pair with

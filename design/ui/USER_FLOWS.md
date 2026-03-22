@@ -116,7 +116,7 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   ↓ Nhập từ khóa ("phóng sanh bao nhiêu biến")
   [Results với tab filter: Bạch thoại / Hỏi đáp / Khai thị / Bài viết]
   ↓ Chọn kết quả đúng loại content
-[/bach-thoai/[slug]]
+[/bach-thoai/[slug]] hoặc [/hoi-dap/[slug]]
   - Loại entry hiện rõ: Bạch thoại / Hỏi đáp / Khai thị
   - Source code/timestamp hiện rõ nếu là Q&A kiểu Wenda
   - Original text (nếu có)
@@ -140,6 +140,10 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
 │ [Xem nguồn gốc] [Screenshot]   │
 └─────────────────────────────────┘
 ```
+
+**Route rule:**
+- `Hỏi đáp / Wenda` -> `/hoi-dap/[slug]`
+- `Bạch thoại` hoặc `Khai thị` -> `/bach-thoai/[slug]`
 
 ---
 

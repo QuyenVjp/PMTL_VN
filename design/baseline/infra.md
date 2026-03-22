@@ -97,6 +97,33 @@ Caddy → apps/web + apps/api + apps/admin
 
 Cloudflare đứng trước Caddy cho CDN/SSL/edge protection.
 
+## Reverse Proxy and Load-Balancer Policy
+
+- Phase 1 canon = `single ingress Caddy` trên một VPS; đây là simplicity baseline, chưa phải HA claim
+- Khi scale sang nhiều instance cho `apps/web`, `apps/api`, hoặc `apps/admin`, ingress/load balancer phải giữ các rule sau:
+  - upstream health routing chỉ dựa trên `/health/ready`, không dựa vào TCP port open đơn thuần
+  - upstream retry chỉ áp dụng cho safe idempotent reads; không retry mù các browser mutation hoặc admin write
+  - request body limits, upload buffering, và timeout budget phải được chốt ở proxy layer thay vì để default ngầm
+  - websocket/SSE forwarding nếu có phải được khai báo riêng; không giả định reverse proxy default đủ đúng
+- PMTL không được tự nhận `high availability` chỉ vì có thêm replica; chỉ được gọi là HA khi ingress, data recovery, và failover contract đã được chốt ở owner docs tương ứng
+
+## Session and Horizontal Scale Rule
+
+- Auth/session authority nằm ở `apps/api` + shared server-side session/refresh store
+- Khi `apps/api` scale ngang, sticky session không phải requirement mặc định
+- Nếu một flow chỉ chạy đúng khi sticky session bật, đó là dấu hiệu design/runtime bug; phải sửa owner module thay vì biến sticky session thành hidden dependency
+- Proxy/LB phải forward cùng resolved client IP chain theo `baseline/security.md`
+- Multi-instance scale chỉ hợp lệ khi:
+  - session store vẫn shared và authoritative
+  - rate-limit/audit IP resolution không drift giữa instance
+  - cache/search/queue sidecars nếu đã bật không trở thành source of truth
+
+## Failover Stance
+
+- Phase 1 single VPS chấp nhận restart/restore oriented recovery, không claim automatic failover
+- Database baseline hiện là single primary + restore discipline; read replica hoặc automatic failover chỉ là Phase 2+ concern khi owner docs đã chốt
+- Ingress failover, DB failover, search failover, và worker failover phải được nêu tường minh ở owner doc trước khi dùng ngôn ngữ như `high availability`, `self-healing`, hoặc `multi-region`
+
 ---
 
 ## Request Flows (Unique — chỉ ở đây)

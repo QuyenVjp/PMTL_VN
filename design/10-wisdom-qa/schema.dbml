@@ -221,7 +221,7 @@ Table offline_bundles {
   updated_at timestamptz [not null]
 }
 
-Table offline_bundle_items {
+Table offline_bundle_entries {
   id uuid [pk]
   offline_bundle_id uuid [not null, ref: > offline_bundles.id]
   entry_type offline_entry_type [not null]

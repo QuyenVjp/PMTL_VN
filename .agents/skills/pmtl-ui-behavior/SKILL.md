@@ -15,6 +15,12 @@ Keep PMTL interactive surfaces accessible, predictable, and complete across form
 - Checking loading, empty, success, and error behavior.
 - Auditing focus, keyboard flow, or validation quality.
 
+## Required Inputs
+
+- target route, component, or interaction flow
+- affected state transitions such as loading, submit, success, empty, or error
+- any relevant page or component owner doc
+
 ## Expected Output
 
 - Interfaces that communicate state clearly and remain keyboard-usable.
@@ -61,9 +67,14 @@ Keep PMTL interactive surfaces accessible, predictable, and complete across form
 
 - Async forms with partial success need explicit follow-up messaging.
 - Toast-only validation is not enough when the form itself can explain the issue.
+- Elderly-oriented surfaces need larger targets, calmer state changes, and clearer inline instructions than default app forms.
+- Deep-linked flows opened from guides or reminders still need full validation, focus, and retry behavior.
 
 ## References
 
+- `design/ui/USER_FLOWS.md`
+- `design/ui/COMPONENT_SPECS.md`
+- `design/ui/ELDERLY_UX.md`
 - `pmtl-fe-implementation`
 - `pmtl-review-web-ui`
 
@@ -72,3 +83,4 @@ Keep PMTL interactive surfaces accessible, predictable, and complete across form
 - `pmtl-fe-implementation` for code structure.
 - `pmtl-ui-style-system` for visual hierarchy.
 - `pmtl-review-web-ui` when reviewing an existing surface.
+- Route-level page work should also read the relevant page owner docs before editing behavior.

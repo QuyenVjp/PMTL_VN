@@ -205,6 +205,9 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/engagement/practice-logs` | `engagement` | member+ |
 | `GET` | `/engagement/practice-logs/self` | `engagement` | member+ |
 | `PUT` | `/engagement/practice-logs/self` | `engagement` | member+ |
+
+> `PUT /engagement/practice-logs/self` là canonical self-save path cho member practice flow.
+> `POST /engagement/practice-logs` chỉ giữ lại nếu module owner chốt rõ append/manual-entry semantics riêng; không dùng hai route cho cùng một UX mutation mà không phân biệt nghiệp vụ.
 | `GET` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `GET` | `/engagement/practice-sheets/:publicId` | `engagement` | member+ |

@@ -9,6 +9,7 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `Codex core/generic`: skill trong `~/.codex/skills` nhưng mang tính phổ thông, không chỉ dành cho PMTL.
 - `Codex full-stack gap fillers`: skill mới kéo về để bù khoảng trống backend, database, observability, API contracts, infra, NestJS.
 - `Trail of Bits`: gói skill chuyên sâu về security, static analysis, fuzzing, crypto, blockchain, reverse engineering.
+- `docs/agent-operating-model.md`: bản canon cho vai trò Codex, roster subagent, và governance khi dùng external workers.
 
 ## Snapshot hiện tại
 
@@ -26,6 +27,14 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 3. Codex full-stack gap fillers nếu PMTL chưa có skill canonical tương ứng
 4. Global generic tool skills
 5. Trail of Bits hoặc các specialist pack khi task thuộc security hoặc niche tooling
+
+## Operating model fast path
+
+- Codex là primary senior delivery engineer trong repo này, không phải generic assistant.
+- `design/`, `AGENTS.md`, và PMTL repo-local skills là lớp authority trước tiên.
+- Dùng local subagents trước khi gọi external workers nếu câu hỏi chủ yếu là "repo này nói gì" hoặc cần đọc nhiều file song song.
+- External workers là lane advisory, không được override policy của repo.
+- Khi cần roster, escalation rules, hoặc tie-break rules, đọc `docs/agent-operating-model.md`.
 
 ## Stitch MCP fast path
 
@@ -46,6 +55,7 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
 - `pmtl-multi-cli-orchestrator`: điều phối Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, và Aider theo đúng lane thay vì gọi bừa.
 - External CLI workers: dùng `py infra/tools/external_agent.py --provider claude|codex|copilot|gemini|aider --prompt "..."` khi cần second opinion từ Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, hoặc Aider.
+- Gemini wrapper hiện mặc định giữ `sticky workspace session` tại `tmp/gemini-runtime/session.json`; dùng `--session-mode fresh` nếu muốn cắt ngữ cảnh cũ, hoặc `--session-mode resume-latest` nếu muốn bám phiên Gemini CLI gần nhất của project.
 - Claude-side fast path: dùng `/multi-cli-router <task>` để nó tự route worker thay vì bắt người dùng nhớ provider.
 - Repo wrapper nhanh trên Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
 - `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Claude/Copilot và chỉ gọi Gemini/Codex khi tín hiệu đủ rõ.
@@ -136,6 +146,19 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - Chưa có observability/SRE canonical riêng của PMTL; hiện đang dùng nhiều skill ngoài để bù.
 - Chưa có skill riêng cho payments, billing, file/media pipeline, API client SDK generation.
 
+### Fallback matrix khi PMTL chưa có skill canon đủ dày
+
+| Tình huống | PMTL anchor trước | Fallback dùng được |
+|---|---|---|
+| NestJS service/controller/module work | `pmtl-vn-architecture`, `pmtl-production-baseline` | `nestjs-best-practices`, `ln-643-api-contract-auditor`, `database-migration-helper` |
+| DB/query/transaction review | `pmtl-production-baseline` | `query-optimizer`, `ln-650-persistence-performance-auditor`, `ln-651-query-efficiency-auditor`, `ln-652-transaction-correctness-auditor` |
+| Runtime/scaling/rollback/observability | `pmtl-production-baseline`, PMTL runbooks | `ln-627-observability-auditor`, `infrastructure-monitor`, `docker-compose-production`, `nginx-config-optimizer` |
+| Security/hardening ngoài auth/search | `pmtl-production-baseline`, `pmtl-verify-auth-flow`, `pmtl-verify-search-sync` | `security-best-practices`, `api-security-checker`, Trail of Bits review packs |
+
+Rule:
+- fallback này là lane tạm có kiểm soát, không phải bằng chứng rằng PMTL taxonomy đã đủ
+- khi task dài hơi lặp đi lặp lại ở backend/runtime/security, nên coi đó là tín hiệu phải tạo PMTL-native skill tương ứng
+
 ### Nếu muốn lấp tiếp bằng skill nội bộ PMTL
 
 - `pmtl-be-implementation`: NestJS service/controller/module/use-case theo design-first.
@@ -143,6 +166,9 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - `pmtl-observability-runtime`: logs, metrics, traces, alerting, rollback, incident flow.
 - `pmtl-jobs-and-events`: queue workers, cron, idempotency, retry/dead-letter patterns.
 - `pmtl-api-contracts`: OpenAPI, SDK generation, error envelopes, schema evolution.
+
+Backlog owner hiện tại:
+- `docs/architecture/pmtl-skill-backlog.md`
 
 ## Repo-local skills (.agents/skills)
 

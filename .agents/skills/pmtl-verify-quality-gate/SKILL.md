@@ -14,6 +14,12 @@ Run the strongest relevant checks after implementation so delivery is backed by 
 - Any meaningful code change is considered done.
 - You need a deterministic verification path for web, CMS, or repo-wide edits.
 
+## Required Inputs
+
+- touched scope: `web`, `cms`, or `all`
+- whether tests may be skipped for a narrowly justified reason
+- whether narrower domain verifiers are also required
+
 ## Expected Output
 
 - Command results that show what passed, what failed, and which runtime was used.
@@ -48,6 +54,18 @@ py infra/tools/codex_actions.py quality-gate --scope web --skip-tests
 
 - Treat non-zero exit codes as a failed gate.
 - Include the real command output summary in the final report, not only "tests passed".
+
+## Quality Criteria
+
+- Verification scope is as narrow as possible without becoming misleading.
+- Final reporting includes the actual executed scope and runtime.
+- Quality gate is not used as a substitute for auth/search/domain-specific verification when those lanes changed.
+
+## Edge Cases
+
+- Legacy `cms` naming still exists in the helper even though forward architecture is `apps/api`; call that out plainly when relevant.
+- A passing quality gate does not prove runtime health, auth correctness, or search freshness by itself.
+- Local environment issues can break a gate independently of the code change; distinguish infra failure from code failure.
 
 ## References
 

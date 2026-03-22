@@ -44,11 +44,13 @@ PMTL_VN
 │   ├── /                          Landing page
 │   ├── /bai-viet                  Danh sách bài viết
 │   │   └── /bai-viet/[slug]       Chi tiết bài viết
-│   ├── /bach-thoai                Hub: Bạch thoại Phật pháp / Hỏi đáp / Khai thị / Sách nói
-│   │   ├── /bach-thoai/[slug]     Wisdom entry detail (Bạch thoại / Hỏi đáp / Khai thị)
+│   ├── /bach-thoai                Hub: Bạch thoại Phật pháp / Sách nói
+│   │   ├── /bach-thoai/[slug]     Wisdom entry detail (Bạch thoại / Khai thị / Pháp hội)
 │   │   ├── /bach-thoai/sach-noi   Audiobook library
 │   │   │   ├── /bach-thoai/sach-noi/[bookSlug]             Book detail
 │   │   │   └── /bach-thoai/sach-noi/[bookSlug]/chuong/[n]  Chapter reader
+│   ├── /hoi-dap                   Hub: Wenda / Hỏi đáp
+│   │   └── /hoi-dap/[slug]        QA entry detail
 │   ├── /su-kien                   Danh sách sự kiện
 │   │   └── /su-kien/[slug]        Chi tiết sự kiện
 │   ├── /tim-kiem                  Tìm kiếm
@@ -104,6 +106,7 @@ PMTL_VN
 Content (public, SEO-important): SLUG
   /bai-viet/[slug]
   /bach-thoai/[slug]
+  /hoi-dap/[slug]
   /su-kien/[slug]
 
 Member data (private, no SEO): CUID or UUID
@@ -203,7 +206,7 @@ Sidebar sections — collapsed header + nav items:
 
   PHÁP BẢO
     ▣  Bạch Thoại       → /bach-thoai
-    ?  Hỏi Đáp          → /bach-thoai (filter tab)
+    ?  Hỏi Đáp          → /hoi-dap
     ♦  Phóng Sanh       → /phong-sanh (member journal) / /huong-dan/phong-sanh (public guide)
 
   CỘNG ĐỒNG
@@ -288,7 +291,7 @@ Scenario: guest cố mở /dashboard, /tu-tap/bai-tap
 ```
 Location: /tim-kiem (dedicated page)
 Shortcut: Cmd/Ctrl+K → opens search modal trên desktop
-Mobile: tap search icon trong bottom nav của /bach-thoai
+Mobile: tap search icon trong bottom nav của /bach-thoai hoặc /hoi-dap
 
 Scope: searches across
   1. Bạch Thoại (title + content excerpt)
@@ -331,7 +334,8 @@ Tabs filter to single type: [Tất cả] [Bài viết] [Bạch Thoại] [Hỏi �
 Mọi content page có URL đầy đủ để share:
 
 ```
-Bạch Thoại / Hỏi Đáp: /bach-thoai/[slug]
+Bạch Thoại:            /bach-thoai/[slug]
+Hỏi Đáp:               /hoi-dap/[slug]
 Audiobook chapter:     /bach-thoai/sach-noi/[bookSlug]/chuong/[n]
 Bài viết:              /bai-viet/[slug]
 Sự kiện:               /su-kien/[slug]

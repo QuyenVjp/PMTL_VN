@@ -14,6 +14,17 @@ Review PMTL web interfaces for interaction, accessibility, composition, and visu
 - The task is a UI review, UX audit, or design quality check.
 - You need concrete frontend findings tied to PMTL standards.
 
+## Required Inputs
+
+- target route, component, screenshot, or implementation files
+- whether the task is review-only or expected to lead into fixes
+- any PMTL owner docs that define the intended behavior or visual standard
+
+## Expected Output
+
+- Findings-first review output with concrete user-facing consequences.
+- Tight file references and a brief summary only after the findings.
+
 ## Review order
 
 1. Identify the target route, component, or feature.
@@ -45,9 +56,28 @@ Present findings first, with file and line references. Keep summary brief.
 
 - Every finding should point to a concrete user-facing consequence.
 - Avoid style-only opinions when behavior or accessibility failures are more severe.
+- Findings should be reproducible from the current implementation or current screenshots/surfaces.
+- Tie each finding to PMTL behavior or visual standards instead of generic taste claims.
+
+## Quality Criteria
+
+- Severity tracks actual user harm, not reviewer preference.
+- Behavior, accessibility, and trust issues outrank surface polish.
+- Review stays within web/UI scope and does not drift into backend/API/data claims without evidence.
+
+## Edge Cases
+
+- Legacy surfaces may be structurally constrained; still call out user harm first, then note the structural constraint.
+- A design can be visually refined but still fail due to broken loading/error/focus cycles.
+- Do not use this skill for backend/API/data-layer review; escalate to the appropriate lane instead.
 
 ## References
 
 - `pmtl-ui-behavior`
 - `pmtl-ui-style-system`
 - `vercel-react-best-practices`
+
+## Pair with
+
+- `pmtl-fe-implementation` when the review is expected to lead directly into code changes.
+- `pmtl-verify-quality-gate` after the reviewed fixes land.

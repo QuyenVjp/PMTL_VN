@@ -16,6 +16,17 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 - `POST /api/admin/search/reindex`: admin trigger chuẩn cho full reindex từ admin UI
 - `POST /api/admin/search/reindex/:source`: reindex theo nguồn như `posts`, `guides`, `wisdom`
 
+### Route contract profiles
+
+| Route | Success profile | Required request/response notes |
+|---|---|---|
+| `GET /api/search` | `list` | query params tối thiểu: `q`, optional `limit`, `type`, `entryType`, `sourceFamily`; response phải có `engine` trong `meta` |
+| `GET /api/qa/search` | `list` | query params như search public nhưng result set bị giới hạn `qa_entry`/wisdom QA families |
+| `GET /api/search/status` | `single` | chỉ expose operational-safe summary; không dump internals nhạy cảm |
+| `GET /api/admin/search/status` | `single` | response phải có `engine`, `documentCounts`, `freshness`, `queue`, `outboxLag?`, `sources` |
+| `POST /api/admin/search/reindex` | `accepted` | request phải có `scope: full | source | ids`, optional `reason`, optional `source`; response phải có `jobAccepted` hoặc replay token/job ref |
+| `POST /api/admin/search/reindex/:source` | `accepted` | `:source` phải validate theo allowlist như `posts`, `guides`, `wisdom`, `little_house_guides` |
+
 ## Canonical rules (Quy tắc chuẩn gốc)
 
 1. Source independence (độc lập với nguồn):
@@ -72,7 +83,7 @@ Quy tắc:
 
 - `type` lọc ở tầng index document (`post`, `wisdom_entry`, `qa_entry`, ...)
 - `entryType` và `sourceFamily` chỉ áp dụng cho Wisdom-QA search documents
-- FE public `/tim-kiem` và hub `/bach-thoai` không được tự suy luận loại entry từ title string
+- FE public `/tim-kiem`, `/bach-thoai`, và `/hoi-dap` không được tự suy luận loại entry từ title string
 - `event_discourse` là subtype nội bộ cho retrieval/index; public UI phase hiện tại hiển thị dưới nhóm `Khai thị`, không mở tab public riêng
 
 ## Response & error handling (Phản hồi & xử lý lỗi)
@@ -83,6 +94,17 @@ Response nên chỉ rõ engine used (engine được dùng):
 
 - `meilisearch`
 - `sql-api-fallback`
+
+Public search item tối thiểu phải trả đủ để FE không đoán:
+
+- `publicId`
+- `docType`
+- `title`
+- `excerpt`
+- `href` hoặc canonical route ref
+- `entryType?`
+- `sourceFamily?`
+- `publishedAt?`
 
 ### Status route coverage (Phạm vi route trạng thái)
 
@@ -100,6 +122,8 @@ Status route nên báo:
 - `400`: query rỗng hoặc limit ngoài phạm vi
 - `401`: admin/status route cần session mà không có
 - `403`: role không đủ cho reindex
+- `404`: `reindex/:source` dùng source không tồn tại trong registry
+- `409`: reindex request trùng job đang chạy mà policy không cho enqueue trùng
 - `500`: engine fail và fallback cũng fail
 
 ## Notes for AI/codegen (Ghi chú cho AI và sinh mã)

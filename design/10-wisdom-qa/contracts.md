@@ -95,13 +95,43 @@
 
 - `GET /api/admin/wisdom/entries`
 - `GET /api/admin/wisdom/entries/:publicId`
+- `GET /api/admin/wisdom/authority-profiles`
+- `GET /api/admin/wisdom/authority-profiles/:publicId`
 - `POST /api/admin/wisdom/entries`
 - `PATCH /api/admin/wisdom/entries/:publicId`
+- `POST /api/admin/wisdom/authority-profiles`
+- `PATCH /api/admin/wisdom/authority-profiles/:publicId`
 - `POST /api/admin/wisdom/entries/:publicId/publish`
 - `POST /api/admin/wisdom/entries/ingestion-jobs`
 - `GET /api/admin/wisdom/offline-bundles`
 - `POST /api/admin/wisdom/offline-bundles/rebuild`
 - `GET /api/admin/wisdom/import-jobs`
+
+## Route-level contract notes
+
+- `GET /api/admin/wisdom/authority-profiles`
+  - profile: `list`
+  - returns authority/source context rows only; no public page contract implied
+- `GET /api/admin/wisdom/authority-profiles/:publicId`
+  - profile: `single`
+  - `404` nếu profile không tồn tại
+- `POST /api/admin/wisdom/authority-profiles`
+  - profile: `created`
+  - required fields tối thiểu:
+    - `displayNameVi`
+    - `sourceProvenance`
+    - ít nhất một trong `sourceUrl`, `officialFactSummary`, `translatedProfileSummary`
+  - `409` nếu tạo trùng public identity hoặc canonical source mapping
+- `PATCH /api/admin/wisdom/authority-profiles/:publicId`
+  - profile: `single`
+  - không được merge fact và doctrinal claim vào cùng một field mơ hồ
+  - `409` nếu patch làm vỡ canonical source mapping hoặc duplicate identity
+- `GET /api/admin/wisdom/offline-bundles`
+  - profile: `list`
+  - phải trả đủ `bundleType`, `version`, `lastSyncedAt`, freshness/status summary
+- `POST /api/admin/wisdom/offline-bundles/rebuild`
+  - profile: `accepted`
+  - request phải chỉ rõ target bundle family hoặc rebuild scope; không dùng trigger mơ hồ không payload
 
 ## Notes for AI/codegen
 

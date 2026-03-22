@@ -14,6 +14,13 @@ Provide the non-negotiable PMTL repo defaults for production-grade implementatio
 - Implementing or refactoring features that affect real runtime behavior.
 - Changing logging, env contracts, validation, caching, or request boundaries.
 - You need the default PMTL baseline before applying narrower skills.
+- The task spans multiple apps or modules and needs one shared runtime policy anchor before deeper specialization.
+
+## Required Inputs
+
+- touched app/package/module
+- relevant owner docs or design files for the changed runtime rule
+- expected verification scope
 
 ## Expected Output
 
@@ -33,6 +40,7 @@ Provide the non-negotiable PMTL repo defaults for production-grade implementatio
 2. Validate user input and env contracts before changing runtime behavior.
 3. Add or preserve structured logging at real operational boundaries.
 4. Update docs and skill routing in the same task when rules change.
+5. Hand off to narrower PMTL skills when the task becomes mostly frontend behavior, auth verification, search verification, or incident recovery.
 
 ## Baseline rules
 
@@ -49,6 +57,12 @@ Provide the non-negotiable PMTL repo defaults for production-grade implementatio
 - Re-read the touched docs and confirm the rule still matches code.
 - Pair with `pmtl-verify-quality-gate` after meaningful edits.
 - If auth or search contracts changed, pair with the dedicated verification skill for that area.
+
+## Quality Criteria
+
+- Runtime policy stays aligned across docs, code, and skill routing.
+- Boundary ownership remains explicit; no logic leaks into the wrong app or package.
+- Rule changes are documented in the same task instead of becoming tribal knowledge.
 
 ## Edge Cases
 
@@ -67,4 +81,4 @@ Provide the non-negotiable PMTL repo defaults for production-grade implementatio
 - `pmtl-fe-implementation` for frontend code changes.
 - `pmtl-ui-behavior` and `pmtl-ui-style-system` for UI work.
 - `pmtl-verify-quality-gate` after meaningful edits.
-- `pmtl-runbook-cms-runtime-errors` when the task is incident-oriented.
+- `pmtl-runbook-docker-dev-recovery` when the task is a local/dev incident.

@@ -15,6 +15,7 @@
 - `.vscode/.instructions.md`
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
+- `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
 - `docs/stitch-mcp.md` when the task involves wireframes, design generation, Stitch, or UI exploration through MCP
 
 ## Monorepo Boundaries
@@ -48,8 +49,14 @@
 - Visual direction and style variants: `.agents/skills/pmtl-ui-style-system/SKILL.md`
 - UI review: `.agents/skills/pmtl-review-web-ui/SKILL.md`
 - Verification: `.agents/skills/pmtl-verify-quality-gate/SKILL.md`, `.agents/skills/pmtl-verify-auth-flow/SKILL.md`, `.agents/skills/pmtl-verify-search-sync/SKILL.md`
-- Runbooks: `.agents/skills/pmtl-runbook-docker-dev-recovery/SKILL.md`, `.agents/skills/pmtl-runbook-cms-runtime-errors/SKILL.md`
+- Runbooks: `.agents/skills/pmtl-runbook-docker-dev-recovery/SKILL.md`
 - Stitch/global design helpers when the task explicitly targets Stitch MCP or Stitch wireframing: `C:\Users\ADMIN\.agents\skills\stitch-design\SKILL.md`, `C:\Users\ADMIN\.agents\skills\stitch-wireframe-generator\SKILL.md`, `C:\Users\ADMIN\.agents\skills\design-md\SKILL.md`, `C:\Users\ADMIN\.agents\skills\stitch-loop\SKILL.md`
+
+Interim fallback rule until PMTL-native backend/runtime/security skills are created:
+- backend/API/data work anchors on `pmtl-vn-architecture` + `pmtl-production-baseline`, then may borrow generic NestJS/API/DB/transaction auditors as fallback
+- runtime/scaling/observability work anchors on PMTL baseline/runbook docs, then may borrow observability/infra/Docker production skills as fallback
+- security/hardening outside auth/search anchors on PMTL security docs + production baseline, then may borrow generic security skills or Trail of Bits packs as fallback
+- deprecated Payload/CMS-era skills are not canonical routing targets even if still installed for compatibility
 
 ## Skill Routing Order
 - Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
@@ -57,6 +64,15 @@
 - Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
 - Use global Codex or Claude Code skills only for platform tooling or external integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
 - Prefer canonical PMTL skills over compatibility aliases and design-library entrypoints unless the user explicitly names the older skill.
+
+## Agent Operating Model
+- In this repo, Codex acts as the primary senior delivery engineer: design-first, full-stack, and responsible for turning `design/` into repo-aligned implementation or repo-aligned docs.
+- Codex owns final synthesis, final patch direction, and final verification. Subagents and external workers provide bounded analysis or second opinions only.
+- Route work in this order: repo-local PMTL skills -> local subagents -> external workers when they add clear leverage.
+- Use local subagents first for repo exploration, drift detection, parallel reading, and option generation. Do not escalate externally just to answer "what does this repo say?"
+- Prefer file-path-based prompts and narrow task slices when dispatching workers. Broad prompts that outsource judgment are a routing failure.
+- If outputs disagree, prefer `design/`, `AGENTS.md`, and canonical PMTL skills over model confidence. Update repo docs first if external product drift proves the repo is stale.
+- Read `docs/agent-operating-model.md` before changing worker governance, subagent roles, or escalation defaults.
 
 ## Windows-Safe Execution
 - Prefer `rg`, then `git grep -n`, then PowerShell search.
@@ -87,6 +103,7 @@
 - Use `--speed balanced` when you specifically want Codex/Gemini to stay more competitive.
 - Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast [--compare]`
 - Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
+- Gemini wrapper default is now a sticky per-workspace session under `tmp/gemini-runtime/session.json`; use `--session-mode fresh` to force a clean run or `--session-mode resume-latest` to attach to Gemini CLI's latest project session.
 - `aider` is an opt-in git-aware patch lane. Keep it advisory dry-run by default, with no auto-commits, and do not make it the primary auto-route unless the task explicitly asks for Aider or that exact workflow.
 - Keep external-worker prompts compact and reference repo file paths instead of pasting long code blocks.
 - Treat external workers as advisory reviewers, not the source of truth for repo policy.

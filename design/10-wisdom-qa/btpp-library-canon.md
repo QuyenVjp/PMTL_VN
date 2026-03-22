@@ -6,6 +6,7 @@
 > - route/public IA của thư viện trí huệ
 > - glossary riêng cho cụm pháp môn liên quan
 > - source taxonomy cho wisdom content
+> - official alignment với `xlch.org`
 > - FAQ cho hub BTPP
 > - warning policy cho content nhạy cảm, nhất là `Ngôi Nhà Nhỏ`
 
@@ -14,6 +15,7 @@ Nếu có mâu thuẫn giữa các file UI/SEO khác nhau về:
 - route của thư viện trí huệ
 - nghĩa của `Bạch thoại`, `Hỏi đáp`, `Khai thị`
 - source labels
+- family map official
 - warning block/wording nhạy cảm
 
 thì file này thắng, rồi các file kia phải sửa theo.
@@ -41,6 +43,8 @@ thì file này thắng, rồi các file kia phải sửa theo.
 
 - `/bach-thoai`
 - `/bach-thoai/[slug]`
+- `/hoi-dap`
+- `/hoi-dap/[slug]`
 - `/bach-thoai/sach-noi`
 - `/bach-thoai/sach-noi/[bookSlug]`
 - `/bach-thoai/sach-noi/[bookSlug]/chuong/[chapterNumber]`
@@ -51,33 +55,73 @@ thì file này thắng, rồi các file kia phải sửa theo.
 
 ### Decision
 
-- Chọn `/bach-thoai`, không dùng `/bai-hoa`
+- Chọn `/bach-thoai` cho `Bạch thoại Phật pháp`, không dùng `/bai-hoa`
+- Chọn `/hoi-dap` cho `Wenda / Hỏi đáp`
 - Lý do:
   - `bach-thoai` là âm Việt đúng, người Việt đọc hiểu ngay
   - ngắn hơn `bach-thoai-phat-phap`
   - đỡ mơ hồ hơn `bai-hoa`
   - vẫn giữ ASCII slug tốt cho SEO/share
+  - official site đang tách `白话佛法` khỏi `玄艺问答`; PMTL không nên gộp chung dưới một hub mơ hồ nữa
 
 ### UI label rule
 
-- H1 của hub: `Bạch thoại Phật pháp`
-- Subtitle của hub:
-  - `Thư viện Bạch thoại, Hỏi đáp, Khai thị, Sách nói`
+- H1 của `/bach-thoai`: `Bạch thoại Phật pháp`
+- Subtitle của `/bach-thoai`:
+  - `Bài giảng Bạch thoại và sách nói`
+- H1 của `/hoi-dap`: `Hỏi đáp`
+- Subtitle của `/hoi-dap`:
+  - `Wenda, Huyền học vấn đáp, và tra cứu theo tình huống`
 - Trong bottom nav/sidebar chỉ cần:
   - `Bạch thoại`
+  - `Hỏi đáp`
 
 ---
 
-## 3. Information architecture cho hub `/bach-thoai`
+## 3. Official family map aligned from `xlch.org`
 
-Hub này không được hiển thị như một khối mơ hồ.
+Theo cấu trúc public-facing hiện thấy trên `xlch.org`, PMTL phải preserve ít nhất các family này:
 
-Nó phải có 4 visible tabs rõ ràng:
+1. `初学入门`
+   - `功课经文`
+   - `许愿还愿`
+   - `放生仪式`
+   - `经典组合`
+   - `佛台供设`
+   - `各类升文`
+2. `节目录音`
+   - `问答说话`
+   - `白话佛法`
+   - `玄艺综述`
+   - `师父开示`
+3. `弘法视频`
+   - `法会开示`
+   - `精选开示`
+   - `现场图腾`
+   - `同修分享`
+4. `玄学问答`
+5. `佛法书籍`
+6. `疑问搜索`
+
+### Canonical interpretation for PMTL
+
+- `Bạch thoại Phật pháp` là family riêng
+- `Wenda / Hỏi đáp` là family riêng
+- `玄艺综述 / Zongshu` không được gộp mù vào `Bạch thoại`
+- `师父开示 / 法会开示` là discourse/event channel; PMTL có thể dùng label Việt `Khai thị` cho presentation, nhưng không được vì vậy mà nhét nó thành tab con mặc định của `Bạch thoại`
+- `疑问搜索` là utility/search surface riêng, không chỉ là decorative filter
+- `初学入门` trên source official đang nhấn rất mạnh 6 trụ cột nhập môn; PMTL hiện đã có `Kinh Bài Tập`, `Phát nguyện`, `Phóng sanh`, `Ngôi Nhà Nhỏ`, nhưng vẫn phải theo dõi thêm gap ở `Phật đài` và `Các loại sớ / thăng văn`
+
+---
+
+## 4. Information architecture cho hub `/bach-thoai`
+
+Hub này không được hiển thị như một khối mơ hồ, nhưng cũng không được ôm luôn các family khác.
+
+Nó phải tập trung vào `Bạch thoại Phật pháp` và `Sách nói`.
 
 1. `Bạch thoại`
-2. `Hỏi đáp`
-3. `Khai thị`
-4. `Sách nói`
+2. `Sách nói`
 
 ### Tab semantics
 
@@ -87,17 +131,6 @@ Nó phải có 4 visible tabs rõ ràng:
 - đọc theo bài hoặc theo quyển
 - ưu tiên source-backed text + translation
 
-#### `Hỏi đáp`
-
-- retrieval-first Q&A
-- các bài kiểu `Wenda`, `Phật học vấn đáp`, `Huyền học vấn đáp`
-- ưu tiên tìm theo vấn đề đời sống
-
-#### `Khai thị`
-
-- chỉ dạy, khai mở ngắn hơn hoặc context-specific hơn BTPP
-- có thể gắn dịp, pháp hội, hoàn cảnh thực hành
-
 #### `Sách nói`
 
 - book -> chapter -> text-first + audio companion
@@ -105,13 +138,37 @@ Nó phải có 4 visible tabs rõ ràng:
 
 ### Rules
 
-- Không được để tab `Hỏi đáp` chìm trong `Bạch thoại`
 - Không gọi mọi wisdom content là `Bạch thoại`
-- `Sách nói` là presentation format riêng, không phải category doctrinal ngang hàng với `Hỏi đáp`
+- `Sách nói` là presentation format riêng của BTPP
+- Nếu muốn dẫn qua `Hỏi đáp`, dùng related link hoặc cross-link card; không nhét thành tab của `/bach-thoai`
+- `Khai thị` là content label/filter/detail type, không phải tab public mặc định của `/bach-thoai` ở phase hiện tại
 
 ---
 
-## 4. Glossary chuẩn cho cụm pháp môn
+## 4.1 Information architecture cho hub `/hoi-dap`
+
+Hub `/hoi-dap` là surface retrieval-first cho:
+
+- `Wenda`
+- `玄艺问答`
+- `佛学问答`
+- các Q&A được index theo mã chương trình / timestamp / vấn đề đời sống
+
+Visible tabs chuẩn:
+
+1. `Tất cả`
+2. `Wenda`
+3. `Chủ đề phổ biến`
+
+Rules:
+
+- `Hỏi đáp` không được trình bày như subsection của `Bạch thoại`
+- Detail page của `Hỏi đáp` phải ưu tiên code/timestamp/source label hơn essay layout
+- Nếu entry Q&A có related `Khai thị` hoặc `Bạch thoại`, hiển thị ở related panel, không đổi canonical class của nó
+
+---
+
+## 5. Glossary chuẩn cho cụm pháp môn
 
 | Thuật ngữ gốc | Tên chuẩn PMTL | Ghi chú |
 |---|---|---|
@@ -138,7 +195,7 @@ Search/index nên map cả:
 
 ---
 
-## 5. Source taxonomy chuẩn
+## 6. Source taxonomy chuẩn
 
 Các wisdom entry và practice-support entry phải map vào đúng source family.
 
@@ -147,7 +204,7 @@ Các wisdom entry và practice-support entry phải map vào đúng source famil
 | `btpp_video` | `BTPP video` | `白话佛法视频开示*` |
 | `btpp_radio` | `BTPP radio` | `白话佛法广播讲座*` hoặc radio discourse cùng family |
 | `wenda` | `Hỏi đáp` | `Wenda`, `玄学问答`, `佛学问答` |
-| `zongshu` | `Tổng thuật / Zongshu` | source kiểu tổng hợp, đọc theo mã/timestamp |
+| `zongshu` | `Tổng thuật / Zongshu` | `玄艺综述*`, source kiểu tổng hợp, đọc theo mã/timestamp |
 | `mail_qa` | `Hỏi đáp thư tín` | question-answer qua mail/editorial correspondence |
 | `guide_manual` | `Hướng dẫn / nghi thức` | PDF/manual/ritual guide chuẩn như phóng sanh, Ngôi Nhà Nhỏ |
 
@@ -155,11 +212,12 @@ Các wisdom entry và practice-support entry phải map vào đúng source famil
 
 - Không trộn `wenda` vào `btpp_video`
 - Không gọi một `guide_manual` là `BTPP`
+- Không gọi `zongshu` là `BTPP` chỉ vì cùng xuất hiện trong menu âm thanh / khai thị
 - `Sách nói` là presentation surface; source family vẫn phải là `btpp_video` hoặc `btpp_radio` hay family thực tế tương ứng
 
 ---
 
-## 6. FAQ chuẩn cho hub `/bach-thoai`
+## 7. FAQ chuẩn cho hub `/bach-thoai`
 
 Các câu FAQ tối thiểu:
 
@@ -177,7 +235,25 @@ Các câu FAQ tối thiểu:
 
 ---
 
-## 6.1 Canonical content classification
+## 7.1 FAQ chuẩn cho hub `/hoi-dap`
+
+Các câu FAQ tối thiểu:
+
+1. `Hỏi đáp là gì?`
+2. `Hỏi đáp khác gì với Bạch thoại Phật pháp?`
+3. `Wenda có phải là Khai thị không?`
+4. `Nên tìm Hỏi đáp theo chủ đề hay theo mã chương trình?`
+
+### Short answers baseline
+
+- `Hỏi đáp` là surface tra cứu theo câu hỏi thật, thường có mã chương trình hoặc timestamp.
+- `Wenda` không phải `Bạch thoại`; hai loại này phải giữ owner và label riêng.
+- Một số entry `Khai thị` có thể liên quan câu hỏi thực hành, nhưng canonical class của nó không đổi chỉ vì user nhìn thấy từ khóa giống nhau.
+- Search và filters phải hỗ trợ cả tìm theo câu hỏi đời sống lẫn tìm theo source code.
+
+---
+
+## 7.2 Canonical content classification
 
 Không được gộp mù `Bạch thoại`, `Hỏi đáp`, `Khai thị`, và `bài viết`.
 
@@ -193,7 +269,7 @@ thì canonical class phải là:
 
 - `qaEntries`
 - source family: `wenda`
-- presentation surface: tab `Hỏi đáp`
+- presentation surface: hub `/hoi-dap`
 
 Không được coi đó là:
 
@@ -218,6 +294,10 @@ Canonical class:
 
 - `wisdomEntries`
 - source family thường là `btpp_video`, `btpp_radio`, hoặc family source thật tương ứng
+- public surface hiện tại:
+  - search filter `Khai thị`
+  - related cards từ event / BTPP / Hỏi đáp
+  - chưa mở public top-level route riêng làm canon phase hiện tại
 
 ### `Bài viết`
 
@@ -240,7 +320,7 @@ Posts có thể **trích dẫn hoặc dẫn link** sang `wisdom/qa`, nhưng khô
 
 ---
 
-## 7. FAQ chuẩn cho `Ngôi Nhà Nhỏ`
+## 8. FAQ chuẩn cho `Ngôi Nhà Nhỏ`
 
 Các câu FAQ tối thiểu:
 
@@ -259,7 +339,7 @@ Các câu FAQ tối thiểu:
 
 ---
 
-## 8. Warning policy cho `Ngôi Nhà Nhỏ`
+## 9. Warning policy cho `Ngôi Nhà Nhỏ`
 
 `Ngôi Nhà Nhỏ` là high-risk content surface.
 
@@ -285,7 +365,7 @@ Mọi guide/FAQ/tooling liên quan phải có warning blocks mạnh hơn mặt b
 
 ---
 
-## 9. Product conclusion
+## 10. Product conclusion
 
 ### `Ngôi Nhà Nhỏ`
 
@@ -296,14 +376,15 @@ Mọi guide/FAQ/tooling liên quan phải có warning blocks mạnh hơn mặt b
 
 - route `/bai-hoa` nên bỏ
 - giữ hub ngắn gọn nhưng phải rõ nghĩa bằng `/bach-thoai`
-- H1/nav/subtitle phải giải nghĩa rõ:
-  - `Bạch thoại Phật pháp`
-  - `Bạch thoại / Hỏi đáp / Khai thị / Sách nói`
+- không dùng `/bach-thoai` làm ô gom tất cả `Hỏi đáp`
+- mở `Hỏi đáp` như family riêng bằng `/hoi-dap`
+- `Khai thị` giữ ở level label/filter/detail type cho phase hiện tại, không ép thành tab con của `/bach-thoai`
 
 ---
 
-## 10. Notes for AI/codegen
+## 11. Notes for AI/codegen
 
 - Public route dùng tiếng Việt dễ hiểu, không dùng pinyin hoặc half-transliterated slug.
 - Internal key vẫn có thể dùng `baihua` nếu cần cho data model, nhưng UI/public route không được lẫn.
-- Nếu một page thuộc `Hỏi đáp` hay `Khai thị`, đừng gắn label `Bạch thoại` chỉ vì nó nằm dưới hub `/bach-thoai`.
+- Nếu một page thuộc `Hỏi đáp`, route/detail của nó không được đi qua `/bach-thoai`.
+- Nếu một page thuộc `Khai thị`, đừng gắn label `Bạch thoại` chỉ vì source cùng xuất hiện trong channel `节目录音` hoặc `弘法视频`.

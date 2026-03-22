@@ -45,6 +45,8 @@
    - `ngoiNhaNhoSheet` đã `offered` thì không được mở lại progress fields bừa bãi.
 4. Idempotency (tính không đổi):
    - `practiceLogs` nên support `clientEventId` hoặc composite key kiểu `user + date + plan`.
+   - canonical self-write lane cho member dashboard / practice flow = `PUT /api/engagement/practice-logs/self`
+   - nếu vẫn giữ `POST /api/engagement/practice-logs`, route này phải được coi là append/manual-entry lane riêng; không được dùng song song cho cùng một UX self-save mà không chốt semantics khác biệt
 
 ## Expected errors (Lỗi dự kiến)
 

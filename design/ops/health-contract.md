@@ -17,9 +17,15 @@ File này chốt contract cụ thể cho từng health endpoint.
 | `GET /health/ready` | Ready for traffic? | None | Readiness probe |
 | `GET /health/startup` | Startup complete? | None | Startup probe |
 
-**Port**: Same as API port (default 3001). Caddy does NOT proxy these to the internet.
-**Caddy rule**: `@health path /health/*` → `reverse_proxy api:3001` but only accessible internally.
-If needed for external monitoring: expose via dedicated internal route only.
+**Port**: Same as API port (default 3001).
+**Exposure rule**:
+- canonical deploy gate inside host/container network = direct `http://localhost:3001/health/*`
+- external HTTPS probing via `https://api.pmtl.vn/health/*` is allowed for deploy gate and uptime monitoring when Caddy explicitly proxies these endpoints
+- health endpoints are read-only operational probes, not admin diagnostics; extended system detail stays behind admin auth via `/api/admin/system/health-extended`
+**Caddy rule**:
+- `@health path /health/*` → `reverse_proxy api:3001`
+- if exposed publicly, only `/health/live`, `/health/ready`, `/health/startup` are allowed
+- do not expose queue internals, disk paths, migration SQL, or other sensitive diagnostics on these public probe routes
 
 ---
 
@@ -121,6 +127,7 @@ healthcheck:
 
 **Deploy gate usage**:
 ```bash
+curl -f http://localhost:3001/health/ready || exit 1
 curl -f https://api.pmtl.vn/health/ready || exit 1
 ```
 

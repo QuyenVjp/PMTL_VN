@@ -43,6 +43,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Admin feature query plan | ✅ Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `tracking/admin-feature-query-plan.md` |
 | Wisdom naming & IA canon | ✅ Sẵn sàng | route slug, hub IA, glossary, source taxonomy, FAQ/warnings cho BTPP và Little House cross-surface — `10-wisdom-qa/btpp-library-canon.md` |
 | Wisdom-QA family audit | ✅ Sẵn sàng | audit theo family, anti-drift rules, và gap list để scaffold không đoán taxonomy — `tracking/wisdom-qa-family-audit.md` |
+| XLCH official alignment | ✅ Sẵn sàng | official family map và alignment backlog từ `xlch.org` đã được ghi riêng để tránh gộp sai BTPP/Hỏi đáp/Khai thị — `tracking/xlch-official-alignment.md` |
 | Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `tracking/env-inventory.md` |
 | pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `baseline/pgvector-decision.md` |
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |
