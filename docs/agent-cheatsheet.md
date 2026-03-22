@@ -27,6 +27,14 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 4. Global generic tool skills
 5. Trail of Bits hoặc các specialist pack khi task thuộc security hoặc niche tooling
 
+## Stitch MCP fast path
+
+- Nếu task là wireframe, screen generation, hoặc chỉnh sửa UI trực tiếp trên Stitch, đọc `docs/stitch-mcp.md` trước.
+- Workspace này có cấu hình MCP server `stitch` trong `.mcp.json`, nhưng session chỉ dùng được nếu `STITCH_MCP_API_KEY` đã có từ trước khi mở agent.
+- Project ưu tiên cho PMTL là `PMTL_VN_DEV` với id `8141337621129516599`.
+- Duplicate cũ: `PMTL_VN_DEV` với id `4954059763928985932`.
+- Skill nên gọi khi làm việc với Stitch: `stitch-design`, `stitch-wireframe-generator`, `design-md`, `stitch-loop`.
+
 ## Bản đồ chủ đề thực chiến
 
 ### 1. Workflow và delivery

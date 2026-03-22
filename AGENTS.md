@@ -15,6 +15,7 @@
 - `.vscode/.instructions.md`
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
+- `docs/stitch-mcp.md` when the task involves wireframes, design generation, Stitch, or UI exploration through MCP
 
 ## Monorepo Boundaries
 - Preserve package boundaries:
@@ -48,6 +49,7 @@
 - UI review: `.agents/skills/pmtl-review-web-ui/SKILL.md`
 - Verification: `.agents/skills/pmtl-verify-quality-gate/SKILL.md`, `.agents/skills/pmtl-verify-auth-flow/SKILL.md`, `.agents/skills/pmtl-verify-search-sync/SKILL.md`
 - Runbooks: `.agents/skills/pmtl-runbook-docker-dev-recovery/SKILL.md`, `.agents/skills/pmtl-runbook-cms-runtime-errors/SKILL.md`
+- Stitch/global design helpers when the task explicitly targets Stitch MCP or Stitch wireframing: `C:\Users\ADMIN\.agents\skills\stitch-design\SKILL.md`, `C:\Users\ADMIN\.agents\skills\stitch-wireframe-generator\SKILL.md`, `C:\Users\ADMIN\.agents\skills\design-md\SKILL.md`, `C:\Users\ADMIN\.agents\skills\stitch-loop\SKILL.md`
 
 ## Skill Routing Order
 - Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
@@ -61,6 +63,13 @@
 - Use `mgrep` for conceptual search.
 - Keep edits file-local and split large patches to avoid Windows path/command limits.
 - Avoid broad recursive commands that walk `.next`, `node_modules`, or generated output unless that is the target.
+
+## Stitch MCP
+- Workspace MCP config includes a `stitch` server in `.mcp.json`; prefer it for design generation and wireframe exploration when the session exposes Stitch tools.
+- Required local environment: `STITCH_MCP_API_KEY` must be set before starting the agent session; do not hardcode the key into repo files.
+- Preferred Stitch project for PMTL design work: `PMTL_VN_DEV` with project id `8141337621129516599`.
+- There is an older duplicate project named `PMTL_VN_DEV` with id `4954059763928985932`; use it only if the newer project is unavailable.
+- If the current session does not expose Stitch tools after restart, consult `docs/stitch-mcp.md` and verify connectivity before assuming Stitch is unavailable.
 
 ## Standard Commands
 - Install deps: `pnpm install`

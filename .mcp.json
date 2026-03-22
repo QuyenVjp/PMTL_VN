@@ -1,5 +1,18 @@
 {
   "mcpServers": {
+    "stitch": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://stitch.googleapis.com/mcp",
+        "--header",
+        "X-Goog-Api-Key: ${STITCH_MCP_API_KEY}"
+      ]
+    },
     "shadcn": {
       "type": "stdio",
       "command": "cmd",
