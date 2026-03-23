@@ -89,15 +89,20 @@ healthcheck:
 1. **Postgres connectivity**: `SELECT 1` within 2s timeout
 2. **Pending migrations**: `prisma migrate status` — must be 0 pending migrations
 3. **Feature flags table**: `SELECT COUNT(*) FROM feature_flags` — table must be readable
+4. **Audit log write path**: append-safe probe hoặc equivalent writeability check for `audit_logs`
+5. **Storage adapter readiness**:
+   - `local`: `LOCAL_STORAGE_ROOT` exists and write probe succeeds
+   - `r2`: credentials present and lightweight provider health check succeeds
 
 **Checks (when activated)**:
-4. **Valkey connectivity** (when `VALKEY_URL` set and rate-limit/cache/queue path is routed to Valkey): `PING` → `PONG` within 500ms
-5. **Meilisearch health** (when `SEARCH_ENGINE=meilisearch` and `MEILISEARCH_URL` set): `GET /health` → `{"status":"available"}`
+6. **Valkey connectivity** (when `VALKEY_URL` set and rate-limit/cache/queue path is routed to Valkey): `PING` → `PONG` within 500ms
+7. **Meilisearch health** (when `SEARCH_ENGINE=meilisearch` and `MEILISEARCH_URL` set): `GET /health` → `{"status":"available"}`
 
 **Ready decision rule**:
 - `/health/ready` chỉ trả `200` khi:
   - mọi baseline check đều `ok`
   - và mọi optional dependency đã `activated` đều `ok`
+- `audit` và `storage` là baseline launch-blocker checks; fail ở đây cũng làm readiness fail
 - bất kỳ dependency optional nào ở trạng thái `not_activated` hoặc `skipped` không làm fail readiness
 - bất kỳ dependency optional nào đã `activated` nhưng `error` hoặc `timeout` đều làm `/health/ready` trả `503`
 - không có khái niệm `partially ready for traffic` ở public readiness probe phase 1; partial state chỉ được phản ánh ở payload/admin health page
@@ -110,6 +115,8 @@ healthcheck:
     "postgres": { "status": "ok", "latencyMs": 4 },
     "migrations": { "status": "ok", "pendingCount": 0 },
     "featureFlags": { "status": "ok", "count": 9 },
+    "audit": { "status": "ok", "latencyMs": 3 },
+    "storage": { "status": "ok", "adapter": "local", "latencyMs": 2 },
     "valkey": { "status": "ok", "latencyMs": 1 },
     "meilisearch": { "status": "ok", "latencyMs": 12 }
   },
@@ -124,7 +131,9 @@ healthcheck:
   "checks": {
     "postgres": { "status": "error", "reason": "Connection timeout after 2000ms" },
     "migrations": { "status": "ok", "pendingCount": 0 },
-    "featureFlags": { "status": "skipped" }
+    "featureFlags": { "status": "skipped" },
+    "audit": { "status": "ok", "latencyMs": 4 },
+    "storage": { "status": "error", "reason": "LOCAL_STORAGE_ROOT not writable" }
   },
   "timestamp": "2026-03-21T10:00:00.000Z"
 }
@@ -240,9 +249,23 @@ Admin page shows:
   "dbConnectionCount": 8,
   "pendingOutboxCount": 0,
   "featureFlagsCount": 9,
-  "recentErrors": []  // Last 5 error log entries
+  "recentErrors": [
+    {
+      "occurredAt": "2026-03-21T10:00:00.000Z",
+      "module": "identity",
+      "action": "auth.refresh",
+      "errorCode": "auth.refresh_reused",
+      "requestId": "req_123"
+    }
+  ]  // Max 5 entries, safe projection only
 }
 ```
+
+`recentErrors` projection rules:
+
+- không trả raw message text, stack trace, token, cookie, Authorization header, hoặc internal metadata chưa sanitize
+- chỉ trả field đủ để admin biết lane nào đang lỗi và tra cứu tiếp bằng requestId
+- full raw logs chỉ xem qua ops path hoặc log tail, không expose qua endpoint admin này
 
 ---
 

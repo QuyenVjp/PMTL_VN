@@ -48,6 +48,14 @@ Mục tiêu:
 | `/thong-bao` | `NotificationPreferencesPageDto` | `pushCapabilityStatus`, `eventReminderState` nếu chưa nằm trong aggregate | empty/error/loading states phải map từ loader result |
 | `/lich-ca-nhan` | `PersonalPracticeCalendarPageDto` | `advisoryCards`, `reminderSummary` | advisory summary là primary, event snippets là aux |
 
+## Admin operational routes
+
+| Route pattern | Primary loader contract | Auxiliary loaders | Notes |
+|---|---|---|---|
+| `/admin/dashboard` | `AdminDashboardPageDto` | `recentAuditMiniList`, `pendingModerationMiniList` nếu chưa nằm trong aggregate | không để admin home tự fan-out 4 panel không owner |
+| `/he-thong/health` | `AdminSystemHealthExtendedDto` | `liveHealthStatus`, `metricsSummary` nếu phase-gated tách route | health admin page là operational aggregate, không log tail viewer |
+| `/admin/he-thong/thong-bao` | `AdminNotificationOpsPageDto` | `deliveryHealthSummary`, `jobQueueMiniStats` nếu chưa nằm trong aggregate | queue health và subscription stats phải có owner aggregate rõ |
+
 ## Special notes
 
 ### `/dashboard`
@@ -146,6 +154,28 @@ Rules:
 - page aggregate không được nhét full event detail hay full vow detail.
 - month grid cell chỉ dùng lightweight day projection, không preload advisory detail cho mọi ngày.
 
+### Member auth freshness rule
+
+- các page `member+` phải xác nhận auth state còn hợp lệ trước khi compose aggregate dữ liệu nhạy cảm
+- nếu session hết hạn hoặc permission state stale trước bootstrap, page phải fail về auth path chuẩn thay vì render cached partial member state
+- member page không được render aggregate cũ rồi chờ aux request mới phát hiện `401`
+
+### `/he-thong/health`
+
+`AdminSystemHealthExtendedDto` tối thiểu phải có:
+- `uptime`
+- `memoryUsageMb`
+- `cpuUsagePercent`
+- `diskUsagePercent`
+- `dbConnectionCount`
+- `featureFlagsCount`
+- `recentErrors[]`
+
+Rules:
+- page này không phải raw log explorer; `recentErrors[]` chỉ là safe projection
+- degraded panel phải map từ payload aggregate, không gọi thêm raw log endpoint để tự diễn giải lỗi
+- nếu health aggregate fail, page hiển thị operational failure state; không fallback sang từng probe request riêng lẻ
+
 ## Scaffold rule
 
 Khi scaffold `apps/web`:
@@ -188,6 +218,7 @@ Bảng này chốt thêm `execution contract` cho các page P0 để web không 
 - Page loader chỉ map từ aggregate payload/error envelope sang render state; không được gọi thêm request bonus để "hiểu lỗi".
 - Nếu một warning/degraded state chỉ ảnh hưởng 1 section, aggregate payload vẫn phải trả phần còn lại đủ để page render partial success.
 - Nếu page chưa render được chỉ bằng aggregate payload + canonical error envelope, contract hiện tại bị coi là chưa đóng.
+- admin operational pages cũng theo rule này; không dùng extra debug call để tự bù contract còn thiếu.
 
 ## Query-key ownership principle
 

@@ -17,6 +17,23 @@ Nó không thay file `.env.example`, nhưng giúp tránh quên nhóm env khi sca
 - Không thêm env vô danh nghĩa; mỗi env phải có owner.
 - Khi thêm env mới: cập nhật file này + `.env.example` + `config.schemas.ts` owner module.
 
+## Credential class reference
+
+File này dùng cùng 4 lớp credential với `baseline/secret-management.md`.
+
+| Class | Meaning | Typical examples |
+|---|---|---|
+| `public-safe` | có thể xuất hiện ở browser/public docs | `NEXT_PUBLIC_*`, `VITE_*`, public URLs |
+| `browser/session transport` | đi qua browser auth boundary nhưng không phải public config | `CSRF_SECRET`, cookie policy env |
+| `internal shared-secret` | dùng cho callback/revalidate/internal handshake | `REVALIDATE_SECRET`, signed internal webhook secrets |
+| `admin/service credential` | privileged credential chỉ server/ops được giữ | `JWT_*_SECRET`, `DATABASE_URL`, `SMTP_PASS`, storage/cloud tokens |
+
+Rules:
+
+- `apps/web` và `apps/admin` không được giữ `admin/service credential`
+- `packages/shared` không được giữ env accessor cho bất kỳ class nào
+- env nào không map được vào 1 class ở trên thì chưa đủ readiness để thêm vào inventory
+
 ---
 
 ## Phase 1 — Required before launch
@@ -249,5 +266,6 @@ When scaffolding a new environment, verify:
 - [ ] `REVALIDATE_SECRET` matches between api and web envs
 - [ ] `API_INTERNAL_URL` points to internal Docker network (not public URL)
 - [ ] `COOKIE_SECURE=true` in production
+- [ ] No `admin/service credential` var appears in web/admin public env config
 - [ ] No secrets committed to repo
 - [ ] `apps/api` boots without env validation errors

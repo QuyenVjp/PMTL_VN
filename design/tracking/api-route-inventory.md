@@ -114,6 +114,9 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/admin/sessions/revoke-bulk` | `identity` + `sessions` | super-admin |
 | `POST` | `/admin/users/:publicId/sessions/revoke-all` | `identity` + `sessions` | super-admin |
 
+> `GET /auth/me` là auth session bootstrap route; response owner theo `tracking/api-dto-shape-plan.md` row `AuthSessionStateDto`.
+> `/auth/refresh` và `/auth/me` phải dùng cùng vocabulary cho session freshness / security flags; không để web tự suy luận auth state từ cookie presence.
+
 ## Content
 
 | Method | Route | Owner | Auth |
@@ -189,6 +192,9 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/admin/content/media-library/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
 | `DELETE` | `/content/media/:publicId` | `content` + `storage` | owner/admin |
+
+> `POST /content/media/upload` là signed upload/register primitive; response owner theo `tracking/api-dto-shape-plan.md` row `SignedUploadResponseDto`.
+> route upload không được expose provider-specific shape trực tiếp; client chỉ nhận contract đủ để upload và finalize theo policy PMTL.
 
 ## Community
 
@@ -412,6 +418,8 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/admin/audit-logs/:publicIdOrId` | `audit` | admin+ |
 | `GET` | `/admin/system/health-extended` | `health` + `platform` | admin+ |
 | `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
+
+> `GET /admin/system/health-extended` là admin operational aggregate; response owner theo `tracking/api-dto-shape-plan.md` row `AdminSystemHealthExtendedDto`.
 
 ## Platform / Control Plane — Phase 2+ conditional routes
 

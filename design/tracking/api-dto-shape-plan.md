@@ -36,6 +36,8 @@ Mục tiêu:
 | wisdom hub page | `WisdomHubDto` | `items[]`, `pagination`, `activeTab`, `tabCounts`, `filterFacets`, `featuredEntries[]`, `searchScope`, `engine` | owner cho `/bach-thoai` và `/hoi-dap` |
 | wisdom detail | `WisdomDetailDto` | list item fields + `titleOriginal`, `translatedText`, `rawOriginalText?`, `sourceUrl`, `sourceAttribution`, `keywordAliases[]`, `relatedEntries[]` | `question/answer` pair chỉ hiện khi `entryType = qa` |
 | member dashboard page | `MemberDashboardDto` | `todayLunar`, `advisorySummary`, `quickActions[]`, `practiceSummary`, `activeVowsSummary`, `onboardingState`, `notificationSummary` | owner cho `/dashboard`; không để web tự fan-out mù qua 4 module |
+| auth session state | `AuthSessionStateDto` | `user`, `session`, `permissions`, `mustRefreshBefore`, `requiresEmailVerification`, `securityFlags[]` | owner cho `/auth/me` và auth bootstrap surfaces; không trả raw refresh token |
+| signed upload response | `SignedUploadResponseDto` | `publicId`, `uploadUrl`, `uploadMethod`, `expiresAt`, `expectedPublicUrl`, `allowedMimeTypes[]`, `maxBytes` | owner cho signed upload/register flow; `uploadUrl` short-TTL, không cache ở client |
 | offline bundle list | `OfflineBundleListItemDto` | `publicId`, `bundleType`, `scope`, `version`, `freshnessStatus`, `lastRebuiltAt`, `downloadSize`, `syncStatus` | cho `/ngoai-tuyen` |
 | offline bundle list page | `OfflineBundleListPageDto` | `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | page aggregate cho `/ngoai-tuyen` |
 | offline bundle delta response | `OfflineBundleDeltaResponseDto` | `bundleId`, `bundleName`, `fromVersion`, `toVersion`, `isFullSync`, `added[]`, `updated[]`, `deletedIds[]`, `totalEntries`, `generatedAt` | owner cho `/offline-bundles/:publicId/delta` |
@@ -46,6 +48,9 @@ Mục tiêu:
 | admin search indexing job | `AdminSearchIndexingJobDto` | `publicId`, `source`, `triggerType`, `status`, `startedAt`, `finishedAt`, `durationMs`, `rowsIndexed`, `rowsDeleted`, `actorUserId?`, `requestId?`, `errorSummary?` | không nhét raw logs vào DTO detail |
 | admin search fallback event | `AdminSearchFallbackEventDto` | `occurredAt`, `requestedEngine`, `actualEngine`, `reason`, `route`, `queryHash`, `durationMs`, `userAgentClass`, `requestId` | không expose raw query text |
 | admin push subscription stats | `AdminPushSubscriptionStatsDto` | `activeCount`, `inactiveCount`, `newSubscriptionsLast30d[]`, `browserBreakdown[]`, `lastAggregatedAt`, `deliveryHealthSummary` | aggregate-only cho tab subscriptions của admin notifications |
+| admin dashboard page | `AdminDashboardPageDto` | `systemSummary`, `pendingModeration`, `recentAuditEvents[]`, `contentOpsSummary`, `searchOpsSummary?` | owner cho `/admin/dashboard`; không để admin home tự ghép nhiều panel vô chủ |
+| admin notification ops page | `AdminNotificationOpsPageDto` | `pushStatus`, `subscriptionStats`, `jobQueueSummary`, `recentJobs[]`, `deliveryHealthSummary` | owner cho `/admin/he-thong/thong-bao`; jobs/subscription stats phải cùng vocabulary |
+| admin system health extended | `AdminSystemHealthExtendedDto` | `uptime`, `memoryUsageMb`, `cpuUsagePercent`, `diskUsagePercent`, `dbConnectionCount`, `featureFlagsCount`, `recentErrors[]` | owner cho `/admin/system/health-extended`; `recentErrors[]` chỉ là safe projection |
 | admin moderation report detail | `AdminModerationReportDetailDto` | `publicId`, `status`, `reasonCode`, `reporterSummary`, `targetType`, `targetPreview`, `createdAt`, `decisionHistory[]`, `currentDecisionOptions[]` | giảm blind scaffold ở moderation |
 | admin audit-log detail | `AdminAuditLogDetailDto` | `publicId`, `actorSummary`, `action`, `resourceType`, `resourcePublicId`, `occurredAt`, `metadata`, `correlationId`, `requestId` | `metadata` phải qua safe projection |
 | admin wisdom import job detail | `AdminWisdomImportJobDetailDto` | `publicId`, `jobType`, `providerProfile`, `sourceFamily`, `status`, `candidateSlug`, `dedupeStatus`, `resultEntryPublicId?`, `errorSummary?`, `createdAt`, `updatedAt` | lấp gap import workspace |
@@ -109,6 +114,34 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `sql`
   - `meilisearch`
   - `sql-fallback`
+
+### `AdminDashboardPageDto`
+
+- `systemSummary` tối thiểu:
+  - `healthStatus`
+  - `pendingAlertsCount`
+  - `openIncidentsCount?`
+- `pendingModeration` chỉ là summary cards hoặc mini-list, không trả full report detail
+- `recentAuditEvents[]` dùng safe mini projection:
+  - `occurredAt`
+  - `action`
+  - `resourceType`
+  - `actorSummary`
+- `contentOpsSummary` và `searchOpsSummary?` là aggregate panels, không phải raw ops tables
+
+### `AdminNotificationOpsPageDto`
+
+- `pushStatus` tối thiểu:
+  - `pushEnabled`
+  - `deliveryHealth`
+  - `workerState`
+- `subscriptionStats` dùng `AdminPushSubscriptionStatsDto`
+- `jobQueueSummary` tối thiểu:
+  - `pendingCount`
+  - `processingCount`
+  - `failedCount`
+- `recentJobs[]` là mini-list hoặc snippet; detail route mới được trả full job detail
+- không trả raw payload của notification delivery job trong page aggregate
 
 ### `SearchResultItemDto`
 
@@ -186,6 +219,41 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `default`
   - `unsupported`
 
+### `AuthSessionStateDto`
+
+- `user` tối thiểu:
+  - `publicId`
+  - `emailMasked`
+  - `displayName`
+  - `role`
+- `session` tối thiểu:
+  - `sessionPublicId`
+  - `expiresAt`
+  - `lastRotatedAt?`
+- `permissions` là safe projection:
+  - `canAccessMemberRoutes`
+  - `canAccessAdminRoutes`
+  - `canUploadMedia`
+- `securityFlags[]` canonical values:
+  - `email_unverified`
+  - `password_reset_required`
+  - `session_refresh_due`
+- không bao giờ trả refresh token, session secret, hoặc internal device fingerprint.
+
+### `SignedUploadResponseDto`
+
+- `uploadUrl` là signed URL ngắn hạn; không log, không persist vào client cache, không nhúng vào analytics.
+- `uploadMethod` canonical values:
+  - `PUT`
+  - `POST`
+- `expectedPublicUrl` chỉ là projected public path sau finalize; chưa coi asset là public-live cho tới khi finalize thành công.
+- `allowedMimeTypes[]` và `maxBytes` phải echo policy server-side để client không tự đoán.
+- error companion tối thiểu:
+  - `storage.signed_url_expired`
+  - `storage.signed_url_invalid`
+  - `storage.upload_finalize_failed`
+  - `storage.root_unavailable`
+
 ### `MemberDashboardDto`
 
 - `todayLunar` tối thiểu:
@@ -215,6 +283,17 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `pushCapability`
   - `practiceReminderEnabled`
   - `eventReminderEnabled`
+
+### `AdminSystemHealthExtendedDto`
+
+- `recentErrors[]` chỉ gồm:
+  - `occurredAt`
+  - `module`
+  - `action`
+  - `errorCode`
+  - `requestId`
+- không trả raw stack trace, token, cookie, hoặc payload metadata chưa sanitize.
+- `dbConnectionCount`, `pendingOutboxCount?`, `queueDepths?` là operational counters; không dùng field name mơ hồ kiểu `healthData`.
 
 ### `WisdomHubDto`
 

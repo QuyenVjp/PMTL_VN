@@ -74,9 +74,45 @@ Nó lấp đúng gap audit đã chỉ ra: có error envelope nhưng chưa có re
 
 - `search.engine_unavailable`
 - `search.reindex_not_enabled`
+- `search.query_invalid`
+- `search.query_too_short`
+- `search.cursor_invalid`
 - `calendar.event_not_found`
+- `calendar.month_invalid`
+- `calendar.aggregate_unavailable`
 - `notification.subscription_invalid`
+- `notification.subscription_missing`
 - `notification.delivery_disabled`
+- `notification.push_not_supported`
+- `notification.preferences_degraded`
+
+### Storage / Upload
+
+- `storage.quota_exceeded`
+- `storage.permission_denied`
+- `storage.signed_url_expired`
+- `storage.signed_url_invalid`
+- `storage.upload_finalize_failed`
+- `storage.root_unavailable`
+- `storage.provider_unavailable`
+
+### Page / Aggregate bootstrap
+
+- `dashboard.aggregate_unavailable`
+- `offline.bundle_list_unavailable`
+- `offline.sync_degraded`
+- `page.aggregate_unavailable`
+- `page.partial_data_warning`
+
+### Admin operations
+
+- `admin.insufficient_role`
+- `admin.self_modification_forbidden`
+- `admin.audit_immutable`
+- `admin.feature_flag_locked`
+- `admin.moderation_state_invalid`
+- `admin.reindex_already_running`
+- `admin.health_projection_unavailable`
 
 ### Platform / Generic
 
@@ -96,3 +132,9 @@ Nó lấp đúng gap audit đã chỉ ra: có error envelope nhưng chưa có re
 - `429`: rate limit hit
 - `500`: unexpected server error
 - `503`: dependency/platform temporarily unavailable
+
+## Cross-reference
+
+Error code được nhắc ở `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `ops/health-contract.md`, hoặc module `contracts.md` phải có row canon ở file này trước khi scaffold.
+
+Thiếu row tương ứng = `blocked at design`.
