@@ -153,3 +153,63 @@ Mỗi khi một decision (quyết định) đổi trạng thái sang `implemente
 - doc owner (tài liệu sở hữu) liên quan
 - code reference (tham chiếu mã nguồn) cụ thể
 - nếu là ops/runtime feature (tính năng vận hành/thực thi), thêm evidence (bằng chứng) hoặc command (lệnh) vào runbook (tài liệu vận hành) tương ứng
+
+## Design-only readiness matrix (Ma trận sẵn sàng ở mức thiết kế)
+
+Mục này tồn tại để chặn kiểu `đã có design khá nhiều rồi nên chắc code được`.
+`Ready for implementation` ở đây vẫn chỉ là readiness của tài liệu, không phải runtime completeness.
+
+| Surface | Design status | Còn thiếu để giảm invention | Owner docs phải đồng bộ |
+|---|---|---|---|
+| member page aggregates | partial | khóa `page-loader-contracts` + `api-dto-shape-plan` cho `/dashboard`, `/thong-bao`, `/ngoai-tuyen`, `/lich-ca-nhan` | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `tracking/api-route-inventory.md` |
+| public search + wisdom hub | partial | chốt `engine`, `tabCounts`, `filterFacets`, error mapping, query param canon ở cả page và API level | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `06-search/*`, `10-wisdom-qa/*` |
+| admin query invalidation | partial | chỉ được nâng lên readiness cao hơn khi mapping mutation -> invalidation -> revalidation path được giữ canon và không drift | `tracking/admin-page-api-mapping.md`, `design/ui/ADMIN_MODULE_SPECS.md` |
+| launch blocker runtime modules | partial | mỗi blocker cần artifact expectation + evidence expectation + owner runbook rõ hơn | file này + use-case owner + runbook tương ứng |
+| ops recovery / restore | partial | cần command/evidence contract rõ cho backup, restore, health, metrics | `design/ops/*`, `baseline/observability-architecture.md`, `ops/health-contract.md` |
+
+## Evidence contract before status changes
+
+Từ giờ một dòng trong file này chỉ được đổi trạng thái khi có đủ evidence tier tương ứng:
+
+| Target status | Minimum evidence required |
+|---|---|
+| `implemented` | code path cụ thể + runtime surface cụ thể + verification command hoặc record cụ thể |
+| `required before launch` giữ nguyên | phải có owner doc, artifact path kỳ vọng, và launch rationale rõ |
+| `planned` | phải có trigger + design doc + expected code location |
+| `forbidden for now` / `explicit exclusion` | phải có reason + reconsideration trigger nếu applicable |
+
+Evidence hợp lệ gồm:
+
+- file path thật trong `apps/api`, `apps/web`, `apps/admin`, `infra`
+- command/runbook step có thể lặp lại
+- log record, drill record, hoặc health contract reference cụ thể
+- không dùng câu kiểu `đã có baseline`, `đã discussed`, `đã phase-gated` như evidence
+
+### Page-level evidence split
+
+Với feature có page surface, evidence không đủ nếu chỉ có backend route:
+
+- API tier: route + auth scope + DTO/error contract owner rõ
+- Web tier: page loader contract hoặc query strategy owner rõ theo `tracking/page-loader-contracts.md`
+- Admin tier nếu có: query/invalidation mapping owner rõ theo admin mapping docs
+
+Không được đổi status thành `implemented` cho page-level feature nếu backend đã có route nhưng web/admin fetch strategy vẫn còn để người triển khai tự chọn.
+
+## P0 doc upgrades to finish before broad scaffold
+
+Các nâng cấp dưới đây nên hoàn tất trước khi AI hoặc dev scaffold rộng:
+
+| Priority | Doc | Upgrade cần có | Vì sao |
+|---|---|---|---|
+| P0 | `tracking/api-dto-shape-plan.md` | đóng `request/response/error/projection owner` cho page aggregate và search families | chặn controller/query layer tự bịa field và envelope |
+| P0 | `tracking/page-loader-contracts.md` | chốt `max calls`, `cache mode`, `auth mode`, `error-state owner` cho page bootstrap | chặn web tự fan-out và tự nghĩ empty/degraded behavior |
+| P0 | file này | chốt `design-only readiness` và `evidence contract` trước khi đổi trạng thái | chặn cảm giác `design đã đủ` nhưng chưa có bằng chứng để implement/launch |
+
+## Enterprise handoff rule
+
+Nếu một team khác hoặc external worker nhận task từ `design/`, handoff chỉ được coi là sạch khi:
+
+1. surface có row trong bảng readiness ở trên
+2. page/API/ops owner docs không mâu thuẫn route canon
+3. artifact expectation đủ cụ thể để người nhận task không phải hỏi lại `viết ở đâu`, `fetch bao nhiêu lần`, `ai owner error state`
+4. status trong file này không vượt quá mức evidence hiện có

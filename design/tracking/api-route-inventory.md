@@ -63,6 +63,15 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 }
 ```
 
+## Platform-primitive route rule
+
+Nếu một feature nghe giống managed-platform feature như auth, signed upload, storage lifecycle, webhook callback, realtime fanout, queue ops, hay admin observability:
+
+- vẫn phải define route theo business capability của PMTL trước
+- `apps/api` là backend authority; không được coi direct DB shortcut, client-side hack, hay vendor term là route canon
+- route name ưu tiên mô tả capability (`/notifications/push/subscribe`, `/internal/revalidate`) hơn là table shape hoặc provider vocabulary
+- privileged operations phải ở server-side route có auth/signature contract rõ, không đẩy thẳng credential hoặc privileged action xuống client
+
 ## Status-code matrix
 
 | Route class | Success | Common errors | Notes |
@@ -369,6 +378,8 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 
 > `authority-profiles` hiện là admin-first surface.
 > Chưa mở public route canon trong `PAGE_INVENTORY` thì không tự thêm `/wisdom/authority-profiles*` public read routes.
+> `GET /offline-bundles` là page aggregate route, không chỉ là generic list; response owner phải giữ `syncSummary` và `pendingDeltaBadge` theo `tracking/api-dto-shape-plan.md`.
+> `GET /calendar/personal-practice` là month aggregate route; query `month` là required và response không được drift thành flat event list.
 
 ## Contact
 
@@ -436,5 +447,6 @@ Không được scaffold sớm nếu `apps-api-scaffold-order.md` chưa cho phé
 - `/auth/refresh` exact limit tham chiếu `tracking/coding-readiness.md` Phần 5 + `baseline/security.md`
 - `/internal/revalidate` phải đi với `Cache-Control`/revalidation contract rõ và replay/shared-secret handling; không coi là route nội bộ “tự hiểu”
 - `/admin/system/health-extended` response contract owner là `ops/health-contract.md`, không tự bịa shape ở controller khi scaffold
+- signed upload URL generation, upload finalization, webhook callback intake, queue redrive, và admin status routes là `platform primitives`; luôn hand-authored, không generated CRUD
 - route search/admin queue/outbox thuộc `Phase 2+` chỉ được bật khi trigger trong các doc owner tương ứng đã được đáp ứng
 - `/offline-bundles/:publicId/delta` là canonical delta sync route; không drift sang `/offline/bundles/*` nếu chưa có migration decision rõ

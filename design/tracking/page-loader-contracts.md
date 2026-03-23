@@ -153,3 +153,65 @@ Khi scaffold `apps/web`:
 1. tạo page loader theo contract ở file này
 2. map mỗi loader sang 1-3 API calls tối đa
 3. nếu vượt quá, quay lại bổ sung aggregate route trước khi code tiếp
+
+## Loader execution matrix
+
+Bảng này chốt thêm `execution contract` cho các page P0 để web không tự phát minh fetch policy.
+
+| Route pattern | Max API calls ở page bootstrap | Auth mode | Cache / revalidation expectation | Error-state owner |
+|---|---|---|---|---|
+| `/dashboard` | `1 primary + tối đa 2 aux` | required member session | primary aggregate phải là `no-store` hoặc equivalent member-private fetch; aux chỉ cho phần phase-gated | aggregate loader map `unauthorized`, `degraded`, `empty-first-visit` |
+| `/ngoai-tuyen` | `1 primary + tối đa 1 aux` | required member session | primary list dùng member-private fetch; delta/pending badge không được polling vô hạn khi chưa có explicit sync action | aggregate loader map `unauthorized`, `sync-degraded`, `empty-library` |
+| `/thong-bao` | `1 primary`, aux chỉ khi phase-gated | required member session | capability + prefs + reminders phải bootstrap cùng lúc; không split thành nhiều request song song trong page | aggregate loader map `unsupported`, `permission-denied`, `degraded`, `empty-preferences` |
+| `/lich-ca-nhan` | `1 primary + tối đa 2 aux` | required member session | month aggregate phải ổn định theo `month` param; chuyển tháng mới được phép refetch | aggregate loader map `month-invalid`, `degraded`, `empty-calendar` |
+| `/tim-kiem` | `1 primary + tối đa 1 aux` | public, signed-in optional | primary search aggregate là source of truth cho `items`, `tabCounts`, `filterFacets`, `engine`; aux `recentSearches` phải non-blocking | aggregate loader map `query-invalid`, `too-short`, `engine-fallback`, `empty-results` |
+| `/bach-thoai` | `1 primary + tối đa 2 aux` | public | primary hub aggregate owns tab/filter counts; aux chỉ cho featured cards hoặc decorations không-blocking | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
+| `/hoi-dap` | `1 primary + tối đa 2 aux` | public | không dùng chung bootstrap loader với `/bach-thoai` nếu route semantics khác; filter/tab state phải đến từ QA aggregate | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
+
+`Auth mode` trong bảng trên phải map thẳng về auth scope canon của `tracking/api-route-inventory.md`:
+
+- `required member session` = `member+`
+- `public, signed-in optional` = primary route `public`, optional personalization aux vẫn phải tôn trọng scope owner riêng
+- nếu một page cần `browser session` hoặc `admin+`, phải ghi đúng literal đó thay vì mô tả tự do
+
+## Loader composition freeze rules
+
+- Không page nào trong file này được gọi trực tiếp quá `3` API surfaces ở bootstrap nếu chưa mở row aggregate mới ở `tracking/api-route-inventory.md`.
+- Nếu page cần signed-in personalization nhưng route vẫn public, phần personalization phải là aux non-blocking và không được làm thay đổi shape primary payload.
+- Loader không được vừa fetch aggregate DTO vừa fetch lại detail/list cùng owner chỉ để client tự merge.
+- Query keys ở web phải đi theo `primary payload sections`, không đi theo từng component con tự nghĩ.
+- Một page có `degraded` state phải render được từ payload aggregate mà không cần request bổ sung để hiểu lỗi.
+
+## Error-state ownership principle
+
+- Primary aggregate API route phải trả đủ state để page render `loading -> success`, `empty`, `unauthorized`, `invalid-input`, `degraded`.
+- Page loader chỉ map từ aggregate payload/error envelope sang render state; không được gọi thêm request bonus để "hiểu lỗi".
+- Nếu một warning/degraded state chỉ ảnh hưởng 1 section, aggregate payload vẫn phải trả phần còn lại đủ để page render partial success.
+- Nếu page chưa render được chỉ bằng aggregate payload + canonical error envelope, contract hiện tại bị coi là chưa đóng.
+
+## Query-key ownership principle
+
+- Primary aggregate payload sở hữu root query key theo route, ví dụ: `['dashboard']`, `['notifications-preferences']`, `['search', normalizedQuery]`.
+- Auxiliary loader chỉ được có query key riêng khi nó thực sự là route độc lập và không nằm trong primary payload.
+- Nếu section đã nằm trong primary DTO, không tạo aux query key chỉ để phục vụ component con.
+- Invalidation ưu tiên root key của aggregate trước; aux key chỉ invalidate riêng khi aux route tồn tại độc lập trong inventory.
+
+## E2E page acceptance checklist
+
+Trước khi coi một page contract là đủ để vào implementation:
+
+1. có `route row` canon ở `design/ui/PAGE_INVENTORY.md`
+2. có `primary loader contract` trong file này
+3. có `DTO owner row` trong `tracking/api-dto-shape-plan.md`
+4. có `API route owner` trong `tracking/api-route-inventory.md`
+5. có `error-state mapping` đủ cho loading, empty, unauthorized, degraded, invalid-input
+6. nếu là member/admin page, đã chốt auth expectation và cache mode
+
+Nếu thiếu bất kỳ item `2-4`, page bị coi là `blocked at design level`.
+Không được bỏ qua checklist để code tiếp; phải bổ sung owner row hoặc mở doc task trước.
+
+Tối thiểu phải chốt được `error code -> render strategy` cho page P0, ví dụ:
+
+- route nào trả error code đó
+- page fail toàn phần hay chỉ degrade 1 section
+- banner/empty state/redirect/retry CTA nào là canonical

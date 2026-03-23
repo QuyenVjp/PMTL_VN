@@ -30,6 +30,23 @@ Codex owns:
 
 Codex does not delegate final judgment to subagents or external workers.
 
+## Managed-Service Lessons, Translated
+
+PMTL nên học từ managed platforms như Supabase ở `defaults`, `contracts`, `DX`, và `observability` — không phải học bằng cách bỏ backend authority.
+
+Áp dụng trong repo này:
+
+- học `security defaults` mạnh hơn, nhưng vẫn giữ `apps/api` là authority cho auth, storage signing, callback verification, và privileged operations
+- học `AI-friendly docs/tooling`, nhưng source of truth vẫn là `design/`, `AGENTS.md`, và PMTL skills
+- học `observability as product feature`, nghĩa là auth/storage/search/jobs/admin ops đều phải có visibility contract
+- học `contract-first tooling`, nghĩa là route/DTO/error/query contract phải đóng trước khi scaffold
+
+Không áp dụng:
+
+- không biến managed service thành authority ngang hoặc cao hơn `apps/api`
+- không đẩy business logic xuống client, DB shortcut, hay vendor-specific surface chỉ vì platform hỗ trợ
+- không dùng privileged key hoặc production connector như shortcut cho agent workflow
+
 ## Default Turn Orientation
 
 Before doing substantial work, Codex should be able to answer these 5 questions:
@@ -161,6 +178,13 @@ Use them only when:
 - Keep prompts short, path-based, and bounded.
 - Never paste giant repo blobs when a file path will do.
 
+### Agent-safe MCP and connector rule
+
+- default environment for connector/MCP work là `dev` hoặc `test`, không phải production
+- prefer read-only first when the task is inspection, documentation, or verification
+- never place live secret, service-role key, admin token, or full connection string into prompts, examples, or logs
+- if a task needs privileged access, Codex must name the boundary explicitly and keep the operation path-based and minimal
+
 ## Forbidden Patterns
 
 Do not:
@@ -183,10 +207,22 @@ Minimum rule:
 - docs or design changes need consistency verification by search, diff, and cross-reference audit
 - if a meaningful check was not run, the final answer must say so plainly
 
+### Design doc staleness check
+
+Before scaffolding from any `design/` doc, verify that:
+
+- route inventory row exists and still maps to the expected owner module
+- `tracking/implementation-mapping.md` status does not exceed its evidence tier
+- `tracking/api-dto-shape-plan.md` rows map to a confirmed route in `tracking/api-route-inventory.md`
+- page aggregate contracts still match `tracking/page-loader-contracts.md` if the route feeds web/admin bootstrap
+
+If any of the above fails, fix the design doc first. Do not treat "design says X" as evidence that runtime X already exists.
+
 ## Related Docs
 
 - `AGENTS.md`
 - `docs/agent-cheatsheet.md`
 - `docs/architecture/skills-taxonomy.md`
+- `design/tracking/error-code-registry.md`
 - `.agents/skills/pmtl-workflow-router/SKILL.md`
 - `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`

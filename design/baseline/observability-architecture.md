@@ -67,6 +67,49 @@ Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
 - Rotation: `max-size=100m, max-file=5` trong docker-compose
 - Aggregation: tail with `docker compose logs -f api | grep "requestId"` hoặc tool ngoài (Phase 2)
 
+### Managed-surface observability rule
+
+Bài học nên lấy là: observability phải bám `product primitives`, không chỉ bám infra.
+
+PMTL phải nhìn thấy ít nhất các surface sau như first-class observability objects:
+
+- auth/session lifecycle
+- storage/upload lifecycle
+- webhook deliveries + callback verification
+- search engine mode + fallback
+- background job / outbox retries khi Phase 2+ bật
+- admin operations có side-effect
+
+Rules:
+
+- request log không đủ để coi một primitive là observable
+- mỗi primitive quan trọng phải có `structured business-event log` + `metric` + `degraded state` hoặc `admin status surface`
+- nếu một managed dependency nằm sau `apps/api`, observability vẫn phải bám boundary của PMTL thay vì coi dependency đó là hộp đen
+
+### AI-friendly log schema reference
+
+Khi agent hoặc dev thêm log, tối thiểu phải map được về shape này:
+
+```json
+{
+  "level": "info|warn|error|fatal",
+  "timestamp": "ISO8601",
+  "requestId": "req_*|job_*",
+  "module": "identity|content|search|platform|...",
+  "action": "domain.action",
+  "statusCode": 200,
+  "durationMs": 45,
+  "actorUserId": "usr_*|null",
+  "correlationId": "corr_*|null"
+}
+```
+
+Notes:
+
+- public route vẫn phải có `requestId`
+- async job/outbox flow phải có `job_*` hoặc `correlationId` để nối với request khởi phát khi có
+- không log raw `authorization`, `cookie`, `password`, `token`, `refreshToken`, hay secret env values
+
 ---
 
 ### Health endpoints — contract đầy đủ
@@ -254,10 +297,12 @@ groups:
         message: "Outbox has > 500 pending events"
 
       - alert: SearchFallbackActive
-        expr: increase(search_fallback_used_count[10m]) > 10
+        expr: increase(search_fallback_total[10m]) > 10
         severity: warning
         message: "Meilisearch fallback active — check search service"
 ```
+
+> Dùng `search_fallback_total` để khớp đúng metric Phase 1 ở trên. `search_fallback_used_count` không có owner canon.
 
 **Alert delivery**: Email (SMTP already configured) + Telegram/Zalo webhook (optional)
 
@@ -335,6 +380,17 @@ Examples:
 - `pmtl_upload_bytes_total`
 - `pmtl_outbox_pending_count`
 - `pmtl_queue_depth_count{queue="search-sync"}`
+
+## Product-primitives dashboard minimum
+
+Khi bật dashboard thực sự, không dừng ở infra-only charts.
+Tối thiểu phải có panel riêng cho:
+
+- auth: login success/fail, refresh failures, revoke/logout-all spikes
+- storage/media: signed upload issued, upload rejects, delete auth rejects, storage lifecycle cleanup
+- search: request volume, fallback, rejected query, engine mode
+- webhook/platform callbacks: accepted, rejected signature, replay block, retry count
+- admin operations: publish, moderation decision, reindex trigger, feature-flag changes
 
 ---
 

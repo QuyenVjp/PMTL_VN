@@ -297,3 +297,54 @@ Khi scaffold thật:
 1. `packages/shared` tạo schema theo profile này
 2. controller/service dùng `select`/projection bám profile
 3. admin/web query layer không tự mở rộng field ngoài owner row
+
+## Contract closure requirements
+
+Ba route family sau là `P0 anti-invention surface`.
+Không được coi là đủ để scaffold nếu mới chỉ có tên DTO mà chưa đóng đủ `request + response + error + projection owner`.
+
+| Route family | Required request contract | Required response contract | Required error companion | Projection owner note |
+|---|---|---|---|---|
+| member dashboard aggregate | query params chỉ được gồm `tz?`, `today?`, `includeOnboarding?`; default: `tz = user setting hoặc server fallback`, `today = server current date`, `includeOnboarding = false` | `MemberDashboardDto` với section-level ownership rõ cho `todayLunar`, `advisorySummary`, `practiceSummary`, `activeVowsSummary`, `notificationSummary` | `identity.unauthorized`, `dashboard.aggregate_unavailable`, `calendar.advisory_unavailable` | `apps/api` phải có 1 aggregate read owner; web không được tự compose mù từ nhiều module |
+| notification preferences aggregate | body/query không được tách capability check thành route riêng cho page bootstrap | `NotificationPreferencesPageDto` + `capability`, `subscriptionState`, `categoryPreferences[]`, `practiceReminder`, `eventReminder`, `conflicts[]` | `identity.unauthorized`, `notification.push_not_supported`, `notification.preferences_degraded`, `notification.subscription_missing` | projection owner là notification module; không cho web tự merge prefs + capability + reminder health |
+| search results aggregate | query params tối thiểu: `q`, `tab?`, `docType?`, `entryType?`, `sourceFamily?`, `cursor?`, `limit?`; default: `tab = all`, `limit = route default`, không tự thêm hidden filter | `SearchResultsPageDto` + stable `SearchResultItemDto[]`, `tabCounts`, `filterFacets`, `engine`, `pagination` | `search.query_invalid`, `search.query_too_short`, `search.engine_unavailable`, `search.cursor_invalid` | search module phải trả canonical `href`, `engine`, `tabCounts`; client không được derive |
+| offline bundle list page | query params tối thiểu: `cursor?`, `pageSize?`, `freshnessStatus?`; default: first page nếu thiếu `cursor`, canonical page size từ route owner, `freshnessStatus = all` | `OfflineBundleListPageDto` + `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | `identity.unauthorized`, `offline.bundle_list_unavailable`, `offline.sync_degraded` | owner là offline bundle aggregate read; page không loop qua từng bundle detail để tự tính badge |
+| personal practice calendar page | query params tối thiểu: `month`, `tz?`; `month` là bắt buộc, `tz` default theo user setting hoặc server fallback | `PersonalPracticeCalendarPageDto` + `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | `identity.unauthorized`, `calendar.month_invalid`, `calendar.aggregate_unavailable` | calendar module là owner của month grid projection; không preload advisory detail cho từng ngày |
+
+### Route inventory dependency
+
+Các row `P0 anti-invention surface` ở trên không được đứng riêng.
+Mỗi row phải map được sang route canon hiện có trong `tracking/api-route-inventory.md` hoặc phải chặn scaffold cho tới khi inventory được bổ sung:
+
+- member dashboard aggregate -> cần route owner row rõ trong inventory trước khi scaffold rộng
+- notification preferences aggregate -> hiện map vào `GET /notifications/preferences`
+- search results aggregate -> hiện map vào `GET /search`
+- offline bundle list page -> hiện map vào `GET /offline-bundles`
+- personal practice calendar page -> hiện map vào `GET /calendar/personal-practice`
+
+Nếu route inventory hiện có chưa đủ semantics aggregate cho DTO row tương ứng, phải cập nhật `api-route-inventory.md` trước; không được để controller hoặc web tự suy luận từ tên gần giống.
+
+## DTO envelope rules
+
+Các profile trong file này mặc định là `payload DTO`, nhưng P0 route family phải chốt thêm envelope semantics để FE/BE không đoán khác nhau:
+
+- `GET page aggregate`:
+  - response envelope tối thiểu: `data`, `meta.requestId`, `meta.generatedAt`
+  - `meta` có thể thêm `engine`, `degraded`, `partialDataWarnings[]` nếu route family cần
+- `list/search response`:
+  - `pagination` phải nằm trong `data`, không nằm rải rác ở top-level tuỳ controller
+  - nếu dùng cursor thì field canonical là `cursor`, `nextCursor`, `hasMore`
+- `detail response`:
+  - chỉ dùng `related*` mini-list hoặc summary card; không nhúng full sibling detail DTO
+- `error response`:
+  - phải dùng error envelope chuẩn của repo, và mỗi route family ở trên phải có error code canon riêng
+  - page bootstrap route không được trả raw infra exception text
+
+## Request-shape freeze rule
+
+Khi một route family đã có row trong file này:
+
+- không được tự thêm query param mới ở controller nếu chưa bổ sung row owner hoặc section tương ứng
+- không được đổi pagination semantics từ `offset` sang `cursor` hoặc ngược lại mà không cập nhật file này
+- không được để admin và web dùng cùng tên route nhưng shape filter khác nhau nếu chưa có note tách owner rõ ràng
+- nếu route aggregate cần `include*` flag để phase-gate, phải ghi rõ default value và allowed values tại đây trước khi scaffold

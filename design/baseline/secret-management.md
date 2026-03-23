@@ -75,6 +75,40 @@ services:
 - Trigger: team size > 3 people, or audit requirement for secret access logs
 - Code change needed: replace env_file with Vault agent sidecar or Infisical SDK
 
+## Supabase-style secret partitioning, PMTL-safe
+
+Bài học nên lấy từ Supabase là `phân lớp credential`, không phải đẩy authority ra khỏi `apps/api`.
+
+Rules:
+
+- không collapse `public credential`, `member/session transport`, `internal shared-secret`, và `admin/service credential` thành cùng một lớp secret
+- `apps/web` chỉ được biết public-safe config hoặc signed artifact ngắn hạn; không được giữ bất kỳ privileged key nào
+- `apps/api` là authority duy nhất để dùng admin/service credential, tạo signed upload URL, ký callback, hoặc gọi privileged provider operation
+- `packages/shared` không được chứa bất kỳ secret, privileged key, hoặc env accessor nào
+- nếu sau này dùng thêm managed service như Supabase cho một phần hạ tầng, vẫn phải đi qua PMTL contract của `apps/api`, không cho client dùng privileged key trực tiếp
+
+### Credential classes
+
+| Class | Examples | Allowed location | Never allowed |
+|---|---|---|---|
+| public-safe | public base URL, public feature flags | `apps/web`, public env, docs | signing key, admin key, DB password |
+| browser/session transport | session cookie, CSRF token | browser + `apps/api` transport boundary | logs, agent prompts, public env |
+| internal shared-secret | webhook shared secret, revalidate secret | `apps/api`, `apps/web` server env, internal callbacks | client bundle, design examples with live values |
+| admin/service credential | DB password, SMTP credential, R2 key, Cloudflare token | `apps/api`, infra secret store, ops-only paths | `apps/web`, `packages/shared`, public docs |
+
+### Rotation posture by class
+
+- public-safe config: đổi được không impact auth boundary, nhưng vẫn phải qua deploy pipeline
+- browser/session transport secret: rotate có thể làm invalid active session/token; phải có user-impact note
+- internal shared-secret: rotate với overlap window ngắn nếu callback hai đầu cần đổi đồng thời
+- admin/service credential: phải có `generate -> stage test -> cutover -> revoke old` rõ ràng
+
+### Agent workflow rule
+
+- agent prompt không được chứa live secret, raw token, private key, hoặc `.env` thật
+- nếu task chạm vào secret doc hoặc env inventory, output mặc định là placeholder + path + procedure, không phải value
+- MCP/tool access với môi trường thật phải mặc định `dev/test`, `read-only` nếu có thể; không nối production bằng shortcut
+
 ---
 
 ## Rotation procedures
@@ -276,6 +310,28 @@ git diff --cached --name-only | grep -E '\.env(\.|$)' | while read f; do
   fi
 done
 ```
+
+## Pre-launch secret scan
+
+Trước production launch đầu tiên hoặc trước khi mở repo cho cộng tác ngoài team:
+
+```bash
+git log --all --full-history -p | grep -E \
+  'JWT_|SMTP_PASS|SECRET|PASSWORD|API_TOKEN|PRIVATE_KEY|HASH_SALT' \
+  | grep -v '.env.example'
+```
+
+Expected:
+
+- không có real secret value trong history
+- chỉ thấy placeholder hoặc doc text an toàn
+
+Nếu có hit đáng ngờ:
+
+1. rotate secret liên quan ngay
+2. purge history trước khi tiếp tục chia sẻ repo
+3. append audit note / rotation log
+4. không coi pre-commit hook hiện tại là đủ để miễn historical scan
 
 ---
 

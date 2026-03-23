@@ -36,6 +36,36 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 - External workers là lane advisory, không được override policy của repo.
 - Khi cần roster, escalation rules, hoặc tie-break rules, đọc `docs/agent-operating-model.md`.
 
+## Supabase-inspired fast path
+
+Nếu task nghe giống feature của Supabase, map sang owner PMTL như sau thay vì code theo vendor mental model:
+
+| Task shape | PMTL owner trước | Doc cần khóa trước |
+|---|---|---|
+| auth/session lifecycle | `apps/api` identity + sessions | `design/01-identity/*`, `tracking/api-route-inventory.md`, `tracking/error-code-registry.md` |
+| signed upload / media lifecycle | `apps/api` content + storage | `design/02-content/*`, `baseline/secret-management.md`, `tracking/api-route-inventory.md` |
+| webhook / callback verification | `apps/api` platform or module owner | owner use-case + `baseline/secret-management.md` + route inventory |
+| background jobs / retries / outbox | `apps/api` platform modules, Phase 2+ only | `baseline/bullmq-worker-architecture.md`, `baseline/outbox-dispatcher-model.md` |
+| observability / dashboard / incident | platform health + metrics + runbooks | `baseline/observability-architecture.md`, `ops/health-contract.md` |
+| page aggregate / DX-first API | API authority first, then web/admin consumers | `tracking/api-dto-shape-plan.md`, `tracking/page-loader-contracts.md`, `tracking/api-route-inventory.md` |
+
+Rule:
+
+- nếu feature "trông giống Supabase", hãy tìm owner PMTL trước, không bê nguyên vocabulary hay mental model của vendor vào repo
+- learned pattern được phép import; authority boundary thì không
+
+## API implementation pre-flight
+
+Trước khi agent scaffold hoặc đề xuất implementation API:
+
+- [ ] route có row trong `tracking/api-route-inventory.md` với auth scope + envelope semantics
+- [ ] request/response DTO row có trong `tracking/api-dto-shape-plan.md`
+- [ ] nếu là page aggregate, có row trong `tracking/page-loader-contracts.md`
+- [ ] error codes domain có mặt trong `tracking/error-code-registry.md`
+- [ ] design status không vượt evidence tier trong `tracking/implementation-mapping.md`
+
+Thiếu bất kỳ mục nào ở trên thì task là `blocked at design`, chưa phải implementation-ready.
+
 ## Stitch MCP fast path
 
 - Nếu task là wireframe, screen generation, hoặc chỉnh sửa UI trực tiếp trên Stitch, đọc `docs/stitch-mcp.md` trước.
