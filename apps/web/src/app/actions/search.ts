@@ -98,8 +98,8 @@ export async function fetchAllTags() {
 
 export async function incrementViewAction(documentId: string): Promise<{ success: boolean; status?: number; error?: string }> {
   try {
-    const cmsUrl = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
-    const token = process.env.PAYLOAD_API_TOKEN
+    const cmsUrl = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+    const token = process.env.CMS_API_TOKEN;
 
     const headers: HeadersInit = { 'Content-Type': 'application/json' }
     if (token) headers['Authorization'] = `Bearer ${token}`

@@ -20,8 +20,9 @@ TAXONOMY_PATH = ROOT / "docs" / "architecture" / "skills-taxonomy.md"
 MULTI_CLI_ROUTER_PATH = ROOT / "infra" / "tools" / "multi_cli_router.py"
 
 SMOKE_DOCKER_ENV = {
-    "CMS_PUBLIC_URL": "http://cms:3001",
-    "PAYLOAD_PUBLIC_SERVER_URL": "http://cms:3001",
+    # Repo no longer ships a CMS service; point to a host-run backend if available.
+    "CMS_PUBLIC_URL": "http://host.docker.internal:3001",
+    "CMS_API_TOKEN": "",
     "NEXT_PUBLIC_SITE_URL": "http://web:3000",
 }
 
@@ -303,20 +304,14 @@ def quality_gate(scope: str, skip_tests: bool, runtime: str) -> int:
         commands = [["pnpm", "--filter", "@pmtl/web", "typecheck"], ["pnpm", "--filter", "@pmtl/web", "lint"]]
         service = "web"
         required = {"web"}
-    elif scope == "cms":
-        commands = [["pnpm", "--filter", "@pmtl/cms", "typecheck"], ["pnpm", "--filter", "@pmtl/cms", "lint"]]
-        service = "cms"
-        required = {"cms"}
     else:
         commands = [["pnpm", "typecheck"], ["pnpm", "lint"]]
-        service = "cms"
-        required = {"cms", "web"}
+        service = "web"
+        required = {"web"}
 
     if not skip_tests:
         if scope == "web":
             commands.insert(0, ["pnpm", "--filter", "@pmtl/web", "test"])
-        elif scope == "cms":
-            commands.insert(0, ["pnpm", "--filter", "@pmtl/cms", "test"])
         else:
             commands.insert(0, ["pnpm", "test"])
 
@@ -334,12 +329,12 @@ def smoke_suite(suite: str, runtime: str) -> int:
         "monitoring": ["pnpm", "monitoring:test"],
         "telegram": ["pnpm", "telegram:test"],
     }
-    required_services = {"cms", "web"} if suite == "smoke" else set()
+    required_services = {"web"} if suite == "smoke" else set()
     default_auto = "host"
     selected_runtime = detect_runtime(runtime, required_services=required_services, default_auto=default_auto)
 
     if selected_runtime == "docker":
-        result = run_in_service("cms", commands[suite], env=SMOKE_DOCKER_ENV if suite == "smoke" else None)
+        result = run_in_service("web", commands[suite], env=SMOKE_DOCKER_ENV if suite == "smoke" else None)
     else:
         result = run_process(commands[suite])
 
@@ -349,69 +344,25 @@ def smoke_suite(suite: str, runtime: str) -> int:
 
 
 def auth_flow(runtime: str) -> int:
-    selected_runtime = detect_runtime(runtime, required_services={"cms", "web"}, default_auto="host")
-    if selected_runtime == "docker":
-        result = run_in_service("cms", ["pnpm", "smoke:test"], env=SMOKE_DOCKER_ENV)
-    else:
-        result = run_process(["pnpm", "smoke:test"])
-
-    stdout = result["stdout"] if isinstance(result["stdout"], str) else ""
-    payload = extract_json_blob(stdout) if stdout else {}
-    results = payload.get("results", []) if isinstance(payload, dict) else []
-    auth_steps = {"cms-health", "member-login", "auth-me", "moderation-reports", "search-status"}
-    auth_results = [item for item in results if isinstance(item, dict) and item.get("step") in auth_steps]
-    ok = result["exit_code"] == 0 and any(
-        isinstance(item, dict) and item.get("step") == "member-login" and item.get("status") == "ok"
-        for item in auth_results
-    )
     emit_json(
         {
-            "ok": ok,
-            "runtime": selected_runtime,
-            "command": result["command"],
-            "exit_code": result["exit_code"],
-            "auth_results": auth_results,
-            "stderr": result["stderr"],
+            "ok": False,
+            "skipped": True,
+            "reason": "auth-flow requires a backend auth service; apps/cms has been removed from this repo.",
         }
     )
-    return 0 if ok else 1
+    return 0
 
 
 def search_sync(all_pages: bool, page: int, limit: int, health_url: str | None, runtime: str) -> int:
-    selected_runtime = detect_runtime(runtime, required_services={"cms", "meilisearch"}, default_auto="docker")
-    if all_pages:
-        command = ["pnpm", "reindex:posts"]
-    else:
-        command = ["pnpm", "--filter", "@pmtl/cms", "reindex:posts", "--", f"--page={page}", f"--limit={limit}"]
-
-    if selected_runtime == "docker":
-        result = run_in_service("cms", command)
-        resolved_health_url = health_url or "http://localhost:7700/health"
-    else:
-        result = run_process(command)
-        resolved_health_url = health_url or "http://localhost:7700/health"
-
-    health = {"ok": False, "status": None, "body": ""}
-    try:
-        with urllib.request.urlopen(resolved_health_url, timeout=10) as response:
-            body = response.read().decode("utf-8", errors="replace")
-            health = {"ok": response.status == 200, "status": response.status, "body": body}
-    except Exception as error:  # noqa: BLE001
-        health = {"ok": False, "status": None, "body": str(error)}
-
-    ok = result["exit_code"] == 0 and health["ok"]
     emit_json(
         {
-            "ok": ok,
-            "runtime": selected_runtime,
-            "command": result["command"],
-            "exit_code": result["exit_code"],
-            "stdout": result["stdout"],
-            "stderr": result["stderr"],
-            "health": health,
+            "ok": False,
+            "skipped": True,
+            "reason": "search-sync (reindex) requires backend ownership; apps/cms has been removed from this repo.",
         }
     )
-    return 0 if ok else 1
+    return 0
 
 
 def bootstrap() -> int:
@@ -478,7 +429,7 @@ def build_parser() -> argparse.ArgumentParser:
     bootstrap_parser.set_defaults(handler=lambda args: bootstrap())
 
     quality_parser = subparsers.add_parser("quality-gate")
-    quality_parser.add_argument("--scope", choices=["all", "web", "cms"], default="all")
+    quality_parser.add_argument("--scope", choices=["all", "web"], default="all")
     quality_parser.add_argument("--skip-tests", action="store_true")
     quality_parser.add_argument("--runtime", choices=["auto", "host", "docker"], default="auto")
     quality_parser.set_defaults(handler=lambda args: quality_gate(args.scope, args.skip_tests, args.runtime))

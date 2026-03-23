@@ -170,7 +170,7 @@ Do not:
 - use worker count as a substitute for evidence quality
 - code before understanding boundaries
 - let business logic drift into page files, config files, or `packages/shared`
-- treat old `apps/cms` or Payload-first material as the forward architecture without explicit confirmation
+- treat legacy CMS-first material as the forward architecture without explicit confirmation
 - mark work complete without the strongest relevant verification you can reasonably run
 
 ## Verification Responsibility

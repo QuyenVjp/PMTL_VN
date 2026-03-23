@@ -13,7 +13,7 @@ export const upcomingEventFixtures: EventSummary[] = [
   },
   {
     id: "event-2",
-    title: "Livestream Payload + Meilisearch indexing",
+    title: "Livestream CMS + Meilisearch indexing",
     slug: "livestream-payload-meilisearch-indexing",
     summary: "Trinh dien luong update index sau publish content.",
     startAt: "2026-03-27T12:00:00.000Z",

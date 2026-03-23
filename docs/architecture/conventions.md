@@ -1,7 +1,7 @@
 # Conventions
 
 File này chốt `repo conventions (quy ước cấu trúc repo)` cho hướng `design-first rebuild`.
-Nếu docs cũ còn nhắc `apps/cms` hoặc `Payload-first`, coi đó là legacy note (ghi chú cũ), không phải baseline mới.
+Nếu docs cũ còn nhắc legacy CMS-first ownership, coi đó là legacy note (ghi chú cũ), không phải baseline mới.
 
 ## 1. Top-level structure (Cấu trúc cấp cao)
 

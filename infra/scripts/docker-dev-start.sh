@@ -9,14 +9,6 @@ case "$service" in
     workspace_dir="apps/web"
     required_bin="$workspace_dir/node_modules/next/dist/bin/next"
     ;;
-  cms|worker)
-    workspace_dir="apps/cms"
-    if [ "$service" = "worker" ]; then
-      required_bin="node_modules/tsx/dist/cli.mjs"
-    else
-      required_bin="$workspace_dir/node_modules/next/dist/bin/next"
-    fi
-    ;;
   *)
     echo "[docker-dev] Unknown service: $service" >&2
     exit 1
@@ -79,13 +71,6 @@ done
 case "$service" in
   web)
     exec pnpm --filter @pmtl/web dev:container
-    ;;
-  cms)
-    pnpm --filter @pmtl/cms db:sync
-    exec pnpm --filter @pmtl/cms dev:container
-    ;;
-  worker)
-    exec pnpm --filter @pmtl/cms worker:container
     ;;
   *)
     echo "[docker-dev] Unknown service: $service" >&2

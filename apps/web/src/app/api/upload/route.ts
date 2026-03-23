@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { CORRELATION_ID_HEADER } from '@/lib/security/request-context'
 
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
 
 function normalizeUploadPayload(data: any) {
@@ -26,7 +26,7 @@ function normalizeUploadPayload(data: any) {
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies()
   // Ưu tiên token hệ thống để tránh bị chặn do role user thiếu quyền upload.
-  const token = process.env.PAYLOAD_API_TOKEN || cookieStore.get('auth_token')?.value
+  const token = process.env.CMS_API_TOKEN || cookieStore.get("auth_token")?.value;
 
   try {
     const contentLength = Number(req.headers.get('content-length') ?? '0')

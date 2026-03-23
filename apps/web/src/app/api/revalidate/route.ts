@@ -91,7 +91,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     status: "ok",
-    message: "Revalidation endpoint is active for Payload CMS internal webhooks.",
+    message: "Revalidation endpoint is active for CMS internal webhooks.",
     docsUrl: "https://nextjs.org/docs/app/building-your-application/caching#on-demand-revalidation",
   });
 }

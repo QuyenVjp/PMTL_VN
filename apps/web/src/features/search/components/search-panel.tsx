@@ -14,7 +14,7 @@ export function SearchPanel() {
     <ZenPanel className="space-y-4 p-6">
       <h2 className="mt-0 font-display text-2xl text-foreground">Tìm kiếm nội dung</h2>
       <p className="text-sm text-muted-foreground">
-        Kết quả được truy vấn từ lớp search client, dữ liệu gốc đồng bộ từ Payload sang Meilisearch.
+        Kết quả được truy vấn từ lớp search client, dữ liệu gốc đồng bộ từ CMS sang Meilisearch.
       </p>
       <ZenInput
         aria-label="Search content"

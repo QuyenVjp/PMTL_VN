@@ -1,20 +1,21 @@
 # PMTL_VN
 
-Monorepo cho dự án web dùng Next.js 16, Payload CMS, PostgreSQL, Meilisearch, Caddy và Docker Compose.
+Monorepo cho dự án web dùng Next.js 16, PostgreSQL, Meilisearch, Redis, Caddy và Docker Compose.
+
+Luu y: Repo **khong con** `apps/cms` (CMS legacy). Backend authority (du kien `apps/api`) va admin app (du kien `apps/admin`) hien dang duoc chot theo `design/` va se scaffold sau.
 
 ## Mục tiêu kiến trúc
 
 - Rõ domain, rõ trách nhiệm từng file.
 - Solo developer có thể sửa nhanh, AI đọc vào hiểu ngay điểm cần thay đổi.
-- Giai đoạn 1 chạy gọn với `web + cms + postgres + meilisearch + caddy`.
-- Giai đoạn 2 hiện đã bật `redis + worker + BullMQ` cho search sync, moderation notification, push dispatch và email notification.
+- Giai đoạn 1 chạy gọn với `web + postgres + meilisearch + redis`.
+- Giai đoạn 2 (ke hoach) mo rong them backend authority + jobs/worker + admin UI theo `design/`.
 
 ## Cấu trúc chính
 
 ```text
 apps/
   web/        # Next.js 16 App Router
-  cms/        # Next.js app host Payload admin UI + REST API
 packages/
   shared/     # schema, type, enum, mapper, utils thuần
   ui/         # UI chia sẻ nếu cần
@@ -25,7 +26,6 @@ infra/
   scripts/    # deploy / backup / healthcheck
 docs/
   architecture/
-  cms/
   api/
 ```
 
@@ -38,15 +38,14 @@ run-dev.bat
 
 `run-dev.bat` se hoi che do chay:
 
-- `1. Core`: `web + cms + postgres + meilisearch + redis` de code FE/BE va test chuc nang chinh.
-- `2. Full`: `core + worker + caddy` de test toan bo flow worker, proxy va cac tinh nang phu tro.
+- `1. Core`: `web + postgres + meilisearch + redis` (gọn để code + test các bề mặt web/search/rate-limit).
+- `2. Full`: `core + caddy` (test proxy/headers/SSL local).
 
 Luồng dev chuẩn là Docker. `run-dev.bat` va `pnpm dev*` deu chi la wrapper cho `docker compose`, khong chay `web/cms/worker` tren host Windows nua.
 
 - tu tao `infra/docker/.env.dev` tu file mau neu con thieu
 - chay preset `core` hoac `full` trong Docker Compose
 - bind mount source code de giu hot reload trong container
-- tu dong `db:sync` cho CMS container luc boot de tranh lech schema dev
 
 Theo doi log:
 
@@ -109,9 +108,9 @@ Xem `TEAM_GUIDE.md` de biet khi nao nen dung Windows native, WSL, Docker, hay ho
 - `logs-dev.bat`: xem log toan bo stack hoac log theo service.
 - `stop-dev.bat`: dung va don compose dev stack.
 - `rebuild-dev.bat`: build lai image dev va recreate container.
-- `pnpm dev`: wrapper cross-platform cho `docker compose up -d`.
-- `pnpm dev:core`: boot preset nhe `web + cms + postgres + meilisearch + redis`.
-- `pnpm dev:full`: boot preset day du `core + worker + caddy`.
+- `pnpm dev`: wrapper cross-platform cho `docker compose up`.
+- `pnpm dev:core`: boot preset nhe `web + postgres + meilisearch + redis`.
+- `pnpm dev:full`: boot preset day du `core + caddy`.
 - `pnpm dev:logs`: wrapper cross-platform cho `docker compose logs -f`.
 - `pnpm dev:stop`: wrapper cross-platform cho `docker compose down`.
 - `pnpm dev:rebuild`: wrapper cross-platform cho `docker compose build --no-cache` + `up -d --force-recreate`.
@@ -131,48 +130,40 @@ Xem `TEAM_GUIDE.md` de biet khi nao nen dung Windows native, WSL, Docker, hay ho
 
 ## Luồng triển khai production
 
-1. GitHub Actions build image cho `web` và `cms`.
+1. GitHub Actions build image cho `web`.
 2. Push image lên registry.
-3. VPS cap nhat `infra/docker/.env.prod` hoac secret source de tro `WEB_IMAGE` va `CMS_IMAGE` den release tag can deploy.
-4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull web cms worker caddy postgres pgbouncer meilisearch redis`.
-5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d web cms worker caddy postgres pgbouncer meilisearch redis`.
+3. VPS cap nhat `infra/docker/.env.prod` hoac secret source de tro `WEB_IMAGE` den release tag can deploy.
+4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull web caddy postgres pgbouncer meilisearch redis`.
+5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d web caddy postgres pgbouncer meilisearch redis`.
 6. Monitoring production la profile tuy chon; tren VPS 4GB, khong nen boot Grafana/Prometheus/Alertmanager/exporters trong deploy mac dinh.
 
 Boundary dev/prod:
 
 - Dev: `infra/docker/compose.dev.yml` dung bind mount source code, named volume cho `node_modules`, `.next`, `.turbo`, pnpm store, media uploads va data services.
-- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config, worker heartbeat va CMS uploads/media.
+- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config.
 - Monitoring production duoc tach thanh profile `monitoring` de tranh lam VPS 4GB nghop RAM khi deploy stack chinh.
 - Drill alert delivery local dung them profile `monitoring-test` va `ALERTMANAGER_CONFIG_PATH=../monitoring/alertmanager.local.yml` de Alertmanager day vao alert sink thay vi Telegram that.
 - Co the override file env runtime bang `PMTL_ENV_FILE=.env.prod.monitoring.local` khi can boot prod-like stack/phien ban smoke rieng ma khong dung vao `.env.prod` chinh.
 - Caddy la public entrypoint duy nhat o production; `web` va `cms` noi bo sau Docker network.
-- `worker` chay cung stack compose production va dung chung image CMS, nhung command rieng.
+- Backend authority + jobs/worker se duoc them sau (khong co trong repo hien tai).
 
 ## Tài liệu cần đọc trước khi code
 
-- `AUDIT_VERIFIED_2026.md`
 - `docs/architecture/conventions.md`
 - `docs/architecture/domains.md`
 - `docs/api/contracts.md`
-- `docs/cms/content-model.md`
-
-`AUDIT_VERIFIED_2026.md` là baseline đã được đối chiếu lại với code hiện tại. Nếu còn audit cũ trong git history hoặc ghi chú cá nhân, chỉ dùng chúng như giả thuyết cần kiểm lại.
+- `docs/cms/content-model.md` (content model hien tai; co the se migrate sang backend authority trong tuong lai).
 
 ## Verification trong Docker dev
 
 Khi stack dev đang chạy bằng Docker, ưu tiên chạy verify từ bên trong container để dùng đúng Node/Pnpm của repo:
 
 ```bash
-docker compose -f infra/docker/compose.dev.yml exec -T cms sh -lc "cd /app/apps/cms && pnpm test"
-docker compose -f infra/docker/compose.dev.yml exec -T web sh -lc "CMS_PUBLIC_URL=http://cms:3001 NEXT_PUBLIC_SITE_URL=http://web:3000 pnpm smoke:test"
+docker compose -f infra/docker/compose.dev.yml exec -T web sh -lc "NEXT_PUBLIC_SITE_URL=http://web:3000 pnpm test"
 ```
 
 Lý do: host shell cũ hơn baseline `Node >= 20.18`, nên `pnpm`, ESLint và một số script verify có thể fail do môi trường thay vì fail do mã nguồn.
 
-## Ghi chú về CMS runtime hiện tại
+## Ghi chú ve backend/content source
 
-- `apps/cms` là một Next.js app riêng, host Payload 3 theo hướng Next-native.
-- Admin UI được phục vụ tại `apps/cms:/admin`.
-- REST API tiếp tục sống tại `apps/cms:/api/*`, nên `apps/web` không cần đổi boundary tích hợp.
-- Cấu trúc collection/access/hooks/service tiếp tục giữ nguyên để business logic không dính vào bootstrap framework.
-- `apps/cms` đồng thời có worker command riêng cho BullMQ: search sync, push dispatch, email notification và maintenance cleanup.
+`apps/web` hien doc noi dung tu `CMS_PUBLIC_URL` (mot content backend). Repo hien tai **khong ship** backend authority; neu can, hay tro `CMS_PUBLIC_URL` toi he thong backend ma anh dang chay rieng, hoac bo qua cac route phu thuoc backend trong giai doan scaffold.

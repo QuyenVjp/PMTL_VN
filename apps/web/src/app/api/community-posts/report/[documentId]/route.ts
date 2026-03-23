@@ -5,7 +5,7 @@ export async function POST(
   const { documentId } = await params
   return Response.json(
     {
-      error: `Chức năng báo cáo bài viết cộng đồng (${documentId}) chưa được migrate sang Payload.`,
+      error: `Chức năng báo cáo bài viết cộng đồng (${documentId}) chưa được migrate sang CMS.`,
     },
     { status: 501 },
   )

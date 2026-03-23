@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import BlogLibraryPanel from '@/components/profile/BlogLibraryPanel'
 
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 
 // ─── Field nhập liệu ───────────────────────────────────────

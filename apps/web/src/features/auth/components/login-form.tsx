@@ -97,7 +97,7 @@ export function LoginForm({ redirectTo = "/profile", className }: LoginFormProps
             Đăng nhập để tiếp tục hành trình tu học
           </h1>
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Session được đồng bộ qua cookie bảo mật của Payload. Nhập email và mật khẩu để vào hồ sơ của bạn.
+            Session được đồng bộ qua cookie bảo mật của hệ thống. Nhập email và mật khẩu để vào hồ sơ của bạn.
           </p>
         </div>
 

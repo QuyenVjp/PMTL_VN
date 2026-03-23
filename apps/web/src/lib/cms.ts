@@ -4,11 +4,10 @@ import { isCmsError } from "@/types/cms";
 import type { CmsEvent } from "@/types/cms";
 
 export const CMS_API_URL =
-  process.env.PAYLOAD_PUBLIC_SERVER_URL ??
   process.env.CMS_PUBLIC_URL ??
   "http://localhost:3001";
 
-const PAYLOAD_URL = CMS_API_URL;
+const CMS_BASE_URL = CMS_API_URL;
 const CMS_PATH_ALIASES: Record<string, string> = {
   "/sidebar-config": "/sidebar",
 };
@@ -19,7 +18,7 @@ function getServerToken(): string | undefined {
     return undefined;
   }
 
-  return process.env.PAYLOAD_API_TOKEN;
+  return process.env.CMS_API_TOKEN;
 }
 
 export interface CmsFetchOptions {
@@ -33,7 +32,7 @@ export interface CmsFetchOptions {
   noCache?: boolean;
 }
 
-type PayloadPaginatedResponse<T> = {
+type CmsPaginatedResponse<T> = {
   docs?: T[];
   totalDocs?: number;
   totalPages?: number;
@@ -41,7 +40,7 @@ type PayloadPaginatedResponse<T> = {
   limit?: number;
 };
 
-type PayloadListResponse<T> = {
+type CmsListResponse<T> = {
   docs: T[];
   totalDocs: number;
   totalPages: number;
@@ -198,7 +197,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
         : null;
 
     if (search) {
-      const url = new URL("/api/posts/search", PAYLOAD_URL);
+      const url = new URL("/api/posts/search", CMS_BASE_URL);
       url.searchParams.set("q", search);
       url.searchParams.set("limit", String(pageSize));
 
@@ -238,7 +237,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
       return toCmsList(data, page, pageSize, payload.totalHits ?? data.length) as T;
     }
 
-    const url = new URL("/api/posts", PAYLOAD_URL);
+    const url = new URL("/api/posts", CMS_BASE_URL);
     url.searchParams.set("depth", "1");
     url.searchParams.set("limit", String(pageSize));
     url.searchParams.set("page", String(page));
@@ -253,7 +252,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
       return toCmsList([], page, pageSize, 0) as T;
     }
 
-    const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+    const payload = (await response.json()) as CmsListResponse<Record<string, unknown>>;
     const data = (payload.docs ?? []).map(mapPayloadPostToLegacy);
 
     return toCmsList(
@@ -265,7 +264,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
   }
 
   if (pathname === "/blog-posts/archive-index") {
-    const urlBase = new URL("/api/posts", PAYLOAD_URL);
+    const urlBase = new URL("/api/posts", CMS_BASE_URL);
     urlBase.searchParams.set("depth", "0");
     urlBase.searchParams.set("sort", "-publishedAt");
 
@@ -284,7 +283,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
         break;
       }
 
-      const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+      const payload = (await response.json()) as CmsListResponse<Record<string, unknown>>;
       const docs = Array.isArray(payload.docs) ? payload.docs : [];
       allPosts.push(...docs);
 
@@ -337,7 +336,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
       return toCmsList([], safePage, safePageSize, 0) as T;
     }
 
-    const urlBase = new URL("/api/posts", PAYLOAD_URL);
+    const urlBase = new URL("/api/posts", CMS_BASE_URL);
     urlBase.searchParams.set("depth", "1");
     urlBase.searchParams.set("sort", "-publishedAt");
 
@@ -356,7 +355,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
         break;
       }
 
-      const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+      const payload = (await response.json()) as CmsListResponse<Record<string, unknown>>;
       const docs = Array.isArray(payload.docs) ? payload.docs : [];
       allPosts.push(...docs);
 
@@ -393,7 +392,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
   }
 
   if (pathname === "/events") {
-    const url = new URL("/api/events", PAYLOAD_URL);
+    const url = new URL("/api/events", CMS_BASE_URL);
     url.searchParams.set("depth", "0");
     url.searchParams.set("limit", String(pageSize));
     url.searchParams.set("page", String(page));
@@ -405,7 +404,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
       return toCmsList([], page, pageSize, 0) as T;
     }
 
-    const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+    const payload = (await response.json()) as CmsListResponse<Record<string, unknown>>;
     const data = (payload.docs ?? []).map(mapPayloadEventToLegacy);
 
     return toCmsList(
@@ -417,7 +416,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
   }
 
   if (path === "/blog-tags") {
-    const url = new URL("/api/categories", PAYLOAD_URL);
+    const url = new URL("/api/categories", CMS_BASE_URL);
     url.searchParams.set("depth", "0");
     url.searchParams.set("limit", "200");
     url.searchParams.set("page", "1");
@@ -429,7 +428,7 @@ async function payloadBridgeFetch<T>(path: string, options: CmsFetchOptions): Pr
       return toCmsList([], 1, 200, 0) as T;
     }
 
-    const payload = (await response.json()) as PayloadListResponse<Record<string, unknown>>;
+    const payload = (await response.json()) as CmsListResponse<Record<string, unknown>>;
     const data = (payload.docs ?? []).map((category) => ({
       createdAt: String(category.createdAt ?? new Date().toISOString()),
       description: null,
@@ -460,7 +459,7 @@ export function buildCmsUrl(
   return `${CMS_API_URL}/api${normalizedPath}${query ? `?${query}` : ""}`;
 }
 
-function normalizePaginationResponse<T>(payload: PayloadPaginatedResponse<T>) {
+function normalizePaginationResponse<T>(payload: CmsPaginatedResponse<T>) {
   const data = Array.isArray(payload.docs) ? payload.docs : [];
   const page = typeof payload.page === "number" ? payload.page : 1;
   const pageSize = typeof payload.limit === "number" ? payload.limit : data.length;
@@ -493,7 +492,7 @@ function normalizeCmsPayload<T>(payload: unknown): T {
   }
 
   if ("docs" in payload || "totalDocs" in payload || "totalPages" in payload) {
-    return normalizePaginationResponse(payload as PayloadPaginatedResponse<unknown>) as T;
+    return normalizePaginationResponse(payload as CmsPaginatedResponse<unknown>) as T;
   }
 
   return {

@@ -115,7 +115,7 @@ Stack:
   - upload
 - crawler/search bot phải có budget riêng, không đi chung hẳn với browser auth flows
 
-### Payload and route budgets
+### Request payload and route budgets
 
 - mọi route phải có:
   - request body limit

@@ -130,7 +130,7 @@ export async function fetchTodayChant(params: {
     if (lunarDay) qs.set('lunarDay', String(lunarDay));
 
     const url = `${CMS_API_URL}/api/chant-plans/today-chant?${qs}`;
-    const token = process.env.PAYLOAD_API_TOKEN;
+    const token = process.env.CMS_API_TOKEN;
     const res = await fetch(url, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       cache: 'force-cache',

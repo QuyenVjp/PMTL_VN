@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-//  lib/api/navigation.ts — Navigation builder (Payload-first)
+//  lib/api/navigation.ts — Navigation builder (CMS-first)
 //  Server-side only
 // ─────────────────────────────────────────────────────────────
 

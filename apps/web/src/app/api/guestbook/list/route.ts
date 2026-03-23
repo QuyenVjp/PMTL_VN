@@ -5,11 +5,11 @@
 import { connection, NextRequest } from 'next/server'
 import { normalizeGuestbookList } from '@/lib/api/guestbook'
 
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 export async function GET(request: NextRequest) {
   await connection()
-  const token = process.env.PAYLOAD_API_TOKEN
+  const token = process.env.CMS_API_TOKEN
   const { searchParams } = new URL(request.url)
   const page = searchParams.get('page') ?? '1'
   const pageSize = searchParams.get('pageSize') ?? '20'

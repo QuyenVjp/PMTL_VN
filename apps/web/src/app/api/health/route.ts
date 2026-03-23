@@ -3,10 +3,15 @@ import { NextResponse } from "next/server";
 import { ensureRedisConnected } from "@/lib/cache/redis";
 import { isShuttingDown } from "@/lib/runtime/shutdown";
 
-const CMS_URL = process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+const CMS_URL = process.env.CMS_PUBLIC_URL?.trim() || "";
+const CMS_HEALTH_REQUIRED = process.env.CMS_HEALTH_REQUIRED === "true";
 const MEILI_URL = process.env.MEILI_HOST ?? "http://meilisearch:7700";
 
 async function checkCms() {
+  if (!CMS_URL) {
+    return { status: "disabled" as const };
+  }
+
   try {
     const response = await fetch(`${CMS_URL}/api/health`, { cache: "no-store" });
     const body: unknown = await response.json().catch(() => null);
@@ -15,6 +20,10 @@ async function checkCms() {
       details: body,
     };
   } catch (error) {
+    if (!CMS_HEALTH_REQUIRED) {
+      return { status: "disabled" as const, note: error instanceof Error ? error.message : "cms check skipped" };
+    }
+
     return { status: "error" as const, error: error instanceof Error ? error.message : "cms check failed" };
   }
 }

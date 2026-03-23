@@ -8,7 +8,7 @@ import { normalizeApiErrorMessage, parseResponseBody } from "@/lib/http-error";
 import { logger } from "@/lib/logger";
 import { CORRELATION_ID_HEADER } from "@/lib/security/request-context";
 
-const CMS_API_URL = process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 export async function POST(request: NextRequest) {
   const cookieStore = await cookies();

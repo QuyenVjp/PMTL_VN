@@ -12,11 +12,6 @@ Prerequisites:
 
 Run one batch:
 ```bash
-pnpm --filter @pmtl/cms reindex:posts -- --page=1 --limit=100
-```
-
-Run all pages:
-```bash
 pnpm reindex:posts
 ```
 
@@ -25,7 +20,7 @@ Expected result:
 
 After run:
 ```bash
-pnpm --filter @pmtl/cms test
+pnpm --filter @pmtl/web test
 curl http://localhost:7700/health
 ```
 
@@ -73,7 +68,6 @@ docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.ym
 
 Post-restore checks:
 ```bash
-pnpm --filter @pmtl/cms typecheck
 pnpm test
 curl http://localhost:3001/api/health
 curl http://localhost:3000/api/health
@@ -124,6 +118,7 @@ Stack:
 - Alertmanager sends alerts to Telegram
 - Grafana is provisioned with the default PMTL Overview dashboard
 - Error logs va exceptions di len Sentry Cloud tu `web`, `cms`, `worker`
+- Error logs và exceptions đi lên Sentry (nếu bật) từ `web` và các service đang chạy
 
 Bring monitoring stack up with production services:
 ```bash

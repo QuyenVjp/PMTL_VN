@@ -7,7 +7,7 @@ import { isAllowedOrigin } from "@/lib/security/origin";
 const CSRF_MAX_AGE_SECONDS = 60 * 60 * 8;
 
 function getCsrfSecret(): string {
-  return process.env.CSRF_SECRET ?? process.env.PAYLOAD_SECRET ?? "replace-me";
+  return process.env.CSRF_SECRET ?? "replace-me";
 }
 
 function sign(payload: string): string {

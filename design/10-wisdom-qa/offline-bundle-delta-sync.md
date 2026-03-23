@@ -124,8 +124,8 @@ const OfflineEntrySchema = z.object({
   - hoặc trả degraded status có note rõ để client không merge mù
 - response nên có thêm metadata delivery:
   - `Content-Encoding: gzip` nếu platform support
-  - `X-Payload-Items`
-  - `X-Payload-Bytes` khi có thể tính được
+  - `X-Delta-Items`
+  - `X-Delta-Bytes` khi có thể tính được
 
 ---
 

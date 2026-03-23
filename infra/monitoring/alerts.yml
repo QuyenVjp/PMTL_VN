@@ -20,24 +20,6 @@ groups:
           summary: "Web đang trả về lỗi 5xx"
           description: "Host {{ $labels.host }} có tỷ lệ 5xx duy trì trên 0.05 request/giây trong 10 phút gần nhất."
 
-      - alert: PMTLWorkerHeartbeatStale
-        expr: pmtl_worker_healthy == 0
-        for: 2m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Heartbeat của worker đã lỗi thời"
-          description: "Worker đang ở trạng thái không khỏe liên tục hơn 2 phút; giá trị heartbeat hiện tại là {{ $value }}."
-
-      - alert: PMTLWorkerFailedJobs
-        expr: pmtl_worker_queue_jobs{state="failed"} > 0
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Hàng đợi worker có job lỗi"
-          description: "Queue {{ $labels.queue }} hiện có {{ $value }} job lỗi đang chờ kiểm tra."
-
   - name: pmtl-data-stores
     rules:
       - alert: PMTLRedisExporterDown

@@ -10,7 +10,7 @@ import { logger } from '@/lib/logger'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
 import { CORRELATION_ID_HEADER } from '@/lib/security/request-context'
 
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 export async function POST(request: NextRequest) {
   let rawBody: unknown
@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       [CORRELATION_ID_HEADER]: request.headers.get(CORRELATION_ID_HEADER) ?? crypto.randomUUID(),
     })
 
-    if (process.env.PAYLOAD_API_TOKEN) {
-      headers.set('Authorization', `Bearer ${process.env.PAYLOAD_API_TOKEN}`)
+    if (process.env.CMS_API_TOKEN) {
+      headers.set("Authorization", `Bearer ${process.env.CMS_API_TOKEN}`);
     }
 
     const res = await fetch(`${CMS_API_URL}/api/guestbook/submit`, {

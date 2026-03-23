@@ -56,7 +56,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - backend/API/data work anchors on `pmtl-vn-architecture` + `pmtl-production-baseline`, then may borrow generic NestJS/API/DB/transaction auditors as fallback
 - runtime/scaling/observability work anchors on PMTL baseline/runbook docs, then may borrow observability/infra/Docker production skills as fallback
 - security/hardening outside auth/search anchors on PMTL security docs + production baseline, then may borrow generic security skills or Trail of Bits packs as fallback
-- deprecated Payload/CMS-era skills are not canonical routing targets even if still installed for compatibility
+- deprecated legacy CMS-era skills are not canonical routing targets even if still installed for compatibility
 
 ## Skill Routing Order
 - Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
@@ -120,4 +120,4 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 ## Design-First Direction
 - Current target architecture is `apps/web + apps/api + apps/admin` with NestJS as backend authority.
 - Treat `design/` as the architecture source of truth for the rebuild direction.
-- If old docs or runtime folders still reference `apps/cms` or Payload-first ownership, do not copy that direction forward without explicit confirmation.
+- If old docs or runtime folders still reference legacy CMS-first ownership, do not copy that direction forward without explicit confirmation.

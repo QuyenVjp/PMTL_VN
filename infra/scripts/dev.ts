@@ -11,8 +11,8 @@ type CommandName = "up" | "logs" | "down" | "rebuild";
 type PresetName = "core" | "full";
 
 const presetServices: Record<PresetName, string[]> = {
-  core: ["web", "cms"],
-  full: ["web", "cms", "worker", "caddy"],
+  core: ["web", "postgres", "meilisearch", "redis"],
+  full: ["web", "postgres", "meilisearch", "redis", "caddy"],
 };
 
 function fail(message: string): never {

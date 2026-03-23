@@ -285,7 +285,7 @@ export async function getRelatedPosts(post: BlogPost, limit = 4): Promise<BlogPo
  * avoiding race conditions that occur when multiple readers write back currentViews+1.
  */
 export async function incrementPostViews(documentId: string): Promise<void> {
-  const cmsUrl = process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001'
+  const cmsUrl = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
   await fetch(`${cmsUrl}/api/posts/${documentId}/view`, {
     method: 'POST',

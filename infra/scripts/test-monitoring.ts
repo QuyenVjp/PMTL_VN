@@ -13,9 +13,6 @@ const envFileValues = parseSimpleEnvFile(envFile);
 const webBaseUrl =
   process.env.MONITORING_WEB_BASE_URL
   ?? `http://127.0.0.1:${getEnvValue("MONITORING_WEB_PORT", envFileValues, "3000")}`;
-const cmsBaseUrl =
-  process.env.MONITORING_CMS_BASE_URL
-  ?? `http://127.0.0.1:${getEnvValue("MONITORING_CMS_PORT", envFileValues, "3001")}`;
 const prometheusBaseUrl =
   process.env.MONITORING_PROMETHEUS_URL ??
   `http://127.0.0.1:${getEnvValue("PROMETHEUS_PORT", envFileValues, "9090")}`;
@@ -25,7 +22,6 @@ const alertmanagerBaseUrl =
 const alertSinkBaseUrl = process.env.MONITORING_ALERT_SINK_URL
   ?? (getEnvValue("ALERT_SINK_PORT", envFileValues) ? `http://127.0.0.1:${getEnvValue("ALERT_SINK_PORT", envFileValues)}` : "");
 const monitoringSecret = getEnvValue("MONITORING_TEST_SECRET", envFileValues, "");
-const workerAlertWaitMs = Number(process.env.MONITORING_WORKER_ALERT_WAIT_MS ?? "270000");
 const pollIntervalMs = Number(process.env.MONITORING_POLL_INTERVAL_MS ?? "5000");
 const requestTimeoutMs = Number(process.env.MONITORING_REQUEST_TIMEOUT_MS ?? "15000");
 
@@ -140,7 +136,7 @@ async function checkPrometheusTargets() {
       .filter((value): value is string => typeof value === "string"),
   );
 
-  const expectedJobs = ["prometheus", "caddy", "blackbox-http", "worker-metrics", "postgres-exporter", "redis-exporter", "node-exporter"];
+  const expectedJobs = ["prometheus", "caddy", "blackbox-http", "postgres-exporter", "redis-exporter", "node-exporter"];
   const missingJobs = expectedJobs.filter((job) => !jobs.has(job));
 
   if (missingJobs.length > 0) {
@@ -153,7 +149,7 @@ async function checkPrometheusTargets() {
   };
 }
 
-async function triggerSentryTest(baseUrl: string, app: "web" | "cms") {
+async function triggerSentryTest(baseUrl: string) {
   if (!monitoringSecret) {
     throw new Error("MONITORING_TEST_SECRET is required to trigger Sentry test routes.");
   }
@@ -164,12 +160,12 @@ async function triggerSentryTest(baseUrl: string, app: "web" | "cms") {
       "x-monitoring-test-secret": monitoringSecret,
     },
     body: JSON.stringify({
-      message: `PMTL ${app} monitoring test`,
+      message: "PMTL web monitoring test",
     }),
   });
 
   if (result.status !== 500) {
-    throw new Error(`${app} sentry test returned ${result.status}: ${JSON.stringify(result.body)}`);
+    throw new Error(`web sentry test returned ${result.status}: ${JSON.stringify(result.body)}`);
   }
 
   const eventId =
@@ -177,36 +173,13 @@ async function triggerSentryTest(baseUrl: string, app: "web" | "cms") {
       ? ((result.body as JsonRecord).eventId as string)
       : null;
   if (!eventId) {
-    throw new Error(`${app} sentry test did not return an eventId.`);
+    throw new Error("web sentry test did not return an eventId.");
   }
 
   return {
-    app,
+    app: "web",
     eventId,
   };
-}
-
-async function waitForWorkerAlert() {
-  const deadline = Date.now() + workerAlertWaitMs;
-
-  while (Date.now() < deadline) {
-    const alerts = await fetchJson(`${alertmanagerBaseUrl}/api/v2/alerts`);
-    await requireOk("alertmanager alerts", alerts);
-
-    const alertList = Array.isArray(alerts.body) ? (alerts.body as JsonRecord[]) : [];
-    const workerAlert = alertList.find((alert) => {
-      const labels = typeof alert.labels === "object" && alert.labels ? (alert.labels as JsonRecord) : null;
-      return labels?.alertname === "PMTLWorkerHeartbeatStale";
-    });
-
-    if (workerAlert) {
-      return workerAlert;
-    }
-
-    await sleep(pollIntervalMs);
-  }
-
-  throw new Error("PMTLWorkerHeartbeatStale did not appear in Alertmanager within the wait window.");
 }
 
 async function checkAlertSinkDelivery() {
@@ -236,73 +209,6 @@ async function checkAlertSinkDelivery() {
   };
 }
 
-async function simulateWorkerDown() {
-  if (!(await fileExists(composeFile))) {
-    throw new Error(`Compose file not found: ${composeFile}`);
-  }
-
-  if (!(await fileExists(envFile))) {
-    throw new Error(`Env file not found: ${envFile}`);
-  }
-
-  const stopResult = await runCompose(["stop", "worker"]);
-  if (stopResult.code !== 0) {
-    throw new Error(`Failed to stop worker: ${stopResult.stderr || stopResult.stdout}`);
-  }
-
-  try {
-    await resetAlertSink();
-
-    const healthCheckDeadline = Date.now() + 180000;
-    let workerRouteFailed = false;
-
-    while (Date.now() < healthCheckDeadline) {
-      const result = await fetchJson(`${cmsBaseUrl}/api/worker/health`);
-      if (result.status === 503) {
-        workerRouteFailed = true;
-        break;
-      }
-
-      await sleep(pollIntervalMs);
-    }
-
-    if (!workerRouteFailed) {
-      throw new Error("CMS worker health route did not switch to 503 after stopping the worker.");
-    }
-
-    const alert = await waitForWorkerAlert();
-    const sink = await checkAlertSinkDelivery();
-    const alertmanagerLogs = await runCompose(["logs", "--tail", "50", "alertmanager"]);
-
-    return {
-      workerHealthRoute: "503",
-      alert,
-      sink,
-      alertmanagerLogs: {
-        code: alertmanagerLogs.code,
-        stderr: alertmanagerLogs.stderr.trim(),
-      },
-    };
-  } finally {
-    const startResult = await runCompose(["start", "worker"]);
-    if (startResult.code !== 0) {
-      throw new Error(`Worker restart failed after monitoring test: ${startResult.stderr || startResult.stdout}`);
-    }
-  }
-}
-
-async function checkWorkerMetrics() {
-  const metrics = await fetchText(`${cmsBaseUrl}/api/metrics/worker`);
-  if (!metrics.ok || !metrics.body.includes("pmtl_worker_healthy")) {
-    throw new Error(`Worker metrics endpoint failed (${metrics.status}).`);
-  }
-
-  return {
-    status: metrics.status,
-    containsWorkerHealthMetric: true,
-  };
-}
-
 async function main() {
   const results: Array<{ step: string; details: unknown }> = [];
 
@@ -312,23 +218,8 @@ async function main() {
   });
 
   results.push({
-    step: "worker-metrics",
-    details: await checkWorkerMetrics(),
-  });
-
-  results.push({
     step: "web-sentry",
-    details: await triggerSentryTest(webBaseUrl, "web"),
-  });
-
-  results.push({
-    step: "cms-sentry",
-    details: await triggerSentryTest(cmsBaseUrl, "cms"),
-  });
-
-  results.push({
-    step: "worker-down-alert",
-    details: await simulateWorkerDown(),
+    details: await triggerSentryTest(webBaseUrl),
   });
 
   console.log(

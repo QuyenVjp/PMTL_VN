@@ -3,7 +3,7 @@ import type { PostSummary } from "@pmtl/shared";
 export const featuredPostFixtures: PostSummary[] = [
   {
     id: "post-1",
-    title: "Tach collection config khoi business logic trong Payload",
+    title: "Tach collection config khoi business logic trong CMS",
     slug: "tach-collection-config-khoi-business-logic",
     excerpt: "Rule, side effect va indexing song o service layer de AI sua dung diem.",
     publishedAt: "2026-03-14T09:00:00.000Z",

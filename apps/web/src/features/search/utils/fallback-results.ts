@@ -3,7 +3,7 @@ import { mapSearchSourceToResult } from "@pmtl/shared";
 export const fallbackSearchResults = [
   mapSearchSourceToResult({
     id: "post-1",
-    title: "Payload service layer",
+    title: "CMS service layer",
     slug: "payload-service-layer",
     excerpt: "Tach validation, side effect va indexing khoi schema.",
     type: "post",

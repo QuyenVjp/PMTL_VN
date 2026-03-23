@@ -6,8 +6,6 @@ services:
     depends_on:
       web:
         condition: service_healthy
-      cms:
-        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -41,9 +39,6 @@ services:
     environment:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
-    depends_on:
-      cms:
-        condition: service_healthy
     ports:
       - "127.0.0.1:${MONITORING_WEB_PORT:-3000}:3000"
     networks:
@@ -55,43 +50,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: "5"
-
-  cms:
-    image: ${CMS_IMAGE}
-    container_name: pmtl-cms
-    restart: unless-stopped
-    mem_limit: 1024m
-    stop_grace_period: 180s
-    env_file:
-      - ${PMTL_ENV_FILE:-.env.prod}
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-    depends_on:
-      postgres:
-        condition: service_healthy
-      pgbouncer:
-        condition: service_started
-      meilisearch:
-        condition: service_healthy
-    ports:
-      - "127.0.0.1:${MONITORING_CMS_PORT:-3001}:3001"
-    networks:
-      - backend
-    volumes:
-      - cms-media-prod:/app/apps/cms/media
-      - worker-heartbeat:/var/run/pmtl
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3001/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
     logging:
       driver: json-file
       options:
@@ -219,51 +177,6 @@ services:
       start_period: 20s
     networks:
       - backend
-
-  worker:
-    image: ${CMS_IMAGE}
-    container_name: pmtl-worker
-    restart: unless-stopped
-    mem_limit: 512m
-    stop_grace_period: 180s
-    env_file:
-      - ${PMTL_ENV_FILE:-.env.prod}
-    environment:
-      WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
-      WORKER_HEARTBEAT_STALE_SECONDS: "120"
-    command: ["pnpm", "--filter", "@pmtl/cms", "worker:start"]
-    depends_on:
-      cms:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-      pgbouncer:
-        condition: service_started
-      meilisearch:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - backend
-    volumes:
-      - worker-heartbeat:/var/run/pmtl
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "const fs=require('fs');const p=process.env.WORKER_HEARTBEAT_PATH||'/tmp/pmtl-worker-heartbeat';const stale=Number(process.env.WORKER_HEARTBEAT_STALE_SECONDS||120)*1000;const stat=fs.statSync(p);if(Date.now()-stat.mtimeMs>stale) process.exit(1);"
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-        max-file: "5"
 
   blackbox-exporter:
     profiles: ["monitoring"]
@@ -493,8 +406,6 @@ volumes:
   redis-prod-data:
   caddy-data:
   caddy-config:
-  worker-heartbeat:
-  cms-media-prod:
   prometheus-data:
   grafana-data:
 

@@ -2,11 +2,10 @@
   "$schema": "https://turborepo.com/schema.json",
   "globalPassThroughEnv": [
     "CMS_PUBLIC_URL",
+    "CMS_API_TOKEN",
     "DATABASE_URL",
     "MEILI_HOST",
     "NEXT_PUBLIC_SITE_URL",
-    "PAYLOAD_DB_PUSH",
-    "PAYLOAD_PUBLIC_SERVER_URL",
     "PORT",
     "REDIS_URL"
   ],

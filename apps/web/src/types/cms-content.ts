@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────────
 //  CMS content types shared across the web app.
 //  Transitional DTOs remain intentionally explicit while the repo
-//  finishes converging on Payload-native response shapes.
+//  finishes converging on CMS-native response shapes.
 // ─────────────────────────────────────────────────────────────
 
 /** Generic paginated list response from the CMS */

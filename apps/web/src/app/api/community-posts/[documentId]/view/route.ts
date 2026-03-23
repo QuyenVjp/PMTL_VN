@@ -5,7 +5,7 @@ export async function POST(
   const { documentId } = await params
   return Response.json(
     {
-      error: `Chức năng ghi nhận lượt xem cho bài cộng đồng (${documentId}) chưa được migrate sang Payload.`,
+      error: `Chức năng ghi nhận lượt xem cho bài cộng đồng (${documentId}) chưa được migrate sang CMS.`,
       views: 0,
     },
     { status: 501 },

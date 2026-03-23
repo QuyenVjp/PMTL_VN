@@ -47,7 +47,7 @@ export async function getCommunityPosts(params: {
   const posts = (res.data || []).map(raw => ({
     documentId: raw.documentId,
     ...raw,
-    coverUrl: raw.cover_image ? (raw.cover_image.url.startsWith('http') ? raw.cover_image.url : `${(process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')}${raw.cover_image.url}`) : undefined,
+    coverUrl: raw.cover_image ? (raw.cover_image.url.startsWith("http") ? raw.cover_image.url : `${process.env.CMS_PUBLIC_URL ?? "http://localhost:3001"}${raw.cover_image.url}`) : undefined,
     comments: (raw.comments || []).map((c: any) => ({
       documentId: c.documentId,
       ...c,
@@ -79,7 +79,7 @@ export async function getCommunityPostBySlug(slug: string): Promise<CommunityPos
     return {
       documentId: raw.documentId,
       ...raw,
-      coverUrl: raw.cover_image ? (raw.cover_image.url.startsWith('http') ? raw.cover_image.url : `${(process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')}${raw.cover_image.url}`) : undefined,
+      coverUrl: raw.cover_image ? (raw.cover_image.url.startsWith("http") ? raw.cover_image.url : `${process.env.CMS_PUBLIC_URL ?? "http://localhost:3001"}${raw.cover_image.url}`) : undefined,
       comments: (raw.comments || []).map((c: any) => ({
         documentId: c.documentId,
         ...c,

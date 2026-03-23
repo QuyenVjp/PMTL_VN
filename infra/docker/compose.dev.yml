@@ -16,7 +16,9 @@ services:
       CHOKIDAR_USEPOLLING: "true"
       CHOKIDAR_INTERVAL: "500"
     depends_on:
-      cms:
+      meilisearch:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     working_dir: /app
     command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "web"]
@@ -64,134 +66,6 @@ services:
     restart: unless-stopped
     networks:
       - frontend
-      - backend
-
-  cms:
-    build:
-      context: ../..
-      dockerfile: apps/cms/Dockerfile
-      target: dev
-    env_file:
-      - .env.dev
-    environment:
-      NODE_ENV: development
-      PORT: 3001
-      NODE_OPTIONS: --max-old-space-size=2560
-      NEXT_TELEMETRY_DISABLED: "1"
-      NEXT_PUBLIC_SENTRY_ENABLED: "false"
-      SENTRY_ENABLED: "false"
-      WATCHPACK_POLLING: "true"
-      CHOKIDAR_USEPOLLING: "true"
-      CHOKIDAR_INTERVAL: "500"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      meilisearch:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    working_dir: /app
-    command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "cms"]
-    ports:
-      - "3001:3001"
-    restart: unless-stopped
-    volumes:
-      - ../../package.json:/app/package.json:ro
-      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
-      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml:ro
-      - ../../turbo.json:/app/turbo.json:ro
-      - ../../apps/cms/src:/app/apps/cms/src
-      - ../../apps/cms/public:/app/apps/cms/public
-      - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
-      - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
-      - ../../apps/cms/vitest.config.ts:/app/apps/cms/vitest.config.ts:ro
-      - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts
-      - ../../apps/cms/next.config.mjs:/app/apps/cms/next.config.mjs:ro
-      - ../../apps/cms/eslint.config.mjs:/app/apps/cms/eslint.config.mjs:ro
-      - ../../apps/cms/.env.local:/app/apps/cms/.env.local:ro
-      - ../../packages/shared/src:/app/packages/shared/src
-      - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
-      - ../../packages/config:/app/packages/config:ro
-      - ../../infra/scripts:/app/infra/scripts:ro
-      - node-modules:/app/node_modules
-      - pnpm-store:/root/.local/share/pnpm/store
-      - turbo-cache:/app/.turbo
-      - cms-next-cache:/app/apps/cms/.next
-      - cms-media-dev:/app/apps/cms/media
-      - worker-heartbeat:/var/run/pmtl
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "const socket=require('net').connect(3001,'127.0.0.1');socket.on('connect',()=>{socket.end();process.exit(0)});socket.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),2000)"
-        ]
-      interval: 20s
-      timeout: 10s
-      retries: 6
-      start_period: 60s
-    init: true
-    networks:
-      - backend
-
-  worker:
-    build:
-      context: ../..
-      dockerfile: apps/cms/Dockerfile
-      target: dev
-    env_file:
-      - .env.dev
-    environment:
-      NODE_ENV: development
-      NODE_OPTIONS: --max-old-space-size=512
-      SENTRY_ENABLED: "false"
-      WORKER_HEARTBEAT_PATH: /var/run/pmtl/worker-heartbeat.json
-      WORKER_HEARTBEAT_STALE_SECONDS: "120"
-      CHOKIDAR_USEPOLLING: "true"
-    working_dir: /app
-    command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "worker"]
-    depends_on:
-      postgres:
-        condition: service_healthy
-      meilisearch:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      cms:
-        condition: service_healthy
-    restart: unless-stopped
-    volumes:
-      - ../../package.json:/app/package.json:ro
-      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
-      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml:ro
-      - ../../turbo.json:/app/turbo.json:ro
-      - ../../apps/cms/src:/app/apps/cms/src
-      - ../../apps/cms/package.json:/app/apps/cms/package.json:ro
-      - ../../apps/cms/tsconfig.json:/app/apps/cms/tsconfig.json:ro
-      - ../../apps/cms/vitest.config.ts:/app/apps/cms/vitest.config.ts:ro
-      - ../../apps/cms/next-env.d.ts:/app/apps/cms/next-env.d.ts:ro
-      - ../../packages/shared/src:/app/packages/shared/src
-      - ../../packages/shared/package.json:/app/packages/shared/package.json:ro
-      - ../../packages/config:/app/packages/config:ro
-      - ../../infra/scripts:/app/infra/scripts:ro
-      - node-modules:/app/node_modules
-      - pnpm-store:/root/.local/share/pnpm/store
-      - worker-heartbeat:/var/run/pmtl
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "const fs=require('fs');const p=process.env.WORKER_HEARTBEAT_PATH||'/tmp/pmtl-worker-heartbeat';const stale=Number(process.env.WORKER_HEARTBEAT_STALE_SECONDS||120)*1000;const stat=fs.statSync(p);if(Date.now()-stat.mtimeMs>stale) process.exit(1);"
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 240s
-    init: true
-    networks:
       - backend
 
   postgres:
@@ -272,8 +146,6 @@ services:
     depends_on:
       web:
         condition: service_healthy
-      cms:
-        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -291,13 +163,10 @@ volumes:
   redis-dev-data:
   caddy-data:
   caddy-config:
-  worker-heartbeat:
   node-modules:
   pnpm-store:
   turbo-cache:
   web-next-cache:
-  cms-next-cache:
-  cms-media-dev:
 
 networks:
   frontend:

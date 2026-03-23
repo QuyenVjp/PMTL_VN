@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  lib/api/guides.ts — Hướng Dẫn Sơ Học & Kinh Bài Tập API
-//  Server-side only — fetch from Payload CMS
+//  Server-side only — fetch from CMS
 // ─────────────────────────────────────────────────────────────
 
 import { cachedCmsFetch } from '@/lib/cms/server-cache'

@@ -31,12 +31,6 @@ scrape_configs:
       - targets: ["http://web:3000/api/health"]
         labels:
           service: web
-      - targets: ["http://cms:3001/api/health"]
-        labels:
-          service: cms
-      - targets: ["http://cms:3001/api/worker/health"]
-        labels:
-          service: worker
       - targets: ["http://meilisearch:7700/health"]
         labels:
           service: meilisearch
@@ -52,11 +46,6 @@ scrape_configs:
         target_label: service
       - target_label: __address__
         replacement: blackbox-exporter:9115
-
-  - job_name: worker-metrics
-    metrics_path: /api/metrics/worker
-    static_configs:
-      - targets: ["cms:3001"]
 
   - job_name: postgres-exporter
     static_configs:

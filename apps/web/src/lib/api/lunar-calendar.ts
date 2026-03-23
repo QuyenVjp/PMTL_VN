@@ -30,8 +30,8 @@ export interface LunarEvent {
  */
 export async function fetchLunarEvents(): Promise<LunarEvent[]> {
   try {
-    const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001');
-    const token = process.env.PAYLOAD_API_TOKEN;
+    const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+    const token = process.env.CMS_API_TOKEN;
 
     // Goi endpoint custom /with-blogs — dung Document Service ben BE, co relatedBlogs
     const res = await fetch(`${CMS_API_URL}/api/lunar-events/with-blogs`, {

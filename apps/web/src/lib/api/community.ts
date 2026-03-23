@@ -106,7 +106,7 @@ export async function fetchPostsServer(params?: {
   pageSize?: number
 }): Promise<{ posts: CommunityPost[]; total: number }> {
   const cmsBaseUrl =
-    process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001'
+    process.env.CMS_PUBLIC_URL ?? "http://localhost:3001"
   const page = Math.max(1, params?.page ?? 1)
   const pageSize = Math.max(1, params?.pageSize ?? 20)
 

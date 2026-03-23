@@ -1,6 +1,6 @@
 import { withCsrfHeaders } from "@/lib/security/client";
 
-const API = process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+const API = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 export function getAuthToken(): null {
   return null;

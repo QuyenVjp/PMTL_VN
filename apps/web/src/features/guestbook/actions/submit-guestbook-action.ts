@@ -46,7 +46,7 @@ export async function submitGuestbookAction(
     };
   }
 
-  const token = process.env.PAYLOAD_API_TOKEN;
+  const token = process.env.CMS_API_TOKEN;
 
   if (!token) {
     return {
@@ -57,10 +57,7 @@ export async function submitGuestbookAction(
   }
 
   try {
-    const cmsUrl =
-      process.env.PAYLOAD_PUBLIC_SERVER_URL ??
-      process.env.CMS_PUBLIC_URL ??
-      "http://localhost:3001";
+    const cmsUrl = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
     const response = await fetch(`${cmsUrl}/api/guestbook/submit`, {
       method: "POST",

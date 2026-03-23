@@ -29,8 +29,8 @@ export function SiteFooter() {
           <article>
             <h4 className="footer-subtitle">Kiến trúc</h4>
             <p className="muted" style={{ marginBottom: 0 }}>
-              `apps/web` hiển thị, `apps/cms` quản trị và xử lý nghiệp vụ, `packages/shared` giữ
-              hợp đồng dữ liệu dùng chung.
+              `apps/web` hiển thị, backend content (du kien `apps/api`) se quan tri va xu ly nghiep vu,
+              `packages/shared` giu hop dong du lieu dung chung.
             </p>
           </article>
         </section>

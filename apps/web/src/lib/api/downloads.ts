@@ -1,6 +1,6 @@
 // ─────────────────────────────────────────────────────────────
 //  fe-pmtl/lib/api/downloads.ts
-//  Lấy tài liệu tải từ Payload Downloads API
+//  Lấy tài liệu tải từ CMS Downloads API
 // ─────────────────────────────────────────────────────────────
 import { cachedCmsFetch } from '@/lib/cms/server-cache'
 

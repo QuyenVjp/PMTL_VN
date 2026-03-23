@@ -9,7 +9,7 @@ export async function GET(
   return NextResponse.json(
     {
       data: null,
-      error: `Bài cộng đồng "${documentId}" chưa sẵn sàng trên Payload API.`,
+      error: `Bài cộng đồng \"${documentId}\" chưa sẵn sàng trên CMS API.`,
     },
     {
       status: 404,

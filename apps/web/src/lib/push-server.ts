@@ -54,7 +54,7 @@ export interface PushJobRecord {
   createdAt?: string | null;
 }
 
-type PayloadListResponse<T> = {
+type CmsListResponse<T> = {
   docs: T[];
   totalDocs?: number;
 };
@@ -111,8 +111,8 @@ type RawPushJob = {
 };
 
 const CMS_API_URL =
-  process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
-const CMS_TOKEN = process.env.PAYLOAD_API_TOKEN?.trim() ?? "";
+  process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
+const CMS_TOKEN = process.env.CMS_API_TOKEN?.trim() ?? "";
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
   return {
@@ -248,7 +248,7 @@ function mapPushJob(record: RawPushJob): PushJobRecord {
 
 export async function fetchSubscriptionByEndpoint(endpoint: string): Promise<PushSubscriptionRecord | null> {
   const query = `/api/pushSubscriptions?where[endpoint][equals]=${encodeURIComponent(endpoint)}&limit=1&depth=0`;
-  const result = await cmsAdminFetch<PayloadListResponse<RawPushSubscription>>(query, {
+  const result = await cmsAdminFetch<CmsListResponse<RawPushSubscription>>(query, {
     method: "GET",
   });
 
@@ -269,7 +269,7 @@ export async function createPushJob(data: Record<string, unknown>) {
 }
 
 export async function fetchPushJobByDocumentId(documentId: string): Promise<PushJobRecord | null> {
-  const response = await cmsAdminFetch<PayloadListResponse<RawPushJob>>(
+  const response = await cmsAdminFetch<CmsListResponse<RawPushJob>>(
     `/api/pushJobs?where[publicId][equals]=${encodeURIComponent(documentId)}&limit=1&depth=0`,
     { method: "GET" },
   );
@@ -283,7 +283,7 @@ export async function fetchRecentNotifications(limit = 24) {
   }
 
   try {
-    const response = await cmsAdminFetch<PayloadListResponse<RawPushJob>>(
+    const response = await cmsAdminFetch<CmsListResponse<RawPushJob>>(
       `/api/pushJobs?where[status][equals]=completed&sort=-createdAt&limit=${Math.max(1, Math.min(100, limit))}&depth=0`,
       { method: "GET" },
     );
@@ -300,7 +300,7 @@ export async function fetchRecentNotifications(limit = 24) {
 
 export async function fetchPushSubscriptionsPage(start: number, limit: number) {
   const page = Math.floor(start / limit) + 1;
-  const response = await cmsAdminFetch<PayloadListResponse<RawPushSubscription>>(
+  const response = await cmsAdminFetch<CmsListResponse<RawPushSubscription>>(
     `/api/pushSubscriptions?where[isActive][equals]=true&sort=updatedAt&limit=${limit}&page=${page}&depth=0`,
     { method: "GET" },
   );

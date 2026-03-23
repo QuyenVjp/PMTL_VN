@@ -13,7 +13,7 @@ export function PostList({ posts }: PostListProps) {
     return (
       <EmptyState
         title="Chưa có bài viết"
-        description="Khi Payload có dữ liệu, mục này sẽ lấy trực tiếp từ CMS thay vì fixture."
+        description="Khi CMS có dữ liệu, mục này sẽ lấy trực tiếp từ CMS thay vì fixture."
       />
     );
   }

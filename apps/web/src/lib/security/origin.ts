@@ -1,7 +1,6 @@
 const DEFAULT_ALLOWED_ORIGINS = [
   process.env.NEXT_PUBLIC_SITE_URL,
   process.env.CMS_PUBLIC_URL,
-  process.env.PAYLOAD_PUBLIC_SERVER_URL,
   "http://localhost:3000",
   "http://127.0.0.1:3000",
   "http://localhost:3001",

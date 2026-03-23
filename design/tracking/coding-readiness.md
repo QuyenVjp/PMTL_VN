@@ -28,7 +28,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `baseline/migration-strategy.md` |
 | Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
-| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills Payload legacy đã bị deprecate hoặc loại khỏi luồng code mới |
+| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills CMS legacy đã bị deprecate hoặc loại khỏi luồng code mới |
 | OpenAPI spec | ✅ Sẵn sàng | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới |
 | Deferred/excluded advanced tech design | ✅ Sẵn sàng | Các component `planned` / `explicit exclusion` đều có design doc rõ — xem `DECISIONS.md` section 15 |
 | Email provider decision | ✅ Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `baseline/email-provider-decision.md` |
@@ -139,7 +139,7 @@ Mọi domain module (01-11) đều có:
 
 **Trạng thái hiện tại**:
 - `AGENTS.md` đã chốt `design-first` + `apps/web + apps/api + apps/admin`
-- các skill Payload cũ đã được đánh dấu deprecated trong repo routing
+- các skill CMS cũ đã được đánh dấu deprecated trong repo routing
 - không còn coi chúng là blocker cho design readiness
 
 **Lưu ý**:
@@ -376,9 +376,9 @@ Bước 12 — Contact (reference users):
 ### Skills DEPRECATED / CONFLICT (không dùng cho code mới):
 | Skill | Vấn đề | Action |
 |---|---|---|
-| `pmtl-scaffold-payload-collection` | Creates Payload collections | **Deprecate** |
-| `pmtl-production-baseline` | May reference Payload patterns | **Review & Update** |
-| `pmtl-runbook-cms-runtime-errors` | References CMS (Payload) runtime | **Deprecate** |
+| `pmtl-scaffold-payload-collection` | Creates legacy CMS collections | **Deprecate** |
+| `pmtl-production-baseline` | May reference legacy CMS patterns | **Review & Update** |
+| `pmtl-runbook-cms-runtime-errors` | References legacy CMS runtime | **Deprecate** |
 
 **Action required**: coi các skill deprecated ở trên là historical/no-route entries; không dùng chúng cho chat mới, không giữ chúng trong checklist active của rebuild.
 

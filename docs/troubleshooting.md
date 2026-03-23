@@ -23,7 +23,7 @@ Symptoms:
 
 Likely causes:
 - CMS is not running
-- `PAYLOAD_PUBLIC_SERVER_URL` or `CMS_PUBLIC_URL` is wrong
+- `CMS_PUBLIC_URL` is wrong
 - Meilisearch or Postgres is unavailable, causing upstream CMS failures
 
 Checks:
@@ -98,16 +98,14 @@ pnpm test
 ## CMS `typecheck` Regenerates Types And Then Fails
 
 Symptoms:
-- `pnpm --filter @pmtl/cms typecheck` fails during `generate:types` or `generate:importmap`
+- legacy `@pmtl/cms` workspace commands referenced in old docs
 
 Checks:
-- `PAYLOAD_CONFIG_PATH=src/payload.config.ts` is valid
-- CMS env vars are present
-- collection field config is syntactically valid
+- This repo no longer ships `apps/cms`. Remove or ignore any `@pmtl/cms` commands you still have locally.
 
 Rerun:
 ```bash
-pnpm --filter @pmtl/cms typecheck
+pnpm --filter @pmtl/web typecheck
 ```
 
 ## Auth Cookie Not Persisting
@@ -134,7 +132,7 @@ Symptoms:
 Checks:
 - `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are present on CMS
 - `NEXT_PUBLIC_SITE_URL` is the web domain
-- `CMS_PUBLIC_URL` / `PAYLOAD_PUBLIC_SERVER_URL` is the CMS domain
+- `CMS_PUBLIC_URL` is the CMS domain
 - the Google OAuth client is configured with the exact origins and callback URLs below
 
 Google Console values used by this repo:
@@ -149,7 +147,7 @@ https://cms.phapmontamlinh-quantheambotat.vn/api/connect/google/callback
 ```
 
 Notes:
-- the callback now completes on CMS and hands a Payload JWT back to web
+- the callback completes on CMS and hands a session token back to web
 - `redirect_uri` must match exactly, including scheme and subdomain
 
 ## Search Reindex Appears To Do Nothing

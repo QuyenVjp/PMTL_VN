@@ -13,7 +13,7 @@ function readConfiguredHostname(value: string | undefined): string | null {
   }
 }
 
-const cmsHostname = readConfiguredHostname(process.env.CMS_PUBLIC_URL) ?? readConfiguredHostname(process.env.PAYLOAD_PUBLIC_SERVER_URL);
+const cmsHostname = readConfiguredHostname(process.env.CMS_PUBLIC_URL);
 
 const nextConfig: NextConfig = {
   cacheComponents: true,

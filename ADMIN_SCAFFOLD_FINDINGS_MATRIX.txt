@@ -69,7 +69,7 @@ HIGH-IMPACT CONSTRAINTS (Implementation Must Follow)
 │ Rule:     All content publish mutations must call platform/cache webhook    │
 │ When:     After onSuccess (list + detail cache invalidated client-side)    │
 │ Route:    POST /internal/revalidate                                        │
-│ Payload:  { source: 'post-publish' | 'guide-publish' | ... , id }         │
+│ Body:     { source: 'post-publish' | 'guide-publish' | ... , id }         │
 │ Violates: Skipping webhook → public pages serve cached old content         │
 └─────────────────────────────────────────────────────────────────────────────┘
 

@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { normalizeApiErrorMessage, parseResponseBody } from '@/lib/http-error'
 import { logger } from '@/lib/logger'
 
-const CMS_API_URL = (process.env.PAYLOAD_PUBLIC_SERVER_URL ?? process.env.CMS_PUBLIC_URL ?? 'http://localhost:3001')
+const CMS_API_URL = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
 
 type LegacyProfileUpdateBody = {
   fullName?: string | null

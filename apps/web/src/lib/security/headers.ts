@@ -25,7 +25,7 @@ function readConfiguredOrigin(value: string | undefined): string | null {
 
 function buildCsp() {
   const siteOrigin = readConfiguredOrigin(process.env.NEXT_PUBLIC_SITE_URL);
-  const cmsOrigin = readConfiguredOrigin(process.env.CMS_PUBLIC_URL) ?? readConfiguredOrigin(process.env.PAYLOAD_PUBLIC_SERVER_URL);
+  const cmsOrigin = readConfiguredOrigin(process.env.CMS_PUBLIC_URL);
   const connectSrc = ["'self'", ...LOCAL_CMS_ORIGINS, ...REMOTE_IMAGE_ORIGINS];
   const imgSrc = ["'self'", "data:", "blob:", ...LOCAL_CMS_ORIGINS, ...REMOTE_IMAGE_ORIGINS];
 
