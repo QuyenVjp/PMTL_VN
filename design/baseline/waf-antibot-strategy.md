@@ -219,13 +219,17 @@ All responses must include these headers. Set in `Caddyfile`:
     "img-src 'self' https: data:",
     "media-src 'self' https:",
     "connect-src 'self' https://api.pmtl.vn",
-    "frame-src https://challenges.cloudflare.com",  // Turnstile
+    "frame-src 'self' https://challenges.cloudflare.com",  // Phase 2 only when Turnstile is enabled
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "object-src 'none'",
   ].join('; ')
 }
 ```
+
+Rule:
+- nếu Turnstile chưa bật, `frame-src https://challenges.cloudflare.com` không phải Phase 1 baseline bắt buộc
+- khi Turnstile bật ở Phase 2+, CSP phải được nới đúng scope này và không nới rộng hơn
 
 **CSP nonce strategy for Next.js**:
 - Generate nonce per request in `middleware.ts`

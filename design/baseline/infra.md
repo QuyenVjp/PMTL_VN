@@ -61,6 +61,7 @@ Media local disk chỉ được coi là operational nếu:
 ### 5. Async Reliability
 
 **Phase 1**: Sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ. Không cần outbox/queue.
+Exception: email delivery dùng inline exponential backoff ở Phase 1 theo `baseline/email-provider-decision.md`; chưa cần outbox hay BullMQ chỉ riêng cho email.
 **Phase 2+**: Outbox + dispatcher + BullMQ + worker khi side effect đủ quan trọng.
 
 ```
@@ -80,7 +81,7 @@ Ref: `tracking/outbox-event-taxonomy.md` cho taxonomy đầy đủ.
 | Cloudflare Web Analytics | Privacy-first web analytics, available on all plans | Optional Phase 1 |
 | Cloudflare Image Transform | Bitmap image resize/format optimization at edge; not for SVG resize | Phase 2+ |
 | Off-site backup | Snapshot ngoài VPS | Phase 1 |
-| Uptime monitor (Uptime Kuma or equivalent) | external uptime checks for web/api/admin/SSL | Recommended Phase 1 |
+| Uptime monitor (Uptime Kuma or equivalent) | external uptime checks for web/api/admin/SSL | Required before public production launch |
 | Error tracking (Sentry or equivalent) | external error capture and alerting | Recommended Phase 1 |
 
 ---
@@ -109,6 +110,7 @@ Rule:
 - PMTL không bắt buộc bật `Meilisearch` từ ngày đầu
 - nhưng nếu public search là acquisition surface quan trọng cho SEO/GEO thì được phép bật sớm
 - dù bật sớm, `Meilisearch` vẫn là projection, không phải canonical source
+- nếu bật `Search-first launch`, search fallback logging/metrics ở `baseline/observability-architecture.md` trở thành requirement ngay trong Phase 1
 
 ## DNS and network exposure baseline
 
@@ -118,6 +120,8 @@ Rule:
   - `www.pmtl.vn` nếu còn giữ thì phải redirect về canonical host
   - subdomains public như `api.pmtl.vn`, `admin.pmtl.vn` phải đi qua cùng edge policy
 - `DNSSEC` phải được bật ở Cloudflare zone trước launch thật; đây là design requirement nhưng vẫn cần live DNS proof
+  - Acceptance baseline: Cloudflare zone dashboard hiển thị `DNSSEC: Active`; DS record đã được add ở registrar và propagate; `dig DS pmtl.vn +short` trả về ít nhất 1 record hợp lệ hoặc tool như DNSViz xác nhận chain hợp lệ
+  - Rollback baseline: tắt DNSSEC ở Cloudflare zone -> xóa DS record ở registrar -> chờ TTL expire; procedure này phải được ghi ở `ops/deploy-runbook.md` trước launch
 - TXT/DNS owner split:
   - host reachability records (`A`, `AAAA`, `CNAME`, NS) theo file này
   - email-auth TXT (`SPF`, `DKIM`, `DMARC`) theo `baseline/email-provider-decision.md`

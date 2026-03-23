@@ -404,11 +404,12 @@ JSON-LD cho từng loại content:
 ### Technical SEO (skill: `technical-seo-checker`)
 
 - `sitemap.xml` auto-generated từ published content (Next.js `sitemap.ts`)
-- `robots.txt`: allow public, disallow `/dashboard`, `/tu-tap`, `/tai-khoan`, `/admin`
+- `robots.txt`: canonical disallow list xem `design/seo-geo/strategy.md` — không maintain list riêng ở đây để tránh drift
 - Core Web Vitals targets: LCP < 2.5s, CLS < 0.1, INP < 200ms
 - Mobile-first indexing: responsive design, no separate mobile site
 - HTTPS enforced (Caddy + Cloudflare)
 - Canonical URLs trên mọi page
+- CSP headers, bao gồm nonce generation cho inline script hợp lệ, bám `design/baseline/waf-antibot-strategy.md`; `middleware.ts` là owner cho per-request nonce generation khi scaffold `apps/web`
 
 ### GEO — AI citation optimization (skill: `geo-content-optimizer`)
 

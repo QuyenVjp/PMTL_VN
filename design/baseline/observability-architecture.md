@@ -11,9 +11,9 @@ Mọi quyết định ở đây là binding — không được tự ý bật la
 
 ## Phase 1 — Logging + Health + Metrics endpoint (REQUIRED BEFORE LAUNCH)
 
-### Phase 1 external monitors (recommended)
+### Phase 1 external monitors (required before public production launch)
 
-- external uptime monitor như `Uptime Kuma` hoặc equivalent nên check:
+- external uptime monitor như `Uptime Kuma` hoặc equivalent phải check:
   - public site
   - admin URL
   - `GET /health/live`
@@ -149,6 +149,12 @@ Auth: **Internal only** — Caddy không expose ra internet
 **Impl**: `prom-client` npm package (Prometheus compatible). NestJS custom metrics provider.
 
 ### Search fallback logging contract
+
+Contract này chỉ áp dụng khi `Meilisearch` được bật:
+- Phase 2+ bình thường
+- hoặc `Search-first launch` ở Phase 1
+
+Nếu launch đang ở chế độ SQL-only search, có thể bỏ qua fallback logging này vì không có engine fallback thực sự.
 
 Khi search route không chạy đúng engine được yêu cầu, log tối thiểu:
 

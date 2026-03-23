@@ -136,9 +136,11 @@ Trang chủ > Ngôi Nhà Nhỏ > Đốt & Hậu xử lý > Quy trình đốt
 ### robots.txt
 
 ```text
+# Canonical disallow list. frontend-architecture.md không maintain list riêng — trỏ về đây.
 User-agent: *
 Allow: /
 Disallow: /admin/
+Disallow: /dashboard/
 Disallow: /tu-tap/
 Disallow: /phat-nguyen/
 Disallow: /phong-sanh/
@@ -148,7 +150,7 @@ Disallow: /tai-khoan/
 Disallow: /thong-bao/
 Disallow: /api/
 
-Sitemap: https://phatmontamlinh.vn/sitemap.xml
+Sitemap: https://pmtl.vn/sitemap.xml
 ```
 
 ### sitemap.xml

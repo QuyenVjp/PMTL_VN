@@ -70,7 +70,7 @@ Phần này map trực tiếp theo tên check mà các web-audit tools thường
 | Cookies | `design-covered` + `runtime-evidence-required` | `baseline/security.md`, `baseline/frontend-architecture.md` | auth/tracking cookie posture phải intentional, scan live mới thấy thực tế |
 | DNS Server | `runtime-evidence-required` | `baseline/infra.md` | authoritative DNS phải do Cloudflare own; live NS lookup mới chứng minh |
 | DNS Records | `runtime-evidence-required` | `baseline/infra.md`, `baseline/email-provider-decision.md` | `A/AAAA/MX/TXT` phải đúng theo host + mail auth plan |
-| DNSSEC | `design-covered` + `runtime-evidence-required` | `baseline/infra.md` | DNSSEC phải được bật ở Cloudflare zone trước launch |
+| DNSSEC | `design-covered` + `runtime-evidence-required` | `baseline/infra.md` | DNSSEC phải bật ở Cloudflare zone, DS record phải propagate, và acceptance baseline phải đủ để rollback an toàn |
 | Site Features | `design-covered` + `runtime-evidence-required` | `ui/PAGE_INVENTORY.md`, `baseline/frontend-architecture.md` | public feature surface do page inventory own; live scan chỉ xác nhận host đang expose gì |
 | Firewall Types | `design-covered` + `runtime-evidence-required` | `baseline/waf-antibot-strategy.md`, `infra/cloudflare/waf-rules.md` | Cloudflare là edge WAF authority; live fingerprint chỉ là evidence |
 | Get IP Address | `runtime-evidence-required` | `baseline/infra.md` | design biết có Cloudflare + single VPS, nhưng live DNS/IP lookup mới ra public IP chain |

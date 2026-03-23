@@ -139,20 +139,17 @@ def classify_interaction_mode(prompt: str, mode: str) -> str:
         "repo",
         "repository",
         "codebase",
-        "code",
         "module",
         "endpoint",
         "schema",
         "dto",
         "nestjs",
         "nextjs",
-        "file",
-        "read ",
-        "review ",
         "diff",
-        "patch",
-        "implement",
-        "scaffold",
+        "route inventory",
+        "api contract",
+        "page inventory",
+        "agents.md",
     )
     if path_pattern.search(prompt):
         return "repo"
@@ -160,10 +157,12 @@ def classify_interaction_mode(prompt: str, mode: str) -> str:
 
 
 def shape_prompt(prompt: str, interaction_mode: str) -> str:
-    if interaction_mode != "chat":
-        return prompt
-    prefix = "Treat this as a normal chat reply. Do not inspect repository files, tools, MCP servers, or local docs unless the prompt explicitly requires them. Answer directly and concisely. "
-    return prefix + prompt.strip()
+    stripped = prompt.strip()
+    if interaction_mode == "chat":
+        prefix = "Treat this as a normal chat reply. Do not inspect repository files, tools, MCP servers, or local docs unless the prompt explicitly requires them. Answer directly and concisely. "
+        return prefix + stripped
+    repo_prefix = "Treat this as a targeted repo task. Read only the files or paths explicitly named in the prompt. Do not recursively inspect unrelated repo files, AGENTS, skills, MCP servers, or local docs unless the prompt explicitly requires them. "
+    return repo_prefix + stripped
 
 
 def command_cwd(cwd: Path, provider: str, interaction_mode: str) -> Path:
@@ -191,6 +190,25 @@ def load_json_file(path: Path) -> dict | None:
 def save_json_file(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def delete_file_if_exists(path: Path) -> None:
+    try:
+        path.unlink()
+    except FileNotFoundError:
+        return
+
+
+def is_stale_session_error(message: str) -> bool:
+    text = message.lower()
+    stale_markers = (
+        "no conversation found with session id",
+        "conversation not found",
+        "session not found",
+        "invalid session",
+        "unknown session",
+    )
+    return any(marker in text for marker in stale_markers)
 
 
 def load_recent_turns(cwd: Path, provider: str) -> list[dict]:
@@ -377,11 +395,18 @@ def run_copilot(
     interaction_mode: str,
 ) -> tuple[str, str | None]:
     state = load_provider_session(cwd, "copilot") if session_mode in {"auto", "sticky"} else None
-    execution_cwd = command_cwd(cwd, "copilot", interaction_mode)
+    execution_cwd = provider_runtime_dir(cwd, "copilot") if interaction_mode == "repo" else command_cwd(cwd, "copilot", interaction_mode)
+    scoped_prompt = prompt
+    if interaction_mode == "repo":
+        scoped_prompt = (
+            f"Workspace root: {cwd}. Resolve any relative repo paths from this root. "
+            "Read only the explicitly named files or paths under that root; do not scan unrelated repo files.\n"
+            f"{prompt}"
+        )
     command = [
         "copilot.exe",
         "-p",
-        prompt,
+        scoped_prompt,
         "--model",
         model or "claude-haiku-4.5",
         "--allow-all-tools",
@@ -400,12 +425,25 @@ def run_copilot(
     elif state and isinstance(state.get("session_id"), str):
         command.append(f"--resume={state['session_id']}")
 
-    result = run_command_with_retries(
-        command,
-        cwd=execution_cwd,
-        timeout_seconds=timeout_seconds,
-        retries=retries,
-    )
+    try:
+        result = run_command_with_retries(
+            command,
+            cwd=execution_cwd,
+            timeout_seconds=timeout_seconds,
+            retries=retries,
+        )
+    except RuntimeError as exc:
+        if state and is_stale_session_error(str(exc)):
+            delete_file_if_exists(provider_state_path(cwd, "copilot"))
+            fresh_command = [item for item in command if not item.startswith("--resume=")]
+            result = run_command_with_retries(
+                fresh_command,
+                cwd=execution_cwd,
+                timeout_seconds=timeout_seconds,
+                retries=0,
+            )
+        else:
+            raise
 
     response = None
     resolved_model = None
@@ -518,12 +556,34 @@ def run_claude(
         command.extend(["--resume", state["session_id"]])
     command.extend(["--model", resolved_model])
 
-    result = run_command_with_retries(
-        command,
-        cwd=execution_cwd,
-        timeout_seconds=timeout_seconds,
-        retries=retries,
-    )
+    try:
+        result = run_command_with_retries(
+            command,
+            cwd=execution_cwd,
+            timeout_seconds=timeout_seconds,
+            retries=retries,
+        )
+    except RuntimeError as exc:
+        if state and is_stale_session_error(str(exc)):
+            delete_file_if_exists(provider_state_path(cwd, "claude"))
+            fresh_command: list[str] = []
+            skip_next = False
+            for item in command:
+                if skip_next:
+                    skip_next = False
+                    continue
+                if item == "--resume":
+                    skip_next = True
+                    continue
+                fresh_command.append(item)
+            result = run_command_with_retries(
+                fresh_command,
+                cwd=execution_cwd,
+                timeout_seconds=timeout_seconds,
+                retries=0,
+            )
+        else:
+            raise
 
     try:
         payload = json.loads(result.stdout.strip())
