@@ -43,6 +43,8 @@ Các target (mục tiêu) dưới đây chỉ có nghĩa khi component (thành p
 | search API (API tìm kiếm) | p95 `< 250ms` | Meilisearch đã bật | route timing log + search health |
 | search freshness (độ tươi mới của tìm kiếm) | `< 10 giây` | Meilisearch + sync path (đường đồng bộ) đã bật | index sync lag metric (chỉ số trễ đồng bộ chỉ mục) |
 | notification dispatch start (bắt đầu phân phát thông báo) | `< 30 giây` | queue/worker (hàng đợi/xử lý nền) đã bật | queue lag metric (chỉ số trễ hàng đợi) |
+| member notification preference update | p95 `< 500ms` | `/thong-bao` preference/reminder routes active | route timing log |
+| push job delivery success rate | `>= 95%` non-expired subscriptions | push delivery active | push job metrics + deactivated subscription audit |
 | async side-effect enqueue/handoff (đưa vào hàng đợi/bàn giao tác động phụ bất đồng bộ) | `< 2 giây` | outbox/queue đã bật | outbox lag / dispatch metric (chỉ số trễ/phân phát) |
 
 ## Error-budget stance (Quan điểm về ngân sách lỗi)

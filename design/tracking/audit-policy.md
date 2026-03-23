@@ -105,6 +105,24 @@ Tối thiểu phải ưu tiên các trường sau khi có liên quan:
 - feature flag key nếu action đụng rollout
 - dependency fallback context nếu action là degraded path (ví dụ search fallback)
 
+### Moderation audit metadata profile
+
+Các action moderation không được log metadata mơ hồ.
+Tối thiểu:
+
+- `reasonCode`
+- `decisionType`
+- `targetType`
+- `targetPublicId`
+- `reportPublicId`
+- `resolutionEffect`
+- `noteSafe` nếu có
+
+Không log:
+- raw IP
+- raw secret/token
+- raw reporter private note nếu không cần điều tra
+
 ## Snapshot trước/sau
 
 - Với các thay đổi nội dung quan trọng, nên lưu:

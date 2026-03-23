@@ -941,6 +941,12 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Subscribe / unsubscribe button
 - Notification types toggle (practice reminder / event / community)
 - Permission guide nếu browser chưa cấp
+- Reminder settings summary
+- Capability state: supported / permission denied / subscribed / degraded
+
+**Rule**:
+- đây là settings surface, không phải inbox lịch sử thông báo
+- không render raw push job history cho member ở route này
 
 ---
 

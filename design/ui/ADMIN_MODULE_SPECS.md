@@ -615,35 +615,111 @@ Link to media library items
 ## 20. Tìm kiếm (`/he-thong/tim-kiem`)
 
 **Role**: `admin+`
-**API deps**: `GET /api/admin/search/status`, `POST /api/admin/search/reindex`, `POST /api/admin/search/reindex/:source`
+**API deps**: `GET /api/admin/search/status`, `GET /api/admin/search/operational-status`, `GET /api/admin/search/performance`, `GET /api/admin/search/indexing-jobs`, `GET /api/admin/search/indexing-jobs/:publicId`, `GET /api/admin/search/fallback-events`, `GET /api/admin/search/index-settings`, `POST /api/admin/search/reindex`, `POST /api/admin/search/reindex/:source`, `PUT /api/admin/search/index-settings`
 **Feature flag**: `search.meilisearch.enabled` (shows different UI per flag state)
 
-### When flag = false (SQL mode)
-```
-Trạng thái: SQL search (Postgres tsvector)
-Mode: Phase 1 — không cần reindex thủ công
+Tabs: [Tổng quan] [Hiệu năng] [Indexing jobs] [Fallback events] [Index settings]
 
-[Kiểm tra SQL search] → runs test query, shows result count
-```
+### Tab 1 — Tổng quan
 
-### When flag = true (Meilisearch mode)
-```
-Trạng thái Meilisearch:  ● Hoạt động
-Index: pmtl_content
-Documents: 1,245
-Last sync: 5 phút trước
-Queue depth: 0
+- cards:
+  - `Engine requested`
+  - `Engine actual`
+  - `Index freshness`
+  - `Document count`
+  - `Pending indexing jobs`
+  - `Last successful reindex`
+- health rows:
+  - SQL fallback availability
+  - Meilisearch health
+  - bootstrap fallback active / not active
+- source freshness table:
+  - `posts`
+  - `wisdom`
+  - `guides`
+  - các source khác khi active
+- primary actions:
+  - `[Reindex tất cả]`
+  - `[Reindex theo source]`
+  - `[Mở job gần nhất]`
 
-Sources:
-  posts       ● Fresh (last: 2h ago)
-  wisdom      ● Fresh (last: 2h ago)
-  guides      ⚠ Stale (last: 25h ago)
+### Tab 2 — Hiệu năng
 
-[Reindex tất cả]  [Reindex posts]  [Reindex wisdom]  [Reindex guides]
-```
+- cards/charts tối thiểu:
+  - query volume `15m / 1h / 24h`
+  - p95 latency theo engine
+  - fallback rate
+  - query rejected count
+  - crawler vs browser search pressure
+- filters:
+  - time window
+  - engine
+  - source/docType khi surfaced
+- nếu engine actual = `sql-fallback`, phải hiện warning rõ thay vì chỉ đổi icon màu
 
-Reindex action: shows progress spinner, then completion toast
-If Meilisearch down: shows error state with fallback indicator
+### Tab 3 — Indexing jobs
+
+DataTable columns:
+- Job ID
+- Source
+- Trigger type
+- Status
+- Started at
+- Finished at
+- Duration
+- Rows affected
+
+Filters:
+- Status
+- Source
+- Trigger type
+
+Row detail:
+- error summary
+- actor / requestId
+- indexed / deleted rows
+- affected range nếu có
+
+Actions:
+- Retry
+- Open affected source workspace
+- Copy requestId
+
+### Tab 4 — Fallback events
+
+DataTable columns:
+- Time
+- Requested engine
+- Actual engine
+- Reason
+- Route
+- Query hash
+- Duration
+- User-agent class
+
+Filters:
+- reason (`bootstrap`, `timeout`, `health`, `manual-disable`, `index-stale`)
+- route
+- user-agent class
+
+Rule:
+- tuyệt đối không hiện raw query text
+- tab này là operational evidence lane, không phải analytics vanity view
+
+### Tab 5 — Index settings
+
+- read-mostly summary:
+  - searchable/filterable/sortable attributes
+  - ranking rules
+  - query guard limits canon
+- write action:
+  - `Update settings` chỉ `super-admin`
+  - bắt buộc confirm dialog + audit note
+
+**Rules**:
+- workspace này không sửa canonical content text
+- mọi screen phải hiện `engine requested` và `engine actual`
+- nếu `search.meilisearch.enabled = false`, vẫn phải hiện được search pressure và SQL-mode operational summary
 
 ---
 

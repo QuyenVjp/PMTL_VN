@@ -19,7 +19,7 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
 
 ## Còn thiếu cho `apps/api`
 
-- response DTO field-level schemas cho từng route profile vẫn cần derive rõ từ `packages/shared` khi bắt đầu scaffold controller
+- response DTO field-level schemas cho từng route profile đã có owner scaffold baseline ở `tracking/api-dto-shape-plan.md`; khi scaffold controller vẫn phải map sang `packages/shared`
 - admin page-to-route-group mapping đã có owner docs riêng (`tracking/admin-page-api-mapping.md`, `tracking/admin-feature-query-plan.md`), nhưng DTO shape thật vẫn phải derive khi bắt đầu scaffold controller/query layer
 - search surface vẫn có 2 lớp:
   - `/search` là federated public entrypoint
@@ -35,7 +35,7 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
 
 ## Còn thiếu cho `apps/web`
 
-- loader contracts cho các public grouped content pages (`/ngoi-nha-nho/[group]`, `/kinh-bai-tap/[group]`, `/huong-dan/[slug]`) vẫn nên được map thêm sang page-level data requirements khi bắt đầu scaffold RSC loaders
+- loader contracts cho các public/member grouped pages đã có owner baseline ở `tracking/page-loader-contracts.md`; lúc scaffold RSC chỉ còn việc map sang API aggregates tương ứng
 - `/thong-bao` đã có backing route family cơ bản, nhưng UX states cho empty/error/loading và preference conflict cần map thêm sang component states
 - `/ngoai-tuyen` đã có route surface cơ bản, nhưng cần explicit pagination/sync badge strategy khi scaffold thật
 
@@ -48,6 +48,16 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
   - import-job detail DTO
   - provider profile options DTO
   - draft translation review form field picks
+
+## Đã khóa thêm trong pass này
+
+- `tracking/api-dto-shape-plan.md`:
+  - field picks baseline cho public/admin DTO profiles
+  - giảm blind scaffold ở moderation, audit-log, search-admin, wisdom import
+- `tracking/page-loader-contracts.md`:
+  - page-level data requirements cho grouped content, wisdom hubs, offline, notifications
+- `tracking/outbox-event-taxonomy.md`:
+  - công thức `idempotencyKey` theo từng event family để producer không tự random
 
 ## Domain-by-domain lỗ hổng cần để mắt khi scaffold
 

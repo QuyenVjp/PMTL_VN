@@ -160,6 +160,8 @@ deploy:
 **GitHub Environment**: `production` environment requires 1 manual approver.
 This is the human gate — automated only after explicit approval.
 
+Deploy outputs sau khi chạy phải được ghi về deploy record canon theo `ops/deploy-record-template.md`.
+
 ### Human gate checklist
 
 Người approve production deploy phải xác nhận tối thiểu:
@@ -187,6 +189,42 @@ Không được approve theo kiểu “CI xanh là bấm” nếu 5 điểm trê
 - Retention của release artifact và backup artifact phải được ghi rõ trong deploy pipeline notes hoặc runbook liên quan
 
 Nếu chưa có artifact pinning rõ, rollback chỉ được coi là `best effort manual rollback`, chưa phải rollback contract mạnh.
+
+### Minimum artifact chain
+
+Mỗi production deploy record phải nối được 4 điểm sau:
+
+1. `commit SHA`
+2. `release artifact/image tag`
+3. `migration revision`
+4. `backup artifact id/timestamp`
+
+Nếu thiếu 1 trong 4 điểm trên:
+- deploy có thể vẫn chạy
+- nhưng không được coi là có rollback proof mạnh
+
+### Rollback proof rule
+
+`deploy-rollback.sh` không được coi là đủ chỉ vì script tồn tại.
+Rollback proof mạnh chỉ đạt khi có:
+
+- artifact pinning rõ
+- restore/rollback rehearsal record trong `ops/restore-drill-log.md`
+- post-rollback health verification
+- post-rollback sample canonical read verification
+
+## Deploy record output rule
+
+Pipeline hoặc operator phải map tối thiểu các output sau vào `ops/deploy-record-template.md`:
+
+- `commit SHA`
+- `release artifact/image tag`
+- `migration revision applied`
+- `backup artifact id/timestamp`
+- smoke gate results
+- rollback target artifact
+
+Nếu CI/CD sau này auto-generate deploy record, field names vẫn phải giữ đúng template owner; không được tự invent schema khác.
 
 ---
 

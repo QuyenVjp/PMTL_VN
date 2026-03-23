@@ -30,6 +30,57 @@
 - dispatch control-plane (lớp điều phối hệ thống) canonical record (bản ghi chuẩn gốc) nằm ở `pushJobs`
 - **Phase 2+**: gửi push/email thật là async worker concern — cần `notification.push.enabled` feature flag bật
 - **Phase 1**: subscription và job records được ghi nhận nhưng delivery chưa tự động thực thi
+- `/thong-bao` là member preferences + capability surface, **không** là inbox canonical
+- member-facing delivery scope hiện gồm:
+  - practice reminders
+  - event reminders
+  - community/admin informational push khi được opt-in
+- nếu sau này có inbox/message-center, đó phải là owner surface khác, không reuse `pushJobs`
+
+## Member preference projection contract
+
+`GET /api/notifications/preferences` phải trả được aggregate đủ cho page `/thong-bao`, không chỉ raw category rows.
+
+`NotificationPreferencesPageDto` tối thiểu phải gồm:
+
+- `capability`
+  - `pushSupported`
+  - `permissionState`
+  - `serviceWorkerReady`
+  - `deliveryHealth`
+- `subscriptionState`
+  - `isSubscribed`
+  - `subscriptionPublicId?`
+  - `subscribedAt?`
+  - `lastConfirmedAt?`
+- `categoryPreferences[]`
+  - `categoryKey`
+  - `label`
+  - `enabled`
+  - `channel`
+  - `lockedReason?`
+- `practiceReminder`
+  - `enabled`
+  - `scheduleSummary`
+  - `timezone`
+  - `degradedReason?`
+- `eventReminder`
+  - `enabled`
+  - `scheduleSummary`
+  - `timezone`
+  - `degradedReason?`
+- `conflicts[]`
+- `lastEvaluatedAt`
+
+`conflicts[]` chỉ được trả projected conflict codes:
+
+- `push_flag_disabled`
+- `worker_inactive`
+- `permission_denied`
+- `subscription_missing`
+- `delivery_degraded`
+
+Không trả raw worker error, endpoint URL, auth key, hoặc per-job delivery history trong page aggregate.
 
 ## Permission baseline
 
@@ -50,6 +101,9 @@ Subscribe payload phải có:
 - `keys.auth`
 - `timezone`
 - `notificationPrefs`
+
+Patch payload cho preferences/reminders không được cho client tự gửi raw subscription state.
+Subscription truth vẫn do browser capability + backend subscription record compose ra.
 
 ## Error expectations
 
@@ -82,6 +136,11 @@ Subscribe payload phải có:
 - Notification là async-only (chỉ chạy ngầm, bất đồng bộ); request path nên tạo hoặc sửa job rồi trả sớm.
 - Self-send prevention nên xử lý ở job payload/rule, không hack ở UI.
 - `admin push jobs` là control-plane management surface, không phải inbox message center của người dùng.
+- `/thong-bao` không được render lịch sử `pushJobs`; chỉ render:
+  - capability
+  - subscription state
+  - per-category preferences
+  - reminder settings
 
 - `timezone`: Local device offset for quiet-hours calculation.
 - `notificationPrefs`: Granular category opt-ins.

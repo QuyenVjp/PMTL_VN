@@ -139,8 +139,39 @@ Auth: **Internal only** — Caddy không expose ra internet
 | `feature_flag_evaluations_total` | Counter | `flag_key, result` | Flag checks |
 | `search_requests_total` | Counter | `endpoint, engine, user_agent_class, status_code` | Search/crawl pressure visibility |
 | `search_request_duration_seconds` | Histogram | `endpoint, engine, user_agent_class` | Distinguish human vs crawler pressure |
+| `search_fallback_total` | Counter | `reason, from_engine, to_engine, route` | Visibility for bootstrap/timeout/health fallback |
+| `search_query_rejected_total` | Counter | `reason, route, user_agent_class` | Query guard pressure |
+| `search_engine_mode` | Gauge | `requested_engine, actual_engine` | Current runtime mode |
+| `search_index_freshness_seconds` | Gauge | `source` | Staleness / sync lag |
+| `search_reindex_jobs_total` | Counter | `source, status, trigger_type` | Reindex volume and outcome |
+| `search_reindex_job_duration_seconds` | Histogram | `source, status` | Reindex duration |
 
 **Impl**: `prom-client` npm package (Prometheus compatible). NestJS custom metrics provider.
+
+### Search fallback logging contract
+
+Khi search route không chạy đúng engine được yêu cầu, log tối thiểu:
+
+```json
+{
+  "level": "warn",
+  "requestId": "req_abc123",
+  "module": "search",
+  "action": "search.fallback_to_sql",
+  "route": "GET /api/search",
+  "requestedEngine": "meilisearch",
+  "actualEngine": "sql-fallback",
+  "reason": "bootstrap|timeout|health|manual-disable|index-stale",
+  "durationMs": 1820,
+  "queryHash": "sha256:...",
+  "userAgentClass": "verified_crawler|anonymous_browser|authenticated_member|unknown_bot"
+}
+```
+
+**Rule**:
+- không log raw query text
+- mọi fallback event phải có `requestedEngine`, `actualEngine`, `reason`
+- bootstrap fallback và runtime fallback phải dùng cùng field names để admin/search ops đọc cùng một ngôn ngữ
 
 ---
 

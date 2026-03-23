@@ -248,6 +248,7 @@ All responses must include these headers. Set in `Caddyfile`:
 - mọi thay đổi edge rule phải được phản ánh ở:
   - file này
   - `infra/cloudflare/waf-rules.md`
+  - `infra/cloudflare/change-runbook.md` nếu đổi procedure/rollout stance
   - nếu app fallback cũng đổi, cập nhật thêm `baseline/security.md`
 - không chấp nhận dashboard-only drift không có doc/IaC plan kèm theo
 

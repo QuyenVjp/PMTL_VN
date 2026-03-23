@@ -28,6 +28,17 @@ Deploy runbook không thay backup/restore runbook — đọc cả hai.
   - artifact/image tag
   - migration revision
   - backup artifact id hoặc timestamp
+- deploy record canon phải theo `ops/deploy-record-template.md`
+
+## Deploy record pinning
+
+- Sau mỗi production deploy, operator phải tạo hoặc cập nhật đúng `1` deploy record theo `ops/deploy-record-template.md`.
+- Không được coi terminal scrollback hay CI log URL là deploy record canon.
+- Nếu deploy record chưa được ghi xong, deploy chỉ được coi là `executed`, chưa được coi là `evidenced`.
+- `last-known-good-artifact` dùng cho rollback phải lookup được từ deploy record gần nhất có:
+  - smoke pass
+  - rollback artifact pinned
+  - không có unresolved critical issue
 
 ---
 

@@ -239,6 +239,11 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/search/status` | `search` | admin+ |
 | `POST` | `/search/reindex` | `search` | admin+ |
 | `GET` | `/admin/search/status` | `search` | admin+ |
+| `GET` | `/admin/search/operational-status` | `search` | admin+ |
+| `GET` | `/admin/search/performance` | `search` | admin+ |
+| `GET` | `/admin/search/indexing-jobs` | `search` | admin+ |
+| `GET` | `/admin/search/indexing-jobs/:publicId` | `search` | admin+ |
+| `GET` | `/admin/search/fallback-events` | `search` | admin+ |
 | `POST` | `/admin/search/reindex` | `search` | admin+ |
 | `POST` | `/admin/search/reindex/:source` | `search` | admin+ |
 | `GET` | `/admin/search/index-settings` | `search` | admin+ |

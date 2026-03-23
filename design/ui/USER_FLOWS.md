@@ -320,13 +320,16 @@ Mỗi journey có: actor, trigger, steps, screens involved, success state, failu
   [Đăng ký] hoặc [Xem bản đồ] hoặc [Tải chương trình]
   ↓ Nếu là member:
 [/thong-bao]
+  - capability card: browser hỗ trợ không, permission thế nào
   - Bật nhắc sự kiện nếu muốn
+  - reminder settings summary
 ```
 
 **Rules:**
 - CTA chính phải hiện phía trên fold
 - timeline phải đọc được nhanh trên mobile
 - event canceled phải có banner trạng thái rõ
+- `/thong-bao` ở flow này là settings surface, không phải inbox/history
 
 ---
 

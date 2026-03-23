@@ -143,6 +143,38 @@ const OutboxEventSchema = z.object({
 - `occurredAt` là thời điểm sự kiện nghiệp vụ (business event) xảy ra, không phải thời điểm ghi vào bảng outbox
 - Thứ tự sắp xếp/thực hiện lại (ordering/replay order) được lấy từ thứ tự chèn vào bảng outbox (insertion order) + chính sách điều phối (dispatcher policy), không mã hóa bằng trường phụ trong bao bì (envelope) nếu chưa có trường hợp sử dụng thực tế
 
+## Idempotency key derivation (Công thức tạo `idempotencyKey`)
+
+Outbox producer không được tự random `idempotencyKey`.
+Mỗi event family phải dùng business-fact key ổn định:
+
+| Event type | Idempotency key formula |
+|---|---|
+| `identity.user.blocked` | `identity.user.blocked:{aggregateId}:{blockedAt}` |
+| `content.post.published` | `content.post.published:{aggregateId}:{publishedAt}` |
+| `content.post.unpublished` | `content.post.unpublished:{aggregateId}:{unpublishedAt}` |
+| `content.post.deleted` | `content.post.deleted:{aggregateId}:{deletedAt}` |
+| `content.chant_item.published` | `content.chant_item.published:{aggregateId}:{publishedAt}` |
+| `community.post.submitted` | `community.post.submitted:{aggregateId}:{submittedAt}` |
+| `community.comment.submitted` | `community.comment.submitted:{aggregateId}:{submittedAt}` |
+| `community.guestbook.submitted` | `community.guestbook.submitted:{aggregateId}:{submittedAt}` |
+| `moderation.report.resolved` | `moderation.report.resolved:{aggregateId}:{resolvedAt}` |
+| `moderation.content.hidden` | `moderation.content.hidden:{aggregateId}:{hiddenAt}` |
+| `moderation.guestbook.approved` | `moderation.guestbook.approved:{aggregateId}:{approvedAt}` |
+| `calendar.event.published` | `calendar.event.published:{aggregateId}:{publishedAt}` |
+| `calendar.event.updated` | `calendar.event.updated:{aggregateId}:{version}` |
+| `notification.push_job.dispatched` | `notification.push_job.dispatched:{aggregateId}:{dispatchWindow}` |
+| `vow.created` | `vow.created:{aggregateId}:{createdAt}` |
+| `vow.milestone.fulfilled` | `vow.milestone.fulfilled:{aggregateId}:{milestonePublicId}:{fulfilledAt}` |
+| `vow.completed` | `vow.completed:{aggregateId}:{completedAt}` |
+| `wisdom.entry.published` | `wisdom.entry.published:{aggregateId}:{publishedAt}` |
+| `wisdom.bundle.rebuilt` | `wisdom.bundle.rebuilt:{aggregateId}:{version}` |
+
+**Rules**:
+- ưu tiên business timestamp/version/publicId, không dùng random suffix
+- nếu event không có `publishedAt/completedAt/version` ổn định, phải bổ sung owner field trước khi scaffold outbox producer
+- subscriber vẫn dedupe theo `eventId`; `idempotencyKey` là producer-side anti-dup signal, không thay subscriber idempotency check
+
 ---
 
 ## Phase 1 fallback behavior (Hành vi dự phòng giai đoạn 1)

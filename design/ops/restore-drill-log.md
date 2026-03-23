@@ -17,6 +17,10 @@ Không được ghi "pass" nếu chưa chạy thật.
 - Environment:
 - Backup source:
 - Backup timestamp:
+- Backup artifact id / filename:
+- Release artifact expected before restore:
+- Release artifact expected after rollback check:
+- Corresponding deploy record:
 - Restore start:
 - Restore end:
 - Duration:
@@ -33,12 +37,33 @@ Không được ghi "pass" nếu chưa chạy thật.
 - `/health/live`:
 - `/health/ready`:
 - `/health/startup`:
+- deployed commit SHA verified:
+- migration revision verified:
 - sample canonical read:
 - auth smoke check:
 - media sample check:
 - migration state check:
 - wisdom sample check:
 - offline bundle delta check:
+
+### Artifact pinning / rollback proof
+
+- backup artifact pinned to deploy record:
+  - `yes`
+  - `no`
+- release artifact pinned by immutable SHA/tag:
+  - `yes`
+  - `no`
+- rollback target artifact identified:
+- rollback rehearsal attempted:
+  - `yes`
+  - `no`
+- rollback rehearsal result:
+  - `pass`
+  - `fail`
+- post-rollback `/health/ready`:
+- post-rollback sample read:
+- post-rollback search status:
 
 ### Wisdom / offline verification checklist
 
@@ -103,3 +128,4 @@ Mỗi issue phải ghi rõ:
 - Nếu record gần nhất là `fail`, hệ không được gọi là `production-safe`.
 - Nếu media consistency checklist vượt ngưỡng fail mà vẫn ghi `pass`, record đó không hợp lệ.
 - Nếu wisdom/offline verification bị bỏ trống trong khi module này đã public, record đó không được coi là full restore evidence.
+- Nếu `backup artifact` hoặc `release artifact` không pin rõ bằng id/SHA/tag, record đó không được coi là rollback proof đầy đủ.

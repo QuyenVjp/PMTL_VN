@@ -10,6 +10,7 @@ Mục tiêu:
 > Canon chiến lược: `design/baseline/waf-antibot-strategy.md`
 > App fallback canon: `design/baseline/security.md`
 > Growth-safe launch: `design/baseline/high-traffic-resilience-plan.md`
+> Change procedure: `infra/cloudflare/change-runbook.md`
 
 ---
 

@@ -48,6 +48,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/failure-modes.md` | failure behavior owner | degrade/fail-closed/fail-open matrix | không lặp full infra tutorial |
 | `ops/backup-restore.md` | restore procedure owner | backup/restore commands, acceptance criteria | không phát minh policy security mới |
 | `ops/health-contract.md` | health endpoint contract owner | `/health/live`, `/health/ready`, `/health/startup` exact checks | không lặp metrics/logging strategy |
+| `ops/deploy-record-template.md` | deploy evidence template owner | post-deploy artifact chain, smoke evidence, rollback-proof record shape | không thay deploy procedure hay CI gate một mình |
 | `ops/restore-drill-log.md` | drill evidence log | dated drill records | không chứa rule mới |
 | `tracking/implementation-mapping.md` | implementation truth owner | status `implemented/required before launch/planned/forbidden for now/explicit exclusion` | không lặp rationale dài |
 | `tracking/module-interactions.md` | cross-module interaction owner | ownership boundaries, direct vs async interaction | không lặp repo structure |
@@ -55,6 +56,8 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `tracking/admin-page-api-mapping.md` | admin page-to-data mapping owner | admin page route -> API group -> query keys -> invalidation rules | không thay visual layout hay API canon |
 | `tracking/apps-admin-scaffold-backlog.md` | admin scaffold backlog owner | feature rollout order, queries.ts/mutations.ts plan, blockers before admin coding | không thay API canon hay page route canon |
 | `tracking/admin-feature-query-plan.md` | admin query/mutation factory owner | feature folder -> query keys -> query exports -> mutation exports -> invalidation graph | không thay API canon hay visual IA |
+| `tracking/api-dto-shape-plan.md` | scaffold DTO picks owner | field-level response/request profile picks cho route families dễ drift | không thay domain contract detail một mình |
+| `tracking/page-loader-contracts.md` | page-level loader owner | page data requirements, aggregate-vs-aux loader split, grouped-page fetch discipline | không thay route canon hay UI journey |
 | `tracking/env-inventory.md` | env inventory owner | env names, scope, required/optional, owner app | không lặp full deploy steps |
 | `tracking/error-code-registry.md` | error code owner | canonical error codes and meanings | không lặp route contracts |
 | `baseline/migration-strategy.md` | DB/schema evolution owner | naming, rollout, rollback, seed rules | không lặp infra topology |

@@ -206,6 +206,69 @@ async handle(job: Job<PushJobPayload>) {
 | `moderation.alert` | New report submitted | Moderators | Always enabled when module active |
 | `wisdom.bundle.ready` | Offline bundle rebuilt | Opted-in users | Feature flag: `wisdom.offline.enabled` |
 
+## Member `/thong-bao` scope
+
+`/thong-bao` là member settings surface, không phải inbox/history surface.
+
+Page phải trả lời 4 câu:
+
+1. Trình duyệt này có hỗ trợ push không?
+2. Trình duyệt này đã subscribe chưa?
+3. Member đang bật category nào?
+4. Reminder nào đang active?
+
+### Aggregate page contract
+
+Primary route aggregate cho `/thong-bao` là `NotificationPreferencesPageDto`.
+
+Aggregate phải chứa:
+- `capability`
+- `subscriptionState`
+- `categoryPreferences[]`
+- `practiceReminder`
+- `eventReminder`
+- `conflicts[]`
+- `lastEvaluatedAt`
+
+Canonical states:
+- `permissionState`
+  - `granted`
+  - `denied`
+  - `default`
+  - `unsupported`
+- `deliveryHealth`
+  - `healthy`
+  - `degraded`
+  - `disabled`
+  - `unsupported`
+
+`conflicts[]` chỉ dùng projected codes, không expose raw worker/runtime errors.
+
+Member page không được cố render:
+- raw pushJobs history
+- per-recipient delivery logs
+- worker error detail
+
+### Delivery scope mapping
+
+| Category | Member preference | Downstream record | Delivery lane |
+|---|---|---|---|
+| Practice reminders | on/off | reminder preference record | push job khi due |
+| Event reminders | on/off | reminder preference record | push job khi due |
+| Community / informational | on/off | notification preference record | manual/admin or content-triggered push |
+| Moderation alerts | n/a member | control-plane only | admin/moderator lane |
+
+### Failure/fallback rule
+
+- push delivery fail không làm hỏng canonical preference update
+- nếu push fail:
+  - update job stats
+  - retry theo worker policy
+  - có thể hiện member state `subscribed but delivery degraded` qua status aggregate nếu sự cố kéo dài
+- Phase 1:
+  - `/thong-bao` chỉ quản capability + preferences + reminder toggles
+  - downstream delivery có thể chưa active nếu feature flag/worker chưa bật
+
 ---
 
 ## Admin push ops
