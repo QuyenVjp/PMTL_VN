@@ -141,9 +141,52 @@
 - `GET /api/admin/wisdom/offline-bundles`
   - profile: `list`
   - phải trả đủ `bundleType`, `version`, `lastSyncedAt`, freshness/status summary
+- `GET /api/wisdom/entries`
+  - profile: `list`
+  - canonical public list/hub surface cho `/bach-thoai` và `/hoi-dap`
+  - query filters tối thiểu:
+    - `entryType?`
+    - `sourceFamily?`
+    - `tag?`
+    - `q?`
+    - `cursor?`
+    - `limit?`
+  - response phải map thẳng sang `WisdomHubDto`, gồm:
+    - `items[]`
+    - `pagination`
+    - `tabCounts`
+    - `filterFacets`
+    - `engine`
+  - client không tự đếm tab hay source-family facets từ raw list
+- `GET /api/offline-bundles`
+  - profile: `list`
+  - response phải map thẳng sang `OfflineBundleListPageDto`
+  - canonical pagination semantics:
+    - cursor-first
+    - `meta.pagination.nextCursor?`
+    - `meta.pagination.hasMore`
+  - list page không trả full manifest hay full delta preview cho từng bundle
+- `GET /api/offline-bundles/:publicId/status`
+  - profile: `single`
+  - phải trả:
+    - `publicId`
+    - `bundleType`
+    - `version`
+    - `syncStatus`
+    - `lastSyncedVersion?`
+    - `pendingUpdateCount?`
+    - `lastCheckedAt?`
 - `POST /api/admin/wisdom/offline-bundles/rebuild`
   - profile: `accepted`
   - request phải chỉ rõ target bundle family hoặc rebuild scope; không dùng trigger mơ hồ không payload
+- `GET /api/offline-bundles/:publicId/delta`
+  - profile: `single`
+  - response owner là `OfflineBundleDeltaResponseDto`
+  - nếu server không còn incremental history đủ xa, route vẫn trả `200` với `isFullSync: true`
+  - canonical error codes tối thiểu:
+    - `wisdom.offline.version_stale`
+    - `wisdom.offline.bundle_not_found`
+    - `wisdom.offline.device_fingerprint_required`
 - `POST /api/admin/wisdom/entries/duplicate-check`
   - profile: `single`
   - required fields tối thiểu:

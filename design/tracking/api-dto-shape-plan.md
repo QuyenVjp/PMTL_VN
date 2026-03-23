@@ -30,14 +30,22 @@ Mục tiêu:
 | public editorial detail | `PublicContentDetailDto` | list item fields + `bodyHtml`, `seoTitle`, `seoDescription`, `breadcrumbs[]`, `relatedItems[]` | không leak moderation/editor notes |
 | grouped content landing | `GroupedContentLandingDto` | `groupKey`, `title`, `intro`, `summaryBlocks[]`, `guideCards[]`, `faqHighlights[]`, `downloads[]`, `primaryCta` | dùng cho `Little House`, `Daily Practice`, `Life Release` group pages |
 | grouped content guide detail | `GroupedContentGuideDetailDto` | `publicId`, `slug`, `groupKey`, `title`, `summaryBox`, `toc[]`, `contentBlocks[]`, `warnings[]`, `faq[]`, `downloads[]`, `prevNext` | block anatomy phải ổn định cho RSC |
+| public search result item | `SearchResultItemDto` | `publicId`, `docType`, `entryType?`, `sourceFamily?`, `title`, `excerpt`, `href`, `publishedAt?`, `highlight?` | shared shape cho `/search`, `/tim-kiem`, wisdom-aware search cards |
+| public search results page | `SearchResultsPageDto` | `query`, `appliedFilters`, `items[]`, `pagination`, `tabCounts`, `filterFacets`, `engine`, `suggestedQueries[]` | owner cho `/tim-kiem`; không để client tự đếm/tabulate từ raw list |
 | wisdom list | `WisdomListItemDto` | `publicId`, `slug`, `entryType`, `sourceFamily`, `titleVietnamese`, `summaryVietnamese`, `sourceCode`, `publishedAt`, `hasAudio` | không đưa full original text vào list |
+| wisdom hub page | `WisdomHubDto` | `items[]`, `pagination`, `activeTab`, `tabCounts`, `filterFacets`, `featuredEntries[]`, `searchScope`, `engine` | owner cho `/bach-thoai` và `/hoi-dap` |
 | wisdom detail | `WisdomDetailDto` | list item fields + `titleOriginal`, `translatedText`, `rawOriginalText?`, `sourceUrl`, `sourceAttribution`, `keywordAliases[]`, `relatedEntries[]` | `question/answer` pair chỉ hiện khi `entryType = qa` |
+| member dashboard page | `MemberDashboardDto` | `todayLunar`, `advisorySummary`, `quickActions[]`, `practiceSummary`, `activeVowsSummary`, `onboardingState`, `notificationSummary` | owner cho `/dashboard`; không để web tự fan-out mù qua 4 module |
 | offline bundle list | `OfflineBundleListItemDto` | `publicId`, `bundleType`, `scope`, `version`, `freshnessStatus`, `lastRebuiltAt`, `downloadSize`, `syncStatus` | cho `/ngoai-tuyen` |
+| offline bundle list page | `OfflineBundleListPageDto` | `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | page aggregate cho `/ngoai-tuyen` |
+| offline bundle delta response | `OfflineBundleDeltaResponseDto` | `bundleId`, `bundleName`, `fromVersion`, `toVersion`, `isFullSync`, `added[]`, `updated[]`, `deletedIds[]`, `totalEntries`, `generatedAt` | owner cho `/offline-bundles/:publicId/delta` |
 | member notification preferences page | `NotificationPreferencesPageDto` | `capability`, `subscriptionState`, `categoryPreferences[]`, `practiceReminder`, `eventReminder`, `conflicts[]`, `lastEvaluatedAt` | owner cho `/thong-bao`; page settings surface, không phải inbox |
+| personal practice calendar page | `PersonalPracticeCalendarPageDto` | `todayLunar`, `advisorySummary`, `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | owner cho `/lich-ca-nhan`; không nhét full event detail vào page aggregate |
 | admin table common | `AdminTableRowDto` | `publicId`, `status`, `createdAt`, `updatedAt`, `lastModifiedBy?` | base shape cho tables |
 | admin search status | `AdminSearchStatusDto` | `requestedEngine`, `actualEngine`, `indexFreshnessSeconds`, `documentCount`, `pendingJobs`, `lastSuccessfulReindexAt`, `meiliHealth`, `sqlFallbackAvailable`, `bootstrapFallbackActive` | owner cho `/admin/search/status` và `operational-status` |
 | admin search indexing job | `AdminSearchIndexingJobDto` | `publicId`, `source`, `triggerType`, `status`, `startedAt`, `finishedAt`, `durationMs`, `rowsIndexed`, `rowsDeleted`, `actorUserId?`, `requestId?`, `errorSummary?` | không nhét raw logs vào DTO detail |
 | admin search fallback event | `AdminSearchFallbackEventDto` | `occurredAt`, `requestedEngine`, `actualEngine`, `reason`, `route`, `queryHash`, `durationMs`, `userAgentClass`, `requestId` | không expose raw query text |
+| admin push subscription stats | `AdminPushSubscriptionStatsDto` | `activeCount`, `inactiveCount`, `newSubscriptionsLast30d[]`, `browserBreakdown[]`, `lastAggregatedAt`, `deliveryHealthSummary` | aggregate-only cho tab subscriptions của admin notifications |
 | admin moderation report detail | `AdminModerationReportDetailDto` | `publicId`, `status`, `reasonCode`, `reporterSummary`, `targetType`, `targetPreview`, `createdAt`, `decisionHistory[]`, `currentDecisionOptions[]` | giảm blind scaffold ở moderation |
 | admin audit-log detail | `AdminAuditLogDetailDto` | `publicId`, `actorSummary`, `action`, `resourceType`, `resourcePublicId`, `occurredAt`, `metadata`, `correlationId`, `requestId` | `metadata` phải qua safe projection |
 | admin wisdom import job detail | `AdminWisdomImportJobDetailDto` | `publicId`, `jobType`, `providerProfile`, `sourceFamily`, `status`, `candidateSlug`, `dedupeStatus`, `resultEntryPublicId?`, `errorSummary?`, `createdAt`, `updatedAt` | lấp gap import workspace |
@@ -102,6 +110,47 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `meilisearch`
   - `sql-fallback`
 
+### `SearchResultItemDto`
+
+- `docType` canonical values tối thiểu:
+  - `post`
+  - `wisdom_entry`
+  - `qa_entry`
+  - `guide`
+  - `sutra`
+  - `chant_item`
+- `highlight?` chỉ là safe rendered snippet; không trả raw engine payload.
+- `href` phải là canonical public route; client không tự ráp từ `docType`.
+
+### `SearchResultsPageDto`
+
+- `query` tối thiểu:
+  - `q`
+  - `normalizedQ`
+- `appliedFilters` tối thiểu:
+  - `type?`
+  - `entryType?`
+  - `sourceFamily?`
+- `pagination` tối thiểu:
+  - `limit`
+  - `offset`
+  - `hasMore`
+  - `totalApproximate?`
+- `tabCounts` là projected counts theo result family, không để client tự đếm:
+  - `all`
+  - `content`
+  - `wisdom`
+  - `qa`
+- `filterFacets` là safe projections:
+  - `entryTypes[]`
+  - `sourceFamilies[]`
+  - `docTypes[]`
+- `engine` canonical values:
+  - `sql`
+  - `meilisearch`
+  - `sql-fallback`
+- `suggestedQueries[]` là optional UX helper; không block page.
+
 ### `NotificationPreferencesPageDto`
 
 - `capability` tối thiểu:
@@ -136,6 +185,109 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `denied`
   - `default`
   - `unsupported`
+
+### `MemberDashboardDto`
+
+- `todayLunar` tối thiểu:
+  - `lunarLabel`
+  - `specialDayBadge?`
+- `advisorySummary` tối thiểu:
+  - `headline`
+  - `recommendedSequence[]`
+  - `sourceRefs[]`
+- `quickActions[]` là explicit actions:
+  - `start_practice`
+  - `open_calendar`
+  - `open_vows`
+  - `open_notifications`
+- `practiceSummary` tối thiểu:
+  - `lastPracticeAt?`
+  - `todayCompletionState`
+  - `streakSummary?`
+- `activeVowsSummary` tối thiểu:
+  - `activeCount`
+  - `nextMilestoneLabel?`
+- `onboardingState` tối thiểu:
+  - `isFirstVisit`
+  - `showOnboardingBanner`
+  - `nextRecommendedRoute`
+- `notificationSummary` chỉ là aggregate state:
+  - `pushCapability`
+  - `practiceReminderEnabled`
+  - `eventReminderEnabled`
+
+### `WisdomHubDto`
+
+- `items[]` dùng `WisdomListItemDto`, không trả full detail body.
+- `activeTab` canonical values:
+  - `btpp`
+  - `qa`
+  - `khai-thi`
+  - `sach-noi`
+- `tabCounts` không được derive ở client.
+- `filterFacets` tối thiểu:
+  - `entryTypes[]`
+  - `sourceFamilies[]`
+  - `tags[]`
+- `featuredEntries[]` chỉ là mini cards, không duplicate full list payload.
+- `searchScope` canonical values:
+  - `wisdom_hub`
+  - `qa_hub`
+- `engine` phải echo actual retrieval engine để hub/search UI không đoán.
+
+### `OfflineBundleListPageDto`
+
+- `syncSummary` tối thiểu:
+  - `upToDateCount`
+  - `outdatedCount`
+  - `downloadingCount`
+- `pendingDeltaBadge` tối thiểu:
+  - `hasPendingUpdates`
+  - `pendingBundleCount`
+- không trả full bundle manifest của từng item trong list page.
+- `pagination` canonical shape tối thiểu:
+  - `cursor?`
+  - `nextCursor?`
+  - `pageSize`
+  - `hasMore`
+- member list page ưu tiên cursor semantics; không mặc định offset nếu chưa có measured need.
+
+### `OfflineBundleDeltaResponseDto`
+
+- `added[]` và `updated[]` dùng cùng một stable `OfflineEntryDto`:
+  - `publicId`
+  - `entryType`
+  - `entryVersion`
+  - `title`
+  - `translatedText`
+  - `tags[]`
+  - `sourceUrl?`
+  - `audioUrl?`
+- `deletedIds[]` chỉ chứa canonical entry `publicId`.
+- nếu server buộc full sync thay vì incremental delta, response vẫn giữ shape này với `isFullSync: true`.
+- route error companion codes tối thiểu:
+  - `wisdom.offline.version_stale`
+  - `wisdom.offline.bundle_not_found`
+  - `wisdom.offline.device_fingerprint_required`
+
+### `PersonalPracticeCalendarPageDto`
+
+- `calendarDays[]` chỉ chứa page-cell projection:
+  - `date`
+  - `lunarLabel`
+  - `hasAdvisory`
+  - `hasReminder`
+  - `hasEvent`
+- `upcomingEvents[]` là snippet:
+  - `publicId`
+  - `slug`
+  - `title`
+  - `startsAt`
+  - `ctaLabel?`
+- `activeVowReminders[]` là summary:
+  - `vowPublicId`
+  - `label`
+  - `dueHint`
 
 ## Readiness note
 

@@ -251,7 +251,7 @@ Lý do:
 ### Canon blockers and exclusions
 
 - `queue-ops` là explicit exclusion cho current scaffold wave; route này chỉ tồn tại ở Phase 2+ notes, chưa đủ canon route + mapping.
-- `moderated-comments` chưa được scaffold cho tới khi comment moderation route group được canon hóa riêng trong `tracking/api-route-inventory.md`.
+- `moderated-comments` đã có route canon baseline; vẫn giữ `conditional` cho tới khi comment detail projection bám `AdminModeratedCommentDetailDto`.
 - `feature-flags-admin` chỉ dùng admin read-path `GET /api/admin/feature-flags` và `GET /api/admin/feature-flags/:key`.
 - `health-admin` là read-only view trên route `GET /api/admin/system/health-extended`; không có `mutations.ts`.
 - `users-admin`, `sessions-admin`, `wisdom-baihoa`, `assisted-entry-admin` phải bám chính xác canon route mới thêm trong `tracking/api-route-inventory.md`, không được scaffold theo API deps cũ trong audit notes.
@@ -797,7 +797,7 @@ No `mutations.ts` first pass.
 
 Blocker:
 
-- audit-log admin route group still future-facing in canon
+- metadata projection phải bám allowlist của `AdminAuditLogDetailDto`; không render raw internal metadata
 
 ### 19. `events-admin`
 
@@ -870,13 +870,10 @@ Query keys:
 - `notificationAdminKeys.status()`
 - `notificationAdminKeys.pushJobs(filters)`
 - `notificationAdminKeys.pushJob(publicId)`
-- `notificationAdminKeys.preferences()`
-- `notificationAdminKeys.practiceReminders()`
+- `notificationAdminKeys.subscriptionStats()`
 
 Mutations:
 
-- update preferences
-- update practice reminder settings
 - create push job
 - process push job
 - redrive push job
@@ -885,7 +882,7 @@ Invalidation:
 
 - jobs list/detail
 - notification status
-- preferences/reminder keys
+- subscription stats
 
 ### 22. `volunteers-admin`
 

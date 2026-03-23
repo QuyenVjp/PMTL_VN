@@ -230,6 +230,10 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/moderation/reports` | `moderation` | member+ |
 | `GET` | `/moderation/reports` | `moderation` | admin+ |
 | `POST` | `/moderation/reports/:publicId/decision` | `moderation` | admin+ |
+| `GET` | `/admin/moderation/comments` | `moderation` | moderator+ |
+| `GET` | `/admin/moderation/comments/:publicId` | `moderation` | moderator+ |
+| `POST` | `/admin/moderation/comments/:publicId/hide` | `moderation` | moderator+ |
+| `POST` | `/admin/moderation/comments/:publicId/restore` | `moderation` | moderator+ |
 
 ## Search
 
@@ -292,6 +296,8 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `PATCH` | `/notifications/preferences` | `notification` | member+ |
 | `GET` | `/notifications/reminders/practice` | `notification` | member+ |
 | `PATCH` | `/notifications/reminders/practice` | `notification` | member+ |
+| `GET` | `/notifications/reminders/events` | `notification` | member+ |
+| `PATCH` | `/notifications/reminders/events` | `notification` | member+ |
 | `POST` | `/notifications/push/subscribe` | `notification` | member+ |
 | `POST` | `/notifications/push/unsubscribe` | `notification` | member+ |
 | `GET` | `/notifications/push/stats` | `notification` | admin+ |
@@ -301,6 +307,7 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `POST` | `/admin/notifications/push/jobs/:publicId/process` | `notification` | admin+ |
 | `POST` | `/admin/notifications/push/jobs/:publicId/redrive` | `notification` | admin+ |
 | `GET` | `/admin/notifications/push/status` | `notification` | admin+ |
+| `GET` | `/admin/notifications/push/subscription-stats` | `notification` | admin+ |
 
 ## Vows & Merit
 
@@ -390,6 +397,8 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 | `GET` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
 | `GET` | `/feature-flags/:key` | `feature-flags` | internal/admin |
 | `PATCH` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
+| `GET` | `/admin/audit-logs` | `audit` | admin+ |
+| `GET` | `/admin/audit-logs/:publicIdOrId` | `audit` | admin+ |
 | `GET` | `/admin/system/health-extended` | `health` + `platform` | admin+ |
 | `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
 

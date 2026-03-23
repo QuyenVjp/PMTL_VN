@@ -11,6 +11,8 @@
 - `PATCH /api/notifications/preferences`
 - `GET /api/notifications/reminders/practice`
 - `PATCH /api/notifications/reminders/practice`
+- `GET /api/notifications/reminders/events`
+- `PATCH /api/notifications/reminders/events`
 - `POST /api/notifications/push/subscribe`
 - `POST /api/notifications/push/unsubscribe`
 - `GET /api/notifications/push/stats`
@@ -23,6 +25,7 @@
 - `POST /api/admin/notifications/push/jobs/:publicId/process`
 - `POST /api/admin/notifications/push/jobs/:publicId/redrive`
 - `GET /api/admin/notifications/push/status`
+- `GET /api/admin/notifications/push/subscription-stats`
 
 ## Canonical rules
 
@@ -40,6 +43,11 @@
 ## Member preference projection contract
 
 `GET /api/notifications/preferences` phải trả được aggregate đủ cho page `/thong-bao`, không chỉ raw category rows.
+Không có `POST create preferences` riêng cho member.
+Nếu user chưa có row persisted:
+
+- `GET /api/notifications/preferences` trả default-projected state
+- `PATCH /api/notifications/preferences` hoặc reminder patch đầu tiên được phép materialize canonical record theo kiểu upsert
 
 `NotificationPreferencesPageDto` tối thiểu phải gồm:
 
@@ -126,8 +134,10 @@ Subscription truth vẫn do browser capability + backend subscription record com
   - queue health
   - pending / processing / failed job counts
   - recent jobs
+  - subscription aggregate stats
   - error summary ngắn
   - redrive action có audit
+- admin page này là push-ops surface, không dùng member route `/notifications/preferences` hay `/notifications/reminders/practice`
 - segmentation hay quiet-hours override nếu có phải là explicit admin action, không để UI tự sửa payload raw ngoài rule
 
 ## Notes for AI/codegen

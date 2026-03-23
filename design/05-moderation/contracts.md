@@ -17,6 +17,10 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 - `POST /api/moderation/reports`: canonical moderation report create route
 - `GET /api/moderation/reports`: list moderation reports cho admin
 - `POST /api/moderation/reports/:publicId/decision`: submit resolution cho admin
+- `GET /api/admin/moderation/comments`: admin list comments với moderation summaries
+- `GET /api/admin/moderation/comments/:publicId`: admin detail cho comment target
+- `POST /api/admin/moderation/comments/:publicId/hide`: force-hide comment target
+- `POST /api/admin/moderation/comments/:publicId/restore`: restore hidden comment target
 
 ## Canonical write rules (Quy tắc ghi chuẩn gốc)
 

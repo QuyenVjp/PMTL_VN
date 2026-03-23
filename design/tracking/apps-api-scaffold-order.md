@@ -494,6 +494,8 @@ Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, ou
 | trusted proxy / client IP contract | rate-limit và audit IP sẽ sai |
 | storage abstraction + upload hardening | media path là launch blocker thật |
 | cache/revalidation dispatcher owner | publish path sẽ tự phát invalidation mỗi nơi một kiểu |
+| member aggregate read profiles cho `/dashboard`, `/lich-ca-nhan`, `/ngoai-tuyen` | nếu chưa khóa `MemberDashboardDto`, `PersonalPracticeCalendarPageDto`, `OfflineBundleListPageDto` thì web scaffold sẽ tự bịa fan-out/read-model |
+| search + wisdom member/public aggregates cho `/tim-kiem`, `/bach-thoai`, `/hoi-dap`, offline delta | nếu chưa khóa `SearchResultsPageDto`, `SearchResultItemDto`, `WisdomHubDto`, `OfflineBundleDeltaResponseDto` thì web scaffold sẽ tự bịa facets/tab counts/engine badge/delta error handling |
 
 ---
 

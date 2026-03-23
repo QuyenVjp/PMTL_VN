@@ -110,6 +110,39 @@ Rule:
 - nhưng nếu public search là acquisition surface quan trọng cho SEO/GEO thì được phép bật sớm
 - dù bật sớm, `Meilisearch` vẫn là projection, không phải canonical source
 
+## DNS and network exposure baseline
+
+- authoritative DNS baseline là `Cloudflare DNS`
+- public hostnames canonical:
+  - `pmtl.vn`
+  - `www.pmtl.vn` nếu còn giữ thì phải redirect về canonical host
+  - subdomains public như `api.pmtl.vn`, `admin.pmtl.vn` phải đi qua cùng edge policy
+- `DNSSEC` phải được bật ở Cloudflare zone trước launch thật; đây là design requirement nhưng vẫn cần live DNS proof
+- TXT/DNS owner split:
+  - host reachability records (`A`, `AAAA`, `CNAME`, NS) theo file này
+  - email-auth TXT (`SPF`, `DKIM`, `DMARC`) theo `baseline/email-provider-decision.md`
+- external web-check tools có thể lộ:
+  - authoritative name servers
+  - public edge IP chain
+  - redirect hostnames
+  - traceroute path
+  design không coi đó là bug nếu khớp canonical exposure đã chốt
+
+### Public exposure rule
+
+- intended public ingress:
+  - `80/tcp` chỉ để redirect HTTP -> HTTPS
+  - `443/tcp` cho HTTPS qua Caddy/Cloudflare
+- non-public services không được internet-reachable:
+  - Postgres
+  - Valkey
+  - Meilisearch origin port
+  - Prometheus/Grafana/Alertmanager nội bộ
+- SSH nếu dùng trên VPS:
+  - không được coi là public application surface
+  - phải giới hạn bằng host firewall / provider ACL / VPN hoặc admin allowlist
+- `open ports`, `server IP`, `traceroute`, `DNS server`, `DNSSEC` đều là `runtime-evidence-required`; design ở đây chỉ chốt intended exposure để sau này scan có baseline đối chiếu
+
 ## Reverse Proxy and Load-Balancer Policy
 
 - Phase 1 canon = `single ingress Caddy` trên một VPS; đây là simplicity baseline, chưa phải HA claim

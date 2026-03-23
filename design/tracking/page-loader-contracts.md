@@ -33,6 +33,7 @@ Mục tiêu:
 | `/kinh-bai-tap/[group]` | `GroupedContentLandingDto` | `scenarioPresetHighlights`, `downloadPanel` | không fetch toàn bộ preset content nếu chỉ cần highlights |
 | `/kinh-bai-tap/[group]/[slug]` | `GroupedContentGuideDetailDto` | `scenarioPresetCard`, `trackerCtaState` | CTA thực hành là aux nhẹ, không block detail |
 | `/huong-dan/phong-sanh/[slug]` | `GroupedContentGuideDetailDto` | `journalCtaState`, `relatedVariantsMiniList` | warnings/script blocks là primary payload |
+| `/tim-kiem` | `SearchResultsPageDto` | `recentSearches` nếu signed-in, `suggestedQueries` nếu chưa nằm trong aggregate | engine, tabCounts, filterFacets phải đến từ primary payload |
 | `/bach-thoai` | `WisdomHubDto` | `featuredEntries`, `filterFacets`, `tabCounts` | tab/filter state không được tự suy từ raw list |
 | `/hoi-dap` | `WisdomHubDto` với `entryType=qa` | `filterFacets`, `tabCounts` | route riêng, không chung loader với `/bach-thoai` nếu semantics khác |
 | `/bach-thoai/[slug]` | `WisdomDetailDto` | `audioCompanion`, `relatedEntriesMiniList` | Q&A không đi route này |
@@ -42,11 +43,28 @@ Mục tiêu:
 
 | Route pattern | Primary loader contract | Auxiliary loaders | Notes |
 |---|---|---|---|
+| `/dashboard` | `MemberDashboardDto` | `advisorySummary` nếu chưa nằm trong aggregate, `recentPracticeState` nếu đang phase-gated tách route | không để page tự gọi rời calendar + engagement + vows + notifications rồi ghép trong component |
 | `/ngoai-tuyen` | `OfflineBundleListPageDto` | `syncSummary`, `pendingDeltaBadge` | page cần pagination + sync badge strategy rõ |
 | `/thong-bao` | `NotificationPreferencesPageDto` | `pushCapabilityStatus`, `eventReminderState` nếu chưa nằm trong aggregate | empty/error/loading states phải map từ loader result |
 | `/lich-ca-nhan` | `PersonalPracticeCalendarPageDto` | `advisoryCards`, `reminderSummary` | advisory summary là primary, event snippets là aux |
 
 ## Special notes
+
+### `/dashboard`
+
+`MemberDashboardDto` tối thiểu phải có:
+- `todayLunar`
+- `advisorySummary`
+- `quickActions[]`
+- `practiceSummary`
+- `activeVowsSummary`
+- `onboardingState`
+- `notificationSummary`
+
+Rules:
+- page này phải dùng aggregate read profile rõ; không cho RSC tự ghép mù từ nhiều modules không có owner.
+- nếu API chưa có aggregate route riêng, composition tạm thời vẫn không được vượt `3` calls.
+- onboarding banner state phải nằm trong aggregate hoặc aux owner rõ; không hardcode ở client.
 
 ### `/ngoai-tuyen`
 
@@ -64,6 +82,10 @@ Mỗi item:
 - `syncBadge`
 - `downloadSize`
 - `lastUpdatedAt`
+
+Rules:
+- list page không được fetch full manifest của mọi bundle.
+- `pendingDeltaBadge` phải là aggregate page signal, không bắt client loop qua từng bundle status để tự đếm.
 
 ### `/thong-bao`
 
@@ -92,6 +114,37 @@ Rules:
 
 - hub page cần `tabCounts` và `filterFacets` riêng
 - không để client tự quét toàn bộ list rồi đếm
+- response aggregate phải echo `engine` đang dùng để UI/search badge không đoán
+
+### `/tim-kiem`
+
+`SearchResultsPageDto` tối thiểu phải có:
+- `query`
+- `appliedFilters`
+- `items[]`
+- `pagination`
+- `tabCounts`
+- `filterFacets`
+- `engine`
+
+Rules:
+- page này dùng `1 primary aggregate loader`; không tách `search results`, `tab counts`, `filter facets`, `engine status` thành nhiều request tự ghép.
+- query guard reject state phải map từ aggregate/API error code, không để client tự suy từ URL input.
+- nếu signed-in mới có `recentSearches`, đó là aux không-blocking.
+
+### `/lich-ca-nhan`
+
+`PersonalPracticeCalendarPageDto` tối thiểu phải có:
+- `todayLunar`
+- `advisorySummary`
+- `calendarDays[]`
+- `upcomingEvents[]`
+- `reminderSummary`
+- `activeVowReminders[]`
+
+Rules:
+- page aggregate không được nhét full event detail hay full vow detail.
+- month grid cell chỉ dùng lightweight day projection, không preload advisory detail cho mọi ngày.
 
 ## Scaffold rule
 

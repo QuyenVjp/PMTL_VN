@@ -180,6 +180,29 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
 - không dùng `*` cho authenticated routes (đường dẫn yêu cầu xác thực)
 - chỉ cho phép credentials (thông tin xác thực) cho origin (nguồn) thật sự cần cookie auth (xác thực bằng cookie)
 
+## Transport security / HTTPS baseline
+
+- production chỉ phục vụ qua `HTTPS`; `HTTP` phải `301` redirect sang canonical `HTTPS`
+- Cloudflare SSL mode phải là `Full (strict)`; không dùng `Flexible`
+- TLS baseline tối thiểu:
+  - `TLS 1.2+`
+  - ưu tiên `TLS 1.3` khi edge/proxy support
+- mixed-content trên public/admin/member pages bị coi là security bug
+- HSTS phải bật ở production với:
+  - `max-age=31536000`
+  - `includeSubDomains`
+- exact cipher-suite scan là runtime evidence concern; design chỉ chốt floor và ownership
+
+## Public disclosure surface
+
+- trước launch phải có `/.well-known/security.txt`
+- file này tối thiểu phải chỉ rõ:
+  - `Contact`
+  - `Policy`
+  - `Expires`
+- `security.txt` là public disclosure artifact; không thay contact page nhưng phải trỏ được contact/security channel thật
+- nếu chưa có `security.txt`, external web-check security surface không được coi là complete
+
 ## Trusted proxy / client IP contract
 
 - `apps/api` chỉ tin `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` khi request đi qua proxy đã được trust

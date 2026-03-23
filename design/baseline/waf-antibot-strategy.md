@@ -84,6 +84,19 @@ Condition: http.request.uri.path matches "^/api/search" AND rate > 60/min from s
 - WAF/body rule chỉ áp dụng cho non-upload API surfaces
 - upload/media routes phải đi qua allowlist riêng, không dùng chung edge body block
 
+### Firewall type / edge fingerprint note
+
+- external scanners thường gắn nhãn `Cloudflare`, `reverse proxy`, hoặc `WAF` dựa trên:
+  - `CF-Ray`
+  - challenge/captcha behavior
+  - response pattern khi rate-limit/challenge
+- PMTL không cố “ẩn firewall type” như một security goal riêng; mục tiêu là edge protection đúng policy
+- live proof đúng cho `Firewall Types` là:
+  - response có `CF-Ray`
+  - challenge behavior khớp rule
+  - zone đang proxy đúng host public
+- `Server` header hay heuristic vendor label từ tool ngoài không phải canonical source of truth; owner docs của PMTL vẫn là file này + `infra/cloudflare/waf-rules.md`
+
 ### Bot Management (Cloudflare Pro+)
 - Phase 2+: Upgrade to Pro if bot traffic measurably impacts DB
 - Feature: Cloudflare Bot Management scores every request 1–99

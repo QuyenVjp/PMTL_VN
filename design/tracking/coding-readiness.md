@@ -37,6 +37,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Secret management | ✅ Sẵn sàng | Rotation procedures per secret, compromise response, .gitignore — `baseline/secret-management.md` |
 | CI/CD gates | ✅ Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback, concurrency + least-privilege permissions + cache guidance — `baseline/cicd-deploy-gates.md` |
 | WAF + anti-bot | ✅ Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `baseline/waf-antibot-strategy.md` |
+| External web-check readiness | ✅ Sẵn sàng ở mức design | owner split giữa design-vs-runtime evidence cho TLS/headers/DNS/crawl/metadata/email-auth đã được khóa — `baseline/external-web-check-readiness.md` |
 | Health contract | ✅ Sẵn sàng | Exact check lists per endpoint, failure runbook — `ops/health-contract.md` |
 | Admin module specs | ✅ Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/ui/ADMIN_MODULE_SPECS.md` |
 | Admin page/API/query mapping | ✅ Sẵn sàng | page route -> API group -> query keys -> invalidation rules — `tracking/admin-page-api-mapping.md` |

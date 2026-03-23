@@ -293,6 +293,7 @@ Admin route: `/he-thong/thong-bao`
 - Total active subscriptions
 - Chart: new subscriptions per day (last 30 days)
 - Breakdown by userAgent/browser
+- Read-model route: `GET /api/admin/notifications/push/subscription-stats`
 
 ---
 

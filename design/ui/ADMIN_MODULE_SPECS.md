@@ -32,7 +32,7 @@ Mỗi workspace phải có:
 ## 1. Dashboard (`/dashboard`)
 
 **Role**: `admin+`
-**API deps**: `/api/admin/system/dashboard-stats`, `/api/content/posts?limit=5`, `/api/moderation/reports?status=pending&limit=5`, `/api/he-thong/audit-logs?limit=10`
+**API deps**: `/api/admin/system/dashboard-stats`, `/api/content/posts?limit=5`, `/api/moderation/reports?status=pending&limit=5`, `/api/admin/audit-logs?limit=10`
 
 ### Stat cards (row 1)
 | Card | Metric | Query |
@@ -438,7 +438,7 @@ Post-decision: toast "Đã xử lý báo cáo", navigate back to list, pending c
 ## 14. Bình luận (`/kiem-duyet/binh-luan`)
 
 **Role**: `moderator+`
-**API deps**: `GET /api/community/posts/:id/comments`, moderation decision endpoints
+**API deps**: `GET /api/admin/moderation/comments`, `GET /api/admin/moderation/comments/:publicId`, `POST /api/admin/moderation/comments/:publicId/hide`, `POST /api/admin/moderation/comments/:publicId/restore`
 
 DataTable columns: Author, Comment (truncated), Post, Has reports, Status, Date
 Filter: Has reports (Yes/No), Status (Active / Hidden)
@@ -726,7 +726,7 @@ Rule:
 ## 21. Thông báo (`/he-thong/thong-bao`)
 
 **Role**: `admin+`
-**API deps**: Push notification architecture routes
+**API deps**: `GET /api/admin/notifications/push/status`, `GET /api/admin/notifications/push/jobs`, `GET /api/admin/notifications/push/jobs/:publicId`, `GET /api/admin/notifications/push/subscription-stats`, `POST /api/admin/notifications/push/jobs`, `POST /api/admin/notifications/push/jobs/:publicId/process`, `POST /api/admin/notifications/push/jobs/:publicId/redrive`
 **Feature flag**: `notification.push.enabled`
 
 When flag = false:
@@ -740,7 +740,7 @@ When flag = true: Full push job management (see `08-notification/push-notificati
 Tabs: [Push jobs] [Subscriptions] [Tạo thông báo]
 
 **Tab 1 — Push jobs**: DataTable of jobs with status chips, delivery stats
-**Tab 2 — Subscriptions**: Active subscription count + chart + browser breakdown
+**Tab 2 — Subscriptions**: aggregate-only stats: active subscription count + chart + browser breakdown
 **Tab 3 — Tạo thông báo**: Create push job form
 
 ---

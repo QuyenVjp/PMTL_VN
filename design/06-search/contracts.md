@@ -106,6 +106,17 @@ Public search item tối thiểu phải trả đủ để FE không đoán:
 - `sourceFamily?`
 - `publishedAt?`
 
+Consumer aggregate rule cho `/tim-kiem`:
+
+- `GET /api/search` phải đủ shape để map thẳng sang `SearchResultsPageDto`
+- ngoài `data[]`, response `meta` phải có:
+  - `engine`
+  - `pagination`
+  - `tabCounts`
+  - `filterFacets`
+- public/member consumer không được tự quét `data[]` để đếm tab hoặc dựng facet
+- nếu query bị reject vì guard (`length`, `term count`, suspicious pattern), canonical error code phải tới từ backend thay vì client-side heuristic
+
 ### Status route coverage (Phạm vi route trạng thái)
 
 Status route nên báo:
@@ -120,6 +131,7 @@ Status route nên báo:
 ### Expected errors (Lỗi dự kiến)
 
 - `400`: query rỗng hoặc limit ngoài phạm vi
+- `400`: query vượt guard budget (`search.query.invalid`)
 - `401`: admin/status route cần session mà không có
 - `403`: role không đủ cho reindex
 - `404`: `reindex/:source` dùng source không tồn tại trong registry
