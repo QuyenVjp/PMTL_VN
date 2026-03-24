@@ -12,6 +12,74 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 - Last verified ở mức design vào `2026-03-21`; cho tới khi xuất hiện artifact runtime thật có đường dẫn rõ trong `apps/api`, `apps/web`, `apps/admin`, bảng này vẫn phải mặc định nghiêng về `required before launch` hoặc `planned`, không được tự suy ra `implemented`.
 - Vì vậy bảng dưới đây chủ yếu liệt kê các `launch blockers (vật cản ngăn chặn ra mắt)`, `planned targets (mục tiêu đã lập kế hoạch)`, và `explicit exclusions (các phần bị loại rõ ràng)`, nhưng từng dòng đều chỉ rõ artifact (thành phần mã nguồn) sẽ phải xuất hiện ở đâu.
 
+## Current safe scaffold window (Cửa sổ scaffold an toàn hiện tại)
+
+Ở thời điểm hiện tại, `apps/api` chỉ được coi là an toàn để bắt đầu scaffold theo thứ tự:
+
+1. Step 0 — app shell
+2. Step 1 — common technical baseline
+3. Step 2 — Prisma + persistence foundation
+4. Step 3 — platform modules block auth/launch
+5. Step 4 — health + metrics + startup truth
+6. Step 5 — identity first risky write-path
+7. Step 6 — storage-backed upload boundary
+8. Step 7 — content module **chỉ với 5 route đầu tiên**
+
+Mọi route khác xuất hiện trong `tracking/api-route-inventory.md` vẫn là canon inventory, chưa tự động trở thành scaffold target.
+
+## First vertical slice to implement first (Vertical slice đầu tiên nên làm)
+
+Slice đầu tiên được khuyến nghị để thử E2E thật là:
+
+- public page `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
+- `GET /content/chanting/environment-rules`
+- `GET /content/chanting/environment-rules/:groupKey`
+- admin lane `/admin/noi-dung/niem-kinh` chỉ cho tab `Môi trường & thời gian`
+
+Lý do chọn:
+
+- read-mostly, không cần auth member để bootstrap public page
+- owner module đơn: `content`
+- DTO/page-loader/route/admin mapping đã khóa xong
+- không đòi Prisma graph phức tạp, queue, notification delivery, hay multi-module aggregate orchestration
+- scope đủ trọn để kiểm tra design -> `packages/shared` -> `apps/api` -> `apps/web` -> `apps/admin`
+
+Không chọn làm slice đầu tiên:
+
+- `/dashboard`
+  - vì là aggregate 5 module (`identity + calendar + engagement + vows-merit + notification`)
+- `/thong-bao`
+  - vì còn phase-gating capability/reminder semantics và auth-required member flow
+- `/ngoai-tuyen`
+  - vì kéo theo delta sync, offline state, và Wisdom-QA bundle complexity
+
+### Slice boundary (ranh giới bắt buộc)
+
+Nếu code slice này, phạm vi được phép chỉ gồm:
+
+- content read models cho `chanting/environment-rules`
+- admin CRUD tối thiểu cho environment-rule groups/rules
+- public loader/page cho `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
+- admin tab render cho workspace `Niệm kinh` phần environment rules
+
+Không được lôi thêm:
+
+- `chant item` full detail
+- `chant plan` implementation
+- member tracker state
+- notification logic
+- dashboard aggregate
+- worker/queue/search side effects
+
+### Acceptance target
+
+Slice này chỉ được coi là pass khi:
+
+1. public page render hoàn toàn từ `ChantEnvironmentRulesPageDto`
+2. admin tab không hardcode bucket/rule wording ngoài canon DTO
+3. `reference-only` rules không bị product hóa thành calculator / interpretation UX
+4. web/admin đều dùng cùng vocabulary cho 6 buckets canon
+
 ## Status semantics (Ý nghĩa các trạng thái)
 
 - `implemented`: đã triển khai

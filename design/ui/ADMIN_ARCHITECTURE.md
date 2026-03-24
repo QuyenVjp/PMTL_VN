@@ -71,6 +71,7 @@ const sidebarData = {
         { title: 'Ngôi Nhà Nhỏ', url: '/noi-dung/ngoi-nha-nho', icon: BookMarked },
         { title: 'Phóng Sanh', url: '/noi-dung/phong-sanh', icon: Fish },
         { title: 'Thư viện pháp môn', url: '/noi-dung/thu-vien-phap-mon', icon: Clapperboard },
+        { title: 'Tài liệu', url: '/noi-dung/tai-lieu', icon: FolderDown },
         { title: 'Kinh sách', url: '/noi-dung/kinh-sach', icon: Library },
         { title: 'Niệm kinh', url: '/noi-dung/niem-kinh', icon: Music },
         { title: 'Media', url: '/noi-dung/media', icon: Image },
@@ -418,6 +419,7 @@ Không dùng serif headings cho admin — professional density > contemplative m
 | `/noi-dung/ngoi-nha-nho` | Ngôi Nhà Nhỏ | Workspace quản lý grouped guides, case variants, FAQ, downloads, assets |
 | `/noi-dung/phong-sanh` | Phóng Sanh | Workspace quản lý ritual guides, variants, FAQ, downloads, review notes |
 | `/noi-dung/thu-vien-phap-mon` | Thư viện pháp môn | Workspace quản lý curated photo albums, video playlists, featured collections |
+| `/noi-dung/tai-lieu` | Tài liệu | Workspace quản lý download records, taxonomy, và publish state cho `/tai-lieu` |
 | `/noi-dung/kinh-sach` | Kinh sách | DataTable + nested volumes |
 | `/noi-dung/niem-kinh` | Niệm kinh | DataTable + audio management |
 | `/noi-dung/media` | Media | Gallery view + upload |

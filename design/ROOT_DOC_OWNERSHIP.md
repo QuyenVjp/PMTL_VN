@@ -70,11 +70,17 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `ops/deploy-runbook.md` | deploy/rollback procedure owner | deploy, rollback, migration-fail handling | không thay backup runbook |
 | `overview/terminology.md` | terminology owner | PMTL terms + `English (Việt)` notation | không lặp qua nhiều root files |
 | `overview/source-analysis.md` | source-derived feature surface owner | official source notes + feature implications | không lặp source summaries |
+| `overview/architecture-principles.md` | architecture summary owner | stack truth summary, module grouping orientation, high-level do/don’t map | không là canonical owner cho module boundaries, implementation truth, hay phase rules |
 | `overview/architecture-at-a-glance.md` | 1-minute architecture orientation owner | entrypoint tóm tắt đúng current direction | không chốt rule mới thay owner docs |
 | `overview/domain-map.md` | domain index owner | domain grouping, quick pointers | không override module ownership |
 | `overview/execution-map.md` | execution-path orientation owner | read order, implementation orientation, cross-link map | không thay implementation truth |
 | `overview/phase-activation-matrix.md` | phase activation summary owner | phase summary, activation checklist tóm tắt | không thay decision trigger gốc |
 | `overview/roadmap.md` | roadmap summary owner | planning narrative, sequencing note | không đổi launch blocker semantics |
+| `seo-geo/strategy.md` | SEO/GEO strategy owner | URL strategy, robots.txt canonical disallow list, sitemap structure, canonical/hreflang posture, CWV targets | không thay route canon nếu `ui/PAGE_INVENTORY.md` đã chốt |
+| `seo-geo/structured-data.md` | structured-data owner | Schema.org mapping per page family, JSON-LD obligations, schema selection rules | không tự đổi route canon hay content ownership |
+| `seo-geo/geo-citation-strategy.md` | GEO citation owner | AI-citation posture, entity-definition rules, quotability guidance, citation-focused content formatting | không tự override doctrinal/source ownership |
+| `seo-geo/content-cluster-map.md` | SEO content-cluster owner | cluster hierarchy, pillar/cluster relationships, target keyword grouping | không tự tạo page routes ngoài `ui/PAGE_INVENTORY.md` |
+| `seo-geo/little-house-seo.md` | feature-specific SEO owner for Little House | Little House keyword map, internal linking plan, metadata focus, structured-data specialization | không thay Little House content canon một mình |
 | `baseline/writing-standards.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
 | `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |
 | `deep-research-report.md` | research appendix owner | research notes, source synthesis, rationale backlog | không là canonical policy owner nếu chưa được promote sang owner file |
@@ -92,6 +98,8 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `ui/ADMIN_MODULE_SPECS.md` | admin workspace owner | filters, bulk actions, table states, invalidation rules | không đổi route canon một mình |
 | `07-calendar/luc-trai-days-canon.md` | `六齋日` canon owner | day-role matrix, fallback semantics, warning families, advisory obligations cho ngày mùng 8/14/15/23/29/30 | không thay source-backed doctrine owner của Wisdom-QA |
 | `10-wisdom-qa/btpp-library-canon.md` | BTPP library owner | public route slug, hub IA, glossary, source taxonomy, FAQ, warning policy cho BTPP/Little House cross-surface | không thay data schema chi tiết một mình |
+| `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md` | source provenance owner | source tiers, source-family taxonomy, provenance rules cho source-backed wisdom content | không tự override publish policy hay route canon |
+| `10-wisdom-qa/INGESTION_PLAN.md` | source-backed ingestion owner | ingestion steps, required source metadata, duplicate guard, draft-only automation rules | không tự override source taxonomy hay manual editor workflow |
 | `10-wisdom-qa/manual-translation-editor-workflow.md` | wisdom manual editor flow owner | current manual-first translation flow, required editor fields, duplicate-check/slug-preview/draft gate, anti-auto-publish stance | không thay phase-later automation architecture một mình |
 | `10-wisdom-qa/translation-automation-architecture.md` | wisdom automation owner | orchestrator stance, MCP/API role split, duplicate guard, slug preview, import-job lifecycle cho lane auto-ingest/auto-translate | không thay source taxonomy hoặc publish policy một mình |
 | `tracking/wisdom-qa-family-audit.md` | Wisdom-QA audit owner | family inventory, taxonomy drift, unresolved gaps, next audit order cho `10-wisdom-qa` | không tự override canon route nếu `btpp-library-canon.md` đã chốt |

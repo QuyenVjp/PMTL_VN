@@ -11,16 +11,16 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Sẵn sàng | 11 modules có docs core; contact use-cases, Little House content/admin surface, Daily Practice content/admin surface, Life Release content/admin surface, search ops, notification ops, assisted-entry path đã được khóa trong design |
-| Platform modules | ✅ Sẵn sàng | 11 modules có spec đầy đủ |
-| Security baseline | ✅ Sẵn sàng | Auth, upload, CSRF, rate-limit đã chốt |
+| Backend architecture | ✅ Design-ready | 11 modules có docs core; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
+| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong `apps-api-scaffold-order.md` |
+| Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `tracking/implementation-mapping.md` |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
 | UI/UX design | ✅ Sẵn sàng | `design/ui/` đã có core baseline docs + owner docs cho IA/navigation, landing, homepage, và app screens; xem `ROOT_DOC_OWNERSHIP.md` |
 | Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `baseline/frontend-architecture.md` |
 | Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
-| Rate-limit values | ✅ Sẵn sàng | 13 endpoints với exact limits — xem Phần 5 |
+| Rate-limit values | ✅ Design-locked | 13 endpoints với exact limits — xem Phần 5; wiring chỉ được cắm khi route tương ứng tới đúng scaffold step |
 | Webhook replay protection | ✅ Sẵn sàng | signature verify + dedup persistence đã chốt ở `baseline/security.md` + `tracking/implementation-mapping.md` |
 | Migration order | ✅ Sẵn sàng | 12 bước chi tiết — xem Phần 6 |
 | Testing strategy | ✅ Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `baseline/testing-strategy.md` |
@@ -28,8 +28,8 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `baseline/migration-strategy.md` |
 | Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `baseline/infra.md` |
 | SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `SVG_PRECISION_WORKFLOW.md` |
-| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills CMS legacy đã bị deprecate hoặc loại khỏi luồng code mới |
-| OpenAPI spec | ✅ Sẵn sàng | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới |
+| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills CMS legacy đã bị deprecate hoặc loại khỏi luồng code mới; external baseline hiện chỉ dùng `Gemini + Copilot` |
+| OpenAPI spec | ✅ Design-locked | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới; runtime artifact vẫn pending implementation |
 | Deferred/excluded advanced tech design | ✅ Sẵn sàng | Các component `planned` / `explicit exclusion` đều có design doc rõ — xem `DECISIONS.md` section 15 |
 | Email provider decision | ✅ Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `baseline/email-provider-decision.md` |
 | Storage lifecycle | ✅ Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `baseline/storage-lifecycle.md` |
@@ -52,7 +52,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `08-notification/push-notification-architecture.md` |
 | Observability architecture | ✅ Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `baseline/observability-architecture.md` |
 
-**VERDICT**: `DESIGN-READY FOR FULL-STACK IMPLEMENTATION PLANNING`
+**VERDICT**: `DESIGN-READY FOR PHASED IMPLEMENTATION PLANNING`
 Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. File này **không** có nghĩa runtime đã sẵn sàng hoặc launch đã an toàn.
 
 ### Readiness split bắt buộc
@@ -63,7 +63,9 @@ Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. 
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ rõ để bắt đầu code module đó | `tracking/implementation-mapping.md` |
 | `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `DECISIONS.md` section 9 + `tracking/implementation-mapping.md` |
 
-Coding agent có thể bắt đầu Wave 1, nhưng vẫn còn runtime evidence blockers trước launch như restore drill pass, implementation proof, và post-code OpenAPI coverage proof.
+Coding agent có thể bắt đầu Wave 1, nhưng chỉ theo thứ tự scaffold đã khóa. Với `apps/api`, cửa sổ an toàn hiện tại là Step `0 -> 7` theo `apps-api-scaffold-order.md`, và ở Step 7 vẫn chỉ được làm `5` content routes đầu tiên.
+Các route khác đang xuất hiện trong inventory không mặc định trở thành Wave 1 scaffold target.
+Slice E2E đầu tiên nên dùng để kiểm tra design-to-code là `chanting environment rules`, không phải member dashboard.
 Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md) để tránh dựng sai từ commit đầu.
 
 ---
@@ -147,7 +149,7 @@ Mọi domain module (01-11) đều có:
 
 ---
 
-### ✅ GAP 5: OpenAPI spec — CLOSED IN DESIGN
+### ✅ GAP 5: OpenAPI spec — DESIGN-CLOSED, RUNTIME PENDING
 
 **Strategy**: auto-gen từ NestJS `@nestjs/swagger` decorators. Không cần viết spec bằng tay.
 
@@ -172,7 +174,7 @@ Mọi domain module (01-11) đều có:
 - `GET /api/docs` trả 200 OK trong môi trường dev
 - Không có route nào hiện là `{}` (empty schema) trong Swagger UI
 
-**Note**: OpenAPI spec là runtime artifact — nó không thể được hoàn chỉnh hoàn toàn trong design phase. Gap này được đóng ở design level bằng cách chốt strategy, ownership, và completion criteria. Coding agent biết chính xác phải làm gì.
+**Note**: OpenAPI spec là runtime artifact — nó không thể được hoàn chỉnh hoàn toàn trong design phase. Gap này được đóng ở design level bằng cách chốt strategy, ownership, và completion criteria. Nó chưa được coi là `implemented` cho tới khi `/api/docs` và coverage decorator chạy thật trong `apps/api`.
 
 ---
 
@@ -253,6 +255,12 @@ Cộng thêm 1 flag test để verify feature_flags table hoạt động.
 ---
 
 ## Phần 5: Rate-limit values per endpoint
+
+Các giá trị dưới đây là `design-locked limits`, không có nghĩa tất cả limiter đã được code ngay từ Step 1.
+Limiter nào được cắm ở bước nào phải bám `apps-api-scaffold-order.md`, đặc biệt:
+- `/api/auth/refresh` thuộc identity Step 5
+- upload limiter thuộc storage/upload boundary Step 6
+- content/community/vows/engagement limiter chỉ cắm khi route write-path tương ứng thật sự được scaffold
 
 | Endpoint group | Limit | Window | Scope |
 |---|---|---|---|

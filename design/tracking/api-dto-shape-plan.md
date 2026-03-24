@@ -49,6 +49,8 @@ Mục tiêu:
 | offline bundle delta response | `OfflineBundleDeltaResponseDto` | `bundleId`, `bundleName`, `fromVersion`, `toVersion`, `isFullSync`, `added[]`, `updated[]`, `deletedIds[]`, `totalEntries`, `generatedAt` | owner cho `/offline-bundles/:publicId/delta` |
 | member notification preferences page | `NotificationPreferencesPageDto` | `capability`, `subscriptionState`, `categoryPreferences[]`, `practiceReminder`, `eventReminder`, `conflicts[]`, `lastEvaluatedAt` | owner cho `/thong-bao`; page settings surface, không phải inbox |
 | personal practice calendar page | `PersonalPracticeCalendarPageDto` | `todayLunar`, `advisorySummary`, `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | owner cho `/lich-ca-nhan`; không nhét full event detail vào page aggregate |
+| admin download detail | `AdminDownloadDetailDto` | `publicId`, `title`, `downloadType`, `targetAudience`, `status`, `versionNote`, `sourceReference`, `fileRef`, `surfaceRefs[]`, `updatedAt` | owner cho `/admin/content/downloads/:publicId`; download workspace không tự ráp metadata từ raw asset |
+| admin sutra detail | `AdminSutraDetailDto` | `publicId`, `slug`, `title`, `status`, `language`, `summary`, `volumes[]`, `audioCompanion?`, `glossaryRefs[]`, `updatedAt` | owner cho `/admin/content/sutras/:publicId`; nested sutra tree phải đến từ 1 detail aggregate |
 | admin table common | `AdminTableRowDto` | `publicId`, `status`, `createdAt`, `updatedAt`, `lastModifiedBy?` | base shape cho tables |
 | admin search status | `AdminSearchStatusDto` | `requestedEngine`, `actualEngine`, `indexFreshnessSeconds`, `documentCount`, `pendingJobs`, `lastSuccessfulReindexAt`, `meiliHealth`, `sqlFallbackAvailable`, `bootstrapFallbackActive` | owner cho `/admin/search/status` và `operational-status` |
 | admin search indexing job | `AdminSearchIndexingJobDto` | `publicId`, `source`, `triggerType`, `status`, `startedAt`, `finishedAt`, `durationMs`, `rowsIndexed`, `rowsDeleted`, `actorUserId?`, `requestId?`, `errorSummary?` | không nhét raw logs vào DTO detail |
@@ -56,7 +58,7 @@ Mục tiêu:
 | admin push subscription stats | `AdminPushSubscriptionStatsDto` | `activeCount`, `inactiveCount`, `newSubscriptionsLast30d[]`, `browserBreakdown[]`, `lastAggregatedAt`, `deliveryHealthSummary` | aggregate-only cho tab subscriptions của admin notifications |
 | admin dashboard page | `AdminDashboardPageDto` | `systemSummary`, `pendingModeration`, `recentAuditEvents[]`, `contentOpsSummary`, `searchOpsSummary?` | owner cho `/admin/dashboard`; không để admin home tự ghép nhiều panel vô chủ |
 | admin notification ops page | `AdminNotificationOpsPageDto` | `pushStatus`, `subscriptionStats`, `jobQueueSummary`, `recentJobs[]`, `deliveryHealthSummary` | owner cho `/admin/he-thong/thong-bao`; jobs/subscription stats phải cùng vocabulary |
-| admin system health extended | `AdminSystemHealthExtendedDto` | `uptime`, `memoryUsageMb`, `cpuUsagePercent`, `diskUsagePercent`, `dbConnectionCount`, `featureFlagsCount`, `recentErrors[]` | owner cho `/admin/system/health-extended`; `recentErrors[]` chỉ là safe projection |
+| admin system health extended | `AdminSystemHealthExtendedDto` | `uptime`, `memoryUsageMb`, `cpuUsagePercent`, `diskUsagePercent`, `dbConnectionCount`, `featureFlagsCount`, `recentErrors[]` | owner cho page `/admin/he-thong/health` qua backing API `GET /admin/system/health-extended`; `recentErrors[]` chỉ là safe projection |
 | admin moderation report detail | `AdminModerationReportDetailDto` | `publicId`, `status`, `reasonCode`, `reporterSummary`, `targetType`, `targetPreview`, `createdAt`, `decisionHistory[]`, `currentDecisionOptions[]` | giảm blind scaffold ở moderation |
 | admin audit-log detail | `AdminAuditLogDetailDto` | `publicId`, `actorSummary`, `action`, `resourceType`, `resourcePublicId`, `occurredAt`, `metadata`, `correlationId`, `requestId` | `metadata` phải qua safe projection |
 | admin wisdom import job detail | `AdminWisdomImportJobDetailDto` | `publicId`, `jobType`, `providerProfile`, `sourceFamily`, `status`, `candidateSlug`, `dedupeStatus`, `resultEntryPublicId?`, `errorSummary?`, `createdAt`, `updatedAt` | lấp gap import workspace |
@@ -120,6 +122,34 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `sql`
   - `meilisearch`
   - `sql-fallback`
+
+### `AdminDownloadDetailDto`
+
+- `fileRef` là safe projection:
+  - `publicId`
+  - `mimeType`
+  - `fileSizeLabel`
+  - `downloadUrl`
+- `surfaceRefs[]` chỉ là owner references:
+  - `surfaceType`
+  - `surfaceLabel`
+  - `href`
+- workspace này không được tự suy metadata từ raw media asset record.
+
+### `AdminSutraDetailDto`
+
+- `volumes[]` phải đủ cho nested editor:
+  - `volumePublicId`
+  - `title`
+  - `orderIndex`
+  - `chapters[]`
+- mỗi `chapters[]` item tối thiểu:
+  - `chapterPublicId`
+  - `title`
+  - `orderIndex`
+  - `hasAudioCompanion`
+  - `status`
+- route detail này là owner aggregate cho tree editor; không để admin UI expand rồi tự fan-out từng chapter route nếu chưa có canon riêng.
 
 ### `AdminDashboardPageDto`
 
@@ -529,7 +559,7 @@ Không được coi là đủ để scaffold nếu mới chỉ có tên DTO mà 
 Các row `P0 anti-invention surface` ở trên không được đứng riêng.
 Mỗi row phải map được sang route canon hiện có trong `tracking/api-route-inventory.md` hoặc phải chặn scaffold cho tới khi inventory được bổ sung:
 
-- member dashboard aggregate -> cần route owner row rõ trong inventory trước khi scaffold rộng
+- member dashboard aggregate -> hiện map vào `GET /dashboard`
 - notification preferences aggregate -> hiện map vào `GET /notifications/preferences`
 - search results aggregate -> hiện map vào `GET /search`
 - offline bundle list page -> hiện map vào `GET /offline-bundles`

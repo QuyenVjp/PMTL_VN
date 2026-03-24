@@ -44,11 +44,11 @@ Mỗi workspace phải có:
 
 ### Recent posts table (5 rows compact)
 Columns: Tiêu đề, Status chip, Author, Date
-Click row → navigate to `/noi-dung/bai-viet/$postId`
+Click row → navigate to `/noi-dung/bai-viet/[postId]`
 
 ### Pending reports table (5 rows compact)
 Columns: #ID, Content type, Reason, Reporter, Time ago
-Click row → navigate to `/kiem-duyet/bao-cao/$reportId`
+Click row → navigate to `/kiem-duyet/bao-cao/[reportId]`
 
 ### Audit log stream (last 10)
 Columns: Action, Actor, Target, Timestamp
@@ -92,7 +92,7 @@ Fields: Tiêu đề*, Slug (auto-generated, editable), Category*, Tags (multi), 
 Save → PATCH to draft, Publish → POST to publish endpoint
 Audit: `post.create`, `post.publish`
 
-### Edit view (`/noi-dung/bai-viet/$postId`)
+### Edit view (`/noi-dung/bai-viet/[postId]`)
 Same fields as create. Shows: Last modified by, Published at.
 "Xem trên trang" link → opens `/bai-viet/[slug]` in new tab
 On publish: triggers Next.js revalidation via webhook
@@ -102,7 +102,7 @@ On publish: triggers Next.js revalidation via webhook
 **Success**: Toast "Đã lưu" / "Đã xuất bản"
 **Error**: Toast with error code + retry
 
-**Query invalidation**: After publish/unpublish → invalidate `['posts']`, `['post', id]`
+**Query invalidation**: After publish/unpublish → follow `tracking/admin-page-api-mapping.md` query-key canon for `admin-posts` list/detail + dashboard widget dependencies when affected.
 
 ---
 
@@ -279,7 +279,7 @@ Tabs: [Collections] [Featured] [Tags]
 **Tab 1 — Collections**:
 DataTable: Name, Type (photo/video), Item count, Status, Date
 Create: modal with name, description, type, featured toggle
-Detail (`$collectionId`): Grid of media items, add/remove/reorder, publish
+Detail (`[collectionId]`): Grid of media items, add/remove/reorder, publish
 
 **Tab 2 — Featured**:
 Up to 6 featured collection slots (drag-to-reorder)
@@ -290,10 +290,44 @@ Tag management: add/rename/merge/delete tags
 
 ---
 
+## 7a. Tài liệu (`/noi-dung/tai-lieu`)
+
+**Role**: `editor+`
+**API deps**: `/api/admin/content/downloads*`
+
+Tabs: [Danh sách tài liệu] [Danh mục & loại] [Gắn vào surface] [Xuất bản]
+
+**Tab 1 — Danh sách tài liệu**:
+- DataTable: Tên tài liệu, Type (PDF/audio/checklist/printable), Chủ đề, Version, Status, Last updated
+- Filters: type, topic, status, target audience
+- Row actions: View detail, Edit metadata, Publish, Unpublish
+
+**Tab 2 — Danh mục & loại**:
+- Curated taxonomy editor cho:
+  - `downloadType`
+  - `targetAudience`
+  - `surfaceRefs`
+- Rule: taxonomy dùng cho public `/tai-lieu` và companion panels; không tạo label tự do drift nhau giữa các workspace
+
+**Tab 3 — Gắn vào surface**:
+- Hiện record này đang được dùng ở:
+  - `Kinh Bài Tập`
+  - `Ngôi Nhà Nhỏ`
+  - `Kinh Văn Tự Tu`
+  - `Phóng Sanh`
+  - `Bài viết / Hướng dẫn`
+- Rule: download là owner record chung; các workspace khác chỉ reference, không copy metadata riêng
+
+**Tab 4 — Xuất bản**:
+- Preview card/list item cho public `/tai-lieu`
+- Validation cho file ref, version note, source reference, file size label
+
+---
+
 ## 8. Kinh sách (`/noi-dung/kinh-sach`)
 
 **Role**: `editor+`
-**API deps**: `/api/content/sutras`, `/api/admin/wisdom/baihua/*`
+**API deps**: `/api/admin/content/sutras*`, `/api/admin/wisdom/baihua/*`
 
 Tabs: [Danh sách kinh] [Bạch thoại audiobook]
 
@@ -301,6 +335,13 @@ Tabs: [Danh sách kinh] [Bạch thoại audiobook]
 DataTable: Title, Volumes, Status, Date
 Row expand → show volumes list
 Row expand further → chapters per volume
+- Create/edit flow phải quản được:
+  - sutra metadata
+  - volume ordering
+  - chapter ordering
+  - audio companion refs
+  - publish state cho reading tree
+- Rule: hierarchy `sutra -> volume -> chapter` là content-owned; không dùng public read route `/api/content/sutras` làm admin write dependency
 
 **Tab 2 — Bạch thoại audiobook**:
 DataTable: Book title, Chapter count, Translation status, Last updated
@@ -389,7 +430,7 @@ Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [O
 ## 9. Niệm kinh (`/noi-dung/niem-kinh`)
 
 **Role**: `editor+`
-**API deps**: `/api/content/chant-items`, `/api/content/chant-plans`, `/api/admin/content/chanting/environment-rules`
+**API deps**: `/api/admin/content/chant-items*`, `/api/admin/content/chant-ritual-templates*`, `/api/admin/content/chant-plans*`, `/api/admin/content/chanting/environment-rules*`
 
 Tabs: [Bản kinh] [Ritual templates] [Chant Plans] [Môi trường & thời gian]
 
@@ -459,7 +500,7 @@ Drag-to-reorder items within plan
 ## 10. Media (`/noi-dung/media`)
 
 **Role**: `editor+`
-**API deps**: `POST /api/content/media/upload`, `DELETE /api/content/media/:id`, `GET /api/content/media`
+**API deps**: `POST /api/content/media/upload`, `DELETE /api/content/media/:publicId`, media-library support routes dùng để resolve usage/embedding context
 
 ### Gallery view (default)
 Grid of thumbnails (4 cols desktop, 2 cols mobile)
@@ -477,6 +518,7 @@ On success: file appears in gallery
 Shows: filename, MIME, size, checksum, uploaded by, status, linked entities
 Actions: Copy URL, Download, Delete (with confirm + audit)
 If linked: shows what content uses this file
+Note: chưa claim dedicated `GET /api/content/media/:publicId` canon cho detail modal; nếu cần route riêng thì phải mở thêm row trong `tracking/api-route-inventory.md` + DTO owner trong `tracking/api-dto-shape-plan.md` trước khi scaffold.
 
 **Pagination**: Infinite scroll (load more) or pagination toggle
 **Empty state**: "Chưa có file nào. [Tải lên]"
@@ -528,7 +570,7 @@ Default sort: Created desc, Status=pending first
 **Badge**: Pending count in sidebar (real-time via polling every 30s)
 Bulk: Mark as ignored (for spam reports)
 
-### Report detail (`/kiem-duyet/bao-cao/$reportId`)
+### Report detail (`/kiem-duyet/bao-cao/[reportId]`)
 
 Layout: Split view
 Left: Content preview (rendered, not raw HTML) + reporter info + reason + description
@@ -575,7 +617,7 @@ Sort: Join date desc (default)
 **No bulk actions** (role/status changes are individual, high-impact)
 Row actions: View profile, Change role, Block/Unblock, View sessions
 
-### User detail (`/nguoi-dung/$userId`)
+### User detail (`/nguoi-dung/[userId]`)
 
 Tabs: [Profile] [Sessions] [Audit history] [Practice stats]
 
@@ -720,7 +762,7 @@ Tabs: [Sự kiện] [Lunar overrides] [Advisory preview] [Projection status]
   - `sourceVersion`
   - `completedAt`
 
-### Event workspace (`/he-thong/lich/$eventId`)
+### Event workspace (`/he-thong/lich/[eventId]`)
 
 Tabs: [Thông tin] [Agenda] [Speakers] [CTAs] [Gallery/Files]
 

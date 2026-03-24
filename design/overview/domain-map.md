@@ -14,8 +14,9 @@ markmap:
 ---
 
 ## Canonical source rule (Quy tắc nguồn chuẩn duy nhất)
-- nguồn chuẩn cho ownership và responsibility là [architecture-principles.md](./architecture-principles.md)
-- nếu `domain-map.md` và `architecture-principles.md` mâu thuẫn nhau, luôn tin `architecture-principles.md`
+- thứ tự ưu tiên nằm ở [ROOT_DOC_OWNERSHIP.md](../ROOT_DOC_OWNERSHIP.md)
+- ownership và responsibility mức domain nằm ở từng `NN-domain/module-map.md`
+- cross-module ownership/boundary nằm ở [tracking/module-interactions.md](../tracking/module-interactions.md)
 - `domain-map.md` chỉ dùng để:
   - định vị mô-đun
   - dẫn đường đọc tài liệu
@@ -26,9 +27,11 @@ markmap:
 ## Recommended reading order (Thứ tự đọc tài liệu)
 1. [README.md](../README.md)
 2. [DECISIONS.md](../DECISIONS.md)
-3. [architecture-principles.md](./architecture-principles.md)
-4. [execution-map.md](./execution-map.md)
-5. module map và use-case của mô-đun đang chuẩn bị triển khai
+3. [ROOT_DOC_OWNERSHIP.md](../ROOT_DOC_OWNERSHIP.md)
+4. [module-interactions.md](../tracking/module-interactions.md)
+5. [architecture-principles.md](./architecture-principles.md)
+6. [execution-map.md](./execution-map.md)
+7. module map và use-case của mô-đun đang chuẩn bị triển khai
 
 ---
 
@@ -93,7 +96,7 @@ markmap:
 
 ## Cross-cutting references (Tài liệu xuyên mô-đun)
 - **Base decisions (Quyết định nền tảng)**: [DECISIONS.md](../DECISIONS.md)
-- **Architecture principles (Nguyên tắc kiến trúc)**: [architecture-principles.md](./architecture-principles.md)
+- **Architecture summary (Tóm tắt kiến trúc)**: [architecture-principles.md](./architecture-principles.md)
 - **Execution & debug maps (Bản đồ thực thi và gỡ lỗi)**: [execution-map.md](./execution-map.md)
 - **Inter-module interactions (Tương tác giữa các mô-đun)**: [module-interactions.md](../tracking/module-interactions.md)
 - **Policies (Chính sách)**: [audit-policy.md](../tracking/audit-policy.md), [sla-slo.md](../baseline/sla-slo.md), [security.md](../baseline/security.md)
@@ -101,6 +104,6 @@ markmap:
 ---
 
 ## Rules for future edits (Quy tắc cập nhật về sau)
-1. Khi thêm mô-đun mới: tạo thư mục vật lý trước, cập nhật `architecture-principles.md`, rồi mới thêm chỉ mục ngắn ở đây.
+1. Khi thêm mô-đun mới: tạo thư mục vật lý trước, chốt `module-map.md` của mô-đun và cập nhật `tracking/module-interactions.md` nếu có boundary mới, rồi mới thêm chỉ mục ngắn ở đây.
 2. Không copy logic chi tiết từ canonical source sang file chỉ mục này.
-3. Mỗi entry ở đây nên ngắn; nếu cần chi tiết, đưa sang `architecture-principles.md` hoặc `module-map.md` tương ứng.
+3. Mỗi entry ở đây nên ngắn; nếu cần chi tiết, đưa sang `module-map.md`, `contracts.md`, hoặc owner doc tương ứng.

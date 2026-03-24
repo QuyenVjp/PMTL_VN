@@ -1,10 +1,10 @@
 # PMTL_VN Architecture Principles
 
 > Ghi chú cho sinh viên:
-> File này mô tả `repo truth (thực trạng repo)` và `implementation mapping (cách map sang code triển khai)`.
-> Các quyết định nền tảng như `Postgres là source of truth`, `NestJS auth duy nhất`, `async-first` đã được chốt ở [DECISIONS.md](../DECISIONS.md). Không lặp lại toàn văn ở đây.
-> Đây là `canonical source (nguồn chuẩn duy nhất)` cho owner/responsibility mapping giữa các module.
-> Các file index như `domain-map.md` chỉ được dẫn link về đây, không được tự chốt lại ownership.
+> File này là `orientation doc (tài liệu định hướng)` để tóm tắt stack truth và nhóm mô-đun ở mức cao.
+> Canonical decisions nằm ở [DECISIONS.md](../DECISIONS.md); implementation truth nằm ở `tracking/implementation-mapping.md`.
+> Ownership boundaries đi theo `tracking/module-interactions.md` và từng `NN-domain/module-map.md`.
+> Các file overview như file này không tự chốt policy mới hay tự nhận quyền owner.
 
 ## Mục tiêu của tài liệu này
 
@@ -31,12 +31,10 @@ Tài liệu này dùng để trả lời 3 câu hỏi:
 ### Data & Runtime
 
 - PostgreSQL là `source of truth (nguồn dữ liệu gốc đáng tin cậy nhất)`.
-- **Phase 2+**: `outbox_events` trong Postgres là handoff chuẩn cho business event quan trọng — chỉ bật khi side effect đủ chậm hoặc failure cost đủ cao (xem `DECISIONS.md` section 7). Phase 1 dùng sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ.
-- **Deferred**: `Valkey` (`Redis-compatible`) chỉ dùng cho cache, execution queue (hàng đợi thực thi), rate-limit coordination, và request guard coordination — chỉ bật khi có measured pain (xem `DECISIONS.md` section 3).
-- **Deferred**: Meilisearch là `computed read model (mô hình dữ liệu đọc được tính ra)`, không phải nguồn ghi dữ liệu gốc — chỉ bật khi search là core feature và SQL performance không đủ.
+- Deferred execution/search components follow `DECISIONS.md` + `overview/phase-activation-matrix.md`; không được suy ra queue/search-first là baseline Phase 1.
 - object storage là đích chuẩn cho media/file trong target phase production.
 - Caddy là reverse proxy và TLS entrypoint.
-- observability chuẩn là metrics + logs + traces.
+- observability baseline là structured logs + `/health/*` + `/metrics`; tracing chỉ là phase-later option.
 
 ## Repo truth theo miền dữ liệu
 
@@ -324,5 +322,5 @@ Future candidate chỉ được thêm vào current scope khi có owner module (m
 ## Baseline bổ sung phải giữ
 
 - Boundary runtime phải có schema validation rõ cho request, webhook payload, search document và env config. Khi outbox/queue đã bật (Phase 2+), queue payload cũng phải validate.
-- **Phase 2+**: Business event quan trọng phải đi qua outbox trước khi vào execution queue — chỉ áp dụng khi `outbox.enabled` feature flag đã bật. Phase 1 dùng sync hoặc fire-and-forget có log intent + log outcome + recovery path rõ.
+- Nếu Phase 2+ bật outbox/queue, follow `DECISIONS.md` section 7 + `baseline/outbox-dispatcher-model.md`; Phase 1 không được suy diễn thành queue-first.
 - Recommendation/semantic retrieval chỉ thêm khi use case rõ; không ép `pgvector` thành mặc định của search.

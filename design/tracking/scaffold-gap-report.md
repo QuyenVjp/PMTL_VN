@@ -39,6 +39,19 @@ Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin`
 - `/thong-bao` đã có backing route family cơ bản, nhưng UX states cho empty/error/loading và preference conflict cần map thêm sang component states
 - `/ngoai-tuyen` đã có route surface cơ bản, nhưng cần explicit pagination/sync badge strategy khi scaffold thật
 
+## Vertical slice recommendation (Khuyến nghị slice đầu tiên)
+
+Slice E2E đầu tiên nên làm là `chanting environment rules`:
+
+- public page `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
+- API `GET /content/chanting/environment-rules`
+- API `GET /content/chanting/environment-rules/:groupKey`
+- admin tab environment rules trong `/admin/noi-dung/niem-kinh`
+
+Không nên lấy `/dashboard` làm slice đầu tiên vì đó là validation surface đa module.
+Không nên lấy `/ngoai-tuyen` làm slice đầu vì bundle/delta sync còn complexity riêng.
+Không nên lấy `/thong-bao` làm slice đầu nếu chưa muốn chạm auth member + capability phase-gating.
+
 ## Còn thiếu cho `apps/admin`
 
 - `tracking/admin-page-api-mapping.md`, `tracking/apps-admin-scaffold-backlog.md`, và `tracking/admin-feature-query-plan.md` đã chốt route group + query key family + invalidation baseline

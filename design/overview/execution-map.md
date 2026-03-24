@@ -13,18 +13,17 @@ Nó trả lời câu hỏi:
 2. Đọc `tracking/module-interactions.md`
 3. Đọc `overview/terminology.md`
 4. Đọc `overview/source-analysis.md`
-5. Đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
-6. Đọc `10-wisdom-qa/INGESTION_PLAN.md`
-7. Đọc `overview/feature-surface-from-official-sites.md`
-8. Đọc `ui/ELDERLY_UX.md`
-9. Đọc `tracking/audit-policy.md`
-10. Đọc `baseline/sla-slo.md`
-11. Đọc `baseline/security.md`
-12. Đọc `baseline/failure-modes.md`
-13. Đọc `baseline/writing-standards.md`
-14. Chọn module owner bên dưới
-15. Mở `contracts.md` của module đó
-16. Mở file trong `use-cases/` tương ứng
+5. Nếu làm lane source-backed của `10-wisdom-qa`, đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
+6. Nếu làm lane ingest/editor của `10-wisdom-qa`, đọc `10-wisdom-qa/INGESTION_PLAN.md`
+7. Đọc `ui/ELDERLY_UX.md`
+8. Đọc `tracking/audit-policy.md`
+9. Đọc `baseline/sla-slo.md`
+10. Đọc `baseline/security.md`
+11. Đọc `baseline/failure-modes.md`
+12. Đọc `baseline/writing-standards.md`
+13. Chọn module owner bên dưới
+14. Mở `contracts.md` của module đó
+15. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 

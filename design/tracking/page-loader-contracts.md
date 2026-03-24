@@ -136,7 +136,7 @@ Rules:
 
 Rules:
 - page này phải dùng aggregate read profile rõ; không cho RSC tự ghép mù từ nhiều modules không có owner.
-- nếu API chưa có aggregate route riêng, composition tạm thời vẫn không được vượt `3` calls.
+- bootstrap owner route là `GET /dashboard`; auxiliary loader chỉ tồn tại cho section phase-gated đã được canon hóa riêng.
 - onboarding banner state phải nằm trong aggregate hoặc aux owner rõ; không hardcode ở client.
 
 ### `/ngoai-tuyen`

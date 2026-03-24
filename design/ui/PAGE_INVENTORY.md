@@ -1237,6 +1237,17 @@ Similar pattern cho:
 - Delete button (với authorization check)
 - Scan status indicator
 
+### 4.8b Downloads Workspace
+
+| Route | `/admin/noi-dung/tai-lieu` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Danh sách tài liệu / Danh mục & loại / Gắn vào surface / Xuất bản
+- Quản lý record tải xuống dùng lại cho `/tai-lieu` và các content companion panels
+- Validation cho file ref, version note, source reference
+
 ### 4.8a Media Library Workspace
 
 | Route | `/admin/noi-dung/thu-vien-phap-mon` | Auth | `admin+` |
@@ -1248,6 +1259,17 @@ Similar pattern cho:
 - Preview hub `/thu-vien/phap-mon`
 - Validation cho item types, external video domains, owner refs
 - Publish action + audit summary
+
+### 4.8c Sutra Workspace
+
+| Route | `/admin/noi-dung/kinh-sach` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content + Wisdom-QA |
+
+**Nội dung:**
+- Tab `Danh sách kinh`: quản lý tree `sutra -> volume -> chapter`
+- Tab `Bạch thoại audiobook`: reuse baihua admin lane, không đổi owner của audiobook workflow
+- Preview reading hierarchy trước publish
 
 ---
 

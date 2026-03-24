@@ -417,6 +417,10 @@ modules/content/
 - `PATCH /content/posts/:publicId`
 - `POST /content/posts/:publicId/publish`
 
+Các route `content` và `admin/content` khác đang có trong `tracking/api-route-inventory.md` chỉ là canon inventory ở giai đoạn này.
+Chúng **không** trở thành Wave 1 scaffold target chỉ vì đã có route row, DTO row, hay admin workspace row.
+Nếu chưa vượt qua Step 7 với publish path đầu tiên đứng vững, không được kéo grouped-content workspaces, downloads, sutras, chanting admin, hay media-library publish lane vào code thật.
+
 ### Blocking invariants
 
 - publish path phải nối được:
@@ -519,6 +523,7 @@ Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, ou
 
 - `api-route-inventory.md` có thể liệt kê route `Phase 2+` để tránh quên contract
 - sự hiện diện trong inventory **không** có nghĩa route đó được scaffold ở Wave 1
+- điều này cũng áp dụng cho các route phase-sau-trong-Wave-1 như `admin/content/*`, grouped content surfaces, và member aggregates: inventory khóa canon trước, scaffold-order mới quyết định lúc nào được code
 - nếu route là `conditional` hoặc `phase 2+`, scaffold order file này thắng
 
 Nếu cần chỗ để “để dành”, chỉ được để trong `design/` hoặc `implementation-mapping.md`, không được tạo runtime artifact giả.

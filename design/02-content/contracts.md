@@ -93,7 +93,7 @@ Search-related source fields:
 - `GET /api/content/media-library/collections`
 - `GET /api/content/media-library/collections/:slug`
 - `GET /api/content/media-library/featured`
-- `GET /api/media-library/tags`
+- `GET /api/content/media-library/tags`
 
 Ghi chú:
 - `beginnerGuides` và `hubPages` nên là public surface chính cho:
@@ -113,6 +113,34 @@ Ghi chú:
 - canonical write đi qua backend owner module
 - admin (`Phụng sự viên`) hoặc super-admin là actor chính
 - `_status` và `publishedAt` là cặp field quyết định public delivery
+
+### Downloads editorial workspace
+- `GET /api/admin/content/downloads`
+- `GET /api/admin/content/downloads/:publicId`
+- `POST /api/admin/content/downloads`
+- `PATCH /api/admin/content/downloads/:publicId`
+- `POST /api/admin/content/downloads/publish`
+
+Quy tắc:
+- `downloads` là first-class curated records; không bury file metadata trong guide/post body rồi coi như xong.
+- record phải giữ rõ `downloadType`, `targetAudience`, `versionNote`, `sourceReference`, `fileRef`.
+- public hub `/tai-lieu` chỉ đọc curated download records đã publish; admin workspace này là owner write-path tương ứng.
+
+### Sutra editorial workspace
+- `GET /api/admin/content/sutras`
+- `GET /api/admin/content/sutras/:publicId`
+- `POST /api/admin/content/sutras`
+- `PATCH /api/admin/content/sutras/:publicId`
+- `POST /api/admin/content/sutras/:publicId/volumes`
+- `PATCH /api/admin/content/sutras/:publicId/volumes/:volumePublicId`
+- `POST /api/admin/content/sutras/:publicId/volumes/:volumePublicId/chapters`
+- `PATCH /api/admin/content/sutras/:publicId/volumes/:volumePublicId/chapters/:chapterPublicId`
+- `POST /api/admin/content/sutras/publish`
+
+Quy tắc:
+- `sutras`, `sutraVolumes`, `sutraChapters` là content-owned reading tree; không đẩy CRUD này sang wisdom audiobook lane.
+- admin workspace `Kinh sách` được quyền quản reading hierarchy, glossary refs, audio companion refs và publish state cho thư viện kinh.
+- `baihua audiobook` vẫn giữ owner ở `10-wisdom-qa`; workspace `Kinh sách` chỉ đồng hiển thị lane đó, không đổi owner.
 
 ### Little House editorial workspace
 - `GET /api/admin/content/little-house/overview`

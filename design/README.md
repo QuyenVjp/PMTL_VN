@@ -12,7 +12,7 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
   - schema/migration (lược đồ/di cư dữ liệu) tương ứng
   - runtime artifact (sản phẩm thực thi) tương ứng
 - File khóa sổ chuyện này là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
-- Các rule cho major versions hiện hành đã được rà lại ở mức design vào `2026-03-21`; nếu audit cũ mâu thuẫn, ưu tiên các root docs hiện hành thay vì audit notes.
+- Các rule cho major versions hiện hành đã được rà lại ở mức design vào `2026-03-21`; implementation/runtime truth vẫn phải khóa ở `implementation-mapping.md`, không suy từ audit notes hay overview docs.
 
 ## Orientation in 2 files
 
@@ -244,6 +244,15 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md) | Cloudflare WAF rules, Bot Fight Mode, honeypot, CSP nonce, security headers |
 | [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/external-web-check-readiness.md) | Web-check categories nào design cover được, categories nào phải đợi runtime evidence, và cách diễn giải kết quả scan ngoài |
 | [health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md) | Exact check lists for /health/live, /health/ready, /health/startup |
+
+### SEO & GEO
+| File | Nội dung |
+|---|---|
+| [strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/strategy.md) | Owner chiến lược SEO/GEO: URL strategy, robots.txt, sitemap, canonical/hreflang, CWV targets |
+| [structured-data.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/structured-data.md) | Schema.org mapping per page family, JSON-LD obligations, rich-result posture |
+| [geo-citation-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/geo-citation-strategy.md) | GEO cho AI engines: entity pages, citation format, quotability rules |
+| [content-cluster-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/content-cluster-map.md) | Cluster map cho pillar/cluster content theo surface chính |
+| [little-house-seo.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/little-house-seo.md) | SEO chuyên biệt cho surface `Ngôi Nhà Nhỏ` |
 
 ### UI/UX baseline docs
 | File | Nội dung |

@@ -51,8 +51,8 @@ Nhưng có thể học tinh thần:
 
 Áp dụng vào PMTL:
 
-- service-level authz checks phải explicit
-- public/admin/member ownership rules phải viết như policy thật
+- dùng đây như review lens cho explicit authz checks đã được owner ở `baseline/security.md` và `design/DECISIONS.md`
+- explicit checks vẫn nằm ở `apps/api`; nếu về sau có DB-level policy hỗ trợ thêm thì nó là defense-in-depth
 - về sau nếu có DB-level policy hỗ trợ thêm, nó là defense-in-depth chứ không thay `apps/api` authority
 
 ### 1.3 Operator-friendly security advisor mindset
@@ -75,14 +75,13 @@ Học từ Security Advisor / AI-assisted fixes:
 
 Học từ docs export Markdown + one-click AI handoff:
 
-- docs phải dễ copy cho AI tools
-- docs phải rõ owner, small, linkable, path-stable
+- docs có lợi hơn khi owner rõ, linkable, và path-stable
+- markdown clean giúp AI/dev handoff đỡ lệch hơn
 
 Áp dụng vào PMTL:
 
-- tiếp tục giữ design docs ngắn, owner-based, path-stable
-- ưu tiên markdown clean, không nhồi screenshot/text noise
-- khi tạo doc mới, nghĩ luôn “agent copy/paste/readability”
+- coi đây là validation cho hướng đã owner ở `ROOT_DOC_OWNERSHIP.md` và `baseline/writing-standards.md`
+- không dùng file này để phát minh docs policy mới ngoài các owner docs đó
 
 ### 1.5 Observability as a first-class product surface
 
@@ -221,7 +220,7 @@ Những thay đổi dưới đây là hợp lý ở mức design:
 
 1. Siết rõ hơn default exposure rules cho docs/OpenAPI/metrics/schema-like endpoints.
 2. Tăng độ rõ của public-safe vs privileged key classes.
-3. Giữ “policy-first authz” như một design keyword rõ hơn, gần tinh thần RLS.
+3. Dùng “policy-first authz” như review lens cho các authz rules đã owner ở `baseline/security.md`.
 4. Chuẩn hóa read-only/scope-first rule cho MCP/connectors/tooling access.
 5. Bổ sung future operator surfaces:
    - security posture

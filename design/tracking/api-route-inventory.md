@@ -166,6 +166,20 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/content/media-library/collections/:slug` | `content` | public |
 | `GET` | `/content/media-library/featured` | `content` | public |
 | `GET` | `/content/media-library/tags` | `content` | public |
+| `GET` | `/admin/content/downloads` | `content` | editor+ |
+| `GET` | `/admin/content/downloads/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/downloads` | `content` | editor+ |
+| `PATCH` | `/admin/content/downloads/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/downloads/publish` | `content` | editor+ |
+| `GET` | `/admin/content/sutras` | `content` | editor+ |
+| `GET` | `/admin/content/sutras/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/sutras` | `content` | editor+ |
+| `PATCH` | `/admin/content/sutras/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/sutras/:publicId/volumes` | `content` | editor+ |
+| `PATCH` | `/admin/content/sutras/:publicId/volumes/:volumePublicId` | `content` | editor+ |
+| `POST` | `/admin/content/sutras/:publicId/volumes/:volumePublicId/chapters` | `content` | editor+ |
+| `PATCH` | `/admin/content/sutras/:publicId/volumes/:volumePublicId/chapters/:chapterPublicId` | `content` | editor+ |
+| `POST` | `/admin/content/sutras/publish` | `content` | editor+ |
 | `GET` | `/content/chant-hub` | `content` | public |
 | `GET` | `/content/chanting/environment-rules` | `content` | public |
 | `GET` | `/content/chanting/environment-rules/:groupKey` | `content` | public |
@@ -233,6 +247,8 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 > `GET /content/chant-hub` là public support aggregate cho `/niem-kinh`; không để web tự ghép chant items + ritual templates + guide refs từ nhiều route.
 > `GET /content/chanting/environment-rules` là public support aggregate cho `/niem-kinh/luu-y-moi-truong-va-thoi-gian`; không trả raw FAQ blob hoặc để web tự chắp rule từ component demo.
 > `chant-items` là unit-level chant content; `chant-ritual-templates` là multi-step ritual owner như `thắp tâm hương`; `chant-plans` chỉ compose từ owner records chứ không chôn raw ritual flow.
+> `GET /admin/content/downloads*` là admin owner lane cho workspace `/admin/noi-dung/tai-lieu`; public `/content/downloads` vẫn chỉ là read surface.
+> `GET /admin/content/sutras*` là admin owner lane cho workspace `/admin/noi-dung/kinh-sach`; `baihua audiobook` tiếp tục đi qua `/admin/wisdom/baihua/*`.
 
 ## Community
 
@@ -275,6 +291,15 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/complete` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-self-stored` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-offered` | `engagement` | member+ |
+
+## Member page aggregates
+
+| Method | Route | Owner | Auth |
+|---|---|---|---|
+| `GET` | `/dashboard` | `identity + calendar + engagement + vows-merit + notification` | member+ |
+
+> `GET /dashboard` là member home aggregate route cho page `/dashboard`; response owner theo `tracking/api-dto-shape-plan.md` row `MemberDashboardDto`.
+> Route này chỉ canon hóa aggregate read profile cho bootstrap member home. Detail/workspace authority vẫn nằm ở module owner routes như `/calendar/*`, `/engagement/*`, `/vows*`, `/notifications/*`.
 
 ## Moderation
 
