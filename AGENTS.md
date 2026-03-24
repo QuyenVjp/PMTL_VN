@@ -17,6 +17,7 @@
 - `docs/agent-cheatsheet.md` for fast human and agent routing
 - `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
 - `design/baseline/dependency-governance.md` when the task touches dependency upgrades, version drift, security advisories, migration policy, or “latest stack” decisions
+- `design/baseline/managed-platform-patterns.md` when the task references Supabase-like features, managed-platform ideas, or asks what patterns PMTL should import without losing backend authority
 - `docs/stitch-mcp.md` when the task involves wireframes, design generation, Stitch, or UI exploration through MCP
 
 ## Monorepo Boundaries
