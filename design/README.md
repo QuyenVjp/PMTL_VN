@@ -119,20 +119,21 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 6. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/repo-structure.md)
 7. [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/platform-modules.md)
 8. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
-9. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
-10. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
-11. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/high-traffic-resilience-plan.md)
-12. [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/external-web-check-readiness.md)
-13. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
-14. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
-15. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
-16. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
-17. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
-18. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
-19. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
-20. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-page-api-mapping.md)
-21. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/dependency-governance.md)
-22. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
+9. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nestjs-11-adoption.md)
+10. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+11. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
+12. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/high-traffic-resilience-plan.md)
+13. [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/external-web-check-readiness.md)
+14. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
+15. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
+16. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
+17. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
+18. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
+19. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
+20. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
+21. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-page-api-mapping.md)
+22. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/dependency-governance.md)
+23. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
 23. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
 24. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
 25. [apps-admin-scaffold-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-admin-scaffold-backlog.md)
@@ -184,6 +185,7 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | File | Nội dung |
 |---|---|
 | [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md) | Thứ tự khởi động platform modules + fail behavior |
+| [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nestjs-11-adoption.md) | Exact Nest 11 scaffold line, Express v5 route stance, logger policy, selective use/defer of Nest 11 features |
 | [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md) | Event nào đi outbox, event schema, idempotency |
 | [unified-index-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/unified-index-mapping.md) | Field mapping Content + Wisdom-QA → search index |
 | [offline-bundle-delta-sync.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/offline-bundle-delta-sync.md) | Delta sync schema cho offline bundles |

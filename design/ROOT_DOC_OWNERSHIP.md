@@ -39,6 +39,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/repo-structure.md` | folder/file placement owner | repo shape, module anatomy, placement rules | không lặp full security/infra policy |
 | `baseline/platform-modules.md` | platform/control-plane owner | sessions, audit, flags, rate-limit, storage, health, metrics | không ôm domain module contracts |
 | `baseline/nest-baseline.md` | NestJS app pipeline owner | request pipeline, Zod, Pino, guards, error envelope | không lặp full infra policy |
+| `baseline/nestjs-11-adoption.md` | NestJS 11 feature adoption owner | exact scaffold line, Express v5 route stance, logger policy, selective use/defer list for Nest 11 capabilities | không thay request pipeline hay repo phase rules một mình |
 | `baseline/security.md` | security policy owner | auth, CSRF, CORS, cookies, upload security, webhook, secrets | không lặp infra topology |
 | `baseline/infra.md` | infra phase owner | phase baseline, optional components, trigger rules | không biến thành deep ops tutorial |
 | `baseline/high-traffic-resilience-plan.md` | growth-safe launch owner | launch profiles, traffic/crawl/abuse pressure stance, supporting tech order, anti-collapse rules | không thay failure-mode detail hay search contract một mình |

@@ -11,6 +11,15 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - logger: `Pino` qua `nestjs-pino`
 - API contract surface: `Swagger / OpenAPI`
 
+### NestJS 11 scaffold stance
+
+- baseline scaffold line: `NestJS 11.1.17`
+- HTTP platform baseline: `platform-express`
+- bootstrap baseline: `NestFactory.create(AppModule)`
+- route syntax phải bám Nest 11 + Express v5 semantics
+- `ConsoleLogger` không phải logging authority; chỉ chấp nhận bootstrap fallback rất sớm nếu logger module chưa dựng xong
+- ref owner: `baseline/nestjs-11-adoption.md`
+
 ## Không dùng làm mặc định
 
 - `class-validator` + class DTO decorators làm validation baseline
@@ -112,6 +121,16 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
   - `module`
   - `action`
 - không log password, raw token, secret, raw refresh token
+- không coi `ConsoleLogger({ json: true })` là thay thế cho `nestjs-pino`
+
+## NestJS 11 transport and framework notes
+
+- `plainToClass` không được dùng trong code mới; dùng `plainToInstance`
+- `setGlobalPrefix()` exclusions không dùng `RegExp` làm baseline
+- query parser stance phải được chốt rõ ở bootstrap; không để implicit framework default quyết định contract query của PMTL
+- `IntrinsicException` chỉ dùng khi thật sự cần skip framework auto-log cho infra-level path; không dùng để làm silent business error
+- `ParseDatePipe` được phép dùng như transport helper, nhưng không thay boundary validation bằng `Zod`
+- built-in cache / microservices / OTEL surfaces của Nest 11 chỉ được activate khi phase trigger tương ứng của PMTL đã đạt
 
 ## Prisma safety defaults
 

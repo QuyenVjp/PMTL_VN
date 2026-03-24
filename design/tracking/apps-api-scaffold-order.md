@@ -99,6 +99,9 @@ apps/api/prisma/schema.prisma
 - global prefix `/api`
 - request id / correlation id path
 - app bootstrap không nhét business logic
+- baseline Nest line = `11.1.17`
+- HTTP platform baseline = `platform-express`
+- route syntax trong controller phải bám Nest 11 + Express v5 semantics
 - `apps/api` giữ ownership của OpenAPI, guards, error envelope
 - `app.enableShutdownHooks()` là baseline để không tự cắt ngang graceful stop path
 
@@ -111,6 +114,8 @@ apps/api/prisma/schema.prisma
 
 - scaffold domain module trước khi có app shell
 - nhét Prisma client, auth helper, và custom error lung tung vào `common/`
+- dùng mental model route cũ của Express/Nest trước v11 cho wildcard/optional path
+- scaffold theo `ConsoleLogger` thay vì dựng Pino path ngay từ technical baseline
 
 ---
 

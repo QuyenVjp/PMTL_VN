@@ -131,8 +131,8 @@ Columns:
 
 | Package / runtime | Approved current line | Minimum acceptable | Status | Upgrade mode | Notes |
 |---|---|---|---|---|---|
-| NestJS | `11.x stable` | latest stable 11.x at scaffold time | target | exact pin in scaffold PR | authority stays `apps/api` |
-| `@nestjs/swagger` | `11.x-compatible stable` | line matching chosen NestJS major | target | exact pin in scaffold PR | must keep OpenAPI contract generation healthy |
+| NestJS core/common/platform-express | `11.1.17` | `11.1.17` | target | exact pin in scaffold PR | authority stays `apps/api`; see `baseline/nestjs-11-adoption.md` |
+| `@nestjs/swagger` | latest stable `11.x` compatible at scaffold time | line matching chosen NestJS major | target | exact pin in scaffold PR | must keep OpenAPI contract generation healthy |
 | Prisma ORM | `7.x stable` | latest stable 7.x at scaffold time | target | exact pin in scaffold PR | `DECISIONS.md` already chose Prisma |
 | Zod | same exact version as `packages/shared` | exact shared version | target | exact sync required | boundary validation canon |
 | Pino + `nestjs-pino` | latest stable line compatible with chosen NestJS | matching stable line | target | exact pin in scaffold PR | log schema governed by PMTL docs |
