@@ -1,6 +1,6 @@
 ---
 name: pmtl-multi-cli-orchestrator
-description: PMTL_VN governance skill for routing Claude Code CLI, OpenAI Codex CLI, GitHub Copilot CLI, Gemini CLI, and optional Aider runs to the right worker based on task shape, repo policy, and verified capability docs.
+description: PMTL_VN governance skill for routing GitHub Copilot CLI and Gemini CLI to the right lane based on task shape, repo policy, and verified capability docs.
 ---
 
 # PMTL Multi CLI Orchestrator
@@ -11,7 +11,7 @@ Own routing for external AI CLI workers so PMTL tasks use the smallest correct w
 
 ## Use When
 
-- The user asks for Claude Code, Codex CLI, Copilot CLI, Gemini CLI, Aider, or "multi agent" help.
+- The user asks for Copilot CLI, Gemini CLI, or "multi agent" help.
 - The task needs a second opinion, latest-doc research, or cross-model comparison.
 - The agent must decide which external worker should review, search, or implement a narrow subtask.
 - Worker configuration, prompts, or routing rules are being added or changed.
@@ -35,13 +35,10 @@ Own routing for external AI CLI workers so PMTL tasks use the smallest correct w
 2. Stay local when the task is trivial, purely repo-local, or already fully covered by the active PMTL skill stack.
 3. Use `references/routing-matrix.md` to pick the smallest correct worker set.
 4. Use Gemini first when the task depends on current external docs, version drift, or "what changed lately" research.
-5. Use Claude Code when the task spans more than a handful of files, changes repo policy or architecture docs, or needs a review-first loop with Claude-specific agents or hooks.
-6. Use Codex when the task is narrow enough to express as one compact non-interactive prompt, or when you specifically want `exec`, `review`, `mcp`, or optional `--search`.
-7. Use Copilot when the task is GitHub-centric in a concrete way: PRs, issues, Actions, GitHub MCP tools, Copilot custom agents, or prompt-file customization.
-8. Use Aider only as an opt-in git-aware patch lane, ideally in dry-run mode, when the task explicitly asks for Aider or benefits from its repo-map and patch-planning behavior more than from Codex.
-9. Merge only validated findings. External workers are advisors, not the policy authority.
-10. If workers disagree with PMTL docs, treat repo docs as authoritative unless the conflict is caused by external product drift. In that case, verify with official product docs and update repo docs in the same task before changing routing.
-11. If routing changes, update `AGENTS.md`, `docs/architecture/skills-taxonomy.md`, `docs/agent-cheatsheet.md`, and the worker-facing docs in the same task.
+5. Use Copilot when the task is GitHub-centric in a concrete way, or when you want a mainstream implementation sanity check on a bounded lane.
+6. Merge only validated findings. External workers are advisors, not the policy authority.
+7. If workers disagree with PMTL docs, treat repo docs as authoritative unless the conflict is caused by external product drift. In that case, verify with official product docs and update repo docs in the same task before changing routing.
+8. If routing changes, update `AGENTS.md`, `docs/architecture/skills-taxonomy.md`, `docs/agent-cheatsheet.md`, and the worker-facing docs in the same task.
 
 ## Quality Criteria
 
@@ -65,7 +62,7 @@ Own routing for external AI CLI workers so PMTL tasks use the smallest correct w
 - If the task is purely repo-local and no external worker adds real leverage, stay local and skip the wrappers.
 - If two workers recommend conflicting actions, prefer PMTL repo docs and local verification over model confidence.
 - If a worker exposes a feature locally but the repo does not rely on it yet, note it as optional instead of hard-wiring routing around it.
-- If a worker times out or loses auth, fall back to the next-best worker and record the limitation.
+- If one worker times out or loses auth, fall back to the other baseline worker and record the limitation.
 
 ## References
 

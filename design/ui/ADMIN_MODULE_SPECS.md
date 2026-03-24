@@ -389,9 +389,9 @@ Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [O
 ## 9. Niệm kinh (`/noi-dung/niem-kinh`)
 
 **Role**: `editor+`
-**API deps**: `/api/content/chant-items`, `/api/content/chant-plans`
+**API deps**: `/api/content/chant-items`, `/api/content/chant-plans`, `/api/admin/content/chanting/environment-rules`
 
-Tabs: [Bản kinh] [Ritual templates] [Chant Plans]
+Tabs: [Bản kinh] [Ritual templates] [Chant Plans] [Môi trường & thời gian]
 
 **Tab 1 — Bản kinh (Chant items)**:
 DataTable: Tên kinh, Type (chant/sutra), Duration, Audio file, Status
@@ -426,6 +426,33 @@ Edit: title, description, lyrics (rich text), audio file, category
 List of practice plans (morning chant, evening chant, etc.)
 Each plan: name, ordered list of chant items
 Drag-to-reorder items within plan
+
+**Tab 4 — Môi trường & thời gian**:
+- owner cho bộ rule `time/place/environment/body-state`
+- grouped editor theo 6 buckets:
+  - `time-rules`
+  - `place-rules`
+  - `food-body-rules`
+  - `posture-hygiene-rules`
+  - `special-location-cautions`
+  - `non-interpretive-cautions`
+- mỗi rule phải quản được:
+  - `ruleKey`
+  - `title`
+  - `canonicalWording`
+  - `severity`
+  - `productizationMode`
+  - `safeLaneRefs[]`
+  - `avoidItems[]`
+  - `shortReason`
+  - `sourceReference`
+  - `versionNote`
+- các rule như `giấc mơ`, `ánh sáng`, `tro/lửa` phải bị khóa ở mode `reference-only`, không cho editor biến thành calculator wording
+- preview phải hiện:
+  - warning card
+  - environment checklist item
+  - special-location caution
+  - reference-only note
 
 ---
 

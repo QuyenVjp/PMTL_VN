@@ -459,7 +459,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     router_parser = subparsers.add_parser("multi-cli-router")
     router_parser.add_argument("--task", required=True)
-    router_parser.add_argument("--provider", choices=["claude", "codex", "copilot", "gemini", "aider"])
+    router_parser.add_argument("--provider", choices=["copilot", "gemini"])
     router_parser.add_argument("--compare", action="store_true")
     router_parser.add_argument("--route-only", action="store_true")
     router_parser.add_argument("--speed", choices=["fast", "balanced", "deep"], default="fast")

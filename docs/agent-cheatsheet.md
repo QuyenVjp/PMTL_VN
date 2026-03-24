@@ -108,18 +108,17 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 - `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
-- `pmtl-multi-cli-orchestrator`: điều phối Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, và Aider theo đúng lane thay vì gọi bừa.
-- External CLI workers: dùng `py infra/tools/external_agent.py --provider claude|codex|copilot|gemini|aider --prompt "..."` khi cần second opinion từ Claude Code CLI, Codex CLI, Copilot CLI, Gemini CLI, hoặc Aider.
-- Wrapper hiện giữ `sticky workspace session` cho Claude, Copilot, và Gemini tại `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json`.
-- Nếu Claude/Copilot dính session stale, wrapper tự bỏ resume token hỏng và rerun fresh một lần thay vì fail cứng ngay.
+- `pmtl-multi-cli-orchestrator`: điều phối Gemini CLI và Copilot CLI theo đúng lane thay vì gọi bừa.
+- External CLI workers: dùng `py infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Gemini CLI hoặc Copilot CLI.
+- Wrapper hiện giữ `sticky workspace session` cho Copilot và Gemini tại `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json`.
+- Nếu Copilot dính session stale, wrapper tự bỏ resume token hỏng và rerun fresh một lần thay vì fail cứng ngay.
 - Wrapper còn lưu `conversation.jsonl` cùng thư mục runtime để tự bơm lại vài lượt chat gần nhất khi provider resume không ổn định.
 - `--interaction-mode auto` là mặc định: prompt dạng chat chạy trong runtime dir sạch để tránh nạp repo MCP/skills không cần thiết; prompt có path/repo signal rõ mới giữ workspace context.
 - Ép mode bằng `--interaction-mode chat` hoặc `--interaction-mode repo` khi cần kiểm soát rõ hơn.
 - `repo` mode nên ghi rõ file/path cần đọc; wrapper hiện nhắc worker chỉ đọc đúng những path được nêu thay vì quét repo lan man.
 - Dùng `--session-mode fresh` nếu muốn cắt ngữ cảnh cũ, hoặc `--session-mode resume-latest` nếu muốn bám phiên CLI gần nhất của provider khi được hỗ trợ.
-- Claude-side fast path: dùng `/multi-cli-router <task>` để nó tự route worker thay vì bắt người dùng nhớ provider.
 - Repo wrapper nhanh trên Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
-- `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Claude/Copilot và chỉ gọi Gemini/Codex khi tín hiệu đủ rõ.
+- `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Copilot cho implementation sanity và Gemini cho docs research.
 - `--speed balanced`: giữ routing trung tính hơn.
 - `--speed deep`: ưu tiên review/context sâu hơn tốc độ.
 - `aider`: lane opt-in cho git-aware patch proposals; wrapper hiện chạy dry-run, không auto-commit, hợp cho đề xuất diff hơn là thay repo trực tiếp.
@@ -128,7 +127,7 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 ### 2. PMTL core
 
 - `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
-- `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, bao gồm docs research, second opinion, và task split theo thế mạnh từng CLI.
+- `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, hiện baseline là Gemini và Copilot cho docs research, second opinion, và task split theo thế mạnh từng CLI.
 - `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
 - `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL.
 - `pmtl-ui-behavior`, `pmtl-ui-style-system`, `pmtl-review-web-ui`: behavior, style, UI review.

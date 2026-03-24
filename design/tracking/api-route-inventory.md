@@ -167,6 +167,8 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/content/media-library/featured` | `content` | public |
 | `GET` | `/content/media-library/tags` | `content` | public |
 | `GET` | `/content/chant-hub` | `content` | public |
+| `GET` | `/content/chanting/environment-rules` | `content` | public |
+| `GET` | `/content/chanting/environment-rules/:groupKey` | `content` | public |
 | `GET` | `/content/chant-items` | `content` | public |
 | `GET` | `/content/chant-items/:publicIdOrSlug` | `content` | public |
 | `GET` | `/content/chant-ritual-templates` | `content` | public |
@@ -219,6 +221,9 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/admin/content/chant-plans` | `content` | editor+ |
 | `POST` | `/admin/content/chant-plans` | `content` | editor+ |
 | `PATCH` | `/admin/content/chant-plans/:publicId` | `content` | editor+ |
+| `GET` | `/admin/content/chanting/environment-rules` | `content` | editor+ |
+| `POST` | `/admin/content/chanting/environment-rules` | `content` | editor+ |
+| `PATCH` | `/admin/content/chanting/environment-rules/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/chanting/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
 | `DELETE` | `/content/media/:publicId` | `content` + `storage` | owner/admin |
@@ -226,6 +231,7 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 > `POST /content/media/upload` là signed upload/register primitive; response owner theo `tracking/api-dto-shape-plan.md` row `SignedUploadResponseDto`.
 > route upload không được expose provider-specific shape trực tiếp; client chỉ nhận contract đủ để upload và finalize theo policy PMTL.
 > `GET /content/chant-hub` là public support aggregate cho `/niem-kinh`; không để web tự ghép chant items + ritual templates + guide refs từ nhiều route.
+> `GET /content/chanting/environment-rules` là public support aggregate cho `/niem-kinh/luu-y-moi-truong-va-thoi-gian`; không trả raw FAQ blob hoặc để web tự chắp rule từ component demo.
 > `chant-items` là unit-level chant content; `chant-ritual-templates` là multi-step ritual owner như `thắp tâm hương`; `chant-plans` chỉ compose từ owner records chứ không chôn raw ritual flow.
 
 ## Community

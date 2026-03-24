@@ -479,6 +479,35 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.9a Chant Environment Rules
+
+| Field | Value |
+|---|---|
+| Route | `/niem-kinh/luu-y-moi-truong-va-thoi-gian` |
+| Title | Lưu ý môi trường & thời gian khi niệm kinh |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- intro ngắn giải thích đây là canon cho `time/place/environment/body-state`
+- 6 nhóm rule:
+  - thời gian
+  - địa điểm
+  - ăn uống & thể trạng
+  - tư thế & vệ sinh
+  - nơi đặc biệt
+  - những gì không nên tự suy diễn
+- quick checklist `Trước khi bắt đầu`
+- special-location caution cards
+- reference-only caution notes cho giấc mơ / ánh sáng / tro lửa
+- related guide refs sang `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`
+
+**Route rule**:
+- đây là source-of-truth page, không chỉ là FAQ mở rộng
+- các surface khác được nhúng snippet / deep-link từ đây, không copy wording mỗi nơi một kiểu
+
+---
+
 ### 1.10 Chant Item Detail
 
 | Field | Value |

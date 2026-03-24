@@ -163,11 +163,8 @@ Use them only when:
 
 | Worker | Best Use |
 |---|---|
-| `Claude` | nuanced review, architecture critique, writing-heavy policy tension, doc rewrites |
 | `Gemini` | broad synthesis, current external research, family or market scanning, alternative framing |
 | `Copilot` | implementation sanity checks, mainstream engineering patterns, GitHub-centric review |
-| `Codex CLI` | compact narrow tasks where another OpenAI lane is useful |
-| `Aider` | opt-in git-aware patch proposals, dry-run by default, never default governance |
 
 ### Escalation Rules
 
@@ -175,6 +172,7 @@ Use them only when:
 - Use the smallest correct worker set.
 - Prefer one external worker for review lanes.
 - Use two external workers max for contested lanes.
+- Current PMTL external baseline is `Gemini + Copilot` only. Claude, Codex CLI, and Aider stay disabled until explicitly re-enabled in repo governance.
 - Keep prompts short, path-based, and bounded.
 - Never paste giant repo blobs when a file path will do.
 

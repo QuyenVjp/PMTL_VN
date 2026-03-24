@@ -65,7 +65,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
 - Use `pmtl-workflow-router` first when the task spans multiple phases such as planning, implementation, review, or verification.
 - Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
-- Use global Codex or Claude Code skills only for platform tooling or external integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
+- Use global platform skills only for tool-oriented integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
 - Prefer canonical PMTL skills over compatibility aliases and design-library entrypoints unless the user explicitly names the older skill.
 
 ## Agent Operating Model
@@ -99,15 +99,15 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Monitoring drills: `pnpm monitoring:test`, `pnpm telegram:test`
 
 ## External Workers
-- Codex may consult external CLI workers when the user explicitly asks for Claude Code, Codex CLI, Copilot, Gemini, or Aider input, or when a second opinion is materially useful.
+- Codex may consult external CLI workers when the user explicitly asks for Gemini or Copilot input, or when a second opinion is materially useful.
 - Use `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md` when deciding which worker should search, review, or implement a narrow subtask.
 - Phrases such as `use multi-cli router` or `dung multi-cli router` mean: apply `pmtl-multi-cli-orchestrator` and dispatch the smallest correct worker set without asking the user to pick a provider.
 - Preferred repo wrapper: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast [--compare]`
-- Use `--speed balanced` when you specifically want Codex/Gemini to stay more competitive.
+- Use `--speed balanced` when you want Gemini and Copilot to stay equally eligible.
 - Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast [--compare]`
-- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
-- External worker wrapper now keeps sticky per-workspace sessions under `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json` for Claude, Copilot, and Gemini.
-- Wrapper auto-recovers from stale Claude/Copilot resume tokens by dropping the bad saved session and rerunning fresh once.
+- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <copilot|gemini> --prompt "<prompt>"`
+- External worker wrapper now keeps sticky per-workspace sessions under `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json` for Copilot and Gemini.
+- Claude, Codex CLI, and Aider are currently out of the PMTL external-worker baseline and should not be auto-routed until explicitly re-enabled.
 - Wrapper also keeps a lightweight local conversation memory at `~/.codex/subagent-runtime/<provider>/<workspace-key>/conversation.jsonl` so chat context survives even when provider resume quality is uneven.
 - Default wrapper behavior is `--interaction-mode auto`: chat-style prompts run in a clean runtime dir so repo MCP/skills are not loaded unnecessarily; repo-aware prompts keep workspace context.
 - Use `--interaction-mode repo` when the worker must read repo context, or `--interaction-mode chat` when you want a lightweight answer lane.

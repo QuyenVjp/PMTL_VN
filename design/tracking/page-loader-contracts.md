@@ -29,6 +29,7 @@ Mục tiêu:
 | Route pattern | Primary loader contract | Auxiliary loaders | Notes |
 |---|---|---|---|
 | `/niem-kinh` | `ChantHubPageDto` | `memberPracticeContext` nếu signed-in, `dailyGuideRefs` nếu chưa nằm trong aggregate | support hub, không chỉ chant library list |
+| `/niem-kinh/luu-y-moi-truong-va-thoi-gian` | `ChantEnvironmentRulesPageDto` | `memberPracticeContext` nếu signed-in, `relatedGuideMiniList` | rule canon surface; không để page tự ráp từ FAQ/component demo |
 | `/niem-kinh/[slug]` | `ChantItemDetailDto` | `practiceLogState` nếu signed-in, `relatedPlanMiniList` | item detail không được nhét full ritual flow |
 | `/niem-kinh/nghi-thuc/[slug]` | `ChantRitualTemplateDetailDto` | `relatedPlanMiniList`, `trackerCtaState` nếu signed-in | ritual detail phải render stepper/card flow, không phải long-form article |
 | `/niem-kinh/ke-hoach/[slug]` | `ChantPlanDetailDto` | `progressState` nếu signed-in, `relatedGuideMiniList` | plan detail là ordered composition surface |
@@ -91,6 +92,23 @@ Rules:
 - FE phải render được stepper và step cards chỉ từ aggregate payload.
 - không parse từ raw markdown/article body để tự suy ra step types.
 - `thắp tâm hương` phải hiển thị rõ `quán tưởng`, `niệm thầm`, `lạy`, `số biến`.
+
+### `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
+
+`ChantEnvironmentRulesPageDto` tối thiểu phải có:
+- `intro`
+- `groupCards[]`
+- `groups[]`
+- `quickChecklist`
+- `specialLocationHighlights[]`
+- `referenceOnlyCautions[]`
+- `relatedGuideRefs[]`
+
+Rules:
+- page này là canon rule surface, không phải một bài FAQ dài.
+- FE không tự merge content từ `DailyRecitationQA.tsx`, `ChantingNotesSection.tsx`, hay note rời.
+- `referenceOnlyCautions[]` không được biến thành calculator/auto-interpretation UX.
+- tracker và grouped guides chỉ được reuse snippets/cards từ aggregate này hoặc group route tương ứng.
 
 ### `/niem-kinh/ke-hoach/[slug]`
 

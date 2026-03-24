@@ -17,6 +17,7 @@ SESSION_MODES = ("auto", "fresh", "sticky", "resume-latest")
 INTERACTION_MODES = ("auto", "chat", "repo")
 MAX_MEMORY_TURNS = 6
 MAX_MEMORY_CHARS = 600
+PROVIDER_HEALTH_TTL_SECONDS = 6 * 60 * 60
 
 
 def parse_args() -> argparse.Namespace:
@@ -26,7 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         required=True,
-        choices=("claude", "codex", "copilot", "gemini", "aider"),
+        choices=("copilot", "gemini"),
         help="External CLI to run.",
     )
     parser.add_argument(
@@ -126,6 +127,10 @@ def provider_memory_path(cwd: Path, provider: str) -> Path:
     return provider_runtime_dir(cwd, provider) / "conversation.jsonl"
 
 
+def provider_health_path(cwd: Path, provider: str) -> Path:
+    return provider_runtime_dir(cwd, provider) / "health.json"
+
+
 def classify_interaction_mode(prompt: str, mode: str) -> str:
     if mode != "auto":
         return mode
@@ -197,6 +202,90 @@ def delete_file_if_exists(path: Path) -> None:
         path.unlink()
     except FileNotFoundError:
         return
+
+
+def load_provider_health(cwd: Path, provider: str) -> dict | None:
+    payload = load_json_file(provider_health_path(cwd, provider))
+    if not payload:
+        return None
+    recorded_at = payload.get("recorded_at")
+    if not isinstance(recorded_at, (int, float)):
+        return None
+    if time.time() - float(recorded_at) > PROVIDER_HEALTH_TTL_SECONDS:
+        delete_file_if_exists(provider_health_path(cwd, provider))
+        return None
+    return payload
+
+
+def store_provider_health(cwd: Path, provider: str, *, status: str, message: str) -> None:
+    save_json_file(
+        provider_health_path(cwd, provider),
+        {
+            "status": status,
+            "message": message,
+            "recorded_at": int(time.time()),
+        },
+    )
+
+
+def clear_provider_health(cwd: Path, provider: str) -> None:
+    delete_file_if_exists(provider_health_path(cwd, provider))
+
+
+def extract_cli_error_message(stdout: str, stderr: str) -> str:
+    for source in (stderr, stdout):
+        for line in reversed(source.splitlines()):
+            candidate = line.strip()
+            if not candidate:
+                continue
+            if candidate.startswith("{"):
+                try:
+                    payload = json.loads(candidate)
+                except json.JSONDecodeError:
+                    pass
+                else:
+                    for key in ("result", "message", "error"):
+                        value = payload.get(key)
+                        if isinstance(value, str) and value.strip():
+                            return value.strip()
+            return candidate
+    return "Unknown external worker failure."
+
+
+def is_provider_auth_access_error(provider: str, message: str) -> bool:
+    text = message.lower()
+    generic_markers = (
+        "please login again",
+        "not logged in",
+        "authentication required",
+        "access denied",
+        "unauthorized",
+        "forbidden",
+    )
+    provider_markers = {
+        "claude": (
+            "does not have access to claude",
+            "contact your administrator",
+        ),
+        "copilot": (
+            "failed to authenticate",
+            "login required",
+        ),
+    }
+    return any(marker in text for marker in generic_markers) or any(
+        marker in text for marker in provider_markers.get(provider, ())
+    )
+
+
+def format_provider_auth_access_error(provider: str, message: str) -> str:
+    if provider == "claude":
+        return (
+            "Claude CLI authentication is present but this account/org cannot run Claude requests right now. "
+            f"Claude said: {message} "
+            "Run `claude auth logout`, then `claude auth login --claudeai --email <your-email>`. "
+            "If the problem persists, run `claude setup-token` or contact the Anthropic org admin to restore Claude Code access."
+        )
+    return message
 
 
 def is_stale_session_error(message: str) -> bool:
@@ -346,6 +435,7 @@ def run_command_with_retries(
     cwd: Path,
     timeout_seconds: int,
     retries: int,
+    provider: str | None = None,
 ) -> subprocess.CompletedProcess[str]:
     last_error: Exception | None = None
     max_attempts = max(1, retries + 1)
@@ -374,7 +464,9 @@ def run_command_with_retries(
         if completed.returncode == 0:
             return completed
 
-        message = completed.stderr.strip() or completed.stdout.strip() or "Unknown external worker failure."
+        message = extract_cli_error_message(completed.stdout, completed.stderr)
+        if provider and is_provider_auth_access_error(provider, message):
+            raise RuntimeError(format_provider_auth_access_error(provider, message))
         last_error = RuntimeError(f"{message} (attempt {attempt}/{max_attempts})")
         if attempt == max_attempts:
             raise last_error
@@ -509,6 +601,12 @@ def run_claude(
     if not claude_script:
         raise RuntimeError("Claude Code CLI executable was not found on PATH.")
 
+    cached_health = load_provider_health(cwd, "claude") if session_mode != "fresh" else None
+    if cached_health and cached_health.get("status") == "auth_unavailable":
+        cached_message = cached_health.get("message")
+        if isinstance(cached_message, str) and cached_message.strip():
+            raise RuntimeError(cached_message)
+
     state = load_provider_session(cwd, "claude") if session_mode in {"auto", "sticky"} else None
     execution_cwd = command_cwd(cwd, "claude", interaction_mode)
     default_model = "claude-haiku-4-5" if interaction_mode == "chat" else "sonnet"
@@ -562,6 +660,7 @@ def run_claude(
             cwd=execution_cwd,
             timeout_seconds=timeout_seconds,
             retries=retries,
+            provider="claude",
         )
     except RuntimeError as exc:
         if state and is_stale_session_error(str(exc)):
@@ -581,8 +680,11 @@ def run_claude(
                 cwd=execution_cwd,
                 timeout_seconds=timeout_seconds,
                 retries=0,
+                provider="claude",
             )
         else:
+            if is_provider_auth_access_error("claude", str(exc)):
+                store_provider_health(cwd, "claude", status="auth_unavailable", message=str(exc))
             raise
 
     try:
@@ -601,6 +703,7 @@ def run_claude(
             "claude",
             {"session_id": session_id.strip(), "model": resolved_model},
         )
+    clear_provider_health(cwd, "claude")
 
     return response, resolved_model
 

@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXTERNAL_AGENT = ROOT / "infra" / "tools" / "external_agent.py"
-PROVIDERS = ("claude", "codex", "copilot", "gemini", "aider")
+PROVIDERS = ("copilot", "gemini")
 
 
 def parse_args() -> argparse.Namespace:
@@ -99,103 +99,47 @@ def score_task(task: str) -> tuple[dict[str, int], list[str]]:
         scores["copilot"] += 5
         reasons.append("GitHub-centric wording pushes priority to Copilot.")
 
-    policy_keywords = (
+    repo_policy_keywords = (
         "architecture",
         "design",
         "repo policy",
         "routing",
         "skill",
         "agents.md",
-        "claude.md",
         "docs",
         "governance",
-        "review first",
-        "multi file",
-        "cross file",
         "source of truth",
-    )
-    if any(keyword in text for keyword in policy_keywords):
-        scores["claude"] += 4
-        reasons.append("Policy or architecture wording pushes priority to Claude.")
-
-    repo_policy_paths = ("agents.md", "claude.md", "team_guide.md", "design/")
-    if any(keyword in text for keyword in repo_policy_paths):
-        scores["claude"] += 3
-        reasons.append("Repo policy file references increase Claude priority.")
-
-    high_context_policy = ("architecture", "repo policy", "source of truth", "governance", "agents policy")
-    if any(keyword in text for keyword in high_context_policy):
-        scores["claude"] += 2
-        reasons.append("High-context policy wording strengthens Claude as primary reviewer.")
-
-    codex_keywords = (
-        "script",
-        "wrapper",
-        "patch",
-        "diff",
         "review",
-        "non-interactive",
+        "wrapper",
         "cli",
-        "exec",
-        "command",
-        "regex",
-        "json",
         "automation",
-        "targeted",
-        "focused",
     )
-    if any(keyword in text for keyword in codex_keywords):
-        scores["codex"] += 4
-        reasons.append("Focused scripting or review wording pushes priority to Codex.")
-
-    aider_keywords = (
-        "aider",
-        "pair programming",
-        "git-aware patch",
-        "dry-run patch",
-        "repo map",
-    )
-    if any(keyword in text for keyword in aider_keywords):
-        scores["aider"] += 6
-        reasons.append("Explicit aider or git-aware patch wording enables the optional Aider lane.")
+    if any(keyword in text for keyword in repo_policy_keywords):
+        scores["copilot"] += 2
+        reasons.append("Repo-policy or wrapper wording makes Copilot the stronger implementation sanity lane.")
 
     path_hits = re.findall(r"(?:^|\s)(?:[A-Za-z]:)?[\\/.\w-]+(?:/[.\w-]+)+(?:\.[A-Za-z0-9]+)?", task)
     if len(path_hits) >= 3:
-        scores["claude"] += 2
-        reasons.append("Multiple path references suggest a higher-context review.")
+        scores["gemini"] += 2
+        reasons.append("Multiple path references suggest a broader synthesis pass.")
     elif len(path_hits) == 1:
-        scores["codex"] += 1
-        reasons.append("Single-path task suggests a narrower worker lane.")
+        scores["copilot"] += 1
+        reasons.append("Single-path task suggests a narrower implementation lane.")
 
     if "compare" in text or "second opinion" in text:
         scores["gemini"] += 1
-        scores["codex"] += 1
+        scores["copilot"] += 1
         reasons.append("Comparison wording makes a two-worker lane more likely.")
 
     if all(value == 0 for value in scores.values()):
-        scores["claude"] = 2
-        reasons.append("Default fallback is Claude for general repo-aware tasks.")
+        scores["gemini"] = 2
+        reasons.append("Default fallback is Gemini for general external synthesis tasks.")
 
     return scores, reasons
 
 
 def pick_secondary(primary: str, scores: dict[str, int]) -> str:
-    preferred = {
-        "gemini": "codex",
-        "claude": "codex",
-        "codex": "claude",
-        "copilot": "claude",
-        "aider": "claude",
-    }
-    candidate = preferred[primary]
-    if candidate != primary:
-        return candidate
-
-    ordered = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
-    for provider, _score in ordered:
-        if provider != primary:
-            return provider
-    return primary
+    return "copilot" if primary == "gemini" else "gemini"
 
 
 def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: list[str]) -> None:
@@ -206,44 +150,33 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
     if speed == "fast":
         explicit_gemini = any(token in text for token in ("latest", "official docs", "version drift", "research", "what changed"))
         explicit_copilot = any(token in text for token in ("github", "pull request", "actions", "workflow", "copilot"))
-        explicit_codex = any(token in text for token in ("codex", "exec", "jsonl", "non-interactive"))
-        explicit_aider = any(token in text for token in ("aider", "pair programming", "dry-run patch", "git-aware patch"))
 
         if not explicit_gemini:
             scores["gemini"] -= 2
         else:
             scores["gemini"] += 2
-        if not explicit_codex:
-            scores["codex"] -= 3
-        else:
-            scores["codex"] += 1
-        if not explicit_aider:
-            scores["aider"] -= 3
-        else:
-            scores["aider"] += 1
         if not explicit_copilot:
             scores["copilot"] -= 1
-        scores["claude"] += 1
-        reasons.append("Fast mode biases toward the quickest useful lane and avoids slower workers unless clearly warranted.")
+        reasons.append("Fast mode biases toward Gemini research and Copilot implementation instead of broader worker fan-out.")
         return
 
     if speed == "deep":
-        scores["claude"] += 1
-        scores["codex"] += 1
-        reasons.append("Deep mode keeps higher-context and review-heavy workers eligible.")
+        scores["gemini"] += 1
+        scores["copilot"] += 1
+        reasons.append("Deep mode keeps both Gemini and Copilot eligible for a comparison lane.")
 
 
 def provider_rank(provider: str, speed: str) -> int:
     if speed == "fast":
-        order = ("claude", "copilot", "gemini", "codex", "aider")
+        order = ("copilot", "gemini")
     elif speed == "deep":
-        order = ("claude", "codex", "gemini", "copilot", "aider")
+        order = ("gemini", "copilot")
     else:
-        order = ("claude", "gemini", "codex", "copilot", "aider")
+        order = ("gemini", "copilot")
     return order.index(provider)
 
 
-def route_task(task: str, forced_provider: str | None, compare: bool, speed: str) -> dict[str, object]:
+def route_task(task: str, forced_provider: str | None, compare: bool, speed: str, cwd: Path) -> dict[str, object]:
     scores, reasons = score_task(task)
     apply_speed_bias(scores, task, speed, reasons)
     if forced_provider:
@@ -322,7 +255,7 @@ def emit_text(result: dict[str, object], debug: bool) -> None:
 def main() -> int:
     args = parse_args()
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
-    route = route_task(args.task, args.provider, args.compare, args.speed)
+    route = route_task(args.task, args.provider, args.compare, args.speed, cwd)
     result: dict[str, object] = {"ok": True, "task": args.task, "route": route, "runs": []}
 
     if not args.route_only:

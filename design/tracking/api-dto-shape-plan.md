@@ -39,6 +39,8 @@ Mục tiêu:
 | auth session state | `AuthSessionStateDto` | `user`, `session`, `permissions`, `mustRefreshBefore`, `requiresEmailVerification`, `securityFlags[]` | owner cho `/auth/me` và auth bootstrap surfaces; không trả raw refresh token |
 | signed upload response | `SignedUploadResponseDto` | `publicId`, `uploadUrl`, `uploadMethod`, `expiresAt`, `expectedPublicUrl`, `allowedMimeTypes[]`, `maxBytes` | owner cho signed upload/register flow; `uploadUrl` short-TTL, không cache ở client |
 | chant hub page | `ChantHubPageDto` | `entryCards[]`, `ritualTemplates[]`, `chantItems[]`, `chantPlans[]`, `faqHighlights[]`, `guideRefs[]` | owner cho `/niem-kinh`; hub support surface, không chỉ generic list |
+| chant environment rules page | `ChantEnvironmentRulesPageDto` | `intro`, `groupCards[]`, `groups[]`, `quickChecklist`, `specialLocationHighlights[]`, `referenceOnlyCautions[]`, `relatedGuideRefs[]` | owner cho `/niem-kinh/luu-y-moi-truong-va-thoi-gian`; rule canon surface |
+| chant environment rule group | `ChantEnvironmentRuleGroupDto` | `groupKey`, `title`, `summary`, `severityLegend[]`, `rules[]`, `lastReviewedAt`, `versionNote?` | owner cho `/content/chanting/environment-rules/:groupKey`; không trả long-form blob |
 | chant item detail | `ChantItemDetailDto` | `publicId`, `slug`, `title`, `summary`, `textBlocks[]`, `audioCompanion`, `recommendedCounts[]`, `timeRules[]`, `relatedRituals[]`, `relatedPlans[]` | owner cho `/niem-kinh/[slug]`; không embed full ritual flow |
 | chant ritual template detail | `ChantRitualTemplateDetailDto` | `publicId`, `slug`, `title`, `summary`, `context`, `preparationChecklist[]`, `steps[]`, `conditionalRules[]`, `relatedChantItems[]`, `relatedPlans[]`, `nextRoutes[]` | owner cho `/niem-kinh/nghi-thuc/[slug]`; flow nhiều bước như `thắp tâm hương` |
 | chant plan detail | `ChantPlanDetailDto` | `publicId`, `slug`, `title`, `summary`, `estimatedDurationMinutes`, `entryRequirements[]`, `orderedSections[]`, `relatedRitualTemplate?`, `nextActions[]` | owner cho `/niem-kinh/ke-hoach/[slug]`; composition surface |
@@ -143,6 +145,77 @@ Dùng khi route canon moderation comment detail được scaffold:
 - `chantItems[]` chỉ là curated subset, không dump toàn bộ library nếu page đã có CTA rõ hơn.
 - `faqHighlights[]` là short snippets; full FAQ vẫn ở guide owner khi cần.
 - `guideRefs[]` là bridges sang `/kinh-bai-tap/*`, không duplicate full guide payload.
+
+### `ChantEnvironmentRulesPageDto`
+
+- `intro` tối thiểu:
+  - `title`
+  - `summary`
+  - `updatedAt`
+- `groupCards[]` là primary entry points cho 6 buckets:
+  - `time-rules`
+  - `place-rules`
+  - `food-body-rules`
+  - `posture-hygiene-rules`
+  - `special-location-cautions`
+  - `non-interpretive-cautions`
+- `groups[]` dùng `ChantEnvironmentRuleGroupDto`, nhưng page aggregate có thể chỉ preload expanded groups cần thiết cho first paint.
+- `quickChecklist` tối thiểu:
+  - `beforeYouStart[]`
+  - `whenToPause[]`
+  - `safeLaneSuggestions[]`
+- `specialLocationHighlights[]` là curated mini list; full rules nằm trong group tương ứng.
+- `referenceOnlyCautions[]` chỉ gồm safe projection:
+  - `topic`
+  - `summary`
+  - `ctaLabel`
+  - `ctaHref`
+- `relatedGuideRefs[]` là bridges sang `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`; không duplicate full guide payload.
+
+### `ChantEnvironmentRuleGroupDto`
+
+- `groupKey` canonical values:
+  - `time-rules`
+  - `place-rules`
+  - `food-body-rules`
+  - `posture-hygiene-rules`
+  - `special-location-cautions`
+  - `non-interpretive-cautions`
+- `rules[]` mỗi item tối thiểu:
+  - `ruleKey`
+  - `title`
+  - `canonicalWording`
+  - `severity`
+  - `productizationMode`
+  - `safeLaneRefs[]?`
+  - `avoidItems[]?`
+  - `shortReason?`
+  - `sourceReference?`
+  - `versionNote?`
+  - `referenceOnly`
+- `severity` canonical values:
+  - `advisory`
+  - `caution`
+  - `strong_guardrail`
+  - `quality_guidance`
+  - `reference_only`
+- `productizationMode` canonical values:
+  - `warning_card`
+  - `checklist_item`
+  - `safe_lane_suggestion`
+  - `drawer_note`
+  - `reference_only_note`
+  - `do_not_automate`
+- `referenceOnly = true` là bắt buộc cho:
+  - ánh sáng
+  - giấc mơ / con số
+  - tro / ngọn lửa
+  - các hiện tượng không được product hóa thành tool phán đoán
+- DTO này không được chứa:
+  - user acknowledgment state
+  - calculator output
+  - auto-interpretation result
+  - raw article body chưa phân nhóm
 
 ### `ChantItemDetailDto`
 

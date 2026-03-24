@@ -118,5 +118,5 @@ Backlog owner for the missing PMTL-native lanes:
 - Repo-local PMTL skills are the canonical source of repo behavior for both Codex and Claude Code when working inside this repository.
 - Superpowers is the preferred generic workflow engine, not the source of PMTL repo policy.
 - Global platform skills should stay tool-oriented and generic rather than duplicating repo policy.
-- External worker routing keeps `aider` as an opt-in dry-run patch lane; the default auto-routing baseline remains Claude, Codex, Copilot, and Gemini unless the task explicitly asks for Aider-like behavior.
+- External worker routing baseline is currently `Gemini + Copilot` only. Claude, Codex CLI, and Aider stay disabled in PMTL auto-routing until they are explicitly re-enabled.
 - Read `docs/agent-operating-model.md` when the task changes Codex role framing, local subagent usage, or external-worker governance.
