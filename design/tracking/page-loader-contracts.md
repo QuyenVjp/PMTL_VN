@@ -28,6 +28,10 @@ Mục tiêu:
 
 | Route pattern | Primary loader contract | Auxiliary loaders | Notes |
 |---|---|---|---|
+| `/niem-kinh` | `ChantHubPageDto` | `memberPracticeContext` nếu signed-in, `dailyGuideRefs` nếu chưa nằm trong aggregate | support hub, không chỉ chant library list |
+| `/niem-kinh/[slug]` | `ChantItemDetailDto` | `practiceLogState` nếu signed-in, `relatedPlanMiniList` | item detail không được nhét full ritual flow |
+| `/niem-kinh/nghi-thuc/[slug]` | `ChantRitualTemplateDetailDto` | `relatedPlanMiniList`, `trackerCtaState` nếu signed-in | ritual detail phải render stepper/card flow, không phải long-form article |
+| `/niem-kinh/ke-hoach/[slug]` | `ChantPlanDetailDto` | `progressState` nếu signed-in, `relatedGuideMiniList` | plan detail là ordered composition surface |
 | `/ngoi-nha-nho/[group]` | `GroupedContentLandingDto` | `relatedFaqHighlights`, `downloadPanel` nếu chưa nằm trong aggregate | không gọi full guide detail cho từng card |
 | `/ngoi-nha-nho/[group]/[slug]` | `GroupedContentGuideDetailDto` | `trackerCtaState` nếu signed-in, `relatedGuidesMiniList` | summary/TOC/blocks phải đến từ 1 detail aggregate |
 | `/kinh-bai-tap/[group]` | `GroupedContentLandingDto` | `scenarioPresetHighlights`, `downloadPanel` | không fetch toàn bộ preset content nếu chỉ cần highlights |
@@ -57,6 +61,49 @@ Mục tiêu:
 | `/admin/he-thong/thong-bao` | `AdminNotificationOpsPageDto` | `deliveryHealthSummary`, `jobQueueMiniStats` nếu chưa nằm trong aggregate | queue health và subscription stats phải có owner aggregate rõ |
 
 ## Special notes
+
+### `/niem-kinh`
+
+`ChantHubPageDto` tối thiểu phải có:
+- `entryCards[]`
+- `ritualTemplates[]`
+- `chantItems[]`
+- `chantPlans[]`
+- `faqHighlights[]`
+- `guideRefs[]`
+
+Rules:
+- route này là support hub, không phải chỉ data dump của chant items.
+- user mới phải nhìn thấy đường đi `guide -> nghi thức -> thực hành`, không phải tự mò từ library.
+- nếu signed-in mới có personalized context thì phần đó là aux non-blocking.
+
+### `/niem-kinh/nghi-thuc/[slug]`
+
+`ChantRitualTemplateDetailDto` tối thiểu phải có:
+- `summary`
+- `preparationChecklist[]`
+- `steps[]`
+- `conditionalRules[]`
+- `relatedChantItems[]`
+- `nextRoutes[]`
+
+Rules:
+- FE phải render được stepper và step cards chỉ từ aggregate payload.
+- không parse từ raw markdown/article body để tự suy ra step types.
+- `thắp tâm hương` phải hiển thị rõ `quán tưởng`, `niệm thầm`, `lạy`, `số biến`.
+
+### `/niem-kinh/ke-hoach/[slug]`
+
+`ChantPlanDetailDto` tối thiểu phải có:
+- `estimatedDurationMinutes`
+- `entryRequirements[]`
+- `orderedSections[]`
+- `relatedRitualTemplate?`
+- `nextActions[]`
+
+Rules:
+- nếu plan có ritual mở đầu, page chỉ ref ritual template card/detail owner, không duplicate toàn bộ flow.
+- CTA sang tracker hoặc guide phải mang context, không link trần.
 
 ### `/dashboard`
 

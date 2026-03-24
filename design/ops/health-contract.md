@@ -227,6 +227,59 @@ Verifies all platform modules initialized (in startup order):
 
 ## Internal admin health dashboard (`/he-thong/health`)
 
+## Admin dashboard aggregate (`GET /api/admin/system/dashboard-stats`)
+
+`GET /api/admin/system/dashboard-stats` là admin home aggregate route cho `/admin/dashboard`.
+Nó không phải generic metrics dump và không được devolve thành 4 query fan-out ở page bootstrap.
+
+Response owner là `AdminDashboardPageDto` với shape tối thiểu:
+
+```json
+{
+  "systemSummary": {
+    "healthStatus": "ok",
+    "pendingAlertsCount": 0,
+    "openIncidentsCount": 0
+  },
+  "pendingModeration": {
+    "pendingReportsCount": 3,
+    "recentReports": []
+  },
+  "recentAuditEvents": [
+    {
+      "occurredAt": "2026-03-21T10:00:00.000Z",
+      "action": "content.publish",
+      "resourceType": "post",
+      "actorSummary": {
+        "publicId": "usr_123",
+        "displayNameMasked": "P***",
+        "role": "admin"
+      }
+    }
+  ],
+  "contentOpsSummary": {
+    "publishedPostsCount": 120,
+    "draftPostsCount": 8,
+    "recentlyUpdatedCount": 5
+  },
+  "searchOpsSummary": {
+    "requestedEngine": "meilisearch",
+    "actualEngine": "sql-fallback",
+    "pendingJobs": 0,
+    "bootstrapFallbackActive": true
+  }
+}
+```
+
+Rules:
+
+- route này là admin page aggregate, không thay detail/list route của từng module owner.
+- `recentAuditEvents[]` chỉ dùng safe mini projection; full detail vẫn ở `/api/admin/audit-logs`.
+- `pendingModeration` là summary card/mini-list, không phải full report table.
+- `contentOpsSummary` và `searchOpsSummary?` là operational summaries ổn định cho dashboard card/panel.
+- dashboard page không được bootstrap bằng cách gọi trực tiếp posts list, moderation reports list, và audit log list rồi tự ghép nếu aggregate route này đã tồn tại.
+- nếu một widget cần chi tiết sâu hơn dashboard aggregate, nó phải mở workspace owner route riêng sau khi user điều hướng, không ép home page thành cross-module explorer.
+
 Admin page shows:
 - Live health status (polls `/health/ready` every 30s)
 - System metrics summary:
@@ -311,6 +364,7 @@ Admin page shows:
 
 | Artifact | Location |
 |---|---|
+| Dashboard aggregate | `apps/api/src/platform/health/controllers/dashboard.controller.ts` hoặc platform controller tương đương |
 | Health module | `apps/api/src/platform/health/health.module.ts` |
 | Live controller | `apps/api/src/platform/health/controllers/live.controller.ts` |
 | Ready controller | `apps/api/src/platform/health/controllers/ready.controller.ts` |

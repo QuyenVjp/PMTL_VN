@@ -397,9 +397,20 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | Module owner | Content |
 
 **Nội dung:**
-- Danh sách bài niệm (niệm kinh, niệm chú, kệ...)
-- Filter theo loại, thời lượng, ngôn ngữ
-- Preview text + play button nếu có audio
+- support hub, không chỉ là generic chant library
+- section `Bắt đầu từ đây`:
+  - guide cards sang `Kinh Bài Tập`
+  - ritual cards như `thắp tâm hương`
+- section `Bài niệm`
+- section `Nghi thức thường dùng`
+- section `Kế hoạch gợi ý`
+- section `Lưu ý quan trọng`
+- filter theo loại, thời lượng, ngôn ngữ
+- preview text + play button nếu có audio
+
+**Route rule**:
+- `/niem-kinh` là hub điều hướng
+- không phải nơi nhét toàn bộ ritual flow chi tiết vào 1 page duy nhất
 
 ---
 
@@ -420,6 +431,60 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Related practice rules (từ Wisdom-QA)
 
 **Elderly note**: Audio controls PHẢI lớn (min 48px touch target). Play/Pause/Volume rõ ràng.
+
+---
+
+### 1.10a Chant Ritual Detail
+
+| Field | Value |
+|---|---|
+| Route | `/niem-kinh/nghi-thuc/[slug]` |
+| Title | Tên nghi thức |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- header: tên nghi thức + khi nào nên dùng
+- preparation card
+- stepper tổng quát
+- step cards với chip loại bước:
+  - Chuẩn bị
+  - Quán tưởng
+  - Niệm thầm
+  - Lạy
+  - Kết thúc
+- count labels rất rõ (`7 biến`, `13 biến`, `3 lần`...)
+- condensed mode: xem nhanh
+- expanded mode: xem chi tiết từng bước
+- related chant items
+- related plan / related guide CTA
+
+**Rule**:
+- các flow như `thắp tâm hương` phải đi route này
+- không render như 1 khối article dài hoặc nhét vào chant item detail
+
+---
+
+### 1.10b Chant Plan Detail
+
+| Field | Value |
+|---|---|
+| Route | `/niem-kinh/ke-hoach/[slug]` |
+| Title | Tên kế hoạch niệm |
+| Auth | `public` (member+ nếu log progress) |
+| Module owner | Content + Engagement |
+
+**Nội dung:**
+- summary + estimated duration
+- ordered sections
+- ritual mở đầu nếu có
+- list bài niệm chính
+- closing items
+- entry requirements
+- CTA sang tracker hoặc guide liên quan
+
+**Rule**:
+- plan detail không được chôn raw ritual wording trong section text nếu ritual đã có owner riêng
 
 ---
 
@@ -1004,7 +1069,7 @@ Similar pattern cho:
 - `/admin/noi-dung/thu-vien-phap-mon` — Media library workspace
 - `/admin/noi-dung/tai-lieu` — Downloads
 - `/admin/noi-dung/kinh-sach` — Sutras
-- `/admin/noi-dung/niem-kinh` — Chant Items
+- `/admin/noi-dung/niem-kinh` — Chant Items + Ritual Templates + Chant Plans
 
 ### 4.3a Little House Content Workspace
 

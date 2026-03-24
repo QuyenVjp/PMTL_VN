@@ -255,6 +255,7 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 | Storage lifecycle | 5 cleanup jobs, upload quota per role, asset state machine | `baseline/storage-lifecycle.md` |
 | Cache topology | 4 layers: Cloudflare → ISR → TanStack Query → Valkey | `baseline/cache-topology.md` |
 | Secret management | VPS env_file Phase 1; rotation procedures per secret type | `baseline/secret-management.md` |
+| Dependency governance | approved version matrix + stable/RC policy + cadence + advisory intake + migration checklists | `baseline/dependency-governance.md` |
 | CI/CD gates | GitHub Actions; 4 automated gates + 1 human gate; no deploy without backup | `baseline/cicd-deploy-gates.md` |
 | WAF + anti-bot | Cloudflare free tier (Bot Fight Mode + OWASP WAF) + app-layer honeypot | `baseline/waf-antibot-strategy.md` |
 | Health contract | 3 endpoints with exact check lists; /health/ready checks DB + migrations + flags | `ops/health-contract.md` |

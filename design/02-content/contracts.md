@@ -19,6 +19,7 @@ Mục đích của nó là chốt business contract (hợp đồng dữ liệu/n
 - `sutraChapters`
 - `sutraGlossary`
 - `chantItems`
+- `chantRitualTemplates`
 - `chantPlans`
 
 ## Public read contracts
@@ -44,6 +45,8 @@ Search-related source fields:
 - `GET /api/content/hub-pages/*`
 - `GET /api/content/sutras`
 - `GET /api/content/guides`
+- `GET /api/content/chant-items`
+- `GET /api/content/chant-plans`
 
 ### Little House content surface
 - `GET /api/content/hub-pages/ngoi-nha-nho`
@@ -127,6 +130,30 @@ Quy tắc:
 - `daily practice` preset không phải user-state
 - preset phải giữ `sourceReference`, `warningList`, `timePlaceRules`
 - bài `benh-nang`, `nguoi-cao-tuoi`, `hoa-giai-oan-ket` phải có review note rõ trước khi publish
+- ritual support flow như `thắp tâm hương` không được nhét thành một `chantItem` đơn lẻ; nó phải đi qua `chantRitualTemplates` rồi mới được tham chiếu vào daily-practice guide/preset khi cần
+
+### Chanting / ritual editorial workspace
+- `GET /api/content/chant-items`
+- `GET /api/content/chant-items/:publicIdOrSlug`
+- `GET /api/content/chant-plans`
+- `GET /api/content/chant-plans/:publicIdOrSlug`
+- `GET /api/admin/content/chant-items`
+- `POST /api/admin/content/chant-items`
+- `PATCH /api/admin/content/chant-items/:publicId`
+- `GET /api/admin/content/chant-ritual-templates`
+- `POST /api/admin/content/chant-ritual-templates`
+- `PATCH /api/admin/content/chant-ritual-templates/:publicId`
+- `GET /api/admin/content/chant-plans`
+- `POST /api/admin/content/chant-plans`
+- `PATCH /api/admin/content/chant-plans/:publicId`
+- `POST /api/admin/content/chanting/publish`
+
+Quy tắc:
+- `chantItems` là owner của từng bài niệm/bài chú/bài kinh đơn lẻ.
+- `chantRitualTemplates` là owner của flow nhiều bước có `niệm thầm`, `quán tưởng`, `lạy`, `thỉnh an`, hoặc conditional step count.
+- `chantPlans` chỉ là ordered composition; không chôn toàn bộ ritual text trực tiếp trong plan row.
+- các flow như `thắp tâm hương` phải được quản như ritual template first-class, rồi mới attach vào plan/guide nếu một trải nghiệm cần nó.
+- FE `/niem-kinh` và admin `/admin/noi-dung/niem-kinh` không tự hardcode ritual sequence từ component text nếu owner records chưa có.
 
 ### Life release editorial workspace
 - `GET /api/admin/content/life-release/overview`
@@ -157,6 +184,52 @@ Quy tắc:
 - album/playlist phải là first-class records
 - item nào ref sang `Calendar` hoặc `Wisdom-QA` phải giữ owner ref rõ
 - FE library page không tự ghép từ raw `media_assets`
+
+## Media upload / storage contract
+
+Canonical media lifecycle route ở Phase 1:
+
+- `POST /api/content/media/upload`
+- `DELETE /api/content/media/:publicId`
+
+`POST /api/content/media/upload` là signed upload/register primitive giữa `content` và `storage`.
+Route này không được trả provider-specific payload thô.
+Client chỉ nhận `SignedUploadResponseDto` đủ để upload theo policy PMTL rồi finalize theo owner flow.
+
+`SignedUploadResponseDto` tối thiểu gồm:
+
+- `publicId`
+- `uploadUrl`
+- `uploadMethod`
+- `expiresAt`
+- `expectedPublicUrl`
+- `allowedMimeTypes[]`
+- `maxBytes`
+
+Canonical rules:
+
+- `uploadUrl` là signed URL ngắn hạn; không log, không persist vào client cache, không nhúng analytics.
+- `uploadMethod` chỉ dùng:
+  - `PUT`
+  - `POST`
+- `expectedPublicUrl` chỉ là projected public path sau finalize; chưa coi asset là public-live cho tới khi finalize thành công.
+- `allowedMimeTypes[]` và `maxBytes` phải echo policy server-side để client không tự đoán.
+- local storage và R2/S3-like provider chỉ là adapter detail; route contract phải giữ vocabulary PMTL, không rò `bucket internals`, root path thật, hoặc credential hints.
+- delete route phải tôn trọng ownership/policy và không được biến thành raw provider delete passthrough từ UI.
+- media-library workspace là curated content surface; signed upload route là storage primitive hỗ trợ biên soạn, không biến content module thành generic asset explorer.
+
+Canonical error codes liên quan:
+
+- `media.file_type_not_allowed`
+- `media.file_too_large`
+- `media.file_missing`
+- `media.delete_forbidden`
+- `storage.permission_denied`
+- `storage.signed_url_expired`
+- `storage.signed_url_invalid`
+- `storage.upload_finalize_failed`
+- `storage.root_unavailable`
+- `storage.provider_unavailable`
 
 ### Revalidation
 - `POST /api/revalidate`

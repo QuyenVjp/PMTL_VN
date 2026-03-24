@@ -47,6 +47,7 @@ Public auth response map về:
 
 - `AuthUser`: sanitized auth user (người dùng xác thực đã làm sạch)
 - `AuthSession`: active session metadata (metadata phiên xác thực đang hoạt động)
+- `AuthSessionStateDto`: auth bootstrap aggregate cho `GET /api/auth/me`
 
 Do not expose (Tuyệt đối không để lộ):
 
@@ -55,6 +56,50 @@ Do not expose (Tuyệt đối không để lộ):
 - raw reset token
 - internal auth secret
 - raw refresh token
+
+## Auth bootstrap aggregate (`GET /api/auth/me`)
+
+`GET /api/auth/me` là canonical auth bootstrap route cho `apps/web` và `apps/admin`.
+Route này không chỉ trả `has session hay không`; nó phải trả `AuthSessionStateDto` đủ để client quyết định auth gating mà không tự đoán từ cookie presence.
+
+`AuthSessionStateDto` tối thiểu gồm:
+
+- `user`
+  - `publicId`
+  - `emailMasked`
+  - `displayName`
+  - `role`
+- `session`
+  - `sessionPublicId`
+  - `expiresAt`
+  - `lastRotatedAt?`
+- `permissions`
+  - `canAccessMemberRoutes`
+  - `canAccessAdminRoutes`
+  - `canUploadMedia`
+- `mustRefreshBefore`
+- `requiresEmailVerification`
+- `securityFlags[]`
+
+Canonical rules:
+
+- `/auth/me` và `/auth/refresh` phải dùng cùng vocabulary cho session freshness.
+- `securityFlags[]` chỉ dùng canonical values:
+  - `email_unverified`
+  - `password_reset_required`
+  - `session_refresh_due`
+- `requiresEmailVerification` là convenience projection cho UI; không thay `securityFlags[]`.
+- `mustRefreshBefore` là soft deadline để client biết cần refresh sớm, không phải TTL thô của refresh token.
+- client không được suy auth state từ cookie presence, local storage, hay cached role cũ khi `/auth/me` chưa confirm.
+- member/admin page bootstrap phải fail về auth path chuẩn nếu `AuthSessionStateDto` nói session stale/forbidden; không render partial protected UI trước rồi mới phát hiện `401`.
+
+Do not expose thêm trong bootstrap aggregate:
+
+- refresh token
+- session secret
+- device fingerprint thô
+- raw ip/user-agent persistence rows
+- bảng permission nội bộ chưa project
 
 ## Expected errors (Lỗi dự kiến)
 
@@ -65,6 +110,18 @@ Do not expose (Tuyệt đối không để lộ):
 - `409`: email đã tồn tại
 - `429`: rate limit / abuse guard chặn
 - `500`: auth runtime, persistence, hoặc provider mapping error
+
+Canonical error codes liên quan:
+
+- `auth.invalid_credentials`
+- `auth.session_missing`
+- `auth.session_expired`
+- `auth.refresh_reused`
+- `auth.forbidden`
+- `auth.account_suspended`
+- `auth.email_not_verified`
+- `auth.reset_token_invalid`
+- `auth.reset_token_expired`
 
 ## Notes for AI/codegen (Ghi chú cho AI và sinh mã)
 

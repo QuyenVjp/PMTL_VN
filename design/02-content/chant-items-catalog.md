@@ -224,6 +224,38 @@ initialExpandLevel: 3
 - `needs_review`: `true`
   - lý do: cần rà lại wording cuối câu khấn và thao tác đốt
 
+### 13. Trình tự thắp tâm hương
+
+- `kind`: `ritual-template`
+- `purpose`: flow quán tưởng dâng hương khi không thao tác thân thể, dùng trước thời công khóa hoặc khi không có bàn thờ PMTL chuẩn
+- `recommended_count`:
+  - `Tịnh Khẩu Nghiệp Chân Ngôn`: `7` biến mặc định
+  - `Tịnh Khẩu Nghiệp Chân Ngôn`: `13` biến cho người chưa ăn chay
+  - `Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát`: `3` lần ở bước thỉnh an
+  - `Thất Phật Diệt Tội Chân Ngôn`: `7` biến
+  - lạy kết thúc: `1`
+- `openingPrayer`:
+  - bắt đầu bằng nhìn Quán Thế Âm Bồ Tát, chắp tay, thanh tịnh thân khẩu ý
+  - phần thỉnh an dùng câu: “Con __(tên), xin dâng hương thỉnh an Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát”
+- `timeRules`:
+  - chọn nơi yên tĩnh, sáng sủa, tốt nhất cạnh cửa sổ
+  - dùng khi không đốt hương thật; toàn bộ thao tác là `quán tưởng`
+  - phải tách rõ step `niệm thầm` với step `quán tưởng`
+- `stepModel`:
+  - `setup_visual_focus`
+  - `purify_mouth_mantra`
+  - `visualize_lamp_and_three_incense_sticks`
+  - `silent_offering_prayer`
+  - `visualize_insert_incense`
+  - `visualize_three_bows`
+  - `gratitude_recitation`
+  - `seven_buddhas_purification_mantra`
+  - `closing_bow`
+- `source_docs`:
+  - `3. Trình tự thắp tâm hương...`
+- `needs_review`: `true`
+  - lý do: cần owner doc riêng cho wording chuẩn từng bước, distinction niệm thầm/quán tưởng, và rule dùng ảnh điện thoại thay thẻ Phật
+
 ## Gợi ý `chantPlans`
 
 ### Daily beginner plan
@@ -240,6 +272,20 @@ initialExpandLevel: 3
 - khép lại:
   - `Bổ Khuyết Chân Ngôn`
   - `Thất Phật Diệt Tội Chân Ngôn`
+
+### Heart-incense ritual support plan
+
+- `ritualTemplate`:
+  - `Trình tự thắp tâm hương`
+- opening support:
+  - `Tịnh Khẩu Nghiệp Chân Ngôn`
+- core flow:
+  - `quán tưởng đèn dầu`
+  - `quán tưởng ba nén hương`
+  - `thỉnh an 3 lần`
+- closing:
+  - `Thất Phật Diệt Tội Chân Ngôn` `7`
+  - `1` lạy kết thúc
 
 ### Life release ritual plan
 

@@ -38,6 +38,10 @@ Mục tiêu:
 | member dashboard page | `MemberDashboardDto` | `todayLunar`, `advisorySummary`, `quickActions[]`, `practiceSummary`, `activeVowsSummary`, `onboardingState`, `notificationSummary` | owner cho `/dashboard`; không để web tự fan-out mù qua 4 module |
 | auth session state | `AuthSessionStateDto` | `user`, `session`, `permissions`, `mustRefreshBefore`, `requiresEmailVerification`, `securityFlags[]` | owner cho `/auth/me` và auth bootstrap surfaces; không trả raw refresh token |
 | signed upload response | `SignedUploadResponseDto` | `publicId`, `uploadUrl`, `uploadMethod`, `expiresAt`, `expectedPublicUrl`, `allowedMimeTypes[]`, `maxBytes` | owner cho signed upload/register flow; `uploadUrl` short-TTL, không cache ở client |
+| chant hub page | `ChantHubPageDto` | `entryCards[]`, `ritualTemplates[]`, `chantItems[]`, `chantPlans[]`, `faqHighlights[]`, `guideRefs[]` | owner cho `/niem-kinh`; hub support surface, không chỉ generic list |
+| chant item detail | `ChantItemDetailDto` | `publicId`, `slug`, `title`, `summary`, `textBlocks[]`, `audioCompanion`, `recommendedCounts[]`, `timeRules[]`, `relatedRituals[]`, `relatedPlans[]` | owner cho `/niem-kinh/[slug]`; không embed full ritual flow |
+| chant ritual template detail | `ChantRitualTemplateDetailDto` | `publicId`, `slug`, `title`, `summary`, `context`, `preparationChecklist[]`, `steps[]`, `conditionalRules[]`, `relatedChantItems[]`, `relatedPlans[]`, `nextRoutes[]` | owner cho `/niem-kinh/nghi-thuc/[slug]`; flow nhiều bước như `thắp tâm hương` |
+| chant plan detail | `ChantPlanDetailDto` | `publicId`, `slug`, `title`, `summary`, `estimatedDurationMinutes`, `entryRequirements[]`, `orderedSections[]`, `relatedRitualTemplate?`, `nextActions[]` | owner cho `/niem-kinh/ke-hoach/[slug]`; composition surface |
 | offline bundle list | `OfflineBundleListItemDto` | `publicId`, `bundleType`, `scope`, `version`, `freshnessStatus`, `lastRebuiltAt`, `downloadSize`, `syncStatus` | cho `/ngoai-tuyen` |
 | offline bundle list page | `OfflineBundleListPageDto` | `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | page aggregate cho `/ngoai-tuyen` |
 | offline bundle delta response | `OfflineBundleDeltaResponseDto` | `bundleId`, `bundleName`, `fromVersion`, `toVersion`, `isFullSync`, `added[]`, `updated[]`, `deletedIds[]`, `totalEntries`, `generatedAt` | owner cho `/offline-bundles/:publicId/delta` |
@@ -128,6 +132,63 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `resourceType`
   - `actorSummary`
 - `contentOpsSummary` và `searchOpsSummary?` là aggregate panels, không phải raw ops tables
+
+### `ChantHubPageDto`
+
+- `entryCards[]` là primary entry points, không phải chỉ nav links:
+  - `bat-dau-tu-day`
+  - `mo-nghi-thuc`
+  - `mo-ke-hoach`
+- `ritualTemplates[]` là mini cards cho các flow như `thắp tâm hương`.
+- `chantItems[]` chỉ là curated subset, không dump toàn bộ library nếu page đã có CTA rõ hơn.
+- `faqHighlights[]` là short snippets; full FAQ vẫn ở guide owner khi cần.
+- `guideRefs[]` là bridges sang `/kinh-bai-tap/*`, không duplicate full guide payload.
+
+### `ChantItemDetailDto`
+
+- `textBlocks[]` phải support bilingual hoặc segmented reading, không chỉ 1 blob text.
+- `recommendedCounts[]` nên có label theo context:
+  - `daily_default`
+  - `ritual_opening`
+  - `special_case`
+- `relatedRituals[]` chỉ là mini refs; ritual detail route mới giữ flow đầy đủ.
+
+### `ChantRitualTemplateDetailDto`
+
+- `context` canonical values tối thiểu:
+  - `daily_practice_opening`
+  - `vow_support`
+  - `life_release_support`
+  - `little_house_support`
+- `steps[]` mỗi item tối thiểu:
+  - `stepNumber`
+  - `stepType`
+  - `title`
+  - `instruction`
+  - `countLabel?`
+  - `conditionNote?`
+- `stepType` canonical values tối thiểu:
+  - `setup`
+  - `visualization`
+  - `silent_recitation`
+  - `bow`
+  - `closing`
+- `conditionalRules[]` phải support các case như `7/13 biến`.
+- route này phải đủ data để FE render stepper + condensed mode mà không bịa cấu trúc từ raw article body.
+
+### `ChantPlanDetailDto`
+
+- `orderedSections[]` mỗi section tối thiểu:
+  - `sectionType`
+  - `title`
+  - `items[]`
+  - `ritualTemplateRef?`
+- `sectionType` canonical values tối thiểu:
+  - `opening_ritual`
+  - `core_recitation`
+  - `optional_support`
+  - `closing`
+- nếu plan có ritual mở đầu như `thắp tâm hương`, section chỉ ref ritual template chứ không chôn toàn văn bước ritual vào plan payload.
 
 ### `AdminNotificationOpsPageDto`
 

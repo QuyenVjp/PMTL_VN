@@ -32,7 +32,7 @@ Mỗi workspace phải có:
 ## 1. Dashboard (`/dashboard`)
 
 **Role**: `admin+`
-**API deps**: `/api/admin/system/dashboard-stats`, `/api/content/posts?limit=5`, `/api/moderation/reports?status=pending&limit=5`, `/api/admin/audit-logs?limit=10`
+**API deps**: `GET /api/admin/system/dashboard-stats`
 
 ### Stat cards (row 1)
 | Card | Metric | Query |
@@ -53,6 +53,11 @@ Click row → navigate to `/kiem-duyet/bao-cao/$reportId`
 ### Audit log stream (last 10)
 Columns: Action, Actor, Target, Timestamp
 Auto-refresh every 60s
+
+Aggregate rule:
+- dashboard page bootstrap dùng `AdminDashboardPageDto`
+- không fetch trực tiếp posts list, moderation reports list, và audit log list ở first paint nếu aggregate route đã đủ data
+- click-through từ widget mới mở workspace owner route tương ứng để lấy detail sâu hơn
 
 **Empty state**: "Chưa có dữ liệu" with setup checklist
 **Loading**: Skeleton cards + skeleton rows
@@ -325,14 +330,38 @@ Tabs: [Entries] [Hỏi đáp] [Authority profiles] [Bạch thoại audiobook] [O
 **Role**: `editor+`
 **API deps**: `/api/content/chant-items`, `/api/content/chant-plans`
 
-Tabs: [Bản kinh] [Chant Plans]
+Tabs: [Bản kinh] [Ritual templates] [Chant Plans]
 
 **Tab 1 — Bản kinh (Chant items)**:
 DataTable: Tên kinh, Type (chant/sutra), Duration, Audio file, Status
 Upload audio: drag-and-drop with MIME validation (mp3, m4a only)
 Edit: title, description, lyrics (rich text), audio file, category
 
-**Tab 2 — Chant Plans**:
+**Tab 2 — Ritual templates**:
+- first-class owner cho các flow như:
+  - thắp tâm hương
+  - khấn phát nguyện
+  - khấn phóng sinh
+  - mở đầu/khép lại Ngôi Nhà Nhỏ theo ngữ cảnh
+- mỗi template phải quản được:
+  - `templateKey`
+  - `displayTitle`
+  - `context`
+  - `orderedSteps[]`
+  - `mantraRefs[]`
+  - `silentRecitations[]`
+  - `visualizationSteps[]`
+  - `timeRules`
+  - `sourceReference`
+  - `reviewNote`
+- riêng `thắp tâm hương` phải giữ rõ distinction giữa:
+  - phần niệm thầm
+  - phần quán tưởng
+  - số biến điều kiện như `Tịnh Khẩu Nghiệp Chân Ngôn 7/13`
+  - bước kết bằng `Thất Phật Diệt Tội Chân Ngôn` + lạy kết thúc
+- ritual template không bị nhét vào `chant item` đơn lẻ vì bản chất là flow nhiều bước, không phải một bài niệm độc lập
+
+**Tab 3 — Chant Plans**:
 List of practice plans (morning chant, evening chant, etc.)
 Each plan: name, ordered list of chant items
 Drag-to-reorder items within plan
@@ -739,6 +768,11 @@ When flag = true: Full push job management (see `08-notification/push-notificati
 
 Tabs: [Push jobs] [Subscriptions] [Tạo thông báo]
 
+Aggregate vocabulary:
+- page header/summary phải bám `AdminNotificationOpsPageDto`
+- `pushStatus`, `subscriptionStats`, `jobQueueSummary`, `recentJobs[]`, `deliveryHealthSummary` là source of truth cho workspace summary
+- detail/job table vẫn có thể dùng route con, nhưng page shell không tự bịa summary từ raw rows
+
 **Tab 1 — Push jobs**: DataTable of jobs with status chips, delivery stats
 **Tab 2 — Subscriptions**: aggregate-only stats: active subscription count + chart + browser breakdown
 **Tab 3 — Tạo thông báo**: Create push job form
@@ -838,4 +872,4 @@ All TanStack Query mutations must call `queryClient.invalidateQueries` after suc
 - Create: invalidate list query
 - Update: invalidate list query + specific item query
 - Delete: invalidate list query, remove specific item from cache
-- Publish/status change: invalidate list + item + related dashboard stats
+- Publish/status change: invalidate list + item + root dashboard aggregate nếu workspace đó thực sự được surface trên dashboard

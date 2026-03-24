@@ -66,6 +66,19 @@ Trước khi agent scaffold hoặc đề xuất implementation API:
 
 Thiếu bất kỳ mục nào ở trên thì task là `blocked at design`, chưa phải implementation-ready.
 
+## Dependency upgrade pre-flight
+
+Trước khi agent đề xuất `đổi stack`, `nâng bản mới`, hoặc `dùng latest`:
+
+- [ ] package hoặc component đó đã được phép bởi `design/DECISIONS.md` chưa
+- [ ] nếu là package active, đã có row hoặc rule phù hợp trong `design/baseline/dependency-governance.md` chưa
+- [ ] nếu là component `planned` / `deferred`, trigger activation trong design đã thật sự được đáp ứng chưa
+- [ ] có official release note / migration guide / advisory source chưa
+- [ ] change đó là patch/minor cadence hay major decision
+- [ ] verification path nào sẽ chứng minh upgrade không phá PMTL contracts
+
+Thiếu bất kỳ mục nào ở trên thì task là `blocked at governance`, chưa phải implementation-ready.
+
 ## Stitch MCP fast path
 
 - Nếu task là wireframe, screen generation, hoặc chỉnh sửa UI trực tiếp trên Stitch, đọc `docs/stitch-mcp.md` trước.

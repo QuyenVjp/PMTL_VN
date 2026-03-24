@@ -304,24 +304,17 @@ Files:
 
 Required query keys:
 
-- `dashboardKeys.stats()`
-- `dashboardKeys.recentPosts(filters)`
-- `dashboardKeys.pendingReports(filters)`
-- `dashboardKeys.auditStream(filters)`
+- `dashboardKeys.page()`
 
 Required query functions:
 
-- `getDashboardStatsQuery()`
-- `getRecentPostsQuery()`
-- `getPendingReportsQuery()`
-- `getAuditStreamQuery()`
+- `getAdminDashboardPageQuery()`
 
 No `mutations.ts` in first pass.
 
 Blockers:
 
 - `/api/admin/system/dashboard-stats`
-- `/api/admin/audit-logs`
 
 ### 2. `posts`
 
@@ -355,7 +348,7 @@ Required mutations:
 Required invalidation:
 
 - list + detail
-- `dashboardKeys.recentPosts`
+- `dashboardKeys.page()`
 - trigger public cache invalidation notice on publish/unpublish
 
 ### 3. `beginner-guides`
@@ -547,21 +540,26 @@ Files:
 
 Status:
 
-- scaffold placeholder only until chant item / chant plan route group is fully canonized
+- scaffold được theo lane `conditional`; route group đã canonized nhưng DTO/detail projection còn phải giữ sát owner docs chanting
 
 Minimum queries:
 
 - chant item list/detail
+- chant ritual template list/detail
 - chant plan list/detail
 
 Mutations:
 
 - create/update chant item
+- create/update chant ritual template
 - create/update chant plan
 
-Blocker:
+Invalidation:
 
-- admin route group still future-facing
+- chant item list/detail
+- chant ritual template list/detail
+- chant plan list/detail
+- dependent `/niem-kinh` loaders hoặc grouped chanting surfaces nếu publish làm đổi ritual flow public
 
 ### 10. `media-admin`
 
@@ -654,7 +652,7 @@ Invalidation:
 
 - report list/detail
 - affected target workspace keys
-- dashboard pending reports
+- root dashboard aggregate nếu moderation summary bị ảnh hưởng
 
 ### 14. `moderated-comments`
 
@@ -1019,7 +1017,7 @@ Invalidation:
 - history
 - affected member detail
 - affected vow detail
-- dashboard recent support activity if shown
+- root dashboard aggregate nếu support widget được surface
 
 Route canon dùng:
 

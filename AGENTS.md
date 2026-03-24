@@ -16,6 +16,7 @@
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
 - `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
+- `design/baseline/dependency-governance.md` when the task touches dependency upgrades, version drift, security advisories, migration policy, or “latest stack” decisions
 - `docs/stitch-mcp.md` when the task involves wireframes, design generation, Stitch, or UI exploration through MCP
 
 ## Monorepo Boundaries

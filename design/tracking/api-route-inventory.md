@@ -159,6 +159,13 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/content/media-library/collections/:slug` | `content` | public |
 | `GET` | `/content/media-library/featured` | `content` | public |
 | `GET` | `/content/media-library/tags` | `content` | public |
+| `GET` | `/content/chant-hub` | `content` | public |
+| `GET` | `/content/chant-items` | `content` | public |
+| `GET` | `/content/chant-items/:publicIdOrSlug` | `content` | public |
+| `GET` | `/content/chant-ritual-templates` | `content` | public |
+| `GET` | `/content/chant-ritual-templates/:publicIdOrSlug` | `content` | public |
+| `GET` | `/content/chant-plans` | `content` | public |
+| `GET` | `/content/chant-plans/:publicIdOrSlug` | `content` | public |
 | `GET` | `/admin/content/little-house/overview` | `content` | editor+ |
 | `POST` | `/admin/content/little-house/guides` | `content` | editor+ |
 | `PATCH` | `/admin/content/little-house/guides/:publicId` | `content` | editor+ |
@@ -190,11 +197,23 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `PATCH` | `/admin/content/media-library/collections/:publicId/items/:itemPublicId` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/featured` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/publish` | `content` | editor+ |
+| `GET` | `/admin/content/chant-items` | `content` | editor+ |
+| `POST` | `/admin/content/chant-items` | `content` | editor+ |
+| `PATCH` | `/admin/content/chant-items/:publicId` | `content` | editor+ |
+| `GET` | `/admin/content/chant-ritual-templates` | `content` | editor+ |
+| `POST` | `/admin/content/chant-ritual-templates` | `content` | editor+ |
+| `PATCH` | `/admin/content/chant-ritual-templates/:publicId` | `content` | editor+ |
+| `GET` | `/admin/content/chant-plans` | `content` | editor+ |
+| `POST` | `/admin/content/chant-plans` | `content` | editor+ |
+| `PATCH` | `/admin/content/chant-plans/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/chanting/publish` | `content` | editor+ |
 | `POST` | `/content/media/upload` | `content` + `storage` | member+ or editor+, per policy |
 | `DELETE` | `/content/media/:publicId` | `content` + `storage` | owner/admin |
 
 > `POST /content/media/upload` là signed upload/register primitive; response owner theo `tracking/api-dto-shape-plan.md` row `SignedUploadResponseDto`.
 > route upload không được expose provider-specific shape trực tiếp; client chỉ nhận contract đủ để upload và finalize theo policy PMTL.
+> `GET /content/chant-hub` là public support aggregate cho `/niem-kinh`; không để web tự ghép chant items + ritual templates + guide refs từ nhiều route.
+> `chant-items` là unit-level chant content; `chant-ritual-templates` là multi-step ritual owner như `thắp tâm hương`; `chant-plans` chỉ compose từ owner records chứ không chôn raw ritual flow.
 
 ## Community
 
@@ -416,9 +435,11 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `PATCH` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
 | `GET` | `/admin/audit-logs` | `audit` | admin+ |
 | `GET` | `/admin/audit-logs/:publicIdOrId` | `audit` | admin+ |
+| `GET` | `/admin/system/dashboard-stats` | `platform` | admin+ |
 | `GET` | `/admin/system/health-extended` | `health` + `platform` | admin+ |
 | `POST` | `/internal/revalidate` | `platform/cache` | internal shared-secret |
 
+> `GET /admin/system/dashboard-stats` là admin home aggregate; response owner theo `ops/health-contract.md` row `AdminDashboardPageDto`.
 > `GET /admin/system/health-extended` là admin operational aggregate; response owner theo `tracking/api-dto-shape-plan.md` row `AdminSystemHealthExtendedDto`.
 
 ## Platform / Control Plane — Phase 2+ conditional routes

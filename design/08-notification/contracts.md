@@ -140,6 +140,44 @@ Subscription truth vẫn do browser capability + backend subscription record com
 - admin page này là push-ops surface, không dùng member route `/notifications/preferences` hay `/notifications/reminders/practice`
 - segmentation hay quiet-hours override nếu có phải là explicit admin action, không để UI tự sửa payload raw ngoài rule
 
+## Admin notification ops aggregate
+
+Admin workspace `/admin/he-thong/thong-bao` có owner aggregate là `AdminNotificationOpsPageDto`.
+DTO này chốt vocabulary page-level cho push ops ngay cả khi implementation Phase 1 còn compose từ nhiều admin route con.
+
+`AdminNotificationOpsPageDto` tối thiểu gồm:
+
+- `pushStatus`
+- `subscriptionStats`
+- `jobQueueSummary`
+- `recentJobs[]`
+- `deliveryHealthSummary`
+
+Projection rules:
+
+- `pushStatus` tối thiểu:
+  - `pushEnabled`
+  - `deliveryHealth`
+  - `workerState`
+- `subscriptionStats` phải dùng aggregate vocabulary ổn định, không trả raw subscription rows.
+- `jobQueueSummary` tối thiểu:
+  - `pendingCount`
+  - `processingCount`
+  - `failedCount`
+- `recentJobs[]` chỉ là mini-list/snippet; detail route mới được trả full job metadata.
+- `deliveryHealthSummary` là page-level operational summary để tab/page header không tự diễn giải từ raw jobs.
+- page aggregate không reuse member preference route và không expose:
+  - raw endpoint URLs
+  - auth keys
+  - full per-recipient delivery logs
+  - worker exception payload chưa sanitize
+
+Composition rule cho Phase 1:
+
+- page có thể compose từ `status`, `jobs`, và `subscription-stats`, nhưng owner doc vẫn là module này
+- nếu composition drift vượt quá vocabulary trên, phải cập nhật owner contract trước khi scaffold UI
+- create/process/redrive mutation invalidates admin push jobs + status + subscription aggregate freshness khi thật sự bị ảnh hưởng
+
 ## Notes for AI/codegen
 
 - `pushJobs` không phải inbox canonical của người dùng.
