@@ -545,6 +545,19 @@ Nhưng tracker nên đổi từ một màn hình counter đơn lẻ thành `task
 - `open guide side sheet`
 - `history drawer`
 
+### Support blocks nên có thêm
+
+- `before-you-begin` preflight card
+- `official-name helper`
+- `recipient/giver separation explainer`
+- `interruption recovery helper`
+- `quality-focus mode`
+- `red-dot correctness checklist`
+- `ready-to-burn advisor`
+- `post-burn reassurance note`
+- `family-assist helper`
+- `special-case warning drawer`
+
 ### Nguyên tắc UX
 
 - gần giấy thật
@@ -552,6 +565,152 @@ Nhưng tracker nên đổi từ một màn hình counter đơn lẻ thành `task
 - thao tác ít
 - không animation phức tạp
 - không game hóa
+
+### Những hỗ trợ user nên có ngay từ Phase C
+
+#### A. Preflight guardrails
+
+Trước khi cho user bắt đầu tụng, tracker nên bắt buộc hiện một card xác nhận ngắn:
+
+- `Kinh Bài Tập` và `Ngôi Nhà Nhỏ` là hai lane riêng
+- phần đang niệm trong tờ này không dùng để cầu cho bản thân
+- `Kính Tặng` là người nhận
+- `Tặng` là người tụng
+
+Mục tiêu:
+
+- chặn lỗi “lấy công khóa tính vào Ngôi Nhà Nhỏ”
+- chặn lỗi “vừa niệm vừa cầu cho bản thân”
+- giảm case user làm nhiều nhưng hiệu quả kém vì hiểu sai lane
+
+#### B. Official-name helper
+
+Form điền tên không nên chỉ là 2 ô text trống.
+
+Nó nên có:
+
+- helper text cho `tên chính thức`
+- warning nếu nhập kiểu tên quá ngắn, nickname, hay placeholder
+- helper riêng cho case:
+  - đã đổi tên
+  - người trong nhà cần kinh
+  - hai người cùng niệm một tờ
+
+Không nên:
+
+- tự suy diễn đổi tên/thăng văn
+- tự kết luận tên nào “đúng pháp” nếu source chưa đủ
+
+#### C. Interruption recovery helper
+
+Đây là chỗ rất nên hỗ trợ user thật.
+
+Khi user bấm `tạm dừng`, UI nên hỏi:
+
+- bị gián đoạn ngắn
+- bị gián đoạn lâu
+- đang ở kinh ngắn hay kinh dài
+
+Sau đó hiện đúng guidance card:
+
+- nếu là gián đoạn ngắn: cách quay lại flow
+- nếu đã quá lâu: warning nên niệm lại đoạn đang làm
+- nếu là kinh ngắn: ưu tiên niệm lại từ đầu
+
+Không làm kiểu stopwatch phức tạp.
+Chỉ cần `resume guidance`, không phải máy chấm công nghi thức.
+
+#### D. Quality-focus mode
+
+User thường hỏi “vừa làm việc khác vừa niệm có được không”.
+
+App không nên phán tuyệt đối, nhưng nên có `focus mode`:
+
+- nhắc user chọn `đang tập trung` hay `đang tranh thủ`
+- nếu chọn `đang tranh thủ`, hiện warning về chất lượng tụng
+- environment checklist:
+  - nơi sạch sẽ / yên tĩnh
+  - không ở nhà vệ sinh
+  - không đang làm món mặn
+
+Mục tiêu là giúp user tự điều chỉnh chất lượng, không phải police họ.
+
+#### E. Red-dot correctness checklist
+
+Trước và sau bước chấm đỏ, phải có checklist rất cụ thể:
+
+- không chấm ra ngoài vòng
+- không tô kín
+- không đánh dấu kiểu `✓`
+- dot size phải đủ rõ
+- chấm từ dưới lên
+
+Điểm này nên đi kèm ảnh đúng/sai và confirmation nhỏ trước khi đánh dấu `marked_complete`.
+
+#### F. Ready-to-burn advisor
+
+Trước khi user chuyển sang `ready_to_burn`, hệ thống nên hiện advisory card:
+
+- đã chấm xong chưa
+- đã điền đúng phần tên chưa
+- nếu đang ở bệnh viện / trường khí kém thì warning riêng
+- ngày ghi trên tờ phải là ngày dương lịch
+- sau khi đốt không nên chấp vào hiện tượng tro/lửa
+
+Đây là support layer rất thực tế, vì user thường sai ở lúc chuẩn bị đốt hơn là lúc đọc guide.
+
+#### G. Family-assist helper
+
+Cần có mode `hỗ trợ người thân` cho case người lớn tuổi / mắt kém.
+
+Mode này không biến thành multi-user workflow phức tạp, chỉ cần:
+
+- giải thích rõ người niệm vẫn là chủ thể chính
+- ai được phép hỗ trợ cầm tay ký / chấm / đốt
+- ai không được thay luôn phần ký tên
+
+Đây là UX rất quan trọng cho PMTL vì nhóm user lớn tuổi sẽ nhiều.
+
+#### H. Special-case warning drawer
+
+Một số case phải có warning drawer riêng, không bury trong FAQ:
+
+- người bệnh nặng
+- tâm thần / trạng thái bất ổn
+- niệm cho người không tin
+- giúp người khác niệm hộ
+- thuê nhà / người cần kinh trong nhà
+
+Mỗi case chỉ cần:
+
+- short explanation
+- điều cần tránh
+- CTA sang guide đầy đủ
+
+#### I. Dream-number caution note
+
+Không nên làm `dream calculator` hay `máy dịch số trong mơ`.
+
+Nên chỉ làm:
+
+- note giải thích đây là thông tin tham khảo
+- nhắc phải xem tổng thể giấc mơ và tình huống thực tế
+- fallback guidance: nếu không chắc, cứ kiên trì niệm theo lane an toàn
+
+Đây là chỗ sản phẩm phải tỉnh táo, tránh biến PMTL thành tool mê tín hóa decision.
+
+#### J. Post-burn reassurance note
+
+Sau khi user đánh dấu đã đốt xong, FE nên có một note ngắn:
+
+- không cần quá chấp vào màu tro / ngọn lửa
+- xem lại checklist nếu lo mình thao tác sai
+- nếu cần, mở lại guide lưu ý khi đốt
+
+Tác dụng:
+
+- giảm anxiety
+- chặn việc user tự suy diễn hiện tượng vật lý thành “phán quyết”
 
 ## 10.5. Cầu nối giữa content và tracker
 
@@ -705,15 +864,15 @@ Feature này có cơ hội SEO rất lớn. Chiến lược đã được chốt
 
 # 16. Tech Features đặc thù
 
-Feature Ngôi Nhà Nhỏ có 8 tính năng công nghệ vượt trội đối thủ. Spec đầy đủ:
+Feature Ngôi Nhà Nhỏ hiện có 15 tính năng công nghệ/hỗ trợ trải nghiệm. Spec đầy đủ:
 
 - `design/02-content/little-house-tech-features.md`
 
 **Tóm tắt phase**:
 - **Phase A**: `image_compare` component (cần ngay khi có content)
-- **Phase B**: Dynamic PDF Generator (điền sẵn Kính Tặng/Tặng)
-- **Phase C**: Smart Quantity Calculator + Lunar, Step Timer, Offline PWA, Anti-mistake Validation
-- **Phase D**: Contextual Warning Engine, Practice Companion deep-link
+- **Phase B**: Dynamic PDF Generator, Dream & Sign caution panel
+- **Phase C**: Smart Quantity Calculator + Lunar, Step Timer, Offline PWA, Anti-mistake Validation, Official Name Helper, Focus Mode, Burning Readiness Advisor, Post-burn Reassurance
+- **Phase D**: Contextual Warning Engine, Practice Companion deep-link, Interruption Recovery Helper, Family Assist Mode
 
 # 17. Việc nên làm tiếp trong repo
 

@@ -46,6 +46,12 @@
 
 - event ownership nằm ở calendar
 - `organizational events` vẫn là event records thuộc calendar; agenda/speakers/ctas là child records, không phải owner mới
+- `special practice day` là vocabulary chung của calendar cho nhiều trường hợp:
+  - recurring lunar day
+  - fixed solar observance
+  - rule family như `luc_trai_days`
+  - ngày có advisory đặc biệt do admin/source-backed rule kích hoạt
+- không tạo model mới hoặc file owner mới cho từng ngày như `ngày vía A`, `ngày kỷ niệm B`, `ngày nên niệm C`
 - nếu event có bài pháp hội / khai thị / wisdom content liên quan, `calendar` chỉ giữ relation refs như `relatedWisdomPublicIds` hoặc `sourceRefs`
 - transcript/pháp hội discourse text vẫn thuộc `wisdom-qa`, không được copy full text vào event record
 - content chỉ tham chiếu event qua relation như `relatedEvent`
@@ -53,6 +59,13 @@
 - `luc_trai_days` là rule family canonical của calendar; source-backed wording và transcript vẫn thuộc `wisdom-qa`
 - personal practice calendar là `derived read model (mô hình dữ liệu đọc)`, không phải canonical owner của event/lunar data
 - `daily practice advisory (thông báo hoặc gói hướng dẫn)` là output read-model của calendar, không phải canonical owner của bài gốc hoặc bản dịch gốc
+- cùng một advisory model phải đủ biểu diễn:
+  - ngày gì
+  - nên hành trì gì
+  - giới hạn / warning gì
+  - có nên nhắc trước không
+  - có hiện trên web không
+  - có cho notification module đọc xuống push job hay không
 - event publish/update hoặc calendar refresh signal quan trọng nên đi qua `outbox_events` trước khi xuống notification/rebuild downstream
 - request payload, refresh job payload và advisory compose input nên có schema runtime rõ
 - `GET /api/admin/calendar/lunar-overrides` trả lifecycle list cho admin, không bắt FE đoán từ event list
@@ -86,6 +99,39 @@
 - `500`
   - lỗi mapping, append outbox, refresh projection, hoặc downstream notification
 
+## Generalized special-day/advisory expectations
+
+Calendar admin surface phải support model tổng quát thay vì case-by-case wording:
+
+- `target`
+  - exact solar date
+  - lunar recurrence
+  - rule family
+- `advisoryKind`
+  - informational
+  - recommended_practice_day
+  - high_priority_observance
+  - event_linked
+- `practiceRecommendations[]`
+- `recitationRules[]`
+- `warningProfile[]`
+- `sourceRefs[]`
+- `preNotifyPolicy?`
+  - enabled
+  - leadTime như `T-1`, `T-3`, `same-day`
+  - delivery channel allowlist
+- `surfaceTargets`
+  - `lunar_calendar`
+  - `member_dashboard`
+  - `homepage_banner`
+  - `notification_candidate_only`
+
+Rule:
+
+- `surfaceTargets` là projection/display intent, không phải ownership transfer sang web hay notification
+- `preNotifyPolicy` chỉ tạo candidate cho `08-notification`; dispatch control-plane vẫn thuộc notification module
+- cùng một model phải dùng lại cho nhiều ngày đặc biệt khác nhau, không buộc team tạo file design riêng cho từng ngày
+
 ## Notes for AI/codegen
 
 - Calendar không copy ritual script vào event record nếu content đã sở hữu dữ liệu đó.
@@ -105,4 +151,5 @@
   rồi để FE mở canonical wisdom detail khi cần.
 - Nếu refresh/read-model drift xảy ra, recovery path chuẩn là replay signal hoặc recompute window, không patch tay mơ hồ.
 - Nếu admin preview `luc_trai_days` advisory, response nên trả `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions`, và `sourceRefs` thay vì 1 blob text duy nhất.
+- Nếu admin preview bất kỳ `special practice day` nào, response nên trả structured fields + `surfaceTargets` + `preNotifyPolicy`, không chỉ 1 đoạn copy dài.
 - Hành động reschedule/cancel phải giữ audit + reason rõ để public FE và notification consumer có context đúng.

@@ -310,6 +310,18 @@ Danh sách FAQ ưu tiên (tối thiểu 10 câu):
 11. Kính Tặng và Tặng có bắt buộc không?
 12. Khi viết sai hoặc chấm sai thì xử lý như thế nào?
 13. Ngôi Nhà Nhỏ có hiệu dụng cho người không theo Phật giáo không?
+14. Kinh Bài Tập và Ngôi Nhà Nhỏ khác nhau thế nào?
+15. Có thể vừa làm việc nhà vừa niệm không?
+16. Nếu đang niệm bị gián đoạn thì làm thế nào?
+17. Có thể hai người cùng niệm một tờ không?
+18. Người lớn tuổi mắt kém có thể nhờ người nhà hỗ trợ chấm / đốt không?
+19. Ngày ghi trên tờ là ngày âm hay ngày dương?
+20. Có thể chấm hoặc niệm ở bệnh viện không?
+21. Sau khi đốt, màu tro hoặc ngọn lửa có ý nghĩa gì không?
+22. Giấc mơ có liên quan đến số lượng tờ hay không?
+23. Giúp người khác niệm hộ cần lưu ý gì?
+24. Có nên nhờ người khác niệm hộ không?
+25. Nhà đi thuê thì ghi `Kính Tặng` thế nào?
 
 ### 5.4 Warning policy — bắt buộc cho mọi block nhạy cảm
 

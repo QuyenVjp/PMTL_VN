@@ -48,12 +48,14 @@ markmap:
 ### Overrides (Lớp ghi đè)
 - gắn chant item hoặc note đặc biệt cho ngày/sự kiện cụ thể
 - đặt target/priority/max/note cho trường hợp đặc biệt
+- cùng cơ chế này phải đủ diễn tả nhiều `special practice day` khác nhau, không mở rộng theo kiểu mỗi ngày mới là một owner doc hay một hardcoded holiday branch
 
 ### Personal practice calendar read model (Mô hình đọc lịch tu học cá nhân)
 - ghép ngày âm, ngày vía, ngày trai giới, event public
 - ghép practice support references
 - ghép vow/life-release hooks
 - compose `daily practice advisory` dạng card ngắn
+- có thể gắn `surfacePlan` và `notificationPlan` như derived intent cho web/notification dùng lại
 - luôn là dữ liệu fully derived (được tính ra hoàn toàn), không thay ownership của event/lunar data gốc
 
 ## Step-by-step build cho personal practice calendar (Các bước dựng lịch tu học cá nhân)

@@ -30,6 +30,11 @@ Nó đồng thời là:
 - một `personal tracking workflow` cho bảng công phu hằng ngày
 - một `calendar-bridged practice surface` vì ngày đặc biệt sẽ làm advisory thay đổi
 
+Nó không nên ôm luôn:
+
+- `Kinh Văn Tự Tu`
+- `Ngôi Nhà Nhỏ`
+
 Nếu chỉ làm như:
 
 - thư viện bài niệm rời
@@ -42,6 +47,8 @@ thì đều thiếu:
 - user không biết công khóa cơ bản khác gì `Ngôi Nhà Nhỏ` và `Kinh Văn Tự Tu`
 - sheet cá nhân không có context và guardrails
 - daily advisory không nối tốt sang thực hành
+
+`Kinh Văn Tự Tu` vì vậy phải là một `companion content surface` riêng, không bị chôn như một chú thích phụ trong FAQ của công khóa hằng ngày.
 
 # 2. Những gì đang có trong repo
 
@@ -178,6 +185,13 @@ Ownership chuẩn:
 - `Calendar` giữ `daily advisory composition`
 - `Notification` chỉ là downstream reminder delivery
 
+`Kinh Văn Tự Tu` vẫn đi trong `Content`:
+
+- có hub riêng
+- có guide / FAQ / download riêng
+- không có tracker mặc định
+- không có calendar advisory ownership
+
 # 5. Information Architecture đề xuất
 
 ## 5.1. Public IA
@@ -220,6 +234,48 @@ Route canonical:
 - dễ gắn CTA “Bắt đầu thực hành”
 - dễ bridge sang member state
 
+## 5.3. Boundary với `Kinh Văn Tự Tu`
+
+`Kinh Văn Tự Tu` không nên bị nhét vào cùng IA `/kinh-bai-tap`.
+
+Lý do:
+
+- `Kinh Bài Tập` là `daily commitment surface`
+- `Kinh Văn Tự Tu` là `accumulation / reserve surface`
+- user mental model khác nhau
+- tracker và advisory logic khác nhau
+
+Route canonical nên là:
+
+```text
+/kinh-van-tu-tu
+├─ /bat-dau
+│  ├─ Kinh Văn Tự Tu là gì
+│  ├─ Khác gì với Kinh Bài Tập và Ngôi Nhà Nhỏ
+│  └─ Dùng trong trường hợp nào
+├─ /cach-dung
+│  ├─ Cách ghi Kính Tặng / tên người niệm
+│  ├─ Cách khấn trước khi niệm
+│  ├─ Cách chấm đỏ
+│  └─ Giờ giấc / giới hạn quan trọng
+├─ /bao-quan
+│  ├─ Cách ghi ngày hoàn thành
+│  ├─ Cách bọc giấy đỏ / vải đỏ
+│  └─ Cách cất giữ / mang ra dùng
+├─ /truong-hop-su-dung
+│  ├─ Dùng cho bản thân
+│  ├─ Dùng cho người khác
+│  ├─ Khi bệnh nặng / tình huống khẩn
+│  └─ Khi cần tích lũy công đức dự phòng
+└─ /tai-xuong
+   ├─ mẫu in
+   ├─ PDF hướng dẫn
+   └─ bảng phân biệt 3 surface
+```
+
+Không mở module mới.
+Ownership vẫn là `Content`.
+
 # 6. Mapping từ nguồn thực tế sang IA mới
 
 | Pattern nguồn | IA mới |
@@ -243,6 +299,11 @@ Route canonical:
 - canonical wording của lời khấn mở đầu
 - full-name rules cho tên kinh/chú
 
+Canonical note:
+
+- `time/place/environment/body-state` rules không nên nằm rải rác trong từng guide
+- `Kinh Bài Tập` là consumer lớn nhất, nhưng source-of-truth tập trung phải nằm ở [chanting-environment-rules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/chanting-environment-rules.md)
+
 ## 7.2. Engagement owns
 
 - `practiceSheets`
@@ -263,6 +324,23 @@ Route canonical:
 - reminder delivery
 - không sở hữu nội dung công khóa
 
+## 7.5. `Kinh Văn Tự Tu` ownership note
+
+`Kinh Văn Tự Tu`:
+
+- không thuộc `Engagement`
+- không có `practiceSheets` owner mặc định
+- không có `daily advisory` owner mặc định
+- không bắt `Calendar` quyết định “hôm nay có nên tích lũy hay không”
+
+Nó là `content-first reference surface` với:
+
+- guide wording
+- practical guardrails
+- source refs
+- printable forms
+- companion downloads
+
 # 8. Data model đề xuất
 
 ## 8.1. Content phase 1
@@ -273,6 +351,7 @@ Tiếp tục dùng:
 - `beginnerGuides`
 - `downloads`
 - `chantItems`
+- `chantRitualTemplates`
 - `chantPlans`
 
 Thêm typed blocks cho `Kinh Bài Tập`:
@@ -352,6 +431,35 @@ Quy tắc:
 - `PATCH /admin/content/daily-practice/faq/:publicId`
 - `POST /admin/content/daily-practice/publish`
 
+## 9.4. `Kinh Văn Tự Tu` content API
+
+- `GET /content/hub-pages/kinh-van-tu-tu`
+- `GET /content/self-cultivation/groups/:groupKey`
+- `GET /content/self-cultivation/guide-map`
+- `GET /content/self-cultivation/guides`
+- `GET /content/self-cultivation/guides/:slug`
+- `GET /content/self-cultivation/faq`
+- `GET /content/self-cultivation/downloads`
+
+Quy tắc:
+
+- không tạo tracker route riêng mặc định
+- không tạo “today preset” hay advisory route riêng cho `Kinh Văn Tự Tu`
+- lời khấn trước khi niệm có thể map sang `chantRitualTemplates`
+- các kinh dùng trong `Kinh Văn Tự Tu` vẫn reference từ `chantItems`, không duplicate thành owner record mới
+
+## 9.5. `Kinh Văn Tự Tu` admin API
+
+- `GET /admin/content/self-cultivation/overview`
+- `POST /admin/content/self-cultivation/guides`
+- `PATCH /admin/content/self-cultivation/guides/:publicId`
+- `POST /admin/content/self-cultivation/faq`
+- `PATCH /admin/content/self-cultivation/faq/:publicId`
+- `POST /admin/content/self-cultivation/publish`
+
+Không cần `scenario-presets` CRUD riêng ở wave đầu.
+Các “trường hợp sử dụng” có thể đi như grouped guides trước.
+
 # 10. Admin FE đề xuất
 
 Route:
@@ -379,6 +487,37 @@ Nó phải quản lý:
 - caution/warning
 - source refs
 - PDF companion
+
+## 10.1. Admin FE cho `Kinh Văn Tự Tu`
+
+Route:
+
+```text
+/admin/noi-dung/kinh-van-tu-tu
+```
+
+Tabs:
+
+- `Tổng quan`
+- `Cách dùng`
+- `Bảo quản`
+- `Trường hợp sử dụng`
+- `FAQ`
+- `Tải xuống`
+- `Version / nguồn`
+
+Workspace này phải quản được:
+
+- guide wording cho cách dùng
+- guardrails về giờ giấc / chấm đỏ / bảo quản
+- source refs cho từng rule nhạy cảm
+- file tải xuống / printable mẫu in
+
+Workspace này không nên có:
+
+- daily preset matrix kiểu `3-7` của công khóa hằng ngày
+- tracker preview
+- advisory integration preview
 
 # 11. User FE đề xuất
 
@@ -458,8 +597,9 @@ Khi user muốn làm thật:
 # 14. Quyết định chốt
 
 1. `Kinh Bài Tập Hằng Ngày` là `feature surface lớn`, không phải chỉ là chant library.
-2. Giữ những gì web ngoài đang làm tốt: PDF chuẩn, step-by-step, FAQ, scenario presets.
-3. Vượt web ngoài ở 4 điểm:
+2. `Kinh Văn Tự Tu` là `companion feature surface` riêng trong `Content`, không bị chôn trong FAQ của `Kinh Bài Tập`.
+3. Giữ những gì web ngoài đang làm tốt: PDF chuẩn, step-by-step, FAQ, scenario presets.
+4. Vượt web ngoài ở 4 điểm:
    - grouped IA
    - guide-to-tracker bridge
    - advisory integration

@@ -28,8 +28,11 @@ Public chanting support phải tách thành 4 loại surface:
 4. `plan detail`
    - route: `/niem-kinh/ke-hoach/[slug]`
    - dùng cho plan công khóa hoặc ritual support plan
+5. `environment rules`
+   - route: `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
+   - dùng cho luật `time/place/environment/body-state`
 
-Không được gộp `chant item`, `ritual`, `plan`, `guide` vào cùng 1 kiểu page detail.
+Không được gộp `chant item`, `ritual`, `plan`, `guide`, `environment rules` vào cùng 1 kiểu page detail.
 
 ---
 
@@ -51,6 +54,8 @@ Hub phải có các section:
   - chant plan cards
 - `Lưu ý quan trọng`
   - FAQ / time-place rules / warning snippets
+- `Môi trường & thời gian`
+  - card sang `/niem-kinh/luu-y-moi-truong-va-thoi-gian`
 
 Primary CTA phải giúp user đi theo 1 trong 3 hướng:
 
@@ -170,6 +175,16 @@ Từ ritual detail:
 Người mới nên được đưa về guide trước nếu chưa biết ngữ cảnh.
 Hub không ép user nhảy thẳng vào chant item detail nếu họ cần guided context.
 
+### Environment rules -> Feature surfaces
+
+Từ `/niem-kinh/luu-y-moi-truong-va-thoi-gian`:
+
+- `Kinh Bài Tập` có thể nhúng `time warning card`, `environment checklist`
+- `Ngôi Nhà Nhỏ` chỉ lấy subset phù hợp như `quality focus`, `bệnh viện`, `non-interpretive caution`
+- `Kinh Văn Tự Tu` lấy subset về giờ giấc và môi trường cơ bản
+
+Feature surfaces không giữ bản sao wording riêng nếu chỉ là cùng một rule môi trường.
+
 ---
 
 ## 7. Rule cho các ritual/support surface khác
@@ -193,6 +208,7 @@ Tức là:
 
 - Public chanting support không được chỉ có `library list + detail text`.
 - Ritual nhiều bước phải có route detail riêng.
+- Rule `time/place/environment` phải có route canon riêng.
 - Step labels và step counts phải visible ngay trên fold.
 - Mobile phải đọc được từng bước mà không cần zoom hay cuộn một khối text quá dài.
 - Mọi CTA từ hub/guide/ritual sang tracker phải mang context, không chỉ là link trần.

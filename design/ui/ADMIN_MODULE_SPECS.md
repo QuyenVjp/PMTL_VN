@@ -163,6 +163,67 @@ Tabs: [Tổng quan] [Nhóm & Bước] [Scenario Presets] [FAQ] [Tải xuống]
 
 ---
 
+## 4a. Kinh Văn Tự Tu (`/noi-dung/kinh-van-tu-tu`)
+
+**Role**: `editor+`
+**API deps**: `/api/admin/content/self-cultivation/*`
+**Feature flag**: none
+
+### Workspace layout (Tab-based, not DataTable)
+
+```text
+Tabs: [Tổng quan] [Cách dùng] [Bảo quản] [Trường hợp sử dụng] [FAQ] [Tải xuống] [Version / nguồn]
+```
+
+**Tab 1 — Tổng quan**:
+- Publish status card (published/draft)
+- Last updated by/at
+- Boundary summary card: khác gì với `Kinh Bài Tập` và `Ngôi Nhà Nhỏ`
+- `Xem trên trang` link
+- [Publish] / [Unpublish] button with confirm dialog
+
+**Tab 2 — Cách dùng**:
+- List of grouped guides with ordering
+- Each guide: title, slug, summary, source reference
+- Add/Edit/Delete guide
+- Special emphasis cho `Kính Tặng`, khấn trước khi niệm, chấm đỏ
+
+**Tab 3 — Bảo quản**:
+- Guides cho ngày hoàn thành, cất giữ, giấy đỏ / vải đỏ
+- Warning list editor
+- Source/version notes bắt buộc cho wording nhạy cảm
+
+**Tab 4 — Trường hợp sử dụng**:
+- List of grouped scenario guides
+- Each: case name, summary, related guide refs, warnings
+- Không phải scenario preset engine kiểu daily practice
+
+**Tab 5 — FAQ**:
+- List of Q&A pairs with drag-to-reorder
+- Add/Edit/Delete FAQ items
+
+**Tab 6 — Tải xuống**:
+- List of downloadable resources
+- Upload new → link to media library
+- Set display order
+- Mark asset type: printable / PDF hướng dẫn / bảng phân biệt
+
+**Tab 7 — Version / nguồn**:
+- Source references list
+- Version notes by sensitive rule group
+- Audit-friendly change summary
+
+**Operational notes**:
+- không có daily preset matrix
+- không có tracker preview
+- không có calendar advisory integration preview
+- scripture text vẫn reference từ `chantItems` / `chantRitualTemplates`, không duplicate owner text ở workspace này
+
+**Audit**: `self-cultivation.publish`, `self-cultivation.guide.update`
+**Empty state per tab**: "Chưa có nội dung. [Thêm mới]"
+
+---
+
 ## 5. Ngôi Nhà Nhỏ (`/noi-dung/ngoi-nha-nho`)
 
 **Role**: `editor+`
@@ -570,15 +631,37 @@ Tabs: [Sự kiện] [Lunar overrides] [Advisory preview] [Projection status]
 - Filter: rule family / lunar day / status / source family
 - Row actions: View detail, Edit, Archive/Delete
 - Create flow phải hỗ trợ:
+  - không chỉ `mùng X` cố định, mà model tổng quát cho special practice day
   - chọn `rule family` như `luc_trai_days`
   - chọn target day hoặc recurrence target
+  - target type:
+    - exact solar date
+    - lunar recurrence
+    - rule family
+  - advisory kind:
+    - informational
+    - recommended practice
+    - high-priority observance
   - warning profile
   - recommended action families
+  - recitation rules
+  - surface plan:
+    - lunar calendar
+    - member dashboard
+    - homepage banner
+    - notification-candidate only
+  - pre-notify policy:
+    - disabled
+    - same-day
+    - T-1
+    - T-3
   - source refs/link preview
 - Detail drawer/page phải hiện:
   - affected dates preview
   - day-role summary
   - fallback suggestions
+  - surface targets summary
+  - pre-notify summary
   - audit trail ngắn
 
 **Tab 3 — Advisory preview**:
@@ -590,7 +673,10 @@ Tabs: [Sự kiện] [Lunar overrides] [Advisory preview] [Projection status]
   - `warningProfile`
   - `fallbackSuggestions`
   - `sourceRefs`
+  - `surfaceTargets`
+  - `preNotifyPolicy`
 - Nếu advisory thuộc `luc_trai_days`, preview phải giải nghĩa rõ `8 / 14 / 15 / 23 / 29 / 30`, không render thành 1 blob text không cấu trúc
+- Không ép admin tạo item riêng từng ngày chỉ vì copy khác nhau; nếu cùng rule family thì preview phải cho thấy cách một model áp ra nhiều ngày.
 
 **Tab 4 — Projection status**:
 - status cards:

@@ -218,6 +218,20 @@ Before scaffolding from any `design/` doc, verify that:
 
 If any of the above fails, fix the design doc first. Do not treat "design says X" as evidence that runtime X already exists.
 
+## AI Debugging Reliability Rule
+
+Khi task là debugging hoặc root-cause analysis, Codex không được giả định rằng LLM “hiểu code” chỉ vì model trả lời tự tin.
+
+Áp dụng trong repo này:
+
+- coi output của model là `hypothesis`, không phải evidence
+- yêu cầu stack trace, failing test, repro, logs, hoặc payload thực tế trước khi kết luận
+- cắt scope xuống flow/module nhỏ nhất thay vì ném nguyên file dài
+- đánh dấu dead code, stale branch, flag-off path, hoặc context không chạy
+- verify mọi fix đề xuất bằng test/check/runtime output thật
+
+Nếu diagnosis chỉ dựa trên đọc code mà thiếu runtime evidence, final synthesis phải nói rõ mức bất định đó.
+
 ## Related Docs
 
 - `AGENTS.md`

@@ -38,7 +38,9 @@
   - practice reminders
   - event reminders
   - community/admin informational push khi được opt-in
+  - calendar special-day advisory pre-notify khi advisory model đánh dấu eligible
 - nếu sau này có inbox/message-center, đó phải là owner surface khác, không reuse `pushJobs`
+- notification không sở hữu ngày đặc biệt; nó chỉ đọc `calendar` advisory output + member preferences để quyết định dispatch
 
 ## Member preference projection contract
 
@@ -75,6 +77,11 @@ Nếu user chưa có row persisted:
 - `eventReminder`
   - `enabled`
   - `scheduleSummary`
+  - `timezone`
+  - `degradedReason?`
+- `specialDayAdvisory`
+  - `enabled`
+  - `channelSummary`
   - `timezone`
   - `degradedReason?`
 - `conflicts[]`
@@ -139,6 +146,7 @@ Subscription truth vẫn do browser capability + backend subscription record com
   - redrive action có audit
 - admin page này là push-ops surface, không dùng member route `/notifications/preferences` hay `/notifications/reminders/practice`
 - segmentation hay quiet-hours override nếu có phải là explicit admin action, không để UI tự sửa payload raw ngoài rule
+- admin manual send cho special-day advisory phải đọc từ advisory preview/package đã compose; không được tự gõ một blob mới rồi coi đó là source of truth của calendar
 
 ## Admin notification ops aggregate
 
@@ -171,6 +179,11 @@ Projection rules:
   - auth keys
   - full per-recipient delivery logs
   - worker exception payload chưa sanitize
+- nếu job được tạo từ calendar advisory thì detail metadata nên sanitize nhưng vẫn giữ được:
+  - `sourceModule = calendar`
+  - `sourceTargetKey`
+  - `leadTime`
+  - `surfaceTargetsSnapshot?`
 
 Composition rule cho Phase 1:
 
@@ -184,6 +197,7 @@ Composition rule cho Phase 1:
 - Notification là async-only (chỉ chạy ngầm, bất đồng bộ); request path nên tạo hoặc sửa job rồi trả sớm.
 - Self-send prevention nên xử lý ở job payload/rule, không hack ở UI.
 - `admin push jobs` là control-plane management surface, không phải inbox message center của người dùng.
+- không tạo contract riêng cho từng ngày lễ; nếu cần nhắc trước các ngày tu học đặc biệt, dùng cùng một job model và lấy input từ advisory package tổng quát của calendar.
 - `/thong-bao` không được render lịch sử `pushJobs`; chỉ render:
   - capability
   - subscription state

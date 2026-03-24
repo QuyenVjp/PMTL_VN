@@ -19,6 +19,7 @@
 - **Phase 1**: sync compute khi route được gọi
 - **Phase 2+**: worker (tiến trình xử lý nền) làm mới `personalPracticeCalendarReadModel`
 - admin publish/update một rule special day
+- admin cần preview một ngày đặc biệt bất kỳ trước khi cho hiện trên web hoặc pre-notify
 
 ## preconditions (điều kiện tiên quyết)
 
@@ -57,9 +58,18 @@
    - exception rules
    - recommended scenario preset ref
    - support refs
-6. Compose `advisoryCards` ngắn gọn cho UI người lớn tuổi.
-7. Gắn `sourceRefs` để user mở bài gốc hoặc bài dịch đã duyệt.
-8. Ghi vào `personalPracticeCalendarReadModel` hoặc trả về tức thời.
+6. Xác định `surfacePlan`:
+   - chỉ hiện trong lịch tu học
+   - hiện ở member dashboard
+   - đủ điều kiện hiện homepage banner
+   - chỉ làm notification candidate, không hiện nổi bật trên web
+7. Xác định `notificationPlan` nếu rule/policy cho phép:
+   - có pre-notify hay không
+   - lead time nào
+   - channel nào được phép
+8. Compose `advisoryCards` ngắn gọn cho UI người lớn tuổi.
+9. Gắn `sourceRefs` để user mở bài gốc hoặc bài dịch đã duyệt.
+10. Ghi vào `personalPracticeCalendarReadModel` hoặc trả về tức thời.
 
 ## async (bất đồng bộ) side-effects
 
@@ -74,6 +84,7 @@
 - bên dưới vẫn có source-backed refs để đối chiếu
 - nếu cần, FE có thể deep-link sang đúng preset hoặc `/tu-tap/bai-tap`
 - notification có thể đọc cùng một output mà không tự tính lại logic
+- cùng pipeline này phải dùng được cho nhiều ngày đặc biệt khác nhau, không cần tạo owner doc mới cho từng ngày
 
 ## Errors
 
@@ -87,3 +98,4 @@
 - `community volunteer site` chỉ là support ref hoặc local CTA, không được thay source chính thức.
 - card hiển thị phải ngắn, nhưng data model bên dưới phải đủ chi tiết để audit và peer review.
 - nếu compose output bị lệch, recovery chuẩn là recompute advisory window từ source data đã duyệt.
+- `surfacePlan` và `notificationPlan` là projection intent; chúng không chuyển authority sang web hay notification module.

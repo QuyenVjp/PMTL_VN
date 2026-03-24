@@ -255,6 +255,7 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 | Storage lifecycle | 5 cleanup jobs, upload quota per role, asset state machine | `baseline/storage-lifecycle.md` |
 | Cache topology | 4 layers: Cloudflare → ISR → TanStack Query → Valkey | `baseline/cache-topology.md` |
 | Secret management | VPS env_file Phase 1; rotation procedures per secret type | `baseline/secret-management.md` |
+| AI debugging discipline | LLM debug output is hypothesis-only until backed by runtime evidence and verification | `baseline/ai-debugging-discipline.md` |
 | Dependency governance | approved version matrix + stable/RC policy + cadence + advisory intake + migration checklists | `baseline/dependency-governance.md` |
 | Managed-platform learnings | import secure defaults, operator UX, observability, AI-readable docs patterns; never import browser-to-DB authority or vendor-owned business boundaries | `baseline/managed-platform-patterns.md` |
 | CI/CD gates | GitHub Actions; 4 automated gates + 1 human gate; no deploy without backup | `baseline/cicd-deploy-gates.md` |

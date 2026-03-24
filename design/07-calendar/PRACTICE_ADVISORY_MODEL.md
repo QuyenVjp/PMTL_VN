@@ -34,6 +34,23 @@ Nó là một `advisory (thông báo hoặc gói hướng dẫn) package` đư�
 - `weekdayLabel`
 - `lunarDateLabel`
 - `dayTags`
+- `advisoryKind`
+- `eventIdentity`
+  - `targetType`
+  - `targetKey`
+  - `ruleFamily?`
+
+### 1b. `surfacePlan` | Kế hoạch hiển thị
+
+- `surfaceTargets`
+  - `lunar_calendar`
+  - `member_dashboard`
+  - `homepage_banner`
+  - `notification_candidate_only`
+- `priority`
+- `startsAt?`
+- `endsAt?`
+- `isPinned?`
 
 ### 2. `announcementCopy` | Phần lời chúc / lời nhắc mở đầu
 
@@ -51,6 +68,9 @@ Mỗi recommendation nên là một record riêng:
 - `labelZh`
 - `actionKind`
 - `priority`
+- `recommendedCount?`
+- `notesVi?`
+- `ctaRef?`
 
 ### 4. `recitationRules` | Quy tắc số biến / giới hạn
 
@@ -104,6 +124,25 @@ Mỗi advisory (thông báo hoặc gói hướng dẫn) package phải có sourc
 - phụng sự viên / contact địa phương
 - video giới thiệu pháp môn
 
+### 10. `notificationPlan` | Kế hoạch nhắc trước nếu cần
+
+- `preNotifyEnabled`
+- `leadTimes`
+  - `same_day`
+  - `T-1`
+  - `T-3`
+- `eligibleChannels`
+  - `push`
+  - `email`
+  - `in_app` nếu phase sau bật
+- `audienceScope`
+  - `opted_in_members`
+  - `segment`
+  - `all_members_if_policy_allows`
+- `notificationSummary`
+
+`notificationPlan` là advisory-owned read output để `08-notification` đọc và quyết định tạo `pushJobs`, không làm `calendar` thành delivery owner.
+
 ## Module ownership
 
 ### `07-calendar`
@@ -120,6 +159,7 @@ Không sở hữu:
 - bài gốc khai thị
 - bản dịch gốc của Q&A
 - community support directory canonical data
+- push delivery execution
 
 ### `10-wisdom-qa`
 
@@ -145,6 +185,7 @@ Chỉ được:
 
 - đọc advisory (thông báo hoặc gói hướng dẫn) package
 - chọn phần nào phù hợp để gửi nhắc
+- map `notificationPlan` sang `pushJobs` hoặc channel khác theo preference/policy
 
 ## Output shape đề xuất cho read model (mô hình dữ liệu đọc)
 
@@ -152,6 +193,8 @@ Mỗi ngày trong `personalPracticeCalendarReadModel` nên có thêm:
 
 - `advisoryCards`
 - `sourceRefs`
+- `surfacePlan`
+- `notificationPlan?`
 
 ## Tại sao không tạo module mới
 
@@ -168,3 +211,4 @@ Nó là lớp compose từ:
 - Đừng hard-code text dài vào calendar service (lớp xử lý nghiệp vụ).
 - Hãy coi `advisory (thông báo hoặc gói hướng dẫn)` là output được compose từ nhiều record nhỏ.
 - Một card hiển thị cho người dùng có thể ngắn, nhưng source-backed data ở dưới phải đầy đủ.
+- Không tạo file design riêng cho mỗi ngày đặc biệt mới nếu model chung vẫn biểu diễn được bằng `dayIdentity + practiceRecommendations + recitationRules + surfacePlan + notificationPlan`.

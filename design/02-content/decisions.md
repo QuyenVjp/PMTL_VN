@@ -199,3 +199,34 @@ Nhưng nếu chỉ dừng ở journal:
 ### Trade-off
 - cần thêm admin/editorial discipline
 - content và journal phải có context bridge rõ để không drift
+
+## Decision 9. `Time / place / environment` chanting rules phải có canon tập trung
+
+### Context
+Repo hiện đã có nhiều mảnh rule về:
+- giờ giấc niệm kinh
+- địa điểm / môi trường
+- đồ ăn / vệ sinh / thể trạng
+- nơi đặc biệt như bệnh viện, nghĩa trang, xe cộ
+
+Nhưng chúng đang rải ở:
+- component demo web
+- FAQ
+- guide inventory
+- feature-specific notes
+
+### Decision
+- Dùng `design/02-content/chanting-environment-rules.md` làm canon tập trung.
+- `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`, và `chanting support surface` chỉ được:
+  - deep-link
+  - reuse rule groups / warning cards / checklist
+  - override rất hẹp theo feature nếu có source-backed reason
+
+### Rationale
+- tránh drift wording giữa các surface
+- giúp admin và FE tái dùng cùng một rule base
+- ngăn AI/codegen tự nhặt rule từ component demo hoặc FAQ rời
+
+### Trade-off
+- cần discipline hơn khi thêm rule mới
+- feature docs phải reference canon thay vì tự copy lại toàn bộ

@@ -219,6 +219,71 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.4ea Self-Cultivation Hub (Kinh Văn Tự Tu — Tổng quan)
+
+| Field | Value |
+|---|---|
+| Route | `/kinh-van-tu-tu` |
+| Title | Kinh Văn Tự Tu |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung chính:**
+- Quick definition: `Kinh Văn Tự Tu là gì`, khác gì với `Kinh Bài Tập` và `Ngôi Nhà Nhỏ`
+- Entry cards theo 5 nhóm: bắt đầu / cách dùng / bảo quản / trường hợp sử dụng / tải xuống
+- Boundary summary box để user không nhầm sang công khóa hằng ngày hoặc Ngôi Nhà Nhỏ
+- Download panel cho mẫu in, PDF hướng dẫn, bảng phân biệt 3 surface
+- CTA `Đọc cách dùng` và `Tải mẫu in`
+
+**SEO**: Primary keyword `kinh văn tự tu`. Schema: `WebPage` + `ItemList` + `BreadcrumbList`.
+**Mobile note**: Card IA hiển thị 1 cột, ưu tiên đọc nhanh và tải mẫu in rõ ràng.
+
+---
+
+### 1.4eb Self-Cultivation Group Landing Pages
+
+| Routes | Auth | Module owner |
+|---|---|---|
+| `/kinh-van-tu-tu/bat-dau` | `public` | Content |
+| `/kinh-van-tu-tu/cach-dung` | `public` | Content |
+| `/kinh-van-tu-tu/bao-quan` | `public` | Content |
+| `/kinh-van-tu-tu/truong-hop-su-dung` | `public` | Content |
+| `/kinh-van-tu-tu/tai-xuong` | `public` | Content |
+
+**Mỗi group landing page có:**
+- Sticky section nav
+- Danh sách guide cards hoặc download cards
+- Boundary note với `Kinh Bài Tập` / `Ngôi Nhà Nhỏ` khi cần
+- CTA `Xem hướng dẫn liên quan`
+- Breadcrumb: Trang chủ > Kinh Văn Tự Tu > [Nhóm]
+
+**SEO**: `Article` + `BreadcrumbList`, nhóm `cách dùng` có thể dùng `HowTo` khi phù hợp.
+
+---
+
+### 1.4ec Self-Cultivation Guide Detail Pages
+
+| Route pattern | Auth | Module owner |
+|---|---|---|
+| `/kinh-van-tu-tu/[group]/[slug]` | `public` | Content |
+
+**Ví dụ routes:**
+- `/kinh-van-tu-tu/cach-dung/cach-ghi-kinh-tang`
+- `/kinh-van-tu-tu/cach-dung/cach-cham-do`
+- `/kinh-van-tu-tu/bao-quan/cach-cat-giu`
+- `/kinh-van-tu-tu/truong-hop-su-dung/dung-cho-ban-than`
+
+**Mỗi guide detail page có:**
+- Sticky TOC
+- Block types: step_sequence, warning_list, script_block, faq_block, download_panel
+- Summary box đầu trang
+- Source/version note cho rule nhạy cảm
+- CTA `Tải mẫu in` hoặc `Xem hướng dẫn liên quan`
+
+**Mobile note**: TOC collapse thành dropdown. `script_block` hiển thị dạng card dọc dễ đọc.
+
+---
+
 ### 1.4f Life Release Hub (Phóng Sanh — Tổng quan)
 
 | Field | Value |
@@ -1064,6 +1129,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 Similar pattern cho:
 - `/admin/noi-dung/huong-dan` — Beginner Guides
 - `/admin/noi-dung/kinh-bai-tap` — Daily Practice workspace
+- `/admin/noi-dung/kinh-van-tu-tu` — Self-cultivation workspace
 - `/admin/noi-dung/ngoi-nha-nho` — Little House workspace
 - `/admin/noi-dung/phong-sanh` — Life Release workspace
 - `/admin/noi-dung/thu-vien-phap-mon` — Media library workspace
@@ -1100,7 +1166,22 @@ Similar pattern cho:
 
 ---
 
-### 4.3c Life Release Content Workspace
+### 4.3c Self-Cultivation Content Workspace
+
+| Route | `/admin/noi-dung/kinh-van-tu-tu` | Auth | `admin+` |
+|---|---|---|---|
+| Module | Content |
+
+**Nội dung:**
+- Tabs: Tổng quan / Cách dùng / Bảo quản / Trường hợp sử dụng / FAQ / Downloads / Version & nguồn
+- Preview guide map cho IA riêng của `Kinh Văn Tự Tu`
+- Validation cho boundary summary, source refs, wording nhạy cảm, printable assets
+- Không có tracker preview hay daily preset preview
+- Publish action + audit summary
+
+---
+
+### 4.3d Life Release Content Workspace
 
 | Route | `/admin/noi-dung/phong-sanh` | Auth | `admin+` |
 |---|---|---|---|

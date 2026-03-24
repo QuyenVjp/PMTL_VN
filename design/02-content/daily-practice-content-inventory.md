@@ -69,11 +69,17 @@
 
 ### Comparison matrix
 
-| Surface | Bản chất | Dùng khi nào |
-|---|---|---|
-| Kinh Bài Tập | công khóa hằng ngày | làm đều mỗi ngày |
-| Ngôi Nhà Nhỏ | trả nghiệp / siêu độ / chuyển công đức | theo từng case |
-| Kinh Văn Tự Tu | tích lũy / dự phòng | dùng lúc cần |
+| Surface | Bản chất | Dùng khi nào | Có tracker | Có daily advisory |
+|---|---|---|---|---|
+| Kinh Bài Tập | công khóa hằng ngày | làm đều mỗi ngày | `yes` | `yes` |
+| Ngôi Nhà Nhỏ | trả nghiệp / siêu độ / chuyển công đức | theo từng case | `member sheet` | `case-linked` |
+| Kinh Văn Tự Tu | tích lũy / dự phòng | dùng lúc cần | `no` | `no` |
+
+Boundary note:
+
+- `Kinh Văn Tự Tu` là surface riêng, không phải tab phụ của `Kinh Bài Tập`
+- dữ liệu sử dụng lại `chantItems` + `chantRitualTemplates` + `downloads`
+- printable / mẫu in là first-class asset của surface này
 
 ---
 
@@ -129,6 +135,12 @@ Nội dung canonical nên có:
 - nơi ô uế, nhà vệ sinh, chỗ khí xấu thì không niệm
 - gần bệnh viện, nghĩa trang, lò mổ:
   - chỉ nên niệm `Chú Đại Bi` theo rule an toàn
+
+Canonical note:
+
+- phần này không nên giữ như wording rời chỉ riêng cho `Kinh Bài Tập`
+- source-of-truth tập trung nằm ở [chanting-environment-rules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-content/chanting-environment-rules.md)
+- route `/kinh-bai-tap/luu-y/thoi-gian-va-dia-diem` chỉ là consumer/curated subset của canon đó
 
 ### 5.2. Cách niệm đúng
 
@@ -217,6 +229,38 @@ Mục tiêu:
 | `huong-dan-kinh-bai-tap-nguoi-moi.pdf` | bản PDF companion chuẩn |
 | `sach-kinh-phat-giao-niem-tung-hop-tap.pdf` | kinh sách gốc |
 | `checklist-cong-khoa-hang-ngay.pdf` | checklist in ra cho người lớn tuổi |
+
+## 8a. `Kinh Văn Tự Tu` companion surface
+
+Route pillar đề xuất:
+
+```text
+/kinh-van-tu-tu
+├─ /bat-dau
+├─ /cach-dung
+├─ /bao-quan
+├─ /truong-hop-su-dung
+└─ /tai-xuong
+```
+
+Nội dung source-derived nên có:
+
+- phân biệt rõ `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`
+- cách ghi `Kính Tặng`
+- cách khấn trước khi niệm và xác định đây là `Kinh Văn Tự Tu`
+- các rule giờ giấc quan trọng cho những kinh như `Tâm Kinh`, `Chú Vãng Sinh`, `Lễ Phật Đại Sám Hối Văn`
+- cách chấm đỏ
+- cách để trống hoặc ghi ngày hoàn thành
+- cách bọc giấy đỏ / vải đỏ và cất giữ
+- các trường hợp sử dụng chính
+
+Downloads cần có:
+
+| Tên | Mục đích |
+|---|---|
+| `kinh-van-tu-tu-huong-dan.pdf` | hướng dẫn dùng và bảo quản |
+| `kinh-van-tu-tu-mau-in.pdf` | printable mẫu in |
+| `bang-phan-biet-3-surface.pdf` | phân biệt công khóa / ngôi nhà nhỏ / kinh văn tự tu |
 
 ---
 

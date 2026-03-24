@@ -47,6 +47,8 @@ Search-related source fields:
 - `GET /api/content/guides`
 - `GET /api/content/chant-items`
 - `GET /api/content/chant-plans`
+- `GET /api/content/chanting/environment-rules`
+- `GET /api/content/chanting/environment-rules/:groupKey`
 
 ### Little House content surface
 - `GET /api/content/hub-pages/ngoi-nha-nho`
@@ -67,6 +69,15 @@ Search-related source fields:
 - `GET /api/content/daily-practice/scenario-presets`
 - `GET /api/content/daily-practice/faq`
 - `GET /api/content/daily-practice/downloads`
+
+### Self-cultivation scripture content surface
+- `GET /api/content/hub-pages/kinh-van-tu-tu`
+- `GET /api/content/self-cultivation/groups/:groupKey`
+- `GET /api/content/self-cultivation/guide-map`
+- `GET /api/content/self-cultivation/guides`
+- `GET /api/content/self-cultivation/guides/:slug`
+- `GET /api/content/self-cultivation/faq`
+- `GET /api/content/self-cultivation/downloads`
 
 ### Life release content surface
 - `GET /api/content/hub-pages/phong-sanh`
@@ -90,8 +101,10 @@ Ghi chú:
   - sơ học nhập môn
   - đường dẫn bắt đầu tu học
   - hub điều hướng tài nguyên chính thức
+- `chanting/environment-rules` là canon tập trung cho `time/place/environment/body-state` rules; các feature surface không được mỗi nơi giữ một bản wording riêng nếu không có source-backed exception
 - với `Ngôi Nhà Nhỏ`, FE không tự ghép 13 bài rời; backend content surface phải trả được grouped IA, guide metadata, case variants, FAQ, download panels
 - với `Kinh Bài Tập Hằng Ngày`, FE không được chỉ dựa vào `chantItems` rời; backend phải trả được grouped IA, step guides, scenario presets, FAQ và companion downloads
+- với `Kinh Văn Tự Tu`, FE không được chỉ render một bài dài generic; backend phải trả được grouped IA, usage/storage guides, FAQ, download panels và boundary summary với `Kinh Bài Tập` / `Ngôi Nhà Nhỏ`
 - với `Phóng Sanh`, FE không được chỉ mở một bài dài generic; backend phải trả được guide map, ritual variants, FAQ, warning blocks và companion downloads
 
 ## Write contracts
@@ -132,6 +145,21 @@ Quy tắc:
 - bài `benh-nang`, `nguoi-cao-tuoi`, `hoa-giai-oan-ket` phải có review note rõ trước khi publish
 - ritual support flow như `thắp tâm hương` không được nhét thành một `chantItem` đơn lẻ; nó phải đi qua `chantRitualTemplates` rồi mới được tham chiếu vào daily-practice guide/preset khi cần
 
+### Self-cultivation editorial workspace
+- `GET /api/admin/content/self-cultivation/overview`
+- `POST /api/admin/content/self-cultivation/guides`
+- `PATCH /api/admin/content/self-cultivation/guides/:publicId`
+- `POST /api/admin/content/self-cultivation/faq`
+- `PATCH /api/admin/content/self-cultivation/faq/:publicId`
+- `POST /api/admin/content/self-cultivation/publish`
+
+Quy tắc:
+- `Kinh Văn Tự Tu` là content-first reference surface, không phải user-state hay tracker module
+- guide bắt buộc nói rõ boundary với `Kinh Bài Tập` và `Ngôi Nhà Nhỏ`
+- rule nhạy cảm như cách ghi tên, chấm đỏ, bảo quản, giờ giấc phải có `sourceReference`
+- printable / mẫu in đi qua `downloads`, không bury trong rich text
+- lời khấn trước khi niệm hoặc flow nhiều bước có thể reference `chantRitualTemplates`
+
 ### Chanting / ritual editorial workspace
 - `GET /api/content/chant-items`
 - `GET /api/content/chant-items/:publicIdOrSlug`
@@ -147,6 +175,9 @@ Quy tắc:
 - `POST /api/admin/content/chant-plans`
 - `PATCH /api/admin/content/chant-plans/:publicId`
 - `POST /api/admin/content/chanting/publish`
+- `GET /api/admin/content/chanting/environment-rules`
+- `POST /api/admin/content/chanting/environment-rules`
+- `PATCH /api/admin/content/chanting/environment-rules/:publicId`
 
 Quy tắc:
 - `chantItems` là owner của từng bài niệm/bài chú/bài kinh đơn lẻ.
@@ -154,6 +185,8 @@ Quy tắc:
 - `chantPlans` chỉ là ordered composition; không chôn toàn bộ ritual text trực tiếp trong plan row.
 - các flow như `thắp tâm hương` phải được quản như ritual template first-class, rồi mới attach vào plan/guide nếu một trải nghiệm cần nó.
 - FE `/niem-kinh` và admin `/admin/noi-dung/niem-kinh` không tự hardcode ritual sequence từ component text nếu owner records chưa có.
+- `Kinh Văn Tự Tu` có thể reference `chantItems` và `chantRitualTemplates`, nhưng không tạo owner text mới cho từng bài kinh chỉ vì khác surface điều hướng.
+- `time/place/environment` rules phải đi qua owner canon tập trung; không để từng feature lưu một blob FAQ riêng rồi drift nhau.
 
 ### Life release editorial workspace
 - `GET /api/admin/content/life-release/overview`
@@ -265,5 +298,7 @@ Canonical error codes liên quan:
 - Search index chỉ là derived document; canonical body vẫn nằm ở content collections.
 - Publish thành công không được phụ thuộc vào việc Meilisearch hay push notification hoàn tất ngay.
 - `Kinh Bài Tập Hằng Ngày` public delivery phải trả được `guideMap`, `scenarioPresets`, `faq`, `downloads` theo DTO rõ ràng; không ép FE tự đoán từ `chantItems` và `chantPlans`.
+- `Kinh Văn Tự Tu` public delivery phải trả được `guideMap`, `faq`, `downloads` và boundary summary với `Kinh Bài Tập` / `Ngôi Nhà Nhỏ`; không ép FE render như một bài dài duy nhất.
 - `Ngôi Nhà Nhỏ` public delivery phải ưu tiên DTO/block đã lọc theo group, slug, block type; không trả raw editor payload chưa sanitize cho FE render trực tiếp.
 - `Phóng Sanh` public delivery phải trả được `guideMap`, `ritualVariants`, `faq`, `downloads` và `warning blocks`; journal module chỉ nhận refs/context chứ không giữ full ritual script.
+- `chanting/environment-rules` public delivery phải phân nhóm rule rõ (`time`, `place`, `food-body`, `posture-hygiene`, `special-location`, `non-interpretive`); không trả một long-form blob duy nhất.

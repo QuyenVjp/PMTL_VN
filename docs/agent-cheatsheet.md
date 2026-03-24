@@ -79,6 +79,18 @@ Trước khi agent đề xuất `đổi stack`, `nâng bản mới`, hoặc `dù
 
 Thiếu bất kỳ mục nào ở trên thì task là `blocked at governance`, chưa phải implementation-ready.
 
+## AI debugging pre-flight
+
+Trước khi agent hoặc external worker debug:
+
+- [ ] đã có failing test, repro steps, stack trace, hoặc log thật chưa
+- [ ] đã cắt scope xuống flow/file/module nhỏ nhất chưa
+- [ ] đã đánh dấu dead code, stale comment, flag-off branch, hoặc irrelevant path chưa
+- [ ] nếu bug nằm sâu cuối file, đã tách đúng đoạn đó ra chưa
+- [ ] đã xác định check nhỏ nhất để verify hypothesis chưa
+
+Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, chưa phải `ready for AI diagnosis`.
+
 ## Stitch MCP fast path
 
 - Nếu task là wireframe, screen generation, hoặc chỉnh sửa UI trực tiếp trên Stitch, đọc `docs/stitch-mcp.md` trước.

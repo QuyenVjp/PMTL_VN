@@ -343,12 +343,286 @@ Validation realtime khi user điền thông tin trong tracker, ngăn các lỗi 
 
 ### Owner
 
-- apps/web: form validation trong tracker UI
+- apps/web: inline validation + helper copy
+- apps/api: final schema validation and safe error codes
+- Content module: source-backed helper text and warning wording
 - Engagement module: server-side validation (Zod schema) như failsafe
 
 ### Phase
 
-Phase C (cùng với tracker).
+Phase C.
+
+---
+
+## 9. Feature 9: Official Name Helper + Recipient Wizard
+
+### Là gì
+
+Wizard nhỏ giúp user điền đúng `Kính Tặng` / `Tặng` theo case, thay vì để hai ô text trống hoàn toàn.
+
+### Tại sao cần
+
+FAQ cho thấy lỗi điền tên là lỗi cực hay gặp:
+- dùng nickname
+- viết tên quá mơ hồ
+- nhầm người nhận với người tụng
+- case thuê nhà / người trong nhà cần kinh / đổi tên
+
+### UI
+
+- bước chọn case:
+  - người cần kinh của bản thân
+  - người quá cố
+  - người trong nhà cần kinh
+  - hóa giải oán kết
+  - tích lũy
+- helper copy đổi theo case
+- warning nếu:
+  - tên quá ngắn
+  - dùng placeholder như `mẹ`, `ba`, `bé`
+  - để trống khi không phải case tích lũy
+- example preview cho cách hiển thị final trên tờ
+
+### Không làm
+
+- không tự quyết định chuyện thăng văn / đổi tên
+- không sinh wording “chuẩn pháp” nếu source chưa đủ
+
+### Owner
+
+- apps/web: wizard + preview
+- Content module: case-specific helper copy
+- Engagement module: persist `recipientType`, `recipientLabel`, `giverName`
+
+### Phase
+
+Phase C.
+
+---
+
+## 10. Feature 10: Interruption Recovery Helper
+
+### Là gì
+
+Trợ lý tiếp tục tụng khi user bị gián đoạn.
+
+### Tại sao cần
+
+FAQ cho thấy đây là pain point thật:
+- đang niệm thì bị làm phiền
+- không biết nên tiếp tục hay niệm lại
+- không biết case nào có thể resume, case nào nên restart
+
+### UI
+
+- nút `Tạm dừng`
+- khi resume, hỏi nhanh:
+  - gián đoạn ngắn
+  - gián đoạn lâu
+  - đang ở kinh ngắn hay kinh dài
+- hiển thị guidance card tương ứng:
+  - resume from current point
+  - restart current segment
+  - ưu tiên niệm lại từ đầu với kinh ngắn
+
+### Owner
+
+- apps/web: pause/resume UX
+- Content module: guidance wording per interruption case
+- Engagement module: optional `pausedAt` / local resume state
+
+### Phase
+
+Phase D.
+
+---
+
+## 11. Feature 11: Focus Mode + Environment Checklist
+
+### Là gì
+
+Một lớp hỗ trợ chất lượng tụng, không phải để kiểm soát user.
+
+### Tại sao cần
+
+FAQ cho thấy chất lượng tụng phụ thuộc mạnh vào bối cảnh:
+- đang làm việc nhà
+- ở nơi không sạch
+- đang nấu món mặn
+- thiếu tập trung
+
+### UI
+
+- mini mode selector:
+  - `Tôi đang tập trung`
+  - `Tôi đang tranh thủ`
+- nếu là `tranh thủ`, hiện warning về chất lượng
+- environment checklist:
+  - nơi sạch sẽ
+  - không ở nhà vệ sinh
+  - không đang làm món mặn
+  - có thể giữ tập trung
+
+### UX rule
+
+- chỉ nhắc, không chặn cứng trừ khi là rule cấm rõ
+- không biến thành shame UX
+
+### Owner
+
+- apps/web: focus mode card
+- Content module: environment guardrails and copy
+
+### Phase
+
+Phase C.
+
+---
+
+## 12. Feature 12: Burning Readiness Advisor
+
+### Là gì
+
+Checklist cuối trước khi chuyển từ `marked_complete` sang `ready_to_burn`.
+
+### Tại sao cần
+
+Rất nhiều lỗi xảy ra ở giai đoạn sát lúc đốt:
+- chưa chấm đúng
+- quên phần tên
+- ghi nhầm ngày
+- đang ở nơi không phù hợp
+
+### UI
+
+- advisory sheet trước bước đốt:
+  - đã chấm xong
+  - tên người nhận / người tụng đã đúng
+  - ngày ghi là dương lịch
+  - đang ở nơi phù hợp
+  - nếu đang ở bệnh viện / nơi trường khí kém thì hiện warning riêng
+- CTA:
+  - `Xem lại hướng dẫn đốt`
+  - `Tôi đã kiểm tra xong`
+
+### Owner
+
+- apps/web: readiness advisory UI
+- Content module: check items, warning copy
+- Engagement module: store `last_guidance_acknowledged_at`
+
+### Phase
+
+Phase C.
+
+---
+
+## 13. Feature 13: Family Assist Mode
+
+### Là gì
+
+Mode hỗ trợ người thân lớn tuổi hoặc mắt kém, nhưng vẫn giữ đúng chủ thể tu tập.
+
+### Tại sao cần
+
+FAQ cho thấy đây là use case thật, không phải edge case.
+
+### UI
+
+- switch `Tôi đang hỗ trợ người thân`
+- hiện guidance:
+  - ai là người niệm chính
+  - phần nào có thể hỗ trợ
+  - phần nào không được thay
+- caregiver checklist:
+  - hỗ trợ cầm tay ký
+  - hỗ trợ chấm đỏ
+  - hỗ trợ đốt
+
+### Không làm
+
+- không biến thành delegation workflow nhiều tài khoản
+- không làm shared editing realtime
+
+### Owner
+
+- apps/web: assist mode UX
+- Content module: helper copy and guardrails
+
+### Phase
+
+Phase D.
+
+---
+
+## 14. Feature 14: Dream & Sign Caution Panel
+
+### Là gì
+
+Một panel giải thích “cách đọc thông tin tham khảo” cho các case như giấc mơ, con số, hiện tượng tro/lửa.
+
+### Tại sao cần
+
+FAQ cho thấy user rất dễ:
+- over-interpret con số trong mơ
+- over-interpret hiện tượng khi đốt
+- đi tìm tool “dịch nghĩa” tự động
+
+### UI
+
+- panel luôn là dạng caution / educational
+- nội dung:
+  - đây là thông tin tham khảo
+  - phải xét theo toàn cảnh
+  - nếu không chắc, quay về lane thực hành an toàn
+- CTA:
+  - `Đọc FAQ`
+  - `Xem hướng dẫn thực hành căn bản`
+
+### Product rule
+
+- không làm dream-number calculator
+- không sinh kết luận tự động từ giấc mơ hoặc hiện tượng vật lý
+
+### Owner
+
+- Content module: caution content
+- apps/web: render panel on FAQ / post-burn screen
+
+### Phase
+
+Phase B.
+
+---
+
+## 15. Feature 15: Post-Burn Reassurance Card
+
+### Là gì
+
+Card trấn an ngắn sau khi user đánh dấu đã đốt xong.
+
+### Tại sao cần
+
+Ngay sau lúc đốt, user thường dễ lo và tự suy diễn hiện tượng.
+
+### UI
+
+- text ngắn:
+  - không cần quá chấp vào màu tro / ngọn lửa
+  - nếu lo mình làm sai, mở lại checklist chuẩn
+  - giữ tâm bình ổn
+- action:
+  - `Xem lại lưu ý khi đốt`
+  - `Quay về danh sách tờ`
+
+### Owner
+
+- apps/web: completion state UI
+- Content module: reassurance wording
+
+### Phase
+
+Phase C.
 
 ---
 
@@ -358,8 +632,15 @@ Phase C (cùng với tracker).
 |---|---|---|
 | Image Compare Component | Phase A | Content blocks |
 | Dynamic PDF Generator | Phase B | Content stable |
+| Dream & Sign Caution Panel | Phase B | FAQ + caution content |
 | Contextual Warning Engine | Phase D | Content + Case variants |
 | Anti-mistake Validation UI | Phase C | Tracker UI |
+| Official Name Helper + Recipient Wizard | Phase C | Tracker UI + content copy |
+| Interruption Recovery Helper | Phase D | Tracker state + guidance copy |
+| Focus Mode + Environment Checklist | Phase C | Tracker UI + content guardrails |
+| Burning Readiness Advisor | Phase C | Tracker state + guidance copy |
+| Family Assist Mode | Phase D | Tracker UI + content guardrails |
+| Post-Burn Reassurance Card | Phase C | Completion state UI |
 | Smart Quantity Calculator | Phase C | Calendar module |
 | Step Timer | Phase C | Tracker UI |
 | Offline PWA | Phase C | Tracker + Service Worker |

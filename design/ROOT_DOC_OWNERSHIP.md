@@ -42,6 +42,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/nestjs-11-adoption.md` | NestJS 11 feature adoption owner | exact scaffold line, Express v5 route stance, logger policy, selective use/defer list for Nest 11 capabilities | không thay request pipeline hay repo phase rules một mình |
 | `baseline/security.md` | security policy owner | auth, CSRF, CORS, cookies, upload security, webhook, secrets | không lặp infra topology |
 | `baseline/infra.md` | infra phase owner | phase baseline, optional components, trigger rules | không biến thành deep ops tutorial |
+| `baseline/ai-debugging-discipline.md` | AI-assisted debugging owner | evidence-first rules for LLM debugging, context hygiene, scope reduction, and verification expectations | không override runtime verification rule một mình |
 | `baseline/managed-platform-patterns.md` | managed-service learning owner | imported patterns from Supabase-like platforms, what PMTL may learn now/later, and what must stay out | không thay authority rules trong `DECISIONS.md` một mình |
 | `baseline/high-traffic-resilience-plan.md` | growth-safe launch owner | launch profiles, traffic/crawl/abuse pressure stance, supporting tech order, anti-collapse rules | không thay failure-mode detail hay search contract một mình |
 | `baseline/external-web-check-readiness.md` | external web-check readiness owner | mapping giữa scan families, owner docs, design-vs-runtime evidence split, host-readiness interpretation | không thay security/infra/seo policy gốc một mình |

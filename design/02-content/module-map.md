@@ -155,12 +155,18 @@ markmap:
 ### Practice support
 - `chantItems` là owner của bài niệm / chú / script / audio / preview image
 - `chantPlans` là owner của plan công khóa hoặc nghi thức
+- `chanting-environment-rules.md` là canon cho `time/place/environment/body-state` rules dùng chung giữa `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`, và `chanting support`
 - các tài liệu như niệm hằng ngày, thắp tâm hương, phát nguyện, phóng sinh, Ngôi Nhà Nhỏ nên map vào lớp này hoặc vào `downloads` / `beginnerGuides`
 - `practice-support-reference.md` là file nối giữa PDF thực tế và content model
 - `Kinh Bài Tập Hằng Ngày` là first-class content surface:
   - `hubPages` giữ hub và group landing
   - `beginnerGuides` giữ step guides, lưu ý, FAQ, scenario pages
   - `downloads` giữ PDF companion, sách kinh, checklist in ra
+- `Kinh Văn Tự Tu` là first-class content surface:
+  - `hubPages` giữ hub và group landing
+  - `beginnerGuides` giữ cách dùng, bảo quản, FAQ, use-case guides
+  - `downloads` giữ mẫu in, PDF hướng dẫn, bảng phân biệt 3 surface
+  - `chantItems` và `chantRitualTemplates` vẫn là source owner cho bài kinh và lời khấn nhiều bước khi cần reference
 - `Phóng Sanh` là first-class content surface:
   - `hubPages` giữ hub và route pillar
   - `beginnerGuides` giữ nghi thức, variant pages, FAQ-style pages

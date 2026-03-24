@@ -147,6 +147,13 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/content/daily-practice/scenario-presets` | `content` | public |
 | `GET` | `/content/daily-practice/faq` | `content` | public |
 | `GET` | `/content/daily-practice/downloads` | `content` | public |
+| `GET` | `/content/hub-pages/kinh-van-tu-tu` | `content` | public |
+| `GET` | `/content/self-cultivation/groups/:groupKey` | `content` | public |
+| `GET` | `/content/self-cultivation/guide-map` | `content` | public |
+| `GET` | `/content/self-cultivation/guides` | `content` | public |
+| `GET` | `/content/self-cultivation/guides/:slug` | `content` | public |
+| `GET` | `/content/self-cultivation/faq` | `content` | public |
+| `GET` | `/content/self-cultivation/downloads` | `content` | public |
 | `GET` | `/content/hub-pages/phong-sanh` | `content` | public |
 | `GET` | `/content/life-release/guide-map` | `content` | public |
 | `GET` | `/content/life-release/guides` | `content` | public |
@@ -182,6 +189,12 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/admin/content/daily-practice/faq` | `content` | editor+ |
 | `PATCH` | `/admin/content/daily-practice/faq/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/daily-practice/publish` | `content` | editor+ |
+| `GET` | `/admin/content/self-cultivation/overview` | `content` | editor+ |
+| `POST` | `/admin/content/self-cultivation/guides` | `content` | editor+ |
+| `PATCH` | `/admin/content/self-cultivation/guides/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/self-cultivation/faq` | `content` | editor+ |
+| `PATCH` | `/admin/content/self-cultivation/faq/:publicId` | `content` | editor+ |
+| `POST` | `/admin/content/self-cultivation/publish` | `content` | editor+ |
 | `GET` | `/admin/content/life-release/overview` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/guides` | `content` | editor+ |
 | `PATCH` | `/admin/content/life-release/guides/:publicId` | `content` | editor+ |
