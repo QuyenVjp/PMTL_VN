@@ -187,6 +187,24 @@ Nếu shadcn CLI hỏi:
 - TypeScript components: `yes`
 - Tailwind prefix: để trống
 
+### Dark mode policy
+
+- Web mới hỗ trợ dark mode ngay từ bootstrap.
+- Dùng `next-themes` với `attribute="class"`.
+- Root layout phải có `suppressHydrationWarning` ở thẻ `html`.
+- Phải có `ThemeProvider` riêng ở `src/components/theme-provider.tsx`.
+- Phải có mode toggle, nhưng đặt tiết chế.
+
+Quyết định UX:
+- `defaultTheme = "light"`
+- `enableSystem = false`
+- `disableTransitionOnChange = true`
+
+Lý do:
+- PMTL là `light-first`
+- tránh system tự lật theme trên reading surfaces
+- vẫn cho user quyền đổi theme khi họ thật sự muốn
+
 ### Starter không được chọn
 
 Không dùng làm starter gốc:
@@ -211,17 +229,42 @@ Không dùng làm starter gốc:
 | Server state | `@tanstack/react-query` | chỉ cho client-side interactive state |
 | Toast | `sonner` | theo frontend baseline |
 | Icons | `lucide-react` | thống nhất |
+| Theme runtime | `next-themes` | class-based dark mode support |
 | Optional accent | `React Bits` | chỉ cho premium sections |
 
 ### Không chốt cho phase bootstrap
 
-- dark mode mặc định
 - Redux
 - global state nặng
 - direct browser calls sang `apps/api`
 - AI/LLM widgets
 - real-time
 - Meilisearch-only assumptions
+
+### Form contract
+
+Interactive forms của `apps/web` khóa theo lane sau:
+- form engine: `react-hook-form`
+- schema validation: `zod`
+- resolver: `@hookform/resolvers/zod`
+- UI anatomy: shadcn `form`, `field`, `field-label`, `field-description`, `field-error`, `field-set`, `field-legend`, `field-group`
+
+Pattern chuẩn:
+- `Input` và `Textarea`: bind trực tiếp từ `field`
+- `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, `Date Picker` và control headless khác: đi qua `Controller`
+- dynamic rows như email list, vow sub-items, practice items, CTA collections: đi qua `useFieldArray`
+
+Validation mode mặc định theo loại form:
+- auth forms: `onSubmit` hoặc `onBlur`
+- profile/settings forms: `onBlur`
+- search/filter nhẹ: chỉ được `onChange` khi field ít và feedback cần tức thời
+- complex write forms: không dùng `onChange` toàn bộ nếu gây nhiễu UX
+
+Accessibility/error contract:
+- `Field` phải nhận `data-invalid` khi có lỗi
+- form control phải nhận `aria-invalid`
+- lỗi phải render ra text thật qua `FieldError`, không chỉ đổi màu viền
+- help text và error text phải gắn được với field qua markup/accessibility wiring của shadcn
 
 ---
 

@@ -66,9 +66,20 @@ Palette chủ đạo vẫn là:
 | `--warning` | `#C49A3C` | Amber, caution states |
 | `--info` | `#5B7FA5` | Neutral information |
 
-### Dark mode (Phase 2+)
+### Dark mode
 
-Phase 1 chỉ hỗ trợ light mode. Dark mode deferred — Buddhist content thường đọc tốt hơn trên nền sáng ấm.
+PMTL hỗ trợ dark mode, nhưng vẫn là hệ `light-first`.
+
+Rule:
+- default là light
+- không auto theo system ở bootstrap phase
+- dark mode là user choice rõ ràng, không phải mode chính
+
+Dark palette phải:
+- giữ độ ấm
+- tránh tím/neon/SaaS lạnh
+- giữ readability cho body text dài
+- không làm kinh văn trở thành low-contrast decorative text
 
 ---
 

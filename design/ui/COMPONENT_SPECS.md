@@ -653,6 +653,36 @@ Mô tả thêm (optional): [Textarea]
 
 ## V. Form Components
 
+### Form platform contract
+
+- Form stack chuẩn cho `apps/web` và `apps/admin`:
+  - `react-hook-form`
+  - `zod`
+  - `@hookform/resolvers/zod`
+  - shadcn `Field` family
+- Anatomy mặc định:
+  - `Field`
+  - `FieldLabel`
+  - `FieldDescription`
+  - `FieldError`
+  - `FieldSet`
+  - `FieldLegend`
+  - `FieldGroup`
+- Binding rules:
+  - `Input`, `Textarea`: bind trực tiếp từ `field`
+  - `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, date-like headless controls: dùng `Controller`
+  - dynamic array rows: dùng `useFieldArray`
+- Error/accessibility rules:
+  - `Field` phải có `data-invalid` khi field invalid
+  - control phải có `aria-invalid`
+  - lỗi phải hiện bằng text thật qua `FieldError`
+  - help text / error text phải gắn đúng với control theo markup accessible của shadcn
+- Validation mode rules:
+  - auth/security-sensitive: `onSubmit` hoặc `onBlur`
+  - profile/settings: `onBlur`
+  - search/filter nhẹ: `onChange` chỉ khi feedback tức thời thật sự hữu ích
+  - complex write forms: tránh `onChange` toàn cục nếu UX bị ồn
+
 ### `AuthForm` variants
 
 **Login form:**

@@ -36,6 +36,7 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 | Markdown | **react-markdown** + **rehype-sanitize** | Server-side sanitize cho rich text |
 | Toast | **Sonner** | Accessible, stacking, auto-dismiss |
 | Animation | **Motion v12** (minimal) | Chỉ cho page transitions, overlays, reveal nhẹ; không cho elderly-heavy screens |
+| Theme runtime | **next-themes** | class-based dark mode support cho Next.js |
 
 ### Monorepo + shadcn rules
 
@@ -82,12 +83,50 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
   - `input`
   - `ring`
 - Khi dùng class như `bg-background`, `text-foreground`, `bg-primary`, `text-primary-foreground`, nghĩa là đang đi qua token system chuẩn của shadcn.
-- PMTL giữ light-first. Dark mode không phải baseline phase bootstrap dù shadcn có hỗ trợ sẵn.
+- PMTL giữ light-first, nhưng dark mode vẫn được scaffold ngay từ bootstrap.
 - Khi thêm token semantic mới như `warning`, `success`, `info`, cần:
   - khai báo ở `:root`
   - khai báo ở `.dark` nếu dark mode được bật trong phase sau
   - expose bằng `@theme inline`
   - rồi mới dùng dưới dạng utility classes
+
+### Dark mode contract
+
+- `apps/web` hỗ trợ dark mode ngay từ bootstrap bằng `next-themes`.
+- Root layout phải:
+  - bọc app bằng `ThemeProvider`
+  - dùng `attribute="class"`
+  - thêm `suppressHydrationWarning` ở thẻ `html`
+Default UX:
+- `defaultTheme = "light"`
+- `enableSystem = false`
+- `disableTransitionOnChange = true`
+- Theme toggle được phép có, nhưng không nên đẩy thành CTA lớn trên content-heavy pages.
+
+### Form architecture contract
+
+- `apps/web` khóa `React Hook Form + Zod + @hookform/resolvers/zod` cho interactive forms; không dùng `TanStack Form` ở bootstrap phase.
+- shadcn `Field` family là anatomy mặc định cho form markup:
+  - `Field`
+  - `FieldLabel`
+  - `FieldDescription`
+  - `FieldError`
+  - `FieldSet`
+  - `FieldLegend`
+  - `FieldGroup`
+- `Input` và `Textarea` dạng đơn giản được bind trực tiếp từ `field`.
+- Các control headless hoặc controlled như `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, `Date Picker` phải dùng `Controller`.
+- Dynamic array forms phải dùng `useFieldArray`; không tự giữ array row state thủ công khi RHF đã đủ giải quyết.
+- Validation modes:
+  - auth / security-sensitive forms: `onSubmit` hoặc `onBlur`
+  - profile/settings forms: `onBlur`
+  - lightweight search/filter forms: `onChange` chỉ khi feedback tức thời có lợi rõ
+  - complex write flows: tránh `onChange` toàn cục nếu tạo nhiễu và làm màn hình nhấp nháy lỗi
+- Accessibility contract cho form errors:
+  - `Field` nhận `data-invalid`
+  - control nhận `aria-invalid`
+  - lỗi phải có text thật qua `FieldError`
+  - không dùng màu sắc làm tín hiệu lỗi duy nhất
 
 ### Monorepo alias direction
 
