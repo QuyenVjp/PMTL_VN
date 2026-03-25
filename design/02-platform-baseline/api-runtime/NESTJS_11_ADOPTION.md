@@ -10,6 +10,7 @@ Mục tiêu:
 
 > **Framework authority**: `design/01-repo-constitution/DECISIONS.md` section 14
 > **App pipeline authority**: `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`
+> **Feature adoption authority**: [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
 > **Scaffold sequence authority**: `design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md`
 > **Version governance authority**: `design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md`
 

@@ -5727,3 +5727,3018 @@ Hint
 @RouteConfig() and @RouteConstraints are imported from @nestjs/platform-fastify.
 Example#
 A working example is available here.
+
+
+
+
+
+
+
+
+
+--------new------------------
+
+
+
+Custom route decorators
+Nest is built around a language feature called decorators. Decorators are a well-known concept in a lot of commonly used programming languages, but in the JavaScript world, they're still relatively new. In order to better understand how decorators work, we recommend reading this article. Here's a simple definition:
+
+An ES2016 decorator is an expression which returns a function and can take a target, name and property descriptor as arguments. You apply it by prefixing the decorator with an @ character and placing this at the very top of what you are trying to decorate. Decorators can be defined for either a class, a method or a property.
+Param decorators#
+Nest provides a set of useful param decorators that you can use together with the HTTP route handlers. Below is a list of the provided decorators and the plain Express (or Fastify) objects they represent
+
+@Request(), @Req()	req
+@Response(), @Res()	res
+@Next()	next
+@Session()	req.session
+@Param(param?: string)	req.params / req.params[param]
+@Body(param?: string)	req.body / req.body[param]
+@Query(param?: string)	req.query / req.query[param]
+@Headers(param?: string)	req.headers / req.headers[param]
+@Ip()	req.ip
+@HostParam()	req.hosts
+Additionally, you can create your own custom decorators. Why is this useful?
+
+In the node.js world, it's common practice to attach properties to the request object. Then you manually extract them in each route handler, using code like the following:
+
+
+
+const user = req.user;
+In order to make your code more readable and transparent, you can create a @User() decorator and reuse it across all of your controllers.
+
+
+user.decorator.tsJS
+
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const User = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.user;
+  },
+);
+Then, you can simply use it wherever it fits your requirements.
+
+
+JS
+
+@Get()
+async findOne(@User() user: UserEntity) {
+  console.log(user);
+}
+Passing data#
+When the behavior of your decorator depends on some conditions, you can use the data parameter to pass an argument to the decorator's factory function. One use case for this is a custom decorator that extracts properties from the request object by key. Let's assume, for example, that our authentication layer validates requests and attaches a user entity to the request object. The user entity for an authenticated request might look like:
+
+
+{
+  "id": 101,
+  "firstName": "Alan",
+  "lastName": "Turing",
+  "email": "alan@email.com",
+  "roles": ["admin"]
+}
+Let's define a decorator that takes a property name as key, and returns the associated value if it exists (or undefined if it doesn't exist, or if the user object has not been created).
+
+
+user.decorator.tsJS
+
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const User = createParamDecorator(
+  (data: string, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    const user = request.user;
+
+    return data ? user?.[data] : user;
+  },
+);
+Here's how you could then access a particular property via the @User() decorator in the controller:
+
+
+JS
+
+@Get()
+async findOne(@User('firstName') firstName: string) {
+  console.log(`Hello ${firstName}`);
+}
+You can use this same decorator with different keys to access different properties. If the user object is deep or complex, this can make for easier and more readable request handler implementations.
+
+Hint
+For TypeScript users, note that createParamDecorator<T>() is a generic. This means you can explicitly enforce type safety, for example createParamDecorator<string>((data, ctx) => ...). Alternatively, specify a parameter type in the factory function, for example createParamDecorator((data: string, ctx) => ...). If you omit both, the type for data will be any.
+Working with pipes#
+Nest treats custom param decorators in the same fashion as the built-in ones (@Body(), @Param() and @Query()). This means that pipes are executed for the custom annotated parameters as well (in our examples, the user argument). Moreover, you can apply the pipe directly to the custom decorator:
+
+
+JS
+
+@Get()
+async findOne(
+  @User(new ValidationPipe({ validateCustomDecorators: true }))
+  user: UserEntity,
+) {
+  console.log(user);
+}
+Hint
+Note that validateCustomDecorators option must be set to true. ValidationPipe does not validate arguments annotated with the custom decorators by default.
+Decorator composition#
+Nest provides a helper method to compose multiple decorators. For example, suppose you want to combine all decorators related to authentication into a single decorator. This could be done with the following construction:
+
+
+auth.decorator.tsJS
+
+import { applyDecorators } from '@nestjs/common';
+
+export function Auth(...roles: Role[]) {
+  return applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(AuthGuard, RolesGuard),
+    ApiBearerAuth(),
+    ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+  );
+}
+You can then use this custom @Auth() decorator as follows:
+
+
+
+@Get('users')
+@Auth('admin')
+findAllUsers() {}
+This has the effect of applying all four decorators with a single declaration.
+
+Warning
+The @ApiHideProperty() decorator from the @nestjs/swagger package is not composable and won't work properly with the applyDecorators function.
+
+
+Asynchronous providers
+At times, the application start should be delayed until one or more asynchronous tasks are completed. For example, you may not want to start accepting requests until the connection with the database has been established. You can achieve this using asynchronous providers.
+
+The syntax for this is to use async/await with the useFactory syntax. The factory returns a Promise, and the factory function can await asynchronous tasks. Nest will await resolution of the promise before instantiating any class that depends on (injects) such a provider.
+
+
+
+{
+  provide: 'ASYNC_CONNECTION',
+  useFactory: async () => {
+    const connection = await createConnection(options);
+    return connection;
+  },
+}
+Hint
+Learn more about custom provider syntax here.
+Injection#
+Asynchronous providers are injected to other components by their tokens, like any other provider. In the example above, you would use the construct @Inject('ASYNC_CONNECTION').
+
+Example#
+The TypeORM recipe has a more substantial example of an asynchronous provider.
+
+
+
+
+
+Lazy loading modules
+By default, modules are eagerly loaded, which means that as soon as the application loads, so do all the modules, whether or not they are immediately necessary. While this is fine for most applications, it may become a bottleneck for apps/workers running in the serverless environment, where the startup latency ("cold start") is crucial.
+
+Lazy loading can help decrease bootstrap time by loading only modules required by the specific serverless function invocation. In addition, you could also load other modules asynchronously once the serverless function is "warm" to speed-up the bootstrap time for subsequent calls even further (deferred modules registration).
+
+Hint
+If you're familiar with the Angular framework, you might have seen the "lazy-loading modules" term before. Be aware that this technique is functionally different in Nest and so think about this as an entirely different feature that shares similar naming conventions.
+Warning
+Do note that lifecycle hooks methods are not invoked in lazy loaded modules and services.
+Getting started#
+To load modules on-demand, Nest provides the LazyModuleLoader class that can be injected into a class in the normal way:
+
+
+cats.service.tsJS
+
+@Injectable()
+export class CatsService {
+  constructor(private lazyModuleLoader: LazyModuleLoader) {}
+}
+Hint
+The LazyModuleLoader class is imported from the @nestjs/core package.
+Alternatively, you can obtain a reference to the LazyModuleLoader provider from within your application bootstrap file (main.ts), as follows:
+
+
+
+// "app" represents a Nest application instance
+const lazyModuleLoader = app.get(LazyModuleLoader);
+With this in place, you can now load any module using the following construction:
+
+
+
+const { LazyModule } = await import('./lazy.module');
+const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
+Hint
+"Lazy loaded" modules are cached upon the first LazyModuleLoader#load method invocation. That means, each consecutive attempt to load LazyModule will be very fast and will return a cached instance, instead of loading the module again.
+
+Load "LazyModule" attempt: 1
+time: 2.379ms
+Load "LazyModule" attempt: 2
+time: 0.294ms
+Load "LazyModule" attempt: 3
+time: 0.303ms
+Also, "lazy loaded" modules share the same modules graph as those eagerly loaded on the application bootstrap as well as any other lazy modules registered later in your app.
+
+Where lazy.module.ts is a TypeScript file that exports a regular Nest module (no extra changes are required).
+
+The LazyModuleLoader#load method returns the module reference (of LazyModule) that lets you navigate the internal list of providers and obtain a reference to any provider using its injection token as a lookup key.
+
+For example, let's say we have a LazyModule with the following definition:
+
+
+
+@Module({
+  providers: [LazyService],
+  exports: [LazyService],
+})
+export class LazyModule {}
+Hint
+Lazy loaded modules cannot be registered as global modules as it simply makes no sense (since they are registered lazily, on-demand when all the statically registered modules have been already instantiated). Likewise, registered global enhancers (guards/interceptors/etc.) will not work properly either.
+With this, we could obtain a reference to the LazyService provider, as follows:
+
+
+
+const { LazyModule } = await import('./lazy.module');
+const moduleRef = await this.lazyModuleLoader.load(() => LazyModule);
+
+const { LazyService } = await import('./lazy.service');
+const lazyService = moduleRef.get(LazyService);
+Warning
+If you use Webpack, make sure to update your tsconfig.json file - setting compilerOptions.module to "esnext" and adding compilerOptions.moduleResolution property with "node" as a value:
+
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    ...
+  }
+}
+With these options set up, you'll be able to leverage the code splitting feature.
+
+Lazy loading controllers, gateways, and resolvers#
+Since controllers (or resolvers in GraphQL applications) in Nest represent sets of routes/paths/topics (or queries/mutations), you cannot lazy load them using the LazyModuleLoader class.
+
+Warning
+Controllers, resolvers, and gateways registered inside lazy loaded modules will not behave as expected. Similarly, you cannot register middleware functions (by implementing the MiddlewareConsumer interface) on-demand.
+For example, let's say you're building a REST API (HTTP application) with a Fastify driver under the hood (using the @nestjs/platform-fastify package). Fastify does not let you register routes after the application is ready/successfully listening to messages. That means even if we analyzed route mappings registered in the module's controllers, all lazy loaded routes wouldn't be accessible since there is no way to register them at runtime.
+
+Likewise, some transport strategies we provide as part of the @nestjs/microservices package (including Kafka, gRPC, or RabbitMQ) require to subscribe/listen to specific topics/channels before the connection is established. Once your application starts listening to messages, the framework would not be able to subscribe/listen to new topics.
+
+Lastly, the @nestjs/graphql package with the code first approach enabled automatically generates the GraphQL schema on-the-fly based on the metadata. That means, it requires all classes to be loaded beforehand. Otherwise, it would not be doable to create the appropriate, valid schema.
+
+Common use-cases#
+Most commonly, you will see lazy loaded modules in situations when your worker/cron job/lambda & serverless function/webhook must trigger different services (different logic) based on the input arguments (route path/date/query parameters, etc.). On the other hand, lazy loading modules may not make too much sense for monolithic applications, where the startup time is rather irrelevant.
+
+
+
+Lifecycle Events
+A Nest application, as well as every application element, has a lifecycle managed by Nest. Nest provides lifecycle hooks that give visibility into key lifecycle events, and the ability to act (run registered code on your modules, providers or controllers) when they occur.
+
+Lifecycle sequence#
+The following diagram depicts the sequence of key application lifecycle events, from the time the application is bootstrapped until the node process exits. We can divide the overall lifecycle into three phases: initializing, running and terminating. Using this lifecycle, you can plan for appropriate initialization of modules and services, manage active connections, and gracefully shutdown your application when it receives a termination signal.
+
+
+Lifecycle events#
+Lifecycle events happen during application bootstrapping and shutdown. Nest calls registered lifecycle hook methods on modules, providers and controllers at each of the following lifecycle events (shutdown hooks need to be enabled first, as described below). As shown in the diagram above, Nest also calls the appropriate underlying methods to begin listening for connections, and to stop listening for connections.
+
+In the following table, onModuleInit and onApplicationBootstrap are only triggered if you explicitly call app.init() or app.listen().
+
+In the following table, onModuleDestroy, beforeApplicationShutdown and onApplicationShutdown are only triggered if you explicitly call app.close() or if the process receives a special system signal (such as SIGTERM) and you have correctly called enableShutdownHooks at application bootstrap (see below Application shutdown part).
+
+Lifecycle hook method	Lifecycle event triggering the hook method call
+onModuleInit()	Called once the host module's dependencies have been resolved.
+onApplicationBootstrap()	Called once all modules have been initialized, but before listening for connections.
+onModuleDestroy()*	Called after a termination signal (e.g., SIGTERM) has been received.
+beforeApplicationShutdown()*	Called after all onModuleDestroy() handlers have completed (Promises resolved or rejected);
+once complete (Promises resolved or rejected), all existing connections will be closed (app.close() called).
+onApplicationShutdown()*	Called after connections close (app.close() resolves).
+* For these events, if you're not calling app.close() explicitly, you must opt-in to make them work with system signals such as SIGTERM. See Application shutdown below.
+
+Warning
+The lifecycle hooks listed above are not triggered for request-scoped classes. Request-scoped classes are not tied to the application lifecycle and their lifespan is unpredictable. They are exclusively created for each request and automatically garbage-collected after the response is sent.
+Hint
+Execution order of onModuleInit() and onApplicationBootstrap() directly depends on the order of module imports, awaiting the previous hook.
+Usage#
+Each lifecycle hook is represented by an interface. Interfaces are technically optional because they do not exist after TypeScript compilation. Nonetheless, it's good practice to use them in order to benefit from strong typing and editor tooling. To register a lifecycle hook, implement the appropriate interface. For example, to register a method to be called during module initialization on a particular class (e.g., Controller, Provider or Module), implement the OnModuleInit interface by supplying an onModuleInit() method, as shown below:
+
+
+JS
+
+import { Injectable, OnModuleInit } from '@nestjs/common';
+
+@Injectable()
+export class UsersService implements OnModuleInit {
+  onModuleInit() {
+    console.log(`The module has been initialized.`);
+  }
+}
+Asynchronous initialization#
+Both the OnModuleInit and OnApplicationBootstrap hooks allow you to defer the application initialization process (return a Promise or mark the method as async and await an asynchronous method completion in the method body).
+
+
+JS
+
+async onModuleInit(): Promise<void> {
+  await this.fetch();
+}
+Application shutdown#
+The onModuleDestroy(), beforeApplicationShutdown() and onApplicationShutdown() hooks are called in the terminating phase (in response to an explicit call to app.close() or upon receipt of system signals such as SIGTERM if opted-in). This feature is often used with Kubernetes to manage containers' lifecycles, by Heroku for dynos or similar services.
+
+Shutdown hook listeners consume system resources, so they are disabled by default. To use shutdown hooks, you must enable listeners by calling enableShutdownHooks():
+
+
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Starts listening for shutdown hooks
+  app.enableShutdownHooks();
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+warning
+Due to inherent platform limitations, NestJS has limited support for application shutdown hooks on Windows. You can expect SIGINT to work, as well as SIGBREAK and to some extent SIGHUP - read more. However SIGTERM will never work on Windows because killing a process in the task manager is unconditional, "i.e., there's no way for an application to detect or prevent it". Here's some relevant documentation from libuv to learn more about how SIGINT, SIGBREAK and others are handled on Windows. Also, see Node.js documentation of Process Signal Events
+Info
+enableShutdownHooks consumes memory by starting listeners. In cases where you are running multiple Nest apps in a single Node process (e.g., when running parallel tests with Jest), Node may complain about excessive listener processes. For this reason, enableShutdownHooks is not enabled by default. Be aware of this condition when you are running multiple instances in a single Node process.
+When the application receives a termination signal it will call any registered onModuleDestroy(), beforeApplicationShutdown(), then onApplicationShutdown() methods (in the sequence described above) with the corresponding signal as the first parameter. If a registered function awaits an asynchronous call (returns a promise), Nest will not continue in the sequence until the promise is resolved or rejected.
+
+
+JS
+
+@Injectable()
+class UsersService implements OnApplicationShutdown {
+  onApplicationShutdown(signal: string) {
+    console.log(signal); // e.g. "SIGINT"
+  }
+}
+Info
+Calling app.close() doesn't terminate the Node process but only triggers the onModuleDestroy() and onApplicationShutdown() hooks, so if there are some intervals, long-running background tasks, etc. the process won't be automatically terminated.
+
+
+Discovery service
+The DiscoveryService provided by the @nestjs/core package is a powerful utility that allows developers to dynamically inspect and retrieve providers, controllers, and other metadata within a NestJS application. This is particularly useful when building plugins, decorators, or advanced features that rely on runtime introspection. By leveraging DiscoveryService, developers can create more flexible and modular architectures, enabling automation and dynamic behavior in their applications.
+
+Getting started#
+Before using DiscoveryService, you need to import the DiscoveryModule in the module where you intend to use it. This ensures that the service is available for dependency injection. Below is an example of how to configure it within a NestJS module:
+
+
+
+import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
+import { ExampleService } from './example.service';
+
+@Module({
+  imports: [DiscoveryModule],
+  providers: [ExampleService],
+})
+export class ExampleModule {}
+Once the module is set up, DiscoveryService can be injected into any provider or service where dynamic discovery is required.
+
+
+example.service.tsJS
+
+@Injectable()
+export class ExampleService {
+  constructor(private readonly discoveryService: DiscoveryService) {}
+}
+Discovering providers and controllers#
+One of the key capabilities of DiscoveryService is retrieving all registered providers in the application. This is useful for dynamically processing providers based on specific conditions. The following snippet demonstrates how to access all providers:
+
+
+
+const providers = this.discoveryService.getProviders();
+console.log(providers);
+Each provider object contains information such as its instance, token, and metadata. Similarly, if you need to retrieve all registered controllers within the application, you can do so with:
+
+
+
+const controllers = this.discoveryService.getControllers();
+console.log(controllers);
+This feature is particularly beneficial for scenarios where controllers need to be processed dynamically, such as analytics tracking, or automatic registration mechanisms.
+
+Extracting metadata#
+Beyond discovering providers and controllers, DiscoveryService also enables retrieval of metadata attached to these components. This is particularly valuable when working with custom decorators that store metadata at runtime.
+
+For example, consider a case where a custom decorator is used to tag providers with specific metadata:
+
+
+
+import { DiscoveryService } from '@nestjs/core';
+
+export const FeatureFlag = DiscoveryService.createDecorator();
+Applying this decorator to a service allows it to store metadata that can later be queried:
+
+
+
+import { Injectable } from '@nestjs/common';
+import { FeatureFlag } from './custom-metadata.decorator';
+
+@Injectable()
+@FeatureFlag('experimental')
+export class CustomService {}
+Once metadata is attached to providers in this way, DiscoveryService makes it easy to filter providers based on assigned metadata. The following code snippet demonstrates how to retrieve providers that have been tagged with a specific metadata value:
+
+
+
+const providers = this.discoveryService.getProviders();
+
+const [provider] = providers.filter(
+  (item) =>
+    this.discoveryService.getMetadataByDecorator(FeatureFlag, item) ===
+    'experimental',
+);
+
+console.log(
+  'Providers with the "experimental" feature flag metadata:',
+  provider,
+);
+Conclusion#
+The DiscoveryService is a versatile and powerful tool that enables runtime introspection in NestJS applications. By allowing dynamic discovery of providers, controllers, and metadata, it plays a crucial role in building extensible frameworks, plugins, and automation-driven features. Whether you need to scan and process providers, extract metadata for advanced processing, or create modular and scalable architectures, DiscoveryService provides an efficient and structured approach to achieving these goals.
+
+Platform agnosticism
+Nest is a platform-agnostic framework. This means you can develop reusable logical parts that can be used across different types of applications. For example, most components can be re-used without change across different underlying HTTP server frameworks (e.g., Express and Fastify), and even across different types of applications (e.g., HTTP server frameworks, Microservices with different transport layers, and Web Sockets).
+
+Build once, use everywhere#
+The Overview section of the documentation primarily shows coding techniques using HTTP server frameworks (e.g., apps providing a REST API or providing an MVC-style server-side rendered app). However, all those building blocks can be used on top of different transport layers (microservices or websockets).
+
+Furthermore, Nest comes with a dedicated GraphQL module. You can use GraphQL as your API layer interchangeably with providing a REST API.
+
+In addition, the application context feature helps to create any kind of Node.js application - including things like CRON jobs and CLI apps - on top of Nest.
+
+Nest aspires to be a full-fledged platform for Node.js apps that brings a higher-level of modularity and reusability to your applications. Build once, use everywhere!
+
+Serialization
+Serialization is a process that happens before objects are returned in a network response. This is an appropriate place to provide rules for transforming and sanitizing the data to be returned to the client. For example, sensitive data like passwords should always be excluded from the response. Or, certain properties might require additional transformation, such as sending only a subset of properties of an entity. Performing these transformations manually can be tedious and error prone, and can leave you uncertain that all cases have been covered.
+
+Overview#
+Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The ClassSerializerInterceptor interceptor uses the powerful class-transformer package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the instanceToPlain() function from class-transformer. In doing so, it can apply rules expressed by class-transformer decorators on an entity/DTO class, as described below.
+
+Hint
+The serialization does not apply to StreamableFile responses.
+Exclude properties#
+Let's assume that we want to automatically exclude a password property from a user entity. We annotate the entity as follows:
+
+
+
+import { Exclude } from 'class-transformer';
+
+export class UserEntity {
+  id: number;
+  firstName: string;
+  lastName: string;
+
+  @Exclude()
+  password: string;
+
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
+}
+Now consider a controller with a method handler that returns an instance of this class.
+
+
+
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+findOne(): UserEntity {
+  return new UserEntity({
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    password: 'password',
+  });
+}
+Warning
+Note that we must return an instance of the class. If you return a plain JavaScript object, for example, { user: new UserEntity() }, the object won't be properly serialized.
+Hint
+The ClassSerializerInterceptor is imported from @nestjs/common.
+When this endpoint is requested, the client receives the following response:
+
+
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe"
+}
+Note that the interceptor can be applied application-wide (as covered here). The combination of the interceptor and the entity class declaration ensures that any method that returns a UserEntity will be sure to remove the password property. This gives you a measure of centralized enforcement of this business rule.
+
+Expose properties#
+You can use the @Expose() decorator to provide alias names for properties, or to execute a function to calculate a property value (analogous to getter functions), as shown below.
+
+
+
+@Expose()
+get fullName(): string {
+  return `${this.firstName} ${this.lastName}`;
+}
+Transform#
+You can perform additional data transformation using the @Transform() decorator. For example, the following construct returns the name property of the RoleEntity instead of returning the whole object.
+
+
+
+@Transform(({ value }) => value.name)
+role: RoleEntity;
+Pass options#
+You may want to modify the default behavior of the transformation functions. To override default settings, pass them in an options object with the @SerializeOptions() decorator.
+
+
+
+@SerializeOptions({
+  excludePrefixes: ['_'],
+})
+@Get()
+findOne(): UserEntity {
+  return new UserEntity();
+}
+Hint
+The @SerializeOptions() decorator is imported from @nestjs/common.
+Options passed via @SerializeOptions() are passed as the second argument of the underlying instanceToPlain() function. In this example, we are automatically excluding all properties that begin with the _ prefix.
+
+Transform plain objects#
+You can enforce transformations at the controller level by using the @SerializeOptions decorator. This ensures that all responses are transformed into instances of the specified class, applying any decorators from class-validator or class-transformer, even when plain objects are returned. This approach leads to cleaner code without the need to repeatedly instantiate the class or call plainToInstance.
+
+In the example below, despite returning plain JavaScript objects in both conditional branches, they will be automatically converted into UserEntity instances, with the relevant decorators applied:
+
+
+
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: UserEntity })
+@Get()
+findOne(@Query() { id }: { id: number }): UserEntity {
+  if (id === 1) {
+    return {
+      id: 1,
+      firstName: 'John',
+      lastName: 'Doe',
+      password: 'password',
+    };
+  }
+
+  return {
+    id: 2,
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
+    password: 'password2',
+  };
+}
+Hint
+By specifying the expected return type for the controller, you can leverage TypeScript's type-checking capabilities to ensure that the returned plain object adheres to the shape of the DTO or entity. The plainToInstance function doesn't provide this level of type hinting, which can lead to potential bugs if the plain object doesn't match the expected DTO or entity structure.
+Example#
+A working example is available here.
+
+WebSockets and Microservices#
+While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the ClassSerializerInterceptor works the same for WebSockets and Microservices, regardless of the transport method that is used.
+
+Learn more#
+Read more about available decorators and options as provided by the class-transformer package here.
+
+
+
+
+
+Versioning
+Hint
+This chapter is only relevant to HTTP-based applications.
+Versioning allows you to have different versions of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application.
+
+There are 4 types of versioning that are supported:
+
+URI Versioning	The version will be passed within the URI of the request (default)
+Header Versioning	A custom request header will specify the version
+Media Type Versioning	The Accept header of the request will specify the version
+Custom Versioning	Any aspect of the request may be used to specify the version(s). A custom function is provided to extract said version(s).
+URI Versioning Type#
+URI Versioning uses the version passed within the URI of the request, such as https://example.com/v1/route and https://example.com/v2/route.
+
+Notice
+With URI Versioning the version will be automatically added to the URI after the global path prefix (if one exists), and before any controller or route paths.
+To enable URI Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+// or "app.enableVersioning()"
+app.enableVersioning({
+  type: VersioningType.URI,
+});
+await app.listen(process.env.PORT ?? 3000);
+Notice
+The version in the URI will be automatically prefixed with v by default, however the prefix value can be configured by setting the prefix key to your desired prefix or false if you wish to disable it.
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Header Versioning Type#
+Header Versioning uses a custom, user specified, request header to specify the version where the value of the header will be the version to use for the request.
+
+Example HTTP Requests for Header Versioning:
+
+To enable Header Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.HEADER,
+  header: 'Custom-Header',
+});
+await app.listen(process.env.PORT ?? 3000);
+The header property should be the name of the header that will contain the version of the request.
+
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Media Type Versioning Type#
+Media Type Versioning uses the Accept header of the request to specify the version.
+
+Within the Accept header, the version will be separated from the media type with a semi-colon, ;. It should then contain a key-value pair that represents the version to use for the request, such as Accept: application/json;v=2. They key is treated more as a prefix when determining the version will to be configured to include the key and separator.
+
+To enable Media Type Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.MEDIA_TYPE,
+  key: 'v=',
+});
+await app.listen(process.env.PORT ?? 3000);
+The key property should be the key and separator of the key-value pair that contains the version. For the example Accept: application/json;v=2, the key property would be set to v=.
+
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Custom Versioning Type#
+Custom Versioning uses any aspect of the request to specify the version (or versions). The incoming request is analyzed using an extractor function that returns a string or array of strings.
+
+If multiple versions are provided by the requester, the extractor function can return an array of strings, sorted in order of greatest/highest version to smallest/lowest version. Versions are matched to routes in order from highest to lowest.
+
+If an empty string or array is returned from the extractor, no routes are matched and a 404 is returned.
+
+For example, if an incoming request specifies it supports versions 1, 2, and 3, the extractorMUST return [3, 2, 1]. This ensures that the highest possible route version is selected first.
+
+If versions [3, 2, 1] are extracted, but routes only exist for version 2 and 1, the route that matches version 2 is selected (version 3 is automatically ignored).
+
+Notice
+Selecting the highest matching version based on the array returned from extractor > does not reliably work with the Express adapter due to design limitations. A single version (either a string or array of 1 element) works just fine in Express. Fastify correctly supports both highest matching version selection and single version selection.
+To enable Custom Versioning for your application, create an extractor function and pass it into your application like so:
+
+
+main.tsJS
+
+// Example extractor that pulls out a list of versions from a custom header and turns it into a sorted array.
+// This example uses Fastify, but Express requests can be processed in a similar way.
+const extractor = (request: FastifyRequest): string | string[] =>
+  [request.headers['custom-versioning-field'] ?? '']
+     .flatMap(v => v.split(','))
+     .filter(v => !!v)
+     .sort()
+     .reverse()
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.CUSTOM,
+  extractor,
+});
+await app.listen(process.env.PORT ?? 3000);
+Usage#
+Versioning allows you to version controllers, individual routes, and also provides a way for certain resources to opt-out of versioning. The usage of versioning is the same regardless of the Versioning Type your application uses.
+
+Notice
+If versioning is enabled for the application but the controller or route does not specify the version, any requests to that controller/route will be returned a 404 response status. Similarly, if a request is received containing a version that does not have a corresponding controller or route, it will also be returned a 404 response status.
+Controller versions#
+A version can be applied to a controller, setting the version for all routes within the controller.
+
+To add a version to a controller do the following:
+
+
+cats.controller.tsJS
+
+@Controller({
+  version: '1',
+})
+export class CatsControllerV1 {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats for version 1';
+  }
+}
+Route versions#
+A version can be applied to an individual route. This version will override any other version that would effect the route, such as the Controller Version.
+
+To add a version to an individual route do the following:
+
+
+cats.controller.tsJS
+
+import { Controller, Get, Version } from '@nestjs/common';
+
+@Controller()
+export class CatsController {
+  @Version('1')
+  @Get('cats')
+  findAllV1(): string {
+    return 'This action returns all cats for version 1';
+  }
+
+  @Version('2')
+  @Get('cats')
+  findAllV2(): string {
+    return 'This action returns all cats for version 2';
+  }
+}
+Multiple versions#
+Multiple versions can be applied to a controller or route. To use multiple versions, you would set the version to be an Array.
+
+To add multiple versions do the following:
+
+
+cats.controller.tsJS
+
+@Controller({
+  version: ['1', '2'],
+})
+export class CatsController {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats for version 1 or 2';
+  }
+}
+Version "Neutral"#
+Some controllers or routes may not care about the version and would have the same functionality regardless of the version. To accommodate this, the version can be set to VERSION_NEUTRAL symbol.
+
+An incoming request will be mapped to a VERSION_NEUTRAL controller or route regardless of the version sent in the request in addition to if the request does not contain a version at all.
+
+Notice
+For URI Versioning, a VERSION_NEUTRAL resource would not have the version present in the URI.
+To add a version neutral controller or route do the following:
+
+
+cats.controller.tsJS
+
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+
+@Controller({
+  version: VERSION_NEUTRAL,
+})
+export class CatsController {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats regardless of version';
+  }
+}
+Global default version#
+If you do not want to provide a version for each controller/or individual routes, or if you want to have a specific version set as the default version for every controller/route that don't have the version specified, you could set the defaultVersion as follows:
+
+
+main.tsJS
+
+app.enableVersioning({
+  // ...
+  defaultVersion: '1'
+  // or
+  defaultVersion: ['1', '2']
+  // or
+  defaultVersion: VERSION_NEUTRAL
+});
+Middleware versioning#
+Middlewares can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the MiddlewareConsumer.forRoutes() method:
+
+
+app.module.tsJS
+
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller';
+
+@Module({
+  imports: [CatsModule],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET, version: '2' });
+  }
+}
+With the code above, the LoggerMiddleware will only be applied to the version '2' of /cats endpoint.
+
+Notice
+Middlewares work with any versioning type described in the this section: URI, Header, Media Type or Custom.
+
+
+
+Task scheduling
+Task scheduling allows you to schedule arbitrary code (methods/functions) to execute at a fixed date/time, at recurring intervals, or once after a specified interval. In the Linux world, this is often handled by packages like cron at the OS level. For Node.js apps, there are several packages that emulate cron-like functionality. Nest provides the @nestjs/schedule package, which integrates with the popular Node.js cron package. We'll cover this package in the current chapter.
+
+Installation#
+To begin using it, we first install the required dependencies.
+
+
+$ npm install --save @nestjs/schedule
+To activate job scheduling, import the ScheduleModule into the root AppModule and run the forRoot() static method as shown below:
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
+
+@Module({
+  imports: [
+    ScheduleModule.forRoot()
+  ],
+})
+export class AppModule {}
+The .forRoot() call initializes the scheduler and registers any declarative cron jobs, timeouts and intervals that exist within your app. Registration occurs when the onApplicationBootstrap lifecycle hook occurs, ensuring that all modules have loaded and declared any scheduled jobs.
+
+Declarative cron jobs#
+A cron job schedules an arbitrary function (method call) to run automatically. Cron jobs can run:
+
+Once, at a specified date/time.
+On a recurring basis; recurring jobs can run at a specified instant within a specified interval (for example, once per hour, once per week, once every 5 minutes)
+Declare a cron job with the @Cron() decorator preceding the method definition containing the code to be executed, as follows:
+
+
+
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
+
+@Injectable()
+export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
+
+  @Cron('45 * * * * *')
+  handleCron() {
+    this.logger.debug('Called when the current second is 45');
+  }
+}
+In this example, the handleCron() method will be called each time the current second is 45. In other words, the method will be run once per minute, at the 45 second mark.
+
+The @Cron() decorator supports the following standard cron patterns:
+
+Asterisk (e.g. *)
+Ranges (e.g. 1-3,5)
+Steps (e.g. */2)
+In the example above, we passed 45 * * * * * to the decorator. The following key shows how each position in the cron pattern string is interpreted:
+
+
+* * * * * *
+| | | | | |
+| | | | | day of week
+| | | | months
+| | | day of month
+| | hours
+| minutes
+seconds (optional)
+Some sample cron patterns are:
+
+* * * * * *	every second
+45 * * * * *	every minute, on the 45th second
+0 10 * * * *	every hour, at the start of the 10th minute
+0 */30 9-17 * * *	every 30 minutes between 9am and 5pm
+0 30 11 * * 1-5	Monday to Friday at 11:30am
+The @nestjs/schedule package provides a convenient enum with commonly used cron patterns. You can use this enum as follows:
+
+
+
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+@Injectable()
+export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  handleCron() {
+    this.logger.debug('Called every 30 seconds');
+  }
+}
+In this example, the handleCron() method will be called every 30 seconds. If an exception occurs, it will be logged to the console, as every method annotated with @Cron() is automatically wrapped in a try-catch block.
+
+Alternatively, you can supply a JavaScript Date object to the @Cron() decorator. Doing so causes the job to execute exactly once, at the specified date.
+
+Hint
+Use JavaScript date arithmetic to schedule jobs relative to the current date. For example, @Cron(new Date(Date.now() + 10 * 1000)) to schedule a job to run 10 seconds after the app starts.
+Also, you can supply additional options as the second parameter to the @Cron() decorator.
+
+name	Useful to access and control a cron job after it's been declared.
+timeZone	Specify the timezone for the execution. This will modify the actual time relative to your timezone. If the timezone is invalid, an error is thrown. You can check all timezones available at Moment Timezone website.
+utcOffset	This allows you to specify the offset of your timezone rather than using the timeZone param.
+waitForCompletion	If true, no additional instances of the cron job will run until the current onTick callback has been completed. Any new scheduled executions that occur while the current cron job is running will be skipped entirely.
+disabled	This indicates whether the job will be executed at all.
+
+
+import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
+@Injectable()
+export class NotificationService {
+  @Cron('* * 0 * * *', {
+    name: 'notifications',
+    timeZone: 'Europe/Paris',
+  })
+  triggerNotifications() {}
+}
+You can access and control a cron job after it's been declared, or dynamically create a cron job (where its cron pattern is defined at runtime) with the Dynamic API. To access a declarative cron job via the API, you must associate the job with a name by passing the name property in an optional options object as the second argument of the decorator.
+
+Declarative intervals#
+To declare that a method should run at a (recurring) specified interval, prefix the method definition with the @Interval() decorator. Pass the interval value, as a number in milliseconds, to the decorator as shown below:
+
+
+
+@Interval(10000)
+handleInterval() {
+  this.logger.debug('Called every 10 seconds');
+}
+Hint
+This mechanism uses the JavaScript setInterval() function under the hood. You can also utilize a cron job to schedule recurring jobs.
+If you want to control your declarative interval from outside the declaring class via the Dynamic API, associate the interval with a name using the following construction:
+
+
+
+@Interval('notifications', 2500)
+handleInterval() {}
+If an exception occurs, it will be logged to the console, as every method annotated with @Interval() is automatically wrapped in a try-catch block.
+
+The Dynamic API also enables creating dynamic intervals, where the interval's properties are defined at runtime, and listing and deleting them.
+
+Official enterprise support
+ Providing technical guidance
+ Performing in-depth code reviews
+ Mentoring team members
+ Advising best practices
+Explore more
+
+Declarative timeouts#
+To declare that a method should run (once) at a specified timeout, prefix the method definition with the @Timeout() decorator. Pass the relative time offset (in milliseconds), from application startup, to the decorator as shown below:
+
+
+
+@Timeout(5000)
+handleTimeout() {
+  this.logger.debug('Called once after 5 seconds');
+}
+Hint
+This mechanism uses the JavaScript setTimeout() function under the hood.
+If an exception occurs, it will be logged to the console, as every method annotated with @Timeout() is automatically wrapped in a try-catch block.
+
+If you want to control your declarative timeout from outside the declaring class via the Dynamic API, associate the timeout with a name using the following construction:
+
+
+
+@Timeout('notifications', 2500)
+handleTimeout() {}
+The Dynamic API also enables creating dynamic timeouts, where the timeout's properties are defined at runtime, and listing and deleting them.
+
+Dynamic schedule module API#
+The @nestjs/schedule module provides a dynamic API that enables managing declarative cron jobs, timeouts and intervals. The API also enables creating and managing dynamic cron jobs, timeouts and intervals, where the properties are defined at runtime.
+
+Dynamic cron jobs#
+Obtain a reference to a CronJob instance by name from anywhere in your code using the SchedulerRegistry API. First, inject SchedulerRegistry using standard constructor injection:
+
+
+
+constructor(private schedulerRegistry: SchedulerRegistry) {}
+Hint
+Import the SchedulerRegistry from the @nestjs/schedule package.
+Then use it in a class as follows. Assume a cron job was created with the following declaration:
+
+
+
+@Cron('* * 8 * * *', {
+  name: 'notifications',
+})
+triggerNotifications() {}
+Access this job using the following:
+
+
+
+const job = this.schedulerRegistry.getCronJob('notifications');
+
+job.stop();
+console.log(job.lastDate());
+The getCronJob() method returns the named cron job. The returned CronJob object has the following methods:
+
+stop() - stops a job that is scheduled to run.
+start() - restarts a job that has been stopped.
+setTime(time: CronTime) - stops a job, sets a new time for it, and then starts it
+lastDate() - returns a DateTime representation of the date on which the last execution of a job occurred.
+nextDate() - returns a DateTime representation of the date when the next execution of a job is scheduled.
+nextDates(count: number) - Provides an array (size count) of DateTime representations for the next set of dates that will trigger job execution. count defaults to 0, returning an empty array.
+Hint
+Use toJSDate() on DateTime objects to render them as a JavaScript Date equivalent to this DateTime.
+Create a new cron job dynamically using the SchedulerRegistry#addCronJob method, as follows:
+
+
+
+addCronJob(name: string, seconds: string) {
+  const job = new CronJob(`${seconds} * * * * *`, () => {
+    this.logger.warn(`time (${seconds}) for job ${name} to run!`);
+  });
+
+  this.schedulerRegistry.addCronJob(name, job);
+  job.start();
+
+  this.logger.warn(
+    `job ${name} added for each minute at ${seconds} seconds!`,
+  );
+}
+In this code, we use the CronJob object from the cron package to create the cron job. The CronJob constructor takes a cron pattern (just like the @Cron()decorator) as its first argument, and a callback to be executed when the cron timer fires as its second argument. The SchedulerRegistry#addCronJob method takes two arguments: a name for the CronJob, and the CronJob object itself.
+
+Warning
+Remember to inject the SchedulerRegistry before accessing it. Import CronJob from the cron package.
+Delete a named cron job using the SchedulerRegistry#deleteCronJob method, as follows:
+
+
+
+deleteCron(name: string) {
+  this.schedulerRegistry.deleteCronJob(name);
+  this.logger.warn(`job ${name} deleted!`);
+}
+List all cron jobs using the SchedulerRegistry#getCronJobs method as follows:
+
+
+
+getCrons() {
+  const jobs = this.schedulerRegistry.getCronJobs();
+  jobs.forEach((value, key, map) => {
+    let next;
+    try {
+      next = value.nextDate().toJSDate();
+    } catch (e) {
+      next = 'error: next fire date is in the past!';
+    }
+    this.logger.log(`job: ${key} -> next: ${next}`);
+  });
+}
+The getCronJobs() method returns a map. In this code, we iterate over the map and attempt to access the nextDate() method of each CronJob. In the CronJob API, if a job has already fired and has no future firing date, it throws an exception.
+
+Dynamic intervals#
+Obtain a reference to an interval with the SchedulerRegistry#getInterval method. As above, inject SchedulerRegistry using standard constructor injection:
+
+
+
+constructor(private schedulerRegistry: SchedulerRegistry) {}
+And use it as follows:
+
+
+
+const interval = this.schedulerRegistry.getInterval('notifications');
+clearInterval(interval);
+Create a new interval dynamically using the SchedulerRegistry#addInterval method, as follows:
+
+
+
+addInterval(name: string, milliseconds: number) {
+  const callback = () => {
+    this.logger.warn(`Interval ${name} executing at time (${milliseconds})!`);
+  };
+
+  const interval = setInterval(callback, milliseconds);
+  this.schedulerRegistry.addInterval(name, interval);
+}
+In this code, we create a standard JavaScript interval, then pass it to the SchedulerRegistry#addInterval method. That method takes two arguments: a name for the interval, and the interval itself.
+
+Delete a named interval using the SchedulerRegistry#deleteInterval method, as follows:
+
+
+
+deleteInterval(name: string) {
+  this.schedulerRegistry.deleteInterval(name);
+  this.logger.warn(`Interval ${name} deleted!`);
+}
+List all intervals using the SchedulerRegistry#getIntervals method as follows:
+
+
+
+getIntervals() {
+  const intervals = this.schedulerRegistry.getIntervals();
+  intervals.forEach(key => this.logger.log(`Interval: ${key}`));
+}
+Dynamic timeouts#
+Obtain a reference to a timeout with the SchedulerRegistry#getTimeout method. As above, inject SchedulerRegistry using standard constructor injection:
+
+
+
+constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
+And use it as follows:
+
+
+
+const timeout = this.schedulerRegistry.getTimeout('notifications');
+clearTimeout(timeout);
+Create a new timeout dynamically using the SchedulerRegistry#addTimeout method, as follows:
+
+
+
+addTimeout(name: string, milliseconds: number) {
+  const callback = () => {
+    this.logger.warn(`Timeout ${name} executing after (${milliseconds})!`);
+  };
+
+  const timeout = setTimeout(callback, milliseconds);
+  this.schedulerRegistry.addTimeout(name, timeout);
+}
+In this code, we create a standard JavaScript timeout, then pass it to the SchedulerRegistry#addTimeout method. That method takes two arguments: a name for the timeout, and the timeout itself.
+
+Delete a named timeout using the SchedulerRegistry#deleteTimeout method, as follows:
+
+
+
+deleteTimeout(name: string) {
+  this.schedulerRegistry.deleteTimeout(name);
+  this.logger.warn(`Timeout ${name} deleted!`);
+}
+List all timeouts using the SchedulerRegistry#getTimeouts method as follows:
+
+
+
+getTimeouts() {
+  const timeouts = this.schedulerRegistry.getTimeouts();
+  timeouts.forEach(key => this.logger.log(`Timeout: ${key}`));
+}
+Example#
+A working example is available here.
+
+
+Queues
+Queues are a powerful design pattern that help you deal with common application scaling and performance challenges. Some examples of problems that Queues can help you solve are:
+
+Smooth out processing peaks. For example, if users can initiate resource-intensive tasks at arbitrary times, you can add these tasks to a queue instead of performing them synchronously. Then you can have worker processes pull tasks from the queue in a controlled manner. You can easily add new Queue consumers to scale up the back-end task handling as the application scales up.
+Break up monolithic tasks that may otherwise block the Node.js event loop. For example, if a user request requires CPU intensive work like audio transcoding, you can delegate this task to other processes, freeing up user-facing processes to remain responsive.
+Provide a reliable communication channel across various services. For example, you can queue tasks (jobs) in one process or service, and consume them in another. You can be notified (by listening for status events) upon completion, error or other state changes in the job life cycle from any process or service. When Queue producers or consumers fail, their state is preserved and task handling can restart automatically when nodes are restarted.
+Nest provides the @nestjs/bullmq package for BullMQ integration and @nestjs/bull package for Bull integration. Both packages are abstractions/wrappers on top of their respective libraries, which were developed by the same team. Bull is currently in maintenance mode, with the team focusing on fixing bugs, while BullMQ is actively developed, featuring a modern TypeScript implementation and a different set of features. If Bull meets your requirements, it remains a reliable and battle-tested choice. The Nest packages make it easy to integrate both, BullMQ or Bull Queues, into your Nest application in a friendly way.
+
+Both BullMQ and Bull use Redis to persist job data, so you'll need to have Redis installed on your system. Because they are Redis-backed, your Queue architecture can be completely distributed and platform-independent. For example, you can have some Queue producers and consumers and listeners running in Nest on one (or several) nodes, and other producers, consumers and listeners running on other Node.js platforms on other network nodes.
+
+This chapter covers the @nestjs/bullmq and @nestjs/bull packages. We also recommend reading the BullMQ and Bull documentation for more background and specific implementation details.
+
+BullMQ installation#
+To begin using BullMQ, we first install the required dependencies.
+
+
+$ npm install --save @nestjs/bullmq bullmq
+Once the installation process is complete, we can import the BullModule into the root AppModule.
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+
+@Module({
+  imports: [
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+  ],
+})
+export class AppModule {}
+The forRoot() method is used to register a bullmq package configuration object that will be used by all queues registered in the application (unless specified otherwise). For your reference, the following are a few of the properties within a configuration object:
+
+connection: ConnectionOptions - Options to configure the Redis connection. See Connections for more information. Optional.
+prefix: string - Prefix for all queue keys. Optional.
+defaultJobOptions: JobOpts - Options to control the default settings for new jobs. See JobOpts for more information. Optional.
+settings: AdvancedSettings - Advanced Queue configuration settings. These should usually not be changed. See AdvancedSettings for more information. Optional.
+extraOptions - Extra options for module init. See Manual Registration
+All the options are optional, providing detailed control over queue behavior. These are passed directly to the BullMQ Queue constructor. Read more about these options and other options here.
+
+To register a queue, import the BullModule.registerQueue() dynamic module, as follows:
+
+
+
+BullModule.registerQueue({
+  name: 'audio',
+});
+Hint
+Create multiple queues by passing multiple comma-separated configuration objects to the registerQueue() method.
+The registerQueue() method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property. A queue name is used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues.
+
+You can also override some of the pre-configured options for a specific queue, as follows:
+
+
+
+BullModule.registerQueue({
+  name: 'audio',
+  connection: {
+    port: 6380,
+  },
+});
+BullMQ also supports parent - child relationships between jobs. This functionality enables the creation of flows where jobs are the node of trees of arbitrary depth. To read more about them check here.
+
+To add a flow, you can do the following:
+
+
+
+BullModule.registerFlowProducer({
+  name: 'flowProducerName',
+});
+Since jobs are persisted in Redis, each time a specific named queue is instantiated (e.g., when an app is started/restarted), it attempts to process any old jobs that may exist from a previous unfinished session.
+
+Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed here.
+
+Official enterprise support
+ Providing technical guidance
+ Performing in-depth code reviews
+ Mentoring team members
+ Advising best practices
+Explore more
+
+Named configurations#
+If your queues connect to multiple different Redis instances, you can use a technique called named configurations. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
+
+For example, assuming that you have an additional Redis instance (apart from the default one) used by a few queues registered in your application, you can register its configuration as follows:
+
+
+
+BullModule.forRoot('alternative-config', {
+  connection: {
+    port: 6381,
+  },
+});
+In the example above, 'alternative-config' is just a configuration key (it can be any arbitrary string).
+
+With this in place, you can now point to this configuration in the registerQueue() options object:
+
+
+
+BullModule.registerQueue({
+  configKey: 'alternative-config',
+  name: 'video',
+});
+Producers#
+Job producers add jobs to queues. Producers are typically application services (Nest providers). To add jobs to a queue, first inject the queue into the service as follows:
+
+
+
+import { Injectable } from '@nestjs/common';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
+
+@Injectable()
+export class AudioService {
+  constructor(@InjectQueue('audio') private audioQueue: Queue) {}
+}
+Hint
+The @InjectQueue() decorator identifies the queue by its name, as provided in the registerQueue() method call (e.g., 'audio').
+Now, add a job by calling the queue's add() method, passing a user-defined job object. Jobs are represented as serializable JavaScript objects (since that is how they are stored in the Redis database). The shape of the job you pass is arbitrary; use it to represent the semantics of your job object. You also need to give it a name. This allows you to create specialized consumers that will only process jobs with a given name.
+
+
+
+const job = await this.audioQueue.add('transcode', {
+  foo: 'bar',
+});
+Job options#
+Jobs can have additional options associated with them. Pass an options object after the job argument in the Queue.add() method. Some of the job options properties are:
+
+priority: number - Optional priority value. Ranges from 1 (highest priority) to MAX_INT (lowest priority). Note that using priorities has a slight impact on performance, so use them with caution.
+delay: number - An amount of time (milliseconds) to wait until this job can be processed. Note that for accurate delays, both server and clients should have their clocks synchronized.
+attempts: number - The total number of attempts to try the job until it completes.
+repeat: RepeatOpts - Repeat job according to a cron specification. See RepeatOpts.
+backoff: number | BackoffOpts - Backoff setting for automatic retries if the job fails. See BackoffOpts.
+lifo: boolean - If true, adds the job to the right end of the queue instead of the left (default false).
+jobId: number | string - Override the job ID - by default, the job ID is a unique integer, but you can use this setting to override it. If you use this option, it is up to you to ensure the jobId is unique. If you attempt to add a job with an id that already exists, it will not be added.
+removeOnComplete: boolean | number - If true, removes the job when it successfully completes. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the completed set.
+removeOnFail: boolean | number - If true, removes the job when it fails after all attempts. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the failed set.
+stackTraceLimit: number - Limits the amount of stack trace lines that will be recorded in the stacktrace.
+Here are a few examples of customizing jobs with job options.
+
+To delay the start of a job, use the delay configuration property.
+
+
+
+const job = await this.audioQueue.add(
+  'transcode',
+  {
+    foo: 'bar',
+  },
+  { delay: 3000 }, // 3 seconds delayed
+);
+To add a job to the right end of the queue (process the job as LIFO (Last In First Out)), set the lifo property of the configuration object to true.
+
+
+
+const job = await this.audioQueue.add(
+  'transcode',
+  {
+    foo: 'bar',
+  },
+  { lifo: true },
+);
+To prioritize a job, use the priority property.
+
+
+
+const job = await this.audioQueue.add(
+  'transcode',
+  {
+    foo: 'bar',
+  },
+  { priority: 2 },
+);
+For a full list of options, check the API documentation here and here.
+
+Consumers#
+A consumer is a class defining methods that either process jobs added into the queue, or listen for events on the queue, or both. Declare a consumer class using the @Processor() decorator as follows:
+
+
+
+import { Processor } from '@nestjs/bullmq';
+
+@Processor('audio')
+export class AudioConsumer {}
+Hint
+Consumers must be registered as providers so the @nestjs/bullmq package can pick them up.
+Where the decorator's string argument (e.g., 'audio') is the name of the queue to be associated with the class methods.
+
+
+
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+
+@Processor('audio')
+export class AudioConsumer extends WorkerHost {
+  async process(job: Job<any, any, string>): Promise<any> {
+    let progress = 0;
+    for (let i = 0; i < 100; i++) {
+      await doSomething(job.data);
+      progress += 1;
+      await job.updateProgress(progress);
+    }
+    return {};
+  }
+}
+The process method is called whenever the worker is idle and there are jobs to process in the queue. This handler method receives the job object as its only argument. The value returned by the handler method is stored in the job object and can be accessed later on, for example in a listener for the completed event.
+
+Job objects have multiple methods that allow you to interact with their state. For example, the above code uses the updateProgress() method to update the job's progress. See here for the complete Job object API reference.
+
+In the older version, Bull, you could designate that a job handler method will handle only jobs of a certain type (jobs with a specific name) by passing that name to the @Process() decorator as shown below.
+
+Warning
+This doesn't work with BullMQ, keep reading.
+
+
+@Process('transcode')
+async transcode(job: Job<unknown>) { ... }
+This behavior is not supported in BullMQ due to confusions it generated. Instead, you need switch cases to call different services or logic for each job name:
+
+
+
+import { Processor, WorkerHost } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+
+@Processor('audio')
+export class AudioConsumer extends WorkerHost {
+  async process(job: Job<any, any, string>): Promise<any> {
+    switch (job.name) {
+      case 'transcode': {
+        let progress = 0;
+        for (i = 0; i < 100; i++) {
+          await doSomething(job.data);
+          progress += 1;
+          await job.progress(progress);
+        }
+        return {};
+      }
+      case 'concatenate': {
+        await doSomeLogic2();
+        break;
+      }
+    }
+  }
+}
+This is covered in the named processor section of the BullMQ documentation.
+
+Request-scoped consumers#
+When a consumer is flagged as request-scoped (learn more about the injection scopes here), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+
+
+
+@Processor({
+  name: 'audio',
+  scope: Scope.REQUEST,
+})
+Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a JOB_REF through the constructor using a standard approach.
+
+
+
+constructor(@Inject(JOB_REF) jobRef: Job) {
+  console.log(jobRef);
+}
+Hint
+The JOB_REF token is imported from the @nestjs/bullmq package.
+Event listeners#
+BullMQ generates a set of useful events when queue and/or job state changes occur. These events can be subscribed to at the Worker level using the @OnWorkerEvent(event) decorator, or at the Queue level with a dedicated listener class and the @OnQueueEvent(event) decorator.
+
+Worker events must be declared within a consumer class (i.e., within a class decorated with the @Processor() decorator). To listen for an event, use the @OnWorkerEvent(event) decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the audio queue, use the following construct:
+
+
+
+import { Processor, Process, OnWorkerEvent } from '@nestjs/bullmq';
+import { Job } from 'bullmq';
+
+@Processor('audio')
+export class AudioConsumer {
+  @OnWorkerEvent('active')
+  onActive(job: Job) {
+    console.log(
+      `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
+    );
+  }
+
+  // ...
+}
+You can see the complete list of events and their arguments as properties of WorkerListener here.
+
+QueueEvent listeners must use the @QueueEventsListener(queue) decorator and extend the QueueEventsHost class provided by @nestjs/bullmq. To listen for an event, use the @OnQueueEvent(event) decorator with the event you want to be handled. For example, to listen to the event emitted when a job enters the active state in the audio queue, use the following construct:
+
+
+
+import {
+  QueueEventsHost,
+  QueueEventsListener,
+  OnQueueEvent,
+} from '@nestjs/bullmq';
+
+@QueueEventsListener('audio')
+export class AudioEventsListener extends QueueEventsHost {
+  @OnQueueEvent('active')
+  onActive(job: { jobId: string; prev?: string }) {
+    console.log(`Processing job ${job.jobId}...`);
+  }
+
+  // ...
+}
+Hint
+QueueEvent Listeners must be registered as providers so the @nestjs/bullmq package can pick them up.
+You can see the complete list of events and their arguments as properties of QueueEventsListener here.
+
+Queue management#
+Queues have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API here. Invoke any of these methods directly on the Queue object, as shown below with the pause/resume examples.
+
+Pause a queue with the pause() method call. A paused queue will not process new jobs until resumed, but current jobs being processed will continue until they are finalized.
+
+
+
+await audioQueue.pause();
+To resume a paused queue, use the resume() method, as follows:
+
+
+
+await audioQueue.resume();
+Separate processes#
+Job handlers can also be run in a separate (forked) process (source). This has several advantages:
+
+The process is sandboxed so if it crashes it does not affect the worker.
+You can run blocking code without affecting the queue (jobs will not stall).
+Much better utilization of multi-core CPUs.
+Less connections to redis.
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+import { join } from 'node:path';
+
+@Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'audio',
+      processors: [join(__dirname, 'processor.js')],
+    }),
+  ],
+})
+export class AppModule {}
+Warning
+Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
+Async configuration#
+You may want to pass bullmq options asynchronously instead of statically. In this case, use the forRootAsync() method which provides several ways to deal with async configuration. Likewise, if you want to pass queue options asynchronously, use the registerQueueAsync() method.
+
+One approach is to use a factory function:
+
+
+
+BullModule.forRootAsync({
+  useFactory: () => ({
+    connection: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+Our factory behaves like any other asynchronous provider (e.g., it can be async and it's able to inject dependencies through inject).
+
+
+
+BullModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    connection: {
+      host: configService.get('QUEUE_HOST'),
+      port: configService.get('QUEUE_PORT'),
+    },
+  }),
+  inject: [ConfigService],
+});
+Alternatively, you can use the useClass syntax:
+
+
+
+BullModule.forRootAsync({
+  useClass: BullConfigService,
+});
+The construction above will instantiate BullConfigService inside BullModule and use it to provide an options object by calling createSharedConfiguration(). Note that this means that the BullConfigService has to implement the SharedBullConfigurationFactory interface, as shown below:
+
+
+
+@Injectable()
+class BullConfigService implements SharedBullConfigurationFactory {
+  createSharedConfiguration(): BullModuleOptions {
+    return {
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    };
+  }
+}
+In order to prevent the creation of BullConfigService inside BullModule and use a provider imported from a different module, you can use the useExisting syntax.
+
+
+
+BullModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+});
+This construction works the same as useClass with one critical difference - BullModule will lookup imported modules to reuse an existing ConfigService instead of instantiating a new one.
+
+Likewise, if you want to pass queue options asynchronously, use the registerQueueAsync() method, just keep in mind to specify the name attribute outside the factory function.
+
+
+
+BullModule.registerQueueAsync({
+  name: 'audio',
+  useFactory: () => ({
+    redis: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+Manual registration#
+By default, BullModule automatically registers BullMQ components (queues, processors, and event listener services) in the onModuleInit lifecycle function. However, in some cases, this behavior may not be ideal. To prevent automatic registration, enable manualRegistration in BullModule like this:
+
+
+
+BullModule.forRoot({
+  extraOptions: {
+    manualRegistration: true,
+  },
+});
+To register these components manually, inject BullRegistrar and call the register function, ideally within OnModuleInit or OnApplicationBootstrap.
+
+
+
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BullRegistrar } from '@nestjs/bullmq';
+
+@Injectable()
+export class AudioService implements OnModuleInit {
+  constructor(private bullRegistrar: BullRegistrar) {}
+
+  onModuleInit() {
+    if (yourConditionHere) {
+      this.bullRegistrar.register();
+    }
+  }
+}
+Unless you call the BullRegistrar#register function, no BullMQ components will work—meaning no jobs will be processed.
+
+Bull installation#
+Note
+If you decided to use BullMQ, skip this section and the following chapters.
+To begin using Bull, we first install the required dependencies.
+
+
+$ npm install --save @nestjs/bull bull
+Once the installation process is complete, we can import the BullModule into the root AppModule.
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
+
+@Module({
+  imports: [
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+  ],
+})
+export class AppModule {}
+The forRoot() method is used to register a bull package configuration object that will be used by all queues registered in the application (unless specified otherwise). A configuration object consists of the following properties:
+
+limiter: RateLimiter - Options to control the rate at which the queue's jobs are processed. See RateLimiter for more information. Optional.
+redis: RedisOpts - Options to configure the Redis connection. See RedisOpts for more information. Optional.
+prefix: string - Prefix for all queue keys. Optional.
+defaultJobOptions: JobOpts - Options to control the default settings for new jobs. See JobOpts for more information. Optional. Note: These do not take effect if you schedule jobs via a FlowProducer. See bullmq#1034 for explanation.
+settings: AdvancedSettings - Advanced Queue configuration settings. These should usually not be changed. See AdvancedSettings for more information. Optional.
+All the options are optional, providing detailed control over queue behavior. These are passed directly to the Bull Queue constructor. Read more about these options here.
+
+To register a queue, import the BullModule.registerQueue() dynamic module, as follows:
+
+
+
+BullModule.registerQueue({
+  name: 'audio',
+});
+Hint
+Create multiple queues by passing multiple comma-separated configuration objects to the registerQueue() method.
+The registerQueue() method is used to instantiate and/or register queues. Queues are shared across modules and processes that connect to the same underlying Redis database with the same credentials. Each queue is unique by its name property. A queue name is used as both an injection token (for injecting the queue into controllers/providers), and as an argument to decorators to associate consumer classes and listeners with queues.
+
+You can also override some of the pre-configured options for a specific queue, as follows:
+
+
+
+BullModule.registerQueue({
+  name: 'audio',
+  redis: {
+    port: 6380,
+  },
+});
+Since jobs are persisted in Redis, each time a specific named queue is instantiated (e.g., when an app is started/restarted), it attempts to process any old jobs that may exist from a previous unfinished session.
+
+Each queue can have one or many producers, consumers, and listeners. Consumers retrieve jobs from the queue in a specific order: FIFO (the default), LIFO, or according to priorities. Controlling queue processing order is discussed here.
+
+Official enterprise support
+ Providing technical guidance
+ Performing in-depth code reviews
+ Mentoring team members
+ Advising best practices
+Explore more
+
+Named configurations#
+If your queues connect to multiple Redis instances, you can use a technique called named configurations. This feature allows you to register several configurations under specified keys, which then you can refer to in the queue options.
+
+For example, assuming that you have an additional Redis instance (apart from the default one) used by a few queues registered in your application, you can register its configuration as follows:
+
+
+
+BullModule.forRoot('alternative-config', {
+  redis: {
+    port: 6381,
+  },
+});
+In the example above, 'alternative-config' is just a configuration key (it can be any arbitrary string).
+
+With this in place, you can now point to this configuration in the registerQueue() options object:
+
+
+
+BullModule.registerQueue({
+  configKey: 'alternative-config',
+  name: 'video',
+});
+Producers#
+Job producers add jobs to queues. Producers are typically application services (Nest providers). To add jobs to a queue, first inject the queue into the service as follows:
+
+
+
+import { Injectable } from '@nestjs/common';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
+
+@Injectable()
+export class AudioService {
+  constructor(@InjectQueue('audio') private audioQueue: Queue) {}
+}
+Hint
+The @InjectQueue() decorator identifies the queue by its name, as provided in the registerQueue() method call (e.g., 'audio').
+Now, add a job by calling the queue's add() method, passing a user-defined job object. Jobs are represented as serializable JavaScript objects (since that is how they are stored in the Redis database). The shape of the job you pass is arbitrary; use it to represent the semantics of your job object.
+
+
+
+const job = await this.audioQueue.add({
+  foo: 'bar',
+});
+Named jobs#
+Jobs may have unique names. This allows you to create specialized consumers that will only process jobs with a given name.
+
+
+
+const job = await this.audioQueue.add('transcode', {
+  foo: 'bar',
+});
+Warning
+When using named jobs, you must create processors for each unique name added to a queue, or the queue will complain that you are missing a processor for the given job. See here for more information on consuming named jobs.
+Job options#
+Jobs can have additional options associated with them. Pass an options object after the job argument in the Queue.add() method. Job options properties are:
+
+priority: number - Optional priority value. Ranges from 1 (highest priority) to MAX_INT (lowest priority). Note that using priorities has a slight impact on performance, so use them with caution.
+delay: number - An amount of time (milliseconds) to wait until this job can be processed. Note that for accurate delays, both server and clients should have their clocks synchronized.
+attempts: number - The total number of attempts to try the job until it completes.
+repeat: RepeatOpts - Repeat job according to a cron specification. See RepeatOpts.
+backoff: number | BackoffOpts - Backoff setting for automatic retries if the job fails. See BackoffOpts.
+lifo: boolean - If true, adds the job to the right end of the queue instead of the left (default false).
+timeout: number - The number of milliseconds after which the job should fail with a timeout error.
+jobId: number | string - Override the job ID - by default, the job ID is a unique integer, but you can use this setting to override it. If you use this option, it is up to you to ensure the jobId is unique. If you attempt to add a job with an id that already exists, it will not be added.
+removeOnComplete: boolean | number - If true, removes the job when it successfully completes. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the completed set.
+removeOnFail: boolean | number - If true, removes the job when it fails after all attempts. A number specifies the amount of jobs to keep. Default behavior is to keep the job in the failed set.
+stackTraceLimit: number - Limits the amount of stack trace lines that will be recorded in the stacktrace.
+Here are a few examples of customizing jobs with job options.
+
+To delay the start of a job, use the delay configuration property.
+
+
+
+const job = await this.audioQueue.add(
+  {
+    foo: 'bar',
+  },
+  { delay: 3000 }, // 3 seconds delayed
+);
+To add a job to the right end of the queue (process the job as LIFO (Last In First Out)), set the lifo property of the configuration object to true.
+
+
+
+const job = await this.audioQueue.add(
+  {
+    foo: 'bar',
+  },
+  { lifo: true },
+);
+To prioritize a job, use the priority property.
+
+
+
+const job = await this.audioQueue.add(
+  {
+    foo: 'bar',
+  },
+  { priority: 2 },
+);
+Consumers#
+A consumer is a class defining methods that either process jobs added into the queue, or listen for events on the queue, or both. Declare a consumer class using the @Processor() decorator as follows:
+
+
+
+import { Processor } from '@nestjs/bull';
+
+@Processor('audio')
+export class AudioConsumer {}
+Hint
+Consumers must be registered as providers so the @nestjs/bull package can pick them up.
+Where the decorator's string argument (e.g., 'audio') is the name of the queue to be associated with the class methods.
+
+Within a consumer class, declare job handlers by decorating handler methods with the @Process() decorator.
+
+
+
+import { Processor, Process } from '@nestjs/bull';
+import { Job } from 'bull';
+
+@Processor('audio')
+export class AudioConsumer {
+  @Process()
+  async transcode(job: Job<unknown>) {
+    let progress = 0;
+    for (let i = 0; i < 100; i++) {
+      await doSomething(job.data);
+      progress += 1;
+      await job.progress(progress);
+    }
+    return {};
+  }
+}
+The decorated method (e.g., transcode()) is called whenever the worker is idle and there are jobs to process in the queue. This handler method receives the job object as its only argument. The value returned by the handler method is stored in the job object and can be accessed later on, for example in a listener for the completed event.
+
+Job objects have multiple methods that allow you to interact with their state. For example, the above code uses the progress() method to update the job's progress. See here for the complete Job object API reference.
+
+You can designate that a job handler method will handle only jobs of a certain type (jobs with a specific name) by passing that name to the @Process() decorator as shown below. You can have multiple @Process() handlers in a given consumer class, corresponding to each job type (name). When you use named jobs, be sure to have a handler corresponding to each name.
+
+
+
+@Process('transcode')
+async transcode(job: Job<unknown>) { ... }
+Warning
+When defining multiple consumers for the same queue, the concurrency option in @Process({ concurrency: 1 }) won't take effect. The minimum concurrency will match the number of consumers defined. This also applies even if @Process() handlers use a different name to handle named jobs.
+Request-scoped consumers#
+When a consumer is flagged as request-scoped (learn more about the injection scopes here), a new instance of the class will be created exclusively for each job. The instance will be garbage-collected after the job has completed.
+
+
+
+@Processor({
+  name: 'audio',
+  scope: Scope.REQUEST,
+})
+Since request-scoped consumer classes are instantiated dynamically and scoped to a single job, you can inject a JOB_REF through the constructor using a standard approach.
+
+
+
+constructor(@Inject(JOB_REF) jobRef: Job) {
+  console.log(jobRef);
+}
+Hint
+The JOB_REF token is imported from the @nestjs/bull package.
+Event listeners#
+Bull generates a set of useful events when queue and/or job state changes occur. Nest provides a set of decorators that allow subscribing to a core set of standard events. These are exported from the @nestjs/bull package.
+
+Event listeners must be declared within a consumer class (i.e., within a class decorated with the @Processor() decorator). To listen for an event, use one of the decorators in the table below to declare a handler for the event. For example, to listen to the event emitted when a job enters the active state in the audio queue, use the following construct:
+
+
+
+import { Processor, Process, OnQueueActive } from '@nestjs/bull';
+import { Job } from 'bull';
+
+@Processor('audio')
+export class AudioConsumer {
+
+  @OnQueueActive()
+  onActive(job: Job) {
+    console.log(
+      `Processing job ${job.id} of type ${job.name} with data ${job.data}...`,
+    );
+  }
+  ...
+Since Bull operates in a distributed (multi-node) environment, it defines the concept of event locality. This concept recognizes that events may be triggered either entirely within a single process, or on shared queues from different processes. A local event is one that is produced when an action or state change is triggered on a queue in the local process. In other words, when your event producers and consumers are local to a single process, all events happening on queues are local.
+
+When a queue is shared across multiple processes, we encounter the possibility of global events. For a listener in one process to receive an event notification triggered by another process, it must register for a global event.
+
+Event handlers are invoked whenever their corresponding event is emitted. The handler is called with the signature shown in the table below, providing access to information relevant to the event. We discuss one key difference between local and global event handler signatures below.
+
+Local event listeners	Global event listeners	Handler method signature / When fired
+@OnQueueError()	@OnGlobalQueueError()	handler(error: Error) - An error occurred. error contains the triggering error.
+@OnQueueWaiting()	@OnGlobalQueueWaiting()	handler(jobId: number | string) - A Job is waiting to be processed as soon as a worker is idling. jobId contains the id for the job that has entered this state.
+@OnQueueActive()	@OnGlobalQueueActive()	handler(job: Job) - Job jobhas started.
+@OnQueueStalled()	@OnGlobalQueueStalled()	handler(job: Job) - Job job has been marked as stalled. This is useful for debugging job workers that crash or pause the event loop.
+@OnQueueProgress()	@OnGlobalQueueProgress()	handler(job: Job, progress: number) - Job job's progress was updated to value progress.
+@OnQueueCompleted()	@OnGlobalQueueCompleted()	handler(job: Job, result: any) Job job successfully completed with a result result.
+@OnQueueFailed()	@OnGlobalQueueFailed()	handler(job: Job, err: Error) Job job failed with reason err.
+@OnQueuePaused()	@OnGlobalQueuePaused()	handler() The queue has been paused.
+@OnQueueResumed()	@OnGlobalQueueResumed()	handler(job: Job) The queue has been resumed.
+@OnQueueCleaned()	@OnGlobalQueueCleaned()	handler(jobs: Job[], type: string) Old jobs have been cleaned from the queue. jobs is an array of cleaned jobs, and type is the type of jobs cleaned.
+@OnQueueDrained()	@OnGlobalQueueDrained()	handler() Emitted whenever the queue has processed all the waiting jobs (even if there can be some delayed jobs not yet processed).
+@OnQueueRemoved()	@OnGlobalQueueRemoved()	handler(job: Job) Job job was successfully removed.
+When listening for global events, the method signatures can be slightly different from their local counterpart. Specifically, any method signature that receives job objects in the local version, instead receives a jobId (number) in the global version. To get a reference to the actual job object in such a case, use the Queue#getJob method. This call should be awaited, and therefore the handler should be declared async. For example:
+
+
+
+@OnGlobalQueueCompleted()
+async onGlobalCompleted(jobId: number, result: any) {
+  const job = await this.immediateQueue.getJob(jobId);
+  console.log('(Global) on completed: job ', job.id, ' -> result: ', result);
+}
+Hint
+To access the Queue object (to make a getJob() call), you must of course inject it. Also, the Queue must be registered in the module where you are injecting it.
+In addition to the specific event listener decorators, you can also use the generic @OnQueueEvent() decorator in combination with either BullQueueEvents or BullQueueGlobalEvents enums. Read more about events here.
+
+Queue management#
+Queue's have an API that allows you to perform management functions like pausing and resuming, retrieving the count of jobs in various states, and several more. You can find the full queue API here. Invoke any of these methods directly on the Queue object, as shown below with the pause/resume examples.
+
+Pause a queue with the pause() method call. A paused queue will not process new jobs until resumed, but current jobs being processed will continue until they are finalized.
+
+
+
+await audioQueue.pause();
+To resume a paused queue, use the resume() method, as follows:
+
+
+
+await audioQueue.resume();
+Separate processes#
+Job handlers can also be run in a separate (forked) process (source). This has several advantages:
+
+The process is sandboxed so if it crashes it does not affect the worker.
+You can run blocking code without affecting the queue (jobs will not stall).
+Much better utilization of multi-core CPUs.
+Less connections to redis.
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bull';
+import { join } from 'path';
+
+@Module({
+  imports: [
+    BullModule.registerQueue({
+      name: 'audio',
+      processors: [join(__dirname, 'processor.js')],
+    }),
+  ],
+})
+export class AppModule {}
+Please note that because your function is being executed in a forked process, Dependency Injection (and IoC container) won't be available. That means that your processor function will need to contain (or create) all instances of external dependencies it needs.
+
+
+processor.tsJS
+
+import { Job, DoneCallback } from 'bull';
+
+export default function (job: Job, cb: DoneCallback) {
+  console.log(`[${process.pid}] ${JSON.stringify(job.data)}`);
+  cb(null, 'It works');
+}
+Async configuration#
+You may want to pass bull options asynchronously instead of statically. In this case, use the forRootAsync() method which provides several ways to deal with async configuration.
+
+One approach is to use a factory function:
+
+
+
+BullModule.forRootAsync({
+  useFactory: () => ({
+    redis: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+Our factory behaves like any other asynchronous provider (e.g., it can be async and it's able to inject dependencies through inject).
+
+
+
+BullModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    redis: {
+      host: configService.get('QUEUE_HOST'),
+      port: configService.get('QUEUE_PORT'),
+    },
+  }),
+  inject: [ConfigService],
+});
+Alternatively, you can use the useClass syntax:
+
+
+
+BullModule.forRootAsync({
+  useClass: BullConfigService,
+});
+The construction above will instantiate BullConfigService inside BullModule and use it to provide an options object by calling createSharedConfiguration(). Note that this means that the BullConfigService has to implement the SharedBullConfigurationFactory interface, as shown below:
+
+
+
+@Injectable()
+class BullConfigService implements SharedBullConfigurationFactory {
+  createSharedConfiguration(): BullModuleOptions {
+    return {
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    };
+  }
+}
+In order to prevent the creation of BullConfigService inside BullModule and use a provider imported from a different module, you can use the useExisting syntax.
+
+
+
+BullModule.forRootAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+});
+This construction works the same as useClass with one critical difference - BullModule will lookup imported modules to reuse an existing ConfigService instead of instantiating a new one.
+
+Likewise, if you want to pass queue options asynchronously, use the registerQueueAsync() method, just keep in mind to specify the name attribute outside the factory function.
+
+
+
+BullModule.registerQueueAsync({
+  name: 'audio',
+  useFactory: () => ({
+    redis: {
+      host: 'localhost',
+      port: 6379,
+    },
+  }),
+});
+Example#
+A working example is available here.
+
+
+
+
+
+
+
+
+Compression
+Compression can greatly decrease the size of the response body, thereby increasing the speed of a web app.
+
+For high-traffic websites in production, it is strongly recommended to offload compression from the application server - typically in a reverse proxy (e.g., Nginx). In that case, you should not use compression middleware.
+
+Use with Express (default)#
+Use the compression middleware package to enable gzip compression.
+
+First install the required package:
+
+
+$ npm i --save compression
+$ npm i --save-dev @types/compression
+Once the installation is complete, apply the compression middleware as global middleware.
+
+
+
+import * as compression from 'compression';
+// somewhere in your initialization file
+app.use(compression());
+Use with Fastify#
+If using the FastifyAdapter, you'll want to use fastify-compress:
+
+
+$ npm i --save @fastify/compress
+Once the installation is complete, apply the @fastify/compress middleware as global middleware.
+
+Warning
+Please ensure, that you use the type NestFastifyApplication when creating the application. Otherwise, you cannot use register to apply the compression-middleware.
+
+
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+
+import compression from '@fastify/compress';
+
+// inside bootstrap()
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+await app.register(compression);
+By default, @fastify/compress will use Brotli compression (on Node >= 11.7.0) when browsers indicate support for the encoding. While Brotli can be quite efficient in terms of compression ratio, it can also be quite slow. By default, Brotli sets a maximum compression quality of 11, although it can be adjusted to reduce compression time in lieu of compression quality by adjusting the BROTLI_PARAM_QUALITY between 0 min and 11 max. This will require fine tuning to optimize space/time performance. An example with quality 4:
+
+
+
+import { constants } from 'node:zlib';
+// somewhere in your initialization file
+await app.register(compression, { brotliOptions: { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } } });
+To simplify, you may want to tell fastify-compress to only use deflate and gzip to compress responses; you'll end up with potentially larger responses but they'll be delivered much more quickly.
+
+To specify encodings, provide a second argument to app.register:
+
+
+
+await app.register(compression, { encodings: ['gzip', 'deflate'] });
+The above tells fastify-compress to only use gzip and deflate encodings, preferring gzip if the client supports both.
+
+
+
+
+
+
+
+Cookies
+An HTTP cookie is a small piece of data stored by the user's browser. Cookies were designed to be a reliable mechanism for websites to remember stateful information. When the user visits the website again, the cookie is automatically sent with the request.
+
+Use with Express (default)#
+First install the required package (and its types for TypeScript users):
+
+
+$ npm i cookie-parser
+$ npm i -D @types/cookie-parser
+Once the installation is complete, apply the cookie-parser middleware as global middleware (for example, in your main.ts file).
+
+
+
+import * as cookieParser from 'cookie-parser';
+// somewhere in your initialization file
+app.use(cookieParser());
+You can pass several options to the cookieParser middleware:
+
+secret a string or array used for signing cookies. This is optional and if not specified, will not parse signed cookies. If a string is provided, this is used as the secret. If an array is provided, an attempt will be made to unsign the cookie with each secret in order.
+options an object that is passed to cookie.parse as the second option. See cookie for more information.
+The middleware will parse the Cookie header on the request and expose the cookie data as the property req.cookies and, if a secret was provided, as the property req.signedCookies. These properties are name value pairs of the cookie name to cookie value.
+
+When a secret is provided, this module will unsign and validate any signed cookie values and move those name value pairs from req.cookies into req.signedCookies. A signed cookie is a cookie that has a value prefixed with s:. Signed cookies that fail signature validation will have the value false instead of the tampered value.
+
+With this in place, you can now read cookies from within the route handlers, as follows:
+
+
+
+@Get()
+findAll(@Req() request: Request) {
+  console.log(request.cookies); // or "request.cookies['cookieKey']"
+  // or console.log(request.signedCookies);
+}
+Hint
+The @Req() decorator is imported from the @nestjs/common, while Request from the express package.
+To attach a cookie to an outgoing response, use the Response#cookie() method:
+
+
+
+@Get()
+findAll(@Res({ passthrough: true }) response: Response) {
+  response.cookie('key', 'value')
+}
+Warning
+If you want to leave the response handling logic to the framework, remember to set the passthrough option to true, as shown above. Read more here.
+Hint
+The @Res() decorator is imported from the @nestjs/common, while Response from the express package.
+Use with Fastify#
+First install the required package:
+
+
+$ npm i @fastify/cookie
+Once the installation is complete, register the @fastify/cookie plugin:
+
+
+
+import fastifyCookie from '@fastify/cookie';
+
+// somewhere in your initialization file
+const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
+await app.register(fastifyCookie, {
+  secret: 'my-secret', // for cookies signature
+});
+With this in place, you can now read cookies from within the route handlers, as follows:
+
+
+
+@Get()
+findAll(@Req() request: FastifyRequest) {
+  console.log(request.cookies); // or "request.cookies['cookieKey']"
+}
+Hint
+The @Req() decorator is imported from the @nestjs/common, while FastifyRequest from the fastify package.
+To attach a cookie to an outgoing response, use the FastifyReply#setCookie() method:
+
+
+
+@Get()
+findAll(@Res({ passthrough: true }) response: FastifyReply) {
+  response.setCookie('key', 'value')
+}
+To read more about FastifyReply#setCookie() method, check out this page.
+
+Warning
+If you want to leave the response handling logic to the framework, remember to set the passthrough option to true, as shown above. Read more here.
+Hint
+The @Res() decorator is imported from the @nestjs/common, while FastifyReply from the fastify package.
+Creating a custom decorator (cross-platform)#
+To provide a convenient, declarative way of accessing incoming cookies, we can create a custom decorator.
+
+
+
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
+export const Cookies = createParamDecorator((data: string, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  return data ? request.cookies?.[data] : request.cookies;
+});
+The @Cookies() decorator will extract all cookies, or a named cookie from the req.cookies object and populate the decorated parameter with that value.
+
+With this in place, we can now use the decorator in a route handler signature, as follows:
+
+
+
+@Get()
+findAll(@Cookies('name') name: string) {}
+Support us
+
+
+
+
+
+
+
+
+Encryption and Hashing
+Encryption is the process of encoding information. This process converts the original representation of the information, known as plaintext, into an alternative form known as ciphertext. Ideally, only authorized parties can decipher a ciphertext back to plaintext and access the original information. Encryption does not itself prevent interference but denies the intelligible content to a would-be interceptor. Encryption is a two-way function; what is encrypted can be decrypted with the proper key.
+
+Hashing is the process of converting a given key into another value. A hash function is used to generate the new value according to a mathematical algorithm. Once hashing has been done, it should be impossible to go from the output to the input.
+
+Encryption#
+Node.js provides a built-in crypto module that you can use to encrypt and decrypt strings, numbers, buffers, streams, and more. Nest itself does not provide any additional package on top of this module to avoid introducing unnecessary abstractions.
+
+As an example, let's use AES (Advanced Encryption System) 'aes-256-ctr' algorithm CTR encryption mode.
+
+
+
+import { createCipheriv, randomBytes, scrypt } from 'node:crypto';
+import { promisify } from 'node:util';
+
+const iv = randomBytes(16);
+const password = 'Password used to generate key';
+
+// The key length is dependent on the algorithm.
+// In this case for aes256, it is 32 bytes.
+const key = (await promisify(scrypt)(password, 'salt', 32)) as Buffer;
+const cipher = createCipheriv('aes-256-ctr', key, iv);
+
+const textToEncrypt = 'Nest';
+const encryptedText = Buffer.concat([
+  cipher.update(textToEncrypt),
+  cipher.final(),
+]);
+Now to decrypt encryptedText value:
+
+
+
+import { createDecipheriv } from 'node:crypto';
+
+const decipher = createDecipheriv('aes-256-ctr', key, iv);
+const decryptedText = Buffer.concat([
+  decipher.update(encryptedText),
+  decipher.final(),
+]);
+Hashing#
+For hashing, we recommend using either the bcrypt or argon2 packages. Nest itself does not provide any additional wrappers on top of these modules to avoid introducing unnecessary abstractions (making the learning curve short).
+
+As an example, let's use bcrypt to hash a random password.
+
+First install required packages:
+
+
+$ npm i bcrypt
+$ npm i -D @types/bcrypt
+Once the installation is complete, you can use the hash function, as follows:
+
+
+
+import * as bcrypt from 'bcrypt';
+
+const saltOrRounds = 10;
+const password = 'random_password';
+const hash = await bcrypt.hash(password, saltOrRounds);
+To generate a salt, use the genSalt function:
+
+
+
+const salt = await bcrypt.genSalt();
+To compare/check a password, use the compare function:
+
+
+
+const isMatch = await bcrypt.compare(password, hash);
+You can read more about available functions here.
+
+
+
+
+Performance (Fastify)
+By default, Nest makes use of the Express framework. As mentioned earlier, Nest also provides compatibility with other libraries such as, for example, Fastify. Nest achieves this framework independence by implementing a framework adapter whose primary function is to proxy middleware and handlers to appropriate library-specific implementations.
+
+Hint
+Note that in order for a framework adapter to be implemented, the target library has to provide similar request/response pipeline processing as found in Express.
+Fastify provides a good alternative framework for Nest because it solves design issues in a similar manner to Express. However, fastify is much faster than Express, achieving almost two times better benchmarks results. A fair question is why does Nest use Express as the default HTTP provider? The reason is that Express is widely-used, well-known, and has an enormous set of compatible middleware, which is available to Nest users out-of-the-box.
+
+But since Nest provides framework-independence, you can easily migrate between them. Fastify can be a better choice when you place high value on very fast performance. To utilize Fastify, simply choose the built-in FastifyAdapter as shown in this chapter.
+
+Installation#
+First, we need to install the required package:
+
+
+$ npm i --save @nestjs/platform-fastify
+Adapter#
+Once the Fastify platform is installed, we can use the FastifyAdapter.
+
+
+main.tsJS
+
+import { NestFactory } from '@nestjs/core';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter()
+  );
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+By default, Fastify listens only on the localhost 127.0.0.1 interface (read more). If you want to accept connections on other hosts, you should specify '0.0.0.0' in the listen() call:
+
+
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
+  await app.listen(3000, '0.0.0.0');
+}
+Platform specific packages#
+Keep in mind that when you use the FastifyAdapter, Nest uses Fastify as the HTTP provider. This means that each recipe that relies on Express may no longer work. You should, instead, use Fastify equivalent packages.
+
+Redirect response#
+Fastify handles redirect responses slightly differently than Express. To do a proper redirect with Fastify, return both the status code and the URL, as follows:
+
+
+
+@Get()
+index(@Res() res) {
+  res.status(302).redirect('/login');
+}
+Fastify options#
+You can pass options into the Fastify constructor through the FastifyAdapter constructor. For example:
+
+
+
+new FastifyAdapter({ logger: true });
+Middleware#
+Middleware functions retrieve the raw req and res objects instead of Fastify's wrappers. This is how the middie package works (that's used under the hood) and fastify - check out this page for more information,
+
+
+logger.middleware.tsJS
+
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { FastifyRequest, FastifyReply } from 'fastify';
+
+@Injectable()
+export class LoggerMiddleware implements NestMiddleware {
+  use(req: FastifyRequest['raw'], res: FastifyReply['raw'], next: () => void) {
+    console.log('Request...');
+    next();
+  }
+}
+Route Config#
+You can use the route config feature of Fastify with the @RouteConfig() decorator.
+
+
+
+@RouteConfig({ output: 'hello world' })
+@Get()
+index(@Req() req) {
+  return req.routeConfig.output;
+}
+Route Constraints#
+As of v10.3.0, @nestjs/platform-fastify supports route constraints feature of Fastify with @RouteConstraints decorator.
+
+
+
+@RouteConstraints({ version: '1.2.x' })
+newFeature() {
+  return 'This works only for version >= 1.2.x';
+}
+Hint
+@RouteConfig() and @RouteConstraints are imported from @nestjs/platform-fastify.
+Example#
+A working example is available here.
+
+
+
+Standalone applications
+There are several ways of mounting a Nest application. You can create a web app, a microservice or just a bare Nest standalone application (without any network listeners). The Nest standalone application is a wrapper around the Nest IoC container, which holds all instantiated classes. We can obtain a reference to any existing instance from within any imported module directly using the standalone application object. Thus, you can take advantage of the Nest framework anywhere, including, for example, scripted CRON jobs. You can even build a CLI on top of it.
+
+Getting started#
+To create a Nest standalone application, use the following construction:
+
+
+JS
+
+async function bootstrap() {
+  const app = await NestFactory.createApplicationContext(AppModule);
+  // your application logic here ...
+}
+bootstrap();
+Retrieving providers from static modules#
+The standalone application object allows you to obtain a reference to any instance registered within the Nest application. Let's imagine that we have a TasksService provider in the TasksModule module that was imported by our AppModule module. This class provides a set of methods that we want to call from within a CRON job.
+
+
+JS
+
+const tasksService = app.get(TasksService);
+To access the TasksService instance we use the get() method. The get() method acts like a query that searches for an instance in each registered module. You can pass any provider's token to it. Alternatively, for strict context checking, pass an options object with the strict: true property. With this option in effect, you have to navigate through specific modules to obtain a particular instance from the selected context.
+
+
+JS
+
+const tasksService = app.select(TasksModule).get(TasksService, { strict: true });
+Following is a summary of the methods available for retrieving instance references from the standalone application object.
+
+get()	Retrieves an instance of a controller or provider (including guards, filters, and so on) available in the application context.
+select()	Navigates through the module's graph to pull out a specific instance of the selected module (used together with strict mode as described above).
+Hint
+In non-strict mode, the root module is selected by default. To select any other module, you need to navigate the modules graph manually, step by step.
+Keep in mind that a standalone application does not have any network listeners, so any Nest features related to HTTP (e.g., middleware, interceptors, pipes, guards, etc.) are not available in this context.
+
+For example, even if you register a global interceptor in your application and then retrieve a controller's instance using the app.get() method, the interceptor will not be executed.
+
+Retrieving providers from dynamic modules#
+When dealing with dynamic modules, we should supply the same object that represents the registered dynamic module in the application to app.select. For example:
+
+
+JS
+
+export const dynamicConfigModule = ConfigModule.register({ folder: './config' });
+
+@Module({
+  imports: [dynamicConfigModule],
+})
+export class AppModule {}
+Then you can select that module later on:
+
+
+JS
+
+const configService = app.select(dynamicConfigModule).get(ConfigService, { strict: true });
+Terminating phase#
+If you want the Node application to close after the script finishes (e.g., for a script running CRON jobs), you must call the app.close() method in the end of your bootstrap function like this:
+
+
+JS
+
+async function bootstrap() {
+  const app = await NestFactory.createApplicationContext(AppModule);
+  // application logic...
+  await app.close();
+}
+bootstrap();
+And as mentioned in the Lifecycle events chapter, that will trigger lifecycle hooks.
+
+Example#
+A working example is available here.
+
+
+
+Async Local Storage
+AsyncLocalStorage is a Node.js API (based on the async_hooks API) that provides an alternative way of propagating local state through the application without the need to explicitly pass it as a function parameter. It is similar to a thread-local storage in other languages.
+
+The main idea of Async Local Storage is that we can wrap some function call with the AsyncLocalStorage#run call. All code that is invoked within the wrapped call gets access to the same store, which will be unique to each call chain.
+
+In the context of NestJS, that means if we can find a place within the request's lifecycle where we can wrap the rest of the request's code, we will be able to access and modify state visible only to that request, which may serve as an alternative to REQUEST-scoped providers and some of their limitations.
+
+Alternatively, we can use ALS to propagate context for only a part of the system (for example the transaction object) without passing it around explicitly across services, which can increase isolation and encapsulation.
+
+Custom implementation#
+NestJS itself does not provide any built-in abstraction for AsyncLocalStorage, so let's walk through how we could implement it ourselves for the simplest HTTP case to get a better understanding of the whole concept:
+
+info
+For a ready-made dedicated package, continue reading below.
+First, create a new instance of the AsyncLocalStorage in some shared source file. Since we're using NestJS, let's also turn it into a module with a custom provider.
+
+als.module.tsJS
+
+@Module({
+  providers: [
+    {
+      provide: AsyncLocalStorage,
+      useValue: new AsyncLocalStorage(),
+    },
+  ],
+  exports: [AsyncLocalStorage],
+})
+export class AlsModule {}
+Hint
+AsyncLocalStorage is imported from async_hooks.
+We're only concerned with HTTP, so let's use a middleware to wrap the next function with AsyncLocalStorage#run. Since a middleware is the first thing that the request hits, this will make the store available in all enhancers and the rest of the system.
+
+app.module.tsJS
+
+@Module({
+  imports: [AlsModule],
+  providers: [CatsService],
+  controllers: [CatsController],
+})
+export class AppModule implements NestModule {
+  constructor(
+    // inject the AsyncLocalStorage in the module constructor,
+    private readonly als: AsyncLocalStorage
+  ) {}
+
+  configure(consumer: MiddlewareConsumer) {
+    // bind the middleware,
+    consumer
+      .apply((req, res, next) => {
+        // populate the store with some default values
+        // based on the request,
+        const store = {
+          userId: req.headers['x-user-id'],
+        };
+        // and pass the "next" function as callback
+        // to the "als.run" method together with the store.
+        this.als.run(store, () => next());
+      })
+      .forRoutes('*path');
+  }
+}
+Now, anywhere within the lifecycle of a request, we can access the local store instance.
+
+cats.service.tsJS
+
+@Injectable()
+export class CatsService {
+  constructor(
+    // We can inject the provided ALS instance.
+    private readonly als: AsyncLocalStorage,
+    private readonly catsRepository: CatsRepository,
+  ) {}
+
+  getCatForUser() {
+    // The "getStore" method will always return the
+    // store instance associated with the given request.
+    const userId = this.als.getStore()["userId"] as number;
+    return this.catsRepository.getForUser(userId);
+  }
+}
+That's it. Now we have a way to share request related state without needing to inject the whole REQUEST object.
+warning
+Please be aware that while the technique is useful for many use-cases, it inherently obfuscates the code flow (creating implicit context), so use it responsibly and especially avoid creating contextual "God objects".
+NestJS CLS
+The nestjs-cls package provides several DX improvements over using plain AsyncLocalStorage (CLS is an abbreviation of the term continuation-local storage). It abstracts the implementation into a ClsModule that offers various ways of initializing the store for different transports (not only HTTP), as well as a strong-typing support.
+
+The store can then be accessed with an injectable ClsService, or entirely abstracted away from the business logic by using Proxy Providers.
+
+info
+nestjs-cls is a third party package and is not managed by the NestJS core team. Please, report any issues found with the library in the appropriate repository.
+Installation#
+Apart from a peer dependency on the @nestjs libs, it only uses the built-in Node.js API. Install it as any other package.
+
+
+npm i nestjs-cls
+Usage#
+A similar functionality as described above can be implemented using nestjs-cls as follows:
+
+Import the ClsModule in the root module.
+
+app.module.tsJS
+
+@Module({
+  imports: [
+    // Register the ClsModule,
+    ClsModule.forRoot({
+      middleware: {
+        // automatically mount the
+        // ClsMiddleware for all routes
+        mount: true,
+        // and use the setup method to
+        // provide default store values.
+        setup: (cls, req) => {
+          cls.set('userId', req.headers['x-user-id']);
+        },
+      },
+    }),
+  ],
+  providers: [CatsService],
+  controllers: [CatsController],
+})
+export class AppModule {}
+And then can use the ClsService to access the store values.
+
+cats.service.tsJS
+
+@Injectable()
+export class CatsService {
+  constructor(
+    // We can inject the provided ClsService instance,
+    private readonly cls: ClsService,
+    private readonly catsRepository: CatsRepository,
+  ) {}
+
+  getCatForUser() {
+    // and use the "get" method to retrieve any stored value.
+    const userId = this.cls.get('userId');
+    return this.catsRepository.getForUser(userId);
+  }
+}
+To get strong typing of the store values managed by the ClsService (and also get auto-suggestions of the string keys), we can use an optional type parameter ClsService<MyClsStore> when injecting it.
+
+
+export interface MyClsStore extends ClsStore {
+  userId: number;
+}
+hint
+It it also possible to let the package automatically generate a Request ID and access it later with cls.getId(), or to get the whole Request object using cls.get(CLS_REQ).
+Testing#
+Since the ClsService is just another injectable provider, it can be entirely mocked out in unit tests.
+
+However, in certain integration tests, we might still want to use the real ClsService implementation. In that case, we will need to wrap the context-aware piece of code with a call to ClsService#run or ClsService#runWith.
+
+
+
+describe('CatsService', () => {
+  let service: CatsService
+  let cls: ClsService
+  const mockCatsRepository = createMock<CatsRepository>()
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      // Set up most of the testing module as we normally would.
+      providers: [
+        CatsService,
+        {
+          provide: CatsRepository
+          useValue: mockCatsRepository
+        }
+      ],
+      imports: [
+        // Import the static version of ClsModule which only provides
+        // the ClsService, but does not set up the store in any way.
+        ClsModule
+      ],
+    }).compile()
+
+    service = module.get(CatsService)
+
+    // Also retrieve the ClsService for later use.
+    cls = module.get(ClsService)
+  })
+
+  describe('getCatForUser', () => {
+    it('retrieves cat based on user id', async () => {
+      const expectedUserId = 42
+      mocksCatsRepository.getForUser.mockImplementationOnce(
+        (id) => ({ userId: id })
+      )
+
+      // Wrap the test call in the `runWith` method
+      // in which we can pass hand-crafted store values.
+      const cat = await cls.runWith(
+        { userId: expectedUserId },
+        () => service.getCatForUser()
+      )
+
+      expect(cat.userId).toEqual(expectedUserId)
+    })
+  })
+})
+More information#
+Visit the NestJS CLS GitHub Page for the full API documentation and more code examples.
+
+
+
+HTTP adapter
+Occasionally, you may want to access the underlying HTTP server, either within the Nest application context or from the outside.
+
+Every native (platform-specific) HTTP server/library (e.g., Express and Fastify) instance is wrapped in an adapter. The adapter is registered as a globally available provider that can be retrieved from the application context, as well as injected into other providers.
+
+Outside application context strategy#
+To get a reference to the HttpAdapter from outside of the application context, call the getHttpAdapter() method.
+
+
+JS
+
+const app = await NestFactory.create(AppModule);
+const httpAdapter = app.getHttpAdapter();
+As injectable#
+To get a reference to the HttpAdapterHost from within the application context, inject it using the same technique as any other existing provider (e.g., using constructor injection).
+
+
+JS
+
+export class CatsService {
+  constructor(private adapterHost: HttpAdapterHost) {}
+}
+Hint
+The HttpAdapterHost is imported from the @nestjs/core package.
+The HttpAdapterHost is not an actual HttpAdapter. To get the actual HttpAdapter instance, simply access the httpAdapter property.
+
+
+
+const adapterHost = app.get(HttpAdapterHost);
+const httpAdapter = adapterHost.httpAdapter;
+The httpAdapter is the actual instance of the HTTP adapter used by the underlying framework. It is an instance of either ExpressAdapter or FastifyAdapter (both classes extend AbstractHttpAdapter).
+
+The adapter object exposes several useful methods to interact with the HTTP server. However, if you want to access the library instance (e.g., the Express instance) directly, call the getInstance() method.
+
+
+
+const instance = httpAdapter.getInstance();
+Listening event#
+To execute an action when the server begins listening for incoming requests, you can subscribe to the listen$ stream, as demonstrated below:
+
+
+
+this.httpAdapterHost.listen$.subscribe(() =>
+  console.log('HTTP server is listening'),
+);
+Additionally, the HttpAdapterHost provides a listening boolean property that indicates whether the server is currently active and listening:
+
+
+
+if (this.httpAdapterHost.listening) {
+  console.log('HTTP server is listening');
+}
+
+
+
+Keep alive connections
+By default, the HTTP adapters of NestJS will wait until the response is finished before closing the application. But sometimes, this behavior is not desired, or unexpected. There might be some requests that use Connection: Keep-Alive headers that live for a long time.
+
+For these scenarios where you always want your application to exit without waiting for requests to end, you can enable the forceCloseConnections option when creating your NestJS application.
+
+Tip
+Most users will not need to enable this option. But the symptom of needing this option is that your application will not exit when you expect it to. Usually when app.enableShutdownHooks() is enabled and you notice that the application is not restarting/exiting. Most likely while running the NestJS application during development with --watch.
+Usage#
+In your main.ts file, enable the option when creating your NestJS application:
+
+
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule, {
+    forceCloseConnections: true,
+  });
+  await app.listen(process.env.PORT ?? 3000);
+}
+
+bootstrap();
+
+
+
+
+Global prefix
+To set a prefix for every route registered in an HTTP application, use the setGlobalPrefix() method of the INestApplication instance.
+
+
+
+const app = await NestFactory.create(AppModule);
+app.setGlobalPrefix('v1');
+You can exclude routes from the global prefix using the following construction:
+
+
+
+app.setGlobalPrefix('v1', {
+  exclude: [{ path: 'health', method: RequestMethod.GET }],
+});
+Alternatively, you can specify route as a string (it will apply to every request method):
+
+
+
+app.setGlobalPrefix('v1', { exclude: ['cats'] });
+Hint
+The path property supports wildcard parameters using the path-to-regexp package. Note: this does not accept wildcard asterisks *. Instead, you must use parameters (:param) or named wildcards (*splat).
+
+
+
+HTTPS
+To create an application that uses the HTTPS protocol, set the httpsOptions property in the options object passed to the create() method of the NestFactory class:
+
+
+
+const httpsOptions = {
+  key: fs.readFileSync('./secrets/private-key.pem'),
+  cert: fs.readFileSync('./secrets/public-certificate.pem'),
+};
+const app = await NestFactory.create(AppModule, {
+  httpsOptions,
+});
+await app.listen(process.env.PORT ?? 3000);
+If you use the FastifyAdapter, create the application as follows:
+
+
+
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter({ https: httpsOptions }),
+);
+Multiple simultaneous servers#
+The following recipe shows how to instantiate a Nest application that listens on multiple ports (for example, on a non-HTTPS port and an HTTPS port) simultaneously.
+
+
+
+const httpsOptions = {
+  key: fs.readFileSync('./secrets/private-key.pem'),
+  cert: fs.readFileSync('./secrets/public-certificate.pem'),
+};
+
+const server = express();
+const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+await app.init();
+
+const httpServer = http.createServer(server).listen(3000);
+const httpsServer = https.createServer(httpsOptions, server).listen(443);
+Because we called http.createServer / https.createServer ourselves, NestJS doesn't close them when calling app.close / on termination signal. We need to do this ourselves:
+
+
+
+@Injectable()
+export class ShutdownObserver implements OnApplicationShutdown {
+  private httpServers: http.Server[] = [];
+
+  public addHttpServer(server: http.Server): void {
+    this.httpServers.push(server);
+  }
+
+  public async onApplicationShutdown(): Promise<void> {
+    await Promise.all(
+      this.httpServers.map(
+        (server) =>
+          new Promise((resolve, reject) => {
+            server.close((error) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(null);
+              }
+            });
+          }),
+      ),
+    );
+  }
+}
+
+const shutdownObserver = app.get(ShutdownObserver);
+shutdownObserver.addHttpServer(httpServer);
+shutdownObserver.addHttpServer(httpsServer);
+Hint
+The ExpressAdapter is imported from the @nestjs/platform-express package. The http and https packages are native Node.js packages.
+Warning
+This recipe does not work with GraphQL Subscriptions.
+
+
+
+
+Request lifecycle
+Nest applications handle requests and produce responses in a sequence we refer to as the request lifecycle. With the use of middleware, pipes, guards, and interceptors, it can be challenging to track down where a particular piece of code executes during the request lifecycle, especially as global, controller level, and route level components come into play. In general, a request flows through middleware to guards, then to interceptors, then to pipes and finally back to interceptors on the return path (as the response is generated).
+
+Middleware#
+Middleware is executed in a particular sequence. First, Nest runs globally bound middleware (such as middleware bound with app.use) and then it runs module bound middleware, which are determined on paths. Middleware are run sequentially in the order they are bound, similar to the way middleware in Express works. In the case of middleware bound across different modules, the middleware bound to the root module will run first, and then middleware will run in the order that the modules are added to the imports array.
+
+Guards#
+Guard execution starts with global guards, then proceeds to controller guards, and finally to route guards. As with middleware, guards run in the order in which they are bound. For example:
+
+
+
+@UseGuards(Guard1, Guard2)
+@Controller('cats')
+export class CatsController {
+  constructor(private catsService: CatsService) {}
+
+  @UseGuards(Guard3)
+  @Get()
+  getCats(): Cats[] {
+    return this.catsService.getCats();
+  }
+}
+Guard1 will execute before Guard2 and both will execute before Guard3.
+
+Hint
+When speaking about globally bound vs controller or locally bound, the difference is where the guard (or other component is bound). If you are using app.useGlobalGuard() or providing the component via a module, it is globally bound. Otherwise, it is bound to a controller if the decorator precedes a controller class, or to a route if the decorator precedes a route declaration.
+Interceptors#
+Interceptors, for the most part, follow the same pattern as guards, with one catch: as interceptors return RxJS Observables, the observables will be resolved in a first in last out manner. So inbound requests will go through the standard global, controller, route level resolution, but the response side of the request (i.e., after returning from the controller method handler) will be resolved from route to controller to global. Also, any errors thrown by pipes, controllers, or services can be read in the catchError operator of an interceptor.
+
+Pipes#
+Pipes follow the standard global to controller to route bound sequence, with the same first in first out in regards to the @UsePipes() parameters. However, at a route parameter level, if you have multiple pipes running, they will run in the order of the last parameter with a pipe to the first. This also applies to the route level and controller level pipes. For example, if we have the following controller:
+
+
+
+@UsePipes(GeneralValidationPipe)
+@Controller('cats')
+export class CatsController {
+  constructor(private catsService: CatsService) {}
+
+  @UsePipes(RouteSpecificPipe)
+  @Patch(':id')
+  updateCat(
+    @Body() body: UpdateCatDTO,
+    @Param() params: UpdateCatParams,
+    @Query() query: UpdateCatQuery,
+  ) {
+    return this.catsService.updateCat(body, params, query);
+  }
+}
+then the GeneralValidationPipe will run for the query, then the params, and then the body objects before moving on to the RouteSpecificPipe, which follows the same order. If any parameter-specific pipes were in place, they would run (again, from the last to first parameter) after the controller and route level pipes.
+
+Filters#
+Filters are the only component that do not resolve global first. Instead, filters resolve from the lowest level possible, meaning execution starts with any route bound filters and proceeding next to controller level, and finally to global filters. Note that exceptions cannot be passed from filter to filter; if a route level filter catches the exception, a controller or global level filter cannot catch the same exception. The only way to achieve an effect like this is to use inheritance between the filters.
+
+Hint
+Filters are only executed if any uncaught exception occurs during the request process. Caught exceptions, such as those caught with a try/catch will not trigger Exception Filters to fire. As soon as an uncaught exception is encountered, the rest of the lifecycle is ignored and the request skips straight to the filter.
+Summary#
+In general, the request lifecycle looks like the following:
+
+Incoming request
+Middleware
+2.1. Globally bound middleware
+2.2. Module bound middleware
+Guards
+3.1 Global guards
+3.2 Controller guards
+3.3 Route guards
+Interceptors (pre-controller)
+4.1 Global interceptors
+4.2 Controller interceptors
+4.3 Route interceptors
+Pipes
+5.1 Global pipes
+5.2 Controller pipes
+5.3 Route pipes
+5.4 Route parameter pipes
+Controller (method handler)
+Service (if exists)
+Interceptors (post-request)
+8.1 Route interceptor
+8.2 Controller interceptor
+8.3 Global interceptor
+Exception filters
+9.1 route
+9.2 controller
+9.3 global
+Server response
+
+
+
+
+
+Common errors
+During your development with NestJS, you may encounter various errors as you learn the framework.
+
+"Cannot resolve dependency" error#
+Hint
+Check out the NestJS Devtools which can help you resolve the "Cannot resolve dependency" error effortlessly.
+Probably the most common error message is about Nest not being able to resolve dependencies of a provider. The error message usually looks something like this:
+
+
+Nest can't resolve dependencies of the <provider> (?). Please make sure that the argument <unknown_token> at index [<index>] is available in the <module> context.
+
+Potential solutions:
+- Is <module> a valid NestJS module?
+- If <unknown_token> is a provider, is it part of the current <module>?
+- If <unknown_token> is exported from a separate @Module, is that module imported within <module>?
+  @Module({
+    imports: [ /* the Module containing <unknown_token> */ ]
+  })
+The most common culprit of the error, is not having the <provider> in the module's providers array. Please make sure that the provider is indeed in the providers array and following standard NestJS provider practices.
+
+There are a few gotchas, that are common. One is putting a provider in an imports array. If this is the case, the error will have the provider's name where <module> should be.
+
+If you run across this error while developing, take a look at the module mentioned in the error message and look at its providers. For each provider in the providers array, make sure the module has access to all of the dependencies. Often times, providers are duplicated in a "Feature Module" and a "Root Module" which means Nest will try to instantiate the provider twice. More than likely, the module containing the <provider> being duplicated should be added in the "Root Module"'s imports array instead.
+
+If the <unknown_token> above is dependency, you might have a circular file import. This is different from the circular dependency below because instead of having providers depend on each other in their constructors, it just means that two files end up importing each other. A common case would be a module file declaring a token and importing a provider, and the provider import the token constant from the module file. If you are using barrel files, ensure that your barrel imports do not end up creating these circular imports as well.
+
+If the <unknown_token> above is Object, it means that you're injecting using an type/interface without a proper provider's token. To fix that, make sure that:
+
+you're importing the class reference or use a custom token with @Inject() decorator. Read the custom providers page, and
+for class-based providers, you're importing the concrete classes instead of only the type via import type ... syntax.
+Also, make sure you didn't end up injecting the provider on itself because self-injections are not allowed in NestJS. When this happens, <unknown_token> will likely be equal to <provider>.
+
+Explore your graph with NestJS Devtools
+ Graph visualizer
+ Routes navigator
+ Interactive playground
+ CI/CD integration
+Sign up
+
+If you are in a monorepo setup, you may face the same error as above but for core provider called ModuleRef as a <unknown_token>:
+
+
+Nest can't resolve dependencies of the <provider> (?).
+Please make sure that the argument ModuleRef at index [<index>] is available in the <module> context.
+...
+This likely happens when your project end up loading two Node modules of the package @nestjs/core, like this:
+
+
+.
+├── package.json
+├── apps
+│   └── api
+│       └── node_modules
+│           └── @nestjs/bull
+│               └── node_modules
+│                   └── @nestjs/core
+└── node_modules
+    ├── (other packages)
+    └── @nestjs/core
+Solutions:
+
+For Yarn Workspaces, use the nohoist feature to prevent hoisting the package @nestjs/core.
+For pnpm Workspaces, set @nestjs/core as a peerDependencies in your other module and "dependenciesMeta": {"other-module-name": {"injected": true }} in the app package.json where the module is imported. see: dependenciesmetainjected
+"Circular dependency" error#
+Occasionally you'll find it difficult to avoid circular dependencies in your application. You'll need to take some steps to help Nest resolve these. Errors that arise from circular dependencies look like this:
+
+
+Nest cannot create the <module> instance.
+The module at index [<index>] of the <module> "imports" array is undefined.
+
+Potential causes:
+- A circular dependency between modules. Use forwardRef() to avoid it. Read more: https://docs.nestjs.com/fundamentals/circular-dependency
+- The module at index [<index>] is of type "undefined". Check your import statements and the type of the module.
+
+Scope [<module_import_chain>]
+# example chain AppModule -> FooModule
+Circular dependencies can arise from both providers depending on each other, or typescript files depending on each other for constants, such as exporting constants from a module file and importing them in a service file. In the latter case, it is advised to create a separate file for your constants. In the former case, please follow the guide on circular dependencies and make sure that both the modules and the providers are marked with forwardRef.
+
+Debugging dependency errors#
+Along with just manually verifying your dependencies are correct, as of Nest 8.1.0 you can set the NEST_DEBUG environment variable to a string that resolves as truthy, and get extra logging information while Nest is resolving all of the dependencies for the application.
+
+
+In the above image, the string in yellow is the host class of the dependency being injected, the string in blue is the name of the injected dependency, or its injection token, and the string in purple is the module in which the dependency is being searched for. Using this, you can usually trace back the dependency resolution for what's happening and why you're getting dependency injection problems.
+
+"File change detected" loops endlessly#
+Windows users who are using TypeScript version 4.9 and up may encounter this problem. This happens when you're trying to run your application in watch mode, e.g npm run start:dev and see an endless loop of the log messages:
+
+
+XX:XX:XX AM - File change detected. Starting incremental compilation...
+XX:XX:XX AM - Found 0 errors. Watching for file changes.
+When you're using the NestJS CLI to start your application in watch mode it is done by calling tsc --watch, and as of version 4.9 of TypeScript, a new strategy for detecting file changes is used which is likely to be the cause of this problem. In order to fix this problem, you need to add a setting to your tsconfig.json file after the "compilerOptions" option as follows:
+
+
+  "watchOptions": {
+    "watchFile": "fixedPollingInterval"
+  }
+This tells TypeScript to use the polling method for checking for file changes instead of file system events (the new default method), which can cause issues on some machines. You can read more about the "watchFile" option in TypeScript documentation.

@@ -18,7 +18,8 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - bootstrap baseline: `NestFactory.create(AppModule)`
 - route syntax phải bám Nest 11 + Express v5 semantics
 - `ConsoleLogger` không phải logging authority; chỉ chấp nhận bootstrap fallback rất sớm nếu logger module chưa dựng xong
-- ref owner: `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`
+- feature-status owner: [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
+- Nest 11 nuance owner: `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`
 
 ## Không dùng làm mặc định
 

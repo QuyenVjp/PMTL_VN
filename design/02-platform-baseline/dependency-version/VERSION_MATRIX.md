@@ -11,6 +11,7 @@ Nó phải trả lời rõ 3 câu:
 Authority chi tiết vẫn thuộc:
 
 - [DEPENDENCY_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
+- [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
 - [NESTJS_11_ADOPTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
 - [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
 
