@@ -115,12 +115,23 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Use `shadcn` for component acquisition, install guidance, registry-backed examples, and shadcn-specific composition.
 - Use `playwright` for browser reproduction, screenshots, interaction debugging, and rendered-state evidence.
 - Use `postgres-pmtl` for database inspection and runtime data checks.
+- Use `github` for repos/issues/PRs/actions metadata when `GITHUB_PERSONAL_ACCESS_TOKEN` is available.
+- Use `meilisearch-admin` for index/tasks/settings/health checks when Meilisearch is part of the debugging lane.
+- Use `redis-admin` when keyspace, cache state, or Redis runtime inspection matters.
+- Use `sentry-mcp` for hosted error triage when `SENTRY_ACCESS_TOKEN` is available.
+- Use `grafana` for dashboards, alerts, data-source queries, and observability exploration when Grafana credentials exist.
+- Use `smartbear` for SwaggerHub / API Hub / contract-testing lane when SmartBear credentials exist.
 - Use `docker-mcp` for container/infra/server catalog tasks when runtime, Compose, Docker Desktop, or MCP-managed infra tooling matters.
 - MCP priority rule:
   - docs question -> `context7` or official docs lane
   - live Next.js behavior -> `next-devtools`
   - shadcn component/library question -> `shadcn`
   - browser/UI reality -> `playwright`
+  - source-control and GitHub workflow state -> `github`
+  - search runtime/index state -> `meilisearch-admin`
+  - cache/runtime key-value state -> `redis-admin`
+  - hosted error/observability state -> `sentry-mcp` or `grafana`
+  - API hub / Swagger / contract-testing state -> `smartbear`
   - local data/runtime state -> `postgres-pmtl` or `docker-mcp`
 - If an MCP is secret-gated or unavailable in the current session, fall back cleanly and say so instead of inventing behavior.
 
