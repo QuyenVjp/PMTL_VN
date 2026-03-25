@@ -15,6 +15,8 @@ Related refs:
 - `docs/agent-operating-model.md`
 - `docs/agent-cheatsheet.md`
 - `design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md`
+- `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`
+- `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md`
 - `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`
 - `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md`
 

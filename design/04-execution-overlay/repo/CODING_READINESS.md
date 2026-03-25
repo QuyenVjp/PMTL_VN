@@ -11,7 +11,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, và phase map của Nest docs đã khóa trong `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`, nhưng readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
+| Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, feature-status đọc ở `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md`, exact version/runtime pins đọc ở `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`, còn `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` chỉ giữ Nest 11 scaffold nuance; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
 | Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) |
 | Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` |

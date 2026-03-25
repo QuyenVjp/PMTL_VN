@@ -8742,3 +8742,363 @@ When you're using the NestJS CLI to start your application in watch mode it is d
     "watchFile": "fixedPollingInterval"
   }
 This tells TypeScript to use the polling method for checking for file changes instead of file system events (the new default method), which can cause issues on some machines. You can read more about the "watchFile" option in TypeScript documentation.
+
+
+Serialization
+Serialization is a process that happens before objects are returned in a network response. This is an appropriate place to provide rules for transforming and sanitizing the data to be returned to the client. For example, sensitive data like passwords should always be excluded from the response. Or, certain properties might require additional transformation, such as sending only a subset of properties of an entity. Performing these transformations manually can be tedious and error prone, and can leave you uncertain that all cases have been covered.
+
+Overview#
+Nest provides a built-in capability to help ensure that these operations can be performed in a straightforward way. The ClassSerializerInterceptor interceptor uses the powerful class-transformer package to provide a declarative and extensible way of transforming objects. The basic operation it performs is to take the value returned by a method handler and apply the instanceToPlain() function from class-transformer. In doing so, it can apply rules expressed by class-transformer decorators on an entity/DTO class, as described below.
+
+Hint
+The serialization does not apply to StreamableFile responses.
+Exclude properties#
+Let's assume that we want to automatically exclude a password property from a user entity. We annotate the entity as follows:
+
+
+
+import { Exclude } from 'class-transformer';
+
+export class UserEntity {
+  id: number;
+  firstName: string;
+  lastName: string;
+
+  @Exclude()
+  password: string;
+
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
+}
+Now consider a controller with a method handler that returns an instance of this class.
+
+
+
+@UseInterceptors(ClassSerializerInterceptor)
+@Get()
+findOne(): UserEntity {
+  return new UserEntity({
+    id: 1,
+    firstName: 'John',
+    lastName: 'Doe',
+    password: 'password',
+  });
+}
+Warning
+Note that we must return an instance of the class. If you return a plain JavaScript object, for example, { user: new UserEntity() }, the object won't be properly serialized.
+Hint
+The ClassSerializerInterceptor is imported from @nestjs/common.
+When this endpoint is requested, the client receives the following response:
+
+
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Doe"
+}
+Note that the interceptor can be applied application-wide (as covered here). The combination of the interceptor and the entity class declaration ensures that any method that returns a UserEntity will be sure to remove the password property. This gives you a measure of centralized enforcement of this business rule.
+
+Expose properties#
+You can use the @Expose() decorator to provide alias names for properties, or to execute a function to calculate a property value (analogous to getter functions), as shown below.
+
+
+
+@Expose()
+get fullName(): string {
+  return `${this.firstName} ${this.lastName}`;
+}
+Transform#
+You can perform additional data transformation using the @Transform() decorator. For example, the following construct returns the name property of the RoleEntity instead of returning the whole object.
+
+
+
+@Transform(({ value }) => value.name)
+role: RoleEntity;
+Pass options#
+You may want to modify the default behavior of the transformation functions. To override default settings, pass them in an options object with the @SerializeOptions() decorator.
+
+
+
+@SerializeOptions({
+  excludePrefixes: ['_'],
+})
+@Get()
+findOne(): UserEntity {
+  return new UserEntity();
+}
+Hint
+The @SerializeOptions() decorator is imported from @nestjs/common.
+Options passed via @SerializeOptions() are passed as the second argument of the underlying instanceToPlain() function. In this example, we are automatically excluding all properties that begin with the _ prefix.
+
+Transform plain objects#
+You can enforce transformations at the controller level by using the @SerializeOptions decorator. This ensures that all responses are transformed into instances of the specified class, applying any decorators from class-validator or class-transformer, even when plain objects are returned. This approach leads to cleaner code without the need to repeatedly instantiate the class or call plainToInstance.
+
+In the example below, despite returning plain JavaScript objects in both conditional branches, they will be automatically converted into UserEntity instances, with the relevant decorators applied:
+
+
+
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: UserEntity })
+@Get()
+findOne(@Query() { id }: { id: number }): UserEntity {
+  if (id === 1) {
+    return {
+      id: 1,
+      firstName: 'John',
+      lastName: 'Doe',
+      password: 'password',
+    };
+  }
+
+  return {
+    id: 2,
+    firstName: 'Kamil',
+    lastName: 'Mysliwiec',
+    password: 'password2',
+  };
+}
+Hint
+By specifying the expected return type for the controller, you can leverage TypeScript's type-checking capabilities to ensure that the returned plain object adheres to the shape of the DTO or entity. The plainToInstance function doesn't provide this level of type hinting, which can lead to potential bugs if the plain object doesn't match the expected DTO or entity structure.
+Example#
+A working example is available here.
+
+WebSockets and Microservices#
+While this chapter shows examples using HTTP style applications (e.g., Express or Fastify), the ClassSerializerInterceptor works the same for WebSockets and Microservices, regardless of the transport method that is used.
+
+Learn more#
+Read more about available decorators and options as provided by the class-transformer package here.
+
+
+
+Versioning
+Hint
+This chapter is only relevant to HTTP-based applications.
+Versioning allows you to have different versions of your controllers or individual routes running within the same application. Applications change very often and it is not unusual that there are breaking changes that you need to make while still needing to support the previous version of the application.
+
+There are 4 types of versioning that are supported:
+
+URI Versioning	The version will be passed within the URI of the request (default)
+Header Versioning	A custom request header will specify the version
+Media Type Versioning	The Accept header of the request will specify the version
+Custom Versioning	Any aspect of the request may be used to specify the version(s). A custom function is provided to extract said version(s).
+URI Versioning Type#
+URI Versioning uses the version passed within the URI of the request, such as https://example.com/v1/route and https://example.com/v2/route.
+
+Notice
+With URI Versioning the version will be automatically added to the URI after the global path prefix (if one exists), and before any controller or route paths.
+To enable URI Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+// or "app.enableVersioning()"
+app.enableVersioning({
+  type: VersioningType.URI,
+});
+await app.listen(process.env.PORT ?? 3000);
+Notice
+The version in the URI will be automatically prefixed with v by default, however the prefix value can be configured by setting the prefix key to your desired prefix or false if you wish to disable it.
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Header Versioning Type#
+Header Versioning uses a custom, user specified, request header to specify the version where the value of the header will be the version to use for the request.
+
+Example HTTP Requests for Header Versioning:
+
+To enable Header Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.HEADER,
+  header: 'Custom-Header',
+});
+await app.listen(process.env.PORT ?? 3000);
+The header property should be the name of the header that will contain the version of the request.
+
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Media Type Versioning Type#
+Media Type Versioning uses the Accept header of the request to specify the version.
+
+Within the Accept header, the version will be separated from the media type with a semi-colon, ;. It should then contain a key-value pair that represents the version to use for the request, such as Accept: application/json;v=2. They key is treated more as a prefix when determining the version will to be configured to include the key and separator.
+
+To enable Media Type Versioning for your application, do the following:
+
+
+main.tsJS
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.MEDIA_TYPE,
+  key: 'v=',
+});
+await app.listen(process.env.PORT ?? 3000);
+The key property should be the key and separator of the key-value pair that contains the version. For the example Accept: application/json;v=2, the key property would be set to v=.
+
+Hint
+The VersioningType enum is available to use for the type property and is imported from the @nestjs/common package.
+Custom Versioning Type#
+Custom Versioning uses any aspect of the request to specify the version (or versions). The incoming request is analyzed using an extractor function that returns a string or array of strings.
+
+If multiple versions are provided by the requester, the extractor function can return an array of strings, sorted in order of greatest/highest version to smallest/lowest version. Versions are matched to routes in order from highest to lowest.
+
+If an empty string or array is returned from the extractor, no routes are matched and a 404 is returned.
+
+For example, if an incoming request specifies it supports versions 1, 2, and 3, the extractorMUST return [3, 2, 1]. This ensures that the highest possible route version is selected first.
+
+If versions [3, 2, 1] are extracted, but routes only exist for version 2 and 1, the route that matches version 2 is selected (version 3 is automatically ignored).
+
+Notice
+Selecting the highest matching version based on the array returned from extractor > does not reliably work with the Express adapter due to design limitations. A single version (either a string or array of 1 element) works just fine in Express. Fastify correctly supports both highest matching version selection and single version selection.
+To enable Custom Versioning for your application, create an extractor function and pass it into your application like so:
+
+
+main.tsJS
+
+// Example extractor that pulls out a list of versions from a custom header and turns it into a sorted array.
+// This example uses Fastify, but Express requests can be processed in a similar way.
+const extractor = (request: FastifyRequest): string | string[] =>
+  [request.headers['custom-versioning-field'] ?? '']
+     .flatMap(v => v.split(','))
+     .filter(v => !!v)
+     .sort()
+     .reverse()
+
+const app = await NestFactory.create(AppModule);
+app.enableVersioning({
+  type: VersioningType.CUSTOM,
+  extractor,
+});
+await app.listen(process.env.PORT ?? 3000);
+Usage#
+Versioning allows you to version controllers, individual routes, and also provides a way for certain resources to opt-out of versioning. The usage of versioning is the same regardless of the Versioning Type your application uses.
+
+Notice
+If versioning is enabled for the application but the controller or route does not specify the version, any requests to that controller/route will be returned a 404 response status. Similarly, if a request is received containing a version that does not have a corresponding controller or route, it will also be returned a 404 response status.
+Controller versions#
+A version can be applied to a controller, setting the version for all routes within the controller.
+
+To add a version to a controller do the following:
+
+
+cats.controller.tsJS
+
+@Controller({
+  version: '1',
+})
+export class CatsControllerV1 {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats for version 1';
+  }
+}
+Route versions#
+A version can be applied to an individual route. This version will override any other version that would effect the route, such as the Controller Version.
+
+To add a version to an individual route do the following:
+
+
+cats.controller.tsJS
+
+import { Controller, Get, Version } from '@nestjs/common';
+
+@Controller()
+export class CatsController {
+  @Version('1')
+  @Get('cats')
+  findAllV1(): string {
+    return 'This action returns all cats for version 1';
+  }
+
+  @Version('2')
+  @Get('cats')
+  findAllV2(): string {
+    return 'This action returns all cats for version 2';
+  }
+}
+Multiple versions#
+Multiple versions can be applied to a controller or route. To use multiple versions, you would set the version to be an Array.
+
+To add multiple versions do the following:
+
+
+cats.controller.tsJS
+
+@Controller({
+  version: ['1', '2'],
+})
+export class CatsController {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats for version 1 or 2';
+  }
+}
+Version "Neutral"#
+Some controllers or routes may not care about the version and would have the same functionality regardless of the version. To accommodate this, the version can be set to VERSION_NEUTRAL symbol.
+
+An incoming request will be mapped to a VERSION_NEUTRAL controller or route regardless of the version sent in the request in addition to if the request does not contain a version at all.
+
+Notice
+For URI Versioning, a VERSION_NEUTRAL resource would not have the version present in the URI.
+To add a version neutral controller or route do the following:
+
+
+cats.controller.tsJS
+
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+
+@Controller({
+  version: VERSION_NEUTRAL,
+})
+export class CatsController {
+  @Get('cats')
+  findAll(): string {
+    return 'This action returns all cats regardless of version';
+  }
+}
+Global default version#
+If you do not want to provide a version for each controller/or individual routes, or if you want to have a specific version set as the default version for every controller/route that don't have the version specified, you could set the defaultVersion as follows:
+
+
+main.tsJS
+
+app.enableVersioning({
+  // ...
+  defaultVersion: '1'
+  // or
+  defaultVersion: ['1', '2']
+  // or
+  defaultVersion: VERSION_NEUTRAL
+});
+Middleware versioning#
+Middlewares can also use versioning metadata to configure the middleware for a specific route's version. To do so, provide the version number as one of the parameters for the MiddlewareConsumer.forRoutes() method:
+
+
+app.module.tsJS
+
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { CatsModule } from './cats/cats.module';
+import { CatsController } from './cats/cats.controller';
+
+@Module({
+  imports: [CatsModule],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: 'cats', method: RequestMethod.GET, version: '2' });
+  }
+}
+With the code above, the LoggerMiddleware will only be applied to the version '2' of /cats endpoint.
+
+Notice
+Middlewares work with any versioning type described in the this section: URI, Header, Media Type or Custom.
+
+
