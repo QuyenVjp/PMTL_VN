@@ -11,7 +11,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Design-ready | 11 modules có docs core; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
+| Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `baseline/nest-baseline.md`, và phase map của Nest docs đã khóa trong `baseline/nestjs-11-adoption.md`, nhưng readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
 | Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong `apps-api-scaffold-order.md` |
 | Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `tracking/implementation-mapping.md` |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `tracking/prisma-schema-plan.md` |
@@ -151,18 +151,18 @@ Mọi domain module (01-11) đều có:
 
 ### ✅ GAP 5: OpenAPI spec — DESIGN-CLOSED, RUNTIME PENDING
 
-**Strategy**: auto-gen từ NestJS `@nestjs/swagger` decorators. Không cần viết spec bằng tay.
+**Strategy**: OpenAPI runtime artifact đi qua `@nestjs/swagger`, nhưng contract authority vẫn là owner docs + Zod schemas. Không viết spec bằng tay, và cũng không biến swagger decorators thành source of truth thứ hai.
 
-**Ownership**: `apps/api` — mọi controller và DTO trong `apps/api` chịu trách nhiệm decorator coverage.
+**Ownership**: `apps/api` giữ runtime generation ownership; owner docs và shared Zod contracts giữ schema semantics.
 
 **Decorator standard** (bắt buộc cho tất cả public routes):
 - `@ApiTags('module-name')` — trên mỗi controller class
 - `@ApiOperation({ summary: '...' })` — trên mỗi route handler
 - `@ApiResponse({ status: 200, type: ResponseDto })` — success case
 - `@ApiResponse({ status: 400/401/403/404 })` — error cases liên quan
-- `@ApiProperty()` hoặc `@ApiPropertyOptional()` — trên mọi field trong request/response DTO
+- field-level swagger metadata phải được derive từ contract helper/Zod bridge khi có thể; chỉ annotate thủ công khi helper chưa cover được case đó
 
-**Source of truth cho schema**: Zod schemas trong `packages/shared` → infer TypeScript types → dùng `nestjs-zod` (`createZodDto()`) để tự động extract `@ApiProperty` từ Zod, hoặc annotate thủ công DTO nếu không dùng `nestjs-zod`.
+**Source of truth cho schema**: Zod schemas trong `packages/shared` hoặc contract owner tương đương → infer TypeScript types → map sang OpenAPI qua bridge/helper chung. Nếu phải dùng DTO transport class, nó chỉ là documentation shell, không phải nơi tự phát minh schema semantics.
 
 **Generated output**:
 - Swagger UI: `GET /api/docs` (disabled in production, enabled in dev + staging)
@@ -170,11 +170,14 @@ Mọi domain module (01-11) đều có:
 
 **Completion criteria** (what counts as implemented):
 - Tất cả routes public trong `api-route-inventory.md` có `@ApiOperation` + `@ApiTags`
-- Tất cả request/response DTOs có `@ApiProperty` coverage đầy đủ
+- Tất cả request/response surfaces map được từ contract owner sang OpenAPI, không drift khỏi owner docs
+- security schemes trong Swagger phản ánh đúng:
+  - browser/web-admin = cookie-first auth contract
+  - automation/internal = selective bearer khi thật sự tồn tại
 - `GET /api/docs` trả 200 OK trong môi trường dev
 - Không có route nào hiện là `{}` (empty schema) trong Swagger UI
 
-**Note**: OpenAPI spec là runtime artifact — nó không thể được hoàn chỉnh hoàn toàn trong design phase. Gap này được đóng ở design level bằng cách chốt strategy, ownership, và completion criteria. Nó chưa được coi là `implemented` cho tới khi `/api/docs` và coverage decorator chạy thật trong `apps/api`.
+**Note**: OpenAPI spec là runtime artifact — nó không thể được hoàn chỉnh hoàn toàn trong design phase. Gap này được đóng ở design level bằng cách chốt strategy, ownership, và completion criteria. Nó chưa được coi là `implemented` cho tới khi `/api/docs` chạy thật trong `apps/api` và chứng minh docs không drift khỏi Zod/owner contracts.
 
 ---
 

@@ -384,3 +384,13 @@ Admin page shows:
 | Docker healthcheck works | `docker inspect <container>` shows `healthy` status |
 | Deploy gate uses ready | CD pipeline script exits if ready check fails |
 | Admin health page loads | `/he-thong/health` shows live data |
+
+## Interpretation rule from Nest Terminus docs
+
+- Terminus là implementation option tốt cho health indicators, nhưng contract authority vẫn là file này
+- không được để shape/semantics của `/health/live`, `/health/ready`, `/health/startup` trôi theo sample Terminus mặc định
+- nếu dùng `TerminusModule` hoặc health indicators:
+  - phải map về đúng readiness matrix của PMTL
+  - phải tôn trọng shutdown hooks
+  - logger behavior phải bám logging policy chung, không tự tạo health log format riêng
+- admin extended health vẫn là surface riêng của PMTL, không public hóa chỉ vì Terminus hỗ trợ nhiều indicator

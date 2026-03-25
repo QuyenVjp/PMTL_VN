@@ -57,6 +57,32 @@ Error response dùng canonical error envelope từ `baseline/nest-baseline.md` v
 }
 ```
 
+## Validation / error-map rule
+
+- file này không lặp lại full request schema, nhưng mọi route row phải có request validation owner rõ ở:
+  - module `contracts.md`
+  - use-case owner doc
+  - hoặc `tracking/api-dto-shape-plan.md` nếu là aggregate/DTO-heavy surface
+- Nest `ValidationPipe` defaults không được coi là route contract
+- controller không được tự đổi:
+  - invalid body thành generic `400`
+  - invalid query thành generic `Bad Request`
+  - invalid params thành ad hoc message
+- canonical mapping tối thiểu:
+  - invalid body -> `validation.invalid_body`
+  - invalid query -> `validation.invalid_query`
+  - invalid params -> `validation.invalid_params`
+  - malformed business constraint -> `validation.constraint_failed` hoặc owner code cụ thể hơn
+
+## Docs / OpenAPI exposure gating
+
+- Swagger/OpenAPI/docs endpoints là control-plane metadata surface, không phải default public route family
+- production exposure phải có owner decision rõ
+- dev/staging có thể bật docs routes, nhưng:
+  - auth scheme phải phản ánh đúng runtime contract
+  - browser/web-admin flow không được annotate bearer-only toàn cục nếu contract là cookie-first
+  - raw JSON/YAML exposure cũng phải đi qua env gating, không tự public vì DX
+
 ## Platform-primitive route rule
 
 Nếu một feature nghe giống managed-platform feature như auth, signed upload, storage lifecycle, webhook callback, realtime fanout, queue ops, hay admin observability:
@@ -467,6 +493,9 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/health/ready` | `health` | internal/public per deploy policy |
 | `GET` | `/health/startup` | `health` | internal/public per deploy policy |
 | `GET` | `/metrics` | `metrics` | internal only |
+| `GET` | `/docs` | `platform/docs` | dev/staging only by env gate |
+| `GET` | `/docs-json` | `platform/docs` | dev/staging only by env gate |
+| `GET` | `/docs-yaml` | `platform/docs` | dev/staging only by env gate |
 | `GET` | `/admin/feature-flags` | `feature-flags` | super-admin |
 | `GET` | `/admin/feature-flags/:key` | `feature-flags` | super-admin |
 | `GET` | `/feature-flags/:key` | `feature-flags` | internal/admin |
@@ -479,6 +508,7 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 
 > `GET /admin/system/dashboard-stats` là admin home aggregate; response owner theo `ops/health-contract.md` row `AdminDashboardPageDto`.
 > `GET /admin/system/health-extended` là admin operational aggregate; response owner theo `tracking/api-dto-shape-plan.md` row `AdminSystemHealthExtendedDto`.
+> `/docs*` là OpenAPI/docs delivery surface; không phải product route family và không được default-public ở production.
 
 ## Platform / Control Plane — Phase 2+ conditional routes
 
@@ -517,3 +547,7 @@ Không được scaffold sớm nếu `apps-api-scaffold-order.md` chưa cho phé
 - signed upload URL generation, upload finalization, webhook callback intake, queue redrive, và admin status routes là `platform primitives`; luôn hand-authored, không generated CRUD
 - route search/admin queue/outbox thuộc `Phase 2+` chỉ được bật khi trigger trong các doc owner tương ứng đã được đáp ứng
 - `/offline-bundles/:publicId/delta` là canonical delta sync route; không drift sang `/offline/bundles/*` nếu chưa có migration decision rõ
+- `/docs*` route family phải:
+  - bị env-gated ở bootstrap
+  - phản ánh đúng cookie-first vs bearer security schemes theo contract thật
+  - không được coi là đủ an toàn chỉ vì có auth middleware hay obscure path

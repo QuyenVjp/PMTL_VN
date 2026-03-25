@@ -188,3 +188,13 @@ Bảng này map role vào các action cụ thể từng module — dùng khi imp
   3. deletion policy (chính sách xóa)
 - Engagement (Tu tập) và Vows (Phát nguyện) data là **private by default (riêng tư mặc định)** — admin cần lý do support (hỗ trợ) rõ để access (truy cập)
 - per-module scope (phạm vi theo từng mô-đun) bảng trên là **implementation target (mục tiêu triển khai)**, không phải aspirational — implement (triển khai) đúng từ đầu
+
+## Nest guard binding notes
+
+- Nest guard có thể dùng metadata-driven pattern như `@Roles(...)`, `@RequirePermissions(...)`, `Reflector.getAllAndOverride()`, hoặc composition decorator tương đương
+- nhưng metadata chỉ là execution mechanism; authority vẫn là matrix này
+- không được hardcode role string/rule lệch khỏi file này chỉ vì route local “trông đơn giản”
+- nếu một route cần policy phức tạp hơn matrix tĩnh:
+  - role gate vẫn đi qua guard
+  - ownership/business-condition check đi qua policy helper/service
+  - thay đổi phải cập nhật lại matrix hoặc owner doc liên quan, không vá lặng trong guard

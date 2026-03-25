@@ -147,6 +147,7 @@ Không chạy theo % vô hồn. Ưu tiên test cho:
 Mỗi module phải có tests cho:
 
 - Invalid input → Zod validation error
+- invalid input error phải map về canonical code đúng (`validation.invalid_body|query|params`), không phải English default message trôi từ framework
 - Forbidden action → 403 with error envelope
 - Duplicate action → 409 Conflict
 - Missing storage file → graceful degrade, not crash
@@ -154,6 +155,21 @@ Mỗi module phải có tests cho:
 - Rate limit exceeded → 429 with retry-after header
 - Audit fail in transaction → entire write rolls back (Bug 2 regression test)
 - Search returns only published content (Bug 4 regression test)
+
+### Contract verification additions
+
+- auth/session integration tests phải chứng minh browser flow là cookie-first:
+  - login set access/refresh cookies
+  - refresh dùng cookie path đúng
+  - protected browser route không yêu cầu `Authorization: Bearer` như default baseline
+- rate-limit tests phải cover:
+  - exact threshold behavior
+  - tracker source sau trusted proxy resolution
+  - refresh endpoint không bị bỏ sót guard
+- OpenAPI smoke phải cover:
+  - security scheme phản ánh đúng contract thật
+  - browser auth routes không bị annotate bearer-only toàn cục
+  - docs endpoint exposure policy đúng theo environment
 
 ---
 

@@ -62,6 +62,21 @@ Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
 - Dùng custom serializers cho `req`, `res`, và `err` — không log raw object nguyên khối
 - Mọi logger factory phải fail-closed với redact list mặc định; không để từng module tự chọn có redact hay không
 
+**Nest binding rules:**
+- Nest system logs và request logs phải hội tụ về cùng `nestjs-pino` pipeline
+- bootstrap chỉ được dùng logger fallback ngắn trước khi DI logger sẵn sàng; steady-state authority vẫn là injected logger path
+- health/Terminus/custom infra logger nếu tồn tại vẫn phải bám chung redact/context policy này
+- không tạo logger thứ hai với format/schema khác chỉ cho một module “cho tiện grep”
+
+**Request context rules:**
+- mỗi request phải giữ ổn định:
+  - `requestId`
+  - `module`
+  - `action`
+  - `route`
+- async handoff hoặc background follow-up phải carry `correlationId` nếu còn liên hệ với request gốc
+- nếu không xác định được actor hợp lệ, log `actorUserId = null`; không tự bịa actor từ raw cookie/session object
+
 **Log file rotation** (Docker + JSON):
 - Stdout/stderr → Docker logging driver
 - Rotation: `max-size=100m, max-file=5` trong docker-compose

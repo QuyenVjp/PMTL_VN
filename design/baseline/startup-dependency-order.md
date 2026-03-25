@@ -48,6 +48,10 @@ Không có doc này, khi hệ thống fail lúc boot, không ai biết thứ t�
 | **Validation tool** | Zod schema trên toàn bộ env vars |
 
 Quy tắc: config phải validate đủ toàn bộ env required trước khi để bất kỳ module nào tiếp tục.
+Quy tắc thêm:
+- dùng `ConfigModule.forRoot()` làm bootstrap config entry
+- namespaced/feature config phải bám owner namespace rõ
+- không để module sau đọc `process.env` trực tiếp rồi lách qua startup validation
 
 ---
 

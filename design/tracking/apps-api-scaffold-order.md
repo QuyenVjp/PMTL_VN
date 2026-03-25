@@ -104,6 +104,10 @@ apps/api/prisma/schema.prisma
 - route syntax trong controller phải bám Nest 11 + Express v5 semantics
 - `apps/api` giữ ownership của OpenAPI, guards, error envelope
 - `app.enableShutdownHooks()` là baseline để không tự cắt ngang graceful stop path
+- controller/provider/module discipline phải bám `baseline/nest-baseline.md`:
+  - controller mỏng + standard response handling
+  - provider singleton-by-default
+  - module export/import tối thiểu, không circular-by-habit
 
 ### Do not move on until
 
@@ -116,6 +120,8 @@ apps/api/prisma/schema.prisma
 - nhét Prisma client, auth helper, và custom error lung tung vào `common/`
 - dùng mental model route cũ của Express/Nest trước v11 cho wildcard/optional path
 - scaffold theo `ConsoleLogger` thay vì dựng Pino path ngay từ technical baseline
+- coi controller như nơi giữ business logic vì “chưa kịp tách service”
+- import module chéo từ commit đầu rồi vá `forwardRef()` sau
 
 ---
 
@@ -127,6 +133,7 @@ apps/api/prisma/schema.prisma
 common/config/config.module.ts
 common/config/config.service.ts
 common/config/config.schemas.ts
+common/config/config.namespaces.ts
 
 common/logging/logger.module.ts
 common/logging/logger.service.ts
@@ -139,6 +146,10 @@ common/errors/app-error.ts
 common/validation/validation.module.ts
 common/validation/zod-validation.pipe.ts
 common/validation/validation-error.mapper.ts
+
+common/decorators/
+  public.decorator.ts
+  current-user.decorator.ts
 ```
 
 Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, phải chốt luôn vị trí registry/schema dùng chung ở `packages/shared` trước khi scaffold controller hàng loạt.
@@ -150,6 +161,8 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
 - error envelope phải chuẩn ngay từ route đầu tiên
 - validation pipe phải có trước khi controller thật xuất hiện
 - CORS + trusted proxy + client IP resolution contract phải có owner từ bootstrap này, không để đến auth/rate-limit mới vá
+- middleware baseline phải được chốt ngay từ bootstrap để không trôi về Express-style app logic
+- config loading/validation/namespacing phải được chốt ngay từ bootstrap; không để service tự đọc env lung tung
 
 ### Do not move on until
 
@@ -158,12 +171,25 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
 - không controller nào tồn tại mà chưa qua `ZodValidationPipe`
 - `main.ts` đã có owner rõ cho CORS allowlist, trusted proxy / client IP resolution, và shutdown hooks
 - validation path không vô tình leak default English message nếu API/UI đang cần Vietnamese-safe output
+- đã chốt rõ stance:
+  - route handler mặc định không dùng `@Res()`
+  - cookie/header special-case mới dùng `@Res({ passthrough: true })`
+  - provider request-scope không phải default scaffold
+  - custom decorators chỉ làm transport/context ergonomics, không mang business logic
+  - primitive parse/default pipes chỉ là helper; validation authority vẫn là Zod
+  - middleware chỉ giữ pre-routing/transport concern, không giữ authz/business logic
+  - config authority đi qua `ConfigModule` + typed schema/facade, không đọc `process.env` rải rác
 
 ### Common traps
 
 - tạo DTO/class-validator làm source of truth thứ hai
 - dùng `console.*`
 - để exception shape khác nhau giữa các controller
+- để controller gọi thẳng Prisma vì chưa có repository/service pattern
+- viết `@CurrentUser()` xong nhét token parsing / DB lookup vào trong decorator
+- viết `UserByIdPipe` hoặc pipe tương tự để query DB như pattern mặc định của mọi route
+- kéo authz/business rule xuống middleware kiểu Express cũ
+- để từng service tự parse env string/number/boolean mà không qua config owner
 
 ---
 
@@ -258,6 +284,7 @@ platform/rate-limit/
 - auth/search/upload/community mutation đều cần rate-limit path rõ
 - feature flags phải có seed + first consumer từ sớm để không thành dead module
 - `audit` phụ thuộc actor context nên phải đứng sau `sessions` ở dependency thinking, không phải module ngang hàng vô nghĩa
+- identity module không được tự nuốt luôn session/storage/audit ownership chỉ vì route auth xuất hiện sớm
 
 ### Do not move on until
 
@@ -265,6 +292,7 @@ platform/rate-limit/
 - `AuditService.appendInTransaction()` pattern đã được chốt trong code direction
 - feature flag update path có invalidation owner rõ theo `baseline/cache-topology.md`
 - storage owner không còn mơ hồ giữa `content` và `platform/storage`
+- exported provider boundary giữa `identity` và platform modules đã rõ ở design level, không còn mental model “module nào gọi được gì cũng được”
 
 ### Common traps
 
@@ -305,6 +333,8 @@ platform/metrics/
 - `/health/ready` kiểm tra được Postgres connectivity, migration status, feature flags readability, và storage readiness theo phase 1
 - health responses bám `ops/health-contract.md`, gồm readiness matrix và rule public probe không cache stale state
 - optional phase-2 dependencies không được chen vào baseline 11 modules
+- nếu dùng `@nestjs/terminus`, indicator/result shape vẫn phải map về PMTL health contract thay vì lộ raw Terminus payload
+- health logger path phải bám shared logging baseline; không tạo format riêng chỉ cho health lane
 
 ### Do not move on until
 
@@ -357,18 +387,24 @@ common/auth/
   - csrf cookie
 - CSRF transport contract khớp `baseline/security.md`
 - anti-enumeration response giữ nguyên trên login/reset/verification flows
+- guard split rõ:
+  - authn/auth transport ở `auth.guard.ts`
+  - role/permission gate ở `roles.guard.ts` hoặc policy guard tương đương
+- nếu protected-by-default được chọn, `APP_GUARD + @Public()` phải có public route inventory rõ từ đầu
 
 ### Do not move on until
 
 - `manage-auth-session.md` happy paths + failure behavior map được vào code layout
 - refresh rate-limit exact value đã được cắm theo `tracking/coding-readiness.md` Phần 5 và `baseline/security.md`
 - auth routes không bị coi là “public simple controller”
+- swagger/openapi security annotation chưa được phép drift khỏi cookie-first browser contract
 
 ### Common traps
 
 - đọc session ngoài transaction rồi update rời rạc
 - clear cookie nhưng chưa revoke canonical session
 - tách reset/revoke/audit thành nhiều path không atomic
+- annotate bearer auth toàn bộ `/auth/*` chỉ vì sample docs dùng `Authorization: Bearer`
 
 ---
 

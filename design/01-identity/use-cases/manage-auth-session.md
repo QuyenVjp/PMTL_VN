@@ -13,6 +13,38 @@ Chốt write-path nguy hiểm nhất của current phase:
 
 File này tồn tại để AI/dev không tự đoán auth/session behavior (hành vi xác thực/phiên).
 
+## Official Nest auth docs interpretation
+
+- official Nest `Authentication` doc là reference tốt cho:
+  - tách `AuthModule`
+  - dùng guard để bảo vệ route
+  - dùng custom decorator kiểu `@Public()`
+  - tư duy `APP_GUARD` nếu phần lớn route là protected-by-default
+- nhưng sample mặc định của docs là `JWT bearer` tutorial, **không phải PMTL browser baseline**
+- PMTL browser baseline là:
+  - access token ngắn hạn trong `HttpOnly` cookie
+  - refresh token rotation trong `HttpOnly` cookie riêng
+  - CSRF cookie/header contract riêng cho browser mutations
+- bearer token chỉ là lane riêng cho automation/internal route hoặc API contract đã design riêng
+- không được bê nguyên sample `Authorization: Bearer <jwt>` làm mặc định cho web/admin browser flows
+- `JwtModule.register({ global: true })` trong sample docs không tự động trở thành PMTL baseline; token/signing wiring phải đi qua config + security contract của repo
+- sample `UsersService` hard-coded/in-memory chỉ là demo DI, không được dùng làm mental model cho PMTL persistence ownership
+- nếu dùng `APP_GUARD` + `@Public()`:
+  - chỉ áp dụng sau khi public route inventory đã rõ
+  - phải bám `PERMISSION_MATRIX.md` và route contract thật
+  - không dùng để che việc chưa thiết kế auth surface
+
+## Official Nest session docs interpretation
+
+- Nest session docs hữu ích để hiểu middleware hookup, `@Session()` decorator, và transport mechanics
+- nhưng PMTL không dùng `@Session()` object như auth authority business-level
+- canonical auth/session state vẫn phải đi qua:
+  - `sessions` persistence owner
+  - token/cookie verification path
+  - `/auth/me` aggregate contract
+- in-memory session examples hoặc framework secret sample không được dùng làm production mental model
+- route handler không được suy “đã đăng nhập” chỉ vì `req.session` hoặc cookie object hiện diện; phải dựa vào canonical session validation path
+
 ## Current defaults (Mặc định hiện tại)
 
 - access token TTL: `15 phút`
@@ -117,6 +149,8 @@ File này tồn tại để AI/dev không tự đoán auth/session behavior (hà
 - refresh cookie: `HttpOnly`, `Secure`, `SameSite=Lax`, path `/api/auth/refresh`
 - csrf cookie: non-HttpOnly, same-site, path `/`
 - login thành công phải set đủ browser cookies trong cùng response; logout/logout-all/reset success phải clear đúng cả access/refresh/csrf transport liên quan
+- browser route guard/read-model không được suy auth state chỉ từ cookie presence; phải qua canonical `/auth/me` hoặc equivalent session contract
+- route docs / OpenAPI security annotation cho browser auth không được drift thành bearer-only sample chỉ vì Nest docs auth chapter minh họa theo JWT header
 
 ## Reset password (Đặt lại mật khẩu)
 

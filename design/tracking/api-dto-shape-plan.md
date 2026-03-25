@@ -17,6 +17,30 @@ Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping
 - `internal ids`, checksum thô, secret flags, moderation internals không được lộ vào public DTO.
 - Nếu route chưa có row ở file này, controller không được tự chọn field theo cảm tính; phải bổ sung owner row trước.
 
+## Validation / transform baseline for DTO-backed routes
+
+- route family có row ở file này phải map được về request contract owner tương ứng:
+  - `body`
+  - `query`
+  - `params`
+- Nest `ValidationPipe` option samples như `transform`, `whitelist`, `forbidNonWhitelisted` chỉ là framework knobs; PMTL authority vẫn là Zod request schema
+- nếu route cần primitive transport transform:
+  - ưu tiên chốt rõ ở owner row/notes thay vì để controller tự bật auto-transform ngầm
+  - Parse* pipe hoặc equivalent helper chỉ được dùng cho scalar cases thật sự rõ
+- không dựa vào implicit class-transformer conversion để suy DTO/query semantics cho route family
+- nếu route family cần default query values, default đó phải hiện diện trong contract owner hoặc route notes; không để framework default tự quyết
+
+## Error mapping baseline for DTO-backed routes
+
+- mọi route family ở file này phải map được từ validation/authz/business failure về canonical `error.code`
+- error mapping không được để controller tự phát sinh message/code ad hoc theo từng handler
+- tối thiểu:
+  - invalid `body` -> `validation.invalid_body`
+  - invalid `query` -> `validation.invalid_query`
+  - invalid `params` -> `validation.invalid_params`
+  - permission failure -> code family đúng owner module, không generic `Forbidden`
+- nếu một DTO route family có failure mode đặc thù mà registry chưa có row canon, phải cập nhật `tracking/error-code-registry.md` trước khi scaffold
+
 ## Projection safety baseline
 
 ### Safe projection (projection an toàn) mặc định được phép
@@ -674,6 +698,7 @@ Các profile trong file này mặc định là `payload DTO`, nhưng P0 route fa
 - `error response`:
   - phải dùng error envelope chuẩn của repo, và mỗi route family ở trên phải có error code canon riêng
   - page bootstrap route không được trả raw infra exception text
+  - validation detail chỉ được là safe field-level projection; không lộ raw validator target/value internals
 
 ## Request-shape freeze rule
 

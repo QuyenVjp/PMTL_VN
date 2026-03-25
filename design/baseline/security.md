@@ -14,6 +14,22 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - upload hardening (thắt chặt bảo mật tải lên)
   - query cost control (kiểm soát chi phí truy vấn)
 
+## Validation boundary security rule
+
+- PMTL dùng validation như lớp boundary defense, không như authority business logic
+- request `body/query/params` phải bị chặn trước controller bằng schema contract chuẩn
+- Nest `ValidationPipe` docs hữu ích để hiểu global binding/transform/whitelist concepts, nhưng phase 1 authority vẫn là `ZodValidationPipe`
+- không đổi sang `class-validator` baseline chỉ vì docs Nest có ví dụ nhiều hơn
+- error từ validation phải map về canonical codes:
+  - `validation.invalid_body`
+  - `validation.invalid_query`
+  - `validation.invalid_params`
+  - `validation.constraint_failed`
+- validation không được:
+  - lộ raw target/value internals kiểu class-validator sample
+  - biến thành nơi auto-cast payload business phức tạp ngoài owner contract
+  - tạo message tiếng Anh mặc định nếu API surface cần Vietnamese-safe wording
+
 ## Auth model (Mô hình xác thực)
 
 ### Session model mặc định (Mô hình phiên đăng nhập)
@@ -24,6 +40,16 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - Non-browser automation/internal API (tự động hóa ngoài trình duyệt hoặc API nội bộ):
   - chỉ dùng bearer token (token mang theo) khi route (đường dẫn) đó được thiết kế riêng
   - không reuse (tái sử dụng) browser cookie contract (hợp đồng cookie trình duyệt) cho webhook/automation
+
+### Interpretation rule from Nest authentication docs
+
+- official Nest auth docs minh họa tốt cho `module/service/guard` shape và `APP_GUARD + @Public()` pattern
+- nhưng sample username/password -> bearer JWT của docs **không phải** browser auth baseline cho PMTL
+- PMTL coi browser auth là `cookie-transported session/token contract`
+- vì vậy:
+  - không lấy header `Authorization: Bearer` làm mặc định cho web/admin browser flow
+  - không coi JWT stateless-only flow là phase 1 baseline
+  - không hardcode secret theo sample docs; secret/config phải đi qua env contract
 
 ### Token contract (Hợp đồng Token)
 
@@ -36,6 +62,13 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
 - refresh token store (kho lưu trữ token làm mới):
   - lưu server-side (phía máy chủ) bằng token hash (mã băm token) hoặc session record (bản ghi phiên) tương đương
   - không coi refresh token stateless (không lưu trạng thái) là baseline phase 1 (nền tảng giai đoạn 1)
+
+### Interpretation rule from Nest session docs
+
+- Nest session middleware/docs không phải authority cho PMTL session lifecycle
+- default in-memory session storage của ecosystem docs/dev setups không được dùng cho production baseline
+- PMTL session authority vẫn là `platform/sessions` + Postgres-backed canonical records
+- nếu dùng cookie-session style transport helper ở framework layer, nó vẫn không thay canonical `sessions` ownership và revoke semantics
 
 ### Admin session (Phiên quản trị)
 
@@ -133,6 +166,15 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
 - app-layer matrix là canonical fallback và audit source
 - nếu 2 lớp khác nhau, request sẽ bị chặn bởi lớp chặt hơn đang áp dụng
 
+### Interpretation rule from Nest throttler docs
+
+- `@nestjs/throttler` là reference tốt cho guard wiring và async config pattern
+- nhưng PMTL phase 1 không lấy in-memory storage mặc định của throttler làm source of truth
+- phase 1 rate-limit store vẫn là Postgres-backed path đã chốt
+- multi-definition throttler config chỉ được bật khi route classes thật sự cần profile limit khác nhau và owner doc đã chốt
+- tracker/key generation phải bám cùng resolved client IP source đã chốt ở trusted proxy contract
+- `@SkipThrottle()` hoặc equivalent chỉ được dùng khi route owner doc ghi rõ exemption; không dùng để “đỡ vướng” cho admin/debug path
+
 ## Cookie / CSRF / CORS
 
 ### Cookie policy (Chính sách Cookie)
@@ -179,6 +221,18 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
   - `ADMIN_ORIGIN`
 - không dùng `*` cho authenticated routes (đường dẫn yêu cầu xác thực)
 - chỉ cho phép credentials (thông tin xác thực) cho origin (nguồn) thật sự cần cookie auth (xác thực bằng cookie)
+
+## OpenAPI / docs exposure policy
+
+- Swagger/OpenAPI/docs endpoints là metadata exposure surface, không phải DX convenience mặc định
+- production baseline:
+  - không public Swagger UI nếu chưa có owner decision rõ
+  - raw OpenAPI JSON/YAML cũng không tự public chỉ vì `@nestjs/swagger` hỗ trợ
+- dev/staging có thể bật docs để làm implementation aid, nhưng phải phản ánh đúng auth transport thật:
+  - browser/web-admin flow = cookie-first
+  - automation/internal route = selective bearer khi có thật
+- không annotate toàn app thành bearer-only nếu browser contract đang là cookie + CSRF
+- metrics, health, docs, schema-like endpoints phải có exposure rule riêng; không gộp chung vào “public because useful”
 
 ## Transport security / HTTPS baseline
 

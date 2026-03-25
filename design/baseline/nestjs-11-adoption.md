@@ -215,6 +215,33 @@ PMTL deployment baseline vẫn là:
 - VPS
 - CI/CD theo repo docs
 
+### 4.6 Hot Reload / webpack HMR
+
+Không dùng làm baseline phase 1.
+
+Lý do:
+
+- đây là dev-loop optimization, không phải production capability
+- HMR của Nest docs dựa vào `webpack` path và thêm complexity vào bootstrap/watch pipeline
+- docs cũng đã cảnh báo asset copy và một số static/glob patterns không tự tương thích sạch
+- với PMTL hiện tại, ưu tiên watch pipeline đơn giản, ổn định, ít drift hơn trước khi tối ưu boot time
+
+Chỉ cân nhắc bật khi:
+
+- `apps/api` đã tồn tại thật
+- boot time dev trở thành pain point rõ ràng
+- đã xác nhận HMR path không phá:
+  - asset handling cần thiết
+  - OpenAPI generation/dev docs
+  - Prisma workflow
+  - logger/bootstrap behavior
+
+Nếu sau này bật:
+
+- xem nó như dev-only lane
+- không để webpack HMR trở thành assumption của production build/deploy
+- phải có owner note rõ cho `start:dev` script và watch behavior
+
 ---
 
 ## 5. Feature decisions — explicitly not a PMTL baseline
@@ -258,7 +285,135 @@ Vì Nest 11 làm rõ hơn global middleware ordering, PMTL phải giữ request 
 5. controller -> service
 6. exception filter -> logs -> metrics
 
-### 6.4 Lifecycle hook expectations
+---
+
+## 7. Nest docs phase map for PMTL
+
+Phần này khóa cách PMTL đọc catalog Nest docs thành **phase implementation policy**, không phải danh sách “đọc cho biết”.
+
+### Phase A — Immediate scaffold baseline
+
+Những lane này được coi là **bắt buộc** trước khi `apps/api` được scaffold nghiêm túc:
+
+| Doc lane | PMTL stance |
+|---|---|
+| `Overview` | chỉ để giữ đúng mental model Nest app shell + DI; không tự bịa framework pattern riêng |
+| `Controllers` | controller mỏng, standard response handling là mặc định, không `@Res()`-first |
+| `Providers` | service/provider là DI building block; singleton-by-default; không request-scope bừa bãi |
+| `Modules` | module là owner boundary; import/export tối thiểu; không circular-by-habit |
+| `Middleware` | chỉ cho request-id, proxy/trusted-ip resolution, cookie/session preconditions và transport concerns; không nhét business logic |
+| `Exception filters` | global exception filter là error-envelope authority |
+| `Pipes` | `ZodValidationPipe` là boundary validation authority cho params/query/body |
+| `Guards` | authn/authz/rate-limit đi qua guard layer, không nhét vào controller |
+| `Configuration` | env contract phải validated at boot; fail-fast |
+| `Validation` | Nest transport validation chỉ là shell; source of truth vẫn là Zod contract |
+| `Logging` | logger authority là `nestjs-pino`, không phải `ConsoleLogger` |
+| `Authentication` | auth flow là launch-critical; phải chốt từ scaffold wave đầu |
+| `Authorization` | role/policy split phải có từ đầu vì admin/member surfaces đã design-locked |
+| `OpenAPI introduction` | `apps/api` giữ OpenAPI ownership; không để docs drift sau scaffold |
+| `Prisma recipe` | persistence baseline chỉ dùng Prisma, không mở ORM lane thứ hai |
+| `Health checks` | `/health/live`, `/health/ready`, `/health/startup` là baseline launch truth |
+
+Auth-specific interpretation:
+
+- lấy từ official docs:
+  - `AuthModule` / guard split
+  - protected-by-default mental model
+  - `APP_GUARD` + `@Public()` là option hợp lệ
+- không lấy nguyên sample:
+  - username/password + bearer JWT header như browser baseline
+  - in-memory users service
+  - hardcoded JWT secret
+
+### Phase B — Early selective, bật khi route/platform lane chạm tới
+
+Các lane dưới đây **không phải optional mơ hồ**. Chúng được bật sớm khi module liên quan xuất hiện, nhưng không block `main.ts + AppModule + common shell`:
+
+| Doc lane | PMTL stance |
+|---|---|
+| `Interceptors` | dùng cho response/logging/cross-cutting concerns có chủ đích; không thay filter/guard/policy |
+| `File upload` | bật cùng `platform/storage` và upload hardening path |
+| `Cookies` | dùng cho browser auth transport; không tự biến cookie thành auth authority riêng |
+| `Session` | map vào `platform/sessions`; không dùng Nest session middleware như app-state owner mơ hồ |
+| `Encryption and hashing` | bật cùng auth/password/reset-token flows |
+| `Helmet` | bật ở bootstrap security baseline |
+| `CORS` | allowlist/trusted origin phải chốt từ bootstrap |
+| `CSRF Protection` | áp dụng theo browser session/cookie flow của PMTL |
+| `Rate limiting` | bật cùng `platform/rate-limit` và các protected surfaces |
+| `OpenAPI security` | thêm khi auth scheme và protected routes đã đứng |
+| `Async local storage` | chỉ bật khi request context propagation thực sự cần hơn request-id middleware |
+| `Versioning` | chưa là baseline phase 1, nhưng là ứng viên sớm nếu public API tách consumer rõ |
+| `Compression` | selective infra/perf concern; không block app shell |
+| `Streaming files` | chỉ bật cho media/file delivery routes thật |
+| `Task scheduling` | phase 1 chỉ dùng nếu có cron nội bộ launch-critical; không bật chỉ vì Nest có hỗ trợ |
+| `Caching` | không phải phase 1 baseline; chỉ bật khi PMTL cache topology trigger đã đạt |
+| `Hot Reload` | dev-only optimization; chỉ bật nếu bootstrapping/watch loop thực sự chậm và owner note đã khóa webpack/HMR tradeoff |
+
+Session/security-specific interpretation:
+
+- `express-session` hoặc `@fastify/secure-session` docs chỉ là framework transport reference:
+  - không thay `platform/sessions` làm session authority
+  - không thay refresh rotation, revoke semantics, hay audit ownership đã chốt
+  - không biến in-memory/session-secret sample thành production baseline
+- `CORS`, `CSRF Protection`, `Helmet`, và `Rate limiting` là framework hooks hữu ích, nhưng policy authority vẫn nằm ở:
+  - `baseline/security.md`
+  - `tracking/coding-readiness.md`
+  - owner modules trong `platform/*`
+- `OpenAPI security` chỉ được khóa sau khi auth transport thật đã rõ:
+  - browser/web-admin = cookie-first
+  - automation/internal = selective bearer
+  - không annotate bearer-only cho toàn app nếu runtime contract không như vậy
+
+### Phase C — Explicitly deferred out of PMTL phase 1
+
+Những lane này **không được chen vào scaffold đầu**:
+
+| Doc lane | PMTL stance |
+|---|---|
+| `GraphQL` | không dùng |
+| `WebSockets / Gateways` | deferred tới khi có realtime surface thật |
+| `Microservices` (`Redis`, `MQTT`, `NATS`, `RabbitMQ`, `Kafka`, `gRPC`) | không phải phase 1 baseline |
+| `CQRS` | không dùng làm default architecture |
+| `Performance (Fastify)` | phase 1 dùng Express; không dual-platform |
+| `Serverless` | không dùng |
+| `Model-View-Controller` | không relevant cho target stack |
+| `Mongoose` / `TypeORM` / `Sequelize` / `MikroORM` | không mở ORM/document DB lane thứ hai |
+
+### PMTL interpretation rules
+
+- docs Nest được đọc như **capability source**, nhưng project policy vẫn do `design/` chốt
+- một feature có trong docs **không** tự động trở thành PMTL baseline
+- nếu một lane chưa nằm trong Phase A hoặc Phase B, dev/AI phải xem nó là deferred cho tới khi owner doc kích hoạt
+- nếu route/module nào muốn dùng feature Phase B hoặc C sớm hơn, phải cập nhật owner doc tương ứng trong `design/` trước
+- riêng `Interceptors`:
+  - không dùng làm error-envelope authority
+  - không dùng để che business policy đáng lẽ nằm ở service/guard/filter
+  - global response-wrap/cache/timeout chỉ hợp lệ khi route family owner đã chốt semantics tương ứng
+- riêng `Pipes`:
+  - parse/default pipes là transport helper tốt
+  - nhưng PMTL không dùng class-validator-first flow làm baseline
+  - và không khuyến khích entity-loading pipe như default Nest style vì dễ kéo DB/business lookup vào transport layer
+- riêng `Exception filters`:
+  - global filter là error-envelope authority
+  - có thể tận dụng `HttpAdapterHost` hoặc `BaseExceptionFilter` khi cần platform-agnostic path hay partial inheritance
+  - nhưng không cho phép mỗi module tự tạo JSON error schema riêng
+
+---
+
+## 8. Worker-assisted doc reading rule
+
+Khi cần current-doc sanity check:
+
+- ưu tiên official Nest docs trước
+- có thể dùng external worker advisory lane:
+  - `Gemini` cho latest-doc synthesis
+  - `Copilot` cho mainstream implementation sanity
+- external workers chỉ là advisory
+- repo canon chỉ được đổi khi:
+  - official Nest docs support điều đó
+  - và `design/` đã được cập nhật cùng task
+
+## 9. Lifecycle hook expectations
 
 PMTL không được phụ thuộc vào assumption cũ về destroy order.
 
@@ -269,7 +424,7 @@ Rule:
 
 ---
 
-## 7. Scaffold checklist additions
+## 10. Scaffold checklist additions
 
 Trước khi coi `apps/api` scaffold-ready theo Nest 11:
 
@@ -284,7 +439,7 @@ Trước khi coi `apps/api` scaffold-ready theo Nest 11:
 
 ---
 
-## 8. AI/codegen notes
+## 11. AI/codegen notes
 
 Khi AI scaffold hoặc review `apps/api`:
 
@@ -299,7 +454,7 @@ Khi AI scaffold hoặc review `apps/api`:
 
 ---
 
-## 9. Decision summary
+## 12. Decision summary
 
 PMTL dùng `NestJS 11` theo hướng:
 

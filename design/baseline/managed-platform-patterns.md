@@ -38,6 +38,7 @@ Học từ Supabase:
 - document rõ public-safe vs secret-bearing endpoints
 - schema / metadata exposure không được public by accident
 - OpenAPI/health/metrics/docs endpoints phải có exposure policy rõ ngay từ scaffold
+- docs surface còn phải phản ánh đúng auth transport thật; không public hóa bearer-only mental model nếu browser contract là cookie-first
 
 ### 1.2 RLS mindset, translated to PMTL-safe rules
 
@@ -228,6 +229,7 @@ Những thay đổi dưới đây là hợp lý ở mức design:
    - query/index advisory
    - storage consistency status
 6. Chuẩn hóa repo-shared snippets/runbook artifacts cho SQL/ops.
+7. Giữ docs generation là runtime aid, không cho nó trở thành authority thứ hai tách khỏi owner contracts và exposure policy.
 
 ---
 
