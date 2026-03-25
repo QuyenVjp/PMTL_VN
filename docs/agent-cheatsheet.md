@@ -42,12 +42,12 @@ Nếu task nghe giống feature của Supabase, map sang owner PMTL như sau tha
 
 | Task shape | PMTL owner trước | Doc cần khóa trước |
 |---|---|---|
-| auth/session lifecycle | `apps/api` identity + sessions | `design/01-identity/*`, `tracking/api-route-inventory.md`, `tracking/error-code-registry.md` |
-| signed upload / media lifecycle | `apps/api` content + storage | `design/02-content/*`, `baseline/secret-management.md`, `tracking/api-route-inventory.md` |
-| webhook / callback verification | `apps/api` platform or module owner | owner use-case + `baseline/secret-management.md` + route inventory |
-| background jobs / retries / outbox | `apps/api` platform modules, Phase 2+ only | `baseline/bullmq-worker-architecture.md`, `baseline/outbox-dispatcher-model.md` |
-| observability / dashboard / incident | platform health + metrics + runbooks | `baseline/observability-architecture.md`, `ops/health-contract.md` |
-| page aggregate / DX-first API | API authority first, then web/admin consumers | `tracking/api-dto-shape-plan.md`, `tracking/page-loader-contracts.md`, `tracking/api-route-inventory.md` |
+| auth/session lifecycle | `apps/api` identity + sessions | `design/03-domains/identity/*`, `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`, `design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md` |
+| signed upload / media lifecycle | `apps/api` content + storage | `design/03-domains/content/*`, `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md`, `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` |
+| webhook / callback verification | `apps/api` platform or module owner | owner use-case + `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md` + route inventory |
+| background jobs / retries / outbox | `apps/api` platform modules, Phase 2+ only | `design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md`, `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md` |
+| observability / dashboard / incident | platform health + metrics + runbooks | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md`, `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md` |
+| page aggregate / DX-first API | API authority first, then web/admin consumers | `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md`, `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`, `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` |
 
 Rule:
 
@@ -58,11 +58,11 @@ Rule:
 
 Trước khi agent scaffold hoặc đề xuất implementation API:
 
-- [ ] route có row trong `tracking/api-route-inventory.md` với auth scope + envelope semantics
-- [ ] request/response DTO row có trong `tracking/api-dto-shape-plan.md`
-- [ ] nếu là page aggregate, có row trong `tracking/page-loader-contracts.md`
-- [ ] error codes domain có mặt trong `tracking/error-code-registry.md`
-- [ ] design status không vượt evidence tier trong `tracking/implementation-mapping.md`
+- [ ] route có row trong `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` với auth scope + envelope semantics
+- [ ] request/response DTO row có trong `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md`
+- [ ] nếu là page aggregate, có row trong `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`
+- [ ] error codes domain có mặt trong `design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md`
+- [ ] design status không vượt evidence tier trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md`
 
 Thiếu bất kỳ mục nào ở trên thì task là `blocked at design`, chưa phải implementation-ready.
 
@@ -70,8 +70,8 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at design`, chưa
 
 Trước khi agent đề xuất `đổi stack`, `nâng bản mới`, hoặc `dùng latest`:
 
-- [ ] package hoặc component đó đã được phép bởi `design/DECISIONS.md` chưa
-- [ ] nếu là package active, đã có row hoặc rule phù hợp trong `design/baseline/dependency-governance.md` chưa
+- [ ] package hoặc component đó đã được phép bởi `design/01-repo-constitution/DECISIONS.md` chưa
+- [ ] nếu là package active, đã có row hoặc rule phù hợp trong `design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md` chưa
 - [ ] nếu là component `planned` / `deferred`, trigger activation trong design đã thật sự được đáp ứng chưa
 - [ ] có official release note / migration guide / advisory source chưa
 - [ ] change đó là patch/minor cadence hay major decision

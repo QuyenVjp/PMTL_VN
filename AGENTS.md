@@ -16,9 +16,9 @@
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
 - `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
-- `design/baseline/ai-debugging-discipline.md` when the task is debugging, root-cause analysis, or AI-assisted diagnosis
-- `design/baseline/dependency-governance.md` when the task touches dependency upgrades, version drift, security advisories, migration policy, or “latest stack” decisions
-- `design/baseline/managed-platform-patterns.md` when the task references Supabase-like features, managed-platform ideas, or asks what patterns PMTL should import without losing backend authority
+- `design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` when the task is debugging, root-cause analysis, or AI-assisted diagnosis
+- `design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md` when the task touches dependency upgrades, version drift, security advisories, migration policy, or “latest stack” decisions
+- `design/02-platform-baseline/dependency-version/MANAGED_PLATFORM_PATTERNS.md` when the task references Supabase-like features, managed-platform ideas, or asks what patterns PMTL should import without losing backend authority
 - `docs/stitch-mcp.md` when the task involves wireframes, design generation, Stitch, or UI exploration through MCP
 - `docs/reference/nextjs-agent-doc-sources.md` when the task touches Next.js APIs, routing, caching, metadata, Server Actions, or upgrade behavior
 

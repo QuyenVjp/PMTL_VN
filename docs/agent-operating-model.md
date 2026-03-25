@@ -210,9 +210,9 @@ Minimum rule:
 Before scaffolding from any `design/` doc, verify that:
 
 - route inventory row exists and still maps to the expected owner module
-- `tracking/implementation-mapping.md` status does not exceed its evidence tier
-- `tracking/api-dto-shape-plan.md` rows map to a confirmed route in `tracking/api-route-inventory.md`
-- page aggregate contracts still match `tracking/page-loader-contracts.md` if the route feeds web/admin bootstrap
+- `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` status does not exceed its evidence tier
+- `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md` rows map to a confirmed route in `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
+- page aggregate contracts still match `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md` if the route feeds web/admin bootstrap
 
 If any of the above fails, fix the design doc first. Do not treat "design says X" as evidence that runtime X already exists.
 
@@ -235,6 +235,6 @@ Nếu diagnosis chỉ dựa trên đọc code mà thiếu runtime evidence, fina
 - `AGENTS.md`
 - `docs/agent-cheatsheet.md`
 - `docs/architecture/skills-taxonomy.md`
-- `design/tracking/error-code-registry.md`
+- `design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md`
 - `.agents/skills/pmtl-workflow-router/SKILL.md`
 - `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`

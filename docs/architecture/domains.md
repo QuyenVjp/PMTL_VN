@@ -3,8 +3,8 @@
 File này tóm tắt `domain ownership (quyền sở hữu mô-đun)` theo hướng `apps/api` là backend authority.
 Canonical source (nguồn chuẩn) vẫn là:
 
-- [design/overview/architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/architecture-principles.md)
-- [design/tracking/module-interactions.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/module-interactions.md)
+- [design/01-repo-constitution/ARCHITECTURE_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ARCHITECTURE_PRINCIPLES.md)
+- [design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md)
 
 ## Identity
 

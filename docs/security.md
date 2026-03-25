@@ -12,7 +12,7 @@ Request boundaries:
 
 Canonical policy source:
 
-- [design/baseline/security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+- [design/02-platform-baseline/security-runtime/SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
 
 ## Security baseline
 

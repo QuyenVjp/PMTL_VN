@@ -43,10 +43,10 @@ Mục tiêu:
 
 **Primary source docs**
 - `AGENTS.md`
-- `design/DECISIONS.md`
-- `design/baseline/nest-baseline.md`
-- `design/baseline/platform-modules.md`
-- `design/tracking/api-route-inventory.md`
+- `design/01-repo-constitution/DECISIONS.md`
+- `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`
+- `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md`
+- `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
 - module-local `contracts.md`, `module-map.md`, `use-cases/*.md`
 
 **Acceptance criteria**
@@ -73,11 +73,11 @@ Mục tiêu:
 - worker/retry semantics
 
 **Primary source docs**
-- `design/baseline/nest-baseline.md`
-- `design/tracking/api-route-inventory.md`
-- `design/tracking/error-code-registry.md`
+- `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`
+- `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
+- `design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md`
 - module-local `contracts.md`
-- `design/tracking/admin-page-api-mapping.md`
+- `design/04-execution-overlay/admin/ADMIN_PAGE_API_MAPPING.md`
 
 **Acceptance criteria**
 - có route contract checklist
@@ -103,11 +103,11 @@ Mục tiêu:
 - observability dashboards beyond job/runtime essentials
 
 **Primary source docs**
-- `design/DECISIONS.md`
-- `design/tracking/outbox-event-taxonomy.md`
-- `design/baseline/outbox-dispatcher-model.md`
-- `design/baseline/bullmq-worker-architecture.md`
-- `design/06-search/meilisearch-architecture.md`
+- `design/01-repo-constitution/DECISIONS.md`
+- `design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md`
+- `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md`
+- `design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md`
+- `design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md`
 - module-local use-cases that mention outbox/retry/idempotency
 
 **Acceptance criteria**
@@ -133,12 +133,12 @@ Mục tiêu:
 - queue business taxonomy
 
 **Primary source docs**
-- `design/ops/health-contract.md`
-- `design/ops/deploy-runbook.md`
-- `design/baseline/infra.md`
-- `design/baseline/cache-topology.md`
-- `design/baseline/security.md`
-- `design/baseline/cicd-deploy-gates.md`
+- `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md`
+- `design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md`
+- `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md`
+- `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md`
+- `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`
+- `design/02-platform-baseline/deploy-ops/CICD_DEPLOY_GATES.md`
 
 **Acceptance criteria**
 - có incident triage path ngắn

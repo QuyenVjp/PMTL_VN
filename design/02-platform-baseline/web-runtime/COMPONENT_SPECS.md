@@ -1,0 +1,861 @@
+# Component Specifications (Đặc tả Component)
+
+Danh mục các UI components cần thiết cho PMTL_VN.
+Mỗi component có: mô tả, props cơ bản, states, elderly-specific rules nếu cần.
+
+> **Tech stack**: Next.js App Router + shadcn/ui + Tailwind CSS (web), Vite + React + shadcn/ui (admin)
+> **Design principles**: `design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md` — color system, typography, spacing, interactions
+> **Admin architecture**: `design/02-platform-baseline/admin-runtime/ADMIN_ARCHITECTURE.md` — shadcn-admin layout, DataTable, command palette
+> **Frontend architecture**: `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` — library stack, proxy boundary
+> **shadcn taxonomy refs**: form/input, layout/navigation, overlays/dialogs, feedback/status, display/media
+> **Skill ref**: `taste-skill`, `soft-skill`, `minimalist-skill`, `pmtl-creative-designer`, `pmtl-ui-behavior`, `pmtl-vercel-precision`
+
+---
+
+## Design baseline rules (Quy tắc base)
+
+| Rule | Value |
+|---|---|
+| Min touch target | 44×44px (48px preferred cho elderly) |
+| Min body font | 16px (17px+ cho elderly-heavy screens) |
+| Min contrast ratio | WCAG AA (4.5:1 text, 3:1 UI components) |
+| Focus ring | Visible, không dùng `outline: none` |
+| Loading state | Mọi async action phải có loading indicator |
+| Empty state | Mọi list/table phải có empty state design |
+| Error state | Mọi form + async action phải có error state |
+
+## Component sourcing rules (Quy tắc lấy component)
+
+- `shadcn/ui` là catalog/component source chính cho web và admin.
+- `Radix UI` là primitive nền cho accessibility và interaction.
+- `Motion v12` chỉ là animation layer, không phải component source.
+- Nếu shadcn đã có component phù hợp, ưu tiên add từ CLI rồi theme lại theo PMTL trước khi tự phát minh component mới.
+- Không add component chỉ vì nhìn đẹp trong docs; component phải map được với page, flow, hoặc owner doc thật.
+- Các component nặng như `data-table`, `chart`, `resizable`, `menubar`, `context-menu` chỉ add khi route thật yêu cầu.
+
+## Recommended starter inventory for `apps/web`
+
+Đây là inventory nên có rất sớm khi rebuild web theo taxonomy của shadcn:
+
+### Form & Input
+
+- `form`
+- `field`
+- `button`
+- `input`
+- `textarea`
+- `checkbox`
+- `radio-group`
+- `select`
+- `switch`
+- `label`
+
+### Layout & Navigation
+
+- `accordion`
+- `breadcrumb`
+- `navigation-menu`
+- `tabs`
+- `separator`
+- `scroll-area`
+
+### Overlays & Dialogs
+
+- `dialog`
+- `alert-dialog`
+- `sheet`
+- `drawer`
+- `popover`
+- `tooltip`
+- `dropdown-menu`
+- `command`
+
+### Feedback & Status
+
+- `alert`
+- `sonner`
+- `progress`
+- `spinner`
+- `skeleton`
+- `badge`
+- `empty`
+
+### Display & Media
+
+- `avatar`
+- `card`
+- `table`
+- `carousel`
+- `aspect-ratio`
+- `typography`
+
+### Add later only when routes need them
+
+- `data-table`
+- `chart`
+- `resizable`
+- `item`
+- `kbd`
+- `toggle`
+- `toggle-group`
+- `pagination`
+
+---
+
+## I. Navigation Components
+
+### `MainNav`
+Top navigation bar.
+
+**States**: default / scrolled (shadow) / mobile-open
+**Props**: `user: AuthUser | null`, `currentPath: string`
+**Behavior**:
+- Desktop: horizontal links + avatar/login button
+- Mobile: hamburger → slide drawer
+- Active link: visual indicator
+- Auth state: hiện avatar + dropdown khi đã login
+
+---
+
+### `MobileBottomNav`
+Bottom tab bar, chỉ hiện trên mobile (< 768px).
+
+**Tabs**: Trang chủ / Tu tập / Tìm kiếm / Lịch / Tôi
+**States**: active tab highlighted, badge trên icon nếu có notification
+**Elderly rule**: Tab labels phải hiện (không icon-only)
+
+---
+
+### `AdminSidebar`
+Left navigation cho admin pages.
+
+**Sections**: Dashboard / Nội dung / Cộng đồng / Kiểm duyệt / Người dùng / Hệ thống
+**States**: expanded / collapsed (icon-only mode cho desktop)
+**Mobile**: drawer overlay
+
+---
+
+### `Breadcrumb`
+```
+Trang chủ > Kinh sách > Kinh A Di Đà
+```
+**Rules**: Hiện khi depth > 1. Last item không là link. Truncate middle items nếu quá dài.
+
+---
+
+## II. Content Cards
+
+### `PostCard`
+Hiển thị trong list bài viết.
+
+```
+┌────────────────────────────────┐
+│ [Thumbnail optional]            │
+│ [Category tag]                  │
+│ Tiêu đề bài viết               │
+│ Tóm tắt 2 dòng...              │
+│ 12/03/2026 · Tác giả · 5 phút │
+└────────────────────────────────┘
+```
+**Props**: `post: PostSummary`, `showThumbnail?: boolean`
+**States**: default / hover / loading skeleton
+
+---
+
+### `WisdomCard`
+Hiển thị wisdom/QA entry.
+
+```
+┌────────────────────────────────┐
+│ [Loại] Bạch thoại              │
+│ Tiêu đề / câu hỏi             │
+│ Trích đoạn bản dịch...         │
+│ Nguồn: Pháp Sư Tịnh Không     │
+│ [Đọc thêm] [Lưu offline]      │
+└────────────────────────────────┘
+```
+**Props**: `entry: WisdomSummary`, `showOfflineButton?: boolean`
+**Rule**: Luôn hiện source attribution. Không được hiện content không có source.
+
+### `BaihuaBookCard`
+Card đại diện một sách trong library `Sách nói Bạch thoại`.
+
+**Props**: `titleOriginal`, `titleVietnamese?`, `bookKind`, `chapterCount`, `coverHref`, `href`
+**States**: default / hover / loading
+
+### `BaihuaChapterNavigator`
+Navigator chương cho book detail và chapter detail.
+
+**Props**: `chapters`, `currentChapterNumber?`, `bookSlug`
+**States**: default / compact / loading
+**Rule**: luôn hiện số chương rõ; mobile ưu tiên list dọc.
+
+### `BaihuaParallelReader`
+Reader song song `nguyên văn / bản dịch`.
+
+**Props**: `titleOriginal`, `titleVietnamese?`, `bodyOriginal`, `bodyVietnamese?`, `audioRef?`
+**Modes**:
+- `translation-first`
+- `original-first`
+- `split`
+
+**Rule**:
+- text là primary
+- audio là companion
+- nếu bản dịch chỉ là draft, badge review state phải thấy ngay
+
+---
+
+### `ChantItemCard`
+```
+┌────────────────────────────────┐
+│ 🔔 Niệm Phật                   │
+│ Nam Mô A Di Đà Phật            │
+│ Thời lượng: ~10 phút           │
+│ [Niệm kinh] [Ghi lại]         │
+└────────────────────────────────┘
+```
+
+---
+
+### `VowCard`
+```
+┌────────────────────────────────┐
+│ Phát nguyện niệm 1000 biến     │
+│ ████████░░ 800/1000 biến       │
+│ Trạng thái: Đang thực hiện    │
+│ [Xem chi tiết]                 │
+└────────────────────────────────┘
+```
+**States**: active / completed / voided
+**Rule**: Progress bar chỉ hiện nếu có quantified target. Non-measurable vows hiện status text.
+
+---
+
+### `AdvisoryCard`
+Advisory ngày từ Calendar.
+
+```
+┌────────────────────────────────┐
+│ 📅 Mùng 15 tháng 2 - Ngày Rằm │
+│ ─────────────────────────────  │
+│ Thực hành hôm nay:             │
+│ • Niệm kinh buổi sáng          │
+│ • Phóng sanh                   │
+│ ─────────────────────────────  │
+│ Bài đọc gợi ý:                 │
+│ [WisdomCard compact]           │
+└────────────────────────────────┘
+```
+**Rule**: Source references không copy toàn bộ text — chỉ excerpt + link.
+
+---
+
+### `EventCard`
+```
+┌────────────────────────────────┐
+│ [Loại badge]                   │
+│ Tên sự kiện                    │
+│ 📅 15/04/2026 (Rằm tháng 3)    │
+│ Mô tả ngắn...                  │
+└────────────────────────────────┘
+```
+
+### `EventProgramTimeline`
+Timeline theo khung giờ cho sự kiện tổ chức.
+
+```
+┌────────────────────────────────┐
+│ 07:00 - 07:15                  │
+│ Đón tiếp đại biểu              │
+│ Ban Tổ chức                    │
+├────────────────────────────────┤
+│ 08:00 - 11:00                  │
+│ Văn nghệ · chia sẻ · giao lưu │
+│ Ban Tổ chức + Phật hữu         │
+└────────────────────────────────┘
+```
+
+**Props**: `items: EventAgendaItem[]`
+**States**: default / loading / empty
+**Elderly rules**:
+- thời gian nổi bật, chữ to hơn nội dung
+- không nhồi quá nhiều badge nhỏ
+- mobile hiển thị vertical stack, không horizontal timeline phức tạp
+
+### `EventActionBar`
+Thanh CTA cho trang chi tiết sự kiện.
+
+**Buttons**:
+- `Đăng ký`
+- `Xem bản đồ`
+- `Xem livestream`
+- `Tải chương trình`
+
+**Rules**:
+- max 2 CTA primary cùng lúc
+- các CTA còn lại là secondary/ghost
+- mobile xếp dọc, full-width
+
+### `EventSpeakerCard`
+
+```
+┌────────────────────────────────┐
+│ [Avatar] Tên diễn giả          │
+│ Vai trò                        │
+│ Bio ngắn 2-3 dòng              │
+└────────────────────────────────┘
+```
+
+**Props**: `speaker: EventSpeaker`
+**States**: default / loading
+
+### `AdminEventAgendaEditor`
+Editor dạng table/list cho agenda items của admin.
+
+**Fields**:
+- start time
+- end time
+- title
+- description
+- host label
+- segment type
+- sort order
+
+**Rules**:
+- add/remove/reorder rows
+- validate overlap
+- inline error per row
+
+### `AdminEventCtaManager`
+Quản lý CTA links của sự kiện trong admin.
+
+**Fields**:
+- type
+- label
+- url
+- sort order
+
+**Rule**: URL validation inline, preview target domain.
+
+---
+
+## III. Practice UI Components (Critical - Elderly-friendly)
+
+### `PracticeSheet`
+Daily practice tracking sheet.
+
+```
+┌───────────────────────────────────────┐
+│ Tu tập ngày 15/03/2026               │
+│ Mùng 15 tháng 2 âm lịch            │
+├───────────────────────────────────────┤
+│ ☐  Nam Mô A Di Đà Phật   [____] biến │
+│ ☐  Chú Đại Bi             [____] biến │
+│ ☐  Kinh A Di Đà           [  1] quyển│
+├───────────────────────────────────────┤
+│ Ghi chú: ________________________     │
+│                                        │
+│         [   Lưu buổi tu   ]           │
+└───────────────────────────────────────┘
+```
+
+**Elderly rules**:
+- Checkbox min 44×44px
+- Font min 17px
+- Input số: lớn, numeric keyboard on mobile
+- "Lưu" button: fixed bottom, full-width on mobile, min height 52px
+- Không có animation trong quá trình điền
+- Nếu có context từ advisory hoặc preset, phải hiển thị `AdvisoryContextCard` hoặc `ScenarioPresetCard` ở đầu sheet
+- Companion guide drawer mở được từ sticky top action, không ép user rời tracker
+- Trước action complete phải hiện warning time/place rules nếu preset hoặc advisory yêu cầu
+
+---
+
+### `DailyPracticeHubCard`
+Card điều hướng cho hub `Kinh Bài Tập`.
+
+**Props**: `title`, `summary`, `href`, `group`, `readingTime?`, `isRecommended?`
+**States**: default / hover / featured
+**Rule**: summary phải đủ rõ để người mới chọn đúng nhóm mà không cần mở detail.
+
+---
+
+### `DailyPracticeScenarioPresetSelector`
+Selector cho preset theo tình huống: người mới, người cao tuổi, bệnh nặng, công việc/học hành, hóa giải oán kết.
+
+**Props**: `presets`, `selectedPresetId?`, `onSelect`
+**States**: default / selected / disabled
+**Rule**: không hiển thị quá nhiều jargon; mỗi preset phải có 1 dòng giải thích.
+
+---
+
+### `PracticeGuideCompanionDrawer`
+Drawer / sheet hiển thị guide đồng hành ngay trong tracker.
+
+**Props**: `guide`, `group`, `scenarioPreset?`
+**States**: closed / open / loading
+**Rule**: ưu tiên các block ngắn như step summary, warning list, quick checklist; không nhồi full article.
+
+---
+
+### `AdvisoryContextCard`
+Card tóm tắt advisory ngày hiện tại trước khi vào buổi tu.
+
+**Props**: `advisoryTitle`, `lunarLabel`, `recommendedActions`, `guideHref?`
+**States**: default / compact
+**Rule**: advisory chỉ gợi ý, không thay thế ritual truth từ content.
+
+---
+
+### `ScenarioPresetCard`
+Card tóm tắt preset đã chọn và lý do áp dụng.
+
+**Props**: `presetName`, `summary`, `focusItems`, `relatedGuideHref`
+**States**: default / warning / completed
+**Rule**: luôn link ngược về guide chuẩn để user kiểm chứng.
+
+---
+
+### `LifeReleaseGuideHubCard`
+Card điều hướng cho hub `Phóng Sanh`.
+
+**Props**: `title`, `summary`, `href`, `variant?`, `isRecommended?`
+**States**: default / hover / featured
+**Rule**: phải phân biệt rõ `cho bản thân` và `cho người khác`.
+
+---
+
+### `LifeReleaseRitualStepper`
+Stepper cho nghi thức phóng sanh.
+
+**Props**: `steps`, `variantKey?`, `warningList?`
+**States**: default / compact / print-friendly
+**Rule**: step text phải ngắn, không bury câu khấn dài trong từng card nếu đã có script block riêng.
+
+---
+
+### `LifeReleaseVariantCard`
+Card tóm tắt một biến thể nghi thức.
+
+**Props**: `variantKey`, `title`, `summary`, `placeholders`, `guideHref`
+**States**: default / selected
+**Rule**: placeholders quan trọng phải lộ rõ, không ẩn trong tooltip.
+
+---
+
+### `LifeReleaseCompanionPanel`
+Panel / drawer mở ngay trong form journal để xem lại script, biến thể và checklist.
+
+**Props**: `guide`, `variant`, `warnings`
+**States**: closed / open / loading
+**Rule**: chỉ hiển thị phần cần dùng tại thời điểm ghi journal; không render full article nặng.
+
+---
+
+### `LifeReleaseJournalForm`
+Form ghi lại buổi phóng sanh.
+
+**Fields**:
+- `releaseDate`
+- `species`
+- `quantity`
+- `unit`
+- `locationNote`
+- `guideContextRef`
+- `ritualVariantRef`
+- `notes`
+
+**Rules**:
+- nếu có `ritualVariantRef`, companion panel phải mở đúng variant
+- species-specific warning phải hiện nếu user đang ở flow xử lý tử vong
+- submit button không được che mất checklist quan trọng trên mobile
+
+---
+
+### `MediaLibraryFeaturedCollection`
+Card lớn cho collection nổi bật trên `/thu-vien/phap-mon`.
+
+**Props**: `title`, `summary`, `cover`, `collectionType`, `href`
+**States**: default / loading
+**Rule**: phải đọc được đây là `album ảnh` hay `playlist video` ngay từ card.
+
+### `MediaLibraryFilterTabs`
+Tabs lọc collection theo loại/chủ đề.
+
+**Tabs**:
+- tất cả
+- video
+- hình ảnh
+- pháp hội
+- giới thiệu pháp môn
+- đồ đằng
+
+**Rule**: mobile dùng pill scroll ngang, không dropdown sâu.
+
+### `MediaCollectionCard`
+Card hiển thị một collection trong grid.
+
+**Props**: `title`, `cover`, `collectionType`, `itemCount`, `summary`, `href`
+**States**: default / hover / loading
+
+### `MediaCollectionViewer`
+Viewer cho collection detail.
+
+**Modes**:
+- `photo-grid`
+- `video-list`
+- `mixed-gallery`
+
+**Rule**:
+- không autoplay video
+- item nào là curated ref phải có link owner surface rõ
+
+### `AdminMediaCollectionEditor`
+Editor admin cho `media collections`.
+
+**Fields**:
+- title
+- slug
+- collection type
+- description
+- source note
+- featured
+
+### `AdminMediaCollectionItemsManager`
+Manager cho items bên trong collection.
+
+**Fields**:
+- item type
+- media ref hoặc external URL
+- caption
+- owner module
+- owner ref
+- sort order
+
+**Rule**: external URL validation inline; owner ref required nếu item là curated reference.
+
+**Rules**:
+- nếu có `ritualVariantRef`, companion panel phải mở đúng variant
+- species-specific warning phải hiện nếu user đang ở flow xử lý tử vong
+- submit button không được che mất checklist quan trọng trên mobile
+
+---
+
+### `NgoiNhaNhoSheet`
+Ngôi Nhà Nhỏ completion tracker. "Near-paper" interface.
+
+```
+┌───────────────────────────────────────┐
+│ 🏠 Ngôi Nhà Nhỏ #12                  │
+│                                        │
+│ Kinh A Di Đà                          │
+│ ████████████░░░░ 10,000 / 12,000 biến │
+│                                        │
+│ Hôm nay thêm: [_______] biến         │
+│               [  +1  ] [  +10 ] [+100]│
+│                                        │
+│ [  ─  ] [  1000  ] [  +  ]           │
+│                    ↑ số biến input     │
+│                                        │
+│ ─────────────── [  Dâng nhà  ] ───────│
+│ (chỉ active khi đủ 12,000 biến)       │
+└───────────────────────────────────────┘
+```
+
+**Elderly rules**:
+- Tally buttons (+1, +10, +100) min 52×52px
+- Progress bar với số hiển thị rõ (không chỉ %): "10,000 / 12,000"
+- "Dâng nhà" button chỉ active khi đủ biến
+- Confirmation modal khi "Dâng nhà" để tránh nhầm
+- Font số lớn: min 24px
+
+---
+
+### `ChantPlayer`
+Audio player cho bài niệm.
+
+```
+┌─────────────────────────────────────┐
+│ Nam Mô A Di Đà Phật                 │
+│ ─────────────────── ───────         │
+│  ◀◀    ▶ / ❚❚    ▶▶   🔊────        │
+│  [0:00 ──────────── 10:23]          │
+└─────────────────────────────────────┘
+```
+
+**Elderly rules**:
+- Play/Pause button: min 64×64px
+- Skip buttons: min 48×48px
+- Volume slider: min 200px wide
+- Hiện tên bài rõ ràng phía trên controls
+- Không autoplay
+
+---
+
+### `PracticeLogForm`
+Form ghi lại 1 session tu.
+
+**Fields**: date (auto = today), items practiced (multi-select + quantity), duration (optional), notes
+**Elderly rules**: Date input có calendar picker lớn. Multi-select là checkbox list, không phải dropdown.
+
+---
+
+## IV. Community Components
+
+### `CommentThread`
+
+```
+┌─────────────────────────────────────┐
+│ [Avatar] Tên người dùng    2 giờ trước│
+│ Nội dung comment...                  │
+│ [Thích] [Trả lời] [Báo cáo]        │
+│                                      │
+│   ↳ [Avatar] Reply...                │
+│     [Thích] [Trả lời] [Báo cáo]    │
+└─────────────────────────────────────┘
+```
+
+**Rules**:
+- Báo cáo button mờ, không prominently shown
+- Reply nesting: chỉ 1 level (không deep nesting)
+- "Đang chờ duyệt" badge nếu pending
+
+---
+
+### `ReportModal`
+```
+Báo cáo nội dung này
+
+Lý do: [Dropdown]
+  - Nội dung không phù hợp
+  - Thông tin sai lệch
+  - Spam
+  - Khác
+
+Mô tả thêm (optional): [Textarea]
+
+[Huỷ]  [Gửi báo cáo]
+```
+
+---
+
+### `GuestbookEntryCard`
+```
+┌────────────────────────────────┐
+│ Tên ẩn danh / tên hiển thị    │
+│ Nội dung sổ lưu niệm...       │
+│ 12/03/2026                    │
+└────────────────────────────────┘
+```
+
+---
+
+## V. Form Components
+
+### Form platform contract
+
+- Form stack chuẩn cho `apps/web` và `apps/admin`:
+  - `react-hook-form`
+  - `zod`
+  - `@hookform/resolvers/zod`
+  - shadcn `Field` family
+- Anatomy mặc định:
+  - `Field`
+  - `FieldLabel`
+  - `FieldDescription`
+  - `FieldError`
+  - `FieldSet`
+  - `FieldLegend`
+  - `FieldGroup`
+- Binding rules:
+  - `Input`, `Textarea`: bind trực tiếp từ `field`
+  - `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, date-like headless controls: dùng `Controller`
+  - dynamic array rows: dùng `useFieldArray`
+- Error/accessibility rules:
+  - `Field` phải có `data-invalid` khi field invalid
+  - control phải có `aria-invalid`
+  - lỗi phải hiện bằng text thật qua `FieldError`
+  - help text / error text phải gắn đúng với control theo markup accessible của shadcn
+- Validation mode rules:
+  - auth/security-sensitive: `onSubmit` hoặc `onBlur`
+  - profile/settings: `onBlur`
+  - search/filter nhẹ: `onChange` chỉ khi feedback tức thời thật sự hữu ích
+  - complex write forms: tránh `onChange` toàn cục nếu UX bị ồn
+
+### `AuthForm` variants
+
+**Login form:**
+- Email input (large, keyboard: email)
+- Password input (với show/hide toggle)
+- "Ghi nhớ đăng nhập" checkbox
+- Submit button (full width mobile)
+- Error: "Sai email hoặc mật khẩu" (không nêu cụ thể)
+
+**Register form:**
+- Email, password, confirm password, tên hiển thị
+- Password strength indicator (nhưng không quá gamify)
+- Terms acceptance checkbox
+
+**Password input rules**: Show/hide toggle bắt buộc. Min-length hint.
+
+---
+
+### `ProfileForm`
+Tabbed form cho settings.
+
+**Tabs**: Thông tin cá nhân / Đổi mật khẩu / Phiên đăng nhập
+**Avatar**: Upload + preview + crop
+
+---
+
+## VI. State Components
+
+### `LoadingSkeleton`
+Mỗi card/list component phải có skeleton variant.
+
+```tsx
+// Usage
+<PostCard loading={true} />
+// hoặc
+<Skeleton className="h-32 w-full rounded-lg" />
+```
+
+**Rules**: Skeleton animation là pulse (opacity change), không shimmer (quá distracting cho elderly).
+
+---
+
+### `EmptyState`
+
+```
+┌─────────────────────────────┐
+│         [Icon]              │
+│   Chưa có bài viết nào      │
+│  [Action button nếu có]     │
+└─────────────────────────────┘
+```
+
+**Required for**: mọi list, search results, practice history, vow list, notification history.
+
+---
+
+### `ErrorState`
+
+```
+┌─────────────────────────────┐
+│         ⚠️                   │
+│   Đã xảy ra lỗi             │
+│   Vui lòng thử lại          │
+│   [Thử lại]  [Về trang chủ]│
+└─────────────────────────────┘
+```
+
+---
+
+### `OfflineBanner`
+Fixed top banner khi offline.
+
+```
+⚠ Bạn đang offline. Một số tính năng không khả dụng.
+```
+
+---
+
+### `Toast` notifications
+
+| Type | Color | Icon | Use for |
+|---|---|---|---|
+| success | green | ✓ | Save successful, action completed |
+| error | red | ✗ | Save failed, request error |
+| info | blue | ℹ | Neutral information |
+| warning | amber | ⚠ | Action has consequences |
+
+**Rules**: Auto-dismiss sau 4s. Không stack > 3 toasts. Always dismissible.
+
+---
+
+## VII. Admin Components
+
+### `DataTable`
+Sortable, filterable table cho admin listings.
+
+**Features**: sort by column, filter chips, search, pagination, bulk select, row actions
+**Mobile**: responsive → horizontal scroll hoặc card view
+
+---
+
+### `ModerationActions`
+
+```
+┌───────────────────────────────────────┐
+│ [Preview content đang bị báo cáo]     │
+│                                        │
+│ Quyết định:                           │
+│ [Ẩn nội dung] [Bỏ qua báo cáo]       │
+│                                        │
+│ Ghi chú (optional): [____________]    │
+└───────────────────────────────────────┘
+```
+
+---
+
+### `PublishStatusBadge`
+
+| Status | Badge |
+|---|---|
+| draft | Gray "Nháp" |
+| published | Green "Đã xuất bản" |
+| unpublished | Orange "Đã ẩn" |
+
+---
+
+### `AuditLogEntry`
+
+```
+[12/03/2026 14:32] admin@pmtl.vn
+content.post.published
+Post: "Hướng dẫn niệm kinh" (publicId: xxx)
+IP: (masked)
+```
+
+---
+
+### `FeatureFlagToggle`
+
+```
+[Feature Name]  [ON / OFF toggle]
+Mô tả feature...
+Enabled since: 12/03/2026
+```
+
+---
+
+## VIII. Accessibility checklist
+
+Mọi interactive component phải pass:
+
+- [ ] Keyboard navigable (Tab order logic)
+- [ ] Focus ring visible (không `outline: none`)
+- [ ] Screen reader label (`aria-label` hoặc visible text)
+- [ ] Error messages programmatically associated (`aria-describedby`)
+- [ ] Loading state announced (`aria-live`)
+- [ ] Image alt text
+- [ ] Button has accessible name (không icon-only without aria-label)
+- [ ] Color không phải indicator duy nhất (cần icon/text kèm)
+
+---
+
+## IX. Component priority for Phase 1
+
+Implement theo thứ tự:
+
+1. `MainNav` + `MobileBottomNav` (khung app)
+2. `AuthForm` variants (login/register - launch blocker)
+3. `PostCard` + `PostDetail` (content delivery)
+4. `PracticeSheet` + `NgoiNhaNhoSheet` (core Five Treasures UX)
+5. `ChantPlayer` (niệm kinh feature)
+6. `AdvisoryCard` (calendar integration)
+7. `SearchBar` + `SearchResult` (discovery)
+8. `CommentThread` + `ReportModal` (community)
+9. `VowCard` + forms (vows-merit)
+10. Admin `DataTable` + `ModerationActions`

@@ -58,7 +58,7 @@ type AuthSessionView = {
 
 Notes:
 
-- browser flow dùng secure `HttpOnly` cookies theo policy ở `design/baseline/security.md`
+- browser flow dùng secure `HttpOnly` cookies theo policy ở `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`
 - `admin` trong UI có thể hiện là `Phụng sự viên`
 
 ## Content contracts

@@ -3,8 +3,8 @@
 File này mô tả `deployment baseline (nền tảng triển khai)` cho hướng kiến trúc mới.
 Canonical rule gốc sống ở:
 
-- [design/baseline/infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
-- [design/DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
+- [design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md)
+- [design/01-repo-constitution/DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
 
 ## Production topology baseline
 

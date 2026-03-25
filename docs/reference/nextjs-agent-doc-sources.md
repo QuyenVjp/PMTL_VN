@@ -63,10 +63,10 @@ Trang docs cụ thể là lane cuối khi cần semantics đầy đủ hoặc ex
 
 Sau khi đọc official docs, map ngược lại vào:
 - `AGENTS.md`
-- `design/baseline/frontend-architecture.md`
-- `design/tracking/web-app-router-file-contract.md`
-- `design/tracking/web-cache-revalidation-contract.md`
-- owner docs ở `design/ui/*`
+- `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md`
+- `design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md`
+- `design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md`
+- owner docs ở `design/02-platform-baseline/web-runtime/*` và `design/04-execution-overlay/web/*`
 
 Nếu repo canon cũ hơn official docs, cập nhật repo canon trước rồi mới triển khai.
 

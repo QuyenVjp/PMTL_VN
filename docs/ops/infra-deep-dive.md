@@ -28,8 +28,8 @@ File này chỉ mô tả:
 File này không được dùng để:
 
 - suy ra first-launch baseline
-- override [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/DECISIONS.md)
-- override [baseline/infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
+- override [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
+- override [design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md)
 
 ## Cảnh báo thẳng cho người mới
 
