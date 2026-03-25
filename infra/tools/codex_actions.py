@@ -343,6 +343,116 @@ def smoke_suite(suite: str, runtime: str) -> int:
     return 0 if ok else 1
 
 
+def _extract_env_refs(value: object) -> list[str]:
+    refs: list[str] = []
+    if isinstance(value, str):
+        refs.extend(match.group(1) for match in re.finditer(r"\$\{([A-Z0-9_]+)\}", value))
+    elif isinstance(value, list):
+        for item in value:
+            refs.extend(_extract_env_refs(item))
+    elif isinstance(value, dict):
+        for nested in value.values():
+            refs.extend(_extract_env_refs(nested))
+    return refs
+
+
+def _tool_exists(command: str) -> bool:
+    if os.name == "nt":
+        return shutil.which(command) is not None or shutil.which(f"{command}.exe") is not None
+    return shutil.which(command) is not None
+
+
+def mcp_smoke() -> int:
+    mcp_path = ROOT / ".mcp.json"
+    if not mcp_path.exists():
+        emit_json(
+            {
+                "ok": False,
+                "workspace_mcp_present": False,
+                "reason": f"Missing workspace MCP config at {mcp_path}",
+            }
+        )
+        return 1
+
+    config = json.loads(mcp_path.read_text(encoding="utf-8"))
+    servers = config.get("mcpServers", {})
+    if not isinstance(servers, dict):
+        emit_json({"ok": False, "workspace_mcp_present": True, "reason": "Invalid .mcp.json: mcpServers must be an object"})
+        return 1
+
+    repo_paths = {
+        "apps/web": (ROOT / "apps" / "web").exists(),
+        "infra/tools/start_mcp_server.ps1": (ROOT / "infra" / "tools" / "start_mcp_server.ps1").exists(),
+    }
+
+    server_reports: list[dict[str, object]] = []
+    overall_ok = True
+
+    for name, server in servers.items():
+        if not isinstance(server, dict):
+            server_reports.append({"server": name, "ok": False, "reason": "Server entry must be an object"})
+            overall_ok = False
+            continue
+
+        command = str(server.get("command", ""))
+        args = server.get("args", [])
+        transport = server.get("type", "unknown")
+        env_refs = sorted(set(_extract_env_refs(server)))
+        missing_env = [env_name for env_name in env_refs if not os.environ.get(env_name)]
+        command_ok = bool(command) and _tool_exists(command)
+        notes: list[str] = []
+        required_paths: list[str] = []
+
+        if name == "shadcn":
+            required_paths.append("apps/web")
+            if not repo_paths["apps/web"]:
+                notes.append("apps/web is missing, so shadcn MCP cannot target the web app yet")
+        if name in {"meilisearch-admin", "redis-admin", "grafana", "postgres-pmtl"}:
+            required_paths.append("infra/tools/start_mcp_server.ps1")
+            if not repo_paths["infra/tools/start_mcp_server.ps1"]:
+                notes.append("start_mcp_server.ps1 is missing")
+        if name == "next-devtools" and not repo_paths["apps/web"]:
+            notes.append("next-devtools MCP server can start, but Next.js runtime evidence will stay limited until apps/web exists")
+        if name == "smartbear" and not os.environ.get("SWAGGER_API_KEY"):
+            notes.append("SWAGGER_API_KEY is not set, so hosted SmartBear/SwaggerHub lane will stay unavailable")
+
+        ok = command_ok and not missing_env
+        if "apps/web" in required_paths and not repo_paths["apps/web"]:
+            ok = False
+
+        overall_ok = overall_ok and ok
+        server_reports.append(
+            {
+                "server": name,
+                "ok": ok,
+                "transport": transport,
+                "command": command,
+                "args": args,
+                "command_available": command_ok,
+                "required_env": env_refs,
+                "missing_env": missing_env,
+                "required_paths": required_paths,
+                "notes": notes,
+            }
+        )
+
+    emit_json(
+        {
+            "ok": overall_ok,
+            "workspace_mcp_present": True,
+            "workspace_mcp_path": str(mcp_path),
+            "repo_paths": repo_paths,
+            "servers": server_reports,
+            "important_note": (
+                "Even when this preflight passes, Codex desktop only exposes MCP tools to a chat if the workspace .mcp.json "
+                "and required env vars were already present before the chat/session started. Restart the app or open a new "
+                "workspace-root chat after changes."
+            ),
+        }
+    )
+    return 0 if overall_ok else 1
+
+
 def auth_flow(runtime: str) -> int:
     emit_json(
         {
@@ -438,6 +548,9 @@ def build_parser() -> argparse.ArgumentParser:
     smoke_parser.add_argument("--suite", choices=["smoke", "monitoring", "telegram"], required=True)
     smoke_parser.add_argument("--runtime", choices=["auto", "host", "docker"], default="auto")
     smoke_parser.set_defaults(handler=lambda args: smoke_suite(args.suite, args.runtime))
+
+    mcp_parser = subparsers.add_parser("mcp-smoke")
+    mcp_parser.set_defaults(handler=lambda args: mcp_smoke())
 
     auth_parser = subparsers.add_parser("auth-flow")
     auth_parser.add_argument("--runtime", choices=["auto", "host", "docker"], default="auto")

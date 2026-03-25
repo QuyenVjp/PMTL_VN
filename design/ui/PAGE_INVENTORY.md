@@ -651,7 +651,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Search bar lớn (prominent)
-- Filter tabs: Tất cả / Bài viết / Kinh sách / Bạch thoại / Hỏi đáp / Khai thị
+- Filter tabs: Tất cả / Bạch thoại / Hỏi đáp / Khai thị / Bài viết
 - Result cards với source attribution
 - No results state với suggestions
 - Recent searches (local storage)

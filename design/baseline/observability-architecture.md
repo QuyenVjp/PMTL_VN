@@ -130,22 +130,27 @@ Owner: `apps/api/src/platform/health/`
 
 #### `GET /health/ready`
 - **Mục đích**: App sẵn sàng nhận traffic?
-- **Checks bắt buộc**:
+- **Nguồn sự thật chi tiết**: `design/ops/health-contract.md`
+- **Checks baseline bắt buộc**:
   - Postgres connection: `SELECT 1` phải thành công
   - Migration state: pending migrations = 0
   - Feature flags table: readable
-- **Checks khi enabled**:
-  - Valkey ping (khi VALKEY_URL set)
-  - Meilisearch `/health` (khi MEILI_HOST set)
+  - audit log write path writable
+  - storage adapter readiness pass
+- **Checks khi dependency đã activate thật sự**:
+  - Valkey ping
+  - Meilisearch `/health`
 - **Response (pass)**:
 ```json
 {
   "status": "ok",
   "checks": {
-    "postgres": "ok",
-    "migrations": "up-to-date",
-    "featureFlags": "ok",
-    "valkey": "ok"
+    "postgres": { "status": "ok" },
+    "migrations": { "status": "ok", "pendingCount": 0 },
+    "featureFlags": { "status": "ok" },
+    "audit": { "status": "ok" },
+    "storage": { "status": "ok" },
+    "valkey": { "status": "ok" }
   },
   "timestamp": "2026-03-21T10:00:00Z"
 }
@@ -155,8 +160,9 @@ Owner: `apps/api/src/platform/health/`
 
 #### `GET /health/startup`
 - **Mục đích**: App đã startup xong chưa? (Kubernetes startup probe equivalent)
-- **Check**: All platform modules initialized (config, logger, DB, feature-flags, rate-limit, storage, audit, sessions)
-- **Response**: Same shape as /health/live
+- **Nguồn sự thật chi tiết**: `design/ops/health-contract.md`
+- **Check**: All 11 baseline platform modules initialized theo `baseline/startup-dependency-order.md`; optional services report riêng ở `optionalServices`
+- **Response**: không dùng lại shape tối giản của `/health/live`; phải trả module-by-module startup state
 - **Auth**: public
 
 ---

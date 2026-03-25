@@ -143,6 +143,25 @@ Nó phải tập trung vào `Bạch thoại Phật pháp` và `Sách nói`.
 - Nếu muốn dẫn qua `Hỏi đáp`, dùng related link hoặc cross-link card; không nhét thành tab của `/bach-thoai`
 - `Khai thị` là content label/filter/detail type, không phải tab public mặc định của `/bach-thoai` ở phase hiện tại
 
+### Query canon cho `/bach-thoai`
+
+- URL state canonical:
+  - `tab`
+  - `q?`
+  - `entryType?`
+  - `sourceFamily?`
+  - `tag?`
+  - `offset`
+  - `limit`
+- defaults:
+  - `tab=btpp`
+  - `offset=0`
+  - `limit=20`
+- rules:
+  - hub này dùng `offset` pagination cho phase hiện tại
+  - `engine`, `tabCounts`, `filterFacets` phải đến từ aggregate payload
+  - không tự suy `Khai thị` từ title string; nếu user lọc `entryType=event_discourse`, đó vẫn là filter state chứ không mở tab mới
+
 ---
 
 ## 4.1 Information architecture cho hub `/hoi-dap`
@@ -165,6 +184,27 @@ Rules:
 - `Hỏi đáp` không được trình bày như subsection của `Bạch thoại`
 - Detail page của `Hỏi đáp` phải ưu tiên code/timestamp/source label hơn essay layout
 - Nếu entry Q&A có related `Khai thị` hoặc `Bạch thoại`, hiển thị ở related panel, không đổi canonical class của nó
+
+### Query canon cho `/hoi-dap`
+
+- URL state canonical:
+  - `tab`
+  - `q?`
+  - `sourceFamily?`
+  - `tag?`
+  - `offset`
+  - `limit`
+- defaults:
+  - `tab=all`
+  - `offset=0`
+  - `limit=20`
+- tab semantics:
+  - `all`: toàn bộ QA/result set trong hub
+  - `wenda`: ưu tiên family `wenda`
+  - `popular`: curated/topic-led projection nhưng vẫn phải đi từ aggregate payload, không hardcode ở client
+- rules:
+  - `engine`, `tabCounts`, `filterFacets` phải echo từ aggregate payload
+  - `/hoi-dap` là retrieval-first hub riêng; không tái dùng query/tab canon của `/bach-thoai` một cách mù quáng
 
 ---
 

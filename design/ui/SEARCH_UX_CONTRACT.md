@@ -50,10 +50,35 @@ Search state canonical phải nằm ở URL:
 
 - `q`
 - `tab`
-- page/pagination params
+- `offset`
+- `limit`
 - applied filters có ý nghĩa shareable
 
 Không để canonical search state chỉ nằm ở local component state.
+
+### Phase 1 query canon
+
+Phase đầu chốt query model cho `/tim-kiem` là:
+
+- `q`
+- `tab`
+- `type?`
+- `entryType?`
+- `sourceFamily?`
+- `offset`
+- `limit`
+
+Defaults:
+
+- `tab=all`
+- `offset=0`
+- `limit=20`
+
+Rules:
+
+- giữ `offset` pagination cho phase đầu; không đổi sang `cursor` lặng lẽ ở web hoặc API
+- `offset` guard phải theo backend canon; UI không tự cho skip sâu nếu API reject
+- filter nào làm đổi result set thì phải hiện diện ở URL
 
 ### Baseline interaction
 
@@ -109,6 +134,11 @@ Filters có thể có:
 Rules:
 - filter panel state được preserve hợp lý khi user quay lại route
 - filter values canonical phải nằm ở URL nếu chúng thay đổi result set
+- filter phase đầu chỉ bật 3 family đã có owner canon:
+  - `type`
+  - `entryType`
+  - `sourceFamily`
+- `tags/topic` chưa là public search filter mặc định nếu backend route chưa mở canon riêng
 
 ---
 
@@ -168,7 +198,9 @@ Nếu engine fallback/degraded:
 
 ## Open product decisions still needing owner input
 
-- phase đầu có cần instant query suggestion khi gõ không
-- pagination vs load-more cho `/tim-kiem`
-- filter set đầu tiên chính xác gồm những gì
-- có hiển thị recent searches cho signed-in user hay không
+Các điểm dưới đây được freeze cho wave scaffold đầu:
+
+- không dùng instant query suggestion làm primary behavior; baseline là submit search rồi mới fetch results
+- `/tim-kiem` dùng pagination theo `offset + limit`, không dùng load-more làm canon mặc định
+- filter set phase đầu chỉ gồm `type`, `entryType`, `sourceFamily`
+- `recent searches` chỉ là signed-in optional aux hoặc local helper; không block bootstrap loader

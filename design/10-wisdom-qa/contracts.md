@@ -145,19 +145,25 @@
   - profile: `list`
   - canonical public list/hub surface cho `/bach-thoai` và `/hoi-dap`
   - query filters tối thiểu:
+    - `tab?`
     - `entryType?`
     - `sourceFamily?`
     - `tag?`
     - `q?`
-    - `cursor?`
+    - `offset?`
     - `limit?`
   - response phải map thẳng sang `WisdomHubDto`, gồm:
     - `items[]`
     - `pagination`
+    - `activeTab`
     - `tabCounts`
     - `filterFacets`
     - `engine`
   - client không tự đếm tab hay source-family facets từ raw list
+  - hub pagination phase hiện tại là `offset-first`; nếu sau này đổi sang `cursor`, phải cập nhật đồng thời:
+    - file này
+    - `tracking/api-dto-shape-plan.md`
+    - `tracking/page-loader-contracts.md`
 - `GET /api/offline-bundles`
   - profile: `list`
   - response phải map thẳng sang `OfflineBundleListPageDto`

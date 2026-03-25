@@ -30,6 +30,9 @@ verify-all:
 smoke:
   py infra/tools/codex_actions.py smoke-suite --suite smoke
 
+mcp-smoke:
+  py infra/tools/codex_actions.py mcp-smoke
+
 monitoring:
   py infra/tools/codex_actions.py smoke-suite --suite monitoring
 

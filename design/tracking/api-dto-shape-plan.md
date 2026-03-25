@@ -405,6 +405,7 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `q`
   - `normalizedQ`
 - `appliedFilters` tối thiểu:
+  - `tab?`
   - `type?`
   - `entryType?`
   - `sourceFamily?`
@@ -413,11 +414,18 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `offset`
   - `hasMore`
   - `totalApproximate?`
-- `tabCounts` là projected counts theo result family, không để client tự đếm:
+- `tab` canonical values cho public `/tim-kiem`:
   - `all`
-  - `content`
-  - `wisdom`
+  - `btpp`
   - `qa`
+  - `khai-thi`
+  - `posts`
+- `tabCounts` là projected counts theo đúng visible tab trên `/tim-kiem`, không để client tự đếm:
+  - `all`
+  - `btpp`
+  - `qa`
+  - `khai-thi`
+  - `posts`
 - `filterFacets` là safe projections:
   - `entryTypes[]`
   - `sourceFamilies[]`
@@ -542,11 +550,9 @@ Dùng khi route canon moderation comment detail được scaffold:
 ### `WisdomHubDto`
 
 - `items[]` dùng `WisdomListItemDto`, không trả full detail body.
-- `activeTab` canonical values:
-  - `btpp`
-  - `qa`
-  - `khai-thi`
-  - `sach-noi`
+- `activeTab` phải bám route family owner, không dùng chung một enum mơ hồ cho mọi hub:
+  - `/bach-thoai`: `btpp` | `sach-noi`
+  - `/hoi-dap`: `all` | `wenda` | `popular`
 - `tabCounts` không được derive ở client.
 - `filterFacets` tối thiểu:
   - `entryTypes[]`

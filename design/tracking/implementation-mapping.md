@@ -242,11 +242,11 @@ Mục này tồn tại để chặn kiểu `đã có design khá nhiều rồi n
 
 | Surface | Design status | Còn thiếu để giảm invention | Owner docs phải đồng bộ |
 |---|---|---|---|
-| member page aggregates | partial | khóa `page-loader-contracts` + `api-dto-shape-plan` cho `/dashboard`, `/thong-bao`, `/ngoai-tuyen`, `/lich-ca-nhan` | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `tracking/api-route-inventory.md` |
-| public search + wisdom hub | partial | chốt `engine`, `tabCounts`, `filterFacets`, error mapping, query param canon ở cả page và API level | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `06-search/*`, `10-wisdom-qa/*` |
-| admin query invalidation | partial | chỉ được nâng lên readiness cao hơn khi mapping mutation -> invalidation -> revalidation path được giữ canon và không drift | `tracking/admin-page-api-mapping.md`, `design/ui/ADMIN_MODULE_SPECS.md` |
-| launch blocker runtime modules | partial | mỗi blocker cần artifact expectation + evidence expectation + owner runbook rõ hơn | file này + use-case owner + runbook tương ứng |
-| ops recovery / restore | partial | cần command/evidence contract rõ cho backup, restore, health, metrics | `design/ops/*`, `baseline/observability-architecture.md`, `ops/health-contract.md` |
+| member page aggregates | ready at design level | giữ đồng bộ nếu route/DTO/loader của `/dashboard`, `/thong-bao`, `/ngoai-tuyen`, `/lich-ca-nhan` đổi | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `tracking/api-route-inventory.md` |
+| public search + wisdom hub | ready at design level | giữ `tab`, `engine`, `tabCounts`, `filterFacets`, pagination canon đồng bộ giữa `/tim-kiem`, `/bach-thoai`, `/hoi-dap` | `tracking/page-loader-contracts.md`, `tracking/api-dto-shape-plan.md`, `06-search/*`, `10-wisdom-qa/*`, `ui/SEARCH_UX_CONTRACT.md` |
+| admin query invalidation | ready at design level | khi mở mutation mới phải cập nhật cùng lúc mapping `mutation -> query key -> public/cache owner` | `tracking/admin-page-api-mapping.md`, `design/ui/ADMIN_MODULE_SPECS.md`, `tracking/web-cache-revalidation-contract.md` |
+| launch blocker runtime modules | ready at design level, runtime evidence pending | design đã chốt artifact/env/health owner; vẫn chưa được coi là implemented nếu chưa có code path + verification thật | file này + use-case owner + runbook tương ứng |
+| ops recovery / restore | contract-complete, runtime evidence pending | command/evidence template đã chốt; còn thiếu drill record pass và artifact pinning thật | `design/ops/*`, `baseline/observability-architecture.md`, `ops/health-contract.md` |
 
 ## Evidence contract before status changes
 
