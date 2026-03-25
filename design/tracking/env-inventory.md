@@ -109,6 +109,8 @@ Rules:
 | `NEXT_PUBLIC_MEDIA_BASE_URL` | web | yes | media CDN base URL |
 | `REVALIDATE_SECRET` | web + api | yes | shared secret for on-demand ISR revalidation |
 | `NEXT_REVALIDATE_URL` | api | yes | web app revalidation webhook URL |
+| `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | web/infra | yes when multi-instance deploy | shared Server Action encryption key across instances |
+| `DEPLOYMENT_VERSION` | web/infra | no | value used for `deploymentId` / version skew protection when enabled |
 
 ### Admin (apps/admin)
 
@@ -120,6 +122,13 @@ Rules:
 ---
 
 ## Phase 2+ — Required when component enabled
+
+### Web runtime / self-host
+
+| Env | Owner | Required when | Purpose |
+|---|---|---|---|
+| `NEXT_RUNTIME_CONFIG_SOURCE` | web | no | optional marker for runtime config provenance in diagnostics only |
+| `NEXT_PUBLIC_BUILD_SHA` | web | no | public build/version marker for diagnostics UI if team exposes it intentionally |
 
 ### Valkey (cache / rate-limit / queue)
 > Design: `baseline/valkey-architecture.md`

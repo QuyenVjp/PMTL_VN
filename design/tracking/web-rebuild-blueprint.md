@@ -36,7 +36,16 @@ Nguồn đọc bắt buộc trước khi rebuild:
 - [USER_FLOWS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/USER_FLOWS.md)
 - [COMPONENT_SPECS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/COMPONENT_SPECS.md)
 - [DESIGN_PRINCIPLES.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
+- [ROUTE_PAGE_CONTRACTS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ROUTE_PAGE_CONTRACTS.md)
+- [AUTH_UX_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/AUTH_UX_CONTRACT.md)
+- [SEARCH_UX_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SEARCH_UX_CONTRACT.md)
+- [CONTENT_RENDERING_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/CONTENT_RENDERING_CONTRACT.md)
+- [TOKEN_IMPLEMENTATION_SHEET.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/TOKEN_IMPLEMENTATION_SHEET.md)
+- [PRESERVED_UI_STATE_MATRIX.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/PRESERVED_UI_STATE_MATRIX.md)
 - [implementation-mapping.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
+- [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-query-invalidation-plan.md)
+- [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-app-router-file-contract.md)
+- [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-cache-revalidation-contract.md)
 
 ---
 
@@ -187,12 +196,24 @@ Nếu shadcn CLI hỏi:
 - TypeScript components: `yes`
 - Tailwind prefix: để trống
 
+Sau scaffold:
+- `package.json` scripts dùng:
+  - `next dev`
+  - `next build`
+  - `next start`
+- không thêm `--turbopack` vì Next 16 đã dùng Turbopack mặc định
+- nếu sau này có custom `webpack` config thật, phải ra quyết định rõ:
+  - migrate sang Turbopack
+  - hoặc `build --webpack`
+  - không để state nửa mùa
+
 ### Dark mode policy
 
 - Web mới hỗ trợ dark mode ngay từ bootstrap.
 - Dùng `next-themes` với `attribute="class"`.
 - Root layout phải có `suppressHydrationWarning` ở thẻ `html`.
 - Phải có `ThemeProvider` riêng ở `src/components/theme-provider.tsx`.
+- shadcn Next.js dark-mode guide xác nhận đúng wiring này; PMTL chỉ override phần UX defaults.
 - Phải có mode toggle, nhưng đặt tiết chế.
 
 Quyết định UX:
@@ -212,6 +233,25 @@ Không dùng làm starter gốc:
 - block pack nặng animation làm base
 - full AI-generated landing starter không có owner docs
 - theme marketplace đậm dark SaaS/purple bias
+
+### Component acquisition notes từ shadcn docs
+
+- `calendar` dùng shadcn `Calendar` trên `react-day-picker`; chỉ add khi route có nhu cầu thực như `/lich-ca-nhan` hoặc date-range filter.
+- `date-picker` không phải primitive riêng; nó là composition của `Popover + Calendar`.
+- `sidebar` là shell primitive thật cho member app, phải có `SidebarProvider` từ layout boundary.
+- `data-table` không coi là “bật mặc định”; nó là pattern guide trên `table` + `@tanstack/react-table`, nên chỉ add khi route cần behavior grid thật.
+- `carousel` dùng Embla dưới shadcn wrapper; chỉ add khi có nhiều slides thật và justified interaction value, không dùng như default homepage garnish.
+- `typography` docs chỉ là utility reference, không phải component authority cho content renderer.
+
+### Motion reference stance
+
+- Motion official docs xác nhận import baseline `motion/react`.
+- Motion được phép cho:
+  - gesture states
+  - enter/exit
+  - layout transitions
+  - selected scroll-triggered reveals
+- Với animation nhỏ, self-contained, CSS vẫn là lựa chọn ưu tiên.
 
 ---
 
@@ -266,6 +306,56 @@ Accessibility/error contract:
 - lỗi phải render ra text thật qua `FieldError`, không chỉ đổi màu viền
 - help text và error text phải gắn được với field qua markup/accessibility wiring của shadcn
 
+### Query/cache contract
+
+- `apps/web` phải scaffold query layer theo [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-query-invalidation-plan.md).
+- Mọi feature query phải đi qua:
+  - feature-local query key factory
+  - `queryOptions()` hoặc `infiniteQueryOptions()`
+  - invalidate helper thay vì hardcode raw arrays trong component
+- Query key shape ưu tiên:
+  - `['resource', 'list', { ...filters }]`
+  - `['resource', 'detail', slugOrId]`
+  - `['resource', 'aux', ...]`
+- `useSuspenseQuery()` không là mặc định; chỉ dùng cho stable client islands có `Suspense` boundary rõ.
+- Lane cần cancellation-sensitive behavior như typeahead, quick filters, search query đổi nhanh phải dùng `useQuery()`, không dùng suspense lane.
+- Nếu mutation làm đổi public cached surface, phải đi cả 2 đường:
+  - invalidate TanStack Query keys liên quan
+  - server-side revalidation owner theo `cache-topology.md`
+- RSC/page cache semantics phải bám [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-cache-revalidation-contract.md):
+  - cached reads dùng `'use cache'` + `cacheTag()` + `cacheLife()`
+  - tag invalidation mặc định dùng `revalidateTag(tag, 'max')`
+  - không dùng single-arg `revalidateTag(tag)` pattern cũ
+- `refresh()` chỉ dùng trong Server Actions như router/UI helper
+- `updateTag()` chỉ dùng trong Server Actions cho read-your-own-writes
+- `'use client'` chỉ mở ở entry boundary cần state/effects/browser APIs
+- `'use server'` chỉ dùng cho server actions/helper bridge, không thay domain authority của `apps/api`
+- `'use cache'` chỉ cho deterministic server reads; runtime values phải đọc ngoài cached scope rồi truyền vào bằng args serializable
+- redirect sau mutation phải tách rõ:
+  - `redirect()` chỉ lo navigation
+  - invalidation freshness vẫn phải đi qua `updateTag()` hoặc `revalidateTag()`
+
+### App Router file contract
+
+- Special files và root layout conventions của web phải scaffold theo [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-app-router-file-contract.md).
+- Root `app/layout.tsx` phải:
+  - giữ `<html>` + `<body>`
+  - không tự viết `<head>` thủ công
+  - gắn fonts/providers/theme theo contract
+- `error.tsx` phải là client component.
+- `global-error.tsx` phải tự mang `<html>` + `<body>`.
+- `loading.tsx` phải ưu tiên skeleton meaningful, không spinner-only cho content-heavy routes.
+- `not-found.tsx` là bắt buộc ở root; segment detail routes được phép có bản riêng nếu cần CTA owner-aware.
+- `next/image` là default cho image surfaces; remote sources phải được allowlist bằng `images.remotePatterns`.
+- `next/font` là default cho font loading; không dùng external font `<link>` như baseline.
+- `metadata` object / `generateMetadata()` là đường duy nhất cho head metadata; detail pages ưu tiên `generateMetadata()`.
+- `cookies()`, `headers()`, `params`, `searchParams` phải được xử lý theo async contract của Next 16; không code theo sync pattern cũ.
+- network boundary file dùng `proxy.ts`, không scaffold `middleware.ts` như baseline mới.
+- boundary chi tiết của `'use client'`, `'use server'`, `'use cache'` phải bám [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-app-router-file-contract.md) và [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-cache-revalidation-contract.md).
+- Route Handlers ở web tier chỉ dành cho proxy/BFF edge, metadata edge, và file/web concerns thật sự cần; không dựng business API song song với `apps/api`.
+- streaming/prefetch/environment/forms semantics phải bám owner canon, không tự invent local pattern trong lúc scaffold.
+- lazy loading chỉ là optimization cho client widgets/libs; không dùng `ssr: false` như baseline escape hatch.
+
 ---
 
 ## 4. Cấu trúc `apps/web` mới
@@ -306,9 +396,14 @@ apps/web/
     │   └── feedback/
     ├── lib/
     │   ├── api-client.ts
+    │   ├── cache/
+    │   │   ├── profiles.ts
+    │   │   └── tags.ts
     │   ├── env.ts
     │   ├── logger.ts
     │   ├── query/
+    │   ├── server/
+    │   │   └── env.ts
     │   └── utils.ts
     └── styles/
         └── tokens.css
@@ -321,6 +416,17 @@ packages/
         ├── lib/
         └── styles/
 ```
+
+### Deployment assumption
+
+- `apps/web` scaffold theo target:
+  - Node.js server
+  - hoặc Docker container chạy `next start`
+- Không scaffold theo `static export` baseline vì PMTL web cần:
+  - `proxy.ts`
+  - Server Actions
+  - streaming
+  - Cache Components
 
 ### Route groups chốt
 

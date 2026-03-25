@@ -91,6 +91,7 @@ Blueprint đó chốt:
 - route group skeleton
 - visual/system baseline
 - wave order để rebuild web mà không lệch `design/`
+- query key/invalidation canon cho web phải đọc thêm ở [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-query-invalidation-plan.md)
 
 ## Status semantics (Ý nghĩa các trạng thái)
 

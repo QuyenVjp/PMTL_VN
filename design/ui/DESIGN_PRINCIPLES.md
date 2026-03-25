@@ -101,6 +101,11 @@ Dark palette phải:
 --font-mono: 'JetBrains Mono', monospace;
 ```
 
+Implementation rule:
+- web phải load fonts qua `next/font`
+- không dùng external font `<link>` như baseline
+- root layout là owner nơi gắn font variables/classnames toàn app
+
 ### Scale
 
 | Level | Size | Weight | Line height | Usage |

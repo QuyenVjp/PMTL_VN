@@ -6,6 +6,18 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 > **Skill refs**: `taste-skill`, `soft-skill`, `minimalist-skill`, `pmtl-creative-designer`, `pmtl-ui-behavior`, `pmtl-vercel-precision`
 > **Component specs**: `design/ui/COMPONENT_SPECS.md`
 > **Design principles**: `design/ui/DESIGN_PRINCIPLES.md`
+> **Route page contracts**: `design/ui/ROUTE_PAGE_CONTRACTS.md`
+> **Auth UX**: `design/ui/AUTH_UX_CONTRACT.md`
+> **Search UX**: `design/ui/SEARCH_UX_CONTRACT.md`
+> **Content rendering**: `design/ui/CONTENT_RENDERING_CONTRACT.md`
+> **Token sheet**: `design/ui/TOKEN_IMPLEMENTATION_SHEET.md`
+> **Preserved UI state matrix**: `design/ui/PRESERVED_UI_STATE_MATRIX.md`
+> **Component trigger map**: `design/ui/COMPONENT_TRIGGER_MAP.md`
+> **Motion route inventory**: `design/ui/MOTION_ROUTE_INVENTORY.md`
+> **Image/media ratio map**: `design/ui/IMAGE_MEDIA_RATIO_MAP.md`
+> **Web query plan**: `design/tracking/web-query-invalidation-plan.md`
+> **App Router file contract**: `design/tracking/web-app-router-file-contract.md`
+> **Web cache contract**: `design/tracking/web-cache-revalidation-contract.md`
 
 ---
 
@@ -13,7 +25,7 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 
 | App | Mô tả | Tech | Build |
 |---|---|---|---|
-| `apps/web` | Public + member surface | Next.js App Router | SSR/SSG via Next.js |
+| `apps/web` | Public + member surface | Next.js App Router | SSR/SSG via Next.js 16 |
 | `apps/admin` | Management surface (Phụng sự viên) | Vite + React SPA | Static SPA, served by Caddy |
 
 ---
@@ -97,11 +109,106 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
   - bọc app bằng `ThemeProvider`
   - dùng `attribute="class"`
   - thêm `suppressHydrationWarning` ở thẻ `html`
+- `ThemeProvider` nên là wrapper mỏng quanh `next-themes` provider tại `src/components/theme-provider.tsx`.
+- shadcn Next.js dark-mode guide là nguồn xác nhận wiring/hydration contract; PMTL chỉ override UX defaults.
 Default UX:
 - `defaultTheme = "light"`
 - `enableSystem = false`
 - `disableTransitionOnChange = true`
 - Theme toggle được phép có, nhưng không nên đẩy thành CTA lớn trên content-heavy pages.
+
+### Calendar / date-picker contract
+
+- `calendar` trong PMTL đi theo shadcn `Calendar` trên nền `react-day-picker`.
+- Baseline date utils vẫn là `date-fns`; không mở Moment-like stack.
+- `date-picker` là composition của:
+  - `Popover`
+  - `Calendar`
+- Chỉ add `calendar` hoặc `date-picker` khi route có nhu cầu thật:
+  - `/lich-ca-nhan`
+  - date field trong profile/settings
+  - advanced filter có date range
+- Nếu dùng selected date theo local timezone, phải truyền `timeZone` cho `Calendar`.
+- Timezone phải detect ở client bằng `Intl.DateTimeFormat().resolvedOptions().timeZone` trong `useEffect`; không detect ngay lúc render server vì dễ gây hydration mismatch.
+- Nếu route cần RTL hoặc locale-specific calendar formatting, phải đi qua `locale` + `dir` contract của `react-day-picker`, không tự vá format rời rạc từng cell.
+
+### Sidebar contract
+
+- Member shell desktop nav dùng shadcn `Sidebar` family làm primitive chuẩn:
+  - `SidebarProvider`
+  - `Sidebar`
+  - `SidebarTrigger`
+  - `SidebarContent`
+  - `SidebarHeader`
+  - `SidebarFooter`
+- Root shell nào có sidebar phải bọc bằng `SidebarProvider`.
+- `Sidebar` được coi là app-shell primitive, không phải decorative block.
+- Desktop member shell nên ưu tiên collapsible behavior kiểu `icon`; mobile nav vẫn là transient open state và phải reset khi navigate away.
+- Nếu dùng `variant="inset"`, content area phải đi qua `SidebarInset`.
+- Sidebar theming phải dùng token family riêng `--sidebar-*`, không hardcode màu nav trực tiếp trong route components.
+- Keyboard shortcut kiểu `cmd/ctrl+b` là optional capability, không coi là baseline UX bắt buộc cho phase scaffold đầu.
+
+### Data table contract
+
+- `data-table` của shadcn không phải một primitive đóng gói sẵn; nó là pattern guide trên `table` + `@tanstack/react-table`.
+- `apps/web` không lấy `data-table` làm baseline mặc định cho public/member surfaces.
+- Public/member routes ưu tiên:
+  - list/card/feed/content blocks
+  - table đơn giản nếu chỉ là read-only comparison nhẹ
+- Chỉ mở lane `data-table` khi surface thật sự cần:
+  - sorting
+  - filtering
+  - column visibility
+  - row selection
+  - pagination
+- `data-table` vẫn phù hợp hơn với `apps/admin`; nếu `apps/web` có dùng thì phải extract như reusable app component có contract riêng, không “add cho có”.
+
+### Carousel contract
+
+- `carousel` đi theo shadcn component trên nền `embla-carousel-react`.
+- `carousel` không là homepage mặc định và không phải primitive baseline của web scaffold.
+- Chỉ add khi có justified media/storytelling need rõ ràng như:
+  - homepage spotlight có nhiều slides thật
+  - media gallery
+  - quote/testimonial strip có interaction value rõ
+- Nếu chỉ là 1 hero, 1 featured card row, hoặc 1 list ngang đơn giản thì không lôi carousel vào.
+- Nếu route có RTL, `Carousel` phải đồng bộ cả `dir` prop lẫn `opts.direction`; nav arrows phải xử lý hướng rõ ràng.
+- `plugins` như autoplay là optional; không bật mặc định cho content-heavy hoặc elderly-sensitive surfaces.
+
+### Typography contract
+
+- shadcn `Typography` page chỉ là utility examples; PMTL không coi đó là component authority riêng.
+- Typography authority vẫn nằm ở:
+  - `DESIGN_PRINCIPLES.md`
+  - `CONTENT_RENDERING_CONTRACT.md`
+  - token sheet
+- Không tạo `Typography` wrapper generic chỉ để bọc toàn bộ content rồi mất kiểm soát block semantics.
+- Editorial/content surfaces phải render qua owner block vocabulary; utility classes chỉ là implementation detail.
+
+### Motion usage contract
+
+- Motion for React import baseline là `motion/react`.
+- Dùng Motion khi cần lane mà CSS không xử lý sạch hoặc không đủ:
+  - gesture (`whileHover`, `whileTap`)
+  - enter/exit (`AnimatePresence`)
+  - layout transition (`layout`, `layoutId`)
+  - scroll-triggered / scroll-linked motion (`whileInView`, `useScroll`)
+- Với hiệu ứng rất đơn giản, self-contained, như đổi màu hoặc hover transition nhẹ, ưu tiên CSS trước.
+- Motion phải bám declarative state/props model của React; không kéo thêm imperative animation orchestration khi chưa cần.
+
+### Next.js App Router file contract
+
+- `apps/web` phải bám special-file contract ở `design/tracking/web-app-router-file-contract.md`.
+- Root layout phải:
+  - giữ `<html>` + `<body>`
+  - không tự viết `<head>` tags
+  - gắn providers/fonts/theme theo root contract
+- `error.tsx` bắt buộc là client component.
+- `global-error.tsx` phải tự khai báo `<html>` + `<body>`.
+- `loading.tsx` chỉ nên chứa loading UI nhẹ, meaningful, ưu tiên skeleton.
+- Root `not-found.tsx` là bắt buộc; segment detail routes được quyền có `not-found.tsx` riêng nếu cần domain CTA khác.
+- `cookies()`, `headers()`, `draftMode()`, `params`, `searchParams` phải được dùng theo async contract của Next 16.
+- `proxy.ts` là baseline network-boundary file; không scaffold `middleware.ts` như convention chính nữa.
 
 ### Form architecture contract
 
@@ -156,6 +263,46 @@ Default UX:
 - Neutral palette mới như `taupe`, `mauve`, `mist`, `olive` phù hợp làm surface/border/muted states; không thay thế palette chủ đạo PMTL.
 - `font-feature-settings` có thể dùng có chọn lọc cho typography cao cấp, nhưng không được tạo ra trải nghiệm khó đọc trên màn hình dài.
 
+### Font loading rules
+
+- Dùng `next/font` làm baseline; không nhúng external webfont `<link>` như mặc định.
+- Ưu tiên variable fonts nếu source phù hợp.
+- Font mapping `heading/body/sacred/mono` phải bám `design/ui/DESIGN_PRINCIPLES.md`.
+- Root layout là nơi gắn font variables/classnames toàn app; không import font rời rạc từng page rồi drift typography.
+
+### Image/media loading rules
+
+- Dùng `next/image` làm mặc định cho card/hero/content/media surfaces.
+- Mọi image phải có `alt` hữu ích.
+- Remote images phải được allowlist bằng `images.remotePatterns` trong `next.config.ts`, càng specific càng tốt.
+- Không render image mà không khóa ratio bằng:
+  - `width` + `height`
+  - hoặc `fill` với parent sizing rõ
+- Nếu local static import phù hợp, ưu tiên static import để Next tự suy width/height/blur metadata.
+- Không dùng `images.domains`; không dùng `next/legacy/image`.
+- Không bật `dangerouslyAllowLocalIP` ở baseline.
+- Mặc định chấp nhận `qualities = [75]` và redirect cap của Next 16 trừ khi có case đo được.
+- Nếu local image dùng query string, phải có `images.localPatterns.search` rõ ràng.
+
+### Metadata rules
+
+- Static pages ổn định dùng `metadata` object.
+- Detail pages hoặc routes phụ thuộc data dùng `generateMetadata()`.
+- Nếu page và metadata cần cùng data source, dùng shared fetch helper hoặc React `cache()` để tránh duplicate fetch.
+- File-based metadata bootstrap nên có:
+  - favicon
+  - root OG image
+  - robots
+  - sitemap
+
+### Build/runtime baseline
+
+- `next dev`, `next build`, `next start` không cần thêm `--turbopack` ở Next 16.
+- Nếu repo có custom `webpack` config thật, phải quyết định rõ giữ Webpack hay migrate sang Turbopack; không để config ngầm làm build fail bất ngờ.
+- Baseline toolchain cho `apps/web`:
+  - Node.js `20.9+`
+  - TypeScript `5.1+`
+
 ### Data fetching strategy
 
 ```
@@ -168,6 +315,64 @@ Client Component (khi cần interactivity)
   → Dùng cho: practice sheets, forms, real-time interactions
 ```
 
+### Fetch placement rules
+
+- Ưu tiên fetch ở component thực sự cần data; không prop-drill chỉ để “gom fetch về một chỗ”.
+- Read-heavy, SEO-critical, stable surfaces ưu tiên Server Components.
+- Client fetch chỉ dùng khi cần interactivity dài sống ở client:
+  - optimistic state
+  - refetch theo user event
+  - polling/realtime-like UX
+  - form/session-bound client islands
+- Trong cùng một server tree, identical `fetch()` requests được memoize; không viết wrapper phức tạp chỉ để né duplicate fetch khi built-in đã đủ.
+- Trong cùng một component, tránh `await` tuần tự nếu requests không phụ thuộc nhau; khởi động song song rồi `Promise.all()` hoặc `Promise.allSettled()` theo lane.
+- Layout không được ôm uncached/runtime fetch nặng nếu có thể chuyển xuống `page.tsx` hoặc boundary con có `Suspense`.
+- Nếu cần stream data sang client qua React `use()`, chỉ dùng cho client island đã có `Suspense` boundary rõ.
+
+### Server/client boundary rules
+
+- `apps/web` mặc định server-first; chỉ mở `'use client'` ở entry nhỏ nhất thật sự cần interactivity.
+- Không biến whole route tree thành client chỉ vì:
+  - active nav
+  - small toggle
+  - one form field
+- Client Components chỉ nhận props serializable từ Server Components.
+- Server Actions dùng `'use server'` như transport/helper layer:
+  - validate input
+  - kiểm tra auth/authz phía server
+  - trả về shape hẹp cho UI
+- Business authority vẫn ở `apps/api`; không đặt canonical domain logic vào Server Actions của web tier.
+- Cached reads dùng `'use cache'` phải tránh request-time APIs trong cached scope; đọc runtime values bên ngoài rồi truyền vào như arguments.
+
+### Server Action mutation rules
+
+- Server Actions phải được coi là reachable qua direct `POST`, không được giả định “chỉ UI nội bộ mới gọi được”.
+- Page-level auth check không tự bảo vệ action bên trong page đó; action phải tự re-check auth/authz.
+- Mọi input từ client đều là untrusted:
+  - `FormData`
+  - `params`
+  - `searchParams`
+  - headers
+  - hidden inputs
+- Mutation writes nên delegate vào server-only DAL hoặc typed server helper thay vì để DB logic nằm trực tiếp trong UI file.
+- Return value của action phải hẹp và client-safe; không return raw DB row nếu UI không cần.
+- Không làm mutation như side-effect trong render path; logout/write/cache invalidation phải đi qua action hoặc handler rõ ràng.
+- Nếu action cần redirect sau submit:
+  - dùng `redirect()` cho success flow thường
+  - dùng `permanentRedirect()` chỉ khi canonical URL của entity đã đổi thật
+
+### Data security stance
+
+- Server-only modules phải ở server layer và được bảo vệ bằng `server-only` khi phù hợp.
+- Không import DB client, secrets, internal API credentials vào code có khả năng vào client bundle.
+- `NEXT_PUBLIC_*` là public-by-definition; không nhét config nhạy cảm vào prefix này.
+- PMTL ưu tiên Data Access Layer cho read lẫn write lanes để gom:
+  - auth
+  - authz
+  - ownership checks
+  - narrow DTO return shape
+- Với resource mutations, phải check ownership/permission cụ thể; không dừng ở “đã đăng nhập”.
+
 ### Next.js 16 rules cần tận dụng
 
 - Bật `cacheComponents: true` trong `next.config.ts` cho `apps/web`
@@ -177,6 +382,133 @@ Client Component (khi cần interactivity)
 - `use cache: remote` không bật ở phase 1; chỉ xem xét khi default runtime cache không đủ và đã có measured pain / cost justification
 - `use cache: private` không dùng làm mặc định; chỉ dùng khi có compliance/runtime requirement thật sự không thể refactor
 - Tooling/debugging nên ưu tiên Next.js DevTools + MCP workflow khi team cần inspect App Router behavior thay vì tự phát minh debug flow riêng
+- `revalidateTag()` phải dùng form 2 arguments; mặc định dùng `revalidateTag(tag, 'max')`
+- `updateTag()` chỉ dùng trong Server Actions cho read-your-own-writes
+- `refresh()` chỉ là Server Action UI helper, không phải domain invalidation primitive
+- semantics chi tiết của `cacheTag`, `cacheLife`, `revalidateTag`, `refresh` phải bám `design/tracking/web-cache-revalidation-contract.md`
+
+### Route Handler rules
+
+- Route Handlers không là business authority thay `apps/api`; ở `apps/web` chúng chủ yếu phục vụ:
+  - `/api/proxy/*`
+  - metadata/sitemap-like handlers nếu cần
+  - web-tier integration edges thật sự cần
+- Route Handlers không cache by default; không dựa vào implicit caching assumptions.
+- Nếu có `GET` Route Handler ở web tier, phải ghi rõ:
+  - có cache hay không
+  - owner data source là gì
+  - vì sao không fetch trực tiếp bằng Server Component
+- Không đặt `route.ts` cùng segment level với `page.tsx`.
+- File upload/download/proxy edge cases phải đi qua Route Handler contract rõ ràng, không gọi direct internal host từ browser.
+
+### Redirect rules
+
+- `redirect()` là mặc định cho auth redirect, post-submit redirect, và member guard flows.
+- Trong Server Actions, `redirect()` trả `303`; đây là lane chuẩn cho submit-success.
+- `permanentRedirect()` chỉ dùng khi canonical destination đã đổi bền vững, ví dụ slug/username đổi.
+- Conditional incoming-request redirects ở network boundary thuộc `proxy.ts`, không nhét vào component tree.
+
+### Streaming rules
+
+- Streaming là baseline capability của `apps/web`, nhưng phải dùng có chủ đích.
+- `loading.tsx` dùng cho page-level streaming khi cả segment cần shell/fallback rõ.
+- `<Suspense>` dùng cho granular streaming theo section khi page có static shell meaningful và nhiều async lanes độc lập.
+- Mỗi `<Suspense>` boundary là một streaming point và hydration unit; không gộp nhiều vùng chậm vào một boundary nếu chúng không phụ thuộc nhau.
+- Layout, nav, static shell phải lên trước; personalized/slow/member aggregates stream vào sau.
+- Nếu runtime access nằm trong layout, phải bọc `Suspense` riêng hoặc đẩy xuống page/child section; không để layout chặn cả route.
+- Streaming không dùng để che kiến trúc fetch tệ; vẫn phải tối ưu parallel fetch và boundary placement trước.
+
+### Prefetch rules
+
+- Giữ mặc định prefetch của `next/link` cho phần lớn link P0/P1.
+- Chỉ custom prefetch khi có lý do rõ về resource cost hoặc UX intent.
+- Có thể tắt prefetch cho link giá trị thấp như footer/legal/deep rarely-used routes.
+- Hover/manual prefetch chỉ dùng cho high-intent navigation như CTA card, dashboard shortcut, hoặc route nặng cần warm trước.
+- Không đặt side-effects trong layout/page render path vì prefetch có thể kích hoạt chúng trước visit thật.
+- Khi custom `Link` behavior, team phải tự chịu cache invalidation, accessibility, và maintenance complexity; đây không là baseline.
+
+### BFF / proxy stance
+
+- `apps/web` có thể đóng vai `Backend for Frontend`, nhưng chỉ ở lớp web-facing boundary:
+  - proxy route
+  - metadata/file/content-type endpoints thật sự cần
+  - server helper for web UX
+- Điều này không làm `apps/web` thành backend authority.
+- `apps/api` vẫn là owner cho:
+  - business logic
+  - auth policy
+  - domain validation authority
+  - write correctness
+- Public endpoints ở web tier phải được coi là public HTTP surface và audit như public surface thật.
+
+### Environment variable rules
+
+- `.env*` của Next phải nằm ở project root của `apps/web`, không nằm trong `src/`.
+- Server-only env đọc trực tiếp ở server lanes:
+  - Server Components
+  - Route Handlers
+  - Server Actions
+  - server-only modules
+- Chỉ biến có prefix `NEXT_PUBLIC_` mới được coi là client-visible.
+- `NEXT_PUBLIC_*` bị inline tại build time; không dùng chúng cho runtime-varying secrets/config cần đổi theo environment sau build.
+- Nếu client cần runtime config thật, cung cấp qua server/API/bootstrap contract riêng; không lạm dụng `NEXT_PUBLIC_*`.
+- Nếu cần load env ngoài Next runtime như test setup hoặc ORM/tooling config, dùng `@next/env`.
+
+### Forms with Server Actions
+
+- PMTL vẫn khóa form stack UI là `react-hook-form + zod`, nhưng Server Actions được phép làm submit transport khi flow phù hợp.
+- Khi dùng `<form action={serverAction}>`:
+  - action luôn nhận `FormData`
+  - action phải tự auth/authz lại
+  - parse/validate `FormData` về schema typed trước khi mutate
+- Không vì dùng Server Action form mà bỏ RHF/Zod client-side UX contract.
+- Form success flow phải chốt rõ:
+  - inline success
+  - redirect
+  - `updateTag()` / `revalidateTag()`
+  - có cần `refresh()` hay không
+
+### Preserving UI state rules
+
+- Với `cacheComponents: true`, `apps/web` mặc định hưởng preserved UI state across navigations.
+- Không coi mọi preserved state là đúng UX; phải phân loại:
+  - `keep`: filters panel, draft inputs, expanded sidebars, long-lived user setup state
+  - `reset`: dropdowns, transient popovers, ephemeral dialogs, one-shot success/error banners
+- Search/filter/member-shell surfaces được phép tận dụng preserved form/input/scroll state như baseline UX tốt.
+- Các state gắn với current user phải reset khi user identity đổi; không để draft/user-local state của user A lộ sang user B.
+- Logout hard reset ưu tiên full reload semantics nếu cần xóa sạch client-side state.
+- Nếu một interaction phải reset khi page bị hide bởi Activity:
+  - cleanup trong `useLayoutEffect`
+  - hoặc derive state từ URL/search params khi phù hợp
+- Không dùng preserved UI state để né việc thiết kế canonical URL/filter state cho search/member routes.
+
+### Lazy loading rules
+
+- Server Components đã được code-split tự nhiên theo route; lazy loading chủ yếu áp dụng cho Client Components và external libraries.
+- Chỉ lazy-load khi có lý do bundle/interaction rõ:
+  - modal/drawer hiếm mở
+  - rich editor
+  - media/player utilities
+  - fuzzy search lib
+  - admin-ish heavy widgets nếu sau này vào web
+- Không lạm dụng `dynamic()` cho component nhỏ, thường trực, hoặc above-the-fold.
+- `ssr: false` chỉ là ngoại lệ cho browser-only component; không dùng như escape hatch mặc định.
+- Dynamic import từ Server Component không cho full client code-splitting semantics như nhiều người tưởng; nếu cần thật, đẩy boundary vào Client Component đúng chỗ.
+
+### Production / self-host stance
+
+- PMTL `apps/web` target deployment là Node.js server hoặc Docker container, không phải static export baseline.
+- Lý do:
+  - dùng App Router server features
+  - dùng `proxy.ts`
+  - dùng Server Actions
+  - dùng Cache Components / streaming / route handlers
+- Reverse proxy ở phía trước Next.js là mặc định kiến trúc khi self-host.
+- Khi chạy nhiều instances:
+  - phải có build identity ổn định
+  - phải có strategy cho shared cache nếu cần consistency cross-instance
+  - phải có `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` đồng nhất giữa instances
+- Không assume preserved Activity state sẽ sống qua hard reload hoặc version-skew reload; state quan trọng phải có URL/local persistence strategy riêng nếu thật sự cần.
 
 Ví dụ sai:
 - dùng `after()` để append `audit_logs` cho write-path
@@ -256,6 +588,10 @@ Client state (UI only):
 - List/search/feed phải ưu tiên `useInfiniteQuery()` với cursor contract; không default offset pagination cho community/search nếu route có thể scroll dài
 - `queryFn` phải tôn trọng `AbortSignal` để cancellation hoạt động đúng khi route đổi nhanh
 - Mutation invalidation phải đi qua query key factory dùng chung; không hardcode query key string rải rác
+- `apps/web` query key family và invalidation canon phải bám `design/tracking/web-query-invalidation-plan.md`
+- Query key ưu tiên array + object-tail pattern để filter/options ổn định và dễ mở rộng; không trải primitives theo thứ tự khó nhớ
+- Nếu mutation làm đổi public cached surface, ngoài client invalidation còn phải đi qua `revalidateTag()` / `revalidatePath()` owner theo `design/baseline/cache-topology.md`
+- Không dùng `useSuspenseQuery()` cho lane cần cancellation-sensitive behavior như typeahead/filter đổi nhanh
 
 ### Motion v12 rules
 

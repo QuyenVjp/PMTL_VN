@@ -26,6 +26,16 @@
         "apps/web"
       ]
     },
+    "context7": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
     "playwright": {
       "type": "stdio",
       "command": "cmd",
@@ -34,6 +44,27 @@
         "npx",
         "-y",
         "@playwright/mcp@latest"
+      ]
+    },
+    "next-devtools": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "next-devtools-mcp@latest"
+      ]
+    },
+    "docker-mcp": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "mcp",
+        "gateway",
+        "run",
+        "--transport",
+        "stdio"
       ]
     },
     "postgres-pmtl": {
