@@ -34,6 +34,13 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
      - `approvalStatus`
      - `isHidden`
    - `moderationReports` vẫn là canonical source of truth; summary fields là optional read-model/cache layer, không bắt buộc tồn tại trên mọi entity
+   - nếu target entity có summary fields thì trigger sync tối thiểu phải rõ như sau:
+     - sau `report create`: cập nhật `reportCount`, `lastReportReason`, `lastReportAt`
+     - sau `decision = hidden`: cập nhật thêm `moderationStatus`, `isHidden`, `approvalStatus` nếu surface dùng
+     - sau `decision = approved/rejected/flagged`: cập nhật summary theo decision cuối và giữ `reportCount`
+     - sau `restore/unhide`: recompute summary từ `moderationReports`, không patch tay vài field lẻ
+     - sau `target delete/tombstone`: report records vẫn giữ canonical history; summary sync phải chuyển target sang trạng thái `target_removed` hoặc equivalent tombstone state nếu module owner hỗ trợ
+   - nếu sync inline thất bại nhưng canonical `moderationReports` đã commit, recovery path chuẩn là `recompute-summary`, không rollback lịch sử report chỉ vì summary layer lỗi
 3. Async alerts (cảnh báo bất đồng bộ):
    - **Phase 2+**: admin alert hoặc user outcome notification quan trọng phải đi qua `outbox_events`. **Phase 1**: sync hoặc fire-and-forget có log intent + log outcome + retry/alert/manual-recovery path rõ.
 4. Validation (kiểm tra đầu vào):
@@ -68,3 +75,4 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 - không expose moderation note nội bộ hoặc reporter identity nhạy cảm ra community/public route
 - outcome notification là downstream side-effect, không phải primary decision record
 - khi summary bị drift, recovery path chuẩn là recompute từ `moderationReports`
+- implementation không được để mỗi target entity tự nghĩ trigger summary riêng; semantics ở trên là baseline chung, entity-specific extension chỉ được phép bổ sung chứ không được mâu thuẫn

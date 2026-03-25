@@ -165,3 +165,11 @@ Member có thể:
 - audit append là **bắt buộc trong cùng transaction** — không phải async fire-and-forget
 - admin không được gọi endpoint này để sửa record cũ — chỉ tạo mới
 - member correction phải tạo entry mới link về gốc, không overwrite `isAssistedEntry` flag
+
+## Canonical write-path refs
+
+- `use-cases/create-assisted-life-release-entry.md`
+- `use-cases/create-assisted-vow-progress-entry.md`
+
+Hai use-case này là write-path owner cụ thể.
+File hiện tại chỉ chốt policy chung cho assisted-entry, không thay thế action-level use-case docs.

@@ -23,6 +23,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 ## Ownership rules by pattern
 
 - `overview/*.md` là tài liệu orientation (định hướng đọc) và summary (tóm tắt), không phải nơi chốt policy mới.
+- canonical path cho bản đồ luồng dữ liệu là `overview/system-data-flow-map.md`; không tạo thêm root-level alias song song.
 - `NN-domain/decisions.md` là canonical decision owner trong boundary của domain đó. Nếu mâu thuẫn với `DECISIONS.md`, `DECISIONS.md` thắng và file domain phải được sửa lại.
 - `NN-domain/module-map.md` là owner cho module boundaries, responsibilities, và inbound/outbound interactions của domain đó.
 - `NN-domain/contracts.md` là owner cho contract mức domain: route groups, DTO shapes mức design, error mapping, invariants.
@@ -34,6 +35,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 
 | File | Vai trò duy nhất | Được phép chứa | Không được làm |
 |---|---|---|---|
+| `ROOT_DOC_OWNERSHIP.md` | ownership registry owner | precedence rules, root-file roles, anti-duplication guardrails | không tự phát minh policy domain thay owner docs |
 | `README.md` | mục lục + cách đọc | read order, launch scope, pointer | không lặp lại full policy |
 | `DECISIONS.md` | canonical decision baseline | current direction, phase baseline, source-of-truth rules, anti-goals | không thay security/nest/detail owner files |
 | `baseline/repo-structure.md` | folder/file placement owner | repo shape, module anatomy, placement rules | không lặp full security/infra policy |
@@ -62,6 +64,8 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `tracking/admin-feature-query-plan.md` | admin query/mutation factory owner | feature folder -> query keys -> query exports -> mutation exports -> invalidation graph | không thay API canon hay visual IA |
 | `tracking/api-dto-shape-plan.md` | scaffold DTO picks owner | field-level response/request profile picks cho route families dễ drift | không thay domain contract detail một mình |
 | `tracking/page-loader-contracts.md` | page-level loader owner | page data requirements, aggregate-vs-aux loader split, grouped-page fetch discipline | không thay route canon hay UI journey |
+| `tracking/design-doc-residual-backlog.md` | residual doc-debt backlog owner | non-blocking cleanup items, generic contract gaps, wording refresh queue sau authority audit | không là policy owner hay implementation truth owner |
+| `tracking/scaffold-gap-report.md` | scaffold drift checkpoint owner | cross-check gaps còn lại giữa page inventory, route canon, use-case family, và scaffold risk notes | không là route canon owner hay readiness truth owner |
 | `tracking/env-inventory.md` | env inventory owner | env names, scope, required/optional, owner app | không lặp full deploy steps |
 | `tracking/error-code-registry.md` | error code owner | canonical error codes and meanings | không lặp route contracts |
 | `baseline/migration-strategy.md` | DB/schema evolution owner | naming, rollout, rollback, seed rules | không lặp infra topology |
@@ -74,6 +78,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `overview/architecture-at-a-glance.md` | 1-minute architecture orientation owner | entrypoint tóm tắt đúng current direction | không chốt rule mới thay owner docs |
 | `overview/domain-map.md` | domain index owner | domain grouping, quick pointers | không override module ownership |
 | `overview/execution-map.md` | execution-path orientation owner | read order, implementation orientation, cross-link map | không thay implementation truth |
+| `overview/system-data-flow-map.md` | cross-module data-flow walkthrough owner | request -> read -> write -> side-effect walkthrough bằng ngôn ngữ đời thường cho 11 modules | không override module contracts, route canon, hay ownership rules |
 | `overview/phase-activation-matrix.md` | phase activation summary owner | phase summary, activation checklist tóm tắt | không thay decision trigger gốc |
 | `overview/roadmap.md` | roadmap summary owner | planning narrative, sequencing note | không đổi launch blocker semantics |
 | `seo-geo/strategy.md` | SEO/GEO strategy owner | URL strategy, robots.txt canonical disallow list, sitemap structure, canonical/hreflang posture, CWV targets | không thay route canon nếu `ui/PAGE_INVENTORY.md` đã chốt |
@@ -84,6 +89,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `baseline/writing-standards.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
 | `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |
 | `deep-research-report.md` | research appendix owner | research notes, source synthesis, rationale backlog | không là canonical policy owner nếu chưa được promote sang owner file |
+| `glossary.json` | glossary data asset owner | canonical key/value glossary dataset dùng cho tooling hoặc export | không là policy owner hay nơi viết luật bằng prose |
 | `SVG_PRECISION_WORKFLOW.md` | deterministic SVG workflow owner | SVG asset generation rules, output discipline | không là launch gate hay route owner |
 | `ui/LANDING_PAGE_DESIGN.md` | landing page visual spec owner | 7 sections layout, typography, interaction, animation, SEO, performance targets | không là route owner; route authority vẫn là PAGE_INVENTORY.md |
 | `ui/HOMEPAGE_CONSTITUTION.md` | homepage intent/spec owner | homepage content hierarchy, narrative, section obligations | không override route canon hay landing visual rules |

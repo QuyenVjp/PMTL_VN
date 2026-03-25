@@ -1,12 +1,7 @@
 # API_DTO_SHAPE_PLAN
 
-File này chốt `field picks` mức scaffold cho DTO response/request ở các surface dễ bị code tay theo cảm tính.
-
-Mục tiêu:
-
-- giảm guesswork khi scaffold `apps/api`
-- buộc controller/query layer không tự bịa `select` shape
-- làm cầu nối giữa `contracts.md`, `api-route-inventory.md`, và admin/page specs
+File này chốt DTO field picks mức scaffold cho các route family dễ bị code tay theo cảm tính.
+Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping; không thay domain contract detail.
 
 > Route canon: `tracking/api-route-inventory.md`
 > Admin mapping: `tracking/admin-page-api-mapping.md`
@@ -21,6 +16,87 @@ Mục tiêu:
 - Không trả raw DB columns không có nghĩa ở client.
 - `internal ids`, checksum thô, secret flags, moderation internals không được lộ vào public DTO.
 - Nếu route chưa có row ở file này, controller không được tự chọn field theo cảm tính; phải bổ sung owner row trước.
+
+## Projection safety baseline
+
+### Safe projection (projection an toàn) mặc định được phép
+
+- canonical public identity:
+  - `publicId`
+  - `slug`
+- human-readable labels:
+  - `title`
+  - `summary`
+  - `statusLabel`
+- public timestamps:
+  - `publishedAt`
+  - `updatedAt`
+- rendered/derived summaries:
+  - `excerpt`
+  - `highlight`
+  - `targetPreview`
+  - `actorSummary`
+
+### Unsafe projection (projection không an toàn) mặc định bị cấm
+
+- DB-only identity:
+  - raw numeric id
+  - internal UUID không public hóa
+- raw internals:
+  - unsanitized HTML
+  - raw storage row
+  - raw queue payload
+  - raw Meilisearch payload
+- security-sensitive fields:
+  - token
+  - refresh/session secret
+  - checksum thô
+  - secret flag
+  - raw IP / device fingerprint
+- moderation/abuse internals:
+  - raw reporter notes
+  - internal abuse heuristics
+  - hidden review comments chưa qua allowlist
+
+### Projection owner rule
+
+- nếu UI chỉ cần hiển thị, backend phải trả `summary projection`, không đẩy raw nested row để client tự map.
+- `availableActions[]`, `decisionOptions[]`, `lockedReason`, `visibilityStatus` là backend-owned policy projections.
+- bất kỳ field nào cần sanitize/allowlist đều phải được chốt ở DTO owner row hoặc projection notes; không để controller tự quyết ở lúc scaffold.
+
+## Pagination / filter / facet baseline
+
+### Pagination defaults
+
+- nếu route family chưa có lý do mạnh để dùng cursor, phải nói rõ đang dùng `offset`.
+- nếu route family là member list hoặc sync-heavy list, ưu tiên `cursor`.
+- pagination semantics là owner decision của route family; không được đổi giữa controller và web.
+
+### Offset shape (hình dạng offset)
+
+- `limit`
+- `offset`
+- `hasMore`
+- `totalApproximate?`
+
+### Cursor shape (hình dạng cursor)
+
+- `cursor?`
+- `nextCursor?`
+- `pageSize`
+- `hasMore`
+
+### Filter / facet rule
+
+- `appliedFilters` chỉ echo những filter canon được route owner cho phép; không echo hidden filter nội bộ.
+- `filterFacets` là safe projections để render UI filter:
+  - `key`
+  - `label`
+  - `options[]`
+  - `optionCount?`
+  - `selectionMode`
+- admin filter rows và public filter rows có thể khác nhau, nhưng phải giữ cùng vocabulary nếu cùng nói về một dimension.
+- client không được tự đếm `tabCounts` hoặc tự derive facet options từ raw list nếu DTO aggregate đã có field owner.
 
 ## Route family picks
 
@@ -236,6 +312,10 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `drawer_note`
   - `reference_only_note`
   - `do_not_automate`
+- nếu `productizationMode = do_not_automate` thì:
+  - `referenceOnly` phải là `true`
+  - UI chỉ được render note/caution tĩnh
+  - route/service không được trả thêm field gợi ý calculator hay interpretation helper
 - `referenceOnly = true` là bắt buộc cho:
   - ánh sáng
   - giấc mơ / con số
@@ -477,6 +557,12 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `wisdom_hub`
   - `qa_hub`
 - `engine` phải echo actual retrieval engine để hub/search UI không đoán.
+- `pagination` của `WisdomHubDto` mặc định dùng `offset` cho phase hiện tại:
+  - `limit`
+  - `offset`
+  - `hasMore`
+  - `totalApproximate?`
+- nếu sau này muốn đổi sang `cursor`, phải cập nhật cả row route family và page-loader owner tương ứng; không đổi lặng lẽ ở controller.
 
 ### `OfflineBundleListPageDto`
 

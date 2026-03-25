@@ -40,6 +40,27 @@ Tài liệu này chốt data contract (hợp đồng dữ liệu) và business c
 5. Versioning (phiên bản hóa):
    - search payload nên có version metadata khi projection schema thay đổi.
 
+## Search eligibility rule (Quy tắc đủ điều kiện vào search)
+
+Document chỉ được phép xuất hiện trong public search nếu đồng thời thỏa:
+
+- canonical source đang `published`
+- canonical source chưa bị soft-delete/tombstone
+- canonical source không bị moderation hide khỏi public surface
+- route public của source đó vẫn còn canon trong `PAGE_INVENTORY`
+
+Giải thích:
+
+- `published` một mình không đủ nếu entity đã bị `isHidden = true` hoặc `moderationStatus` khiến surface công khai không còn hợp lệ.
+- `flagged` không tự động loại khỏi search trừ khi policy của source module map nó thành hidden/non-public.
+- search projection phải coi moderation-aware visibility là input read-model từ owner module; search không tự phát minh policy mới.
+
+Reindex/delete semantics:
+
+- khi source chuyển từ public -> non-public vì moderation hide hoặc unpublish, search phải emit delete/deactivate cho index document
+- khi source được restore và public lại, search chỉ re-activate sau khi owner module xác nhận visibility đã hợp lệ
+- fallback `sql-api` phải áp cùng visibility rule; không được để fallback lộ document mà Meilisearch path đã ẩn
+
 ## Unified wisdom retrieval rule (Quy tắc truy xuất trí huệ hợp nhất)
 
 Search có thể aggregate result (tổng hợp kết quả) từ:
@@ -147,3 +168,4 @@ Status route nên báo:
 - Không dùng search index như authority cho publish status
 - Nếu worker crash, recovery phải hỗ trợ replay/reindex; partial sync không được đánh dấu hoàn tất
 - `pgvector` là optional capability (khả năng tùy chọn), không thay vai trò chính của Meilisearch
+- search visibility phải được tính từ `publish + moderation-aware public eligibility`, không chỉ từ `publishedAt`.

@@ -7,23 +7,28 @@ Nó trả lời câu hỏi:
 - mỗi module có canonical write-path nào quan trọng nhất
 - route nào chỉ là BFF/proxy, route nào gắn với business owner
 
+> Đây là `orientation map (bản đồ định hướng đọc)`.
+> Các bullet `hãy nhớ` ở dưới chỉ là memory aid (gợi nhớ nhanh), không thay owner docs của từng module hoặc baseline doc chuyên biệt.
+
 ## Cách đọc nhanh
 
 1. Đọc `DECISIONS.md`
 2. Đọc `tracking/module-interactions.md`
-3. Đọc `overview/terminology.md`
-4. Đọc `overview/source-analysis.md`
-5. Nếu làm lane source-backed của `10-wisdom-qa`, đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
-6. Nếu làm lane ingest/editor của `10-wisdom-qa`, đọc `10-wisdom-qa/INGESTION_PLAN.md`
-7. Đọc `ui/ELDERLY_UX.md`
-8. Đọc `tracking/audit-policy.md`
-9. Đọc `baseline/sla-slo.md`
-10. Đọc `baseline/security.md`
-11. Đọc `baseline/failure-modes.md`
-12. Đọc `baseline/writing-standards.md`
-13. Chọn module owner bên dưới
-14. Mở `contracts.md` của module đó
-15. Mở file trong `use-cases/` tương ứng
+3. Đọc `overview/system-data-flow-map.md`
+4. Đọc `overview/terminology.md`
+5. Đọc `overview/source-analysis.md`
+6. Nếu chuẩn bị scaffold rộng, đọc thêm `tracking/scaffold-gap-report.md`
+7. Nếu làm lane source-backed của `10-wisdom-qa`, đọc `10-wisdom-qa/SOURCE_PROVENANCE_MATRIX.md`
+8. Nếu làm lane ingest/editor của `10-wisdom-qa`, đọc `10-wisdom-qa/INGESTION_PLAN.md`
+9. Đọc `ui/ELDERLY_UX.md`
+10. Đọc `tracking/audit-policy.md`
+11. Đọc `baseline/sla-slo.md`
+12. Đọc `baseline/security.md`
+13. Đọc `baseline/failure-modes.md`
+14. Đọc `baseline/writing-standards.md`
+15. Chọn module owner bên dưới
+16. Mở `contracts.md` của module đó
+17. Mở file trong `use-cases/` tương ứng
 
 ## Theo module
 

@@ -194,3 +194,15 @@ Nên tách thành:
   - `link gốc`
   - `ảnh nguồn`
   - `review status (trạng thái kiểm duyệt)`
+
+## Example ref
+
+- `examples/shuohua20140808-08-56.md`
+
+Example này là sample source-backed mapping để kiểm tra matrix hiện tại có đủ sức giữ:
+- bài gốc
+- bản dịch
+- source code/timestamp
+- practice rule extraction
+
+Nó không được thay quyền owner của file này hay của `contracts.md`.

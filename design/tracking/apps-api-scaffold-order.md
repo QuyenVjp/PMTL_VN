@@ -270,7 +270,7 @@ platform/rate-limit/
 
 - để `identity` tự giữ toàn bộ session persistence
 - audit fire-and-forget cho write-path
-- rate-limit làm “TODO” vì nghĩ phase 1 chưa cần
+- rate-limit bị đẩy thành việc để sau chỉ vì nghĩ phase 1 chưa cần
 
 ---
 

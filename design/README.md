@@ -25,7 +25,10 @@ Nó không phải bằng chứng rằng runtime (môi trường thực thi) đã
 - `implementation-ready`: artifact runtime dự kiến và owner code path đã được map đủ cụ thể
 - `launch-ready`: launch blockers thật đã pass, gồm runtime evidence như restore drill
 
-Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
+Các dòng trên chỉ là `quick orientation (định hướng đọc nhanh)`.
+Owner của implementation/readiness truth vẫn là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md); nếu wording ở README và owner doc khác nhau thì owner doc thắng.
+
+`design-ready` nghĩa là design đã đủ rõ, không có nghĩa code/runtime đã tồn tại. Runtime truth luôn đọc ở [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md).
 
 ## First-launch scope (Phạm vi ra mắt lần đầu)
 
@@ -115,71 +118,73 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 2. [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ROOT_DOC_OWNERSHIP.md)
 3. [domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/domain-map.md)
 4. [execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/execution-map.md)
-5. [architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/architecture-principles.md)
-6. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/repo-structure.md)
-7. [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/platform-modules.md)
-8. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
-9. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nestjs-11-adoption.md)
-10. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
-11. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
-12. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/high-traffic-resilience-plan.md)
-13. [ai-debugging-discipline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/ai-debugging-discipline.md)
-14. [managed-platform-patterns.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/managed-platform-patterns.md)
-15. [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/external-web-check-readiness.md)
-16. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
-17. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
-18. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
-19. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
-20. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
-21. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
-22. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
-23. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-page-api-mapping.md)
-24. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/dependency-governance.md)
-25. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
-26. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
-27. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
-28. [apps-admin-scaffold-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-admin-scaffold-backlog.md)
-29. [admin-feature-query-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-feature-query-plan.md)
-30. [api-dto-shape-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-dto-shape-plan.md)
-31. [page-loader-contracts.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/page-loader-contracts.md)
-32. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
-33. [deploy-record-template.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-record-template.md)
-34. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
-35. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
-36. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md)
-37. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md)
-38. [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md)
-39. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
-40. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
-41. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md)
-42. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
-43. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
-44. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
-45. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
-46. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_PRACTICE_CONSTITUTION.md)
-47. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
-48. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
-49. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
-50. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
-51. [luc-trai-days-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/luc-trai-days-canon.md)
-52. [manual-translation-editor-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/manual-translation-editor-workflow.md)
-53. [translation-automation-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/translation-automation-architecture.md)
-54. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
-55. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
-56. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
-57. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
-58. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
-59. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
-60. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
-61. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
-62. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
-63. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
-64. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
-65. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
-66. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
-67. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
-68. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
-69. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
+5. [system-data-flow-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/system-data-flow-map.md)
+6. [architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/architecture-principles.md)
+7. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/repo-structure.md)
+8. [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/platform-modules.md)
+9. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nest-baseline.md)
+10. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/nestjs-11-adoption.md)
+11. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/security.md)
+12. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/infra.md)
+13. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/high-traffic-resilience-plan.md)
+14. [ai-debugging-discipline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/ai-debugging-discipline.md)
+15. [managed-platform-patterns.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/managed-platform-patterns.md)
+16. [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/external-web-check-readiness.md)
+17. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/servercn-design-reference.md)
+18. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md)
+19. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/source-analysis.md)
+20. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/writing-standards.md)
+21. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-route-inventory.md)
+22. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/env-inventory.md)
+23. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/error-code-registry.md)
+24. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-page-api-mapping.md)
+25. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/dependency-governance.md)
+26. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/migration-strategy.md)
+27. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/testing-strategy.md)
+28. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/frontend-architecture.md)
+29. [apps-admin-scaffold-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-admin-scaffold-backlog.md)
+30. [admin-feature-query-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/admin-feature-query-plan.md)
+31. [api-dto-shape-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/api-dto-shape-plan.md)
+32. [page-loader-contracts.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/page-loader-contracts.md)
+33. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-runbook.md)
+34. [deploy-record-template.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/deploy-record-template.md)
+35. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/backup-restore.md)
+36. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/implementation-mapping.md)
+37. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/startup-dependency-order.md)
+38. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/outbox-event-taxonomy.md)
+39. [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/apps-api-scaffold-order.md)
+40. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/restore-drill-log.md)
+41. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/DESIGN_PRINCIPLES.md)
+42. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_ARCHITECTURE.md)
+43. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/coding-readiness.md)
+44. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/prisma-schema-plan.md)
+45. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ELDERLY_UX.md)
+46. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md)
+47. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/CORE_PRACTICE_CONSTITUTION.md)
+48. [scaffold-gap-report.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/scaffold-gap-report.md)
+49. [ui/LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/LANDING_PAGE_DESIGN.md)
+50. [ui/SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/SPIRITUAL_APP_SCREENS.md)
+51. [ui/NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/NAVIGATION_ARCHITECTURE.md)
+52. [ui/ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ui/ADMIN_MODULE_SPECS.md)
+53. [luc-trai-days-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/07-calendar/luc-trai-days-canon.md)
+54. [manual-translation-editor-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/manual-translation-editor-workflow.md)
+55. [translation-automation-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/10-wisdom-qa/translation-automation-architecture.md)
+56. [baseline/observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/observability-architecture.md)
+57. [baseline/valkey-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/valkey-architecture.md)
+58. [baseline/bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/bullmq-worker-architecture.md)
+59. [baseline/outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/outbox-dispatcher-model.md)
+60. [06-search/meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/06-search/meilisearch-architecture.md)
+61. [baseline/pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgbouncer-strategy.md)
+62. [baseline/r2-migration-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/r2-migration-plan.md)
+63. [baseline/email-provider-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/email-provider-decision.md)
+64. [baseline/storage-lifecycle.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/storage-lifecycle.md)
+65. [baseline/cache-topology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cache-topology.md)
+66. [baseline/secret-management.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/secret-management.md)
+67. [baseline/cicd-deploy-gates.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/cicd-deploy-gates.md)
+68. [baseline/waf-antibot-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/waf-antibot-strategy.md)
+69. [baseline/pgvector-decision.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/baseline/pgvector-decision.md)
+70. [08-notification/push-notification-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/08-notification/push-notification-architecture.md)
+71. [ops/health-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/ops/health-contract.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -254,6 +259,17 @@ Không được dùng `design-ready` để ám chỉ runtime đã tồn tại.
 | [content-cluster-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/content-cluster-map.md) | Cluster map cho pillar/cluster content theo surface chính |
 | [little-house-seo.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/seo-geo/little-house-seo.md) | SEO chuyên biệt cho surface `Ngôi Nhà Nhỏ` |
 
+### System Orientation
+| File | Nội dung |
+|---|---|
+| [system-data-flow-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/system-data-flow-map.md) | Bản đồ request -> module đọc -> module ghi -> side effect cho toàn bộ 11 module, viết theo kiểu đời thường nhưng giữ thuật ngữ kỹ thuật |
+
+### Residual Cleanup
+| File | Nội dung |
+|---|---|
+| [design-doc-residual-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/design-doc-residual-backlog.md) | Các gap generic/non-blocking còn lại sau authority audit: acceptance criteria, pagination contract, DTO projection safety, wording refresh |
+| [scaffold-gap-report.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/scaffold-gap-report.md) | Cross-check các gap còn lại giữa page inventory, route canon, use-case family, và rủi ro scaffold rộng |
+
 ### UI/UX baseline docs
 | File | Nội dung |
 |---|---|
@@ -271,6 +287,12 @@ Các visual spec bổ sung như `ui/LANDING_PAGE_DESIGN.md`, `ui/HOMEPAGE_CONSTI
 | File | Nội dung |
 |---|---|
 | [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/SVG_PRECISION_WORKFLOW.md) | Khi nào dùng `svg-precision`, output path nào trong `design/`, và quy tắc spec JSON + SVG + preview |
+
+### Shared terminology & glossary
+| File | Nội dung |
+|---|---|
+| [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/overview/terminology.md) | Thuật ngữ chuẩn dạng `English (Việt)` để overview và owner docs nói cùng một tiếng |
+| [glossary.json](C:/Users/ADMIN/DEV2/PMTL_VN/design/glossary.json) | Dữ liệu glossary chuẩn cho tooling/export; không phải policy prose |
 
 ### Coding readiness
 | File | Nội dung |

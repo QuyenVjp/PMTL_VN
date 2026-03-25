@@ -1060,4 +1060,4 @@ Lý do:
 - không component nào hardcode query key string ngoài feature query files
 - dashboard invalidation dependencies được nối tối thiểu
 - page route -> feature folder -> API group map được 1-1 hoặc 1-n rõ ràng
-- blockers còn lại được ghi rõ, không để “TODO maybe route X”
+- blockers còn lại được ghi rõ, không để kiểu ghi chú mơ hồ như “có thể sau này thêm route X”

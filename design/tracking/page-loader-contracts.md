@@ -1,12 +1,7 @@
 # PAGE_LOADER_CONTRACTS
 
-File này chốt `page-level data requirements` cho các route public/member dễ bị over-fetch hoặc tự chế loader.
-
-Mục tiêu:
-
-- scaffold RSC loaders cho `apps/web` mà không đoán
-- giữ page data shape ổn định giữa `PAGE_INVENTORY`, `USER_FLOWS`, và API layer
-- chặn việc một page tự gọi quá nhiều endpoints không có owner
+File này chốt page-level data requirements cho các route public/member dễ bị over-fetch hoặc tự chế loader.
+Nó là loader owner ở mức page aggregate; không thay route canon, UI journey, hay domain contracts.
 
 > Route canon: `ui/PAGE_INVENTORY.md`
 > User journeys: `ui/USER_FLOWS.md`
@@ -188,6 +183,10 @@ Rules:
 - hub page cần `tabCounts` và `filterFacets` riêng
 - không để client tự quét toàn bộ list rồi đếm
 - response aggregate phải echo `engine` đang dùng để UI/search badge không đoán
+- phase hiện tại dùng `offset pagination` cho 2 hub này; nếu đổi sang cursor phải cập nhật cùng lúc:
+  - `api-dto-shape-plan.md`
+  - file này
+  - route owner trong `api-route-inventory.md`
 
 ### `/tim-kiem`
 
@@ -224,6 +223,11 @@ Rules:
 - các page `member+` phải xác nhận auth state còn hợp lệ trước khi compose aggregate dữ liệu nhạy cảm
 - nếu session hết hạn hoặc permission state stale trước bootstrap, page phải fail về auth path chuẩn thay vì render cached partial member state
 - member page không được render aggregate cũ rồi chờ aux request mới phát hiện `401`
+- auth authority vẫn nằm ở `apps/api`; page loader không tự xác minh session bằng heuristic riêng ở web tier
+- loader chỉ được làm 2 việc:
+  - gọi aggregate route với auth context chuẩn
+  - map `401/403` về redirect hoặc auth state UI canon
+- không cho page component tự cài silent-refresh logic riêng ngoài auth layer owner
 
 ### `/he-thong/health`
 
@@ -281,6 +285,7 @@ Bảng này chốt thêm `execution contract` cho các page P0 để web không 
 
 - Primary aggregate API route phải trả đủ state để page render `loading -> success`, `empty`, `unauthorized`, `invalid-input`, `degraded`.
 - Page loader chỉ map từ aggregate payload/error envelope sang render state; không được gọi thêm request bonus để "hiểu lỗi".
+- Page component chỉ render theo state mà loader đã chuẩn hóa; component không là nơi tự diễn giải `401`, `429`, `engine-fallback`, hay `permission-denied`.
 - Nếu một warning/degraded state chỉ ảnh hưởng 1 section, aggregate payload vẫn phải trả phần còn lại đủ để page render partial success.
 - Nếu page chưa render được chỉ bằng aggregate payload + canonical error envelope, contract hiện tại bị coi là chưa đóng.
 - admin operational pages cũng theo rule này; không dùng extra debug call để tự bù contract còn thiếu.

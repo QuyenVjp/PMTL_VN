@@ -1,17 +1,7 @@
 # ADMIN_PAGE_API_MAPPING
 
-File này là canonical mapping giữa:
-
-- admin page route
-- API route group
-- primary query keys
-- invalidation rules
-
-Mục tiêu:
-
-- scaffold `apps/admin` mà không phải đoán API dependency
-- buộc query keys và invalidation đi cùng page/workspace ownership
-- giảm drift giữa `PAGE_INVENTORY.md`, `ADMIN_ARCHITECTURE.md`, `ADMIN_MODULE_SPECS.md`, và `api-route-inventory.md`
+File này là canonical mapping giữa admin page route, API route group, query keys, và invalidation rules.
+Nó tồn tại để scaffold `apps/admin` mà không phải đoán dependency giữa `PAGE_INVENTORY.md`, `ADMIN_MODULE_SPECS.md`, và `api-route-inventory.md`.
 
 > Page route canon: `design/ui/PAGE_INVENTORY.md`
 > Admin shell/layout: `design/ui/ADMIN_ARCHITECTURE.md`
@@ -32,6 +22,74 @@ Mục tiêu:
   - delete: invalidate list + remove/invalidate detail
   - publish/status change: invalidate list + detail + dashboard/status widgets liên quan
 - Nếu mutation ảnh hưởng public surface, ngoài admin query invalidation còn phải đi qua invalidation owner ở `platform/cache`.
+
+## Role narrowing inside admin surfaces
+
+- `PAGE_INVENTORY.md` giữ page gate ở mức shell:
+  - `admin+`
+  - `super-admin`
+- API route canon mới là nơi chốt action narrowing thực tế như:
+  - `editor+`
+  - `moderator+`
+  - `admin+`
+  - `super-admin`
+- admin page không được suy từ page gate rằng mọi button trên page đều dành cho mọi admin role.
+- mọi action button có risk cao như:
+  - role change
+  - block/unblock
+  - feature flag toggle
+  - publish/unpublish
+  - moderation decision
+  - job redrive
+  phải đi từ backend policy projection hoặc explicit route note, không hardcode ở component.
+
+### Action narrowing matrix shortcut
+
+| Action family | Minimum backend role expectation |
+|---|---|
+| moderation decision / hide / restore | `moderator+` hoặc route owner equivalent |
+| publish / unpublish editorial content | `editor+` hoặc route owner equivalent |
+| role change / feature-flag update / super-sensitive system action | `super-admin` hoặc route owner equivalent |
+| block / unblock user | `admin+` hoặc stricter nếu route owner nói vậy |
+| job redrive / ops retry | `admin+` hoặc stricter nếu route owner nói vậy |
+
+Nếu route canon cụ thể hẹp hơn bảng trên, route canon thắng.
+Nếu page đang ở `admin+` nhưng action route là `super-admin`, workspace phải render disabled/hidden state từ backend policy projection.
+
+## Cross-module invalidation edge rules
+
+- nếu mutation ở admin làm đổi public visibility, phải invalidated cả:
+  - admin workspace keys
+  - public loader/cache owner liên quan
+  - freshness/status widgets nếu chính page đó đang hiển thị chúng
+- nếu mutation chỉ đổi metadata nội bộ, không được broad-invalidate toàn bộ dashboard hay toàn bộ admin shell.
+- invalidation xuyên module phải bám owner thật:
+  - content publish -> content keys + public cache/search freshness
+  - moderation decision -> moderation keys + target surface keys
+  - calendar refresh/override -> calendar keys + advisory preview keys + downstream notification freshness nếu surfaced
+  - notification job redrive -> notification ops keys; không invalidate calendar/content trừ khi page thật sự hiển thị derived candidate từ cùng source
+- nếu một workspace đang dùng child tabs hoặc child aggregates, invalidation phải ưu tiên:
+  - affected child key
+  - parent detail key khi summary đổi
+  - list key khi ordering/filter membership đổi
+
+### Dashboard widget dependency shortcut
+
+`/admin/dashboard` chỉ được invalidate khi mutation làm đổi một trong các aggregate panels owner sau:
+
+- `systemSummary`
+- `pendingModeration`
+- `recentAuditEvents`
+- `contentOpsSummary`
+- `searchOpsSummary`
+
+Ví dụ:
+- content publish/unpublish -> `contentOpsSummary`
+- moderation decision -> `pendingModeration`, có thể kéo `recentAuditEvents`
+- feature-flag update -> `systemSummary`, có thể kéo `recentAuditEvents`
+- search reindex trigger/complete -> `searchOpsSummary`
+
+Không vì một mutation admin bất kỳ mà invalidate root dashboard một cách mặc định.
 
 ## Mapping table
 
@@ -81,6 +139,7 @@ Mục tiêu:
 ## Notes for scaffold
 
 - File này chốt query key family ở mức design. Khi scaffold thật, nên biến chúng thành query key factory ở `apps/admin/src/features/*/queries.ts`.
+- Root dashboard query key canon là `['admin-dashboard']`; không suy từ workspace khác.
 - Nếu một page dùng nhiều tabs trong cùng workspace, ưu tiên key family chung cho workspace rồi tách sub-key theo tab.
 - Đừng invalidate toàn bộ admin cache sau mỗi mutation. Chỉ invalidate workspace bị ảnh hưởng và dashboard/status widgets có dependency thật.
 - Nếu API route group chưa tồn tại đủ chi tiết, đây là dấu hiệu phải quay lại `tracking/api-route-inventory.md` hoặc use-case owner doc trước khi scaffold UI.

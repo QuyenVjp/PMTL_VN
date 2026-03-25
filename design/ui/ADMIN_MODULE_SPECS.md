@@ -8,6 +8,7 @@ Mọi workspace phải có đủ spec trước khi code admin feature tương �
 > **Page routes**: `design/ui/PAGE_INVENTORY.md`
 > **API routes**: `tracking/api-route-inventory.md`
 > **Component specs**: `design/ui/COMPONENT_SPECS.md`
+> **Query keys + invalidation canon**: `tracking/admin-page-api-mapping.md`
 
 ---
 

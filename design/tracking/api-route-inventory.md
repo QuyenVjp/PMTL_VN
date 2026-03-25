@@ -1,13 +1,7 @@
 # API_ROUTE_INVENTORY (Danh mục route API dự kiến)
 
-File này là `inventory (bảng kiểm)` route cho hướng `apps/api`.
-Nó không thay thế `contracts.md` và không thay use-case chi tiết.
-
-Mục tiêu:
-
-- giúp nhìn toàn bộ surface API trong 1 file
-- chặn việc quên route khi scaffold `NestJS`
-- giúp web/admin biết owner module nào cho từng group route
+File này là route inventory canon cho hướng `apps/api`.
+Nó giúp khóa toàn bộ API surface trong 1 file, nhưng không thay `contracts.md` hay use-case owner docs.
 
 ## URL prefix convention
 

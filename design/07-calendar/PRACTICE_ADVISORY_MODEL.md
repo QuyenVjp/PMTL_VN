@@ -212,3 +212,10 @@ Nó là lớp compose từ:
 - Hãy coi `advisory (thông báo hoặc gói hướng dẫn)` là output được compose từ nhiều record nhỏ.
 - Một card hiển thị cho người dùng có thể ngắn, nhưng source-backed data ở dưới phải đầy đủ.
 - Không tạo file design riêng cho mỗi ngày đặc biệt mới nếu model chung vẫn biểu diễn được bằng `dayIdentity + practiceRecommendations + recitationRules + surfacePlan + notificationPlan`.
+
+## Example ref
+
+- `examples/advisory-2026-03-19-mung-1-thang-2-am.md`
+
+Example này chỉ là sample decomposition để kiểm tra model chung có đủ sức biểu diễn advisory thực tế.
+Nó không phải policy owner riêng và không được vượt quyền file này.

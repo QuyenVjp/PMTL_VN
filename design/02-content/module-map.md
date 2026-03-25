@@ -156,6 +156,7 @@ markmap:
 - `chantItems` là owner của bài niệm / chú / script / audio / preview image
 - `chantPlans` là owner của plan công khóa hoặc nghi thức
 - `chanting-environment-rules.md` là canon cho `time/place/environment/body-state` rules dùng chung giữa `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`, và `chanting support`
+- `chanting-support-surface.md` chốt route/display model cho hub `Niệm kinh`, ritual detail, plan detail, và environment-rules surface để FE không biến content support thành 1 cục text dài vô chủ
 - các tài liệu như niệm hằng ngày, thắp tâm hương, phát nguyện, phóng sinh, Ngôi Nhà Nhỏ nên map vào lớp này hoặc vào `downloads` / `beginnerGuides`
 - `practice-support-reference.md` là file nối giữa PDF thực tế và content model
 - `Kinh Bài Tập Hằng Ngày` là first-class content surface:

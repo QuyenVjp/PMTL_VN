@@ -43,6 +43,16 @@
   - optional `guideContextRef`
   - optional `ritualVariantRef`
   - optional `advisoryContextRef`
+  - mọi context ref phải giữ:
+    - `sourcePublicId`
+    - `sourceKind`
+    - `sourceVersion` hoặc `publishedRevision` nếu owner module có versioning
+  - nếu owner source chưa có version number rõ, journal phải snapshot tối thiểu:
+    - `sourceTitle`
+    - `sourceSlug/publicId`
+    - `sourceKind`
+  - source update về sau không được silently rewrite historical journal row; UI có thể báo `sourceUpdated` nhưng canonical journal vẫn giữ snapshot/version lúc tạo
+  - source unpublish/delete không làm journal mất hiệu lực; ref chuyển sang `stale_reference` để recovery/read path xử lý
   - nếu là assisted entry:
     - `ownerUserId`
     - `actorUserId`
@@ -97,6 +107,7 @@ Quy tắc:
 - Assisted entry là support workflow có kiểm soát, không phải quyền cross-user viết bừa.
 - Nếu reminder/progress downstream bị lệch, recovery path phải là replay signal hoặc recompute summary, không sửa tay âm thầm.
 - Admin support UI chỉ là operational surface cho `assisted entry`; canonical owner vẫn là module `vows-merit`.
+- `guideContextRef` / `ritualVariantRef` / `advisoryContextRef` chỉ là companion refs cho UX; không chuyển ritual truth ownership khỏi `02-content` hoặc advisory ownership khỏi `07-calendar`.
 
 - `403`: Forbidden (Unauthorized attempt at cross-user writes).
 - `409`: Conflict (e.g., duplicate active vow of the same type if disallowed).

@@ -34,6 +34,19 @@
 - `member`: full read/write trên dữ liệu của chính mình
 - `admin`: có thể có support access theo policy, nhưng không trở thành owner của workflow cá nhân
 
+### Admin support scope (Phạm vi hỗ trợ của admin)
+
+- `admin` không có blanket quyền đọc/ghi mọi engagement record chỉ vì là admin.
+- Admin support chỉ hợp lệ khi có một trong các lane rõ ràng:
+  - assisted recovery/debug lane đã được mở trong admin workspace tương ứng
+  - member chủ động yêu cầu hỗ trợ qua operational flow được audit
+  - restore/recompute/reconciliation lane theo runbook
+- Mọi cross-user read/write ngoài `self` phải:
+  - append audit với cả `actorUserId` và `ownerUserId`
+  - ghi rõ `supportReason`
+  - không được mutate completion/progress state nếu không có explicit action type
+- Nếu chưa có support lane canonical, mặc định API phải trả `403` thay vì để dev tự mở đường tắt.
+
 ## Canonical write rules (Quy tắc ghi chuẩn gốc)
 
 1. Separation (tách biệt): self-state không được ghi ngược vào content canonical data.
@@ -41,9 +54,19 @@
 3. Context bridge (cầu nối ngữ cảnh):
    - `practiceSheets` có thể giữ `scenarioPresetRef`, `guideContextRef`, `advisoryContextRef`
    - các ref này chỉ để UI mở đúng companion guide, không biến engagement thành owner của rule text
-3. Immutability (tính bất biến) với một số state:
+   - context ref phải giữ thêm `sourcePublicId` + `sourceVersion` hoặc `publishedRevision` nếu owner module có versioning
+   - nếu source owner chưa có version number rõ, engagement phải snapshot tối thiểu:
+     - `sourceTitle`
+     - `sourceSlug/publicId`
+     - `sourceKind`
+   - source change về sau không được silently rewrite historical practice sheet; UI có thể báo `sourceUpdated` nhưng historical row vẫn bám snapshot/version lúc user gắn ref
+   - nếu source bị unpublish/delete:
+     - record engagement cũ vẫn hợp lệ
+     - ref được downgrade thành `stale_reference`
+     - client không được tự xóa history chỉ vì source không còn public
+4. Immutability (tính bất biến) với một số state:
    - `ngoiNhaNhoSheet` đã `offered` thì không được mở lại progress fields bừa bãi.
-4. Idempotency (tính không đổi):
+5. Idempotency (tính không đổi):
    - `practiceLogs` nên support `clientEventId` hoặc composite key kiểu `user + date + plan`.
    - canonical self-write lane cho member dashboard / practice flow = `PUT /api/engagement/practice-logs/self`
    - nếu vẫn giữ `POST /api/engagement/practice-logs`, route này phải được coi là append/manual-entry lane riêng; không được dùng song song cho cùng một UX self-save mà không chốt semantics khác biệt
@@ -63,3 +86,4 @@
 - Offline-first sync (đồng bộ ưu tiên offline-first) phải idempotent
 - Async side-effects không được chặn canonical self-state write path
 - `practiceSheets` không được tự giữ bản sao script kinh/chú; chỉ giữ completion state và context refs.
+- `support access` không phải shortcut cho admin edit hộ member; nếu chưa có support lane explicit thì phải từ chối.

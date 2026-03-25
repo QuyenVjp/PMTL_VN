@@ -195,6 +195,17 @@ Mục tiêu là làm rõ:
 | Calendar     | Content      | Content owns daily practice guides/presets     | compose advisory cho ngày đặc biệt            | direct read                            | chỉ mang refs/preset, không copy ritual truth   |
 | Calendar     | Wisdom & QA  | Calendar owns advisory composition; Wisdom-QA owns teaching text + provenance | compose daily advisory/source refs | direct internal query                  | advisory chỉ mang source refs/excerpts, không copy canonical teaching text |
 
+## Event payload lock
+
+- Bất kỳ row nào trong bảng trên dùng `outbox event -> async job` đều phải coi `tracking/outbox-event-taxonomy.md` là payload owner.
+- `module-interactions.md` chỉ chốt ai phát sang ai và vì sao; không tự đặt event string hoặc payload shape riêng.
+- Ví dụ:
+  - `Content -> Search`
+  - `Community -> Moderation`
+  - `Moderation -> Notification`
+  - `Calendar -> Notification`
+  đều phải quay về taxonomy owner khi chốt envelope/idempotency key/subscriber list.
+
 ## Direct call vs event/job
 
 ### Nên dùng direct call/reference khi
@@ -215,6 +226,13 @@ Ghi chú:
 
 - **Phase 2+**: "async job" luôn nên được hiểu là `canonical write -> outbox_events -> dispatcher -> execution queue -> worker`, không phải request path tự phát queue theo kiểu best effort.
 - **Phase 1**: khi outbox/queue chưa bật, các side effect tương đương dùng sync inline hoặc fire-and-forget có log intent + log outcome + recovery path rõ — không được im lặng bỏ qua (xem `DECISIONS.md` section 7, `infra.md` section "Async Reliability").
+
+## Boundary clarifications đã khóa thêm
+
+- `Engagement` hoặc `Vows & Merit` khi giữ `guideContextRef` / `advisoryContextRef` / `ritualVariantRef` phải coi đó là `versioned or snapshotted companion refs`, không phải live ownership transfer từ `Content` hoặc `Calendar`.
+- `Search` public eligibility luôn phải tính từ `published + moderation-aware visibility`; fallback SQL path và index path phải cùng rule.
+- `Admin support` trên module self-owned mặc định là deny-by-default; chỉ route nào có support/assisted-entry canon mới được cross-user read/write.
+- `Moderation` summary sync semantics là baseline chung theo owner contract; target entity không tự nghĩ trigger lệch chuẩn.
 
 ## Boundary inventory owner
 

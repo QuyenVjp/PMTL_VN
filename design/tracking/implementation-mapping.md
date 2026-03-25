@@ -263,6 +263,27 @@ Với feature có page surface, evidence không đủ nếu chỉ có backend ro
 
 Không được đổi status thành `implemented` cho page-level feature nếu backend đã có route nhưng web/admin fetch strategy vẫn còn để người triển khai tự chọn.
 
+## Family-level acceptance criteria
+
+Mỗi family dưới đây phải đạt đủ điều kiện mới được coi là `implementation-ready` ở mức tài liệu.
+
+| Family | Acceptance criteria tối thiểu |
+|---|---|
+| page aggregate | có route canon, DTO owner row, loader owner row, auth/cache/error-state owner rõ |
+| public detail/list route | có field projection ổn định, pagination/filter semantics rõ nếu là list, không leak internal fields |
+| admin workspace | có page route canon, API route group canon, query key family, invalidation rules, role narrowing note |
+| self-owned member write-path | có owner use-case, idempotency semantics, audit expectation nếu cần, explicit deny cho cross-user writes |
+| assisted-entry/support write-path | có support scope canon, actor/owner audit fields, immutable marker hoặc correction rule rõ |
+| platform runtime module | có expected code location, env contract, failure posture, health/metrics expectation nếu launch-critical |
+| async/downstream lane | có outbox-vs-sync decision rõ, retry/recovery path, idempotency owner, subscriber/consumer boundary rõ |
+
+### Không được coi là đủ nếu chỉ có một nửa chuỗi
+
+- có `schema.dbml` nhưng chưa có route/DTO owner
+- có route canon nhưng chưa có page aggregate contract
+- có admin page nhưng chưa có invalidation/role narrowing rule
+- có async note nhưng chưa nói rõ sync fallback, outbox trigger, hay recovery path
+
 ## P0 doc upgrades to finish before broad scaffold
 
 Các nâng cấp dưới đây nên hoàn tất trước khi AI hoặc dev scaffold rộng:
