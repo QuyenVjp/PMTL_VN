@@ -36,6 +36,16 @@
         "@upstash/context7-mcp@latest"
       ]
     },
+    "openspace": {
+      "type": "stdio",
+      "command": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace\\.venv\\Scripts\\openspace-mcp.exe",
+      "env": {
+        "PYTHONUTF8": "1",
+        "OPENSPACE_HOST_SKILL_DIRS": "C:\\Users\\ADMIN\\.codex\\skills,C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.agents\\skills",
+        "OPENSPACE_WORKSPACE": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace",
+        "OPENSPACE_MODEL": "openai/gpt-4.1-mini"
+      }
+    },
     "playwright": {
       "type": "stdio",
       "command": "cmd",

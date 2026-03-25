@@ -82,6 +82,7 @@ Rules:
 
 - Redirect về `/`
 - Nếu cần xóa sạch client-side state, ưu tiên full reload semantics
+- Sau logout, browser `back` khong duoc lam lo state nhay cam tu member surfaces; restore lane phai re-check session authority truoc khi render lai data nhay cam.
 
 ---
 
@@ -165,6 +166,18 @@ Failure:
 Nếu session hết hạn giữa chừng:
 - không âm thầm mất dữ liệu nếu còn draft cục bộ
 - phải có message rõ trước khi điều hướng đi
+
+### Browser back-forward restore after auth changes
+
+- Auth/session UX phai coi `pageshow` voi `event.persisted === true` la mot lane rieng.
+- Sau `logout`, `session revoke`, hoac `session expiry`, member routes khi duoc restore tu browser history phai:
+  - re-check session authority
+  - clear hoac re-fetch auth-sensitive data
+  - tranh flash lai profile/member state cu trong 1 frame lau thay ro
+- Neu session khong con hop le:
+  - redirect ve `/dang-nhap?next=<currentPath>` hoac `/`
+  - hoac render expired-state gate truoc khi member content mount day du
+- Auth analytics neu co phan tich pageview/member recovery phai tinh ca restore lane, khong chi full load.
 
 ---
 

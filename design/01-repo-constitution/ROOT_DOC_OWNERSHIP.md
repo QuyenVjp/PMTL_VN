@@ -90,6 +90,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md` | DB/schema evolution owner | naming, rollout, rollback, seed rules | không lặp infra topology |
 | `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md` | verification owner | test pyramid, coverage targets, seed/test data rules | không lặp domain ownership |
 | `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` | web/admin frontend owner | RSC/client split, data fetching, UI package usage | không lặp backend auth policy |
+| `design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md` | React runtime owner | compiler stance, purity rules, state/effect/ref/custom-hook discipline, transition semantics | không thay route/data ownership một mình |
 | `design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md` | deploy/rollback procedure owner | deploy, rollback, migration-fail handling | không thay backup runbook |
 | `design/01-repo-constitution/TERMINOLOGY.md` | terminology owner | PMTL terms + `English (Việt)` notation | không lặp qua nhiều root files |
 | `design/05-references/external-research/SOURCE_ANALYSIS.md` | source-derived feature surface owner | official source notes + feature implications | không lặp source summaries |

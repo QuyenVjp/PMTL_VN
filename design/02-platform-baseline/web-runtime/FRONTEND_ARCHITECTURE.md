@@ -6,6 +6,7 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 > **Skill refs**: `taste-skill`, `soft-skill`, `minimalist-skill`, `pmtl-creative-designer`, `pmtl-ui-behavior`, `pmtl-vercel-precision`
 > **Component specs**: `design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md`
 > **Design principles**: `design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md`
+> **React runtime policy**: `design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md`
 > **Route page contracts**: `design/04-execution-overlay/web/ROUTE_PAGE_CONTRACTS.md`
 > **Auth UX**: `design/02-platform-baseline/web-runtime/AUTH_UX_CONTRACT.md`
 > **Search UX**: `design/02-platform-baseline/web-runtime/SEARCH_UX_CONTRACT.md`
@@ -49,6 +50,65 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 | Toast | **Sonner** | Accessible, stacking, auto-dismiss |
 | Animation | **Motion v12** (minimal) | Chỉ cho page transitions, overlays, reveal nhẹ; không cho elderly-heavy screens |
 | Theme runtime | **next-themes** | class-based dark mode support cho Next.js |
+
+### React runtime contract
+
+- React owner doc cho purity, compiler, effects, refs, custom hooks, va transition semantics la `design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md`.
+- `apps/web` va `apps/admin` di theo `compiler-first mindset`:
+  - khong lay `useMemo` / `useCallback` / `memo` lam style baseline cho code moi
+  - chi dung manual memo khi profiling hoac referential-stability contract that su can
+- Effect discipline cua PMTL:
+  - bat dau tu `You Might Not Need an Effect`
+  - event logic va synchronization logic phai tach nhau
+  - dependency list phai phan anh dung reactive values
+- State discipline cua PMTL:
+  - uu tien derived state va owner gan nhat
+  - khong dung context hoac store nhu shortcut cho state structure te
+
+### Navigation restore and bfcache contract
+
+- `apps/web` phai coi browser `back` / `forward` la fast-restore lane, khong mac dinh la full page load lane.
+- Khong dung `unload` listeners trong web app code hoac third-party bootstrap owned by PMTL.
+- `beforeunload` chi duoc gan co dieu kien khi thuc su co unsaved work, va phai go ngay sau khi draft duoc giai quyet.
+- Browser lifecycle hooks cho restore-sensitive UX phai uu tien:
+  - `pageshow`
+  - `pagehide`
+- `pageshow` voi `event.persisted === true` la signal authority cho:
+  - auth-sensitive state refresh
+  - analytics pageview restore lane
+  - stale content revalidation lane khi route can
+- Khong dung `Cache-Control: no-store` tren toan bo HTML response neu muc tieu chi la fresh content; chi dung no-store cho lanes thuc su chua data nhay cam va khong duoc phep restore.
+- Web analytics va performance interpretation phai phan biet:
+  - normal navigation
+  - bfcache restore
+- Khi route dung APIs co the chan bfcache nhu open IndexedDB/WebSocket/fetch lifecycle dai, owner component phai co close/reconnect discipline theo `pagehide` / `pageshow`.
+
+### Speculation Rules API stance
+
+- `Speculation Rules API` khong la web baseline mac dinh cho PMTL phase 1.
+- Neu bat, no chi duoc coi la `progressive enhancement` cho browser support lane; khong duoc tro thanh correctness dependency.
+- `apps/admin` la SPA va khong la target chinh cua `Speculation Rules API`.
+- `apps/web` chi duoc xem xet lane nay cho public document navigations co kha nang click cao:
+  - homepage -> public hub
+  - list -> detail
+  - next/related editorial detail
+- Khong bat speculation cho:
+  - auth routes
+  - member routes
+  - logout
+  - add-to-cart / side-effect style URLs
+  - search result URLs de doi nhanh
+  - routes co state thay doi nhanh hoac nhay cam theo session
+- `prefetch` an toan hon `prerender`; PMTL uu tien `prefetch` truoc, `prerender` chi mo rat hep khi:
+  - same-origin
+  - GET-safe
+  - khong co side effects tren load
+  - owner route da co stale-state mitigation ro
+- Moi speculation rollout phai co:
+  - browser feature detection
+  - analytics/measurement split rieng
+  - stale-state clearing plan
+  - server awareness cho `Sec-Purpose`
 
 ### Monorepo + shadcn rules
 

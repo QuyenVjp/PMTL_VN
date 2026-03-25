@@ -64,6 +64,15 @@ Vì vậy:
 | React Hook Form | design pin | `7.72.0` | [react-hook-form.com/docs](https://react-hook-form.com/docs) |
 | Tailwind CSS | design pin | `4.2.2` | [tailwindcss.com/docs](https://tailwindcss.com/docs) |
 
+React official paths to prefer for behavior questions:
+- compiler + adoption: [react.dev/learn/react-compiler](https://react.dev/learn/react-compiler)
+- purity: [react.dev/learn/keeping-components-pure](https://react.dev/learn/keeping-components-pure)
+- effects discipline: [react.dev/learn/you-might-not-need-an-effect](https://react.dev/learn/you-might-not-need-an-effect)
+- effect dependency semantics: [react.dev/learn/removing-effect-dependencies](https://react.dev/learn/removing-effect-dependencies)
+- custom hooks: [react.dev/learn/reusing-logic-with-custom-hooks](https://react.dev/learn/reusing-logic-with-custom-hooks)
+- browser restore + bfcache behavior: [web.dev/back-forward-cache](https://web.dev/back-forward-cache/)
+- document speculation rules: [developer.mozilla.org/docs/Web/API/Speculation_Rules_API](https://developer.mozilla.org/en-US/docs/Web/API/Speculation_Rules_API)
+
 ## Admin baseline
 
 | Concern | Status | Baseline | Official docs |

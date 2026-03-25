@@ -279,6 +279,19 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
 - nếu current runtime/framework cần `unsafe-eval` trong môi trường dev thì phải ghi rõ là `dev-only concession (nới lỏng chỉ cho môi trường phát triển)`, không coi đó là production baseline
 - `style-src 'self' 'unsafe-inline'` chỉ khi chưa thoát khỏi các hạn chế của framework; nếu thoát được thì bỏ `unsafe-inline`
 
+### Speculation Rules CSP/headers rule
+
+- Neu `apps/web` bat `<script type="speculationrules">`, CSP `script-src` phai explicit allow bang mot trong cac cach:
+  - `'inline-speculation-rules'`
+  - hash-source
+  - nonce-source
+- Khong bat inline speculation script neu CSP chua owner lane nay.
+- Neu dung `Speculation-Rules` response header tro toi file JSON ngoai:
+  - file phai duoc serve voi MIME type `application/speculationrules+json`
+  - chi cho phep file owner boi `apps/web`, khong cho third-party host tu do inject
+- `Supports-Loading-Mode` khong la baseline PMTL phase 1; khong mo credentialed prerender cross-origin/same-site neu chua co owner doc rieng va runtime verification.
+- `Clear-Site-Data: prefetchCache` va `Clear-Site-Data: prerenderCache` la hop le cho lanes can xoa speculation state stale sau auth/state-changing requests.
+
 ### Other headers (Các tiêu đề khác)
 
 - `X-Content-Type-Options: nosniff` (ngăn trình duyệt đoán kiểu nội dung)

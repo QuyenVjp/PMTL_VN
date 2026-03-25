@@ -92,6 +92,17 @@ Ví dụ direction:
   - `usePathname`
   - hoặc `useSelectedLayoutSegment(s)`
 
+### Browser restore lifecycle
+
+- `apps/web` phai support browser back-forward cache restore thay vi gia dinh moi navigation deu remount tu dau.
+- Root-level analytics/session restore hooks neu can dat o client entry nho, khong nhet vao root server layout.
+- Hook lifecycle uu tien:
+  - `pageshow` de detect restore lane qua `event.persisted`
+  - `pagehide` de dong tai nguyen open/cleanup cho lane co the duoc cache
+- Khong dung `unload` nhu owner cleanup event.
+- `beforeunload` chi duoc mo theo draft-sensitive routes va phai remove listener khi khong con dirty state.
+- Route/client modules mo ket noi dai nhu WebSocket, IndexedDB coordination, hoac fetch/process state dai phai co explicit reconnect/close policy khi page bi hide va restore.
+
 ---
 
 ## Server/client boundary contract
@@ -209,6 +220,12 @@ Ví dụ direction:
 
 - Khi route đã stream rồi, response thường là `200` kể cả khi sau đó render `notFound()`.
 - Vì vậy slug existence checks cần diễn ra sớm nếu route cần HTTP 404 thật cho analytics/compliance.
+
+### Analytics and measurement caveat
+
+- Pageview/route analytics cho `apps/web` phai phan biet restore tu `bfcache` voi page load thong thuong.
+- Neu can emit pageview cho restore lane, emit tren `pageshow` khi `event.persisted === true`.
+- Khong doc Core Web Vitals hay route performance chi tu normal loads roi ket luan cho browser restore experience.
 
 ---
 

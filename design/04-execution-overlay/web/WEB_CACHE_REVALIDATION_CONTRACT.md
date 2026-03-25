@@ -111,6 +111,21 @@ Dùng `cacheLife()` để chốt lifetime cho cached function/component.
 - Cache profile quá ngắn có thể tạo dynamic hole và ảnh hưởng prerendering.
 - Không dùng short-lived cache trong outer cached scope nếu chưa chủ động thiết kế `Suspense` boundary.
 
+### Speculation freshness warning
+
+- Neu route duoc dua vao `Speculation Rules` prefetch/prerender lane, owner route phai coi do la them mot tang stale-state risk.
+- Khong dua cac route co server-rendered state bien doi nhanh vao speculation lane neu chua co refresh/clear strategy ro.
+- Cac surfaces nhu:
+  - auth state dependent pages
+  - cart-like/member aggregate pages
+  - admin/control-plane pages
+  khong duoc dua vao speculation cache lane.
+- Khi user action lam invalid toan bo predicted state nhu logout, signin-state change, add-to-cart-like mutation, language/theme state swap can SSR owner, can xem xet tra `Clear-Site-Data` voi:
+  - `prefetchCache`
+  - `prerenderCache`
+  tren same-site response owner phu hop.
+- Khong duoc coi speculation cache la data-freshness primitive; no chi la navigation hint.
+
 ### PMTL default stance
 
 - P0/P1 web không dùng profile kiểu `seconds` làm mặc định cho public pages.
@@ -153,6 +168,12 @@ revalidateTag(tag, 'max')
 - grouped guides
 - homepage sections
 - public/support content nói chung
+
+### Speculation interaction rule
+
+- `revalidateTag()` va `updateTag()` khong xoa duoc browser speculation caches.
+- Neu owner route vua dua vao server invalidation vua dua vao speculation hints, phai danh gia them nhu cau `Clear-Site-Data: prefetchCache` hoac `prerenderCache`.
+- PMTL mac dinh tranh ket hop speculation voi lanes can read-your-own-writes manh.
 
 ### Immediate expire exception
 

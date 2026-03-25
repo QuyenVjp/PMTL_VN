@@ -22,6 +22,38 @@ Related refs:
 
 ---
 
+## 0. Tooling stance: Chrome DevTools MCP
+
+Chrome DevTools MCP la mot lane huu ich cho PMTL khi debug web runtime vi no cho AI thay:
+
+- DOM/state/render tree thuc te
+- network requests
+- console/runtime errors
+- performance traces
+- third-party script/widget behavior trong browser that
+
+Rule:
+
+- coi Chrome DevTools MCP la `runtime evidence source`, khong phai `auto-fix authority`
+- uu tien no khi bug can browser truth ma code reading khong du:
+  - hydration mismatch
+  - cache/navigation oddities
+  - third-party script side effects
+  - auth/session behavior trong browser
+  - performance regressions va rendering glitches
+- khong bo qua:
+  - reproduction steps
+  - owner docs trong `design/`
+  - local verification sau khi AI/DevTools dua hypothesis
+- moi de xuat sinh ra tu DevTools AI hoac MCP lane van phai duoc xem la hypothesis cho toi khi:
+  - repro duoc
+  - fix duoc verify
+  - regression gan do duoc check
+
+PMTL vi vay cho phep dung DevTools MCP de tang toc debug, nhung van giu nguyen principle `evidence-first, verify-always`.
+
+---
+
 ## 1. Why this rule exists
 
 Research gần đây cho thấy fault localization của LLM rất dễ vỡ khi code bị thay đổi theo cách không đổi semantics, ví dụ:
