@@ -2,7 +2,7 @@
 
 File này chốt schema evolution strategy cho NestJS + Prisma.
 
-> **Migration order**: `design/04-execution-overlay/repo/CODING_READINESS.md` Phần 6
+> **Migration order**: [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 6
 > **Prisma schema plan**: `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md`
 
 ---
@@ -162,7 +162,7 @@ npx prisma db seed
 
 Seed production phải tạo:
 - Super-admin user (email từ env var, password từ env var)
-- 8 feature flags từ `coding-readiness.md` Phần 4
+- 8 feature flags từ [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 4
 - Lookup data: categories, lunar events
 
 ### Development seed

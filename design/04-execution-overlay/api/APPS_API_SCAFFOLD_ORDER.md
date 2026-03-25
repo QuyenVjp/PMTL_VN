@@ -557,7 +557,7 @@ Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, ou
 
 ### Conditional routes phải hiểu đúng
 
-- `api-route-inventory.md` có thể liệt kê route `Phase 2+` để tránh quên contract
+- [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) có thể liệt kê route `Phase 2+` để tránh quên contract
 - sự hiện diện trong inventory **không** có nghĩa route đó được scaffold ở Wave 1
 - điều này cũng áp dụng cho các route phase-sau-trong-Wave-1 như `admin/content/*`, grouped content surfaces, và member aggregates: inventory khóa canon trước, scaffold-order mới quyết định lúc nào được code
 - nếu route là `conditional` hoặc `phase 2+`, scaffold order file này thắng

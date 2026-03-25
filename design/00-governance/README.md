@@ -33,3 +33,12 @@ Từ sau lớp governance này, `design/` phải được đọc như:
 - `full-stack ownership map`
 
 Không file nào được tự mặc định là owner nếu governance không nói rõ điều đó.
+
+## Audit Closure In This Pass
+
+Governance audit của tháng `2026-03` chốt thêm 4 khoảng trống từng gây drift:
+
+- governance đứng trên các layer khác khi tranh chấp về taxonomy, source priority, status semantics, và canonical layout
+- status vocabulary phải bám [IMPLEMENTATION_STATUS_SCHEMA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md), không tự phát minh `ready-ish`, `done`, `almost-ready`
+- doc có yếu tố version/runtime phải nói rõ đang dựa trên `installed truth`, `design pin`, hay `activation-time pin`
+- không được suy ra “repo đã cài / runtime đã tồn tại” chỉ vì `design/` đã pin version hoặc scaffold order

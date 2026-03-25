@@ -510,10 +510,28 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 > `GET /admin/system/health-extended` là admin operational aggregate; response owner theo `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md` row `AdminSystemHealthExtendedDto`.
 > `/docs*` là OpenAPI/docs delivery surface; không phải product route family và không được default-public ở production.
 
+### Control-plane bundle semantics
+
+- `health`, `metrics`, và `docs` phải được nhìn như một `control-plane bundle`, không phải ba route tiện đâu mở đó
+- ownership split:
+  - `/health/*` = public-or-internal probe contract theo deploy policy
+  - `/metrics` = internal scrape surface
+  - `/docs*` = env-gated metadata/docs surface
+  - `/admin/system/health-extended` = admin operational aggregate
+- bundle này phải cùng bám:
+  - startup/bootstrap owner
+  - exposure gating theo env/deploy policy
+  - structured logging/redaction policy
+  - no-store / anti-cache semantics khi route owner yêu cầu
+- không route nào trong bundle này được public hóa chỉ vì “hữu ích cho devops”
+- nếu một deployment muốn public một phần bundle:
+  - chỉ `/health/live`, `/health/ready`, `/health/startup` được cân nhắc public theo deploy policy
+  - `/metrics` và `/docs*` vẫn phải có gating riêng, không inherit public status từ `/health/*`
+
 ## Platform / Control Plane — Phase 2+ conditional routes
 
 Các route dưới đây chỉ canon hóa contract cho phase sau.
-Không được scaffold sớm nếu `apps-api-scaffold-order.md` chưa cho phép.
+Không được scaffold sớm nếu [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) chưa cho phép.
 
 | Method | Route | Owner | Auth |
 |---|---|---|---|

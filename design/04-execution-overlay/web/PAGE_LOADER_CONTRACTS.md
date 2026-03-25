@@ -184,9 +184,9 @@ Rules:
 - không để client tự quét toàn bộ list rồi đếm
 - response aggregate phải echo `engine` đang dùng để UI/search badge không đoán
 - phase hiện tại dùng `offset pagination` cho 2 hub này; nếu đổi sang cursor phải cập nhật cùng lúc:
-  - `api-dto-shape-plan.md`
+  - [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
   - file này
-  - route owner trong `api-route-inventory.md`
+  - route owner trong [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
 
 ### `/tim-kiem`
 

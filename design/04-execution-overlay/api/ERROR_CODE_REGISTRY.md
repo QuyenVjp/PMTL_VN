@@ -135,6 +135,6 @@ Nó lấp đúng gap audit đã chỉ ra: có error envelope nhưng chưa có re
 
 ## Cross-reference
 
-Error code được nhắc ở `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`, `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md`, `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md`, hoặc module `contracts.md` phải có row canon ở file này trước khi scaffold.
+Error code được nhắc ở [PAGE_LOADER_CONTRACTS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md), [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md), [HEALTH_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md), hoặc domain `CONTRACTS.md` thì phải có row canon ở file này trước khi scaffold.
 
 Thiếu row tương ứng = `blocked at design`.

@@ -133,3 +133,12 @@ Nhưng từ nay `design/` phải có khả năng được map machine-readably t
 
 - frontmatter
 - hoặc registry file riêng
+
+## Status vocabulary rule
+
+- overlay/governance docs không được tự phát minh status synonym kiểu:
+  - `done`
+  - `almost-ready`
+  - `in-progress but safe`
+- status machine-readable phải bám [IMPLEMENTATION_STATUS_SCHEMA.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md)
+- prose được giải thích thêm, nhưng không thay canonical status vocabulary

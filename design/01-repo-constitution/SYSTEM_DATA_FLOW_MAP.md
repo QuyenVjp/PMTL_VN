@@ -14,7 +14,7 @@ Nó trả lời thật cụ thể 5 câu:
    - revalidate cache
    - phát event qua `outbox_events`
 
-> Đây là `overview doc (tài liệu định hướng đọc)`, không thay `module-map.md`, `contracts.md`, `PAGE_INVENTORY.md`, hay `api-route-inventory.md`.
+> Đây là `overview doc (tài liệu định hướng đọc)`, không thay `module-map.md`, `contracts.md`, [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md), hay [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md).
 > Nếu file này khác owner docs, owner docs thắng.
 
 ## Cách hiểu cực ngắn

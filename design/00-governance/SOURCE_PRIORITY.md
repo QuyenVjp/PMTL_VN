@@ -4,11 +4,20 @@ File này chốt thứ tự ưu tiên khi compile context, đọc docs, scaffold
 
 ## Priority Order
 
-1. Repo Constitution
-2. Platform Baseline
-3. Domain Feature Pack
-4. Execution Overlay
-5. References and Examples
+1. Governance
+2. Repo Constitution
+3. Platform Baseline
+4. Domain Feature Pack
+5. Execution Overlay
+6. References and Examples
+
+Rule:
+
+- `00-governance` không thay owner policy/content của constitution hoặc baseline, nhưng nó thắng khi câu hỏi là:
+  - file nào có quyền thắng file nào
+  - status nào được hiểu là implemented hay chưa
+  - cách phân loại doc
+  - cách giải quyết conflict và naming/layout
 
 ## Definitions
 
@@ -63,19 +72,22 @@ Nó giúp diễn giải, không có quyền override repo rules.
 
 ## Hard Rules
 
+- Governance thắng mọi tranh cãi về taxonomy, status semantics, source priority, conflict resolution, và canonical layout.
 - Snippet không được đè rule.
 - Example không được đè owner doc.
 - Overlay thắng mọi giả định về implementation status.
 - Nếu design nói có nhưng overlay nói `planned`, phải xử lý như `planned`.
 - Nếu official docs mới hơn repo docs và tạo ra drift, phải cập nhật repo docs trước hoặc trong cùng task; không được âm thầm bỏ repo policy.
+- Version-matching doc hoặc matrix của repo thắng model memory và thắng “latest by vibe”.
 
 ## Practical Reading Order For AI
 
-1. Constitution của repo
-2. Baseline của surface đang chạm tới
-3. Domain pack liên quan
-4. Overlay cho implementation truth
-5. References/examples nếu còn thiếu pattern cụ thể
+1. Governance của repo
+2. Constitution của repo
+3. Baseline của surface đang chạm tới
+4. Domain pack liên quan
+5. Overlay cho implementation truth
+6. References/examples nếu còn thiếu pattern cụ thể
 
 ## Anti-Patterns
 

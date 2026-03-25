@@ -12,7 +12,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
 | Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, và phase map của Nest docs đã khóa trong `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`, nhưng readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
-| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong `apps-api-scaffold-order.md` |
+| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) |
 | Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` |
 | UI/UX design | ✅ Sẵn sàng | `design/02-platform-baseline/web-runtime/` và `design/04-execution-overlay/web/` đã có owner docs cho IA/navigation, landing, homepage, app screens, tokens, and route contracts; xem `ROOT_DOC_OWNERSHIP.md` |
@@ -63,17 +63,17 @@ Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. 
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ rõ để bắt đầu code module đó | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `DECISIONS.md` section 9 + `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 
-Coding agent có thể bắt đầu Wave 1, nhưng chỉ theo thứ tự scaffold đã khóa. Với `apps/api`, cửa sổ an toàn hiện tại là Step `0 -> 7` theo `apps-api-scaffold-order.md`, và ở Step 7 vẫn chỉ được làm `5` content routes đầu tiên.
+Coding agent có thể bắt đầu Wave 1, nhưng chỉ theo thứ tự scaffold đã khóa. Với `apps/api`, cửa sổ an toàn hiện tại là Step `0 -> 7` theo [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md), và ở Step 7 vẫn chỉ được làm `5` content routes đầu tiên.
 Các route khác đang xuất hiện trong inventory không mặc định trở thành Wave 1 scaffold target.
 Slice E2E đầu tiên nên dùng để kiểm tra design-to-code là `chanting environment rules`, không phải member dashboard.
-Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) để tránh dựng sai từ commit đầu.
+Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) để tránh dựng sai từ commit đầu.
 
 ---
 
 ## Phần 1: Những gì ĐÃ ổn (Không cần sửa trước khi code)
 
 ### Backend design — ĐẦY ĐỦ
-Mọi domain module (01-11) đều có:
+Mọi domain module canonical đều có:
 - `module-map.md` — objectives, ownership, boundaries
 - `contracts.md` — routes, input/output, error codes
 - `schema.dbml` — DB schema per module
@@ -169,7 +169,7 @@ Mọi domain module (01-11) đều có:
 - Raw JSON spec: `GET /api/docs-json` (có thể export ra `docs/openapi.json` khi build)
 
 **Completion criteria** (what counts as implemented):
-- Tất cả routes public trong `api-route-inventory.md` có `@ApiOperation` + `@ApiTags`
+- Tất cả routes public trong [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) có `@ApiOperation` + `@ApiTags`
 - Tất cả request/response surfaces map được từ contract owner sang OpenAPI, không drift khỏi owner docs
 - security schemes trong Swagger phản ánh đúng:
   - browser/web-admin = cookie-first auth contract
@@ -260,7 +260,7 @@ Cộng thêm 1 flag test để verify feature_flags table hoạt động.
 ## Phần 5: Rate-limit values per endpoint
 
 Các giá trị dưới đây là `design-locked limits`, không có nghĩa tất cả limiter đã được code ngay từ Step 1.
-Limiter nào được cắm ở bước nào phải bám `apps-api-scaffold-order.md`, đặc biệt:
+Limiter nào được cắm ở bước nào phải bám [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md), đặc biệt:
 - `/api/auth/refresh` thuộc identity Step 5
 - upload limiter thuộc storage/upload boundary Step 6
 - content/community/vows/engagement limiter chỉ cắm khi route write-path tương ứng thật sự được scaffold
@@ -401,34 +401,34 @@ Bước 12 — Contact (reference users):
 Wave 1 — Foundation (Nền tảng)
   1. Monorepo setup (pnpm, turborepo, tsconfig)
   2. apps/api: NestJS bootstrap + platform modules (config, logging, errors, validation)
-  3. apps/api: sessions + auth (01-identity)
+  3. apps/api: sessions + auth (`identity`)
   4. apps/api: audit_logs + feature_flags + rate_limit_records
   5. apps/api: /health/* + /metrics
 
 Wave 2 — Core Content
-  6. apps/api: 02-content (posts, guides, media upload)
+  6. apps/api: `content` (posts, guides, media upload)
   7. apps/web: layout + nav + public pages (homepage, post, guide)
   8. Verify restore drill passes
 
 Wave 3 — Core Practice
-  9. apps/api: 04-engagement (practice sheets, Ngôi Nhà Nhỏ)
+  9. apps/api: `engagement` (practice sheets, Ngôi Nhà Nhỏ)
   10. apps/web: member pages (dashboard, tu-tap, nha-nho)
-  11. apps/api: 07-calendar (lunar calendar, advisory)
+  11. apps/api: `calendar` (lunar calendar, advisory)
 
 Wave 4 — Community + Moderation
-  12. apps/api: 03-community + 05-moderation
+  12. apps/api: `community` + `moderation`
   13. apps/web: community pages, comment section
   14. apps/admin: moderation queue
 
 Wave 5 — Vows + Wisdom
-  15. apps/api: 09-vows-merit (vows, life release)
-  16. apps/api: 10-wisdom-qa (wisdom entries, search)
+  15. apps/api: `vows-merit` (vows, life release)
+  16. apps/api: `wisdom-qa` (wisdom entries, search)
   17. apps/web: vow pages, wisdom search
 
 Wave 6 — Notifications + Offline
-  18. apps/api: 08-notification (push subscriptions)
+  18. apps/api: `notification` (push subscriptions)
   19. apps/web: offline bundles, PWA setup
-  20. apps/api: 06-search (phase 1 SQL, phase 2+ Meilisearch)
+  20. apps/api: `search` (phase 1 SQL, phase 2+ Meilisearch)
 ```
 
 ---

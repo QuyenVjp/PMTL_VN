@@ -5,12 +5,13 @@ File này chốt cách xử lý khi docs mâu thuẫn nhau.
 ## Resolution Order
 
 1. Higher source priority wins.
-2. `required` beats `advisory`.
-3. `active` beats `draft`.
-4. Phase-matching doc beats generic `all` doc when both are valid.
-5. Execution Overlay wins for implementation/runtime truth.
-6. Canonical owner beats summary/reference file.
-7. References/examples never beat repo rules.
+2. Governance wins for taxonomy, status semantics, source priority, and conflict mechanics.
+3. `required` beats `advisory`.
+4. `active` beats `draft`.
+5. Phase-matching doc beats generic `all` doc when both are valid.
+6. Execution Overlay wins for implementation/runtime truth.
+7. Canonical owner beats summary/reference file.
+8. References/examples never beat repo rules.
 
 ## Canonical Questions
 
@@ -47,3 +48,4 @@ Phải dừng và sửa docs trước khi scaffold nếu gặp:
 - lấy file dài hơn làm authoritative hơn
 - lấy external reference làm cớ override repo direction
 - suy ra implementation từ architecture prose
+- suy `installed truth` từ design pin khi repo package/runtime artifact chưa tồn tại

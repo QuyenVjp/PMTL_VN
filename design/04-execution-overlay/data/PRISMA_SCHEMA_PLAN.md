@@ -3,8 +3,8 @@
 File này chốt kế hoạch merge 11 module `schema.dbml` thành 1 `prisma/schema.prisma` tổng.
 Không có file này, developer phải tự đoán thứ tự table, foreign keys, enums.
 
-> **Migration order**: xem `coding-readiness.md` Phần 6 cho 12 bước chi tiết
-> **Module schemas**: mỗi module có `schema.dbml` riêng trong `design/XX-module/`
+> **Migration order**: xem [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 6 cho 12 bước chi tiết
+> **Module schemas**: mỗi domain owner giữ `SCHEMA_PLAN.dbml` riêng trong `design/03-domains/<domain>/`
 
 ---
 
@@ -13,17 +13,17 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 | Module | Schema file | Tables chính |
 |---|---|---|
 | Platform | `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md` | `feature_flags`, `audit_logs`, `rate_limit_records` |
-| 01-identity | `design/03-domains/identity/SCHEMA_PLAN.dbml` | `users`, `sessions` |
-| 02-content | `design/03-domains/content/SCHEMA_PLAN.dbml` | `posts`, `media_assets`, `categories`, `tags`, `hub_pages`, `hub_page_blocks`, `beginner_guides`, `downloads`, `media_collections`, `media_collection_items`, `chant_items`, `chant_plans`, `chant_plan_items`, `sutras`, `sutra_volumes`, `sutra_chapters`, `sutra_glossary` |
-| 03-community | `design/03-domains/community/SCHEMA_PLAN.dbml` | `post_comments`, `community_posts`, `community_comments`, `guestbook_entries` |
-| 04-engagement | `design/03-domains/engagement/SCHEMA_PLAN.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `chant_preference_optional_items`, `chant_preference_targets`, `chant_preference_intentions`, `practice_logs`, `practice_log_item_states`, `practice_sheets`, `practice_sheet_items`, `ngoi_nha_nho_sheets`, `ngoi_nha_nho_sheet_entries`, `ngoi_nha_nho_sheet_audit_snapshots` |
-| 05-moderation | `design/03-domains/moderation/SCHEMA_PLAN.dbml` | `moderation_reports` |
-| 06-search | `design/03-domains/search/SCHEMA_PLAN.dbml` | `search_index_metadata` (optional) |
-| 07-calendar | `design/03-domains/calendar/SCHEMA_PLAN.dbml` | `events`, `event_agenda_items`, `event_speakers`, `event_ctas`, `event_gallery_media`, `event_files`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
-| 08-notification | `design/03-domains/notification/SCHEMA_PLAN.dbml` | `push_subscriptions`, `push_jobs` |
-| 09-vows-merit | `design/03-domains/vows-merit/SCHEMA_PLAN.dbml` | `vows`, `vow_progress_entries`, `life_release_journal` |
-| 10-wisdom-qa | `design/03-domains/wisdom-qa/SCHEMA_PLAN.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`, `video_talk_entries`, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
-| 11-contact | `design/03-domains/contact/SCHEMA_PLAN.dbml` | `contact_info`, `volunteers` |
+| `identity` | `design/03-domains/identity/SCHEMA_PLAN.dbml` | `users`, `sessions` |
+| `content` | `design/03-domains/content/SCHEMA_PLAN.dbml` | `posts`, `media_assets`, `categories`, `tags`, `hub_pages`, `hub_page_blocks`, `beginner_guides`, `downloads`, `media_collections`, `media_collection_items`, `chant_items`, `chant_plans`, `chant_plan_items`, `sutras`, `sutra_volumes`, `sutra_chapters`, `sutra_glossary` |
+| `community` | `design/03-domains/community/SCHEMA_PLAN.dbml` | `post_comments`, `community_posts`, `community_comments`, `guestbook_entries` |
+| `engagement` | `design/03-domains/engagement/SCHEMA_PLAN.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `chant_preference_optional_items`, `chant_preference_targets`, `chant_preference_intentions`, `practice_logs`, `practice_log_item_states`, `practice_sheets`, `practice_sheet_items`, `ngoi_nha_nho_sheets`, `ngoi_nha_nho_sheet_entries`, `ngoi_nha_nho_sheet_audit_snapshots` |
+| `moderation` | `design/03-domains/moderation/SCHEMA_PLAN.dbml` | `moderation_reports` |
+| `search` | `design/03-domains/search/SCHEMA_PLAN.dbml` | `search_index_metadata` (optional) |
+| `calendar` | `design/03-domains/calendar/SCHEMA_PLAN.dbml` | `events`, `event_agenda_items`, `event_speakers`, `event_ctas`, `event_gallery_media`, `event_files`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
+| `notification` | `design/03-domains/notification/SCHEMA_PLAN.dbml` | `push_subscriptions`, `push_jobs` |
+| `vows-merit` | `design/03-domains/vows-merit/SCHEMA_PLAN.dbml` | `vows`, `vow_progress_entries`, `life_release_journal` |
+| `wisdom-qa` | `design/03-domains/wisdom-qa/SCHEMA_PLAN.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`, `video_talk_entries`, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
+| `contact` | `design/03-domains/contact/SCHEMA_PLAN.dbml` | `contact_info`, `volunteers` |
 
 ---
 
@@ -241,7 +241,7 @@ offline_bundles → offline_bundle_entries
 
 ## Migration execution order (12 steps)
 
-Ref: `coding-readiness.md` Phần 6 cho chi tiết. Summary:
+Ref: [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 6 cho chi tiết. Summary:
 
 ```
 1. Platform tables (feature_flags, audit_logs, rate_limit_records)
@@ -262,7 +262,7 @@ Ref: `coding-readiness.md` Phần 6 cho chi tiết. Summary:
 
 ## Reference table stubs (quan trọng khi merge)
 
-> Các table `users` và `media_assets` xuất hiện trong nhiều file `schema.dbml` (01-identity, 02-content, 04-engagement, 07-calendar...).
+> Các table `users` và `media_assets` xuất hiện trong nhiều file `SCHEMA_PLAN.dbml` (`identity`, `content`, `engagement`, `calendar`...).
 > Đây là **reference stubs** chỉ chứa `id` + `public_id` để DBML visualizer render được FK arrows.
 > Khi merge sang Prisma, chỉ lấy **1 bản canonical** từ module owner:
 > - `users` → `design/03-domains/identity/SCHEMA_PLAN.dbml`

@@ -1,6 +1,6 @@
 # Wisdom-QA Family Audit
 
-> File này chốt audit pass theo từng family cho `10-wisdom-qa`.
+> File này chốt audit pass theo từng family cho domain `wisdom-qa`.
 > Mục tiêu: không để `apps/web`, `apps/admin`, `apps/api`, và search/index scaffold phải tự đoán taxonomy.
 
 ---
@@ -9,15 +9,15 @@
 
 | Family | Canonical owner | Canonical data class | Public surface |
 |---|---|---|---|
-| `Bạch thoại Phật pháp` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` + detail `/bach-thoai/[slug]` |
-| `Wenda / Hỏi đáp` | `10-wisdom-qa` | `qaEntries` | `/hoi-dap` + detail `/hoi-dap/[slug]` |
-| `Khai thị` | `10-wisdom-qa` | `wisdomEntries` | search filter / related cards / detail labels; chưa mở public top-level route canon |
-| `Phật ngôn / aphorism` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail |
-| `Pháp hội / event discourse` | `10-wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail; có thể deep-link từ event surface |
-| `Authority profile` | `10-wisdom-qa` | `authorityProfiles` | chưa mở public route canon riêng |
-| `Bạch thoại audiobook` | `10-wisdom-qa` | `baihuaBooks` + `wisdomEntries` + `baihuaAudioTracks` | `/bach-thoai/sach-noi/*` |
-| `Offline bundles` | `10-wisdom-qa` | `offlineBundles` + projection items | member offline + admin rebuild workspace |
-| `Search / retrieval` | `06-search` runtime owner, `10-wisdom-qa` source owner | unified search documents | `/tim-kiem` + scoped search trong `/bach-thoai` |
+| `Bạch thoại Phật pháp` | `wisdom-qa` | `wisdomEntries` | `/bach-thoai` + detail `/bach-thoai/[slug]` |
+| `Wenda / Hỏi đáp` | `wisdom-qa` | `qaEntries` | `/hoi-dap` + detail `/hoi-dap/[slug]` |
+| `Khai thị` | `wisdom-qa` | `wisdomEntries` | search filter / related cards / detail labels; chưa mở public top-level route canon |
+| `Phật ngôn / aphorism` | `wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail |
+| `Pháp hội / event discourse` | `wisdom-qa` | `wisdomEntries` | `/bach-thoai` detail; có thể deep-link từ event surface |
+| `Authority profile` | `wisdom-qa` | `authorityProfiles` | chưa mở public route canon riêng |
+| `Bạch thoại audiobook` | `wisdom-qa` | `baihuaBooks` + `wisdomEntries` + `baihuaAudioTracks` | `/bach-thoai/sach-noi/*` |
+| `Offline bundles` | `wisdom-qa` | `offlineBundles` + projection items | member offline + admin rebuild workspace |
+| `Search / retrieval` | `search` runtime owner, `wisdom-qa` source owner | unified search documents | `/tim-kiem` + scoped search trong `/bach-thoai` |
 
 ---
 
@@ -97,7 +97,7 @@
 ### 3.9 Testimony / `同修分享`
 
 - Official source có `同修分享`, nhưng loại này không nên trở thành canonical doctrine owner
-- Nếu PMTL nhận family này, owner hợp lý thiên về `03-community` hoặc curated support surface
+- Nếu PMTL nhận family này, owner hợp lý thiên về `community` hoặc curated support surface
 - Không được gộp `同修分享` vào `wisdomEntries` chỉ vì nó nằm gần `法会开示`
 
 ---
@@ -116,9 +116,9 @@
 ## 5. Suggested next audit order
 
 1. `authorityProfiles` public route decision
-2. `event_discourse` response shape between `07-calendar` and `10-wisdom-qa`
+2. `event_discourse` response shape between `calendar` and `wisdom-qa`
 3. `aphorism / Phật ngôn`
 4. offline bundle control model
-5. search API/query param parity across `06-search` + UI docs + route inventory
+5. search API/query param parity across `search` + UI docs + route inventory
 6. taxonomy/policy cho `现场图腾`
 7. owner decision cho `同修分享`

@@ -1,7 +1,7 @@
 # ADMIN_PAGE_API_MAPPING
 
 File này là canonical mapping giữa admin page route, API route group, query keys, và invalidation rules.
-Nó tồn tại để scaffold `apps/admin` mà không phải đoán dependency giữa `PAGE_INVENTORY.md`, `ADMIN_MODULE_SPECS.md`, và `api-route-inventory.md`.
+Nó tồn tại để scaffold `apps/admin` mà không phải đoán dependency giữa [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md), [ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md), và [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md).
 
 > Page route canon: `design/04-execution-overlay/web/PAGE_INVENTORY.md`
 > Admin shell/layout: `design/02-platform-baseline/admin-runtime/ADMIN_ARCHITECTURE.md`

@@ -459,6 +459,16 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `meilisearch`
   - `sql-fallback`
 - `suggestedQueries[]` là optional UX helper; không block page.
+- query validation/error-map expectations:
+  - invalid/missing `q` theo threshold owner -> `search.query_invalid` hoặc `search.query_too_short`
+  - invalid cursor -> `search.cursor_invalid`
+  - hidden fallback/internal engine detail không lộ qua generic `400`
+- transform/default expectations:
+  - `limit` default phải là route default owner, không suy từ framework pipe
+  - `tab/type/entryType/sourceFamily` chỉ nhận canonical vocab đã chốt; không auto-cast enum lỏng theo query string bất kỳ
+- docs/OpenAPI expectations:
+  - route docs phải phản ánh đây là public read/search aggregate
+  - không annotate bearer/cookie security requirement cho route public này chỉ vì search page có signed-in enhancement
 
 ### `NotificationPreferencesPageDto`
 
@@ -515,6 +525,13 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `password_reset_required`
   - `session_refresh_due`
 - không bao giờ trả refresh token, session secret, hoặc internal device fingerprint.
+- validation/error-map expectations:
+  - route này không nhận body; nếu transport/session invalid thì dùng `auth.session_missing|expired|forbidden`, không trộn vào generic validation code
+  - cookie presence không đủ để trả `200`; canonical session verification fail phải đi đúng auth error code
+- docs/OpenAPI expectations:
+  - browser auth scheme phải phản ánh cookie-first transport
+  - không annotate route này thành bearer-only baseline
+  - nếu có selective bearer support cho internal consumer khác, phải tách rõ contract thay vì làm mơ hồ `/auth/me`
 
 ### `SignedUploadResponseDto`
 
@@ -570,6 +587,12 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `requestId`
 - không trả raw stack trace, token, cookie, hoặc payload metadata chưa sanitize.
 - `dbConnectionCount`, `pendingOutboxCount?`, `queueDepths?` là operational counters; không dùng field name mơ hồ kiểu `healthData`.
+- validation/error-map expectations:
+  - đây là admin operational aggregate; unauthorized/forbidden phải ra `auth.forbidden` hoặc owner admin code, không generic 400/500
+  - degraded dependency state vẫn ưu tiên trả aggregate an toàn nếu contract cho phép; không lộ raw infra exception text
+- docs/OpenAPI expectations:
+  - route này thuộc control-plane/admin surface, không public hóa cùng `/health/*`
+  - docs phải cho thấy đây là admin-only operational projection, không phải raw log tail hay unrestricted diagnostics
 
 ### `WisdomHubDto`
 
@@ -681,7 +704,7 @@ Mỗi row phải map được sang route canon hiện có trong `design/04-execu
 - offline bundle list page -> hiện map vào `GET /offline-bundles`
 - personal practice calendar page -> hiện map vào `GET /calendar/personal-practice`
 
-Nếu route inventory hiện có chưa đủ semantics aggregate cho DTO row tương ứng, phải cập nhật `api-route-inventory.md` trước; không được để controller hoặc web tự suy luận từ tên gần giống.
+Nếu route inventory hiện có chưa đủ semantics aggregate cho DTO row tương ứng, phải cập nhật [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) trước; không được để controller hoặc web tự suy luận từ tên gần giống.
 
 ## DTO envelope rules
 

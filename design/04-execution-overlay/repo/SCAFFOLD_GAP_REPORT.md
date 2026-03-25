@@ -5,7 +5,7 @@ File này gom các lỗ hổng còn lại sau pass chéo giữa:
 - `design/04-execution-overlay/web/PAGE_INVENTORY.md`
 - `design/04-execution-overlay/web/USER_FLOWS.md`
 - `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
-- `NN-domain/USE_CASES/*.md`
+- `design/03-domains/*/USE_CASES/*.md`
 
 Mục tiêu là để chuẩn bị scaffold `apps/api`, `apps/web`, `apps/admin` mà không phải đoán tiếp.
 
@@ -76,14 +76,14 @@ Không nên lấy `/thong-bao` làm slice đầu nếu chưa muốn chạm auth 
 
 | Domain | Main risk |
 |---|---|
-| `01-identity` | verify-email, resend-verification, và admin-update-profile phải đi cùng policy/authz thật từ ngày đầu |
-| `02-content` | grouped content IA cần query contract rõ để web không lắp sai loaders |
-| `03-community` | comment visibility/pending moderation state phải match flow member-only hiện tại |
-| `04-engagement` | self-state routes (`practice-logs/self`, sheets, bookmarks, reading-progress`) cần thống nhất idempotency semantics |
-| `05-moderation` | admin page auth và backend role narrowing phải chốt trong policy helper, không hardcode rải rác |
-| `06-search` | giữ rõ federated search vs specialized wisdom search |
-| `07-calendar` | member read model và admin manual refresh/lunar override phải không lẫn với event CRUD |
-| `08-notification` | reminder preference routes mới chỉ là baseline; downstream delivery vẫn phase-scoped |
-| `09-vows-merit` | assisted-entry, milestone, và life-release correction/void cần transaction + audit từ đầu |
-| `10-wisdom-qa` | `/ngoai-tuyen` và admin wisdom workspace cần read-model DTOs đủ chi tiết trước khi scaffold UI table/offline flows |
-| `11-contact` | route surface khá rõ; chủ yếu còn page-to-API mapping và response DTO detail |
+| `identity` | verify-email, resend-verification, và admin-update-profile phải đi cùng policy/authz thật từ ngày đầu |
+| `content` | grouped content IA cần query contract rõ để web không lắp sai loaders |
+| `community` | comment visibility/pending moderation state phải match flow member-only hiện tại |
+| `engagement` | self-state routes (`practice-logs/self`, sheets, bookmarks, reading-progress`) cần thống nhất idempotency semantics |
+| `moderation` | admin page auth và backend role narrowing phải chốt trong policy helper, không hardcode rải rác |
+| `search` | giữ rõ federated search vs specialized wisdom search |
+| `calendar` | member read model và admin manual refresh/lunar override phải không lẫn với event CRUD |
+| `notification` | reminder preference routes mới chỉ là baseline; downstream delivery vẫn phase-scoped |
+| `vows-merit` | assisted-entry, milestone, và life-release correction/void cần transaction + audit từ đầu |
+| `wisdom-qa` | `/ngoai-tuyen` và admin wisdom workspace cần read-model DTOs đủ chi tiết trước khi scaffold UI table/offline flows |
+| `contact` | route surface khá rõ; chủ yếu còn page-to-API mapping và response DTO detail |

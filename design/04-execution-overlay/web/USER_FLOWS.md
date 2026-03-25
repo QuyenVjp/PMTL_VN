@@ -3,7 +3,7 @@
 File này định nghĩa các journey chính của PMTL_VN.
 Mỗi journey có: actor, trigger, steps, screens involved, success state, failure states.
 
-> **Ref**: `design/04-execution-overlay/web/PAGE_INVENTORY.md` cho routes, `01-identity` → `10-wisdom-qa` cho backend contracts.
+> **Ref**: [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md) cho routes, và các domain packs trong [design/03-domains/](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains) cho backend contracts.
 
 ---
 
