@@ -43,6 +43,20 @@ PMTL_VN không phải app todo, không phải social media, không phải e-comm
 | `--warm-gray-300` | `#C5BFB8` | Borders, dividers |
 | `--warm-gray-100` | `#F0ECE6` | Muted backgrounds |
 
+### Supporting neutrals từ Tailwind v4.2
+
+Nhóm màu trung tính mới của Tailwind như `taupe`, `mauve`, `mist`, `olive` được phép dùng làm:
+- surface phụ
+- border dịu
+- muted sections
+- subtle state containers
+
+Không dùng các màu này để thay luôn palette chủ đạo của PMTL.
+Palette chủ đạo vẫn là:
+- `cream`
+- `gold`
+- `warm gray`
+
 ### Semantic colors
 
 | Token | Hex | Dùng cho |
@@ -96,6 +110,12 @@ Phase 1 chỉ hỗ trợ light mode. Dark mode deferred — Buddhist content th�
 - Source attribution luôn hiện dưới kinh văn
 - Không italic kinh văn — giữ nghiêm trang
 
+### Typographic refinement
+
+- Có thể dùng `font-feature-settings` có chọn lọc cho heading, số liệu, hoặc UI editorial cao cấp.
+- Không bật tính năng typography làm giảm readability trên body text dài.
+- Mọi tinh chỉnh typography phải phục vụ cảm giác trang nghiêm, không phải để phô kỹ thuật.
+
 ---
 
 ## Spacing & Layout
@@ -119,6 +139,7 @@ Phase 1 chỉ hỗ trợ light mode. Dark mode deferred — Buddhist content th�
 - **Content-first**: Nội dung quan trọng nhất ở center column, max width 680px cho reading.
 - **Card-based**: Content cards với subtle shadow (`shadow-sm`) và rounded corners (`rounded-lg`).
 - **Bento grid** (chỉ cho landing/dashboard): Grid layout không đều nhau, visual interest.
+- Ưu tiên logical layout utilities của Tailwind khi giúp layout trung tính theo ngôn ngữ, đặc biệt ở nav, drawer, breadcrumb, side panel, sticky offsets.
 
 ### Mobile-first breakpoints
 
@@ -206,6 +227,12 @@ Slow: 200ms ease-out — modals, drawers
 Page: 300ms ease — route transitions (nếu dùng)
 ❌ KHÔNG animate practice forms — elderly cần stability
 ```
+
+### Motion discipline
+
+- Motion chỉ được dùng để tăng nhịp điệu, không để gây chú ý.
+- Dialog, sheet, menu, hover states, hero reveal là các lane được phép polish mạnh hơn.
+- Practice flows, sutra reading, advisory-heavy pages phải ổn định và ít chuyển động.
 
 ### Feedback
 

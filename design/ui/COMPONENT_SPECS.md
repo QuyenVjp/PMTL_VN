@@ -7,6 +7,7 @@ Mỗi component có: mô tả, props cơ bản, states, elderly-specific rules n
 > **Design principles**: `design/ui/DESIGN_PRINCIPLES.md` — color system, typography, spacing, interactions
 > **Admin architecture**: `design/ui/ADMIN_ARCHITECTURE.md` — shadcn-admin layout, DataTable, command palette
 > **Frontend architecture**: `design/baseline/frontend-architecture.md` — library stack, proxy boundary
+> **shadcn taxonomy refs**: form/input, layout/navigation, overlays/dialogs, feedback/status, display/media
 > **Skill ref**: `taste-skill`, `soft-skill`, `minimalist-skill`, `pmtl-creative-designer`, `pmtl-ui-behavior`, `pmtl-vercel-precision`
 
 ---
@@ -22,6 +23,82 @@ Mỗi component có: mô tả, props cơ bản, states, elderly-specific rules n
 | Loading state | Mọi async action phải có loading indicator |
 | Empty state | Mọi list/table phải có empty state design |
 | Error state | Mọi form + async action phải có error state |
+
+## Component sourcing rules (Quy tắc lấy component)
+
+- `shadcn/ui` là catalog/component source chính cho web và admin.
+- `Radix UI` là primitive nền cho accessibility và interaction.
+- `Motion v12` chỉ là animation layer, không phải component source.
+- Nếu shadcn đã có component phù hợp, ưu tiên add từ CLI rồi theme lại theo PMTL trước khi tự phát minh component mới.
+- Không add component chỉ vì nhìn đẹp trong docs; component phải map được với page, flow, hoặc owner doc thật.
+- Các component nặng như `data-table`, `chart`, `resizable`, `menubar`, `context-menu` chỉ add khi route thật yêu cầu.
+
+## Recommended starter inventory for `apps/web`
+
+Đây là inventory nên có rất sớm khi rebuild web theo taxonomy của shadcn:
+
+### Form & Input
+
+- `form`
+- `field`
+- `button`
+- `input`
+- `textarea`
+- `checkbox`
+- `radio-group`
+- `select`
+- `switch`
+- `label`
+
+### Layout & Navigation
+
+- `accordion`
+- `breadcrumb`
+- `navigation-menu`
+- `tabs`
+- `separator`
+- `scroll-area`
+
+### Overlays & Dialogs
+
+- `dialog`
+- `alert-dialog`
+- `sheet`
+- `drawer`
+- `popover`
+- `tooltip`
+- `dropdown-menu`
+- `command`
+
+### Feedback & Status
+
+- `alert`
+- `sonner`
+- `progress`
+- `spinner`
+- `skeleton`
+- `badge`
+- `empty`
+
+### Display & Media
+
+- `avatar`
+- `card`
+- `table`
+- `carousel`
+- `aspect-ratio`
+- `typography`
+
+### Add later only when routes need them
+
+- `data-table`
+- `chart`
+- `resizable`
+- `item`
+- `kbd`
+- `toggle`
+- `toggle-group`
+- `pagination`
 
 ---
 

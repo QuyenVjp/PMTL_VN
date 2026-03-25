@@ -26,7 +26,8 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 |---|---|---|
 | Framework | **Next.js 16 App Router** | Server Components, SEO, streaming |
 | UI components | **shadcn/ui** | Composable, accessible, Tailwind-native |
-| Styling | **Tailwind CSS 4** | Utility-first, design token integration |
+| Primitives | **Radix UI** | Headless accessibility foundation cho dialog, select, tabs, menu, toast, overlays |
+| Styling | **Tailwind CSS 4.2** | Utility-first, design token integration, logical utilities, CSS variables |
 | Forms | **React Hook Form + Zod** | Performant validation, shared schemas |
 | Server state | **TanStack Query v5** | Cache, dedup, optimistic updates cho client components |
 | Client state | **Zustand** (minimal) | Chỉ cho UI state (sidebar, modal, theme) |
@@ -34,7 +35,87 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 | Date/Calendar | **date-fns** + lunar calendar lib | Lightweight, no Moment |
 | Markdown | **react-markdown** + **rehype-sanitize** | Server-side sanitize cho rich text |
 | Toast | **Sonner** | Accessible, stacking, auto-dismiss |
-| Animation | **Framer Motion** (minimal) | Chỉ cho page transitions, không cho elderly-heavy screens |
+| Animation | **Motion v12** (minimal) | Chỉ cho page transitions, overlays, reveal nhẹ; không cho elderly-heavy screens |
+
+### Monorepo + shadcn rules
+
+- PMTL dùng `apps/web` như app workspace và `packages/ui` như shared component workspace.
+- Khi dùng shadcn CLI trong monorepo, chạy lệnh từ `apps/web`; CLI sẽ quyết định shared primitive nào nên vào `packages/ui` và app composition nào nên ở `apps/web`.
+- Shared primitives như `button`, `input`, `dialog`, `tabs`, `card`, `tooltip` nên sống ở `packages/ui`.
+- App-specific composition như hero blocks, login forms, tracker drawers, content cards có business context nên sống ở `apps/web`.
+- Không giữ hai bản primitive giống nhau ở cả `apps/web` và `packages/ui`.
+- Mỗi workspace phải có `components.json` riêng và phải giữ đồng bộ:
+  - `style`
+  - `iconLibrary`
+  - `tailwind.baseColor`
+  - `tailwind.cssVariables`
+- Với Tailwind v4, `tailwind.config` trong `components.json` nên để rỗng theo hướng dẫn chính thức của shadcn.
+- Mặc định dùng `CSS variables theming`, nghĩa là `tailwind.cssVariables = true`.
+- PMTL web lock các quyết định init sau:
+  - `style = new-york`
+  - `tailwind.baseColor = taupe`
+  - `rsc = true`
+  - `tsx = true`
+  - `tailwind.prefix = ""`
+- Không bật `registries` custom ở bootstrap phase; chỉ dùng public/default shadcn install flow cho vòng scaffold đầu.
+
+### shadcn theme contract
+
+- Theme baseline dùng shadcn CSS variable convention:
+  - `background`
+  - `foreground`
+  - `card`
+  - `card-foreground`
+  - `popover`
+  - `popover-foreground`
+  - `primary`
+  - `primary-foreground`
+  - `secondary`
+  - `secondary-foreground`
+  - `muted`
+  - `muted-foreground`
+  - `accent`
+  - `accent-foreground`
+  - `destructive`
+  - `destructive-foreground`
+  - `border`
+  - `input`
+  - `ring`
+- Khi dùng class như `bg-background`, `text-foreground`, `bg-primary`, `text-primary-foreground`, nghĩa là đang đi qua token system chuẩn của shadcn.
+- PMTL giữ light-first. Dark mode không phải baseline phase bootstrap dù shadcn có hỗ trợ sẵn.
+- Khi thêm token semantic mới như `warning`, `success`, `info`, cần:
+  - khai báo ở `:root`
+  - khai báo ở `.dark` nếu dark mode được bật trong phase sau
+  - expose bằng `@theme inline`
+  - rồi mới dùng dưới dạng utility classes
+
+### Monorepo alias direction
+
+`apps/web/components.json` nên trỏ:
+- `components` -> `@/components`
+- `hooks` -> `@/hooks`
+- `lib` -> `@/lib`
+- `utils` -> `@pmtl/ui/lib/utils`
+- `ui` -> `@pmtl/ui/components`
+
+`packages/ui/components.json` nên trỏ:
+- `components` -> `@pmtl/ui/components`
+- `hooks` -> `@pmtl/ui/hooks`
+- `lib` -> `@pmtl/ui/lib`
+- `utils` -> `@pmtl/ui/lib/utils`
+- `ui` -> `@pmtl/ui/components`
+
+### Tailwind v4.2 usage rules
+
+- Ưu tiên theme bằng CSS variables và `@theme`, không hardcode palette rải rác trong component.
+- Ưu tiên logical utilities khi layout cần trung tính theo hướng viết hoặc có khả năng cần đa ngôn ngữ:
+  - `ps-*`, `pe-*`
+  - `scroll-ps-*`, `scroll-pe-*`
+  - `inline-*`, `min-inline-*`, `max-inline-*`
+  - `block-*`, `min-block-*`, `max-block-*`
+- Không ép mọi layout phải dùng logical utilities. Các utility vật lý như `left/right/top/bottom/w/h` vẫn được dùng khi đang mô tả vị trí vật lý rõ ràng.
+- Neutral palette mới như `taupe`, `mauve`, `mist`, `olive` phù hợp làm surface/border/muted states; không thay thế palette chủ đạo PMTL.
+- `font-feature-settings` có thể dùng có chọn lọc cho typography cao cấp, nhưng không được tạo ra trải nghiệm khó đọc trên màn hình dài.
 
 ### Data fetching strategy
 
@@ -136,6 +217,20 @@ Client state (UI only):
 - List/search/feed phải ưu tiên `useInfiniteQuery()` với cursor contract; không default offset pagination cho community/search nếu route có thể scroll dài
 - `queryFn` phải tôn trọng `AbortSignal` để cancellation hoạt động đúng khi route đổi nhanh
 - Mutation invalidation phải đi qua query key factory dùng chung; không hardcode query key string rải rác
+
+### Motion v12 rules
+
+- Chỉ animate cái giúp tăng clarity hoặc polish:
+  - dialog/sheet open-close
+  - section reveal trên homepage hoặc public hub
+  - card hover elevation nhẹ
+  - route-level transition rất tiết chế
+- Không dùng motion dày cho:
+  - practice sheets
+  - long-form reading
+  - elderly-heavy screens
+  - form nhập liệu dài
+- Ưu tiên `LazyMotion` khi animation spread đủ rộng để đáng giảm bundle.
 
 ### Route structure (Next.js App Router)
 

@@ -80,6 +80,18 @@ Slice này chỉ được coi là pass khi:
 3. `reference-only` rules không bị product hóa thành calculator / interpretation UX
 4. web/admin đều dùng cùng vocabulary cho 6 buckets canon
 
+## Web rebuild starter reference
+
+Nếu reset `apps/web` để scaffold lại từ starter sạch, phải theo:
+
+- [web-rebuild-blueprint.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/tracking/web-rebuild-blueprint.md)
+
+Blueprint đó chốt:
+- starter stack cho `apps/web`
+- route group skeleton
+- visual/system baseline
+- wave order để rebuild web mà không lệch `design/`
+
 ## Status semantics (Ý nghĩa các trạng thái)
 
 - `implemented`: đã triển khai
