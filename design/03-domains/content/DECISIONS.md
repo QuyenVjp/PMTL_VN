@@ -230,3 +230,37 @@ Nhưng chúng đang rải ở:
 ### Trade-off
 - cần discipline hơn khi thêm rule mới
 - feature docs phải reference canon thay vì tự copy lại toàn bộ
+
+## Decision 10. Các bài hỗ trợ kiểu `Công Đức Bảo Sơn Thần Chú` là support guidance, không phải merit ledger có thể tính toán
+
+### Context
+Một số bài hỗ trợ niệm kinh không chỉ là `niệm bao nhiêu biến`, mà còn phụ thuộc mạnh vào:
+- user có thật sự làm việc thiện / tạo công đức gần đây hay không
+- mục đích dùng là gì
+- wording khấn cầu phải bám source
+- có những case việc thiện quá lâu trong quá khứ có thể đã chuyển thành `phúc đức`
+
+Nếu app hoặc AI scaffold hiểu sai, rất dễ trượt sang:
+- máy tính `số dư công đức`
+- nhập `% công đức` như field bắt buộc
+- hứa hẹn hiệu nghiệm như product claim
+
+### Decision
+- Các bài kiểu `Công Đức Bảo Sơn Thần Chú` vẫn thuộc `chantItems` / content owner.
+- Content được phép giữ:
+  - purpose
+  - count presets
+  - prayer template đã duyệt
+  - support conditions
+  - guardrails
+- Engagement chỉ được giữ self-note hoặc context cá nhân nếu có feature hỗ trợ, nhưng không sở hữu `merit balance`, `merit percentage`, hay computed transfer logic.
+- App không được tính toán, quy đổi, hay trực quan hóa “bao nhiêu công đức đang có”.
+
+### Rationale
+- giữ đúng boundary giữa guidance và self-state
+- tránh biến support chant thành pseudo-financial ledger
+- bảo vệ wording pháp môn khỏi bị AI tự bịa logic
+
+### Trade-off
+- UX sẽ ít “tự động” hơn
+- cần editor review kỹ hơn cho support wording nhạy cảm

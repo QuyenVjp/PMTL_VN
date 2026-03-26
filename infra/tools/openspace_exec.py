@@ -61,9 +61,11 @@ def ensure_env(args: argparse.Namespace) -> None:
             ),
         )
         os.environ.pop("OPENSPACE_CONFIG_JSON", None)
+        os.environ.pop("OPENSPACE_DISABLE_SKILLS", None)
     else:
         os.environ["OPENSPACE_HOST_SKILL_DIRS"] = ""
         os.environ["OPENSPACE_CONFIG_JSON"] = json.dumps({"skills": {"enabled": False}})
+        os.environ["OPENSPACE_DISABLE_SKILLS"] = "1"
     os.environ.setdefault("OPENSPACE_WORKSPACE", str(OPENSPACE_ROOT))
     if args.model:
         os.environ["OPENSPACE_MODEL"] = args.model

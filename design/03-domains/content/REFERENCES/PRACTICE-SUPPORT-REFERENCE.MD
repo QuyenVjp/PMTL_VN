@@ -166,6 +166,7 @@ initialExpandLevel: 3
   - onboarding plan picker
   - checklist từng bài
   - preset `recommended_count`
+  - support item như `Công Đức Bảo Sơn Thần Chú` chỉ hiện như optional companion card khi có ngữ cảnh phù hợp, không auto-nhét thành bài bắt buộc cho mọi người
 
 ### mental-incense-flow
 
@@ -280,6 +281,8 @@ initialExpandLevel: 3
   - `opening_prayer` hoặc `prayer_template`
   - `time_rules`
   - `notes`
+  - `support_conditions?`
+  - `guardrails?`
 
 ### Guardrails
 
@@ -287,6 +290,14 @@ initialExpandLevel: 3
 - không để user-state sửa script gốc của bài niệm
 - với phần `Kính Tặng / Tặng`, cần copy giải thích rõ và validation text cụ thể
 - các flow nghi thức cần có mode checklist thay vì chỉ rich text dài
+- với các bài hỗ trợ kiểu `Công Đức Bảo Sơn Thần Chú`:
+  - không dựng `merit wallet`, `merit balance`, hay `% chuyển công đức` thành computed product field
+  - nếu user cần lưu ngữ cảnh, chỉ nên là self-note như:
+    - việc thiện vừa làm
+    - ngày làm
+    - đang cầu cho bản thân hay người thân
+  - không coi mọi việc thiện quá lâu trong quá khứ là còn nguyên để chuyển
+  - không biến app thành công cụ khẳng định “đã chuyển thành công đức thành công”
 
 ### Human review priority
 
@@ -295,6 +306,9 @@ initialExpandLevel: 3
   - số biến mặc định cho từng bài
   - các điều kiện đốt / không đốt
   - infographic “chấm đúng/sai” của Ngôi Nhà Nhỏ
+  - wording support của `Công Đức Bảo Sơn Thần Chú`, nhất là distinction:
+    - việc thiện gần đây có thể chuyển thành công đức
+    - việc thiện quá lâu có thể đã thành `phúc đức`
 
 ## File nên đọc tiếp theo
 

@@ -138,7 +138,36 @@ initialExpandLevel: 3
   - `1. Các bước niệm kinh bài tập...`
 - `needs_review`: `false`
 
-### 8. Thất Phật Diệt Tội Chân Ngôn
+### 8. Công Đức Bảo Sơn Thần Chú
+
+- `kind`: `mantra`
+- `purpose`: hỗ trợ chuyển việc thiện đã làm thành công đức và dùng công đức đã có làm nền để cầu tiêu trừ nghiệp chướng hoặc cầu một việc cụ thể
+- `recommended_count`:
+  - `21`
+  - `27`
+  - `49`
+  - `49 / 59 / 73`: lane cần chuyển công đức rõ hơn theo khai thị đã được người dùng cung cấp; không coi là preset bắt buộc hằng ngày cho mọi người
+- `openingPrayer`:
+  - có thể dùng như bài hỗ trợ sau khi đã làm việc thiện / bố thí pháp / phóng sinh / gieo duyên pháp bảo
+  - app chỉ được giữ `prayer template` và `support note` an toàn, không tự sinh lời khấn mới ngoài owner wording đã duyệt
+- `timeRules`:
+  - sáng hoặc tối đều có thể niệm
+  - không phải bài mặc định bắt buộc trong mọi công khóa hằng ngày
+  - chỉ nên được gợi ý khi user thật sự có `thiện hạnh / công đức` gần đây hoặc có ngữ cảnh cầu xin rõ
+- `supportConditions`:
+  - phải có nền `thiện hạnh / công đức` đã làm
+  - việc thiện quá lâu trong quá khứ có thể đã chuyển thành `phúc đức`, không nên để app mặc định coi là còn nguyên để chuyển
+  - có thể niệm cho bản thân hoặc cho người thân thường làm việc thiện
+- `guardrails`:
+  - app không được tính `số dư công đức`
+  - app không được hứa hẹn hiệu nghiệm hay coi đây là công cụ “đổi công đức” cơ giới
+  - app không được ép user nhập `% công đức`; nếu có template wording thì chỉ là note/reference để user tự đọc, không thành computed field
+- `source_docs`:
+  - `user-supplied guidance: Công Đức Bảo Sơn Thần Chú`
+- `needs_review`: `true`
+  - lý do: cần editor chốt wording tiếng Việt chuẩn cho prayer template, distinction `thiện sự -> công đức` và case `việc thiện quá lâu đã thành phúc đức`
+
+### 9. Thất Phật Diệt Tội Chân Ngôn
 
 - `kind`: `mantra`
 - `purpose`: dùng trong bước thanh tịnh, sám hối, và một số nghi thức
@@ -158,7 +187,7 @@ initialExpandLevel: 3
 
 ## Nhóm ritual templates
 
-### 9. Mẫu khấn phát nguyện
+### 10. Mẫu khấn phát nguyện
 
 - `kind`: `prayer-template`
 - `purpose`: dùng cho flow phát nguyện
@@ -174,7 +203,7 @@ initialExpandLevel: 3
   - `4. Trình tự phát nguyện`
 - `needs_review`: `false`
 
-### 10. Mẫu khấn phóng sinh
+### 11. Mẫu khấn phóng sinh
 
 - `kind`: `prayer-template`
 - `purpose`: dùng cho flow phóng sinh cho bản thân hoặc thay người khác
@@ -190,7 +219,7 @@ initialExpandLevel: 3
   - `5. Nghi thức phóng sinh...`
 - `needs_review`: `false`
 
-### 11. Mẫu thỉnh cầu trước khi tụng Ngôi Nhà Nhỏ
+### 12. Mẫu thỉnh cầu trước khi tụng Ngôi Nhà Nhỏ
 
 - `kind`: `prayer-template`
 - `purpose`: mở đầu trước khi tụng Ngôi Nhà Nhỏ
@@ -206,7 +235,7 @@ initialExpandLevel: 3
   - `6. Phương pháp tụng niệm Ngôi Nhà Nhỏ...`
 - `needs_review`: `false`
 
-### 12. Mẫu khấn trước và sau khi đốt Ngôi Nhà Nhỏ
+### 13. Mẫu khấn trước và sau khi đốt Ngôi Nhà Nhỏ
 
 - `kind`: `prayer-template`
 - `purpose`: hỗ trợ flow đốt Ngôi Nhà Nhỏ không có bàn thờ
@@ -224,7 +253,7 @@ initialExpandLevel: 3
 - `needs_review`: `true`
   - lý do: cần rà lại wording cuối câu khấn và thao tác đốt
 
-### 13. Trình tự thắp tâm hương
+### 14. Trình tự thắp tâm hương
 
 - `kind`: `ritual-template`
 - `purpose`: flow quán tưởng dâng hương khi không thao tác thân thể, dùng trước thời công khóa hoặc khi không có bàn thờ PMTL chuẩn

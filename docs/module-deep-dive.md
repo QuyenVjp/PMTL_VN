@@ -96,6 +96,10 @@ Ví dụ:
 - *Bát Nhã Tâm Kinh* — tương tự, có `beginner lane` và `foundation lane`
 - *Chuẩn Đề Thần Chú* — có preset theo ngày thường / ngày đặc biệt / advisory từ lịch
 - *Tiêu Tai Kiết Tường Thần Chú* — có thể được advisory tăng cường vào ngày phù hợp
+- *Công Đức Bảo Sơn Thần Chú* — là **support item có điều kiện**, không phải bài app được nhét mặc định cho mọi user mỗi ngày. Logic đúng là:
+  - chỉ nên hiện như bài hỗ trợ khi user có ngữ cảnh rõ: vừa làm việc thiện, bố thí pháp, phóng sinh, gieo duyên pháp bảo, hoặc đang có lời cầu xin cụ thể
+  - app có thể giữ wording tham khảo và note hỗ trợ, nhưng **không được tính toán “bao nhiêu công đức”, không dựng ví công đức, không bắt user nhập % chuyển công đức như field tính toán**
+  - nếu việc thiện đã quá lâu trong quá khứ, app cũng không được mặc định coi là vẫn còn nguyên để chuyển thành công đức
 
 Khi admin thêm bài mới hoặc chỉnh sửa script, hệ tự đồng bộ ra practice sheet và search.
 
@@ -176,6 +180,11 @@ Ví dụ:
 - Cô mới nhập môn có thể đi theo lane sơ học với preset nhẹ hơn như `7 biến`
 - Bác đã tu lâu nhưng mới dùng app thì có thể chọn "đã có công khóa ổn định" để **skip beginner lane**
 - Nếu một đồng tu đang赶念 **Ngôi Nhà Nhỏ**, app vẫn phải giữ warning đúng: với người đã qua beginner phase, `Đại Bi` và `Tâm Kinh` không nên bị gợi ý hạ dưới `21 biến`
+- Nếu user muốn dùng `Công Đức Bảo Sơn Thần Chú`, app chỉ nên hỗ trợ ở mức:
+  - card nhắc đây là bài hỗ trợ có điều kiện
+  - chỗ ghi self-note riêng tư về việc thiện vừa làm / ngày đã làm / đang cầu cho ai
+  - prayer template đã duyệt bởi content owner
+  - tuyệt đối không biến feature này thành máy “quy đổi công đức” hay progress bar công đức
 
 Sau đó user mới thấy danh sách bài hôm nay, bấm nút đếm biến (nút to 52px cho người lớn tuổi, có haptic nếu điện thoại hỗ trợ), rồi bấm "Lưu buổi tu" → ghi vào `practiceLogs`. **Không tự động save — user chủ động lưu khi thấy xong.**
 

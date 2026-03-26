@@ -47,3 +47,6 @@ search-check:
 
 skill-audit:
   py infra/tools/codex_actions.py skill-audit
+
+openspace *ARGS:
+  py infra/tools/openspace_bridge.py {{ARGS}}
