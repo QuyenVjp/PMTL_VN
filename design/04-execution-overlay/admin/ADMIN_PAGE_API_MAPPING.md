@@ -1,7 +1,7 @@
 # ADMIN_PAGE_API_MAPPING
 
 File này là canonical mapping giữa admin page route, API route group, query keys, và invalidation rules.
-Nó tồn tại để scaffold `apps/admin` mà không phải đoán dependency giữa [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md), [ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md), và [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md).
+Nó tồn tại để scaffold `apps/admin` mà không phải đoán dependency giữa [PAGE_INVENTORY.md](../web/PAGE_INVENTORY.md), [ADMIN_MODULE_SPECS.md](../../02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md), và [API_ROUTE_INVENTORY.md](../api/API_ROUTE_INVENTORY.md).
 
 > Page route canon: `design/04-execution-overlay/web/PAGE_INVENTORY.md`
 > Admin shell/layout: `design/02-platform-baseline/admin-runtime/ADMIN_ARCHITECTURE.md`
@@ -140,6 +140,7 @@ Không vì một mutation admin bất kỳ mà invalidate root dashboard một c
 
 - File này chốt query key family ở mức design. Khi scaffold thật, nên biến chúng thành query key factory ở `apps/admin/src/features/*/queries.ts`.
 - Root dashboard query key canon là `['admin-dashboard']`; không suy từ workspace khác.
+- ownership invalidate dashboard nằm ở mutation handler / query owner, không nằm ở component page.
 - Nếu một page dùng nhiều tabs trong cùng workspace, ưu tiên key family chung cho workspace rồi tách sub-key theo tab.
 - Đừng invalidate toàn bộ admin cache sau mỗi mutation. Chỉ invalidate workspace bị ảnh hưởng và dashboard/status widgets có dependency thật.
 - Nếu API route group chưa tồn tại đủ chi tiết, đây là dấu hiệu phải quay lại `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` hoặc use-case owner doc trước khi scaffold UI.

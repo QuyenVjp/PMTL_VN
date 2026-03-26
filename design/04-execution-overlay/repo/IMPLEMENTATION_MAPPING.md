@@ -27,6 +27,13 @@ Nó không dùng để khoe roadmap (lộ trình). Nó dùng để trả lời m
 
 Mọi route khác xuất hiện trong `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` vẫn là canon inventory, chưa tự động trở thành scaffold target.
 
+## Readiness projection for codegen
+
+- `design-ready` không đồng nghĩa `scaffold ngay`.
+- green light cho codegen phải bám đúng `Current safe scaffold window` ở file này + step gate trong `design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md`.
+- module/route nằm ngoài cửa sổ hiện tại vẫn là canon inventory, nhưng bị coi là `blocked for current scaffold wave`.
+- nếu route row tồn tại nhưng step chưa mở, codegen phải dừng ở doc sync hoặc shared contract prep; không được nhảy thẳng sang controller/service/runtime artifact.
+
 ## First vertical slice to implement first (Vertical slice đầu tiên nên làm)
 
 Slice đầu tiên được khuyến nghị để thử E2E thật là:
@@ -112,14 +119,14 @@ Slice này chỉ được coi là pass khi:
 
 Nếu reset `apps/web` để scaffold lại từ starter sạch, phải theo:
 
-- [web-rebuild-blueprint.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_REBUILD_BLUEPRINT.md)
+- [web-rebuild-blueprint.md](../web/WEB_REBUILD_BLUEPRINT.md)
 
 Blueprint đó chốt:
 - starter stack cho `apps/web`
 - route group skeleton
 - visual/system baseline
 - wave order để rebuild web mà không lệch `design/`
-- query key/invalidation canon cho web phải đọc thêm ở [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md)
+- query key/invalidation canon cho web phải đọc thêm ở [web-query-invalidation-plan.md](../web/WEB_QUERY_INVALIDATION_PLAN.md)
 
 ## Status semantics (Ý nghĩa các trạng thái)
 
@@ -157,14 +164,14 @@ Blueprint đó chốt:
 | webhook replay protection (chống phát lại webhook) | signature verify guard + `webhook_delivery_dedup` persistence + replay-window policy | required before launch | webhook không được coi là implemented nếu chưa có provider/event-id dedup artifact + signature verification + neutral error response |
 | `/health/live`, `/health/ready`, `/health/startup` (kiểm tra sức khỏe hệ thống) | health module/routes | required before launch | các đường dẫn live/ready/startup trả đúng contract (hợp đồng nghiệp vụ) giai đoạn 1 |
 | `/metrics` tối thiểu | metrics endpoint (điểm truy cập chỉ số) + counters (bộ đếm) cơ bản | required before launch | các chỉ số request/error/upload/rate-limit có thể được scrape (thu thập) nội bộ |
-| backup + restore drill (sao lưu + diễn tập phục hồi) | runbook (tài liệu vận hành) + restore drill record (nhật ký diễn tập phục hồi) | required before launch | [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/RESTORE_DRILL_LOG.md) có evidence (bằng chứng) thật |
+| backup + restore drill (sao lưu + diễn tập phục hồi) | runbook (tài liệu vận hành) + restore drill record (nhật ký diễn tập phục hồi) | required before launch | [restore-drill-log.md](./RESTORE_DRILL_LOG.md) có evidence (bằng chứng) thật |
 
 ## First risky write-paths (Các luồng ghi dữ liệu rủi ro đầu tiên)
 
 | Write-path doc (Tài liệu luồng ghi) | Expected rebuild artifact (Thành phần dự kiến) | Status (Trạng thái) | Launch note (Ghi chú ra mắt) |
 |---|---|---|---|
-| [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md) | auth controller + auth service + session/token tables + audit append + rate limit | required before launch | Lỗi bảo mật (Auth bug) là vật cản ra mắt (launch blocker) |
-| [upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/content/USE_CASES/upload-media-asset.md) | upload controller + media service + storage adapter + media_assets table + asset status handling | required before launch | Ranh giới tải lên (Upload boundary) là vật cản ra mắt (launch blocker) |
+| [manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md) | auth controller + auth service + session/token tables + audit append + rate limit | required before launch | Lỗi bảo mật (Auth bug) là vật cản ra mắt (launch blocker) |
+| [upload-media-asset.md](../../03-domains/content/USE_CASES/upload-media-asset.md) | upload controller + media service + storage adapter + media_assets table + asset status handling | required before launch | Ranh giới tải lên (Upload boundary) là vật cản ra mắt (launch blocker) |
 
 ## Deferred and explicitly excluded advanced components (Các thành phần nâng cao đang tạm hoãn hoặc bị loại rõ ràng)
 
@@ -176,7 +183,7 @@ Coding agent có thể activate phần `planned` mà không cần phát minh l�
 | `Valkey` | `apps/api/src/platform/valkey/` — `ValkeyModule`, `ValkeyService` | planned | rate_limit_records Postgres table shows lock contention OR cache miss rate measured | `design/02-platform-baseline/optional-scale/VALKEY_ARCHITECTURE.md` |
 | `BullMQ` + `apps/worker` | producer: `apps/api/src/platform/queue/`; consumer: `apps/worker/src/handlers/` | planned | background work makes request > 2s OR manual retry unacceptable | `design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md` |
 | `outbox_events` + dispatcher | `apps/api/src/platform/outbox/` — `OutboxService`, `OutboxDispatcherCron` | planned | side effect failure cost > complexity cost | `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md` |
-| `Meilisearch` | `apps/api/src/modules/search/adapters/meilisearch.adapter.ts`; runtime authority: `SEARCH_ENGINE=meilisearch` | planned | SQL search p95 vượt SLO public search đã chốt trong `design/02-platform-baseline/deploy-ops/SLA_SLO.md` hoặc multi-type search requirement xuất hiện rõ | `design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md` |
+| `Meilisearch` | `apps/api/src/modules/search/adapters/meilisearch.adapter.ts`; runtime authority: `SEARCH_ENGINE=meilisearch` | required before launch under current launch profile | PMTL đã chọn `Search-first launch`; SQL fallback chỉ là contingency path khi engine degraded/unavailable, không phải primary launch path | `design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md` |
 | `PgBouncer` | `infra/pgbouncer/pgbouncer.ini`; `infra/docker/docker-compose.pgbouncer.yml` | planned | db_connection_count > 80% of max_connections sustained | `design/02-platform-baseline/optional-scale/PGBOUNCER_STRATEGY.md` |
 | Cloudflare R2 | `apps/api/src/platform/storage/adapters/r2.adapter.ts`; `STORAGE_ADAPTER=r2` | planned | local disk > 70% OR restore drift > 5% | `design/02-platform-baseline/optional-scale/R2_MIGRATION_PLAN.md` |
 | Web Push (VAPID) | `apps/api/src/modules/notification/push.service.ts`; `apps/web/public/sw.js` | planned | PWA active + feature flag `notification.push.enabled` | `design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md` |

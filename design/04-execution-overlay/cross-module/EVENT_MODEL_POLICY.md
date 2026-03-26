@@ -26,7 +26,7 @@ Chốt event model tổng cho backend PMTL.
 
 - default interaction path vẫn là direct service call qua contract rõ
 - chỉ promote một interaction sang event khi có lý do rõ: decoupling, retry boundary, async delivery, audit fan-out, integration lane
-- event name, payload shape, idempotency expectation phải map được sang [OUTBOX_EVENT_TAXONOMY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
+- event name, payload shape, idempotency expectation phải map được sang [OUTBOX_EVENT_TAXONOMY.md](./OUTBOX_EVENT_TAXONOMY.md)
 - nếu event có side-effect user-visible, phải có recovery/replay stance
 
 ## Must not
@@ -43,7 +43,6 @@ Chốt event model tổng cho backend PMTL.
 
 ## Dependencies
 
-- [MODULE_INTERACTIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md)
-- [OUTBOX_EVENT_TAXONOMY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
-
+- [MODULE_INTERACTIONS.md](./MODULE_INTERACTIONS.md)
+- [OUTBOX_EVENT_TAXONOMY.md](./OUTBOX_EVENT_TAXONOMY.md)
+- [IMPLEMENTATION_MAPPING.md](../repo/IMPLEMENTATION_MAPPING.md)

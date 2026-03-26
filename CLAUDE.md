@@ -35,7 +35,7 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - Dev core/full: `just dev-core`, `just dev-full`
 - Stop/rebuild/logs: `just dev-stop`, `just dev-rebuild`, `just dev-logs`
 - Web verify: `just verify-web`
-- Backend verify: `just verify-cms`
+- Backend verify: `just verify-cms` (legacy recipe name for current API/backend verification)
 - Full verify: `just verify-all`
 - Smoke/monitoring/auth/search: `just smoke`, `just monitoring`, `just auth-check`, `just search-check`
 - Fallback package scripts: `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`
@@ -71,6 +71,10 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - `pmtl-quality-gate`: verification planning, targeted checks, review findings.
 - `pmtl-ops-debugger`: Docker, runtime failures, monitoring, incident-style debugging.
 - `pmtl-doc-researcher`: official-doc fact finding, version drift checks, repo-aware gap filling.
+
+## External Compare Workers
+- These are advisory compare lanes, not PMTL-aware role specs.
+- Route them through `pmtl-multi-cli-orchestrator` or call them only when a second opinion is materially useful.
 - `claude-worker`: external Claude Code CLI opinion for compare/validate tasks.
 - `codex-worker`: external Codex CLI opinion for compare/validate tasks.
 - `copilot-worker`: external GitHub Copilot CLI opinion for compare/validate tasks.
@@ -90,7 +94,7 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 
 ## Verification Mapping
 - `apps/web`, `packages/ui`: start with `just verify-web`
-- `apps/api`, auth, search, infra-backed backend changes: start with `just verify-cms`
+- `apps/api`, auth, search, infra-backed backend changes: start with `just verify-cms` (legacy recipe name for current API/backend verification)
 - cross-cutting changes: use `just verify-all`
 - search-specific work: include `just search-check`
 - auth/session/cookie changes: include `just auth-check`

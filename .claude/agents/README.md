@@ -11,7 +11,7 @@ Mục tiêu là:
 ## Core PMTL agents
 
 - `pmtl-architect`
-  - placement, ownership, design alignment, implementation planning
+  - placement, ownership, design alignment, planning and handoff readiness
 - `pmtl-api-builder`
   - NestJS/backend implementation trong `apps/api`
 - `pmtl-web-builder`
@@ -39,6 +39,8 @@ Mục tiêu là:
 - `codex-worker`
 - `copilot-worker`
 - `gemini-worker`
+
+Các worker này là compare lanes/advisory lanes, không phải PMTL role specs. Muốn gọi chúng đúng chỗ thì đi qua multi-cli router hoặc một PMTL role chính trước.
 
 ## How to use
 
@@ -73,6 +75,28 @@ Mục tiêu là:
   - `pmtl-ops-debugger`
 - official-doc fact finding:
   - `pmtl-doc-researcher`
+
+## Ambiguous pairs
+
+| Nếu task là... | Dùng | Không dùng nhầm |
+|---|---|---|
+| backend feature có DTO/service/audit/permission | `pmtl-api-builder` | `pmtl-data-runtime-keeper` nếu chưa đụng schema/migration/transaction boundary |
+| Prisma schema, migration, transaction contract, directUrl/runtime URL | `pmtl-data-runtime-keeper` | `pmtl-api-builder` nếu phần khó nhất là data-runtime correctness |
+| publish xong không ra search, mapping/index/sync sai | `pmtl-search-builder` | `pmtl-ops-debugger` nếu engine vẫn khỏe |
+| Meilisearch container chết, fallback lặp, runtime/search lane đang cháy | `pmtl-ops-debugger` | `pmtl-search-builder` nếu đây là incident hạ tầng/runtime |
+| siết Compose/Caddy/Cloudflare/monitoring trước release | `pmtl-release-hardener` | `pmtl-ops-debugger` nếu không phải live incident |
+| service đang down, Docker dev stack chết, cần logs/runbook/recovery ngay | `pmtl-ops-debugger` | `pmtl-release-hardener` nếu không phải hardening task |
+| cần research official docs, correction pass, fact gathering | `pmtl-doc-researcher` | `pmtl-canon-sync` nếu chưa có evidence đủ chắc |
+| đã có evidence hoặc verified implementation và cần update design/ | `pmtl-canon-sync` | `pmtl-doc-researcher` nếu việc chính là sửa owner docs |
+| task nhỏ với verify path đã rõ | implementer tự verify | `pmtl-quality-gate` |
+| task lớn, diff rộng, hoặc verify path không rõ | `pmtl-quality-gate` | implementer closeout hời hợt |
+
+## Naming rules
+
+- Giữ prefix `pmtl-` cho repo-local role specs.
+- Tên nên mô tả lane thật, không đặt cho oách.
+- Ưu tiên pattern `pmtl-<surface>-<role>` hoặc `pmtl-<domain>-<role>`.
+- Nếu role chỉ research/review/advisory, phải nói rõ trong description và phần `Do not`.
 
 ## Rule
 

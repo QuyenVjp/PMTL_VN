@@ -3,7 +3,7 @@
 File này chốt kế hoạch merge 11 module `schema.dbml` thành 1 `prisma/schema.prisma` tổng.
 Không có file này, developer phải tự đoán thứ tự table, foreign keys, enums.
 
-> **Migration order**: xem [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 6 cho 12 bước chi tiết
+> **Migration order**: xem [CODING_READINESS.md](../repo/CODING_READINESS.md) Phần 6 cho 12 bước chi tiết
 > **Module schemas**: mỗi domain owner giữ `SCHEMA_PLAN.dbml` riêng trong `design/03-domains/<domain>/`
 
 ---
@@ -24,6 +24,14 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 | `vows-merit` | `design/03-domains/vows-merit/SCHEMA_PLAN.dbml` | `vows`, `vow_progress_entries`, `life_release_journal` |
 | `wisdom-qa` | `design/03-domains/wisdom-qa/SCHEMA_PLAN.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`, `video_talk_entries`, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
 | `contact` | `design/03-domains/contact/SCHEMA_PLAN.dbml` | `contact_info`, `volunteers` |
+
+Lưu ý:
+- cột `Tables chính` chỉ là summary để đọc nhanh, không phải exhaustive table list cho migration merge.
+- `post_comments` là editorial blog comment thuộc content/community public surfaces; `community_comments` là comment của member/community posts. Hai family khác module behavior và khác visibility rules.
+- child/junction tables canonical phải đọc thêm ở `Foreign key dependency graph` phía dưới, ví dụ:
+  - `post_tags`, `post_related_posts`, `post_gallery_media`
+  - `hub_page_curated_posts`, `beginner_guide_media`
+  - `chant_item_preview_media`, `chant_item_recommended_presets`, `chant_item_time_rules`, `chant_plan_items`
 
 ---
 
@@ -281,7 +289,7 @@ offline_bundles → offline_bundle_entries
 
 ## Migration execution order (12 steps)
 
-Ref: [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 6 cho chi tiết. Summary:
+Ref: [CODING_READINESS.md](../repo/CODING_READINESS.md) Phần 6 cho chi tiết. Summary:
 
 ```
 1. Platform tables (feature_flags, audit_logs, rate_limit_records)

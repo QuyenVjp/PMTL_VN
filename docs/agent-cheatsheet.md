@@ -32,9 +32,41 @@ File này là bản quét lại toàn bộ skill hiện nhìn thấy trên máy 
 
 - Codex là primary senior delivery engineer trong repo này, không phải generic assistant.
 - `design/`, `AGENTS.md`, và PMTL repo-local skills là lớp authority trước tiên.
+- PMTL role briefs trong `.claude/agents/README.md` là lớp routing nhanh cho chat mới; dùng chúng như reusable prompt seeds, không coi chúng là native runtime guarantee.
 - Dùng local subagents trước khi gọi external workers nếu câu hỏi chủ yếu là "repo này nói gì" hoặc cần đọc nhiều file song song.
 - External workers là lane advisory, không được override policy của repo.
 - Khi cần roster, escalation rules, hoặc tie-break rules, đọc `docs/agent-operating-model.md`.
+
+## PMTL role briefs fast path
+
+Nếu mở chat mới và muốn route nhanh theo task shape, đọc:
+
+1. `AGENTS.md`
+2. `.claude/agents/README.md`
+3. `docs/codex-agent-quickstart.md`
+
+Map nhanh:
+
+| Task shape | Role brief |
+|---|---|
+| planning, placement, handoff readiness | `pmtl-architect` |
+| NestJS/backend feature | `pmtl-api-builder` |
+| Next.js/web feature | `pmtl-web-builder` |
+| admin/internal UI | `pmtl-admin-builder` |
+| search sync, Meilisearch projection, fallback mapping | `pmtl-search-builder` |
+| Prisma schema, migrations, transaction-sensitive data work | `pmtl-data-runtime-keeper` |
+| update `design/` after verified evidence | `pmtl-canon-sync` |
+| Docker, Caddy, Cloudflare, monitoring hardening | `pmtl-release-hardener` |
+| runtime incident, Docker recovery, logs, emergency triage | `pmtl-ops-debugger` |
+| official-doc fact gathering and correction | `pmtl-doc-researcher` |
+| broad review or unclear verification path | `pmtl-quality-gate` |
+
+Ambiguous pairs cần nhớ:
+
+- `pmtl-search-builder` cho projection/sync/index bugs; `pmtl-ops-debugger` cho Meilisearch/runtime incidents
+- `pmtl-release-hardener` cho pre-deploy config/hardening; `pmtl-ops-debugger` cho live recovery
+- `pmtl-doc-researcher` để lấy evidence; `pmtl-canon-sync` để viết vào `design/`
+- task nhỏ với verify path đã rõ thì implementer tự verify, không cần `pmtl-quality-gate`
 
 ## Supabase-inspired fast path
 
@@ -104,12 +136,14 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 ### 1. Workflow và delivery
 
 - `pmtl-workflow-router`: điểm vào mặc định khi chưa biết nên gọi skill nào.
+- `.claude/agents/README.md`: index cho PMTL role briefs khi cần chọn implementer/reviewer/debug lane thật nhanh trong chat mới.
+- `docs/codex-agent-quickstart.md`: starter ngắn để mở chat Codex mới mà không phải nhắc lại cả operating model.
 - `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`: bộ Superpowers để làm rõ spec, chia plan, rồi thực thi.
 - `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
 - `pmtl-multi-cli-orchestrator`: điều phối Gemini CLI và Copilot CLI theo đúng lane thay vì gọi bừa.
-- External CLI workers: dùng `py infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Gemini CLI hoặc Copilot CLI.
+- External CLI workers: lane advisory/compare only, dùng `py infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Gemini CLI hoặc Copilot CLI.
 - Wrapper hiện giữ `sticky workspace session` cho Copilot và Gemini tại `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json`.
 - Nếu Copilot dính session stale, wrapper tự bỏ resume token hỏng và rerun fresh một lần thay vì fail cứng ngay.
 - Wrapper còn lưu `conversation.jsonl` cùng thư mục runtime để tự bơm lại vài lượt chat gần nhất khi provider resume không ổn định.

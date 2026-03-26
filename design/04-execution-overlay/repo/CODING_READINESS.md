@@ -12,7 +12,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
 | Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, feature-status đọc ở `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md`, exact version/runtime pins đọc ở `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`, còn `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` chỉ giữ Nest 11 scaffold nuance; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
-| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) |
+| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md) |
 | Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` |
 | UI/UX design | ✅ Sẵn sàng | `design/02-platform-baseline/web-runtime/` và `design/04-execution-overlay/web/` đã có owner docs cho IA/navigation, landing, homepage, app screens, tokens, and route contracts; xem `ROOT_DOC_OWNERSHIP.md` |
@@ -65,10 +65,10 @@ Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. 
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ rõ để bắt đầu code module đó | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | `launch-ready` | launch blockers thật đã pass, gồm restore drill, runtime evidence, và rollout proof | `DECISIONS.md` section 9 + `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 
-Coding agent có thể bắt đầu Wave 1, nhưng chỉ theo thứ tự scaffold đã khóa. Với `apps/api`, cửa sổ an toàn hiện tại là Step `0 -> 7` theo [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md), và ở Step 7 vẫn chỉ được làm `5` content routes đầu tiên.
+Coding agent có thể bắt đầu Wave 1, nhưng chỉ theo thứ tự scaffold đã khóa. Với `apps/api`, cửa sổ an toàn hiện tại là Step `0 -> 7` theo [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md), và ở Step 7 vẫn chỉ được làm `5` content routes đầu tiên.
 Các route khác đang xuất hiện trong inventory không mặc định trở thành Wave 1 scaffold target.
 Slice E2E đầu tiên nên dùng để kiểm tra design-to-code là `chanting environment rules`, không phải member dashboard.
-Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) để tránh dựng sai từ commit đầu.
+Riêng `apps/api`, thứ tự scaffold và blocker cụ thể đã được tách thành [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md) để tránh dựng sai từ commit đầu.
 
 ---
 
@@ -184,7 +184,7 @@ Trail of Bits skills không còn chỉ là inventory. Chúng đã được cắm
 - Raw JSON spec: `GET /api/docs-json` (có thể export ra `docs/openapi.json` khi build)
 
 **Completion criteria** (what counts as implemented):
-- Tất cả routes public trong [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) có `@ApiOperation` + `@ApiTags`
+- Tất cả routes public trong [API_ROUTE_INVENTORY.md](../api/API_ROUTE_INVENTORY.md) có `@ApiOperation` + `@ApiTags`
 - Tất cả request/response surfaces map được từ contract owner sang OpenAPI, không drift khỏi owner docs
 - security schemes trong Swagger phản ánh đúng:
   - browser/web-admin = cookie-first auth contract
@@ -275,7 +275,7 @@ Cộng thêm 1 flag test để verify feature_flags table hoạt động.
 ## Phần 5: Rate-limit values per endpoint
 
 Các giá trị dưới đây là `design-locked limits`, không có nghĩa tất cả limiter đã được code ngay từ Step 1.
-Limiter nào được cắm ở bước nào phải bám [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md), đặc biệt:
+Limiter nào được cắm ở bước nào phải bám [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md), đặc biệt:
 - `/api/auth/refresh` thuộc identity Step 5
 - upload limiter thuộc storage/upload boundary Step 6
 - content/community/vows/engagement limiter chỉ cắm khi route write-path tương ứng thật sự được scaffold
@@ -386,10 +386,13 @@ Bước 12 — Contact (reference users):
 
 ## Phần 7: Skill alignment với NestJS rebuild
 
-### Skills ALIGNED (dùng được):
-- `.claude/skills/arch-check` ✅ — check code vs NestJS design
-- `.claude/skills/module-scaffold` ✅ — scaffold NestJS modules
-- `.claude/skills/use-case-write` ✅ — viết use-case docs
+### Role briefs / skills ALIGNED (dùng được):
+- `.claude/agents/pmtl-architect.md` ✅ — check placement, ownership, scaffold order, handoff readiness
+- `.claude/agents/pmtl-api-builder.md` ✅ — backend implementation lane cho `apps/api`
+- `.claude/agents/pmtl-data-runtime-keeper.md` ✅ — Prisma/migration/transaction-sensitive data lane
+- `.claude/agents/pmtl-canon-sync.md` ✅ — sync lại owner docs khi design/code drift
+- `.agents/skills/pmtl-vn-architecture/SKILL.md` ✅ — NestJS rebuild architecture anchor
+- `.agents/skills/pmtl-production-baseline/SKILL.md` ✅ — runtime/logging/validation baseline
 - `.agents/skills/pmtl-fe-implementation` ✅ — Next.js frontend rules
 - `.agents/skills/pmtl-fe-craft` ✅ — frontend craftsmanship
 - `.agents/skills/pmtl-ui-behavior` ✅ — UI interaction rules
@@ -406,12 +409,19 @@ Bước 12 — Contact (reference users):
 - `geo-content-optimizer` ✅ — GEO optimization cho AI citation (ChatGPT, Perplexity, Google AI Overviews)
 - `svg-precision` ✅ — deterministic SVG cho icons, diagrams, charts, UI mockups tĩnh, technical drawings trong `design/`
 
-### Skills DEPRECATED / CONFLICT (không dùng cho code mới):
-| Skill | Vấn đề | Action |
+### Skills / role artifacts DEPRECATED / CONFLICT (không dùng cho code mới):
+| Skill hoặc artifact | Vấn đề | Action |
 |---|---|---|
 | `pmtl-scaffold-payload-collection` | Creates legacy CMS collections | **Deprecate** |
-| `pmtl-production-baseline` | May reference legacy CMS patterns | **Review & Update** |
 | `pmtl-runbook-cms-runtime-errors` | References legacy CMS runtime | **Deprecate** |
+
+Pagination consistency rule:
+- hub routes `/bach-thoai` và `/hoi-dap` đang locked ở `offset pagination`
+- offline bundle list đang locked ở `cursor semantics`
+- nếu route family đổi giữa `offset` và `cursor`, phải cập nhật cùng lúc:
+  - `design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md`
+  - `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`
+  - `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
 
 **Action required**: coi các skill deprecated ở trên là historical/no-route entries; không dùng chúng cho chat mới, không giữ chúng trong checklist active của rebuild.
 
@@ -444,7 +454,7 @@ Wave 4 — Community + Moderation
 
 Wave 5 — Vows + Wisdom
   15. apps/api: `vows-merit` (vows, life release)
-  16. apps/api: `wisdom-qa` (wisdom entries, search)
+  16. apps/api: `wisdom-qa` + search lane (`Meilisearch` là launch-active engine, SQL chỉ là fallback contingency)
   17. apps/web: vow pages, wisdom search
 
 Wave 6 — Notifications + Offline

@@ -25,8 +25,8 @@ Nó giúp khóa toàn bộ API surface trong 1 file, nhưng không thay `contrac
 | `browser session` | Yêu cầu transport hợp lệ cho browser auth flow, không dùng như public POST đơn giản |
 | `member+` | Member hoặc admin có session hợp lệ |
 | `admin+` | Admin hoặc super-admin |
-| `editor+` | Narrow API role trong admin surface; UI page có thể mở cho `admin+`, nhưng backend guard chỉ cho editor/admin phù hợp |
-| `moderator+` | Narrow API role trong admin surface; UI page có thể mở cho `admin+`, nhưng backend guard chỉ cho moderator/admin phù hợp |
+| `editor+` | Narrow backend API role guard trong admin surface; page gate có thể rộng hơn (`admin+`), nhưng route-level backend policy mới là authority |
+| `moderator+` | Narrow backend API role guard trong admin surface; page gate có thể rộng hơn (`admin+`), nhưng route-level backend policy mới là authority |
 | `internal shared-secret` | Không dùng browser session; route nội bộ có shared secret hoặc signature contract |
 
 `PAGE_INVENTORY.md` là page auth canon. File này được phép chi tiết hơn ở mức backend role scope cho cùng một admin page.
@@ -555,7 +555,7 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 ## Platform / Control Plane — Phase 2+ conditional routes
 
 Các route dưới đây chỉ canon hóa contract cho phase sau.
-Không được scaffold sớm nếu [APPS_API_SCAFFOLD_ORDER.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md) chưa cho phép.
+Không được scaffold sớm nếu [APPS_API_SCAFFOLD_ORDER.md](./APPS_API_SCAFFOLD_ORDER.md) chưa cho phép.
 
 | Method | Route | Owner | Auth |
 |---|---|---|---|

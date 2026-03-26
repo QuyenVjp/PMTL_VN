@@ -31,21 +31,21 @@ Không có nghĩa là:
 - muốn lấy template ngoài về rồi ép ngược `design/`
 
 Nguồn đọc bắt buộc trước khi rebuild:
-- [frontend-architecture.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-- [PAGE_INVENTORY.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md)
-- [USER_FLOWS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/USER_FLOWS.md)
-- [COMPONENT_SPECS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
-- [DESIGN_PRINCIPLES.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
-- [ROUTE_PAGE_CONTRACTS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/ROUTE_PAGE_CONTRACTS.md)
-- [AUTH_UX_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/AUTH_UX_CONTRACT.md)
-- [SEARCH_UX_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/SEARCH_UX_CONTRACT.md)
-- [CONTENT_RENDERING_CONTRACT.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/CONTENT_RENDERING_CONTRACT.md)
-- [TOKEN_IMPLEMENTATION_SHEET.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/TOKEN_IMPLEMENTATION_SHEET.md)
-- [PRESERVED_UI_STATE_MATRIX.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PRESERVED_UI_STATE_MATRIX.md)
-- [implementation-mapping.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
-- [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md)
-- [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md)
-- [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md)
+- [frontend-architecture.md](../../02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+- [PAGE_INVENTORY.md](./PAGE_INVENTORY.md)
+- [USER_FLOWS.md](./USER_FLOWS.md)
+- [COMPONENT_SPECS.md](../../02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
+- [DESIGN_PRINCIPLES.md](../../02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
+- [ROUTE_PAGE_CONTRACTS.md](./ROUTE_PAGE_CONTRACTS.md)
+- [AUTH_UX_CONTRACT.md](../../02-platform-baseline/web-runtime/AUTH_UX_CONTRACT.md)
+- [SEARCH_UX_CONTRACT.md](../../02-platform-baseline/web-runtime/SEARCH_UX_CONTRACT.md)
+- [CONTENT_RENDERING_CONTRACT.md](../../02-platform-baseline/web-runtime/CONTENT_RENDERING_CONTRACT.md)
+- [TOKEN_IMPLEMENTATION_SHEET.md](./TOKEN_IMPLEMENTATION_SHEET.md)
+- [PRESERVED_UI_STATE_MATRIX.md](./PRESERVED_UI_STATE_MATRIX.md)
+- [implementation-mapping.md](../repo/IMPLEMENTATION_MAPPING.md)
+- [web-query-invalidation-plan.md](./WEB_QUERY_INVALIDATION_PLAN.md)
+- [web-app-router-file-contract.md](./WEB_APP_ROUTER_FILE_CONTRACT.md)
+- [web-cache-revalidation-contract.md](./WEB_CACHE_REVALIDATION_CONTRACT.md)
 
 ---
 
@@ -69,8 +69,8 @@ Chốt dùng:
 - hợp để dựng lại trong monorepo
 
 `shadcn/ui`:
-- đúng với [frontend-architecture.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-- đúng với [COMPONENT_SPECS.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
+- đúng với [frontend-architecture.md](../../02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+- đúng với [COMPONENT_SPECS.md](../../02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
 - đẹp, nhanh, maintainable
 
 `Radix UI`:
@@ -106,6 +106,12 @@ Nhưng khi vào PMTL thì chốt thành rule:
 - ưu tiên docs chính thức của `Next.js`, `Monorepo`, `Tailwind v4`, `Forms`, `React 19`
 - chỉ dùng `registry` hoặc `MCP` của shadcn như nguồn tham khảo/install helper, không để nó override PMTL design canon
 - component nào add vào phải map được về `COMPONENT_SPECS.md` hoặc route/flow thật
+
+### Package pinning stance
+
+- `create-next-app@latest` và `shadcn@latest` chỉ là bootstrap entrypoint; sau scaffold phải pin package versions trong repo manifests theo `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`.
+- `Motion` giữ lane `v12.x` như canon hiện tại; không tự nhảy major mới chỉ vì starter/tooling gợi ý.
+- `Radix UI` primitives và `shadcn` dependencies phải bám exact repo semver sau khi scaffold, không để floating drift thành hidden architecture change.
 
 ### Monorepo policy
 
@@ -312,7 +318,7 @@ Accessibility/error contract:
 
 ### Query/cache contract
 
-- `apps/web` phải scaffold query layer theo [web-query-invalidation-plan.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md).
+- `apps/web` phải scaffold query layer theo [web-query-invalidation-plan.md](./WEB_QUERY_INVALIDATION_PLAN.md).
 - Mọi feature query phải đi qua:
   - feature-local query key factory
   - `queryOptions()` hoặc `infiniteQueryOptions()`
@@ -326,7 +332,7 @@ Accessibility/error contract:
 - Nếu mutation làm đổi public cached surface, phải đi cả 2 đường:
   - invalidate TanStack Query keys liên quan
   - server-side revalidation owner theo `cache-topology.md`
-- RSC/page cache semantics phải bám [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md):
+- RSC/page cache semantics phải bám [web-cache-revalidation-contract.md](./WEB_CACHE_REVALIDATION_CONTRACT.md):
   - cached reads dùng `'use cache'` + `cacheTag()` + `cacheLife()`
   - tag invalidation mặc định dùng `revalidateTag(tag, 'max')`
   - không dùng single-arg `revalidateTag(tag)` pattern cũ
@@ -341,7 +347,7 @@ Accessibility/error contract:
 
 ### App Router file contract
 
-- Special files và root layout conventions của web phải scaffold theo [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md).
+- Special files và root layout conventions của web phải scaffold theo [web-app-router-file-contract.md](./WEB_APP_ROUTER_FILE_CONTRACT.md).
 - Root `app/layout.tsx` phải:
   - giữ `<html>` + `<body>`
   - không tự viết `<head>` thủ công
@@ -355,7 +361,7 @@ Accessibility/error contract:
 - `metadata` object / `generateMetadata()` là đường duy nhất cho head metadata; detail pages ưu tiên `generateMetadata()`.
 - `cookies()`, `headers()`, `params`, `searchParams` phải được xử lý theo async contract của Next 16; không code theo sync pattern cũ.
 - network boundary file dùng `proxy.ts`, không scaffold `middleware.ts` như baseline mới.
-- boundary chi tiết của `'use client'`, `'use server'`, `'use cache'` phải bám [web-app-router-file-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md) và [web-cache-revalidation-contract.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md).
+- boundary chi tiết của `'use client'`, `'use server'`, `'use cache'` phải bám [web-app-router-file-contract.md](./WEB_APP_ROUTER_FILE_CONTRACT.md) và [web-cache-revalidation-contract.md](./WEB_CACHE_REVALIDATION_CONTRACT.md).
 - Route Handlers ở web tier chỉ dành cho proxy/BFF edge, metadata edge, và file/web concerns thật sự cần; không dựng business API song song với `apps/api`.
 - streaming/prefetch/environment/forms semantics phải bám owner canon, không tự invent local pattern trong lúc scaffold.
 - lazy loading chỉ là optimization cho client widgets/libs; không dùng `ssr: false` như baseline escape hatch.
@@ -476,7 +482,7 @@ packages/
 
 ### Design language
 
-Web mới phải đi theo `Contemplative Premium (cao cấp, tĩnh, ấm, trang nghiêm)` từ [DESIGN_PRINCIPLES.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md).
+Web mới phải đi theo `Contemplative Premium (cao cấp, tĩnh, ấm, trang nghiêm)` từ [DESIGN_PRINCIPLES.md](../../02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md).
 
 Không được rơi vào:
 - dark SaaS dashboard look

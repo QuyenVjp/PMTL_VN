@@ -67,6 +67,13 @@ Rules:
 | `ACCESS_TOKEN_TTL_MINUTES` | identity | yes | access token TTL (default: 15) |
 | `REFRESH_TOKEN_TTL_DAYS` | identity | yes | refresh token TTL (default: 30) |
 
+Note:
+- JWT ở PMTL không có nghĩa auth model là stateless bearer-first.
+- Browser contract vẫn là cookie-first:
+  - access token và refresh token đi qua `HttpOnly` cookies
+  - session authority vẫn là Postgres-backed `sessions` ownership trong `apps/api`
+- đọc thêm `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` trước khi scaffold auth transport.
+
 ### Security
 
 | Env | Owner | Required | Purpose |
@@ -100,6 +107,10 @@ Rules:
 | `SMTP_FROM_EMAIL` | platform/notification | yes | Sender email address (e.g., `noreply@pmtl.vn`) |
 | `EMAIL_HASH_SALT` | platform/notification | yes | Salt for hashing emails in audit logs — **never rotate** |
 
+Note:
+- `EMAIL_HASH_SALT` immutable by design; xem `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md`.
+- rotate salt này sẽ làm hỏng lookup/continuity của email hashes trong audit trail.
+
 ### Web (apps/web)
 
 | Env | Owner | Required | Purpose |
@@ -111,6 +122,11 @@ Rules:
 | `NEXT_REVALIDATE_URL` | api | yes | web app revalidation webhook URL |
 | `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` | web/infra | yes when multi-instance deploy | shared Server Action encryption key across instances |
 | `DEPLOYMENT_VERSION` | web/infra | no | value used for `deploymentId` / version skew protection when enabled |
+
+Note:
+- `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` chỉ trở thành required khi nhiều instance `apps/web` cùng phục vụ một deploy surface.
+- single-instance dev hoặc single-instance production không nên phát minh nhu cầu rotate/seed key này sớm hơn deploy topology thật.
+- xem thêm `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` trước khi thêm multi-instance web topology vào scaffold/deploy docs.
 
 ### Admin (apps/admin)
 

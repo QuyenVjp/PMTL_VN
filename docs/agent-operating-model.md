@@ -9,6 +9,12 @@ It exists to make 4 things explicit:
 - when external workers add leverage
 - who wins when outputs disagree
 
+For fresh-session routing, pair this file with:
+
+- `AGENTS.md`
+- `.claude/agents/README.md`
+- `docs/codex-agent-quickstart.md`
+
 ## Codex Role
 
 Codex is the primary senior delivery engineer for PMTL_VN.
@@ -88,6 +94,45 @@ Use this order unless the user explicitly overrides it:
 5. Global generic tool skill only when repo-local PMTL skills do not already own the behavior
 6. External workers only when they add clear value
 
+## PMTL Role-Brief Layer
+
+PMTL currently keeps reusable role briefs in `.claude/agents/`.
+
+Treat them as:
+
+- prompt seeds for fresh Codex sessions
+- a fast routing layer for implementer/reviewer/debug/doc lanes
+- reusable role contracts that must stay aligned with `design/` and `AGENTS.md`
+
+Do not treat them as:
+
+- proof that the current tool has native subagent runtime
+- policy authorities above `design/`
+- permission to bypass PMTL skills or owner docs
+
+Fast mapping:
+
+| Need | Role brief |
+|---|---|
+| planning and placement | `pmtl-architect` |
+| backend implementation | `pmtl-api-builder` |
+| web implementation | `pmtl-web-builder` |
+| admin implementation | `pmtl-admin-builder` |
+| search projection/sync work | `pmtl-search-builder` |
+| Prisma/migration/data-runtime work | `pmtl-data-runtime-keeper` |
+| canon/doc updates | `pmtl-canon-sync` |
+| release/runtime hardening | `pmtl-release-hardener` |
+| live runtime recovery | `pmtl-ops-debugger` |
+| official-doc fact gathering | `pmtl-doc-researcher` |
+| broad review / unclear verify path | `pmtl-quality-gate` |
+
+Ambiguous-boundary rules:
+
+- `pmtl-search-builder` for projection/index/sync bugs; `pmtl-ops-debugger` for engine/container/runtime incidents
+- `pmtl-release-hardener` for planned Docker/Caddy/Cloudflare/monitoring hardening; `pmtl-ops-debugger` for live recovery
+- `pmtl-doc-researcher` gathers evidence; `pmtl-canon-sync` writes verified changes into owner docs
+- if the verification path is already obvious and local to one surface, the implementer should run it directly instead of escalating to `pmtl-quality-gate`
+
 ## Governance
 
 ### Decision Ownership
@@ -158,6 +203,8 @@ Use them only when:
 - a second opinion is materially useful
 - current-product drift or external research matters
 - a narrow comparison is cheaper than local trial-and-error
+
+External workers are compare lanes, not PMTL role specs. Do not route ordinary implementation tasks to them as if they were repo-aware builders.
 
 ### Provider Bias
 

@@ -45,3 +45,7 @@ Execution style:
 Default verification:
 - `just search-check`
 - targeted API verification if search routes or DTOs changed
+
+Do not:
+- use this role for Meilisearch container/process outages or generic Docker/runtime recovery; use `pmtl-ops-debugger`
+- treat search as canonical authority or move business writes into the search lane

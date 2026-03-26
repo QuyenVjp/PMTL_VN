@@ -53,7 +53,7 @@ Nó là loader owner ở mức page aggregate; không thay route canon, UI journ
 | Route pattern | Primary loader contract | Auxiliary loaders | Notes |
 |---|---|---|---|
 | `/admin/dashboard` | `AdminDashboardPageDto` | `recentAuditMiniList`, `pendingModerationMiniList` nếu chưa nằm trong aggregate | không để admin home tự fan-out 4 panel không owner |
-| `/he-thong/health` | `AdminSystemHealthExtendedDto` | `liveHealthStatus`, `metricsSummary` nếu phase-gated tách route | health admin page là operational aggregate, không log tail viewer |
+| `/admin/he-thong/health` | `AdminSystemHealthExtendedDto` | `liveHealthStatus`, `metricsSummary` nếu phase-gated tách route | health admin page là operational aggregate, không log tail viewer |
 | `/admin/he-thong/thong-bao` | `AdminNotificationOpsPageDto` | `deliveryHealthSummary`, `jobQueueMiniStats` nếu chưa nằm trong aggregate | queue health và subscription stats phải có owner aggregate rõ |
 
 ## Special notes
@@ -140,6 +140,7 @@ Rules:
 - `items[]`
 - `pagination`
 - `syncSummary`
+- `pendingDeltaBadge`
 - `hasMore`
 
 Mỗi item:
@@ -154,6 +155,10 @@ Mỗi item:
 Rules:
 - list page không được fetch full manifest của mọi bundle.
 - `pendingDeltaBadge` phải là aggregate page signal, không bắt client loop qua từng bundle status để tự đếm.
+- pagination của page này dùng cursor semantics ở phase hiện tại; nếu drift sang offset phải update cùng lúc:
+  - [API_DTO_SHAPE_PLAN.md](../api/API_DTO_SHAPE_PLAN.md)
+  - file này
+  - route owner note trong [API_ROUTE_INVENTORY.md](../api/API_ROUTE_INVENTORY.md)
 
 ### `/thong-bao`
 
@@ -183,10 +188,10 @@ Rules:
 - hub page cần `tabCounts` và `filterFacets` riêng
 - không để client tự quét toàn bộ list rồi đếm
 - response aggregate phải echo `engine` đang dùng để UI/search badge không đoán
-- phase hiện tại dùng `offset pagination` cho 2 hub này; nếu đổi sang cursor phải cập nhật cùng lúc:
-  - [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
+- phase hiện tại dùng `offset pagination` cho `/bach-thoai` và `/hoi-dap`; nếu đổi sang cursor phải cập nhật cùng lúc:
+  - [API_DTO_SHAPE_PLAN.md](../api/API_DTO_SHAPE_PLAN.md)
+  - [API_ROUTE_INVENTORY.md](../api/API_ROUTE_INVENTORY.md)
   - file này
-  - route owner trong [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
 
 ### `/tim-kiem`
 
@@ -229,7 +234,7 @@ Rules:
   - map `401/403` về redirect hoặc auth state UI canon
 - không cho page component tự cài silent-refresh logic riêng ngoài auth layer owner
 
-### `/he-thong/health`
+### `/admin/he-thong/health`
 
 `AdminSystemHealthExtendedDto` tối thiểu phải có:
 - `uptime`
@@ -284,7 +289,8 @@ Bảng này chốt thêm `execution contract` cho các page P0 để web không 
 ## Error-state ownership principle
 
 - Primary aggregate API route phải trả đủ state để page render `loading -> success`, `empty`, `unauthorized`, `invalid-input`, `degraded`.
-- Page loader chỉ map từ aggregate payload/error envelope sang render state; không được gọi thêm request bonus để "hiểu lỗi".
+- Page loader chỉ map từ aggregate payload/error envelope sang render state; không được gọi thêm request bonus chỉ để "hiểu lỗi".
+- ngoại lệ duy nhất là auxiliary loader đã có route canon riêng và đã được khai báo từ trước ở file này; aux không được dùng để vá aggregate contract còn thiếu.
 - Page component chỉ render theo state mà loader đã chuẩn hóa; component không là nơi tự diễn giải `401`, `429`, `engine-fallback`, hay `permission-denied`.
 - Nếu một warning/degraded state chỉ ảnh hưởng 1 section, aggregate payload vẫn phải trả phần còn lại đủ để page render partial success.
 - Nếu page chưa render được chỉ bằng aggregate payload + canonical error envelope, contract hiện tại bị coi là chưa đóng.

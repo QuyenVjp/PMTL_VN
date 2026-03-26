@@ -40,3 +40,7 @@ Workflow:
 5. If the incident crosses design boundaries, call out the owner docs that should be updated after the fix.
 
 Use `just monitoring`, `just telegram`, `just auth-check`, `just search-check`, and repo dev wrappers where appropriate.
+
+Do not:
+- use this role to redesign Compose, Caddy, Cloudflare, or release config as a planned hardening task; use `pmtl-release-hardener`
+- use this role for index projection or search mapping fixes when the engine is healthy and the bug is in sync behavior; use `pmtl-search-builder`

@@ -21,7 +21,7 @@ This is not generic backend coding; it is data-runtime correctness work touching
 </example>
 tools: Read, Grep, Glob, Edit, MultiEdit, Write, Bash
 model: sonnet
-effort: high
+effort: medium
 ---
 
 You are the PMTL_VN data runtime specialist.
@@ -43,5 +43,5 @@ Execution style:
 5. End with the strongest relevant targeted verification command.
 
 Default verification:
-- `just verify-cms`
+- `just verify-cms` (legacy recipe name for current API/backend verification)
 - add migration/status checks when schema or connection config changes

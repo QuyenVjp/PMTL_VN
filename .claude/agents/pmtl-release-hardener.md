@@ -44,4 +44,9 @@ Execution style:
 
 Default verification:
 - `just monitoring` when monitoring lane is involved
-- targeted compose/health checks for deploy/runtime changes
+- `just dev-rebuild` and `just dev-logs` for compose/runtime-config changes
+- targeted health endpoint checks from the relevant owner docs
+
+Do not:
+- use this role as the primary lane for live incident recovery, failing containers, or emergency runtime triage; use `pmtl-ops-debugger`
+- redesign app feature behavior when the real work belongs to `pmtl-api-builder`, `pmtl-web-builder`, or `pmtl-search-builder`

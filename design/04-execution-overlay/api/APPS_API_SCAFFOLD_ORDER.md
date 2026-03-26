@@ -503,6 +503,11 @@ Các route `content` và `admin/content` khác đang có trong `design/04-execut
 Chúng **không** trở thành Wave 1 scaffold target chỉ vì đã có route row, DTO row, hay admin workspace row.
 Nếu chưa vượt qua Step 7 với publish path đầu tiên đứng vững, không được kéo grouped-content workspaces, downloads, sutras, chanting admin, hay media-library publish lane vào code thật.
 
+Clarification:
+- Step 7 ở đây là cửa scaffold an toàn cho `apps/api`, không phải recommendation cho first E2E vertical slice toàn repo.
+- Vertical slice khuyến nghị đầu tiên vẫn là `chanting environment rules` theo `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md`.
+- Chỉ sau khi Step 7 baseline đứng vững mới được dùng vertical slice đó để kiểm tra design -> shared -> api -> web -> admin end-to-end.
+
 ### Blocking invariants
 
 - publish path phải nối được:
@@ -603,7 +608,7 @@ Không được scaffold `apps/worker` trước khi `Valkey`, queue contract, ou
 
 ### Conditional routes phải hiểu đúng
 
-- [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) có thể liệt kê route `Phase 2+` để tránh quên contract
+- [API_ROUTE_INVENTORY.md](./API_ROUTE_INVENTORY.md) có thể liệt kê route `Phase 2+` để tránh quên contract
 - sự hiện diện trong inventory **không** có nghĩa route đó được scaffold ở Wave 1
 - điều này cũng áp dụng cho các route phase-sau-trong-Wave-1 như `admin/content/*`, grouped content surfaces, và member aggregates: inventory khóa canon trước, scaffold-order mới quyết định lúc nào được code
 - nếu route là `conditional` hoặc `phase 2+`, scaffold order file này thắng

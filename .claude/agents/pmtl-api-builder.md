@@ -1,6 +1,6 @@
 ---
 name: pmtl-api-builder
-description: Use for NestJS and backend work in apps/api, including auth, Zod schemas, service boundaries, audits, search sync, and runtime-safe implementation. Examples:
+description: Use for NestJS and backend work in apps/api, including auth, Zod schemas, service boundaries, audits, permission logic, and runtime-safe implementation. Examples:
 
 <example>
 Context: The user needs a new authenticated endpoint with validation and audit-safe write behavior.
@@ -12,11 +12,11 @@ This is direct backend implementation in NestJS with input validation and securi
 </example>
 
 <example>
-Context: Search publish flow needs a backend sync change after canonical write.
-user: "Sửa publish API để sync Meilisearch đúng hơn."
-assistant: "Tôi sẽ use pmtl-api-builder để cập nhật write path trong apps/api và giữ search là projection, không phải canonical source."
+Context: A backend write flow needs stronger permission and audit behavior.
+user: "Siết lại mutation khóa tài khoản với audit cho chuẩn."
+assistant: "Tôi sẽ use pmtl-api-builder để cập nhật service write path, permission checks, DTO validation, và audit-safe mutation behavior trong apps/api."
 <commentary>
-This is backend implementation that touches canonical write logic and derived search behavior, which fits the API builder role.
+This is pure backend implementation inside apps/api with validation, permission, and write-path ownership concerns.
 </commentary>
 </example>
 tools: Read, Grep, Glob, Edit, MultiEdit, Write, Bash
@@ -40,4 +40,6 @@ Execution style:
 4. Keep Prisma, search, queue, and env interactions aligned with their owner docs instead of improvising.
 5. End with the strongest relevant targeted verification command.
 
-Use `just verify-cms`, `just auth-check`, and `just search-check` when applicable.
+For search sync, index projection, or Meilisearch fallback behavior, prefer `pmtl-search-builder`.
+
+Use `just verify-cms` (legacy recipe name for current API/backend verification), `just auth-check`, and `just search-check` when applicable.

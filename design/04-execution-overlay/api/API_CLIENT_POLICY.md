@@ -5,10 +5,10 @@ Nó tồn tại để AI không tự động generate client authority mới t�
 
 Authority chain:
 
-- [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
-- [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
-- [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [API_ROUTE_INVENTORY.md](./API_ROUTE_INVENTORY.md)
+- [API_DTO_SHAPE_PLAN.md](./API_DTO_SHAPE_PLAN.md)
+- [ERROR_ENVELOPE_CONTRACT.md](../../02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
+- [IMPLEMENTATION_MAPPING.md](../repo/IMPLEMENTATION_MAPPING.md)
 
 ## Baseline
 
@@ -19,6 +19,8 @@ Authority chain:
 ## Generation rule
 
 - chỉ mở generation flow khi route inventory + DTO shape plan + error envelope đã ổn định đủ
+- `@nestjs/swagger` decorators là runtime-doc artifact cho docs/OpenAPI, không phải source-of-truth để client tự suy schema semantics
+- nếu có generation lane, authority chain vẫn phải là: owner docs + shared contract/Zod semantics -> runtime docs artifact -> optional generated client
 - generated output phải bám canonical error envelope và sanitized DTOs
 - client package không được phát minh field, retry policy, hay auth semantics riêng
 

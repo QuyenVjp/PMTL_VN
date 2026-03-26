@@ -45,3 +45,4 @@ Execution style:
 Default verification:
 - `just verify-web` for admin frontend changes
 - add API verification guidance if the admin task depends on backend contract changes
+- note: `just verify-web` is currently the shared frontend verification lane; call out any missing admin-specific coverage as a repo gap instead of assuming it exists

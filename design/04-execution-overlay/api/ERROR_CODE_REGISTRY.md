@@ -2,7 +2,7 @@
 
 File này chốt `canonical error codes (mã lỗi chuẩn)` cho `apps/api`.
 Nó lấp đúng gap audit đã chỉ ra: có error envelope nhưng chưa có registry.
-Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md).
+Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](../../02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md).
 
 ## Envelope
 
@@ -46,6 +46,13 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 - `validation.invalid_env`
 - `validation.constraint_failed`
 
+Rules:
+- `validation.invalid_env` chỉ dùng cho startup/config boot validation, không dùng cho request-time assumptions mơ hồ.
+- `validation.invalid_body` = body JSON/form payload không qua schema.
+- `validation.invalid_query` = URL query params không qua schema.
+- `validation.invalid_params` = path params không qua schema.
+- `validation.constraint_failed` = qua schema nhưng fail semantic/business constraint rõ.
+
 ### Rate limit / Abuse
 
 - `rate_limit.exceeded`
@@ -61,7 +68,6 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 - `media.file_too_large`
 - `media.file_missing`
 - `media.delete_forbidden`
-- `storage.provider_unavailable`
 
 ### Community / Moderation
 
@@ -86,6 +92,7 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 - `calendar.event_not_found`
 - `calendar.month_invalid`
 - `calendar.aggregate_unavailable`
+- `calendar.advisory_unavailable`
 - `notification.subscription_invalid`
 - `notification.subscription_missing`
 - `notification.delivery_disabled`
@@ -109,6 +116,35 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 - `offline.sync_degraded`
 - `page.aggregate_unavailable`
 - `page.partial_data_warning`
+
+### Engagement / Practice
+
+- `engagement.practice_profile_invalid`
+- `engagement.practice_profile_conflict`
+- `engagement.practice_log_invalid`
+- `engagement.practice_log_conflict`
+- `engagement.practice_sheet_invalid`
+- `engagement.practice_sheet_transition_invalid`
+- `engagement.practice_foundation_warning`
+
+### Wisdom offline / bundle sync
+
+- `wisdom.offline.version_stale`
+- `wisdom.offline.bundle_not_found`
+- `wisdom.offline.device_fingerprint_required`
+
+### Contact
+
+- `contact.not_found`
+- `contact.update_forbidden`
+- `contact.volunteer_duplicate`
+
+### Vows / Merit
+
+- `vows.not_found`
+- `vows.status_invalid`
+- `vows.progress_conflict`
+- `vows.assisted_entry_forbidden`
 
 ### Admin operations
 
@@ -151,6 +187,6 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 
 ## Cross-reference
 
-Error code được nhắc ở [PAGE_LOADER_CONTRACTS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md), [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md), [HEALTH_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md), hoặc domain `CONTRACTS.md` thì phải có row canon ở file này trước khi scaffold.
+Error code được nhắc ở [PAGE_LOADER_CONTRACTS.md](../web/PAGE_LOADER_CONTRACTS.md), [API_DTO_SHAPE_PLAN.md](./API_DTO_SHAPE_PLAN.md), [HEALTH_CONTRACT.md](../../02-platform-baseline/api-runtime/HEALTH_CONTRACT.md), hoặc domain `CONTRACTS.md` thì phải có row canon ở file này trước khi scaffold.
 
 Thiếu row tương ứng = `blocked at design`.
