@@ -13,10 +13,10 @@ Authority liên quan:
 
 ```mermaid
 sequenceDiagram
-    participant U as "User"
-    participant W as "Web/Admin"
-    participant A as "apps/api"
-    participant DB as "Postgres"
+    participant U as User
+    participant W as WebAdmin
+    participant A as AppsApi
+    participant DB as Postgres
 
     U->>W: Register / Login / Refresh / Logout
     W->>A: Auth request

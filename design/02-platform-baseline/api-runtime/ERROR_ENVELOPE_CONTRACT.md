@@ -21,12 +21,12 @@ Precedence note:
 {
   "error": {
     "code": "validation.invalid_body",
-    "message": "Du lieu gui len khong hop le.",
+    "message": "Dữ liệu gửi lên không hợp lệ.",
     "status": 400,
     "requestId": "req_123",
     "details": {
       "fieldErrors": {
-        "email": ["Email khong hop le."]
+        "email": ["Email không hợp lệ."]
       }
     }
   }

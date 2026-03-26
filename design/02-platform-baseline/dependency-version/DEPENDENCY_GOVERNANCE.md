@@ -83,97 +83,36 @@ Nếu bảng này lệch `VERSION_MATRIX.md`, coi như drift bug và `VERSION_MA
 
 ### 3.1 Interpretation
 
-Columns:
+This section intentionally does **not** mirror exact numbers nữa.
+Exact pins, installed truth, and activation-time pins chỉ sống ở `VERSION_MATRIX.md`.
+File này chỉ mirror `governance shape` để tránh phải maintain hai bảng version lớn song song.
 
-- `Approved current`: version/line hiện được repo cho phép dùng ngay
-- `Minimum acceptable`: version thấp nhất chấp nhận nếu workspace hoặc image chưa pin exact
-- `Status`: `active`, `target`, `planned`, `explicit exclusion`
-- `Upgrade mode`: `patch/minor in cadence`, `major by decision`, hoặc `activation-time pin`
+### 3.2 Governance groups
 
-### 3.2 Toolchain and workspace root
-
-| Package / runtime | Approved current | Minimum acceptable | Status | Upgrade mode | Notes |
-|---|---|---|---|---|---|
-| Node.js | `20.18.0` baseline | `20.18.0` | active | major by decision | `TEAM_GUIDE.md` is current host baseline |
-| pnpm | `10.30.3` | `10.30.3` | active | patch/minor in cadence | pinned via root `packageManager` |
-| Turbo | `2.5.x` | `2.5.6` | active | patch/minor in cadence | already in workspace |
-| TypeScript | `5.9.x` | `5.9.2` | active | patch/minor in cadence | cross-workspace compiler contract |
-| ESLint | `9.35.x` | `9.35.0` | active | patch/minor in cadence | keep config compatibility checked |
-| Prettier | `3.6.x` | `3.6.2` | active | patch/minor in cadence | formatting drift must stay deterministic |
-| Vitest | `4.1.x` | `4.1.0` | active | patch/minor in cadence | shared test runner baseline |
-| `@vitejs/plugin-react` | `6.0.x` | `6.0.1` | active | patch/minor in cadence | keep React + Vite compatibility checked |
-| Rolldown binding | current RC exception | current pinned RC | active exception | only by explicit exception | see section 2 |
-
-### 3.3 Web app and shared UI
-
-| Package | Approved current | Minimum acceptable | Status | Upgrade mode | Notes |
-|---|---|---|---|---|---|
-| Next.js | `16.2.1` | `16.2.1` | active | patch/minor in cadence; major by decision | design canon is Next.js 16 App Router |
-| React | `19.2.4` | `19.2.4` | active | patch/minor in cadence; major by decision | must stay aligned with `react-dom` and `packages/ui` peers |
-| React DOM | `19.2.4` | `19.2.4` | active | patch/minor in cadence; major by decision | peer sync required |
-| Zod | `4.3.6` | `4.3.6` | active | patch/minor in cadence; major by decision | must stay identical in `apps/web` and `packages/shared`; Zod 4 canon is locked in `ZOD_4_RUNTIME_POLICY.md` |
-| TanStack React Query | `5.95.2` | `5.95.2` | active | patch/minor in cadence; major by decision | keep query patterns aligned with `DECISIONS.md` |
-| React Hook Form | `7.72.0` | `7.72.0` | active | patch/minor in cadence | verify resolver compatibility with Zod |
-| `@hookform/resolvers` | `5.2.x` | `5.2.2` | active | patch/minor in cadence | move with RHF/Zod review |
-| Tailwind CSS | `4.2.2` | `4.2.2` | active | patch/minor in cadence; major by decision | CSS-first config and token rules live in `TAILWIND_CSS_4_POLICY.md` |
-| Sentry JS / Next | `10.44.0` | `10.44.0` | active | patch/minor in cadence | observability helper, not authority |
-| Pino | `10.3.1` | `10.3.1` | active | patch/minor in cadence | log schema still governed by PMTL docs |
-| web-push | `3.6.7` | `3.6.7` | active | patch/minor in cadence | relevant when push path is activated |
-| Recharts | `3.7.x` | `3.7.0` | active | patch/minor in cadence | admin-facing charts later can reuse line |
-| shadcn CLI | `4.1.x` | `4.1.0` | active | patch/minor in cadence | generation helper only; generated code stays repo-owned |
-
-### 3.4 Shared packages
-
-| Package | Approved current | Minimum acceptable | Status | Upgrade mode | Notes |
-|---|---|---|---|---|---|
-| `packages/shared:zod` | `4.3.6` | `4.3.6` | active | must move with web/api/admin boundary review | exact sync with app consumers |
-| `packages/ui:react` peer | `19.2.4` | `19.2.4` | active | move with web React line | peer must not drift from web app |
-| `packages/ui:react-dom` peer | `19.2.4` | `19.2.4` | active | move with web React DOM line | peer must not drift from web app |
-
-### 3.5 Backend target line for `apps/api` scaffold
-
-`apps/api` chưa scaffold xong trong workspace hiện tại, nên bảng này là `approved target line`, không phải installed proof.
-
-| Package / runtime | Approved current line | Minimum acceptable | Status | Upgrade mode | Notes |
-|---|---|---|---|---|---|
-| NestJS core/common/platform-express | `11.1.17` | `11.1.17` | target | exact pin in scaffold PR | authority stays `apps/api`; see `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` |
-| `@nestjs/swagger` | `11.2.6` | `11.2.6` | target | exact pin in scaffold PR | must keep OpenAPI contract generation healthy |
-| Prisma ORM | `7.5.0` | `7.5.0` | target | exact pin in scaffold PR | see `PRISMA_7_POLICY.md` for adoption nuance |
-| Zod | `4.3.6` | `4.3.6` | target | exact sync required | boundary validation canon |
-| Pino + `nestjs-pino` | `10.3.1` + `4.6.1` | `10.3.1` + `4.6.1` | target | exact pin in scaffold PR | log schema governed by PMTL docs |
-| Argon2 library | latest stable line at scaffold time | latest stable line | target | exact pin in scaffold PR | auth-sensitive; treat as High-risk dependency |
-| `file-type` | latest stable line at scaffold time | latest stable line | target | exact pin in scaffold PR | upload hardening path |
-| `prom-client` | latest stable line at scaffold time | latest stable line | target | exact pin in scaffold PR | metrics path only |
-
-### 3.6 Admin target line for `apps/admin` scaffold
-
-`apps/admin` runtime is planned in design but not pinned in workspace here. Approved line:
-
-| Package / runtime | Approved current line | Minimum acceptable | Status | Upgrade mode | Notes |
-|---|---|---|---|---|---|
-| Vite | `8.0.2` | `8.0.2` | target | exact pin in scaffold PR | no beta/rc in runtime admin app |
-| React | `19.2.4` | `19.2.4` | target | exact sync with web | avoid split React majors |
-| TanStack Router | `1.168.3` | `1.168.3` | target | exact pin in scaffold PR | admin-only routing |
-| TanStack Table | `8.21.3` | `8.21.3` | target | exact pin in scaffold PR | admin-only tables |
-| shadcn/ui generated surface | current registry-compatible stable line | latest stable compatible | target | component-by-component import | generated code remains repo-owned |
-
-### 3.7 Infra and deferred components
-
-These are governed by design triggers. Exact versions are pinned only when the feature is activated.
-
-| Component | Approved stable line | Status | Upgrade mode | Notes |
+| Group | Status family | Upgrade mode | Exact-pin authority | Notes |
 |---|---|---|---|---|
-| Caddy | latest stable line at activation time | target | exact pin in infra PR | Phase 1 baseline ingress |
-| Valkey | `9.0.3` | `9.0.3` | planned | exact pin in activation PR | never use RC on production path |
-| BullMQ | `5.71.1` | `5.71.1` | planned | exact pin in activation PR | queue activation must follow design triggers |
-| Meilisearch | `1.40.0` | `1.40.0` | planned | exact pin in activation PR | keep SQL fallback and rebuild path |
-| PgBouncer | `1.25.1` | `1.25.1` | planned | exact pin in activation PR | only when connection pressure is measured |
-| Prometheus | `3.10.0` | `3.10.0` | planned | exact pin in activation PR | Phase 2+ per metrics use case |
-| Alertmanager | `0.31.1` | `0.31.1` | planned | exact pin in activation PR | pair with Prometheus activation |
-| Grafana | `12.4.1` | `12.4.1` | planned | exact pin in activation PR | internal-only by default |
-| OpenTelemetry Collector | `0.148.0` | `0.148.0` | planned | exact pin in activation PR | only when Phase 3 trace trigger is met |
-| Cloudflare R2 adapter | provider feature, not npm package | planned | activation-time config review | cutover follows storage trigger |
-| pgvector | forbidden until reconsideration trigger | explicit exclusion | do not add | see `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
+| Workspace root toolchain | active | patch/minor in cadence; major by decision | `VERSION_MATRIX.md` | Node/pnpm/Turbo/TypeScript/ESLint/Prettier/Vitest/plugin-react |
+| Web runtime and shared UI | active | patch/minor in cadence; major by decision | `VERSION_MATRIX.md` | Next.js/React/Zod/RHF/Tailwind/Pino/Sentry/shadcn CLI |
+| Shared boundary-critical packages | active | exact sync or same-line sync | `VERSION_MATRIX.md` | `zod`, `react`, `react-dom`, generated boundary clients |
+| `apps/api` scaffold target line | target | exact pin in scaffold PR | `VERSION_MATRIX.md` | NestJS, Prisma, Zod, Pino, swagger, auth/upload/metrics helpers |
+| `apps/admin` scaffold target line | target | exact pin in scaffold PR | `VERSION_MATRIX.md` | Vite, React, TanStack Router/Table, shadcn-generated surface |
+| Infra and optional-scale components | planned or explicit exclusion | activation-time pin or do-not-add | `VERSION_MATRIX.md` | Valkey, BullMQ, Meilisearch, PgBouncer, Prometheus, Grafana, OTEL, pgvector |
+
+### 3.3 Mirror intent
+
+- `active` = workspace hiện có thể dùng ngay; cadence review áp dụng trực tiếp
+- `target` = approved line cho scaffold sắp tới; chưa được coi là installed proof
+- `planned` = chỉ pin exact ở activation PR khi measured trigger đã đủ
+- `explicit exclusion` = không được thêm chỉ vì upstream có feature mới
+
+### 3.4 Exact-pin workflow
+
+Khi một approved line đổi:
+
+1. sửa `VERSION_MATRIX.md` trước
+2. chạy verification phù hợp
+3. chỉ sửa file này nếu governance shape đổi
+4. không thêm lại bảng exact version dài vào đây
 
 ---
 
@@ -220,7 +159,7 @@ Mỗi cadence run phải tạo hoặc cập nhật:
 
 1. một PR dependency review
 2. changelog note ngắn trong PR description
-3. updates cho section 3 của file này nếu approved current đổi
+3. cập nhật `VERSION_MATRIX.md` nếu exact pin hoặc approved line đổi; chỉ sửa section 3 của file này khi governance shape hoặc sync rule đổi
 4. patch log trong section 7 nếu có security-driven hotfix
 
 ### Minimum review steps
