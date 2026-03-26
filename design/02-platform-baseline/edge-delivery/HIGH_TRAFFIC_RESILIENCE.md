@@ -90,6 +90,24 @@ Stack:
   - reindex trigger
   - task/progress visibility tối thiểu
 
+### PMTL current launch choice
+
+PMTL hiện chốt dùng `Profile B — Search-first launch`.
+
+Lý do:
+
+- `Wisdom-QA` là surface giá trị cốt lõi, không phải phần phụ
+- search lời dạy là path khám phá chính, không nên để chậm ngay từ ngày đầu
+- source/provenance rõ là product value, không phải nice-to-have
+- launch value package hiện được chốt theo 3 lớp:
+  - `Launch Core A`: câu pháp cú mỗi ngày, lịch ăn chay/ngày âm phổ thông, tủ sách cá nhân, reading list
+  - `Launch Core B`: Wisdom-QA hub + Meilisearch + SQL fallback + provenance rõ
+  - `Launch Core C`: offline bundle cho Bạch Thoại ở mức tối thiểu usable
+
+Rule:
+
+- PMTL không quay về `Simple launch` trừ khi owner docs đổi lại quyết định
+
 ## Mandatory guardrails for growth-safe launch
 
 ### Search

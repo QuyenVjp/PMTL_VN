@@ -26,6 +26,14 @@ Enum guestbook_approval_state {
   rejected [note: "Bị từ chối"]
 }
 
+Enum community_visibility_state {
+  pending_review [note: "Chưa public vì còn chờ duyệt hoặc chờ kiểm tra rủi ro"]
+  visible [note: "Đang hiển thị công khai"]
+  auto_hidden [note: "Tạm ẩn do risk threshold hoặc report dồn dập"]
+  moderator_hidden [note: "Bị ẩn do moderator/admin quyết định"]
+  rejected [note: "Không được public"]
+}
+
 Table users {
   id uuid [pk, note: "ID người dùng (tham chiếu)"]
   public_id varchar [unique, note: "ID công khai"]
@@ -53,12 +61,17 @@ Table community_posts {
   cover_media_id uuid [note: "Ảnh bìa tham chiếu (Cover media reference)"]
   video_url varchar [note: "Đường dẫn video nếu là bài đăng video (External/embedded video URL)"]
   moderation_status moderation_state [not null, note: "Tóm tắt trạng thái kiểm duyệt (Moderation state summary)"]
+  visibility_state community_visibility_state [not null, note: "Trạng thái hiển thị công khai (Public visibility summary)"]
   spam_score int [default: 0, note: "Điểm chống thư rác nội bộ (Internal spam heuristic score)"]
   report_count int [default: 0, note: "Số lượng báo cáo vi phạm tổng hợp (Denormalized report counter)"]
   last_report_reason varchar [note: "Lý do báo cáo gần nhất (Latest report reason snapshot)"]
+  last_reported_at timestamp [note: "Mốc thời gian report gần nhất (Latest report timestamp summary)"]
   pinned bool [default: false, note: "Đánh dấu bài được ghim (Pinned summary flag)"]
   is_hidden bool [default: false, note: "Đã ẩn khỏi giao diện công khai hay chưa (Hidden summary flag)"]
-  likes int [default: 0, note: "Số lượt thích tổng hợp (Likes counter)"]
+  auto_hidden_at timestamp [note: "Thời điểm auto-hide nếu có (Temporary safety hide timestamp)"]
+  published_at timestamp [note: "Mốc public đầu tiên nếu bài được publish (First public visibility timestamp)"]
+  hidden_reason_code varchar [note: "Mã lý do ẩn nếu có (Safe hidden reason summary)"]
+  heart_count int [default: 0, note: "Số tim tổng hợp (Heart counter summary)"]
   views int [default: 0, note: "Số lượt xem tổng hợp (Views counter)"]
   comments_count int [default: 0, note: "Số bình luận tổng hợp (Comment count summary)"]
   created_at timestamp [note: "Thời điểm tạo (Created timestamp)"]
@@ -83,11 +96,16 @@ Table community_comments {
   author_user_id uuid [ref: > users.id, note: "Người dùng viết bình luận (Comment author user)"]
   author_name_snapshot varchar [note: "Tên hiển thị chụp lại tại thời điểm bình luận (Author display snapshot)"]
   moderation_status moderation_state [not null, note: "Trạng thái kiểm duyệt (Moderation state summary)"]
-  likes int [default: 0, note: "Số lượt thích (Likes counter)"]
+  visibility_state community_visibility_state [not null, note: "Trạng thái hiển thị công khai (Visibility summary)"]
+  heart_count int [default: 0, note: "Số tim tổng hợp (Heart counter summary)"]
   spam_score int [default: 0, note: "Điểm chống thư rác nội bộ (Internal spam score)"]
   report_count int [default: 0, note: "Số lượng báo cáo vi phạm (Report counter)"]
   last_report_reason varchar [note: "Lý do báo cáo gần nhất (Latest report reason snapshot)"]
+  last_reported_at timestamp [note: "Mốc thời gian report gần nhất (Latest report timestamp summary)"]
   is_hidden bool [default: false, note: "Ẩn khỏi luồng công khai (Hidden summary flag)"]
+  auto_hidden_at timestamp [note: "Thời điểm auto-hide nếu có (Temporary safety hide timestamp)"]
+  hidden_reason_code varchar [note: "Mã lý do ẩn an toàn (Safe hidden reason summary)"]
+  replies_count int [default: 0, note: "Số reply trực tiếp tổng hợp (Shallow reply count summary)"]
   created_at timestamp [note: "Thời điểm tạo"]
   updated_at timestamp [note: "Thời điểm cập nhật"]
 }
@@ -102,10 +120,15 @@ Table post_comments {
   author_name_snapshot varchar [note: "Tên hiển thị chụp lại (Author name snapshot)"]
   author_email varchar [note: "Email chụp lại cho khách hoặc luồng tương thích (Email snapshot)"]
   moderation_status moderation_state [not null, note: "Trạng thái kiểm duyệt (Moderation state summary)"]
-  likes int [default: 0, note: "Số lượt thích (Likes counter)"]
+  visibility_state community_visibility_state [not null, note: "Trạng thái hiển thị công khai (Visibility summary)"]
+  heart_count int [default: 0, note: "Số tim tổng hợp (Heart counter summary)"]
   report_count int [default: 0, note: "Số báo cáo vi phạm (Report counter)"]
   last_report_reason varchar [note: "Lý do báo cáo gần nhất (Latest reason)"]
+  last_reported_at timestamp [note: "Mốc thời gian report gần nhất (Latest report timestamp summary)"]
   is_hidden bool [default: false, note: "Ẩn khỏi luồng công khai (Hidden flag)"]
+  auto_hidden_at timestamp [note: "Thời điểm auto-hide nếu có (Temporary safety hide timestamp)"]
+  hidden_reason_code varchar [note: "Mã lý do ẩn an toàn (Safe hidden reason summary)"]
+  replies_count int [default: 0, note: "Số reply trực tiếp tổng hợp (Shallow reply count summary)"]
   created_at timestamp
   updated_at timestamp
 }
@@ -125,8 +148,45 @@ Table guestbook_entries {
   admin_reply text [note: "Nội dung phản hồi của quản trị viên (Admin reply body)"]
   is_answered bool [default: false, note: "Đã có phản hồi hay chưa (Answered summary flag)"]
   approval_status guestbook_approval_state [not null, note: "Trạng thái phê duyệt (Approval state summary)"]
+  visibility_state community_visibility_state [not null, note: "Trạng thái hiển thị công khai (Visibility summary)"]
+  report_count int [default: 0, note: "Số lượng report tổng hợp (Report counter summary)"]
+  last_report_reason varchar [note: "Lý do report gần nhất (Latest report reason summary)"]
+  last_reported_at timestamp [note: "Mốc thời gian report gần nhất (Latest report timestamp summary)"]
+  approved_at timestamp [note: "Thời điểm entry được duyệt công khai (Approval timestamp)"]
+  is_hidden bool [default: false, note: "Ẩn khỏi giao diện công khai (Hidden summary flag)"]
+  hidden_reason_code varchar [note: "Mã lý do ẩn an toàn (Safe hidden reason summary)"]
   created_at timestamp
   updated_at timestamp
+}
+
+Table community_post_hearts {
+  post_id uuid [not null, ref: > community_posts.id, note: "Bài cộng đồng được tim"]
+  user_id uuid [not null, ref: > users.id, note: "Người dùng bấm tim"]
+  created_at timestamp [note: "Thời điểm bấm tim đầu tiên"]
+
+  indexes {
+    (post_id, user_id) [pk]
+  }
+}
+
+Table community_comment_hearts {
+  comment_id uuid [not null, ref: > community_comments.id, note: "Bình luận cộng đồng được tim"]
+  user_id uuid [not null, ref: > users.id, note: "Người dùng bấm tim"]
+  created_at timestamp [note: "Thời điểm bấm tim đầu tiên"]
+
+  indexes {
+    (comment_id, user_id) [pk]
+  }
+}
+
+Table post_comment_hearts {
+  comment_id uuid [not null, ref: > post_comments.id, note: "Bình luận editorial được tim"]
+  user_id uuid [not null, ref: > users.id, note: "Người dùng bấm tim"]
+  created_at timestamp [note: "Thời điểm bấm tim đầu tiên"]
+
+  indexes {
+    (comment_id, user_id) [pk]
+  }
 }
 
 TableGroup "Community Core" [note: "Các bề mặt cộng đồng chính (Main community surfaces)"] {
@@ -138,6 +198,9 @@ TableGroup "Community Core" [note: "Các bề mặt cộng đồng chính (Main 
 
 TableGroup "Community Helpers" [note: "Bảng phụ trợ hoặc tham chiếu nhẹ (Helpers & references)"] {
   community_post_tags
+  community_post_hearts
+  community_comment_hearts
+  post_comment_hearts
   users
   posts
 }

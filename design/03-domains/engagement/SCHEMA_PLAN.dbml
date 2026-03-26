@@ -44,6 +44,18 @@ Table chant_plans {
   title varchar [note: "Tiêu đề kế hoạch"]
 }
 
+Enum practice_experience_tier {
+  newcomer [note: "Người mới bắt đầu thực hành"]
+  established [note: "Đồng tu đã có công khóa ổn định"]
+  experienced_new_to_app [note: "Tu lâu rồi nhưng mới dùng PMTL_VN"]
+}
+
+Enum practice_baseline_mode {
+  beginner_guided [note: "Lane sơ học, cho phép preset 7/9 biến ở mức nhập môn"]
+  standard_foundation [note: "Lane nền tảng tiêu chuẩn cho người đã vào guồng"]
+  custom_with_warning [note: "Người dùng tự chỉnh, có warning nếu xuống thấp"]
+}
+
 Table sutra_bookmarks {
   id uuid [pk, note: "Khóa chính đánh dấu kinh điển"]
   public_id varchar [unique]
@@ -74,6 +86,13 @@ Table chant_preferences {
   public_id varchar [unique]
   user_id uuid [not null, ref: > users.id, note: "Người dùng sở hữu cấu hình"]
   plan_id uuid [not null, ref: > chant_plans.id, note: "Kế hoạch tu học tương ứng"]
+  experience_tier practice_experience_tier [not null, default: 'newcomer', note: "Mức độ kinh nghiệm thực hành"]
+  baseline_mode practice_baseline_mode [not null, default: 'beginner_guided', note: "Chế độ baseline đang áp dụng"]
+  skip_beginner_track bool [not null, default: false, note: "Cho phép bỏ qua preset sơ học nếu user tu lâu nhưng mới vào app"]
+  private_streak_enabled bool [not null, default: true, note: "Bật động lực chuỗi riêng tư"]
+  current_streak_days int [not null, default: 0, note: "Chuỗi ngày riêng tư hiện tại"]
+  longest_streak_days int [not null, default: 0, note: "Chuỗi dài nhất riêng tư"]
+  last_completed_practice_date date [note: "Ngày gần nhất hoàn thành công khóa"]
   created_at timestamp
   updated_at timestamp
 }
@@ -147,10 +166,13 @@ Table practice_sheets {
   practice_date date [note: "Ngày thực hành"]
   plan_ref varchar(64) [note: "Tham chiếu tới kế hoạch niệm (Chant plan ref)"]
   status practice_sheet_status [not null, default: 'draft', note: "Trạng thái tờ thực hành"]
+  experience_tier_snapshot practice_experience_tier [note: "Snapshot mức độ thực hành khi mở sheet"]
+  baseline_mode_snapshot practice_baseline_mode [note: "Snapshot baseline mode khi mở sheet"]
   completion_percent int [not null, default: 0, note: "Tỷ lệ hoàn thành (%)"]
   last_client_event_id varchar(64) [note: "Dùng cho đồng bộ ngoại tuyến (Offline sync)"]
   notes_vi text [note: "Ghi chú tiếng Việt"]
   notes_en text [note: "Ghi chú tiếng Anh"]
+  private_streak_after_complete int [note: "Chuỗi riêng tư sau khi hoàn tất sheet, nếu có"]
   created_at timestamptz [not null]
   updated_at timestamptz [not null]
 }

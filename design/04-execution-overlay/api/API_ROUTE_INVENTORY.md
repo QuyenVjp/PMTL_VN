@@ -277,11 +277,27 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `GET` | `/community/posts` | `community` | public |
 | `GET` | `/community/posts/:publicId` | `community` | public |
 | `POST` | `/community/posts` | `community` | member+ |
+| `POST` | `/community/posts/:publicId/heart` | `community` | member+ |
+| `DELETE` | `/community/posts/:publicId/heart` | `community` | member+ |
+| `POST` | `/community/posts/:publicId/report` | `moderation` | member+ |
 | `GET` | `/community/posts/:publicId/comments` | `community` | public |
 | `POST` | `/community/posts/:publicId/comments` | `community` | member+ |
+| `POST` | `/community/comments/:publicId/heart` | `community` | member+ |
+| `DELETE` | `/community/comments/:publicId/heart` | `community` | member+ |
 | `POST` | `/community/comments/:publicId/report` | `moderation` | member+ |
 | `GET` | `/guestbook` | `community` | public |
 | `POST` | `/guestbook` | `community` | public |
+| `POST` | `/guestbook/:publicId/report` | `moderation` | member+ |
+| `GET` | `/admin/community/posts` | `community` + `moderation` | moderator+ |
+| `GET` | `/admin/community/posts/:publicId` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/posts/:publicId/approve` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/posts/:publicId/reject` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/posts/:publicId/hide` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/posts/:publicId/restore` | `community` + `moderation` | moderator+ |
+| `GET` | `/admin/community/guestbook` | `community` + `moderation` | moderator+ |
+| `GET` | `/admin/community/guestbook/:publicId` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/guestbook/:publicId/approve` | `community` + `moderation` | moderator+ |
+| `POST` | `/admin/community/guestbook/:publicId/reject` | `community` + `moderation` | moderator+ |
 
 ## Engagement
 
@@ -295,9 +311,12 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/engagement/practice-logs` | `engagement` | member+ |
 | `GET` | `/engagement/practice-logs/self` | `engagement` | member+ |
 | `PUT` | `/engagement/practice-logs/self` | `engagement` | member+ |
+| `GET` | `/engagement/practice-profile` | `engagement` | member+ |
+| `PATCH` | `/engagement/practice-profile` | `engagement` | member+ |
 
 > `PUT /engagement/practice-logs/self` là canonical self-save path cho member practice flow.
 > `POST /engagement/practice-logs` chỉ giữ lại nếu module owner chốt rõ append/manual-entry semantics riêng; không dùng hai route cho cùng một UX mutation mà không phân biệt nghiệp vụ.
+> `GET/PATCH /engagement/practice-profile` là owner lane cho `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled`; không nhét profile-level write semantics này vào `practice-sheets` hoặc `practice-logs`.
 | `GET` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `POST` | `/engagement/practice-sheets` | `engagement` | member+ |
 | `GET` | `/engagement/practice-sheets/:publicId` | `engagement` | member+ |
@@ -311,6 +330,11 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/complete` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-self-stored` | `engagement` | member+ |
 | `POST` | `/engagement/ngoi-nha-nho-sheets/:publicId/mark-offered` | `engagement` | member+ |
+
+> `practice profile` là self-owned preference/profile surface.
+> `practice logs` là historical/self-save lane cho buổi tu đã lưu hoặc đang lưu.
+> `practice sheet` là daily structured execution surface có snapshot baseline/profile context.
+> `private streak` và `baseline warning` có thể được projection trong aggregate/detail response, nhưng source write authority không được drift khỏi `engagement` owner routes ở trên.
 
 ## Member page aggregates
 

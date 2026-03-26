@@ -15,7 +15,7 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 | Platform | `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md` | `feature_flags`, `audit_logs`, `rate_limit_records` |
 | `identity` | `design/03-domains/identity/SCHEMA_PLAN.dbml` | `users`, `sessions` |
 | `content` | `design/03-domains/content/SCHEMA_PLAN.dbml` | `posts`, `media_assets`, `categories`, `tags`, `hub_pages`, `hub_page_blocks`, `beginner_guides`, `downloads`, `media_collections`, `media_collection_items`, `chant_items`, `chant_plans`, `chant_plan_items`, `sutras`, `sutra_volumes`, `sutra_chapters`, `sutra_glossary` |
-| `community` | `design/03-domains/community/SCHEMA_PLAN.dbml` | `post_comments`, `community_posts`, `community_comments`, `guestbook_entries` |
+| `community` | `design/03-domains/community/SCHEMA_PLAN.dbml` | `post_comments`, `post_comment_hearts`, `community_posts`, `community_post_hearts`, `community_comments`, `community_comment_hearts`, `guestbook_entries` |
 | `engagement` | `design/03-domains/engagement/SCHEMA_PLAN.dbml` | `sutra_bookmarks`, `sutra_reading_progress`, `chant_preferences`, `chant_preference_optional_items`, `chant_preference_targets`, `chant_preference_intentions`, `practice_logs`, `practice_log_item_states`, `practice_sheets`, `practice_sheet_items`, `ngoi_nha_nho_sheets`, `ngoi_nha_nho_sheet_entries`, `ngoi_nha_nho_sheet_audit_snapshots` |
 | `moderation` | `design/03-domains/moderation/SCHEMA_PLAN.dbml` | `moderation_reports` |
 | `search` | `design/03-domains/search/SCHEMA_PLAN.dbml` | `search_index_metadata` (optional) |
@@ -54,6 +54,22 @@ enum ReportStatus {
   pending
   resolved_hidden
   resolved_ignored
+}
+
+enum CommunityModerationState {
+  pending
+  approved
+  rejected
+  flagged
+  hidden
+}
+
+enum CommunityVisibilityState {
+  pending_review
+  visible
+  auto_hidden
+  moderator_hidden
+  rejected
 }
 
 enum GuestbookStatus {
@@ -100,6 +116,18 @@ enum PracticeSheetStatus {
   in_progress
   completed
   archived
+}
+
+enum PracticeExperienceTier {
+  newcomer
+  established
+  experienced_new_to_app
+}
+
+enum PracticeBaselineMode {
+  beginner_guided
+  standard_foundation
+  custom_with_warning
 }
 
 enum NgoiNhaNhoSheetStatus {
@@ -179,8 +207,11 @@ users (root — no FK dependencies)
   ├── media_assets
   ├── posts
   ├── post_comments
+  ├── post_comment_hearts
   ├── community_posts
+  ├── community_post_hearts
   ├── community_comments
+  ├── community_comment_hearts
   ├── guestbook_entries
   ├── sutra_bookmarks
   ├── sutra_reading_progress
@@ -199,10 +230,19 @@ users (root — no FK dependencies)
 
 posts (depends on: users, categories, media_assets)
   ├── post_comments
+  ├── post_comment_hearts
   ├── post_tags → tags
   ├── post_related_posts
   ├── post_gallery_media → media_assets
   └── (search index source)
+
+community_posts
+  ├── community_post_tags
+  ├── community_comments
+  └── community_post_hearts
+
+community_comments
+  └── community_comment_hearts
 
 categories / tags (standalone lookup tables)
 
@@ -297,6 +337,129 @@ Ref: [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overl
 | Enum value | snake_case | `pending_scan`, `super_admin` |
 | Index name | `idx_<table>_<field>` | `@@index([userId], map: "idx_posts_user_id")` |
 | Unique constraint | `uq_<table>_<field>` | `@@unique([email], map: "uq_users_email")` |
+
+---
+
+## Community merge notes (bắt buộc khi scaffold)
+
+### Canonical models
+
+- `CommunityPost` -> `@@map("community_posts")`
+- `CommunityComment` -> `@@map("community_comments")`
+- `PostComment` -> `@@map("post_comments")`
+- `GuestbookEntry` -> `@@map("guestbook_entries")`
+- `CommunityPostHeart` -> `@@map("community_post_hearts")`
+- `CommunityCommentHeart` -> `@@map("community_comment_hearts")`
+- `PostCommentHeart` -> `@@map("post_comment_hearts")`
+- `CommunityPostTag` -> `@@map("community_post_tags")`
+
+### Required enum mapping
+
+- `community_posts.moderation_status` -> `CommunityModerationState`
+- `community_posts.visibility_state` -> `CommunityVisibilityState`
+- `community_comments.moderation_status` -> `CommunityModerationState`
+- `community_comments.visibility_state` -> `CommunityVisibilityState`
+- `post_comments.moderation_status` -> `CommunityModerationState`
+- `post_comments.visibility_state` -> `CommunityVisibilityState`
+- `guestbook_entries.approval_status` -> `GuestbookStatus`
+- `guestbook_entries.visibility_state` -> `CommunityVisibilityState`
+
+### Summary fields that stay on owner tables
+
+- `heartCount`
+- `commentCount`
+- `repliesCount`
+- `reportCount`
+- `lastReportReason`
+- `lastReportedAt`
+- `isHidden`
+- `hiddenReasonCode`
+- `visibilityState`
+
+Những field này là owner read-model summaries để list/detail queries không phải aggregate mỗi lần từ moderation hoặc heart-edge tables.
+
+### Heart edge rules
+
+- Không dùng một bảng generic `reactions`.
+- Dùng 3 edge tables riêng:
+  - `CommunityPostHeart`
+  - `CommunityCommentHeart`
+  - `PostCommentHeart`
+- Mỗi table phải có unique composite trên target FK + `userId`.
+- Toggle heart là create/delete edge; counter summary được update transactionally hoặc recompute-safe.
+
+### Visibility and moderation rules
+
+- `visibilityState` là public/read summary canon; không để web hay controller tự suy từ `moderationStatus + isHidden`.
+- `isHidden` vẫn được giữ như cheap filter/index flag cho read path.
+- `autoHiddenAt` và `hiddenReasonCode` là summary fields an toàn; raw moderation details vẫn ở moderation module.
+
+### Guestbook-specific rules
+
+- Guestbook không có heart edges trong current scope.
+- `approvedAt` phải được lưu để sort/filter public guestbook wall ổn định.
+- report summaries trên guestbook là read-model convenience; canonical report lifecycle vẫn ở moderation module.
+
+### Prisma relation sketch
+
+```prisma
+model CommunityPostHeart {
+  postId    Int
+  userId    Int
+  createdAt DateTime @default(now())
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId])
+  @@map("community_post_hearts")
+}
+```
+
+Áp cùng pattern cho `CommunityCommentHeart` và `PostCommentHeart`.
+
+---
+
+## Engagement merge notes (bắt buộc khi scaffold)
+
+### Practice profile fields
+
+`chant_preferences` phải đủ để app phân biệt:
+- người mới bắt đầu thật
+- đồng tu đã có công khóa ổn định
+- người tu lâu rồi nhưng mới dùng app
+
+Prisma field picks tối thiểu:
+- `experienceTier: PracticeExperienceTier`
+- `baselineMode: PracticeBaselineMode`
+- `skipBeginnerTrack: Boolean`
+- `privateStreakEnabled: Boolean`
+- `currentStreakDays: Int`
+- `longestStreakDays: Int`
+- `lastCompletedPracticeDate: DateTime?` hoặc `Date?` theo quyết định merge cuối
+
+### Practice sheet snapshot fields
+
+`practice_sheets` nên snapshot:
+- `experienceTierSnapshot`
+- `baselineModeSnapshot`
+- `privateStreakAfterComplete?`
+
+Lý do:
+- historical sheet phải phản ánh đúng context lúc user hành trì hôm đó
+- không để change sau này của `chantPreferences` silently rewrite historical understanding
+
+### Foundation guard rule
+
+- engagement được giữ profile/warning state
+- nhưng source-of-truth cho `7 biến` lane sơ học và `21 biến` nền tảng cho user đã qua beginner phase phải nằm ở content/wisdom rule docs
+- Prisma layer không encode “phán quyết tôn giáo”; nó chỉ giữ self-state đủ để app render đúng warning/preset branch
+
+### Streak rule
+
+- `private streak` là self-owned encouragement summary, không phải public/social metric
+- không tạo leaderboard/streak table dùng chung nhiều user
+- derive từ `practice_logs` hoặc update summary ở `chant_preferences`, nhưng source-of-truth vẫn là self-owned practice records
 
 ---
 

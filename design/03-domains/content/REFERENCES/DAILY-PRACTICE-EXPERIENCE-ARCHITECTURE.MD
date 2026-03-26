@@ -276,6 +276,27 @@ Route canonical nên là:
 Không mở module mới.
 Ownership vẫn là `Content`.
 
+# 4.1. Baseline logic phải phản ánh đúng người mới vs đồng tu đã có nền
+
+Một lỗi product rất dễ mắc là biến `7 biến` thành default lâu dài cho mọi user.
+
+Current canon cần hiểu như sau:
+
+- `7` hoặc `9` biến là lane sơ học / vừa bắt đầu
+- với đồng tu đã có công khóa ổn định, đặc biệt trong ngữ cảnh vẫn đang赶念 `Ngôi Nhà Nhỏ`, `21` biến cho `Đại Bi` và `Tâm Kinh` là nền tảng cơ bản
+- app không được vì user bận `Ngôi Nhà Nhỏ` mà auto-downgrade baseline đã qua beginner phase xuống dưới mức nền tảng này
+
+Điều đó dẫn tới 2 requirement sản phẩm:
+
+1. onboarding phải hỏi user là:
+   - mới bắt đầu thật
+   - đã có công khóa ổn định
+   - tu lâu rồi nhưng mới dùng app
+2. `experienced_new_to_app` phải skip được beginner preset 7 biến, không bị ép “học lại từ đầu”
+
+Đây là `profile + guardrail logic`, không phải AI tự tư vấn.
+Source-of-truth phải đi từ owner content/wisdom rule references; engagement chỉ giữ self-profile, sheet state, và warning state.
+
 # 6. Mapping từ nguồn thực tế sang IA mới
 
 | Pattern nguồn | IA mới |

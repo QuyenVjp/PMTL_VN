@@ -128,7 +128,7 @@ No bulk publish (guides published individually with review)
 ### Workspace layout (Tab-based, not DataTable)
 
 ```
-Tabs: [Tổng quan] [Nhóm & Bước] [Scenario Presets] [FAQ] [Tải xuống]
+Tabs: [Tổng quan] [Profile & baseline] [Nhóm & Bước] [Scenario presets] [FAQ] [Tải xuống] [Version / nguồn]
 ```
 
 **Tab 1 — Tổng quan**:
@@ -137,7 +137,26 @@ Tabs: [Tổng quan] [Nhóm & Bước] [Scenario Presets] [FAQ] [Tải xuống]
 - "Xem trên trang" link
 - [Publish] / [Unpublish] button with confirm dialog
 
-**Tab 2 — Nhóm & Bước**:
+**Tab 2 — Profile & baseline**:
+- Wording blocks cho 3 lane:
+  - `người mới bắt đầu thật sự`
+  - `đã có công khóa ổn định`
+  - `tu lâu nhưng mới dùng app`
+- Foundation note editor cho `Đại Bi` / `Tâm Kinh`
+- Warning copy editor khi user post-beginner hạ baseline xuống dưới ngưỡng canon
+- Preview panel:
+  - `newcomer`
+  - `established`
+  - `experienced_new_to_app`
+- Toggle/setting labels cho `private streak` và `gentle encouragement`
+
+Rules:
+- workspace này chỉ quản lý wording, preset guidance, source notes, warning copy
+- admin không được sửa `private streak` counters hay practice profile record của member từ đây
+- canon tổng quát của repo cũng là: admin không có write authority lên member `practice profile` hoặc `private streak` ở bất kỳ workspace thường trực nào; mọi assisted support lane phải đi qua policy/runbook riêng, không phát sinh từ workspace biên tập này
+- preview phải nhấn mạnh `7/9 biến` là lane sơ học; `21 biến` là nền tảng cơ bản cho lane đã có nền theo owner content/wisdom canon
+
+**Tab 3 — Nhóm & Bước**:
 - List of guide groups with drag-to-reorder
 - Each group: expand to show steps
 - Add group button
@@ -145,19 +164,25 @@ Tabs: [Tổng quan] [Nhóm & Bước] [Scenario Presets] [FAQ] [Tải xuống]
 - Add step to group: modal with step fields
 - Edit/Delete step: inline actions
 
-**Tab 3 — Scenario Presets**:
+**Tab 4 — Scenario presets**:
 - List of practice scenarios (morning/evening/etc.)
 - Each: name, description, included steps
 - Add/Edit/Delete presets
+- mỗi preset phải có compatibility note với `practice profile` để scaffold không áp cùng một preset cho mọi tier
 
-**Tab 4 — FAQ**:
+**Tab 5 — FAQ**:
 - List of Q&A pairs with drag-to-reorder
 - Add/Edit/Delete FAQ items
 
-**Tab 5 — Tải xuống**:
+**Tab 6 — Tải xuống**:
 - List of downloadable resources
 - Upload new → link to media library
 - Set display order
+
+**Tab 7 — Version / nguồn**:
+- Source references cho wording nhạy cảm về baseline hành trì
+- Change summary bắt buộc khi sửa rule support copy
+- Audit-ready note để reviewer biết copy nào là guidance, copy nào là warning
 
 **Audit**: `daily-practice.publish`, `daily-practice.guide.update`
 **Empty state per tab**: "Chưa có nội dung. [Thêm mới]"

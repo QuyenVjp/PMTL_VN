@@ -801,9 +801,31 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | Module owner | Community |
 
 **Nội dung:**
-- List community posts (từ mới nhất)
-- Filter theo tag
-- "Chia sẻ bài" button (member+)
+- List community posts theo nhịp khám phá hữu hạn, không phải infinite feed
+- Filter theo tag / loại chia sẻ / bài official từ admin
+- Card có `tim`, `commentCount`, author snapshot, và secondary action `chia sẻ`
+- CTA member+: "Chia sẻ bài", "Viết cảm nhận", "Hỏi kinh nghiệm"
+- Khu official highlights cho bài community do admin/content authority đăng
+- Reply / approval / community update notifications phải trỏ người dùng quay lại surface này qua `/thong-bao`
+
+---
+
+### 1.15a Community Post Detail (Chi tiết bài cộng đồng)
+
+| Field | Value |
+|---|---|
+| Route | `/cong-dong/[slug]` |
+| Title | Tiêu đề bài cộng đồng |
+| Auth | `public` (tương tác cần `member+`) |
+| Module owner | Community |
+
+**Nội dung:**
+- Header bài: title, author snapshot, published time, tag/topic
+- Body đã sanitize
+- Primary actions: `tim`, `chia sẻ`, `báo cáo`
+- Thread comment nông với reply, `tim`, và report per comment
+- Related posts hoặc official guidance refs nếu có
+- Không hiển thị system-generated progress tu tập của tác giả
 
 ---
 
@@ -817,9 +839,11 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 | Module owner | Community |
 
 **Nội dung:**
-- Approved guestbook entries (cards)
-- Submit form (tên, nội dung, CAPTCHA)
+- Approved guestbook entries (cards) với ngôn điệu nhẹ và ưu tiên readability
+- Submit form (tên hiển thị, nội dung, CAPTCHA)
 - Pending message sau submit
+- Report action cho entry công khai
+- Share/copy-link secondary action cho entry đã duyệt nếu policy cho phép
 
 ---
 
@@ -909,7 +933,7 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Greeting + lunar date hôm nay
 - Daily advisory card (từ Calendar)
 - Quick action buttons: Ghi lại buổi tu / Cập nhật Ngôi Nhà Nhỏ / Phóng sanh
-- Practice streak / summary
+- Private practice streak / consistency summary
 - Recent activity (optional)
 - Notification bell
 
@@ -937,11 +961,14 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 **Nội dung:**
 - Header: ngày hôm nay (âm lịch + dương lịch)
+- Practice profile card: `người mới` / `đã có công khóa ổn định` / `tu lâu nhưng mới dùng app`
 - Advisory context card nếu vào từ `/lich-ca-nhan` hoặc ngày đặc biệt
 - Scenario preset card nếu user mở từ guide công khai hoặc preset route
 - Practice items list (từ chantPlans hoặc user preferences)
 - Mỗi item: checkbox + số biến / thời lượng + input điều chỉnh
+- Foundation warning card khi user đã qua beginner phase nhưng preset/customization đang kéo `Đại Bi` / `Tâm Kinh` xuống dưới ngưỡng nền tảng canon
 - Companion guide drawer: mở nhanh `các bước`, `lưu ý`, `thời gian/địa điểm`
+- Private streak / gentle encouragement chip nếu user bật
 - "Lưu buổi tu" button
 - "Hoàn thành buổi tu" action khi đủ checklist
 - Note field (optional)

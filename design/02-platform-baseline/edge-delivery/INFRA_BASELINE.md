@@ -112,6 +112,30 @@ Rule:
 - dù bật sớm, `Meilisearch` vẫn là projection, không phải canonical source
 - nếu bật `Search-first launch`, search fallback logging/metrics ở `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` trở thành requirement ngay trong Phase 1
 
+## Preconfigured dormant lanes
+
+PMTL ưu tiên hướng:
+
+- feature value làm ngay nếu product cần thật
+- heavy stack được chuẩn bị path/boundary/config trước
+- chỉ activate runtime khi measured pain hoặc launch profile yêu cầu
+
+Điều này nghĩa là:
+
+- `Meilisearch` có thể active từ launch theo `Search-first launch`
+- còn `Valkey`, `BullMQ`, `apps/worker`, `outbox`, `PgBouncer`, `Prometheus/Grafana`, `OTEL` nên được giữ ở trạng thái `preconfigured dormant`
+
+`preconfigured dormant` nghĩa là:
+
+- owner docs, env inventory, health expectations, compose path, rollback path đã có
+- AI/codegen được phép scaffold boundary/config sẵn
+- nhưng runtime không được coi là active dependency mặc định cho Phase 1
+
+Rule:
+
+- không vì “muốn làm một lần cho xong” mà biến dormant lane thành hard dependency ngay trong first launch
+- dormant lane phải bật được sạch khi cần, nhưng không được làm daily coding path nặng hơn vô ích
+
 ## DNS and network exposure baseline
 
 - authoritative DNS baseline là `Cloudflare DNS`

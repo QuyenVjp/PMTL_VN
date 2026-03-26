@@ -42,6 +42,18 @@ Phải có:
 - `feature_flags`
 - app-layer rate limit
 - backup + restore discipline
+- `Launch Core A`
+  - câu pháp cú mỗi ngày trên member dashboard
+  - lịch ăn chay/ngày âm phổ thông
+  - tủ sách cá nhân
+  - reading list
+- `Launch Core B`
+  - Wisdom-QA hub
+  - search lời dạy với source/provenance rõ
+  - không AI tư vấn, không model-generated doctrine
+- `Launch Core C`
+  - offline bundle cho Bạch Thoại
+  - tải gói, xem offline, version sync cơ bản
 
 ## 3. Deferred until measured pain (Tạm hoãn cho tới khi có nỗi đau đo được)
 
@@ -49,7 +61,7 @@ Phải có:
 - `BullMQ`
 - `apps/worker`
 - `outbox_events`
-- `Meilisearch` theo mặc định là deferred; exception hợp lệ là `Search-first launch` nếu search là public/core surface và guardrails trong `design/02-platform-baseline/edge-delivery/HIGH_TRAFFIC_RESILIENCE.md` đã được chốt
+- `Meilisearch` theo mặc định là deferred; **nhưng PMTL hiện chốt `Search-first launch`**, nên được phép bật ngay từ launch với `SQL fallback` và không kéo theo queue stack nặng
 - `PgBouncer`
 - `Prometheus/Grafana/Alertmanager`
 - tracing
@@ -105,10 +117,12 @@ Phải có:
 - `Meilisearch` chỉ được bật khi:
   - SQL-first path không còn đủ về latency hoặc scope tìm kiếm, hoặc
   - sản phẩm chọn `Search-first launch` vì public search là core surface từ ngày đầu
+- PMTL hiện chốt `Search-first launch` vì search lời dạy là core surface của Wisdom-QA ngay từ ngày đầu
 - nếu bật `Meilisearch` sớm:
   - vẫn phải giữ `SQL fallback`
   - vẫn không được coi `Meilisearch` là source of truth
   - không được kéo theo `outbox/BullMQ/apps/worker` một cách ngầm định
+- direct sync / manual reindex là launch profile hợp lệ; queue sync chỉ mở khi measured pain thật sự xuất hiện
 - nếu async reliability đã bật, business event quan trọng phải đi theo:
 
 ```txt
@@ -279,6 +293,16 @@ Coding agent có thể activate phần `planned` ngay khi trigger được đáp
 | Admin module completeness | 24 workspaces fully specified with filters/bulk/states/query-invalidation | `design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md` |
 | REVALIDATE_SECRET | Shared secret between api and web for on-demand ISR revalidation | `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md` |
 | API_INTERNAL_URL | Server-to-server URL, never exposed to browser — server components only | `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` |
+
+## 16.1 Launch profile chốt thêm (2026-03-26)
+
+| Decision | Chốt | Doc |
+|---|---|---|
+| Launch shape | `Search-first launch` thay vì `Simple launch` | `design/02-platform-baseline/edge-delivery/HIGH_TRAFFIC_RESILIENCE.md` |
+| Search stack | `Meilisearch + SQL fallback` từ launch; không AI tư vấn | `design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md` |
+| Core member value | daily wisdom + lunar vegetarian guidance + bookshelf + reading list | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
+| Offline value | Bạch Thoại offline bundles ở mức tải gói + đọc offline + version sync cơ bản | `design/03-domains/wisdom-qa/CONTRACTS.md` |
+| Heavy infra stance | stack nặng được cấu hình sẵn theo lane dormant/preconfigured, nhưng không auto-activate trước measured pain | `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` |
 
 ## 17. Anti-goals (Những điều không làm)
 

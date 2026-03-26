@@ -1,7 +1,7 @@
 # Submit Post Comment (Gửi Bình luận Bài viết)
 
 ## Mục đích (Purpose)
-Cho phép thành viên gửi bình luận vào một bài viết công khai, sau đó quy trình kiểm duyệt và thông báo sẽ xử lý các tác vụ hạ nguồn.
+Cho phép thành viên gửi bình luận vào một bài viết công khai, theo fast-path visible policy khi an toàn, rồi quy trình kiểm duyệt và thông báo xử lý tác vụ hạ nguồn.
 
 ## Mô-đun sở hữu (Owner module)
 - `community` (Cộng đồng)
@@ -30,9 +30,11 @@ Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `P
 1. Xác thực bài viết mục tiêu bằng cách sử dụng ID công khai (`publicId`) hoặc bối cảnh tuyến đường.
 2. Xác thực nội dung yêu cầu và chính sách chống thư rác.
 3. Ghi bản ghi bình luận chuẩn gốc (canonical comment record) vào bộ sưu tập `postComments`.
-4. Cập nhật mô hình dữ liệu đọc (read model) tóm tắt nếu cần thiết (ví dụ: số lượng bình luận - `commentCount` trên bài viết).
-5. Thêm sự kiện nhật ký kiểm toán hành động `community.comment.submit`.
-6. Nếu chính sách kích hoạt yêu cầu xem xét, nạp sự kiện outbox để tạo cảnh báo kiểm duyệt hoặc thông báo nội bộ.
+4. Nếu actor hoặc payload rủi ro, gán comment về `pending/manual review`; nếu an toàn thì cho đi theo fast-path visible policy.
+5. Cập nhật mô hình dữ liệu đọc tóm tắt nếu cần thiết (ví dụ: `commentCount` trên bài viết).
+6. Thêm sự kiện nhật ký kiểm toán hành động `community.comment.submit`.
+7. Nếu chính sách kích hoạt yêu cầu xem xét, nạp sự kiện outbox hoặc dispatch best-effort để tạo cảnh báo kiểm duyệt hoặc thông báo nội bộ.
+8. Nếu comment là reply vào comment của người khác, có thể phát notification request cho owner của comment cha theo category `community`.
 
 ## Tác động phụ bất đồng bộ (Async Side-effects)
 - Gửi thông báo cho quản trị viên.
@@ -41,6 +43,7 @@ Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `P
 ## Kết quả thành công (Success Result)
 - Bản ghi chuẩn gốc của bình luận được tạo thành công.
 - Luồng đọc của bài viết có thể trả về bình luận mới tùy theo chính sách hiển thị hiện tại.
+- Comment đủ điều kiện hiển thị có thể nhận `tim` và `report`, nhưng hai flow này không thay đổi canonical owner của comment.
 
 ## Các lỗi có thể xảy ra (Errors)
 - `400`: Thân yêu cầu không hợp lệ hoặc nội dung bình luận quá ngắn/dài.
@@ -62,5 +65,5 @@ Trang web gọi tuyến đường (route) gửi bình luận cho bài viết: `P
 - Việc ghi bình luận chuẩn gốc và nạp sự kiện outbox nên hoàn tất trong vòng dưới 800ms.
 
 ## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
-- Bộ sưu tập `postComments` là chủ sở hữu của bình luận, không phải mô-đun nội dung (content module).
+- Bộ sưu tập `postComments` là chủ sở hữu của bình luận, không phải mô-đun nội dung.
 - Báo cáo kiểm duyệt là một luồng xử lý khác; việc gửi bình luận không được tự động tạo bản ghi trong `moderationReports` trừ khi chính sách quy định rõ ràng.

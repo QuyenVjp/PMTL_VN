@@ -108,3 +108,25 @@ Báo cáo mới, quyết định xử lý, và thông báo kết quả đều l�
 ### Rationale (Lý do)
 - giữ reliability (độ tin cậy) cho tín hiệu quan trọng
 - có recovery path (đường phục hồi) rõ nếu summary bị lệch
+
+---
+
+## Decision 7. Repeated-report threshold có thể auto-hide tạm thời trước khi moderator xử lý tay
+
+### Context (Ngữ cảnh)
+Community và comment surface cần phản ứng nhanh khi nội dung bị nhiều người báo cáo trong thời gian ngắn.
+Nếu chờ moderator xử lý từng record rồi mới ẩn thì public surface dễ bị bẩn hoặc gây khó chịu cho cộng đồng.
+
+### Decision (Quyết định)
+Khi target vượt risk threshold đã chốt:
+- target có thể bị `isHidden = true` hoặc trạng thái tương đương theo temporary safety policy
+- đây chỉ là `protective hide`, không phải final moderation verdict
+- final resolution vẫn phải đi qua `moderationReports` và moderator decision
+
+### Rationale (Lý do)
+- giảm thời gian phơi lộ nội dung rủi ro
+- phù hợp community social-lite có retention loop nhưng vẫn phải sạch
+
+### Trade-off (Đánh đổi)
+- có thể auto-hide nhầm một số nội dung hợp lệ
+- cần audit trail và recompute path rõ để unhide khi resolution kết luận nội dung hợp lệ

@@ -28,6 +28,7 @@
   - `sheetType`
   - `practiceDate`
   - danh sách item
+  - `experienceTier` hoặc practice profile context nếu onboarding vừa chọn
   - `scenarioPresetRef` hoặc `guideContextRef` nếu sheet được mở từ public guide
   - `advisoryContextRef` nếu sheet được mở từ daily advisory
   - `clientEventId` nếu là sync/offline update
@@ -42,11 +43,13 @@
 
 1. Resolve user từ session.
 2. Tạo mới hoặc load `practiceSheets` hiện có theo ngày/plan.
-3. Upsert item state theo payload.
-4. Tính lại `completionPercent`.
-5. Lưu context refs để FE mở lại companion guide đúng.
-6. Nếu đủ điều kiện, chuyển trạng thái sang `completed`.
-7. Append audit nhẹ cho create/complete nếu policy yêu cầu.
+3. Resolve practice profile hiện tại (`newcomer`, `established`, `experienced_new_to_app`) và baseline mode tương ứng.
+4. Upsert item state theo payload.
+5. Tính lại `completionPercent`.
+6. Nếu sheet có context `Ngôi Nhà Nhỏ` load cao, kiểm tra foundation guard; không tự suggest hạ baseline dưới mức owner rule canon cho user đã qua beginner phase.
+7. Lưu context refs để FE mở lại companion guide đúng.
+8. Nếu đủ điều kiện, chuyển trạng thái sang `completed` và cập nhật private streak summary nếu policy bật.
+9. Append audit nhẹ cho create/complete nếu policy yêu cầu.
 
 ## async (bất đồng bộ) side-effects
 
@@ -56,6 +59,7 @@
 
 - user thấy đúng bảng công phu đang làm và tiến độ tổng
 - nếu vào từ preset/guide/advisory, user quay lại đúng companion context
+- nếu user bật động lực riêng tư, UI có thể hiện `private streak` hoặc consistency summary nhưng không public ra ngoài
 
 ## Errors (Lỗi dự kiến)
 
@@ -70,3 +74,4 @@
 - đây là personal practice sheet, không phải social post
 - projection/reminder downstream nếu lệch thì recovery path phải quay về canonical `practiceSheets`
 - nếu public guide đổi wording, `practiceSheets` vẫn chỉ giữ ref/context chứ không lưu script canonical.
+- `7 biến` là lane sơ học; `21 biến` là nền tảng cho user đã qua beginner phase theo owner content/wisdom rule hiện tại.

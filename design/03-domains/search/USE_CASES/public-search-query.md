@@ -4,6 +4,12 @@
 
 - Trả kết quả tìm kiếm public theo query người dùng. **Phase 1**: SQL/API là read path mặc định. **Phase 2+** (khi `search.meilisearch.enabled` feature flag bật): ưu tiên Meilisearch với fallback (đường dự phòng) qua SQL/API khi engine gặp sự cố.
 
+Current launch stance:
+
+- PMTL launch theo `Search-first launch`
+- vì vậy `Meilisearch` là nhánh ưu tiên ngay từ launch
+- `SQL/API` là fallback correctness path, không phải nhánh primary mong muốn
+
 ## owner module (module sở hữu)
 
 - `search`
@@ -27,7 +33,7 @@
 
 ## Read set
 
-- **Phase 1**: SQL/API query path (mặc định)
+- **Phase 1 default repo profile**: SQL/API query path (mặc định)
 - **Phase 2+**: Meilisearch index (ưu tiên khi feature flag bật)
 - fallback (đường dự phòng) SQL/API query path (luôn sẵn sàng)
 
@@ -66,5 +72,6 @@
 ## Notes for AI/codegen
 
 - Search result là DTO đọc, không phải canonical content record.
-- **Phase 1**: SQL/API là nhánh mặc định và duy nhất.
-- **Phase 2+**: khi Meilisearch đã bật và khỏe, nó là nhánh ưu tiên; SQL/API chỉ là fallback correctness.
+- default repo profile có thể SQL-first, nhưng launch profile hiện tại của PMTL là `Search-first`
+- với launch profile hiện tại, Meilisearch là nhánh ưu tiên; SQL/API chỉ là fallback correctness
+- search lời dạy không được drift sang AI answer engine hay tự sinh tư vấn

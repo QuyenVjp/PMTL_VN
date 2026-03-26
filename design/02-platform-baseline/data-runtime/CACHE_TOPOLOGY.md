@@ -256,6 +256,8 @@ After mutation, invalidate related queries:
 | `POST /engagement/bookmarks` | Add bookmark to list immediately |
 | `PATCH /engagement/ngoi-nha-nho-sheets/:id/entries` | Add entry to sheet immediately |
 | `POST /community/posts/:id/comments` | Add comment optimistically |
+| `POST /community/posts/:id/heart` | Toggle `viewerHasHearted` và cập nhật `heartCount` lạc quan khi request guard đã pass |
+| `DELETE /community/posts/:id/heart` | Toggle `viewerHasHearted` và giảm `heartCount` lạc quan |
 
 ---
 

@@ -50,6 +50,9 @@ markmap:
 
 - bật/tắt chant item tùy user
 - đặt goal hoặc intention cá nhân cho một số plan
+- giữ `practice profile`: người mới / đã có công khóa ổn định / tu lâu nhưng mới dùng app
+- cho phép `skip beginner track` với user đã có nền
+- giữ private streak / consistency summary nếu user bật
 
 ### Session history (Lịch sử buổi tu)
 
@@ -61,6 +64,7 @@ markmap:
 - quản lý bảng công phu điện tử hằng ngày
 - hỗ trợ offline-first completion và sync lại sau
 - lưu context user đang theo `daily practice preset` nào
+- lưu snapshot baseline mode để sheet hôm nay phản ánh đúng context thực hành
 - nối từ public guide/advisory sang sheet cá nhân mà không copy ritual truth
 
 ### Little House (Ngôi Nhà Nhỏ)
@@ -84,5 +88,6 @@ markmap:
 
 - `chantItems` và `chantPlans` là reference content
 - practice-facing rules từ PDF/reference docs được chốt ở `01-content`
+- `7 biến` lane sơ học và `21 biến` nền tảng cho user đã qua beginner phase là content/wisdom-owned rule; engagement chỉ giữ profile + warning state
 - canonical self-owned sheets/houses luôn nằm trong Engagement, không nằm trong Content
 - `Kinh Bài Tập Hằng Ngày` public guide, preset, FAQ, time rules là content-owned; `practiceSheets` chỉ giữ self-state và context refs

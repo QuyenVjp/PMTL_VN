@@ -70,6 +70,13 @@
    - `practiceLogs` nên support `clientEventId` hoặc composite key kiểu `user + date + plan`.
    - canonical self-write lane cho member dashboard / practice flow = `PUT /api/engagement/practice-logs/self`
    - nếu vẫn giữ `POST /api/engagement/practice-logs`, route này phải được coi là append/manual-entry lane riêng; không được dùng song song cho cùng một UX self-save mà không chốt semantics khác biệt
+6. Practice profile / encouragement boundary:
+   - `chantPreferences` được phép giữ `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled`
+   - `practiceLogs` hoặc owner aggregate có thể derive `privateStreak`, `consistencySummary`
+   - các projection này là self-owned only; không được lộ sang community/public/admin mặc định
+7. Foundation guard:
+   - nếu user profile đã qua beginner phase, practice surface không được auto-suggest hạ `Đại Bi` / `Tâm Kinh` xuống dưới mức nền tảng canon chỉ vì đang chạy `Ngôi Nhà Nhỏ`
+   - source-of-truth của mức nền tảng vẫn nằm ở content/wisdom rule docs; engagement chỉ lưu profile và warning state
 
 ## Expected errors (Lỗi dự kiến)
 
@@ -87,3 +94,4 @@
 - Async side-effects không được chặn canonical self-state write path
 - `practiceSheets` không được tự giữ bản sao script kinh/chú; chỉ giữ completion state và context refs.
 - `support access` không phải shortcut cho admin edit hộ member; nếu chưa có support lane explicit thì phải từ chối.
+- `private streak` được phép như động lực riêng tư; `public streak` hoặc leaderboard là cấm.

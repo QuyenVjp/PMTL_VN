@@ -1,7 +1,7 @@
 # MEILISEARCH_ARCHITECTURE — Search Engine + SQL Fallback Contract
 
 File này chốt thiết kế đầy đủ cho Meilisearch Phase 2+ và SQL fallback Phase 1.
-Phase 1 dùng SQL `ILIKE`/`tsvector` — Meilisearch chỉ bật khi trigger được đáp ứng.
+Theo default repo, Phase 1 dùng SQL `ILIKE`/`tsvector`; tuy nhiên PMTL hiện đã chốt `Search-first launch`, nên Meilisearch được phép bật ngay từ launch theo file này.
 
 > **Unified index mapping**: `design/03-domains/search/REFERENCES/UNIFIED_INDEX_MAPPING.md` — field mapping per docType
 > **Outbox pipeline**: `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md` — search-sync event taxonomy
@@ -50,6 +50,13 @@ Search-first launch không đồng nghĩa bật luôn:
 - write canonical record
 - inline/direct search sync khi còn đủ budget
 - manual reindex/recovery path khi Meilisearch drift
+
+PMTL current stance:
+
+- profile này là launch choice hiện tại
+- Meilisearch là default preferred engine từ launch
+- SQL fallback là correctness lane bắt buộc
+- BullMQ/outbox/worker không phải prerequisite cho launch search
 
 ---
 

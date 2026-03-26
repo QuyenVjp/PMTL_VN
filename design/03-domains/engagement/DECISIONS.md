@@ -66,20 +66,23 @@ Progress và preference đại diện cho current state (trạng thái hiện t�
 - giảm duplicate record
 - hợp với API contract hiện tại
 
-## Decision 5. No gamification in current phase (Chưa đưa gamification vào giai đoạn hiện tại)
+## Decision 5. Không public-gamify, nhưng được phép có private motivation loop
 
 ### Context (Bối cảnh)
 
-Leaderboard, streaks, và global stats chưa có owner model đủ rõ.
+Leaderboard, streaks công khai, và global stats chưa có owner model đủ rõ.
 
 ### Decision (Quyết định)
 
-- leaderboards, streaks, global statistics là out of scope (ngoài phạm vi) ở current phase
-- chỉ tập trung vào core state management (quản lý trạng thái cốt lõi)
+- leaderboards và global statistics vẫn là out of scope ở current phase
+- `private streak`, consistency summary, và gentle encouragement được phép nếu:
+  - chỉ owner nhìn thấy
+  - không so sánh với người khác
+  - không trở thành penalty loop
 
 ### Rationale (Lý do)
 
-- tránh over-engineering
+- giữ động lực cá nhân mà không biến practice thành social competition
 
 ## Decision 6. Ritual truth lives in content; personal progress lives in engagement (Sự thật nghi thức ở Content; tiến độ cá nhân ở Engagement)
 
@@ -97,3 +100,47 @@ Ritual guides, scripts, prayer templates, count rules là instructional truth (s
 
 - tránh việc UI change vô tình sửa lệch ritual truth
 - giữ ranh giới giữa liturgical truth và personal state
+
+## Decision 7. Onboarding practice profile phải tách người mới nhập môn với người tu lâu nhưng mới dùng app
+
+### Context (Bối cảnh)
+
+Trong đời thực có hai nhóm rất khác:
+- người mới bắt đầu thật sự
+- người đã có công khóa ổn định từ lâu nhưng chỉ mới tham gia PMTL_VN
+
+Nếu app ép cả hai đi cùng một beginner path thì sẽ sai và gây khó chịu.
+
+### Decision (Quyết định)
+
+- `chantPreferences` hoặc owner self-state tương đương phải giữ `practice profile` tối thiểu:
+  - `newcomer`
+  - `established`
+  - `experienced_new_to_app`
+- onboarding phải cho user chọn hoặc skip beginner track rõ ràng
+- user `experienced_new_to_app` được phép bỏ qua preset 7 biến dành cho người mới để vào thẳng profile nền tảng phù hợp
+
+### Rationale (Lý do)
+
+- đúng thực tế đồng tu ngoài đời
+- tránh biến app thành nơi “dạy lại từ đầu” cho người đã có nền
+
+## Decision 8. Little House load không được tự động kéo chuẩn nền tảng xuống dưới mức an toàn đã chốt
+
+### Context (Bối cảnh)
+
+Người dùng đôi khi phải dành nhiều thời gian cho `Ngôi Nhà Nhỏ`.
+Nếu app vì thế tự động gợi ý hạ chuẩn công khóa nền tảng xuống quá thấp thì sẽ trái rule support content.
+
+### Decision (Quyết định)
+
+- Với user profile đã qua beginner phase, app không được auto-suggest giảm `Đại Bi` hoặc `Tâm Kinh` xuống dưới mức nền tảng đã chốt trong owner content/wisdom rule.
+- Current canon cho rule support này:
+  - `7` biến là lane sơ học / mới bắt đầu
+  - `21` biến là nền tảng cơ bản cho đồng tu đã vào guồng, đặc biệt khi vẫn đang赶念 `Ngôi Nhà Nhỏ`
+- Nếu user chủ động custom thấp hơn, UI phải hiện warning rõ thay vì coi đó là normal preset.
+
+### Rationale (Lý do)
+
+- hỗ trợ đúng tinh thần hành trì
+- app không vô tình hướng user sang practice downgrade

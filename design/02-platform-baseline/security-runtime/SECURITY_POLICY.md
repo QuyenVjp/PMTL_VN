@@ -159,7 +159,14 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
 | `POST /api/media/upload` | `20` | `1 giờ` | per-account |
 | `POST /api/community/posts` | `10` | `1 giờ` | per-account |
 | `POST /api/community/posts/:publicId/comments` | `30` | `1 giờ` | per-account |
+| `POST /api/community/posts/:publicId/heart` | `120` | `1 giờ` | per-account |
+| `DELETE /api/community/posts/:publicId/heart` | `120` | `1 giờ` | per-account |
+| `POST /api/community/comments/:publicId/heart` | `120` | `1 giờ` | per-account |
+| `DELETE /api/community/comments/:publicId/heart` | `120` | `1 giờ` | per-account |
+| `POST /api/community/posts/:publicId/report` | `10` | `1 giờ` | per-account |
+| `POST /api/community/comments/:publicId/report` | `10` | `1 giờ` | per-account |
 | `POST /api/guestbook` | `5` | `1 giờ` | per-IP |
+| `POST /api/guestbook/:publicId/report` | `5` | `1 giờ` | per-account |
 
 **Rule**:
 - edge matrix là lớp giảm tải đầu tiên

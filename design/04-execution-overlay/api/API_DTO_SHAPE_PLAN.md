@@ -135,7 +135,16 @@ Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping
 | wisdom list | `WisdomListItemDto` | `publicId`, `slug`, `entryType`, `sourceFamily`, `titleVietnamese`, `summaryVietnamese`, `sourceCode`, `publishedAt`, `hasAudio` | không đưa full original text vào list |
 | wisdom hub page | `WisdomHubDto` | `items[]`, `pagination`, `activeTab`, `tabCounts`, `filterFacets`, `featuredEntries[]`, `searchScope`, `engine` | owner cho `/bach-thoai` và `/hoi-dap` |
 | wisdom detail | `WisdomDetailDto` | list item fields + `titleOriginal`, `translatedText`, `rawOriginalText?`, `sourceUrl`, `sourceAttribution`, `keywordAliases[]`, `relatedEntries[]` | `question/answer` pair chỉ hiện khi `entryType = qa` |
+| community post list item | `CommunityPostListItemDto` | `publicId`, `slug`, `title`, `excerpt`, `authorSummary`, `publishedAt`, `heartCount`, `commentCount`, `visibilityStatus`, `shareUrl`, `viewerHasHearted?`, `tags[]` | owner cho `/community/posts`; không trả moderation internals |
+| community post detail | `CommunityPostDetailDto` | list item fields + `bodyHtml`, `breadcrumbs[]`, `commentsPreview[]`, `relatedPosts[]`, `reportState?` | owner cho `/community/posts/:publicId`; `reportState` là safe projection, không phải raw reports |
+| community comment item | `CommunityCommentItemDto` | `publicId`, `parentPublicId?`, `authorSummary`, `bodyRendered`, `createdAt`, `heartCount`, `viewerHasHearted?`, `replyCount`, `visibilityStatus` | dùng cho editorial/community comment threads; thread depth nông |
+| guestbook entry item | `GuestbookEntryItemDto` | `publicId`, `displayName`, `messageRendered`, `approvedAt`, `shareUrl`, `visibilityStatus` | owner cho `/guestbook`; không public raw moderation state |
 | member dashboard page | `MemberDashboardDto` | `todayLunar`, `advisorySummary`, `quickActions[]`, `practiceSummary`, `activeVowsSummary`, `onboardingState`, `notificationSummary` | owner cho `/dashboard`; không để web tự fan-out mù qua 4 module |
+| member practice profile | `PracticeProfileDto` | `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled`, `foundationRuleSummary`, `warningState?`, `lastUpdatedAt` | owner cho `/engagement/practice-profile`; self-owned profile authority |
+| member practice log item | `PracticeLogItemDto` | `publicId`, `practiceDate`, `planRef?`, `items[]`, `totalCompletedCount`, `completedAt?`, `notePreview?`, `createdAt`, `updatedAt` | owner cho `/engagement/practice-logs`; historical session record, không thay practice sheet |
+| member practice log self-state | `PracticeLogSelfStateDto` | `practiceDate`, `planRef?`, `items[]`, `note?`, `clientEventId?`, `privateStreak?`, `updatedAt` | owner cho `GET/PUT /engagement/practice-logs/self`; canonical self-save lane cho buổi tu |
+| member practice sheet detail | `PracticeSheetDetailDto` | `publicId`, `practiceDate`, `planRef?`, `experienceTierSnapshot`, `baselineModeSnapshot`, `items[]`, `completionState`, `sourceRefs[]`, `baselineWarning?`, `privateStreak?`, `updatedAt` | owner cho `/engagement/practice-sheets/:publicId`; không bắt web tự ghép profile + sheet + warning |
+| member practice sheet mutation result | `PracticeSheetMutationResultDto` | `sheet`, `profile`, `baselineWarning?`, `privateStreak?`, `requestAcceptedAt` | dùng cho `PATCH /engagement/practice-sheets/:publicId` và `POST /engagement/practice-sheets/:publicId/complete`; mutation phải trả aggregate đủ dùng cho optimistic UI |
 | auth session state | `AuthSessionStateDto` | `user`, `session`, `permissions`, `mustRefreshBefore`, `requiresEmailVerification`, `securityFlags[]` | owner cho `/auth/me` và auth bootstrap surfaces; không trả raw refresh token |
 | signed upload response | `SignedUploadResponseDto` | `publicId`, `uploadUrl`, `uploadMethod`, `expiresAt`, `expectedPublicUrl`, `allowedMimeTypes[]`, `maxBytes` | owner cho signed upload/register flow; `uploadUrl` short-TTL, không cache ở client |
 | chant hub page | `ChantHubPageDto` | `entryCards[]`, `ritualTemplates[]`, `chantItems[]`, `chantPlans[]`, `faqHighlights[]`, `guideRefs[]` | owner cho `/niem-kinh`; hub support surface, không chỉ generic list |
@@ -160,6 +169,8 @@ Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping
 | admin notification ops page | `AdminNotificationOpsPageDto` | `pushStatus`, `subscriptionStats`, `jobQueueSummary`, `recentJobs[]`, `deliveryHealthSummary` | owner cho `/admin/he-thong/thong-bao`; jobs/subscription stats phải cùng vocabulary |
 | admin system health extended | `AdminSystemHealthExtendedDto` | `uptime`, `memoryUsageMb`, `cpuUsagePercent`, `diskUsagePercent`, `dbConnectionCount`, `featureFlagsCount`, `recentErrors[]` | owner cho page `/admin/he-thong/health` qua backing API `GET /admin/system/health-extended`; `recentErrors[]` chỉ là safe projection |
 | admin moderation report detail | `AdminModerationReportDetailDto` | `publicId`, `status`, `reasonCode`, `reporterSummary`, `targetType`, `targetPreview`, `createdAt`, `decisionHistory[]`, `currentDecisionOptions[]` | giảm blind scaffold ở moderation |
+| admin community post detail | `AdminCommunityPostDetailDto` | `publicId`, `title`, `authorSummary`, `bodyRendered`, `moderationStatus`, `visibilityStatus`, `heartCount`, `commentCount`, `reportCount`, `createdAt`, `updatedAt`, `availableActions[]` | owner cho `/admin/community/posts/:publicId`; không trả raw abuse internals |
+| admin guestbook entry detail | `AdminGuestbookEntryDetailDto` | `publicId`, `displayName`, `messageRendered`, `approvalStatus`, `visibilityStatus`, `reportCount`, `createdAt`, `updatedAt`, `availableActions[]` | owner cho `/admin/community/guestbook/:publicId`; guestbook approval khác moderation report canonical |
 | admin audit-log detail | `AdminAuditLogDetailDto` | `publicId`, `actorSummary`, `action`, `resourceType`, `resourcePublicId`, `occurredAt`, `metadata`, `correlationId`, `requestId` | `metadata` phải qua safe projection |
 | admin wisdom import job detail | `AdminWisdomImportJobDetailDto` | `publicId`, `jobType`, `providerProfile`, `sourceFamily`, `status`, `candidateSlug`, `dedupeStatus`, `resultEntryPublicId?`, `errorSummary?`, `createdAt`, `updatedAt` | lấp gap import workspace |
 
@@ -565,6 +576,7 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `lastPracticeAt?`
   - `todayCompletionState`
   - `streakSummary?`
+  - `foundationGuard?`
 - `activeVowsSummary` tối thiểu:
   - `activeCount`
   - `nextMilestoneLabel?`
@@ -572,10 +584,85 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `isFirstVisit`
   - `showOnboardingBanner`
   - `nextRecommendedRoute`
+  - `practiceProfileHint?`
 - `notificationSummary` chỉ là aggregate state:
   - `pushCapability`
   - `practiceReminderEnabled`
   - `eventReminderEnabled`
+
+### `PracticeProfileDto`
+
+- `experienceTier` canonical values:
+  - `newcomer`
+  - `established`
+  - `experienced_new_to_app`
+- `baselineMode` canonical values:
+  - `beginner_guided`
+  - `standard_foundation`
+  - `custom_with_warning`
+- `foundationRuleSummary` tối thiểu:
+  - `greatCompassionBaseline`
+  - `heartSutraBaseline`
+  - `noteSafe`
+  - `sourceRef`
+- `warningState?` là profile-level warning projection:
+  - `code`
+  - `message`
+  - `severity`
+- `warningState?` chỉ dùng cho profile/config context.
+- nếu warning gắn trực tiếp với sheet execution hiện tại, dùng `baselineWarning?` ở sheet DTO thay vì tái dùng field name này.
+- route này không trả raw personalized scoring hoặc hidden heuristic internals.
+
+### `PracticeLogItemDto`
+
+- `items[]` là snapshot của buổi tu đã lưu:
+  - `itemKey`
+  - `label`
+  - `completedCount`
+- `PracticeLogItemDto` là historical record/read model.
+- route list/detail cho `practice-logs` không được drift thành daily sheet editor DTO.
+
+### `PracticeLogSelfStateDto`
+
+- dùng cho self-save/read lane `GET/PUT /engagement/practice-logs/self`.
+- `items[]` tối thiểu:
+  - `itemKey`
+  - `completedCount`
+- đây là canonical self-save path cho buổi tu hiện tại; không thay role của `practiceSheets`, vốn là daily structured sheet lane.
+- nếu response có `privateStreak?`, đó là read-only post-save projection để UI cập nhật nhẹ, không mở quyền sửa streak qua request body.
+
+### `PracticeSheetDetailDto`
+
+- `items[]` là projection đủ cho sheet editor:
+  - `itemKey`
+  - `label`
+  - `plannedCount`
+  - `completedCount`
+  - `completionState`
+- `baselineWarning?` tối thiểu:
+  - `code`
+  - `message`
+  - `appliesTo[]`
+  - `sourceRef`
+- `privateStreak?` tối thiểu:
+  - `enabled`
+  - `currentDays`
+  - `longestDays`
+  - `lastCompletedDate`
+- `privateStreak` là self-only projection; không được tái dùng cho community/admin default DTO.
+- visibility canon:
+  - member owner self routes được đọc
+  - admin/moderator/default support routes không được trả field này nếu chưa có support exception owner riêng
+
+### `PracticeSheetMutationResultDto`
+
+- `sheet` dùng `PracticeSheetDetailDto`.
+- `profile` dùng `PracticeProfileDto`.
+- `requestAcceptedAt` là server timestamp để web reconcile optimistic UI.
+- completion/save route không được chỉ trả `200 ok` mơ hồ rồi để client tự reload nhiều endpoint.
+- `profile` ở đây là read-only projection sau mutation:
+  - để UI biết profile/baseline hiện hành
+  - không mở quyền update `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled` qua sheet route
 
 ### `AdminSystemHealthExtendedDto`
 
@@ -692,6 +779,9 @@ Không được coi là đủ để scaffold nếu mới chỉ có tên DTO mà 
 | search results aggregate | query params tối thiểu: `q`, `tab?`, `docType?`, `entryType?`, `sourceFamily?`, `cursor?`, `limit?`; default: `tab = all`, `limit = route default`, không tự thêm hidden filter | `SearchResultsPageDto` + stable `SearchResultItemDto[]`, `tabCounts`, `filterFacets`, `engine`, `pagination` | `search.query_invalid`, `search.query_too_short`, `search.engine_unavailable`, `search.cursor_invalid` | search module phải trả canonical `href`, `engine`, `tabCounts`; client không được derive |
 | offline bundle list page | query params tối thiểu: `cursor?`, `pageSize?`, `freshnessStatus?`; default: first page nếu thiếu `cursor`, canonical page size từ route owner, `freshnessStatus = all` | `OfflineBundleListPageDto` + `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | `identity.unauthorized`, `offline.bundle_list_unavailable`, `offline.sync_degraded` | owner là offline bundle aggregate read; page không loop qua từng bundle detail để tự tính badge |
 | personal practice calendar page | query params tối thiểu: `month`, `tz?`; `month` là bắt buộc, `tz` default theo user setting hoặc server fallback | `PersonalPracticeCalendarPageDto` + `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | `identity.unauthorized`, `calendar.month_invalid`, `calendar.aggregate_unavailable` | calendar module là owner của month grid projection; không preload advisory detail cho từng ngày |
+| member practice profile | body/query shape tối thiểu: `GET` không bắt query ngoài `tz?`; `PATCH` body chỉ được gồm `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled` | `PracticeProfileDto` | `identity.unauthorized`, `engagement.practice_profile_invalid`, `engagement.practice_profile_conflict` | practice profile là authority riêng; không nhét vào auth profile hay daily sheet payload tùy hứng |
+| member practice log list/self-state | `GET /engagement/practice-logs` dùng list query canon; `GET/PUT /engagement/practice-logs/self` chỉ nhận self-save body với completed counts/note/clientEventId, không nhận profile-level fields | `PracticeLogItemDto[]` hoặc `PracticeLogSelfStateDto` | `identity.unauthorized`, `engagement.practice_log_invalid`, `engagement.practice_log_conflict` | `practiceLogs` là historical/self-save lane riêng; không collapse vào `practiceSheets` chỉ vì đều thuộc practice module |
+| member practice sheet detail/mutation | `PATCH`/`complete` body chỉ được mutate self-owned completion fields; profile-level fields không được update qua sheet route | `PracticeSheetDetailDto` hoặc `PracticeSheetMutationResultDto` với `sheet`, `profile`, `baselineWarning?`, `privateStreak?` | `identity.unauthorized`, `engagement.practice_sheet_invalid`, `engagement.practice_sheet_transition_invalid`, `engagement.practice_foundation_warning` | sheet route phải trả đủ aggregate để client không fan-out thêm `/practice-profile` sau mỗi save nếu response đã có projection |
 
 ### Route inventory dependency
 
@@ -703,8 +793,40 @@ Mỗi row phải map được sang route canon hiện có trong `design/04-execu
 - search results aggregate -> hiện map vào `GET /search`
 - offline bundle list page -> hiện map vào `GET /offline-bundles`
 - personal practice calendar page -> hiện map vào `GET /calendar/personal-practice`
+- member practice profile -> hiện map vào `GET/PATCH /engagement/practice-profile`
+- member practice log list/self-state -> hiện map vào `GET /engagement/practice-logs` và `GET/PUT /engagement/practice-logs/self`
+- member practice sheet detail/mutation -> hiện map vào `GET/PATCH /engagement/practice-sheets/:publicId` và `POST /engagement/practice-sheets/:publicId/complete`
 
 Nếu route inventory hiện có chưa đủ semantics aggregate cho DTO row tương ứng, phải cập nhật [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) trước; không được để controller hoặc web tự suy luận từ tên gần giống.
+
+## Zod schema naming canon for practice lane
+
+Lane `practice profile + baseline guard + private streak` phải dùng naming ổn định để FE/BE/shared không drift:
+
+- request schemas:
+  - `practiceProfileQuerySchema`
+  - `practiceProfileUpdateSchema`
+  - `practiceSheetQuerySchema`
+  - `practiceSheetUpdateSchema`
+  - `practiceSheetCompleteSchema`
+- response/DTO companion schemas:
+  - `practiceProfileDtoSchema`
+  - `practiceBaselineWarningSchema`
+  - `privatePracticeStreakSchema`
+  - `practiceLogItemDtoSchema`
+  - `practiceLogSelfStateDtoSchema`
+  - `practiceSheetDetailDtoSchema`
+  - `practiceSheetMutationResultDtoSchema`
+- shared enum/value schemas:
+  - `practiceExperienceTierSchema`
+  - `practiceBaselineModeSchema`
+
+Rules:
+
+- Zod schema name phải bám vocabulary owner ở file này; không sinh alias thứ hai kiểu `dailyPracticeProfileSchema` nếu cùng một contract.
+- field name canon cho streak projection là `privateStreak`; schema name canon là `privatePracticeStreakSchema`.
+- `baseline guard` là warning/projection lane, không phải authority mới ngoài `practiceProfileDtoSchema` và `practiceSheet*` schemas.
+- nếu controller chỉ cần transport parse cho params/query/body, vẫn phải import từ canonical Zod schema; không tự dựng inline schema cục bộ.
 
 ## DTO envelope rules
 

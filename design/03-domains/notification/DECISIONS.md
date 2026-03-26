@@ -132,3 +132,30 @@ Notify user/admin, push fan-out, email delivery request và webhook/revalidation
 ### Trade-off
 
 - Tăng độ phức tạp vận hành cho outbox/dispatcher/replay.
+
+## Decision 7. Community engagement notifications là retention signal hợp lệ của PMTL
+
+### Context
+
+Community không nên là mặt phẳng tĩnh. Người dùng cần lý do quay lại khi có tương tác liên quan trực tiếp tới mình hoặc nội dung cộng đồng mới đáng chú ý.
+
+### Decision
+
+- Notification module phải coi các event community sau là hợp lệ:
+  - có người trả lời comment của user
+  - bài cộng đồng của user được duyệt
+  - bài cộng đồng của user bị từ chối hoặc bị ẩn sau moderation
+  - guestbook entry của user được duyệt
+  - bài cộng đồng hoặc nội dung authority mới được publish cho audience phù hợp
+- Các notification này là engagement/return signal, không phải public counter hay canonical moderation proof.
+- Preference UI có thể gộp chúng dưới category `community`.
+
+### Rationale
+
+- Giúp community tạo vòng quay lại tự nhiên.
+- Giữ module notification bám use case thật, không chỉ reminder tĩnh.
+
+### Trade-off
+
+- Nếu bật quá rộng sẽ gây ồn.
+- Cần category preference và quiet-hour policy rõ để tránh spam người dùng.

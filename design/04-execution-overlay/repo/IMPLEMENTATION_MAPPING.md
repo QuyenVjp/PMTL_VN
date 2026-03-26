@@ -53,6 +53,34 @@ Không chọn làm slice đầu tiên:
 - `/ngoai-tuyen`
   - vì kéo theo delta sync, offline state, và Wisdom-QA bundle complexity
 
+## Current launch value packages
+
+### Launch Core A
+
+- câu pháp cú mỗi ngày trên member dashboard
+- lịch ăn chay/ngày âm phổ thông
+- tủ sách cá nhân
+- reading list
+
+### Launch Core B
+
+- Wisdom-QA hub
+- search lời dạy bằng `Meilisearch + SQL fallback`
+- source/provenance rõ
+- không AI tư vấn
+
+### Launch Core C
+
+- offline bundle cho Bạch Thoại
+- tải gói
+- xem offline
+- version sync cơ bản
+
+Rule:
+
+- các core packages này được coi là `launch value`, không bị đẩy lùi chỉ vì infra lane của chúng từng được ghi là phase-later
+- heavy stack supporting them chỉ được activate đến mức tối thiểu product cần thật
+
 ### Slice boundary (ranh giới bắt buộc)
 
 Nếu code slice này, phạm vi được phép chỉ gồm:
@@ -155,6 +183,11 @@ Coding agent có thể activate phần `planned` mà không cần phát minh l�
 | Prometheus + Grafana | `infra/prometheus/`, `infra/grafana/`, `infra/alertmanager/` | planned | specific metric use case + team needs shared visibility | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
 | OpenTelemetry | `apps/api/src/platform/telemetry/otel.ts`; `OTEL_ENABLED=true` | planned | cross-service latency diagnosis needed | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
 | pgvector | `apps/api/src/platform/embedding/`; `prisma/schema.prisma` extension | **explicit exclusion** | Meilisearch stable 3+ months theo định nghĩa trong `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` AND specific semantic search use case measured | `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
+
+### Launch-profile override
+
+- `Meilisearch` hiện được promote từ `planned by trigger` thành `launch-active target` do PMTL chọn `Search-first launch`
+- `Valkey`, `BullMQ`, `apps/worker`, `outbox`, `PgBouncer`, `Prometheus/Grafana`, `OTEL` vẫn là dormant lanes: cấu hình/owner path có thể scaffold sẵn, nhưng chưa là launch dependency mặc định
 
 ## Forbidden for current phase (Bị cấm trong giai đoạn hiện tại)
 

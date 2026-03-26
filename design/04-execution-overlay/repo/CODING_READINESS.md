@@ -291,7 +291,14 @@ Limiter nào được cắm ở bước nào phải bám [APPS_API_SCAFFOLD_ORDE
 | `POST /api/media/upload` | 20 | 1 giờ | per-account |
 | `POST /api/community/posts` | 10 | 1 giờ | per-account |
 | `POST /api/community/posts/:publicId/comments` | 30 | 1 giờ | per-account |
+| `POST /api/community/posts/:publicId/heart` | 120 | 1 giờ | per-account |
+| `DELETE /api/community/posts/:publicId/heart` | 120 | 1 giờ | per-account |
+| `POST /api/community/comments/:publicId/heart` | 120 | 1 giờ | per-account |
+| `DELETE /api/community/comments/:publicId/heart` | 120 | 1 giờ | per-account |
+| `POST /api/community/posts/:publicId/report` | 10 | 1 giờ | per-account |
+| `POST /api/community/comments/:publicId/report` | 10 | 1 giờ | per-account |
 | `POST /api/guestbook` | 5 | 1 giờ | per-IP |
+| `POST /api/guestbook/:publicId/report` | 5 | 1 giờ | per-account |
 | `GET /api/search` | 100 | 1 phút | per-IP |
 | `POST /api/vows` | 10 | 1 giờ | per-account |
 | `PUT /api/engagement/practice-logs/self` | 50 | 1 giờ | per-account |

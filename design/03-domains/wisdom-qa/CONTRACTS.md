@@ -18,6 +18,7 @@
   - được đọc content public đã publish
 - `member`
   - được tải offline bundle (gói tải ngoại tuyến) cá nhân nếu feature bật
+  - được quản lý tủ sách cá nhân / reading list / bookmark surfaces thuộc lane đọc học
 - `admin`
   - được tạo/cập nhật/publish entry nội dung đã dịch hoặc curated
   - được quản lý source mapping, media refs
@@ -77,6 +78,11 @@
 - `bài pháp hội` hoặc `event discourse` vẫn là `wisdomEntries`
   - `Calendar` có thể deep-link hoặc giữ `relatedWisdomPublicIds`
   - `Calendar` không được trở thành owner của transcript/discourse text
+- launch profile hiện tại yêu cầu các member value surfaces sau phải có owner rõ:
+  - câu pháp cú mỗi ngày trên dashboard
+  - tủ sách cá nhân
+  - reading list
+  - Bạch Thoại offline bundle
 - publish/search/offline-bundle refresh signal quan trọng nên đi qua `outbox_events`
 - ingest payload, publish payload, search payload, bundle-manifest payload và env/runtime config phải có schema runtime rõ
 - lane automation phải phân biệt:
@@ -87,6 +93,9 @@
   - duplicate-check + slug-preview + draft creation là canonical helpers
   - `import jobs` và provider automation là phase-later convenience lane, không phải default create flow
 - custom GPT web link không phải canonical programmatic surface; backend phải bám API/tool lane do PMTL sở hữu
+- bookshelf / reading list lane là member-owned relation/projection:
+  - canonical source-backed entry vẫn thuộc `wisdomEntries` / `qaEntries` / `baihua*`
+  - không copy full canonical text sang member table chỉ để đánh dấu đã lưu hoặc đã đọc
 
 ## Audiobook-specific routes
 

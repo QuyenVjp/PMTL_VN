@@ -40,7 +40,8 @@ Trang web gọi yêu cầu đến `POST /api/guestbook`.
 
 ## Kết quả thành công (Success Result)
 - Bản ghi sổ lưu niệm được tạo thành công.
-- Tin nhắn hiển thị ngay lập tức hoặc chờ phê duyệt tùy theo chính sách hiện hành.
+- Tin nhắn đi vào trạng thái chờ duyệt trước khi public.
+- Khi được duyệt, entry trở thành public shareable surface nhẹ, nhưng không biến thành competitive social card.
 
 ## Các lỗi có thể xảy ra (Errors)
 - `400`: Nội dung JSON hoặc thân yêu cầu không hợp lệ.
@@ -49,6 +50,7 @@ Trang web gọi yêu cầu đến `POST /api/guestbook`.
 
 ## Kiểm toán (Audit)
 - Ghi nhật ký hành động `guestbook.submit`.
+- Khi entry được duyệt sau này, approval action phải có audit trail riêng ở flow moderation/admin.
 
 ## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
 - Chốt chặn yêu cầu là lớp bảo vệ chính chống lại thư rác.
@@ -59,4 +61,5 @@ Trang web gọi yêu cầu đến `POST /api/guestbook`.
 - Yêu cầu gửi nội dung nên được phản hồi nhanh chóng, không phải chờ quy trình gửi thông báo hoàn tất.
 
 ## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
-- Tóm tắt phê duyệt sổ lưu niệm (Guestbook approval summary) không thay thế bản ghi kiểm duyệt gốc (moderation source record) nếu tin nhắn đó bị báo cáo vi phạm sau này.
+- Tóm tắt phê duyệt sổ lưu niệm không thay thế bản ghi kiểm duyệt gốc nếu tin nhắn đó bị báo cáo vi phạm sau này.
+- Guestbook là wall tri ân nhẹ: không thêm public practice progress metrics, reaction zoo, hoặc leaderboard quanh entry.

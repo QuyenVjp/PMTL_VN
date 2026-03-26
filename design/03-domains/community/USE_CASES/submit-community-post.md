@@ -33,7 +33,9 @@ Trang web gửi yêu cầu đến `POST /api/community/posts`.
 3. Ghi bản ghi chuẩn gốc (canonical record) vào bộ sưu tập `communityPosts`.
 4. Khởi tạo các trường tóm tắt đọc nhanh nếu bộ sưu tập yêu cầu.
 5. Thêm sự kiện nhật ký kiểm toán hành động `community.post.submit`.
-6. Nếu chính sách yêu cầu sự chú ý nội bộ, nạp thêm sự kiện outbox để tạo thông báo cho quản trị viên hoặc tín hiệu đánh giá kiểm duyệt.
+6. Nếu người gửi là `member`, gán trạng thái hiển thị mặc định là `pending`.
+7. Nếu người gửi là `admin/editor` theo policy, có thể gán trạng thái publish ngay.
+8. Nếu chính sách yêu cầu sự chú ý nội bộ, nạp thêm sự kiện outbox hoặc dispatch best-effort để tạo thông báo cho quản trị viên hoặc tín hiệu đánh giá kiểm duyệt.
 
 ## Tác động phụ bất đồng bộ (Async Side-effects)
 - Gửi thông báo nội bộ.
@@ -41,7 +43,8 @@ Trang web gửi yêu cầu đến `POST /api/community/posts`.
 
 ## Kết quả thành công (Success Result)
 - Bài đăng cộng đồng được tạo thành công tại mô-đun sở hữu.
-- Dòng tin tức cộng đồng (community feed) có thể hiển thị bài đăng theo chính sách phê duyệt hiện hành.
+- Dòng cộng đồng có thể hiển thị bài đăng theo chính sách phê duyệt hiện hành.
+- Nếu bài chưa được duyệt, người gửi vẫn phải thấy trạng thái chờ duyệt rõ ràng trong member surface.
 
 ## Các lỗi có thể xảy ra (Errors)
 - `400`: Thân yêu cầu không hợp lệ.
@@ -52,6 +55,7 @@ Trang web gửi yêu cầu đến `POST /api/community/posts`.
 
 ## Kiểm toán (Audit)
 - Ghi nhật ký hành động `community.post.submit`.
+- Nếu publish ngay bởi admin/editor, phải có audit metadata thể hiện publish path.
 
 ## Tính không đổi / Chống thư rác (Idempotency / Anti-spam)
 - Chốt chặn yêu cầu là lớp bảo vệ chính chống lại việc gửi tin hàng loạt (flood).
@@ -62,4 +66,5 @@ Trang web gửi yêu cầu đến `POST /api/community/posts`.
 - Luồng gửi bài chỉ ghi bản ghi chuẩn gốc và nạp sự kiện outbox cho các công việc hạ nguồn.
 
 ## Ghi chú cho AI/sinh mã (Notes for AI/codegen)
-- `communityPosts` là bản ghi chuẩn gốc (canonical record); quy trình kiểm duyệt và thông báo chỉ là các tác vụ hạ nguồn.
+- `communityPosts` là bản ghi chuẩn gốc; quy trình kiểm duyệt và thông báo chỉ là tác vụ hạ nguồn.
+- Community post là retention surface: public DTO sau này phải hỗ trợ `heart`, `commentCount`, `shareUrl`, nhưng những thứ đó không thay canonical submit path.
