@@ -18,6 +18,35 @@ Internet
   → apps/api (app-layer rate limit + auth + CSRF)
 ```
 
+### Edge trust-chain rule
+
+- Cloudflare proxying là baseline cho public hostnames của PMTL.
+- Turnstile token luôn phải được verify server-side; client widget một mình không đủ.
+- Turnstile site key là public-safe; Turnstile secret key là server-only credential.
+
+### Caddy forwarding rule
+
+- `reverse_proxy` path của Caddy phải coi `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host` như forwarded chain do proxy tạo/quản lý.
+- incoming forwarded headers từ untrusted hop không được tự động tin.
+- `trusted_proxies` phải được cấu hình theo private ranges và edge providers có owner rõ trước khi PMTL dùng forwarded client IP cho auth/rate-limit/audit.
+- khi PMTL đứng sau Cloudflare, ưu tiên `trusted_proxies_strict` để parse forwarded chain theo hướng giảm left-most spoofing risk.
+
+Rule:
+
+- không trust `X-Forwarded-*` chỉ vì header đó có tồn tại.
+- app-layer IP resolution phải bám chain `Cloudflare -> Caddy -> apps/api`, không tự parse raw header theo cảm tính.
+- access logging của Caddy nếu bật file output phải giữ rotation policy owner-reviewed; header nhạy cảm không được re-enable log thô chỉ để debug nhanh.
+
+### Edge cache / purge rule
+
+- Cloudflare cache purge là server/ops lane; không phát lệnh purge từ browser/client code.
+- purge trigger phải bám owner event có chủ đích như publish/unpublish/index refresh, không purge-all theo thói quen sau mọi write nhỏ.
+
+Rule:
+
+- authenticated/dynamic API paths không được coi là cacheable chỉ vì edge có cache rules.
+- purge ownership mặc định nằm ở `apps/api` hoặc ops lane có credential scoped rõ.
+
 ---
 
 ## Layer 1: Cloudflare (Phase 1)
@@ -128,6 +157,11 @@ Condition: http.request.uri.path matches "^/api/search" AND rate > 60/min from s
 |---|---|---|
 | `TURNSTILE_SITE_KEY` | web | Public key for widget |
 | `TURNSTILE_SECRET_KEY` | api | Server-side verification |
+
+Rules:
+
+- widget render success không được coi là verification pass.
+- verification authority nằm ở `apps/api`.
 
 ---
 

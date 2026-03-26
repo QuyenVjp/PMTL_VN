@@ -24,6 +24,25 @@ Mọi quyết định ở đây là binding — không được tự ý bật la
 - error tracking như `Sentry` hoặc equivalent nên bật sớm cho web/api/admin nếu team cần thấy production exceptions nhanh hơn log tail
 - các tool này không thay `/health/*` và structured logs; chúng chỉ thêm visibility ngoài host
 
+### Sentry stance (recommended, not baseline authority)
+
+- nếu bật `Sentry`, DSN phải tách theo boundary:
+  - web
+  - api
+  - admin
+- SDK init phải chạy sớm nhất có thể ở bootstrap path của từng app, trước route/middleware chính của app đó.
+- `sendDefaultPii` không là baseline mặc định của PMTL; nếu bật thì phải có scrubbing policy owner-reviewed.
+- source map upload chỉ là requirement khi build/minification path cần stack trace readable; không biến thành nghi thức bắt buộc cho mọi runtime không minified.
+- release tagging phải đi qua `SENTRY_RELEASE` hoặc init option tương đương từ build metadata trong CI/deploy artifact path; không để manual upload/tagging thành quy trình chính.
+- performance tracing/replay của Sentry không là baseline authority; logs + health + metrics vẫn là ưu tiên trước.
+
+Rules:
+
+- không dùng một DSN chung cho cả web/api/admin.
+- chỉ init Sentry ở bootstrap/config path; không import SDK tùy tiện trong route/module business code để “bắt lỗi cho nhanh”.
+- không coi Sentry là thay thế cho pino logs, `/health/*`, hay `/metrics`.
+- không bật tracing/replay lane mặc định chỉ vì SDK hỗ trợ.
+
 ### Pino structured logging
 
 Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
@@ -311,6 +330,28 @@ Khi search route không chạy đúng engine được yêu cầu, log tối thi�
 - Manual log tail không còn đủ để diagnose incidents trong < 10 min
 - Team size > 1 người cần shared visibility
 
+### Authority split
+
+- Prometheus là authority cho:
+  - scrape config
+  - recording rules
+  - alerting rules evaluation
+- Alertmanager là authority cho:
+  - grouping
+  - routing
+  - inhibition
+  - notification delivery
+- Grafana là authority cho:
+  - dashboards
+  - internal operator UI
+  - datasource visualization
+
+Rules:
+
+- PMTL không dùng Grafana làm source-of-truth cho alert conditions.
+- alert conditions phải nằm trong Prometheus rule files; Alertmanager chỉ route/notify.
+- Grafana alerting UI không là baseline authority của PMTL ở lane dormant này.
+
 ### Architecture
 
 ```
@@ -337,6 +378,61 @@ scrape_configs:
       - targets: ['worker:3002']
     metrics_path: '/metrics'
 ```
+
+Rules:
+
+- `scrape_timeout` nếu set phải luôn `<= scrape_interval`.
+- config reload chỉ được làm qua:
+  - `SIGHUP`
+  - `POST /-/reload` khi Prometheus/Alertmanager được bật lifecycle endpoint một cách có chủ đích
+- invalid config không được phép hot-reload mù; phải validate trước khi rollout.
+
+### Prometheus rule discipline
+
+- rule files là alert-condition authority.
+- `for` dùng để giữ alert ở trạng thái pending cho đến khi condition tồn tại đủ lâu; không được giả định mọi spike ngắn đều nên fire ngay.
+- `keep_firing_for` là knob hợp lệ khi cần giữ alert firing thêm một khoảng sau khi condition vừa clear; chỉ dùng có chủ đích để giảm flap hoặc giữ notification semantics ổn định.
+- alert phải bám symptom ở user/service level trước, không alert thuần trên cause nội bộ nếu chưa có symptom panel hỗ trợ.
+- metamonitoring là rule set đầu tiên:
+  - Prometheus down / scrape failure lớn
+  - Alertmanager down
+  - config reload failed
+  - rule evaluation failure
+
+### Alertmanager routing discipline
+
+- route tree phải có root route rõ ràng; child routes chỉ override phần thật sự cần override.
+- grouping phải đi qua `group_by` labels có chủ đích; không dùng `...` để tắt grouping trừ khi owner biết rõ blast radius notification.
+- `group_interval` và `repeat_interval` là timing knobs của grouping/renotify semantics; phải owner-review nếu paging volume hoặc escalation behavior đổi.
+- `continue` chỉ dùng khi một alert cần match nhiều nhánh downstream một cách có chủ đích.
+- `inhibit_rules` là path hợp lệ để mute alert cấp thấp hơn khi source alert cấp cao hơn đang active.
+
+### Grafana provisioning and security stance
+
+- Grafana production path phải dùng file provisioning hoặc artifact đã commit; không edit dashboard/rule thủ công trong UI rồi coi đó là authority.
+- anonymous access tắt mặc định.
+- nếu Grafana proxy dữ liệu qua backend, `data_source_proxy_whitelist` phải được owner-review.
+- `GF_SERVER_ROOT_URL` phải khớp reverse-proxy/public path thật nếu có subpath exposure.
+
+Rules:
+
+- Grafana chỉ internal-only qua Caddy/admin boundary.
+- không expose Grafana public internet.
+- dashboard JSON/provisioning files phải là artifact reviewable trong repo.
+
+### Prometheus and OTLP coexistence stance
+
+- Prometheus có thể ingest OTLP metrics khi OTLP receiver được bật rõ ràng; đây không phải baseline mặc định của PMTL.
+- OTLP ingest lane không làm thay đổi authority split:
+  - Prometheus vẫn là authority cho metric storage/query/alerting
+  - OTEL Collector vẫn là telemetry proxy/processor
+- OTLP receiver phải được coi là opt-in feature, không tự bật theo quán tính khi có OTEL lane.
+
+Rules:
+
+- không promote toàn bộ resource attributes vào metric labels theo kiểu blanket.
+- tránh high-cardinality labels từ trace/resource metadata nếu chưa có owner-reviewed mapping.
+- alerting không được dựa trên trace-derived high-cardinality metrics chỉ vì Prometheus ingest được OTLP.
 
 ### Grafana dashboards (required at phase 2)
 1. **API Overview**: request rate, error rate, latency p50/p95/p99
@@ -415,12 +511,16 @@ groups:
 - File: `infra/docker/docker-compose.monitoring.yml` (separate override)
 - Port exposure: all internal only; Caddy proxies `/grafana/*` for admin access
 - Data persistence: named volumes `prometheus_data`, `grafana_data`
+- containers phải có healthcheck và resource limits owner-reviewed trước khi lane này được activate
 
 ### Env vars (Phase 2)
 | Env | Required | Purpose |
 |---|---|---|
 | `PROMETHEUS_ENABLED` | no | Enable Prometheus scrape endpoint |
+| `GF_SECURITY_ADMIN_USER` | no | Grafana admin username override |
 | `GRAFANA_ADMIN_PASSWORD` | yes (when enabled) | Grafana admin password |
+| `GF_SERVER_ROOT_URL` | yes (when Grafana enabled behind proxy/subpath) | Canonical Grafana root URL |
+| `GF_AUTH_ANONYMOUS_ENABLED` | no | Must stay `false` unless explicit owner exception |
 | `ALERTMANAGER_WEBHOOK_URL` | no | Alert delivery webhook |
 | `ALERTMANAGER_EMAIL_FROM` | yes (when enabled) | Alert sender email |
 | `ALERTMANAGER_EMAIL_TO` | yes (when enabled) | Alert recipient(s) |

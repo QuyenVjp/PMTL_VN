@@ -29,6 +29,7 @@ Authority chain:
   - schema path
   - migrations path
   - datasource url
+- nếu deployment/runtime dùng pooled connection string còn Prisma CLI cần direct connection riêng, separation đó phải đi qua `prisma.config.ts`; không để migrate/introspection và app runtime dùng chung một URL theo thói quen.
 - không dựa vào `--schema`, `--url`, hoặc ad hoc CLI flags cũ làm baseline config contract
 - không dùng `db push` làm baseline cho shared/dev/prod workflow
 - schema merge authority đi qua `PRISMA_SCHEMA_PLAN.md`, không sửa DBML/domain plan và runtime schema mỗi nơi một kiểu
@@ -55,6 +56,7 @@ Authority chain:
 - local/dev: `prisma migrate dev`
 - deploy/runtime: `prisma migrate deploy`
 - `prisma.config.ts` là nơi authority cho connection config dùng bởi Prisma CLI ở v7
+- khi có pooled runtime URL, Prisma migrate/introspection phải đi qua `directUrl` tách riêng thay vì tái dùng pooled app URL.
 - migration naming, rollback expectation, seed posture đọc ở `MIGRATION_STRATEGY.md`
 - không trộn migration/schema changes vào feature PR nếu chưa có ownership chain rõ
 

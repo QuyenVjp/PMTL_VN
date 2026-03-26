@@ -60,6 +60,18 @@ Nếu team chưa đạt được các mục tiêu này, phải ghi chú rõ là 
 
 Nếu current phase chưa đạt retention trên, phải ghi rõ `chưa đạt retention target`.
 
+## PostgreSQL logical backup stance
+
+- `pg_dump` logical backup có thể xuất:
+  - plain SQL script
+  - archive format
+- `pg_restore` chỉ áp dụng cho archive format; không dùng cho plain SQL script.
+
+Rules:
+
+- nếu cần selective restore hoặc selective object restore, backup strategy phải có archive-format path rõ thay vì chỉ giữ plain SQL script.
+- nếu chỉ giữ plain SQL script, runbook phải coi đó là restore path toàn cục/đơn giản; không ngầm hứa selective restore linh hoạt.
+
 ## Phase 1 off-site baseline
 
 - Doc này chưa ép cứng provider duy nhất, nhưng Phase 1 bắt buộc phải có:

@@ -91,6 +91,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Codex owns final synthesis, final patch direction, and final verification. Subagents and external workers provide bounded analysis or second opinions only.
 - Route work in this order: repo-local PMTL skills -> local subagents -> external workers when they add clear leverage.
 - Use local subagents first for repo exploration, drift detection, parallel reading, and option generation. Do not escalate externally just to answer "what does this repo say?"
+- Repo-local reusable agent specs live in `.claude/agents/README.md`; keep those role files aligned with `design/` and this `AGENTS.md` instead of treating them as freeform personas.
 - Prefer file-path-based prompts and narrow task slices when dispatching workers. Broad prompts that outsource judgment are a routing failure.
 - If outputs disagree, prefer `design/`, `AGENTS.md`, and canonical PMTL skills over model confidence. Update repo docs first if external product drift proves the repo is stale.
 - Read `docs/agent-operating-model.md` before changing worker governance, subagent roles, or escalation defaults.

@@ -183,6 +183,12 @@ Rules:
 | `SENTRY_DSN_WEB` | web | no | public web error tracking DSN |
 | `SENTRY_DSN_API` | api | no | API/server error tracking DSN |
 | `SENTRY_DSN_ADMIN` | admin | no | admin SPA error tracking DSN |
+| `SENTRY_RELEASE` | web + api + admin | no | release/version tag for artifact correlation |
+
+Rules:
+
+- DSN phải tách theo app boundary; không dùng một DSN chung cho mọi surface.
+- nếu bật Sentry, source-map/release artifact path phải thuộc CI/deploy process có owner rõ.
 
 ### Cloudflare R2 (object storage)
 > Design: `design/02-platform-baseline/optional-scale/R2_MIGRATION_PLAN.md`
@@ -227,10 +233,19 @@ Rules:
 | Env | Owner | Required when | Purpose |
 |---|---|---|---|
 | `PROMETHEUS_ENABLED` | api | no | enable Prometheus metrics endpoint |
+| `GF_SECURITY_ADMIN_USER` | infra | no | Grafana admin username override |
 | `GRAFANA_ADMIN_PASSWORD` | infra | yes | Grafana admin UI password |
+| `GF_SERVER_ROOT_URL` | infra | yes when Grafana exposed through proxy/subpath | canonical Grafana root URL |
+| `GF_AUTH_ANONYMOUS_ENABLED` | infra | no | Grafana anonymous access gate; should remain `false` by default |
 | `ALERTMANAGER_WEBHOOK_URL` | infra | no | webhook for alert delivery |
 | `ALERTMANAGER_EMAIL_FROM` | infra | yes | alert sender email |
 | `ALERTMANAGER_EMAIL_TO` | infra | yes | alert recipient email(s) |
+
+Rules:
+
+- không phát minh PMTL-specific env aliases cho Grafana nếu upstream `GF_*` env đã đủ rõ.
+- Grafana anonymous access mặc định phải tắt.
+- Grafana provisioning files vẫn là authority; env chỉ override runtime/security shell.
 
 ### PgBouncer (Phase 2+)
 > Design: `design/02-platform-baseline/optional-scale/PGBOUNCER_STRATEGY.md`

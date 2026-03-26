@@ -100,6 +100,63 @@ Caddy → apps/web + apps/api + apps/admin
 
 Cloudflare đứng trước Caddy cho CDN/SSL/edge protection.
 
+Trust-chain rule:
+
+- Caddy là reverse-proxy authority tại origin.
+- forwarded client identity chỉ được tin khi chain edge/proxy đã được owner-review.
+- `trusted_proxies` của Caddy và app-layer IP resolution phải đồng bộ; không để Cloudflare/Caddy/apps/api mỗi nơi hiểu client IP một kiểu.
+- nếu origin đứng sau Cloudflare hoặc multi-proxy chain tương tự, ưu tiên `trusted_proxies_strict` để forwarded chain được parse theo hướng giảm spoofing risk.
+
+## Docker Compose production discipline
+
+- production compose nên đi theo split:
+  - base compose file
+  - production override file
+- app code phải nằm trong image; production path không bind-mount source code vào container app.
+- env overrides đi qua env files hoặc deployment secret path có owner rõ.
+
+Rules:
+
+- restart policy là per-service operational choice; không biến một ví dụ upstream thành hard law cho mọi service.
+- healthcheck/readiness vẫn là requirement của PMTL dù compose chỉ start container chứ không đảm bảo app-ready semantics.
+- nếu service phụ thuộc readiness của service khác, phải dùng `depends_on` long syntax với `condition: service_healthy`; short syntax chỉ đủ cho startup ordering, không đủ cho readiness gate.
+- `docker compose up --wait` chỉ hợp lệ khi service healthchecks đã được owner-review.
+
+## Docker image build canon
+
+- app images của `apps/web`, `apps/api`, và `apps/admin` phải đi theo multi-stage build; không dùng single-stage image cho production runtime.
+- stage names phải rõ ràng theo purpose, tối thiểu:
+  - `builder`
+  - `runtime`
+- final runtime stage chỉ được copy runtime artifacts cần thiết; không copy nguyên source tree nếu runtime không cần.
+- final runtime stage phải dùng `USER` non-root có owner rõ.
+- monorepo build path phải có `.dockerignore` ở root để cắt junk khỏi build context.
+- BuildKit là builder baseline của PMTL; không design theo legacy-builder assumptions.
+- base images nên ưu tiên minimal image phù hợp runtime thật và pin bằng digest khi release path cần reproducibility/supply-chain discipline cao hơn.
+
+Rules:
+
+- không truyền secrets build qua `ARG`/plain `ENV` rồi bake vào image layers; nếu build thật sự cần secret tạm thời thì phải dùng build-secret mount path có owner rõ.
+- layer ordering phải ưu tiên cache hit:
+  - stable manifest/dependency files trước
+  - source code volatile sau
+- cache mismatch làm invalidate toàn bộ phần sau của Dockerfile; không được đặt `COPY . .` quá sớm rồi tự phá cache.
+- nếu builder phải kéo package/private artifact lặp lại nhiều lần, được phép dùng cache mount của BuildKit cho package-manager path có owner rõ.
+- package-manager/update cleanup phải hoàn tất trong cùng `RUN` khi dùng distro package manager, không để cache/rac thải build sang final image.
+- healthcheck command/value cụ thể không tự phát minh ở Dockerfile canon này; authority vẫn là `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md` và owner docs của từng service.
+
+## Docker host/runtime hardening stance
+
+- Docker Engine containers mặc định không có resource constraints; production path phải có owner-reviewed CPU/memory limits ở service level thay vì để unlimited.
+- default logging driver `json-file` không tự rotate; nếu host còn giữ local Docker logs như operational source thì phải có rotation policy owner-reviewed.
+- Docker daemon metrics chỉ được mở khi observability lane thật sự cần; nếu bật thì bind internal/loopback, không expose public.
+
+Rules:
+
+- không expose Docker daemon socket/network API ra plain TCP; remote admin path phải đi qua SSH hoặc TLS có owner rõ.
+- seccomp default profile là runtime baseline hợp lệ; không chạy `seccomp=unconfined` nếu không có exception doc riêng.
+- `userns-remap`, content trust, build policies, và internal CA injection là host/org hardening options đáng cân nhắc, nhưng không tự động trở thành PMTL baseline nếu deployment path hiện tại chưa owner-review hết blast radius.
+
 ## Growth-safe launch profiles
 
 - baseline launch profile: xem `design/02-platform-baseline/edge-delivery/HIGH_TRAFFIC_RESILIENCE.md`

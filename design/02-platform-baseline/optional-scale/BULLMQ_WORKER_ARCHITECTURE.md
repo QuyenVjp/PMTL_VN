@@ -175,6 +175,12 @@ Dead-letter jobs are visible in admin (`/he-thong/queue-ops` — see below).
 - validation/business invariant error → đừng retry vô hạn; đi dead-letter sớm nếu handler xác định là non-retryable
 - idempotency conflict do duplicate replay → log `duplicate_skipped`, không coi là failure
 - retry/backoff/concurrency/rate-limit là queue-owner policy; producer không tự override ngẫu hứng nếu chưa có owner exception.
+- built-in backoff types baseline là `fixed` hoặc `exponential`; custom backoff chỉ mở khi queue owner có lý do rõ và test semantics đủ chặt.
+- retry chỉ có nghĩa khi `attempts > 1`; không cấu hình backoff rồi kỳ vọng retry tự xuất hiện.
+- finalized jobs phải có retention policy rõ cho:
+  - `removeOnComplete`
+  - `removeOnFail`
+  không để queue storage phình vô hạn vì quên cleanup stance.
 
 ## Deduplication stance
 
@@ -260,6 +266,15 @@ async function bootstrap() {
 }
 bootstrap();
 ```
+
+## Graceful shutdown stance
+
+- worker shutdown path phải gọi `worker.close()` để ngừng nhận job mới và chờ active jobs hoàn tất trước khi process exit.
+
+Rules:
+
+- không kill `apps/worker` như stateless HTTP process rồi kỳ vọng BullMQ tự xử lý sạch.
+- SIGTERM/SIGINT path của worker phải có close order và timeout posture owner-reviewed.
 
 **WorkerModule** imports:
 - `ConfigModule` — env validation

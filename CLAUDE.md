@@ -59,11 +59,18 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - Keep context clean. If the current thread becomes noisy or drifts, reset and restate the task precisely.
 
 ## PMTL Subagents
+- Repo-local role specs also live in `.claude/agents/README.md`; even outside Claude Code they can be reused as prompt/role briefs for new sessions.
 - `pmtl-architect`: placement, contracts, domain ownership, design alignment.
 - `pmtl-api-builder`: NestJS, auth, schemas, audits, runtime boundaries.
 - `pmtl-web-builder`: Next.js, UI behavior, feature implementation, style fidelity.
+- `pmtl-admin-builder`: apps/admin internal tooling, moderation, operations screens, admin-only UX.
+- `pmtl-search-builder`: Meilisearch integration, search sync, SQL fallback, search debugging.
+- `pmtl-data-runtime-keeper`: Prisma, Postgres, migrations, directUrl/runtime URL boundaries, transaction-sensitive data work.
+- `pmtl-canon-sync`: design-doc updates, source-of-truth locking, official-doc correction passes.
+- `pmtl-release-hardener`: Docker, Compose, Caddy, Cloudflare, monitoring, release-minded runtime hardening.
 - `pmtl-quality-gate`: verification planning, targeted checks, review findings.
 - `pmtl-ops-debugger`: Docker, runtime failures, monitoring, incident-style debugging.
+- `pmtl-doc-researcher`: official-doc fact finding, version drift checks, repo-aware gap filling.
 - `claude-worker`: external Claude Code CLI opinion for compare/validate tasks.
 - `codex-worker`: external Codex CLI opinion for compare/validate tasks.
 - `copilot-worker`: external GitHub Copilot CLI opinion for compare/validate tasks.

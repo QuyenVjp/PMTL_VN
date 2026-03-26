@@ -67,6 +67,7 @@ Prisma 7 note:
   - `schema`
   - `migrations.path`
   - `datasource.url`
+- nếu runtime URL đi qua pooler/connection proxy còn migrate cần direct connection, separation đó phải được khai báo bằng `directUrl` trong `prisma.config.ts`
 - không coi `--schema`, `--url`, `--shadow-database-url` kiểu cũ là baseline workflow contract nữa
 
 ### Production
@@ -86,6 +87,11 @@ npx prisma migrate diff \
 ```
 
 Nếu cần so sánh config-backed datasource hai phía, ưu tiên các mode dựa trên `prisma.config.ts`; không khóa repo vào mental model flag cũ khi v7 đã đổi.
+
+Rules:
+
+- không reuse pooled runtime URL cho migrate/deploy/introspection chỉ vì tiện copy env.
+- CI/deploy migration lane phải có owner rõ cho direct connection secret nếu direct path được dùng.
 
 ---
 

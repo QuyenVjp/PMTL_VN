@@ -667,6 +667,7 @@ Rules:
 
 ### Auth / key boundary
 
+- self-hosted production Meilisearch phải có master key đủ mạnh ở bootstrap/config boundary; không coi production-without-master-key là baseline hợp lệ.
 - Khi Meilisearch có master key, mọi route trừ `/health` đều nằm sau `Authorization: Bearer <api_key_or_tenant_token>`.
 - `MEILISEARCH_MASTER_KEY` chỉ được tồn tại ở server-side ops boundary.
 - `apps/api` runtime mặc định phải dùng `MEILISEARCH_API_KEY` scoped key, không dùng master key cho query/index/settings flow hằng ngày.
@@ -677,6 +678,7 @@ Rules:
   - admin key
   - index settings write capability
 - PMTL baseline hiện tại không cho browser gọi Meilisearch trực tiếp; browser gọi `apps/api`, còn `apps/api` mới gọi Meilisearch.
+- upstream Meilisearch có hỗ trợ backend-generated tenant token để frontend gọi search trực tiếp trong multi-tenant/shared-index scenarios; đây là optional capability, không phải baseline PMTL.
 - tenant token không là baseline của PMTL search vì search hiện không là multitenant direct-to-engine product.
 - nếu tương lai mở direct browser search qua tenant token hoặc scoped search key, phải có owner doc riêng cho:
   - key issuance
@@ -684,6 +686,19 @@ Rules:
   - searchRules/filter scope
   - logout/revocation posture
   - abuse/rate-limit implications
+
+### Upstream tenant-token fact boundary
+
+- tenant token là JWT ngắn hạn được generate ở backend từ parent API key theo search rules.
+- parent key dùng để ký tenant token phải là search-scoped API key; payload chuẩn mang `apiKeyUid`, `searchRules`, và có thể có expiry.
+- tenant token chỉ áp dụng cho search path; không mở quyền admin/indexing.
+- nếu parent API key hết hạn hoặc bị xóa, tenant token phụ thuộc nó cũng mất hiệu lực.
+
+Rules:
+
+- PMTL hiện không dùng tenant token như launch baseline.
+- nếu tương lai mở lane này, browser chỉ được nhận tenant token đã issue từ backend; không được đẩy raw master/admin key xuống browser để vá lỗi auth/search.
+- không được lấy upstream support của tenant token làm lý do để mở browser-direct Meilisearch path khi owner doc chưa cho phép.
 
 ### Runtime API key scope stance
 
