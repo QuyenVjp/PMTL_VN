@@ -74,7 +74,12 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 ### Search / Calendar / Notification
 
 - `search.engine_unavailable`
+- `search.authorization_missing`
+- `search.invalid_api_key`
 - `search.reindex_not_enabled`
+- `search.task_failed`
+- `search.task_not_found`
+- `search.index_settings_update_failed`
 - `search.query_invalid`
 - `search.query_too_short`
 - `search.cursor_invalid`

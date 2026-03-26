@@ -2842,3 +2842,459 @@ Synchronous Error Validation: The following errors are now returned synchronousl
 invalid_index_uid
 invalid_settings_ranking_rules
 invalid_settings_typo_tolerance when oneTypo and twoTypos are filled but invalid for minWordSizeForTypos
+
+Authorization
+How to authenticate with the Meilisearch API using API keys and the Authorization header.
+
+If you are new to Meilisearch, check out the getting started guide.
+By providing Meilisearch with a master key at launch, you protect your instance from unauthorized requests. The provided master key must be at least 16 bytes. From then on, you must include the Authorization header along with a valid API key to access protected routes (all routes except /health).
+
+cURL
+
+JS
+
+Python
+
+PHP
+
+Java
+
+Ruby
+
+Go
+
+C#
+
+Rust
+
+Swift
+
+Dart
+curl \
+  -X GET 'MEILISEARCH_URL/keys' \
+  -H 'Authorization: Bearer MASTER_KEY'
+The /keys route can only be accessed using the master key. For security reasons, we recommend using regular API keys for all other routes.
+To learn more about keys and security, refer to our security tutorial.
+
+
+
+Dưới đây là thông tin **chi tiết và đầy đủ** về **Meilisearch JavaScript SDK** (tên package: `meilisearch`), tập trung vào hai phần bạn hỏi: **Authorization / Keys / Tenant tokens** và **Errors / Error codes / Troubleshooting**.
+
+SDK hiện tại (phiên bản mới nhất ~ **v0.56.0** tháng 3/2026) là **isomorphic** (chạy được cả Node.js, browser, và một số runtime khác). Nó hỗ trợ đầy đủ Meilisearch API, bao gồm cả multitenancy qua tenant tokens.
+
+### 1. Cài đặt SDK
+```bash
+npm install meilisearch
+# hoặc yarn add meilisearch
+```
+
+Import cơ bản:
+```js
+import { MeiliSearch } from 'meilisearch';
+// Hoặc dùng require nếu CommonJS
+const { MeiliSearch } = require('meilisearch');
+```
+
+### 2. Authorization / Keys / Tenant Tokens
+
+#### a. Khởi tạo Client với API Key (Authorization cơ bản)
+Mọi request đều cần truyền `apiKey` khi tạo client (trừ một số route public như health). SDK sẽ tự động thêm header `Authorization: Bearer <apiKey>` vào mọi request.
+
+```js
+const client = new MeiliSearch({
+  host: 'http://localhost:7700',     // hoặc URL production của bạn
+  apiKey: 'your_api_key_here',       // Master key (full quyền) hoặc Search key (chỉ search)
+});
+```
+
+**Lưu ý quan trọng về security:**
+- Không nên expose **master key** ra frontend/browser.
+- Trên production, chỉ dùng **Search API Key** (có action `search`) cho client-side.
+- Bạn có thể custom header hoặc dùng `requestConfig` nếu cần.
+
+#### b. Quản lý API Keys (Keys Management)
+Meilisearch có route `/keys` chỉ accessible bằng **master key**.
+
+SDK hỗ trợ đầy đủ các method liên quan đến keys:
+
+```js
+// List all keys (phải dùng master key)
+const keys = await client.getKeys({ limit: 10, offset: 0 });
+
+// Get one key by UID
+const key = await client.getKey('uid-cua-key');
+
+// Create new key
+const newKey = await client.createKey({
+  actions: ['search', 'documents.add'],   // hoặc ['*'] cho full
+  indexes: ['movies', 'books'],           // hoặc ['*']
+  expiresAt: '2026-12-31T23:59:59Z',      // hoặc null (không hết hạn)
+  name: 'My frontend search key',
+  description: 'Dùng cho web search'
+});
+
+// Update key (chỉ một số trường cho phép update)
+await client.updateKey('uid-cua-key', {
+  name: 'New name',
+  description: 'Updated desc'
+});
+
+// Delete key
+await client.deleteKey('uid-cua-key');
+```
+
+**Các lỗi thường gặp khi quản lý keys**: `invalid_api_key_actions`, `missing_api_key_indexes`, `immutable_api_key_*`, `api_key_already_exists`, v.v.
+
+#### c. Tenant Tokens (Multitenancy)
+Tenant token là JWT ngắn hạn, được generate từ một **Search API Key** (không được dùng master key để sign). Nó cho phép giới hạn kết quả search theo user (ví dụ: user chỉ thấy dữ liệu của chính mình qua filter).
+
+**Bước 1: Generate tenant token** (thường làm ở backend)
+
+```js
+import { generateTenantToken } from 'meilisearch/token';
+
+// Tìm apiKeyUid trước (chỉ cần làm 1 lần)
+const keysResponse = await client.getKeys(); // dùng master key
+const searchApiKey = keysResponse.results.find(k => k.name.includes('Default Search') || k.actions.includes('search'));
+const apiKeyUid = searchApiKey.uid;   // ví dụ: "85c3c2f9-bdd6-41f1-abd8-11fcf80e0f76"
+
+// Search rules (rất quan trọng)
+const searchRules = {
+  "patient_medical_records": {          // tên index
+    "filter": "user_id = 123"           // filter sẽ tự động áp dụng
+  },
+  // Có thể thêm nhiều index
+  "orders": {
+    "filter": "customer_id = 123 AND status != 'deleted'"
+  }
+};
+
+const token = await generateTenantToken({
+  apiKey: 'your_search_api_key_here',   // Phải là key có quyền "search"
+  apiKeyUid: apiKeyUid,
+  searchRules: searchRules,
+  expiresAt: new Date('2026-12-31')     // optional, khuyến khích set để tăng security
+});
+```
+
+**Bước 2: Sử dụng tenant token ở frontend (hoặc client-side)**
+
+```js
+const frontEndClient = new MeiliSearch({
+  host: 'http://localhost:7700',
+  apiKey: token   // <-- Dùng tenant token thay vì API key thông thường
+});
+
+const results = await frontEndClient
+  .index('patient_medical_records')
+  .search('blood test');   // Tự động chỉ thấy dữ liệu của user_id = 123
+```
+
+**Nuances & Edge cases của tenant tokens:**
+- Tenant token **không thể** permissive hơn API key dùng để sign nó.
+- Phải có ít nhất một search rule.
+- `expiresAt` nên set để tránh token vĩnh viễn.
+- Có thể dùng tenant token như API key bình thường (interchangeable cho search).
+- Nếu filter syntax sai → sẽ lỗi ở lúc search (`invalid_search_filter`).
+- Hỗ trợ filter phức tạp, nhưng chỉ dùng được thuộc tính đã khai báo trong `filterableAttributes`.
+
+### 3. Errors / Error Codes / Troubleshooting
+
+#### a. Error Format (từ Meilisearch API)
+Mọi lỗi đều trả về JSON có cấu trúc chuẩn:
+
+```json
+{
+  "message": "Index `movies` not found.",
+  "code": "index_not_found",
+  "type": "invalid_request",
+  "link": "https://docs.meilisearch.com/errors#index_not_found"
+}
+```
+
+- **message**: Mô tả dễ hiểu cho developer.
+- **code**: Mã lỗi cụ thể (rất hữu ích để handle).
+- **type**: 
+  - `invalid_request` (thường 4xx) — lỗi do input sai.
+  - `auth` (4xx) — vấn đề xác thực/quyền.
+  - `internal` (5xx) — lỗi server nội bộ.
+  - `system` (5xx) — giới hạn hệ thống (disk full, index quá lớn...).
+- **link**: Link tài liệu chính thức.
+
+SDK sẽ throw **MeilisearchApiError** (hoặc tương tự) chứa đầy đủ thông tin trên, nên bạn có thể catch và đọc `error.code`, `error.type`, `error.message`.
+
+#### b. Một số Error Codes phổ biến (liên quan đến phần bạn hỏi)
+
+**Authorization & Keys:**
+- `invalid_api_key` — API key sai hoặc không tồn tại.
+- `missing_authorization_header` — Không gửi header Authorization.
+- `missing_master_key` — Cần master key để truy cập `/keys`.
+- `api_key_not_found`, `api_key_already_exists`.
+- `invalid_api_key_uid`, `invalid_api_key_actions`, `invalid_api_key_indexes`.
+- `immutable_api_key_*` — Không được sửa một số trường sau khi tạo.
+
+**Tenant Token & Search:**
+- `invalid_search_filter` — Filter syntax sai hoặc thuộc tính chưa filterable.
+- `invalid_api_key` (khi tenant token invalid hoặc hết hạn).
+- `remote_invalid_api_key`.
+
+**Index & Documents:**
+- `index_not_found`, `index_already_exists`.
+- `invalid_index_uid`.
+
+**Search parameters sai:**
+- `invalid_search_q`, `invalid_search_sort`, `invalid_search_facets`, `invalid_search_limit`, `invalid_search_offset`, v.v. (rất nhiều, hầu hết bắt đầu bằng `invalid_search_*`).
+
+#### c. Troubleshooting & Best Practices
+
+1. **Luôn catch error và log code + message**:
+   ```js
+   try {
+     await index.search(...);
+   } catch (error) {
+     if (error.name === 'MeilisearchApiError' || error.code) {
+       console.error(`Meilisearch Error: ${error.code} - ${error.message}`);
+       console.error(`Type: ${error.type}, Link: ${error.link}`);
+       
+       // Handle cụ thể
+       if (error.code === 'invalid_api_key') {
+         // Refresh token hoặc redirect login
+       }
+     }
+   }
+   ```
+
+2. **Common issues & cách fix:**
+   - **403 Forbidden / invalid_api_key**: Kiểm tra key có đúng không, có action `search` không, hoặc tenant token đã hết hạn.
+   - **401 Unauthorized**: Thiếu header Authorization (thường do quên truyền `apiKey` khi init client).
+   - **index_not_found**: Index chưa tạo hoặc UID sai (case-sensitive).
+   - **invalid_search_filter**: Thuộc tính chưa được add vào `filterableAttributes` (phải update settings trước).
+   - Tenant token không hoạt động: Kiểm tra `apiKeyUid` đúng chưa, searchRules có đúng index name không, filter syntax đúng (dùng dấu `=` thay vì `==`).
+   - Version mismatch: SDK v0.56 tương thích với Meilisearch mới nhất (kiểm tra release notes nếu dùng version cũ).
+
+3. **Debug tips:**
+   - Dùng `client.getTasks()` hoặc `client.getTask(taskUid)` để xem lỗi asynchronous (add documents, update settings...).
+   - Kiểm tra console/network tab browser để xem raw response.
+   - Đọc full error list chính thức: https://www.meilisearch.com/docs/reference/errors/error_codes
+   - Nếu dùng React/Next.js: cẩn thận với hydration và expose key (chỉ expose tenant token hoặc search key).
+
+4. **Edge cases cần chú ý:**
+   - Tenant token trên browser: Vì là JWT, ai cũng có thể decode payload (nhưng không sửa được vì có signature). Đừng để filter lộ thông tin nhạy cảm.
+   - Rate limit / system errors: Khi index quá lớn hoặc nhiều request đồng thời.
+   - Network issues: SDK hỗ trợ abort signal và custom HTTP client nếu cần retry logic.
+
+Nếu bạn đang gặp lỗi cụ thể (ví dụ paste error message/code), hoặc cần ví dụ đầy đủ cho một use-case nào đó (Next.js + tenant token, React InstantSearch, v.v.), cứ bảo tao để mình đi sâu hơn nhé!
+
+Tài liệu chính thức tham khảo:
+- SDK GitHub & API reference: https://github.com/meilisearch/meilisearch-js
+- Tenant tokens: https://www.meilisearch.com/docs/learn/security/generate_tenant_token_sdk
+- Errors: https://www.meilisearch.com/docs/reference/errors/overview
+
+Cần thêm phần nào khác không (search options, documents, settings...)?
+
+
+
+**Dưới đây là thông tin CHI TIẾT 100% từ docs chính thức Meilisearch (cập nhật mới nhất 2026, tôi đã search + browse trực tiếp các trang reference & learn để lấy verbatim).**  
+Tao tổng hợp **đầy đủ, không cắt xén**, có cấu trúc rõ ràng, code ví dụ JS SDK, nuances, edge cases, security notes, và link chính thức để mày verify.
+
+### 1. Keys / Authorization / Tenant Tokens (từ official docs)
+
+#### Authorization (https://www.meilisearch.com/docs/reference/api/authorization)
+Khi Meilisearch chạy với **master key** (ít nhất 16 bytes), **tất cả route trừ `/health`** đều yêu cầu header:
+```http
+Authorization: Bearer <API_KEY_HOẶC_TENANT_TOKEN>
+```
+- **Master key**: full quyền, **chỉ dùng để quản lý keys** (`/keys`). Không bao giờ expose ra frontend.
+- **Khuyến cáo security**: Dùng **regular API keys** (scoped) cho mọi route khác.  
+Ví dụ cURL:
+```bash
+curl \
+  -X GET 'MEILISEARCH_URL/keys' \
+  -H 'Authorization: Bearer MASTER_KEY'
+```
+Với JS SDK:
+```js
+const client = new MeiliSearch({
+  host: 'http://localhost:7700',
+  apiKey: 'your_api_key_or_tenant_token'
+});
+```
+
+#### API Keys Management (chỉ master key mới gọi được)
+Các endpoint chính (từ reference/api/keys):
+- **GET /keys** → List keys (có pagination `limit`, `offset`)
+- **GET /keys/{uid}** → Get one key
+- **POST /keys** → Create key
+- **PATCH /keys/{uid}** → Update (chỉ `name` + `description`)
+- **DELETE /keys/{uid}** → Delete
+
+**Body create key (POST)** ví dụ:
+```json
+{
+  "actions": ["search", "documents.*"],
+  "indexes": ["movies", "*"],
+  "expiresAt": "2026-12-31T23:59:59Z",
+  "name": "Frontend search key",
+  "description": "Dùng cho web client"
+}
+```
+Response trả về **key string** (chỉ hiện 1 lần khi tạo).
+
+**Nuances & edge cases**:
+- API key chỉ có thể có actions và indexes đã định nghĩa.
+- Một số trường immutable sau khi tạo (`immutable_api_key_*` errors).
+- Default có 2 key khi khởi động: Admin (full) và Search (chỉ search).
+
+#### Tenant Tokens (Multitenancy) – từ docs learn/security
+**Tenant token** là JWT ngắn hạn, được generate từ **Search API Key** (không dùng master key). Nó embed **search rules** (filter) để tự động giới hạn kết quả search cho từng user/tenant mà **không cần tạo index riêng**.
+
+**Generate tenant token với JS SDK** (https://www.meilisearch.com/docs/learn/security/generate_tenant_token_sdk):
+```js
+import { generateTenantToken } from 'meilisearch/token';
+
+// 1. Tạo searchRules
+const searchRules = {
+  "patient_medical_records": {
+    "filter": "user_id = 123 AND status != 'deleted'"
+  },
+  "orders": {
+    "filter": "customer_id = 123"
+  },
+  // Hoặc dùng wildcard
+  "*": { "filter": "tenant_id = 42" }
+};
+
+// 2. Lấy apiKeyUid (chỉ cần làm 1 lần với master key)
+const keys = await client.getKeys();
+const searchKey = keys.results.find(k => k.actions.includes('search'));
+const apiKeyUid = searchKey.uid;
+
+// 3. Generate
+const token = await generateTenantToken({
+  apiKey: 'your_search_api_key_here',   // Phải là Search key
+  apiKeyUid: apiKeyUid,
+  searchRules: searchRules,
+  expiresAt: new Date('2026-12-31')     // RẤT KHUYẾN KHÍCH (tăng security)
+});
+```
+
+**Sử dụng token ở frontend**:
+```js
+const frontEndClient = new MeiliSearch({
+  host: 'http://localhost:7700',
+  apiKey: token   // <-- Dùng như API key bình thường
+});
+
+const results = await frontEndClient
+  .index('patient_medical_records')
+  .search('blood test');   // Tự động áp filter user_id = 123
+```
+
+**Tenant token payload reference** (JWT structure – từ https://www.meilisearch.com/docs/learn/security/tenant_token_reference):
+```json
+{
+  "exp": 1735689599,                    // UNIX timestamp
+  "apiKeyUid": "85c3c2f9-bdd6-41f1-abd8-11fcf80e0f76",
+  "searchRules": {
+    "index_name": { "filter": "user_id = 123" },
+    "*": {}
+  }
+}
+```
+- `searchRules` bắt buộc phải có ít nhất 1 index.
+- Filter syntax giống filter bình thường.
+- Token **không thể** permissive hơn API key dùng để sign.
+- Nếu API key hết hạn hoặc bị xóa → tất cả tenant token từ nó cũng invalid.
+- Wildcard `*` hỗ trợ.
+
+**Security & best practices** (từ docs):
+- Sinh token ở backend, gửi xuống frontend qua session.
+- Luôn set `expiresAt`.
+- Tenant token chỉ ảnh hưởng **search endpoint**, không ảnh hưởng admin/indexing.
+- Sanitize output để tránh XSS (docs có nhắc riêng).
+
+### 2. Errors / Error Codes (từ https://www.meilisearch.com/docs/reference/errors/overview)
+
+**Format lỗi chuẩn** (luôn JSON):
+```json
+{
+  "message": "Index `movies` not found.",
+  "code": "index_not_found",
+  "type": "invalid_request",
+  "link": "https://www.meilisearch.com/docs/reference/errors#error_codes"
+}
+```
+- `type`:
+  - `auth` → vấn đề xác thực (401/403)
+  - `invalid_request` → 4xx (input sai)
+  - `internal` → 5xx (lỗi server)
+  - `system` → 5xx (disk full, quota...)
+
+**Error codes quan trọng liên quan Keys/Authorization/Tenant**:
+- `invalid_api_key`
+- `missing_authorization_header`
+- `missing_master_key`
+- `api_key_not_found` / `api_key_already_exists`
+- `invalid_api_key_actions` / `invalid_api_key_indexes` / `invalid_api_key_uid`
+- `immutable_api_key_*` (nhiều trường)
+- `remote_invalid_api_key` (tenant token invalid/hết hạn)
+
+**Liên quan Tasks**: `task_not_found`, `invalid_task_*`, v.v.
+
+**Cách handle trong JS SDK**:
+```js
+try {
+  await client.index('abc').search('q');
+} catch (e) {
+  console.error(e.code, e.type, e.message, e.link);
+  // Ví dụ: if (e.code === 'invalid_api_key') { refresh token }
+}
+```
+
+### 3. Tasks API CHI TIẾT (full reference)
+
+Hầu hết operations (add/update documents, update settings, create index, delete...) đều **asynchronous** → trả về taskUid ngay lập tức. Sau đó poll task status.
+
+**Endpoints chính** (từ https://www.meilisearch.com/docs/reference/api/tasks):
+- **GET /tasks** → List tasks (cực mạnh với filter)
+- **GET /tasks/{taskUid}** → Get single task
+- **POST /tasks/cancel** → Cancel tasks (theo filter)
+
+**Query parameters cho GET /tasks** (rất chi tiết):
+- `limit`, `from`, `reverse`
+- `uids`, `statuses` (enqueued | processing | succeeded | failed | canceled)
+- `types`, `indexUids`
+- `batchUids`, `canceledBy`
+- `afterEnqueuedAt`, `beforeEnqueuedAt`, `afterStartedAt`, `beforeStartedAt`, `afterFinishedAt`, `beforeFinishedAt`
+
+**Task object đầy đủ**:
+```json
+{
+  "uid": 123,
+  "status": "succeeded",           // enqueued | processing | succeeded | failed | canceled
+  "type": "documentAdditionOrUpdate",
+  "indexUid": "movies",
+  "enqueuedAt": "2026-03-26T09:00:00Z",
+  "startedAt": "2026-03-26T09:00:01Z",
+  "finishedAt": "2026-03-26T09:00:05Z",
+  "duration": "PT4.123S",
+  "details": { ... },              // tùy type (số documents processed, etc.)
+  "error": null,                   // hoặc error object nếu failed
+  "canceledBy": null
+}
+```
+
+**Best practice** (từ docs):
+- Sau khi gọi async operation (ví dụ `index.addDocuments()`), lưu taskUid và poll `getTask(taskUid)` hoặc `getTasks()` với filter.
+- Dùng `waitForTask` helper trong JS SDK để tiện (nó poll tự động).
+
+Nếu mày cần ví dụ code cụ thể cho Tasks trong JS SDK, hoặc muốn tao paste full list error codes (hơn 100 cái), hoặc cần phần nào sâu hơn (ví dụ batch, cancel tasks, v.v.), cứ nói. Tao lấy thẳng từ docs chính thức hết rồi, không lười đâu! 😎
+
+**Link chính thức để mày check**:
+- Authorization: https://www.meilisearch.com/docs/reference/api/authorization
+- Keys: https://www.meilisearch.com/docs/reference/api/keys
+- Tenant tokens: https://www.meilisearch.com/docs/learn/security/generate_tenant_token_sdk
+- Errors: https://www.meilisearch.com/docs/reference/errors/overview
+- Tasks: https://www.meilisearch.com/docs/reference/api/tasks
+
+Cần thêm gì nữa không?

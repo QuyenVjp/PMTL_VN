@@ -60,6 +60,18 @@ Tạo runbook ngắn cho các nhóm lỗi Nest/common backend mà AI hoặc deve
   - [SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
   - [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md)
 
+### Meilisearch / SDK / task-state errors
+
+- triệu chứng: invalid API key, search timeout, task failed, settings update fail, health ok nhưng index stale
+- đọc:
+  - [MEILISEARCH_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md)
+  - [ERROR_CODE_REGISTRY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
+- rules:
+  - không coi `202 accepted` là thành công cuối cùng
+  - kiểm `taskUid` qua Tasks API trước khi kết luận write succeeded
+  - `waitForTask` chỉ dùng cho script/admin action có budget rõ; không block hot path mù quáng
+  - `invalid_api_key` hoặc auth/key drift phải map về server-side secret/runbook issue, không giải bằng cách đẩy key xuống browser
+
 ## Must not
 
 - không sửa lỗi theo stackoverflow snippet trước khi map lỗi vào owner doc

@@ -488,6 +488,23 @@ Rules:
 - full reindex, partial source reindex, document upsert/delete, settings update đều phải coi là async task-bearing operations.
 - `Tasks API` là operational truth cho trạng thái index job; application log chỉ là evidence phụ.
 - không dùng `delete tasks` hay `cancel tasks` như cleanup mặc định. Đó là operator action hiếm, phải có audit trail.
+- khi polling tasks, app/admin lane chỉ cần support subset filter canon:
+  - `statuses`
+  - `types`
+  - `indexUids`
+  - `uids`
+  - `afterEnqueuedAt` / `beforeEnqueuedAt`
+  - `afterFinishedAt` / `beforeFinishedAt`
+- không cần expose toàn bộ query surface của Tasks API ra public/admin UX nếu chưa có use case thật.
+
+### SDK helper stance
+
+- `waitForTask(taskUid)` của JS SDK là helper hợp lệ cho scripts, admin actions đồng bộ ngắn, và verification lane.
+- worker/runtime hot path không được block vô thời hạn chỉ để chờ `waitForTask`.
+- với hot path:
+  - lưu `taskUid`
+  - trả control về app/job orchestration
+  - theo dõi completion qua polling có budget hoặc admin status lane
 
 ### Reindex progress contract
 
@@ -615,7 +632,7 @@ Audit: `search.full_reindex.triggered` with actor.
 // apps/api/src/platform/search/meilisearch.config.ts
 {
   host: process.env.MEILISEARCH_URL ?? 'http://meilisearch:7700',
-  apiKey: process.env.MEILISEARCH_MASTER_KEY,  // required in Phase 2
+  apiKey: process.env.MEILISEARCH_API_KEY,  // scoped runtime key
 }
 ```
 
@@ -626,11 +643,67 @@ Audit: `search.full_reindex.triggered` with actor.
 MeilisearchModule.forRootAsync({
   useFactory: (config: ConfigService) => ({
     host: config.get('MEILISEARCH_URL'),
-    apiKey: config.get('MEILISEARCH_MASTER_KEY'),
+    apiKey: config.get('MEILISEARCH_API_KEY'),
   }),
   inject: [ConfigService],
 })
 ```
+
+### JavaScript SDK policy (`meilisearch-js`)
+
+PMTL dùng JavaScript SDK chính thức `meilisearch` cho NestJS/server-side integration.
+
+Rules:
+
+- import canon:
+  - `import { Meilisearch } from 'meilisearch'`
+- không dùng default import mơ hồ hoặc wrapper fetch tự chế làm lệch API semantics.
+- Meilisearch client phải được khởi tạo ở module/service scope, không tạo mới theo từng request.
+- `client.index(indexUid)` là handle hợp lệ cho query/upsert/delete, nhưng application vẫn phải coi mọi write là async task-bearing operation.
+- với `addDocuments`, `addOrUpdateDocuments`, `updateSettings`, `deleteDocuments`, `deleteAllDocuments`:
+  - response task chỉ là `accepted`
+  - phải theo dõi tiếp qua `getTask(taskUid)` hoặc `getTasks(...)`
+- search params phải đi qua DTO đã chuẩn hóa; không được pass-through raw query object từ web xuống SDK.
+
+### Auth / key boundary
+
+- Khi Meilisearch có master key, mọi route trừ `/health` đều nằm sau `Authorization: Bearer <api_key_or_tenant_token>`.
+- `MEILISEARCH_MASTER_KEY` chỉ được tồn tại ở server-side ops boundary.
+- `apps/api` runtime mặc định phải dùng `MEILISEARCH_API_KEY` scoped key, không dùng master key cho query/index/settings flow hằng ngày.
+- `/keys` management chỉ được thực hiện bằng master key và chỉ ở admin/ops lane.
+- default admin/search keys của Meilisearch không tự động trở thành PMTL canon; nếu dùng, phải rotate và ghi owner rõ.
+- Browser không được nhận:
+  - master key
+  - admin key
+  - index settings write capability
+- PMTL baseline hiện tại không cho browser gọi Meilisearch trực tiếp; browser gọi `apps/api`, còn `apps/api` mới gọi Meilisearch.
+- tenant token không là baseline của PMTL search vì search hiện không là multitenant direct-to-engine product.
+- nếu tương lai mở direct browser search qua tenant token hoặc scoped search key, phải có owner doc riêng cho:
+  - key issuance
+  - expiry
+  - searchRules/filter scope
+  - logout/revocation posture
+  - abuse/rate-limit implications
+
+### Runtime API key scope stance
+
+`MEILISEARCH_API_KEY` của `apps/api` tối thiểu phải đủ actions cho:
+
+- `search`
+- `documents.*`
+- `indexes.get`
+- `indexes.update`
+- `tasks.get`
+- `settings.get`
+- `settings.update`
+
+Nhưng vẫn phải giữ càng hẹp càng tốt theo implementation thật.
+
+Rules:
+
+- không dùng master key làm “cho nhanh”.
+- runtime key rotation phải có runbook.
+- nếu settings update không thuộc launch surface, có thể tách thêm admin-only key thay vì cho runtime key giữ write quyền rộng.
 
 ---
 

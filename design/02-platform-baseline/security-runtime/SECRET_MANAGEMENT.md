@@ -40,6 +40,7 @@ Secret management không phải "best practice" — là security requirement.
 |---|---|---|
 | VAPID private key | `VAPID_PRIVATE_KEY` | VPS env_file |
 | Revalidate webhook secret | `REVALIDATE_SECRET` | VPS env_file (api + web) |
+| Meilisearch runtime API key | `MEILISEARCH_API_KEY` | VPS env_file |
 | Meilisearch master key | `MEILISEARCH_MASTER_KEY` | VPS env_file |
 | Valkey auth password | `VALKEY_URL` (password part) | VPS env_file |
 
