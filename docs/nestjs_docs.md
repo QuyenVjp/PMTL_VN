@@ -9102,3 +9102,1638 @@ Notice
 Middlewares work with any versioning type described in the this section: URI, Header, Media Type or Custom.
 
 
+Guards
+A guard is a class annotated with the @Injectable() decorator, which implements the CanActivate interface.
+
+
+Guards have a single responsibility. They determine whether a given request will be handled by the route handler or not, depending on certain conditions (like permissions, roles, ACLs, etc.) present at run-time. This is often referred to as authorization. Authorization (and its cousin, authentication, with which it usually collaborates) has typically been handled by middleware in traditional Express applications. Middleware is a fine choice for authentication, since things like token validation and attaching properties to the request object are not strongly connected with a particular route context (and its metadata).
+
+But middleware, by its nature, is dumb. It doesn't know which handler will be executed after calling the next() function. On the other hand, Guards have access to the ExecutionContext instance, and thus know exactly what's going to be executed next. They're designed, much like exception filters, pipes, and interceptors, to let you interpose processing logic at exactly the right point in the request/response cycle, and to do so declaratively. This helps keep your code DRY and declarative.
+
+Hint
+Guards are executed after all middleware, but before any interceptor or pipe.
+Authorization guard#
+As mentioned, authorization is a great use case for Guards because specific routes should be available only when the caller (usually a specific authenticated user) has sufficient permissions. The AuthGuard that we'll build now assumes an authenticated user (and that, therefore, a token is attached to the request headers). It will extract and validate the token, and use the extracted information to determine whether the request can proceed or not.
+
+
+auth.guard.tsJS
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest();
+    return validateRequest(request);
+  }
+}
+Hint
+If you are looking for a real-world example on how to implement an authentication mechanism in your application, visit this chapter. Likewise, for more sophisticated authorization example, check this page.
+The logic inside the validateRequest() function can be as simple or sophisticated as needed. The main point of this example is to show how guards fit into the request/response cycle.
+
+Every guard must implement a canActivate() function. This function should return a boolean, indicating whether the current request is allowed or not. It can return the response either synchronously or asynchronously (via a Promise or Observable). Nest uses the return value to control the next action:
+
+if it returns true, the request will be processed.
+if it returns false, Nest will deny the request.
+Official enterprise support
+ Providing technical guidance
+ Performing in-depth code reviews
+ Mentoring team members
+ Advising best practices
+Explore more
+
+Execution context#
+The canActivate() function takes a single argument, the ExecutionContext instance. The ExecutionContext inherits from ArgumentsHost. We saw ArgumentsHost previously in the exception filters chapter. In the sample above, we are just using the same helper methods defined on ArgumentsHost that we used earlier, to get a reference to the Request object. You can refer back to the Arguments host section of the exception filters chapter for more on this topic.
+
+By extending ArgumentsHost, ExecutionContext also adds several new helper methods that provide additional details about the current execution process. These details can be helpful in building more generic guards that can work across a broad set of controllers, methods, and execution contexts. Learn more about ExecutionContexthere.
+
+Role-based authentication#
+Let's build a more functional guard that permits access only to users with a specific role. We'll start with a basic guard template, and build on it in the coming sections. For now, it allows all requests to proceed:
+
+
+roles.guard.tsJS
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    return true;
+  }
+}
+Binding guards#
+Like pipes and exception filters, guards can be controller-scoped, method-scoped, or global-scoped. Below, we set up a controller-scoped guard using the @UseGuards() decorator. This decorator may take a single argument, or a comma-separated list of arguments. This lets you easily apply the appropriate set of guards with one declaration.
+
+
+JS
+
+@Controller('cats')
+@UseGuards(RolesGuard)
+export class CatsController {}
+Hint
+The @UseGuards() decorator is imported from the @nestjs/common package.
+Above, we passed the RolesGuard class (instead of an instance), leaving responsibility for instantiation to the framework and enabling dependency injection. As with pipes and exception filters, we can also pass an in-place instance:
+
+
+JS
+
+@Controller('cats')
+@UseGuards(new RolesGuard())
+export class CatsController {}
+The construction above attaches the guard to every handler declared by this controller. If we wish the guard to apply only to a single method, we apply the @UseGuards() decorator at the method level.
+
+In order to set up a global guard, use the useGlobalGuards() method of the Nest application instance:
+
+
+JS
+
+const app = await NestFactory.create(AppModule);
+app.useGlobalGuards(new RolesGuard());
+Notice
+In the case of hybrid apps the useGlobalGuards() method doesn't set up guards for gateways and microservices by default (see Hybrid application for information on how to change this behavior). For "standard" (non-hybrid) microservice apps, useGlobalGuards() does mount the guards globally.
+Global guards are used across the whole application, for every controller and every route handler. In terms of dependency injection, global guards registered from outside of any module (with useGlobalGuards() as in the example above) cannot inject dependencies since this is done outside the context of any module. In order to solve this issue, you can set up a guard directly from any module using the following construction:
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
+})
+export class AppModule {}
+Hint
+When using this approach to perform dependency injection for the guard, note that regardless of the module where this construction is employed, the guard is, in fact, global. Where should this be done? Choose the module where the guard (RolesGuard in the example above) is defined. Also, useClass is not the only way of dealing with custom provider registration. Learn more here.
+Setting roles per handler#
+Our RolesGuard is working, but it's not very smart yet. We're not yet taking advantage of the most important guard feature - the execution context. It doesn't yet know about roles, or which roles are allowed for each handler. The CatsController, for example, could have different permission schemes for different routes. Some might be available only for an admin user, and others could be open for everyone. How can we match roles to routes in a flexible and reusable way?
+
+This is where custom metadata comes into play (learn more here). Nest provides the ability to attach custom metadata to route handlers through either decorators created via Reflector.createDecorator static method, or the built-in @SetMetadata() decorator.
+
+For example, let's create a @Roles() decorator using the Reflector.createDecorator method that will attach the metadata to the handler. Reflector is provided out of the box by the framework and exposed from the @nestjs/core package.
+
+
+roles.decorator.tsJS
+
+import { Reflector } from '@nestjs/core';
+
+export const Roles = Reflector.createDecorator<string[]>();
+The Roles decorator here is a function that takes a single argument of type string[].
+
+Now, to use this decorator, we simply annotate the handler with it:
+
+
+cats.controller.tsJS
+
+@Post()
+@Roles(['admin'])
+async create(@Body() createCatDto: CreateCatDto) {
+  this.catsService.create(createCatDto);
+}
+Here we've attached the Roles decorator metadata to the create() method, indicating that only users with the admin role should be allowed to access this route.
+
+Alternatively, instead of using the Reflector.createDecorator method, we could use the built-in @SetMetadata() decorator. Learn more about here.
+
+Putting it all together#
+Let's now go back and tie this together with our RolesGuard. Currently, it simply returns true in all cases, allowing every request to proceed. We want to make the return value conditional based on comparing the roles assigned to the current user to the actual roles required by the current route being processed. In order to access the route's role(s) (custom metadata), we'll use the Reflector helper class again, as follows:
+
+
+roles.guard.tsJS
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Roles } from './roles.decorator';
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const roles = this.reflector.get(Roles, context.getHandler());
+    if (!roles) {
+      return true;
+    }
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    return matchRoles(roles, user.roles);
+  }
+}
+Hint
+In the node.js world, it's common practice to attach the authorized user to the request object. Thus, in our sample code above, we are assuming that request.user contains the user instance and allowed roles. In your app, you will probably make that association in your custom authentication guard (or middleware). Check this chapter for more information on this topic.
+Warning
+The logic inside the matchRoles() function can be as simple or sophisticated as needed. The main point of this example is to show how guards fit into the request/response cycle.
+Refer to the Reflection and metadata section of the Execution context chapter for more details on utilizing Reflector in a context-sensitive way.
+
+When a user with insufficient privileges requests an endpoint, Nest automatically returns the following response:
+
+
+
+{
+  "statusCode": 403,
+  "message": "Forbidden resource",
+  "error": "Forbidden"
+}
+Note that behind the scenes, when a guard returns false, the framework throws a ForbiddenException. If you want to return a different error response, you should throw your own specific exception. For example:
+
+
+
+throw new UnauthorizedException();
+Any exception thrown by a guard will be handled by the exceptions layer (global exceptions filter and any exceptions filters that are applied to the current context).
+
+Hint
+If you are looking for a real-world example on how to implement authorization, check this chapter.
+
+Interceptors
+An interceptor is a class annotated with the @Injectable() decorator and implements the NestInterceptor interface.
+
+
+Interceptors have a set of useful capabilities which are inspired by the Aspect Oriented Programming (AOP) technique. They make it possible to:
+
+bind extra logic before / after method execution
+transform the result returned from a function
+transform the exception thrown from a function
+extend the basic function behavior
+completely override a function depending on specific conditions (e.g., for caching purposes)
+Basics#
+Each interceptor implements the intercept() method, which takes two arguments. The first one is the ExecutionContext instance (exactly the same object as for guards). The ExecutionContext inherits from ArgumentsHost. We saw ArgumentsHost before in the exception filters chapter. There, we saw that it's a wrapper around arguments that have been passed to the original handler, and contains different arguments arrays based on the type of the application. You can refer back to the exception filters for more on this topic.
+
+Execution context#
+By extending ArgumentsHost, ExecutionContext also adds several new helper methods that provide additional details about the current execution process. These details can be helpful in building more generic interceptors that can work across a broad set of controllers, methods, and execution contexts. Learn more about ExecutionContexthere.
+
+Call handler#
+The second argument is a CallHandler. The CallHandler interface implements the handle() method, which you can use to invoke the route handler method at some point in your interceptor. If you don't call the handle() method in your implementation of the intercept() method, the route handler method won't be executed at all.
+
+This approach means that the intercept() method effectively wraps the request/response stream. As a result, you may implement custom logic both before and after the execution of the final route handler. It's clear that you can write code in your intercept() method that executes before calling handle(), but how do you affect what happens afterward? Because the handle() method returns an Observable, we can use powerful RxJS operators to further manipulate the response. Using Aspect Oriented Programming terminology, the invocation of the route handler (i.e., calling handle()) is called a Pointcut, indicating that it's the point at which our additional logic is inserted.
+
+Consider, for example, an incoming POST /cats request. This request is destined for the create() handler defined inside the CatsController. If an interceptor which does not call the handle() method is called anywhere along the way, the create() method won't be executed. Once handle() is called (and its Observable has been returned), the create() handler will be triggered. And once the response stream is received via the Observable, additional operations can be performed on the stream, and a final result returned to the caller.
+
+Explore your graph with NestJS Devtools
+ Graph visualizer
+ Routes navigator
+ Interactive playground
+ CI/CD integration
+Sign up
+
+Aspect interception#
+The first use case we'll look at is to use an interceptor to log user interaction (e.g., storing user calls, asynchronously dispatching events or calculating a timestamp). We show a simple LoggingInterceptor below:
+
+
+logging.interceptor.tsJS
+
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    console.log('Before...');
+
+    const now = Date.now();
+    return next
+      .handle()
+      .pipe(
+        tap(() => console.log(`After... ${Date.now() - now}ms`)),
+      );
+  }
+}
+Hint
+The NestInterceptor<T, R> is a generic interface in which T indicates the type of an Observable<T> (supporting the response stream), and R is the type of the value wrapped by Observable<R>.
+Notice
+Interceptors, like controllers, providers, guards, and so on, can inject dependencies through their constructor.
+Since handle() returns an RxJS Observable, we have a wide choice of operators we can use to manipulate the stream. In the example above, we used the tap() operator, which invokes our anonymous logging function upon graceful or exceptional termination of the observable stream, but doesn't otherwise interfere with the response cycle.
+
+Binding interceptors#
+In order to set up the interceptor, we use the @UseInterceptors() decorator imported from the @nestjs/common package. Like pipes and guards, interceptors can be controller-scoped, method-scoped, or global-scoped.
+
+
+cats.controller.tsJS
+
+@UseInterceptors(LoggingInterceptor)
+export class CatsController {}
+Hint
+The @UseInterceptors() decorator is imported from the @nestjs/common package.
+Using the above construction, each route handler defined in CatsController will use LoggingInterceptor. When someone calls the GET /cats endpoint, you'll see the following output in your standard output:
+
+
+
+Before...
+After... 1ms
+Note that we passed the LoggingInterceptor class (instead of an instance), leaving responsibility for instantiation to the framework and enabling dependency injection. As with pipes, guards, and exception filters, we can also pass an in-place instance:
+
+
+cats.controller.tsJS
+
+@UseInterceptors(new LoggingInterceptor())
+export class CatsController {}
+As mentioned, the construction above attaches the interceptor to every handler declared by this controller. If we want to restrict the interceptor's scope to a single method, we simply apply the decorator at the method level.
+
+In order to set up a global interceptor, we use the useGlobalInterceptors() method of the Nest application instance:
+
+
+
+const app = await NestFactory.create(AppModule);
+app.useGlobalInterceptors(new LoggingInterceptor());
+Global interceptors are used across the whole application, for every controller and every route handler. In terms of dependency injection, global interceptors registered from outside of any module (with useGlobalInterceptors(), as in the example above) cannot inject dependencies since this is done outside the context of any module. In order to solve this issue, you can set up an interceptor directly from any module using the following construction:
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
+})
+export class AppModule {}
+Hint
+When using this approach to perform dependency injection for the interceptor, note that regardless of the module where this construction is employed, the interceptor is, in fact, global. Where should this be done? Choose the module where the interceptor (LoggingInterceptor in the example above) is defined. Also, useClass is not the only way of dealing with custom provider registration. Learn more here.
+Response mapping#
+We already know that handle() returns an Observable. The stream contains the value returned from the route handler, and thus we can easily mutate it using RxJS's map() operator.
+
+Warning
+The response mapping feature doesn't work with the library-specific response strategy (using the @Res() object directly is forbidden).
+Let's create the TransformInterceptor, which will modify each response in a trivial way to demonstrate the process. It will use RxJS's map() operator to assign the response object to the data property of a newly created object, returning the new object to the client.
+
+
+transform.interceptor.tsJS
+
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface Response<T> {
+  data: T;
+}
+
+@Injectable()
+export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
+    return next.handle().pipe(map(data => ({ data })));
+  }
+}
+Hint
+Nest interceptors work with both synchronous and asynchronous intercept() methods. You can simply switch the method to async if necessary.
+With the above construction, when someone calls the GET /cats endpoint, the response would look like the following (assuming that route handler returns an empty array []):
+
+
+{
+  "data": []
+}
+Interceptors have great value in creating re-usable solutions to requirements that occur across an entire application. For example, imagine we need to transform each occurrence of a null value to an empty string ''. We can do it using one line of code and bind the interceptor globally so that it will automatically be used by each registered handler.
+
+
+JS
+
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+@Injectable()
+export class ExcludeNullInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next
+      .handle()
+      .pipe(map(value => value === null ? '' : value ));
+  }
+}
+Exception mapping#
+Another interesting use-case is to take advantage of RxJS's catchError() operator to override thrown exceptions:
+
+
+errors.interceptor.tsJS
+
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  BadGatewayException,
+  CallHandler,
+} from '@nestjs/common';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+@Injectable()
+export class ErrorsInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next
+      .handle()
+      .pipe(
+        catchError(err => throwError(() => new BadGatewayException())),
+      );
+  }
+}
+Stream overriding#
+There are several reasons why we may sometimes want to completely prevent calling the handler and return a different value instead. An obvious example is to implement a cache to improve response time. Let's take a look at a simple cache interceptor that returns its response from a cache. In a realistic example, we'd want to consider other factors like TTL, cache invalidation, cache size, etc., but that's beyond the scope of this discussion. Here we'll provide a basic example that demonstrates the main concept.
+
+
+cache.interceptor.tsJS
+
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { Observable, of } from 'rxjs';
+
+@Injectable()
+export class CacheInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const isCached = true;
+    if (isCached) {
+      return of([]);
+    }
+    return next.handle();
+  }
+}
+Our CacheInterceptor has a hardcoded isCached variable and a hardcoded response [] as well. The key point to note is that we return a new stream here, created by the RxJS of() operator, therefore the route handler won't be called at all. When someone calls an endpoint that makes use of CacheInterceptor, the response (a hardcoded, empty array) will be returned immediately. In order to create a generic solution, you can take advantage of Reflector and create a custom decorator. The Reflector is well described in the guards chapter.
+
+More operators#
+The possibility of manipulating the stream using RxJS operators gives us many capabilities. Let's consider another common use case. Imagine you would like to handle timeouts on route requests. When your endpoint doesn't return anything after a period of time, you want to terminate with an error response. The following construction enables this:
+
+
+timeout.interceptor.tsJS
+
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, RequestTimeoutException } from '@nestjs/common';
+import { Observable, throwError, TimeoutError } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
+
+@Injectable()
+export class TimeoutInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      timeout(5000),
+      catchError(err => {
+        if (err instanceof TimeoutError) {
+          return throwError(() => new RequestTimeoutException());
+        }
+        return throwError(() => err);
+      }),
+    );
+  };
+};
+After 5 seconds, request processing will be canceled. You can also add custom logic before throwing RequestTimeoutException (e.g. release resources).
+
+
+Exception filters
+Nest comes with a built-in exceptions layer which is responsible for processing all unhandled exceptions across an application. When an exception is not handled by your application code, it is caught by this layer, which then automatically sends an appropriate user-friendly response.
+
+
+Out of the box, this action is performed by a built-in global exception filter, which handles exceptions of type HttpException (and subclasses of it). When an exception is unrecognized (is neither HttpException nor a class that inherits from HttpException), the built-in exception filter generates the following default JSON response:
+
+
+{
+  "statusCode": 500,
+  "message": "Internal server error"
+}
+Hint
+The global exception filter partially supports the http-errors library. Basically, any thrown exception containing the statusCode and message properties will be properly populated and sent back as a response (instead of the default InternalServerErrorException for unrecognized exceptions).
+Throwing standard exceptions#
+Nest provides a built-in HttpException class, exposed from the @nestjs/common package. For typical HTTP REST/GraphQL API based applications, it's best practice to send standard HTTP response objects when certain error conditions occur.
+
+For example, in the CatsController, we have a findAll() method (a GET route handler). Let's assume that this route handler throws an exception for some reason. To demonstrate this, we'll hard-code it as follows:
+
+
+cats.controller.tsJS
+
+@Get()
+async findAll() {
+  throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+}
+Hint
+We used the HttpStatus here. This is a helper enum imported from the @nestjs/common package.
+When the client calls this endpoint, the response looks like this:
+
+
+{
+  "statusCode": 403,
+  "message": "Forbidden"
+}
+The HttpException constructor takes two required arguments which determine the response:
+
+The response argument defines the JSON response body. It can be a string or an object as described below.
+The status argument defines the HTTP status code.
+By default, the JSON response body contains two properties:
+
+statusCode: defaults to the HTTP status code provided in the status argument
+message: a short description of the HTTP error based on the status
+To override just the message portion of the JSON response body, supply a string in the response argument. To override the entire JSON response body, pass an object in the response argument. Nest will serialize the object and return it as the JSON response body.
+
+The second constructor argument - status - should be a valid HTTP status code. Best practice is to use the HttpStatus enum imported from @nestjs/common.
+
+There is a third constructor argument (optional) - options - that can be used to provide an error cause. This cause object is not serialized into the response object, but it can be useful for logging purposes, providing valuable information about the inner error that caused the HttpException to be thrown.
+
+Here's an example overriding the entire response body and providing an error cause:
+
+
+cats.controller.tsJS
+
+@Get()
+async findAll() {
+  try {
+    await this.service.findAll()
+  } catch (error) {
+    throw new HttpException({
+      status: HttpStatus.FORBIDDEN,
+      error: 'This is a custom message',
+    }, HttpStatus.FORBIDDEN, {
+      cause: error
+    });
+  }
+}
+Using the above, this is how the response would look:
+
+
+{
+  "status": 403,
+  "error": "This is a custom message"
+}
+Exceptions logging#
+By default, the exception filter does not log built-in exceptions like HttpException (and any exceptions that inherit from it). When these exceptions are thrown, they won't appear in the console, as they are treated as part of the normal application flow. The same behavior applies to other built-in exceptions such as WsException and RpcException.
+
+These exceptions all inherit from the base IntrinsicException class, which is exported from the @nestjs/common package. This class helps differentiate between exceptions that are part of normal application operation and those that are not.
+
+If you want to log these exceptions, you can create a custom exception filter. We'll explain how to do this in the next section.
+
+Custom exceptions#
+In many cases, you will not need to write custom exceptions, and can use the built-in Nest HTTP exception, as described in the next section. If you do need to create customized exceptions, it's good practice to create your own exceptions hierarchy, where your custom exceptions inherit from the base HttpException class. With this approach, Nest will recognize your exceptions, and automatically take care of the error responses. Let's implement such a custom exception:
+
+
+forbidden.exception.tsJS
+
+export class ForbiddenException extends HttpException {
+  constructor() {
+    super('Forbidden', HttpStatus.FORBIDDEN);
+  }
+}
+Since ForbiddenException extends the base HttpException, it will work seamlessly with the built-in exception handler, and therefore we can use it inside the findAll() method.
+
+
+cats.controller.tsJS
+
+@Get()
+async findAll() {
+  throw new ForbiddenException();
+}
+Built-in HTTP exceptions#
+Nest provides a set of standard exceptions that inherit from the base HttpException. These are exposed from the @nestjs/common package, and represent many of the most common HTTP exceptions:
+
+BadRequestException
+UnauthorizedException
+NotFoundException
+ForbiddenException
+NotAcceptableException
+RequestTimeoutException
+ConflictException
+GoneException
+HttpVersionNotSupportedException
+PayloadTooLargeException
+UnsupportedMediaTypeException
+UnprocessableEntityException
+InternalServerErrorException
+NotImplementedException
+ImATeapotException
+MethodNotAllowedException
+BadGatewayException
+ServiceUnavailableException
+GatewayTimeoutException
+PreconditionFailedException
+All the built-in exceptions can also provide both an error cause and an error description using the options parameter:
+
+
+
+throw new BadRequestException('Something bad happened', {
+  cause: new Error(),
+  description: 'Some error description',
+});
+Using the above, this is how the response would look:
+
+
+{
+  "message": "Something bad happened",
+  "error": "Some error description",
+  "statusCode": 400
+}
+Exception filters#
+While the base (built-in) exception filter can automatically handle many cases for you, you may want full control over the exceptions layer. For example, you may want to add logging or use a different JSON schema based on some dynamic factors. Exception filters are designed for exactly this purpose. They let you control the exact flow of control and the content of the response sent back to the client.
+
+Let's create an exception filter that is responsible for catching exceptions which are an instance of the HttpException class, and implementing custom response logic for them. To do this, we'll need to access the underlying platform Request and Response objects. We'll access the Request object so we can pull out the original url and include that in the logging information. We'll use the Response object to take direct control of the response that is sent, using the response.json() method.
+
+
+http-exception.filter.tsJS
+
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const status = exception.getStatus();
+
+    response
+      .status(status)
+      .json({
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+      });
+  }
+}
+Hint
+All exception filters should implement the generic ExceptionFilter<T> interface. This requires you to provide the catch(exception: T, host: ArgumentsHost) method with its indicated signature. T indicates the type of the exception.
+Warning
+If you are using @nestjs/platform-fastify you can use response.send() instead of response.json(). Don't forget to import the correct types from fastify.
+The @Catch(HttpException) decorator binds the required metadata to the exception filter, telling Nest that this particular filter is looking for exceptions of type HttpException and nothing else. The @Catch() decorator may take a single parameter, or a comma-separated list. This lets you set up the filter for several types of exceptions at once.
+
+Arguments host#
+Let's look at the parameters of the catch() method. The exception parameter is the exception object currently being processed. The host parameter is an ArgumentsHost object. ArgumentsHost is a powerful utility object that we'll examine further in the execution context chapter*. In this code sample, we use it to obtain a reference to the Request and Response objects that are being passed to the original request handler (in the controller where the exception originates). In this code sample, we've used some helper methods on ArgumentsHost to get the desired Request and Response objects. Learn more about ArgumentsHosthere.
+
+*The reason for this level of abstraction is that ArgumentsHost functions in all contexts (e.g., the HTTP server context we're working with now, but also Microservices and WebSockets). In the execution context chapter we'll see how we can access the appropriate underlying arguments for any execution context with the power of ArgumentsHost and its helper functions. This will allow us to write generic exception filters that operate across all contexts.
+
+Learn the right way!
+ 80+ chapters
+ 5+ hours of videos
+ Official certificate
+ Deep-dive sessions
+Explore official courses
+
+Binding filters#
+Let's tie our new HttpExceptionFilter to the CatsController's create() method.
+
+
+cats.controller.tsJS
+
+@Post()
+@UseFilters(new HttpExceptionFilter())
+async create(@Body() createCatDto: CreateCatDto) {
+  throw new ForbiddenException();
+}
+Hint
+The @UseFilters() decorator is imported from the @nestjs/common package.
+We have used the @UseFilters() decorator here. Similar to the @Catch() decorator, it can take a single filter instance, or a comma-separated list of filter instances. Here, we created the instance of HttpExceptionFilter in place. Alternatively, you may pass the class (instead of an instance), leaving responsibility for instantiation to the framework, and enabling dependency injection.
+
+
+cats.controller.tsJS
+
+@Post()
+@UseFilters(HttpExceptionFilter)
+async create(@Body() createCatDto: CreateCatDto) {
+  throw new ForbiddenException();
+}
+Hint
+Prefer applying filters by using classes instead of instances when possible. It reduces memory usage since Nest can easily reuse instances of the same class across your entire module.
+In the example above, the HttpExceptionFilter is applied only to the single create() route handler, making it method-scoped. Exception filters can be scoped at different levels: method-scoped of the controller/resolver/gateway, controller-scoped, or global-scoped. For example, to set up a filter as controller-scoped, you would do the following:
+
+
+cats.controller.tsJS
+
+@Controller()
+@UseFilters(new HttpExceptionFilter())
+export class CatsController {}
+This construction sets up the HttpExceptionFilter for every route handler defined inside the CatsController.
+
+To create a global-scoped filter, you would do the following:
+
+
+main.tsJS
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new HttpExceptionFilter());
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+Warning
+The useGlobalFilters() method does not set up filters for gateways or hybrid applications.
+Global-scoped filters are used across the whole application, for every controller and every route handler. In terms of dependency injection, global filters registered from outside of any module (with useGlobalFilters() as in the example above) cannot inject dependencies since this is done outside the context of any module. In order to solve this issue, you can register a global-scoped filter directly from any module using the following construction:
+
+
+app.module.tsJS
+
+import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+
+@Module({
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
+})
+export class AppModule {}
+Hint
+When using this approach to perform dependency injection for the filter, note that regardless of the module where this construction is employed, the filter is, in fact, global. Where should this be done? Choose the module where the filter (HttpExceptionFilter in the example above) is defined. Also, useClass is not the only way of dealing with custom provider registration. Learn more here.
+You can add as many filters with this technique as needed; simply add each to the providers array.
+
+Catch everything#
+In order to catch every unhandled exception (regardless of the exception type), leave the @Catch() decorator's parameter list empty, e.g., @Catch().
+
+In the example below we have a code that is platform-agnostic because it uses the HTTP adapter to deliver the response, and doesn't use any of the platform-specific objects (Request and Response) directly:
+
+
+
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
+
+@Catch()
+export class CatchEverythingFilter implements ExceptionFilter {
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+
+  catch(exception: unknown, host: ArgumentsHost): void {
+    // In certain situations `httpAdapter` might not be available in the
+    // constructor method, thus we should resolve it here.
+    const { httpAdapter } = this.httpAdapterHost;
+
+    const ctx = host.switchToHttp();
+
+    const httpStatus =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const responseBody = {
+      statusCode: httpStatus,
+      timestamp: new Date().toISOString(),
+      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+    };
+
+    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+  }
+}
+Warning
+When combining an exception filter that catches everything with a filter that is bound to a specific type, the "Catch anything" filter should be declared first to allow the specific filter to correctly handle the bound type.
+Inheritance#
+Typically, you'll create fully customized exception filters crafted to fulfill your application requirements. However, there might be use-cases when you would like to simply extend the built-in default global exception filter, and override the behavior based on certain factors.
+
+In order to delegate exception processing to the base filter, you need to extend BaseExceptionFilter and call the inherited catch() method.
+
+
+all-exceptions.filter.tsJS
+
+import { Catch, ArgumentsHost } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
+
+@Catch()
+export class AllExceptionsFilter extends BaseExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    super.catch(exception, host);
+  }
+}
+Warning
+Method-scoped and Controller-scoped filters that extend the BaseExceptionFilter should not be instantiated with new. Instead, let the framework instantiate them automatically.
+Global filters can extend the base filter. This can be done in either of two ways.
+
+The first method is to inject the HttpAdapter reference when instantiating the custom global filter:
+
+
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+The second method is to use the APP_FILTER token as shown here.
+
+Introduction
+The OpenAPI specification is a language-agnostic definition format used to describe RESTful APIs. Nest provides a dedicated module which allows generating such a specification by leveraging decorators.
+
+Installation#
+To begin using it, we first install the required dependency.
+
+
+$ npm install --save @nestjs/swagger
+Bootstrap#
+Once the installation process is complete, open the main.ts file and initialize Swagger using the SwaggerModule class:
+
+
+main.tsJS
+
+import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+Hint
+The factory method SwaggerModule.createDocument() is used specifically to generate the Swagger document when you request it. This approach helps save some initialization time, and the resulting document is a serializable object that conforms to the OpenAPI Document specification. Instead of serving the document over HTTP, you can also save it as a JSON or YAML file and use it in various ways.
+The DocumentBuilder helps to structure a base document that conforms to the OpenAPI Specification. It provides several methods that allow setting such properties as title, description, version, etc. In order to create a full document (with all HTTP routes defined) we use the createDocument() method of the SwaggerModule class. This method takes two arguments, an application instance and a Swagger options object. Alternatively, we can provide a third argument, which should be of type SwaggerDocumentOptions. More on this in the Document options section.
+
+Once we create a document, we can call the setup() method. It accepts:
+
+The path to mount the Swagger UI
+An application instance
+The document object instantiated above
+Optional configuration parameter (read more here)
+Now you can run the following command to start the HTTP server:
+
+
+$ npm run start
+While the application is running, open your browser and navigate to http://localhost:3000/api. You should see the Swagger UI.
+
+
+As you can see, the SwaggerModule automatically reflects all of your endpoints.
+
+Hint
+To generate and download a Swagger JSON file, navigate to http://localhost:3000/api-json (assuming that your Swagger documentation is available under http://localhost:3000/api). It is also possible to expose it on a route of your choice using only the setup method from @nestjs/swagger, like this:
+
+
+SwaggerModule.setup('swagger', app, documentFactory, {
+  jsonDocumentUrl: 'swagger/json',
+});
+Which would expose it at http://localhost:3000/swagger/json
+
+Warning
+When using fastify and helmet, there may be a problem with CSP, to solve this collision, configure the CSP as shown below:
+
+
+app.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: [`'self'`],
+      styleSrc: [`'self'`, `'unsafe-inline'`],
+      imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+      scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+    },
+  },
+});
+
+// If you are not going to use CSP at all, you can use this:
+app.register(helmet, {
+  contentSecurityPolicy: false,
+});
+Document options#
+When creating a document, it is possible to provide some extra options to fine tune the library's behavior. These options should be of type SwaggerDocumentOptions, which can be the following:
+
+
+export interface SwaggerDocumentOptions {
+  /**
+   * List of modules to include in the specification
+   */
+  include?: Function[];
+
+  /**
+   * Additional, extra models that should be inspected and included in the specification
+   */
+  extraModels?: Function[];
+
+  /**
+   * If `true`, swagger will ignore the global prefix set through `setGlobalPrefix()` method
+   */
+  ignoreGlobalPrefix?: boolean;
+
+  /**
+   * If `true`, swagger will also load routes from the modules imported by `include` modules
+   */
+  deepScanRoutes?: boolean;
+
+  /**
+   * Custom operationIdFactory that will be used to generate the `operationId`
+   * based on the `controllerKey`, `methodKey`, and version.
+   * @default () => controllerKey_methodKey_version
+   */
+  operationIdFactory?: OperationIdFactory;
+
+  /**
+   * Custom linkNameFactory that will be used to generate the name of links
+   * in the `links` field of responses
+   *
+   * @see [Link objects](https://swagger.io/docs/specification/links/)
+   *
+   * @default () => `${controllerKey}_${methodKey}_from_${fieldKey}`
+   */
+  linkNameFactory?: (
+    controllerKey: string,
+    methodKey: string,
+    fieldKey: string
+  ) => string;
+
+  /*
+   * Generate tags automatically based on the controller name.
+   * If `false`, you must use the `@ApiTags()` decorator to define tags.
+   * Otherwise, the controller name without the suffix `Controller` will be used.
+   * @default true
+   */
+  autoTagControllers?: boolean;
+}
+For example, if you want to make sure that the library generates operation names like createUser instead of UsersController_createUser, you can set the following:
+
+
+const options: SwaggerDocumentOptions =  {
+  operationIdFactory: (
+    controllerKey: string,
+    methodKey: string
+  ) => methodKey
+};
+const documentFactory = () => SwaggerModule.createDocument(app, config, options);
+Setup options#
+You can configure Swagger UI by passing the options object which fulfills the SwaggerCustomOptions interface as a fourth argument of the SwaggerModule#setup method.
+
+
+export interface SwaggerCustomOptions {
+  /**
+   * If `true`, Swagger resources paths will be prefixed by the global prefix set through `setGlobalPrefix()`.
+   * Default: `false`.
+   * @see https://docs.nestjs.com/faq/global-prefix
+   */
+  useGlobalPrefix?: boolean;
+
+  /**
+   * If `false`, the Swagger UI will not be served. Only API definitions (JSON and YAML)
+   * will be accessible (on `/{path}-json` and `/{path}-yaml`). To fully disable both the Swagger UI and API definitions, use `raw: false`.
+   * Default: `true`.
+   * @deprecated Use `ui` instead.
+   */
+  swaggerUiEnabled?: boolean;
+
+  /**
+   * If `false`, the Swagger UI will not be served. Only API definitions (JSON and YAML)
+   * will be accessible (on `/{path}-json` and `/{path}-yaml`). To fully disable both the Swagger UI and API definitions, use `raw: false`.
+   * Default: `true`.
+   */
+  ui?: boolean;
+
+  /**
+   * If `true`, raw definitions for all formats will be served.
+   * Alternatively, you can pass an array to specify the formats to be served, e.g., `raw: ['json']` to serve only JSON definitions.
+   * If omitted or set to an empty array, no definitions (JSON or YAML) will be served.
+   * Use this option to control the availability of Swagger-related endpoints.
+   * Default: `true`.
+   */
+  raw?: boolean | Array<'json' | 'yaml'>;
+
+  /**
+   * Url point the API definition to load in Swagger UI.
+   */
+  swaggerUrl?: string;
+
+  /**
+   * Path of the JSON API definition to serve.
+   * Default: `<path>-json`.
+   */
+  jsonDocumentUrl?: string;
+
+  /**
+   * Path of the YAML API definition to serve.
+   * Default: `<path>-yaml`.
+   */
+  yamlDocumentUrl?: string;
+
+  /**
+   * Hook allowing to alter the OpenAPI document before being served.
+   * It's called after the document is generated and before it is served as JSON & YAML.
+   */
+  patchDocumentOnRequest?: <TRequest = any, TResponse = any>(
+    req: TRequest,
+    res: TResponse,
+    document: OpenAPIObject
+  ) => OpenAPIObject;
+
+  /**
+   * If `true`, the selector of OpenAPI definitions is displayed in the Swagger UI interface.
+   * Default: `false`.
+   */
+  explorer?: boolean;
+
+  /**
+   * Additional Swagger UI options
+   */
+  swaggerOptions?: SwaggerUiOptions;
+
+  /**
+   * Custom CSS styles to inject in Swagger UI page.
+   */
+  customCss?: string;
+
+  /**
+   * URL(s) of a custom CSS stylesheet to load in Swagger UI page.
+   */
+  customCssUrl?: string | string[];
+
+  /**
+   * URL(s) of custom JavaScript files to load in Swagger UI page.
+   */
+  customJs?: string | string[];
+
+  /**
+   * Custom JavaScript scripts to load in Swagger UI page.
+   */
+  customJsStr?: string | string[];
+
+  /**
+   * Custom favicon for Swagger UI page.
+   */
+  customfavIcon?: string;
+
+  /**
+   * Custom title for Swagger UI page.
+   */
+  customSiteTitle?: string;
+
+  /**
+   * File system path (ex: ./node_modules/swagger-ui-dist) containing static Swagger UI assets.
+   */
+  customSwaggerUiPath?: string;
+
+  /**
+   * @deprecated This property has no effect.
+   */
+  validatorUrl?: string;
+
+  /**
+   * @deprecated This property has no effect.
+   */
+  url?: string;
+
+  /**
+   * @deprecated This property has no effect.
+   */
+  urls?: Record<'url' | 'name', string>[];
+}
+Hint
+ui and raw are independent options. Disabling Swagger UI (ui: false) does not disable API definitions (JSON/YAML). Conversely, disabling API definitions (raw: []) does not disable the Swagger UI.
+For example, the following configuration will disable the Swagger UI but still allow access to API definitions:
+
+
+
+const options: SwaggerCustomOptions = {
+  ui: false, // Swagger UI is disabled
+  raw: ['json'], // JSON API definition is still accessible (YAML is disabled)
+};
+SwaggerModule.setup('api', app, options);
+In this case, http://localhost:3000/api-json will still be accessible, but http://localhost:3000/api (Swagger UI) will not.
+
+
+File upload
+To handle file uploading, Nest provides a built-in module based on the multer middleware package for Express. Multer handles data posted in the multipart/form-data format, which is primarily used for uploading files via an HTTP POST request. This module is fully configurable and you can adjust its behavior to your application requirements.
+
+Warning
+Multer cannot process data which is not in the supported multipart format (multipart/form-data). Also, note that this package is not compatible with the FastifyAdapter.
+For better type safety, let's install Multer typings package:
+
+
+$ npm i -D @types/multer
+With this package installed, we can now use the Express.Multer.File type (you can import this type as follows: import { Express } from 'express').
+
+Basic example#
+To upload a single file, simply tie the FileInterceptor() interceptor to the route handler and extract file from the request using the @UploadedFile() decorator.
+
+
+JS
+
+@Post('upload')
+@UseInterceptors(FileInterceptor('file'))
+uploadFile(@UploadedFile() file: Express.Multer.File) {
+  console.log(file);
+}
+Hint
+The FileInterceptor() decorator is exported from the @nestjs/platform-express package. The @UploadedFile() decorator is exported from @nestjs/common.
+The FileInterceptor() decorator takes two arguments:
+
+fieldName: string that supplies the name of the field from the HTML form that holds a file
+options: optional object of type MulterOptions. This is the same object used by the multer constructor (more details here).
+Warning
+FileInterceptor() may not be compatible with third party cloud providers like Google Firebase or others.
+File validation#
+Often times it can be useful to validate incoming file metadata, like file size or file mime-type. For this, you can create your own Pipe and bind it to the parameter annotated with the UploadedFile decorator. The example below demonstrates how a basic file size validator pipe could be implemented:
+
+
+
+import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
+
+@Injectable()
+export class FileSizeValidationPipe implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata) {
+    // "value" is an object containing the file's attributes and metadata
+    const oneKb = 1000;
+    return value.size < oneKb;
+  }
+}
+This can be used in conjunction with the FileInterceptor as follows:
+
+
+
+@Post('file')
+@UseInterceptors(FileInterceptor('file'))
+uploadFileAndValidate(@UploadedFile(
+  new FileSizeValidationPipe(),
+  // other pipes can be added here
+) file: Express.Multer.File, ) {
+  return file;
+}
+Nest provides a built-in pipe to handle common use cases and facilitate/standardize the addition of new ones. This pipe is called ParseFilePipe, and you can use it as follows:
+
+
+
+@Post('file')
+uploadFileAndPassValidation(
+  @Body() body: SampleDto,
+  @UploadedFile(
+    new ParseFilePipe({
+      validators: [
+        // ... Set of file validator instances here
+      ]
+    })
+  )
+  file: Express.Multer.File,
+) {
+  return {
+    body,
+    file: file.buffer.toString(),
+  };
+}
+As you can see, it's required to specify an array of file validators that will be executed by the ParseFilePipe. We'll discuss the interface of a validator, but it's worth mentioning this pipe also has two additional optional options:
+
+errorHttpStatusCode	The HTTP status code to be thrown in case any validator fails. Default is 400 (BAD REQUEST)
+exceptionFactory	A factory which receives the error message and returns an error.
+Now, back to the FileValidator interface. To integrate validators with this pipe, you have to either use built-in implementations or provide your own custom FileValidator. See example below:
+
+
+
+export abstract class FileValidator<TValidationOptions = Record<string, any>> {
+  constructor(protected readonly validationOptions: TValidationOptions) {}
+
+  /**
+   * Indicates if this file should be considered valid, according to the options passed in the constructor.
+   * @param file the file from the request object
+   */
+  abstract isValid(file?: any): boolean | Promise<boolean>;
+
+  /**
+   * Builds an error message in case the validation fails.
+   * @param file the file from the request object
+   */
+  abstract buildErrorMessage(file: any): string;
+}
+Hint
+The FileValidator interfaces supports async validation via its isValid function. To leverage type security, you can also type the file parameter as Express.Multer.File in case you are using express (default) as a driver.
+FileValidator is a regular class that has access to the file object and validates it according to the options provided by the client. Nest has two built-in FileValidator implementations you can use in your project:
+
+MaxFileSizeValidator - Checks if a given file's size is less than the provided value (measured in bytes)
+FileTypeValidator - Checks if a given file's mime-type matches a given string or RegExp. By default, validates the mime-type using file content magic number
+To understand how these can be used in conjunction with the aforementioned FileParsePipe, we'll use an altered snippet of the last presented example:
+
+
+
+@UploadedFile(
+  new ParseFilePipe({
+    validators: [
+      new MaxFileSizeValidator({ maxSize: 1000 }),
+      new FileTypeValidator({ fileType: 'image/jpeg' }),
+    ],
+  }),
+)
+file: Express.Multer.File,
+Hint
+If the number of validators increase largely or their options are cluttering the file, you can define this array in a separate file and import it here as a named constant like fileValidators.
+Finally, you can use the special ParseFilePipeBuilder class that lets you compose & construct your validators. By using it as shown below you can avoid manual instantiation of each validator and just pass their options directly:
+
+
+
+@UploadedFile(
+  new ParseFilePipeBuilder()
+    .addFileTypeValidator({
+      fileType: 'jpeg',
+    })
+    .addMaxSizeValidator({
+      maxSize: 1000
+    })
+    .build({
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+    }),
+)
+file: Express.Multer.File,
+Hint
+File presence is required by default, but you can make it optional by adding fileIsRequired: false parameter inside build function options (at the same level as errorHttpStatusCode).
+Array of files#
+To upload an array of files (identified with a single field name), use the FilesInterceptor() decorator (note the plural Files in the decorator name). This decorator takes three arguments:
+
+fieldName: as described above
+maxCount: optional number defining the maximum number of files to accept
+options: optional MulterOptions object, as described above
+When using FilesInterceptor(), extract files from the request with the @UploadedFiles() decorator.
+
+
+JS
+
+@Post('upload')
+@UseInterceptors(FilesInterceptor('files'))
+uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
+  console.log(files);
+}
+Hint
+The FilesInterceptor() decorator is exported from the @nestjs/platform-express package. The @UploadedFiles() decorator is exported from @nestjs/common.
+Multiple files#
+To upload multiple files (all with different field name keys), use the FileFieldsInterceptor() decorator. This decorator takes two arguments:
+
+uploadedFields: an array of objects, where each object specifies a required name property with a string value specifying a field name, as described above, and an optional maxCount property, as described above
+options: optional MulterOptions object, as described above
+When using FileFieldsInterceptor(), extract files from the request with the @UploadedFiles() decorator.
+
+
+JS
+
+@Post('upload')
+@UseInterceptors(FileFieldsInterceptor([
+  { name: 'avatar', maxCount: 1 },
+  { name: 'background', maxCount: 1 },
+]))
+uploadFile(@UploadedFiles() files: { avatar?: Express.Multer.File[], background?: Express.Multer.File[] }) {
+  console.log(files);
+}
+Any files#
+To upload all fields with arbitrary field name keys, use the AnyFilesInterceptor() decorator. This decorator can accept an optional options object as described above.
+
+When using AnyFilesInterceptor(), extract files from the request with the @UploadedFiles() decorator.
+
+
+JS
+
+@Post('upload')
+@UseInterceptors(AnyFilesInterceptor())
+uploadFile(@UploadedFiles() files: Array<Express.Multer.File>) {
+  console.log(files);
+}
+No files#
+To accept multipart/form-data but not allow any files to be uploaded, use the NoFilesInterceptor. This sets multipart data as attributes on the request body. Any files sent with the request will throw a BadRequestException.
+
+
+
+@Post('upload')
+@UseInterceptors(NoFilesInterceptor())
+handleMultiPartData(@Body() body) {
+  console.log(body)
+}
+Default options#
+You can specify multer options in the file interceptors as described above. To set default options, you can call the static register() method when you import the MulterModule, passing in supported options. You can use all options listed here.
+
+
+
+MulterModule.register({
+  dest: './upload',
+});
+Hint
+The MulterModule class is exported from the @nestjs/platform-express package.
+Async configuration#
+When you need to set MulterModule options asynchronously instead of statically, use the registerAsync() method. As with most dynamic modules, Nest provides several techniques to deal with async configuration.
+
+One technique is to use a factory function:
+
+
+
+MulterModule.registerAsync({
+  useFactory: () => ({
+    dest: './upload',
+  }),
+});
+Like other factory providers, our factory function can be async and can inject dependencies through inject.
+
+
+
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useFactory: async (configService: ConfigService) => ({
+    dest: configService.get<string>('MULTER_DEST'),
+  }),
+  inject: [ConfigService],
+});
+Alternatively, you can configure the MulterModule using a class instead of a factory, as shown below:
+
+
+
+MulterModule.registerAsync({
+  useClass: MulterConfigService,
+});
+The construction above instantiates MulterConfigService inside MulterModule, using it to create the required options object. Note that in this example, the MulterConfigService has to implement the MulterOptionsFactory interface, as shown below. The MulterModule will call the createMulterOptions() method on the instantiated object of the supplied class.
+
+
+
+@Injectable()
+class MulterConfigService implements MulterOptionsFactory {
+  createMulterOptions(): MulterModuleOptions {
+    return {
+      dest: './upload',
+    };
+  }
+}
+If you want to reuse an existing options provider instead of creating a private copy inside the MulterModule, use the useExisting syntax.
+
+
+
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useExisting: ConfigService,
+});
+You can also pass so-called extraProviders to the registerAsync() method. These providers will be merged with the module providers.
+
+
+
+MulterModule.registerAsync({
+  imports: [ConfigModule],
+  useClass: ConfigService,
+  extraProviders: [MyAdditionalProvider],
+});
+This is useful when you want to provide additional dependencies to the factory function or the class constructor.
+
+Example#
+A working example is available here.
+
+
+
+
+Testing
+Automated testing is considered an essential part of any serious software development effort. Automation makes it easy to repeat individual tests or test suites quickly and easily during development. This helps ensure that releases meet quality and performance goals. Automation helps increase coverage and provides a faster feedback loop to developers. Automation both increases the productivity of individual developers and ensures that tests are run at critical development lifecycle junctures, such as source code control check-in, feature integration, and version release.
+
+Such tests often span a variety of types, including unit tests, end-to-end (e2e) tests, integration tests, and so on. While the benefits are unquestionable, it can be tedious to set them up. Nest strives to promote development best practices, including effective testing, so it includes features such as the following to help developers and teams build and automate tests. Nest:
+
+automatically scaffolds default unit tests for components and e2e tests for applications
+provides default tooling (such as a test runner that builds an isolated module/application loader)
+provides integration with Jest and Supertest out-of-the-box, while remaining agnostic to testing tools
+makes the Nest dependency injection system available in the testing environment for easily mocking components
+As mentioned, you can use any testing framework that you like, as Nest doesn't force any specific tooling. Simply replace the elements needed (such as the test runner), and you will still enjoy the benefits of Nest's ready-made testing facilities.
+
+Installation#
+To get started, first install the required package:
+
+
+$ npm i --save-dev @nestjs/testing
+Unit testing#
+In the following example, we test two classes: CatsController and CatsService. As mentioned, Jest is provided as the default testing framework. It serves as a test-runner and also provides assert functions and test-double utilities that help with mocking, spying, etc. In the following basic test, we manually instantiate these classes, and ensure that the controller and service fulfill their API contract.
+
+
+cats.controller.spec.tsJS
+
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+describe('CatsController', () => {
+  let catsController: CatsController;
+  let catsService: CatsService;
+
+  beforeEach(() => {
+    catsService = new CatsService();
+    catsController = new CatsController(catsService);
+  });
+
+  describe('findAll', () => {
+    it('should return an array of cats', async () => {
+      const result = ['test'];
+      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+
+      expect(await catsController.findAll()).toBe(result);
+    });
+  });
+});
+Hint
+Keep your test files located near the classes they test. Testing files should have a .spec or .test suffix.
+Because the above sample is trivial, we aren't really testing anything Nest-specific. Indeed, we aren't even using dependency injection (notice that we pass an instance of CatsService to our catsController). This form of testing - where we manually instantiate the classes being tested - is often called isolated testing as it is independent from the framework. Let's introduce some more advanced capabilities that help you test applications that make more extensive use of Nest features.
+
+Testing utilities#
+The @nestjs/testing package provides a set of utilities that enable a more robust testing process. Let's rewrite the previous example using the built-in Test class:
+
+
+cats.controller.spec.tsJS
+
+import { Test } from '@nestjs/testing';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
+
+describe('CatsController', () => {
+  let catsController: CatsController;
+  let catsService: CatsService;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+        controllers: [CatsController],
+        providers: [CatsService],
+      }).compile();
+
+    catsService = moduleRef.get(CatsService);
+    catsController = moduleRef.get(CatsController);
+  });
+
+  describe('findAll', () => {
+    it('should return an array of cats', async () => {
+      const result = ['test'];
+      jest.spyOn(catsService, 'findAll').mockImplementation(() => result);
+
+      expect(await catsController.findAll()).toBe(result);
+    });
+  });
+});
+The Test class is useful for providing an application execution context that essentially mocks the full Nest runtime, but gives you hooks that make it easy to manage class instances, including mocking and overriding. The Test class has a createTestingModule() method that takes a module metadata object as its argument (the same object you pass to the @Module() decorator). This method returns a TestingModule instance which in turn provides a few methods. For unit tests, the important one is the compile() method. This method bootstraps a module with its dependencies (similar to the way an application is bootstrapped in the conventional main.ts file using NestFactory.create()), and returns a module that is ready for testing.
+
+Hint
+The compile() method is asynchronous and therefore has to be awaited. Once the module is compiled you can retrieve any static instance it declares (controllers and providers) using the get() method.
+TestingModule inherits from the module reference class, and therefore its ability to dynamically resolve scoped providers (transient or request-scoped). Do this with the resolve() method (the get() method can only retrieve static instances).
+
+
+
+const moduleRef = await Test.createTestingModule({
+  controllers: [CatsController],
+  providers: [CatsService],
+}).compile();
+
+catsService = await moduleRef.resolve(CatsService);
+Warning
+The resolve() method returns a unique instance of the provider, from its own DI container sub-tree. Each sub-tree has a unique context identifier. Thus, if you call this method more than once and compare instance references, you will see that they are not equal.
+Hint
+Learn more about the module reference features here.
+Instead of using the production version of any provider, you can override it with a custom provider for testing purposes. For example, you can mock a database service instead of connecting to a live database. We'll cover overrides in the next section, but they're available for unit tests as well.
+
+Learn the right way!
+ 80+ chapters
+ 5+ hours of videos
+ Official certificate
+ Deep-dive sessions
+Explore official courses
+
+Auto mocking#
+Nest also allows you to define a mock factory to apply to all of your missing dependencies. This is useful for cases where you have a large number of dependencies in a class and mocking all of them will take a long time and a lot of setup. To make use of this feature, the createTestingModule() will need to be chained up with the useMocker() method, passing a factory for your dependency mocks. This factory can take in an optional token, which is an instance token, any token which is valid for a Nest provider, and returns a mock implementation. The below is an example of creating a generic mocker using jest-mock and a specific mock for CatsService using jest.fn().
+
+
+
+// ...
+import { ModuleMocker, MockMetadata } from 'jest-mock';
+
+const moduleMocker = new ModuleMocker(global);
+
+describe('CatsController', () => {
+  let controller: CatsController;
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      controllers: [CatsController],
+    })
+      .useMocker((token) => {
+        const results = ['test1', 'test2'];
+        if (token === CatsService) {
+          return { findAll: jest.fn().mockResolvedValue(results) };
+        }
+        if (typeof token === 'function') {
+          const mockMetadata = moduleMocker.getMetadata(
+            token,
+          ) as MockMetadata<any, any>;
+          const Mock = moduleMocker.generateFromMetadata(
+            mockMetadata,
+          ) as ObjectConstructor;
+          return new Mock();
+        }
+      })
+      .compile();
+
+    controller = moduleRef.get(CatsController);
+  });
+});
+You can also retrieve these mocks out of the testing container as you normally would custom providers, moduleRef.get(CatsService).
+
+Hint
+A general mock factory, like createMock from @golevelup/ts-jest can also be passed directly.
+Hint
+REQUEST and INQUIRER providers cannot be auto-mocked because they're already pre-defined in the context. However, they can be overwritten using the custom provider syntax or by utilizing the .overrideProvider method.
+End-to-end testing#
+Unlike unit testing, which focuses on individual modules and classes, end-to-end (e2e) testing covers the interaction of classes and modules at a more aggregate level -- closer to the kind of interaction that end-users will have with the production system. As an application grows, it becomes hard to manually test the end-to-end behavior of each API endpoint. Automated end-to-end tests help us ensure that the overall behavior of the system is correct and meets project requirements. To perform e2e tests we use a similar configuration to the one we just covered in unit testing. In addition, Nest makes it easy to use the Supertest library to simulate HTTP requests.
+
+
+cats.e2e-spec.tsJS
+
+import * as request from 'supertest';
+import { Test } from '@nestjs/testing';
+import { CatsModule } from '../../src/cats/cats.module';
+import { CatsService } from '../../src/cats/cats.service';
+import { INestApplication } from '@nestjs/common';
+
+describe('Cats', () => {
+  let app: INestApplication;
+  let catsService = { findAll: () => ['test'] };
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [CatsModule],
+    })
+      .overrideProvider(CatsService)
+      .useValue(catsService)
+      .compile();
+
+    app = moduleRef.createNestApplication();
+    await app.init();
+  });
+
+  it(`/GET cats`, () => {
+    return request(app.getHttpServer())
+      .get('/cats')
+      .expect(200)
+      .expect({
+        data: catsService.findAll(),
+      });
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+});
+Hint
+If you're using Fastify as your HTTP adapter, it requires a slightly different configuration, and has built-in testing capabilities:
+
+
+let app: NestFastifyApplication;
+
+beforeAll(async () => {
+  app = moduleRef.createNestApplication<NestFastifyApplication>(
+    new FastifyAdapter(),
+  );
+
+  await app.init();
+  await app.getHttpAdapter().getInstance().ready();
+});
+
+it(`/GET cats`, () => {
+  return app
+    .inject({
+      method: 'GET',
+      url: '/cats',
+    })
+    .then((result) => {
+      expect(result.statusCode).toEqual(200);
+      expect(result.payload).toEqual(/* expectedPayload */);
+    });
+});
+
+afterAll(async () => {
+  await app.close();
+});
+In this example, we build on some of the concepts described earlier. In addition to the compile() method we used earlier, we now use the createNestApplication() method to instantiate a full Nest runtime environment.
+
+One caveat to consider is that when your application is compiled using the compile() method, the HttpAdapterHost#httpAdapter will be undefined at that time. This is because there isn't an HTTP adapter or server created yet during this compilation phase. If your test requires the httpAdapter, you should use the createNestApplication() method to create the application instance, or refactor your project to avoid this dependency when initializing the dependencies graph.
+
+Alright, let's break down the example:
+
+We save a reference to the running app in our app variable so we can use it to simulate HTTP requests.
+
+We simulate HTTP tests using the request() function from Supertest. We want these HTTP requests to route to our running Nest app, so we pass the request() function a reference to the HTTP listener that underlies Nest (which, in turn, may be provided by the Express platform). Hence the construction request(app.getHttpServer()). The call to request() hands us a wrapped HTTP Server, now connected to the Nest app, which exposes methods to simulate an actual HTTP request. For example, using request(...).get('/cats') will initiate a request to the Nest app that is identical to an actual HTTP request like get '/cats' coming in over the network.
+
+In this example, we also provide an alternate (test-double) implementation of the CatsService which simply returns a hard-coded value that we can test for. Use overrideProvider() to provide such an alternate implementation. Similarly, Nest provides methods to override modules, guards, interceptors, filters and pipes with the overrideModule(), overrideGuard(), overrideInterceptor(), overrideFilter(), and overridePipe() methods respectively.
+
+Each of the override methods (except for overrideModule()) returns an object with 3 different methods that mirror those described for custom providers:
+
+useClass: you supply a class that will be instantiated to provide the instance to override the object (provider, guard, etc.).
+useValue: you supply an instance that will override the object.
+useFactory: you supply a function that returns an instance that will override the object.
+On the other hand, overrideModule() returns an object with the useModule() method, which you can use to supply a module that will override the original module, as follows:
+
+
+
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideModule(CatsModule)
+  .useModule(AlternateCatsModule)
+  .compile();
+Each of the override method types, in turn, returns the TestingModule instance, and can thus be chained with other methods in the fluent style. You should use compile() at the end of such a chain to cause Nest to instantiate and initialize the module.
+
+Also, sometimes you may want to provide a custom logger e.g. when the tests are run (for example, on a CI server). Use the setLogger() method and pass an object that fulfills the LoggerService interface to instruct the TestModuleBuilder how to log during tests (by default, only "error" logs will be logged to the console).
+
+The compiled module has several useful methods, as described in the following table:
+
+createNestApplication()	Creates and returns a Nest application (INestApplication instance) based on the given module. Note that you must manually initialize the application using the init() method.
+createNestMicroservice()	Creates and returns a Nest microservice (INestMicroservice instance) based on the given module.
+get()	Retrieves a static instance of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the module reference class.
+resolve()	Retrieves a dynamically created scoped instance (request or transient) of a controller or provider (including guards, filters, etc.) available in the application context. Inherited from the module reference class.
+select()	Navigates through the module's dependency graph; can be used to retrieve a specific instance from the selected module (used along with strict mode (strict: true) in get() method).
+Hint
+Keep your e2e test files inside the test directory. The testing files should have a .e2e-spec suffix.
+Overriding globally registered enhancers#
+If you have a globally registered guard (or pipe, interceptor, or filter), you need to take a few more steps to override that enhancer. To recap the original registration looks like this:
+
+
+
+providers: [
+  {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  },
+],
+This is registering the guard as a "multi"-provider through the APP_* token. To be able to replace the JwtAuthGuard here, the registration needs to use an existing provider in this slot:
+
+
+
+providers: [
+  {
+    provide: APP_GUARD,
+    useExisting: JwtAuthGuard,
+    // ^^^^^^^^ notice the use of 'useExisting' instead of 'useClass'
+  },
+  JwtAuthGuard,
+],
+Hint
+Change the useClass to useExisting to reference a registered provider instead of having Nest instantiate it behind the token.
+Now the JwtAuthGuard is visible to Nest as a regular provider that can be overridden when creating the TestingModule:
+
+
+
+const moduleRef = await Test.createTestingModule({
+  imports: [AppModule],
+})
+  .overrideProvider(JwtAuthGuard)
+  .useClass(MockAuthGuard)
+  .compile();
+Now all your tests will use the MockAuthGuard on every request.
+
+Testing request-scoped instances#
+Request-scoped providers are created uniquely for each incoming request. The instance is garbage-collected after the request has completed processing. This poses a problem, because we can't access a dependency injection sub-tree generated specifically for a tested request.
+
+We know (based on the sections above) that the resolve() method can be used to retrieve a dynamically instantiated class. Also, as described here, we know we can pass a unique context identifier to control the lifecycle of a DI container sub-tree. How do we leverage this in a testing context?
+
+The strategy is to generate a context identifier beforehand and force Nest to use this particular ID to create a sub-tree for all incoming requests. In this way we'll be able to retrieve instances created for a tested request.
+
+To accomplish this, use jest.spyOn() on the ContextIdFactory:
+
+
+
+const contextId = ContextIdFactory.create();
+jest
+  .spyOn(ContextIdFactory, 'getByRequest')
+  .mockImplementation(() => contextId);
+Now we can use the contextId to access a single generated DI container sub-tree for any subsequent request.
+
+
+
+catsService = await moduleRef.resolve(CatsService, contextId);

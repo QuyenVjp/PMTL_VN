@@ -131,6 +131,7 @@ Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMI
 7. [error-envelope-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
 8. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
 9. [auth-session-flow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
+10. [apps-api-implementation-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_IMPLEMENTATION_CANON.md)
 
 ### Web/Admin path
 
@@ -141,6 +142,7 @@ Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMI
 5. [zustand-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/ZUSTAND_POLICY.md)
 6. [component-specs.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
 7. [page-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md)
+8. [apps-web-implementation-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/APPS_WEB_IMPLEMENTATION_CANON.md)
 
 ### Ops/Review path
 
@@ -196,6 +198,8 @@ Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMI
 | [valkey-cache-candidate-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md) | Inventory cache families, TTL classes, invalidation owner, explicit do-not-cache list |
 | [bullmq-worker-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md) | Queue definitions, job schemas, idempotency, dead-letter, worker entrypoint |
 | [bullmq-activation-shortlist.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/BULLMQ_ACTIVATION_SHORTLIST.md) | Workload nào được phép promote lên BullMQ trước, trigger gì đủ, cái gì chưa nên queue |
+| [bullmq-implementation-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/BULLMQ_IMPLEMENTATION_CANON.md) | File placement, producer/worker seams, naming canon, must-exist artifacts khi scaffold queue lane |
+| [otel-implementation-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/OTEL_IMPLEMENTATION_CANON.md) | File placement, bootstrap seams, collector pipeline, resource/propagation/sampling canon cho lane OTEL |
 | [outbox-dispatcher-model.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md) | outbox_events schema, dispatcher cron, retry/dead-letter, redrive API |
 | [meilisearch-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md) | Index settings, sync strategy, SQL fallback contract, monitoring |
 | [pgbouncer-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/PGBOUNCER_STRATEGY.md) | Pool mode, trigger threshold, Docker Compose config, rollback |

@@ -87,6 +87,21 @@ Vì vậy trong giai đoạn design/scaffold hiện tại, agent phải dùng:
 
 Khi scaffold lại `apps/web` xong và cài `next`, bundled docs lane sẽ trở thành ưu tiên số 1.
 
+Trong giai đoạn design hiện tại, repo có thể dùng:
+
+```txt
+docs/nextjs.md
+```
+
+như official-doc bundle tạm thời cho các topics đã paste tay:
+- `use cache`
+- `revalidateTag`
+- `updateTag`
+- Route Handlers
+- metadata / OG images
+
+Nhưng khi `apps/web/node_modules/next/dist/docs/` xuất hiện, bundled docs theo đúng version cài đặt phải thắng `docs/nextjs.md`.
+
 ---
 
 ## MCP lane

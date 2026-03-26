@@ -140,6 +140,7 @@ common/config/config.namespaces.ts
 common/logging/logger.module.ts
 common/logging/logger.service.ts
 common/logging/logger.constants.ts
+common/logging/logger.config.ts
 
 common/errors/errors.module.ts
 common/errors/global-exception.filter.ts
@@ -160,6 +161,8 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
 
 - env phải fail fast
 - logger phải có trước business flow
+- `LoggerModule.forRootAsync(...)` + `app.useLogger(app.get(Logger))` phải có từ bootstrap step đầu
+- `genReqId` owner và redact/serializer defaults phải sống ở logging module, không để rải trong middleware/controller
 - error envelope phải chuẩn ngay từ route đầu tiên
 - validation pipe phải có trước khi controller thật xuất hiện
 - CORS + trusted proxy + client IP resolution contract phải có owner từ bootstrap này, không để đến auth/rate-limit mới vá
@@ -181,6 +184,7 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
   - primitive parse/default pipes chỉ là helper; validation authority vẫn là Zod
   - middleware chỉ giữ pre-routing/transport concern, không giữ authz/business logic
   - config authority đi qua `ConfigModule` + typed schema/facade, không đọc `process.env` rải rác
+  - custom config factory tự validate/transform object của nó; không hiểu nhầm `validationSchema` là đã cover mọi custom config branch
 
 ### Common traps
 
@@ -192,6 +196,8 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
 - viết `UserByIdPipe` hoặc pipe tương tự để query DB như pattern mặc định của mọi route
 - kéo authz/business rule xuống middleware kiểu Express cũ
 - để từng service tự parse env string/number/boolean mà không qua config owner
+- bật Swagger UI public mặc định trên production host mà không có env gate/ui/raw policy rõ
+- scaffold upload route trước khi storage module + mime/size validators đứng được
 
 ---
 
@@ -243,6 +249,36 @@ Sau đó mới tới `posts` và content tables cần cho upload/publish path.
 - scaffold theo `prisma-client-js` hoặc docs v6-style dù repo đã chốt Prisma 7
 - tạo `schema.prisma` nhưng quên `prisma.config.ts`, rồi dựa vào CLI flags cũ để chạy local/prod
 - không chừa `prisma/sql/` path rõ mà lại để raw SQL/TypedSQL trôi vào random service file
+
+---
+
+## Step 2.5 — Testing and docs seams before feature explosion
+
+### Must exist
+
+```txt
+src/test/
+src/test/test-app.factory.ts
+src/test/mocks/
+src/test/fixtures/
+```
+
+Ít nhất phải có owner path cho:
+- `TestingModule` factory helpers
+- mock providers cho Prisma/config/external adapters
+- test data fixtures tối thiểu
+
+### Do not move on until
+
+- không route launch-critical nào mà hoàn toàn thiếu test seam
+- mock/provider strategy của unit test đã rõ; không phụ thuộc import cả `AppModule`
+- Swagger/OpenAPI exposure policy đã chốt cho dev/staging/prod
+
+### Common traps
+
+- đợi tới e2e mới nghĩ về mock seams
+- mỗi module tự invent test helper riêng
+- dùng DB/network thật trong unit tests chỉ vì chưa có tokenized provider seam
 
 ---
 

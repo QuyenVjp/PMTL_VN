@@ -293,6 +293,9 @@ Pattern chuẩn:
 - `Input` và `Textarea`: bind trực tiếp từ `field`
 - `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, `Date Picker` và control headless khác: đi qua `Controller`
 - dynamic rows như email list, vow sub-items, practice items, CTA collections: đi qua `useFieldArray`
+- `defaultValues` phải lấy từ owner projection; khi source data đổi thì `reset(nextValues)` là đường đồng bộ chuẩn
+- không sync toàn bộ form state sang Zustand/store nếu không có external owner thật sự
+- form submit phải đi qua `handleSubmit`; mutation không được gắn thẳng vào button click để bỏ qua validation
 
 Validation mode mặc định theo loại form:
 - auth forms: `onSubmit` hoặc `onBlur`
@@ -305,6 +308,7 @@ Accessibility/error contract:
 - form control phải nhận `aria-invalid`
 - lỗi phải render ra text thật qua `FieldError`, không chỉ đổi màu viền
 - help text và error text phải gắn được với field qua markup/accessibility wiring của shadcn
+- field-level server errors map về `setError`; form-level server errors đi ở summary/banner owner
 
 ### Query/cache contract
 

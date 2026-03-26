@@ -181,7 +181,7 @@ Coding agent có thể activate phần `planned` mà không cần phát minh l�
 | Cloudflare R2 | `apps/api/src/platform/storage/adapters/r2.adapter.ts`; `STORAGE_ADAPTER=r2` | planned | local disk > 70% OR restore drift > 5% | `design/02-platform-baseline/optional-scale/R2_MIGRATION_PLAN.md` |
 | Web Push (VAPID) | `apps/api/src/modules/notification/push.service.ts`; `apps/web/public/sw.js` | planned | PWA active + feature flag `notification.push.enabled` | `design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md` |
 | Prometheus + Grafana | `infra/prometheus/`, `infra/grafana/`, `infra/alertmanager/` | planned | specific metric use case + team needs shared visibility | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
-| OpenTelemetry | `apps/api/src/platform/telemetry/otel.ts`; `OTEL_ENABLED=true` | planned | cross-service latency diagnosis needed | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
+| OpenTelemetry | `apps/api/src/platform/telemetry/*`; `apps/worker/src/platform/telemetry/*`; `infra/otel/otelcol.config.yaml`; `OTEL_ENABLED=true` | planned | cross-service latency diagnosis needed | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
 | pgvector | `apps/api/src/platform/embedding/`; `prisma/schema.prisma` extension | **explicit exclusion** | Meilisearch stable 3+ months theo định nghĩa trong `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` AND specific semantic search use case measured | `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
 
 ### Launch-profile override

@@ -44,6 +44,47 @@ apps/worker (consumer — separate process, same codebase)
 Entrypoint: `apps/worker/src/main.ts` (distinct from `apps/api/src/main.ts`)
 Same monorepo, shares `packages/shared` schemas.
 
+## Nest integration stance
+
+- producers là Nest providers/services; không enqueue job trực tiếp từ controller như baseline.
+- queue injection canon:
+  - `@InjectQueue('<queue-alias>')` cho queue producer
+  - `@InjectFlowProducer('<flow-name>')` cho flow producer
+- queue/flow identity phải bám registration owner:
+  - `BullModule.registerQueue(...)`
+  - `BullModule.registerFlowProducer(...)`
+- queue name trong code phải đi qua constants/owner registry; không hardcode lặp string ở nhiều service.
+- `FlowProducer` chỉ dùng cho parent/child dependency graph thật sự; không lấy flow làm default cho mọi fan-out đơn giản.
+- `QueueEvents` listener lane là hợp lệ cho cross-worker observability/admin status, nhưng không thay canonical job result state trong Postgres/audit tables.
+
+### Producer anti-patterns
+
+- controller gọi `queue.add()` trực tiếp
+- service hardcode raw queue name string khắp codebase
+- dùng `FlowProducer` cho job đơn lẻ không có dependency graph
+- enqueue job mà không có job name/data schema/idempotency story rõ
+- controller hoặc UI flow chờ queue events như source-of-truth thay cho handler result owner
+
+## Connections stance
+
+- BullMQ vẫn bám Redis-compatible backend qua connection owner của PMTL; queue path không tự tạo connection semantics riêng ngoài `VALKEY_ARCHITECTURE.md`.
+- `Queue` và `Worker` được phép reuse connection owner khi phù hợp lifecycle, nhưng `QueueEvents` phải dùng blocking connection riêng; không cố reuse cùng kiểu producer connection cho event listener.
+- producer-side connection phải fail nhanh hơn worker-side connection:
+  - producer/add-job path không được treo vô thời hạn khi Valkey down
+  - worker/consumer path được phép giữ persistent reconnect posture
+- `maxRetriesPerRequest` policy:
+  - producer-side queue client: finite/fast-fail budget
+  - worker-side reused ioredis connection: `maxRetriesPerRequest = null` khi docs BullMQ yêu cầu cho background processing
+- cấm dùng `ioredis keyPrefix`; BullMQ phải dùng prefix của chính nó (`BULLMQ_PREFIX` / queue prefix owner).
+- queue backend bắt buộc giữ `noeviction`; nếu runtime không chứng minh được policy này ở queue DB/instance thì không được activate BullMQ.
+
+### Connection anti-patterns
+
+- dùng cùng blocking connection strategy cho `QueueEvents` và producer HTTP path
+- để producer add-job request treo lâu vì retry policy kiểu worker
+- bật BullMQ trên DB/instance chưa chứng minh `noeviction`
+- dùng `keyPrefix` của ioredis chồng lên BullMQ prefix
+
 ---
 
 ## Queue definitions
@@ -133,6 +174,30 @@ Dead-letter jobs are visible in admin (`/he-thong/queue-ops` — see below).
 - network/transient downstream error → retry bình thường
 - validation/business invariant error → đừng retry vô hạn; đi dead-letter sớm nếu handler xác định là non-retryable
 - idempotency conflict do duplicate replay → log `duplicate_skipped`, không coi là failure
+- retry/backoff/concurrency/rate-limit là queue-owner policy; producer không tự override ngẫu hứng nếu chưa có owner exception.
+
+## Deduplication stance
+
+- PMTL ưu tiên idempotency owner ở handler + `ProcessedJobLog`.
+- BullMQ deduplication key là optional accelerator cho burst protection ở producer edge; không thay thế idempotent handler semantics.
+- nếu dùng deduplication:
+  - owner phải ghi rõ dedupe window/key
+  - worker phải remove dedupe key theo đúng lifecycle khi docs yêu cầu
+  - duplicated event chỉ là signal observability, không phải business success
+
+## Scheduler / repeat stance
+
+- repeatable APIs cũ không là baseline mới; nếu cần scheduled/repeat queue jobs, ưu tiên `Job Schedulers` line của BullMQ hiện tại.
+- phase 2 của PMTL chưa mở broad recurring jobs qua BullMQ chỉ vì framework hỗ trợ; cron/scheduler phải bám `TASK_SCHEDULING_POLICY.md`.
+- queue scheduler templates không được tự mang deduplication semantics mơ hồ làm hỏng cadence.
+
+## Concurrency and limiter stance
+
+- concurrency mặc định owner theo bảng queue definitions; không tăng chỉ vì queue depth cao mà chưa nhìn downstream budget.
+- nếu downstream API có hard rate limit, queue owner được phép dùng limiter/rate-limit policy ở worker level, nhưng phải document rõ ngay trong queue owner section.
+- attempts/backoff phải đi cùng classification retryable/non-retryable; không retry business invariant errors như transient network errors.
+- `Global Concurrency` và `Global Rate Limit` không là baseline mặc định; chỉ mở khi nhiều worker instances cùng queue cần một shared cap thực sự.
+- local worker concurrency là knob ưu tiên trước; global controls chỉ bật khi local scaling không còn đủ an toàn.
 
 ---
 
@@ -225,6 +290,17 @@ Admin sidebar entry:
 
 Audit on redrive: `queue.job.redriven` with jobId, queue, actor.
 
+## Events and listeners
+
+- local worker events (`completed`, `failed`, `progress`, `error`) phải được hook vào logger/metrics owner của worker.
+- mọi worker phải có `error` listener; không để EventEmitter error làm worker chết im lặng.
+- `QueueEvents` listener phù hợp cho:
+  - global completed/failed/progress signals
+  - admin queue ops surface
+  - queue metrics aggregation
+- `QueueEvents` không thay thế durable audit/job result persistence.
+- event retention/trim phải có owner; nếu dùng `trimEvents`, đây là maintenance action có chủ đích, không chạy bừa.
+
 ---
 
 ## Worker Docker Compose
@@ -287,6 +363,8 @@ Sau `30s`:
 | `pmtl_queue_failed_total{queue}` | Counter | > 5 failures/10 min |
 | `pmtl_queue_dead_letter_count` | Gauge | > 0 → warn, > 500 → escalate |
 | `pmtl_worker_active_jobs{queue}` | Gauge | — |
+| `pmtl_queue_event_lag_seconds{queue}` | Gauge | > 30s on active queue → investigate |
+| `pmtl_queue_deduplicated_total{queue}` | Counter | sudden spike → investigate duplicate producer behavior |
 
 ### Scaling guidance
 
@@ -299,6 +377,17 @@ Sau `30s`:
   - DB connection pressure
 
 Worker exposes `/metrics` on port 3002 (separate from API port 3001).
+
+## Production hardening stance
+
+- activation chỉ hợp lệ khi queue DB/instance đã xác nhận:
+  - `noeviction`
+  - health/readiness green
+  - metrics scrape path hoạt động
+  - dead-letter/admin redrive path đứng được
+- producer path phải có explicit failure contract khi Redis down; không giả vờ enqueue thành công.
+- worker rollout phải ưu tiên graceful drain trước restart/stop.
+- backlog lớn, dead-letter tăng, hay dedupe spike phải được coi là operational signal có owner; không để queue thành black box.
 
 ---
 

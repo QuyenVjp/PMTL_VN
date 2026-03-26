@@ -274,6 +274,7 @@ Default UX:
 ### Form architecture contract
 
 - `apps/web` khóa `React Hook Form + Zod + @hookform/resolvers/zod` cho interactive forms; không dùng `TanStack Form` ở bootstrap phase.
+- Resolver authority của repo là `zodResolver`; không dùng `yupResolver` hay mixed-schema resolver làm baseline mới.
 - shadcn `Field` family là anatomy mặc định cho form markup:
   - `Field`
   - `FieldLabel`
@@ -285,16 +286,32 @@ Default UX:
 - `Input` và `Textarea` dạng đơn giản được bind trực tiếp từ `field`.
 - Các control headless hoặc controlled như `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, `Date Picker` phải dùng `Controller`.
 - Dynamic array forms phải dùng `useFieldArray`; không tự giữ array row state thủ công khi RHF đã đủ giải quyết.
+- RHF đi theo uncontrolled-first model:
+  - input native hoặc component có `ref` / `name` / `onChange` / `onBlur` sạch thì đi qua `register`
+  - chỉ dùng `Controller` khi control thực sự là controlled hoặc không expose `ref` chuẩn
+- `defaultValues` phải đi từ owner projection của route hoặc entity hiện tại; không hardcode bản sao rời rạc trong component tree.
+- Khi record owner thay đổi sau fetch hoặc route transition, reset phải đi qua `form.reset(nextValues)` theo owner event; không trộn uncontrolled defaults cũ với patch state thủ công.
+- Không mirror toàn bộ form values sang Zustand, URL state, hoặc client store chỉ để "dễ debug".
+- `watch()` và `useWatch()` chỉ dùng cho derived UI thật sự cần; không dùng như global reactive bus thay cho proper field ownership.
+- Submit handler phải đi qua `handleSubmit`; không bypass validation bằng `onClick` gọi mutation trực tiếp.
 - Validation modes:
   - auth / security-sensitive forms: `onSubmit` hoặc `onBlur`
   - profile/settings forms: `onBlur`
   - lightweight search/filter forms: `onChange` chỉ khi feedback tức thời có lợi rõ
   - complex write flows: tránh `onChange` toàn cục nếu tạo nhiễu và làm màn hình nhấp nháy lỗi
+- Error mapping contract:
+  - field errors render qua `FieldError`
+  - form-level/server errors phải đi qua owner banner hoặc summary block, không nhét tùy tiện vào 1 field bất kỳ
+  - Vietnamese copy phải giữ đủ dấu, không dùng English fallback nếu API owner đã có copy chuẩn
 - Accessibility contract cho form errors:
   - `Field` nhận `data-invalid`
   - control nhận `aria-invalid`
   - lỗi phải có text thật qua `FieldError`
   - không dùng màu sắc làm tín hiệu lỗi duy nhất
+- RHF + async mutation contract:
+  - pending state của submit do mutation owner giữ
+  - form disable/loading chỉ được buộc ở controls có side effect tương ứng
+  - thành công từ server là authority cho reset/close modal/navigate, không tự assume success trước response
 
 ### Monorepo alias direction
 
@@ -438,12 +455,14 @@ Client Component (khi cần interactivity)
 
 - Bật `cacheComponents: true` trong `next.config.ts` cho `apps/web`
 - Public deterministic reads phải ưu tiên `use cache` + `cacheTag()` thay vì chỉ dựa vào `revalidate` số giây
+- Nếu dùng `'use cache'` ở file-level, mọi exported function trong file đó phải là `async`.
 - Runtime values như `cookies()` và `headers()` phải đọc **ngoài** cached scope rồi truyền vào như argument
 - `after()` chỉ dùng cho side effects không-authoritative, nghĩa là **không thuộc request-response contract và chỉ best-effort**, như logging, analytics, soft counters; **không** dùng cho canonical write, auth, audit, rate-limit, cache invalidation mang tính correctness, hay security enforcement
 - `use cache: remote` không bật ở phase 1; chỉ xem xét khi default runtime cache không đủ và đã có measured pain / cost justification
 - `use cache: private` không dùng làm mặc định; chỉ dùng khi có compliance/runtime requirement thật sự không thể refactor
 - Tooling/debugging nên ưu tiên Next.js DevTools + MCP workflow khi team cần inspect App Router behavior thay vì tự phát minh debug flow riêng
 - `revalidateTag()` phải dùng form 2 arguments; mặc định dùng `revalidateTag(tag, 'max')`
+- `revalidateTag(tag)` single-arg là legacy/deprecated; không được scaffold mới theo pattern này.
 - `updateTag()` chỉ dùng trong Server Actions cho read-your-own-writes
 - `refresh()` chỉ là Server Action UI helper, không phải domain invalidation primitive
 - semantics chi tiết của `cacheTag`, `cacheLife`, `revalidateTag`, `refresh` phải bám `design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md`
@@ -455,6 +474,8 @@ Client Component (khi cần interactivity)
   - metadata/sitemap-like handlers nếu cần
   - web-tier integration edges thật sự cần
 - Route Handlers không cache by default; không dựa vào implicit caching assumptions.
+- Dưới `cacheComponents`, `GET` Route Handlers vẫn là request-time mặc định; chỉ được coi là prerender/cacheable khi không đụng runtime data hoặc owner config đã khóa rõ semantics.
+- Không đặt `'use cache'` trực tiếp trong thân Route Handler; nếu cần cache hóa data read cho `GET`, phải tách helper function riêng có `'use cache'` rồi gọi helper đó.
 - Nếu có `GET` Route Handler ở web tier, phải ghi rõ:
   - có cache hay không
   - owner data source là gì
@@ -653,6 +674,45 @@ Client state (UI only):
 - Query key ưu tiên array + object-tail pattern để filter/options ổn định và dễ mở rộng; không trải primitives theo thứ tự khó nhớ
 - Nếu mutation làm đổi public cached surface, ngoài client invalidation còn phải đi qua `revalidateTag()` / `revalidatePath()` owner theo `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md`
 - Không dùng `useSuspenseQuery()` cho lane cần cancellation-sensitive behavior như typeahead/filter đổi nhanh
+
+### TanStack Query important defaults cần explicit hóa
+
+- query mặc định coi cache là `stale`
+- stale query có thể refetch khi:
+  - mount lại
+  - window refocus
+  - network reconnect
+- inactive query mặc định bị garbage collect sau `5 phút`
+- query lỗi mặc định retry `3 lần` với exponential backoff
+- structural sharing mặc định được giữ nguyên; không tắt bừa nếu chưa có profiling/evidence
+
+Rules:
+
+- PMTL không được dựa vào các default trên theo kiểu “để thư viện tự lo”.
+- mọi query family quan trọng phải có owner `staleTime`/`gcTime` rõ.
+- retry mặc định không phù hợp cho mutation semantic hoặc auth-sensitive lane thì phải override rõ.
+
+### SSR / hydration / prefetch stance
+
+- RSC aggregate là bootstrap authority của page; TanStack Query chỉ hydrate/hold cache cho client-interactive islands.
+- server prefetch + hydration chỉ dùng khi nó giảm waterfall rõ ràng hoặc giúp island có cache nóng ngay sau first paint.
+- không hydrate toàn bộ page data sang client chỉ vì có thể.
+- `Prefetching & Router Integration` hợp lệ cho:
+  - high-intent next step
+  - route transition mượt hơn
+  - infinite/search/list route có UX need rõ
+- prefetch phải bám owner route semantics của Next.js; không tạo request storm chỉ vì hover/prefetch local pattern.
+
+### Optimistic update stance
+
+- phân biệt rõ:
+  - optimistic UI: render tạm từ mutation variables
+  - optimistic cache: sửa cache qua `onMutate`
+- ưu tiên optimistic UI cho lane đơn giản như heart, bookmark, local add-item.
+- optimistic cache chỉ dùng khi:
+  - query scope bị ảnh hưởng đã biết rõ
+  - rollback path đã thiết kế
+  - mutation response hoặc invalidation path đủ để reconcile
 
 ### Motion v12 rules
 

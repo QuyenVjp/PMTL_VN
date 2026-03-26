@@ -140,6 +140,17 @@ Zod official paths to prefer for behavior questions:
     - Prisma Client setup + database connections
     - Migrate
     - query optimization / performance
+- OpenTelemetry:
+  - OTEL dùng docs official paths sau làm baseline khi lane được activate:
+    - What is OpenTelemetry / Observability primer
+    - Context propagation
+    - Traces / Metrics / Logs
+    - Resources
+    - Sampling
+    - JavaScript -> Node.js / Instrumentation
+    - Collector -> Quick start / Configuration / Receivers / Processors / Exporters
+    - Handling sensitive data / Collector configuration / Collector hosting
+  - JavaScript logs lane hiện chưa là PMTL baseline authority; pino structured logs vẫn thắng
 - Node / TypeScript:
   - repo root hiện vẫn giữ installed truth cũ hơn recommended scaffold pins
   - nếu muốn nâng root toolchain, phải đi qua dependency-governance pass riêng; không tự nâng lẫn vào feature scaffold

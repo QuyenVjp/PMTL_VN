@@ -70,6 +70,34 @@ Owner: `apps/api` — mọi log phải qua `nestjs-pino`.
 - health/Terminus/custom infra logger nếu tồn tại vẫn phải bám chung redact/context policy này
 - không tạo logger thứ hai với format/schema khác chỉ cho một module “cho tiện grep”
 
+**`nestjs-pino` bootstrap canon:**
+- `LoggerModule.forRoot()` hoặc `forRootAsync()` là logger module authority
+- `main.ts` phải dùng:
+  - `NestFactory.create(AppModule, { bufferLogs: true })`
+  - `app.useLogger(app.get(Logger))`
+- không được để Nest system logs đi một đường và app logs đi một đường khác
+- `ConsoleLogger({ json: true })` không phải thay thế hợp lệ cho `nestjs-pino`
+
+**Request/response auto-log stance:**
+- auto request/response log của `pino-http` là baseline hợp lệ cho API shell
+- route nào cần giảm noise có thể dùng `exclude` hoặc `forRoutes` có chủ đích
+- không tắt auto logs toàn cục rồi kỳ vọng từng controller tự log thủ công để thay thế
+- nếu có route siêu ồn như health/readiness probes, phải loại trừ bằng config owner thay vì ad hoc middleware
+
+**Request id canon:**
+- ưu tiên nhận `X-Request-ID` nếu upstream/proxy đã cấp
+- nếu thiếu thì generate tại boundary đầu tiên bằng `genReqId` logic có owner
+- mọi request log, error envelope, và fallback event phải dùng cùng `requestId`
+- không để module tự phát minh thêm `traceId`/`request_id`/`reqId` song song khi chưa có owner doc riêng
+
+**Logger API stance:**
+- trong phần lớn codebase, ưu tiên Nest `Logger` API để giữ parameter order chuẩn của Nest
+- `PinoLogger` chỉ dùng khi thật sự cần native Pino semantics:
+  - child logger
+  - assign extra fields cho nhiều log liên tiếp
+  - helper/wrapper logging hẹp
+- nếu dùng `PinoLogger` trực tiếp, vẫn phải bám chung redact/serializer/context policy
+
 **Request context rules:**
 - mỗi request phải giữ ổn định:
   - `requestId`
@@ -219,6 +247,35 @@ Auth: **Internal only** — Caddy không expose ra internet
 Contract này chỉ áp dụng khi `Meilisearch` được bật:
 - Phase 2+ bình thường
 - hoặc `Search-first launch` ở Phase 1
+
+### BullMQ observability addendum
+
+Khi BullMQ active, queue lane phải bổ sung tối thiểu:
+
+- structured events:
+  - `queue.job.enqueued`
+  - `queue.job.started`
+  - `queue.job.completed`
+  - `queue.job.failed`
+  - `queue.job.duplicate_skipped`
+  - `queue.job.redriven`
+- metrics:
+  - queue depth
+  - oldest job age
+  - active jobs
+  - failed jobs
+  - dead-letter count
+  - deduplicated jobs
+  - queue event lag nếu có `QueueEvents` listener
+- admin/runtime surfaces:
+  - dead-letter inspection
+  - retry/redrive action
+  - per-queue health snapshot
+
+Rules:
+
+- QueueEvents là observability signal hữu ích, nhưng không là business source-of-truth.
+- backlog lớn hoặc dead-letter tăng không được xem là “infra noise”; đó là product-operational debt phải có owner rõ.
 
 Nếu launch đang ở chế độ SQL-only search, có thể bỏ qua fallback logging này vì không có engine fallback thực sự.
 
@@ -381,17 +438,153 @@ groups:
 
 ```
 apps/api + apps/worker
-  → OpenTelemetry SDK (auto-instrument NestJS)
+  → OpenTelemetry SDK (Node SDK + auto-instrument selected boundaries)
   → OTEL Collector
   → Tempo (trace storage)
   → Grafana (trace UI via Tempo datasource)
 ```
+
+Rules:
+
+- OpenTelemetry không phải observability backend.
+- OTEL chỉ là instrumentation + export/collection layer.
+- Pino structured logs vẫn là log authority; OTEL trace lane chỉ bổ sung correlation và distributed-causality.
 
 ### Trace instrumentation requirements
 - Auto-instrument: HTTP requests, DB queries (Prisma), BullMQ jobs
 - Manual spans: audit writes, outbox dispatch, search sync
 - Correlation: `traceId` must flow into Pino log context (structured field)
 - Propagation: W3C TraceContext headers between API → Worker
+- queue/job correlation metadata phải carry đủ `traceparent` hoặc owner-approved equivalent từ producer sang consumer
+
+### SDK and instrumentation stance
+
+- Node runtime authority: `@opentelemetry/sdk-node`
+- app bootstrap authority: dedicated `otel.bootstrap.ts` helper, không nhét cả lane vào `main.ts`
+- default span processor: `BatchSpanProcessor`
+- SDK bootstrap phải chạy trước khi app bắt đầu nhận request/job
+- `OTEL_ENABLED=false` phải no-op sạch, không giữ side effect runtime
+
+Rules:
+
+- không tạo nhiều tracer provider theo module
+- không coi auto-instrumentation là lý do đủ để bỏ manual span ở owner boundaries quan trọng
+- không span hóa mọi hàm service nhỏ; manual spans chỉ thêm ở boundary thật sự có giá trị chẩn đoán
+
+### Resource and service identity
+
+- `service.name` là bắt buộc; không chấp nhận `unknown_service`
+- resource baseline tối thiểu:
+  - `service.name`
+  - `service.version`
+  - `service.namespace=pmtl`
+  - `deployment.environment.name`
+- `OTEL_RESOURCE_ATTRIBUTES` được phép dùng để thêm resource attributes owner-reviewed
+
+Rules:
+
+- `apps/api` và `apps/worker` phải có `service.name` khác nhau
+- mặc định bắt đầu từ detector set tối thiểu; chỉ cộng thêm host/container/k8s/cloud detector khi deployment context thật sự cần
+
+### Sampling stance
+
+- activation mặc định của PMTL dùng `head sampling 100%`
+- nếu chưa có pressure thực, không cần set sampler riêng
+- giảm volume bằng `TraceIdRatioBasedSampler` chỉ khi measured cost/volume buộc phải làm
+- tail sampling là collector concern, không phải application concern
+
+Rules:
+
+- app SDK không tự phát minh sampling rule theo route/module
+- nếu collector bật tail sampling thì phải có:
+  - dashboard cho sampling pressure
+  - alert khi collector không theo kịp
+  - runbook rollback về simpler sampling
+
+### Propagation and baggage stance
+
+- default propagator bám W3C TraceContext
+- OTEL baggage không là baseline feature của PMTL
+- nội bộ trust boundary có thể propagate trace headers/correlation metadata
+- outbound tới external/public services phải cân nhắc strip hoặc sanitize context
+
+Rules:
+
+- không cho PII, credentials, API keys, doctrinal/private practice notes vào baggage
+- không coi baggage là metadata bus chung giữa modules
+
+### Logs relationship stance
+
+- OpenTelemetry JavaScript logs lane hiện còn development-level; PMTL không dùng nó làm log authority
+- pino/nestjs-pino structured logs vẫn là baseline
+- mục tiêu của OTEL trong PMTL là correlate logs với traces bằng `traceId`/`spanId`, không thay cả log stack
+
+### Collector pipeline stance
+
+Collector baseline shape:
+
+```yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  memory_limiter:
+  batch:
+  # optional:
+  # filter:
+  # redaction:
+  # tailsampling:
+
+exporters:
+  otlp:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp]
+```
+
+Rules:
+
+- collector chỉ include receivers/processors/exporters thật sự cần
+- collector config phải dùng env expansion cho secret/header endpoint nếu có
+- collector không bind public rộng; ưu tiên localhost hoặc Docker-internal service address
+- dev-local collector trên localhost hoặc Docker-internal network được phép dùng plaintext OTLP để giảm friction; không copy stance đó sang shared/prod environments
+- nếu collector nằm ngoài trusted local network, transport phải dùng TLS/mTLS
+- internal telemetry của collector phải được bật đủ để thấy CPU/memory/throughput pressure
+
+### Sensitive-data handling
+
+- principle: data minimization trước, redaction sau
+- không collect từ app side:
+  - password
+  - refresh/access token
+  - API keys
+  - CSRF token
+  - raw email nếu owner policy yêu cầu hash
+  - doctrinal/private notes
+  - member progress tu tập riêng tư
+- collector processor có thể filter/redact thêm, nhưng không phải nơi sửa app instrumentation cẩu thả
+
+### Activation guard
+
+Chỉ được bật OTEL khi:
+
+- phase 1 logs + `/health/*` + `/metrics` đã ổn định
+- requestId/correlation policy đã rõ
+- restore/runbook/ops owner đã có evidence thật
+- service boundaries đủ ổn để trace có ý nghĩa chẩn đoán
+
+Không được bật OTEL chỉ vì:
+
+- muốn “enterprise”
+- muốn có tracing dashboard đẹp
+- framework support sẵn
 
 ### Required spans per trace
 | Span | When |
@@ -410,6 +603,10 @@ apps/api + apps/worker
 | `OTEL_ENABLED` | no | Enable OTEL SDK |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | yes (when enabled) | OTEL Collector endpoint |
 | `OTEL_SERVICE_NAME` | yes (when enabled) | Service name in traces |
+| `OTEL_RESOURCE_ATTRIBUTES` | no | Extra owner-reviewed resource attributes |
+| `OTEL_TRACES_SAMPLER` | no | Head sampler mode when volume forces tuning |
+| `OTEL_TRACES_SAMPLER_ARG` | no | Sampler argument such as trace ratio |
+| `OTEL_EXPORTER_OTLP_HEADERS` | no | Exporter auth headers when collector/backend requires them |
 
 ### Rollback Phase 3
 - Set `OTEL_ENABLED=false` — SDK disables itself, no traces sent
@@ -450,7 +647,10 @@ Tối thiểu phải có panel riêng cho:
 | Prometheus config | `infra/prometheus/prometheus.yml` |
 | Grafana dashboards | `infra/grafana/dashboards/*.json` |
 | Alertmanager rules | `infra/alertmanager/alerts.yml` |
-| OTEL bootstrap | `apps/api/src/platform/telemetry/otel.ts` |
+| OTEL bootstrap (api) | `apps/api/src/platform/telemetry/otel.bootstrap.ts` |
+| OTEL bootstrap (worker) | `apps/worker/src/platform/telemetry/otel.bootstrap.ts` |
+| OTEL collector config | `infra/otel/otelcol.config.yaml` |
+| OTEL implementation canon | `design/04-execution-overlay/repo/OTEL_IMPLEMENTATION_CANON.md` |
 
 ---
 

@@ -26,6 +26,7 @@ Nó tồn tại để web không tự phát minh cache semantics giữa:
 ### `use cache` boundary rule
 
 - Chỉ dùng `'use cache'` cho deterministic server reads hoặc cached component output.
+- Nếu dùng `'use cache'` ở file-level, toàn bộ function exports trong file đó phải là `async`.
 - Không đọc trực tiếp các request-time APIs trong cached scope:
   - `cookies()`
   - `headers()`
@@ -34,6 +35,7 @@ Nó tồn tại để web không tự phát minh cache semantics giữa:
 - Nếu cần runtime values, đọc chúng **ngoài** cached scope rồi truyền vào như arguments serializable.
 - Args và return values của cached function phải serializable theo RSC contract.
 - Không truyền class instances, `URL`, function thường, hoặc shared promise động vào cached scope.
+- Non-serializable values như `children` hoặc Server Action reference chỉ được pass-through; không được introspect hoặc mutate chúng trong cached scope.
 - Không dùng shared `Map<id, Promise<...>>` để “bắc cầu” uncached data sang cached function; ưu tiên built-in `fetch()` dedupe hoặc tách cached/uncached lane cho rõ.
 
 ### Runtime stance
@@ -154,6 +156,7 @@ revalidateTag(tag, 'max')
 ```
 
 - Không dùng single-argument form cũ.
+- Không suppress TypeScript chỉ để giữ `revalidateTag(tag)` pattern cũ.
 
 ### Semantics rule
 
@@ -183,6 +186,11 @@ revalidateTag(tag, 'max')
 - route handler cần expire ngay theo contract ngoài hệ thống
 
 Không lấy `{ expire: 0 }` làm mặc định cho write flow nội bộ.
+
+### Route Handler cache helper rule
+
+- Trong `GET` Route Handlers, nếu cần tận dụng cache của Next.js, phải extract cached helper có `'use cache'` thay vì đặt `'use cache'` trực tiếp trong thân handler.
+- Owner file phải ghi rõ helper nào là cached boundary và runtime APIs nào bị cấm trong helper đó.
 
 ---
 

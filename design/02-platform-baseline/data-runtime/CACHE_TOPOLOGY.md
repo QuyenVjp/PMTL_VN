@@ -216,6 +216,15 @@ Rule:
 - Feed/search/list dài dùng `useInfiniteQuery()` với cursor contract khi UX là infinite scroll / load-more
 - Suspense mode chỉ bật ở component có fallback UI được thiết kế rõ
 
+### Important defaults override discipline
+
+- không để `stale = true`, `retry = 3`, `gcTime = 5 phút` làm product behavior ngầm định cho mọi lane
+- query owner phải chốt override khi:
+  - data nhạy cảm với freshness
+  - query tốn tiền/tài nguyên
+  - retry có thể tạo UX xấu hoặc che lỗi auth
+- structural sharing giữ nguyên làm default, chỉ tắt khi profiling cho thấy cần
+
 ### staleTime policy per query type
 
 | Query | staleTime | gcTime | Note |
@@ -258,6 +267,12 @@ After mutation, invalidate related queries:
 | `POST /community/posts/:id/comments` | Add comment optimistically |
 | `POST /community/posts/:id/heart` | Toggle `viewerHasHearted` và cập nhật `heartCount` lạc quan khi request guard đã pass |
 | `DELETE /community/posts/:id/heart` | Toggle `viewerHasHearted` và giảm `heartCount` lạc quan |
+
+Rules:
+
+- optimistic UI và optimistic cache không đồng nghĩa; owner mutation phải chọn rõ lane nào.
+- optimistic cache phải có rollback context và reconciliation plan.
+- nếu mutation response đã trả canonical projection mới, ưu tiên update từ response thay vì patch mò nhiều key.
 
 ---
 

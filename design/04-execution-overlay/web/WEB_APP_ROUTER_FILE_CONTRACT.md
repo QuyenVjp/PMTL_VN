@@ -138,8 +138,10 @@ Ví dụ direction:
 ### `'use cache'` rule
 
 - `'use cache'` chỉ cho cached deterministic output ở route/component/function scope.
+- Nếu dùng `'use cache'` ở file-level, mọi exported function trong file đó phải là `async`.
 - Không đọc trực tiếp `cookies()`, `headers()`, `searchParams` trong cached scope.
 - Runtime values phải đọc ngoài cached scope rồi truyền vào qua args serializable.
+- Non-serializable values chỉ được pass-through nếu không introspect chúng trong cached scope.
 - Nếu cached scope có dynamic hole hoặc short-lived cache, owner route phải có `Suspense` strategy rõ ràng.
 
 ---
@@ -268,6 +270,7 @@ Ví dụ direction:
 - Dùng `metadata` object cho static pages ổn định.
 - Dùng `generateMetadata()` cho detail pages hoặc pages phụ thuộc data.
 - Chỉ server components mới được export `metadata` hoặc `generateMetadata`.
+- Dynamic metadata được phép stream; không tự hack branch riêng cho bot/crawler nếu Next.js default behavior đã đủ.
 
 ### Page/data dedupe rule
 
@@ -330,6 +333,8 @@ Route-specific `opengraph-image` chỉ thêm ở surfaces cần share mạnh:
 ### Caching rule
 
 - Route Handlers không cached by default.
+- Khi `cacheComponents` bật, `GET` Route Handlers chỉ được prerender/cache hóa nếu không đụng runtime APIs, request object properties, hoặc uncached async sources ngoài cached helper boundary.
+- Không đặt `'use cache'` trực tiếp trong thân Route Handler; nếu cần cached read, extract helper function riêng có `'use cache'`.
 - Nếu một `GET` handler của web tier được cache hoặc prerender, file đó phải ghi rõ owner semantics; không để implicit.
 - Không dùng Route Handler như đường tắt cho data mà Server Component fetch trực tiếp được tốt hơn.
 

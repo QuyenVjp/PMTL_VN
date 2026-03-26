@@ -253,6 +253,17 @@ Note: When PgBouncer enabled, `DATABASE_URL` changes to point to PgBouncer, not 
 | `OTEL_ENABLED` | api + worker | no | enable OTEL SDK |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | api + worker | yes | OTEL Collector endpoint |
 | `OTEL_SERVICE_NAME` | api + worker | yes | service identifier in traces |
+| `OTEL_RESOURCE_ATTRIBUTES` | api + worker | no | extra owner-reviewed resource attributes such as `deployment.environment.name` |
+| `OTEL_TRACES_SAMPLER` | api + worker | no | head sampler mode when tuning data volume |
+| `OTEL_TRACES_SAMPLER_ARG` | api + worker | no | sampler argument such as ratio value |
+| `OTEL_EXPORTER_OTLP_HEADERS` | api + worker | no | exporter auth headers when collector/backend requires them |
+
+Rules:
+
+- `OTEL_SERVICE_NAME` không được để fallback `unknown_service`.
+- `OTEL_RESOURCE_ATTRIBUTES` chỉ được dùng cho attributes owner-reviewed; không nhét secret/PII.
+- `OTEL_TRACES_SAMPLER*` chỉ set khi measured volume/cost buộc phải tuning; activation mặc định của PMTL là head sampling 100%.
+- `OTEL_EXPORTER_OTLP_HEADERS` là `admin/service credential`; không xuất hiện ở web/admin env.
 
 ### pgvector (if trigger met — see pgvector-decision.md)
 

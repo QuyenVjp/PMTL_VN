@@ -26,6 +26,7 @@ Chốt stance cho Async Local Storage trong backend PMTL.
 
 - phase_1 không bắt ALS làm baseline bắt buộc
 - request correlation hiện tại ưu tiên explicit propagation qua logger/request context rules
+- `nestjs-pino` dùng AsyncLocalStorage nội bộ cho request context là chấp nhận được; điều bị deferred là repo tự mở thêm một ALS abstraction mới làm application baseline
 - nếu sau này bật ALS, mục tiêu phải rõ: logging context, trace correlation, or tenancy context
 
 ## Must not
@@ -43,4 +44,3 @@ Chốt stance cho Async Local Storage trong backend PMTL.
 
 - [OBSERVABILITY_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
 - [AI_DEBUGGING_DISCIPLINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md)
-

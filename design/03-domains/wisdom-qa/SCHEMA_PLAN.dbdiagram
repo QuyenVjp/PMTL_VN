@@ -1,0 +1,198 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "wisdom_entries",
+      "schemaName": "public",
+      "x": 0,
+      "y": 50
+    },
+    {
+      "name": "baihua_books",
+      "schemaName": "public",
+      "x": 460.5,
+      "y": 50
+    },
+    {
+      "name": "baihua_book_entries",
+      "schemaName": "public",
+      "x": 921,
+      "y": 50
+    },
+    {
+      "name": "baihua_audio_tracks",
+      "schemaName": "public",
+      "x": 1381.5,
+      "y": 50
+    },
+    {
+      "name": "wisdom_entry_tags",
+      "schemaName": "public",
+      "x": 0,
+      "y": 900
+    },
+    {
+      "name": "qa_entries",
+      "schemaName": "public",
+      "x": 460.5,
+      "y": 676
+    },
+    {
+      "name": "authority_profiles",
+      "schemaName": "public",
+      "x": 921,
+      "y": 292
+    },
+    {
+      "name": "qa_entry_tags",
+      "schemaName": "public",
+      "x": 1381.5,
+      "y": 452
+    },
+    {
+      "name": "qa_entry_keyword_aliases",
+      "schemaName": "public",
+      "x": 0,
+      "y": 1078
+    },
+    {
+      "name": "offline_bundles",
+      "schemaName": "public",
+      "x": 460.5,
+      "y": 1398
+    },
+    {
+      "name": "offline_bundle_entries",
+      "schemaName": "public",
+      "x": 921,
+      "y": 758
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "baihua_books",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "baihua_book_id"
+      ],
+      "secondTableName": "baihua_book_entries",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "wisdom_entries",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "wisdom_entry_id"
+      ],
+      "secondTableName": "baihua_book_entries",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "baihua_books",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "baihua_book_id"
+      ],
+      "secondTableName": "baihua_audio_tracks",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "wisdom_entries",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "wisdom_entry_id"
+      ],
+      "secondTableName": "baihua_audio_tracks",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "wisdom_entries",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "wisdom_entry_id"
+      ],
+      "secondTableName": "wisdom_entry_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "qa_entries",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "qa_entry_id"
+      ],
+      "secondTableName": "qa_entry_tags",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "qa_entries",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "qa_entry_id"
+      ],
+      "secondTableName": "qa_entry_keyword_aliases",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "offline_bundles",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offline_bundle_id"
+      ],
+      "secondTableName": "offline_bundle_entries",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    }
+  ]
+}

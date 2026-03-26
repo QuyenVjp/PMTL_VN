@@ -20,6 +20,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - bootstrap baseline: `NestFactory.create(AppModule)`
 - route syntax phải bám Nest 11 + Express v5 semantics
 - `ConsoleLogger` không phải logging authority; chỉ chấp nhận bootstrap fallback rất sớm nếu logger module chưa dựng xong
+- `NestFactory.create(AppModule, { bufferLogs: true })` + `app.useLogger(app.get(Logger))` là bootstrap canon cho logger authority
 - exact version pin owner: [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
 - feature-status owner: [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
 - Nest 11 nuance owner: `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`
@@ -29,20 +30,22 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - `class-validator` + class DTO decorators làm validation baseline
 - exception shape tùy hứng theo từng controller
 - logger rời rạc bằng `console.*`
+- tạo `PinoLogger`/`pino()` instance rời rạc ngoài DI như một authority thứ hai
 - business logic trong controller
 
 ## Request pipeline mặc định
 
 1. request-id / correlation middleware
 2. proxy / client-ip resolution middleware
-3. auth guard nếu route cần auth
-4. role/permission guard nếu route cần authz
-5. rate-limit guard nếu route thuộc protected surface
-6. `ZodValidationPipe` cho params/query/body
-7. controller mỏng gọi service
-8. service xử lý business logic + persistence
-9. global exception filter chuẩn hóa error envelope
-10. response logging / metrics capture
+3. `pino-http` request context binding / auto request log
+4. auth guard nếu route cần auth
+5. role/permission guard nếu route cần authz
+6. rate-limit guard nếu route thuộc protected surface
+7. `ZodValidationPipe` cho params/query/body
+8. controller mỏng gọi service
+9. service xử lý business logic + persistence
+10. global exception filter chuẩn hóa error envelope
+11. response logging / metrics capture
 
 ## Middleware discipline
 
@@ -116,6 +119,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - env contract chuẩn của PMTL vẫn do `design/04-execution-overlay/repo/ENV_INVENTORY.md` + `common/config/config.schemas.ts` owner, không do Nest docs sample tự quyết
 - validate env bằng `Zod` tại bootstrap là baseline của PMTL; không đổi sang Joi/class-validator-first chỉ vì Nest docs có ví dụ
 - runtime env phải override `.env` file nếu cùng key; đây là behavior mặc định cần được coi là canonical
+- `validationSchema` hoặc sample validator của `ConfigModule.forRoot(...)` không được hiểu sai là đã validate mọi custom/namespaced config object; custom config factory vẫn phải tự validate/transform object nó trả ra.
 - feature/module-specific config được phép dùng namespaced config hoặc `forFeature()`, nhưng:
   - key namespace phải rõ owner
   - không đọc chéo config module khác theo kiểu ngẫu hứng
@@ -348,9 +352,14 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - OpenAPI artifact authority của `apps/api` là `@nestjs/swagger`, nhưng contract authority vẫn là Zod + owner docs
 - Swagger decorators là transport/documentation layer, không được trở thành source-of-truth thứ hai
 - `SwaggerModule.createDocument()` và `SwaggerModule.setup()` là runtime delivery mechanism hợp lệ cho dev/staging docs
+- `documentFactory = () => SwaggerModule.createDocument(...)` là bootstrap path hợp lệ để trì hoãn document generation; không cần eager-create document nặng ở startup nếu chưa cần serve docs ngay.
 - OpenAPI security scheme phải bám auth transport thật của PMTL, không copy bearer-only sample nếu browser flow đang là cookie-first
 - `Mapped Types` chỉ dùng khi chúng không làm mờ owner DTO/schema semantics
 - CLI plugin / decorator helpers chỉ là boilerplate reduction tool, không thay owner contract review
+- availability của Swagger UI/raw docs phải đi qua env/security decision rõ:
+  - dev/staging có thể bật UI
+  - production có thể chỉ để raw JSON/YAML hoặc tắt hoàn toàn
+  - không assume `/api` docs UI luôn được public chỉ vì sample docs mặc định làm vậy
 
 ### OpenAPI anti-patterns
 
@@ -358,6 +367,47 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - bearer auth annotate toàn app dù browser flow thực tế là cookie + CSRF
 - expose `/api/docs` ở production mà không có owner security decision rõ
 - dùng mapped types để suy ra DTO business semantics mà không có owner row trong tracking docs
+
+## File upload discipline
+
+- file upload baseline của PMTL bám `@nestjs/platform-express` + Multer vì phase 1 đã chốt Express platform.
+- Multer chỉ xử lý `multipart/form-data`; không coi nó là generic body parser cho mọi upload edge.
+- upload route phải đi qua:
+  - interceptor phù hợp (`FileInterceptor`, `FilesInterceptor`, `FileFieldsInterceptor`)
+  - file validation pipe/validator rõ ràng
+  - storage owner service/module ở dưới
+- upload validation tối thiểu phải kiểm:
+  - mime/type allowlist
+  - size limit
+  - required/optional semantics
+  - count limit nếu multi-file
+- Multer defaults nên owner ở platform/storage bootstrap qua module config; route-level override chỉ dùng khi use-case thật sự khác.
+- phase 1 không dual-support Fastify upload semantics; docs/sample Fastify lane không phải baseline PMTL.
+
+### File upload anti-patterns
+
+- controller tự parse multipart payload bằng tay
+- coi filename/originalname từ client là trusted
+- dùng `AnyFilesInterceptor` như default shortcut cho mọi upload route
+- mở upload route mà không có size/type/count guard rõ
+- để controller ghi thẳng disk/storage path logic thay vì đi qua storage owner
+
+## Testing seam discipline
+
+- unit tests của `apps/api` phải ưu tiên `TestingModule` + mock provider seam; không mở DB connection thật nếu test không cần integration depth đó.
+- repository/model/provider phụ thuộc external runtime phải được mock qua custom provider token thay vì kéo cả module graph mù.
+- controller tests chỉ xác nhận:
+  - route wiring
+  - validation/guard/filter integration ở mức cần thiết
+  - response shape hẹp
+- service tests là nơi xác nhận business orchestration và dependency interactions.
+- integration tests mới được chạm DB/runtime thật, và phải có fixture/bootstrap owner rõ.
+
+### Testing anti-patterns
+
+- unit test import cả `AppModule` chỉ để test một service
+- test service nhưng vẫn kéo Prisma/DB/network thật vì chưa có provider seam
+- đợi tới e2e mới phát hiện validation/error-envelope drift
 
 ## NestJS 11 transport and framework notes
 

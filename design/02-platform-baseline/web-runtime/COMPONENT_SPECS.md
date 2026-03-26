@@ -660,6 +660,7 @@ Mô tả thêm (optional): [Textarea]
   - `zod`
   - `@hookform/resolvers/zod`
   - shadcn `Field` family
+- Resolver authority là `zodResolver`; examples dùng resolver khác chỉ là tham khảo ngoài baseline PMTL.
 - Anatomy mặc định:
   - `Field`
   - `FieldLabel`
@@ -672,11 +673,23 @@ Mô tả thêm (optional): [Textarea]
   - `Input`, `Textarea`: bind trực tiếp từ `field`
   - `Select`, `Switch`, `Checkbox`, `RadioGroup`, `Input OTP`, date-like headless controls: dùng `Controller`
   - dynamic array rows: dùng `useFieldArray`
+- State rules:
+  - `defaultValues` lấy từ owner projection
+  - data đổi theo entity/route thì đi qua `reset`
+  - không mirror full form state sang Zustand hoặc context global nếu chỉ để submit
+- Subscription rules:
+  - ưu tiên `register`
+  - `Controller` chỉ cho controlled/headless lane
+  - `watch` / `useWatch` chỉ dùng cho derived UI hẹp, không làm bus toàn form
 - Error/accessibility rules:
   - `Field` phải có `data-invalid` khi field invalid
   - control phải có `aria-invalid`
   - lỗi phải hiện bằng text thật qua `FieldError`
   - help text / error text phải gắn đúng với control theo markup accessible của shadcn
+- Submit/error rules:
+  - submit luôn đi qua `handleSubmit`
+  - lỗi field từ server map về `setError`
+  - lỗi form-level render ở summary/banner owner, không chôn trong 1 field sai ngữ nghĩa
 - Validation mode rules:
   - auth/security-sensitive: `onSubmit` hoặc `onBlur`
   - profile/settings: `onBlur`

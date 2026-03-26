@@ -21,6 +21,20 @@ Nó tồn tại để web scaffold không phải tự bịa query keys, tự har
 - `apps/web` chỉ dùng `TanStack Query` cho client-interactive server state.
 - Public/member page bootstrap bằng `RSC` không được thay bằng client query chỉ vì tiện tay.
 
+## Important defaults stance
+
+- query mặc định là `stale`
+- inactive query mặc định `gcTime = 5 phút`
+- failed query mặc định retry `3 lần`
+- stale query có thể refetch khi mount/focus/reconnect
+- structural sharing giữ nguyên làm baseline
+
+Rules:
+
+- không được để default này tác động product semantics một cách vô thức.
+- query family owner phải chốt `staleTime`, `gcTime`, `retry` khi lane đó quan trọng cho UX hoặc correctness.
+- auth/session, mutation-follow-up, và payment-like semantics không được dựa mù vào retry mặc định.
+
 ---
 
 ## Query key doctrine
@@ -126,6 +140,20 @@ Dùng cho:
 
 Không dùng offset list thường chỉ để nhìn “ngầu hơn”.
 
+### Pagination / infinite canon
+
+- paginated query và infinite query là 2 lane khác nhau; không trộn bừa.
+- paginated query dùng khi:
+  - UX là page numbers / next-previous rõ
+  - URL/search params cần đại diện page hiện tại
+- infinite query dùng khi:
+  - UX là load-more / infinite scroll
+  - backend có cursor contract hoặc owner đã chấp nhận cursor semantics
+- `keepPreviousData`-style UX phải được thiết kế ở query owner; không để table/list giật trống khi page đổi nếu route đó đáng giữ continuity.
+- route nào có thể scroll dài và user quay lại nhiều:
+  - ưu tiên `useInfiniteQuery()` + scroll restoration plan
+  - nhưng không vượt qua page loader/data ownership canon
+
 ---
 
 ## Web key families
@@ -212,6 +240,12 @@ Khi mutation success:
 - nếu nhiều key bị ảnh hưởng, dùng `Promise.all`
 - nếu mutation callback trả Promise, giữ async chain để mutation không coi là complete quá sớm
 
+### Mutation response vs invalidation
+
+- nếu mutation response đã trả đủ canonical projection mới, được phép update cache trực tiếp từ response để giảm refetch.
+- nếu response không đủ aggregate mới, phải invalidate owner queries thay vì patch cache đoán mò.
+- `Updates from Mutation Responses` chỉ hợp lệ khi response owner thật sự là source mới nhất của cùng query shape.
+
 ### Minimum invalidation patterns
 
 - create:
@@ -251,6 +285,19 @@ Khi mutation success:
   - invalidate `['notifications', 'preferences']`
 - offline bundle download/delete:
   - invalidate `['offline-bundles', 'list', filters]`
+
+### Optimistic update canon
+
+- optimistic UI lane hợp lệ cho:
+  - heart / bookmark
+  - add comment vào list đang mở
+  - practice-entry append nhỏ
+- optimistic cache lane chỉ hợp lệ khi:
+  - mutation scope hẹp
+  - rollback có thể làm sạch
+  - response hoặc invalidation theo sau đã chốt
+- optimistic cache phải dùng `onMutate` + rollback context rõ; không sửa cache inline rời rạc trong component.
+- nếu mutation có khả năng bị moderation/rejection/permission race, ưu tiên optimistic UI nhẹ hơn là optimistic cache nặng.
 
 ---
 
@@ -294,6 +341,17 @@ Không được:
 - Chỉ tách query khi:
   - route owner thật sự tách aux route
   - UX cần non-blocking load lane riêng
+
+## SSR / hydration / prefetch rule
+
+- `Server Rendering & Hydration` chỉ dùng khi client island cần cache nóng ngay sau render đầu hoặc để tránh waterfall rõ ràng.
+- dehydration state phải xuất phát từ owner query options; không serialize raw fetched blobs theo kiểu ad hoc.
+- `QueryClientProvider` là app shell concern; không tạo QueryClient mới trong component con.
+- route prefetch chỉ được phép kéo theo query prefetch khi:
+  - route transition có xác suất cao
+  - query cost có lợi rõ
+  - không làm lệch cache ownership giữa Next.js route prefetch và TanStack prefetch
+- `Next.js app with prefetching` và `Next.js app with streaming` được coi là pattern tham khảo, không phải giấy phép hydrate mọi thứ sang client.
 
 ---
 
