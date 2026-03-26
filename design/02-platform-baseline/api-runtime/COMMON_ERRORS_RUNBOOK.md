@@ -45,6 +45,15 @@ Tạo runbook ngắn cho các nhóm lỗi Nest/common backend mà AI hoặc deve
   - [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
   - [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
 
+### Prisma / migration / connection errors
+
+- triệu chứng: P20xx, migrate fail, pool timeout, relation drift, shadow database fail
+- đọc:
+  - [PRISMA_7_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
+  - [PRISMA_QUERY_PATTERN_RULES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md)
+  - [MIGRATION_STRATEGY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md)
+  - [ERROR_CODE_REGISTRY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
+
 ### Auth / cookies / CSRF / throttling
 
 - đọc:
@@ -55,4 +64,3 @@ Tạo runbook ngắn cho các nhóm lỗi Nest/common backend mà AI hoặc deve
 
 - không sửa lỗi theo stackoverflow snippet trước khi map lỗi vào owner doc
 - không đổi owner contract chỉ để dập lỗi local
-

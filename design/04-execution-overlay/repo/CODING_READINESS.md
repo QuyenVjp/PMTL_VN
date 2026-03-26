@@ -260,7 +260,7 @@ Danh sách flags cần tạo trong `feature_flags` table khi launch:
 |---|---|---|---|
 | `community.post.enabled` | Cho phép member tạo community post | `false` | Community |
 | `community.guestbook.enabled` | Cho phép submit guestbook | `true` | Community |
-| `search.meilisearch.enabled` | Dùng Meilisearch thay SQL | `false` | Search |
+| `search.meilisearch.enabled` | Cờ đồng bộ trạng thái triển khai Meilisearch cho admin; không override `SEARCH_ENGINE` | `true` under current Search-first launch | Search |
 | `notification.push.enabled` | Cho phép push notifications | `false` | Notification |
 | `wisdom.offline.enabled` | Cho phép download offline bundles | `false` | Wisdom-QA |
 | `vow.assisted_entry.enabled` | Cho phép admin assisted entry | `false` | Vows-Merit |

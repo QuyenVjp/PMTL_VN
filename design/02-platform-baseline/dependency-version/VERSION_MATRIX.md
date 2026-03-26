@@ -133,6 +133,13 @@ Zod official paths to prefer for behavior questions:
   - app-router, cache, metadata, and route behavior phải đọc version-matched docs trước khi scaffold
 - Prisma:
   - design pin là `7.5.0`, nhưng chưa có installed manifest trong `apps/api`; không được giả định generator/runtime setup đã tồn tại
+  - official paths nên ưu tiên:
+    - PostgreSQL quickstart / add to existing project
+    - Upgrade to v7
+    - Prisma schema overview
+    - Prisma Client setup + database connections
+    - Migrate
+    - query optimization / performance
 - Node / TypeScript:
   - repo root hiện vẫn giữ installed truth cũ hơn recommended scaffold pins
   - nếu muốn nâng root toolchain, phải đi qua dependency-governance pass riêng; không tự nâng lẫn vào feature scaffold

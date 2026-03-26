@@ -127,9 +127,10 @@ Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMI
 3. [zod-4-runtime-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md)
 4. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
 5. [prisma-7-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
-6. [error-envelope-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
-7. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
-8. [auth-session-flow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
+6. [prisma-query-pattern-rules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md)
+7. [error-envelope-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
+8. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+9. [auth-session-flow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
 
 ### Web/Admin path
 
@@ -185,6 +186,7 @@ Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMI
 | [xlch-official-alignment.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/external-research/XLCH_OFFICIAL_ALIGNMENT.md) | Những family và ranh giới nội dung PMTL phải preserve từ site official `xlch.org` |
 | [baihua-audiobook-ingestion-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/wisdom-qa/REFERENCES/BAIHUA-AUDIOBOOK-INGESTION-INVENTORY.MD) | Inventory các lớp dữ liệu cần ingest từ source audiobook |
 | [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md) | Merge 10 .dbml → Prisma schema, enums, FK graph, naming |
+| [prisma-query-pattern-rules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md) | Canon cho select/include/omit, relation queries, null/undefined, raw SQL/TypedSQL, và pooling notes |
 
 ### Infra & Ops — Phase 2+ ready design docs
 | File | Nội dung |

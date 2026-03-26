@@ -83,8 +83,12 @@ Phase 2+ (Meilisearch active):
     → Meilisearch upsert / delete
 ```
 
-`SEARCH_ENGINE` env var controls routing: `sql` (default) or `meilisearch`.
+`SEARCH_ENGINE` env var controls routing: `sql` or `meilisearch`.
+Trong launch profile hiện tại của PMTL, default expected value là `meilisearch`.
 SearchService reads this at startup — no runtime toggle.
+
+`search.meilisearch.enabled` nếu vẫn được seed trong `feature_flags` table chỉ là cờ đồng bộ trạng thái triển khai cho admin UX.
+Nó không được override `SEARCH_ENGINE`, không được tạo “công tắc thứ hai” cạnh tranh với env runtime authority.
 
 ## Freshness and failover budget
 
@@ -178,9 +182,10 @@ export const PMTL_INDEX_SETTINGS: Settings = {
     'typo',
     'proximity',
     'attribute',
+    'attributeRank',
+    'wordPosition',
     'sort',
     'exactness',
-    // No custom rules — default ranking is sufficient for editorial content
   ],
 
   // Vietnamese requires no special tokenizer — Meilisearch handles Unicode well
@@ -216,8 +221,49 @@ export const PMTL_INDEX_SETTINGS: Settings = {
   pagination: {
     maxTotalHits: 500,  // hard cap for public queries
   },
+
+  faceting: {
+    maxValuesPerFacet: 20,
+  },
+
+  prefixSearch: 'indexingTime',
 };
 ```
+
+### Settings authority and exclusions
+
+PMTL chỉ coi các settings sau là canonical launch settings:
+
+| Setting | Stance |
+|---|---|
+| `searchableAttributes` | required |
+| `filterableAttributes` | required |
+| `sortableAttributes` | required |
+| `displayedAttributes` | required |
+| `rankingRules` | required |
+| `typoTolerance` | required |
+| `pagination.maxTotalHits` | required |
+| `faceting.maxValuesPerFacet` | required |
+| `synonyms` | optional curation lane, owner-reviewed only |
+| `dictionary` / `stopWords` | optional language-tuning lane, owner-reviewed only |
+
+Rules:
+
+- `attributeRank` và `wordPosition` được chốt là hợp lệ cho PMTL từ line mới của Meilisearch, vì chúng giúp ưu tiên `title`/`excerpt` tốt hơn cho editorial và Wisdom search.
+- `distinctAttribute` không là baseline cho unified index; chỉ mở khi owner doc riêng chứng minh duplicate collapse thực sự cần.
+- `embedders`, `vector`, `chat workspace`, `MCP`, `LangChain`, `similar documents`, `foreignKeys`, `network`, `sharding`, `webhooks`, `task queue compaction`, `compact`, `experimental features` không thuộc PMTL search baseline.
+- `multi-search` và `facet search` không là public baseline route; chỉ mở khi search UX có owner doc riêng yêu cầu chúng.
+- `PUT /api/admin/search/index-settings` không được dùng để “thử tay” trên production. Mọi thay đổi settings phải xuất phát từ owner doc + audit note + verification.
+
+### Synonyms / dictionary curation stance
+
+- `synonyms` chỉ được dùng cho:
+  - Việt hóa thuật ngữ phổ biến
+  - biến thể dấu / không dấu khi owner cho phép
+  - alias editorial đã được review
+- không dùng `synonyms` để ép semantic equivalence mơ hồ hoặc “đoán ý người dùng”.
+- `dictionary`, `nonSeparatorTokens`, `separatorTokens`, `stopWords` là language-tuning lane hẹp.
+- mọi thay đổi language-tuning phải được version hóa như index settings change và có rollback note.
 
 ---
 
@@ -371,6 +417,32 @@ export class SearchService {
 - Dump dùng cho migration/export/import giữa environments hoặc version transitions
 - Không coi Meilisearch là source of truth; nếu mất index thì canonical recovery path vẫn là rebuild từ Postgres
 
+### Snapshot / dump / restore stance
+
+- `snapshot` là lane ưu tiên cho rollback nhanh cùng version line gần nhau.
+- `dump` là lane ưu tiên cho:
+  - migration giữa environments
+  - version transitions cần kiểm soát
+  - forensic export / controlled restore drill
+- restore từ snapshot/dump chỉ là acceleration path.
+- nếu restore có nghi ngờ drift, canonical answer vẫn là `rebuild from Postgres`.
+- Search-first launch phải có runbook tối thiểu cho:
+  - tạo snapshot thủ công
+  - xác minh snapshot tồn tại
+  - dump trước upgrade đáng kể
+  - post-restore verification bằng stats + sample lookup
+
+### Version / upgrade stance
+
+- Changelog là input bắt buộc trước mỗi lần đổi image/version line.
+- Feature hoặc route nào mới nhưng experimental hoặc enterprise-only thì không được tự động nhập vào PMTL baseline.
+- Release notes phải được đọc trước khi nâng các lane:
+  - ranking rules
+  - tasks lifecycle
+  - dump/snapshot format
+  - experimental flags
+  - under-the-hood changes ảnh hưởng memory/indexing
+
 ---
 
 ## Indexing pipeline (Phase 2+)
@@ -396,6 +468,26 @@ export class SearchService {
   - `operation` (`upsert` | `delete` | `reindex`)
 - admin/status surface nên đọc được task state từ Meilisearch tasks API thay vì chỉ nhìn log text
 - replay cùng `idempotencyKey` phải map về một business outcome rõ: `duplicate_skipped`, `task_rechecked`, hoặc `reissued_after_failure`
+
+### Meilisearch task lifecycle contract
+
+PMTL chỉ coi một write vào Meilisearch là `completed` khi task state đã được xác nhận qua Tasks API.
+
+| Task state | PMTL meaning |
+|---|---|
+| `enqueued` | đã nhận yêu cầu, chưa xử lý |
+| `processing` | engine đang xử lý |
+| `succeeded` | write hoặc settings update hoàn tất |
+| `failed` | phải surface lỗi rõ, không được giả completed |
+| `canceled` | operator hoặc system chủ động hủy |
+
+Rules:
+
+- `taskUid` phải được log cùng `requestId` hoặc `outboxEventId` khi có.
+- `GET /api/admin/search/indexing-jobs/:publicId` nên surface được `taskUid`, `status`, `errorCode`, `errorMessage`, `enqueuedAt`, `startedAt`, `finishedAt`.
+- full reindex, partial source reindex, document upsert/delete, settings update đều phải coi là async task-bearing operations.
+- `Tasks API` là operational truth cho trạng thái index job; application log chỉ là evidence phụ.
+- không dùng `delete tasks` hay `cancel tasks` như cleanup mặc định. Đó là operator action hiếm, phải có audit trail.
 
 ### Reindex progress contract
 
@@ -601,6 +693,29 @@ meilisearch: await this.meili.health().catch(() => ({ status: 'unavailable' })),
   - spot-check các published records ngẫu nhiên
   - nếu doc canonical không xuất hiện ở index dù đã qua freshness SLA, coi như sync drift
 
+### Observability / admin evidence minimum
+
+Khi Meilisearch active, admin/ops surfaces tối thiểu phải đọc được:
+
+- `/health`
+- `/stats`
+- recent `/tasks`
+- index settings fingerprint
+- document count per unified index
+- last successful reindex timestamp
+- fallback event count từ API layer
+
+Operational metrics tối thiểu:
+
+- Meilisearch health status
+- indexing task success/failure count
+- indexing task duration
+- search fallback rate
+- search query latency by `engineRequested` / `engineActual`
+- reindex age / freshness lag
+
+`/logs` và `/metrics` của Meilisearch chỉ là operator evidence lane; PMTL không coi raw engine logs là contract authority cho user-facing freshness.
+
 ---
 
 ## Docker Compose
@@ -609,7 +724,7 @@ meilisearch: await this.meili.health().catch(() => ({ status: 'unavailable' })),
 # infra/docker/docker-compose.meilisearch.yml (override file)
 services:
   meilisearch:
-    image: getmeili/meilisearch:v1.32.1
+    image: getmeili/meilisearch:v1.40.0
     env_file: /etc/pmtl/secrets/.env.production
     environment:
       MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY}
@@ -632,7 +747,8 @@ volumes:
 
 **Pinning rule**:
 - không đoán trước image tag tương lai trong design doc
-- ví dụ ở đây dùng `v1.32.1` vì đó là release stable mới nhất đã review tại thời điểm cập nhật doc; khi rollout thật phải re-check upstream release notes rồi ghi lại tag đã chọn trong deploy artifact / runbook
+- compose/runtime artifact phải pin exact reviewed image tag sau khi đọc changelog và upgrade notes của line sẽ dùng
+- design doc có thể dùng placeholder nếu exact tag chưa được rollout artifact chốt
 
 ---
 
@@ -654,9 +770,9 @@ volumes:
 
 | Env | Required | Default | Purpose |
 |---|---|---|---|
-| `SEARCH_ENGINE` | no | `sql` | `sql` or `meilisearch` |
-| `MEILISEARCH_URL` | Phase 2+ | — | HTTP URL: `http://meilisearch:7700` |
-| `MEILISEARCH_MASTER_KEY` | Phase 2+ | — | Master API key (keep secret) |
+| `SEARCH_ENGINE` | no | `meilisearch` under current launch profile | `sql` or `meilisearch` |
+| `MEILISEARCH_URL` | Search-first launch or Phase 2+ | — | HTTP URL: `http://meilisearch:7700` |
+| `MEILISEARCH_MASTER_KEY` | Search-first launch or Phase 2+ | — | Master API key (keep secret) |
 | `MEILISEARCH_INDEX_UID` | no | `pmtl_content` | Index name |
 
 ---
@@ -692,3 +808,30 @@ volumes:
 | Idempotency | Replay same search-sync job → `duplicate_skipped` log, no duplicate in Meilisearch |
 | Reindex | Admin triggers reindex → all published posts appear in Meilisearch, count matches DB |
 | Status endpoint | `GET /api/search/status` returns current engine and document count |
+
+---
+
+## Explicit exclusions for PMTL baseline
+
+Các lane sau không được AI scaffold hoặc operator mở mặc định chỉ vì Meilisearch có support:
+
+- `chats`
+- `MCP`
+- `LangChain`
+- `embedders`
+- `vector storage`
+- `similar documents`
+- `foreignKeys`
+- `network`
+- `sharding / replicated sharding`
+- `_shard` filters
+- `useNetwork`
+- `task queue compaction`
+- `compact`
+- enterprise-only features chưa có owner decision
+
+Muốn mở bất kỳ lane nào ở trên phải có:
+
+1. owner doc riêng trong `design/`
+2. runtime justification đo được
+3. env / security / backup / observability contract riêng

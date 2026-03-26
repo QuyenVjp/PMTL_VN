@@ -4,7 +4,7 @@
 
 - Đồng bộ một bài viết đã publish từ content owner sang search index.
   - **Phase 1**: sync inline — content publish trigger gọi trực tiếp search service để update SQL indexes / revalidate. Fire-and-forget có log nếu lỗi.
-  - **Phase 2+** (khi `outbox.enabled` + `search.meilisearch.enabled` bật): flow `canonical write → outbox → dispatcher → execution queue → worker → Meilisearch upsert`.
+  - **Phase 2+** (khi `outbox.enabled` bật và runtime search line đang dùng Meilisearch): flow `canonical write → outbox → dispatcher → execution queue → worker → Meilisearch upsert`.
 
 ## owner module (module sở hữu)
 
@@ -78,4 +78,5 @@
 
 - Search chỉ đọc source fields từ content owner.
 - Không cập nhật ngược canonical post body từ search module.
+- `SEARCH_ENGINE` là runtime authority; `search.meilisearch.enabled` nếu có chỉ là rollout/status mirror.
 - Nếu sau này bật `pgvector`, đó là pipeline bổ sung cho recommendation/related-content chứ không thay flow này.

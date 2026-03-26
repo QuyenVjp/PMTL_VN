@@ -163,9 +163,16 @@ Rules:
 
 | Env | Owner | Required when | Purpose |
 |---|---|---|---|
-| `MEILI_HOST` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch host URL |
-| `MEILI_MASTER_KEY` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch master key |
-| `MEILI_INDEX_NAME` | search | no | index name (default: `pmtl_content`) |
+| `SEARCH_ENGINE` | search | no | runtime routing authority: `sql` or `meilisearch` |
+| `MEILISEARCH_URL` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch host URL |
+| `MEILISEARCH_MASTER_KEY` | search | yes when `Search-first launch` or Phase 2+ search engine active | Meilisearch master key |
+| `MEILISEARCH_INDEX_UID` | search | no | index name (default: `pmtl_content`) |
+
+Rules:
+
+- Canonical env names là `MEILISEARCH_*`; không được scaffold alias `MEILI_*` mới.
+- `SEARCH_ENGINE` là authority quyết định API route qua SQL hay Meilisearch.
+- nếu seed `search.meilisearch.enabled` trong `feature_flags`, flag đó chỉ là cờ đồng bộ trạng thái triển khai cho admin; không override env authority.
 
 ### Error tracking / external monitoring
 

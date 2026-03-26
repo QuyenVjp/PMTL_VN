@@ -122,6 +122,16 @@ Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/
 - `platform.not_found`
 - `platform.unexpected_error`
 
+### Prisma / Persistence
+
+- `prisma.unique_conflict`
+- `prisma.record_not_found`
+- `prisma.foreign_key_conflict`
+- `prisma.transaction_conflict_retryable`
+- `prisma.pool_timeout`
+- `prisma.query_invalid`
+- `prisma.migration_failed`
+
 ## Status mapping guideline
 
 - `400`: invalid input / precondition fail

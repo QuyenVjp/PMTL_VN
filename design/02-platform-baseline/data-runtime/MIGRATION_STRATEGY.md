@@ -13,6 +13,7 @@ File này chốt schema evolution strategy cho NestJS + Prisma.
 - Migration phải idempotent ở mức vận hành hợp lý
 - Destructive migration cần plan rollback hoặc restore path
 - **Backup DB TRƯỚC mọi production migration**
+- Prisma 7 CLI config authority nằm ở `prisma.config.ts`, không ở các flag ad hoc cũ
 
 ---
 
@@ -60,6 +61,14 @@ npx prisma validate
 npx prisma format
 ```
 
+Prisma 7 note:
+
+- `prisma.config.ts` phải chỉ rõ:
+  - `schema`
+  - `migrations.path`
+  - `datasource.url`
+- không coi `--schema`, `--url`, `--shadow-database-url` kiểu cũ là baseline workflow contract nữa
+
 ### Production
 
 ```bash
@@ -72,9 +81,11 @@ npx prisma migrate status
 # Diff: so sánh schema vs DB hiện tại
 npx prisma migrate diff \
   --from-schema-datamodel prisma/schema.prisma \
-  --to-schema-datasource prisma/schema.prisma \
+  --to-config-datasource \
   --exit-code
 ```
+
+Nếu cần so sánh config-backed datasource hai phía, ưu tiên các mode dựa trên `prisma.config.ts`; không khóa repo vào mental model flag cũ khi v7 đã đổi.
 
 ---
 
@@ -136,6 +147,22 @@ Step 5 — Verify: SELECT COUNT(*) FROM posts WHERE public_id IS NULL; → 0
 
 **Rule**: Không drop column trong cùng deploy với add column. Tối thiểu 1 deploy cycle giữa add → drop.
 
+## Shadow database stance
+
+- Prisma Migrate dựa vào shadow database cho một số workflow diff/migrate dev.
+- Shadow DB là tooling concern, không phải application datasource.
+- Khi local/dev/staging gặp lỗi shadow database:
+  - kiểm tra `prisma.config.ts`
+  - kiểm tra quyền tạo/drop schema hoặc database
+  - không vá bằng cách đổi thẳng application datasource cho qua lỗi
+
+## Baselining existing database stance
+
+- Nếu về sau PMTL import một database có sẵn:
+  - phải baseline rõ migration history
+  - không được vừa introspect vừa coi schema hiện hữu là migration history hoàn chỉnh
+- Baselining là operation có owner; không làm như bước phụ trong feature PR thường.
+
 ---
 
 ## Rollback rules
@@ -148,6 +175,24 @@ Step 5 — Verify: SELECT COUNT(*) FROM posts WHERE public_id IS NULL; → 0
 | Data migration sai | Chạy corrective migration hoặc restore |
 
 **Rule**: `prisma migrate` không có native "down" migration. Destructive = backup/restore.
+
+## Expand-and-contract stance
+
+- PMTL mặc định dùng expand-and-contract cho thay đổi schema có compatibility risk:
+  1. add shape mới tương thích
+  2. deploy app đọc được cả hai shape
+  3. backfill
+  4. switch write path
+  5. drop shape cũ ở migration riêng
+- rename/drop không được gộp vào một bước “đổi xong là xóa ngay” nếu route/service vẫn còn chance đọc shape cũ trong deploy window
+
+## Down migration / patching stance
+
+- `down migration` chỉ là recovery aid hẹp; không được tạo cảm giác rằng production rollback có thể phụ thuộc hoàn toàn vào down script
+- hotfix / patching migration phải:
+  - ghi rõ lý do
+  - chỉ scope vào drift cần sửa
+  - không tranh thủ nhét thêm schema cleanup ngoài incident scope
 
 ---
 

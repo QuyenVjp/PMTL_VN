@@ -2,7 +2,7 @@
 
 ## Purpose
 
-- Trả kết quả tìm kiếm public theo query người dùng. **Phase 1**: SQL/API là read path mặc định. **Phase 2+** (khi `search.meilisearch.enabled` feature flag bật): ưu tiên Meilisearch với fallback (đường dự phòng) qua SQL/API khi engine gặp sự cố.
+- Trả kết quả tìm kiếm public theo query người dùng. **Phase 1**: SQL/API là read path mặc định theo repo baseline cũ. Với launch profile hiện tại của PMTL, `SEARCH_ENGINE=meilisearch` là runtime authority ưu tiên Meilisearch với fallback (đường dự phòng) qua SQL/API khi engine gặp sự cố.
 
 Current launch stance:
 
@@ -74,4 +74,5 @@ Current launch stance:
 - Search result là DTO đọc, không phải canonical content record.
 - default repo profile có thể SQL-first, nhưng launch profile hiện tại của PMTL là `Search-first`
 - với launch profile hiện tại, Meilisearch là nhánh ưu tiên; SQL/API chỉ là fallback correctness
+- `search.meilisearch.enabled` nếu tồn tại chỉ là rollout/status mirror cho admin UI, không override `SEARCH_ENGINE`
 - search lời dạy không được drift sang AI answer engine hay tự sinh tư vấn

@@ -679,7 +679,7 @@ Row actions: Revoke
 List view (not DataTable — simple toggle list):
 ```
 [●] community.post.enabled          "Cho phép member tạo community post"    [Toggle]
-[○] search.meilisearch.enabled      "Dùng Meilisearch thay SQL"             [Toggle]
+[●] search.meilisearch.enabled      "Đồng bộ trạng thái triển khai Meilisearch" [Toggle]
 [○] notification.push.enabled       "Cho phép push notifications"           [Toggle]
 ...
 ```
@@ -826,7 +826,7 @@ Link to media library items
 
 **Role**: `admin+`
 **API deps**: `GET /api/admin/search/status`, `GET /api/admin/search/operational-status`, `GET /api/admin/search/performance`, `GET /api/admin/search/indexing-jobs`, `GET /api/admin/search/indexing-jobs/:publicId`, `GET /api/admin/search/fallback-events`, `GET /api/admin/search/index-settings`, `POST /api/admin/search/reindex`, `POST /api/admin/search/reindex/:source`, `PUT /api/admin/search/index-settings`
-**Feature flag**: `search.meilisearch.enabled` (shows different UI per flag state)
+**Feature flag**: `search.meilisearch.enabled` (admin rollout/status mirror only; does not override `SEARCH_ENGINE`)
 
 Tabs: [Tổng quan] [Hiệu năng] [Indexing jobs] [Fallback events] [Index settings]
 
@@ -930,6 +930,7 @@ Rule:
 - workspace này không sửa canonical content text
 - mọi screen phải hiện `engine requested` và `engine actual`
 - nếu `search.meilisearch.enabled = false`, vẫn phải hiện được search pressure và SQL-mode operational summary
+- mọi screen trong workspace này phải show rõ: `runtime authority = SEARCH_ENGINE`, `admin mirror = search.meilisearch.enabled`
 
 ---
 

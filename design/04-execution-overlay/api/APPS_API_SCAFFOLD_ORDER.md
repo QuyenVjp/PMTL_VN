@@ -73,6 +73,7 @@ apps/api/
       identity/
       content/
   prisma/
+    prisma.config.ts
     schema.prisma
     migrations/
 ```
@@ -91,6 +92,7 @@ apps/api/src/app.module.ts
 apps/api/src/common/
 apps/api/src/platform/
 apps/api/src/modules/
+apps/api/prisma.config.ts
 apps/api/prisma/schema.prisma
 ```
 
@@ -198,11 +200,13 @@ Nếu route contract được chia sẻ với `apps/web` hoặc `apps/admin`, ph
 ### Must exist
 
 ```txt
+prisma.config.ts
 prisma/schema.prisma
 prisma/migrations/
 common/prisma/prisma.module.ts
 common/prisma/prisma.service.ts
 common/prisma/extensions/
+prisma/sql/
 ```
 
 ### First migration scope only
@@ -222,6 +226,9 @@ Sau đó mới tới `posts` và content tables cần cho upload/publish path.
 
 - merge strategy bám `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md`
 - migration naming bám `design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md`
+- Prisma 7 config path đã được chốt qua `prisma.config.ts`
+- generator line của schema mới phải bám `prisma-client`
+- query patterns phải bám `design/02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md`
 - `publicId` contract thống nhất
 - `users` và `sessions` không duplicate owner model từ module khác
 - seed bootstrap path đã được chốt tối thiểu cho `feature_flags` và first admin/super-admin bootstrap
@@ -233,6 +240,9 @@ Sau đó mới tới `posts` và content tables cần cho upload/publish path.
 - expose `id` autoincrement ra API
 - rải `queryRaw` hoặc query helper trùng lặp ở nhiều service thay vì có data-layer pattern tập trung
 - để repository nào cũng tự viết lại cùng logic omit/select/result mapping thay vì gom ở Prisma extension/helper
+- scaffold theo `prisma-client-js` hoặc docs v6-style dù repo đã chốt Prisma 7
+- tạo `schema.prisma` nhưng quên `prisma.config.ts`, rồi dựa vào CLI flags cũ để chạy local/prod
+- không chừa `prisma/sql/` path rõ mà lại để raw SQL/TypedSQL trôi vào random service file
 
 ---
 
