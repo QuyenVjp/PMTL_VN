@@ -7,6 +7,7 @@ Requires Valkey to be enabled first. Phase 2+ only.
 > **Outbox dispatcher**: `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md`
 > **Env vars**: `design/04-execution-overlay/repo/ENV_INVENTORY.md` — BULLMQ_*, WORKER_* groups
 > **Phase trigger**: `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md`
+> **Activation shortlist**: `design/04-execution-overlay/repo/BULLMQ_ACTIVATION_SHORTLIST.md`
 
 ---
 

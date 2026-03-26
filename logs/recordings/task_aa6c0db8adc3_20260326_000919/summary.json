@@ -1,0 +1,17 @@
+{
+  "task_id": "task_aa6c0db8adc3",
+  "start_time": "2026-03-26T00:09:19",
+  "end_time": "2026-03-26T00:09:24.305423",
+  "trajectory": {
+    "total_steps": 0,
+    "success_count": 0,
+    "success_rate": 0.0,
+    "by_backend": {},
+    "by_tool": {}
+  },
+  "agent_actions": {
+    "total_actions": 0,
+    "by_agent": {},
+    "by_type": {}
+  }
+}

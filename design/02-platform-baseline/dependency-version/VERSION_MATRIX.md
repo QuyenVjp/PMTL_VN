@@ -73,6 +73,15 @@ React official paths to prefer for behavior questions:
 - browser restore + bfcache behavior: [web.dev/back-forward-cache](https://web.dev/back-forward-cache/)
 - document speculation rules: [developer.mozilla.org/docs/Web/API/Speculation_Rules_API](https://developer.mozilla.org/en-US/docs/Web/API/Speculation_Rules_API)
 
+Zod official paths to prefer for behavior questions:
+- intro + basic usage: [zod.dev](https://zod.dev/)
+- release notes: [zod.dev/v4?id=release-notes](https://zod.dev/v4?id=release-notes)
+- migration guide: [zod.dev/v4/changelog](https://zod.dev/v4/changelog)
+- formatting errors: [zod.dev/error-formatting](https://zod.dev/error-formatting)
+- metadata and registries: [zod.dev/metadata](https://zod.dev/metadata)
+- JSON Schema: [zod.dev/json-schema](https://zod.dev/json-schema)
+- codecs: [zod.dev/codecs](https://zod.dev/codecs)
+
 ## Admin baseline
 
 | Concern | Status | Baseline | Official docs |
@@ -112,6 +121,7 @@ React official paths to prefer for behavior questions:
 | OpenTelemetry Collector | activation-time pin | `0.148.0` | [opentelemetry.io/docs](https://opentelemetry.io/docs/) |
 | `@opentelemetry/api` | activation-time pin | `1.9.0` | [opentelemetry.io/docs/languages/js](https://opentelemetry.io/docs/languages/js/) |
 | `@opentelemetry/sdk-node` | activation-time pin | `0.213.0` | [opentelemetry.io/docs/languages/js](https://opentelemetry.io/docs/languages/js/) |
+| `redis` (`node-redis`) | activation-time pin | follow activation-time latest stable when Valkey lane opens | [redis.io/docs/latest/develop/clients/nodejs](https://redis.io/docs/latest/develop/clients/nodejs/) |
 | pgvector | excluded | excluded until reconsideration trigger | [pgvector.org](https://pgvector.org/) |
 
 ## Version-specific behavior locks

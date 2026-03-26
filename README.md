@@ -86,6 +86,27 @@ Hoac foreground:
 pnpm docker:dev
 ```
 
+## OpenSpace bridge
+
+Repo này hiện có lane OpenSpace local ở `tmp/OpenSpace`, dùng `Gemini` làm backbone và có thể bọc thêm `Copilot` như advisory lane trước/sau.
+
+Ví dụ:
+
+```bash
+py infra/tools/openspace_bridge.py --task "List files in the repo root"
+py infra/tools/openspace_bridge.py --task "Inspect GitHub workflow files and suggest cleanup" --copilot both
+py infra/tools/openspace_bridge.py --task "Refactor this shell workflow to Windows-safe commands" --max-iterations 5
+py infra/tools/openspace_bridge.py --task "Stabilize this repeated workflow and learn from it" --mode learn
+```
+
+Gợi ý dùng:
+
+- Dùng `OpenSpace` cho task nhiều bước, dùng tool, có khả năng lặp lại.
+- Bật `--copilot both` khi task thiên về GitHub/workflow/review lane.
+- Giữ `Gemini` làm engine thực thi, xem `Copilot` như lane shaping/review thay vì backbone model.
+- Dùng `--mode fast` cho hầu hết task hằng ngày để đỡ đốt quota.
+- Chỉ bật `--mode learn` khi bạn thật sự muốn OpenSpace ghi log, capture skill mới, và tiến hóa từ task đó.
+
 Neu muon dung entrypoint ngan, determinist va than thien voi Codex/AI tooling:
 
 ```bash

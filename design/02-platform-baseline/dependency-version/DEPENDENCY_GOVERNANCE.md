@@ -107,7 +107,7 @@ Columns:
 | Next.js | `16.1.6` | `16.1.6` | active | patch/minor in cadence; major by decision | design canon is Next.js 16 App Router |
 | React | `19.2.0` | `19.2.0` | active | patch/minor in cadence; major by decision | must stay aligned with `react-dom` and `packages/ui` peers |
 | React DOM | `19.2.0` | `19.2.0` | active | patch/minor in cadence; major by decision | peer sync required |
-| Zod | `4.1.11` | `4.1.11` | active | patch/minor in cadence; major by decision | must stay identical in `apps/web` and `packages/shared` |
+| Zod | `4.3.6` | `4.3.6` | active | patch/minor in cadence; major by decision | must stay identical in `apps/web` and `packages/shared`; Zod 4 canon is locked in `ZOD_4_RUNTIME_POLICY.md` |
 | TanStack React Query | `5.90.x` | `5.90.21` | active | patch/minor in cadence; major by decision | keep query patterns aligned with `DECISIONS.md` |
 | React Hook Form | `7.62.x` | `7.62.0` | active | patch/minor in cadence | verify resolver compatibility with Zod |
 | `@hookform/resolvers` | `5.2.x` | `5.2.2` | active | patch/minor in cadence | move with RHF/Zod review |
@@ -121,7 +121,7 @@ Columns:
 
 | Package | Approved current | Minimum acceptable | Status | Upgrade mode | Notes |
 |---|---|---|---|---|---|
-| `packages/shared:zod` | `4.1.11` | `4.1.11` | active | must move with web/api/admin boundary review | exact sync with app consumers |
+| `packages/shared:zod` | `4.3.6` | `4.3.6` | active | must move with web/api/admin boundary review | exact sync with app consumers |
 | `packages/ui:react` peer | `19.2.x` | `19.2.0` | active | move with web React line | peer must not drift from web app |
 | `packages/ui:react-dom` peer | `19.2.x` | `19.2.0` | active | move with web React DOM line | peer must not drift from web app |
 
@@ -366,6 +366,9 @@ Append-only log. Mỗi lần patch ngoài cadence thường lệ phải thêm m�
 - [ ] search for API removals and renamed fields
 - [ ] typecheck whole workspace
 - [ ] verify schema error handling shape expected by API/client still matches
+- [ ] verify metadata/registries, JSON Schema export, and codecs usage still stay derivative, not source-of-truth
+- [ ] verify deprecated `ZodError.format()` / `.flatten()` are not reintroduced; use top-level helper path
+- [ ] verify `zod/mini` or `zod/v4/core` have not leaked into app runtime without owner exception
 - [ ] update examples and docs if error shape changed
 
 ## 8.7 TanStack Query major

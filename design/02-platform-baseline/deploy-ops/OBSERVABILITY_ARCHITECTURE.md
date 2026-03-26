@@ -1,5 +1,7 @@
 # OBSERVABILITY_ARCHITECTURE (Kiến trúc giám sát)
 
+> **Valkey runtime drill**: `design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md`
+
 File này chốt thiết kế đầy đủ cho observability stack từ Phase 1 đến Phase 3.
 Mọi quyết định ở đây là binding — không được tự ý bật layer nặng trước khi đạt phase trigger.
 
@@ -286,6 +288,30 @@ scrape_configs:
 4. **DB Dashboard**: query latency, connection count, slow queries
 5. **Search Dashboard**: search query count, latency, fallback rate
 6. **Queue Dashboard** (when BullMQ enabled): queue depth, processed, failed, dead-letter
+7. **Valkey Dashboard** (when Valkey enabled): connected state, memory usage, evictions, keyspace hit/miss, reconnect/error rate, fallback activations
+
+### Valkey / Redis-compatible observability minimum
+
+Khi `VALKEY_URL` da activate that, phase 2 dashboard va alert lane phai bo sung:
+
+- connection state / ping latency
+- memory used / memory fragmentation ratio
+- evicted keys
+- expired keys
+- keyspace hits / misses
+- reconnect count
+- command error count theo class:
+  - transport/recoverable
+  - wrongtype/schema misuse
+- app-level fallback count:
+  - `rate-limit.valkey.fallback`
+  - cache fallback to DB
+
+Redis Insight duoc phep dung nhu operator inspection tool, nhung khong thay the:
+
+- Prometheus metrics
+- Grafana dashboard
+- Pino business-event logs
 
 ### Alertmanager rules (required at phase 2)
 ```yaml

@@ -209,7 +209,10 @@ Các file sau được thêm để lấp gap deferred tech, ops, security, và a
 | File | Lấp gap gì | Phase |
 |---|---|---|
 | `design/02-platform-baseline/optional-scale/VALKEY_ARCHITECTURE.md` | Full Valkey topology, key namespaces, rate-limit migration, failure modes, rollback | Phase 2+ |
+| `design/04-execution-overlay/repo/VALKEY_MODULE_OPPORTUNITY_MATRIX.md` | Module-by-module matrix cho lane Valkey: module nào đáng bật, trigger nào đủ mạnh, anti-goal gì phải tránh | Phase 2+ |
+| `design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md` | Inventory cache families, TTL classes, invalidation owner, do-not-cache list cho Valkey | Phase 2+ |
 | `design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md` | Queue definitions, job schemas, idempotency, dead-letter, worker entrypoint | Phase 2+ |
+| `design/04-execution-overlay/repo/BULLMQ_ACTIVATION_SHORTLIST.md` | Shortlist workload nào được promote lên BullMQ đầu tiên, trigger nào đủ mạnh, exclusions | Phase 2+ |
 | `design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md` | outbox_events schema, dispatcher cron, retry/dead-letter model, redrive | Phase 2+ |
 | `design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md` | Index settings, sync strategy, SQL fallback contract, admin reindex ops | Phase 2+ |
 | `design/02-platform-baseline/optional-scale/PGBOUNCER_STRATEGY.md` | Pool mode, config, trigger threshold, Docker Compose setup, rollback | Phase 2+ |
@@ -220,6 +223,7 @@ Các file sau được thêm để lấp gap deferred tech, ops, security, và a
 | `design/02-platform-baseline/security-runtime/EMAIL_PROVIDER_DECISION.md` | Brevo SMTP config, delivery failure policy, retry semantics, anti-enumeration | Phase 1 |
 | `design/02-platform-baseline/data-runtime/STORAGE_LIFECYCLE.md` | Asset states, cleanup jobs (orphan/rejected/soft-delete), upload quota, disk monitoring | Phase 1+ |
 | `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md` | Cloudflare edge, Next.js ISR, TanStack Query staleTime, Valkey cache, invalidation rules | All phases |
+| `design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md` | Activation/fallback/rollback drill cho Valkey + Redis Insight operator runbook | Phase 2+ |
 | `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md` | Secret inventory, rotation procedures per secret type, compromise response, .gitignore | Phase 1 |
 | `design/02-platform-baseline/deploy-ops/CICD_DEPLOY_GATES.md` | GitHub Actions CI pipeline, deploy gates, CD pipeline, branch protection, rollback | Phase 1+ |
 | `design/02-platform-baseline/edge-delivery/WAF_ANTIBOT_STRATEGY.md` | Cloudflare WAF rules, Bot Fight Mode, Turnstile, honeypot, security headers, CSP nonce | Phase 1+ |

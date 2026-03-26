@@ -4,6 +4,7 @@ File này chốt toàn bộ caching strategy từ Phase 1 đến Phase 2+.
 Không có doc này, cache invalidation bị implement tùy hứng và gây stale data bugs.
 
 > **Valkey**: `design/02-platform-baseline/optional-scale/VALKEY_ARCHITECTURE.md` (Phase 2+)
+> **Valkey cache inventory**: `design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md`
 > **Frontend**: `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` — TanStack Query + ISR
 > **Infra**: `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` — Cloudflare CDN layer
 

@@ -6,6 +6,10 @@ Phase 1 dùng Postgres `rate_limit_records` table — Valkey chỉ bật khi tri
 > **Phase trigger**: `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` — "Valkey: Cache miss rate > threshold HOẶC rate-limit Postgres table too slow"
 > **BullMQ dependency**: `design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md` — Valkey là BullMQ backend
 > **Env vars**: `design/04-execution-overlay/repo/ENV_INVENTORY.md` — VALKEY_* group
+> **Node client baseline**: `node-redis` via npm package `redis`
+> **Module opportunity overlay**: `design/04-execution-overlay/repo/VALKEY_MODULE_OPPORTUNITY_MATRIX.md`
+> **Cache candidate inventory**: `design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md`
+> **Runtime drill**: `design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md`
 
 ---
 
@@ -47,6 +51,33 @@ Valkey does NOT:
 - Store canonical business data (Postgres is source of truth)
 - Replace session storage (sessions stay in Postgres)
 - Cache user-specific sensitive data without TTL
+- Act as PMTL canonical event bus via Redis pub/sub
+
+---
+
+## Node client baseline
+
+- PMTL chốt `node-redis` là Node.js client baseline cho lane Valkey/Redis-compatible.
+- Không đưa `ioredis` vào scaffold mới nếu không có owner decision riêng.
+- Object-mapping layers như RedisOM không là baseline cho PMTL; key design và command usage phải explicit.
+
+### Connection contract
+
+- Dùng `createClient()` với `VALKEY_URL` làm connection string authority.
+- Mỗi process phải:
+  - đăng ký `client.on('error', ...)` trước `connect()`
+  - `await client.connect()` trong startup lane
+  - chỉ coi client sẵn sàng khi `client.isReady === true`
+  - đóng graceful bằng `await client.quit()` khi shutdown
+- `client.isOpen` chỉ là socket-state signal; readiness contract không được dựa vào nó một mình.
+
+### URL contract
+
+- Shape hợp lệ:
+  - `redis://host:port`
+  - `redis://username:password@host:port/db-number`
+  - `rediss://...` chỉ khi TLS thực sự cần
+- PMTL chỉ dùng `VALKEY_URL` làm env owner; không tạo thêm env duplicate chỉ để phục vụ client syntax.
 
 ---
 
@@ -141,12 +172,89 @@ const SLIDING_WINDOW_SCRIPT = `
 {
   url: process.env.VALKEY_URL,          // redis://valkey:6379
   socket: {
+    connectTimeout: 5000,
     tls: process.env.VALKEY_TLS === 'true',
     reconnectStrategy: (retries) => Math.min(retries * 100, 3000),
   },
   maxRetriesPerRequest: parseInt(process.env.VALKEY_MAX_RETRIES ?? '3'),
 }
 ```
+
+### Client lifecycle notes
+
+- Không tạo connect/disconnect theo từng request.
+- `apps/api` giữ singleton client(s) cho cache/rate-limit.
+- `apps/worker` giữ client(s) riêng theo worker lifecycle.
+- Shutdown path ưu tiên `quit()`; chỉ force-close khi process đang fail-fast và không thể chờ graceful close.
+
+### Error handling and reconnect rules
+
+- Redis-compatible command errors trong PMTL chia 2 nhóm:
+  - recoverable transport/runtime: `ECONNREFUSED`, `ECONNRESET`, `ETIMEDOUT`, `EAI_AGAIN`, `BUSY`, `TRYAGAIN`, `LOADING`
+  - unrecoverable schema/code misuse: `WRONGTYPE` va app misuse tuong duong
+- recoverable errors:
+  - cho phep retry co gioi han + exponential backoff
+  - hoac degrade/fallback theo owner lane
+- unrecoverable errors:
+  - fail fast
+  - sua code/schema thay vi retry
+- moi client phai co `error` listener; khong duoc de process crash vi unhandled EventEmitter error.
+- reconnect tu dong duoc phep cho cache/read-heavy lanes.
+- voi non-idempotent lanes co nguy co replay sai khi reconnect:
+  - can can nhac `disableOfflineQueue: true`
+  - hoac tach rieng connection khong queue offline
+
+### Command timeout rule
+
+- connect timeout baseline: `5000ms`
+- command timeout cho lane nhay cam budget phai dung abort signal hoac wrapper timeout ro rang
+- khong de Valkey command treo vo thoi han trong request path
+
+### Client-side caching / pooling / smart handoff stance
+
+- client-side caching khong la baseline PMTL cho phase 2:
+  - de tang invalidation complexity
+  - co nguy co drift voi server-side cache owners
+- pooling khong la baseline rieng; `node-redis` multiplexing tren singleton client la du cho current architecture cho toi khi do duoc connection contention that
+- `Smart client handoffs` khong la baseline vi PMTL hien khong chot Redis Software/Cloud enterprise lane
+- geographic failover khong la baseline; neu can mo sau nay phai co owner doc rieng
+
+### Pub/sub stance
+
+- Redis/Valkey `pub/sub` khong la event backbone mac dinh cua PMTL.
+- PMTL khong dung Redis pub/sub de thay cho:
+  - transactional outbox
+  - BullMQ durable queue
+  - canonical cross-module event delivery
+- Ly do:
+  - pub/sub khong durable
+  - subscriber offline co the mat event
+  - khong phu hop cho auditability, retry, dead-letter, va replay requirements cua PMTL
+- Neu can broadcast ephemeral signal noi bo trong tuong lai, pub/sub chi duoc xem xet cho:
+  - cache invalidation hint
+  - best-effort refresh signal
+  - dev/operator convenience lane
+- Ngay ca trong cac lane do:
+  - khong duoc coi message la source of truth
+  - consumer phai co kha nang recompute/read-lai tu canonical store
+
+---
+
+## Pipeline / transaction semantics
+
+- PMTL phan biet ro:
+  - pipeline = giam round-trip
+  - transaction = can multi-command atomicity tu phia Redis
+- command doc/ghi doc lap co the dung auto-pipelining trong cung event-loop tick, vi du `Promise.all([...])`
+- khong dung pipeline nhu the no dam bao atomicity
+- can semantics atomic hoac ordered commit thi phai dung:
+  - `MULTI/EXEC`
+  - hoac Lua script/server-side atomic primitive
+- voi rate-limit/sliding-window va update canh tranh:
+  - uu tien Lua script nhu owner pattern hien tai
+- neu ket noi bi mat trong luc pipeline:
+  - phai biet `Promise.all()` auto-pipeline va `multi().execAsPipeline()` co semantics khac nhau
+  - khong chon bua mot trong hai cho lane co side effects ma chua danh gia replay/discard behavior
 
 ---
 
@@ -234,3 +342,28 @@ Step 6 — If stable: remove Postgres fallback code path (keep table for history
 | Fallback works | Stop Valkey → rate-limit still works (Postgres fallback) + warn in logs |
 | BullMQ routing | Jobs appear in Valkey DB 1 after enqueue |
 | Cache hit | Repeated identical request → Pino log shows cache hit, no DB query |
+
+---
+
+## Operator tooling stance
+
+### Redis Insight
+
+- `Redis Insight` duoc phep dung nhu operator/debug tool cho Valkey lane.
+- Vai tro dung:
+  - inspect key namespace
+  - xem TTL/eviction pressure
+  - check queue key growth
+  - inspect memory/top keys khi incident
+- Khong dung Redis Insight nhu source of truth cho business state.
+- Khong thao tac tay sua key production neu chua co runbook/incident note ro.
+
+### Observability handoff
+
+- Khi Valkey duoc activate, owner observability phai bo sung it nhat:
+  - connected / disconnected state
+  - command error count theo class
+  - fallback activation count
+  - cache hit / miss ratio
+  - queue DB pressure neu BullMQ cung active
+- Dashboard/metric owner van nam o `OBSERVABILITY_ARCHITECTURE.md`; file nay chi chot Valkey-specific expectations.

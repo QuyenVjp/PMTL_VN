@@ -28,6 +28,27 @@ Mỗi incident type (loại sự cố) phải trả lời được:
 - bước manual (thủ công) đầu tiên là gì
 - điều kiện nào được coi là `healthy again (khỏe mạnh trở lại)`
 
+## Verification toolchain for failure/security incidents
+
+Trail of Bits skills khong thay the runtime evidence, nhung duoc chot la specialist verification lane cho cac incident/security questions sau:
+
+| Incident / question | Tool / skill lane | Stance |
+|---|---|---|
+| suspicious security bug from review/scanner | `trailofbits-fp-check` | required before final verdict |
+| need to find similar bug elsewhere after one true bug | `trailofbits-variant-analysis` | recommended |
+| dependency/package compromise suspicion | `trailofbits-supply-chain-risk-auditor` | recommended |
+| CI/CD workflow injection or agentic Actions risk | `trailofbits-agentic-actions-auditor` | recommended |
+| static code security scan for app/web/api | `trailofbits-semgrep`, `trailofbits-codeql` | adopted when lane justifies |
+| patch disputed or high-risk security fix | `trailofbits-second-opinion` | recommended |
+
+Rules:
+
+- tool output khong duoc coi la incident truth neu chua doi chieu voi:
+  - runtime evidence
+  - owner docs
+  - local reproduction hoac proof
+- severity cao ma chua qua false-positive verification thi khong duoc dua vao final summary nhu bug da xac nhan
+
 ## Phase 1 matrix (Ma trận giai đoạn 1)
 
 | Dependency failure (Thất bại phụ thuộc) | User-facing behavior (Hành vi phía người dùng) | API behavior (Hành vi API) | Log level (Mức nhật ký) | First manual step (Bước thủ công đầu tiên) | Healthy again when (Khỏe lại khi nào) |

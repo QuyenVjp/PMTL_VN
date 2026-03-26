@@ -18,6 +18,14 @@ Không có testing strategy rõ → paper architecture.
 | **Playwright** | E2E browser tests (Phase 2+) | Cross-browser, reliable, ít flaky |
 | **Faker.js** | Test data generation | Deterministic seeding, realistic data |
 
+### Verification add-ons
+
+| Tool / skill | Dùng cho | Trạng thái |
+|---|---|---|
+| `trailofbits-property-based-testing` | Serialization, parsing, schema invariants, filter/state invariants | adopted-when-fit |
+| `trailofbits-second-opinion` | second review cho patch rủi ro hoặc fix tranh cãi | advisory-but-recommended |
+| `trailofbits-fp-check` | xác minh suspected security finding trước khi kết luận | required-for-security-verdict |
+
 ---
 
 ## Test layers
@@ -170,6 +178,38 @@ Mỗi module phải có tests cho:
   - security scheme phản ánh đúng contract thật
   - browser auth routes không bị annotate bearer-only toàn cục
   - docs endpoint exposure policy đúng theo environment
+
+### Property-based testing rule
+
+Phải cân nhắc `trailofbits-property-based-testing` khi lane thuộc một trong các nhóm sau:
+
+- Zod schema parsing/coercion có nhiều biến thể input
+- DTO serialization/deserialization phải giữ invariant ổn định
+- search filters, pagination params, sort params có nhiều tổ hợp
+- calendar/date/lunar conversion có nhiều edge case
+- text normalization, slug generation, query normalization
+
+Không bắt buộc áp dụng cho mọi module. Nhưng với các lane trên, nếu chỉ viết vài example test tay thì chưa đủ mạnh.
+
+Preferred stance:
+
+- example-based tests chứng minh business examples chính
+- property-based tests chứng minh invariant không vỡ khi input thay đổi rộng
+
+Ví dụ invariant nên test:
+
+- parse rồi serialize không làm drift canonical values
+- invalid input không làm văng raw framework error shape
+- normalized search query luôn ra cùng key cho các biến thể spacing/case tương đương
+- slug generation không sinh route segment cấm
+
+### Security finding verification rule
+
+- Khi một scanner, review skill, hoặc external worker báo security issue:
+  - không được chốt bug chỉ từ tool output
+  - phải đi qua `trailofbits-fp-check` mindset hoặc equivalent verification discipline
+- Khi fix security issue có blast radius không nhỏ:
+  - nên chạy `trailofbits-second-opinion` hoặc một review lane tương đương trước khi claim closed
 
 ---
 

@@ -49,6 +49,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md` | folder/file placement owner | repo shape, module anatomy, placement rules | không lặp full security/infra policy |
 | `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md` | platform/control-plane owner | sessions, audit, flags, rate-limit, storage, health, metrics | không ôm domain module contracts |
 | `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md` | NestJS app pipeline owner | request pipeline, Zod, Pino, guards, error envelope | không lặp full infra policy |
+| `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md` | Zod runtime owner | Zod 4 source-of-truth chain, schema placement, error policy, metadata/JSON Schema/codecs stance | không thay route owner hay FE form UX owner một mình |
 | `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md` | Nest feature adoption owner | status `adopted/restricted/deferred/excluded/reference-only` cho toàn bộ surface Nest trong repo | không thay exact version pin hay request pipeline detail một mình |
 | `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` | NestJS 11 scaffold nuance owner | exact scaffold line, Express v5 route stance, logger policy, selected Nest 11-specific behaviors and caveats | không thay request pipeline, global adoption matrix, hay repo phase rules một mình |
 | `design/02-platform-baseline/api-runtime/SERIALIZATION_POLICY.md` | API response serialization owner | mapper/projection rules, null/undefined/date stance, anti-leak guardrails | không thay DTO contract owner một mình |
@@ -75,6 +76,9 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/04-execution-overlay/repo/DEPLOY_RECORD_TEMPLATE.md` | deploy evidence template owner | post-deploy artifact chain, smoke evidence, rollback-proof record shape | không thay deploy procedure hay CI gate một mình |
 | `design/04-execution-overlay/repo/RESTORE_DRILL_LOG.md` | drill evidence log | dated drill records | không chứa rule mới |
 | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` | implementation truth owner | status `implemented/required before launch/planned/forbidden for now/explicit exclusion` | không lặp rationale dài |
+| `design/04-execution-overlay/repo/VALKEY_MODULE_OPPORTUNITY_MATRIX.md` | module-by-module Valkey activation owner | per-domain opportunities, trigger-worthy use, anti-goals, activation priority | không thay phase baseline hay key topology một mình |
+| `design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md` | Valkey cache candidate owner | cache families, TTL class, invalidation owner, do-not-cache list | không thay cache-topology owner hay invalidation chain một mình |
+| `design/04-execution-overlay/repo/BULLMQ_ACTIVATION_SHORTLIST.md` | async promotion shortlist owner | first BullMQ workloads, promotion triggers, exclusions, readiness checklist | không thay queue contract hay outbox discipline một mình |
 | `design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md` | cross-module interaction owner | ownership boundaries, direct vs async interaction | không lặp repo structure |
 | `design/04-execution-overlay/cross-module/EVENT_MODEL_POLICY.md` | event model owner | direct-vs-event promotion rule, outbox-ready event discipline, anti-magic guidance | không thay queue worker topology một mình |
 | `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md` | API route inventory owner | route groups, auth scope, owner module | không thay use-case detail |
@@ -92,6 +96,7 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` | web/admin frontend owner | RSC/client split, data fetching, UI package usage | không lặp backend auth policy |
 | `design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md` | React runtime owner | compiler stance, purity rules, state/effect/ref/custom-hook discipline, transition semantics | không thay route/data ownership một mình |
 | `design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md` | deploy/rollback procedure owner | deploy, rollback, migration-fail handling | không thay backup runbook |
+| `design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md` | Valkey runtime drill owner | activation checklist, fallback drill, Redis Insight inspection rules, rollback evidence | không thay health/metrics/phase trigger authority một mình |
 | `design/01-repo-constitution/TERMINOLOGY.md` | terminology owner | PMTL terms + `English (Việt)` notation | không lặp qua nhiều root files |
 | `design/05-references/external-research/SOURCE_ANALYSIS.md` | source-derived feature surface owner | official source notes + feature implications | không lặp source summaries |
 | `design/01-repo-constitution/ARCHITECTURE_PRINCIPLES.md` | architecture summary owner | stack truth summary, module grouping orientation, high-level do/don’t map | không là canonical owner cho module boundaries, implementation truth, hay phase rules |

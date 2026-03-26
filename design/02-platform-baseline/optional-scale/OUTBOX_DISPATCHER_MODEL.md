@@ -15,6 +15,20 @@ Phase 2+. Requires BullMQ + Valkey to be active first.
 Same as BullMQ — activate when side effect failure cost > complexity cost.
 **Prerequisite**: BullMQ + Valkey both active.
 
+### Non-goal: Redis pub/sub event bus
+
+- PMTL khong dung Redis/Valkey pub/sub lam dispatcher/event bus cho outbox.
+- Outbox dispatch owner path van la:
+  - canonical write
+  - `outbox_events`
+  - dispatcher
+  - BullMQ durable queue
+  - worker consumer
+- Khong duoc thay chuoi nay bang:
+  - `outbox -> Redis pub/sub -> subscriber`
+  - hoac `domain event -> Redis pub/sub` roi coi nhu delivered
+- Neu can signal best-effort cho cache/UI/internal operator lane, do la lane phu, khong phai delivery contract cua outbox.
+
 ---
 
 ## Transactional write pattern (MANDATORY)

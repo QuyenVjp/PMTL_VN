@@ -183,6 +183,22 @@ Nếu 2 worker disagree, không vote theo số lượng model. Quay lại:
 - design owner docs
 - local repro
 
+### Trail of Bits specialist review lane
+
+Khi bug nghiêng về security, false positive verification, hoặc bug-variant hunting:
+
+- uu tien them specialist lane thay vi tiep tuc hoi model tong quat
+- lane uu tien:
+  - `trailofbits-fp-check` cho security verdict
+  - `trailofbits-variant-analysis` cho bug cousin hunt
+  - `trailofbits-second-opinion` cho review doclap cua patch/finding
+  - `trailofbits-semgrep` / `trailofbits-codeql` khi can static evidence
+
+Rule:
+
+- specialist skill cung khong override runtime evidence
+- nhung voi security/debug lane kho, no duoc xem la evidence-building tool tot hon generic chat reasoning
+
 ---
 
 ## 7. Verification requirement after an AI-suggested fix

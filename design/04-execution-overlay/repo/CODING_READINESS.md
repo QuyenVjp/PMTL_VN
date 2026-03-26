@@ -18,6 +18,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | UI/UX design | ✅ Sẵn sàng | `design/02-platform-baseline/web-runtime/` và `design/04-execution-overlay/web/` đã có owner docs cho IA/navigation, landing, homepage, app screens, tokens, and route contracts; xem `ROOT_DOC_OWNERSHIP.md` |
 | Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` |
 | Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
+| Zod 4 policy | ✅ Design-locked | source-of-truth chain, schema placement, error policy, metadata/JSON Schema/codecs stance — `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md` |
 | Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
 | Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
 | Rate-limit values | ✅ Design-locked | 13 endpoints với exact limits — xem Phần 5; wiring chỉ được cắm khi route tương ứng tới đúng scaffold step |
@@ -51,6 +52,7 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 | pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
 | Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md` |
 | Observability architecture | ✅ Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
+| Verification toolchain matrix | ✅ Design-locked | Trail of Bits skills đã được khóa vào testing/debugging/security verification thay vì chỉ inventory/catalog |
 
 **VERDICT**: `DESIGN-READY FOR PHASED IMPLEMENTATION PLANNING`
 Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. File này **không** có nghĩa runtime đã sẵn sàng hoặc launch đã an toàn.
@@ -96,6 +98,19 @@ Mọi domain module canonical đều có:
 - Outbox taxonomy: `design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md`
 - API route inventory: `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`
 - Env variables: `design/04-execution-overlay/repo/ENV_INVENTORY.md`
+
+### Verification toolchain — ĐÃ KHÓA
+
+Trail of Bits skills không còn chỉ là inventory. Chúng đã được cắm vào verification canon như sau:
+
+| Lane | Owner docs | Tooling stance |
+|---|---|---|
+| schema/parser/filter invariants | `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md` | `trailofbits-property-based-testing` adopted-when-fit |
+| suspected security finding verification | `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md`, `design/02-platform-baseline/security-runtime/FAILURE_MODES.md` | `trailofbits-fp-check` required before final verdict |
+| security bug variant hunt | `design/02-platform-baseline/security-runtime/FAILURE_MODES.md`, `design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` | `trailofbits-variant-analysis` recommended |
+| static security scanning | `design/02-platform-baseline/security-runtime/FAILURE_MODES.md` | `trailofbits-semgrep` / `trailofbits-codeql` adopted when lane justifies |
+| dependency / CI security review | `design/02-platform-baseline/security-runtime/FAILURE_MODES.md` | `trailofbits-supply-chain-risk-auditor`, `trailofbits-agentic-actions-auditor` recommended |
+| disputed fix / high-risk patch review | `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md`, `design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` | `trailofbits-second-opinion` recommended |
 
 ### UI/UX design — ĐẦY ĐỦ
 - Route inventory đầy đủ: `design/04-execution-overlay/web/PAGE_INVENTORY.md`

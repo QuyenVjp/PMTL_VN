@@ -19,6 +19,7 @@ Nếu mâu thuẫn với file khác, ưu tiên file này cho frontend decisions.
 > **Web query plan**: `design/04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md`
 > **App Router file contract**: `design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md`
 > **Web cache contract**: `design/04-execution-overlay/web/WEB_CACHE_REVALIDATION_CONTRACT.md`
+> **Zod 4 runtime owner**: `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md`
 
 ---
 

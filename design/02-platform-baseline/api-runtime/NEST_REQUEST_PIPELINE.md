@@ -10,6 +10,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - runtime validation: `Zod`
 - logger: `Pino` qua `nestjs-pino`
 - API contract surface: `Swagger / OpenAPI`
+> **Zod 4 runtime owner**: `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md`
 
 ### NestJS 11 scaffold stance
 
@@ -75,6 +76,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - mọi request DTO, query, params, env contract, webhook payload đều phải có schema `Zod`
 - schema nghiệp vụ nên đăng ký tập trung qua Zod registry/metadata để giảm việc viết lại cùng contract cho validation, docs, và internal tooling
 - nếu cần sinh JSON Schema/OpenAPI, ưu tiên derive từ registry/schema chuẩn thay vì viết source of truth thứ hai
+- formatting/normalization của validation error phải bám helper top-level của Zod 4; không lấy deprecated instance helpers làm baseline mới
 - nếu cần OpenAPI sync:
   - route contract phải được map rõ từ schema sang docs
   - không dùng decorator DTO riêng chỉ để tạo ra source of truth thứ hai
