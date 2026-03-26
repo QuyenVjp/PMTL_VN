@@ -66,6 +66,7 @@
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
 - Production defaults, logging, validation, runtime guidance: `.agents/skills/pmtl-production-baseline/SKILL.md`
 - Frontend implementation: `.agents/skills/pmtl-fe-implementation/SKILL.md`
+- Admin UI implementation: `.agents/skills/pmtl-admin-ui/SKILL.md`
 - UI behavior and accessibility: `.agents/skills/pmtl-ui-behavior/SKILL.md`
 - Visual direction and style variants: `.agents/skills/pmtl-ui-style-system/SKILL.md`
 - UI review: `.agents/skills/pmtl-review-web-ui/SKILL.md`
@@ -85,6 +86,11 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
 - Use global platform skills only for tool-oriented integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
 - Prefer canonical PMTL skills over compatibility aliases and design-library entrypoints unless the user explicitly names the older skill.
+- Codex combo defaults for fresh UI sessions:
+  - `apps/web` feature/page: `pmtl-fe-implementation` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
+  - `apps/admin` workspace/page: `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
+  - premium public-facing polish pass only after structure is stable: add `pmtl-creative-designer` or a named design-library variant
+  - `ui-ux-pro-max` is a secondary critique/reference lane, not the repo authority for PMTL web/admin surfaces
 
 ## Agent Operating Model
 - In this repo, Codex acts as the primary senior delivery engineer: design-first, full-stack, and responsible for turning `design/` into repo-aligned implementation or repo-aligned docs.

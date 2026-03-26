@@ -29,9 +29,10 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 ## Read First
 
 1. `AGENTS.md`
-2. `design/ui/PAGE_INVENTORY.md` when route or page purpose matters
-3. `design/ui/USER_FLOWS.md` when the work changes journey behavior
-4. `design/ui/COMPONENT_SPECS.md` or module owner docs when component or domain rules already exist
+2. `design/04-execution-overlay/web/PAGE_INVENTORY.md` when route or page purpose matters
+3. `design/04-execution-overlay/web/USER_FLOWS.md` when the work changes journey behavior
+4. `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md` when the surface is page-aggregate driven
+5. `design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md` or module owner docs when component or domain rules already exist
 
 ## Execution Approach
 
@@ -62,8 +63,16 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 
 - Run `py infra/tools/codex_actions.py quality-gate --scope web` after meaningful changes.
 - Recheck that the final file placement still respects feature-first boundaries.
-- If the change touched route behavior, compare the implemented surface against the relevant `design/ui/*` owner docs.
+- If the change touched route behavior, compare the implemented surface against:
+  - `design/04-execution-overlay/web/PAGE_INVENTORY.md`
+  - `design/04-execution-overlay/web/USER_FLOWS.md`
+  - `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md` when aggregate data flow matters
 - If the change touched auth/search/runtime boundaries, pair with the narrower verification skill instead of relying on web-only checks.
+
+## Do not
+
+- Do not use this skill as the primary lane for `apps/admin`; use `pmtl-admin-ui` when the task is an admin workspace, admin shell, admin DataTable flow, or admin query/mutation surface.
+- Do not invent route purpose, aggregate DTO shape, or cache behavior outside the corresponding owner docs.
 
 ## Edge Cases
 
@@ -74,9 +83,10 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 
 - `AGENTS.md`
 - `docs/architecture/conventions.md`
-- `design/ui/PAGE_INVENTORY.md`
-- `design/ui/USER_FLOWS.md`
-- `design/ui/COMPONENT_SPECS.md`
+- `design/04-execution-overlay/web/PAGE_INVENTORY.md`
+- `design/04-execution-overlay/web/USER_FLOWS.md`
+- `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`
+- `design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md`
 - `apps/web/src/features`
 
 ## Pair with

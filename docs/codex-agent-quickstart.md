@@ -42,6 +42,21 @@ If the task crosses role boundaries, say which PMTL role should own the next han
 - Nếu task là live incident: `pmtl-ops-debugger` trước, không gọi `pmtl-release-hardener` quá sớm
 - Nếu verify path đã rõ và task nhỏ: implementer tự chạy verify, không cần `pmtl-quality-gate`
 
+## Skill combos for fresh Codex chats
+
+| Surface | Primary combo | Notes |
+|---|---|---|
+| `apps/web` page/feature | `pmtl-fe-implementation` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system` | add `pmtl-creative-designer` only when public-facing polish matters |
+| `apps/admin` workspace/page | `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system` | keep admin clarity-first; do not let design flair override ops readability |
+| public landing/hero redesign | `pmtl-fe-implementation` -> `pmtl-ui-style-system` -> `pmtl-creative-designer` | `frontend-design` is optional accent lane, not canon authority |
+| admin density/usability critique | `pmtl-admin-ui` -> `ui-ux-pro-max` | use `ui-ux-pro-max` as advisory critique only |
+
+Rules:
+
+- `pmtl-fe-implementation` is the web implementer default, not the admin default.
+- `pmtl-admin-ui` owns admin workspace structure, table/filter/bulk-action flows, and query/invalidation discipline.
+- `ui-ux-pro-max` is a secondary reference lane. Do not let it override PMTL owner docs.
+
 ## Useful opening lines
 
 ```text
@@ -58,4 +73,8 @@ Use pmtl-release-hardener. Keep Docker/Caddy/Cloudflare changes within PMTL depl
 
 ```text
 Use pmtl-doc-researcher. Official docs only. Return verified truths, PMTL inferences, and unresolved policy gaps separately.
+```
+
+```text
+Use pmtl-admin-ui with pmtl-ui-behavior. Build this apps/admin workspace against ADMIN_MODULE_SPECS, ADMIN_PAGE_API_MAPPING, and ADMIN_FEATURE_QUERY_PLAN. Keep query keys and invalidation owner-driven, not component-invented.
 ```

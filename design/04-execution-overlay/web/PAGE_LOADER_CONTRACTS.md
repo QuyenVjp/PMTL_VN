@@ -44,7 +44,7 @@ Nó là loader owner ở mức page aggregate; không thay route canon, UI journ
 | Route pattern | Primary loader contract | Auxiliary loaders | Notes |
 |---|---|---|---|
 | `/dashboard` | `MemberDashboardDto` | `advisorySummary` nếu chưa nằm trong aggregate, `recentPracticeState` nếu đang phase-gated tách route | không để page tự gọi rời calendar + engagement + vows + notifications rồi ghép trong component |
-| `/ngoai-tuyen` | `OfflineBundleListPageDto` | `syncSummary`, `pendingDeltaBadge` | page cần pagination + sync badge strategy rõ |
+| `/ngoai-tuyen` | `OfflineBundleListPageDto` | `syncSummary`, `pendingDeltaBadge` | **cursor pagination**; page cần sync badge strategy rõ |
 | `/thong-bao` | `NotificationPreferencesPageDto` | `pushCapabilityStatus`, `eventReminderState` nếu chưa nằm trong aggregate | empty/error/loading states phải map từ loader result |
 | `/lich-ca-nhan` | `PersonalPracticeCalendarPageDto` | `advisoryCards`, `reminderSummary` | advisory summary là primary, event snippets là aux |
 
@@ -265,12 +265,12 @@ Bảng này chốt thêm `execution contract` cho các page P0 để web không 
 | Route pattern | Max API calls ở page bootstrap | Auth mode | Cache / revalidation expectation | Error-state owner |
 |---|---|---|---|---|
 | `/dashboard` | `1 primary + tối đa 2 aux` | required member session | primary aggregate phải là `no-store` hoặc equivalent member-private fetch; aux chỉ cho phần phase-gated | aggregate loader map `unauthorized`, `degraded`, `empty-first-visit` |
-| `/ngoai-tuyen` | `1 primary + tối đa 1 aux` | required member session | primary list dùng member-private fetch; delta/pending badge không được polling vô hạn khi chưa có explicit sync action | aggregate loader map `unauthorized`, `sync-degraded`, `empty-library` |
+| `/ngoai-tuyen` | `1 primary + tối đa 1 aux` | required member session | **cursor pagination**; primary list dùng member-private fetch; delta/pending badge không được polling vô hạn khi chưa có explicit sync action | aggregate loader map `unauthorized`, `sync-degraded`, `empty-library` |
 | `/thong-bao` | `1 primary`, aux chỉ khi phase-gated | required member session | capability + prefs + reminders phải bootstrap cùng lúc; không split thành nhiều request song song trong page | aggregate loader map `unsupported`, `permission-denied`, `degraded`, `empty-preferences` |
 | `/lich-ca-nhan` | `1 primary + tối đa 2 aux` | required member session | month aggregate phải ổn định theo `month` param; chuyển tháng mới được phép refetch | aggregate loader map `month-invalid`, `degraded`, `empty-calendar` |
-| `/tim-kiem` | `1 primary + tối đa 1 aux` | public, signed-in optional | primary search aggregate là source of truth cho `items`, `tabCounts`, `filterFacets`, `engine`; aux `recentSearches` phải non-blocking | aggregate loader map `query-invalid`, `too-short`, `engine-fallback`, `empty-results` |
-| `/bach-thoai` | `1 primary + tối đa 2 aux` | public | primary hub aggregate owns tab/filter counts; aux chỉ cho featured cards hoặc decorations không-blocking | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
-| `/hoi-dap` | `1 primary + tối đa 2 aux` | public | không dùng chung bootstrap loader với `/bach-thoai` nếu route semantics khác; filter/tab state phải đến từ QA aggregate | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
+| `/tim-kiem` | `1 primary + tối đa 1 aux` | public, signed-in optional | **cursor pagination**; primary search aggregate là source of truth cho `items`, `tabCounts`, `filterFacets`, `engine`; aux `recentSearches` phải non-blocking | aggregate loader map `query-invalid`, `too-short`, `engine-fallback`, `empty-results` |
+| `/bach-thoai` | `1 primary + tối đa 2 aux` | public | **offset pagination**; primary hub aggregate owns tab/filter counts; aux chỉ cho featured cards hoặc decorations không-blocking | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
+| `/hoi-dap` | `1 primary + tối đa 2 aux` | public | **offset pagination**; không dùng chung bootstrap loader với `/bach-thoai` nếu route semantics khác; filter/tab state phải đến từ QA aggregate | aggregate loader map `empty-hub`, `filter-invalid`, `engine-fallback` |
 
 `Auth mode` trong bảng trên phải map thẳng về auth scope canon của `design/04-execution-overlay/api/API_ROUTE_INVENTORY.md`:
 

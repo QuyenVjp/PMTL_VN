@@ -460,7 +460,7 @@ Wave 5 — Vows + Wisdom
 Wave 6 — Notifications + Offline
   18. apps/api: `notification` (push subscriptions)
   19. apps/web: offline bundles, PWA setup
-  20. apps/api: `search` (phase 1 SQL, phase 2+ Meilisearch)
+  20. apps/api: `search` — Meilisearch là launch-active engine (xem Wave 5 item 16), SQL là fallback contingency; Phase 2+ khi cần advanced runtime adapters
 ```
 
 ---

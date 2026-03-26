@@ -22,7 +22,7 @@ Không có file này, developer phải tự đoán thứ tự table, foreign key
 | `calendar` | `design/03-domains/calendar/SCHEMA_PLAN.dbml` | `events`, `event_agenda_items`, `event_speakers`, `event_ctas`, `event_gallery_media`, `event_files`, `lunar_events`, `lunar_event_overrides`, `personal_practice_calendar_read_model` |
 | `notification` | `design/03-domains/notification/SCHEMA_PLAN.dbml` | `push_subscriptions`, `push_jobs` |
 | `vows-merit` | `design/03-domains/vows-merit/SCHEMA_PLAN.dbml` | `vows`, `vow_progress_entries`, `life_release_journal` |
-| `wisdom-qa` | `design/03-domains/wisdom-qa/SCHEMA_PLAN.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`, `video_talk_entries`, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
+| `wisdom-qa` | `design/03-domains/wisdom-qa/SCHEMA_PLAN.dbml` | `authority_profiles`, `wisdom_entries`, `qa_entries`, `audio_talk_entries`\*, `video_talk_entries`\*, `offline_bundles`, `offline_bundle_entries`, `offline_sync_states` |
 | `contact` | `design/03-domains/contact/SCHEMA_PLAN.dbml` | `contact_info`, `volunteers` |
 
 Lưu ý:
@@ -32,6 +32,11 @@ Lưu ý:
   - `post_tags`, `post_related_posts`, `post_gallery_media`
   - `hub_page_curated_posts`, `beginner_guide_media`
   - `chant_item_preview_media`, `chant_item_recommended_presets`, `chant_item_time_rules`, `chant_plan_items`
+- `audio_talk_entries`* và `video_talk_entries`* (đánh dấu * ở bảng trên) là **schema-only** ở phase hiện tại:
+  - **Không được tự mở DTO** cho hai table này nếu chưa có owner row trong `API_DTO_SHAPE_PLAN.md`.
+  - **Không được tự mở route** nếu chưa có route row trong `API_ROUTE_INVENTORY.md`.
+  - Scaffold DB migration cho hai table theo thứ tự wisdom-qa bình thường, nhưng **không cho controller hoặc admin workspace fetch trực tiếp** trước khi có phase gate rõ.
+
 
 ---
 

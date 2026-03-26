@@ -23,6 +23,7 @@ PMTL_VN uses a folder-based skill system. Skills are grouped by operational role
 - `pmtl-vn-architecture`
 - `pmtl-production-baseline`
 - `pmtl-fe-implementation`
+- `pmtl-admin-ui`
 - `pmtl-ui-behavior`
 - `vercel-react-best-practices`
 

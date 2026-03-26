@@ -72,15 +72,17 @@ Keep PMTL interactive surfaces accessible, predictable, and complete across form
 
 ## References
 
-- `design/ui/USER_FLOWS.md`
-- `design/ui/COMPONENT_SPECS.md`
-- `design/ui/ELDERLY_UX.md`
+- `design/04-execution-overlay/web/USER_FLOWS.md`
+- `design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md`
+- `design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md`
+- `design/02-platform-baseline/web-runtime/ELDERLY_UX.md`
 - `pmtl-fe-implementation`
 - `pmtl-review-web-ui`
 
 ## Pair with
 
 - `pmtl-fe-implementation` for code structure.
+- `pmtl-admin-ui` for admin workspace tables, filters, bulk actions, and operational forms.
 - `pmtl-ui-style-system` for visual hierarchy.
 - `pmtl-review-web-ui` when reviewing an existing surface.
 - Route-level page work should also read the relevant page owner docs before editing behavior.

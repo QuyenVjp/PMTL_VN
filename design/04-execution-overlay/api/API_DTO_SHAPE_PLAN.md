@@ -859,3 +859,27 @@ Khi một route family đã có row trong file này:
 - không được đổi pagination semantics từ `offset` sang `cursor` hoặc ngược lại mà không cập nhật file này
 - không được để admin và web dùng cùng tên route nhưng shape filter khác nhau nếu chưa có note tách owner rõ ràng
 - nếu route aggregate cần `include*` flag để phase-gate, phải ghi rõ default value và allowed values tại đây trước khi scaffold
+
+## Validation error mapping discipline
+
+- Mỗi P0 route family phải có `error code companion` rõ ràng trong `ERROR_CODE_REGISTRY.md` trước khi scaffold.
+- Validation error từ Zod phải đi qua mapper tập trung, trả field-level output theo `fieldErrors` key trong `details`; không trả raw `ZodError` trực tiếp ra client.
+- Route family không được tự định nghĩa error shape riêng ngoài canonical error envelope ở `ERROR_ENVELOPE_CONTRACT.md`.
+- `validation.invalid_body`, `validation.invalid_query`, `validation.invalid_params` là 3 code boundary cho input validation; `validation.constraint_failed` là code cho semantic business constraint đã qua schema.
+- Không được merge validation error và domain error vào cùng 1 response field; chúng đi 2 code family riêng.
+
+## Auth scope — DTO rule
+
+- Route family nào gắn auth scope `member+` hoặc `admin+` phải có error code `auth.session_missing` trong companion list.
+- Nếu route cần phân biệt `thiếu session` vs `đủ session nhưng không đủ quyền`, phải ghi rõ 2 error codes: `auth.session_missing` (401) và `auth.forbidden` (403).
+- DTO projection cho member route không được bao gồm field `admin-only`; ngược lại admin route không được trả field `public-only` nếu có security implication.
+- Nếu một route có thể trả kết quả khác nhau dựa trên auth state (public fallback vs member personalized), phải note rõ `dual-mode projection` và phần personalized phải là aux non-blocking.
+
+## Dashboard aggregate — cache invalidation ownership
+
+- `MemberDashboardDto` là primary aggregate; query key root là `['dashboard']` hoặc `['dashboard', userId]`.
+- Không section nào trong dashboard được tự invalidate query key riêng trừ khi section đó đã phase-gated thành route độc lập trong `API_ROUTE_INVENTORY.md`.
+- Các mutation trong `engagement`, `vows-merit`, `calendar`, `notification` modules mà ảnh hưởng dashboard state phải invalidate `['dashboard']` root key → không invalidate chỉ section key riêng lẻ.
+- Server-side invalidation authority thuộc `apps/api`; client không được tự quyết định invalidation schedule dựa trên timer hoặc scroll event.
+- `advisorySummary` trong dashboard phải đến từ aggregate hoặc phải là aux với query key riêng nếu phase-gated; không để RSC tự gọi calendar API rồi merge.
+

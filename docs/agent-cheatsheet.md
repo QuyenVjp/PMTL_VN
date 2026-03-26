@@ -163,10 +163,20 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 - `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
 - `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, hiện baseline là Gemini và Copilot cho docs research, second opinion, và task split theo thế mạnh từng CLI.
 - `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
-- `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL.
+- `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL cho `apps/web`.
+- `pmtl-admin-ui`: admin workspace implementation của PMTL cho `apps/admin`.
 - `pmtl-ui-behavior`, `pmtl-ui-style-system`, `pmtl-review-web-ui`: behavior, style, UI review.
 - `pmtl-verify-quality-gate`, `pmtl-verify-auth-flow`, `pmtl-verify-search-sync`: verify chất lượng, auth, search.
 - `pmtl-automation-smoke-suite`, `pmtl-runbook-docker-dev-recovery`: smoke test và recovery cho local/dev stack.
+
+### PMTL UI combo defaults
+
+| Task shape | Recommended combo | Avoid |
+|---|---|---|
+| `apps/web` feature/page | `pmtl-fe-implementation` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system` | dùng `ui-ux-pro-max` làm authority chính |
+| `apps/admin` workspace/page | `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system` | dùng `frontend-design` để lái admin shell/workspace |
+| public premium polish | thêm `pmtl-creative-designer` sau khi structure đúng canon | đánh bóng trước khi route/data/state đúng |
+| dense admin audit/review | `pmtl-admin-ui` -> `ui-ux-pro-max` advisory pass | trộn generic SaaS/dashboard patterns vào PMTL canon |
 
 ### 3. Frontend, UI, design
 
