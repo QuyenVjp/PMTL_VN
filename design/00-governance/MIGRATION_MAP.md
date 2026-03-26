@@ -21,7 +21,7 @@ Nó chốt:
 ## Current reading note
 
 File này đang là `migration ledger`, không phải live layout owner.
-Các move lớn của root docs và domain packs phần lớn đã hoàn thành; canonical live layout luôn đọc ở `CANONICAL_LAYOUT.md` và `ROOT_DOC_OWNERSHIP.md`.
+Các move lớn của root docs và domain packs phần lớn đã hoàn thành; canonical live layout luôn đọc ở `FOLDER_CANON.md` và `ROOT_DOC_OWNERSHIP.md`.
 
 ## Top-Level Folder Direction
 

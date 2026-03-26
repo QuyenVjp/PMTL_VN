@@ -10,10 +10,10 @@ Từ bây giờ `design/` phải được đọc theo governance layer trước,
 Đọc theo thứ tự:
 
 1. [design/00-governance/README.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/README.md)
-2. [design/00-governance/SOURCE_PRIORITY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/SOURCE_PRIORITY.md)
-3. [design/00-governance/DOC_TAXONOMY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/DOC_TAXONOMY.md)
-4. [design/00-governance/CONFLICT_RESOLUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/CONFLICT_RESOLUTION.md)
-5. [design/00-governance/CANONICAL_LAYOUT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/CANONICAL_LAYOUT.md)
+2. [design/00-governance/GOVERNANCE_SYSTEM.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/GOVERNANCE_SYSTEM.md)
+3. [design/00-governance/STATUS_AND_PHASE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/STATUS_AND_PHASE.md)
+4. [design/00-governance/FOLDER_CANON.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/FOLDER_CANON.md)
+5. [design/00-governance/IMPORT_AND_FORMAT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPORT_AND_FORMAT.md)
 6. [design/00-governance/MIGRATION_MAP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/MIGRATION_MAP.md)
 
 ## Canonical Layers
@@ -49,7 +49,7 @@ Folder legacy đã được thay bằng layout canonical; nếu cần lần lạ
 
 ## Readiness semantics
 
-- Canonical vocabulary owner là [implementation-status-schema.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md).
+- Canonical vocabulary owner là [STATUS_AND_PHASE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/STATUS_AND_PHASE.md).
 - `design-ready` = design đủ rõ để bắt đầu implementation planning.
 - `implementation-ready` = artifact runtime dự kiến và owner code path đã được map đủ cụ thể.
 - `launch-ready` = launch blockers thật đã pass, gồm runtime evidence như restore drill.

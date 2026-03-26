@@ -48,7 +48,7 @@ Không được coi `pgvector` là deferred thông thường. Chỉ xem xét l�
 
 | Label | Meaning | Owner doc |
 |---|---|---|
-| `design-ready` | design đủ rõ để bắt đầu implementation planning | `design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md` |
+| `design-ready` | design đủ rõ để bắt đầu implementation planning | `design/00-governance/STATUS_AND_PHASE.md` |
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ để bắt đầu code module đó | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 | `launch-ready` | launch blockers thật đã pass, gồm runtime evidence như restore drill | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 

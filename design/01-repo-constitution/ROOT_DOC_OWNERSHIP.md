@@ -2,9 +2,9 @@
 
 Trước khi dùng file này, đọc governance docs ở:
 
-- [design/00-governance/SOURCE_PRIORITY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/SOURCE_PRIORITY.md)
-- [design/00-governance/DOC_TAXONOMY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/DOC_TAXONOMY.md)
-- [design/00-governance/CONFLICT_RESOLUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/CONFLICT_RESOLUTION.md)
+- [design/00-governance/GOVERNANCE_SYSTEM.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/GOVERNANCE_SYSTEM.md)
+- [design/00-governance/STATUS_AND_PHASE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/STATUS_AND_PHASE.md)
+- [design/00-governance/FOLDER_CANON.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/FOLDER_CANON.md)
 - [design/00-governance/MIGRATION_MAP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/MIGRATION_MAP.md)
 
 File này tồn tại để xử lý đúng vấn đề audit đã chỉ ra:

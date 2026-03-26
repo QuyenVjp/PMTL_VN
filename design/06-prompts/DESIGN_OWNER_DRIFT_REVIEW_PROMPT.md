@@ -8,8 +8,8 @@ Prompt mẫu này dùng khi cần review drift trong `design/` mà không biến
 Bạn đang review drift trong thư mục `design/` của PMTL_VN.
 
 Trước khi nhận xét:
-1. đọc `design/00-governance/SOURCE_PRIORITY.md`
-2. đọc `design/00-governance/CONFLICT_RESOLUTION.md`
+1. đọc `design/00-governance/GOVERNANCE_SYSTEM.md`
+2. đọc `design/00-governance/STATUS_AND_PHASE.md`
 3. đọc `design/01-repo-constitution/ROOT_DOC_OWNERSHIP.md`
 4. đọc exact owner docs của lane đang audit trước khi đọc overview docs
 
