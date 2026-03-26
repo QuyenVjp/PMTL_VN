@@ -24,33 +24,15 @@ Nó không override root docs. Nó chỉ gom các quyết định đủ quan tr�
 
 ## Phase 1 baseline
 
-- `apps/web`
-- `apps/api`
-- `apps/admin`
-- `Postgres`
-- `Caddy`
-- local storage abstraction + local disk adapter
-- auth/session hardening
-- upload hardening
-- `audit_logs`
-- `feature_flags`
-- app-layer rate limit
-- `/health/*`
-- `/metrics`
-- backup + restore discipline
+- Full Phase 1 list lives in [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) section 2.
+- Shorthand only: first launch = `apps/web + apps/api + apps/admin` trên `Postgres + Caddy` với storage abstraction, auth/upload hardening, `audit_logs`, `feature_flags`, app-layer rate limit, `/health/*`, `/metrics`, và restore discipline.
 
 ---
 
 ## Deferred until measured pain
 
-- `Valkey`
-- `BullMQ`
-- `apps/worker`
-- `outbox_events`
-- `Meilisearch`
-- `PgBouncer`
-- Prometheus / Grafana / Alertmanager
-- tracing / OpenTelemetry
+- Full deferred / excluded matrix lives in [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) sections 3 and 15, plus [PHASE_ACTIVATION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/PHASE_ACTIVATION_MATRIX.md).
+- Default reading shortcut: optional-scale tech như `Valkey`, `BullMQ`, `Meilisearch`, `PgBouncer`, Prometheus/Grafana/Alertmanager, và tracing không được scaffold sớm nếu chưa có trigger đo được.
 
 ---
 
@@ -66,9 +48,9 @@ Không được coi `pgvector` là deferred thông thường. Chỉ xem xét l�
 
 | Label | Meaning | Owner doc |
 |---|---|---|
-| `design-ready` | design đủ rõ để bắt đầu implementation planning | `design/04-execution-overlay/repo/CODING_READINESS.md` |
+| `design-ready` | design đủ rõ để bắt đầu implementation planning | `design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md` |
 | `implementation-ready` | artifact runtime cụ thể đã được map đủ để bắt đầu code module đó | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
-| `launch-ready` | launch blockers thật đã pass, gồm runtime evidence như restore drill | `README.md` + `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
+| `launch-ready` | launch blockers thật đã pass, gồm runtime evidence như restore drill | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
 
 **Rule**: không dùng `design-ready` để ám chỉ runtime đã tồn tại.
 

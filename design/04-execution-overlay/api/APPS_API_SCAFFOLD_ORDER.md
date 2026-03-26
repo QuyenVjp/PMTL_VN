@@ -10,7 +10,7 @@ Mục tiêu là để lúc bắt đầu code NestJS rebuild, dev/AI biết:
 File này **không** nói runtime đã tồn tại. Nó chỉ chốt thứ tự dựng nền đúng theo `design/`.
 
 > Canonical refs:
-> - `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md`
+> - `design/01-repo-constitution/REPO_STRUCTURE.md`
 > - `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md`
 > - `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`
 > - `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`
@@ -111,7 +111,7 @@ apps/api/prisma/schema.prisma
 
 ### Do not move on until
 
-- tree baseline khớp `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md`
+- tree baseline khớp `design/01-repo-constitution/REPO_STRUCTURE.md`
 - không có `common.service.ts`, `utils/` bãi rác, hay folder mơ hồ ngoài baseline
 
 ### Common traps

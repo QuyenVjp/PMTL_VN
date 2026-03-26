@@ -49,57 +49,24 @@ Folder legacy đã được thay bằng layout canonical; nếu cần lần lạ
 
 ## Readiness semantics
 
-- `design-ready`: design đủ rõ để bắt đầu implementation planning
-- `implementation-ready`: artifact runtime dự kiến và owner code path đã được map đủ cụ thể
-- `launch-ready`: launch blockers thật đã pass, gồm runtime evidence như restore drill
+- Canonical vocabulary owner là [implementation-status-schema.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPLEMENTATION_STATUS_SCHEMA.md).
+- `design-ready` = design đủ rõ để bắt đầu implementation planning.
+- `implementation-ready` = artifact runtime dự kiến và owner code path đã được map đủ cụ thể.
+- `launch-ready` = launch blockers thật đã pass, gồm runtime evidence như restore drill.
 
 Các dòng trên chỉ là `quick orientation (định hướng đọc nhanh)`.
-Owner của implementation/readiness truth vẫn là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md); nếu wording ở README và owner doc khác nhau thì owner doc thắng.
+Runtime truth owner vẫn là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md); nếu wording ở README và owner docs khác nhau thì owner docs thắng.
 
 `design-ready` nghĩa là design đã đủ rõ, không có nghĩa code/runtime đã tồn tại. Runtime truth luôn đọc ở [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md).
 
 ## First-launch scope (Phạm vi ra mắt lần đầu)
 
-### In scope (Nằm trong phạm vi)
-
-- `apps/web`
-- `apps/api`
-- `apps/admin`
-- `Postgres`
-- `Caddy`
-- structured logs
-- `/health/*`
-- `/metrics`
-- local storage abstraction (lớp trừu tượng lưu trữ nội bộ)
-- auth/session hardening (thắt chặt bảo mật phiên đăng nhập)
-- upload hardening (thắt chặt bảo mật tải tập tin)
-- audit logs (nhật ký kiểm tra)
-- feature flags (cờ tính năng)
-- app-layer rate limit
-- backup + restore discipline (kỷ luật sao lưu và phục hồi)
-
-### Explicitly deferred (Tạm hoãn rõ ràng)
-
-- `Valkey`
-- `BullMQ`
-- `apps/worker` (tiến trình xử lý nền)
-- `outbox_events` (sự kiện chờ phát đi)
-- `Meilisearch` theo mặc định là deferred, nhưng được phép bật sớm theo `Search-first launch` nếu đúng guardrails ở `design/02-platform-baseline/edge-delivery/HIGH_TRAFFIC_RESILIENCE.md`
-- `PgBouncer`
-- Prometheus/Grafana/Alertmanager (bộ công cụ giám sát và cảnh báo)
-- tracing (truy vết thực thi)
-
-### Explicitly excluded for current direction (Loại khỏi hướng hiện tại một cách rõ ràng)
-
-- `pgvector` — không phải deferred; chỉ xem xét lại khi trigger trong `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` được đáp ứng
-
-### Forbidden for now (Bị cấm ở hiện tại)
-
-- bật queue (hàng đợi) trước khi có idempotency (tính lặp lại không đổi kết quả) + retry policy (chính sách thử lại)
-- bật Meilisearch mà không có SQL fallback + reindex/recovery path + startup fallback contract
-- public upload (tải lên công khai) trước khi chốt MIME sniffing (kiểm tra loại tập tin) + delete authorization (ủy quyền xóa)
-- tự host stack observability (hệ thống giám sát) nặng khi chưa từng restore DB (phục hồi cơ sở dữ liệu) thành công
-- gọi là production-safe (an toàn vận hành) nếu chưa có restore drill pass (buổi diễn tập phục hồi thành công)
+- Full Phase 1 baseline owner: [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) section 2.
+- Deferred / excluded tech owner: [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) sections 3 and 15, plus [phase-activation-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/PHASE_ACTIVATION_MATRIX.md).
+- README chỉ giữ shorthand để khỏi lặp full list:
+  - first launch = `apps/web + apps/api + apps/admin` trên `Postgres + Caddy` với logs, `/health/*`, `/metrics`, storage abstraction, auth/upload hardening, audit logs, feature flags, rate limit, và restore discipline
+  - optional-scale lanes như `Valkey`, `BullMQ`, `Meilisearch`, `PgBouncer`, Prometheus/Grafana/Alertmanager, và tracing mặc định vẫn tắt cho đến khi trigger docs cho phép
+  - `pgvector` là `explicit exclusion`, không phải deferred thông thường
 
 ## Repo quickstart (Khởi động nhanh kho mã nguồn)
 
@@ -128,6 +95,8 @@ Owner của implementation/readiness truth vẫn là [implementation-mapping.md]
 
 ## Launch gate (Cổng kiểm soát ra mắt)
 
+Owner của launch-readiness truth là [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md); checklist dưới đây chỉ là summary operator-facing.
+
 - [ ] auth/session policy finalized (chốt xong chính sách phiên đăng nhập)
 - [ ] upload/media policy finalized (chốt xong chính sách truyền thông/tải lên)
 - [ ] `audit_logs` implemented (đã triển khai nhật ký kiểm tra)
@@ -142,85 +111,43 @@ Owner của implementation/readiness truth vẫn là [implementation-mapping.md]
 
 ## Read in order (Thứ tự đọc)
 
+### Core path
+
 1. [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
 2. [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ROOT_DOC_OWNERSHIP.md)
-3. [domain-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DOMAIN_MAP.md)
-4. [execution-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/EXECUTION_MAP.md)
-5. [system-data-flow-map.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/SYSTEM_DATA_FLOW_MAP.md)
-6. [architecture-principles.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ARCHITECTURE_PRINCIPLES.md)
-7. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md)
-8. [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md)
-9. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-10. [zod-4-runtime-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md)
-11. [nest-feature-adoption-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
-12. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
-13. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
-14. [infra.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md)
-15. [high-traffic-resilience-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/HIGH_TRAFFIC_RESILIENCE.md)
-16. [ai-debugging-discipline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md)
-17. [managed-platform-patterns.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/MANAGED_PLATFORM_PATTERNS.md)
-18. [external-web-check-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/framework-docs/EXTERNAL_WEB_CHECK_READINESS.md)
-19. [servercn-design-reference.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/starter-patterns/SERVERCN_DESIGN_REFERENCE.md)
-20. [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/TERMINOLOGY.md)
-21. [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/external-research/SOURCE_ANALYSIS.md)
-22. [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md)
-23. [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
-24. [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/ENV_INVENTORY.md)
-25. [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
-26. [admin-page-api-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/admin/ADMIN_PAGE_API_MAPPING.md)
-27. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
-28. [version-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
-29. [migration-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md)
-30. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md)
-31. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-32. [react-runtime-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md)
-33. [apps-admin-scaffold-backlog.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/admin/APPS_ADMIN_SCAFFOLD_BACKLOG.md)
-34. [admin-feature-query-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/admin/ADMIN_FEATURE_QUERY_PLAN.md)
-35. [api-dto-shape-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
-36. [page-loader-contracts.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_LOADER_CONTRACTS.md)
-37. [deploy-runbook.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md)
-38. [deploy-record-template.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/DEPLOY_RECORD_TEMPLATE.md)
-39. [backup-restore.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/BACKUP_RESTORE.md)
-40. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
-41. [startup-dependency-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/STARTUP_DEPENDENCY_ORDER.md)
-42. [outbox-event-taxonomy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
-43. [apps-api-scaffold-order.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/APPS_API_SCAFFOLD_ORDER.md)
-44. [restore-drill-log.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/RESTORE_DRILL_LOG.md)
-45. [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
-46. [ADMIN_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/admin-runtime/ADMIN_ARCHITECTURE.md)
-47. [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md)
-48. [prisma-schema-plan.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md)
-49. [ELDERLY_UX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/ELDERLY_UX.md)
-50. [SVG_PRECISION_WORKFLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/starter-patterns/SVG_PRECISION_WORKFLOW.md)
-51. [CORE_PRACTICE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/CORE_PRACTICE_CONSTITUTION.md)
-52. [scaffold-gap-report.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/SCAFFOLD_GAP_REPORT.md)
-53. [LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md)
-54. [SPIRITUAL_APP_SCREENS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/examples/SPIRITUAL_APP_SCREENS.md)
-55. [NAVIGATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/NAVIGATION_ARCHITECTURE.md)
-56. [ADMIN_MODULE_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md)
-57. [luc-trai-days-canon.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/calendar/REFERENCES/LUC-TRAI-DAYS-CANON.MD)
-58. [manual-translation-editor-workflow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/wisdom-qa/REFERENCES/MANUAL-TRANSLATION-EDITOR-WORKFLOW.MD)
-59. [translation-automation-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/TRANSLATION_AUTOMATION_ARCHITECTURE.md)
-60. [OBSERVABILITY_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
-61. [VALKEY_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/VALKEY_ARCHITECTURE.md)
-62. [BULLMQ_WORKER_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/BULLMQ_WORKER_ARCHITECTURE.md)
-63. [OUTBOX_DISPATCHER_MODEL.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/OUTBOX_DISPATCHER_MODEL.md)
-64. [VALKEY_MODULE_OPPORTUNITY_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/VALKEY_MODULE_OPPORTUNITY_MATRIX.md)
-65. [VALKEY_CACHE_CANDIDATE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/VALKEY_CACHE_CANDIDATE_INVENTORY.md)
-66. [BULLMQ_ACTIVATION_SHORTLIST.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/BULLMQ_ACTIVATION_SHORTLIST.md)
-67. [VALKEY_RUNTIME_DRILL.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md)
-68. [MEILISEARCH_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/MEILISEARCH_ARCHITECTURE.md)
-69. [PGBOUNCER_STRATEGY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/PGBOUNCER_STRATEGY.md)
-70. [R2_MIGRATION_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/R2_MIGRATION_PLAN.md)
-71. [EMAIL_PROVIDER_DECISION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/EMAIL_PROVIDER_DECISION.md)
-72. [STORAGE_LIFECYCLE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/STORAGE_LIFECYCLE.md)
-73. [CACHE_TOPOLOGY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md)
-74. [SECRET_MANAGEMENT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md)
-75. [CICD_DEPLOY_GATES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/CICD_DEPLOY_GATES.md)
-76. [WAF_ANTIBOT_STRATEGY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/WAF_ANTIBOT_STRATEGY.md)
-77. [PGVECTOR_DECISION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md)
-78. [PUSH_NOTIFICATION_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md)
-79. [HEALTH_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md)
+3. [architecture-at-a-glance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ARCHITECTURE_AT_A_GLANCE.md)
+4. [phase-activation-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/PHASE_ACTIVATION_MATRIX.md)
+5. [version-matrix.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+6. [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+
+### Backend/API path
+
+1. [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/REPO_STRUCTURE.md)
+2. [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+3. [zod-4-runtime-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md)
+4. [nestjs-11-adoption.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
+5. [prisma-7-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
+6. [error-envelope-contract.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
+7. [security.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+8. [auth-session-flow.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
+
+### Web/Admin path
+
+1. [frontend-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+2. [react-runtime-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md)
+3. [tailwind-css-4-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
+4. [shadcn-ui-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
+5. [zustand-policy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/ZUSTAND_POLICY.md)
+6. [component-specs.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
+7. [page-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md)
+
+### Ops/Review path
+
+1. [ai-debugging-discipline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md)
+2. [dependency-governance.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
+3. [testing-strategy.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md)
+4. [observability-architecture.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
+5. [valkey-runtime-drill.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/VALKEY_RUNTIME_DRILL.md)
 
 ## Key docs by purpose (Nhóm tài liệu chính)
 
@@ -346,12 +273,12 @@ Các visual spec bổ sung như `02-platform-baseline/web-runtime/LANDING_PAGE_D
 ## Where each rule lives (Quy tắc nằm ở đâu)
 
 - Decision baseline hợp nhất (Nền tảng quyết định hợp nhất): [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- Repo structure baseline (Nền tảng cấu trúc thư mục): [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md)
+- Repo structure baseline (Nền tảng cấu trúc thư mục): [repo-structure.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/REPO_STRUCTURE.md)
 - Platform/control-plane baseline (Nền tảng mô-đun hệ thống cốt lõi): [platform-modules.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md)
 - Root-doc ownership (Quyền sở hữu của file gốc): [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ROOT_DOC_OWNERSHIP.md)
 - Terminology + notation (Thuật ngữ và quy tắc ghi chú): [terminology.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/TERMINOLOGY.md)
 - Source-derived feature surface (Bề mặt chức năng rút ra từ nguồn): [source-analysis.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/05-references/external-research/SOURCE_ANALYSIS.md)
-- Writing standards (Chuẩn viết contract và use-case): [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md)
+- Writing standards (Chuẩn viết contract và use-case): [writing-standards.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/WRITING_STANDARDS.md)
 - API route inventory (Danh mục route API): [api-route-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
 - Env inventory (Danh mục biến môi trường): [env-inventory.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/ENV_INVENTORY.md)
 - Error code registry (Danh mục mã lỗi): [error-code-registry.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)

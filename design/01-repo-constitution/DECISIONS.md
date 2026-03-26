@@ -7,7 +7,7 @@ Nếu một file khác mô tả khác file này, ưu tiên file này trước, r
 
 - `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`
 - `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`
-- `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md`
+- `design/01-repo-constitution/REPO_STRUCTURE.md`
 - `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md`
 - `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md`
 
@@ -167,6 +167,9 @@ Các quyết định này từng không rõ — đã chốt và ghi vào doc ri�
 
 ## 14. Library choices (Chọn thư viện — chốt)
 
+Exact version pins không sống ở file này.
+File này chỉ chốt `library family + rationale`; số version exact phải đọc ở [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md).
+
 ### Backend (`apps/api`)
 
 | Concern | Library | Lý do |
@@ -179,6 +182,12 @@ Các quyết định này từng không rõ — đã chốt và ghi vào doc ri�
 | Password hash | Argon2id | OWASP recommended |
 | MIME detection | file-type (npm) | Magic bytes, không dựa extension |
 | UUID | crypto.randomUUID() | Built-in Node.js |
+
+Backend adoption docs:
+
+- Prisma 7 runtime/adoption policy: [PRISMA_7_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
+- API error envelope contract: [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
+- Auth/session sequence canon: [AUTH_SESSION_FLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
 
 ### Frontend — Web (`apps/web`)
 
@@ -194,6 +203,12 @@ Các quyết định này từng không rõ — đã chốt và ghi vào doc ri�
 | Toast | Sonner | Accessible stacking |
 | Date | date-fns | Lightweight |
 | Markdown | react-markdown + rehype-sanitize | Server-side safe |
+
+Frontend policy docs:
+
+- Tailwind CSS 4 policy: [TAILWIND_CSS_4_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
+- shadcn/ui inventory and acquisition rules: [SHADCN_UI_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
+- Zustand boundaries and hydration rules: [ZUSTAND_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/ZUSTAND_POLICY.md)
 
 **Next.js 16 cache rule**:
 - Public deterministic reads ưu tiên `use cache` + `cacheTag`

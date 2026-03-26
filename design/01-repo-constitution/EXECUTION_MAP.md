@@ -25,7 +25,7 @@ Nó trả lời câu hỏi:
 11. Đọc `design/02-platform-baseline/deploy-ops/SLA_SLO.md`
 12. Đọc `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`
 13. Đọc `design/02-platform-baseline/security-runtime/FAILURE_MODES.md`
-14. Đọc `design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md`
+14. Đọc `design/00-governance/WRITING_STANDARDS.md`
 15. Chọn module owner bên dưới
 16. Mở `contracts.md` của module đó
 17. Mở file trong `use-cases/` tương ứng

@@ -119,7 +119,7 @@ Mục tiêu:
 
 | Nest surface | PMTL status | PMTL stance | Owner doc |
 |---|---|---|---|
-| CLI / Workspaces / Libraries / Scripts | `reference-only` | monorepo owner là repo structure + package manager docs, không phải Nest CLI canon | [REPO_STRUCTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md) |
+| CLI / Workspaces / Libraries / Scripts | `reference-only` | monorepo owner là repo structure + package manager docs, không phải Nest CLI canon | [REPO_STRUCTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/REPO_STRUCTURE.md) |
 | SWC (fast compiler) | `deferred` | chỉ mở khi build pain thật sự xuất hiện | [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md) |
 | Passport (auth) | `excluded` | current auth baseline không dùng Passport-first mental model | [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md) |
 | Router module | `reference-only` | route canon owner là overlay inventory, không phải Nest router trick | [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) |

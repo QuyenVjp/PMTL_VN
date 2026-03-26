@@ -81,7 +81,7 @@ Học từ docs export Markdown + one-click AI handoff:
 
 Áp dụng vào PMTL:
 
-- coi đây là validation cho hướng đã owner ở `ROOT_DOC_OWNERSHIP.md` và `design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md`
+- coi đây là validation cho hướng đã owner ở `ROOT_DOC_OWNERSHIP.md` và `design/00-governance/WRITING_STANDARDS.md`
 - không dùng file này để phát minh docs policy mới ngoài các owner docs đó
 
 ### 1.5 Observability as a first-class product surface

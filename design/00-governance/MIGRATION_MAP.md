@@ -15,7 +15,13 @@ Nó chốt:
 - `keep` = giữ nguyên path hiện tại trong ngắn hạn
 - `rename` = nên đổi tên để khớp taxonomy mới
 - `move` = nên chuyển sang layer/path mới
+- `completed` = target move đã hạ cánh; row được giữ để làm audit trail
 - `reference-only` = chỉ dùng làm ngữ cảnh, không làm source of truth
+
+## Current reading note
+
+File này đang là `migration ledger`, không phải live layout owner.
+Các move lớn của root docs và domain packs phần lớn đã hoàn thành; canonical live layout luôn đọc ở `CANONICAL_LAYOUT.md` và `ROOT_DOC_OWNERSHIP.md`.
 
 ## Top-Level Folder Direction
 
@@ -57,7 +63,7 @@ Nó chốt:
 
 | Current file | Target path | Role |
 |---|---|---|
-| `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md` | `02-platform-baseline/dependency-version/REPO_STRUCTURE.md` | canonical owner |
+| `design/02-platform-baseline/dependency-version/REPO_STRUCTURE.md` | `01-repo-constitution/REPO_STRUCTURE.md` | canonical owner |
 | `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md` | `02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md` | canonical owner |
 | `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` | `02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` | canonical owner |
 | `design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md` | `02-platform-baseline/api-runtime/PLATFORM_MODULES.md` | canonical owner |
@@ -80,7 +86,7 @@ Nó chốt:
 | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` | `02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` | canonical owner |
 | `design/02-platform-baseline/dependency-version/MANAGED_PLATFORM_PATTERNS.md` | `02-platform-baseline/dependency-version/MANAGED_PLATFORM_PATTERNS.md` | canonical owner |
 | `design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` | `02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` | canonical owner |
-| `design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md` | `02-platform-baseline/dependency-version/WRITING_STANDARDS.md` | canonical owner |
+| `design/02-platform-baseline/dependency-version/WRITING_STANDARDS.md` | `00-governance/WRITING_STANDARDS.md` | canonical owner |
 
 ### Optional Scale Or Reference
 
@@ -117,7 +123,7 @@ Nó chốt:
 | `design/01-repo-constitution/SYSTEM_DATA_FLOW_MAP.md` | `01-repo-constitution/SYSTEM_DATA_FLOW_MAP.md` | summary walkthrough |
 | `design/01-repo-constitution/TERMINOLOGY.md` | `01-repo-constitution/TERMINOLOGY.md` | canonical owner |
 | `design/05-references/external-research/SOURCE_ANALYSIS.md` | `05-references/external-research/SOURCE_ANALYSIS.md` | reference-only |
-| `overview/roadmap.md` | `05-references/external-research/ROADMAP.md` | reference-only |
+| `overview/roadmap.md` | `01-repo-constitution/ROADMAP.md` | summary owner |
 | `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` | `04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` | canonical owner |
 | `design/04-execution-overlay/repo/CODING_READINESS.md` | `04-execution-overlay/repo/CODING_READINESS.md` | canonical owner |
 | `design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md` | `04-execution-overlay/cross-module/MODULE_INTERACTIONS.md` | canonical owner |

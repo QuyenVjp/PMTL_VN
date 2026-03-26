@@ -2,6 +2,7 @@
 
 File này gom trigger của các component deferred để team không đọc rải rác nhiều root docs.
 Không thay thế `DECISIONS.md`, `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md`, hay `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md`.
+Nó chỉ bao phủ `deferred/planned/excluded activations`; full Phase 1 baseline vẫn do `DECISIONS.md` section 2 sở hữu.
 
 > **Decision baseline**: `design/01-repo-constitution/DECISIONS.md`
 > **Infra owner**: `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md`

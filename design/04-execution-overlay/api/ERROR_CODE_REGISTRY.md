@@ -2,6 +2,7 @@
 
 File này chốt `canonical error codes (mã lỗi chuẩn)` cho `apps/api`.
 Nó lấp đúng gap audit đã chỉ ra: có error envelope nhưng chưa có registry.
+Envelope shape owner nằm ở [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md).
 
 ## Envelope
 

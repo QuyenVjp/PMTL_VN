@@ -11,6 +11,7 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - logger: `Pino` qua `nestjs-pino`
 - API contract surface: `Swagger / OpenAPI`
 > **Zod 4 runtime owner**: `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md`
+> **Error envelope owner**: `design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md`
 
 ### NestJS 11 scaffold stance
 
