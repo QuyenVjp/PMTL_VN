@@ -395,7 +395,9 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
-  Post: 'Post'
+  Post: 'Post',
+  ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
+  ChantEnvironmentRule: 'ChantEnvironmentRule'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "post"
+    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -933,6 +935,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChantEnvironmentRuleGroup: {
+      payload: Prisma.$ChantEnvironmentRuleGroupPayload<ExtArgs>
+      fields: Prisma.ChantEnvironmentRuleGroupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChantEnvironmentRuleGroupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChantEnvironmentRuleGroupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        findFirst: {
+          args: Prisma.ChantEnvironmentRuleGroupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChantEnvironmentRuleGroupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        findMany: {
+          args: Prisma.ChantEnvironmentRuleGroupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>[]
+        }
+        create: {
+          args: Prisma.ChantEnvironmentRuleGroupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        createMany: {
+          args: Prisma.ChantEnvironmentRuleGroupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChantEnvironmentRuleGroupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>[]
+        }
+        delete: {
+          args: Prisma.ChantEnvironmentRuleGroupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        update: {
+          args: Prisma.ChantEnvironmentRuleGroupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChantEnvironmentRuleGroupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChantEnvironmentRuleGroupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChantEnvironmentRuleGroupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChantEnvironmentRuleGroupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRuleGroupPayload>
+        }
+        aggregate: {
+          args: Prisma.ChantEnvironmentRuleGroupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChantEnvironmentRuleGroup>
+        }
+        groupBy: {
+          args: Prisma.ChantEnvironmentRuleGroupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantEnvironmentRuleGroupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChantEnvironmentRuleGroupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantEnvironmentRuleGroupCountAggregateOutputType> | number
+        }
+      }
+    }
+    ChantEnvironmentRule: {
+      payload: Prisma.$ChantEnvironmentRulePayload<ExtArgs>
+      fields: Prisma.ChantEnvironmentRuleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChantEnvironmentRuleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChantEnvironmentRuleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        findFirst: {
+          args: Prisma.ChantEnvironmentRuleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChantEnvironmentRuleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        findMany: {
+          args: Prisma.ChantEnvironmentRuleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>[]
+        }
+        create: {
+          args: Prisma.ChantEnvironmentRuleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        createMany: {
+          args: Prisma.ChantEnvironmentRuleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChantEnvironmentRuleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>[]
+        }
+        delete: {
+          args: Prisma.ChantEnvironmentRuleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        update: {
+          args: Prisma.ChantEnvironmentRuleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        deleteMany: {
+          args: Prisma.ChantEnvironmentRuleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChantEnvironmentRuleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChantEnvironmentRuleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>[]
+        }
+        upsert: {
+          args: Prisma.ChantEnvironmentRuleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantEnvironmentRulePayload>
+        }
+        aggregate: {
+          args: Prisma.ChantEnvironmentRuleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChantEnvironmentRule>
+        }
+        groupBy: {
+          args: Prisma.ChantEnvironmentRuleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantEnvironmentRuleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChantEnvironmentRuleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantEnvironmentRuleCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1087,6 +1237,45 @@ export const PostScalarFieldEnum = {
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const ChantEnvironmentRuleGroupScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  groupKey: 'groupKey',
+  title: 'title',
+  summary: 'summary',
+  sortOrder: 'sortOrder',
+  lastReviewedAt: 'lastReviewedAt',
+  versionNote: 'versionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantEnvironmentRuleGroupScalarFieldEnum = (typeof ChantEnvironmentRuleGroupScalarFieldEnum)[keyof typeof ChantEnvironmentRuleGroupScalarFieldEnum]
+
+
+export const ChantEnvironmentRuleScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  groupId: 'groupId',
+  ruleKey: 'ruleKey',
+  title: 'title',
+  canonicalWording: 'canonicalWording',
+  severity: 'severity',
+  productizationMode: 'productizationMode',
+  safeLaneRefs: 'safeLaneRefs',
+  avoidItems: 'avoidItems',
+  shortReason: 'shortReason',
+  sourceReference: 'sourceReference',
+  versionNote: 'versionNote',
+  referenceOnly: 'referenceOnly',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantEnvironmentRuleScalarFieldEnum = (typeof ChantEnvironmentRuleScalarFieldEnum)[keyof typeof ChantEnvironmentRuleScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1263,6 +1452,34 @@ export type ListEnumContentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'RuleSeverity'
+ */
+export type EnumRuleSeverityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RuleSeverity'>
+    
+
+
+/**
+ * Reference to a field of type 'RuleSeverity[]'
+ */
+export type ListEnumRuleSeverityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RuleSeverity[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RuleProductizationMode'
+ */
+export type EnumRuleProductizationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RuleProductizationMode'>
+    
+
+
+/**
+ * Reference to a field of type 'RuleProductizationMode[]'
+ */
+export type ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RuleProductizationMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1377,6 +1594,8 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   mediaAsset?: Prisma.MediaAssetOmit
   post?: Prisma.PostOmit
+  chantEnvironmentRuleGroup?: Prisma.ChantEnvironmentRuleGroupOmit
+  chantEnvironmentRule?: Prisma.ChantEnvironmentRuleOmit
 }
 
 /* Types for Logging */

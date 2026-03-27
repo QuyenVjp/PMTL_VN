@@ -1,4 +1,5 @@
 import { createRootRoute, createRoute, Outlet, Link } from "@tanstack/react-router";
+import { niemKinhRoutes } from "./noi-dung/niem-kinh/index.js";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -12,6 +13,12 @@ const rootRoute = createRootRoute({
           >
             Tổng quan
           </Link>
+          <Link
+            to="/noi-dung/niem-kinh/moi-truong-thoi-gian"
+            className="text-sm hover:text-blue-600 [&.active]:text-blue-600 [&.active]:font-medium"
+          >
+            Niệm kinh
+          </Link>
         </div>
       </nav>
       <main className="p-6">
@@ -20,6 +27,9 @@ const rootRoute = createRootRoute({
     </div>
   ),
 });
+
+// Export rootRoute so niem-kinh routes can reference it
+export { rootRoute };
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -32,4 +42,4 @@ const indexRoute = createRoute({
   ),
 });
 
-export const routeTree = rootRoute.addChildren([indexRoute]);
+export const routeTree = rootRoute.addChildren([indexRoute, niemKinhRoutes]);

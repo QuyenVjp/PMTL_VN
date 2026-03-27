@@ -4,9 +4,10 @@ import { ContentService } from "./content.service.js";
 import { ContentRepository } from "./content.repository.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
 import { StorageModule } from "../../platform/storage/storage.module.js";
+import { ChantingModule } from "./chanting/chanting.module.js";
 
 @Module({
-  imports: [AuditModule, StorageModule],
+  imports: [AuditModule, StorageModule, ChantingModule],
   controllers: [ContentController],
   providers: [ContentService, ContentRepository],
   exports: [ContentService],

@@ -57,7 +57,9 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
-  Post: 'Post'
+  Post: 'Post',
+  ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
+  ChantEnvironmentRule: 'ChantEnvironmentRule'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -187,6 +189,45 @@ export const PostScalarFieldEnum = {
 } as const
 
 export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+
+
+export const ChantEnvironmentRuleGroupScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  groupKey: 'groupKey',
+  title: 'title',
+  summary: 'summary',
+  sortOrder: 'sortOrder',
+  lastReviewedAt: 'lastReviewedAt',
+  versionNote: 'versionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantEnvironmentRuleGroupScalarFieldEnum = (typeof ChantEnvironmentRuleGroupScalarFieldEnum)[keyof typeof ChantEnvironmentRuleGroupScalarFieldEnum]
+
+
+export const ChantEnvironmentRuleScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  groupId: 'groupId',
+  ruleKey: 'ruleKey',
+  title: 'title',
+  canonicalWording: 'canonicalWording',
+  severity: 'severity',
+  productizationMode: 'productizationMode',
+  safeLaneRefs: 'safeLaneRefs',
+  avoidItems: 'avoidItems',
+  shortReason: 'shortReason',
+  sourceReference: 'sourceReference',
+  versionNote: 'versionNote',
+  referenceOnly: 'referenceOnly',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantEnvironmentRuleScalarFieldEnum = (typeof ChantEnvironmentRuleScalarFieldEnum)[keyof typeof ChantEnvironmentRuleScalarFieldEnum]
 
 
 export const SortOrder = {

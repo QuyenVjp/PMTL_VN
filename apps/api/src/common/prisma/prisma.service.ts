@@ -1,12 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from "@nestjs/common";
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
-import pg from "pg";
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
-  private readonly pool: pg.Pool;
 
   constructor() {
     const connectionString = process.env.DATABASE_URL;
@@ -14,8 +12,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       throw new Error("DATABASE_URL environment variable is required");
     }
 
-    const pool = new pg.Pool({ connectionString });
-    const adapter = new PrismaPg(pool);
+    const adapter = new PrismaPg({ connectionString });
 
     super({
       adapter,
@@ -28,8 +25,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         },
       },
     });
-
-    this.pool = pool;
   }
 
   async onModuleInit() {
@@ -39,7 +34,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
   async onModuleDestroy() {
     await this.$disconnect();
-    await this.pool.end();
     this.logger.log("Database disconnected");
   }
 

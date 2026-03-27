@@ -44,3 +44,26 @@ export const AssetStatus = {
 } as const
 
 export type AssetStatus = (typeof AssetStatus)[keyof typeof AssetStatus]
+
+
+export const RuleSeverity = {
+  ADVISORY: 'ADVISORY',
+  CAUTION: 'CAUTION',
+  STRONG_GUARDRAIL: 'STRONG_GUARDRAIL',
+  QUALITY_GUIDANCE: 'QUALITY_GUIDANCE',
+  REFERENCE_ONLY: 'REFERENCE_ONLY'
+} as const
+
+export type RuleSeverity = (typeof RuleSeverity)[keyof typeof RuleSeverity]
+
+
+export const RuleProductizationMode = {
+  WARNING_CARD: 'WARNING_CARD',
+  CHECKLIST_ITEM: 'CHECKLIST_ITEM',
+  SAFE_LANE_SUGGESTION: 'SAFE_LANE_SUGGESTION',
+  DRAWER_NOTE: 'DRAWER_NOTE',
+  REFERENCE_ONLY_NOTE: 'REFERENCE_ONLY_NOTE',
+  DO_NOT_AUTOMATE: 'DO_NOT_AUTOMATE'
+} as const
+
+export type RuleProductizationMode = (typeof RuleProductizationMode)[keyof typeof RuleProductizationMode]

@@ -52,3 +52,13 @@ export type MediaAsset = Prisma.MediaAssetModel
  * 
  */
 export type Post = Prisma.PostModel
+/**
+ * Model ChantEnvironmentRuleGroup
+ * 
+ */
+export type ChantEnvironmentRuleGroup = Prisma.ChantEnvironmentRuleGroupModel
+/**
+ * Model ChantEnvironmentRule
+ * 
+ */
+export type ChantEnvironmentRule = Prisma.ChantEnvironmentRuleModel

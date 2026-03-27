@@ -182,3 +182,67 @@ model Post {
   @@index([publishedAt])
   @@map("posts")
 }
+
+// ============================================================================
+// CHANTING ENVIRONMENT RULES
+// Canonical rule surface for /niem-kinh/luu-y-moi-truong-va-thoi-gian
+// ============================================================================
+
+enum RuleSeverity {
+  ADVISORY
+  CAUTION
+  STRONG_GUARDRAIL
+  QUALITY_GUIDANCE
+  REFERENCE_ONLY
+}
+
+enum RuleProductizationMode {
+  WARNING_CARD
+  CHECKLIST_ITEM
+  SAFE_LANE_SUGGESTION
+  DRAWER_NOTE
+  REFERENCE_ONLY_NOTE
+  DO_NOT_AUTOMATE
+}
+
+model ChantEnvironmentRuleGroup {
+  id              String   @id @default(cuid())
+  publicId        String   @unique @map("public_id")
+  groupKey        String   @unique @map("group_key")
+  title           String
+  summary         String
+  sortOrder       Int      @default(0) @map("sort_order")
+  lastReviewedAt  DateTime @default(now()) @map("last_reviewed_at")
+  versionNote     String?  @map("version_note")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  rules ChantEnvironmentRule[]
+
+  @@map("chant_environment_rule_groups")
+}
+
+model ChantEnvironmentRule {
+  id                  String                  @id @default(cuid())
+  publicId            String                  @unique @map("public_id")
+  groupId             String                  @map("group_id")
+  ruleKey             String                  @unique @map("rule_key")
+  title               String
+  canonicalWording    String                  @map("canonical_wording")
+  severity            RuleSeverity
+  productizationMode  RuleProductizationMode  @map("productization_mode")
+  safeLaneRefs        String[]                @default([]) @map("safe_lane_refs")
+  avoidItems          String[]                @default([]) @map("avoid_items")
+  shortReason         String?                 @map("short_reason")
+  sourceReference     String?                 @map("source_reference")
+  versionNote         String?                 @map("version_note")
+  referenceOnly       Boolean                 @default(false) @map("reference_only")
+  sortOrder           Int                     @default(0) @map("sort_order")
+  createdAt           DateTime                @default(now()) @map("created_at")
+  updatedAt           DateTime                @updatedAt @map("updated_at")
+
+  group ChantEnvironmentRuleGroup @relation(fields: [groupId], references: [id])
+
+  @@index([groupId])
+  @@map("chant_environment_rules")
+}

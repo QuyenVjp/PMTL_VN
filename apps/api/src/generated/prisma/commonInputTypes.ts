@@ -372,6 +372,40 @@ export type EnumContentStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type EnumRuleSeverityFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleSeverity | Prisma.EnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | $Enums.RuleSeverity | runtime.Types.Skip
+}
+
+export type EnumRuleProductizationModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleProductizationMode | Prisma.EnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | $Enums.RuleProductizationMode | runtime.Types.Skip
+}
+
+export type EnumRuleSeverityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleSeverity | Prisma.EnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleSeverityWithAggregatesFilter<$PrismaModel> | $Enums.RuleSeverity | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumRuleProductizationModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleProductizationMode | Prisma.EnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleProductizationModeWithAggregatesFilter<$PrismaModel> | $Enums.RuleProductizationMode | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | runtime.Types.Skip
@@ -687,6 +721,40 @@ export type NestedEnumContentStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumRuleSeverityFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleSeverity | Prisma.EnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | $Enums.RuleSeverity | runtime.Types.Skip
+}
+
+export type NestedEnumRuleProductizationModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleProductizationMode | Prisma.EnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | $Enums.RuleProductizationMode | runtime.Types.Skip
+}
+
+export type NestedEnumRuleSeverityWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleSeverity | Prisma.EnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleSeverity[] | Prisma.ListEnumRuleSeverityFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleSeverityWithAggregatesFilter<$PrismaModel> | $Enums.RuleSeverity | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRuleSeverityFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumRuleProductizationModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RuleProductizationMode | Prisma.EnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RuleProductizationMode[] | Prisma.ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRuleProductizationModeWithAggregatesFilter<$PrismaModel> | $Enums.RuleProductizationMode | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRuleProductizationModeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 

@@ -8,7 +8,7 @@ import { createLoggerConfig } from "./logger.config.js";
   imports: [
     PinoLoggerModule.forRootAsync({
       useFactory: () => {
-        const isDevelopment = process.env.NODE_ENV !== "production";
+        const isDevelopment = process.env.NODE_ENV === "development";
         return createLoggerConfig(isDevelopment);
       },
     }),
