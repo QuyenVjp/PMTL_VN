@@ -1,13 +1,20 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalPassThroughEnv": [
-    "CMS_PUBLIC_URL",
-    "CMS_API_TOKEN",
     "DATABASE_URL",
-    "MEILI_HOST",
+    "DATABASE_DIRECT_URL",
+    "API_BASE_URL",
+    "API_INTERNAL_URL",
+    "WEB_ORIGIN",
+    "ADMIN_ORIGIN",
     "NEXT_PUBLIC_SITE_URL",
-    "PORT",
-    "REDIS_URL"
+    "NEXT_PUBLIC_API_BASE_URL",
+    "NEXT_PUBLIC_MEDIA_BASE_URL",
+    "VITE_API_BASE_URL",
+    "VITE_ADMIN_URL",
+    "MEILISEARCH_URL",
+    "MEILISEARCH_API_KEY",
+    "VALKEY_URL"
   ],
   "tasks": {
     "dev": {

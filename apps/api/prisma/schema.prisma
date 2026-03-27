@@ -1,0 +1,184 @@
+// PMTL Phase 1 schema
+// Reference: design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["strictUndefinedChecks", "typedSql"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum UserRole {
+  MEMBER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssetStatus {
+  UPLOADING
+  READY
+  ORPHANED
+  DELETED
+}
+
+// ============================================================================
+// PLATFORM TABLES
+// ============================================================================
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  enabled     Boolean  @default(false)
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("feature_flags")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?  @map("actor_id")
+  actorType  String   @map("actor_type")
+  action     String
+  resource   String
+  resourceId String?  @map("resource_id")
+  metadata   Json?
+  ipAddress  String?  @map("ip_address")
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([actorId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model RateLimitRecord {
+  id         String   @id @default(cuid())
+  key        String
+  endpoint   String
+  count      Int      @default(1)
+  windowStart DateTime @map("window_start")
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([key, endpoint, windowStart])
+  @@index([expiresAt])
+  @@map("rate_limit_records")
+}
+
+// ============================================================================
+// IDENTITY TABLES
+// ============================================================================
+
+model User {
+  id           String     @id @default(cuid())
+  publicId     String     @unique @map("public_id")
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  displayName  String     @map("display_name")
+  avatarUrl    String?    @map("avatar_url")
+  role         UserRole   @default(MEMBER)
+  status       UserStatus @default(ACTIVE)
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  lastLoginAt  DateTime?  @map("last_login_at")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  sessions     Session[]
+  posts        Post[]
+  mediaAssets  MediaAsset[]
+
+  @@index([email])
+  @@index([status])
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  refreshToken String   @unique @map("refresh_token")
+  userAgent    String?  @map("user_agent")
+  ipAddress    String?  @map("ip_address")
+  expiresAt    DateTime @map("expires_at")
+  revokedAt    DateTime? @map("revoked_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================================================
+// CONTENT TABLES
+// ============================================================================
+
+model MediaAsset {
+  id          String      @id @default(cuid())
+  publicId    String      @unique @map("public_id")
+  filename    String
+  mimeType    String      @map("mime_type")
+  size        Int
+  storageKey  String      @map("storage_key")
+  url         String
+  width       Int?
+  height      Int?
+  status      AssetStatus @default(UPLOADING)
+  uploaderId  String      @map("uploader_id")
+  metadata    Json?
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  uploader User @relation(fields: [uploaderId], references: [id])
+
+  @@index([uploaderId])
+  @@index([status])
+  @@map("media_assets")
+}
+
+model Post {
+  id          String        @id @default(cuid())
+  publicId    String        @unique @map("public_id")
+  slug        String        @unique
+  title       String
+  excerpt     String?
+  content     Json
+  status      ContentStatus @default(DRAFT)
+  authorId    String        @map("author_id")
+  featuredImageId String?   @map("featured_image_id")
+  publishedAt DateTime?     @map("published_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([status])
+  @@index([publishedAt])
+  @@map("posts")
+}

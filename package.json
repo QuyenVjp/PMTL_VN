@@ -30,7 +30,7 @@
     "docker:prod:monitoring:test": "docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml --profile monitoring --profile monitoring-test up -d",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "pnpm --filter @pmtl/web test",
+    "test": "turbo run test",
     "test:web": "pnpm --filter @pmtl/web test",
     "typecheck": "turbo run typecheck",
     "format": "prettier --check .",

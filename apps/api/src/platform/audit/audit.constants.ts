@@ -1,0 +1,4 @@
+export const AUDIT_CONSTANTS = {
+  MAX_METADATA_SIZE: 16384, // 16KB
+  RETENTION_DAYS: 90,
+} as const;
