@@ -1,17 +1,19 @@
 import { Injectable, NotFoundException, ForbiddenException, ConflictException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { ContentRepository } from "./content.repository.js";
+import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
 import { canCreatePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
 import type { CreatePostInput, UpdatePostInput, ListPostsQuery } from "./content.schemas.js";
-import type { UserRole, ContentStatus } from "../../generated/prisma/client.js";
+import type { UserRole, ContentStatus, Prisma } from "../../generated/prisma/client.js";
 
 @Injectable()
 export class ContentService {
   constructor(
     private readonly repository: ContentRepository,
+    private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly storage: StorageService,
   ) {}
@@ -87,17 +89,24 @@ export class ContentService {
       throw new ConflictException("Slug đã tồn tại");
     }
 
-    const post = await this.repository.create({
-      publicId,
-      slug,
-      title: input.title,
-      excerpt: input.excerpt,
-      content: input.content,
-      authorId,
-      featuredImageId: input.featuredImageId,
+    // Bug 2 fix: post creation + audit in same transaction
+    const post = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.post.create({
+        data: {
+          publicId,
+          slug,
+          title: input.title,
+          excerpt: input.excerpt,
+          content: input.content as Prisma.InputJsonValue,
+          authorId,
+          featuredImageId: input.featuredImageId,
+          status: "DRAFT",
+        },
+        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      });
+      await this.audit.appendInTransaction(tx, auditContext, "content.create", "post", publicId);
+      return created;
     });
-
-    await this.audit.append(auditContext, "content.create", "post", publicId);
 
     const featuredImageUrl = post.featuredImageId
       ? (await this.storage.getAsset(post.featuredImageId))?.url
@@ -130,15 +139,22 @@ export class ContentService {
       }
     }
 
-    const updated = await this.repository.update(publicId, {
-      title: input.title,
-      slug: input.slug,
-      excerpt: input.excerpt,
-      content: input.content,
-      featuredImageId: input.featuredImageId,
+    // Bug 2 fix: post update + audit in same transaction
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.post.update({
+        where: { publicId },
+        data: {
+          title: input.title,
+          slug: input.slug,
+          excerpt: input.excerpt,
+          content: input.content as Prisma.InputJsonValue | undefined,
+          featuredImageId: input.featuredImageId,
+        },
+        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      });
+      await this.audit.appendInTransaction(tx, auditContext, "content.update", "post", publicId);
+      return result;
     });
-
-    await this.audit.append(auditContext, "content.update", "post", publicId);
 
     const featuredImageUrl = updated.featuredImageId
       ? (await this.storage.getAsset(updated.featuredImageId))?.url
@@ -162,12 +178,16 @@ export class ContentService {
       throw new ConflictException("Bài viết đã được xuất bản");
     }
 
-    const updated = await this.repository.update(publicId, {
-      status: "PUBLISHED",
-      publishedAt: new Date(),
+    // Bug 2 fix: publish + audit in same transaction
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.post.update({
+        where: { publicId },
+        data: { status: "PUBLISHED", publishedAt: new Date() },
+        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      });
+      await this.audit.appendInTransaction(tx, auditContext, "content.publish", "post", publicId);
+      return result;
     });
-
-    await this.audit.append(auditContext, "content.publish", "post", publicId);
 
     const featuredImageUrl = updated.featuredImageId
       ? (await this.storage.getAsset(updated.featuredImageId))?.url

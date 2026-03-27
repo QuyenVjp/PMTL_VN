@@ -1,30 +1,39 @@
+/**
+ * Bootstrap — NEST_REQUEST_PIPELINE.md canon
+ *
+ * Constitution: NestFactory.create(AppModule, { bufferLogs: true })
+ * then app.useLogger(app.get(Logger))
+ *
+ * Global pipes, filters, interceptors are registered via APP_PIPE / APP_FILTER /
+ * APP_INTERCEPTOR providers in AppModule — NOT via app.useGlobal*() here.
+ * This ensures DI injection works correctly for all global concerns.
+ */
 import { NestFactory } from "@nestjs/core";
 import { Logger } from "nestjs-pino";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import { AppModule } from "./app.module.js";
 import { ConfigService } from "./common/config/config.service.js";
-import { GlobalExceptionFilter } from "./common/errors/global-exception.filter.js";
-import { ZodValidationPipe } from "./common/validation/zod-validation.pipe.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
 
+  // Converge Nest system + app logging on single structured logger path
   const logger = app.get(Logger);
   app.useLogger(logger);
 
   const configService = app.get(ConfigService);
 
-  // Global prefix
+  // Global prefix — locked at bootstrap
   app.setGlobalPrefix("api");
 
-  // Security
+  // Security headers (pipeline position #3 — helmet)
   app.use(helmet());
   app.use(cookieParser());
 
-  // CORS
+  // CORS — only WEB_ORIGIN and ADMIN_ORIGIN allowed
   app.enableCors({
     origin: [configService.webOrigin, configService.adminOrigin],
     credentials: true,
@@ -32,17 +41,13 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Request-Id"],
   });
 
-  // Global pipes and filters
-  app.useGlobalPipes(new ZodValidationPipe());
-  app.useGlobalFilters(new GlobalExceptionFilter(logger));
-
-  // Graceful shutdown
+  // Graceful shutdown hooks for Prisma + sessions cleanup
   app.enableShutdownHooks();
 
   const port = configService.apiPort;
   await app.listen(port);
 
-  logger.log(`🚀 API server running on port ${port}`);
+  logger.log(`API server running on port ${port}`);
 }
 
 void bootstrap();

@@ -1,31 +1,42 @@
+/**
+ * Global Exception Filter — HTTP error envelope authority
+ *
+ * Constitution: design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md
+ * "global exception filter standardizes error envelope" — pipeline position #10
+ *
+ * Error envelope canon format:
+ * { error: { code, message, status, requestId, details? } }
+ *
+ * Registered via APP_FILTER provider (NOT app.useGlobalFilters).
+ * No stack trace leak to production client.
+ * Validation errors: safe field-level details.
+ * Auth errors: avoid enumeration.
+ */
 import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Inject,
 } from "@nestjs/common";
 import type { Response, Request } from "express";
-import type { Logger } from "nestjs-pino";
+import { Logger } from "nestjs-pino";
 import { AppError } from "./app-error.js";
 
-interface ErrorEnvelope {
-  success: false;
+interface CanonErrorEnvelope {
   error: {
     code: string;
     message: string;
-    details?: Record<string, unknown>;
-  };
-  meta: {
-    timestamp: string;
+    status: number;
     requestId?: string;
-    path: string;
+    details?: Record<string, unknown>;
   };
 }
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-  constructor(private readonly logger: Logger) {}
+  constructor(@Inject(Logger) private readonly logger: Logger) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -46,13 +57,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       details = exception.details;
 
       this.logger.warn(
-        {
-          code,
-          message,
-          details,
-          path: request.url,
-          requestId,
-        },
+        { code, statusCode, details, path: request.url, requestId },
         `App error: ${code}`,
       );
     } else if (exception instanceof HttpException) {
@@ -61,30 +66,24 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
       if (typeof exceptionResponse === "object" && exceptionResponse !== null) {
         const resp = exceptionResponse as Record<string, unknown>;
-        code = (resp.error as string) ?? "HTTP_ERROR";
+        code = (resp.code as string) ?? (resp.error as string) ?? "HTTP_ERROR";
         message = (resp.message as string) ?? exception.message;
+        if (resp.detail && typeof resp.detail === "object") {
+          details = resp.detail as Record<string, unknown>;
+        }
       } else {
         message = exception.message;
       }
 
       this.logger.warn(
-        {
-          code,
-          message,
-          statusCode,
-          path: request.url,
-          requestId,
-        },
+        { code, statusCode, path: request.url, requestId },
         `HTTP exception: ${statusCode}`,
       );
     } else if (exception instanceof Error) {
+      // No stack trace leak to production client
       this.logger.error(
         {
-          err: {
-            message: exception.message,
-            stack: exception.stack,
-            name: exception.name,
-          },
+          err: { message: exception.message, stack: exception.stack, name: exception.name },
           path: request.url,
           requestId,
         },
@@ -92,26 +91,18 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     } else {
       this.logger.error(
-        {
-          exception,
-          path: request.url,
-          requestId,
-        },
+        { exception, path: request.url, requestId },
         "Unknown exception",
       );
     }
 
-    const envelope: ErrorEnvelope = {
-      success: false,
+    const envelope: CanonErrorEnvelope = {
       error: {
         code,
         message,
-        ...(details && { details }),
-      },
-      meta: {
-        timestamp: new Date().toISOString(),
+        status: statusCode,
         requestId,
-        path: request.url,
+        ...(details && { details }),
       },
     };
 

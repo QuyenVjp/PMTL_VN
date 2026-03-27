@@ -21,6 +21,10 @@ export class IdentityService {
     private readonly audit: AuditService,
   ) {}
 
+  /**
+   * Login — write-path with mandatory audit in same transaction.
+   * Constitution Bug 2 fix: audit MUST be same DB transaction as canonical write.
+   */
   async login(input: LoginInput, metadata: { userAgent?: string; ipAddress?: string }) {
     const user = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
@@ -50,19 +54,17 @@ export class IdentityService {
     // Generate tokens
     const accessToken = await this.generateAccessToken(user, session.id);
 
-    // Update last login
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() },
+    // Transaction: lastLogin update + audit append — Bug 2 fix
+    const auditContext: AuditContext = { actorId: user.id, actorType: "user", ...metadata };
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() },
+      });
+      await this.audit.appendInTransaction(
+        tx, auditContext, "auth.login", "session", session.id,
+      );
     });
-
-    // Audit
-    await this.audit.append(
-      { actorId: user.id, actorType: "user", ...metadata },
-      "auth.login",
-      "session",
-      session.id,
-    );
 
     return {
       ...mapUserToAuthResponse(user),
@@ -71,6 +73,10 @@ export class IdentityService {
     };
   }
 
+  /**
+   * Register — write-path with mandatory audit in same transaction.
+   * Constitution Bug 2 fix: user.create + audit MUST be atomic.
+   */
   async register(input: RegisterInput) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
@@ -83,23 +89,26 @@ export class IdentityService {
     const passwordHash = await argon2.hash(input.password);
     const publicId = nanoid(21);
 
-    const user = await this.prisma.user.create({
-      data: {
-        publicId,
-        email: input.email.toLowerCase(),
-        passwordHash,
-        displayName: input.displayName,
-        role: "MEMBER",
-        status: "ACTIVE",
-      },
+    const user = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          publicId,
+          email: input.email.toLowerCase(),
+          passwordHash,
+          displayName: input.displayName,
+          role: "MEMBER",
+          status: "ACTIVE",
+        },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: created.id, actorType: "user" },
+        "user.create",
+        "user",
+        created.publicId,
+      );
+      return created;
     });
-
-    await this.audit.append(
-      { actorId: user.id, actorType: "user" },
-      "user.create",
-      "user",
-      user.publicId,
-    );
 
     return mapUserToAuthResponse(user);
   }
@@ -164,20 +173,26 @@ export class IdentityService {
     return mapUserToAuthResponse(user);
   }
 
+  /** Bug 2 fix: profile update + audit in same transaction */
   async updateProfile(userId: string, input: UpdateProfileInput, auditContext: AuditContext) {
-    const user = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        displayName: input.displayName,
-        avatarUrl: input.avatarUrl,
-      },
+    const user = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.user.update({
+        where: { id: userId },
+        data: {
+          displayName: input.displayName,
+          avatarUrl: input.avatarUrl,
+        },
+      });
+      await this.audit.appendInTransaction(
+        tx, auditContext, "user.update", "user", updated.publicId, input as Record<string, unknown>,
+      );
+      return updated;
     });
-
-    await this.audit.append(auditContext, "user.update", "user", user.publicId, input);
 
     return mapUserToAuthResponse(user);
   }
 
+  /** Bug 2 fix: password change + audit in same transaction */
   async changePassword(userId: string, input: ChangePasswordInput, auditContext: AuditContext) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -193,12 +208,15 @@ export class IdentityService {
     }
 
     const newPasswordHash = await argon2.hash(input.newPassword);
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: { passwordHash: newPasswordHash },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: userId },
+        data: { passwordHash: newPasswordHash },
+      });
+      await this.audit.appendInTransaction(
+        tx, auditContext, "user.update", "user", user.publicId, { field: "password" },
+      );
     });
-
-    await this.audit.append(auditContext, "user.update", "user", user.publicId, { field: "password" });
 
     return { success: true };
   }

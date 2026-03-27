@@ -40,7 +40,8 @@
       "Bash(echo \"LINT_EXIT:$?\")",
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -path */lib/* -name *.ts -o -path */lib/* -name *.tsx)",
       "Bash(python3:*)",
-      "Bash(grep -A 10 '\"\"test\"\"' /c/Users/ADMIN/DEV2/PMTL_VN/apps/web/package.json)"
+      "Bash(grep -A 10 '\"\"test\"\"' /c/Users/ADMIN/DEV2/PMTL_VN/apps/web/package.json)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -type f -name *.tsx -o -name *.ts)"
     ]
   },
   "enableAllProjectMcpServers": true,

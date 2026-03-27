@@ -1,4 +1,16 @@
+/**
+ * Admin API Client — typed, envelope-aware, cookie-first auth
+ *
+ * Auto-unwraps the backend ResponseInterceptor envelope:
+ *   Backend returns: { data: T, meta: { timestamp, requestId, path } }
+ *   Client returns:  T (just the data)
+ *
+ * Error handling matches GlobalExceptionFilter canon envelope:
+ *   Backend returns: { error: { code, message, status, requestId, details? } }
+ *   Client throws:   HttpError(status, { code, message, details })
+ */
 import { HttpError } from "./http-error.js";
+import type { ApiSuccessEnvelope, ApiErrorEnvelope } from "./envelopes.js";
 
 const BASE_URL = "/api";
 
@@ -45,29 +57,33 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return undefined as T;
   }
 
-  interface ApiErrorShape {
-    code?: string;
-    message?: string;
-    details?: Record<string, unknown>;
-  }
-  interface ApiResponseShape {
-    error?: ApiErrorShape;
-    code?: string;
-    message?: string;
-    details?: Record<string, unknown>;
-  }
-
-  const json = (await response.json()) as ApiResponseShape;
+  const json: unknown = await response.json();
 
   if (!response.ok) {
-    const error: ApiErrorShape = json.error ?? json;
+    // Extract from canon error envelope: { error: { code, message, status, requestId, details? } }
+    const envelope = json as ApiErrorEnvelope;
+    const err = envelope.error;
+    if (err) {
+      throw new HttpError(response.status, {
+        code: err.code ?? "UNKNOWN_ERROR",
+        message: err.message ?? "Lỗi không xác định",
+        details: err.details,
+      });
+    }
+    // Fallback for non-canon error responses
     throw new HttpError(response.status, {
-      code: error.code ?? "UNKNOWN_ERROR",
-      message: error.message ?? "Lỗi không xác định",
-      details: error.details,
+      code: "UNKNOWN_ERROR",
+      message: "Lỗi không xác định",
     });
   }
 
+  // Auto-unwrap success envelope from ResponseInterceptor: { data: T, meta }
+  const envelope = json as ApiSuccessEnvelope<T>;
+  if (envelope.data !== undefined) {
+    return envelope.data;
+  }
+
+  // Fallback for responses not wrapped by interceptor
   return json as T;
 }
 
