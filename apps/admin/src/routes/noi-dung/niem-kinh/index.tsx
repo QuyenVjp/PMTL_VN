@@ -1,302 +1,159 @@
-import { createRoute, Outlet, Link } from "@tanstack/react-router";
-import { rootRoute } from "../../__root.js";
-import { useQuery } from "@tanstack/react-query";
+import { createRoute, Link, Outlet } from "@tanstack/react-router";
 
-// Workspace route for /noi-dung/niem-kinh
+import { EnvironmentRulesTable } from "@/features/chant-admin/environment-rules-table";
+import { EditorPage } from "@/features/content/editor-page";
+import { rootRoute } from "@/routes/__root.js";
+
+type WorkspaceTab = {
+  path: string;
+  label: string;
+  description: string;
+  disabled?: boolean;
+};
+
+const TABS: WorkspaceTab[] = [
+  {
+    path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
+    label: "Môi trường & thời gian",
+    description: "Quản lý rule thời điểm, không gian, thể trạng và bối cảnh hành trì.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/ban-kinh",
+    label: "Bản kinh",
+    description: "Biên tập script niệm, bản tụng và trạng thái xuất bản.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/nghi-thuc",
+    label: "Nghi thức",
+    description: "Điều phối ritual template theo mục đích sử dụng.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/ke-hoach",
+    label: "Kế hoạch",
+    description: "Theo dõi chant plan, milestone và nhắc lịch liên quan.",
+  },
+];
+
 export const niemKinhWorkspaceRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/noi-dung/niem-kinh",
   component: NiemKinhWorkspace,
 });
 
-// Tab routes
 export const environmentRulesTabRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/moi-truong-thoi-gian",
-  component: EnvironmentRulesTab,
+  component: EnvironmentRulesTable,
 });
 
-// Default index redirects to first tab
+const banKinhRoute = createRoute({
+  getParentRoute: () => niemKinhWorkspaceRoute,
+  path: "/ban-kinh",
+  component: () => (
+    <EditorPage
+      title="Bản kinh"
+      description="Biên tập bản kinh và script niệm dài trong cùng workspace quản trị."
+      initialContent="<h2>Bản kinh mẫu</h2><p>Nội dung bản kinh được biên tập tại đây.</p>"
+    />
+  ),
+});
+
+const nghiThucRoute = createRoute({
+  getParentRoute: () => niemKinhWorkspaceRoute,
+  path: "/nghi-thuc",
+  component: () => (
+    <EditorPage
+      title="Nghi thức"
+      description="Biên tập template nghi thức, giữ đúng lane nội dung của module Niệm kinh."
+      initialContent="<h2>Nghi thức cơ bản</h2><ul><li>Chuẩn bị</li><li>Thực hành</li><li>Hồi hướng</li></ul>"
+    />
+  ),
+});
+
+const keHoachRoute = createRoute({
+  getParentRoute: () => niemKinhWorkspaceRoute,
+  path: "/ke-hoach",
+  component: () => (
+    <EditorPage
+      title="Kế hoạch"
+      description="Soạn kế hoạch hành trì dài và ghi chú điều phối trong cùng một màn hình."
+      initialContent="<h2>Kế hoạch 49 ngày</h2><p>Thiết lập mục tiêu, nhắc nhở và milestone tại đây.</p>"
+    />
+  ),
+});
+
 export const niemKinhIndexRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/",
-  component: () => {
-    // Redirect to first tab
-    return (
-      <div className="text-gray-500">
-        Chọn một tab để bắt đầu.
-      </div>
-    );
-  },
+  component: () => (
+    <div className="rounded-2xl border bg-card p-6 shadow-sm">
+      <h2 className="text-lg font-semibold text-foreground">Chọn tab để làm việc</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Chọn đúng tab để đi vào phần rule, bản kinh, nghi thức hoặc kế hoạch cần thao tác.
+      </p>
+    </div>
+  ),
 });
 
-const TABS = [
-  {
-    path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
-    label: "Môi trường & thời gian",
-    description: "Quy tắc về thời gian, địa điểm niệm kinh",
-  },
-  // Future tabs (not implemented in this slice)
-  // { path: "/noi-dung/niem-kinh/bai-niem", label: "Bài niệm", disabled: true },
-  // { path: "/noi-dung/niem-kinh/nghi-thuc", label: "Nghi thức", disabled: true },
-  // { path: "/noi-dung/niem-kinh/ke-hoach", label: "Kế hoạch", disabled: true },
-];
-
-function NiemKinhWorkspace() {
-  return (
-    <div>
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Niệm kinh</h1>
-        <p className="text-gray-600 mt-1">
-          Quản lý nội dung liên quan đến niệm kinh, nghi thức và hướng dẫn tu tập.
-        </p>
-      </header>
-
-      {/* Tabs */}
-      <nav className="border-b border-gray-200 mb-6">
-        <div className="flex gap-6">
-          {TABS.map((tab) => (
-            <TabLink key={tab.path} tab={tab} />
-          ))}
-        </div>
-      </nav>
-
-      {/* Tab Content */}
-      <Outlet />
-    </div>
-  );
-}
-
-function TabLink({ tab }: { tab: { path: string; label: string } }) {
+function WorkspaceTabLink({ tab }: { tab: WorkspaceTab }) {
   return (
     <Link
       to={tab.path}
       activeOptions={{ exact: true }}
       activeProps={{
-        className: "pb-3 text-sm font-medium border-b-2 transition-colors border-blue-600 text-blue-600",
+        className:
+          "rounded-xl border border-primary/20 bg-primary/8 px-4 py-3 text-primary shadow-sm",
       }}
       inactiveProps={{
         className:
-          "pb-3 text-sm font-medium border-b-2 transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
+          "rounded-xl border border-border bg-background px-4 py-3 text-foreground transition-colors hover:border-primary/30 hover:bg-accent/60",
       }}
     >
-      {tab.label}
+      <p className="text-sm font-semibold">{tab.label}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{tab.description}</p>
     </Link>
   );
 }
 
-// Environment Rules Tab Component
-function EnvironmentRulesTab() {
-  return <EnvironmentRulesContent />;
-}
-
-interface RuleGroup {
-  groupKey: string;
-  title: string;
-  summary: string;
-  rules: Array<{
-    ruleKey: string;
-    title: string;
-    canonicalWording: string;
-    severity: string;
-    productizationMode: string;
-    referenceOnly: boolean;
-  }>;
-  lastReviewedAt: string;
-}
-
-interface EnvironmentRulesResponse {
-  intro: {
-    title: string;
-    summary: string;
-    updatedAt: string;
-  };
-  groupCards: Array<{
-    groupKey: string;
-    title: string;
-    summary: string;
-    ruleCount: number;
-  }>;
-  groups: RuleGroup[];
-}
-
-function resolveApiBaseUrl(rawBaseUrl: string | undefined): string {
-  if (!rawBaseUrl) {
-    throw new Error("VITE_API_BASE_URL is required for admin content queries.");
-  }
-
-  const trimmed = rawBaseUrl.replace(/\/+$/, "");
-  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
-}
-
-async function fetchEnvironmentRules(): Promise<EnvironmentRulesResponse> {
-  const apiBaseUrl = resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL as string | undefined);
-  const res = await fetch(`${apiBaseUrl}/content/chanting/environment-rules`);
-  
-  if (!res.ok) {
-    throw new Error(`Failed to fetch: ${res.status}`);
-  }
-  
-  const data = (await res.json()) as EnvironmentRulesResponse;
-  return data;
-}
-
-const SEVERITY_BADGE_CLASSES: Record<string, string> = {
-  advisory: "bg-blue-100 text-blue-800",
-  caution: "bg-amber-100 text-amber-800",
-  strong_guardrail: "bg-red-100 text-red-800",
-  quality_guidance: "bg-green-100 text-green-800",
-  reference_only: "bg-gray-100 text-gray-600",
-};
-
-const SEVERITY_LABELS: Record<string, string> = {
-  advisory: "Khuyến cáo",
-  caution: "Lưu ý",
-  strong_guardrail: "Quan trọng",
-  quality_guidance: "Hướng dẫn",
-  reference_only: "Tham khảo",
-};
-
-function EnvironmentRulesContent() {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["admin-chant-environment-rules", "list"],
-    queryFn: fetchEnvironmentRules,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Đang tải...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <h3 className="text-red-800 font-medium">Không thể tải dữ liệu</h3>
-        <p className="text-red-600 text-sm mt-1">
-          {error instanceof Error ? error.message : "Đã xảy ra lỗi"}
-        </p>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="bg-gray-50 rounded-lg p-8 text-center">
-        <p className="text-gray-500">Chưa có dữ liệu quy tắc môi trường.</p>
-      </div>
-    );
-  }
-
+function NiemKinhWorkspace() {
   return (
-    <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white border rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">
-            {data.groupCards.length}
+    <div className="space-y-5">
+      <section className="rounded-2xl border bg-card px-6 py-5 shadow-sm">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium text-primary">Nội dung / Niệm kinh</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+              Workspace `Niệm kinh`
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Workspace này gom đúng 4 lane nghiệp vụ của Niệm kinh: rule môi trường,
+              bản kinh, nghi thức và kế hoạch. Mỗi tab giữ đúng ngữ cảnh thao tác
+              thay vì tách thành route demo rời rạc.
+            </p>
           </div>
-          <div className="text-sm text-gray-500">Nhóm quy tắc</div>
-        </div>
-        <div className="bg-white border rounded-lg p-4">
-          <div className="text-2xl font-bold text-gray-900">
-            {data.groupCards.reduce((sum, g) => sum + g.ruleCount, 0)}
-          </div>
-          <div className="text-sm text-gray-500">Tổng số quy tắc</div>
-        </div>
-        <div className="bg-white border rounded-lg p-4">
-          <div className="text-sm font-medium text-gray-900">
-            {new Date(data.intro.updatedAt).toLocaleDateString("vi-VN")}
-          </div>
-          <div className="text-sm text-gray-500">Cập nhật lần cuối</div>
-        </div>
-      </div>
 
-      {/* Read-only notice */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-amber-800 text-sm">
-          ℹ️ Chế độ chỉ xem. Chỉnh sửa quy tắc môi trường sẽ được hỗ trợ trong phiên bản sau.
-        </p>
-      </div>
-
-      {/* Groups Table */}
-      <div className="bg-white border rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nhóm
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Mô tả
-              </th>
-              <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                Số quy tắc
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {data.groupCards.map((group) => (
-              <tr key={group.groupKey} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <div className="font-medium text-gray-900">{group.title}</div>
-                  <div className="text-xs text-gray-400">{group.groupKey}</div>
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-600">
-                  {group.summary}
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                    {group.ruleCount}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Detailed Rules by Group */}
-      {data.groups.map((group) => (
-        <div key={group.groupKey} className="bg-white border rounded-lg">
-          <div className="px-4 py-3 border-b bg-gray-50">
-            <h3 className="font-medium text-gray-900">{group.title}</h3>
-            <p className="text-sm text-gray-500">{group.summary}</p>
-          </div>
-          <div className="divide-y divide-gray-100">
-            {group.rules.map((rule) => (
-              <div key={rule.ruleKey} className="px-4 py-3">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-gray-900">{rule.title}</span>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SEVERITY_BADGE_CLASSES[rule.severity] || SEVERITY_BADGE_CLASSES.advisory}`}>
-                        {SEVERITY_LABELS[rule.severity] || rule.severity}
-                      </span>
-                      {rule.referenceOnly && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                          Không product hóa
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600">{rule.canonicalWording}</p>
-                    <p className="text-xs text-gray-400 mt-1">{rule.ruleKey}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="rounded-xl border bg-background px-4 py-3 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Current slice</p>
+            <p className="mt-1">Đi vào đúng tab để tiếp tục thao tác biên tập.</p>
           </div>
         </div>
-      ))}
+      </section>
+
+      <section className="grid gap-3 lg:grid-cols-4">
+        {TABS.map((tab) => (
+          <WorkspaceTabLink key={tab.path} tab={tab} />
+        ))}
+      </section>
+
+      <Outlet />
     </div>
   );
 }
 
-// Export all routes for this workspace
 export const niemKinhRoutes = niemKinhWorkspaceRoute.addChildren([
   niemKinhIndexRoute,
   environmentRulesTabRoute,
+  banKinhRoute,
+  nghiThucRoute,
+  keHoachRoute,
 ]);

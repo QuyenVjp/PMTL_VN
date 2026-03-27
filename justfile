@@ -9,6 +9,28 @@ dev-core:
 dev-full:
   pnpm dev:full
 
+run:
+  powershell -ExecutionPolicy Bypass -File ./run-project.ps1
+
+host-prepare:
+  powershell -ExecutionPolicy Bypass -File ./infra/scripts/prepare-host-dev.ps1
+
+host-full:
+  pnpm dev:host:full
+
+admin-dev:
+  pnpm dev:host:admin
+
+admin-run:
+  powershell -ExecutionPolicy Bypass -File ./infra/scripts/run-admin.ps1
+
+admin-build:
+  pnpm build:admin
+
+admin-check:
+  pnpm typecheck:admin
+  pnpm build:admin
+
 dev-logs:
   pnpm dev:logs
 

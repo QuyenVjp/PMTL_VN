@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1 --port 3002 --strictPort",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint . --max-warnings 0",
@@ -13,21 +13,37 @@
   "dependencies": {
     "@pmtl/shared": "workspace:*",
     "@pmtl/ui": "workspace:*",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@radix-ui/react-collapsible": "1.1.12",
+    "@radix-ui/react-dialog": "1.1.15",
+    "@radix-ui/react-dropdown-menu": "2.1.16",
+    "@radix-ui/react-separator": "1.1.8",
+    "@radix-ui/react-slot": "1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-tooltip": "1.2.8",
+    "@tanstack/react-query": "5.95.2",
     "@tanstack/react-router": "1.168.3",
     "@tanstack/react-table": "8.21.3",
-    "@tanstack/react-query": "5.95.2",
+    "@tiptap/extension-placeholder": "^3.20.5",
+    "@tiptap/react": "^3.20.5",
+    "@tiptap/starter-kit": "^3.20.5",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.515.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "3.3.1",
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "4.2.2",
+    "@types/node": "22.13.2",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@types/node": "22.13.2",
-    "typescript": "5.8.3",
-    "vite": "8.0.2",
     "@vitejs/plugin-react": "6.0.1",
     "tailwindcss": "4.2.2",
-    "@tailwindcss/vite": "4.2.2"
+    "typescript": "5.8.3",
+    "vite": "8.0.2"
   }
 }

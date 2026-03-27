@@ -7,7 +7,7 @@ lock_dir="node_modules/.docker-dev-install.lock"
 case "$service" in
   web)
     workspace_dir="apps/web"
-    required_bin="$workspace_dir/node_modules/next/dist/bin/next"
+    required_bin="$workspace_dir/node_modules/.bin/next"
     ;;
   *)
     echo "[docker-dev] Unknown service: $service" >&2
@@ -70,7 +70,9 @@ done
 
 case "$service" in
   web)
-    exec pnpm --filter @pmtl/web dev:container
+    cd "$workspace_dir"
+    export PATH="/app/$workspace_dir/node_modules/.bin:/app/node_modules/.bin:$PATH"
+    exec next dev --hostname 0.0.0.0 --port 3000 --turbopack
     ;;
   *)
     echo "[docker-dev] Unknown service: $service" >&2

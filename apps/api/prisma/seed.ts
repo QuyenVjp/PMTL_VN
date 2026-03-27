@@ -1,7 +1,16 @@
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, RuleSeverity, RuleProductizationMode } from "../src/generated/prisma/client.js";
 import { nanoid } from "nanoid";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is required to run prisma seed.");
+}
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString }),
+});
 
 interface RuleData {
   ruleKey: string;
@@ -287,55 +296,49 @@ async function seedEnvironmentRules() {
   console.log("Seeding chant environment rules...");
 
   for (const groupData of ENVIRONMENT_RULES_DATA) {
+    const groupPayload = {
+      title: groupData.title,
+      summary: groupData.summary,
+      sortOrder: groupData.sortOrder,
+      ...(groupData.versionNote ? { versionNote: groupData.versionNote } : {}),
+    };
+
     const group = await prisma.chantEnvironmentRuleGroup.upsert({
       where: { groupKey: groupData.groupKey },
-      update: {
-        title: groupData.title,
-        summary: groupData.summary,
-        sortOrder: groupData.sortOrder,
-        versionNote: groupData.versionNote,
-      },
+      update: groupPayload,
       create: {
         publicId: nanoid(21),
         groupKey: groupData.groupKey,
-        title: groupData.title,
-        summary: groupData.summary,
-        sortOrder: groupData.sortOrder,
-        versionNote: groupData.versionNote,
+        ...groupPayload,
       },
     });
 
     console.log(`  Created/updated group: ${groupData.groupKey}`);
 
     for (const ruleData of groupData.rules) {
+      const rulePayload = {
+        title: ruleData.title,
+        canonicalWording: ruleData.canonicalWording,
+        severity: ruleData.severity,
+        productizationMode: ruleData.productizationMode,
+        safeLaneRefs: ruleData.safeLaneRefs || [],
+        avoidItems: ruleData.avoidItems || [],
+        referenceOnly: ruleData.referenceOnly || false,
+        sortOrder: ruleData.sortOrder,
+        ...(ruleData.shortReason ? { shortReason: ruleData.shortReason } : {}),
+        ...(ruleData.sourceReference
+          ? { sourceReference: ruleData.sourceReference }
+          : {}),
+      };
+
       await prisma.chantEnvironmentRule.upsert({
         where: { ruleKey: ruleData.ruleKey },
-        update: {
-          title: ruleData.title,
-          canonicalWording: ruleData.canonicalWording,
-          severity: ruleData.severity,
-          productizationMode: ruleData.productizationMode,
-          safeLaneRefs: ruleData.safeLaneRefs || [],
-          avoidItems: ruleData.avoidItems || [],
-          shortReason: ruleData.shortReason,
-          sourceReference: ruleData.sourceReference,
-          referenceOnly: ruleData.referenceOnly || false,
-          sortOrder: ruleData.sortOrder,
-        },
+        update: rulePayload,
         create: {
           publicId: nanoid(21),
           groupId: group.id,
           ruleKey: ruleData.ruleKey,
-          title: ruleData.title,
-          canonicalWording: ruleData.canonicalWording,
-          severity: ruleData.severity,
-          productizationMode: ruleData.productizationMode,
-          safeLaneRefs: ruleData.safeLaneRefs || [],
-          avoidItems: ruleData.avoidItems || [],
-          shortReason: ruleData.shortReason,
-          sourceReference: ruleData.sourceReference,
-          referenceOnly: ruleData.referenceOnly || false,
-          sortOrder: ruleData.sortOrder,
+          ...rulePayload,
         },
       });
     }

@@ -1,12 +1,23 @@
 import type { Params } from "nestjs-pino";
 import type { Options } from "pino-http";
+import { createRequire } from "node:module";
 import { nanoid } from "nanoid";
 import { REDACT_PATHS, REQUEST_ID_HEADER } from "./logger.constants.js";
 
 export function createLoggerConfig(isDevelopment: boolean): Params {
+  const require = createRequire(import.meta.url);
+  const hasPinoPretty = (() => {
+    try {
+      require.resolve("pino-pretty");
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+
   const pinoHttpOptions: Options = {
     level: isDevelopment ? "debug" : "info",
-    transport: isDevelopment
+    transport: isDevelopment && hasPinoPretty
       ? {
           target: "pino-pretty",
           options: {

@@ -2,8 +2,12 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routes/__root.js";
-import "./index.css";
+
+import { CommandMenu } from "@/components/command-menu";
+import { SearchProvider } from "@/context/search-provider";
+import { ThemeProvider } from "@/context/theme-provider";
+import { routeTree } from "@/routes/__root.js";
+import "@/index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,12 +26,18 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const rootEl = document.getElementById("root");
-if (rootEl) {
-  createRoot(rootEl).render(
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  createRoot(rootElement).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <ThemeProvider>
+          <SearchProvider>
+            <RouterProvider router={router} />
+            <CommandMenu />
+          </SearchProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>,
   );
