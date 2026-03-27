@@ -139,7 +139,7 @@ Nội dung canonical nên có:
 Canonical note:
 
 - phần này không nên giữ như wording rời chỉ riêng cho `Kinh Bài Tập`
-- source-of-truth tập trung nằm ở [chanting-environment-rules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD)
+- source-of-truth tập trung nằm ở [chanting-environment-rules.md](../../../03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD)
 - route `/kinh-bai-tap/luu-y/thoi-gian-va-dia-diem` chỉ là consumer/curated subset của canon đó
 
 ### 5.2. Cách niệm đúng

@@ -5,11 +5,11 @@ Nó tồn tại để AI scaffold không trôi về mindset Tailwind v3 hoặc J
 
 Authority liên quan:
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
-- [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
-- [TOKEN_IMPLEMENTATION_SHEET.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/TOKEN_IMPLEMENTATION_SHEET.md)
-- [SHADCN_UI_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
+- [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+- [DESIGN_PRINCIPLES.md](../../02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
+- [TOKEN_IMPLEMENTATION_SHEET.md](../../04-execution-overlay/web/TOKEN_IMPLEMENTATION_SHEET.md)
+- [SHADCN_UI_INVENTORY.md](../../02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
 
 ## Baseline
 

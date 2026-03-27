@@ -1,7 +1,7 @@
 # PMTL_VN Design Roadmap (Lộ trình thiết kế)
 
-> Phase definitions và baseline stack: xem [README.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/README.md) + [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-> Coding waves: xem [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) phần 8
+> Phase definitions và baseline stack: xem [README.md](../README.md) + [DECISIONS.md](../01-repo-constitution/DECISIONS.md)
+> Coding waves: xem [CODING_READINESS.md](../04-execution-overlay/repo/CODING_READINESS.md) phần 8
 > File này chỉ giữ `exit criteria` per phase, không lặp full stack/scope
 
 ## Phase 1 — Foundation

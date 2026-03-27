@@ -36,6 +36,6 @@ Chốt danh sách custom decorators canonical cho `apps/api`.
 
 ## Dependencies
 
-- [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
-- [SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+- [NEST_FEATURE_ADOPTION_MATRIX.md](../../02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
+- [SECURITY_POLICY.md](../../02-platform-baseline/security-runtime/SECURITY_POLICY.md)
 

@@ -2,7 +2,7 @@
 
 Canonical path đã chuyển sang:
 
-- [design/01-repo-constitution/REPO_STRUCTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/REPO_STRUCTURE.md)
+- [design/01-repo-constitution/REPO_STRUCTURE.md](../../01-repo-constitution/REPO_STRUCTURE.md)
 
 Lý do:
 

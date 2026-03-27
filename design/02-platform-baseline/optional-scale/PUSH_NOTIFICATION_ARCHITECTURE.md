@@ -6,7 +6,7 @@ Phase 1: endpoint tồn tại nhưng bị guard bởi feature flag `notification
 > **Module map**: `design/03-domains/notification/MODULE_MAP.md`
 > **Contracts**: `design/03-domains/notification/CONTRACTS.md`
 > **Outbox taxonomy**: `design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md`
-> **Feature flag**: [CODING_READINESS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md) Phần 4
+> **Feature flag**: [CODING_READINESS.md](../../04-execution-overlay/repo/CODING_READINESS.md) Phần 4
 
 ---
 

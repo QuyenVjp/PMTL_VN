@@ -42,6 +42,6 @@ Chốt encryption/hashing stance cho PMTL backend.
 
 ## Dependencies
 
-- [SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
-- [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md)
+- [SECURITY_POLICY.md](../../02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+- [manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md)
 

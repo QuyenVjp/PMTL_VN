@@ -5,9 +5,9 @@ Mục tiêu là để AI không kéo server state hoặc auth authority vào sto
 
 Authority liên quan:
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [FRONTEND_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-- [REACT_RUNTIME_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
+- [FRONTEND_ARCHITECTURE.md](../../02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+- [REACT_RUNTIME_POLICY.md](../../02-platform-baseline/web-runtime/REACT_RUNTIME_POLICY.md)
 
 ## Allowed uses
 

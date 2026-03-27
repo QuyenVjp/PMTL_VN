@@ -5,12 +5,12 @@ Nó bổ sung cho schema plan và migration strategy để AI scaffold không d�
 
 Authority chain:
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
-- [MIGRATION_STRATEGY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md)
-- [PRISMA_QUERY_PATTERN_RULES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md)
-- [PRISMA_SCHEMA_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md)
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
+- [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+- [MIGRATION_STRATEGY.md](../../02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md)
+- [PRISMA_QUERY_PATTERN_RULES.md](../../02-platform-baseline/data-runtime/PRISMA_QUERY_PATTERN_RULES.md)
+- [PRISMA_SCHEMA_PLAN.md](../../04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md)
+- [NEST_REQUEST_PIPELINE.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
 
 ## Baseline
 
@@ -66,6 +66,111 @@ Authority chain:
 - nếu dùng ESM-first scaffold line theo official docs, repo vẫn phải giữ import path và build settings thống nhất với Nest runtime decisions; không vừa theo docs mẫu, vừa tạo second pattern trong app
 - connection-pool / adapter defaults thay đổi theo v7 phải được review trong same task nếu có timeout/regression evidence; không copy-paste tuning từ v6 by habit
 - error formatting, logging, và tracing của Prisma phải đi vào repo logging/observability pipeline; không coi mặc định console formatter của docs là owner behavior
+
+## Canonical pattern examples
+
+### 1. prisma.config.ts — CLI và runtime URL authority
+
+```typescript
+// apps/api/prisma.config.ts
+import { defineConfig } from 'prisma/config';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+export default defineConfig({
+  earlyAccess: true,
+  schema: './prisma/schema.prisma',
+  migrate: {
+    // CLI migrate/introspection phải dùng direct URL, không dùng pooled URL
+    url: process.env.DIRECT_DATABASE_URL!,
+  },
+});
+```
+
+### 2. schema.prisma — generator đúng cho Prisma 7
+
+```prisma
+// apps/api/prisma/schema.prisma
+generator client {
+  // Prisma 7: generator là "prisma-client", KHÔNG phải "prisma-client-js"
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")       // pooled URL cho app runtime
+  directUrl = env("DIRECT_DATABASE_URL") // direct URL cho migrate/introspect
+}
+
+// Example: platform table (không phải domain business table)
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  targetType String
+  targetId   String?
+  meta       Json?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_logs")
+  @@index([actorId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
+}
+```
+
+### 3. PrismaService — singleton owner trong NestJS
+
+```typescript
+// apps/api/src/common/prisma/prisma.service.ts
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor() {
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const adapter = new PrismaPg(pool);
+    super({ adapter });
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
+
+// Rule: mọi module cần Prisma đều inject PrismaService — không new PrismaClient() rải rác
+```
+
+### 4. Transaction pattern cho risky write-paths
+
+```typescript
+// Correct: transaction bao toàn bộ write-path nhạy cảm
+async refreshTokens(oldToken: string, userId: string) {
+  return this.prisma.$transaction(async (tx) => {
+    // revoke old token
+    await tx.session.update({
+      where: { token: oldToken },
+      data: { revokedAt: new Date() },
+    });
+    // create new session
+    const session = await tx.session.create({
+      data: { userId, token: generateToken(), expiresAt: nextExpiry() },
+    });
+    return session;
+  });
+}
+
+// Wrong: separate queries without transaction — race condition risk
+// await this.prisma.session.update(...);   // ← NO
+// await this.prisma.session.create(...);   // ← NO
+```
 
 ## Forbidden drift
 

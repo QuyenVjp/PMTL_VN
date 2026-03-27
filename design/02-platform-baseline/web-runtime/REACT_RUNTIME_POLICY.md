@@ -179,9 +179,9 @@ Chot React runtime rules cho `apps/web` va `apps/admin` de codegen khong di lech
 
 ## Dependencies
 
-- [FRONTEND_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-- [WEB_APP_ROUTER_FILE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md)
-- [WEB_QUERY_INVALIDATION_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md)
-- [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
-- [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
-- [docs/react_docs.md](C:/Users/ADMIN/DEV2/PMTL_VN/docs/react_docs.md)
+- [FRONTEND_ARCHITECTURE.md](../../02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+- [WEB_APP_ROUTER_FILE_CONTRACT.md](../../04-execution-overlay/web/WEB_APP_ROUTER_FILE_CONTRACT.md)
+- [WEB_QUERY_INVALIDATION_PLAN.md](../../04-execution-overlay/web/WEB_QUERY_INVALIDATION_PLAN.md)
+- [DESIGN_PRINCIPLES.md](../../02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
+- [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+- [docs/react_docs.md](../../../docs/react_docs.md)

@@ -323,7 +323,7 @@ Source-of-truth phải đi từ owner content/wisdom rule references; engagement
 Canonical note:
 
 - `time/place/environment/body-state` rules không nên nằm rải rác trong từng guide
-- `Kinh Bài Tập` là consumer lớn nhất, nhưng source-of-truth tập trung phải nằm ở [chanting-environment-rules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD)
+- `Kinh Bài Tập` là consumer lớn nhất, nhưng source-of-truth tập trung phải nằm ở [chanting-environment-rules.md](../../../03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD)
 
 ## 7.2. Engagement owns
 

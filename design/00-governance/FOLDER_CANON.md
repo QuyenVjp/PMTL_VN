@@ -37,8 +37,8 @@ design/
 ## Live Layout Rule
 
 - file này chốt target layout
-- [MIGRATION_MAP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/MIGRATION_MAP.md) chỉ là audit ledger cho move/rename history
-- [ROOT_DOC_OWNERSHIP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ROOT_DOC_OWNERSHIP.md) vẫn là owner registry chi tiết
+- [MIGRATION_MAP.md](../00-governance/MIGRATION_MAP.md) chỉ là audit ledger cho move/rename history
+- [ROOT_DOC_OWNERSHIP.md](../01-repo-constitution/ROOT_DOC_OWNERSHIP.md) vẫn là owner registry chi tiết
 
 ## Domain Standard
 

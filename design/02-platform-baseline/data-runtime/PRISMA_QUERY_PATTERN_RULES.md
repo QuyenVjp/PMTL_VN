@@ -5,10 +5,10 @@ Nó tồn tại để AI scaffold không suy từ ví dụ CRUD đơn giản th�
 
 Authority chain:
 
-- [PRISMA_7_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [SERIALIZATION_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/SERIALIZATION_POLICY.md)
-- [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
+- [PRISMA_7_POLICY.md](../../02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
+- [NEST_REQUEST_PIPELINE.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [SERIALIZATION_POLICY.md](../../02-platform-baseline/api-runtime/SERIALIZATION_POLICY.md)
+- [API_DTO_SHAPE_PLAN.md](../../04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
 
 ## Baseline
 

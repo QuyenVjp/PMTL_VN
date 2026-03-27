@@ -14,7 +14,7 @@ Nó trả lời thật cụ thể 5 câu:
    - revalidate cache
    - phát event qua `outbox_events`
 
-> Đây là `overview doc (tài liệu định hướng đọc)`, không thay `module-map.md`, `contracts.md`, [PAGE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/web/PAGE_INVENTORY.md), hay [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md).
+> Đây là `overview doc (tài liệu định hướng đọc)`, không thay `module-map.md`, `contracts.md`, [PAGE_INVENTORY.md](../04-execution-overlay/web/PAGE_INVENTORY.md), hay [API_ROUTE_INVENTORY.md](../04-execution-overlay/api/API_ROUTE_INVENTORY.md).
 > Nếu file này khác owner docs, owner docs thắng.
 
 ## Cách hiểu cực ngắn
@@ -80,8 +80,8 @@ Ví dụ:
 
 ## Platform / control-plane tables mà người mới rất hay quên
 
-Các bảng này **không nên bị nuốt vào nhầm business module**. Chúng thuộc lớp `platform/control-plane (nền tảng/điều phối)` ở [platform-modules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md).
-Phần dưới đây là `orientation snapshot (ảnh chụp định hướng)` để dễ đọc toàn hệ; owner thật của boundary/control-plane vẫn là [platform-modules.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/PLATFORM_MODULES.md).
+Các bảng này **không nên bị nuốt vào nhầm business module**. Chúng thuộc lớp `platform/control-plane (nền tảng/điều phối)` ở [platform-modules.md](../02-platform-baseline/api-runtime/PLATFORM_MODULES.md).
+Phần dưới đây là `orientation snapshot (ảnh chụp định hướng)` để dễ đọc toàn hệ; owner thật của boundary/control-plane vẫn là [platform-modules.md](../02-platform-baseline/api-runtime/PLATFORM_MODULES.md).
 
 | Bảng / vùng dữ liệu | Owner thực tế | Dùng để làm gì |
 |---|---|---|
@@ -298,7 +298,7 @@ Không được tự giữ:
 
 ## Permission matrix shortcut (bản rút gọn quyền)
 
-File gốc: [PERMISSION_MATRIX.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/REFERENCES/PERMISSION_MATRIX.md)
+File gốc: [PERMISSION_MATRIX.md](../03-domains/identity/REFERENCES/PERMISSION_MATRIX.md)
 
 | Vai trò | Đọc public content | Ghi self-state | Đăng community | Xử lý moderation | Quản lý content/admin ops |
 |---|---|---|---|---|---|
@@ -313,7 +313,7 @@ File gốc: [PERMISSION_MATRIX.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domain
 
 ## Outbox event taxonomy shortcut (bản rút gọn side effect quan trọng)
 
-File gốc: [outbox-event-taxonomy.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
+File gốc: [outbox-event-taxonomy.md](../04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
 
 Khi nào cần `outbox_events`:
 - publish/unpublish/delete content mà downstream phải reindex/revalidate
@@ -334,7 +334,7 @@ Hiểu rất đời thường:
 
 ## Notification / Web Push / VAPID hiểu rất đời thường
 
-File gốc: [push-notification-architecture.md](/C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md)
+File gốc: [push-notification-architecture.md](../02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md)
 
 3 lớp chính:
 

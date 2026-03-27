@@ -9,6 +9,66 @@ Nó không override root docs. Nó chỉ gom các quyết định đủ quan tr�
 
 ---
 
+## C4 Level 1 — System Context
+
+```mermaid
+C4Context
+  title PMTL_VN — System Context
+
+  Person(member, "Thành viên", "Người tu tập: đọc kinh, ghi công phu, phóng sanh, xem lịch")
+  Person(guest, "Khách", "Xem nội dung công khai, không cần đăng nhập")
+  Person(admin, "Phụng sự viên", "Quản lý nội dung, kiểm duyệt, vận hành")
+
+  System(pmtl, "PMTL_VN", "Nền tảng Phật pháp: nội dung, cộng đồng, tu tập cá nhân, lịch âm, tủ sách")
+
+  System_Ext(cloudflare, "Cloudflare", "WAF, CDN, proxy edge")
+  System_Ext(email, "Email Provider", "Gửi email xác thực, thông báo")
+  System_Ext(r2, "Cloudflare R2", "Phase 2: object storage scale-out")
+
+  Rel(guest, pmtl, "Đọc nội dung, tìm kiếm", "HTTPS")
+  Rel(member, pmtl, "Đăng nhập, tu tập, nguyện lực, phóng sanh", "HTTPS")
+  Rel(admin, pmtl, "Quản lý nội dung, kiểm duyệt", "HTTPS/admin")
+  Rel(pmtl, cloudflare, "Đứng sau WAF/CDN")
+  Rel(pmtl, email, "Gửi email", "SMTP/API")
+  Rel(pmtl, r2, "Phase 2: R2 upload", "S3-compat")
+```
+
+---
+
+## C4 Level 2 — Container View (Phase 1)
+
+```mermaid
+graph TB
+  subgraph Edge["Edge / Proxy"]
+    CF["Cloudflare WAF+CDN"]
+    Caddy["Caddy Reverse Proxy<br/>(TLS, routing)"]
+  end
+
+  subgraph Apps["Applications"]
+    Web["apps/web<br/>Next.js 16<br/>(SSR + RSC, Tailwind 4)"]
+    Admin["apps/admin<br/>Vite + React<br/>(Admin SPA)"]
+    API["apps/api<br/>NestJS 11<br/>(Auth authority, write-paths)"]
+  end
+
+  subgraph Data["Data Layer"]
+    PG[("Postgres 16<br/>(Source of Truth)")]
+    Meili["Meilisearch<br/>(Search projection,<br/>SQL fallback khi degraded)"]
+    Disk["Local Disk<br/>(Phase 1 media,<br/>abstracted via adapter)"]
+  end
+
+  CF --> Caddy
+  Caddy -->|"/ routes"| Web
+  Caddy -->|"/api routes"| API
+  Caddy -->|"/admin routes"| Admin
+  Web -->|"REST/JSON"| API
+  Admin -->|"REST/JSON"| API
+  API -->|"Prisma 7 ORM"| PG
+  API -->|"SDK"| Meili
+  API -->|"StorageAdapter"| Disk
+```
+
+---
+
 ## Current direction
 
 - Product direction: `design-first rebuild`
@@ -24,14 +84,14 @@ Nó không override root docs. Nó chỉ gom các quyết định đủ quan tr�
 
 ## Phase 1 baseline
 
-- Full Phase 1 list lives in [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) section 2.
+- Full Phase 1 list lives in [DECISIONS.md](../01-repo-constitution/DECISIONS.md) section 2.
 - Shorthand only: first launch = `apps/web + apps/api + apps/admin` trên `Postgres + Caddy` với storage abstraction, auth/upload hardening, `audit_logs`, `feature_flags`, app-layer rate limit, `/health/*`, `/metrics`, và restore discipline.
 
 ---
 
 ## Deferred until measured pain
 
-- Full deferred / excluded matrix lives in [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) sections 3 and 15, plus [PHASE_ACTIVATION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/PHASE_ACTIVATION_MATRIX.md).
+- Full deferred / excluded matrix lives in [DECISIONS.md](../01-repo-constitution/DECISIONS.md) sections 3 and 15, plus [PHASE_ACTIVATION_MATRIX.md](../01-repo-constitution/PHASE_ACTIVATION_MATRIX.md).
 - Default reading shortcut: optional-scale tech như `Valkey`, `BullMQ`, `Meilisearch`, `PgBouncer`, Prometheus/Grafana/Alertmanager, và tracing không được scaffold sớm nếu chưa có trigger đo được.
 
 ---

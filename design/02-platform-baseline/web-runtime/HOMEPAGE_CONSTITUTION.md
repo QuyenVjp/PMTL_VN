@@ -1,6 +1,6 @@
 # Homepage Constitution — PMTL_VN
 
-> Companion document for [LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md).
+> Companion document for [LANDING_PAGE_DESIGN.md](../../02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md).
 > This file sharpens homepage art direction, atmosphere, and composition.
 > Route authority still belongs to `PAGE_INVENTORY.md`. Navigation authority still belongs to `NAVIGATION_ARCHITECTURE.md`.
 
@@ -567,7 +567,7 @@ Homepage direction is correct only if all statements below are true:
 
 ## 14. Notes For AI Design And Codegen
 
-- Preserve [LANDING_PAGE_DESIGN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md) as the main landing-page owner.
+- Preserve [LANDING_PAGE_DESIGN.md](../../02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md) as the main landing-page owner.
 - Use this file to sharpen art direction, palette discipline, and homepage emotional logic.
 - Do not invent route names here; route canon lives elsewhere.
 - When converting this into UI, prefer high-precision composition over more components.

@@ -28,7 +28,7 @@ Chốt stance cho `API versioning` trong PMTL.
 ## Must
 
 - phase_1 không bật API versioning layer toàn cục
-- route canon ở [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md) là source of truth, không tự thêm `/v1`
+- route canon ở [API_ROUTE_INVENTORY.md](../../04-execution-overlay/api/API_ROUTE_INVENTORY.md) là source of truth, không tự thêm `/v1`
 - nếu sau này mở versioning, phải chốt lại bằng decision update trước khi scaffold
 
 ## Must not
@@ -50,6 +50,6 @@ Chốt stance cho `API versioning` trong PMTL.
 
 ## Dependencies
 
-- [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [API_ROUTE_INVENTORY.md](../../04-execution-overlay/api/API_ROUTE_INVENTORY.md)
+- [IMPLEMENTATION_MAPPING.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 

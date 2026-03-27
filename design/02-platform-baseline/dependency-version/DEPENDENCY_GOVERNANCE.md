@@ -78,7 +78,7 @@ Rule:
 
 ## 3. Approved version policy mirror
 
-Section này là `governance mirror` của exact pins trong [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md).
+Section này là `governance mirror` của exact pins trong [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md).
 Nếu bảng này lệch `VERSION_MATRIX.md`, coi như drift bug và `VERSION_MATRIX.md` thắng.
 
 ### 3.1 Interpretation

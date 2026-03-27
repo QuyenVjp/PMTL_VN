@@ -2,7 +2,7 @@
 
 Canonical path đã chuyển sang:
 
-- [design/00-governance/WRITING_STANDARDS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/WRITING_STANDARDS.md)
+- [design/00-governance/WRITING_STANDARDS.md](../../00-governance/WRITING_STANDARDS.md)
 
 Lý do:
 

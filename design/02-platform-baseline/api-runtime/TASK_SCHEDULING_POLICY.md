@@ -51,7 +51,7 @@ Chốt stance cho cron/scheduler trong `apps/api`.
 
 ## Dependencies
 
-- [OUTBOX_EVENT_TAXONOMY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
-- [OBSERVABILITY_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [OUTBOX_EVENT_TAXONOMY.md](../../04-execution-overlay/cross-module/OUTBOX_EVENT_TAXONOMY.md)
+- [OBSERVABILITY_ARCHITECTURE.md](../../02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
+- [IMPLEMENTATION_MAPPING.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 

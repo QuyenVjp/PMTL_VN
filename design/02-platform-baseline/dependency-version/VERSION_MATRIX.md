@@ -10,10 +10,10 @@ Nó phải trả lời rõ 3 câu:
 
 Authority chi tiết vẫn thuộc:
 
-- [DEPENDENCY_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
-- [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
-- [NESTJS_11_ADOPTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
+- [DEPENDENCY_GOVERNANCE.md](../../02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
+- [NEST_FEATURE_ADOPTION_MATRIX.md](../../02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
+- [NESTJS_11_ADOPTION.md](../../02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
 
 ## Truth labels
 
@@ -46,9 +46,9 @@ Vì vậy:
 
 | Concern | Status | Baseline | Source |
 |---|---|---|---|
-| Node.js | installed truth | `>=20.18.0` | [package.json](C:/Users/ADMIN/DEV2/PMTL_VN/package.json) |
-| pnpm | installed truth | `10.30.3` | [package.json](C:/Users/ADMIN/DEV2/PMTL_VN/package.json) |
-| TypeScript | installed truth | `5.9.2` root toolchain | [package.json](C:/Users/ADMIN/DEV2/PMTL_VN/package.json) |
+| Node.js | installed truth | `>=20.18.0` | [package.json](../../../package.json) |
+| pnpm | installed truth | `10.30.3` | [package.json](../../../package.json) |
+| TypeScript | installed truth | `5.9.2` root toolchain | [package.json](../../../package.json) |
 | Node.js recommended scaffold pin | design pin | `24.14.1` LTS line | [nodejs.org/download/releases](https://nodejs.org/en/download/releases/) |
 | pnpm recommended scaffold pin | design pin | `10.33.0` | [pnpm.io/installation](https://pnpm.io/installation) |
 
@@ -128,7 +128,7 @@ Zod official paths to prefer for behavior questions:
 
 - NestJS:
   - current design pin bám `11.1.17`
-  - route semantics bám Express v5 behavior qua [NESTJS_11_ADOPTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
+  - route semantics bám Express v5 behavior qua [NESTJS_11_ADOPTION.md](../../02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md)
 - Next.js:
   - app-router, cache, metadata, and route behavior phải đọc version-matched docs trước khi scaffold
 - Prisma:
@@ -159,7 +159,7 @@ Zod official paths to prefer for behavior questions:
 
 - Không dùng `latest` như một lý do đủ để nâng version.
 - Không dùng prerelease trên production runtime path nếu không có doc ngoại lệ rõ.
-- Boundary-critical packages phải giữ sync theo [DEPENDENCY_GOVERNANCE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md).
+- Boundary-critical packages phải giữ sync theo [DEPENDENCY_GOVERNANCE.md](../../02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md).
 - Nếu docs/framework thay đổi behavior quan trọng, cập nhật owner docs trước rồi mới scaffold/code.
 - Khi repo chưa có package manifest cho một app:
   - dùng `design pin` để thiết kế/scaffold

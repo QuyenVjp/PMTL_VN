@@ -20,7 +20,7 @@ Nó thay path legacy cũ trong `design/02-platform-baseline/dependency-version/W
 - `409` duplicate hoặc conflict
 - `500` lỗi hệ thống/downstream
 
-Nếu route family có nuance hơn, phải map về canonical `error.code` và [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md).
+Nếu route family có nuance hơn, phải map về canonical `error.code` và [ERROR_ENVELOPE_CONTRACT.md](../02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md).
 
 ## Use-case rules
 

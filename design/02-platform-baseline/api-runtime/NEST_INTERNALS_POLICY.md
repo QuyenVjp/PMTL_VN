@@ -56,7 +56,7 @@ Chốt stance cho các Nest internals dễ bị dùng sai.
 
 ## Dependencies
 
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [EVENT_MODEL_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/EVENT_MODEL_POLICY.md)
-- [MODULE_INTERACTIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/cross-module/MODULE_INTERACTIONS.md)
+- [NEST_REQUEST_PIPELINE.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [EVENT_MODEL_POLICY.md](../../04-execution-overlay/cross-module/EVENT_MODEL_POLICY.md)
+- [MODULE_INTERACTIONS.md](../../04-execution-overlay/cross-module/MODULE_INTERACTIONS.md)
 

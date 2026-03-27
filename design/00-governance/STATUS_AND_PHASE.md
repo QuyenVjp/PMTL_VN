@@ -46,7 +46,7 @@ Lớp scale/observability nâng cao, không được kéo vào scaffold sớm th
 
 ## PMTL Practical Mapping
 
-- full Phase 1 component list owner là [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
+- full Phase 1 component list owner là [DECISIONS.md](../01-repo-constitution/DECISIONS.md)
 - optional-scale activations như `Valkey`, `BullMQ`, `Meilisearch`, `R2`, push notifications chỉ bật theo trigger docs tương ứng
 - observability/scale lanes như OTEL, Prometheus/Grafana/Alertmanager, `PgBouncer` vẫn là later-phase systems cho đến khi trigger đo được
 

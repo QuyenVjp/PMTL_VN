@@ -2,7 +2,7 @@
 
 Canonical path đã chuyển sang:
 
-- [design/01-repo-constitution/ROADMAP.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/ROADMAP.md)
+- [design/01-repo-constitution/ROADMAP.md](../../01-repo-constitution/ROADMAP.md)
 
 Lý do:
 

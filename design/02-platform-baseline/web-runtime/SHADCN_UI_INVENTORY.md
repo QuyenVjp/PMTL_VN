@@ -5,10 +5,10 @@ Nó không thay design system owner docs; nó tồn tại để AI biết nên a
 
 Authority liên quan:
 
-- [FRONTEND_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
-- [DESIGN_PRINCIPLES.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
-- [COMPONENT_SPECS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
-- [TAILWIND_CSS_4_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
+- [FRONTEND_ARCHITECTURE.md](../../02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md)
+- [DESIGN_PRINCIPLES.md](../../02-platform-baseline/web-runtime/DESIGN_PRINCIPLES.md)
+- [COMPONENT_SPECS.md](../../02-platform-baseline/web-runtime/COMPONENT_SPECS.md)
+- [TAILWIND_CSS_4_POLICY.md](../../02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
 
 ## Acquisition rules
 

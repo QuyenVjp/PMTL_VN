@@ -1,18 +1,18 @@
 # ERROR_ENVELOPE_CONTRACT
 
 File này chốt JSON error envelope chuẩn cho `apps/api`.
-Nó làm rõ phần shape/metadata/detail projection, còn canonical code list vẫn do [ERROR_CODE_REGISTRY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md) sở hữu.
+Nó làm rõ phần shape/metadata/detail projection, còn canonical code list vẫn do [ERROR_CODE_REGISTRY.md](../../04-execution-overlay/api/ERROR_CODE_REGISTRY.md) sở hữu.
 
 Authority liên quan:
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [ERROR_CODE_REGISTRY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
-- [ZOD_4_RUNTIME_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
+- [NEST_REQUEST_PIPELINE.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [ERROR_CODE_REGISTRY.md](../../04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
+- [ZOD_4_RUNTIME_POLICY.md](../../02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md)
 
 Precedence note:
 
-- nếu file này mâu thuẫn với root decision baseline, [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md) thắng
+- nếu file này mâu thuẫn với root decision baseline, [DECISIONS.md](../../01-repo-constitution/DECISIONS.md) thắng
 - trong lane error handling chi tiết, file này thắng overview docs
 
 ## Canonical shape

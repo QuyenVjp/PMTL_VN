@@ -42,5 +42,5 @@ Chốt stance cho Async Local Storage trong backend PMTL.
 
 ## Dependencies
 
-- [OBSERVABILITY_ARCHITECTURE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
-- [AI_DEBUGGING_DISCIPLINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md)
+- [OBSERVABILITY_ARCHITECTURE.md](../../02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md)
+- [AI_DEBUGGING_DISCIPLINE.md](../../02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md)

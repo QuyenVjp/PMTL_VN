@@ -158,6 +158,86 @@ Rule:
 - coi `fromJSONSchema()` input là authority thay cho Zod owner schema
 - nhét metadata vào registry rồi quên cập nhật schema thật
 
+## Canonical pattern examples
+
+### 1. Shared boundary schema (packages/shared)
+
+```typescript
+// packages/shared/src/schemas/identity.schemas.ts
+import { z } from 'zod';
+
+export const RegisterMemberSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8).max(72),
+  displayName: z.string().min(1).max(80).trim(),
+});
+
+// Type inferred from schema — do NOT write a separate interface
+export type RegisterMemberDto = z.infer<typeof RegisterMemberSchema>;
+```
+
+### 2. NestJS pipe usage at boundary
+
+```typescript
+// apps/api/src/common/validation/zod-validation.pipe.ts
+import { PipeTransform, BadRequestException } from '@nestjs/common';
+import { ZodSchema } from 'zod';
+import { z } from 'zod';
+
+export class ZodPipe<T> implements PipeTransform {
+  constructor(private schema: ZodSchema<T>) {}
+
+  transform(value: unknown): T {
+    const result = this.schema.safeParse(value);
+    if (!result.success) {
+      // NEVER return raw ZodError — always map through envelope
+      throw new BadRequestException(mapZodError(result.error));
+    }
+    return result.data;
+  }
+}
+
+function mapZodError(err: z.ZodError) {
+  // z.treeifyError() is the Zod 4 baseline — NOT .format() or .flatten()
+  return { code: 'VALIDATION_ERROR', detail: z.treeifyError(err) };
+}
+```
+
+### 3. Zod 4 refinement — prefer .check() over .superRefine()
+
+```typescript
+// Zod 4: .check() is preferred for same-type validation
+export const VowSchema = z.object({
+  targetCount: z.number().int().positive(),
+  deadline: z.string().date().optional(),
+}).check((ctx) => {
+  if (ctx.value.deadline && new Date(ctx.value.deadline) < new Date()) {
+    ctx.addIssue({ code: 'custom', message: 'deadline phải trong tương lai', path: ['deadline'] });
+  }
+});
+
+// .superRefine() still valid in compatibility lane, but not the new default
+```
+
+### 4. Env schema (apps/api config)
+
+```typescript
+// apps/api/src/common/config/config.schemas.ts
+import { z } from 'zod';
+
+export const EnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  DIRECT_DATABASE_URL: z.string().url(),
+  JWT_SECRET: z.string().min(32),
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+  PORT: z.coerce.number().default(3000),
+  STORAGE_ADAPTER: z.enum(['local', 'r2']).default('local'),
+  SEARCH_ENGINE: z.enum(['meilisearch', 'sql']).default('meilisearch'),
+});
+
+export type Env = z.infer<typeof EnvSchema>;
+```
+
 ## Decision for future AI/codegen
 
 AI chỉ được thêm validation mới nếu:

@@ -60,7 +60,7 @@ Chốt transport/runtime concerns chưa đủ lớn để tách thành nhiều o
 
 ## Dependencies
 
-- [INFRA_BASELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md)
-- [SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [INFRA_BASELINE.md](../../02-platform-baseline/edge-delivery/INFRA_BASELINE.md)
+- [SECURITY_POLICY.md](../../02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+- [IMPLEMENTATION_MAPPING.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 

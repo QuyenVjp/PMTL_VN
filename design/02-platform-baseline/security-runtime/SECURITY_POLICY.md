@@ -415,6 +415,6 @@ Matrix này là `edge-first budget` cho Cloudflare/WAF. Nó không thay thế ap
 
 Những quyết định trên phải được ánh xạ (map) tiếp vào:
 
-- [manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md)
-- [upload-media-asset.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/content/USE_CASES/upload-media-asset.md)
-- [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md)
+- [upload-media-asset.md](../../03-domains/content/USE_CASES/upload-media-asset.md)
+- [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)

@@ -37,7 +37,9 @@
       "Bash(npx --filter @pmtl/api prisma generate --schema=apps/api/prisma/schema.prisma)",
       "Bash(npx eslint:*)",
       "Bash(echo \"EXIT:$?\")",
-      "Bash(echo \"LINT_EXIT:$?\")"
+      "Bash(echo \"LINT_EXIT:$?\")",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -path */lib/* -name *.ts -o -path */lib/* -name *.tsx)",
+      "Bash(python3:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -59,7 +59,7 @@ Ví dụ hợp lệ:
 ### status
 
 Status canon cho implementation/readiness không chốt ở đây.
-Đọc [STATUS_AND_PHASE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/STATUS_AND_PHASE.md).
+Đọc [STATUS_AND_PHASE.md](../00-governance/STATUS_AND_PHASE.md).
 
 ## Hard Rules
 
@@ -122,7 +122,7 @@ Phải dừng và sửa docs trước khi scaffold nếu gặp:
 ## Reading Order
 
 1. file này
-2. [STATUS_AND_PHASE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/STATUS_AND_PHASE.md)
-3. [FOLDER_CANON.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/FOLDER_CANON.md)
-4. [IMPORT_AND_FORMAT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/IMPORT_AND_FORMAT.md)
-5. [WRITING_STANDARDS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/WRITING_STANDARDS.md)
+2. [STATUS_AND_PHASE.md](../00-governance/STATUS_AND_PHASE.md)
+3. [FOLDER_CANON.md](../00-governance/FOLDER_CANON.md)
+4. [IMPORT_AND_FORMAT.md](../00-governance/IMPORT_AND_FORMAT.md)
+5. [WRITING_STANDARDS.md](../00-governance/WRITING_STANDARDS.md)

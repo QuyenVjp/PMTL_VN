@@ -119,7 +119,7 @@ Từ tài liệu public của `Servercn`:
 
 ## Related docs
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [nest-baseline.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
-- [coding-readiness.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/CODING_READINESS.md)
+- [DECISIONS.md](../../01-repo-constitution/DECISIONS.md)
+- [nest-baseline.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [coding-readiness.md](../../04-execution-overlay/repo/CODING_READINESS.md)

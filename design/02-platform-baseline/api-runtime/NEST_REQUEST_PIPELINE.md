@@ -21,8 +21,8 @@ Nếu chưa thống nhất các điểm ở đây, không nên bắt đầu scaf
 - route syntax phải bám Nest 11 + Express v5 semantics
 - `ConsoleLogger` không phải logging authority; chỉ chấp nhận bootstrap fallback rất sớm nếu logger module chưa dựng xong
 - `NestFactory.create(AppModule, { bufferLogs: true })` + `app.useLogger(app.get(Logger))` là bootstrap canon cho logger authority
-- exact version pin owner: [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
-- feature-status owner: [NEST_FEATURE_ADOPTION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
+- exact version pin owner: [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+- feature-status owner: [NEST_FEATURE_ADOPTION_MATRIX.md](../../02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md)
 - Nest 11 nuance owner: `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md`
 
 ## Không dùng làm mặc định
@@ -679,6 +679,6 @@ interface AuditService {
 - persistence không leak thẳng ra public DTO
 - không tạo source of truth thứ hai giữa Zod schema và DTO decorator model
 - module imports/exports phải thể hiện owner boundary rõ, không circular theo thói quen
-- mọi launch-blocker flow phải map vào [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- mọi launch-blocker flow phải map vào [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 - cross-module communication phải qua exported service interface, không import toàn bộ module
 - audit mandatory events phải trong cùng DB transaction với write

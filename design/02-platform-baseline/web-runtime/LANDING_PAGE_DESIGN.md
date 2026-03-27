@@ -1,6 +1,6 @@
 # Landing Page Design — PMTL_VN
 
-> Companion art direction: see [HOMEPAGE_CONSTITUTION.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/HOMEPAGE_CONSTITUTION.md) for the homepage palette, atmosphere, and composition laws.
+> Companion art direction: see [HOMEPAGE_CONSTITUTION.md](../../02-platform-baseline/web-runtime/HOMEPAGE_CONSTITUTION.md) for the homepage palette, atmosphere, and composition laws.
 > `LANDING_PAGE_DESIGN.md` remains the landing-page owner. The companion file sharpens tone; it does not replace route or navigation canon.
 
 > **Triết lý**: Landing page không phải trang bán hàng. Đây là **cổng vào không gian tu học** — người đến đây đang tìm sự tĩnh lặng, hướng dẫn, và cộng đồng.

@@ -182,7 +182,7 @@ Các quyết định này từng không rõ — đã chốt và ghi vào doc ri�
 ## 14. Library choices (Chọn thư viện — chốt)
 
 Exact version pins không sống ở file này.
-File này chỉ chốt `library family + rationale`; số version exact phải đọc ở [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md).
+File này chỉ chốt `library family + rationale`; số version exact phải đọc ở [VERSION_MATRIX.md](../02-platform-baseline/dependency-version/VERSION_MATRIX.md).
 
 ### Backend (`apps/api`)
 
@@ -199,9 +199,9 @@ File này chỉ chốt `library family + rationale`; số version exact phải �
 
 Backend adoption docs:
 
-- Prisma 7 runtime/adoption policy: [PRISMA_7_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
-- API error envelope contract: [ERROR_ENVELOPE_CONTRACT.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
-- Auth/session sequence canon: [AUTH_SESSION_FLOW.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
+- Prisma 7 runtime/adoption policy: [PRISMA_7_POLICY.md](../02-platform-baseline/data-runtime/PRISMA_7_POLICY.md)
+- API error envelope contract: [ERROR_ENVELOPE_CONTRACT.md](../02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md)
+- Auth/session sequence canon: [AUTH_SESSION_FLOW.md](../02-platform-baseline/security-runtime/AUTH_SESSION_FLOW.md)
 
 ### Frontend — Web (`apps/web`)
 
@@ -220,9 +220,9 @@ Backend adoption docs:
 
 Frontend policy docs:
 
-- Tailwind CSS 4 policy: [TAILWIND_CSS_4_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
-- shadcn/ui inventory and acquisition rules: [SHADCN_UI_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
-- Zustand boundaries and hydration rules: [ZUSTAND_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/web-runtime/ZUSTAND_POLICY.md)
+- Tailwind CSS 4 policy: [TAILWIND_CSS_4_POLICY.md](../02-platform-baseline/web-runtime/TAILWIND_CSS_4_POLICY.md)
+- shadcn/ui inventory and acquisition rules: [SHADCN_UI_INVENTORY.md](../02-platform-baseline/web-runtime/SHADCN_UI_INVENTORY.md)
+- Zustand boundaries and hydration rules: [ZUSTAND_POLICY.md](../02-platform-baseline/web-runtime/ZUSTAND_POLICY.md)
 
 **Next.js 16 cache rule**:
 - Public deterministic reads ưu tiên `use cache` + `cacheTag`

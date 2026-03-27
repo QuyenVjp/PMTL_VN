@@ -5,9 +5,9 @@ Nó bổ sung cho `SECURITY_POLICY.md` và identity contracts để auth lane kh
 
 Authority liên quan:
 
-- [SECURITY_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/security-runtime/SECURITY_POLICY.md)
-- [design/03-domains/identity/CONTRACTS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/CONTRACTS.md)
-- [design/03-domains/identity/USE_CASES/manage-auth-session.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/03-domains/identity/USE_CASES/manage-auth-session.md)
+- [SECURITY_POLICY.md](../../02-platform-baseline/security-runtime/SECURITY_POLICY.md)
+- [design/03-domains/identity/CONTRACTS.md](../../03-domains/identity/CONTRACTS.md)
+- [design/03-domains/identity/USE_CASES/manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md)
 
 ## Primary sequence
 

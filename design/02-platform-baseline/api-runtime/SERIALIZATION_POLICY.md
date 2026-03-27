@@ -21,7 +21,7 @@ Chốt `response serialization stance` cho `apps/api`.
 ## Version basis
 
 - NestJS `11.1.17`
-- OpenAPI/runtime contract pins: [VERSION_MATRIX.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md)
+- OpenAPI/runtime contract pins: [VERSION_MATRIX.md](../../02-platform-baseline/dependency-version/VERSION_MATRIX.md)
 
 ## Why
 
@@ -29,7 +29,7 @@ Chốt `response serialization stance` cho `apps/api`.
 
 ## Must
 
-- response shape phải bám [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md) và [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
+- response shape phải bám [API_DTO_SHAPE_PLAN.md](../../04-execution-overlay/api/API_DTO_SHAPE_PLAN.md) và [API_ROUTE_INVENTORY.md](../../04-execution-overlay/api/API_ROUTE_INVENTORY.md)
 - controller chỉ trả DTO/public projection, không trả raw Prisma record hoặc internal entity shape
 - `Date` phải serialize ra ISO-8601 string ở public/admin API surfaces
 - enum public-facing phải dùng vocabulary đã chốt ở DTO plan / contract owner
@@ -57,8 +57,8 @@ Chốt `response serialization stance` cho `apps/api`.
 
 ## Dependencies
 
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [API_DTO_SHAPE_PLAN.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
-- [API_ROUTE_INVENTORY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_ROUTE_INVENTORY.md)
-- [ERROR_CODE_REGISTRY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
+- [NEST_REQUEST_PIPELINE.md](../../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [API_DTO_SHAPE_PLAN.md](../../04-execution-overlay/api/API_DTO_SHAPE_PLAN.md)
+- [API_ROUTE_INVENTORY.md](../../04-execution-overlay/api/API_ROUTE_INVENTORY.md)
+- [ERROR_CODE_REGISTRY.md](../../04-execution-overlay/api/ERROR_CODE_REGISTRY.md)
 

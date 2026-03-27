@@ -5,9 +5,9 @@ Nó thay path legacy cũ trong `design/02-platform-baseline/dependency-version/R
 
 Authority liên quan:
 
-- [DECISIONS.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/01-repo-constitution/DECISIONS.md)
-- [NEST_REQUEST_PIPELINE.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
-- [IMPLEMENTATION_MAPPING.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+- [DECISIONS.md](../01-repo-constitution/DECISIONS.md)
+- [NEST_REQUEST_PIPELINE.md](../02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md)
+- [IMPLEMENTATION_MAPPING.md](../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 
 ## Monorepo baseline
 
@@ -37,7 +37,7 @@ design/
 - `apps/worker`: optional phase 2+, chỉ bật khi async workload đủ đáng tách khỏi request path
 - `packages/shared`: framework-agnostic contracts, schemas, types, mappers, validators
 - `packages/ui`: shared UI primitives cho web/admin khi thật sự có reuse
-- `packages/api-client`: generated hoặc hand-curated client từ OpenAPI/contracts theo [API_CLIENT_POLICY.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/api/API_CLIENT_POLICY.md)
+- `packages/api-client`: generated hoặc hand-curated client từ OpenAPI/contracts theo [API_CLIENT_POLICY.md](../04-execution-overlay/api/API_CLIENT_POLICY.md)
 - `packages/config`: shared lint/typescript/prettier/tooling config
 - `infra`: Docker, Caddy, deploy, backup, scripts vận hành
 - `docs`: runbooks, commands, learning notes, agent docs

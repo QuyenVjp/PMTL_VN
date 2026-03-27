@@ -1,7 +1,7 @@
 # CANONICAL_LAYOUT
 
 Shim cũ.
-Canonical layout owner giờ là [FOLDER_CANON.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/00-governance/FOLDER_CANON.md).
+Canonical layout owner giờ là [FOLDER_CANON.md](../00-governance/FOLDER_CANON.md).
   USE_CASES/
   REFERENCES/
 ```

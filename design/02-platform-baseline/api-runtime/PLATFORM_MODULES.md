@@ -282,7 +282,7 @@ metrics.constants.ts
 
 ## First launch blockers tied to these modules
 
-Theo [implementation-mapping.md](C:/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md), các phần dưới đây là blocker thật:
+Theo [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md), các phần dưới đây là blocker thật:
 
 - `sessions`
 - `audit`
