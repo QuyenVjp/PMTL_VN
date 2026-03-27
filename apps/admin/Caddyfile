@@ -1,0 +1,17 @@
+:3002 {
+	root * /srv
+	encode gzip
+
+	# SPA fallback — all routes to index.html
+	try_files {path} /index.html
+
+	file_server
+
+	# Security headers
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+}

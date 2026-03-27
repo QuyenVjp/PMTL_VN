@@ -105,3 +105,10 @@ Card 4:
 - `title`: `Lưu ý cho phụ nữ mang thai / ở cữ`
 - `body`: `Tổng số Lễ Phật trong ngày đặc biệt không nên vượt quá 7 biến.`
 
+## Inheritance note
+
+- Example này là `single-day advisory card sample`.
+- Rule đầy đủ của Q161 (cross-day cap, age segments, Ngôi Nhà Nhỏ cap matrix, self-cultivation burn guardrails) xem thêm:
+  - `advisory-q161-rule-pack.md`
+  - `../../wisdom-qa/REFERENCES/examples/q161-le-phat-dai-sam-hoi-van-special-days.md`
+

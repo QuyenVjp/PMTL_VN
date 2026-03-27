@@ -81,14 +81,22 @@ initialExpandLevel: 3
 - `kind`: `sutra`
 - `purpose`: sám hối, tiêu trừ nghiệp chướng
 - `recommended_count`:
-  - `1-7` biến
+  - `1-7` biến: lane công khóa ngày thường
+  - lane ngày đặc biệt theo `Q161`: `21`, `27`, `49`, `63`, `79`, và cụm cap `87` cho `30 Tết + Mùng 1`
 - `openingPrayer`:
   - “Thỉnh cầu ... giúp con sám hối và tiêu trừ nghiệp chướng...”
 - `timeRules`:
-  - thuộc công khóa hằng ngày
+  - ngày thường: tốt nhất tránh `22:00 -> 05:00`
+  - ngày có `thắp đầu hương` và nhà có bàn thờ: có thể mở lane 24h
+- `guardrails`:
+  - không vượt cap theo ngày hoặc cap cộng dồn của cụm ngày
+  - cap ngày đã bao gồm phần trong `Kinh Bài Tập`; không cộng thêm vượt trần
+  - thai phụ/sản phụ: ngày đặc biệt không vượt `7` biến
 - `source_docs`:
   - `1. Các bước niệm kinh bài tập...`
-- `needs_review`: `false`
+  - `Q161 - Lễ Phật Đại Sám Hối Văn ngày đặc biệt`
+- `needs_review`: `true`
+  - lý do: lane ngày đặc biệt có nhiều cap theo lịch âm, cần canonical calendar rule-pack trước khi hard-code preset UI
 
 ### 5. Tiêu Tai Cát Tường Thần Chú
 

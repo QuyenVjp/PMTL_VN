@@ -45,14 +45,26 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return undefined as T;
   }
 
-  const json = await response.json();
+  interface ApiErrorShape {
+    code?: string;
+    message?: string;
+    details?: Record<string, unknown>;
+  }
+  interface ApiResponseShape {
+    error?: ApiErrorShape;
+    code?: string;
+    message?: string;
+    details?: Record<string, unknown>;
+  }
+
+  const json = (await response.json()) as ApiResponseShape;
 
   if (!response.ok) {
-    const error = json?.error ?? json;
+    const error: ApiErrorShape = json.error ?? json;
     throw new HttpError(response.status, {
-      code: error?.code ?? "UNKNOWN_ERROR",
-      message: error?.message ?? "Lỗi không xác định",
-      details: error?.details,
+      code: error.code ?? "UNKNOWN_ERROR",
+      message: error.message ?? "Lỗi không xác định",
+      details: error.details,
     });
   }
 

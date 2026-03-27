@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { adminOperators } from "@/components/layout/admin-user";
 import { WorkspaceTablePage } from "@/features/workspaces/workspace-table-page";
+import { toStr } from "@/lib/utils";
 
 const contentColumns = [
   { key: "tieuDe", label: "Tiêu đề" },
@@ -333,8 +334,8 @@ export function ModerationReportsPage() {
           label: "Đối tượng",
           render: (row) => (
             <div className="space-y-1">
-              <div className="font-medium">{String(row.target ?? "")}</div>
-              <div className="text-sm text-muted-foreground">Owner: {String(row.owner ?? "")}</div>
+              <div className="font-medium">{toStr(row.target)}</div>
+              <div className="text-sm text-muted-foreground">Owner: {toStr(row.owner)}</div>
             </div>
           ),
         },
@@ -464,9 +465,9 @@ export function UsersAdminPage() {
           label: "Thành viên",
           enableHiding: false,
           render: (row) => {
-            const name = String(row.hoTen ?? "");
-            const email = String(row.email ?? "");
-            const avatar = String(row.avatar ?? "");
+            const name = toStr(row.hoTen);
+            const email = toStr(row.email);
+            const avatar = toStr(row.avatar);
 
             return (
               <div className="flex items-center gap-3">
@@ -488,11 +489,11 @@ export function UsersAdminPage() {
           className: "w-[220px]",
           render: (row) => (
             <div className="space-y-1">
-              <div className="font-medium">{String(row.vaiTro ?? "")}</div>
-              <div className="text-sm text-muted-foreground">{String(row.workspace ?? "")}</div>
+              <div className="font-medium">{toStr(row.vaiTro)}</div>
+              <div className="text-sm text-muted-foreground">{toStr(row.workspace)}</div>
             </div>
           ),
-          getFilterValue: (row) => String(row.vaiTro ?? ""),
+          getFilterValue: (row) => toStr(row.vaiTro),
         },
         { key: "thietBi", label: "Thiết bị gần nhất", className: "w-[180px]" },
         { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },

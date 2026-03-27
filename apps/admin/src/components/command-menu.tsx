@@ -57,7 +57,7 @@ export function CommandMenu() {
   }, []);
 
   const runRoute = (to: string) => {
-    navigate({ to });
+    void navigate({ to });
     setOpen(false);
   };
 

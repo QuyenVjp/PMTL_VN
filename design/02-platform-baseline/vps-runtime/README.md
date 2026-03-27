@@ -12,9 +12,10 @@ VPS self-host deployment canon cho PMTL_VN. Target: solo sinh viÃªn, VPS VN hoáº
 | `DOCKER_PROD_COMPOSE.md` | docker-compose.prod.yml template, multi-stage Dockerfile, deploy commands |
 | `CADDY_PROD_CONFIG.md` | Caddyfile template, DNS/Cloudflare setup, SSL options |
 | `MONITORING_SELF_HOST.md` | Uptime Kuma + Prometheus + Grafana + Loki + Telegram alert |
-| `BACKUP_RECOVERY_VPS.md` | pg_dump cron, remote sync B2/R2, 1-click restore script |
+| `BACKUP_RECOVERY_VPS.md` | pg_dump cron, remote sync Vietnix/MinIO/Viettel Cloud, 1-click restore |
 | `SECURITY_VPS_CANON.md` | OS hardening, Docker security, OWASP checklist, rate limit |
-| `COST_ZERO_VPS_GUIDE.md` | Free services map, RAM optimization, GitHub Actions CI/CD |
+| `COST_ZERO_VPS_GUIDE.md` | Free services map, RAM optimization, Woodpecker CI self-hosted |
+| `PRODUCTION_CHECKLIST.md` | Go-live checklist: infra, Docker, SSL, app, monitoring, security |
 
 ## Quick read order
 

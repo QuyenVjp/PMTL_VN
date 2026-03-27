@@ -1,0 +1,53 @@
+# ─── Stage 1: deps ────────────────────────────────────────────────────────────
+FROM node:20-alpine AS deps
+RUN corepack enable && corepack prepare pnpm@10.30.3 --activate
+
+WORKDIR /repo
+
+# Copy workspace manifests first (layer cache)
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/config/package.json ./packages/config/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/ui/package.json ./packages/ui/
+COPY apps/api/package.json ./apps/api/
+
+RUN pnpm install --frozen-lockfile
+
+# ─── Stage 2: build ───────────────────────────────────────────────────────────
+FROM deps AS builder
+
+COPY packages/ ./packages/
+COPY apps/api/ ./apps/api/
+
+WORKDIR /repo/apps/api
+RUN pnpm run build
+
+# ─── Stage 3: prod deploy bundle ──────────────────────────────────────────────
+FROM deps AS pruner
+WORKDIR /repo
+RUN pnpm deploy --filter @pmtl/api --prod /deploy/api
+
+# ─── Stage 4: runtime ─────────────────────────────────────────────────────────
+FROM node:20-alpine AS runtime
+
+RUN addgroup -S pmtl && adduser -S pmtl -G pmtl
+
+WORKDIR /app
+
+# Copy pruned prod deps
+COPY --from=pruner /deploy/api/node_modules ./node_modules
+
+# Copy compiled output
+COPY --from=builder /repo/apps/api/dist ./dist
+COPY --from=builder /repo/apps/api/prisma ./prisma
+
+# Security: run as non-root
+USER pmtl
+
+ENV NODE_ENV=production
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD wget --quiet --tries=1 --spider http://127.0.0.1:3001/api/health/live || exit 1
+
+CMD ["node", "dist/main.js"]

@@ -40,7 +40,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import { cn, toStr } from "@/lib/utils";
 
 export type WorkspaceStat = {
   label: string;
@@ -108,7 +108,7 @@ const globalFilterFn: FilterFn<WorkspaceRow> = (row, _columnId, value) => {
   }
 
   const haystack = Object.values(row.original)
-    .flatMap((item) => (Array.isArray(item) ? item : [item ?? ""]))
+    .flatMap((item): string[] => (Array.isArray(item) ? item.map(toStr) : [toStr(item)]))
     .join(" ")
     .toLowerCase();
 
@@ -282,7 +282,7 @@ function resolveActionUpdate(action: string, row: WorkspaceRow) {
 function normalizeRowForForm(row: WorkspaceRow, columns: WorkspaceColumn[]) {
   return columns.reduce<Record<string, string>>((accumulator, column) => {
     const value = row[column.key];
-    accumulator[column.key] = Array.isArray(value) ? value.join(", ") : `${value ?? ""}`;
+    accumulator[column.key] = Array.isArray(value) ? value.map(toStr).join(", ") : toStr(value);
     return accumulator;
   }, {});
 }

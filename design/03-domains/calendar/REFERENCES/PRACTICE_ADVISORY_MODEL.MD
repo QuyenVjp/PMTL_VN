@@ -84,6 +84,39 @@ Mỗi rule nên có:
 - `conditionSummaryVi`
 - `sourceRef`
 
+### 4b. `crossDayCapRules` | Quy tắc cộng dồn nhiều ngày
+
+Một số bài có cap theo cụm ngày, không phải theo từng ngày riêng lẻ.
+
+Mỗi rule nên có:
+
+- `ruleKey`
+- `windowKey`
+- `windowStartRef`
+- `windowEndRef`
+- `maxTotalCount`
+- `countingMethod`
+  - `sum_of_days`
+  - `remaining_balance`
+- `conditionSummaryVi`
+- `sourceRef`
+
+### 4c. `audienceCapRules` | Giới hạn theo nhóm đối tượng
+
+Mỗi rule nên có:
+
+- `audienceType`
+  - `pregnant`
+  - `postpartum`
+  - `children_under_12`
+  - `children_12_to_under_18`
+  - `adult_18_plus`
+- `chantKey`
+- `maxCount`
+- `scope`
+- `conditionSummaryVi`
+- `sourceRef`
+
 ### 5. `timeWindowRules` | Quy tắc thời gian
 
 - `notRecommendedStart`
@@ -106,6 +139,19 @@ Mỗi condition nên tách riêng:
 - `audienceType`
 - `ruleSummaryVi`
 - `maxCount`
+- `sourceRef`
+
+### 7b. `littleHouseCapRules` | Giới hạn Ngôi Nhà Nhỏ theo ngày đặc biệt
+
+Mỗi rule nên tách rõ:
+
+- `dayType`
+- `capType`
+  - `total_all_types`
+  - `per_type`
+  - `per_target`
+- `maxCount`
+- `specialCaseNote?`
 - `sourceRef`
 
 ### 8. `sourceRefs` | Liên kết nguồn
@@ -216,6 +262,8 @@ Nó là lớp compose từ:
 ## Example ref
 
 - `examples/advisory-2026-03-19-mung-1-thang-2-am.md`
+- `examples/advisory-q161-rule-pack.md`
+- `../../wisdom-qa/REFERENCES/examples/q161-le-phat-dai-sam-hoi-van-special-days.md`
 
 Example này chỉ là sample decomposition để kiểm tra model chung có đủ sức biểu diễn advisory thực tế.
 Nó không phải policy owner riêng và không được vượt quyền file này.

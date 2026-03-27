@@ -1,0 +1,143 @@
+---
+# Woodpecker CI — PMTL_VN
+# Self-hosted on VPS. Replaces GitHub Actions billing dependency.
+# Runner: woodpecker-agent (Docker runner)
+# Docs: https://woodpecker-ci.org/docs
+
+when:
+  - event: [push, pull_request]
+    branch: [main, develop]
+
+steps:
+  # ─── Install ────────────────────────────────────────────────────────────────
+  install:
+    image: node:20-alpine
+    commands:
+      - corepack enable
+      - corepack prepare pnpm@10.30.3 --activate
+      - pnpm install --frozen-lockfile
+    when:
+      - event: [push, pull_request]
+
+  # ─── Lint ───────────────────────────────────────────────────────────────────
+  lint:
+    image: node:20-alpine
+    depends_on: [install]
+    commands:
+      - pnpm lint
+    when:
+      - event: [push, pull_request]
+
+  # ─── TypeCheck ──────────────────────────────────────────────────────────────
+  typecheck:
+    image: node:20-alpine
+    depends_on: [install]
+    commands:
+      - pnpm typecheck
+    when:
+      - event: [push, pull_request]
+
+  # ─── Test ────────────────────────────────────────────────────────────────────
+  test:
+    image: node:20-alpine
+    depends_on: [install]
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://pmtl:pmtl@postgres:5432/pmtl_test
+      DATABASE_DIRECT_URL: postgresql://pmtl:pmtl@postgres:5432/pmtl_test
+      JWT_ACCESS_SECRET: ci-test-access-secret-32chars-min
+      JWT_REFRESH_SECRET: ci-test-refresh-secret-32chars-min
+    commands:
+      - pnpm --filter @pmtl/api test
+    when:
+      - event: [push, pull_request]
+
+  # ─── Build Docker Images (main branch only) ──────────────────────────────────
+  build-api:
+    image: plugins/docker
+    depends_on: [lint, typecheck, test]
+    settings:
+      repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-api
+      tags:
+        - ${CI_COMMIT_SHA}
+        - latest
+      dockerfile: apps/api/Dockerfile
+      context: .
+      registry: ghcr.io
+      username:
+        from_secret: GHCR_USERNAME
+      password:
+        from_secret: GHCR_TOKEN
+    when:
+      - event: push
+        branch: main
+
+  build-web:
+    image: plugins/docker
+    depends_on: [lint, typecheck]
+    settings:
+      repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-web
+      tags:
+        - ${CI_COMMIT_SHA}
+        - latest
+      dockerfile: apps/web/Dockerfile
+      context: .
+      registry: ghcr.io
+      username:
+        from_secret: GHCR_USERNAME
+      password:
+        from_secret: GHCR_TOKEN
+    when:
+      - event: push
+        branch: main
+
+  build-admin:
+    image: plugins/docker
+    depends_on: [lint, typecheck]
+    settings:
+      repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-admin
+      tags:
+        - ${CI_COMMIT_SHA}
+        - latest
+      dockerfile: apps/admin/Dockerfile
+      context: .
+      registry: ghcr.io
+      username:
+        from_secret: GHCR_USERNAME
+      password:
+        from_secret: GHCR_TOKEN
+    when:
+      - event: push
+        branch: main
+
+  # ─── Deploy to VPS (main branch only) ────────────────────────────────────────
+  deploy:
+    image: appleboy/drone-ssh
+    depends_on: [build-api, build-web, build-admin]
+    settings:
+      host:
+        from_secret: VPS_HOST
+      username:
+        from_secret: VPS_USER
+      key:
+        from_secret: VPS_SSH_KEY
+      script:
+        - cd /opt/pmtl
+        - export WEB_IMAGE=ghcr.io/${CI_REPO_OWNER}/pmtl-vn-web:${CI_COMMIT_SHA}
+        - export API_IMAGE=ghcr.io/${CI_REPO_OWNER}/pmtl-vn-api:${CI_COMMIT_SHA}
+        - export ADMIN_IMAGE=ghcr.io/${CI_REPO_OWNER}/pmtl-vn-admin:${CI_COMMIT_SHA}
+        - docker compose -f infra/docker/compose.prod.yml pull
+        - docker compose -f infra/docker/compose.prod.yml up -d --no-deps --remove-orphans
+        - docker compose -f infra/docker/compose.prod.yml exec -T api node -e "require('./dist/main')" || true
+        - docker system prune -f --filter "until=24h"
+    when:
+      - event: push
+        branch: main
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pmtl
+      POSTGRES_PASSWORD: pmtl
+      POSTGRES_DB: pmtl_test

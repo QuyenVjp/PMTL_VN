@@ -13,7 +13,7 @@ graph LR
   PG[("Postgres 16\nVPS")]
   Cron["cron: pg_dump\n(daily 2AM)"]
   Local["/backups/daily/\n(giữ 7 ngày)"]
-  Remote["Remote storage\n(Backblaze B2 free 10GB\nhoặc GitHub repo private)"]
+  Remote["Remote storage\n(Vietnix Object Storage\nhoặc MinIO self-host\nhoặc Viettel Cloud S3)"]
   Media["/data/media/\n(local disk)"]
   MediaRemote["Media backup\n(rsync weekly)"]
 
@@ -77,17 +77,34 @@ fi
 
 ---
 
-## Remote sync — Backblaze B2 (free 10GB)
+## Remote sync — Ưu tiên provider VN-friendly
+
+### Lựa chọn theo thứ tự ưu tiên
+
+| Provider | Chi phí | Ghi chú |
+|---|---|---|
+| **Vietnix Object Storage** | ~30-50k VND/tháng/10GB | S3-compatible, datacenter VN, thanh toán VND |
+| **Viettel Cloud Object Storage** | ~50k VND/tháng | S3-compatible, datacenter VN |
+| **MinIO self-host** | $0 (dùng VPS disk thứ 2) | Hoàn toàn tự kiểm soát, S3-compatible API |
+| Cloudflare R2 | $0 (10GB free) | Không phải VN nhưng miễn phí |
+
+### Setup với rclone (S3-compatible — dùng cho Vietnix / Viettel Cloud / MinIO)
 
 ```bash
 # Cài rclone
 curl https://rclone.org/install.sh | sudo bash
 
-# Config Backblaze B2
+# Config S3-compatible provider (Vietnix / Viettel Cloud / MinIO)
 rclone config
-# → Chọn "b2", điền account_id và application_key từ Backblaze console
+# → Chọn "s3"
+# → Provider: "Other" (cho Vietnix/Viettel) hoặc "Minio"
+# → endpoint: <endpoint từ provider — ví dụ storage.vietnix.vn hoặc minio.pmtl.vn:9000>
+# → access_key_id + secret_access_key từ provider console
 
-# Sync backups lên B2
+# Test connection
+rclone lsd remote:
+
+# Sync backups
 rclone sync /opt/pmtl/backups/daily remote:pmtl-backups/daily \
   --transfers 2 \
   --log-level INFO
@@ -96,10 +113,22 @@ rclone sync /opt/pmtl/backups/daily remote:pmtl-backups/daily \
 30 2 * * * pmtl rclone sync /opt/pmtl/backups/daily remote:pmtl-backups/daily >> /var/log/pmtl-rclone.log 2>&1
 ```
 
-**Alternatives free storage:**
-- GitHub private repo (push dump nhỏ < 100MB)
-- Cloudflare R2 free 10GB/tháng
-- Backblaze B2 free 10GB
+### MinIO self-host (nếu có VPS thứ 2 hoặc disk dư)
+
+```bash
+# Chạy MinIO qua Docker trên VPS backup
+docker run -d \
+  --name pmtl-minio \
+  -p 9000:9000 -p 9001:9001 \
+  -v /data/minio:/data \
+  -e MINIO_ROOT_USER=pmtl \
+  -e MINIO_ROOT_PASSWORD=<strong-password> \
+  --restart unless-stopped \
+  quay.io/minio/minio server /data --console-address ":9001"
+
+# Tạo bucket pmtl-backups từ MinIO console (port 9001)
+# Sau đó dùng rclone với endpoint: http://<vps-ip>:9000
+```
 
 ---
 
@@ -160,7 +189,7 @@ Theo `design/04-execution-overlay/repo/RESTORE_DRILL_LOG.md`:
 ## Media backup (local disk → remote)
 
 ```bash
-# Weekly sync media lên Backblaze B2
+# Weekly sync media lên remote (Vietnix / MinIO / Viettel Cloud)
 0 3 * * 0 pmtl rclone sync /opt/pmtl/data/media remote:pmtl-backups/media >> /var/log/pmtl-media-backup.log 2>&1
 ```
 

@@ -78,3 +78,29 @@ skill-audit:
 
 openspace *ARGS:
   py infra/tools/openspace_bridge.py {{ARGS}}
+
+# ─── CI / Deploy / Backup ─────────────────────────────────────────────────────
+
+# Run full CI checks locally (mirrors .woodpecker.yml pipeline)
+ci:
+  pnpm install --frozen-lockfile
+  pnpm lint
+  pnpm typecheck
+  pnpm --filter @pmtl/api test
+
+# Deploy to production VPS via SSH
+# Usage: just deploy-vps <sha>
+# Example: just deploy-vps abc1234
+deploy-vps sha="latest":
+  ssh ${VPS_USER}@${VPS_HOST} "cd /opt/pmtl && \
+    WEB_IMAGE=ghcr.io/${GHCR_OWNER}/pmtl-vn-web:{{sha}} \
+    API_IMAGE=ghcr.io/${GHCR_OWNER}/pmtl-vn-api:{{sha}} \
+    ADMIN_IMAGE=ghcr.io/${GHCR_OWNER}/pmtl-vn-admin:{{sha}} \
+    docker compose -f infra/docker/compose.prod.yml pull && \
+    docker compose -f infra/docker/compose.prod.yml up -d --no-deps --remove-orphans && \
+    docker system prune -f --filter 'until=24h'"
+
+# Trigger remote backup to Vietnix/MinIO/Viettel Cloud via SSH
+backup-vietnix:
+  ssh ${VPS_USER}@${VPS_HOST} "/opt/pmtl/scripts/backup-db.sh && \
+    rclone sync /opt/pmtl/backups/daily remote:pmtl-backups/daily --log-level INFO"
