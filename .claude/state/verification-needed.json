@@ -1,0 +1,10 @@
+{
+  "files": [
+    "/design/00-governance/FOLDER_CANON.md"
+  ],
+  "verify": [
+    "pnpm lint",
+    "pnpm typecheck"
+  ],
+  "updatedAt": "2026-03-27T13:18:40.286Z"
+}

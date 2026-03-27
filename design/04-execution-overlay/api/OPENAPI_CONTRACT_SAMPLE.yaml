@@ -1,0 +1,348 @@
+openapi: 3.1.0
+info:
+  title: PMTL_VN API — Contract Sample
+  version: 1.0.0
+  description: |
+    Sample OpenAPI contract cho PMTL_VN API.
+    File này là REFERENCE ONLY — bản authority vẫn là Zod schemas trong packages/shared.
+    Nếu YAML này khác Zod schema, Zod thắng. Cập nhật YAML theo schema, không ngược lại.
+
+    Owner: design/04-execution-overlay/api/API_ROUTE_INVENTORY.md
+    Zod policy: design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md
+    Error envelope: design/02-platform-baseline/api-runtime/ERROR_ENVELOPE_CONTRACT.md
+
+servers:
+  - url: https://api.pmtl.vn
+    description: Production VPS
+  - url: http://localhost:3002
+    description: Local development
+
+tags:
+  - name: health
+    description: Health check endpoints (required before launch)
+  - name: content
+    description: Content module — public read endpoints
+  - name: auth
+    description: Identity module — authentication
+
+# ─── COMMON SCHEMAS ───────────────────────────────────────────────────────────
+
+components:
+  schemas:
+    # PMTL Error Envelope (canonical — see ERROR_ENVELOPE_CONTRACT.md)
+    ErrorEnvelope:
+      type: object
+      required: [success, code, message, requestId, timestamp]
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: Input validation failed
+        requestId:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        detail:
+          description: Zod treeifyError output for validation errors
+          type: object
+          additionalProperties: true
+
+    # Generic success wrapper
+    SuccessEnvelope:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+        data:
+          description: Payload — type varies per endpoint
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            code: UNAUTHORIZED
+            message: Access token required
+            requestId: 550e8400-e29b-41d4-a716-446655440000
+            timestamp: "2026-03-27T10:00:00Z"
+
+    TooManyRequests:
+      description: Rate limit exceeded
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds until rate limit resets
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorEnvelope'
+          example:
+            success: false
+            code: RATE_LIMIT_EXCEEDED
+            message: Too many requests
+            requestId: 550e8400-e29b-41d4-a716-446655440001
+            timestamp: "2026-03-27T10:00:00Z"
+
+# ─── HEALTH ENDPOINTS ─────────────────────────────────────────────────────────
+
+paths:
+  /health/live:
+    get:
+      tags: [health]
+      summary: Liveness check
+      description: Returns 200 if process is alive. No DB check.
+      operationId: healthLive
+      responses:
+        '200':
+          description: Process alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  uptime:
+                    type: number
+                    description: Process uptime in seconds
+              example:
+                status: ok
+                uptime: 3600
+
+  /health/ready:
+    get:
+      tags: [health]
+      summary: Readiness check
+      description: Returns 200 if all dependencies (Postgres, Meilisearch) are reachable.
+      operationId: healthReady
+      responses:
+        '200':
+          description: All dependencies healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  checks:
+                    type: object
+                    properties:
+                      postgres:
+                        type: string
+                        enum: [ok, error]
+                      meilisearch:
+                        type: string
+                        enum: [ok, error]
+              example:
+                status: ok
+                checks:
+                  postgres: ok
+                  meilisearch: ok
+        '503':
+          description: One or more dependencies unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+# ─── CONTENT: CHANTING ENVIRONMENT RULES ──────────────────────────────────────
+# First vertical slice — see IMPLEMENTATION_MAPPING.md
+
+  /content/chanting/environment-rules:
+    get:
+      tags: [content]
+      summary: Get all chanting environment rule groups
+      description: |
+        Returns canonical chanting environment rule groups and their rules.
+        Public endpoint — no auth required.
+        Rate limit: 30 req/min per IP (app-layer).
+      operationId: getChantingEnvironmentRules
+      parameters:
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [vi]
+            default: vi
+          description: Language locale (only Vietnamese supported in Phase 1)
+      responses:
+        '200':
+          description: List of environment rule groups
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ChantEnvironmentRuleGroupDto'
+              example:
+                success: true
+                data:
+                  - groupKey: thoi-gian
+                    groupLabel: Thời gian niệm kinh
+                    rules:
+                      - ruleKey: sang-som
+                        label: Sáng sớm
+                        description: Thời điểm tốt nhất để niệm kinh
+                        isReferenceOnly: false
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+  /content/chanting/environment-rules/{groupKey}:
+    get:
+      tags: [content]
+      summary: Get single chanting environment rule group by key
+      operationId: getChantingEnvironmentRuleGroup
+      parameters:
+        - name: groupKey
+          in: path
+          required: true
+          schema:
+            type: string
+          example: thoi-gian
+      responses:
+        '200':
+          description: Single rule group
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/ChantEnvironmentRuleGroupDto'
+        '404':
+          description: Group key not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+              example:
+                success: false
+                code: NOT_FOUND
+                message: Environment rule group not found
+                requestId: 550e8400-e29b-41d4-a716-446655440002
+                timestamp: "2026-03-27T10:00:00Z"
+
+# ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Login with email + password
+      description: |
+        Returns access token + refresh token on success.
+        Rate limit: 5 req/15min per IP (launch blocker).
+        Audit: all login attempts logged to audit_logs.
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 72
+            example:
+              email: user@pmtl.vn
+              password: "securepassword123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessEnvelope'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          accessToken:
+                            type: string
+                          refreshToken:
+                            type: string
+                          expiresIn:
+                            type: integer
+                            description: Access token TTL in seconds
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+
+# ─── DOMAIN SCHEMAS ───────────────────────────────────────────────────────────
+
+components:
+  schemas:
+    ChantEnvironmentRuleDto:
+      type: object
+      required: [ruleKey, label, isReferenceOnly]
+      properties:
+        ruleKey:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+          nullable: true
+        isReferenceOnly:
+          type: boolean
+          description: |
+            If true, this rule is informational only.
+            Must NOT be productized into a calculator or interpretation UX.
+
+    ChantEnvironmentRuleGroupDto:
+      type: object
+      required: [groupKey, groupLabel, rules]
+      properties:
+        groupKey:
+          type: string
+        groupLabel:
+          type: string
+        rules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChantEnvironmentRuleDto'
