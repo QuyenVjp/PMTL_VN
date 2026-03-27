@@ -248,6 +248,26 @@ model ChantEnvironmentRule {
 }
 
 // ============================================================================
+// WEBHOOK DEDUPLICATION
+// ============================================================================
+
+model WebhookDelivery {
+  id          String   @id @default(cuid())
+  provider    String                          // e.g. "stripe", "payos", "cloudflare"
+  eventId     String   @map("event_id")       // provider's unique event/delivery ID
+  eventType   String   @map("event_type")     // e.g. "payment.completed"
+  status      String   @default("PROCESSED")  // PROCESSED | FAILED
+  metadata    Json?
+  processedAt DateTime @default(now()) @map("processed_at")
+  expiresAt   DateTime @map("expires_at")     // TTL for cleanup
+
+  @@unique([provider, eventId])
+  @@index([expiresAt])
+  @@index([provider, eventType])
+  @@map("webhook_deliveries")
+}
+
+// ============================================================================
 // MODERATION TABLES
 // ============================================================================
 

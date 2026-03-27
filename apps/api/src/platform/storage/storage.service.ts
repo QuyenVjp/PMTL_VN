@@ -1,10 +1,30 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+/**
+ * Storage Service — Upload Hardening (Launch Blocker)
+ *
+ * Constitution: design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md
+ * - Upload route must go through: interceptor → validation → storage owner
+ * - Upload validation minimum: mime/type allowlist, size limit, count limit
+ * - Multer defaults owner: platform/storage bootstrap
+ * - Trust filename/originalname from client: FORBIDDEN
+ *
+ * Hardening checklist:
+ * ✓ MIME allowlist validation (Content-Type header)
+ * ✓ Magic bytes sniffing (file-type library — rejects type spoofing)
+ * ✓ File size limits by type
+ * ✓ Secure filename generation (nanoid — never trust client filename)
+ * ✓ Delete auth (owner or ADMIN/SUPER_ADMIN)
+ * ✓ Virus scan stub (hook for future ClamAV integration)
+ * ✓ Audit logging via caller responsibility (appendInTransaction)
+ */
+import { Injectable, BadRequestException, ForbiddenException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import { fileTypeFromBuffer } from "file-type";
 import { ConfigService } from "../../common/config/config.service.js";
 import { LocalStorageAdapter } from "./local-storage.adapter.js";
 import { MediaAssetsRepository } from "./media-assets.repository.js";
-import { ALL_ALLOWED_TYPES } from "./storage.schemas.js";
+import { ALL_ALLOWED_TYPES, MIME_TO_EXTENSIONS } from "./storage.schemas.js";
 import type { StorageInterface } from "./storage.interface.js";
+import type { UserRole } from "../../generated/prisma/client.js";
 
 type AllowedMimeType = (typeof ALL_ALLOWED_TYPES)[number];
 
@@ -17,7 +37,7 @@ export class StorageService {
     private readonly localAdapter: LocalStorageAdapter,
     private readonly mediaRepo: MediaAssetsRepository,
   ) {
-    // Phase 1: local only
+    // Phase 1: local only. R2 adapter planned per IMPLEMENTATION_MAPPING.md trigger.
     this.adapter = this.localAdapter;
   }
 
@@ -28,30 +48,45 @@ export class StorageService {
     uploaderId: string,
     metadata?: { width?: number; height?: number },
   ) {
-    // Validate MIME type
+    // Step 1: Validate declared MIME type against allowlist
     if (!this.isAllowedMimeType(mimeType)) {
       throw new BadRequestException(`Loại file không được hỗ trợ: ${mimeType}`);
     }
 
-    // Validate size
+    // Step 2: Magic bytes sniffing — reject type spoofing
+    const detectedType = await fileTypeFromBuffer(buffer);
+    if (detectedType && detectedType.mime !== mimeType) {
+      throw new BadRequestException(
+        `Nội dung file không khớp với loại khai báo. Khai báo: ${mimeType}, thực tế: ${detectedType.mime}`,
+      );
+    }
+    // If file-type can't detect (e.g., plain text), trust allowlist for known safe types
+    if (!detectedType && !this.isSafeUndetectableType(mimeType)) {
+      throw new BadRequestException("Không thể xác minh loại file");
+    }
+
+    // Step 3: File size limits
     const sizeMb = buffer.length / (1024 * 1024);
     const maxSize = this.getMaxSizeForType(mimeType);
     if (sizeMb > maxSize) {
       throw new BadRequestException(`File vượt quá dung lượng cho phép (${maxSize}MB)`);
     }
 
-    // Generate storage key
+    // Step 4: Virus scan stub — hook for future ClamAV integration
+    await this.virusScanStub(buffer);
+
+    // Step 5: Secure filename — NEVER trust client filename
     const publicId = nanoid(21);
-    const ext = this.getExtension(filename);
+    const ext = this.getSafeExtension(mimeType);
     const storageKey = `${this.getFolder(mimeType)}/${publicId}${ext}`;
 
-    // Upload to storage
+    // Step 6: Upload to storage adapter
     const url = await this.adapter.upload(storageKey, buffer, mimeType);
 
-    // Create asset record
+    // Step 7: Create asset record (UPLOADING status)
     const asset = await this.mediaRepo.create({
       publicId,
-      filename,
+      filename: this.sanitizeFilename(filename),
       mimeType,
       size: buffer.length,
       storageKey,
@@ -61,21 +96,28 @@ export class StorageService {
       height: metadata?.height,
     });
 
-    // Mark as ready
+    // Step 8: Mark as ready
     await this.mediaRepo.updateStatus(publicId, "READY");
 
     return asset;
   }
 
-  async deleteFile(publicId: string, requesterId: string) {
+  /**
+   * Delete file — owner or ADMIN/SUPER_ADMIN only.
+   * Constitution: "delete auth clear, audit logged"
+   */
+  async deleteFile(publicId: string, requesterId: string, requesterRole?: UserRole) {
     const asset = await this.mediaRepo.findByPublicId(publicId);
-    
+
     if (!asset) {
       throw new BadRequestException("File không tồn tại");
     }
 
-    if (asset.uploaderId !== requesterId) {
-      throw new BadRequestException("Không có quyền xóa file này");
+    // Owner check + admin override
+    const isOwner = asset.uploaderId === requesterId;
+    const isAdmin = requesterRole === "ADMIN" || requesterRole === "SUPER_ADMIN";
+    if (!isOwner && !isAdmin) {
+      throw new ForbiddenException("Không có quyền xóa file này");
     }
 
     await this.adapter.delete(asset.storageKey);
@@ -92,13 +134,11 @@ export class StorageService {
     return this.mediaRepo.findByUploader(uploaderId);
   }
 
+  // --- Private hardening helpers ---
+
   private getMaxSizeForType(mimeType: string): number {
-    if (mimeType.startsWith("image/")) {
-      return this.configService.maxImageMb;
-    }
-    if (mimeType.startsWith("video/")) {
-      return this.configService.maxVideoMb;
-    }
+    if (mimeType.startsWith("image/")) return this.configService.maxImageMb;
+    if (mimeType.startsWith("video/")) return this.configService.maxVideoMb;
     return this.configService.maxDocumentMb;
   }
 
@@ -109,12 +149,37 @@ export class StorageService {
     return "documents";
   }
 
-  private getExtension(filename: string): string {
-    const lastDot = filename.lastIndexOf(".");
-    return lastDot > 0 ? filename.substring(lastDot) : "";
+  /** Get safe extension from MIME type — never from client filename */
+  private getSafeExtension(mimeType: string): string {
+    return MIME_TO_EXTENSIONS[mimeType as AllowedMimeType] ?? "";
+  }
+
+  /** Sanitize client-provided filename for display only (never used for storage paths) */
+  private sanitizeFilename(filename: string): string {
+    return filename
+      .replace(/[^\w\s\-.()]/g, "_")
+      .replace(/\s+/g, "_")
+      .substring(0, 200);
+  }
+
+  /** Types where file-type library can't detect magic bytes but are still safe */
+  private isSafeUndetectableType(mimeType: string): boolean {
+    return mimeType === "application/pdf";
   }
 
   private isAllowedMimeType(mimeType: string): mimeType is AllowedMimeType {
     return ALL_ALLOWED_TYPES.includes(mimeType as AllowedMimeType);
+  }
+
+  /**
+   * Virus scan stub — Phase 1: no-op.
+   * When ClamAV is available, replace with actual scan via clamdscan or REST API.
+   * Constitution: upload hardening requires virus scan stub.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async virusScanStub(buffer: Buffer): Promise<void> {
+    // TODO: integrate ClamAV when available on VPS
+    // const result = await clamav.scanBuffer(buffer);
+    // if (result.isInfected) throw new BadRequestException("File bị phát hiện mã độc");
   }
 }

@@ -87,6 +87,11 @@ export type ChantEnvironmentRuleGroup = Prisma.ChantEnvironmentRuleGroupModel
  */
 export type ChantEnvironmentRule = Prisma.ChantEnvironmentRuleModel
 /**
+ * Model WebhookDelivery
+ * 
+ */
+export type WebhookDelivery = Prisma.WebhookDeliveryModel
+/**
  * Model ModerationReport
  * 
  */

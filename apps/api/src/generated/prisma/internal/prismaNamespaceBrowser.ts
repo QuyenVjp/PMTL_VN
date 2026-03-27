@@ -60,6 +60,7 @@ export const ModelName = {
   Post: 'Post',
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
   ChantEnvironmentRule: 'ChantEnvironmentRule',
+  WebhookDelivery: 'WebhookDelivery',
   ModerationReport: 'ModerationReport'
 } as const
 
@@ -229,6 +230,20 @@ export const ChantEnvironmentRuleScalarFieldEnum = {
 } as const
 
 export type ChantEnvironmentRuleScalarFieldEnum = (typeof ChantEnvironmentRuleScalarFieldEnum)[keyof typeof ChantEnvironmentRuleScalarFieldEnum]
+
+
+export const WebhookDeliveryScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  status: 'status',
+  metadata: 'metadata',
+  processedAt: 'processedAt',
+  expiresAt: 'expiresAt'
+} as const
+
+export type WebhookDeliveryScalarFieldEnum = (typeof WebhookDeliveryScalarFieldEnum)[keyof typeof WebhookDeliveryScalarFieldEnum]
 
 
 export const ModerationReportScalarFieldEnum = {

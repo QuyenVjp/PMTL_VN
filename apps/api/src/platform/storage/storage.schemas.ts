@@ -49,3 +49,22 @@ export const ALL_ALLOWED_TYPES = [
   ...ALLOWED_DOCUMENT_TYPES,
   ...ALLOWED_VIDEO_TYPES,
 ] as const;
+
+/**
+ * MIME → file extension map — used by StorageService for secure filename generation.
+ * Constitution: "Trust filename/originalname from client: FORBIDDEN"
+ * Extension is derived from validated MIME type, never from client input.
+ */
+export const MIME_TO_EXTENSIONS: Record<(typeof ALL_ALLOWED_TYPES)[number], string> = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+  "image/avif": ".avif",
+  "application/pdf": ".pdf",
+  "audio/mpeg": ".mp3",
+  "audio/mp4": ".m4a",
+  "audio/ogg": ".ogg",
+  "video/mp4": ".mp4",
+  "video/webm": ".webm",
+};

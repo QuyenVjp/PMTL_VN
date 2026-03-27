@@ -32,6 +32,61 @@
   }
 }
 
+/**
+ * Elderly-First UX Layer
+ *
+ * Constitution: Phase 2 admin panel improvements
+ * - 44px minimum touch targets (WCAG 2.5.8 Target Size)
+ * - 16px minimum font size (prevents mobile zoom on focus)
+ * - High contrast text (WCAG AA+)
+ */
+@layer base {
+  button,
+  [role="button"],
+  a,
+  input,
+  select,
+  textarea,
+  [tabindex] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  label,
+  th,
+  td {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Compact inline elements (badges, icons) exempt from touch target sizing */
+  .badge,
+  [data-slot="badge"],
+  [data-compact="true"],
+  svg {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* Table cells — exempt from touch target sizing */
+  td,
+  th {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* Focus ring — high visibility for keyboard navigation */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
 @utility no-scrollbar {
   &::-webkit-scrollbar {
     display: none;

@@ -1,7 +1,8 @@
 import { Suspense, lazy, type ComponentType } from "react";
-import { createRootRoute, createRoute, Outlet, useLocation } from "@tanstack/react-router";
+import { createRootRoute, createRoute, Outlet, useLocation, redirect } from "@tanstack/react-router";
 
 import { AdminShell } from "@/components/layout/admin-shell";
+import { getCurrentUser } from "@/lib/auth";
 import { niemKinhRoutes } from "@/routes/noi-dung/niem-kinh/index.js";
 
 const SignInPage = lazy(() => import("@/features/auth/sign-in").then((mod) => ({ default: mod.SignInPage })));
@@ -108,7 +109,20 @@ function RootLayout() {
   );
 }
 
+/** Auth paths that don't require authentication */
+const PUBLIC_PATHS = ["/auth/dang-nhap", "/auth/quen-mat-khau"];
+
 export const rootRoute = createRootRoute({
+  beforeLoad: async ({ location }) => {
+    if (PUBLIC_PATHS.includes(location.pathname)) {
+      return;
+    }
+    const user = await getCurrentUser();
+    if (!user) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+      throw redirect({ to: "/auth/dang-nhap" });
+    }
+  },
   component: RootLayout,
 });
 
