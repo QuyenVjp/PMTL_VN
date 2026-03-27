@@ -4,8 +4,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 
 import { CommandMenu } from "@/components/command-menu";
-import { SearchProvider } from "@/context/search-provider";
-import { ThemeProvider } from "@/context/theme-provider";
+import { ThemeSync } from "@/stores/theme-sync";
+import { CommandPaletteShortcut } from "@/stores/command-shortcut";
 import { queryClient } from "@/lib/query/query-client.js";
 import { routeTree } from "@/routes/__root.js";
 import "@/index.css";
@@ -24,12 +24,10 @@ if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <SearchProvider>
-            <RouterProvider router={router} />
-            <CommandMenu />
-          </SearchProvider>
-        </ThemeProvider>
+        <ThemeSync />
+        <CommandPaletteShortcut />
+        <RouterProvider router={router} />
+        <CommandMenu />
       </QueryClientProvider>
     </StrictMode>,
   );

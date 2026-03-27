@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useSearch } from "@/context/search-provider";
+import { useSearch } from "@/stores/search";
 
 const summaryCards = [
   { title: "Thành viên hoạt động", value: "12.480", detail: "+8,2% so với tháng trước", icon: UsersIcon },

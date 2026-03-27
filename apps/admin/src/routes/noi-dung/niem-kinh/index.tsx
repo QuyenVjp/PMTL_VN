@@ -2,7 +2,7 @@ import { createRoute, Link, Outlet } from "@tanstack/react-router";
 
 import { EnvironmentRulesTable } from "@/features/chant-admin/environment-rules-table";
 import { EditorPage } from "@/features/content/editor-page";
-import { rootRoute } from "@/routes/__root.js";
+import { authenticatedRoute } from "@/routes/__root.js";
 
 type WorkspaceTab = {
   path: string;
@@ -35,7 +35,7 @@ const TABS: WorkspaceTab[] = [
 ];
 
 export const niemKinhWorkspaceRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/niem-kinh",
   component: NiemKinhWorkspace,
 });

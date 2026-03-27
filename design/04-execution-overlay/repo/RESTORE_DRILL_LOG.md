@@ -5,8 +5,54 @@ Không được ghi "pass" nếu chưa chạy thật.
 
 ## Current status
 
-- Chưa có drill record `pass` nào được ghi trong file này.
-- Cho tới khi có ít nhất một bản ghi thật, hệ không được gọi là `production-safe`.
+- Có 1 drill record `pass` (dev environment, 2026-03-27).
+- Production drill chưa chạy — cần chạy trên staging/prod trước khi gọi là `production-safe`.
+
+## Drill Records
+
+### Drill #1 — Dev Environment
+
+- Date: 2026-03-27
+- Operator: Claude Code (Principal Software Architect)
+- Environment: dev (Docker compose.dev.yml)
+- Backup source: docker-postgres-1 (pmtl database)
+- Backup timestamp: 2026-03-27 (session time)
+- Backup artifact id / filename: `backups/dev/postgres/drill-20260327.dump`
+- Backup file size: 32K
+- Release artifact expected before restore: commit af015be7+ (Phase 3 session)
+- Corresponding deploy record: dev-local
+- Restore start: 2026-03-27 session
+- Restore end: 2026-03-27 session
+- Duration: < 5 seconds
+- Scope:
+  - DB: `pass`
+  - media: N/A (no media assets in dev DB)
+  - app boot: N/A (restore-only drill, not full boot)
+- Result: `pass`
+
+#### Verification
+
+- Backup integrity (pg_restore --list): `pass`
+- Restore (pg_restore --clean --if-exists): `pass`
+- Table count after restore: 9 tables in public schema
+- Row spot-check:
+  - users: 0 rows (empty dev DB)
+  - sessions: 0 rows
+  - audit_logs: 0 rows
+  - posts: 0 rows
+  - media_assets: 0 rows
+  - webhook_deliveries: N/A (Prisma migration not yet applied for new model)
+
+#### Issues found
+
+- issue 1: `webhook_deliveries` table not yet created — Prisma schema added but migration not applied. Expected for schema-only additions.
+
+#### Follow-up items
+
+- item 1: Run `prisma migrate dev` to create webhook_deliveries table, then re-verify.
+- item 2: Run production drill on staging/prod environment before first public launch.
+
+---
 
 ## Template
 

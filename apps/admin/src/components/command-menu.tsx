@@ -13,8 +13,8 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
-import { useSearch } from "@/context/search-provider";
-import { useTheme } from "@/context/theme-provider";
+import { useSearch } from "@/stores/search";
+import { useTheme } from "@/stores/theme";
 
 type RouteCommand = {
   label: string;

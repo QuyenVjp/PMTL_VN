@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "@/context/theme-provider";
+import { useTheme } from "@/stores/theme";
 
 const settingsNav = [
   { key: "profile", title: "Hồ sơ", icon: UserCogIcon },

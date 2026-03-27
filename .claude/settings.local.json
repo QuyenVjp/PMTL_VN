@@ -43,7 +43,9 @@
       "Bash(grep -A 10 '\"\"test\"\"' /c/Users/ADMIN/DEV2/PMTL_VN/apps/web/package.json)",
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -type f -name *.tsx -o -name *.ts)",
       "Bash(npx prisma:*)",
-      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin -maxdepth 2 -type f \\\\\\(-name tailwind.config.* -o -name postcss.config.* -o -name .css \\\\\\))"
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin -maxdepth 2 -type f \\\\\\(-name tailwind.config.* -o -name postcss.config.* -o -name .css \\\\\\))",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay -name *APPS_API* -o -name *IMPLEMENTATION*)",
+      "Bash(docker compose:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
