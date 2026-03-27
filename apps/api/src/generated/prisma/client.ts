@@ -86,3 +86,8 @@ export type ChantEnvironmentRuleGroup = Prisma.ChantEnvironmentRuleGroupModel
  * 
  */
 export type ChantEnvironmentRule = Prisma.ChantEnvironmentRuleModel
+/**
+ * Model ModerationReport
+ * 
+ */
+export type ModerationReport = Prisma.ModerationReportModel

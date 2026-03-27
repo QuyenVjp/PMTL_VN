@@ -397,7 +397,8 @@ export const ModelName = {
   MediaAsset: 'MediaAsset',
   Post: 'Post',
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
-  ChantEnvironmentRule: 'ChantEnvironmentRule'
+  ChantEnvironmentRule: 'ChantEnvironmentRule',
+  ModerationReport: 'ModerationReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -413,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule"
+    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "moderationReport"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1083,6 +1084,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ModerationReport: {
+      payload: Prisma.$ModerationReportPayload<ExtArgs>
+      fields: Prisma.ModerationReportFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ModerationReportFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ModerationReportFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        findFirst: {
+          args: Prisma.ModerationReportFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ModerationReportFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        findMany: {
+          args: Prisma.ModerationReportFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>[]
+        }
+        create: {
+          args: Prisma.ModerationReportCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        createMany: {
+          args: Prisma.ModerationReportCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ModerationReportCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>[]
+        }
+        delete: {
+          args: Prisma.ModerationReportDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        update: {
+          args: Prisma.ModerationReportUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        deleteMany: {
+          args: Prisma.ModerationReportDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ModerationReportUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ModerationReportUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>[]
+        }
+        upsert: {
+          args: Prisma.ModerationReportUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ModerationReportPayload>
+        }
+        aggregate: {
+          args: Prisma.ModerationReportAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateModerationReport>
+        }
+        groupBy: {
+          args: Prisma.ModerationReportGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ModerationReportGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ModerationReportCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ModerationReportCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1276,6 +1351,25 @@ export const ChantEnvironmentRuleScalarFieldEnum = {
 } as const
 
 export type ChantEnvironmentRuleScalarFieldEnum = (typeof ChantEnvironmentRuleScalarFieldEnum)[keyof typeof ChantEnvironmentRuleScalarFieldEnum]
+
+
+export const ModerationReportScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  reporterUserId: 'reporterUserId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reasonCode: 'reasonCode',
+  description: 'description',
+  status: 'status',
+  decisionBy: 'decisionBy',
+  decisionAt: 'decisionAt',
+  decisionNote: 'decisionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ModerationReportScalarFieldEnum = (typeof ModerationReportScalarFieldEnum)[keyof typeof ModerationReportScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1480,6 +1574,20 @@ export type ListEnumRuleProductizationModeFieldRefInput<$PrismaModel> = FieldRef
 
 
 /**
+ * Reference to a field of type 'ReportStatus'
+ */
+export type EnumReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ReportStatus[]'
+ */
+export type ListEnumReportStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReportStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1596,6 +1704,7 @@ export type GlobalOmitConfig = {
   post?: Prisma.PostOmit
   chantEnvironmentRuleGroup?: Prisma.ChantEnvironmentRuleGroupOmit
   chantEnvironmentRule?: Prisma.ChantEnvironmentRuleOmit
+  moderationReport?: Prisma.ModerationReportOmit
 }
 
 /* Types for Logging */

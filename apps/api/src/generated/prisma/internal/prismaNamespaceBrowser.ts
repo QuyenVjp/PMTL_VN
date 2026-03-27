@@ -59,7 +59,8 @@ export const ModelName = {
   MediaAsset: 'MediaAsset',
   Post: 'Post',
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
-  ChantEnvironmentRule: 'ChantEnvironmentRule'
+  ChantEnvironmentRule: 'ChantEnvironmentRule',
+  ModerationReport: 'ModerationReport'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -228,6 +229,25 @@ export const ChantEnvironmentRuleScalarFieldEnum = {
 } as const
 
 export type ChantEnvironmentRuleScalarFieldEnum = (typeof ChantEnvironmentRuleScalarFieldEnum)[keyof typeof ChantEnvironmentRuleScalarFieldEnum]
+
+
+export const ModerationReportScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  reporterUserId: 'reporterUserId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reasonCode: 'reasonCode',
+  description: 'description',
+  status: 'status',
+  decisionBy: 'decisionBy',
+  decisionAt: 'decisionAt',
+  decisionNote: 'decisionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ModerationReportScalarFieldEnum = (typeof ModerationReportScalarFieldEnum)[keyof typeof ModerationReportScalarFieldEnum]
 
 
 export const SortOrder = {

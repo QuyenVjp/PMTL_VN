@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Sparkles,
+  Settings2,
   Users,
   UserSquare2,
 } from "lucide-react";
@@ -67,6 +68,7 @@ export const sidebarNavGroups: NavGroup[] = [
   {
     title: "Hệ thống",
     items: [
+      { title: "Cài đặt admin", url: "/he-thong/cai-dat", icon: Settings2 },
       { title: "Feature flags", url: "/he-thong/feature-flags", icon: ShieldCheck },
       { title: "Audit logs", url: "/he-thong/audit-logs", icon: ScrollText },
       { title: "Lịch & Sự kiện", url: "/he-thong/lich", icon: CalendarDays },

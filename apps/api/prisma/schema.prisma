@@ -246,3 +246,35 @@ model ChantEnvironmentRule {
   @@index([groupId])
   @@map("chant_environment_rules")
 }
+
+// ============================================================================
+// MODERATION TABLES
+// ============================================================================
+
+enum ReportStatus {
+  PENDING
+  RESOLVED_HIDE
+  RESOLVED_IGNORE
+  RESOLVED_ESCALATE
+}
+
+model ModerationReport {
+  id              String       @id @default(cuid())
+  publicId        String       @unique @map("public_id")
+  reporterUserId  String       @map("reporter_user_id")
+  targetType      String       @map("target_type") // "post" | "comment" | "community_post" | "guestbook"
+  targetId        String       @map("target_id")
+  reasonCode      String       @map("reason_code")
+  description     String?
+  status          ReportStatus @default(PENDING)
+  decisionBy      String?      @map("decision_by")
+  decisionAt      DateTime?    @map("decision_at")
+  decisionNote    String?      @map("decision_note")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([targetType, targetId])
+  @@index([reporterUserId])
+  @@map("moderation_reports")
+}

@@ -24,4 +24,5 @@ __pycache__/
 *.pyc
 tmp/aider/
 tmp/aider-runtime/
+tmp/reference/
 .aider*

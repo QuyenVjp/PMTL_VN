@@ -29,9 +29,12 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - This repo is Docker-first. Prefer `just` wrappers and repo scripts over ad hoc shell chains.
 - Windows native is the default on this machine unless a task is large enough to justify WSL.
 - Node baseline is `20.18.0`.
+- Official Anthropic Claude Code references are synced under `tmp/reference/anthropic` via `pnpm claude:setup`.
 
 ## Preferred Commands
 - Bootstrap: `just bootstrap`
+- Claude bootstrap: `pnpm claude:setup`
+- Claude doctor: `pnpm claude:doctor`
 - Dev core/full: `just dev-core`, `just dev-full`
 - Stop/rebuild/logs: `just dev-stop`, `just dev-rebuild`, `just dev-logs`
 - Web verify: `just verify-web`

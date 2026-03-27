@@ -1,12 +1,21 @@
 import { useMemo, useState } from "react";
-import { CalendarDaysIcon, RefreshCcwIcon, SearchIcon, SendHorizonalIcon } from "lucide-react";
+import {
+  CalendarDaysIcon,
+  RefreshCcwIcon,
+  SearchIcon,
+  SendHorizonalIcon,
+  ShieldCheckIcon,
+  UserPlusIcon,
+} from "lucide-react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { adminOperators } from "@/components/layout/admin-user";
 import { WorkspaceTablePage } from "@/features/workspaces/workspace-table-page";
 
 const contentColumns = [
@@ -15,6 +24,23 @@ const contentColumns = [
   { key: "owner", label: "Phụ trách", className: "w-[160px]" },
   { key: "capNhat", label: "Cập nhật", className: "w-[160px]" },
 ];
+
+const userAvatarMap = {
+  "Ngọc Minh": adminOperators[0]?.avatar ?? "/avatars/ngoc-minh.png",
+  "Diệu An": adminOperators[1]?.avatar ?? "/avatars/dieu-an.png",
+  "Pháp Bảo": adminOperators[2]?.avatar ?? "/avatars/phap-bao.png",
+  "Thanh Tịnh": adminOperators[3]?.avatar ?? "/avatars/thanh-tinh.png",
+  "Sơn Nhiên": "/avatars/qa-operator.png",
+};
+
+function initialsFromName(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
 
 export function PostsPage() {
   return (
@@ -265,10 +291,29 @@ export function GuestbookPage() {
 export function ModerationReportsPage() {
   return (
     <WorkspaceTablePage
-      title="Báo cáo"
-      description="Bàn điều phối kiểm duyệt báo cáo từ thành viên, ưu tiên theo mức độ và target ảnh hưởng."
-      searchPlaceholder="Tìm báo cáo theo mã, target hoặc người gửi"
-      primaryAction="Mở hàng chờ"
+      title="Báo cáo kiểm duyệt"
+      description="Bàn điều phối kiểu task queue cho các báo cáo từ thành viên, ưu tiên theo mức độ ảnh hưởng và owner xử lý."
+      searchPlaceholder="Lọc theo mã case, target, owner hoặc người gửi..."
+      entityName="case"
+      headerActions={[
+        {
+          label: "Nhập hàng chờ",
+          variant: "outline",
+          mode: "feedback",
+          feedbackMessage: "Đã đồng bộ hàng chờ moderation từ backlog mới nhất.",
+        },
+        {
+          label: "Tạo case",
+          mode: "create",
+          createDefaults: {
+            trangThai: "Mở mới",
+            uuTien: "Trung bình",
+            owner: "Moderator ca sáng",
+            nguoiGui: "Báo cáo nội bộ",
+            actions: ["Mở case", "Nhận xử lý", "Ẩn"],
+          },
+        },
+      ]}
       stats={[
         { label: "Mở mới", value: "24", note: "6 báo cáo phát sinh trong 24 giờ gần nhất" },
         { label: "Đang xử lý", value: "11", note: "3 case cần phối hợp với community ops" },
@@ -283,15 +328,62 @@ export function ModerationReportsPage() {
       ]}
       columns={[
         { key: "maBaoCao", label: "Mã", className: "w-[140px]" },
-        { key: "target", label: "Đối tượng" },
+        {
+          key: "target",
+          label: "Đối tượng",
+          render: (row) => (
+            <div className="space-y-1">
+              <div className="font-medium">{String(row.target ?? "")}</div>
+              <div className="text-sm text-muted-foreground">Owner: {String(row.owner ?? "")}</div>
+            </div>
+          ),
+        },
         { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
         { key: "uuTien", label: "Ưu tiên", className: "w-[140px]" },
         { key: "nguoiGui", label: "Người gửi", className: "w-[180px]" },
+        { key: "owner", label: "Owner", className: "w-[180px]" },
       ]}
       rows={[
-        { id: "report-1", maBaoCao: "RPT-24031", target: "Bài đăng cộng đồng #CP-991", trangThai: "Mở mới", uuTien: "Khẩn", nguoiGui: "Minh Quang", actions: ["Mở", "Nhận xử lý"] },
-        { id: "report-2", maBaoCao: "RPT-24018", target: "Bình luận #CM-1182", trangThai: "Đang xử lý", uuTien: "Cao", nguoiGui: "Diệu Tâm", actions: ["Mở", "Ra quyết định"] },
-        { id: "report-3", maBaoCao: "RPT-23994", target: "Bài viết hướng dẫn", trangThai: "Đang xử lý", uuTien: "Trung bình", nguoiGui: "Hồng Liên", actions: ["Mở"] },
+        {
+          id: "report-1",
+          maBaoCao: "RPT-24031",
+          target: "Bài đăng cộng đồng #CP-991",
+          trangThai: "Mở mới",
+          uuTien: "Khẩn",
+          nguoiGui: "Minh Quang",
+          owner: "Moderator ca sáng",
+          actions: ["Mở case", "Nhận xử lý", "Ẩn"],
+        },
+        {
+          id: "report-2",
+          maBaoCao: "RPT-24018",
+          target: "Bình luận #CM-1182",
+          trangThai: "Đang xử lý",
+          uuTien: "Cao",
+          nguoiGui: "Diệu Tâm",
+          owner: "Diệu An",
+          actions: ["Mở case", "Ra quyết định", "Ẩn"],
+        },
+        {
+          id: "report-3",
+          maBaoCao: "RPT-23994",
+          target: "Bài viết hướng dẫn / Nguồn trích dẫn",
+          trangThai: "Đang xử lý",
+          uuTien: "Trung bình",
+          nguoiGui: "Hồng Liên",
+          owner: "Ngọc Minh",
+          actions: ["Mở case", "Ra quyết định"],
+        },
+        {
+          id: "report-4",
+          maBaoCao: "RPT-23961",
+          target: "Sổ lưu niệm / Ảnh không phù hợp",
+          trangThai: "Mở mới",
+          uuTien: "Cao",
+          nguoiGui: "Thanh Lam",
+          owner: "Moderator ca chiều",
+          actions: ["Mở case", "Nhận xử lý", "Ẩn"],
+        },
       ]}
     />
   );
@@ -322,9 +414,38 @@ export function UsersAdminPage() {
   return (
     <WorkspaceTablePage
       title="Người dùng"
-      description="Danh sách thành viên, vai trò vận hành và các thao tác khóa/mở theo đúng lane admin."
-      searchPlaceholder="Tìm người dùng theo email, tên hoặc vai trò"
-      primaryAction="Thêm quản trị viên"
+      description="Danh sách thành viên, vai trò vận hành và các thao tác mời, đổi quyền, khóa hoặc rà soát phiên theo đúng lane admin."
+      searchPlaceholder="Lọc theo tên, email, vai trò hoặc workspace..."
+      entityName="người dùng"
+      headerActions={[
+        {
+          label: "Mời thành viên",
+          variant: "outline",
+          icon: UserPlusIcon,
+          mode: "create",
+          createDefaults: {
+            trangThai: "Đã mời",
+            vaiTro: "Cộng tác viên",
+            workspace: "Workspace chờ gán",
+            thietBi: "Chưa đăng nhập",
+            lanCuoi: "Chưa có",
+            actions: ["Mở hồ sơ", "Gửi lại thư mời", "Thu hồi"],
+          },
+        },
+        {
+          label: "Thêm operator",
+          icon: ShieldCheckIcon,
+          mode: "create",
+          createDefaults: {
+            trangThai: "Hoạt động",
+            vaiTro: "Operator",
+            workspace: "Vận hành PMTL",
+            thietBi: "Chrome / Windows",
+            lanCuoi: "Vừa xong",
+            actions: ["Mở hồ sơ", "Đổi vai trò", "Đặt lại MFA", "Khóa"],
+          },
+        },
+      ]}
       stats={[
         { label: "Tổng thành viên", value: "18.420", note: "Bao gồm cả tài khoản chưa xác minh và đã khóa" },
         { label: "Quản trị viên", value: "18", note: "Phân tách theo owner: nội dung, community, hệ thống" },
@@ -338,16 +459,118 @@ export function UsersAdminPage() {
         { label: "Quản trị", value: "admin", predicate: (row) => String(row.vaiTro).includes("Admin") },
       ]}
       columns={[
-        { key: "hoTen", label: "Họ tên" },
-        { key: "email", label: "Email" },
-        { key: "vaiTro", label: "Vai trò", className: "w-[160px]" },
+        {
+          key: "hoTen",
+          label: "Thành viên",
+          enableHiding: false,
+          render: (row) => {
+            const name = String(row.hoTen ?? "");
+            const email = String(row.email ?? "");
+            const avatar = String(row.avatar ?? "");
+
+            return (
+              <div className="flex items-center gap-3">
+                <Avatar className="size-10 rounded-xl">
+                  <AvatarImage src={avatar} alt={name} />
+                  <AvatarFallback className="rounded-xl">{initialsFromName(name)}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <div className="truncate font-medium">{name}</div>
+                  <div className="truncate text-sm text-muted-foreground">{email}</div>
+                </div>
+              </div>
+            );
+          },
+        },
+        {
+          key: "vaiTro",
+          label: "Vai trò",
+          className: "w-[220px]",
+          render: (row) => (
+            <div className="space-y-1">
+              <div className="font-medium">{String(row.vaiTro ?? "")}</div>
+              <div className="text-sm text-muted-foreground">{String(row.workspace ?? "")}</div>
+            </div>
+          ),
+          getFilterValue: (row) => String(row.vaiTro ?? ""),
+        },
+        { key: "thietBi", label: "Thiết bị gần nhất", className: "w-[180px]" },
         { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
         { key: "lanCuoi", label: "Lần cuối", className: "w-[160px]" },
       ]}
       rows={[
-        { id: "user-1", hoTen: "Ngọc Minh", email: "ngoc.minh@pmtl.vn", vaiTro: "Admin nội dung", trangThai: "Hoạt động", lanCuoi: "27/03 14:08", actions: ["Mở hồ sơ"] },
-        { id: "user-2", hoTen: "Diệu An", email: "dieu.an@pmtl.vn", vaiTro: "Moderator", trangThai: "Hoạt động", lanCuoi: "27/03 13:02", actions: ["Mở hồ sơ", "Đổi vai trò"] },
-        { id: "user-3", hoTen: "Tâm Hòa", email: "tam.hoa@pmtl.vn", vaiTro: "Thành viên", trangThai: "Đang khóa", lanCuoi: "23/03 09:20", actions: ["Mở hồ sơ", "Mở khóa"] },
+        {
+          id: "user-1",
+          hoTen: "Ngọc Minh",
+          email: "ngoc.minh@pmtl.vn",
+          avatar: userAvatarMap["Ngọc Minh"],
+          vaiTro: "Admin nội dung",
+          workspace: "Điều phối nội dung",
+          thietBi: "Chrome / Windows",
+          trangThai: "Hoạt động",
+          lanCuoi: "27/03 14:08",
+          actions: ["Mở hồ sơ", "Đổi vai trò", "Đặt lại MFA", "Khóa"],
+        },
+        {
+          id: "user-2",
+          hoTen: "Diệu An",
+          email: "dieu.an@pmtl.vn",
+          avatar: userAvatarMap["Diệu An"],
+          vaiTro: "Moderator",
+          workspace: "Kiểm duyệt cộng đồng",
+          thietBi: "Safari / iPhone",
+          trangThai: "Hoạt động",
+          lanCuoi: "27/03 13:02",
+          actions: ["Mở hồ sơ", "Đổi vai trò", "Khóa"],
+        },
+        {
+          id: "user-3",
+          hoTen: "Pháp Bảo",
+          email: "phap.bao@pmtl.vn",
+          avatar: userAvatarMap["Pháp Bảo"],
+          vaiTro: "Search ops",
+          workspace: "Hệ thống",
+          thietBi: "Arc / macOS",
+          trangThai: "Hoạt động",
+          lanCuoi: "27/03 12:41",
+          actions: ["Mở hồ sơ", "Đổi vai trò", "Đặt lại MFA"],
+        },
+        {
+          id: "user-4",
+          hoTen: "Thanh Tịnh",
+          email: "thanh.tinh@pmtl.vn",
+          avatar: userAvatarMap["Thanh Tịnh"],
+          vaiTro: "Hỗ trợ phát nguyện",
+          workspace: "Hỗ trợ",
+          thietBi: "Edge / Windows",
+          trangThai: "Đã mời",
+          lanCuoi: "Chưa đăng nhập",
+          actions: ["Mở hồ sơ", "Gửi lại thư mời", "Thu hồi"],
+        },
+        {
+          id: "user-5",
+          hoTen: "Sơn Nhiên",
+          email: "admin@pmtl.local",
+          avatar: userAvatarMap["Sơn Nhiên"],
+          vaiTro: "Super admin",
+          workspace: "Vận hành PMTL",
+          thietBi: "Chrome / Windows",
+          trangThai: "Hoạt động",
+          lanCuoi: "27/03 14:20",
+          actions: ["Mở hồ sơ", "Đặt lại MFA"],
+        },
+        {
+          id: "user-6",
+          hoTen: "Tâm Hòa",
+          email: "tam.hoa@pmtl.vn",
+          avatar: userAvatarMap["Thanh Tịnh"],
+          vaiTro: "Thành viên",
+          workspace: "Cộng đồng",
+          thietBi: "Firefox / Ubuntu",
+          trangThai: "Đang khóa",
+          lanCuoi: "23/03 09:20",
+          actions: ["Mở hồ sơ", "Mở khóa"],
+        },
       ]}
     />
   );

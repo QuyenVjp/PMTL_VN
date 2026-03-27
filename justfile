@@ -12,6 +12,12 @@ dev-full:
 run:
   powershell -ExecutionPolicy Bypass -File ./run-project.ps1
 
+claude-setup:
+  pwsh -ExecutionPolicy Bypass -File ./infra/scripts/bootstrap-claude-code.ps1
+
+claude-doctor:
+  pwsh -ExecutionPolicy Bypass -File ./infra/scripts/claude-code-doctor.ps1
+
 host-prepare:
   powershell -ExecutionPolicy Bypass -File ./infra/scripts/prepare-host-dev.ps1
 

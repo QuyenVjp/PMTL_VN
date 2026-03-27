@@ -19,15 +19,15 @@ export function ThemeSwitch() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+          Giao diện sáng
           <CheckIcon className={cn("ms-auto size-4", theme !== "light" && "hidden")} />
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+          Giao diện tối
           <CheckIcon className={cn("ms-auto size-4", theme !== "dark" && "hidden")} />
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+          Theo hệ thống
           <CheckIcon className={cn("ms-auto size-4", theme !== "system" && "hidden")} />
         </DropdownMenuItem>
       </DropdownMenuContent>

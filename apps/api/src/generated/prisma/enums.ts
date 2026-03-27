@@ -67,3 +67,13 @@ export const RuleProductizationMode = {
 } as const
 
 export type RuleProductizationMode = (typeof RuleProductizationMode)[keyof typeof RuleProductizationMode]
+
+
+export const ReportStatus = {
+  PENDING: 'PENDING',
+  RESOLVED_HIDE: 'RESOLVED_HIDE',
+  RESOLVED_IGNORE: 'RESOLVED_IGNORE',
+  RESOLVED_ESCALATE: 'RESOLVED_ESCALATE'
+} as const
+
+export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]

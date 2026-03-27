@@ -23,6 +23,8 @@
     "dev:host:full": "turbo run dev --parallel --filter=@pmtl/web --filter=@pmtl/api --filter=@pmtl/admin",
     "dev:host:prepare": "powershell -ExecutionPolicy Bypass -File ./infra/scripts/prepare-host-dev.ps1",
     "run": "powershell -ExecutionPolicy Bypass -File ./run-project.ps1",
+    "claude:setup": "pwsh -ExecutionPolicy Bypass -File ./infra/scripts/bootstrap-claude-code.ps1",
+    "claude:doctor": "pwsh -ExecutionPolicy Bypass -File ./infra/scripts/claude-code-doctor.ps1",
     "admin:run": "powershell -ExecutionPolicy Bypass -File ./infra/scripts/run-admin.ps1",
     "dev:host:web": "pnpm --filter @pmtl/web dev",
     "db:reset:dev": "tsx infra/scripts/reset-dev-db.ts",

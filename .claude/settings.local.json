@@ -20,13 +20,30 @@
       "WebFetch(domain:orientalradio.com.sg)",
       "WebFetch(domain:xinlingfamen.info)",
       "WebFetch(domain:www.guanyincitta.info)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/modules/identity -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/platform/sessions -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/platform/feature-flags -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/platform/audit -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/platform/health -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/common/guards -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/common/decorators -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/common/auth -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN -name schema.prisma -o -name *.prisma)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/common/errors -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/common/validation -type f -name *.ts)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/modules/content -type f -name *.ts)",
+      "Bash(xargs ls:*)",
+      "Bash(npx --filter @pmtl/api prisma generate --schema=apps/api/prisma/schema.prisma)",
+      "Bash(npx eslint:*)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(echo \"LINT_EXIT:$?\")"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "playwright",
     "postgres-pmtl",
     "shadcn"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

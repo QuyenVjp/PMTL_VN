@@ -20,6 +20,9 @@ const AuditLogsPage = lazy(() =>
 const HealthPage = lazy(() =>
   import("@/features/system/health-page").then((mod) => ({ default: mod.HealthPage })),
 );
+const SettingsPage = lazy(() =>
+  import("@/features/settings").then((mod) => ({ default: mod.SettingsPage })),
+);
 const PostsPage = lazy(() => import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.PostsPage })));
 const GuidesPage = lazy(() => import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.GuidesPage })));
 const DailyPracticePage = lazy(() =>
@@ -48,16 +51,14 @@ const GuestbookPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.GuestbookPage })),
 );
 const ModerationReportsPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.ModerationReportsPage })),
+  import("@/features/moderation-reports").then((mod) => ({ default: mod.ModerationReportsPage })),
 );
 const ModerationCommentsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.ModerationCommentsPage })),
 );
-const UsersAdminPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.UsersAdminPage })),
-);
+const UsersPage = lazy(() => import("@/features/users").then((mod) => ({ default: mod.UsersPage })));
 const SessionsPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.SessionsPage })),
+  import("@/features/sessions").then((mod) => ({ default: mod.SessionsPage })),
 );
 const CalendarEventsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.CalendarEventsPage })),
@@ -204,7 +205,7 @@ const moderationCommentsRoute = createRoute({
 const usersRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/nguoi-dung",
-  component: withSuspense(UsersAdminPage),
+  component: withSuspense(UsersPage),
 });
 
 const sessionsRoute = createRoute({
@@ -223,6 +224,12 @@ const auditLogsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/he-thong/audit-logs",
   component: withSuspense(AuditLogsPage),
+});
+
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/he-thong/cai-dat",
+  component: withSuspense(SettingsPage),
 });
 
 const calendarRoute = createRoute({
@@ -293,6 +300,7 @@ export const routeTree = rootRoute.addChildren([
   sessionsRoute,
   featureFlagsRoute,
   auditLogsRoute,
+  settingsRoute,
   calendarRoute,
   searchRoute,
   notificationsRoute,

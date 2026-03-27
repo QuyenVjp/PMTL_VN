@@ -20,6 +20,7 @@ import { SessionsModule } from "./platform/sessions/sessions.module.js";
 // Domain modules
 import { IdentityModule } from "./modules/identity/identity.module.js";
 import { ContentModule } from "./modules/content/content.module.js";
+import { ModerationModule } from "./modules/moderation/moderation.module.js";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ContentModule } from "./modules/content/content.module.js";
     // Domain
     IdentityModule,
     ContentModule,
+    ModerationModule,
   ],
   providers: [
     {

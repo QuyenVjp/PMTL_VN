@@ -1,11 +1,18 @@
 import * as React from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { Settings2Icon } from "lucide-react";
+import { BellIcon, Settings2Icon, SparklesIcon } from "lucide-react";
 
+import { UserMenu } from "@/components/layout/user-menu";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { TopNav } from "@/components/layout/top-nav";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -54,18 +61,40 @@ export function Header({
 
         <div className="flex items-center gap-1">
           <ThemeSwitch />
-          <Button variant="ghost" size="icon" className="size-9 rounded-full text-muted-foreground" asChild>
-            <Link to="/he-thong/tim-kiem" aria-label="Mở trung tâm hệ thống">
-              <Settings2Icon className="size-4" />
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-9 rounded-full border bg-muted text-sm font-semibold text-foreground"
-          >
-            SN
-          </Button>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="size-9 rounded-full text-muted-foreground">
+                <Settings2Icon className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to="/he-thong/cai-dat">Cài đặt admin</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/he-thong/tim-kiem">Tìm kiếm</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/he-thong/thong-bao">
+                  <BellIcon className="size-4" />
+                  Thông báo
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/he-thong/health">Health</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/he-thong/feature-flags">Feature flags</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/ho-tro/phat-nguyen/nhap-ho">
+                  <SparklesIcon className="size-4" />
+                  Nhập hộ
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <UserMenu />
         </div>
       </div>
     </header>

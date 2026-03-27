@@ -25,5 +25,30 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) {
+            return;
+          }
+
+          if (id.includes("recharts")) {
+            return "charts";
+          }
+
+          if (id.includes("@tanstack")) {
+            return "tanstack";
+          }
+
+          if (id.includes("@radix-ui") || id.includes("cmdk")) {
+            return "radix";
+          }
+
+          if (id.includes("lucide-react")) {
+            return "icons";
+          }
+        },
+      },
+    },
   },
 });
