@@ -3,11 +3,17 @@ import {
   Injectable,
   BadRequestException,
 } from "@nestjs/common";
-import { ZodSchema, z } from "zod";
+import { ZodError, z } from "zod";
+
+type SchemaLike<TOutput = unknown> = {
+  safeParse: (value: unknown) =>
+    | { success: true; data: TOutput }
+    | { success: false; error: unknown };
+};
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema?: ZodSchema) {}
+  constructor(private schema?: SchemaLike) {}
 
   transform(value: unknown) {
     if (!this.schema) {
@@ -20,16 +26,19 @@ export class ZodValidationPipe implements PipeTransform {
     }
 
     // ZOD_4_RUNTIME_POLICY: use z.treeifyError() for structured error tree
-    const tree = z.treeifyError(result.error);
+    const detail =
+      result.error instanceof ZodError
+        ? z.treeifyError(result.error)
+        : { formErrors: ["Validation failed"], details: result.error };
 
     throw new BadRequestException({
       code: "VALIDATION_ERROR",
       message: "Dữ liệu không hợp lệ",
-      detail: tree,
+      detail,
     });
   }
 }
 
-export function ZodValidate(schema: ZodSchema): ZodValidationPipe {
+export function ZodValidate(schema: SchemaLike): ZodValidationPipe {
   return new ZodValidationPipe(schema);
 }

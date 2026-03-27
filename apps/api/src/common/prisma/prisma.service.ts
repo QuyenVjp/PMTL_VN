@@ -2,9 +2,12 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from "@nestjs/commo
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
+const slowQueryLogger = new Logger("PrismaSlowQuery");
+
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
+  private readonly extendedClient: unknown;
 
   constructor() {
     const connectionString = process.env.DATABASE_URL;
@@ -22,6 +25,25 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       omit: {
         user: {
           passwordHash: true,
+        },
+      },
+    });
+
+    this.extendedClient = this.$extends({
+      query: {
+        $allModels: {
+          async $allOperations({ model, operation, args, query }) {
+            const startedAt = Date.now();
+            const result = await query(args);
+            const durationMs = Date.now() - startedAt;
+
+            if (durationMs >= 250 && typeof model === "string") {
+              // Emit only slow-query info to keep logs cheap in production.
+              slowQueryLogger.warn(`${model}.${operation} took ${durationMs}ms`);
+            }
+
+            return result;
+          },
         },
       },
     });
@@ -51,5 +73,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         await this.$executeRawUnsafe(`TRUNCATE TABLE "public"."${tablename}" CASCADE;`);
       }
     }
+  }
+
+  get extended() {
+    return this.extendedClient as PrismaClient;
   }
 }

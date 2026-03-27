@@ -58,4 +58,17 @@ export class ChantingController {
 
     return this.chantingService.getEnvironmentRuleGroup(groupKey);
   }
+
+  @Get("rule-packs/q161")
+  @Public()
+  @ApiOperation({
+    summary: "Lấy Q161 rule-pack theo projection của content/chanting",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Q161 content rule-pack",
+  })
+  async getQ161RulePack() {
+    return this.chantingService.getQ161RulePack();
+  }
 }

@@ -25,24 +25,23 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm run build
 
 # ─── Stage 3: runtime ─────────────────────────────────────────────────────────
-FROM node:20-alpine AS runtime
-
-RUN addgroup -S pmtl && adduser -S pmtl -G pmtl
+FROM gcr.io/distroless/nodejs20-debian12:nonroot AS runtime
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
 # Next.js standalone bundle (requires output: 'standalone' in next.config)
 COPY --from=builder /repo/apps/web/.next/standalone ./
 COPY --from=builder /repo/apps/web/.next/static ./.next/static
 COPY --from=builder /repo/apps/web/public ./public
 
-USER pmtl
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+  CMD ["node", "-e", "const http=require('http');const req=http.get('http://127.0.0.1:3000/',res=>process.exit(res.statusCode<500?0:1));req.on('error',()=>process.exit(1));req.setTimeout(5000,()=>{req.destroy();process.exit(1);});"]
 
-CMD ["node", "server.js"]
+CMD ["server.js"]

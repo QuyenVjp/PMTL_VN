@@ -120,3 +120,38 @@ export type ProductizationMode = z.infer<typeof productizationModeSchema>;
 export type ChantEnvironmentRuleResponse = z.infer<typeof chantEnvironmentRuleResponseSchema>;
 export type ChantEnvironmentRuleGroupResponse = z.infer<typeof chantEnvironmentRuleGroupResponseSchema>;
 export type ChantEnvironmentRulesPageResponse = z.infer<typeof chantEnvironmentRulesPageResponseSchema>;
+
+export const q161ContentRulePackResponseSchema = z.object({
+  chantKey: z.literal("le_phat_dai_sam_hoi_van"),
+  reviewStatus: z.literal("human_review_required"),
+  recitationCaps: z.array(
+    z.object({
+      key: z.string().check(z.minLength(1)),
+      scope: z.enum(["single_day_total", "cross_day_total"]),
+      maxCount: z.number().int().positive(),
+      appliesTo: z.string().check(z.minLength(1)),
+    }),
+  ),
+  crossDayCapRules: z.array(
+    z.object({
+      key: z.string().check(z.minLength(1)),
+      window: z.string().check(z.minLength(1)),
+      maxCount: z.number().check(z.int(), z.gte(1)),
+    }),
+  ),
+  audienceCapRules: z.array(
+    z.object({
+      audience: z.string().check(z.minLength(1)),
+      maxCount: z.number().check(z.int(), z.gte(1)),
+    }),
+  ),
+  littleHouseCapRules: z.array(
+    z.object({
+      dayType: z.string().check(z.minLength(1)),
+      capType: z.enum(["total_all_types", "per_type", "per_target_type"]),
+      maxCount: z.number().check(z.int(), z.gte(1)),
+    }),
+  ),
+});
+
+export type Q161ContentRulePackResponse = z.infer<typeof q161ContentRulePackResponseSchema>;

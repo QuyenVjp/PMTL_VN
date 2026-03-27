@@ -10,6 +10,7 @@ import {
   storageConfig,
   emailConfig,
   revalidationConfig,
+  cacheConfig,
 } from "./config.namespaces.js";
 
 @Global()
@@ -28,6 +29,7 @@ import {
         storageConfig,
         emailConfig,
         revalidationConfig,
+        cacheConfig,
       ],
     }),
   ],

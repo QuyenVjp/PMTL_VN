@@ -75,6 +75,12 @@ export const revalidationConfigSchema = z.object({
   NEXT_REVALIDATE_URL: z.string().url().optional(),
 });
 
+// Cache/Redis config schema
+export const cacheConfigSchema = z.object({
+  VALKEY_URL: z.string().url().optional(),
+  CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(300),
+});
+
 // Combined env schema for validation
 export const envSchema = z.object({
   ...coreConfigSchema.shape,
@@ -85,6 +91,7 @@ export const envSchema = z.object({
   ...storageConfigSchema.shape,
   ...emailConfigSchema.shape,
   ...revalidationConfigSchema.shape,
+  ...cacheConfigSchema.shape,
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

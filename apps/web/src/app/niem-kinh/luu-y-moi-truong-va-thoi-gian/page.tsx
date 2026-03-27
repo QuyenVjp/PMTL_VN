@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { EnvironmentRulesPage } from "./page-content";
+import { getServerApiBaseUrl } from "../../../lib/api-base";
 
 export const metadata: Metadata = {
   title: "Lưu ý môi trường và thời gian niệm kinh",
@@ -70,22 +72,19 @@ interface EnvironmentRulesData {
   }>;
 }
 
-function resolveApiBaseUrl(rawBaseUrl: string): string {
-  const trimmed = rawBaseUrl.replace(/\/+$/, "");
-  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
-}
-
 async function getEnvironmentRulesData(): Promise<EnvironmentRulesData | null> {
-  const apiBaseUrl = process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
-  
+  "use cache";
+  cacheLife("hours");
+  cacheTag("content:chanting-environment-rules");
+
+  const apiBaseUrl = getServerApiBaseUrl();
+
   if (!apiBaseUrl) {
     return null;
   }
 
   try {
-    const res = await fetch(`${resolveApiBaseUrl(apiBaseUrl)}/content/chanting/environment-rules`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
-    });
+    const res = await fetch(`${apiBaseUrl}/content/chanting/environment-rules`);
 
     if (!res.ok) {
       console.error(`API returned ${res.status}`);

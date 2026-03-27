@@ -12,6 +12,14 @@ steps:
   # ─── Install ────────────────────────────────────────────────────────────────
   install:
     image: node:20-alpine
+    environment:
+      TURBO_TELEMETRY_DISABLED: "1"
+      TURBO_TOKEN:
+        from_secret: TURBO_TOKEN
+      TURBO_TEAM:
+        from_secret: TURBO_TEAM
+      TURBO_API:
+        from_secret: TURBO_API
     commands:
       - corepack enable
       - corepack prepare pnpm@10.30.3 --activate
@@ -20,20 +28,21 @@ steps:
       - event: [push, pull_request]
 
   # ─── Lint ───────────────────────────────────────────────────────────────────
-  lint:
+  lint-typecheck:
     image: node:20-alpine
     depends_on: [install]
+    environment:
+      TURBO_TELEMETRY_DISABLED: "1"
+      TURBO_TOKEN:
+        from_secret: TURBO_TOKEN
+      TURBO_TEAM:
+        from_secret: TURBO_TEAM
+      TURBO_API:
+        from_secret: TURBO_API
     commands:
-      - pnpm lint
-    when:
-      - event: [push, pull_request]
-
-  # ─── TypeCheck ──────────────────────────────────────────────────────────────
-  typecheck:
-    image: node:20-alpine
-    depends_on: [install]
-    commands:
-      - pnpm typecheck
+      - corepack enable
+      - corepack prepare pnpm@10.30.3 --activate
+      - pnpm turbo run lint typecheck --cache-dir=.turbo
     when:
       - event: [push, pull_request]
 
@@ -47,15 +56,24 @@ steps:
       DATABASE_DIRECT_URL: postgresql://pmtl:pmtl@postgres:5432/pmtl_test
       JWT_ACCESS_SECRET: ci-test-access-secret-32chars-min
       JWT_REFRESH_SECRET: ci-test-refresh-secret-32chars-min
+      TURBO_TELEMETRY_DISABLED: "1"
+      TURBO_TOKEN:
+        from_secret: TURBO_TOKEN
+      TURBO_TEAM:
+        from_secret: TURBO_TEAM
+      TURBO_API:
+        from_secret: TURBO_API
     commands:
-      - pnpm --filter @pmtl/api test
+      - corepack enable
+      - corepack prepare pnpm@10.30.3 --activate
+      - pnpm turbo run test --filter=@pmtl/api --cache-dir=.turbo
     when:
       - event: [push, pull_request]
 
   # ─── Build Docker Images (main branch only) ──────────────────────────────────
   build-api:
     image: plugins/docker
-    depends_on: [lint, typecheck, test]
+    depends_on: [lint-typecheck, test]
     settings:
       repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-api
       tags:
@@ -74,7 +92,7 @@ steps:
 
   build-web:
     image: plugins/docker
-    depends_on: [lint, typecheck]
+    depends_on: [lint-typecheck]
     settings:
       repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-web
       tags:
@@ -93,7 +111,7 @@ steps:
 
   build-admin:
     image: plugins/docker
-    depends_on: [lint, typecheck]
+    depends_on: [lint-typecheck]
     settings:
       repo: ghcr.io/${CI_REPO_OWNER}/pmtl-vn-admin
       tags:

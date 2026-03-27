@@ -8,6 +8,7 @@ import {
   storageConfigSchema,
   emailConfigSchema,
   revalidationConfigSchema,
+  cacheConfigSchema,
 } from "./config.schemas.js";
 
 export const coreConfig = registerAs("core", () => {
@@ -70,6 +71,14 @@ export const revalidationConfig = registerAs("revalidation", () => {
   const parsed = revalidationConfigSchema.safeParse(process.env);
   if (!parsed.success) {
     throw new Error(`Revalidation config validation failed: ${JSON.stringify(parsed.error.format())}`);
+  }
+  return parsed.data;
+});
+
+export const cacheConfig = registerAs("cache", () => {
+  const parsed = cacheConfigSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(`Cache config validation failed: ${JSON.stringify(parsed.error.format())}`);
   }
   return parsed.data;
 });

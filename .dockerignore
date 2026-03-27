@@ -1,5 +1,7 @@
 .git
 .github
+.agents
+.claude
 .turbo
 .vscode
 .idea
@@ -13,8 +15,12 @@ node_modules
 **/.cache
 **/.temp
 **/tmp
+**/*.tsbuildinfo
 **/*.log
 tmp-runtime-logs
+design
+docs
+logs
 apps/cms/media
 .tmp-run-dev.log
 .tmp-run-dev.err.log

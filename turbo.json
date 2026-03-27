@@ -44,8 +44,16 @@
     "SEARCH_ENGINE",
     "MEILISEARCH_URL",
     "MEILISEARCH_API_KEY",
-    "VALKEY_URL"
+    "VALKEY_URL",
+    "TURBO_TOKEN",
+    "TURBO_TEAM",
+    "TURBO_API",
+    "TURBO_REMOTE_ONLY",
+    "TURBO_TELEMETRY_DISABLED"
   ],
+  "remoteCache": {
+    "signature": true
+  },
   "tasks": {
     "dev": {
       "cache": false,

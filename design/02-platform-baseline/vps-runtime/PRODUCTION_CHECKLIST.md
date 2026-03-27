@@ -24,6 +24,8 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 - [ ] `compose.prod.yml` reviewed: image tags không là `latest`
 - [ ] Tất cả services có `restart: unless-stopped`
 - [ ] Tất cả services có `healthcheck` configured
+- [ ] Runtime images dùng multi-stage + non-root (web/api/admin)
+- [ ] Runtime image tối ưu production (`distroless` hoặc tương đương) cho web/api
 - [ ] Memory limits set (web: 1024m, postgres: 512m, meilisearch: 512m)
 - [ ] Named volumes defined (không bind-mount data vào code dir)
 - [ ] `.env.prod` file present, không commit vào git
@@ -46,6 +48,8 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 
 - [ ] `GET /api/health/live` → `{ status: "ok" }`
 - [ ] `GET /api/health/ready` → `{ status: "ok", checks: { postgres: "ok", ... } }`
+- [ ] Next.js `cacheComponents=true` và cache strategy rõ (`use cache`, `cacheLife`, `cacheTag`)
+- [ ] Route đọc nặng đã gắn explicit cache profile (không implicit fetch cache)
 - [ ] Prisma migrations applied: `prisma migrate deploy`
 - [ ] Seed data loaded nếu cần (chanting env rules, etc.)
 - [ ] Auth flow test: login → access token → refresh token
@@ -60,6 +64,8 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 ## 5. Monitoring & Backup
 
 - [ ] Uptime Kuma deployed và ping `/api/health/live` mỗi 5 phút
+- [ ] Netdata profile chạy ổn (`/api/v1/info` trả về healthy)
+- [ ] Prometheus scrape Netdata target thành công
 - [ ] Telegram bot token + chat ID configured cho alerts
 - [ ] Test alert: `just telegram` hoặc send test message manually
 - [ ] pg_dump cron configured: `0 2 * * *` → `/opt/pmtl/scripts/backup-db.sh`
@@ -78,6 +84,7 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 - [ ] Postgres không expose port ra ngoài VPS (chỉ internal Docker network)
 - [ ] Meilisearch không expose port ra ngoài (chỉ internal)
 - [ ] `no-new-privileges: true` trong compose cho api/web/admin
+- [ ] Distroless runtime không chứa shell/package manager ở prod image (web/api)
 - [ ] Admin panel không accessible từ public internet nếu chưa cần (optional: IP whitelist)
 - [ ] Brevo SMTP credentials rotated từ dev sang production account
 - [ ] Git repo không có secrets: `git log --all --oneline | head -20` + secret scan
@@ -94,6 +101,7 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 | pg_dump cron active | ✅ BLOCKER | [ ] |
 | Restore drill done | ✅ BLOCKER | [ ] |
 | Uptime Kuma alert | ✅ BLOCKER | [ ] |
+| Netdata health + local-only exposure | ✅ BLOCKER | [ ] |
 | Rate limit working | ✅ BLOCKER | [ ] |
 | Prometheus/Grafana | ⏳ Phase 2 | — |
 | Woodpecker CI live | ⏳ Phase 2 | — |

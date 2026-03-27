@@ -9,6 +9,7 @@ import {
   storageConfig,
   emailConfig,
   revalidationConfig,
+  cacheConfig,
 } from "./config.namespaces.js";
 
 @Injectable()
@@ -30,6 +31,8 @@ export class ConfigService {
     private readonly email: ConfigType<typeof emailConfig>,
     @Inject(revalidationConfig.KEY)
     private readonly revalidation: ConfigType<typeof revalidationConfig>,
+    @Inject(cacheConfig.KEY)
+    private readonly cache: ConfigType<typeof cacheConfig>,
   ) {}
 
   // Core
@@ -157,5 +160,13 @@ export class ConfigService {
   }
   get nextRevalidateUrl() {
     return this.revalidation.NEXT_REVALIDATE_URL;
+  }
+
+  // Cache
+  get valkeyUrl() {
+    return this.cache.VALKEY_URL;
+  }
+  get cacheTtlSeconds() {
+    return this.cache.CACHE_TTL_SECONDS;
   }
 }

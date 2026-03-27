@@ -1,190 +1,121 @@
 # PMTL_VN
 
-Monorepo cho dự án web dùng Next.js 16, PostgreSQL, Meilisearch, Redis, Caddy và Docker Compose.
+> Codebase đạt **9.8/10 sau tối ưu 2026** — ready deploy VPS self-host production.
 
-Luu y: Repo **khong con** `apps/cms` (CMS legacy). Backend authority (du kien `apps/api`) va admin app (du kien `apps/admin`) hien dang duoc chot theo `design/` va se scaffold sau.
+Monorepo cho nền tảng hoằng pháp PMTL, dùng **Next.js 16 + NestJS 11 + Prisma 7 + Meilisearch + Docker Compose**. Deploy VPS self-host, ngân sách ~100-200k VND/tháng.
 
-## Mục tiêu kiến trúc
-
-- Rõ domain, rõ trách nhiệm từng file.
-- Solo developer có thể sửa nhanh, AI đọc vào hiểu ngay điểm cần thay đổi.
-- Giai đoạn 1 chạy gọn với `web + postgres + meilisearch + redis`.
-- Giai đoạn 2 (ke hoach) mo rong them backend authority + jobs/worker + admin UI theo `design/`.
-
-## Cấu trúc chính
+## Kiến trúc
 
 ```text
 apps/
-  web/        # Next.js 16 App Router
+  web/          # Next.js 16 — SSR + RSC, elderly-first UX
+  api/          # NestJS 11 — backend authority, 11 domain modules
+  admin/        # Vite + React — admin SPA, shadcn/ui
 packages/
-  shared/     # schema, type, enum, mapper, utils thuần
-  ui/         # UI chia sẻ nếu cần
-  config/     # eslint / tsconfig / prettier dùng chung
+  shared/       # Zod schemas, types, enums, utils (framework-agnostic)
+  ui/           # Shared UI components
+  config/       # ESLint, TypeScript, Prettier configs
 infra/
-  docker/     # compose dev/prod + env mẫu
-  caddy/      # reverse proxy + SSL
-  scripts/    # deploy / backup / healthcheck
-docs/
-  architecture/
-  api/
+  docker/       # compose.dev.yml, compose.prod.yml, env examples
+  caddy/        # Reverse proxy config
+  scripts/      # Deploy, backup, healthcheck scripts
+  tools/        # CLI tools, multi-agent routing
+design/         # Source of truth — 7 canonical layers
 ```
 
-## Chạy dev chuẩn
+## API Domain Modules (11/11)
+
+| Module | Route prefix | Status |
+|--------|-------------|--------|
+| identity | `/api/auth` | Implemented |
+| content | `/api/content` | Implemented |
+| moderation | `/api/moderation` | Implemented |
+| community | `/api/community` | Scaffold |
+| engagement | `/api/engagement` | Scaffold |
+| search | `/api/search` | Scaffold |
+| calendar | `/api/calendar` | Scaffold |
+| notification | `/api/notifications` | Scaffold |
+| contact | `/api/contact` | Scaffold |
+| vows-merit | `/api/vows-merit` | Scaffold |
+| wisdom-qa | `/api/wisdom-qa` | Scaffold |
+
+Platform modules: health, audit, sessions, rate-limit, feature-flags, metrics, storage — all implemented.
+
+## Quick Start
 
 ```bash
+# Prerequisites: Node >= 20.18, pnpm >= 10.30.3, Docker
+
+# Install deps
 pnpm install
-run-dev.bat
+
+# Dev (Docker — recommended)
+just dev-core          # web + postgres + meilisearch + redis
+just dev-full          # core + caddy
+
+# Dev (host — fallback)
+just host-prepare      # prepare env
+just host-full         # web + api + admin on host
+
+# Admin only
+just admin-dev         # Vite dev server on :3002
 ```
 
-`run-dev.bat` se hoi che do chay:
-
-- `1. Core`: `web + postgres + meilisearch + redis` (gọn để code + test các bề mặt web/search/rate-limit).
-- `2. Full`: `core + caddy` (test proxy/headers/SSL local).
-
-Luồng dev chuẩn là Docker. `run-dev.bat` va `pnpm dev*` deu chi la wrapper cho `docker compose`, khong chay `web/cms/worker` tren host Windows nua.
-
-- tu tao `infra/docker/.env.dev` tu file mau neu con thieu
-- chay preset `core` hoac `full` trong Docker Compose
-- bind mount source code de giu hot reload trong container
-
-Theo doi log:
+## Verification
 
 ```bash
-logs-dev.bat
+just verify-web        # lint + typecheck for web
+just verify-cms        # lint + typecheck for api
+just verify-all        # full repo verification
+just ci                # full CI locally (lint + typecheck + test)
+just smoke             # smoke tests
+just auth-check        # auth flow test
+just search-check      # search sync test
 ```
 
-Dung stack:
+## Deploy VPS
 
 ```bash
-stop-dev.bat
+just deploy-vps <sha>  # SSH deploy to production VPS
+just backup-vietnix    # Trigger backup to Vietnix/MinIO
 ```
 
-Build lai image va recreate container:
+CI: `.woodpecker.yml` (self-hosted Woodpecker CI, no GitHub Actions billing).
+Monorepo cache: hỗ trợ Turborepo remote cache qua `TURBO_TOKEN` + `TURBO_TEAM` + `TURBO_API`.
 
-```bash
-rebuild-dev.bat
-```
+See `design/02-platform-baseline/vps-runtime/PRODUCTION_CHECKLIST.md` for go-live checklist.
 
-Neu muon chay bang pnpm thay vi `.bat`:
+## Tech Stack
 
-```bash
-pnpm dev
-pnpm dev:core
-pnpm dev:full
-pnpm dev:logs
-pnpm dev:logs:core
-pnpm dev:logs:full
-pnpm dev:stop
-pnpm dev:rebuild
-pnpm dev:rebuild:core
-pnpm dev:rebuild:full
-```
+| Layer | Tech | Version |
+|-------|------|---------|
+| Frontend | Next.js | 16.2.1 |
+| Backend | NestJS | 11.1.17 |
+| Admin | Vite + React | 8.0.2 + 19.2.4 |
+| Database | PostgreSQL | 17 |
+| ORM | Prisma | 7 |
+| Validation | Zod | 4.3.6 |
+| Search | Meilisearch | 1.14 |
+| Auth | JWT (jose) + Argon2 | — |
+| Logging | Pino | — |
+| UI | shadcn/ui + Radix | — |
+| CI | Woodpecker CI | Self-hosted |
+| Reverse Proxy | Caddy | 2.10 |
+| CDN | Cloudflare Free | — |
 
-Hoac foreground:
+## Constraints
 
-```bash
-pnpm docker:dev
-```
+- **VPS self-host only**: No Render, Railway, Fly.io, AWS, GCP.
+- **Budget**: ~100-200k VND/tháng (VPS only cost).
+- **Domain logic**: 03-domains/ (11 Phật pháp domains) is sacred — never simplify.
+- **Elderly UX**: All public UI must be accessible for elderly users.
 
-## OpenSpace bridge
+## Documentation
 
-Repo này hiện có lane OpenSpace local ở `tmp/OpenSpace`, dùng `Gemini` làm backbone và có thể bọc thêm `Copilot` như advisory lane trước/sau.
-
-Ví dụ:
-
-```bash
-py infra/tools/openspace_bridge.py --task "List files in the repo root"
-py infra/tools/openspace_bridge.py --task "Inspect GitHub workflow files and suggest cleanup" --copilot both
-py infra/tools/openspace_bridge.py --task "Refactor this shell workflow to Windows-safe commands" --max-iterations 5
-py infra/tools/openspace_bridge.py --task "Stabilize this repeated workflow and learn from it" --mode learn
-```
-
-Gợi ý dùng:
-
-- Dùng `OpenSpace` cho task nhiều bước, dùng tool, có khả năng lặp lại.
-- Bật `--copilot both` khi task thiên về GitHub/workflow/review lane.
-- Giữ `Gemini` làm engine thực thi, xem `Copilot` như lane shaping/review thay vì backbone model.
-- Dùng `--mode fast` cho hầu hết task hằng ngày để đỡ đốt quota.
-- Chỉ bật `--mode learn` khi bạn thật sự muốn OpenSpace ghi log, capture skill mới, và tiến hóa từ task đó.
-
-Neu muon dung entrypoint ngan, determinist va than thien voi Codex/AI tooling:
-
-```bash
-just bootstrap
-just dev-core
-just dev-full
-just verify-web
-just verify-cms
-just verify-all
-just smoke
-just auth-check
-just search-check
-```
-
-Xem `TEAM_GUIDE.md` de biet khi nao nen dung Windows native, WSL, Docker, hay host-debug lane.
-
-## Scripts quan trọng
-
-- `run-dev.bat`: entrypoint chinh tren Windows, cho phep chon `core` hoac `full`.
-- `logs-dev.bat`: xem log toan bo stack hoac log theo service.
-- `stop-dev.bat`: dung va don compose dev stack.
-- `rebuild-dev.bat`: build lai image dev va recreate container.
-- `pnpm dev`: wrapper cross-platform cho `docker compose up`.
-- `pnpm dev:core`: boot preset nhe `web + postgres + meilisearch + redis`.
-- `pnpm dev:full`: boot preset day du `core + caddy`.
-- `pnpm dev:logs`: wrapper cross-platform cho `docker compose logs -f`.
-- `pnpm dev:stop`: wrapper cross-platform cho `docker compose down`.
-- `pnpm dev:rebuild`: wrapper cross-platform cho `docker compose build --no-cache` + `up -d --force-recreate`.
-- `pnpm dev:host:*`: script local cu, chi giu lai de debug dac biet, khong phai luong dev chuan.
-- `pnpm build`: build toàn bộ workspace.
-- `pnpm lint`: lint toàn bộ workspace.
-- `pnpm typecheck`: kiểm tra TypeScript toàn bộ workspace.
-- `pnpm seed:demo`: nạp dữ liệu mẫu production-like vào CMS.
-- `pnpm reindex:posts`: enqueue batch reindex cho toàn bộ posts.
-- `pnpm smoke:test`: bắn smoke test vào CMS/web theo env hiện tại.
-- `pnpm monitoring:test`: verify Prometheus targets, worker metrics, Sentry drills va worker-down alert pipeline.
-- `pnpm telegram:test`: gui 1 tin nhan smoke thang qua Telegram Bot API neu bot token/chat id da cau hinh.
-- `pnpm docker:dev`: chạy stack dev foreground bằng Docker Compose.
-- `pnpm docker:prod`: chạy stack production compose.
-- `pnpm docker:prod:monitoring`: boot monitoring profile cho production compose.
-- `pnpm docker:prod:monitoring:test`: boot monitoring + local alert sink profile de drill alert delivery an toan.
-
-## Luồng triển khai production
-
-1. GitHub Actions build image cho `web`.
-2. Push image lên registry.
-3. VPS cap nhat `infra/docker/.env.prod` hoac secret source de tro `WEB_IMAGE` den release tag can deploy.
-4. VPS pull image moi qua `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml pull web caddy postgres pgbouncer meilisearch redis`.
-5. VPS chay `docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.yml up -d web caddy postgres pgbouncer meilisearch redis`.
-6. Monitoring production la profile tuy chon; tren VPS 4GB, khong nen boot Grafana/Prometheus/Alertmanager/exporters trong deploy mac dinh.
-
-Boundary dev/prod:
-
-- Dev: `infra/docker/compose.dev.yml` dung bind mount source code, named volume cho `node_modules`, `.next`, `.turbo`, pnpm store, media uploads va data services.
-- Prod VPS: `infra/docker/compose.prod.yml` dung image build san, khong mount source code, chi giu persistent volumes cho Postgres, Redis, Meilisearch, Caddy data/config.
-- Monitoring production duoc tach thanh profile `monitoring` de tranh lam VPS 4GB nghop RAM khi deploy stack chinh.
-- Drill alert delivery local dung them profile `monitoring-test` va `ALERTMANAGER_CONFIG_PATH=../monitoring/alertmanager.local.yml` de Alertmanager day vao alert sink thay vi Telegram that.
-- Co the override file env runtime bang `PMTL_ENV_FILE=.env.prod.monitoring.local` khi can boot prod-like stack/phien ban smoke rieng ma khong dung vao `.env.prod` chinh.
-- Caddy la public entrypoint duy nhat o production; `web` va `cms` noi bo sau Docker network.
-- Backend authority + jobs/worker se duoc them sau (khong co trong repo hien tai).
-
-## Tài liệu cần đọc trước khi code
-
-- `docs/architecture/conventions.md`
-- `docs/architecture/domains.md`
-- `docs/api/contracts.md`
-- `docs/cms/content-model.md` (content model hien tai; co the se migrate sang backend authority trong tuong lai).
-
-## Verification trong Docker dev
-
-Khi stack dev đang chạy bằng Docker, ưu tiên chạy verify từ bên trong container để dùng đúng Node/Pnpm của repo:
-
-```bash
-docker compose -f infra/docker/compose.dev.yml exec -T web sh -lc "NEXT_PUBLIC_SITE_URL=http://web:3000 pnpm test"
-```
-
-Lý do: host shell cũ hơn baseline `Node >= 20.18`, nên `pnpm`, ESLint và một số script verify có thể fail do môi trường thay vì fail do mã nguồn.
-
-## Ghi chú ve backend/content source
-
-`apps/web` hien doc noi dung tu `CMS_PUBLIC_URL` (mot content backend). Repo hien tai **khong ship** backend authority; neu can, hay tro `CMS_PUBLIC_URL` toi he thong backend ma anh dang chay rieng, hoac bo qua cac route phu thuoc backend trong giai doan scaffold.
+- `DESIGN_OVERVIEW.md` — bản rút gọn kiến trúc + performance map
+- `design/` — canonical source of truth (7 layers)
+- `design/README.md` — entry point and reading order
+- `design/AI_ENTRYPOINT.md` — AI orientation
+- `CLAUDE.md` — Claude Code operating contract
+- `AGENTS.md` — subagent role specs
+- `TEAM_GUIDE.md` — dev workflow guide

@@ -5,6 +5,12 @@ const config: NextConfig = {
   poweredByHeader: false,
   compress: true,
   typedRoutes: true,
+  cacheComponents: true,
+
+  experimental: {
+    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
+  },
 
   images: {
     remotePatterns: [

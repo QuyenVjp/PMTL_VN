@@ -28,6 +28,8 @@ FROM caddy:2.10-alpine AS runtime
 COPY --from=builder /repo/apps/admin/dist /srv
 COPY apps/admin/Caddyfile /etc/caddy/Caddyfile
 
+USER caddy
+
 EXPOSE 3002
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
