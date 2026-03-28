@@ -1,8 +1,10 @@
-import { useState } from "react";
-import { ActivityIcon, CheckCircleIcon, AlertTriangleIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ActivityIcon, CheckCircleIcon, AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { searchStatusOptions, useReindexMutation } from "@/features/system/search-queries.js";
 
 // ── Re-exports from feature modules ─────────────────────────────────
 
@@ -41,7 +43,10 @@ export function SutrasPage() {
 // ── Search Ops ───────────────────────────────────────────────────────
 
 export function SearchOpsPage() {
-  const [lastCheck] = useState(() => new Date().toISOString());
+  const { data: status, isLoading } = useQuery(searchStatusOptions());
+  const reindex = useReindexMutation();
+
+  const isOperational = !isLoading && status?.status === "operational";
 
   return (
     <div className="space-y-6">
@@ -59,8 +64,12 @@ export function SearchOpsPage() {
             <CheckCircleIcon className="size-4 text-emerald-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Hoạt động</div>
-            <p className="text-xs text-muted-foreground">Meilisearch primary engine</p>
+            <div className="text-2xl font-bold">
+              {isLoading ? "…" : isOperational ? "Hoạt động" : "Có vấn đề"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {status?.engine ?? "Meilisearch"} primary engine
+            </p>
           </CardContent>
         </Card>
 
@@ -71,18 +80,20 @@ export function SearchOpsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">SQL sẵn sàng</div>
-            <p className="text-xs text-muted-foreground">PostgreSQL full-text fallback</p>
+            <p className="text-xs text-muted-foreground">
+              {status?.fallback ?? "PostgreSQL FTS"} fallback
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cảnh báo</CardTitle>
+            <CardTitle className="text-sm font-medium">Indexes</CardTitle>
             <AlertTriangleIcon className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Không có fallback event gần đây</p>
+            <div className="text-2xl font-bold">{status?.indexes.length ?? "—"}</div>
+            <p className="text-xs text-muted-foreground">Index đang theo dõi</p>
           </CardContent>
         </Card>
       </div>
@@ -96,28 +107,64 @@ export function SearchOpsPage() {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between border-b pb-2">
               <span className="text-muted-foreground">Engine</span>
-              <span className="font-medium">Meilisearch</span>
+              <span className="font-medium">{status?.engine ?? "—"}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-muted-foreground">Fallback</span>
-              <span className="font-medium">PostgreSQL FTS</span>
+              <span className="font-medium">{status?.fallback ?? "—"}</span>
             </div>
             <div className="flex justify-between border-b pb-2">
               <span className="text-muted-foreground">Lần kiểm tra cuối</span>
-              <span className="font-medium">{new Date(lastCheck).toLocaleString("vi-VN")}</span>
+              <span className="font-medium">
+                {status ? new Date(status.checkedAt).toLocaleString("vi-VN") : "—"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Trạng thái tổng quan</span>
               <Badge
                 variant="outline"
-                className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"
+                className={
+                  isOperational
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"
+                    : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400"
+                }
               >
-                Bình thường
+                {isLoading ? "Đang kiểm tra…" : isOperational ? "Bình thường" : "Cần kiểm tra"}
               </Badge>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {status && status.indexes.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Indexes</CardTitle>
+            <CardDescription>Danh sách index và trạng thái. Reindex khi cần đồng bộ lại dữ liệu.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {status.indexes.map((idx) => (
+                <div key={idx.name} className="flex items-center justify-between rounded-md border px-3 py-2">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-sm">{idx.name}</span>
+                    <Badge variant="outline" className="text-xs">{idx.status}</Badge>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={reindex.isPending}
+                    onClick={() => reindex.mutate(idx.name)}
+                  >
+                    <RefreshCwIcon className="mr-1.5 size-3.5" />
+                    Reindex
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
