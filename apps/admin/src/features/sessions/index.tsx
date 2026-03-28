@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import {
+  type ColumnDef,
   type SortingState,
   type VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -11,22 +11,60 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { ColumnDef } from "@tanstack/react-table";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { RefreshCwIcon, Trash2Icon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Trash2Icon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTablePagination, DataTableToolbar, DataTableBulkActions } from "@/components/data-table";
+import {
+  DataTableBulkActions,
+  DataTableColumnHeader,
+  DataTableToolbar,
+} from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { sessionListOptions, sessionAdminKeys } from "./queries.js";
-import { useRevokeSession, useRevokeBulk } from "./mutations.js";
+import {
+  WorkspaceConfirmDialog,
+  WorkspaceDataTable,
+  WorkspaceRowActions,
+} from "@/components/workspace";
+import { sessionListOptions } from "@/features/sessions/queries";
+import { useRevokeSession, useRevokeBulk } from "@/features/sessions/mutations";
 import {
   sessionStatusLabel,
   sessionStatusVariant,
   type AdminSessionListItem,
-} from "./types.js";
+} from "@/features/sessions/types";
+
+// ── Context ──────────────────────────────────────────────────────────
+
+type SessionDialogType = "revoke" | null;
+
+type SessionContextValue = {
+  open: SessionDialogType;
+  currentRow: AdminSessionListItem | null;
+  setOpen: (value: SessionDialogType) => void;
+  setCurrentRow: React.Dispatch<React.SetStateAction<AdminSessionListItem | null>>;
+};
+
+const SessionContext = createContext<SessionContextValue | null>(null);
+
+function SessionProvider({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState<SessionDialogType>(null);
+  const [currentRow, setCurrentRow] = useState<AdminSessionListItem | null>(null);
+  return (
+    <SessionContext.Provider value={{ open, currentRow, setOpen, setCurrentRow }}>
+      {children}
+    </SessionContext.Provider>
+  );
+}
+
+function useSession() {
+  const ctx = useContext(SessionContext);
+  if (!ctx) throw new Error("useSession must be used within SessionProvider");
+  return ctx;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
 
 const statusFilterOptions = [
   { label: "Hoạt động", value: "active" },
@@ -34,16 +72,35 @@ const statusFilterOptions = [
   { label: "Hết hạn", value: "expired" },
 ];
 
-export function SessionsPage() {
+// ── Row actions ───────────────────────────────────────────────────────
+
+function SessionRowActions({ row }: { row: AdminSessionListItem }) {
+  const { setOpen, setCurrentRow } = useSession();
+  if (row.status !== "active") return null;
+  return (
+    <WorkspaceRowActions
+      actions={[
+        {
+          label: "Thu hồi",
+          icon: Trash2Icon,
+          onClick: () => { setCurrentRow(row); setOpen("revoke"); },
+          variant: "destructive",
+        },
+      ]}
+    />
+  );
+}
+
+// ── Table ─────────────────────────────────────────────────────────────
+
+function SessionsTable() {
   const { data: envelope, isLoading } = useQuery(sessionListOptions({ limit: 100 }));
   const sessions = envelope?.data ?? [];
-  const qc = useQueryClient();
-  const revokeSession = useRevokeSession();
   const revokeBulk = useRevokeBulk();
 
+  const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [sorting, setSorting] = useState<SortingState>([]);
 
   const columns = useMemo<ColumnDef<AdminSessionListItem>[]>(
     () => [
@@ -51,7 +108,10 @@ export function SessionsPage() {
         id: "select",
         header: ({ table }) => (
           <Checkbox
-            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
             onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
             aria-label="Chọn tất cả"
             className="translate-y-[2px]"
@@ -91,7 +151,9 @@ export function SessionsPage() {
       {
         accessorKey: "ipAddress",
         header: ({ column }) => <DataTableColumnHeader column={column} title="IP" />,
-        cell: ({ row }) => <div className="text-nowrap">{row.original.ipAddress ?? "—"}</div>,
+        cell: ({ row }) => (
+          <div className="text-nowrap">{row.original.ipAddress ?? "—"}</div>
+        ),
         meta: { label: "IP" },
       },
       {
@@ -110,7 +172,7 @@ export function SessionsPage() {
         accessorKey: "createdAt",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tạo lúc" />,
         cell: ({ row }) => (
-          <div className="text-nowrap">
+          <div className="text-nowrap text-muted-foreground">
             {new Date(row.original.createdAt).toLocaleString("vi-VN")}
           </div>
         ),
@@ -118,24 +180,12 @@ export function SessionsPage() {
       },
       {
         id: "actions",
-        cell: ({ row }) => {
-          if (row.original.status !== "active") return null;
-          return (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => revokeSession.mutate({ sessionId: row.original.sessionId })}
-              disabled={revokeSession.isPending}
-            >
-              Thu hồi
-            </Button>
-          );
-        },
+        cell: ({ row }) => <SessionRowActions row={row.original} />,
         enableSorting: false,
         enableHiding: false,
       },
     ],
-    [revokeSession],
+    [],
   );
 
   const table = useReactTable({
@@ -160,88 +210,95 @@ export function SessionsPage() {
     .rows.map((row) => row.original.sessionId);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Tìm session theo email, IP hoặc thiết bị..."
+        searchKey="userDisplayName"
+        viewButtonLabel="Xem"
+        filters={[
+          { columnId: "status", title: "Trạng thái", options: statusFilterOptions },
+        ]}
+      />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Không có phiên nào."
+      />
+      <DataTableBulkActions table={table} entityName="phiên">
+        <Button
+          size="icon"
+          variant="destructive"
+          title="Thu hồi phiên đã chọn"
+          onClick={() => revokeBulk.mutate({ sessionIds: selectedIds })}
+          disabled={revokeBulk.isPending}
+          className="rounded-xl"
+        >
+          <Trash2Icon className="size-4" />
+        </Button>
+      </DataTableBulkActions>
+    </div>
+  );
+}
+
+// ── Dialogs ───────────────────────────────────────────────────────────
+
+function SessionDialogs() {
+  const { open, setOpen, currentRow, setCurrentRow } = useSession();
+  const revokeSession = useRevokeSession();
+
+  const handleClose = () => {
+    setOpen(null);
+    setTimeout(() => setCurrentRow(null), 200);
+  };
+
+  return (
+    <>
+      {currentRow && (
+        <WorkspaceConfirmDialog
+          open={open === "revoke"}
+          onOpenChange={(v) => (!v ? handleClose() : setOpen("revoke"))}
+          title="Thu hồi phiên"
+          description={
+            <>
+              Thu hồi phiên của{" "}
+              <span className="font-semibold text-foreground">{currentRow.userDisplayName}</span>?
+              Người dùng sẽ bị đăng xuất ngay lập tức.
+            </>
+          }
+          confirmLabel="Thu hồi"
+          variant="destructive"
+          isPending={revokeSession.isPending}
+          onConfirm={() =>
+            revokeSession.mutate(
+              { sessionId: currentRow.sessionId },
+              { onSuccess: handleClose },
+            )
+          }
+        />
+      )}
+    </>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────
+
+export function SessionsPage() {
+  return (
+    <SessionProvider>
+      <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Phiên đăng nhập</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Theo dõi session đang mở, thiết bị và thu hồi khi cần.
           </p>
         </div>
-        <Button
-          variant="outline"
-          className="space-x-1"
-          onClick={() => void qc.invalidateQueries({ queryKey: sessionAdminKeys.lists() })}
-        >
-          <span>Làm mới</span>
-          <RefreshCwIcon className="size-4" />
-        </Button>
+
+        <SessionsTable />
       </div>
 
-      <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
-        <DataTableToolbar
-          table={table}
-          searchPlaceholder="Tìm session theo email, IP hoặc thiết bị..."
-          searchKey="userDisplayName"
-          viewButtonLabel="Xem"
-          filters={[
-            { columnId: "status", title: "Trạng thái", options: statusFilterOptions },
-          ]}
-        />
-
-        <div className="overflow-hidden rounded-xl border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                    Đang tải dữ liệu...
-                  </TableCell>
-                </TableRow>
-              ) : table.getRowModel().rows.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                    Không có phiên nào.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <DataTablePagination table={table} className="mt-auto" />
-        <DataTableBulkActions table={table} entityName="phiên">
-          <Button
-            size="icon"
-            variant="destructive"
-            title="Thu hồi phiên đã chọn"
-            onClick={() => revokeBulk.mutate({ sessionIds: selectedIds })}
-            disabled={revokeBulk.isPending}
-            className="rounded-xl"
-          >
-            <Trash2Icon className="size-4" />
-          </Button>
-        </DataTableBulkActions>
-      </div>
-    </div>
+      <SessionDialogs />
+    </SessionProvider>
   );
 }

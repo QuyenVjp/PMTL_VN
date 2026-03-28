@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { BellIcon, LogOutIcon, Settings2Icon, ShieldCheckIcon, UserIcon } from "lucide-react";
 
-import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCurrentUser } from "@/lib/query/use-current-user";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function UserMenu() {
-  const user = getAdminUserDisplay();
+  const user = useCurrentUser();
 
   return (
     <DropdownMenu modal={false}>

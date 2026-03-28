@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { BellIcon, Loader2Icon, MonitorIcon, PaletteIcon, UserCogIcon, WrenchIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { adminClient } from "@/lib/api/admin-client";
 import { clearAuthCache } from "@/lib/auth";
+import { currentUserQueryKey, useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
 
 const settingsNav = [
@@ -63,7 +64,8 @@ async function uploadAvatar(file: File): Promise<UploadResponse> {
 
 export function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const adminUser = getAdminUserDisplay();
+  const adminUser = useCurrentUser();
+  const qc = useQueryClient();
   const [section, setSection] = useState("profile");
   const [profile, setProfile] = useState({
     displayName: adminUser.name,
@@ -103,10 +105,16 @@ export function SettingsPage() {
         ...(avatarUrl !== undefined ? { avatarUrl } : {}),
       });
 
-      // Step 3: Clear auth cache so next read picks up fresh data
+      // Step 3: Clear the module-level auth cache, then invalidate the
+      // TanStack Query cache so NavUser and any other reactive consumers
+      // re-fetch /auth/me and display the updated avatar immediately.
       clearAuthCache();
+      await qc.invalidateQueries({ queryKey: currentUserQueryKey });
 
       setAvatarFile(null);
+      // Replace blob preview URL with the persisted CDN URL so the form
+      // reflects the real stored avatar (blob URLs are ephemeral).
+      if (avatarUrl !== undefined) setAvatarPreview(avatarUrl);
       toast.success("Đã cập nhật hồ sơ thành công");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Lỗi không xác định";

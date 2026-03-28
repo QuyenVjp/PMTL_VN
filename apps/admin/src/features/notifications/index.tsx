@@ -1,7 +1,21 @@
-import { useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
+import {
+  type ColumnDef,
+  type SortingState,
+  type VisibilityState,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { PlusIcon, RefreshCcwIcon } from "lucide-react";
+import { PlusIcon, RefreshCwIcon } from "lucide-react";
+import { toast } from "sonner";
 
+import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,78 +28,82 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-
+import {
+  WorkspaceConfirmDialog,
+  WorkspaceDataTable,
+  WorkspaceRowActions,
+} from "@/components/workspace";
 import {
   pushJobListOptions,
   pushStatusOptions,
   subscriptionStatsOptions,
   pushKeys,
-  type PushJobFilters,
-} from "./queries.js";
-import { useCreatePushJob, useRedrivePushJob, type CreatePushJobInput } from "./mutations.js";
+  type PushJobItem,
+} from "@/features/notifications/queries";
+import {
+  useCreatePushJob,
+  useRedrivePushJob,
+} from "@/features/notifications/mutations";
 
-// ── Helpers ─────────────────────────────────────────────────────────
+// ── Context ──────────────────────────────────────────────────────────
 
-function jobStatusLabel(status: string): string {
-  if (status === "PENDING") return "Chờ xử lý";
-  if (status === "PROCESSING") return "Đang gửi";
-  if (status === "COMPLETED") return "Hoàn thành";
-  if (status === "FAILED") return "Thất bại";
-  return status;
+type NotifDialogType = "create" | "redrive" | null;
+
+type NotifContextValue = {
+  open: NotifDialogType;
+  currentRow: PushJobItem | null;
+  setOpen: (value: NotifDialogType) => void;
+  setCurrentRow: React.Dispatch<React.SetStateAction<PushJobItem | null>>;
+};
+
+const NotifContext = createContext<NotifContextValue | null>(null);
+
+function NotifProvider({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState<NotifDialogType>(null);
+  const [currentRow, setCurrentRow] = useState<PushJobItem | null>(null);
+  return (
+    <NotifContext.Provider value={{ open, currentRow, setOpen, setCurrentRow }}>
+      {children}
+    </NotifContext.Provider>
+  );
 }
 
-function jobStatusBadgeClass(status: string): string {
-  if (status === "COMPLETED")
+function useNotif() {
+  const ctx = useContext(NotifContext);
+  if (!ctx) throw new Error("useNotif must be used within NotifProvider");
+  return ctx;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
+
+const statusOptions = [
+  { label: "Chờ xử lý", value: "PENDING" },
+  { label: "Đang gửi", value: "PROCESSING" },
+  { label: "Hoàn thành", value: "COMPLETED" },
+  { label: "Thất bại", value: "FAILED" },
+];
+
+function statusBadgeClass(s: string): string {
+  if (s === "COMPLETED")
     return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
-  if (status === "PENDING" || status === "PROCESSING")
+  if (s === "PENDING" || s === "PROCESSING")
     return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
-  if (status === "FAILED")
+  if (s === "FAILED")
     return "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400";
   return "";
 }
 
-function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function statusLabel(s: string): string {
+  if (s === "PENDING") return "Chờ xử lý";
+  if (s === "PROCESSING") return "Đang gửi";
+  if (s === "COMPLETED") return "Hoàn thành";
+  if (s === "FAILED") return "Thất bại";
+  return s;
 }
 
-function truncate(text: string, max: number): string {
-  return text.length > max ? text.slice(0, max) + "..." : text;
-}
-
-function TableSkeleton({ rows = 5 }: { rows?: number }) {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-10 w-full" />
-      ))}
-    </div>
-  );
-}
-
-// ── Stats Cards ─────────────────────────────────────────────────────
+// ── Stats cards ───────────────────────────────────────────────────────
 
 function StatsCards() {
   const { data: pushStatus, isLoading: statusLoading } = useQuery(pushStatusOptions());
@@ -118,243 +136,286 @@ function StatsCards() {
   );
 }
 
-// ── Main Page ───────────────────────────────────────────────────────
-
-export function NotificationsPage() {
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [createOpen, setCreateOpen] = useState(false);
-
-  const qc = useQueryClient();
-  const redrivePush = useRedrivePushJob();
-
-  const filters: PushJobFilters = {
-    limit: 20,
-    offset: 0,
-    status: statusFilter || undefined,
-  };
-
-  const { data, isLoading, isError } = useQuery(pushJobListOptions(filters));
-  const jobs = data?.data ?? [];
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Thông báo</h1>
-          <p className="text-sm text-muted-foreground">
-            Theo dõi push jobs, subscription stats và gửi thông báo.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => {
-              void qc.invalidateQueries({ queryKey: pushKeys.lists() });
-              void qc.invalidateQueries({ queryKey: pushKeys.status() });
-              void qc.invalidateQueries({ queryKey: pushKeys.subscriptionStats() });
-            }}
-          >
-            <RefreshCcwIcon className="size-4" />
-            Làm mới
-          </Button>
-          <Button onClick={() => setCreateOpen(true)}>
-            <PlusIcon className="size-4" />
-            Tạo đợt gửi
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <StatsCards />
-
-      {/* Filters */}
-      <div className="flex gap-2">
-        {["", "PENDING", "PROCESSING", "COMPLETED", "FAILED"].map((s) => (
-          <Button
-            key={s}
-            variant={statusFilter === s ? "default" : "outline"}
-            size="sm"
-            onClick={() => setStatusFilter(s)}
-          >
-            {s === "" ? "Tất cả" : jobStatusLabel(s)}
-          </Button>
-        ))}
-      </div>
-
-      {/* Error */}
-      {isError && (
-        <Card className="border-red-200 dark:border-red-800">
-          <CardContent className="p-4 text-sm text-red-600 dark:text-red-400">
-            Không tải được danh sách push jobs.
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Table */}
-      <Card>
-        <CardContent className="pt-6">
-          {isLoading ? (
-            <TableSkeleton />
-          ) : jobs.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tiêu đề</TableHead>
-                  <TableHead>Nội dung</TableHead>
-                  <TableHead>Đối tượng</TableHead>
-                  <TableHead>Đã gửi</TableHead>
-                  <TableHead>Thất bại</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Người tạo</TableHead>
-                  <TableHead>Ngày tạo</TableHead>
-                  <TableHead className="w-[100px]" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {jobs.map((job) => (
-                  <TableRow key={job.publicId}>
-                    <TableCell className="max-w-[180px] truncate font-medium">
-                      {job.title}
-                    </TableCell>
-                    <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
-                      {truncate(job.body, 50)}
-                    </TableCell>
-                    <TableCell className="text-nowrap text-sm text-muted-foreground">
-                      {job.targetAudience ?? "Tất cả"}
-                    </TableCell>
-                    <TableCell className="tabular-nums">{job.sentCount}</TableCell>
-                    <TableCell className="tabular-nums">{job.failedCount}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={jobStatusBadgeClass(job.status)}>
-                        {jobStatusLabel(job.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-nowrap text-sm">
-                      {job.createdBy.displayName}
-                    </TableCell>
-                    <TableCell className="text-nowrap text-sm text-muted-foreground">
-                      {formatDateTime(job.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      {job.status === "FAILED" && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={redrivePush.isPending}
-                          onClick={() => redrivePush.mutate(job.publicId)}
-                        >
-                          Gửi lại
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              Chưa có đợt gửi thông báo nào.
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Create Dialog */}
-      <CreatePushJobDialog open={createOpen} onOpenChange={setCreateOpen} />
-    </div>
-  );
-}
-
-// ── Create Dialog ───────────────────────────────────────────────────
+// ── Create dialog ─────────────────────────────────────────────────────
 
 function CreatePushJobDialog({
   open,
   onOpenChange,
 }: {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (v: boolean) => void;
 }) {
-  const createJob = useCreatePushJob();
-  const [form, setForm] = useState<CreatePushJobInput>({
-    title: "",
-    body: "",
-    targetAudience: undefined,
-  });
+  const createPushJob = useCreatePushJob();
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [targetAudience, setTargetAudience] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    createJob.mutate(
-      {
-        title: form.title,
-        body: form.body,
-        targetAudience: form.targetAudience || undefined,
-      },
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-          setForm({ title: "", body: "", targetAudience: undefined });
-        },
-      },
+  const reset = () => { setTitle(""); setBody(""); setTargetAudience(""); };
+
+  const handleSubmit = () => {
+    if (!title.trim() || !body.trim()) {
+      toast.error("Tiêu đề và nội dung không được để trống.");
+      return;
+    }
+    createPushJob.mutate(
+      { title: title.trim(), body: body.trim(), targetAudience: targetAudience.trim() || undefined },
+      { onSuccess: () => { reset(); onOpenChange(false); } },
     );
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+        <DialogHeader className="text-start">
           <DialogTitle>Tạo đợt gửi thông báo</DialogTitle>
-          <DialogDescription>Soạn nội dung và chọn đối tượng nhận.</DialogDescription>
+          <DialogDescription>Gửi push notification đến thiết bị của thành viên.</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Tiêu đề *</label>
-            <Input
-              required
-              value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              placeholder="Tiêu đề thông báo"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Nội dung *</label>
-            <Textarea
-              required
-              value={form.body}
-              onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
-              placeholder="Nội dung thông báo..."
-              rows={4}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Đối tượng</label>
-            <Select
-              value={form.targetAudience ?? "ALL"}
-              onValueChange={(v) =>
-                setForm((f) => ({ ...f, targetAudience: v === "ALL" ? undefined : v }))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">Tất cả</SelectItem>
-                <SelectItem value="MEMBERS">Thành viên</SelectItem>
-                <SelectItem value="VOLUNTEERS">Phụng sự viên</SelectItem>
-                <SelectItem value="ADMINS">Quản trị viên</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Huỷ
-            </Button>
-            <Button type="submit" disabled={createJob.isPending}>
-              {createJob.isPending ? "Đang tạo..." : "Tạo đợt gửi"}
-            </Button>
-          </DialogFooter>
-        </form>
+
+        <div className="space-y-4">
+          <label className="grid gap-2">
+            <span className="text-sm font-medium">Tiêu đề</span>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Thông báo mới từ PMTL..." />
+          </label>
+          <label className="grid gap-2">
+            <span className="text-sm font-medium">Nội dung</span>
+            <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Nội dung thông báo..." rows={3} />
+          </label>
+          <label className="grid gap-2">
+            <span className="text-sm font-medium">Đối tượng (tuỳ chọn)</span>
+            <Input value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} placeholder="ALL, MEMBER, ADMIN..." />
+          </label>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+          <Button onClick={handleSubmit} disabled={createPushJob.isPending || !title.trim() || !body.trim()}>
+            {createPushJob.isPending ? "Đang gửi..." : "Gửi thông báo"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// ── Row actions ───────────────────────────────────────────────────────
+
+function NotifRowActions({ row }: { row: PushJobItem }) {
+  const { setOpen, setCurrentRow } = useNotif();
+  if (row.status !== "FAILED") return null;
+  return (
+    <WorkspaceRowActions
+      actions={[
+        {
+          label: "Gửi lại",
+          onClick: () => { setCurrentRow(row); setOpen("redrive"); },
+        },
+      ]}
+    />
+  );
+}
+
+// ── Table ─────────────────────────────────────────────────────────────
+
+function NotificationsTable() {
+  const { data: envelope, isLoading } = useQuery(pushJobListOptions({ limit: 100 }));
+  const jobs = envelope?.data ?? [];
+
+  const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+
+  const columns = useMemo<ColumnDef<PushJobItem>[]>(
+    () => [
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
+        cell: ({ row }) => (
+          <div className="max-w-[240px] truncate font-medium">{row.original.title}</div>
+        ),
+        meta: { label: "Tiêu đề" },
+        enableHiding: false,
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng thái" />,
+        cell: ({ row }) => (
+          <Badge variant="outline" className={statusBadgeClass(row.original.status)}>
+            {statusLabel(row.original.status)}
+          </Badge>
+        ),
+        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
+        meta: { label: "Trạng thái" },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "sentCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Đã gửi" />,
+        cell: ({ row }) => (
+          <div className="tabular-nums">{row.original.sentCount}</div>
+        ),
+        meta: { label: "Đã gửi" },
+      },
+      {
+        accessorKey: "failedCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thất bại" />,
+        cell: ({ row }) => (
+          <div className={row.original.failedCount > 0 ? "font-medium text-destructive tabular-nums" : "tabular-nums text-muted-foreground"}>
+            {row.original.failedCount}
+          </div>
+        ),
+        meta: { label: "Thất bại" },
+      },
+      {
+        accessorKey: "createdBy",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Người tạo" />,
+        cell: ({ row }) => (
+          <div className="text-nowrap">{row.original.createdBy.displayName}</div>
+        ),
+        meta: { label: "Người tạo" },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày tạo" />,
+        cell: ({ row }) => (
+          <div className="text-nowrap text-muted-foreground">
+            {new Date(row.original.createdAt).toLocaleDateString("vi-VN")}
+          </div>
+        ),
+        meta: { label: "Ngày tạo" },
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => <NotifRowActions row={row.original} />,
+        enableSorting: false,
+        enableHiding: false,
+      },
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data: jobs,
+    columns,
+    state: { sorting, rowSelection, columnVisibility },
+    getRowId: (row) => row.publicId,
+    enableRowSelection: true,
+    onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  });
+
+  return (
+    <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Lọc theo tiêu đề..."
+        searchKey="title"
+        viewButtonLabel="Xem"
+        filters={[{ columnId: "status", title: "Trạng thái", options: statusOptions }]}
+      />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Chưa có đợt gửi thông báo nào."
+      />
+    </div>
+  );
+}
+
+// ── Dialogs ───────────────────────────────────────────────────────────
+
+function NotifDialogs() {
+  const { open, setOpen, currentRow, setCurrentRow } = useNotif();
+  const redrivePushJob = useRedrivePushJob();
+
+  const handleClose = () => {
+    setOpen(null);
+    setTimeout(() => setCurrentRow(null), 200);
+  };
+
+  return (
+    <>
+      <CreatePushJobDialog
+        open={open === "create"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
+      />
+      {currentRow && (
+        <WorkspaceConfirmDialog
+          open={open === "redrive"}
+          onOpenChange={(v) => (!v ? handleClose() : setOpen("redrive"))}
+          title="Gửi lại thông báo"
+          description={
+            <>
+              Gửi lại đợt thông báo <span className="font-semibold text-foreground">{currentRow.title}</span>?
+            </>
+          }
+          confirmLabel="Gửi lại"
+          isPending={redrivePushJob.isPending}
+          onConfirm={() =>
+            redrivePushJob.mutate(currentRow.publicId, { onSuccess: handleClose })
+          }
+        />
+      )}
+    </>
+  );
+}
+
+// ── Primary buttons ───────────────────────────────────────────────────
+
+function NotifPrimaryButtons() {
+  const { setOpen } = useNotif();
+  const qc = useQueryClient();
+
+  return (
+    <div className="flex gap-2">
+      <Button
+        variant="outline"
+        onClick={() => {
+          void qc.invalidateQueries({ queryKey: pushKeys.lists() });
+          void qc.invalidateQueries({ queryKey: pushKeys.status() });
+          void qc.invalidateQueries({ queryKey: pushKeys.subscriptionStats() });
+        }}
+      >
+        <RefreshCwIcon className="size-4" />
+        Làm mới
+      </Button>
+      <Button onClick={() => setOpen("create")}>
+        <PlusIcon className="size-4" />
+        Tạo đợt gửi
+      </Button>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────
+
+export function NotificationsPage() {
+  return (
+    <NotifProvider>
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Thông báo</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Theo dõi push jobs, subscription stats và gửi thông báo.
+            </p>
+          </div>
+          <NotifPrimaryButtons />
+        </div>
+
+        <StatsCards />
+        <NotificationsTable />
+      </div>
+
+      <NotifDialogs />
+    </NotifProvider>
   );
 }

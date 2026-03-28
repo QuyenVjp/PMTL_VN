@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, LogOutIcon, ShieldCheckIcon, SparklesIcon } from "lucide-react";
 
-import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useCurrentUser } from "@/lib/query/use-current-user";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/c
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const user = getAdminUserDisplay();
+  const user = useCurrentUser();
 
   return (
     <SidebarMenu>
