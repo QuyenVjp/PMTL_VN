@@ -80,6 +80,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@pmtl/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
       '@pmtl/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -368,6 +371,12 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
+
+  packages/api-client:
+    devDependencies:
+      '@tanstack/react-query':
+        specifier: 5.95.2
+        version: 5.95.2(react@19.2.4)
 
   packages/config: {}
 

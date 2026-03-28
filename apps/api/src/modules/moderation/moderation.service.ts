@@ -3,6 +3,8 @@ import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { NotFoundError, ConflictError } from "../../common/errors/app-error.js";
 import { ModerationRepository } from "./moderation.repository.js";
+import { mapReportToListItem, mapReportToDetail } from "./moderation.mapper.js";
+import { assertReportIsPending } from "./moderation.policy.js";
 import type { ReportStatus } from "../../generated/prisma/client.js";
 import type { ModerationReportListQuery, ModerationDecisionInput } from "./moderation.schemas.js";
 
@@ -23,7 +25,6 @@ export class ModerationService {
   async list(query: ModerationReportListQuery) {
     const { reports, total } = await this.repository.findMany(query);
 
-    // Batch-fetch reporter display names
     const reporterIds = [...new Set(reports.map((r) => r.reporterUserId))];
     const reporters = reporterIds.length > 0
       ? await this.prisma.user.findMany({
@@ -34,22 +35,7 @@ export class ModerationService {
     const reporterMap = new Map(reporters.map((u) => [u.id, u]));
 
     return {
-      data: reports.map((r) => {
-        const reporter = reporterMap.get(r.reporterUserId);
-        return {
-          publicId: r.publicId,
-          status: r.status,
-          reasonCode: r.reasonCode,
-          targetType: r.targetType,
-          targetId: r.targetId,
-          description: r.description,
-          reporterSummary: reporter
-            ? { publicId: reporter.publicId, displayName: reporter.displayName, role: reporter.role }
-            : null,
-          createdAt: r.createdAt,
-          updatedAt: r.updatedAt,
-        };
-      }),
+      data: reports.map((r) => mapReportToListItem(r, reporterMap.get(r.reporterUserId))),
       meta: {
         pagination: {
           total,
@@ -67,40 +53,14 @@ export class ModerationService {
       throw new NotFoundError("Báo cáo", publicId);
     }
 
-    // Fetch reporter info
     const reporter = await this.prisma.user.findUnique({
       where: { id: report.reporterUserId },
       select: { publicId: true, displayName: true, role: true },
     });
 
-    // Build target preview — fetch title from target table
     const targetPreview = await this.buildTargetPreview(report.targetType, report.targetId);
 
-    // Decision options based on current status
-    const currentDecisionOptions = report.status === "PENDING"
-      ? ["hide", "ignore", "escalate"]
-      : [];
-
-    return {
-      data: {
-        publicId: report.publicId,
-        status: report.status,
-        reasonCode: report.reasonCode,
-        description: report.description,
-        targetType: report.targetType,
-        targetId: report.targetId,
-        targetPreview,
-        reporterSummary: reporter
-          ? { publicId: reporter.publicId, displayName: reporter.displayName, role: reporter.role }
-          : null,
-        decisionBy: report.decisionBy,
-        decisionAt: report.decisionAt,
-        decisionNote: report.decisionNote,
-        currentDecisionOptions,
-        createdAt: report.createdAt,
-        updatedAt: report.updatedAt,
-      },
-    };
+    return { data: mapReportToDetail(report, reporter, targetPreview) };
   }
 
   async resolveReport(
@@ -114,9 +74,7 @@ export class ModerationService {
       throw new NotFoundError("Báo cáo", publicId);
     }
 
-    if (report.status !== "PENDING") {
-      throw new ConflictError("Báo cáo đã được xử lý");
-    }
+    assertReportIsPending(report.status);
 
     const newStatus = DECISION_TO_STATUS[input.decision];
     if (!newStatus) {
@@ -167,7 +125,6 @@ export class ModerationService {
         : { type: "post", publicId: targetId, title: "(Đã xóa)", slug: null };
     }
 
-    // Fallback for types not yet in schema
     return { type: targetType, publicId: targetId, title: `(${targetType})`, slug: null };
   }
 }
