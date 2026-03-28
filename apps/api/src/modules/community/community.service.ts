@@ -1,43 +1,28 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { nanoid } from "nanoid";
-import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService } from "../../platform/audit/audit.service.js";
+import { mapGuestbookEntryToAdminItem, mapPostToAdminItem } from "./community.mapper.js";
+import { CommunityRepository } from "./community.repository.js";
 import type {
-  CreateCommunityPostInput,
-  CommunityPostQuery,
   AdminUpdateCommunityPostInput,
+  AdminUpdateGuestbookInput,
+  CommunityPostQuery,
+  CreateCommunityPostInput,
   CreateGuestbookEntryInput,
   GuestbookQuery,
-  AdminUpdateGuestbookInput,
 } from "./community.schemas.js";
 
 @Injectable()
 export class CommunityService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly repo: CommunityRepository,
     private readonly audit: AuditService,
   ) {}
 
   // ── Public post endpoints ──────────────────────────────────────────
 
   async listPosts(query: CommunityPostQuery) {
-    const where: Record<string, unknown> = { status: "APPROVED", isHidden: false };
-
-    if (query.search) {
-      where.content = { contains: query.search, mode: "insensitive" };
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.communityPost.findMany({
-        where,
-        include: { author: { select: { publicId: true, displayName: true } } },
-        orderBy: { createdAt: "desc" },
-        take: query.limit,
-        skip: query.offset,
-      }),
-      this.prisma.communityPost.count({ where }),
-    ]);
-
+    const { data, total } = await this.repo.findManyPublishedPosts(query);
     return {
       data,
       meta: {
@@ -52,27 +37,13 @@ export class CommunityService {
   }
 
   async getPostById(publicId: string) {
-    const post = await this.prisma.communityPost.findFirst({
-      where: { publicId, status: "APPROVED", isHidden: false },
-      include: { author: { select: { publicId: true, displayName: true } } },
-    });
-
-    if (!post) {
-      throw new NotFoundException("Không tìm thấy bài đăng");
-    }
-
+    const post = await this.repo.findPublicPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
     return post;
   }
 
   async createPost(input: CreateCommunityPostInput, userId: string) {
-    const post = await this.prisma.communityPost.create({
-      data: {
-        publicId: nanoid(),
-        content: input.content,
-        authorId: userId,
-        status: "PENDING",
-      },
-    });
+    const post = await this.repo.createPost(input, userId, nanoid());
 
     await this.audit.append(
       { actorId: userId, actorType: "user" },
@@ -87,28 +58,9 @@ export class CommunityService {
   // ── Admin post endpoints ───────────────────────────────────────────
 
   async adminListPosts(query: CommunityPostQuery) {
-    const where: Record<string, unknown> = {};
-
-    if (query.status) {
-      where.status = query.status;
-    }
-    if (query.search) {
-      where.content = { contains: query.search, mode: "insensitive" };
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.communityPost.findMany({
-        where,
-        include: { author: { select: { publicId: true, displayName: true, email: true } } },
-        orderBy: { createdAt: "desc" },
-        take: query.limit,
-        skip: query.offset,
-      }),
-      this.prisma.communityPost.count({ where }),
-    ]);
-
+    const { data, total } = await this.repo.findManyAdminPosts(query);
     return {
-      data,
+      data: data.map(mapPostToAdminItem),
       meta: {
         pagination: {
           total,
@@ -121,32 +73,16 @@ export class CommunityService {
   }
 
   async adminGetPost(publicId: string) {
-    const post = await this.prisma.communityPost.findUnique({
-      where: { publicId },
-      include: { author: { select: { publicId: true, displayName: true, email: true } } },
-    });
-
-    if (!post) {
-      throw new NotFoundException("Không tìm thấy bài đăng");
-    }
-
-    return post;
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+    return mapPostToAdminItem(post);
   }
 
   async adminUpdatePostStatus(publicId: string, input: AdminUpdateCommunityPostInput, adminId: string) {
-    const post = await this.prisma.communityPost.findUnique({ where: { publicId } });
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
 
-    if (!post) {
-      throw new NotFoundException("Không tìm thấy bài đăng");
-    }
-
-    const updated = await this.prisma.communityPost.update({
-      where: { publicId },
-      data: {
-        status: input.status,
-        isHidden: input.status === "HIDDEN",
-      },
-    });
+    const updated = await this.repo.updatePostStatus(publicId, input);
 
     await this.audit.append(
       { actorId: adminId, actorType: "admin" },
@@ -162,25 +98,9 @@ export class CommunityService {
   // ── Admin guestbook endpoints ──────────────────────────────────────
 
   async adminListGuestbook(query: GuestbookQuery) {
-    const where: Record<string, unknown> = {};
-
-    if (query.status) {
-      where.status = query.status;
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.guestbookEntry.findMany({
-        where,
-        include: { author: { select: { publicId: true, displayName: true, email: true } } },
-        orderBy: { createdAt: "desc" },
-        take: query.limit,
-        skip: query.offset,
-      }),
-      this.prisma.guestbookEntry.count({ where }),
-    ]);
-
+    const { data, total } = await this.repo.findManyAdminGuestbook(query);
     return {
-      data,
+      data: data.map(mapGuestbookEntryToAdminItem),
       meta: {
         pagination: {
           total,
@@ -193,30 +113,13 @@ export class CommunityService {
   }
 
   async adminGetGuestbookEntry(publicId: string) {
-    const entry = await this.prisma.guestbookEntry.findUnique({
-      where: { publicId },
-      include: {
-        author: { select: { publicId: true, displayName: true, email: true } },
-        approvedBy: { select: { publicId: true, displayName: true } },
-      },
-    });
-
-    if (!entry) {
-      throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
-    }
-
-    return entry;
+    const entry = await this.repo.findAdminGuestbookEntryByPublicId(publicId);
+    if (!entry) throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
+    return mapGuestbookEntryToAdminItem(entry);
   }
 
   async adminCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string) {
-    const entry = await this.prisma.guestbookEntry.create({
-      data: {
-        publicId: nanoid(),
-        content: input.content,
-        authorId: userId,
-        status: "PENDING",
-      },
-    });
+    const entry = await this.repo.createGuestbookEntry(input, userId, nanoid());
 
     await this.audit.append(
       { actorId: userId, actorType: "user" },
@@ -229,20 +132,14 @@ export class CommunityService {
   }
 
   async adminUpdateGuestbookStatus(publicId: string, input: AdminUpdateGuestbookInput, adminId: string) {
-    const entry = await this.prisma.guestbookEntry.findUnique({ where: { publicId } });
+    const entry = await this.repo.findAdminGuestbookEntryByPublicId(publicId);
+    if (!entry) throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
 
-    if (!entry) {
-      throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
-    }
-
-    const updated = await this.prisma.guestbookEntry.update({
-      where: { publicId },
-      data: {
-        status: input.status,
-        approvedById: input.status === "APPROVED" ? adminId : entry.approvedById,
-        approvedAt: input.status === "APPROVED" ? new Date() : entry.approvedAt,
-      },
-    });
+    const updated = await this.repo.updateGuestbookStatus(
+      { publicId, approvedById: entry.approvedById, approvedAt: entry.approvedAt },
+      input,
+      adminId,
+    );
 
     await this.audit.append(
       { actorId: adminId, actorType: "admin" },
