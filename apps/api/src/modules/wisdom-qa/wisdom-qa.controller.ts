@@ -37,22 +37,20 @@ export class WisdomQaController {
   }
 
   @Post("questions")
-  @UsePipes(ZodValidate(askQuestionSchema))
   @ApiOperation({ summary: "Đặt câu hỏi Phật pháp" })
   @ApiResponse({ status: 201, description: "Đã gửi câu hỏi" })
   askQuestion(
-    @Body() input: AskQuestionInput,
+    @Body(ZodValidate(askQuestionSchema)) input: AskQuestionInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.wisdomQaService.askQuestion(input, user.id);
   }
 
   @Post("answers")
-  @UsePipes(ZodValidate(submitAnswerSchema))
   @ApiOperation({ summary: "Gửi câu trả lời" })
   @ApiResponse({ status: 201, description: "Đã gửi câu trả lời" })
   submitAnswer(
-    @Body() input: SubmitAnswerInput,
+    @Body(ZodValidate(submitAnswerSchema)) input: SubmitAnswerInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.wisdomQaService.submitAnswer(input, user.id);

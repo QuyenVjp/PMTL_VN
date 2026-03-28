@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { BellIcon, MonitorIcon, PaletteIcon, UserCogIcon, WrenchIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { BellIcon, Loader2Icon, MonitorIcon, PaletteIcon, UserCogIcon, WrenchIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { adminClient } from "@/lib/api/admin-client";
+import { clearAuthCache } from "@/lib/auth";
 import { useTheme } from "@/stores/theme";
 
 const settingsNav = [
@@ -19,6 +22,44 @@ const settingsNav = [
   { key: "notifications", title: "Thông báo", icon: BellIcon },
   { key: "display", title: "Hiển thị", icon: MonitorIcon },
 ];
+
+interface UploadResponse {
+  publicId: string;
+  url: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+}
+
+interface ProfileResponse {
+  id: string;
+  email: string;
+  displayName: string;
+  role: string;
+  avatarUrl: string | null;
+}
+
+async function uploadAvatar(file: File): Promise<UploadResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch("/api/admin/media/upload", {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errJson: unknown = await response.json().catch(() => null);
+    const errObj = errJson as Record<string, unknown> | null;
+    const errInner = (errObj?.error ?? null) as Record<string, unknown> | null;
+    const msg = typeof errInner?.message === "string" ? errInner.message : "Upload thất bại";
+    throw new Error(msg);
+  }
+
+  const json = (await response.json()) as { data: UploadResponse };
+  return json.data;
+}
 
 export function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -31,6 +72,9 @@ export function SettingsPage() {
     role: adminUser.role,
   });
   const [avatarPreview, setAvatarPreview] = useState(adminUser.avatar);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [preferences, setPreferences] = useState({
     theme,
     compactTables: true,
@@ -39,9 +83,48 @@ export function SettingsPage() {
     moderationAlerts: true,
     securityAlerts: true,
   });
-  const [feedback, setFeedback] = useState<string | null>(null);
 
   const activeItem = settingsNav.find((item) => item.key === section) ?? settingsNav[0];
+
+  async function handleSaveProfile() {
+    setSaving(true);
+    try {
+      let avatarUrl: string | undefined;
+
+      // Step 1: Upload avatar if a new file was selected
+      if (avatarFile) {
+        const uploaded = await uploadAvatar(avatarFile);
+        avatarUrl = uploaded.url;
+      }
+
+      // Step 2: Update profile via PATCH /auth/profile
+      await adminClient.patch<ProfileResponse>("/auth/profile", {
+        displayName: profile.displayName,
+        ...(avatarUrl !== undefined ? { avatarUrl } : {}),
+      });
+
+      // Step 3: Clear auth cache so next read picks up fresh data
+      clearAuthCache();
+
+      setAvatarFile(null);
+      toast.success("Đã cập nhật hồ sơ thành công");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Lỗi không xác định";
+      toast.error(`Cập nhật hồ sơ thất bại: ${message}`);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleRevokeOtherSessions() {
+    try {
+      await adminClient.post("/auth/logout-all");
+      clearAuthCache();
+      toast.success("Đã thu hồi toàn bộ phiên đăng nhập khác.");
+    } catch {
+      toast.error("Không thể thu hồi phiên. Vui lòng thử lại.");
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -117,10 +200,6 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {feedback ? (
-                <div className="mb-4 rounded-xl border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">{feedback}</div>
-              ) : null}
-
               {section === "profile" ? (
                 <div className="grid gap-4 lg:max-w-2xl">
                   <div className="grid gap-2">
@@ -132,21 +211,25 @@ export function SettingsPage() {
                       </Avatar>
                       <div className="grid gap-2">
                         <Input
+                          ref={fileInputRef}
                           type="file"
                           accept="image/png,image/jpeg,image/webp"
                           onChange={(event) => {
                             const file = event.target.files?.[0];
-                            if (!file) {
+                            if (!file) return;
+
+                            if (file.size > 5 * 1024 * 1024) {
+                              toast.error("Ảnh không được vượt quá 5MB");
                               return;
                             }
 
                             const previewUrl = URL.createObjectURL(file);
                             setAvatarPreview(previewUrl);
-                            setFeedback(`Đã nạp ảnh "${file.name}" để preview trước khi lưu.`);
+                            setAvatarFile(file);
                           }}
                         />
                         <p className="text-xs text-muted-foreground">
-                          Dùng ảnh thật cho avatar operator. Không dùng SVG cho lane avatar.
+                          PNG, JPG, WebP tối đa 5MB. Ảnh sẽ được upload khi bấm Cập nhật hồ sơ.
                         </p>
                       </div>
                     </div>
@@ -169,8 +252,12 @@ export function SettingsPage() {
                       id="settings-email"
                       type="email"
                       value={profile.email}
-                      onChange={(event) => setProfile((current) => ({ ...current, email: event.target.value }))}
+                      disabled
+                      className="bg-muted"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Email không thể thay đổi qua giao diện cài đặt.
+                    </p>
                   </div>
                   <div className="grid gap-2">
                     <label className="text-sm font-medium" htmlFor="settings-role">
@@ -179,7 +266,8 @@ export function SettingsPage() {
                     <Input
                       id="settings-role"
                       value={profile.role}
-                      onChange={(event) => setProfile((current) => ({ ...current, role: event.target.value }))}
+                      disabled
+                      className="bg-muted"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -193,7 +281,10 @@ export function SettingsPage() {
                     />
                   </div>
                   <div className="flex justify-end">
-                    <Button onClick={() => setFeedback("Đã lưu thay đổi hồ sơ quản trị.")}>Cập nhật hồ sơ</Button>
+                    <Button onClick={() => void handleSaveProfile()} disabled={saving}>
+                      {saving && <Loader2Icon className="size-4 animate-spin" />}
+                      Cập nhật hồ sơ
+                    </Button>
                   </div>
                 </div>
               ) : null}
@@ -201,9 +292,9 @@ export function SettingsPage() {
               {section === "account" ? (
                 <div className="grid gap-4 lg:max-w-3xl">
                   {[
-                    ["Quyền hiện tại", "Super-admin nội bộ / quyền chỉnh flag / quyền revoke session"],
-                    ["Phiên đăng nhập", "3 phiên đang mở, 1 phiên cảnh báo cần rà soát"],
-                    ["Bảo vệ tài khoản", "Bật bắt buộc đổi mật khẩu mỗi 90 ngày và xác thực hai bước"],
+                    ["Quyền hiện tại", `${adminUser.role} — quyền quản trị nội bộ`],
+                    ["Email đăng nhập", adminUser.email],
+                    ["Bảo vệ tài khoản", "Cookie-based session với refresh token tự động"],
                   ].map(([label, value]) => (
                     <div key={label} className="rounded-xl border p-4">
                       <p className="text-sm text-muted-foreground">{label}</p>
@@ -211,10 +302,7 @@ export function SettingsPage() {
                     </div>
                   ))}
                   <div className="flex flex-wrap justify-end gap-2">
-                    <Button variant="outline" onClick={() => setFeedback("Đã gửi yêu cầu reset mật khẩu cho operator.")}>
-                      Reset mật khẩu
-                    </Button>
-                    <Button onClick={() => setFeedback("Đã thu hồi toàn bộ phiên đăng nhập khác thiết bị hiện tại.")}>
+                    <Button variant="destructive" onClick={() => void handleRevokeOtherSessions()}>
                       Thu hồi phiên khác
                     </Button>
                   </div>
@@ -263,7 +351,7 @@ export function SettingsPage() {
                     </label>
                   ))}
                   <div className="flex justify-end">
-                    <Button onClick={() => setFeedback("Đã lưu cài đặt giao diện admin và áp dụng ngay lên shell.")}>
+                    <Button onClick={() => toast.success("Đã lưu cài đặt giao diện.")}>
                       Lưu giao diện
                     </Button>
                   </div>
@@ -293,7 +381,7 @@ export function SettingsPage() {
                     </label>
                   ))}
                   <div className="flex justify-end">
-                    <Button onClick={() => setFeedback("Đã cập nhật cài đặt thông báo vận hành.")}>
+                    <Button onClick={() => toast.success("Đã cập nhật cài đặt thông báo.")}>
                       Cập nhật thông báo
                     </Button>
                   </div>
@@ -313,7 +401,7 @@ export function SettingsPage() {
                     </div>
                   ))}
                   <div className="flex justify-end">
-                    <Button onClick={() => setFeedback("Đã lưu quy tắc hiển thị mặc định cho admin.")}>
+                    <Button onClick={() => toast.success("Đã lưu quy tắc hiển thị.")}>
                       Lưu hiển thị
                     </Button>
                   </div>

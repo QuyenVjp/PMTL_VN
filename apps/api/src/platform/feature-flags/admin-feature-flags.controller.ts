@@ -6,7 +6,6 @@ import {
   Body,
   Req,
   UseGuards,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -70,11 +69,10 @@ export class AdminFeatureFlagsController {
 
   @Patch(":key")
   @Roles("SUPER_ADMIN")
-  @UsePipes(ZodValidate(updateFeatureFlagSchema))
   @ApiOperation({ summary: "Cập nhật feature flag (super-admin)" })
   async update(
     @Param("key") key: string,
-    @Body() input: UpdateFeatureFlagInput,
+    @Body(ZodValidate(updateFeatureFlagSchema)) input: UpdateFeatureFlagInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {

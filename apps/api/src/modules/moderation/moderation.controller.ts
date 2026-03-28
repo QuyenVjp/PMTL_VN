@@ -7,7 +7,6 @@ import {
   Body,
   Req,
   UseGuards,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -45,11 +44,10 @@ export class ModerationController {
   }
 
   @Post(":publicId/decision")
-  @UsePipes(ZodValidate(moderationDecisionSchema))
   @ApiOperation({ summary: "Quyết định xử lý báo cáo" })
   async decide(
     @Param("publicId") publicId: string,
-    @Body() input: ModerationDecisionInput,
+    @Body(ZodValidate(moderationDecisionSchema)) input: ModerationDecisionInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {

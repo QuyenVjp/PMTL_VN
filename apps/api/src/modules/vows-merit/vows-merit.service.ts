@@ -115,8 +115,8 @@ export class VowsMeritService {
         journalDate: new Date(input.journalDate),
         animalType: input.animalType,
         quantity: input.quantity,
-        location: input.location,
-        note: input.note,
+        ...(input.location !== undefined && { location: input.location }),
+        ...(input.note !== undefined && { note: input.note }),
         actorUserId: adminId,
       },
       include: {

@@ -399,15 +399,14 @@ export function PostsPage() {
   const publishPost = usePublishPost();
 
   const filters: PostListFilters = {
+    page: 1,
     limit: 20,
-    offset: 0,
-    search: search || undefined,
     status: statusFilter || undefined,
   };
 
   const { data, isLoading, isError } = useQuery(postListOptions(filters));
-  const posts = data?.data ?? [];
-  const total = data?.meta?.pagination?.total ?? 0;
+  const posts = data?.items ?? [];
+  const total = data?.pagination?.total ?? 0;
 
   return (
     <div className="space-y-6">
@@ -474,7 +473,7 @@ export function PostsPage() {
               </TableHeader>
               <TableBody>
                 {posts.map((post) => (
-                  <TableRow key={post.publicId}>
+                  <TableRow key={post.id}>
                     <TableCell className="max-w-[300px] truncate font-medium">
                       {post.title}
                     </TableCell>
@@ -483,7 +482,7 @@ export function PostsPage() {
                         {statusLabel(post.status)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{post.authorName}</TableCell>
+                    <TableCell>{post.author.displayName}</TableCell>
                     <TableCell className="text-nowrap text-muted-foreground">
                       {timeAgo(post.updatedAt)}
                     </TableCell>
@@ -493,7 +492,7 @@ export function PostsPage() {
                           variant="outline"
                           size="sm"
                           disabled={publishPost.isPending}
-                          onClick={() => publishPost.mutate(post.publicId)}
+                          onClick={() => publishPost.mutate(post.id)}
                         >
                           Xuất bản
                         </Button>

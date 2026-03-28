@@ -101,9 +101,14 @@ export class ContactService {
       throw new NotFoundException("Tình nguyện viên không tồn tại");
     }
 
+    const data: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(input)) {
+      if (v !== undefined) data[k] = v;
+    }
+
     const volunteer = await this.prisma.volunteer.update({
       where: { publicId },
-      data: input,
+      data,
     });
 
     await this.audit.append(auditCtx, "admin.volunteer.update", "volunteer", publicId, {
@@ -141,12 +146,15 @@ export class ContactService {
     const { socialLinks, ...rest } = input;
     let info;
     if (existing) {
+      const updateData: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(rest)) {
+        if (v !== undefined) updateData[k] = v;
+      }
+      if (socialLinks !== undefined) updateData.socialLinks = socialLinks;
+
       info = await this.prisma.contactInfo.update({
         where: { id: existing.id },
-        data: {
-          ...rest,
-          ...(socialLinks !== undefined ? { socialLinks } : {}),
-        },
+        data: updateData,
       });
     } else {
       info = await this.prisma.contactInfo.create({

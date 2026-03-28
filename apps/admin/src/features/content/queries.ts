@@ -1,17 +1,21 @@
 import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
+import type { ListResponse } from "@/lib/api/envelopes.js";
 
 // ── Posts ─────────────────────────────────────────────────────────────
 
 export interface PostListItem {
-  publicId: string;
+  id: string;
   slug: string;
   title: string;
   excerpt: string | null;
   status: string;
-  authorId: string;
-  authorName: string;
+  author: {
+    id: string;
+    displayName: string;
+    avatarUrl: string | null;
+  };
+  featuredImageUrl: string | null;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -23,8 +27,8 @@ export interface PostDetail extends PostListItem {
 }
 
 export interface PostListFilters {
+  page?: number;
   limit?: number;
-  offset?: number;
   search?: string;
   status?: string;
 }
@@ -39,15 +43,14 @@ export const postKeys = {
 
 export function postListOptions(filters: PostListFilters = {}) {
   const params: Record<string, string | number | boolean | undefined> = {
+    page: filters.page ?? 1,
     limit: filters.limit ?? 20,
-    offset: filters.offset ?? 0,
-    search: filters.search || undefined,
     status: filters.status || undefined,
   };
 
   return queryOptions({
     queryKey: postKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<PostListItem>>("/content/posts", params),
+    queryFn: () => adminClient.get<ListResponse<PostListItem>>("/content/posts", params),
   });
 }
 

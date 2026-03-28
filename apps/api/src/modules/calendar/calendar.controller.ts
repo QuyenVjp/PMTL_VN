@@ -93,22 +93,20 @@ export class AdminCalendarController {
   }
 
   @Post("events")
-  @UsePipes(ZodValidate(adminCreateEventSchema))
   @ApiOperation({ summary: "Tạo sự kiện mới (admin)" })
   @ApiResponse({ status: 201, description: "Tạo thành công" })
   async createEvent(
-    @Body() input: AdminCreateEventInput,
+    @Body(ZodValidate(adminCreateEventSchema)) input: AdminCreateEventInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.calendarService.adminCreateEvent(input, user.id);
   }
 
   @Patch("events/:publicId")
-  @UsePipes(ZodValidate(adminUpdateEventSchema))
   @ApiOperation({ summary: "Cập nhật sự kiện (admin)" })
   async updateEvent(
     @Param("publicId") publicId: string,
-    @Body() input: AdminUpdateEventInput,
+    @Body(ZodValidate(adminUpdateEventSchema)) input: AdminUpdateEventInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.calendarService.adminUpdateEvent(publicId, input, user.id);

@@ -130,17 +130,19 @@ export class ModerationService {
       input.note,
     );
 
+    const auditMeta: Record<string, unknown> = {
+      decision: input.decision,
+      targetType: report.targetType,
+      targetId: report.targetId,
+    };
+    if (input.note !== undefined) auditMeta.note = input.note;
+
     await this.audit.append(
       auditCtx,
       "admin.user.status_change",
       "moderation_report",
       report.id,
-      {
-        decision: input.decision,
-        targetType: report.targetType,
-        targetId: report.targetId,
-        note: input.note,
-      },
+      auditMeta,
     );
 
     return {

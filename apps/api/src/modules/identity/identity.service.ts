@@ -176,12 +176,13 @@ export class IdentityService {
   /** Bug 2 fix: profile update + audit in same transaction */
   async updateProfile(userId: string, input: UpdateProfileInput, auditContext: AuditContext) {
     const user = await this.prisma.$transaction(async (tx) => {
+      const profileData: Record<string, unknown> = {};
+      if (input.displayName !== undefined) profileData.displayName = input.displayName;
+      if (input.avatarUrl !== undefined) profileData.avatarUrl = input.avatarUrl;
+
       const updated = await tx.user.update({
         where: { id: userId },
-        data: {
-          displayName: input.displayName,
-          avatarUrl: input.avatarUrl,
-        },
+        data: profileData,
       });
       await this.audit.appendInTransaction(
         tx, auditContext, "user.update", "user", updated.publicId, input as Record<string, unknown>,

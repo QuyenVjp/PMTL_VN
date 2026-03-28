@@ -74,12 +74,11 @@ export class AdminVolunteerController {
   }
 
   @Post()
-  @UsePipes(ZodValidate(createVolunteerSchema))
   @ApiOperation({ summary: "Tạo tình nguyện viên" })
   @ApiResponse({ status: 201, description: "Đã tạo tình nguyện viên" })
   create(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() input: CreateVolunteerInput,
+    @Body(ZodValidate(createVolunteerSchema)) input: CreateVolunteerInput,
   ) {
     return this.contactService.adminCreateVolunteer(input, {
       actorId: user.id,
@@ -88,13 +87,12 @@ export class AdminVolunteerController {
   }
 
   @Patch(":publicId")
-  @UsePipes(ZodValidate(updateVolunteerSchema))
   @ApiOperation({ summary: "Cập nhật tình nguyện viên" })
   @ApiResponse({ status: 200, description: "Đã cập nhật tình nguyện viên" })
   update(
     @CurrentUser() user: AuthenticatedUser,
     @Param("publicId") publicId: string,
-    @Body() input: UpdateVolunteerInput,
+    @Body(ZodValidate(updateVolunteerSchema)) input: UpdateVolunteerInput,
   ) {
     return this.contactService.adminUpdateVolunteer(publicId, input, {
       actorId: user.id,
@@ -130,12 +128,11 @@ export class AdminContactInfoController {
   }
 
   @Patch()
-  @UsePipes(ZodValidate(updateContactInfoSchema))
   @ApiOperation({ summary: "Cập nhật thông tin liên hệ" })
   @ApiResponse({ status: 200, description: "Đã cập nhật thông tin liên hệ" })
   update(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() input: UpdateContactInfoInput,
+    @Body(ZodValidate(updateContactInfoSchema)) input: UpdateContactInfoInput,
   ) {
     return this.contactService.adminUpdateContactInfo(input, {
       actorId: user.id,

@@ -34,12 +34,11 @@ export class AdminNotificationController {
   }
 
   @Post("push/jobs")
-  @UsePipes(ZodValidate(adminCreatePushJobSchema))
   @ApiOperation({ summary: "Tạo push job mới" })
   @ApiResponse({ status: 201, description: "Đã tạo push job" })
   createJob(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() input: AdminCreatePushJobInput,
+    @Body(ZodValidate(adminCreatePushJobSchema)) input: AdminCreatePushJobInput,
   ) {
     return this.notificationService.adminCreatePushJob(input, user.id, {
       actorId: user.id,

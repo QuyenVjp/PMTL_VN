@@ -145,15 +145,16 @@ export class ContentService {
 
     // Bug 2 fix: post update + audit in same transaction
     const updated = await this.prisma.$transaction(async (tx) => {
+      const postUpdateData: Record<string, unknown> = {};
+      if (input.title !== undefined) postUpdateData.title = input.title;
+      if (input.slug !== undefined) postUpdateData.slug = input.slug;
+      if (input.excerpt !== undefined) postUpdateData.excerpt = input.excerpt;
+      if (input.content !== undefined) postUpdateData.content = input.content as Prisma.InputJsonValue;
+      if (input.featuredImageId !== undefined) postUpdateData.featuredImageId = input.featuredImageId;
+
       const result = await tx.post.update({
         where: { publicId },
-        data: {
-          title: input.title,
-          slug: input.slug,
-          excerpt: input.excerpt,
-          content: input.content as Prisma.InputJsonValue | undefined,
-          featuredImageId: input.featuredImageId,
-        },
+        data: postUpdateData,
         include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
       });
       await this.audit.appendInTransaction(tx, auditContext, "content.update", "post", publicId);

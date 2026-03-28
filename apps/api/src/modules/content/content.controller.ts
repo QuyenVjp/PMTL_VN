@@ -10,7 +10,6 @@ import {
   Req,
   HttpCode,
   HttpStatus,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -73,12 +72,11 @@ export class ContentController {
 
   @Post("posts")
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(createPostSchema))
   @ApiOperation({ summary: "Tạo bài viết mới" })
   @ApiResponse({ status: 201, description: "Bài viết đã được tạo" })
   @ApiResponse({ status: 403, description: "Không có quyền" })
   async createPost(
-    @Body() input: CreatePostInput,
+    @Body(ZodValidate(createPostSchema)) input: CreatePostInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -91,7 +89,6 @@ export class ContentController {
   }
 
   @Patch("posts/:publicId")
-  @UsePipes(ZodValidate(updatePostSchema))
   @ApiOperation({ summary: "Cập nhật bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
   @ApiResponse({ status: 200, description: "Bài viết đã được cập nhật" })
@@ -99,7 +96,7 @@ export class ContentController {
   @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
   async updatePost(
     @Param("publicId") publicId: string,
-    @Body() input: UpdatePostInput,
+    @Body(ZodValidate(updatePostSchema)) input: UpdatePostInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -161,11 +158,10 @@ export class GuideController {
   @Post()
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(createGuideSchema))
   @ApiOperation({ summary: "Tạo bài hướng dẫn" })
   @ApiResponse({ status: 201, description: "Đã tạo bài hướng dẫn" })
   async createGuide(
-    @Body() input: CreateGuideInput,
+    @Body(ZodValidate(createGuideSchema)) input: CreateGuideInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -179,13 +175,12 @@ export class GuideController {
 
   @Patch(":publicId")
   @Roles("ADMIN", "SUPER_ADMIN")
-  @UsePipes(ZodValidate(updateGuideSchema))
   @ApiOperation({ summary: "Cập nhật bài hướng dẫn" })
   @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateGuide(
     @Param("publicId") publicId: string,
-    @Body() input: UpdateGuideInput,
+    @Body(ZodValidate(updateGuideSchema)) input: UpdateGuideInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -243,11 +238,10 @@ export class AdminDownloadController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(createDownloadSchema))
   @ApiOperation({ summary: "Tạo tài liệu" })
   @ApiResponse({ status: 201, description: "Đã tạo tài liệu" })
   async createDownload(
-    @Body() input: CreateDownloadInput,
+    @Body(ZodValidate(createDownloadSchema)) input: CreateDownloadInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -260,13 +254,12 @@ export class AdminDownloadController {
   }
 
   @Patch(":publicId")
-  @UsePipes(ZodValidate(updateDownloadSchema))
   @ApiOperation({ summary: "Cập nhật tài liệu" })
   @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateDownload(
     @Param("publicId") publicId: string,
-    @Body() input: UpdateDownloadInput,
+    @Body(ZodValidate(updateDownloadSchema)) input: UpdateDownloadInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {

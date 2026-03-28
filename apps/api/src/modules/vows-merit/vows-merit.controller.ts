@@ -8,7 +8,6 @@ import {
   Req,
   HttpCode,
   HttpStatus,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -60,11 +59,10 @@ export class AdminVowsController {
 
   @Post("assisted-entry")
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(assistedEntrySchema))
   @ApiOperation({ summary: "Nhập hộ phát nguyện cho thành viên" })
   @ApiResponse({ status: 201, description: "Đã tạo phát nguyện" })
   async createAssistedEntry(
-    @Body() input: AssistedEntryInput,
+    @Body(ZodValidate(assistedEntrySchema)) input: AssistedEntryInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -78,11 +76,10 @@ export class AdminVowsController {
 
   @Post("assisted-entry/life-release")
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(lifeReleaseEntrySchema))
   @ApiOperation({ summary: "Nhập hộ phóng sanh cho thành viên" })
   @ApiResponse({ status: 201, description: "Đã tạo nhật ký phóng sanh" })
   async createLifeReleaseEntry(
-    @Body() input: LifeReleaseEntryInput,
+    @Body(ZodValidate(lifeReleaseEntrySchema)) input: LifeReleaseEntryInput,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {

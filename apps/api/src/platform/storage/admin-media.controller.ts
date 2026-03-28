@@ -1,16 +1,24 @@
 import {
   Controller,
   Get,
+  Post,
   Delete,
   Param,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from "@nestjs/common";
-import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiTags, ApiOperation, ApiConsumes } from "@nestjs/swagger";
 import { z } from "zod";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
+import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { StorageService } from "./storage.service.js";
 import { NotFoundError } from "../../common/errors/app-error.js";
 
 const mediaListQuerySchema = z.object({
@@ -30,7 +38,40 @@ type MediaListQuery = z.infer<typeof mediaListQuerySchema>;
 @UseGuards(RolesGuard)
 @Roles("ADMIN", "SUPER_ADMIN")
 export class AdminMediaController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
+
+  @Post("upload")
+  @ApiOperation({ summary: "Upload media file (admin)" })
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 10 * 1024 * 1024 } }))
+  async upload(
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    if (!file) {
+      throw new BadRequestException("Chưa chọn file để upload");
+    }
+
+    const asset = await this.storageService.uploadFile(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+      user.id,
+    );
+
+    return {
+      data: {
+        publicId: asset.publicId,
+        url: asset.url,
+        filename: asset.filename,
+        mimeType: asset.mimeType,
+        size: asset.size,
+      },
+    };
+  }
 
   @Get()
   @ApiOperation({ summary: "Danh sách media assets (admin)" })

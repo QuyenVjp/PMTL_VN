@@ -118,17 +118,18 @@ export class ContentRepository {
   }
 
   async update(publicId: string, data: UpdatePostData) {
+    const updateData: Record<string, unknown> = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.slug !== undefined) updateData.slug = data.slug;
+    if (data.excerpt !== undefined) updateData.excerpt = data.excerpt;
+    if (data.content !== undefined) updateData.content = data.content as Prisma.InputJsonValue;
+    if (data.featuredImageId !== undefined) updateData.featuredImageId = data.featuredImageId;
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.publishedAt !== undefined) updateData.publishedAt = data.publishedAt;
+
     return this.prisma.post.update({
       where: { publicId },
-      data: {
-        title: data.title,
-        slug: data.slug,
-        excerpt: data.excerpt,
-        content: data.content as Prisma.InputJsonValue,
-        featuredImageId: data.featuredImageId,
-        status: data.status,
-        publishedAt: data.publishedAt,
-      },
+      data: updateData,
       include: {
         author: {
           select: {

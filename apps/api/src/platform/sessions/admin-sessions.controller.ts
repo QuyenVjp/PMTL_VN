@@ -8,7 +8,6 @@ import {
   Body,
   Req,
   UseGuards,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -61,10 +60,9 @@ export class AdminSessionsController {
   }
 
   @Post("revoke-bulk")
-  @UsePipes(ZodValidate(adminRevokeBulkSchema))
   @ApiOperation({ summary: "Thu hồi nhiều phiên cùng lúc (super-admin)" })
   async revokeBulk(
-    @Body() input: AdminRevokeBulkInput,
+    @Body(ZodValidate(adminRevokeBulkSchema)) input: AdminRevokeBulkInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {

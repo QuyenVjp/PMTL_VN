@@ -44,12 +44,11 @@ export class IdentityController {
   @Post("login")
   @Public()
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ZodValidate(loginSchema))
   @ApiOperation({ summary: "Đăng nhập" })
   @ApiResponse({ status: 200, description: "Đăng nhập thành công" })
   @ApiResponse({ status: 401, description: "Email hoặc mật khẩu không đúng" })
   async login(
-    @Body() input: LoginInput,
+    @Body(ZodValidate(loginSchema)) input: LoginInput,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -151,12 +150,11 @@ export class IdentityController {
   }
 
   @Patch("profile")
-  @UsePipes(ZodValidate(updateProfileSchema))
   @ApiOperation({ summary: "Cập nhật hồ sơ" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateProfile(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() input: UpdateProfileInput,
+    @Body(ZodValidate(updateProfileSchema)) input: UpdateProfileInput,
     @Req() req: Request,
   ) {
     return this.identityService.updateProfile(user.id, input, {
@@ -169,12 +167,11 @@ export class IdentityController {
 
   @Post("change-password")
   @HttpCode(HttpStatus.OK)
-  @UsePipes(ZodValidate(changePasswordSchema))
   @ApiOperation({ summary: "Đổi mật khẩu" })
   @ApiResponse({ status: 200, description: "Đã đổi mật khẩu" })
   async changePassword(
     @CurrentUser() user: AuthenticatedUser,
-    @Body() input: ChangePasswordInput,
+    @Body(ZodValidate(changePasswordSchema)) input: ChangePasswordInput,
     @Req() req: Request,
   ) {
     return this.identityService.changePassword(user.id, input, {

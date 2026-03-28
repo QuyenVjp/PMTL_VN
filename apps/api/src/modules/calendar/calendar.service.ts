@@ -130,13 +130,13 @@ export class CalendarService {
       data: {
         publicId: nanoid(),
         title: input.title,
-        description: input.description,
         startAt: new Date(input.startAt),
-        endAt: input.endAt ? new Date(input.endAt) : undefined,
-        location: input.location,
         eventType: input.eventType ?? "general",
         status: "DRAFT",
         createdById: userId,
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.endAt !== undefined && { endAt: new Date(input.endAt) }),
+        ...(input.location !== undefined && { location: input.location }),
       },
     });
 

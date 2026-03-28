@@ -45,11 +45,10 @@ export class CommunityController {
   }
 
   @Post("posts")
-  @UsePipes(ZodValidate(createCommunityPostSchema))
   @ApiOperation({ summary: "Tạo bài đăng cộng đồng" })
   @ApiResponse({ status: 201, description: "Tạo thành công" })
   createPost(
-    @Body() input: CreateCommunityPostInput,
+    @Body(ZodValidate(createCommunityPostSchema)) input: CreateCommunityPostInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.createPost(input, user.id);
@@ -81,13 +80,12 @@ export class AdminCommunityController {
   }
 
   @Patch("posts/:publicId")
-  @UsePipes(ZodValidate(adminUpdateCommunityPostSchema))
   @ApiOperation({ summary: "Cập nhật trạng thái bài đăng" })
   @ApiResponse({ status: 200, description: "Cập nhật thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   updatePostStatus(
     @Param("publicId") publicId: string,
-    @Body() input: AdminUpdateCommunityPostInput,
+    @Body(ZodValidate(adminUpdateCommunityPostSchema)) input: AdminUpdateCommunityPostInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.adminUpdatePostStatus(publicId, input, user.id);
@@ -112,24 +110,22 @@ export class AdminCommunityController {
   }
 
   @Post("guestbook")
-  @UsePipes(ZodValidate(createGuestbookEntrySchema))
   @ApiOperation({ summary: "Tạo bản ghi sổ lưu bút" })
   @ApiResponse({ status: 201, description: "Tạo thành công" })
   createGuestbookEntry(
-    @Body() input: CreateGuestbookEntryInput,
+    @Body(ZodValidate(createGuestbookEntrySchema)) input: CreateGuestbookEntryInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.adminCreateGuestbookEntry(input, user.id);
   }
 
   @Patch("guestbook/:publicId")
-  @UsePipes(ZodValidate(adminUpdateGuestbookSchema))
   @ApiOperation({ summary: "Duyệt / từ chối sổ lưu bút" })
   @ApiResponse({ status: 200, description: "Cập nhật thành công" })
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   updateGuestbookStatus(
     @Param("publicId") publicId: string,
-    @Body() input: AdminUpdateGuestbookInput,
+    @Body(ZodValidate(adminUpdateGuestbookSchema)) input: AdminUpdateGuestbookInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.adminUpdateGuestbookStatus(publicId, input, user.id);

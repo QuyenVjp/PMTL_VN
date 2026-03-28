@@ -12,8 +12,8 @@ export class FeatureFlagsRepository {
       data: {
         key: data.key,
         enabled: data.enabled,
-        description: data.description,
-        metadata: data.metadata as Prisma.InputJsonValue,
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.metadata !== undefined && { metadata: data.metadata as Prisma.InputJsonValue }),
       },
     });
   }
@@ -31,13 +31,14 @@ export class FeatureFlagsRepository {
   }
 
   async update(key: string, data: UpdateFeatureFlagInput) {
+    const updateData: Record<string, unknown> = {};
+    if (data.enabled !== undefined) updateData.enabled = data.enabled;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.metadata !== undefined) updateData.metadata = data.metadata as Prisma.InputJsonValue;
+
     return this.prisma.featureFlag.update({
       where: { key },
-      data: {
-        enabled: data.enabled,
-        description: data.description,
-        metadata: data.metadata as Prisma.InputJsonValue,
-      },
+      data: updateData,
     });
   }
 
@@ -47,13 +48,13 @@ export class FeatureFlagsRepository {
       create: {
         key: data.key,
         enabled: data.enabled,
-        description: data.description,
-        metadata: data.metadata as Prisma.InputJsonValue,
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.metadata !== undefined && { metadata: data.metadata as Prisma.InputJsonValue }),
       },
       update: {
         enabled: data.enabled,
-        description: data.description,
-        metadata: data.metadata as Prisma.InputJsonValue,
+        ...(data.description !== undefined && { description: data.description }),
+        ...(data.metadata !== undefined && { metadata: data.metadata as Prisma.InputJsonValue }),
       },
     });
   }

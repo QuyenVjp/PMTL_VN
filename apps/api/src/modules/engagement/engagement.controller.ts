@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UsePipes } from "@nestjs/common";
+import { Controller, Get, Post, Body } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
@@ -17,22 +17,20 @@ export class EngagementController {
   constructor(private readonly engagementService: EngagementService) {}
 
   @Post("reactions")
-  @UsePipes(ZodValidate(toggleReactionSchema))
   @ApiOperation({ summary: "Toggle reaction (like, pray, inspire, gratitude)" })
   @ApiResponse({ status: 200, description: "Reaction toggled" })
   toggleReaction(
-    @Body() input: ToggleReactionInput,
+    @Body(ZodValidate(toggleReactionSchema)) input: ToggleReactionInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.engagementService.toggleReaction(input, user.id);
   }
 
   @Post("bookmarks")
-  @UsePipes(ZodValidate(toggleBookmarkSchema))
   @ApiOperation({ summary: "Toggle bookmark" })
   @ApiResponse({ status: 200, description: "Bookmark toggled" })
   toggleBookmark(
-    @Body() input: ToggleBookmarkInput,
+    @Body(ZodValidate(toggleBookmarkSchema)) input: ToggleBookmarkInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.engagementService.toggleBookmark(input, user.id);
