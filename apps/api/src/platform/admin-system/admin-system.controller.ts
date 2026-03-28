@@ -18,14 +18,12 @@ export class AdminSystemController {
   @Get("dashboard-stats")
   @ApiOperation({ summary: "Admin dashboard aggregate stats" })
   async dashboardStats() {
-    const stats = await this.adminSystem.getDashboardStats();
-    return { data: stats };
+    return this.adminSystem.getDashboardStats();
   }
 
   @Get("health-extended")
   @ApiOperation({ summary: "Extended system health for admin operators" })
   async healthExtended() {
-    const health = await this.adminSystem.getHealthExtended();
-    return { data: health };
+    return this.adminSystem.getHealthExtended();
   }
 }

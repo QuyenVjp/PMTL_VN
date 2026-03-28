@@ -186,12 +186,13 @@ export class IdentityController {
   }
 
   private setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
+    const domain = this.resolveCookieDomain();
     const cookieOptions = {
       httpOnly: true,
       secure: this.configService.cookieSecure,
       sameSite: "lax" as const,
-      domain: this.configService.cookieDomain,
       path: "/",
+      ...(domain ? { domain } : {}),
     };
 
     res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
@@ -206,12 +207,13 @@ export class IdentityController {
   }
 
   private clearAuthCookies(res: Response) {
+    const domain = this.resolveCookieDomain();
     const cookieOptions = {
       httpOnly: true,
       secure: this.configService.cookieSecure,
       sameSite: "lax" as const,
-      domain: this.configService.cookieDomain,
       path: "/",
+      ...(domain ? { domain } : {}),
     };
 
     res.clearCookie(ACCESS_TOKEN_COOKIE, cookieOptions);
@@ -222,5 +224,23 @@ export class IdentityController {
     const cookies = req.cookies as Record<string, unknown> | undefined;
     const value = cookies?.[key];
     return typeof value === "string" ? value : undefined;
+  }
+
+  private resolveCookieDomain(): string | undefined {
+    const configuredDomain = this.configService.cookieDomain?.trim();
+    if (!configuredDomain) {
+      return undefined;
+    }
+
+    const normalizedDomain = configuredDomain.replace(/^\./, "").toLowerCase();
+    if (
+      normalizedDomain === "localhost" ||
+      normalizedDomain === "127.0.0.1" ||
+      normalizedDomain === "::1"
+    ) {
+      return undefined;
+    }
+
+    return configuredDomain;
   }
 }

@@ -50,15 +50,41 @@ if ($null -eq $service) {
   exit 1
 }
 
+$serviceStartBlocked = $false
 if ($service.Status -ne "Running") {
   Write-Step "Starting com.docker.service..."
   try {
     Start-Service com.docker.service
   } catch {
     Write-Host "[docker-recover] Cannot start com.docker.service in current shell."
-    Write-Host "[docker-recover] Open PowerShell as Administrator and run:"
-    Write-Host "  Start-Service com.docker.service"
-    exit 1
+    Write-Host "[docker-recover] Attempting elevated start via UAC prompt..."
+    try {
+      $elevatedShell = (Get-Command pwsh -ErrorAction SilentlyContinue)?.Source
+      if (-not $elevatedShell) {
+        $elevatedShell = (Get-Command powershell -ErrorAction SilentlyContinue)?.Source
+      }
+
+      if ($elevatedShell) {
+        $proc = Start-Process -FilePath $elevatedShell -Verb RunAs -Wait -PassThru -ArgumentList @(
+          "-NoProfile",
+          "-Command",
+          "Start-Service com.docker.service"
+        )
+        if ($proc.ExitCode -eq 0) {
+          Write-Step "com.docker.service started from elevated helper."
+        } else {
+          $serviceStartBlocked = $true
+        }
+      } else {
+        $serviceStartBlocked = $true
+      }
+    } catch {
+      $serviceStartBlocked = $true
+    }
+
+    if ($serviceStartBlocked) {
+      Write-Host "[docker-recover] Falling back to 'docker desktop start' (may still require elevation prompt)."
+    }
   }
 }
 
@@ -90,6 +116,10 @@ do {
 } while ((Get-Date) -lt $deadline)
 
 Write-Host "[docker-recover] Docker engine did not become ready in $TimeoutSeconds seconds."
+if ($serviceStartBlocked) {
+  Write-Host "[docker-recover] If this machine just rebooted, open PowerShell as Administrator and run:"
+  Write-Host "  Start-Service com.docker.service"
+}
 Write-Host "[docker-recover] Run: docker desktop logs --tail 200"
 Write-Host "[docker-recover] Run: & 'C:\Program Files\Docker\Docker\resources\com.docker.diagnose.exe' gather -upload"
 exit 1

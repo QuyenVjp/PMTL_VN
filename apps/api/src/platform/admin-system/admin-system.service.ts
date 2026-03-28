@@ -199,8 +199,9 @@ export class AdminSystemService {
 
     // System stats
     const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    const [totalAdmins, activeAdmins] = await Promise.all([
+    const [totalAdmins, activeAdmins, totalWebhookDeliveries24h, failedWebhookDeliveries24h] = await Promise.all([
       this.prisma.user.count({
         where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
       }),
@@ -210,6 +211,12 @@ export class AdminSystemService {
           expiresAt: { gt: now },
           user: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
         },
+      }),
+      this.prisma.webhookDelivery.count({
+        where: { processedAt: { gte: twentyFourHoursAgo } },
+      }),
+      this.prisma.webhookDelivery.count({
+        where: { processedAt: { gte: twentyFourHoursAgo }, status: "FAILED" },
       }),
     ]);
 
@@ -226,7 +233,10 @@ export class AdminSystemService {
       overall,
       components,
       systemStats: {
-        errorRate24h: 0, // Placeholder — requires metrics integration
+        errorRate24h:
+          totalWebhookDeliveries24h > 0
+            ? Number(((failedWebhookDeliveries24h / totalWebhookDeliveries24h) * 100).toFixed(2))
+            : 0,
         activeAdmins,
         totalAdmins,
       },
