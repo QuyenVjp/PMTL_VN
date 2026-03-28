@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIcon,
@@ -8,6 +8,20 @@ import {
   ShieldAlertIcon,
   UsersIcon,
 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,6 +80,21 @@ function targetTypeLabel(type: string): string {
   return map[type] ?? type;
 }
 
+function statusShortLabel(status: string): string {
+  if (status === "PUBLISHED") return "Xuất bản";
+  if (status === "DRAFT") return "Nháp";
+  if (status === "ARCHIVED") return "Ẩn";
+  return status;
+}
+
+function targetTypeShortLabel(type: string): string {
+  if (type === "post") return "Bài viết";
+  if (type === "comment") return "Bình luận";
+  if (type === "community_post") return "CĐ";
+  if (type === "guestbook") return "Sổ lưu niệm";
+  return type;
+}
+
 function userInitials(displayName: string): string {
   return displayName
     .split(" ")
@@ -122,6 +151,11 @@ function TableSkeleton({ rows = 5 }: { rows?: number }) {
 export function DashboardOverview() {
   const { setOpen } = useSearch();
   const qc = useQueryClient();
+  const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    setChartReady(true);
+  }, []);
 
   const { data: adminUser } = useQuery({
     queryKey: ["auth", "me"],
@@ -176,6 +210,43 @@ export function DashboardOverview() {
       },
     ];
   }, [stats]);
+
+  const postStatusChartData = useMemo(() => {
+    if (!stats) return [];
+    return stats.postStatusStats.map((item) => ({
+      name: statusShortLabel(item.status),
+      value: item.count,
+    }));
+  }, [stats]);
+
+  const pendingTargetChartData = useMemo(() => {
+    if (!stats) return [];
+    return stats.pendingReportTargetStats.map((item) => ({
+      name: targetTypeShortLabel(item.targetType),
+      value: item.count,
+    }));
+  }, [stats]);
+
+  const auditActionChartData = useMemo(() => {
+    if (!stats) return [];
+    return stats.auditActionStats.map((item) => ({
+      name: item.action,
+      value: item.count,
+    }));
+  }, [stats]);
+
+  const activitySeriesChartData = useMemo(() => {
+    if (!stats) return [];
+    return stats.activitySeries7d.map((item) => ({
+      ...item,
+      label: new Date(item.date).toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+      }),
+    }));
+  }, [stats]);
+
+  const pieColors = ["#16a34a", "#f59e0b", "#0ea5e9", "#8b5cf6", "#ef4444", "#06b6d4"];
 
   return (
     <div className="space-y-6">
@@ -296,6 +367,148 @@ export function DashboardOverview() {
                 </CardContent>
               </Card>
             ))}
+      </div>
+
+      {/* ── Practical reporting section ───────────────────────────────── */ }
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card className="xl:col-span-2">
+          <CardHeader>
+            <CardTitle>Nhịp vận hành 7 ngày</CardTitle>
+            <CardDescription>
+              Theo dõi song song nội dung, kiểm duyệt và audit event để phát hiện lệch tải.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isLoading || !chartReady ? (
+              <Skeleton className="h-64 w-full" />
+            ) : (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={activitySeriesChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="posts" name="Bài viết" stroke="#f59e0b" strokeWidth={2} />
+                    <Line type="monotone" dataKey="reports" name="Báo cáo" stroke="#ef4444" strokeWidth={2} />
+                    <Line type="monotone" dataKey="audits" name="Audit" stroke="#3b82f6" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+            {stats && (
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="rounded-lg border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">User mới 7 ngày</p>
+                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newUsers7d)}</p>
+                </div>
+                <div className="rounded-lg border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Bài đã xuất bản 7 ngày</p>
+                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newPublishedPosts7d)}</p>
+                </div>
+                <div className="rounded-lg border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Báo cáo pending mới 7 ngày</p>
+                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newPendingReports7d)}</p>
+                </div>
+                <div className="rounded-lg border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Phiên active mới 24h</p>
+                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.activeSessions24h)}</p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tỷ trọng trạng thái nội dung</CardTitle>
+            <CardDescription>Phân bố bài viết theo trạng thái hiện tại.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading || !chartReady ? (
+              <Skeleton className="h-64 w-full" />
+            ) : postStatusChartData.length > 0 ? (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={postStatusChartData} dataKey="value" nameKey="name" outerRadius={84}>
+                      {postStatusChartData.map((entry, index) => (
+                        <Cell key={entry.name} fill={pieColors[index % pieColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Chưa đủ dữ liệu để hiển thị biểu đồ.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Top hành động audit (7 ngày)</CardTitle>
+            <CardDescription>
+              Nhìn nhanh hành vi vận hành nào đang chiếm tải cao nhất.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading || !chartReady ? (
+              <Skeleton className="h-64 w-full" />
+            ) : auditActionChartData.length > 0 ? (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={auditActionChartData} layout="vertical" margin={{ left: 30 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" allowDecimals={false} />
+                    <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 12 }} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#3b82f6" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Chưa có event audit trong 7 ngày.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Cơ cấu báo cáo pending</CardTitle>
+            <CardDescription>
+              Cho biết lane kiểm duyệt nào đang dồn case chờ quyết định.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoading || !chartReady ? (
+              <Skeleton className="h-64 w-full" />
+            ) : pendingTargetChartData.length > 0 ? (
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={pendingTargetChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#ef4444" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Không có báo cáo pending.
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Content table + Pending reports ───────────────────────────── */}

@@ -29,6 +29,30 @@ export interface DashboardStats {
     resourceId: string | null;
     createdAt: string;
   }>;
+  postStatusStats: Array<{
+    status: string;
+    count: number;
+  }>;
+  pendingReportTargetStats: Array<{
+    targetType: string;
+    count: number;
+  }>;
+  auditActionStats: Array<{
+    action: string;
+    count: number;
+  }>;
+  activitySeries7d: Array<{
+    date: string;
+    posts: number;
+    reports: number;
+    audits: number;
+  }>;
+  periodSummary: {
+    newUsers7d: number;
+    newPublishedPosts7d: number;
+    newPendingReports7d: number;
+    activeSessions24h: number;
+  };
 }
 
 export const dashboardKeys = {

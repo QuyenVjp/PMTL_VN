@@ -39,6 +39,30 @@ export interface DashboardStats {
     resourceId: string | null;
     createdAt: string;
   }>;
+  postStatusStats: Array<{
+    status: string;
+    count: number;
+  }>;
+  pendingReportTargetStats: Array<{
+    targetType: string;
+    count: number;
+  }>;
+  auditActionStats: Array<{
+    action: string;
+    count: number;
+  }>;
+  activitySeries7d: Array<{
+    date: string;
+    posts: number;
+    reports: number;
+    audits: number;
+  }>;
+  periodSummary: {
+    newUsers7d: number;
+    newPublishedPosts7d: number;
+    newPendingReports7d: number;
+    activeSessions24h: number;
+  };
 }
 
 export interface HealthExtended {
@@ -64,6 +88,8 @@ export class AdminSystemService {
 
   async getDashboardStats(): Promise<DashboardStats> {
     const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     const [
       totalUsers,
@@ -73,6 +99,16 @@ export class AdminSystemService {
       recentPosts,
       pendingReportsList,
       recentAuditLogs,
+      postStatusGrouped,
+      pendingTargetGrouped,
+      auditActionGrouped,
+      posts7dRows,
+      reports7dRows,
+      audits7dRows,
+      newUsers7d,
+      newPublishedPosts7d,
+      newPendingReports7d,
+      activeSessions24h,
     ] = await Promise.all([
       // Total non-suspended users
       this.prisma.user.count({
@@ -138,7 +174,63 @@ export class AdminSystemService {
           createdAt: true,
         },
       }),
+      this.prisma.post.groupBy({
+        by: ["status"],
+        _count: { _all: true },
+      }),
+      this.prisma.moderationReport.groupBy({
+        by: ["targetType"],
+        where: { status: "PENDING" },
+        _count: { _all: true },
+      }),
+      this.prisma.auditLog.groupBy({
+        by: ["action"],
+        where: { createdAt: { gte: sevenDaysAgo } },
+        _count: { _all: true },
+        orderBy: { _count: { action: "desc" } },
+        take: 8,
+      }),
+      this.prisma.post.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }),
+      this.prisma.moderationReport.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }),
+      this.prisma.auditLog.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }),
+      this.prisma.user.count({
+        where: { createdAt: { gte: sevenDaysAgo } },
+      }),
+      this.prisma.post.count({
+        where: {
+          status: "PUBLISHED",
+          publishedAt: { gte: sevenDaysAgo },
+        },
+      }),
+      this.prisma.moderationReport.count({
+        where: {
+          status: "PENDING",
+          createdAt: { gte: sevenDaysAgo },
+        },
+      }),
+      this.prisma.session.count({
+        where: {
+          revokedAt: null,
+          expiresAt: { gt: now },
+          createdAt: { gte: twentyFourHoursAgo },
+        },
+      }),
     ]);
+
+    const activitySeries7d = this.buildActivitySeries7d({
+      posts: posts7dRows.map((row) => row.createdAt),
+      reports: reports7dRows.map((row) => row.createdAt),
+      audits: audits7dRows.map((row) => row.createdAt),
+    });
 
     return {
       totalUsers,
@@ -168,6 +260,25 @@ export class AdminSystemService {
         resourceId: l.resourceId,
         createdAt: l.createdAt.toISOString(),
       })),
+      postStatusStats: postStatusGrouped.map((group) => ({
+        status: group.status,
+        count: group._count._all,
+      })),
+      pendingReportTargetStats: pendingTargetGrouped.map((group) => ({
+        targetType: group.targetType,
+        count: group._count._all,
+      })),
+      auditActionStats: auditActionGrouped.map((group) => ({
+        action: group.action,
+        count: group._count._all,
+      })),
+      activitySeries7d,
+      periodSummary: {
+        newUsers7d,
+        newPublishedPosts7d,
+        newPendingReports7d,
+        activeSessions24h,
+      },
     };
   }
 
@@ -266,5 +377,52 @@ export class AdminSystemService {
         detail: error instanceof Error ? error.message : "Không thể kết nối",
       };
     }
+  }
+
+  private buildActivitySeries7d(input: {
+    posts: Date[];
+    reports: Date[];
+    audits: Date[];
+  }): Array<{
+    date: string;
+    posts: number;
+    reports: number;
+    audits: number;
+  }> {
+    const now = new Date();
+    const labels = Array.from({ length: 7 }, (_, offset) => {
+      const day = new Date(now);
+      day.setHours(0, 0, 0, 0);
+      day.setDate(day.getDate() - (6 - offset));
+      return day.toISOString().slice(0, 10);
+    });
+
+    const seed = labels.reduce<Record<string, { posts: number; reports: number; audits: number }>>(
+      (acc, key) => {
+        acc[key] = { posts: 0, reports: 0, audits: 0 };
+        return acc;
+      },
+      {},
+    );
+
+    const countInto = (dates: Date[], field: "posts" | "reports" | "audits") => {
+      for (const date of dates) {
+        const key = date.toISOString().slice(0, 10);
+        if (seed[key]) {
+          seed[key][field] += 1;
+        }
+      }
+    };
+
+    countInto(input.posts, "posts");
+    countInto(input.reports, "reports");
+    countInto(input.audits, "audits");
+
+    return labels.map((key) => ({
+      date: key,
+      posts: seed[key].posts,
+      reports: seed[key].reports,
+      audits: seed[key].audits,
+    }));
   }
 }
