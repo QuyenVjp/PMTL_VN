@@ -27,9 +27,11 @@ export class CalendarService {
     const { page, pageSize, from, to } = query;
     const offset = (page - 1) * pageSize;
 
+    const startAtFilter: { gte?: Date; lte?: Date } = {};
+    if (from) startAtFilter.gte = new Date(from);
+    if (to) startAtFilter.lte = new Date(to);
     const where: Record<string, unknown> = { status: "PUBLISHED" };
-    if (from) (where as any).startAt = { ...(where as any).startAt, gte: new Date(from) };
-    if (to) (where as any).startAt = { ...(where as any).startAt, lte: new Date(to) };
+    if (Object.keys(startAtFilter).length > 0) where.startAt = startAtFilter;
 
     const [data, total] = await Promise.all([
       this.prisma.calendarEvent.findMany({

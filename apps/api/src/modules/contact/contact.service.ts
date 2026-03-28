@@ -87,7 +87,7 @@ export class ContactService {
       },
     });
 
-    await this.audit.append(auditCtx, "CREATE", "volunteer", volunteer.publicId, {
+    await this.audit.append(auditCtx, "admin.volunteer.create", "volunteer", volunteer.publicId, {
       displayName: input.displayName,
       role: input.role,
     });
@@ -106,7 +106,7 @@ export class ContactService {
       data: input,
     });
 
-    await this.audit.append(auditCtx, "UPDATE", "volunteer", publicId, {
+    await this.audit.append(auditCtx, "admin.volunteer.update", "volunteer", publicId, {
       fields: Object.keys(input),
     });
 
@@ -121,7 +121,7 @@ export class ContactService {
 
     await this.prisma.volunteer.delete({ where: { publicId } });
 
-    await this.audit.append(auditCtx, "DELETE", "volunteer", publicId, {
+    await this.audit.append(auditCtx, "admin.volunteer.delete", "volunteer", publicId, {
       displayName: existing.displayName,
     });
 
@@ -138,26 +138,30 @@ export class ContactService {
   async adminUpdateContactInfo(input: UpdateContactInfoInput, auditCtx: AuditContext) {
     const existing = await this.prisma.contactInfo.findFirst();
 
+    const { socialLinks, ...rest } = input;
     let info;
     if (existing) {
       info = await this.prisma.contactInfo.update({
         where: { id: existing.id },
-        data: input,
+        data: {
+          ...rest,
+          ...(socialLinks !== undefined ? { socialLinks } : {}),
+        },
       });
     } else {
       info = await this.prisma.contactInfo.create({
         data: {
           publicId: nanoid(),
-          title: input.title ?? "",
-          email: input.email,
-          phone: input.phone,
-          address: input.address,
-          socialLinks: input.socialLinks ?? {},
+          title: rest.title ?? "",
+          email: rest.email,
+          phone: rest.phone,
+          address: rest.address,
+          socialLinks: socialLinks ?? {},
         },
       });
     }
 
-    await this.audit.append(auditCtx, existing ? "UPDATE" : "CREATE", "contact_info", info.publicId, {
+    await this.audit.append(auditCtx, "admin.contact_info.update", "contact_info", info.publicId, {
       fields: Object.keys(input),
     });
 

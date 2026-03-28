@@ -83,7 +83,7 @@ export class AdminVolunteerController {
   ) {
     return this.contactService.adminCreateVolunteer(input, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 
@@ -98,7 +98,7 @@ export class AdminVolunteerController {
   ) {
     return this.contactService.adminUpdateVolunteer(publicId, input, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 
@@ -111,7 +111,7 @@ export class AdminVolunteerController {
   ) {
     return this.contactService.adminDeleteVolunteer(publicId, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 }
@@ -139,7 +139,7 @@ export class AdminContactInfoController {
   ) {
     return this.contactService.adminUpdateContactInfo(input, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 }

@@ -75,8 +75,8 @@ export class CommunityService {
     });
 
     await this.audit.append(
-      { actorId: userId, actorType: "USER" },
-      "CREATE",
+      { actorId: userId, actorType: "user" },
+      "content.create",
       "CommunityPost",
       post.publicId,
     );
@@ -149,8 +149,8 @@ export class CommunityService {
     });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "ADMIN" },
-      "UPDATE",
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.update",
       "CommunityPost",
       publicId,
       { previousStatus: post.status, newStatus: input.status },
@@ -219,8 +219,8 @@ export class CommunityService {
     });
 
     await this.audit.append(
-      { actorId: userId, actorType: "USER" },
-      "CREATE",
+      { actorId: userId, actorType: "user" },
+      "admin.guestbook.create",
       "GuestbookEntry",
       entry.publicId,
     );
@@ -245,8 +245,8 @@ export class CommunityService {
     });
 
     await this.audit.append(
-      { actorId: adminId, actorType: "ADMIN" },
-      "UPDATE",
+      { actorId: adminId, actorType: "admin" },
+      "admin.guestbook.update",
       "GuestbookEntry",
       publicId,
       { previousStatus: entry.status, newStatus: input.status },

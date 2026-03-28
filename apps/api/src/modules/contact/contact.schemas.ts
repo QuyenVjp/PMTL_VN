@@ -46,6 +46,6 @@ export const updateContactInfoSchema = z.object({
   email: z.string().email().optional(),
   phone: z.string().max(20).optional(),
   address: z.string().max(500).optional(),
-  socialLinks: z.record(z.string()).optional(),
+  socialLinks: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateContactInfoInput = z.infer<typeof updateContactInfoSchema>;

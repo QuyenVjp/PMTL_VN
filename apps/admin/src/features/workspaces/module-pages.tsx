@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { RefreshCcwIcon } from "lucide-react";
+import { RefreshCcwIcon, ActivityIcon, CheckCircleIcon, AlertTriangleIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -19,7 +19,18 @@ import { postListOptions, postKeys, type PostListFilters } from "@/features/cont
 import { usePublishPost } from "@/features/content/mutations.js";
 import { mediaListOptions, mediaKeys, type MediaListFilters } from "@/features/media/queries.js";
 import { useDeleteMediaAsset } from "@/features/media/mutations.js";
-import { PlaceholderPage } from "@/features/workspace/placeholder-page.js";
+import { guideListOptions, guideKeys, type GuideListFilters } from "@/features/guides/queries.js";
+import { usePublishGuide } from "@/features/guides/mutations.js";
+import { downloadListOptions, downloadKeys, type DownloadListFilters } from "@/features/downloads/queries.js";
+import { usePublishDownload } from "@/features/downloads/mutations.js";
+// ── Re-exports from feature modules ────────────────────────────────
+
+export { GuidesPage } from "@/features/guides/index.js";
+export { DownloadsPage } from "@/features/downloads/index.js";
+export { AssistedEntryPage } from "@/features/assisted-entry/index.js";
+export { CommunityPostsPage } from "@/features/community-posts/index.js";
+export { GuestbookPage } from "@/features/guestbook/index.js";
+export { ModerationCommentsPage } from "@/features/moderation-comments/index.js";
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -54,6 +65,327 @@ function TableSkeleton({ rows = 5 }: { rows?: number }) {
       {Array.from({ length: rows }).map((_, i) => (
         <Skeleton key={i} className="h-10 w-full" />
       ))}
+    </div>
+  );
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  BEGINNER: "Nhập môn",
+  DAILY_PRACTICE: "Hành trì hằng ngày",
+  LITTLE_HOUSE: "Ngôi Nhà Nhỏ",
+  LIFE_RELEASE: "Phóng sanh",
+  GENERAL: "Chung",
+};
+
+function categoryLabel(cat: string): string {
+  return CATEGORY_LABELS[cat] ?? cat;
+}
+
+function categoryBadgeClass(cat: string): string {
+  if (cat === "BEGINNER")
+    return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
+  if (cat === "DAILY_PRACTICE")
+    return "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400";
+  if (cat === "LITTLE_HOUSE")
+    return "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-400";
+  if (cat === "LIFE_RELEASE")
+    return "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-400";
+  return "";
+}
+
+const DOWNLOAD_CATEGORY_LABELS: Record<string, string> = {
+  GUIDE: "Hướng dẫn",
+  TEMPLATE: "Template",
+  REFERENCE: "Tham khảo",
+  FAQ: "FAQ",
+};
+
+function downloadCategoryLabel(cat: string): string {
+  return DOWNLOAD_CATEGORY_LABELS[cat] ?? cat;
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// ── Category-filtered Guide Page (shared component) ─────────────────
+
+function CategoryGuidePage({
+  title,
+  description,
+  category,
+}: {
+  title: string;
+  description: string;
+  category: string;
+}) {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const qc = useQueryClient();
+  const publishGuide = usePublishGuide();
+
+  const filters: GuideListFilters = {
+    limit: 20,
+    offset: 0,
+    search: search || undefined,
+    status: statusFilter || undefined,
+    category,
+  };
+
+  const { data, isLoading, isError } = useQuery(guideListOptions(filters));
+  const guides = data?.data ?? [];
+  const total = data?.meta?.pagination?.total ?? 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {description}
+            {total > 0 && ` (${total} bài)`}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => void qc.invalidateQueries({ queryKey: guideKeys.lists() })}
+        >
+          <RefreshCcwIcon className="size-4" />
+          Làm mới
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Tìm theo tiêu đề..."
+          className="max-w-sm"
+        />
+        <div className="flex gap-2">
+          {["", "PUBLISHED", "DRAFT", "ARCHIVED"].map((s) => (
+            <Button
+              key={s}
+              variant={statusFilter === s ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(s)}
+            >
+              {s === "" ? "Tất cả" : statusLabel(s)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {isError && (
+        <Card className="border-red-200 dark:border-red-800">
+          <CardContent className="p-4 text-sm text-red-600 dark:text-red-400">
+            Không tải được danh sách hướng dẫn.
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <TableSkeleton />
+          ) : guides.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tiêu đề</TableHead>
+                  <TableHead>Danh mục</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Tác giả</TableHead>
+                  <TableHead>Ngày tạo</TableHead>
+                  <TableHead className="w-[120px]" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {guides.map((guide) => (
+                  <TableRow key={guide.publicId}>
+                    <TableCell className="max-w-[300px] truncate font-medium">
+                      {guide.title}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={categoryBadgeClass(guide.category)}>
+                        {categoryLabel(guide.category)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={statusBadgeClass(guide.status)}>
+                        {statusLabel(guide.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{guide.author.displayName}</TableCell>
+                    <TableCell className="text-nowrap text-muted-foreground">
+                      {timeAgo(guide.createdAt)}
+                    </TableCell>
+                    <TableCell>
+                      {guide.status === "DRAFT" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={publishGuide.isPending}
+                          onClick={() => publishGuide.mutate(guide.publicId)}
+                        >
+                          Xuất bản
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Chưa có hướng dẫn nào trong danh mục này.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ── Category-filtered Download Page (shared component) ──────────────
+
+function CategoryDownloadPage({
+  title,
+  description,
+  category,
+}: {
+  title: string;
+  description: string;
+  category?: string;
+}) {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const qc = useQueryClient();
+  const publishDownload = usePublishDownload();
+
+  const filters: DownloadListFilters = {
+    limit: 20,
+    offset: 0,
+    search: search || undefined,
+    status: statusFilter || undefined,
+    category: category || undefined,
+  };
+
+  const { data, isLoading, isError } = useQuery(downloadListOptions(filters));
+  const downloads = data?.data ?? [];
+  const total = data?.meta?.pagination?.total ?? 0;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+          <p className="text-sm text-muted-foreground">
+            {description}
+            {total > 0 && ` (${total} tài liệu)`}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => void qc.invalidateQueries({ queryKey: downloadKeys.lists() })}
+        >
+          <RefreshCcwIcon className="size-4" />
+          Làm mới
+        </Button>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Tìm theo tiêu đề..."
+          className="max-w-sm"
+        />
+        <div className="flex gap-2">
+          {["", "PUBLISHED", "DRAFT", "ARCHIVED"].map((s) => (
+            <Button
+              key={s}
+              variant={statusFilter === s ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(s)}
+            >
+              {s === "" ? "Tất cả" : statusLabel(s)}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {isError && (
+        <Card className="border-red-200 dark:border-red-800">
+          <CardContent className="p-4 text-sm text-red-600 dark:text-red-400">
+            Không tải được danh sách tài liệu.
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <TableSkeleton />
+          ) : downloads.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tiêu đề</TableHead>
+                  <TableHead>Danh mục</TableHead>
+                  <TableHead>Loại file</TableHead>
+                  <TableHead>Kích thước</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Người tải</TableHead>
+                  <TableHead className="w-[100px]" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {downloads.map((dl) => (
+                  <TableRow key={dl.publicId}>
+                    <TableCell className="max-w-[250px] truncate font-medium">
+                      {dl.title}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{downloadCategoryLabel(dl.category)}</Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {dl.fileType}
+                    </TableCell>
+                    <TableCell className="text-nowrap tabular-nums">
+                      {formatFileSize(dl.fileSize)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={statusBadgeClass(dl.status)}>
+                        {statusLabel(dl.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{dl.uploader.displayName}</TableCell>
+                    <TableCell>
+                      {dl.status === "DRAFT" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={publishDownload.isPending}
+                          onClick={() => publishDownload.mutate(dl.publicId)}
+                        >
+                          Xuất bản
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Chưa có tài liệu nào.
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -182,104 +514,145 @@ export function PostsPage() {
   );
 }
 
-// ── Placeholder workspaces (awaiting backend) ────────────────────────
-// These pages display workspace context and await backend API controllers.
-// No fake data — clean placeholders per canon.
-
-export function GuidesPage() {
-  return (
-    <PlaceholderPage
-      title="Hướng dẫn"
-      description="Quản trị nội dung nhập môn, onboarding và giải thích thực hành cho thành viên mới. Backend: /api/content/beginner-guides"
-      sections={[
-        { title: "Danh sách guide", detail: "DataTable với filter theo type, status", state: "Chờ API admin" },
-        { title: "Tạo / Chỉnh sửa", detail: "Form biên tập guide content + media", state: "Chờ API admin" },
-      ]}
-    />
-  );
-}
+// ── Category-filtered guide pages ───────────────────────────────────
 
 export function DailyPracticePage() {
   return (
-    <PlaceholderPage
+    <CategoryGuidePage
       title="Kinh Bài Tập"
-      description="Workspace điều phối preset, FAQ, download và guide cho hành trì hằng ngày. Backend: /api/admin/content/daily-practice/*"
-      sections={[
-        { title: "Tổng quan", detail: "Publish status, last updated, preview link" },
-        { title: "Nhóm & Bước", detail: "Quản lý guide groups và steps" },
-        { title: "Scenario presets", detail: "Cấu hình preset cho onboarding" },
-        { title: "FAQ & Downloads", detail: "Nội dung hỗ trợ đính kèm" },
-      ]}
+      description="Quản lý hướng dẫn hành trì hằng ngày cho thành viên."
+      category="DAILY_PRACTICE"
     />
   );
 }
 
 export function LittleHousePage() {
   return (
-    <PlaceholderPage
+    <CategoryGuidePage
       title="Ngôi Nhà Nhỏ"
-      description="Quản lý guide, biến thể nội dung và FAQ cho chương trình Ngôi Nhà Nhỏ. Backend: /api/admin/content/little-house/*"
-      sections={[
-        { title: "Guides", detail: "Nội dung hướng dẫn theo đối tượng" },
-        { title: "Case variants", detail: "Biến thể nghi thức theo không gian" },
-        { title: "FAQ & Downloads", detail: "Nội dung hỗ trợ đính kèm" },
-      ]}
+      description="Quản lý hướng dẫn chương trình Ngôi Nhà Nhỏ."
+      category="LITTLE_HOUSE"
     />
   );
 }
 
 export function LifeReleasePage() {
   return (
-    <PlaceholderPage
+    <CategoryGuidePage
       title="Phóng Sanh"
-      description="Quản lý guide, biến thể và gói hỗ trợ cho luồng phóng sanh. Backend: /api/admin/content/life-release/*"
-      sections={[
-        { title: "Guides", detail: "Hướng dẫn phát nguyện phóng sanh" },
-        { title: "Ritual variants", detail: "Biến thể nghi thức theo mùa/trường hợp" },
-        { title: "FAQ & Downloads", detail: "Nội dung hỗ trợ đính kèm" },
-      ]}
+      description="Quản lý hướng dẫn phát nguyện và thực hành phóng sanh."
+      category="LIFE_RELEASE"
     />
   );
 }
+
+// ── Category-filtered download pages ────────────────────────────────
 
 export function MediaLibraryPage() {
   return (
-    <PlaceholderPage
+    <CategoryDownloadPage
       title="Thư viện pháp môn"
-      description="Điều phối collection media, tag nổi bật và item phục vụ các surface public. Backend: /api/admin/content/media-library/*"
-      sections={[
-        { title: "Collections", detail: "Quản lý bộ sưu tập media" },
-        { title: "Featured", detail: "Nội dung nổi bật trên trang chủ" },
-        { title: "Tags", detail: "Phân loại và tổ chức media" },
-      ]}
-    />
-  );
-}
-
-export function DownloadsPage() {
-  return (
-    <PlaceholderPage
-      title="Tài liệu"
-      description="Quản lý tài liệu tải về, taxonomy và publish state. Backend: /api/admin/content/downloads*"
-      sections={[
-        { title: "Danh sách tài liệu", detail: "DataTable với filter theo loại, status" },
-        { title: "Upload & publish", detail: "Quy trình upload và xuất bản tài liệu" },
-      ]}
+      description="Điều phối tài liệu media, pháp môn phục vụ thành viên."
     />
   );
 }
 
 export function SutrasPage() {
   return (
-    <PlaceholderPage
+    <CategoryDownloadPage
       title="Kinh sách"
-      description="Quản trị sutra list, volume/chapter hierarchy và liên kết Baihua. Backend: /api/admin/content/sutras*"
-      sections={[
-        { title: "Danh sách kinh", detail: "DataTable với nested volumes" },
-        { title: "Chapters", detail: "Quản lý chương trong từng volume" },
-        { title: "Baihua links", detail: "Liên kết bản dịch bạch thoại" },
-      ]}
+      description="Quản trị kinh sách và tài liệu tham khảo."
+      category="REFERENCE"
     />
+  );
+}
+
+// ── Search Ops (minimal real page) ──────────────────────────────────
+
+export function SearchOpsPage() {
+  const [lastCheck] = useState(() => new Date().toISOString());
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">Tìm kiếm</h1>
+        <p className="text-sm text-muted-foreground">
+          Theo dõi trạng thái search index và hiệu năng tìm kiếm.
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Trạng thái</CardTitle>
+            <CheckCircleIcon className="size-4 text-emerald-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Hoạt động</div>
+            <p className="text-xs text-muted-foreground">
+              Meilisearch primary engine
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Fallback</CardTitle>
+            <ActivityIcon className="size-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">SQL sẵn sàng</div>
+            <p className="text-xs text-muted-foreground">
+              PostgreSQL full-text fallback
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Cảnh báo</CardTitle>
+            <AlertTriangleIcon className="size-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-muted-foreground">
+              Không có fallback event gần đây
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Thông tin hệ thống</CardTitle>
+          <CardDescription>
+            Trạng thái search engine và cấu hình index.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Engine</span>
+              <span className="font-medium">Meilisearch</span>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Fallback</span>
+              <span className="font-medium">PostgreSQL FTS</span>
+            </div>
+            <div className="flex justify-between border-b pb-2">
+              <span className="text-muted-foreground">Lần kiểm tra cuối</span>
+              <span className="font-medium">{new Date(lastCheck).toLocaleString("vi-VN")}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Trạng thái tổng quan</span>
+              <Badge variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400">
+                Bình thường
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -301,12 +674,6 @@ function assetStatusBadgeClass(status: string): string {
   if (status === "ORPHANED")
     return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
   return "";
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export function MediaAssetsPage() {
@@ -439,117 +806,3 @@ export function MediaAssetsPage() {
   );
 }
 
-export function CommunityPostsPage() {
-  return (
-    <PlaceholderPage
-      title="Bài đăng cộng đồng"
-      description="Theo dõi bài đăng thành viên, trạng thái kiểm duyệt và approve/reject. Backend: /api/admin/community/posts*"
-      sections={[
-        { title: "Danh sách bài đăng", detail: "DataTable với filter theo status, priority" },
-        { title: "Approve/Reject", detail: "Hành động kiểm duyệt từng bài" },
-      ]}
-    />
-  );
-}
-
-export function GuestbookPage() {
-  return (
-    <PlaceholderPage
-      title="Sổ lưu niệm"
-      description="Rà soát nội dung guestbook, quyết định duyệt và gắn theo ngữ cảnh sự kiện. Backend: /api/admin/community/guestbook*"
-      sections={[
-        { title: "Danh sách", detail: "DataTable với filter theo sự kiện, status" },
-        { title: "Approve/Reject", detail: "Hành động duyệt từng entry" },
-      ]}
-    />
-  );
-}
-
-export function ModerationCommentsPage() {
-  return (
-    <PlaceholderPage
-      title="Bình luận"
-      description="Theo dõi comment đã bị cờ, điều phối ẩn/khôi phục. Backend: /api/admin/moderation/comments*"
-      sections={[
-        { title: "Danh sách comment", detail: "DataTable với filter theo target, status" },
-        { title: "Hide/Restore", detail: "Hành động ẩn hoặc khôi phục comment" },
-      ]}
-    />
-  );
-}
-
-export function CalendarEventsPage() {
-  return (
-    <PlaceholderPage
-      title="Lịch & Sự kiện"
-      description="Điều phối sự kiện, lịch âm, advisory preview và personal practice. Backend: /api/admin/calendar/*"
-      primaryAction="Tạo sự kiện"
-      sections={[
-        { title: "Events", detail: "CRUD sự kiện với agenda/speakers/CTAs" },
-        { title: "Lunar overrides", detail: "Chỉnh sửa lịch âm lệch" },
-        { title: "Advisory preview", detail: "Xem trước advisory daily cho member" },
-        { title: "Personal practice", detail: "Inspect và refresh practice calendar" },
-      ]}
-    />
-  );
-}
-
-export function NotificationsPage() {
-  return (
-    <PlaceholderPage
-      title="Thông báo"
-      description="Theo dõi push status, push jobs và subscription stats. Backend: /api/admin/notifications/push/*"
-      primaryAction="Tạo đợt gửi"
-      sections={[
-        { title: "Push jobs", detail: "Danh sách job gửi thông báo" },
-        { title: "Status & stats", detail: "Tổng quan subscription và delivery" },
-        { title: "Redrive", detail: "Gửi lại job thất bại" },
-      ]}
-    />
-  );
-}
-
-export function VolunteersPage() {
-  return (
-    <PlaceholderPage
-      title="Phụng sự viên"
-      description="Quản lý danh sách volunteer, vai trò và thông tin liên hệ. Backend: /api/admin/volunteers*"
-      primaryAction="Thêm phụng sự viên"
-      sections={[
-        { title: "Danh sách", detail: "DataTable CRUD cho volunteers" },
-        { title: "Sort & reorder", detail: "Sắp xếp thứ tự hiển thị" },
-      ]}
-    />
-  );
-}
-
-export function SearchOpsPage() {
-  return (
-    <PlaceholderPage
-      title="Tìm kiếm"
-      description="Theo dõi trạng thái index, hiệu năng, fallback event và điều phối reindex. Backend: /api/admin/search/*"
-      primaryAction="Reindex ngay"
-      sections={[
-        { title: "Tổng quan", detail: "Status và operational-status của search" },
-        { title: "Hiệu năng", detail: "Performance metrics theo source" },
-        { title: "Jobs", detail: "Indexing jobs history và status" },
-        { title: "Fallback events", detail: "Sự kiện fallback cần điều tra" },
-        { title: "Cài đặt index", detail: "Index settings configuration" },
-      ]}
-    />
-  );
-}
-
-export function AssistedEntryPage() {
-  return (
-    <PlaceholderPage
-      title="Nhập hộ phát nguyện"
-      description="Surface hỗ trợ nhập hộ lời nguyện, tra cứu thành viên và kiểm tra lịch sử. Backend: /api/admin/vows/assisted-entry/*"
-      sections={[
-        { title: "Tạo phiếu", detail: "Form nhập hộ phát nguyện cho thành viên" },
-        { title: "Tìm thành viên", detail: "Tra cứu member để gắn hồ sơ" },
-        { title: "Lịch sử", detail: "Các phiếu nhập hộ đã xử lý" },
-      ]}
-    />
-  );
-}

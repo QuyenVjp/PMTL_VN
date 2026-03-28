@@ -1,0 +1,505 @@
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { RefreshCcwIcon, SearchIcon } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  vowHistoryOptions,
+  memberSearchOptions,
+  assistedEntryKeys,
+  type VowHistoryFilters,
+  type MemberSearchResult,
+} from "./queries.js";
+import { useCreateVow, useCreateLifeReleaseJournal } from "./mutations.js";
+
+// ── Helpers ─────────────────────────────────────────────────────────
+
+const VOW_TYPE_LABELS: Record<string, string> = {
+  LIFE_RELEASE: "Phóng sanh",
+  CHANTING: "Trì tụng",
+  SUTRA_READING: "Đọc kinh",
+  CUSTOM: "Tuỳ chỉnh",
+};
+
+function vowTypeLabel(t: string): string {
+  return VOW_TYPE_LABELS[t] ?? t;
+}
+
+function statusLabel(s: string): string {
+  if (s === "ACTIVE") return "Đang thực hiện";
+  if (s === "COMPLETED") return "Hoàn thành";
+  if (s === "CANCELLED") return "Đã huỷ";
+  return s;
+}
+
+function statusBadgeClass(s: string): string {
+  if (s === "ACTIVE")
+    return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
+  if (s === "COMPLETED")
+    return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
+  if (s === "CANCELLED")
+    return "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400";
+  return "";
+}
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "vừa xong";
+  if (mins < 60) return `${mins} phút trước`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} giờ trước`;
+  return `${Math.floor(hrs / 24)} ngày trước`;
+}
+
+function TableSkeleton({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-10 w-full" />
+      ))}
+    </div>
+  );
+}
+
+// ── Member Search Input ─────────────────────────────────────────────
+
+function MemberSearchInput({
+  selectedMember,
+  onSelect,
+}: {
+  selectedMember: MemberSearchResult | null;
+  onSelect: (m: MemberSearchResult | null) => void;
+}) {
+  const [searchText, setSearchText] = useState("");
+  const { data: results, isLoading } = useQuery(memberSearchOptions(searchText));
+
+  if (selectedMember) {
+    return (
+      <div className="flex items-center gap-2 rounded-md border p-2">
+        <span className="text-sm font-medium">{selectedMember.displayName}</span>
+        <span className="text-xs text-muted-foreground">{selectedMember.email}</span>
+        <Button variant="ghost" size="sm" onClick={() => onSelect(null)} className="ml-auto h-6">
+          Đổi
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Tìm thành viên (tên hoặc email)..."
+          className="pl-9"
+        />
+      </div>
+      {searchText.length >= 2 && (
+        <div className="max-h-40 overflow-auto rounded-md border">
+          {isLoading ? (
+            <div className="p-3 text-sm text-muted-foreground">Đang tìm...</div>
+          ) : results && results.length > 0 ? (
+            results.map((m) => (
+              <button
+                key={m.publicId}
+                type="button"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted"
+                onClick={() => {
+                  onSelect(m);
+                  setSearchText("");
+                }}
+              >
+                <span className="font-medium">{m.displayName}</span>
+                <span className="text-xs text-muted-foreground">{m.email}</span>
+              </button>
+            ))
+          ) : (
+            <div className="p-3 text-sm text-muted-foreground">Không tìm thấy.</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── History Tab ─────────────────────────────────────────────────────
+
+function HistoryTab() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const qc = useQueryClient();
+
+  const filters: VowHistoryFilters = {
+    limit: 20,
+    offset: 0,
+    search: search || undefined,
+    status: statusFilter || undefined,
+  };
+
+  const { data, isLoading, isError } = useQuery(vowHistoryOptions(filters));
+  const items = data?.data ?? [];
+  const total = data?.meta?.pagination?.total ?? 0;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-3">
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Tìm theo thành viên..."
+          className="max-w-sm"
+        />
+        <div className="flex gap-2">
+          {["", "ACTIVE", "COMPLETED", "CANCELLED"].map((s) => (
+            <Button
+              key={s}
+              variant={statusFilter === s ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(s)}
+            >
+              {s === "" ? "Tất cả" : statusLabel(s)}
+            </Button>
+          ))}
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => void qc.invalidateQueries({ queryKey: assistedEntryKeys.lists() })}
+        >
+          <RefreshCcwIcon className="size-4" />
+        </Button>
+      </div>
+
+      {total > 0 && (
+        <p className="text-sm text-muted-foreground">{total} phiếu</p>
+      )}
+
+      {isError && (
+        <Card className="border-red-200 dark:border-red-800">
+          <CardContent className="p-4 text-sm text-red-600 dark:text-red-400">
+            Không tải được lịch sử nhập hộ.
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardContent className="pt-6">
+          {isLoading ? (
+            <TableSkeleton />
+          ) : items.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Thành viên</TableHead>
+                  <TableHead>Loại nguyện</TableHead>
+                  <TableHead>Mô tả</TableHead>
+                  <TableHead>Mục tiêu</TableHead>
+                  <TableHead>Tiến độ</TableHead>
+                  <TableHead>Trạng thái</TableHead>
+                  <TableHead>Ngày tạo</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.publicId}>
+                    <TableCell className="font-medium">
+                      {item.user.displayName}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{vowTypeLabel(item.vowType)}</Badge>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {item.description}
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {item.targetCount ?? "—"}
+                    </TableCell>
+                    <TableCell className="tabular-nums">
+                      {item.currentCount}
+                      {item.targetCount ? ` / ${item.targetCount}` : ""}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={statusBadgeClass(item.status)}>
+                        {statusLabel(item.status)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-nowrap text-muted-foreground">
+                      {timeAgo(item.createdAt)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              Chưa có phiếu nhập hộ nào.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ── Create Vow Form ─────────────────────────────────────────────────
+
+function CreateVowForm() {
+  const [member, setMember] = useState<MemberSearchResult | null>(null);
+  const [vowType, setVowType] = useState("LIFE_RELEASE");
+  const [description, setDescription] = useState("");
+  const [targetCount, setTargetCount] = useState("");
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
+  const createVow = useCreateVow();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!member || !description.trim()) return;
+    createVow.mutate(
+      {
+        memberPublicId: member.publicId,
+        vowType,
+        description: description.trim(),
+        targetCount: targetCount ? Number(targetCount) : undefined,
+        startDate,
+      },
+      {
+        onSuccess: () => {
+          setMember(null);
+          setDescription("");
+          setTargetCount("");
+          setStartDate(new Date().toISOString().slice(0, 10));
+        },
+      },
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Phát nguyện</CardTitle>
+        <CardDescription>Tạo phiếu phát nguyện hộ cho thành viên.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Thành viên</label>
+            <MemberSearchInput selectedMember={member} onSelect={setMember} />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Loại nguyện</label>
+            <Select value={vowType} onValueChange={setVowType}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="LIFE_RELEASE">Phóng sanh</SelectItem>
+                <SelectItem value="CHANTING">Trì tụng</SelectItem>
+                <SelectItem value="SUTRA_READING">Đọc kinh</SelectItem>
+                <SelectItem value="CUSTOM">Tuỳ chỉnh</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Mô tả</label>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Nội dung lời nguyện..."
+              rows={3}
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Mục tiêu (số lần)</label>
+              <Input
+                type="number"
+                value={targetCount}
+                onChange={(e) => setTargetCount(e.target.value)}
+                placeholder="Không bắt buộc"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ngày bắt đầu</label>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <Button type="submit" disabled={createVow.isPending || !member || !description.trim()}>
+            {createVow.isPending ? "Đang tạo..." : "Tạo phiếu phát nguyện"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Create Life Release Form ────────────────────────────────────────
+
+function CreateLifeReleaseForm() {
+  const [member, setMember] = useState<MemberSearchResult | null>(null);
+  const [animalType, setAnimalType] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [location, setLocation] = useState("");
+  const [note, setNote] = useState("");
+  const [journalDate, setJournalDate] = useState(new Date().toISOString().slice(0, 10));
+  const createJournal = useCreateLifeReleaseJournal();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!member || !animalType.trim() || !quantity || !location.trim()) return;
+    createJournal.mutate(
+      {
+        memberPublicId: member.publicId,
+        animalType: animalType.trim(),
+        quantity: Number(quantity),
+        location: location.trim(),
+        note: note.trim() || undefined,
+        journalDate,
+      },
+      {
+        onSuccess: () => {
+          setMember(null);
+          setAnimalType("");
+          setQuantity("");
+          setLocation("");
+          setNote("");
+          setJournalDate(new Date().toISOString().slice(0, 10));
+        },
+      },
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Phóng sanh</CardTitle>
+        <CardDescription>Tạo nhật ký phóng sanh hộ cho thành viên.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Thành viên</label>
+            <MemberSearchInput selectedMember={member} onSelect={setMember} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Loại vật</label>
+              <Input
+                value={animalType}
+                onChange={(e) => setAnimalType(e.target.value)}
+                placeholder="Cá, chim, rùa..."
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Số lượng</label>
+              <Input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Địa điểm</label>
+            <Input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Sông, hồ, biển..."
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Ghi chú</label>
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Ghi chú thêm..."
+              rows={2}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Ngày phóng sanh</label>
+            <Input
+              type="date"
+              value={journalDate}
+              onChange={(e) => setJournalDate(e.target.value)}
+              required
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={createJournal.isPending || !member || !animalType.trim() || !quantity || !location.trim()}
+          >
+            {createJournal.isPending ? "Đang tạo..." : "Tạo phiếu phóng sanh"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Assisted Entry Page ─────────────────────────────────────────────
+
+export function AssistedEntryPage() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">Nhập hộ phát nguyện</h1>
+        <p className="text-sm text-muted-foreground">
+          Hỗ trợ nhập hộ lời nguyện, tra cứu thành viên và kiểm tra lịch sử.
+        </p>
+      </div>
+
+      <Tabs defaultValue="history">
+        <TabsList>
+          <TabsTrigger value="history">Lịch sử</TabsTrigger>
+          <TabsTrigger value="create">Tạo phiếu</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="history" className="mt-4">
+          <HistoryTab />
+        </TabsContent>
+
+        <TabsContent value="create" className="mt-4">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <CreateVowForm />
+            <CreateLifeReleaseForm />
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

@@ -77,7 +77,7 @@ export class NotificationService {
       },
     });
 
-    await this.audit.append(auditCtx, "CREATE", "push_job", job.publicId, {
+    await this.audit.append(auditCtx, "admin.push_job.create", "push_job", job.publicId, {
       title: input.title,
       targetAudience: input.targetAudience,
     });
@@ -109,7 +109,7 @@ export class NotificationService {
       },
     });
 
-    await this.audit.append(auditCtx, "UPDATE", "push_job", publicId, {
+    await this.audit.append(auditCtx, "admin.push_job.redrive", "push_job", publicId, {
       action: "redrive",
     });
 

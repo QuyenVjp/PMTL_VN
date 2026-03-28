@@ -1,9 +1,0 @@
-{
-  "files": [
-    "/apps/api/src/platform/audit/audit.schemas.ts"
-  ],
-  "verify": [
-    "just verify-cms"
-  ],
-  "updatedAt": "2026-03-28T10:46:03.332Z"
-}

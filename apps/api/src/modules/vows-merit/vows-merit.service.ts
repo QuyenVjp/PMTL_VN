@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import { VowType } from "../../generated/prisma/client.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import type {
@@ -77,7 +78,7 @@ export class VowsMeritService {
       data: {
         publicId,
         userId: member.id,
-        vowType: input.vowType as any,
+        vowType: input.vowType as VowType,
         description: input.description,
         targetCount: input.targetCount,
         currentCount: 0,

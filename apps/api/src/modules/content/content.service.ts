@@ -11,7 +11,7 @@ import type {
   GuideQuery, CreateGuideInput, UpdateGuideInput,
   DownloadQuery, CreateDownloadInput, UpdateDownloadInput,
 } from "./content.schemas.js";
-import type { UserRole, ContentStatus, Prisma } from "../../generated/prisma/client.js";
+import { type UserRole, type ContentStatus, type Prisma, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
 @Injectable()
 export class ContentService {
@@ -218,7 +218,7 @@ export class ContentService {
   async listGuides(query: GuideQuery) {
     const where: Prisma.BeginnerGuideWhereInput = {};
     if (query.status) where.status = query.status as ContentStatus;
-    if (query.category) where.category = query.category as any;
+    if (query.category) where.category = query.category as GuideCategory;
     if (query.search) {
       where.OR = [
         { title: { contains: query.search, mode: "insensitive" } },
@@ -266,7 +266,7 @@ export class ContentService {
         slug: input.slug,
         content: input.content as Prisma.InputJsonValue,
         excerpt: input.excerpt,
-        category: input.category as any,
+        category: input.category as GuideCategory,
         status: "DRAFT",
         authorId: userId,
       },
@@ -293,7 +293,7 @@ export class ContentService {
         ...(input.slug !== undefined && { slug: input.slug }),
         ...(input.content !== undefined && { content: input.content as Prisma.InputJsonValue }),
         ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
-        ...(input.category !== undefined && { category: input.category as any }),
+        ...(input.category !== undefined && { category: input.category as GuideCategory }),
       },
       include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });
@@ -322,7 +322,7 @@ export class ContentService {
   async adminListDownloads(query: DownloadQuery) {
     const where: Prisma.DownloadWhereInput = {};
     if (query.status) where.status = query.status as ContentStatus;
-    if (query.category) where.category = query.category as any;
+    if (query.category) where.category = query.category as DownloadCategory;
     if (query.search) {
       where.OR = [
         { title: { contains: query.search, mode: "insensitive" } },
@@ -364,7 +364,7 @@ export class ContentService {
         publicId,
         title: input.title,
         description: input.description,
-        category: input.category as any,
+        category: input.category as DownloadCategory,
         fileUrl: input.fileUrl,
         fileType: input.fileType,
         fileSize: input.fileSize,
@@ -387,7 +387,7 @@ export class ContentService {
       data: {
         ...(input.title !== undefined && { title: input.title }),
         ...(input.description !== undefined && { description: input.description }),
-        ...(input.category !== undefined && { category: input.category as any }),
+        ...(input.category !== undefined && { category: input.category as DownloadCategory }),
         ...(input.fileUrl !== undefined && { fileUrl: input.fileUrl }),
         ...(input.fileType !== undefined && { fileType: input.fileType }),
         ...(input.fileSize !== undefined && { fileSize: input.fileSize }),

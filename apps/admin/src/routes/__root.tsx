@@ -82,16 +82,16 @@ const SessionsPage = lazy(() =>
   import("@/features/sessions").then((mod) => ({ default: mod.SessionsPage })),
 );
 const CalendarEventsPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.CalendarEventsPage })),
+  import("@/features/calendar").then((mod) => ({ default: mod.CalendarEventsPage })),
 );
 const SearchOpsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.SearchOpsPage })),
 );
 const NotificationsPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.NotificationsPage })),
+  import("@/features/notifications").then((mod) => ({ default: mod.NotificationsPage })),
 );
 const VolunteersPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.VolunteersPage })),
+  import("@/features/volunteers").then((mod) => ({ default: mod.VolunteersPage })),
 );
 const AssistedEntryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.AssistedEntryPage })),

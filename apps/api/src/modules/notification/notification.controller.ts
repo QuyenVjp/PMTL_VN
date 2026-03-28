@@ -43,7 +43,7 @@ export class AdminNotificationController {
   ) {
     return this.notificationService.adminCreatePushJob(input, user.id, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 
@@ -56,7 +56,7 @@ export class AdminNotificationController {
   ) {
     return this.notificationService.adminRedrivePushJob(publicId, {
       actorId: user.id,
-      actorType: "USER",
+      actorType: "user",
     });
   }
 
