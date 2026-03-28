@@ -92,6 +92,61 @@ export type ChantEnvironmentRule = Prisma.ChantEnvironmentRuleModel
  */
 export type WebhookDelivery = Prisma.WebhookDeliveryModel
 /**
+ * Model CommunityPost
+ * 
+ */
+export type CommunityPost = Prisma.CommunityPostModel
+/**
+ * Model GuestbookEntry
+ * 
+ */
+export type GuestbookEntry = Prisma.GuestbookEntryModel
+/**
+ * Model CalendarEvent
+ * 
+ */
+export type CalendarEvent = Prisma.CalendarEventModel
+/**
+ * Model Volunteer
+ * 
+ */
+export type Volunteer = Prisma.VolunteerModel
+/**
+ * Model ContactInfo
+ * 
+ */
+export type ContactInfo = Prisma.ContactInfoModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model PushJob
+ * 
+ */
+export type PushJob = Prisma.PushJobModel
+/**
+ * Model BeginnerGuide
+ * 
+ */
+export type BeginnerGuide = Prisma.BeginnerGuideModel
+/**
+ * Model Download
+ * 
+ */
+export type Download = Prisma.DownloadModel
+/**
+ * Model Vow
+ * 
+ */
+export type Vow = Prisma.VowModel
+/**
+ * Model LifeReleaseJournal
+ * 
+ */
+export type LifeReleaseJournal = Prisma.LifeReleaseJournalModel
+/**
  * Model ModerationReport
  * 
  */

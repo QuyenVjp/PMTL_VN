@@ -32,6 +32,43 @@ export const auditActionSchema = z.enum([
   "admin.feature_flag.update",
   "admin.user.role_change",
   "admin.user.status_change",
+
+  // Calendar admin actions
+  "admin.calendar_event.create",
+  "admin.calendar_event.update",
+  "admin.calendar_event.delete",
+  "admin.calendar_event.publish",
+
+  // Community actions
+  "admin.community_post.update",
+  "admin.guestbook.create",
+  "admin.guestbook.update",
+
+  // Notification actions
+  "admin.push_job.create",
+  "admin.push_job.redrive",
+
+  // Volunteer/contact actions
+  "admin.volunteer.create",
+  "admin.volunteer.update",
+  "admin.volunteer.delete",
+  "admin.contact_info.update",
+
+  // Download actions
+  "admin.download.create",
+  "admin.download.update",
+  "admin.download.delete",
+  "admin.download.publish",
+
+  // Guide actions
+  "admin.guide.create",
+  "admin.guide.update",
+  "admin.guide.publish",
+
+  // Vow / merit actions
+  "admin.vow.create",
+  "admin.vow.update",
+  "admin.life_release.create",
 ]);
 
 export const auditActorTypeSchema = z.enum([

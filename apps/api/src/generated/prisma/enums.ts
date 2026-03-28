@@ -69,6 +69,84 @@ export const RuleProductizationMode = {
 export type RuleProductizationMode = (typeof RuleProductizationMode)[keyof typeof RuleProductizationMode]
 
 
+export const CommunityPostStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  HIDDEN: 'HIDDEN'
+} as const
+
+export type CommunityPostStatus = (typeof CommunityPostStatus)[keyof typeof CommunityPostStatus]
+
+
+export const GuestbookEntryStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type GuestbookEntryStatus = (typeof GuestbookEntryStatus)[keyof typeof GuestbookEntryStatus]
+
+
+export const EventStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
+
+export const PushJobStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type PushJobStatus = (typeof PushJobStatus)[keyof typeof PushJobStatus]
+
+
+export const VowStatus = {
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  VOIDED: 'VOIDED'
+} as const
+
+export type VowStatus = (typeof VowStatus)[keyof typeof VowStatus]
+
+
+export const VowType = {
+  LIFE_RELEASE: 'LIFE_RELEASE',
+  CHANTING: 'CHANTING',
+  SUTRA_READING: 'SUTRA_READING',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type VowType = (typeof VowType)[keyof typeof VowType]
+
+
+export const GuideCategory = {
+  BEGINNER: 'BEGINNER',
+  DAILY_PRACTICE: 'DAILY_PRACTICE',
+  LITTLE_HOUSE: 'LITTLE_HOUSE',
+  LIFE_RELEASE: 'LIFE_RELEASE',
+  GENERAL: 'GENERAL'
+} as const
+
+export type GuideCategory = (typeof GuideCategory)[keyof typeof GuideCategory]
+
+
+export const DownloadCategory = {
+  GUIDE: 'GUIDE',
+  TEMPLATE: 'TEMPLATE',
+  REFERENCE: 'REFERENCE',
+  FAQ: 'FAQ'
+} as const
+
+export type DownloadCategory = (typeof DownloadCategory)[keyof typeof DownloadCategory]
+
+
 export const ReportStatus = {
   PENDING: 'PENDING',
   RESOLVED_HIDE: 'RESOLVED_HIDE',

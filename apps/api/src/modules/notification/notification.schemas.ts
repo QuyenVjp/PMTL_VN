@@ -1,15 +1,20 @@
 import { z } from "zod";
 
-export const notificationQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  pageSize: z.coerce.number().int().min(1).max(50).default(20),
-  unreadOnly: z.coerce.boolean().default(false),
+export const adminPushJobQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  status: z.string().optional(),
 });
+export type AdminPushJobQuery = z.infer<typeof adminPushJobQuerySchema>;
 
-export type NotificationQuery = z.infer<typeof notificationQuerySchema>;
-
-export const markReadSchema = z.object({
-  notificationIds: z.array(z.string().min(1)).min(1).max(100),
+export const adminCreatePushJobSchema = z.object({
+  title: z.string().min(3).max(200),
+  body: z.string().min(5).max(2000),
+  targetAudience: z.string().default("all_members"),
 });
+export type AdminCreatePushJobInput = z.infer<typeof adminCreatePushJobSchema>;
 
-export type MarkReadInput = z.infer<typeof markReadSchema>;
+export const adminRedrivePushJobSchema = z.object({
+  publicId: z.string().min(1),
+});
+export type AdminRedrivePushJobInput = z.infer<typeof adminRedrivePushJobSchema>;

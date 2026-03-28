@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -14,6 +15,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import type { Request } from "express";
 import { Public } from "../../common/decorators/public.decorator.js";
+import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
@@ -25,6 +27,18 @@ import {
   type CreatePostInput,
   type UpdatePostInput,
   type ListPostsQuery,
+  guideQuerySchema,
+  createGuideSchema,
+  updateGuideSchema,
+  type GuideQuery,
+  type CreateGuideInput,
+  type UpdateGuideInput,
+  downloadQuerySchema,
+  createDownloadSchema,
+  updateDownloadSchema,
+  type DownloadQuery,
+  type CreateDownloadInput,
+  type UpdateDownloadInput,
 } from "./content.schemas.js";
 
 @ApiTags("content")
@@ -110,6 +124,179 @@ export class ContentController {
     @Req() req: Request,
   ) {
     return this.contentService.publishPost(publicId, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+}
+
+// ======================== Guide Controller ========================
+
+@ApiTags("beginner-guides")
+@Controller("content/beginner-guides")
+export class GuideController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @Public()
+  @ApiOperation({ summary: "Danh sách bài hướng dẫn" })
+  @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn" })
+  async listGuides(@Query() query: GuideQuery) {
+    const validated = guideQuerySchema.parse(query);
+    // Public: only published
+    return this.contentService.listGuides({ ...validated, status: validated.status || "PUBLISHED" });
+  }
+
+  @Get(":slugOrId")
+  @Public()
+  @ApiOperation({ summary: "Chi tiết bài hướng dẫn" })
+  @ApiParam({ name: "slugOrId", description: "Public ID hoặc slug" })
+  @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn" })
+  async getGuide(@Param("slugOrId") slugOrId: string) {
+    return this.contentService.getGuide(slugOrId);
+  }
+
+  @Post()
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidate(createGuideSchema))
+  @ApiOperation({ summary: "Tạo bài hướng dẫn" })
+  @ApiResponse({ status: 201, description: "Đã tạo bài hướng dẫn" })
+  async createGuide(
+    @Body() input: CreateGuideInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.createGuide(input, user.id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Patch(":publicId")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @UsePipes(ZodValidate(updateGuideSchema))
+  @ApiOperation({ summary: "Cập nhật bài hướng dẫn" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật" })
+  async updateGuide(
+    @Param("publicId") publicId: string,
+    @Body() input: UpdateGuideInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.updateGuide(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Post(":publicId/publish")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Xuất bản bài hướng dẫn" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã xuất bản" })
+  async publishGuide(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.publishGuide(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+}
+
+// ======================== Admin Download Controller ========================
+
+@ApiTags("admin-downloads")
+@Controller("admin/content/downloads")
+@Roles("ADMIN", "SUPER_ADMIN")
+export class AdminDownloadController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @ApiOperation({ summary: "Danh sách tài liệu" })
+  @ApiResponse({ status: 200, description: "Danh sách tài liệu" })
+  async listDownloads(@Query() query: DownloadQuery) {
+    const validated = downloadQuerySchema.parse(query);
+    return this.contentService.adminListDownloads(validated);
+  }
+
+  @Get(":publicId")
+  @ApiOperation({ summary: "Chi tiết tài liệu" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Chi tiết tài liệu" })
+  async getDownload(@Param("publicId") publicId: string) {
+    return this.contentService.adminGetDownload(publicId);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UsePipes(ZodValidate(createDownloadSchema))
+  @ApiOperation({ summary: "Tạo tài liệu" })
+  @ApiResponse({ status: 201, description: "Đã tạo tài liệu" })
+  async createDownload(
+    @Body() input: CreateDownloadInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.adminCreateDownload(input, user.id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Patch(":publicId")
+  @UsePipes(ZodValidate(updateDownloadSchema))
+  @ApiOperation({ summary: "Cập nhật tài liệu" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật" })
+  async updateDownload(
+    @Param("publicId") publicId: string,
+    @Body() input: UpdateDownloadInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.adminUpdateDownload(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete(":publicId")
+  @ApiOperation({ summary: "Xóa tài liệu" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã xóa" })
+  async deleteDownload(@Param("publicId") publicId: string) {
+    return this.contentService.adminDeleteDownload(publicId);
+  }
+
+  @Post(":publicId/publish")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Xuất bản tài liệu" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã xuất bản" })
+  async publishDownload(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.adminPublishDownload(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

@@ -1,26 +1,41 @@
 import { z } from "zod";
 
-export const createVowSchema = z.object({
-  type: z.string().min(1).max(100),
-  description: z.string().max(2000).optional(),
-  startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional(),
-});
-
-export type CreateVowInput = z.infer<typeof createVowSchema>;
-
-export const logMeritSchema = z.object({
-  vowId: z.string().min(1),
-  note: z.string().max(1000).optional(),
-  completedAt: z.string().datetime().optional(),
-});
-
-export type LogMeritInput = z.infer<typeof logMeritSchema>;
-
 export const vowQuerySchema = z.object({
-  page: z.coerce.number().int().positive().default(1),
-  pageSize: z.coerce.number().int().min(1).max(50).default(12),
-  status: z.enum(["active", "completed", "paused"]).optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  status: z.string().optional(),
+  vowType: z.string().optional(),
+  search: z.string().optional(),
 });
-
 export type VowQuery = z.infer<typeof vowQuerySchema>;
+
+export const assistedEntrySchema = z.object({
+  memberPublicId: z.string().min(1),
+  vowType: z.enum(["LIFE_RELEASE", "CHANTING", "SUTRA_READING", "CUSTOM"]),
+  description: z.string().min(5).max(2000),
+  targetCount: z.number().int().min(1).optional(),
+  startDate: z.string().datetime(),
+});
+export type AssistedEntryInput = z.infer<typeof assistedEntrySchema>;
+
+export const lifeReleaseEntrySchema = z.object({
+  memberPublicId: z.string().min(1),
+  animalType: z.string().min(1).max(100),
+  quantity: z.number().int().min(1),
+  location: z.string().max(500).optional(),
+  note: z.string().max(2000).optional(),
+  journalDate: z.string().datetime(),
+});
+export type LifeReleaseEntryInput = z.infer<typeof lifeReleaseEntrySchema>;
+
+export const memberSearchSchema = z.object({
+  search: z.string().min(1),
+  limit: z.coerce.number().int().min(1).max(20).default(10),
+});
+export type MemberSearchQuery = z.infer<typeof memberSearchSchema>;
+
+export const assistedEntryHistorySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+export type AssistedEntryHistoryQuery = z.infer<typeof assistedEntryHistorySchema>;

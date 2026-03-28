@@ -61,6 +61,17 @@ export const ModelName = {
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
   ChantEnvironmentRule: 'ChantEnvironmentRule',
   WebhookDelivery: 'WebhookDelivery',
+  CommunityPost: 'CommunityPost',
+  GuestbookEntry: 'GuestbookEntry',
+  CalendarEvent: 'CalendarEvent',
+  Volunteer: 'Volunteer',
+  ContactInfo: 'ContactInfo',
+  PushSubscription: 'PushSubscription',
+  PushJob: 'PushJob',
+  BeginnerGuide: 'BeginnerGuide',
+  Download: 'Download',
+  Vow: 'Vow',
+  LifeReleaseJournal: 'LifeReleaseJournal',
   ModerationReport: 'ModerationReport'
 } as const
 
@@ -244,6 +255,196 @@ export const WebhookDeliveryScalarFieldEnum = {
 } as const
 
 export type WebhookDeliveryScalarFieldEnum = (typeof WebhookDeliveryScalarFieldEnum)[keyof typeof WebhookDeliveryScalarFieldEnum]
+
+
+export const CommunityPostScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  authorId: 'authorId',
+  content: 'content',
+  status: 'status',
+  heartCount: 'heartCount',
+  commentCount: 'commentCount',
+  reportCount: 'reportCount',
+  isHidden: 'isHidden',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommunityPostScalarFieldEnum = (typeof CommunityPostScalarFieldEnum)[keyof typeof CommunityPostScalarFieldEnum]
+
+
+export const GuestbookEntryScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  authorId: 'authorId',
+  content: 'content',
+  status: 'status',
+  approvedById: 'approvedById',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GuestbookEntryScalarFieldEnum = (typeof GuestbookEntryScalarFieldEnum)[keyof typeof GuestbookEntryScalarFieldEnum]
+
+
+export const CalendarEventScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  description: 'description',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  location: 'location',
+  eventType: 'eventType',
+  status: 'status',
+  createdById: 'createdById',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+export const VolunteerScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  displayName: 'displayName',
+  role: 'role',
+  avatarUrl: 'avatarUrl',
+  phone: 'phone',
+  zaloLink: 'zaloLink',
+  bio: 'bio',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VolunteerScalarFieldEnum = (typeof VolunteerScalarFieldEnum)[keyof typeof VolunteerScalarFieldEnum]
+
+
+export const ContactInfoScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  socialLinks: 'socialLinks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactInfoScalarFieldEnum = (typeof ContactInfoScalarFieldEnum)[keyof typeof ContactInfoScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  isActive: 'isActive',
+  subscribedAt: 'subscribedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const PushJobScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  body: 'body',
+  status: 'status',
+  targetAudience: 'targetAudience',
+  sentCount: 'sentCount',
+  failedCount: 'failedCount',
+  createdById: 'createdById',
+  processedAt: 'processedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PushJobScalarFieldEnum = (typeof PushJobScalarFieldEnum)[keyof typeof PushJobScalarFieldEnum]
+
+
+export const BeginnerGuideScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  excerpt: 'excerpt',
+  category: 'category',
+  status: 'status',
+  authorId: 'authorId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BeginnerGuideScalarFieldEnum = (typeof BeginnerGuideScalarFieldEnum)[keyof typeof BeginnerGuideScalarFieldEnum]
+
+
+export const DownloadScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  fileUrl: 'fileUrl',
+  fileType: 'fileType',
+  fileSize: 'fileSize',
+  status: 'status',
+  uploaderId: 'uploaderId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DownloadScalarFieldEnum = (typeof DownloadScalarFieldEnum)[keyof typeof DownloadScalarFieldEnum]
+
+
+export const VowScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  vowType: 'vowType',
+  description: 'description',
+  targetCount: 'targetCount',
+  currentCount: 'currentCount',
+  status: 'status',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VowScalarFieldEnum = (typeof VowScalarFieldEnum)[keyof typeof VowScalarFieldEnum]
+
+
+export const LifeReleaseJournalScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  vowId: 'vowId',
+  journalDate: 'journalDate',
+  animalType: 'animalType',
+  quantity: 'quantity',
+  location: 'location',
+  note: 'note',
+  actorUserId: 'actorUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LifeReleaseJournalScalarFieldEnum = (typeof LifeReleaseJournalScalarFieldEnum)[keyof typeof LifeReleaseJournalScalarFieldEnum]
 
 
 export const ModerationReportScalarFieldEnum = {

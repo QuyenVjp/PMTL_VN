@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
-import { NotificationController } from "./notification.controller.js";
+import { AdminNotificationController } from "./notification.controller.js";
 import { NotificationService } from "./notification.service.js";
+import { AuditModule } from "../../platform/audit/audit.module.js";
 
 @Module({
-  controllers: [NotificationController],
+  imports: [AuditModule],
+  controllers: [AdminNotificationController],
   providers: [NotificationService],
   exports: [NotificationService],
 })

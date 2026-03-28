@@ -7,6 +7,14 @@ import {
   ContentStatus,
   AssetStatus,
   ReportStatus,
+  CommunityPostStatus,
+  GuestbookEntryStatus,
+  EventStatus,
+  PushJobStatus,
+  VowStatus,
+  VowType,
+  GuideCategory,
+  DownloadCategory,
 } from "../src/generated/prisma/client.js";
 import { nanoid } from "nanoid";
 import * as argon2 from "argon2";
@@ -1385,6 +1393,423 @@ async function seedRateLimitRecords() {
   console.log(`Seeded ${records.length} rate-limit records.`);
 }
 
+// ============================================================================
+// COMMUNITY POSTS SEED
+// ============================================================================
+
+async function seedCommunityPosts(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+  const posts = [
+    { content: "Hôm nay mình bắt đầu trì tụng Đại Bi Chú, cảm giác tâm rất nhẹ nhàng và bình an. Xin chia sẻ cùng các bạn đồng tu.", status: CommunityPostStatus.APPROVED, heartCount: 12, commentCount: 3 },
+    { content: "Xin hỏi các anh chị, khi niệm kinh vào buổi tối có cần thắp nhang không ạ? Mình mới bắt đầu tu tập nên chưa rõ lắm.", status: CommunityPostStatus.APPROVED, heartCount: 5, commentCount: 8 },
+    { content: "Chia sẻ kinh nghiệm phóng sanh cuối tuần vừa rồi tại hồ Tây. Đã phóng sanh được 50 con cá chép và 100 con ốc.", status: CommunityPostStatus.APPROVED, heartCount: 24, commentCount: 6 },
+    { content: "Mình muốn tìm bạn đồng tu ở khu vực Quận 7, TP.HCM. Có ai quan tâm không ạ?", status: CommunityPostStatus.PENDING, heartCount: 0, commentCount: 0 },
+    { content: "Xin cảm ơn ban quản trị PMTL đã tạo nền tảng này. Rất hữu ích cho việc tu tập hằng ngày.", status: CommunityPostStatus.APPROVED, heartCount: 31, commentCount: 2 },
+    { content: "Hôm nay hoàn thành 108 biến Đại Bi Chú. Nguyện hồi hướng công đức cho tất cả chúng sanh.", status: CommunityPostStatus.APPROVED, heartCount: 18, commentCount: 4 },
+    { content: "Nội dung vi phạm quy tắc cộng đồng - đã bị ẩn.", status: CommunityPostStatus.HIDDEN, heartCount: 0, commentCount: 0, isHidden: true, reportCount: 3 },
+    { content: "Có ai biết cách set up bàn thờ nhỏ trong phòng trọ không? Mình ở trọ nên không gian hạn chế.", status: CommunityPostStatus.APPROVED, heartCount: 9, commentCount: 11 },
+  ];
+
+  for (let i = 0; i < posts.length; i++) {
+    const spec = posts[i];
+    const author = users[i % users.length];
+    const publicId = `cp_${nanoid(12)}`;
+
+    await prisma.communityPost.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        authorId: author.id,
+        content: spec.content,
+        status: spec.status,
+        heartCount: spec.heartCount,
+        commentCount: spec.commentCount,
+        reportCount: spec.reportCount ?? 0,
+        isHidden: spec.isHidden ?? false,
+      },
+    });
+  }
+
+  console.log(`Seeded ${posts.length} community posts.`);
+}
+
+// ============================================================================
+// GUESTBOOK ENTRIES SEED
+// ============================================================================
+
+async function seedGuestbookEntries(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+  const adminUser = users.find(u => u.displayName.includes("Admin")) ?? users[0];
+
+  const entries = [
+    { content: "Cảm ơn PMTL đã mang đến nơi tu tập online ấm áp. Con xin ghi sổ lưu niệm nhân dịp Vu Lan 2026.", status: GuestbookEntryStatus.APPROVED },
+    { content: "Đã tham gia lễ phóng sanh ngày rằm tháng 7. Rất cảm động và ý nghĩa. Nguyện cho tất cả chúng sanh được an lạc.", status: GuestbookEntryStatus.APPROVED },
+    { content: "Mình là Phật tử mới, được giới thiệu đến PMTL. Cảm giác như tìm được ngôi nhà tâm linh của mình.", status: GuestbookEntryStatus.APPROVED },
+    { content: "Xin ghi nhận công đức của các phụng sự viên đã hỗ trợ buổi lễ Dược Sư cuối tuần qua.", status: GuestbookEntryStatus.PENDING },
+    { content: "Lần đầu tiên sử dụng ứng dụng niệm kinh, rất tiện lợi. Mong PMTL ngày càng phát triển.", status: GuestbookEntryStatus.APPROVED },
+    { content: "Nhân dịp Tết Nguyên Đán, con xin kính chúc quý Thầy và ban quản trị sức khoẻ, an lạc.", status: GuestbookEntryStatus.APPROVED },
+  ];
+
+  for (let i = 0; i < entries.length; i++) {
+    const spec = entries[i];
+    const author = users[i % users.length];
+    const publicId = `gb_${nanoid(12)}`;
+
+    await prisma.guestbookEntry.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        authorId: author.id,
+        content: spec.content,
+        status: spec.status,
+        approvedById: spec.status === GuestbookEntryStatus.APPROVED ? adminUser.id : null,
+        approvedAt: spec.status === GuestbookEntryStatus.APPROVED ? new Date() : null,
+      },
+    });
+  }
+
+  console.log(`Seeded ${entries.length} guestbook entries.`);
+}
+
+// ============================================================================
+// CALENDAR EVENTS SEED
+// ============================================================================
+
+async function seedCalendarEvents(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+  const now = new Date();
+
+  const events = [
+    { title: "Lễ Phóng Sanh Rằm Tháng 4", description: "Buổi phóng sanh tập thể tại hồ Tây, Hà Nội. Mọi người tập trung lúc 6h sáng.", startAt: new Date(now.getTime() + 7 * 86400000), location: "Hồ Tây, Hà Nội", eventType: "special_practice_day", status: EventStatus.PUBLISHED },
+    { title: "Khoá Tu Mùa Hè 2026", description: "Khoá tu 3 ngày tại chùa Hoằng Pháp. Đăng ký trước ngày 15/5.", startAt: new Date(now.getTime() + 30 * 86400000), endAt: new Date(now.getTime() + 33 * 86400000), location: "Chùa Hoằng Pháp, Hóc Môn, TP.HCM", eventType: "organizational", status: EventStatus.PUBLISHED },
+    { title: "Lễ Vu Lan Báo Hiếu", description: "Đại lễ Vu Lan Báo Hiếu năm 2026. Chương trình bao gồm tụng kinh, thuyết pháp và cài hoa hồng.", startAt: new Date(now.getTime() + 60 * 86400000), location: "Đạo tràng PMTL", eventType: "lunar_recurrence", status: EventStatus.DRAFT },
+    { title: "Buổi Chia Sẻ Pháp Thoại Online", description: "Pháp thoại trực tuyến chủ đề: Ứng dụng Phật pháp trong đời sống hiện đại.", startAt: new Date(now.getTime() + 3 * 86400000), location: "Zoom Meeting", eventType: "organizational", status: EventStatus.PUBLISHED },
+    { title: "Ngày Vía Quan Thế Âm Bồ Tát", description: "Ngày 19/2 âm lịch - Kỷ niệm ngày Đản sanh của Đức Quan Thế Âm Bồ Tát.", startAt: new Date(now.getTime() + 14 * 86400000), eventType: "fixed_observance", status: EventStatus.PUBLISHED },
+    { title: "Lớp Học Niệm Kinh Cho Người Mới", description: "Hướng dẫn cách niệm kinh cơ bản cho người mới bắt đầu tu tập.", startAt: new Date(now.getTime() + 5 * 86400000), location: "Phòng sinh hoạt PMTL", eventType: "organizational", status: EventStatus.PUBLISHED },
+  ];
+
+  for (let i = 0; i < events.length; i++) {
+    const spec = events[i];
+    const creator = users[i % users.length];
+    const publicId = `evt_${nanoid(12)}`;
+
+    await prisma.calendarEvent.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        title: spec.title,
+        description: spec.description,
+        startAt: spec.startAt,
+        endAt: spec.endAt ?? null,
+        location: spec.location ?? null,
+        eventType: spec.eventType,
+        status: spec.status,
+        createdById: creator.id,
+        publishedAt: spec.status === EventStatus.PUBLISHED ? new Date() : null,
+      },
+    });
+  }
+
+  console.log(`Seeded ${events.length} calendar events.`);
+}
+
+// ============================================================================
+// VOLUNTEERS SEED
+// ============================================================================
+
+async function seedVolunteers() {
+  const volunteers = [
+    { displayName: "Thầy Minh Hạnh", role: "Trụ trì", bio: "Trụ trì đạo tràng PMTL, hướng dẫn tu tập và tổ chức các khoá tu.", sortOrder: 1 },
+    { displayName: "Sư cô Diệu Liên", role: "Hướng dẫn tu tập", bio: "Phụ trách hướng dẫn tu tập cho Phật tử mới.", sortOrder: 2 },
+    { displayName: "Nguyễn Văn An", role: "Phụng sự viên kỹ thuật", phone: "0901234567", zaloLink: "https://zalo.me/0901234567", bio: "Hỗ trợ kỹ thuật và vận hành hệ thống PMTL.", sortOrder: 3 },
+    { displayName: "Trần Thị Bích", role: "Điều phối sự kiện", phone: "0912345678", bio: "Điều phối và tổ chức các sự kiện phóng sanh, khoá tu.", sortOrder: 4 },
+    { displayName: "Lê Minh Tâm", role: "Phụng sự viên nội dung", bio: "Biên tập nội dung bài viết và hướng dẫn tu tập.", sortOrder: 5 },
+    { displayName: "Phạm Thị Hương", role: "Tình nguyện viên", phone: "0923456789", bio: "Hỗ trợ tiếp đón Phật tử mới và tổ chức sinh hoạt cộng đồng.", sortOrder: 6, isActive: false },
+  ];
+
+  for (const spec of volunteers) {
+    const publicId = `vol_${nanoid(12)}`;
+    await prisma.volunteer.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        displayName: spec.displayName,
+        role: spec.role,
+        phone: spec.phone ?? null,
+        zaloLink: spec.zaloLink ?? null,
+        bio: spec.bio ?? null,
+        sortOrder: spec.sortOrder,
+        isActive: spec.isActive ?? true,
+      },
+    });
+  }
+
+  console.log(`Seeded ${volunteers.length} volunteers.`);
+}
+
+// ============================================================================
+// CONTACT INFO SEED
+// ============================================================================
+
+async function seedContactInfo() {
+  const publicId = "contact_pmtl_main";
+  await prisma.contactInfo.upsert({
+    where: { publicId },
+    update: {},
+    create: {
+      publicId,
+      title: "Phật Mẫu Tâm Linh",
+      email: "lienhe@phatmautamlinh.vn",
+      phone: "028-1234-5678",
+      address: "123 Đường Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh",
+      socialLinks: {
+        facebook: "https://facebook.com/phatmautamlinh",
+        zalo: "https://zalo.me/phatmautamlinh",
+        youtube: "https://youtube.com/@phatmautamlinh",
+      },
+    },
+  });
+
+  console.log("Seeded contact info.");
+}
+
+// ============================================================================
+// PUSH JOBS SEED
+// ============================================================================
+
+async function seedPushJobs(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+  const now = new Date();
+
+  const jobs = [
+    { title: "Nhắc nhở niệm kinh buổi sáng", body: "Đã đến giờ niệm kinh buổi sáng. Hãy dành 15 phút cho tâm an lạc.", status: PushJobStatus.COMPLETED, targetAudience: "all_members", sentCount: 150, failedCount: 3 },
+    { title: "Thông báo lễ phóng sanh", body: "Lễ phóng sanh rằm tháng 4 sẽ diễn ra vào Chủ nhật tuần này. Đăng ký tham gia ngay!", status: PushJobStatus.COMPLETED, targetAudience: "all_members", sentCount: 200, failedCount: 1 },
+    { title: "Khoá tu mùa hè - Hạn đăng ký", body: "Chỉ còn 5 ngày để đăng ký Khoá Tu Mùa Hè 2026. Nhanh tay đăng ký!", status: PushJobStatus.PENDING, targetAudience: "active_members" },
+    { title: "Cập nhật tính năng mới", body: "PMTL vừa ra mắt tính năng theo dõi tiến trình tu tập. Khám phá ngay!", status: PushJobStatus.FAILED, targetAudience: "all_members", sentCount: 0, failedCount: 180 },
+    { title: "Chúc mừng Vu Lan", body: "Nhân mùa Vu Lan Báo Hiếu, xin kính chúc quý Phật tử sức khoẻ, an lạc.", status: PushJobStatus.PROCESSING, targetAudience: "all_members", sentCount: 80 },
+  ];
+
+  for (let i = 0; i < jobs.length; i++) {
+    const spec = jobs[i];
+    const creator = users[i % users.length];
+    const publicId = `pj_${nanoid(12)}`;
+
+    await prisma.pushJob.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        title: spec.title,
+        body: spec.body,
+        status: spec.status,
+        targetAudience: spec.targetAudience,
+        sentCount: spec.sentCount ?? 0,
+        failedCount: spec.failedCount ?? 0,
+        createdById: creator.id,
+        processedAt: spec.status !== PushJobStatus.PENDING ? new Date(now.getTime() - 3600000) : null,
+        completedAt: spec.status === PushJobStatus.COMPLETED ? new Date(now.getTime() - 1800000) : null,
+      },
+    });
+  }
+
+  console.log(`Seeded ${jobs.length} push jobs.`);
+}
+
+// ============================================================================
+// BEGINNER GUIDES SEED
+// ============================================================================
+
+async function seedBeginnerGuides(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+
+  const guides = [
+    { title: "Hướng dẫn bắt đầu tu tập tại nhà", slug: "huong-dan-bat-dau-tu-tap-tai-nha", category: GuideCategory.BEGINNER, excerpt: "Hướng dẫn từng bước cho người mới bắt đầu hành trì Phật pháp tại nhà.", status: ContentStatus.PUBLISHED },
+    { title: "Cách set up bàn thờ Phật đơn giản", slug: "cach-setup-ban-tho-phat-don-gian", category: GuideCategory.BEGINNER, excerpt: "Hướng dẫn bày trí bàn thờ Phật phù hợp với không gian nhỏ.", status: ContentStatus.PUBLISHED },
+    { title: "Hướng dẫn niệm Đại Bi Chú hằng ngày", slug: "huong-dan-niem-dai-bi-chu-hang-ngay", category: GuideCategory.DAILY_PRACTICE, excerpt: "Phương pháp trì tụng Đại Bi Chú đúng cách, bao gồm số biến và cách hồi hướng.", status: ContentStatus.PUBLISHED },
+    { title: "Kinh Bát Nhã Ba La Mật Đa Tâm Kinh - Giải nghĩa", slug: "kinh-bat-nha-giai-nghia", category: GuideCategory.DAILY_PRACTICE, excerpt: "Giải thích ý nghĩa sâu xa của Tâm Kinh Bát Nhã cho người tu tập.", status: ContentStatus.DRAFT },
+    { title: "Hướng dẫn thực hành Ngôi Nhà Nhỏ", slug: "huong-dan-thuc-hanh-ngoi-nha-nho", category: GuideCategory.LITTLE_HOUSE, excerpt: "Hướng dẫn chi tiết cách thực hành Ngôi Nhà Nhỏ theo đúng phương pháp.", status: ContentStatus.PUBLISHED },
+    { title: "Cách đốt Ngôi Nhà Nhỏ đúng cách", slug: "cach-dot-ngoi-nha-nho-dung-cach", category: GuideCategory.LITTLE_HOUSE, excerpt: "Các bước chuẩn bị và đốt Ngôi Nhà Nhỏ an toàn và đúng nghi thức.", status: ContentStatus.PUBLISHED },
+    { title: "Hướng dẫn phóng sanh đúng pháp", slug: "huong-dan-phong-sanh-dung-phap", category: GuideCategory.LIFE_RELEASE, excerpt: "Những điều cần biết khi phóng sanh: chọn vật, chọn địa điểm, và nghi thức.", status: ContentStatus.PUBLISHED },
+    { title: "Phát nguyện phóng sanh - Ý nghĩa và cách thực hiện", slug: "phat-nguyen-phong-sanh-y-nghia", category: GuideCategory.LIFE_RELEASE, excerpt: "Giải thích ý nghĩa phát nguyện phóng sanh và cách lập nguyện đúng đắn.", status: ContentStatus.DRAFT },
+  ];
+
+  for (let i = 0; i < guides.length; i++) {
+    const spec = guides[i];
+    const author = users[i % users.length];
+    const publicId = `bg_${nanoid(12)}`;
+
+    await prisma.beginnerGuide.upsert({
+      where: { slug: spec.slug },
+      update: {
+        title: spec.title,
+        category: spec.category,
+        excerpt: spec.excerpt,
+        status: spec.status,
+      },
+      create: {
+        publicId,
+        title: spec.title,
+        slug: spec.slug,
+        content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: spec.excerpt }] }] },
+        excerpt: spec.excerpt,
+        category: spec.category,
+        status: spec.status,
+        authorId: author.id,
+        publishedAt: spec.status === ContentStatus.PUBLISHED ? new Date() : null,
+      },
+    });
+  }
+
+  console.log(`Seeded ${guides.length} beginner guides.`);
+}
+
+// ============================================================================
+// DOWNLOADS SEED
+// ============================================================================
+
+async function seedDownloads(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+
+  const downloads = [
+    { title: "Kinh Đại Bi Chú (PDF)", category: DownloadCategory.GUIDE, fileUrl: "/files/dai-bi-chu.pdf", fileType: "application/pdf", fileSize: 245000, status: ContentStatus.PUBLISHED },
+    { title: "Bản in Ngôi Nhà Nhỏ (A4)", category: DownloadCategory.TEMPLATE, fileUrl: "/files/ngoi-nha-nho-a4.pdf", fileType: "application/pdf", fileSize: 180000, status: ContentStatus.PUBLISHED },
+    { title: "Hướng dẫn phóng sanh (PDF)", category: DownloadCategory.GUIDE, fileUrl: "/files/huong-dan-phong-sanh.pdf", fileType: "application/pdf", fileSize: 320000, status: ContentStatus.PUBLISHED },
+    { title: "Lịch âm 2026 - Ngày tốt tu tập", category: DownloadCategory.REFERENCE, fileUrl: "/files/lich-am-2026.pdf", fileType: "application/pdf", fileSize: 150000, status: ContentStatus.PUBLISHED },
+    { title: "FAQ - Câu hỏi thường gặp về niệm kinh", category: DownloadCategory.FAQ, fileUrl: "/files/faq-niem-kinh.pdf", fileType: "application/pdf", fileSize: 95000, status: ContentStatus.DRAFT },
+    { title: "Template theo dõi công phu hằng ngày", category: DownloadCategory.TEMPLATE, fileUrl: "/files/template-cong-phu.xlsx", fileType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileSize: 42000, status: ContentStatus.PUBLISHED },
+  ];
+
+  for (let i = 0; i < downloads.length; i++) {
+    const spec = downloads[i];
+    const uploader = users[i % users.length];
+    const publicId = `dl_${nanoid(12)}`;
+
+    await prisma.download.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        title: spec.title,
+        description: `Tài liệu: ${spec.title}`,
+        category: spec.category,
+        fileUrl: spec.fileUrl,
+        fileType: spec.fileType,
+        fileSize: spec.fileSize,
+        status: spec.status,
+        uploaderId: uploader.id,
+        publishedAt: spec.status === ContentStatus.PUBLISHED ? new Date() : null,
+      },
+    });
+  }
+
+  console.log(`Seeded ${downloads.length} downloads.`);
+}
+
+// ============================================================================
+// VOWS & LIFE RELEASE JOURNALS SEED
+// ============================================================================
+
+async function seedVowsAndJournals(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+  const now = new Date();
+
+  const vows = [
+    { vowType: VowType.LIFE_RELEASE, description: "Phát nguyện phóng sanh 1000 con vật trong năm 2026", targetCount: 1000, currentCount: 350, status: VowStatus.ACTIVE },
+    { vowType: VowType.CHANTING, description: "Trì tụng 10.000 biến Đại Bi Chú", targetCount: 10000, currentCount: 3200, status: VowStatus.ACTIVE },
+    { vowType: VowType.SUTRA_READING, description: "Đọc trọn bộ Kinh Địa Tạng trong 49 ngày", targetCount: 49, currentCount: 49, status: VowStatus.COMPLETED },
+    { vowType: VowType.CUSTOM, description: "Ăn chay mỗi ngày rằm và mùng 1", targetCount: 24, currentCount: 8, status: VowStatus.ACTIVE },
+    { vowType: VowType.LIFE_RELEASE, description: "Phóng sanh mỗi tháng một lần", targetCount: 12, currentCount: 4, status: VowStatus.ACTIVE },
+  ];
+
+  const createdVowIds: string[] = [];
+
+  for (let i = 0; i < vows.length; i++) {
+    const spec = vows[i];
+    const user = users[i % users.length];
+    const publicId = `vow_${nanoid(12)}`;
+
+    const vow = await prisma.vow.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        userId: user.id,
+        vowType: spec.vowType,
+        description: spec.description,
+        targetCount: spec.targetCount,
+        currentCount: spec.currentCount,
+        status: spec.status,
+        startDate: new Date(now.getTime() - 90 * 86400000),
+        endDate: spec.status === VowStatus.COMPLETED ? new Date(now.getTime() - 10 * 86400000) : null,
+      },
+    });
+
+    createdVowIds.push(vow.id);
+  }
+
+  // Seed life release journals
+  const journals = [
+    { animalType: "Cá chép", quantity: 50, location: "Hồ Tây, Hà Nội", note: "Phóng sanh nhân ngày rằm tháng 3" },
+    { animalType: "Ốc", quantity: 200, location: "Sông Sài Gòn", note: "Phóng sanh cuối tuần" },
+    { animalType: "Chim sẻ", quantity: 20, location: "Công viên Lê Thị Riêng", note: "Phóng sanh ngày Phật đản" },
+    { animalType: "Cá chép", quantity: 100, location: "Hồ Hoàn Kiếm", note: "Phóng sanh tập thể cùng đạo tràng" },
+    { animalType: "Tôm", quantity: 500, location: "Biển Vũng Tàu", note: "Phóng sanh biển nhân lễ Vu Lan" },
+  ];
+
+  for (let i = 0; i < journals.length; i++) {
+    const spec = journals[i];
+    const user = users[i % users.length];
+    const publicId = `lrj_${nanoid(12)}`;
+
+    await prisma.lifeReleaseJournal.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        userId: user.id,
+        vowId: createdVowIds[0] ?? null,
+        journalDate: new Date(now.getTime() - (i + 1) * 7 * 86400000),
+        animalType: spec.animalType,
+        quantity: spec.quantity,
+        location: spec.location,
+        note: spec.note,
+      },
+    });
+  }
+
+  console.log(`Seeded ${vows.length} vows and ${journals.length} life release journals.`);
+}
+
+// ============================================================================
+// PUSH SUBSCRIPTIONS SEED
+// ============================================================================
+
+async function seedPushSubscriptions(usersByEmail: Map<string, { id: string; publicId: string; displayName: string }>) {
+  const users = Array.from(usersByEmail.values());
+
+  for (let i = 0; i < Math.min(users.length, 3); i++) {
+    const user = users[i];
+    const publicId = `psub_${nanoid(12)}`;
+
+    await prisma.pushSubscription.upsert({
+      where: { publicId },
+      update: {},
+      create: {
+        publicId,
+        userId: user.id,
+        endpoint: `https://fcm.googleapis.com/fcm/send/seed-endpoint-${i}`,
+        isActive: true,
+      },
+    });
+  }
+
+  console.log(`Seeded push subscriptions.`);
+}
+
 async function printSeedSummary() {
   const [
     users,
@@ -1398,6 +1823,17 @@ async function printSeedSummary() {
     webhookDeliveries,
     chantRuleGroups,
     chantRules,
+    communityPosts,
+    guestbookEntries,
+    calendarEvents,
+    volunteers,
+    contactInfo,
+    pushSubscriptions,
+    pushJobs,
+    beginnerGuides,
+    downloads,
+    vows,
+    lifeReleaseJournals,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.session.count(),
@@ -1410,6 +1846,17 @@ async function printSeedSummary() {
     prisma.webhookDelivery.count(),
     prisma.chantEnvironmentRuleGroup.count(),
     prisma.chantEnvironmentRule.count(),
+    prisma.communityPost.count(),
+    prisma.guestbookEntry.count(),
+    prisma.calendarEvent.count(),
+    prisma.volunteer.count(),
+    prisma.contactInfo.count(),
+    prisma.pushSubscription.count(),
+    prisma.pushJob.count(),
+    prisma.beginnerGuide.count(),
+    prisma.download.count(),
+    prisma.vow.count(),
+    prisma.lifeReleaseJournal.count(),
   ]);
 
   console.log("Seed summary:");
@@ -1425,6 +1872,17 @@ async function printSeedSummary() {
     webhookDeliveries,
     chantRuleGroups,
     chantRules,
+    communityPosts,
+    guestbookEntries,
+    calendarEvents,
+    volunteers,
+    contactInfo,
+    pushSubscriptions,
+    pushJobs,
+    beginnerGuides,
+    downloads,
+    vows,
+    lifeReleaseJournals,
   });
 }
 
@@ -1441,6 +1899,17 @@ async function main() {
     await seedRateLimitRecords();
     await seedWebhookDeliveries();
     await seedEnvironmentRules();
+    // New domain tables
+    await seedCommunityPosts(usersByEmail);
+    await seedGuestbookEntries(usersByEmail);
+    await seedCalendarEvents(usersByEmail);
+    await seedVolunteers();
+    await seedContactInfo();
+    await seedPushJobs(usersByEmail);
+    await seedPushSubscriptions(usersByEmail);
+    await seedBeginnerGuides(usersByEmail);
+    await seedDownloads(usersByEmail);
+    await seedVowsAndJournals(usersByEmail);
     await printSeedSummary();
   } catch (error) {
     console.error("Error seeding data:", error);

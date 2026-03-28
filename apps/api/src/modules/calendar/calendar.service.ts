@@ -1,10 +1,14 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { nanoid } from "nanoid";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { mapQ161ForCalendar } from "../wisdom-qa/q161-rule-pack.data.js";
 import type {
+  AdminCreateEventInput,
+  AdminEventQuery,
+  AdminUpdateEventInput,
   AdvisoryRuntimeStatusResponse,
-  CreateEventInput,
   EventQuery,
   Q161CalendarRulePackResponse,
 } from "./calendar.schemas.js";
@@ -14,19 +18,201 @@ export class CalendarService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly cacheService: CacheService,
+    private readonly audit: AuditService,
   ) {}
 
-  listEvents(query: EventQuery) {
-    return { data: [], total: 0, page: query.page, pageSize: query.pageSize };
+  // ── Public ──────────────────────────────────────────────────────────────
+
+  async listEvents(query: EventQuery) {
+    const { page, pageSize, from, to } = query;
+    const offset = (page - 1) * pageSize;
+
+    const where: Record<string, unknown> = { status: "PUBLISHED" };
+    if (from) (where as any).startAt = { ...(where as any).startAt, gte: new Date(from) };
+    if (to) (where as any).startAt = { ...(where as any).startAt, lte: new Date(to) };
+
+    const [data, total] = await Promise.all([
+      this.prisma.calendarEvent.findMany({
+        where,
+        orderBy: { startAt: "asc" },
+        skip: offset,
+        take: pageSize,
+        select: {
+          publicId: true,
+          title: true,
+          description: true,
+          startAt: true,
+          endAt: true,
+          location: true,
+          eventType: true,
+          publishedAt: true,
+        },
+      }),
+      this.prisma.calendarEvent.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        pagination: { total, limit: pageSize, offset, hasMore: offset + data.length < total },
+      },
+    };
   }
 
-  getEventById(id: string) {
-    return { id, message: "Chức năng đang phát triển" };
+  async getEventByPublicId(publicId: string) {
+    const event = await this.prisma.calendarEvent.findUnique({
+      where: { publicId, status: "PUBLISHED" },
+      select: {
+        publicId: true,
+        title: true,
+        description: true,
+        startAt: true,
+        endAt: true,
+        location: true,
+        eventType: true,
+        publishedAt: true,
+      },
+    });
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+    return event;
   }
 
-  createEvent(input: CreateEventInput, actorId: string) {
-    return { id: actorId, title: input.title, message: "Chức năng đang phát triển" };
+  // ── Admin ───────────────────────────────────────────────────────────────
+
+  async adminListEvents(query: AdminEventQuery) {
+    const { limit, offset, status, search, eventType } = query;
+
+    const where: Record<string, unknown> = {};
+    if (status) where.status = status;
+    if (eventType) where.eventType = eventType;
+    if (search) where.title = { contains: search, mode: "insensitive" };
+
+    const [data, total] = await Promise.all([
+      this.prisma.calendarEvent.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: offset,
+        take: limit,
+        include: {
+          createdBy: {
+            select: { publicId: true, displayName: true, email: true },
+          },
+        },
+      }),
+      this.prisma.calendarEvent.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        pagination: { total, limit, offset, hasMore: offset + data.length < total },
+      },
+    };
   }
+
+  async adminGetEvent(publicId: string) {
+    const event = await this.prisma.calendarEvent.findUnique({
+      where: { publicId },
+      include: {
+        createdBy: {
+          select: { publicId: true, displayName: true, email: true },
+        },
+      },
+    });
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+    return event;
+  }
+
+  async adminCreateEvent(input: AdminCreateEventInput, userId: string) {
+    const event = await this.prisma.calendarEvent.create({
+      data: {
+        publicId: nanoid(),
+        title: input.title,
+        description: input.description,
+        startAt: new Date(input.startAt),
+        endAt: input.endAt ? new Date(input.endAt) : undefined,
+        location: input.location,
+        eventType: input.eventType ?? "general",
+        status: "DRAFT",
+        createdById: userId,
+      },
+    });
+
+    const auditCtx: AuditContext = { actorId: userId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.create", "calendar_event", event.id, {
+      publicId: event.publicId,
+      title: event.title,
+    });
+
+    return event;
+  }
+
+  async adminUpdateEvent(publicId: string, input: AdminUpdateEventInput, actorId?: string) {
+    const existing = await this.prisma.calendarEvent.findUnique({ where: { publicId } });
+    if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const data: Record<string, unknown> = {};
+    if (input.title !== undefined) data.title = input.title;
+    if (input.description !== undefined) data.description = input.description;
+    if (input.startAt !== undefined) data.startAt = new Date(input.startAt);
+    if (input.endAt !== undefined) data.endAt = new Date(input.endAt);
+    if (input.location !== undefined) data.location = input.location;
+    if (input.eventType !== undefined) data.eventType = input.eventType;
+
+    const updated = await this.prisma.calendarEvent.update({
+      where: { publicId },
+      data,
+    });
+
+    if (actorId) {
+      const auditCtx: AuditContext = { actorId, actorType: "user" };
+      await this.audit.append(auditCtx, "admin.calendar_event.update", "calendar_event", updated.id, {
+        publicId,
+        changedFields: Object.keys(data),
+      });
+    }
+
+    return updated;
+  }
+
+  async adminDeleteEvent(publicId: string, actorId?: string) {
+    const existing = await this.prisma.calendarEvent.findUnique({ where: { publicId } });
+    if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    await this.prisma.calendarEvent.delete({ where: { publicId } });
+
+    if (actorId) {
+      const auditCtx: AuditContext = { actorId, actorType: "user" };
+      await this.audit.append(auditCtx, "admin.calendar_event.delete", "calendar_event", existing.id, {
+        publicId,
+        title: existing.title,
+      });
+    }
+
+    return { success: true };
+  }
+
+  async adminPublishEvent(publicId: string, actorId?: string) {
+    const existing = await this.prisma.calendarEvent.findUnique({ where: { publicId } });
+    if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const updated = await this.prisma.calendarEvent.update({
+      where: { publicId },
+      data: { status: "PUBLISHED", publishedAt: new Date() },
+    });
+
+    if (actorId) {
+      const auditCtx: AuditContext = { actorId, actorType: "user" };
+      await this.audit.append(auditCtx, "admin.calendar_event.publish", "calendar_event", updated.id, {
+        publicId,
+        title: updated.title,
+      });
+    }
+
+    return updated;
+  }
+
+  // ── Advisory / Q161 (preserved) ─────────────────────────────────────────
 
   async getQ161RulePack(): Promise<Q161CalendarRulePackResponse> {
     return this.cacheService.getOrSet("calendar:q161:rule-pack:v1", 60 * 30, async () => {

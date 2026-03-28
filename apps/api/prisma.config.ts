@@ -14,5 +14,6 @@ export default defineConfig({
   },
   migrations: {
     path: path.join(import.meta.dirname, "prisma", "migrations"),
+    seed: "npx tsx prisma/seed.ts",
   },
 });

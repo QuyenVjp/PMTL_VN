@@ -108,9 +108,20 @@ model User {
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @updatedAt @map("updated_at")
 
-  sessions     Session[]
-  posts        Post[]
-  mediaAssets  MediaAsset[]
+  sessions            Session[]
+  posts               Post[]
+  mediaAssets         MediaAsset[]
+  communityPosts      CommunityPost[]      @relation("communityPosts")
+  guestbookEntries    GuestbookEntry[]     @relation("guestbookEntries")
+  guestbookApprovals  GuestbookEntry[]     @relation("guestbookApprovals")
+  calendarEvents      CalendarEvent[]      @relation("calendarEvents")
+  pushSubscriptions   PushSubscription[]   @relation("pushSubscriptions")
+  pushJobs            PushJob[]            @relation("pushJobs")
+  beginnerGuides      BeginnerGuide[]      @relation("beginnerGuides")
+  downloads           Download[]           @relation("downloads")
+  vows                Vow[]                @relation("vows")
+  lifeReleaseJournals LifeReleaseJournal[] @relation("lifeReleaseJournals")
+  lifeReleaseActors   LifeReleaseJournal[] @relation("lifeReleaseActors")
 
   @@index([email])
   @@index([status])
@@ -271,12 +282,318 @@ model WebhookDelivery {
 // MODERATION TABLES
 // ============================================================================
 
+enum CommunityPostStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  HIDDEN
+}
+
+enum GuestbookEntryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum PushJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum VowStatus {
+  ACTIVE
+  COMPLETED
+  VOIDED
+}
+
+enum VowType {
+  LIFE_RELEASE
+  CHANTING
+  SUTRA_READING
+  CUSTOM
+}
+
+enum GuideCategory {
+  BEGINNER
+  DAILY_PRACTICE
+  LITTLE_HOUSE
+  LIFE_RELEASE
+  GENERAL
+}
+
+enum DownloadCategory {
+  GUIDE
+  TEMPLATE
+  REFERENCE
+  FAQ
+}
+
 enum ReportStatus {
   PENDING
   RESOLVED_HIDE
   RESOLVED_IGNORE
   RESOLVED_ESCALATE
 }
+
+// ============================================================================
+// COMMUNITY TABLES
+// ============================================================================
+
+model CommunityPost {
+  id               String              @id @default(cuid())
+  publicId         String              @unique @map("public_id")
+  authorId         String              @map("author_id")
+  content          String
+  status           CommunityPostStatus @default(PENDING)
+  heartCount       Int                 @default(0) @map("heart_count")
+  commentCount     Int                 @default(0) @map("comment_count")
+  reportCount      Int                 @default(0) @map("report_count")
+  isHidden         Boolean             @default(false) @map("is_hidden")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  author User @relation("communityPosts", fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("community_posts")
+}
+
+model GuestbookEntry {
+  id            String              @id @default(cuid())
+  publicId      String              @unique @map("public_id")
+  authorId      String              @map("author_id")
+  content       String
+  status        GuestbookEntryStatus @default(PENDING)
+  approvedById  String?             @map("approved_by_id")
+  approvedAt    DateTime?           @map("approved_at")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  author     User  @relation("guestbookEntries", fields: [authorId], references: [id])
+  approvedBy User? @relation("guestbookApprovals", fields: [approvedById], references: [id])
+
+  @@index([authorId])
+  @@index([status])
+  @@map("guestbook_entries")
+}
+
+// ============================================================================
+// CALENDAR TABLES
+// ============================================================================
+
+model CalendarEvent {
+  id            String      @id @default(cuid())
+  publicId      String      @unique @map("public_id")
+  title         String
+  description   String?
+  startAt       DateTime    @map("start_at")
+  endAt         DateTime?   @map("end_at")
+  location      String?
+  eventType     String      @default("general") @map("event_type")
+  status        EventStatus @default(DRAFT)
+  createdById   String      @map("created_by_id")
+  publishedAt   DateTime?   @map("published_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+
+  createdBy User @relation("calendarEvents", fields: [createdById], references: [id])
+
+  @@index([status])
+  @@index([startAt])
+  @@index([createdById])
+  @@map("calendar_events")
+}
+
+// ============================================================================
+// VOLUNTEER & CONTACT TABLES
+// ============================================================================
+
+model Volunteer {
+  id          String   @id @default(cuid())
+  publicId    String   @unique @map("public_id")
+  displayName String   @map("display_name")
+  role        String
+  avatarUrl   String?  @map("avatar_url")
+  phone       String?
+  zaloLink    String?  @map("zalo_link")
+  bio         String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("volunteers")
+}
+
+model ContactInfo {
+  id          String   @id @default(cuid())
+  publicId    String   @unique @map("public_id")
+  title       String   @default("Phật Mẫu Tâm Linh")
+  email       String?
+  phone       String?
+  address     String?
+  socialLinks Json?    @map("social_links")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("contact_info")
+}
+
+// ============================================================================
+// NOTIFICATION TABLES
+// ============================================================================
+
+model PushSubscription {
+  id              String   @id @default(cuid())
+  publicId        String   @unique @map("public_id")
+  userId          String   @map("user_id")
+  endpoint        String
+  isActive        Boolean  @default(true) @map("is_active")
+  subscribedAt    DateTime @default(now()) @map("subscribed_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation("pushSubscriptions", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([isActive])
+  @@map("push_subscriptions")
+}
+
+model PushJob {
+  id              String        @id @default(cuid())
+  publicId        String        @unique @map("public_id")
+  title           String
+  body            String
+  status          PushJobStatus @default(PENDING)
+  targetAudience  String?       @map("target_audience")
+  sentCount       Int           @default(0) @map("sent_count")
+  failedCount     Int           @default(0) @map("failed_count")
+  createdById     String        @map("created_by_id")
+  processedAt     DateTime?     @map("processed_at")
+  completedAt     DateTime?     @map("completed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  createdBy User @relation("pushJobs", fields: [createdById], references: [id])
+
+  @@index([status])
+  @@index([createdById])
+  @@map("push_jobs")
+}
+
+// ============================================================================
+// CONTENT EXTENSION TABLES
+// ============================================================================
+
+model BeginnerGuide {
+  id          String        @id @default(cuid())
+  publicId    String        @unique @map("public_id")
+  title       String
+  slug        String        @unique
+  content     Json
+  excerpt     String?
+  category    GuideCategory @default(BEGINNER)
+  status      ContentStatus @default(DRAFT)
+  authorId    String        @map("author_id")
+  publishedAt DateTime?     @map("published_at")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  author User @relation("beginnerGuides", fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([status])
+  @@index([category])
+  @@map("beginner_guides")
+}
+
+model Download {
+  id          String           @id @default(cuid())
+  publicId    String           @unique @map("public_id")
+  title       String
+  description String?
+  category    DownloadCategory @default(GUIDE)
+  fileUrl     String           @map("file_url")
+  fileType    String           @map("file_type")
+  fileSize    Int              @default(0) @map("file_size")
+  status      ContentStatus    @default(DRAFT)
+  uploaderId  String           @map("uploader_id")
+  publishedAt DateTime?        @map("published_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  uploader User @relation("downloads", fields: [uploaderId], references: [id])
+
+  @@index([uploaderId])
+  @@index([status])
+  @@index([category])
+  @@map("downloads")
+}
+
+// ============================================================================
+// VOWS & MERIT TABLES
+// ============================================================================
+
+model Vow {
+  id            String    @id @default(cuid())
+  publicId      String    @unique @map("public_id")
+  userId        String    @map("user_id")
+  vowType       VowType   @map("vow_type")
+  description   String
+  targetCount   Int?      @map("target_count")
+  currentCount  Int       @default(0) @map("current_count")
+  status        VowStatus @default(ACTIVE)
+  startDate     DateTime  @map("start_date")
+  endDate       DateTime? @map("end_date")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  user    User                    @relation("vows", fields: [userId], references: [id])
+  entries LifeReleaseJournal[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("vows")
+}
+
+model LifeReleaseJournal {
+  id           String   @id @default(cuid())
+  publicId     String   @unique @map("public_id")
+  userId       String   @map("user_id")
+  vowId        String?  @map("vow_id")
+  journalDate  DateTime @map("journal_date")
+  animalType   String   @map("animal_type")
+  quantity     Int
+  location     String?
+  note         String?
+  actorUserId  String?  @map("actor_user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user  User  @relation("lifeReleaseJournals", fields: [userId], references: [id])
+  vow   Vow?  @relation(fields: [vowId], references: [id])
+  actor User? @relation("lifeReleaseActors", fields: [actorUserId], references: [id])
+
+  @@index([userId])
+  @@index([vowId])
+  @@index([journalDate])
+  @@map("life_release_journals")
+}
+
+// ============================================================================
+// MODERATION TABLES
+// ============================================================================
 
 model ModerationReport {
   id              String       @id @default(cuid())

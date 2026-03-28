@@ -241,6 +241,17 @@ export type UserWhereInput = {
   sessions?: Prisma.SessionListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobListRelationFilter | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideListRelationFilter | runtime.Types.Skip
+  downloads?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
+  vows?: Prisma.VowListRelationFilter | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
 }
 
 export type UserOrderByWithRelationInput = {
@@ -259,6 +270,17 @@ export type UserOrderByWithRelationInput = {
   sessions?: Prisma.SessionOrderByRelationAggregateInput | runtime.Types.Skip
   posts?: Prisma.PostOrderByRelationAggregateInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetOrderByRelationAggregateInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostOrderByRelationAggregateInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventOrderByRelationAggregateInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobOrderByRelationAggregateInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideOrderByRelationAggregateInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadOrderByRelationAggregateInput | runtime.Types.Skip
+  vows?: Prisma.VowOrderByRelationAggregateInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalOrderByRelationAggregateInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -280,6 +302,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sessions?: Prisma.SessionListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobListRelationFilter | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideListRelationFilter | runtime.Types.Skip
+  downloads?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
+  vows?: Prisma.VowListRelationFilter | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -334,6 +367,17 @@ export type UserCreateInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateInput = {
@@ -352,6 +396,17 @@ export type UserUncheckedCreateInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserUpdateInput = {
@@ -370,6 +425,17 @@ export type UserUpdateInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateInput = {
@@ -388,6 +454,17 @@ export type UserUncheckedUpdateInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateManyInput = {
@@ -485,6 +562,11 @@ export type UserScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput | runtime.Types.Skip
 }
 
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null | runtime.Types.Skip
+  isNot?: Prisma.UserWhereInput | null | runtime.Types.Skip
+}
+
 export type EnumUserRoleFieldUpdateOperationsInput = {
   set?: $Enums.UserRole | runtime.Types.Skip
 }
@@ -539,6 +621,164 @@ export type UserUpdateOneRequiredWithoutPostsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostsInput, Prisma.UserUpdateWithoutPostsInput>, Prisma.UserUncheckedUpdateWithoutPostsInput> | runtime.Types.Skip
 }
 
+export type UserCreateNestedOneWithoutCommunityPostsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityPostsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutCommunityPostsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityPostsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutCommunityPostsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityPostsInput, Prisma.UserUpdateWithoutCommunityPostsInput>, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutGuestbookEntriesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGuestbookEntriesInput, Prisma.UserUncheckedCreateWithoutGuestbookEntriesInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGuestbookEntriesInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutGuestbookApprovalsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedCreateWithoutGuestbookApprovalsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGuestbookApprovalsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutGuestbookEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGuestbookEntriesInput, Prisma.UserUncheckedCreateWithoutGuestbookEntriesInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGuestbookEntriesInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutGuestbookEntriesInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGuestbookEntriesInput, Prisma.UserUpdateWithoutGuestbookEntriesInput>, Prisma.UserUncheckedUpdateWithoutGuestbookEntriesInput> | runtime.Types.Skip
+}
+
+export type UserUpdateOneWithoutGuestbookApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedCreateWithoutGuestbookApprovalsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGuestbookApprovalsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutGuestbookApprovalsInput | runtime.Types.Skip
+  disconnect?: Prisma.UserWhereInput | boolean | runtime.Types.Skip
+  delete?: Prisma.UserWhereInput | boolean | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGuestbookApprovalsInput, Prisma.UserUpdateWithoutGuestbookApprovalsInput>, Prisma.UserUncheckedUpdateWithoutGuestbookApprovalsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutCalendarEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCalendarEventsInput, Prisma.UserUncheckedCreateWithoutCalendarEventsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCalendarEventsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutCalendarEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCalendarEventsInput, Prisma.UserUncheckedCreateWithoutCalendarEventsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCalendarEventsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutCalendarEventsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCalendarEventsInput, Prisma.UserUpdateWithoutCalendarEventsInput>, Prisma.UserUncheckedUpdateWithoutCalendarEventsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutPushSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutPushSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutPushSubscriptionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPushSubscriptionsInput, Prisma.UserUpdateWithoutPushSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutPushJobsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushJobsInput, Prisma.UserUncheckedCreateWithoutPushJobsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushJobsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutPushJobsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushJobsInput, Prisma.UserUncheckedCreateWithoutPushJobsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushJobsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutPushJobsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPushJobsInput, Prisma.UserUpdateWithoutPushJobsInput>, Prisma.UserUncheckedUpdateWithoutPushJobsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutBeginnerGuidesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBeginnerGuidesInput, Prisma.UserUncheckedCreateWithoutBeginnerGuidesInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBeginnerGuidesInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutBeginnerGuidesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBeginnerGuidesInput, Prisma.UserUncheckedCreateWithoutBeginnerGuidesInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBeginnerGuidesInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutBeginnerGuidesInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBeginnerGuidesInput, Prisma.UserUpdateWithoutBeginnerGuidesInput>, Prisma.UserUncheckedUpdateWithoutBeginnerGuidesInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutDownloadsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDownloadsInput, Prisma.UserUncheckedCreateWithoutDownloadsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDownloadsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutDownloadsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDownloadsInput, Prisma.UserUncheckedCreateWithoutDownloadsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDownloadsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutDownloadsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDownloadsInput, Prisma.UserUpdateWithoutDownloadsInput>, Prisma.UserUncheckedUpdateWithoutDownloadsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutVowsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVowsInput, Prisma.UserUncheckedCreateWithoutVowsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVowsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutVowsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutVowsInput, Prisma.UserUncheckedCreateWithoutVowsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutVowsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutVowsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutVowsInput, Prisma.UserUpdateWithoutVowsInput>, Prisma.UserUncheckedUpdateWithoutVowsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutLifeReleaseJournalsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseJournalsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLifeReleaseJournalsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutLifeReleaseActorsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseActorsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLifeReleaseActorsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutLifeReleaseJournalsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseJournalsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLifeReleaseJournalsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutLifeReleaseJournalsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLifeReleaseJournalsInput, Prisma.UserUpdateWithoutLifeReleaseJournalsInput>, Prisma.UserUncheckedUpdateWithoutLifeReleaseJournalsInput> | runtime.Types.Skip
+}
+
+export type UserUpdateOneWithoutLifeReleaseActorsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseActorsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLifeReleaseActorsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutLifeReleaseActorsInput | runtime.Types.Skip
+  disconnect?: Prisma.UserWhereInput | boolean | runtime.Types.Skip
+  delete?: Prisma.UserWhereInput | boolean | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLifeReleaseActorsInput, Prisma.UserUpdateWithoutLifeReleaseActorsInput>, Prisma.UserUncheckedUpdateWithoutLifeReleaseActorsInput> | runtime.Types.Skip
+}
+
 export type UserCreateWithoutSessionsInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -554,6 +794,17 @@ export type UserCreateWithoutSessionsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -571,6 +822,17 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -604,6 +866,17 @@ export type UserUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -621,6 +894,17 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutMediaAssetsInput = {
@@ -638,6 +922,17 @@ export type UserCreateWithoutMediaAssetsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutMediaAssetsInput = {
@@ -655,6 +950,17 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutMediaAssetsInput = {
@@ -688,6 +994,17 @@ export type UserUpdateWithoutMediaAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutMediaAssetsInput = {
@@ -705,6 +1022,17 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPostsInput = {
@@ -722,6 +1050,17 @@ export type UserCreateWithoutPostsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPostsInput = {
@@ -739,6 +1078,17 @@ export type UserUncheckedCreateWithoutPostsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPostsInput = {
@@ -772,6 +1122,17 @@ export type UserUpdateWithoutPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPostsInput = {
@@ -789,6 +1150,1425 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutCommunityPostsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutCommunityPostsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutCommunityPostsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+}
+
+export type UserUpsertWithoutCommunityPostsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityPostsInput, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityPostsInput, Prisma.UserUncheckedCreateWithoutCommunityPostsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityPostsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityPostsInput, Prisma.UserUncheckedUpdateWithoutCommunityPostsInput>
+}
+
+export type UserUpdateWithoutCommunityPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutCommunityPostsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutGuestbookEntriesInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutGuestbookEntriesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGuestbookEntriesInput, Prisma.UserUncheckedCreateWithoutGuestbookEntriesInput>
+}
+
+export type UserCreateWithoutGuestbookApprovalsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutGuestbookApprovalsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedCreateWithoutGuestbookApprovalsInput>
+}
+
+export type UserUpsertWithoutGuestbookEntriesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGuestbookEntriesInput, Prisma.UserUncheckedUpdateWithoutGuestbookEntriesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGuestbookEntriesInput, Prisma.UserUncheckedCreateWithoutGuestbookEntriesInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutGuestbookEntriesInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGuestbookEntriesInput, Prisma.UserUncheckedUpdateWithoutGuestbookEntriesInput>
+}
+
+export type UserUpdateWithoutGuestbookEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUpsertWithoutGuestbookApprovalsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedUpdateWithoutGuestbookApprovalsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedCreateWithoutGuestbookApprovalsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutGuestbookApprovalsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGuestbookApprovalsInput, Prisma.UserUncheckedUpdateWithoutGuestbookApprovalsInput>
+}
+
+export type UserUpdateWithoutGuestbookApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutCalendarEventsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutCalendarEventsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutCalendarEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCalendarEventsInput, Prisma.UserUncheckedCreateWithoutCalendarEventsInput>
+}
+
+export type UserUpsertWithoutCalendarEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCalendarEventsInput, Prisma.UserUncheckedUpdateWithoutCalendarEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCalendarEventsInput, Prisma.UserUncheckedCreateWithoutCalendarEventsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutCalendarEventsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCalendarEventsInput, Prisma.UserUncheckedUpdateWithoutCalendarEventsInput>
+}
+
+export type UserUpdateWithoutCalendarEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutCalendarEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutPushSubscriptionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpsertWithoutPushSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutPushSubscriptionsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpdateWithoutPushSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutPushJobsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutPushJobsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutPushJobsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushJobsInput, Prisma.UserUncheckedCreateWithoutPushJobsInput>
+}
+
+export type UserUpsertWithoutPushJobsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPushJobsInput, Prisma.UserUncheckedUpdateWithoutPushJobsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushJobsInput, Prisma.UserUncheckedCreateWithoutPushJobsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutPushJobsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPushJobsInput, Prisma.UserUncheckedUpdateWithoutPushJobsInput>
+}
+
+export type UserUpdateWithoutPushJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutPushJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutBeginnerGuidesInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutBeginnerGuidesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBeginnerGuidesInput, Prisma.UserUncheckedCreateWithoutBeginnerGuidesInput>
+}
+
+export type UserUpsertWithoutBeginnerGuidesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBeginnerGuidesInput, Prisma.UserUncheckedUpdateWithoutBeginnerGuidesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBeginnerGuidesInput, Prisma.UserUncheckedCreateWithoutBeginnerGuidesInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutBeginnerGuidesInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBeginnerGuidesInput, Prisma.UserUncheckedUpdateWithoutBeginnerGuidesInput>
+}
+
+export type UserUpdateWithoutBeginnerGuidesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutDownloadsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutDownloadsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutDownloadsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDownloadsInput, Prisma.UserUncheckedCreateWithoutDownloadsInput>
+}
+
+export type UserUpsertWithoutDownloadsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDownloadsInput, Prisma.UserUncheckedUpdateWithoutDownloadsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDownloadsInput, Prisma.UserUncheckedCreateWithoutDownloadsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutDownloadsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDownloadsInput, Prisma.UserUncheckedUpdateWithoutDownloadsInput>
+}
+
+export type UserUpdateWithoutDownloadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutDownloadsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutVowsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutVowsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutVowsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutVowsInput, Prisma.UserUncheckedCreateWithoutVowsInput>
+}
+
+export type UserUpsertWithoutVowsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutVowsInput, Prisma.UserUncheckedUpdateWithoutVowsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutVowsInput, Prisma.UserUncheckedCreateWithoutVowsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutVowsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutVowsInput, Prisma.UserUncheckedUpdateWithoutVowsInput>
+}
+
+export type UserUpdateWithoutVowsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutVowsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutLifeReleaseJournalsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutLifeReleaseJournalsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseJournalsInput>
+}
+
+export type UserCreateWithoutLifeReleaseActorsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutLifeReleaseActorsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseActorsInput>
+}
+
+export type UserUpsertWithoutLifeReleaseJournalsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedUpdateWithoutLifeReleaseJournalsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseJournalsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutLifeReleaseJournalsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLifeReleaseJournalsInput, Prisma.UserUncheckedUpdateWithoutLifeReleaseJournalsInput>
+}
+
+export type UserUpdateWithoutLifeReleaseJournalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+}
+
+export type UserUpsertWithoutLifeReleaseActorsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedUpdateWithoutLifeReleaseActorsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedCreateWithoutLifeReleaseActorsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutLifeReleaseActorsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLifeReleaseActorsInput, Prisma.UserUncheckedUpdateWithoutLifeReleaseActorsInput>
+}
+
+export type UserUpdateWithoutLifeReleaseActorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
 }
 
 
@@ -800,12 +2580,34 @@ export type UserCountOutputType = {
   sessions: number
   posts: number
   mediaAssets: number
+  communityPosts: number
+  guestbookEntries: number
+  guestbookApprovals: number
+  calendarEvents: number
+  pushSubscriptions: number
+  pushJobs: number
+  beginnerGuides: number
+  downloads: number
+  vows: number
+  lifeReleaseJournals: number
+  lifeReleaseActors: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   posts?: boolean | UserCountOutputTypeCountPostsArgs
   mediaAssets?: boolean | UserCountOutputTypeCountMediaAssetsArgs
+  communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
+  guestbookEntries?: boolean | UserCountOutputTypeCountGuestbookEntriesArgs
+  guestbookApprovals?: boolean | UserCountOutputTypeCountGuestbookApprovalsArgs
+  calendarEvents?: boolean | UserCountOutputTypeCountCalendarEventsArgs
+  pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
+  pushJobs?: boolean | UserCountOutputTypeCountPushJobsArgs
+  beginnerGuides?: boolean | UserCountOutputTypeCountBeginnerGuidesArgs
+  downloads?: boolean | UserCountOutputTypeCountDownloadsArgs
+  vows?: boolean | UserCountOutputTypeCountVowsArgs
+  lifeReleaseJournals?: boolean | UserCountOutputTypeCountLifeReleaseJournalsArgs
+  lifeReleaseActors?: boolean | UserCountOutputTypeCountLifeReleaseActorsArgs
 }
 
 /**
@@ -839,6 +2641,83 @@ export type UserCountOutputTypeCountMediaAssetsArgs<ExtArgs extends runtime.Type
   where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGuestbookEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GuestbookEntryWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountGuestbookApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GuestbookEntryWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCalendarEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PushSubscriptionWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPushJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PushJobWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBeginnerGuidesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BeginnerGuideWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDownloadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DownloadWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountVowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.VowWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountLifeReleaseJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LifeReleaseJournalWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountLifeReleaseActorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LifeReleaseJournalWhereInput | runtime.Types.Skip
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
@@ -856,6 +2735,17 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.User$postsArgs<ExtArgs> | runtime.Types.Skip
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
+  communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
+  guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
+  guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
+  calendarEvents?: boolean | Prisma.User$calendarEventsArgs<ExtArgs> | runtime.Types.Skip
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs> | runtime.Types.Skip
+  pushJobs?: boolean | Prisma.User$pushJobsArgs<ExtArgs> | runtime.Types.Skip
+  beginnerGuides?: boolean | Prisma.User$beginnerGuidesArgs<ExtArgs> | runtime.Types.Skip
+  downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs> | runtime.Types.Skip
+  vows?: boolean | Prisma.User$vowsArgs<ExtArgs> | runtime.Types.Skip
+  lifeReleaseJournals?: boolean | Prisma.User$lifeReleaseJournalsArgs<ExtArgs> | runtime.Types.Skip
+  lifeReleaseActors?: boolean | Prisma.User$lifeReleaseActorsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["user"]>
 
@@ -909,6 +2799,17 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.User$postsArgs<ExtArgs> | runtime.Types.Skip
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
+  communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
+  guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
+  guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
+  calendarEvents?: boolean | Prisma.User$calendarEventsArgs<ExtArgs> | runtime.Types.Skip
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs> | runtime.Types.Skip
+  pushJobs?: boolean | Prisma.User$pushJobsArgs<ExtArgs> | runtime.Types.Skip
+  beginnerGuides?: boolean | Prisma.User$beginnerGuidesArgs<ExtArgs> | runtime.Types.Skip
+  downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs> | runtime.Types.Skip
+  vows?: boolean | Prisma.User$vowsArgs<ExtArgs> | runtime.Types.Skip
+  lifeReleaseJournals?: boolean | Prisma.User$lifeReleaseJournalsArgs<ExtArgs> | runtime.Types.Skip
+  lifeReleaseActors?: boolean | Prisma.User$lifeReleaseActorsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -920,6 +2821,17 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
     mediaAssets: Prisma.$MediaAssetPayload<ExtArgs>[]
+    communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
+    guestbookEntries: Prisma.$GuestbookEntryPayload<ExtArgs>[]
+    guestbookApprovals: Prisma.$GuestbookEntryPayload<ExtArgs>[]
+    calendarEvents: Prisma.$CalendarEventPayload<ExtArgs>[]
+    pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
+    pushJobs: Prisma.$PushJobPayload<ExtArgs>[]
+    beginnerGuides: Prisma.$BeginnerGuidePayload<ExtArgs>[]
+    downloads: Prisma.$DownloadPayload<ExtArgs>[]
+    vows: Prisma.$VowPayload<ExtArgs>[]
+    lifeReleaseJournals: Prisma.$LifeReleaseJournalPayload<ExtArgs>[]
+    lifeReleaseActors: Prisma.$LifeReleaseJournalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1331,6 +3243,17 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.User$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mediaAssets<T extends Prisma.User$mediaAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityPosts<T extends Prisma.User$communityPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  guestbookEntries<T extends Prisma.User$guestbookEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  guestbookApprovals<T extends Prisma.User$guestbookApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  calendarEvents<T extends Prisma.User$calendarEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$calendarEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pushJobs<T extends Prisma.User$pushJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  beginnerGuides<T extends Prisma.User$beginnerGuidesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$beginnerGuidesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BeginnerGuidePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  downloads<T extends Prisma.User$downloadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$downloadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vows<T extends Prisma.User$vowsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$vowsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  lifeReleaseJournals<T extends Prisma.User$lifeReleaseJournalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lifeReleaseJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  lifeReleaseActors<T extends Prisma.User$lifeReleaseActorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lifeReleaseActorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1834,6 +3757,270 @@ export type User$mediaAssetsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.MediaAssetScalarFieldEnum | Prisma.MediaAssetScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.communityPosts
+ */
+export type User$communityPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityPost
+   */
+  select?: Prisma.CommunityPostSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityPost
+   */
+  omit?: Prisma.CommunityPostOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityPostInclude<ExtArgs> | null
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.CommunityPostOrderByWithRelationInput | Prisma.CommunityPostOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.CommunityPostWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.CommunityPostScalarFieldEnum | Prisma.CommunityPostScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.guestbookEntries
+ */
+export type User$guestbookEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GuestbookEntry
+   */
+  select?: Prisma.GuestbookEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GuestbookEntry
+   */
+  omit?: Prisma.GuestbookEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GuestbookEntryInclude<ExtArgs> | null
+  where?: Prisma.GuestbookEntryWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.GuestbookEntryOrderByWithRelationInput | Prisma.GuestbookEntryOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.GuestbookEntryWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.GuestbookEntryScalarFieldEnum | Prisma.GuestbookEntryScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.guestbookApprovals
+ */
+export type User$guestbookApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GuestbookEntry
+   */
+  select?: Prisma.GuestbookEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GuestbookEntry
+   */
+  omit?: Prisma.GuestbookEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GuestbookEntryInclude<ExtArgs> | null
+  where?: Prisma.GuestbookEntryWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.GuestbookEntryOrderByWithRelationInput | Prisma.GuestbookEntryOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.GuestbookEntryWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.GuestbookEntryScalarFieldEnum | Prisma.GuestbookEntryScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.calendarEvents
+ */
+export type User$calendarEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarEvent
+   */
+  select?: Prisma.CalendarEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CalendarEvent
+   */
+  omit?: Prisma.CalendarEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CalendarEventInclude<ExtArgs> | null
+  where?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.CalendarEventOrderByWithRelationInput | Prisma.CalendarEventOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.CalendarEventWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.CalendarEventScalarFieldEnum | Prisma.CalendarEventScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.pushSubscriptions
+ */
+export type User$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PushSubscription
+   */
+  select?: Prisma.PushSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PushSubscription
+   */
+  omit?: Prisma.PushSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PushSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.PushSubscriptionWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.PushSubscriptionOrderByWithRelationInput | Prisma.PushSubscriptionOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.PushSubscriptionWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.pushJobs
+ */
+export type User$pushJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PushJob
+   */
+  select?: Prisma.PushJobSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PushJob
+   */
+  omit?: Prisma.PushJobOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PushJobInclude<ExtArgs> | null
+  where?: Prisma.PushJobWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.PushJobOrderByWithRelationInput | Prisma.PushJobOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.PushJobWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.PushJobScalarFieldEnum | Prisma.PushJobScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.beginnerGuides
+ */
+export type User$beginnerGuidesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BeginnerGuide
+   */
+  select?: Prisma.BeginnerGuideSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BeginnerGuide
+   */
+  omit?: Prisma.BeginnerGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BeginnerGuideInclude<ExtArgs> | null
+  where?: Prisma.BeginnerGuideWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.BeginnerGuideOrderByWithRelationInput | Prisma.BeginnerGuideOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.BeginnerGuideWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.BeginnerGuideScalarFieldEnum | Prisma.BeginnerGuideScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.downloads
+ */
+export type User$downloadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Download
+   */
+  select?: Prisma.DownloadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Download
+   */
+  omit?: Prisma.DownloadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DownloadInclude<ExtArgs> | null
+  where?: Prisma.DownloadWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.DownloadOrderByWithRelationInput | Prisma.DownloadOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.DownloadWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.DownloadScalarFieldEnum | Prisma.DownloadScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.vows
+ */
+export type User$vowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Vow
+   */
+  select?: Prisma.VowSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Vow
+   */
+  omit?: Prisma.VowOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.VowInclude<ExtArgs> | null
+  where?: Prisma.VowWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.VowOrderByWithRelationInput | Prisma.VowOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.VowWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.VowScalarFieldEnum | Prisma.VowScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.lifeReleaseJournals
+ */
+export type User$lifeReleaseJournalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LifeReleaseJournal
+   */
+  select?: Prisma.LifeReleaseJournalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LifeReleaseJournal
+   */
+  omit?: Prisma.LifeReleaseJournalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LifeReleaseJournalInclude<ExtArgs> | null
+  where?: Prisma.LifeReleaseJournalWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.LifeReleaseJournalOrderByWithRelationInput | Prisma.LifeReleaseJournalOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.LifeReleaseJournalWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.LifeReleaseJournalScalarFieldEnum | Prisma.LifeReleaseJournalScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.lifeReleaseActors
+ */
+export type User$lifeReleaseActorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LifeReleaseJournal
+   */
+  select?: Prisma.LifeReleaseJournalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LifeReleaseJournal
+   */
+  omit?: Prisma.LifeReleaseJournalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LifeReleaseJournalInclude<ExtArgs> | null
+  where?: Prisma.LifeReleaseJournalWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.LifeReleaseJournalOrderByWithRelationInput | Prisma.LifeReleaseJournalOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.LifeReleaseJournalWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.LifeReleaseJournalScalarFieldEnum | Prisma.LifeReleaseJournalScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

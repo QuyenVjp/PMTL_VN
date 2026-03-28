@@ -6,7 +6,11 @@ import { AuditService, type AuditContext } from "../../platform/audit/audit.serv
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
 import { canCreatePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
-import type { CreatePostInput, UpdatePostInput, ListPostsQuery } from "./content.schemas.js";
+import type {
+  CreatePostInput, UpdatePostInput, ListPostsQuery,
+  GuideQuery, CreateGuideInput, UpdateGuideInput,
+  DownloadQuery, CreateDownloadInput, UpdateDownloadInput,
+} from "./content.schemas.js";
 import type { UserRole, ContentStatus, Prisma } from "../../generated/prisma/client.js";
 
 @Injectable()
@@ -207,5 +211,214 @@ export class ContentService {
       .substring(0, 50);
 
     return `${base}-${publicId.substring(0, 8)}`;
+  }
+
+  // ======================== Guide methods ========================
+
+  async listGuides(query: GuideQuery) {
+    const where: Prisma.BeginnerGuideWhereInput = {};
+    if (query.status) where.status = query.status as ContentStatus;
+    if (query.category) where.category = query.category as any;
+    if (query.search) {
+      where.OR = [
+        { title: { contains: query.search, mode: "insensitive" } },
+        { excerpt: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.beginnerGuide.findMany({
+        where,
+        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        orderBy: { createdAt: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.beginnerGuide.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
+    };
+  }
+
+  async getGuide(publicIdOrSlug: string) {
+    const guide = await this.prisma.beginnerGuide.findFirst({
+      where: { OR: [{ publicId: publicIdOrSlug }, { slug: publicIdOrSlug }] },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+    if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+    return guide;
+  }
+
+  async createGuide(input: CreateGuideInput, userId: string, auditContext: AuditContext) {
+    const publicId = nanoid(21);
+
+    // Check slug uniqueness
+    const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug: input.slug } });
+    if (existing) throw new ConflictException("Slug đã tồn tại");
+
+    const guide = await this.prisma.beginnerGuide.create({
+      data: {
+        publicId,
+        title: input.title,
+        slug: input.slug,
+        content: input.content as Prisma.InputJsonValue,
+        excerpt: input.excerpt,
+        category: input.category as any,
+        status: "DRAFT",
+        authorId: userId,
+      },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.create", "beginner_guide", publicId);
+    return guide;
+  }
+
+  async updateGuide(publicId: string, input: UpdateGuideInput, auditContext: AuditContext) {
+    const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
+    if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+
+    if (input.slug && input.slug !== guide.slug) {
+      const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug: input.slug } });
+      if (existing) throw new ConflictException("Slug đã tồn tại");
+    }
+
+    const updated = await this.prisma.beginnerGuide.update({
+      where: { publicId },
+      data: {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.slug !== undefined && { slug: input.slug }),
+        ...(input.content !== undefined && { content: input.content as Prisma.InputJsonValue }),
+        ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+        ...(input.category !== undefined && { category: input.category as any }),
+      },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.update", "beginner_guide", publicId);
+    return updated;
+  }
+
+  async publishGuide(publicId: string, auditContext: AuditContext) {
+    const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
+    if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+    if (guide.status === "PUBLISHED") throw new ConflictException("Bài hướng dẫn đã được xuất bản");
+
+    const updated = await this.prisma.beginnerGuide.update({
+      where: { publicId },
+      data: { status: "PUBLISHED", publishedAt: new Date() },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.publish", "beginner_guide", publicId);
+    return updated;
+  }
+
+  // ======================== Download methods ========================
+
+  async adminListDownloads(query: DownloadQuery) {
+    const where: Prisma.DownloadWhereInput = {};
+    if (query.status) where.status = query.status as ContentStatus;
+    if (query.category) where.category = query.category as any;
+    if (query.search) {
+      where.OR = [
+        { title: { contains: query.search, mode: "insensitive" } },
+        { description: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.download.findMany({
+        where,
+        include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        orderBy: { createdAt: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.download.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
+    };
+  }
+
+  async adminGetDownload(publicId: string) {
+    const download = await this.prisma.download.findUnique({
+      where: { publicId },
+      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+    if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+    return download;
+  }
+
+  async adminCreateDownload(input: CreateDownloadInput, userId: string, auditContext: AuditContext) {
+    const publicId = nanoid(21);
+
+    const download = await this.prisma.download.create({
+      data: {
+        publicId,
+        title: input.title,
+        description: input.description,
+        category: input.category as any,
+        fileUrl: input.fileUrl,
+        fileType: input.fileType,
+        fileSize: input.fileSize,
+        status: "DRAFT",
+        uploaderId: userId,
+      },
+      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.create", "download", publicId);
+    return download;
+  }
+
+  async adminUpdateDownload(publicId: string, input: UpdateDownloadInput, auditContext: AuditContext) {
+    const download = await this.prisma.download.findUnique({ where: { publicId } });
+    if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+
+    const updated = await this.prisma.download.update({
+      where: { publicId },
+      data: {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.category !== undefined && { category: input.category as any }),
+        ...(input.fileUrl !== undefined && { fileUrl: input.fileUrl }),
+        ...(input.fileType !== undefined && { fileType: input.fileType }),
+        ...(input.fileSize !== undefined && { fileSize: input.fileSize }),
+      },
+      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.update", "download", publicId);
+    return updated;
+  }
+
+  async adminDeleteDownload(publicId: string) {
+    const download = await this.prisma.download.findUnique({ where: { publicId } });
+    if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+
+    await this.prisma.download.delete({ where: { publicId } });
+    return { success: true };
+  }
+
+  async adminPublishDownload(publicId: string, auditContext: AuditContext) {
+    const download = await this.prisma.download.findUnique({ where: { publicId } });
+    if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+    if (download.status === "PUBLISHED") throw new ConflictException("Tài liệu đã được xuất bản");
+
+    const updated = await this.prisma.download.update({
+      where: { publicId },
+      data: { status: "PUBLISHED", publishedAt: new Date() },
+      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.publish", "download", publicId);
+    return updated;
   }
 }
