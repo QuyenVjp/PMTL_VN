@@ -28,6 +28,16 @@ interface MeResponse {
 
 let cachedUser: AdminUser | null = null;
 
+/** Attempt silent token refresh using the refresh cookie. Returns true if successful. */
+async function trySilentRefresh(): Promise<boolean> {
+  try {
+    await adminClient.post<MeResponse>("/auth/refresh");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Check current session by calling /auth/me. Returns user or null. */
 export async function getCurrentUser(): Promise<AdminUser | null> {
   if (cachedUser) return cachedUser;
@@ -52,11 +62,39 @@ export async function getCurrentUser(): Promise<AdminUser | null> {
     return cachedUser;
   } catch (err) {
     if (err instanceof HttpError && err.isUnauthorized) {
-      return null;
+      // Access token expired — attempt silent refresh before giving up
+      const refreshed = await trySilentRefresh();
+      if (!refreshed) return null;
+
+      // Retry /auth/me with the new token
+      try {
+        const response = await adminClient.get<MeResponse>("/auth/me");
+        const user = response.user;
+
+        if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+          return null;
+        }
+
+        cachedUser = {
+          publicId: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          role: user.role,
+          avatarUrl: user.avatarUrl,
+        };
+        return cachedUser;
+      } catch {
+        return null;
+      }
     }
     // Network error or other — treat as unauthenticated
     return null;
   }
+}
+
+/** Get cached user synchronously (populated by beforeLoad in route guard). */
+export function getCachedUser(): AdminUser | null {
+  return cachedUser;
 }
 
 /** Clear cached user (on logout) */

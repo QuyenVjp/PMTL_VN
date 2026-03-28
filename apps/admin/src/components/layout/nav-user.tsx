@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, LogOutIcon, ShieldCheckIcon, SparklesIcon } from "lucide-react";
 
-import { currentAdminUser } from "@/components/layout/admin-user";
+import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/c
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const user = getAdminUserDisplay();
 
   return (
     <SidebarMenu>
@@ -27,12 +28,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={currentAdminUser.avatar} alt={currentAdminUser.name} />
-                <AvatarFallback className="rounded-lg">{currentAdminUser.initials}</AvatarFallback>
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-start text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-semibold">{currentAdminUser.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{currentAdminUser.email}</span>
+                <span className="truncate font-semibold">{user.name}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
               <ChevronsUpDownIcon className="ms-auto size-4 group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
@@ -46,12 +47,12 @@ export function NavUser() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex items-center gap-3 px-1 py-1">
                 <Avatar className="size-9 rounded-lg">
-                  <AvatarImage src={currentAdminUser.avatar} alt={currentAdminUser.name} />
-                  <AvatarFallback className="rounded-lg">{currentAdminUser.initials}</AvatarFallback>
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid text-start">
-                  <span className="font-semibold">{currentAdminUser.name}</span>
-                  <span className="text-xs text-muted-foreground">{currentAdminUser.role}</span>
+                  <span className="font-semibold">{user.name}</span>
+                  <span className="text-xs text-muted-foreground">{user.role}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

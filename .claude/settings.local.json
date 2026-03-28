@@ -58,7 +58,12 @@
       "Bash(git commit:*)",
       "Bash(xargs wc:*)",
       "Skill(update-config)",
-      "Bash(find C:/Users/ADMIN/DEV2/PMTL_VN -path */node_modules/@radix-ui/react-select/package.json)"
+      "Bash(find C:/Users/ADMIN/DEV2/PMTL_VN -path */node_modules/@radix-ui/react-select/package.json)",
+      "mcp__openspace__execute_task",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -name *client* -type f)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -name *query* -type f)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { BellIcon, MonitorIcon, PaletteIcon, ShieldCheckIcon, UserCogIcon, WrenchIcon } from "lucide-react";
+import { BellIcon, MonitorIcon, PaletteIcon, UserCogIcon, WrenchIcon } from "lucide-react";
 
-import { currentAdminUser } from "@/components/layout/admin-user";
+import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,14 +22,15 @@ const settingsNav = [
 
 export function SettingsPage() {
   const { theme, setTheme } = useTheme();
+  const adminUser = getAdminUserDisplay();
   const [section, setSection] = useState("profile");
   const [profile, setProfile] = useState({
-    displayName: currentAdminUser.name,
-    email: currentAdminUser.email,
+    displayName: adminUser.name,
+    email: adminUser.email,
     workspace: "PMTL Admin / Wave 0",
-    role: currentAdminUser.role,
+    role: adminUser.role,
   });
-  const [avatarPreview, setAvatarPreview] = useState(currentAdminUser.avatar);
+  const [avatarPreview, setAvatarPreview] = useState(adminUser.avatar);
   const [preferences, setPreferences] = useState({
     theme,
     compactTables: true,
@@ -58,12 +59,12 @@ export function SettingsPage() {
           <div className="rounded-2xl border bg-card p-3">
             <div className="mb-3 flex items-center gap-3 rounded-xl border bg-muted/30 p-3">
               <Avatar className="size-12 rounded-xl">
-                <AvatarImage src={currentAdminUser.avatar} alt={currentAdminUser.name} />
-                <AvatarFallback className="rounded-xl">{currentAdminUser.initials}</AvatarFallback>
+                <AvatarImage src={adminUser.avatar} alt={adminUser.name} />
+                <AvatarFallback className="rounded-xl">{adminUser.initials}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="truncate font-semibold">{currentAdminUser.name}</p>
-                <p className="truncate text-sm text-muted-foreground">{currentAdminUser.role}</p>
+                <p className="truncate font-semibold">{adminUser.name}</p>
+                <p className="truncate text-sm text-muted-foreground">{adminUser.role}</p>
               </div>
             </div>
 
@@ -127,7 +128,7 @@ export function SettingsPage() {
                     <div className="flex flex-wrap items-center gap-4 rounded-xl border p-4">
                       <Avatar className="size-16 rounded-2xl">
                         <AvatarImage src={avatarPreview} alt={profile.displayName} />
-                        <AvatarFallback className="rounded-2xl">{currentAdminUser.initials}</AvatarFallback>
+                        <AvatarFallback className="rounded-2xl">{adminUser.initials}</AvatarFallback>
                       </Avatar>
                       <div className="grid gap-2">
                         <Input
@@ -319,18 +320,6 @@ export function SettingsPage() {
                 </div>
               ) : null}
             </CardContent>
-          </Card>
-
-          <Card className="mt-4 border-dashed">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ShieldCheckIcon className="size-4" />
-                Ghi chú production
-              </CardTitle>
-              <CardDescription>
-                Khi đẩy production, route này là admin setting nội bộ. Nó không thay thế auth flow public hay policy backend.
-              </CardDescription>
-            </CardHeader>
           </Card>
         </div>
       </div>

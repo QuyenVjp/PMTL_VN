@@ -40,7 +40,7 @@ function normalizeRole(value: string | undefined): DevAdminSeedConfig["role"] {
   const normalized = value?.trim().toUpperCase();
 
   if (!normalized || normalized === "SUPER_ADMIN") {
-    return "SUPER_ADMIN";
+    return DEFAULT_ROLE;
   }
 
   if (normalized === "ADMIN") {

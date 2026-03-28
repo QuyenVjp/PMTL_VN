@@ -86,6 +86,28 @@
     min-width: unset;
   }
 
+  /* Radix Checkbox uses role="button" but must not be stretched to 44px */
+  [data-slot="checkbox"],
+  button[data-slot="checkbox"] {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* cmdk CommandItem uses [tabindex] — exempt from 44px rule to avoid bloated palette rows */
+  [cmdk-item],
+  [cmdk-group-heading],
+  [cmdk-input-wrapper] {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* Sidebar nav buttons & icon-only buttons inherit from ShadCN sidebar primitives */
+  [data-sidebar="menu-button"],
+  [data-sidebar="menu-action"] {
+    min-height: unset;
+    min-width: unset;
+  }
+
   /* Focus ring — high visibility for keyboard navigation */
   :focus-visible {
     outline: 2px solid var(--ring);

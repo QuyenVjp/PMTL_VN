@@ -118,6 +118,8 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 
 ## MCP Routing
 - Workspace MCP stack lives in `.mcp.json`. Prefer MCPs when they provide fresher docs, runtime internals, browser evidence, or infra state that repo files cannot provide.
+- OpenSpace is the default execution lane for Claude Code task runs in this repo. Prefer the `openspace` MCP server first for implementation/debug tasks unless a task explicitly requires another MCP.
+- Do not hardcode provider API keys for OpenSpace in repo config. Prefer host-agent integration and environment-driven model/key resolution.
 - Use `context7` first for current library/framework docs across the wider stack: Next.js, React, TanStack, RHF, Zod, Motion, Docker, cloud SDKs, etc.
 - Use `next-devtools` first for live Next.js runtime/app-router diagnostics. When available, initialize it early in a Next.js session before making routing/caching claims.
 - Use `shadcn` for component acquisition, install guidance, registry-backed examples, and shadcn-specific composition.

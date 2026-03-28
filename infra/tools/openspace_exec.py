@@ -87,10 +87,19 @@ async def run_task(args: argparse.Namespace) -> dict:
     grounding_config_path = build_grounding_config_path()
 
     llm_kwargs: dict[str, str] = {}
-    if os.environ.get("GOOGLE_API_KEY"):
+    explicit_key = os.environ.get("OPENSPACE_LLM_API_KEY")
+    if model.startswith("anthropic/") and os.environ.get("ANTHROPIC_API_KEY"):
+        llm_kwargs["api_key"] = os.environ["ANTHROPIC_API_KEY"]
+    elif model.startswith("gemini/") and os.environ.get("GOOGLE_API_KEY"):
         llm_kwargs["api_key"] = os.environ["GOOGLE_API_KEY"]
-    elif os.environ.get("OPENSPACE_LLM_API_KEY"):
-        llm_kwargs["api_key"] = os.environ["OPENSPACE_LLM_API_KEY"]
+    elif model.startswith("openai/") and os.environ.get("OPENAI_API_KEY"):
+        llm_kwargs["api_key"] = os.environ["OPENAI_API_KEY"]
+    elif model.startswith("openai/") and explicit_key:
+        llm_kwargs["api_key"] = explicit_key
+    elif model.startswith("openrouter/") and os.environ.get("OPENROUTER_API_KEY"):
+        llm_kwargs["api_key"] = os.environ["OPENROUTER_API_KEY"]
+    elif model.startswith("openrouter/") and explicit_key:
+        llm_kwargs["api_key"] = explicit_key
 
     config = OpenSpaceConfig(
         llm_model=model,

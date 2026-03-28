@@ -29,7 +29,8 @@ async function fetchEnvironmentRules(): Promise<ChantEnvironmentRulesResponse> {
     throw new Error(`Không tải được dữ liệu môi trường niệm kinh (${response.status}).`);
   }
 
-  return (await response.json()) as ChantEnvironmentRulesResponse;
+  const json = (await response.json()) as { data: ChantEnvironmentRulesResponse };
+  return json.data;
 }
 
 export function getChantEnvironmentRulesQueryOptions() {

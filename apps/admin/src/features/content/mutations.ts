@@ -1,0 +1,65 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { adminClient } from "@/lib/api/admin-client.js";
+import { handleApiError } from "@/lib/handle-api-error.js";
+import { postKeys } from "./queries.js";
+import { dashboardKeys } from "@/features/dashboard/queries.js";
+
+interface CreatePostInput {
+  title: string;
+  slug?: string;
+  excerpt?: string;
+  content?: unknown;
+  status?: string;
+}
+
+interface UpdatePostInput {
+  title?: string;
+  slug?: string;
+  excerpt?: string;
+  content?: unknown;
+  status?: string;
+}
+
+export function useCreatePost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: CreatePostInput) =>
+      adminClient.post("/content/posts", input),
+    onSuccess: () => {
+      toast.success("Đã tạo bài viết.");
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function useUpdatePost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ publicId, ...input }: UpdatePostInput & { publicId: string }) =>
+      adminClient.patch(`/content/posts/${publicId}`, input),
+    onSuccess: (_data, { publicId }) => {
+      toast.success("Đã cập nhật bài viết.");
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+      void qc.invalidateQueries({ queryKey: postKeys.detail(publicId) });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}
+
+export function usePublishPost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.post(`/content/posts/${publicId}/publish`),
+    onSuccess: () => {
+      toast.success("Đã xuất bản bài viết.");
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}

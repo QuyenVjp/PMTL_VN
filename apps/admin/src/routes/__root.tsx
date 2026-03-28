@@ -11,6 +11,9 @@
  */
 import { Suspense, lazy, type ComponentType } from "react";
 import { createRootRoute, createRoute, Outlet, redirect } from "@tanstack/react-router";
+import { Toaster } from "sonner";
+
+import { CommandMenu } from "@/components/command-menu";
 
 import { AdminShell } from "@/components/layout/admin-shell";
 import { getCurrentUser } from "@/lib/auth";
@@ -115,7 +118,13 @@ function withSuspense(Component: ComponentType) {
 // ── Root Route ───────────────────────────────────────────────────────
 
 export const rootRoute = createRootRoute({
-  component: Outlet,
+  component: () => (
+    <>
+      <Outlet />
+      <CommandMenu />
+      <Toaster richColors position="bottom-right" />
+    </>
+  ),
 });
 
 // ── _authenticated Layout Route ──────────────────────────────────────

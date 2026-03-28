@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { BellIcon, LogOutIcon, Settings2Icon, ShieldCheckIcon, UserIcon } from "lucide-react";
 
-import { currentAdminUser } from "@/components/layout/admin-user";
+import { getAdminUserDisplay } from "@/components/layout/admin-user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function UserMenu() {
+  const user = getAdminUserDisplay();
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -24,8 +26,8 @@ export function UserMenu() {
           aria-label="Mở menu người dùng"
         >
           <Avatar className="size-10">
-            <AvatarImage src={currentAdminUser.avatar} alt={currentAdminUser.name} />
-            <AvatarFallback className="bg-transparent text-sm font-semibold">{currentAdminUser.initials}</AvatarFallback>
+            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarFallback className="bg-transparent text-sm font-semibold">{user.initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -33,12 +35,12 @@ export function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex items-center gap-3 px-1 py-1">
             <Avatar className="size-9">
-              <AvatarImage src={currentAdminUser.avatar} alt={currentAdminUser.name} />
-              <AvatarFallback className="text-sm font-semibold">{currentAdminUser.initials}</AvatarFallback>
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="text-sm font-semibold">{user.initials}</AvatarFallback>
             </Avatar>
             <div className="grid text-start">
-              <span className="font-semibold">{currentAdminUser.name}</span>
-              <span className="text-xs text-muted-foreground">{currentAdminUser.email}</span>
+              <span className="font-semibold">{user.name}</span>
+              <span className="text-xs text-muted-foreground">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>

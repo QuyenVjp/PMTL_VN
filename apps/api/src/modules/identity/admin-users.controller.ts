@@ -8,7 +8,6 @@ import {
   Body,
   Req,
   UseGuards,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import type { Request } from "express";
@@ -52,11 +51,10 @@ export class AdminUsersController {
   }
 
   @Patch(":publicId/profile")
-  @UsePipes(ZodValidate(adminUpdateProfileSchema))
   @ApiOperation({ summary: "Cập nhật hồ sơ người dùng (admin)" })
   async updateProfile(
     @Param("publicId") publicId: string,
-    @Body() input: AdminUpdateProfileInput,
+    @Body(ZodValidate(adminUpdateProfileSchema)) input: AdminUpdateProfileInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -69,11 +67,10 @@ export class AdminUsersController {
   }
 
   @Patch(":publicId/role")
-  @UsePipes(ZodValidate(adminChangeRoleSchema))
   @ApiOperation({ summary: "Thay đổi quyền người dùng (admin)" })
   async changeRole(
     @Param("publicId") publicId: string,
-    @Body() input: AdminChangeRoleInput,
+    @Body(ZodValidate(adminChangeRoleSchema)) input: AdminChangeRoleInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -86,11 +83,10 @@ export class AdminUsersController {
   }
 
   @Post(":publicId/block")
-  @UsePipes(ZodValidate(adminBlockUserSchema))
   @ApiOperation({ summary: "Khóa người dùng (admin)" })
   async block(
     @Param("publicId") publicId: string,
-    @Body() input: AdminBlockUserInput,
+    @Body(ZodValidate(adminBlockUserSchema)) input: AdminBlockUserInput,
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {
