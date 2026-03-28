@@ -45,7 +45,20 @@
       "Bash(npx prisma:*)",
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin -maxdepth 2 -type f \\\\\\(-name tailwind.config.* -o -name postcss.config.* -o -name .css \\\\\\))",
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/design/04-execution-overlay -name *APPS_API* -o -name *IMPLEMENTATION*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma migrate dev --name add-webhook-deliveries)",
+      "Bash(mkdir -p prisma/migrations/0000_baseline)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script --output prisma/migrations/0000_baseline/migration.sql)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma migrate resolve --applied 0000_baseline)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma db push)",
+      "Bash(DATABASE_DIRECT_URL=\"postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl\" npx prisma migrate status)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(xargs wc:*)",
+      "Skill(update-config)",
+      "Bash(find C:/Users/ADMIN/DEV2/PMTL_VN -path */node_modules/@radix-ui/react-select/package.json)"
     ]
   },
   "enableAllProjectMcpServers": true,

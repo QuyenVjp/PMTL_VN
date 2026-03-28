@@ -16,10 +16,10 @@ const verificationPatterns = [
   /\bjust\s+verify-all\b/i,
   /\bjust\s+auth-check\b/i,
   /\bjust\s+search-check\b/i,
-  /\bpnpm\s+lint\b/i,
-  /\bpnpm\s+typecheck\b/i,
-  /\bpnpm\s+test\b/i,
-  /\bpnpm\s+build\b/i
+  /\bpnpm\b.*\blint\b/i,
+  /\bpnpm\b.*\btypecheck\b/i,
+  /\bpnpm\b.*\btest\b/i,
+  /\bpnpm\b.*\bbuild\b/i
 ];
 
 if (verificationPatterns.some((pattern) => pattern.test(command))) {

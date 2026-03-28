@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -35,17 +36,15 @@ export function UsersActionDialog({
   const updateProfile = useUpdateProfile();
   const [displayName, setDisplayName] = useState(currentRow.displayName);
   const [email, setEmail] = useState(currentRow.email);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setDisplayName(currentRow.displayName);
     setEmail(currentRow.email);
-    setError(null);
   }, [currentRow, open]);
 
   const handleSubmit = () => {
     if (!displayName.trim() || !email.trim()) {
-      setError("Tên hiển thị và email không được để trống.");
+      toast.error("Tên hiển thị và email không được để trống.");
       return;
     }
 
@@ -57,10 +56,7 @@ export function UsersActionDialog({
           ...(email !== currentRow.email && { email: email.trim() }),
         },
       },
-      {
-        onSuccess: () => onOpenChange(false),
-        onError: (err) => setError(err.message),
-      },
+      { onSuccess: () => onOpenChange(false) },
     );
   };
 
@@ -73,12 +69,6 @@ export function UsersActionDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {error ? (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-              {error}
-            </div>
-          ) : null}
-
           <div className="flex items-center gap-4">
             <Avatar className="size-16 rounded-2xl">
               <AvatarImage src={currentRow.avatarUrl ?? undefined} alt={currentRow.displayName} />

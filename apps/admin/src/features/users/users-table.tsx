@@ -26,9 +26,9 @@ import {
   initials,
   roleLabel,
   roleOptions,
+  statusBadgeClass,
   statusLabel,
   statusOptions,
-  statusVariant,
   type AdminUserListItem,
 } from "@/features/users/types";
 
@@ -90,7 +90,11 @@ export function UsersTable() {
       {
         accessorKey: "status",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng thái" />,
-        cell: ({ row }) => <Badge variant={statusVariant(row.original.status)}>{statusLabel(row.original.status)}</Badge>,
+        cell: ({ row }) => (
+          <Badge variant="outline" className={statusBadgeClass(row.original.status)}>
+            {statusLabel(row.original.status)}
+          </Badge>
+        ),
         filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
         meta: { label: "Trạng thái" },
         enableSorting: false,

@@ -26,7 +26,6 @@ export function UsersRoleDialog({
 }) {
   const changeRole = useChangeRole();
   const [role, setRole] = useState<ApiUserRole>(currentRow.role);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
     if (role === currentRow.role) {
@@ -36,10 +35,7 @@ export function UsersRoleDialog({
 
     changeRole.mutate(
       { publicId: currentRow.publicId, input: { role } },
-      {
-        onSuccess: () => onOpenChange(false),
-        onError: (err) => setError(err.message),
-      },
+      { onSuccess: () => onOpenChange(false) },
     );
   };
 
@@ -58,12 +54,6 @@ export function UsersRoleDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {error ? (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-              {error}
-            </div>
-          ) : null}
-
           <label className="grid gap-2">
             <span className="text-sm font-medium">Vai trò mới</span>
             <Select value={role} onValueChange={(v) => setRole(v as ApiUserRole)}>

@@ -84,10 +84,21 @@ export function statusLabel(status: ApiUserStatus): string {
   return STATUS_LABELS[status] ?? status;
 }
 
+/** @deprecated Use statusBadgeClass for rich colors */
 export function statusVariant(status: ApiUserStatus): "default" | "secondary" | "outline" {
   if (status === "ACTIVE") return "secondary";
   if (status === "PENDING_VERIFICATION") return "outline";
-  return "default"; // SUSPENDED
+  return "default";
+}
+
+/** Returns Tailwind color classes for `<Badge variant="outline" className={statusBadgeClass(s)}>` */
+export function statusBadgeClass(status: ApiUserStatus): string {
+  if (status === "ACTIVE")
+    return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
+  if (status === "SUSPENDED")
+    return "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400";
+  // PENDING_VERIFICATION
+  return "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-400";
 }
 
 export function initials(name: string) {

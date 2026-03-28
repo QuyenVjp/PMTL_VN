@@ -2,6 +2,7 @@ import {
   PipeTransform,
   Injectable,
   BadRequestException,
+  Optional,
 } from "@nestjs/common";
 import { ZodError, z } from "zod";
 
@@ -13,7 +14,7 @@ type SchemaLike<TOutput = unknown> = {
 
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema?: SchemaLike) {}
+  constructor(@Optional() private readonly schema?: SchemaLike) {}
 
   transform(value: unknown) {
     if (!this.schema) {

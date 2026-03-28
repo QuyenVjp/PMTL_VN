@@ -15,10 +15,18 @@ export default defineConfig({
   },
   server: {
     port: 3002,
+    host: "127.0.0.1",
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
+        // Dùng 127.0.0.1 thay localhost — Windows Node 18+ resolve localhost → ::1 (IPv6)
+        // mà API NestJS listen trên IPv4 → gây ECONNREFUSED
+        target: "http://127.0.0.1:3001",
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on("error", (err) => {
+            console.error("[vite-proxy] API unreachable:", err.message);
+          });
+        },
       },
     },
   },

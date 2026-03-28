@@ -1,6 +1,8 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, RuleSeverity, RuleProductizationMode } from "../src/generated/prisma/client.js";
 import { nanoid } from "nanoid";
+import * as argon2 from "argon2";
+import { resolveDevAdminSeedConfig } from "../src/common/seed/dev-admin-seed-config.js";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -349,8 +351,43 @@ async function seedEnvironmentRules() {
   console.log("Environment rules seeding complete.");
 }
 
+async function seedDevAdminUser() {
+  const config = resolveDevAdminSeedConfig();
+
+  if (!config.enabled) {
+    console.log("Dev admin seeding is disabled for this environment.");
+    return;
+  }
+
+  const passwordHash = await argon2.hash(config.password);
+  const now = new Date();
+
+  await prisma.user.upsert({
+    where: { email: config.email },
+    update: {
+      passwordHash,
+      displayName: config.displayName,
+      role: config.role,
+      status: "ACTIVE",
+      emailVerifiedAt: now,
+    },
+    create: {
+      publicId: nanoid(21),
+      email: config.email,
+      passwordHash,
+      displayName: config.displayName,
+      role: config.role,
+      status: "ACTIVE",
+      emailVerifiedAt: now,
+    },
+  });
+
+  console.log(`Dev admin seeded: ${config.email} (${config.role})`);
+}
+
 async function main() {
   try {
+    await seedDevAdminUser();
     await seedEnvironmentRules();
   } catch (error) {
     console.error("Error seeding data:", error);

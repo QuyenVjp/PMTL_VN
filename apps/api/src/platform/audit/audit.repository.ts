@@ -9,33 +9,28 @@ type TransactionClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" |
 export class AuditRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  private toCreateData(data: CreateAuditLogInput): Prisma.AuditLogCreateInput {
+    return {
+      actorType: data.actorType,
+      action: data.action,
+      resource: data.resource,
+      ...(data.actorId ? { actorId: data.actorId } : {}),
+      ...(data.resourceId ? { resourceId: data.resourceId } : {}),
+      ...(data.metadata ? { metadata: data.metadata as Prisma.InputJsonValue } : {}),
+      ...(data.ipAddress ? { ipAddress: data.ipAddress } : {}),
+      ...(data.userAgent ? { userAgent: data.userAgent } : {}),
+    };
+  }
+
   async create(data: CreateAuditLogInput) {
     return this.prisma.auditLog.create({
-      data: {
-        actorId: data.actorId,
-        actorType: data.actorType,
-        action: data.action,
-        resource: data.resource,
-        resourceId: data.resourceId,
-        metadata: data.metadata as Prisma.InputJsonValue,
-        ipAddress: data.ipAddress,
-        userAgent: data.userAgent,
-      },
+      data: this.toCreateData(data),
     });
   }
 
   async createInTransaction(tx: TransactionClient, data: CreateAuditLogInput) {
     return tx.auditLog.create({
-      data: {
-        actorId: data.actorId,
-        actorType: data.actorType,
-        action: data.action,
-        resource: data.resource,
-        resourceId: data.resourceId,
-        metadata: data.metadata as Prisma.InputJsonValue,
-        ipAddress: data.ipAddress,
-        userAgent: data.userAgent,
-      },
+      data: this.toCreateData(data),
     });
   }
 

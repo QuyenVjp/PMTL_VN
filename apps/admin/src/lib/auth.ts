@@ -17,11 +17,13 @@ export interface AdminUser {
 }
 
 interface MeResponse {
-  publicId: string;
-  email: string;
-  displayName: string;
-  role: string;
-  avatarUrl?: string | null;
+  user: {
+    id: string;
+    email: string;
+    displayName: string;
+    role: string;
+    avatarUrl?: string | null;
+  };
 }
 
 let cachedUser: AdminUser | null = null;
@@ -31,15 +33,23 @@ export async function getCurrentUser(): Promise<AdminUser | null> {
   if (cachedUser) return cachedUser;
 
   try {
-    const user = await adminClient.get<MeResponse>("/auth/me");
+    // API response sau envelope unwrap: { user: { id, email, role, ... } }
+    const response = await adminClient.get<MeResponse>("/auth/me");
+    const user = response.user;
 
     // Only admin roles allowed in admin panel
     if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
       return null;
     }
 
-    cachedUser = user;
-    return user;
+    cachedUser = {
+      publicId: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+    };
+    return cachedUser;
   } catch (err) {
     if (err instanceof HttpError && err.isUnauthorized) {
       return null;

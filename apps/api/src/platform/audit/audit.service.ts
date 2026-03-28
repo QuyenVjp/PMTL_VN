@@ -12,6 +12,25 @@ export interface AuditContext {
   userAgent?: string;
 }
 
+export function buildAuditLogInput(
+  context: AuditContext,
+  action: AuditAction,
+  resource: string,
+  resourceId?: string,
+  metadata?: Record<string, unknown>,
+): CreateAuditLogInput {
+  return {
+    actorType: context.actorType,
+    action,
+    resource,
+    ...(context.actorId ? { actorId: context.actorId } : {}),
+    ...(resourceId ? { resourceId } : {}),
+    ...(metadata ? { metadata } : {}),
+    ...(context.ipAddress ? { ipAddress: context.ipAddress } : {}),
+    ...(context.userAgent ? { userAgent: context.userAgent } : {}),
+  };
+}
+
 @Injectable()
 export class AuditService {
   constructor(private readonly repository: AuditRepository) {}
@@ -23,16 +42,7 @@ export class AuditService {
     resourceId?: string,
     metadata?: Record<string, unknown>,
   ) {
-    const input: CreateAuditLogInput = {
-      actorId: context.actorId,
-      actorType: context.actorType,
-      action,
-      resource,
-      resourceId,
-      metadata,
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-    };
+    const input = buildAuditLogInput(context, action, resource, resourceId, metadata);
 
     return this.repository.create(input);
   }
@@ -45,16 +55,7 @@ export class AuditService {
     resourceId?: string,
     metadata?: Record<string, unknown>,
   ) {
-    const input: CreateAuditLogInput = {
-      actorId: context.actorId,
-      actorType: context.actorType,
-      action,
-      resource,
-      resourceId,
-      metadata,
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
-    };
+    const input = buildAuditLogInput(context, action, resource, resourceId, metadata);
 
     return this.repository.createInTransaction(tx, input);
   }

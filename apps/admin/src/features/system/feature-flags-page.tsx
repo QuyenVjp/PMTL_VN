@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryOptions } from "@tanstack/react-query";
 import { RefreshCwIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { adminClient } from "@/lib/api/admin-client.js";
+import { handleApiError } from "@/lib/handle-api-error.js";
 
 interface FeatureFlag {
   key: string;
@@ -35,9 +37,11 @@ function useToggleFlag() {
   return useMutation({
     mutationFn: ({ key, enabled }: { key: string; enabled: boolean }) =>
       adminClient.patch(`/admin/feature-flags/${key}`, { enabled }),
-    onSuccess: () => {
+    onSuccess: (_data, { key, enabled }) => {
+      toast.success(enabled ? `Đã bật cờ "${key}".` : `Đã tắt cờ "${key}".`);
       void qc.invalidateQueries({ queryKey: flagKeys.list() });
     },
+    onError: handleApiError,
   });
 }
 

@@ -51,6 +51,11 @@ $hostEnv = @{
   MEILISEARCH_URL = "http://127.0.0.1:7700"
   MEILISEARCH_API_KEY = "YSc9DR7IjNACcdDcwtk1oZ1jL7TZ4OirvIW0Xu2To9U="
   SEARCH_ENGINE = "meilisearch"
+  SEED_ADMIN_ENABLED = "true"
+  SEED_ADMIN_EMAIL = "admin@pmtl.local"
+  SEED_ADMIN_PASSWORD = "PmtlAdmin!123"
+  SEED_ADMIN_DISPLAY_NAME = "PMTL Admin"
+  SEED_ADMIN_ROLE = "SUPER_ADMIN"
 }
 
 foreach ($entry in $hostEnv.GetEnumerator()) {

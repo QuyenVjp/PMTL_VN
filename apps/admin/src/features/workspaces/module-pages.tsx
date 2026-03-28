@@ -16,14 +16,53 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { adminOperators } from "@/components/layout/admin-user";
-import { WorkspaceTablePage } from "@/features/workspaces/workspace-table-page";
+import { WorkspaceTablePage, type WorkspaceColumn } from "@/features/workspaces/workspace-table-page";
 import { toStr } from "@/lib/utils";
 
-const contentColumns = [
+// ── Shared field options ──────────────────────────────────────────────
+
+const CONTENT_STATUS_OPTIONS = ["Đang xuất bản", "Chờ duyệt", "Nháp", "Cần chỉnh sửa"];
+
+const OWNER_OPTIONS = [
+  "Biên tập", "Nội dung", "Huấn tu", "Thiết kế",
+  "Vận hành", "Sự kiện", "Cộng đồng", "Niệm kinh",
+  "Kinh sách", "Hỗ trợ", "Media", "Hướng dẫn",
+];
+
+const MOD_STATUS_OPTIONS = ["Mở mới", "Đang xử lý", "Đã xử lý", "Ẩn"];
+const MOD_PRIORITY_OPTIONS = ["Khẩn", "Cao", "Trung bình", "Thấp"];
+
+const USER_STATUS_OPTIONS = ["Hoạt động", "Đã mời", "Đang khóa", "Chờ xác minh"];
+const USER_ROLE_OPTIONS = [
+  "Super admin", "Admin nội dung", "Moderator", "Search ops",
+  "Hỗ trợ phát nguyện", "Operator", "Cộng tác viên", "Thành viên",
+];
+
+// ── Shared column sets ────────────────────────────────────────────────
+
+const contentColumns: WorkspaceColumn[] = [
   { key: "tieuDe", label: "Tiêu đề" },
-  { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-  { key: "owner", label: "Phụ trách", className: "w-[160px]" },
-  { key: "capNhat", label: "Cập nhật", className: "w-[160px]" },
+  {
+    key: "trangThai",
+    label: "Trạng thái",
+    className: "w-[140px]",
+    fieldType: "select",
+    fieldOptions: CONTENT_STATUS_OPTIONS,
+  },
+  {
+    key: "owner",
+    label: "Phụ trách",
+    className: "w-[160px]",
+    fieldType: "select",
+    fieldOptions: OWNER_OPTIONS,
+  },
+  {
+    key: "capNhat",
+    label: "Cập nhật",
+    className: "w-[160px]",
+    fieldType: "datetime",
+    hideInForm: true,
+  },
 ];
 
 const userAvatarMap = {
@@ -109,9 +148,9 @@ export function DailyPracticePage() {
       searchPlaceholder="Tìm preset, gói bài tập hoặc FAQ"
       columns={[
         { key: "tenGoi", label: "Gói nội dung" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
-        { key: "ghiChu", label: "Ghi chú" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
+        { key: "ghiChu", label: "Ghi chú", fieldType: "textarea" },
       ]}
       rows={[
         { id: "practice-1", tenGoi: "Lộ trình 7 ngày nhập môn", trangThai: "Đang xuất bản", owner: "Huấn tu", ghiChu: "Đang dùng cho onboarding web", actions: ["Mở"] },
@@ -130,9 +169,9 @@ export function LittleHousePage() {
       searchPlaceholder="Tìm case, guide hoặc FAQ của Ngôi nhà nhỏ"
       columns={[
         { key: "tenMuc", label: "Mục nội dung" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "doiTuong", label: "Đối tượng", className: "w-[180px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "doiTuong", label: "Đối tượng", className: "w-[180px]", fieldType: "select", fieldOptions: ["Gia đình mới", "Thành viên nội thành", "Thành viên mới", "Tất cả"] },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
       ]}
       rows={[
         { id: "house-1", tenMuc: "Checklist chuẩn bị bàn thờ", trangThai: "Đang xuất bản", doiTuong: "Gia đình mới", owner: "Nội dung", actions: ["Mở"] },
@@ -151,9 +190,9 @@ export function LifeReleasePage() {
       searchPlaceholder="Tìm guide phóng sanh hoặc biến thể nghi thức"
       columns={[
         { key: "tenMuc", label: "Mục nội dung" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
-        { key: "ghiChu", label: "Ghi chú" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
+        { key: "ghiChu", label: "Ghi chú", fieldType: "textarea" },
       ]}
       rows={[
         { id: "release-1", tenMuc: "Hướng dẫn phát nguyện phóng sanh", trangThai: "Đang xuất bản", owner: "Hỗ trợ", ghiChu: "Liên kết với assisted entry", actions: ["Mở"] },
@@ -172,9 +211,9 @@ export function MediaLibraryPage() {
       searchPlaceholder="Tìm collection, tag hoặc asset"
       columns={[
         { key: "boSuuTap", label: "Collection" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "soMuc", label: "Số mục", className: "w-[120px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "soMuc", label: "Số mục", className: "w-[120px]", fieldType: "number" },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
       ]}
       rows={[
         { id: "library-1", boSuuTap: "Pháp thoại căn bản", trangThai: "Đang xuất bản", soMuc: "128", owner: "Media", actions: ["Mở"] },
@@ -193,9 +232,9 @@ export function DownloadsPage() {
       searchPlaceholder="Tìm tài liệu theo tên hoặc loại"
       columns={[
         { key: "tenTaiLieu", label: "Tài liệu" },
-        { key: "loai", label: "Loại", className: "w-[160px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "capNhat", label: "Cập nhật", className: "w-[160px]" },
+        { key: "loai", label: "Loại", className: "w-[160px]", fieldType: "select", fieldOptions: ["PDF", "DOCX", "PPTX", "MP3", "MP4", "Khác"] },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "capNhat", label: "Cập nhật", className: "w-[160px]", fieldType: "datetime", hideInForm: true },
       ]}
       rows={[
         { id: "download-1", tenTaiLieu: "Sổ tay thực tập tại gia", loai: "PDF", trangThai: "Đang xuất bản", capNhat: "26/03 21:10", actions: ["Mở"] },
@@ -214,9 +253,9 @@ export function SutrasPage() {
       searchPlaceholder="Tìm bộ kinh, chương hoặc bản dịch"
       columns={[
         { key: "tenBoKinh", label: "Bộ kinh" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "chuong", label: "Chương", className: "w-[120px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "chuong", label: "Chương", className: "w-[120px]", fieldType: "number" },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
       ]}
       rows={[
         { id: "sutra-1", tenBoKinh: "Kinh A Di Đà", trangThai: "Đang xuất bản", chuong: "24", owner: "Kinh sách", actions: ["Mở"] },
@@ -235,8 +274,8 @@ export function MediaAssetsPage() {
       searchPlaceholder="Tìm asset theo tên file hoặc owner"
       columns={[
         { key: "tep", label: "Tệp" },
-        { key: "loai", label: "Loại", className: "w-[140px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
+        { key: "loai", label: "Loại", className: "w-[140px]", fieldType: "select", fieldOptions: ["Ảnh", "Audio", "Video", "PDF", "Khác"] },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: ["Ổn định", "Đang xử lý", "Lỗi", "Cần thay thế"] },
         { key: "thamChieu", label: "Đang dùng tại" },
       ]}
       rows={[
@@ -257,8 +296,8 @@ export function CommunityPostsPage() {
       columns={[
         { key: "tieuDe", label: "Bài đăng" },
         { key: "tacGia", label: "Tác giả", className: "w-[180px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "uuTien", label: "Ưu tiên", className: "w-[140px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: MOD_STATUS_OPTIONS },
+        { key: "uuTien", label: "Ưu tiên", className: "w-[140px]", fieldType: "select", fieldOptions: MOD_PRIORITY_OPTIONS },
       ]}
       rows={[
         { id: "community-1", tieuDe: "Nhật ký 21 ngày hành trì", tacGia: "Liên Hoa", trangThai: "Đang xuất bản", uuTien: "Bình thường", actions: ["Mở"] },
@@ -278,8 +317,8 @@ export function GuestbookPage() {
       columns={[
         { key: "nguoiGui", label: "Người gửi" },
         { key: "suKien", label: "Sự kiện", className: "w-[220px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "capNhat", label: "Cập nhật", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: MOD_STATUS_OPTIONS },
+        { key: "capNhat", label: "Cập nhật", className: "w-[160px]", fieldType: "datetime", hideInForm: true },
       ]}
       rows={[
         { id: "guestbook-1", nguoiGui: "Gia đình Phúc An", suKien: "Khóa tu cuối tuần", trangThai: "Đang xuất bản", capNhat: "27/03 07:10", actions: ["Mở"] },
@@ -328,7 +367,7 @@ export function ModerationReportsPage() {
         { label: "Khẩn", value: "urgent", predicate: (row) => row.uuTien === "Khẩn" },
       ]}
       columns={[
-        { key: "maBaoCao", label: "Mã", className: "w-[140px]" },
+        { key: "maBaoCao", label: "Mã", className: "w-[140px]", fieldType: "readonly" },
         {
           key: "target",
           label: "Đối tượng",
@@ -339,10 +378,10 @@ export function ModerationReportsPage() {
             </div>
           ),
         },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "uuTien", label: "Ưu tiên", className: "w-[140px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: MOD_STATUS_OPTIONS },
+        { key: "uuTien", label: "Ưu tiên", className: "w-[140px]", fieldType: "select", fieldOptions: MOD_PRIORITY_OPTIONS },
         { key: "nguoiGui", label: "Người gửi", className: "w-[180px]" },
-        { key: "owner", label: "Owner", className: "w-[180px]" },
+        { key: "owner", label: "Owner", className: "w-[180px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
       ]}
       rows={[
         {
@@ -397,10 +436,10 @@ export function ModerationCommentsPage() {
       description="Theo dõi comment đã bị cờ, điều phối ẩn/khôi phục và kiểm tra lịch sử thao tác."
       searchPlaceholder="Tìm bình luận theo tác giả, target hoặc trạng thái"
       columns={[
-        { key: "noiDung", label: "Nội dung bình luận" },
+        { key: "noiDung", label: "Nội dung bình luận", fieldType: "textarea" },
         { key: "target", label: "Đối tượng", className: "w-[220px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "capNhat", label: "Cập nhật", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: ["Đang hiển thị", "Đã ẩn", "Chờ rà soát"] },
+        { key: "capNhat", label: "Cập nhật", className: "w-[160px]", fieldType: "datetime", hideInForm: true },
       ]}
       rows={[
         { id: "comment-1", noiDung: "Xin hỏi lịch phát nguyện buổi tối?", target: "Bài viết / Phóng sanh", trangThai: "Đang hiển thị", capNhat: "27/03 13:55", actions: ["Ẩn", "Mở chi tiết"] },
@@ -494,10 +533,12 @@ export function UsersAdminPage() {
             </div>
           ),
           getFilterValue: (row) => toStr(row.vaiTro),
+          fieldType: "select",
+          fieldOptions: USER_ROLE_OPTIONS,
         },
         { key: "thietBi", label: "Thiết bị gần nhất", className: "w-[180px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "lanCuoi", label: "Lần cuối", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: USER_STATUS_OPTIONS },
+        { key: "lanCuoi", label: "Lần cuối", className: "w-[160px]", fieldType: "datetime", hideInForm: true },
       ]}
       rows={[
         {
@@ -586,9 +627,9 @@ export function SessionsPage() {
       columns={[
         { key: "nguoiDung", label: "Người dùng" },
         { key: "thietBi", label: "Thiết bị" },
-        { key: "ip", label: "IP", className: "w-[140px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "lanCuoi", label: "Lần cuối", className: "w-[160px]" },
+        { key: "ip", label: "IP", className: "w-[140px]", fieldType: "readonly" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: ["Hoạt động", "Cảnh báo", "Đã thu hồi"] },
+        { key: "lanCuoi", label: "Lần cuối", className: "w-[160px]", fieldType: "datetime", hideInForm: true },
       ]}
       rows={[
         { id: "session-1", nguoiDung: "Ngọc Minh", thietBi: "Chrome / Windows", ip: "14.177.22.18", trangThai: "Hoạt động", lanCuoi: "27/03 14:10", actions: ["Thu hồi"] },
@@ -608,9 +649,9 @@ export function CalendarEventsPage() {
       primaryAction="Tạo sự kiện"
       columns={[
         { key: "suKien", label: "Sự kiện" },
-        { key: "lich", label: "Lịch", className: "w-[180px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "owner", label: "Phụ trách", className: "w-[160px]" },
+        { key: "lich", label: "Lịch", className: "w-[180px]", fieldType: "datetime" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: CONTENT_STATUS_OPTIONS },
+        { key: "owner", label: "Phụ trách", className: "w-[160px]", fieldType: "select", fieldOptions: OWNER_OPTIONS },
       ]}
       rows={[
         { id: "event-1", suKien: "Lễ sám hối cuối tháng", lich: "29/03 19:30", trangThai: "Đang xuất bản", owner: "Sự kiện", actions: ["Mở", "Dời lịch"] },
@@ -629,10 +670,10 @@ export function NotificationsPage() {
       searchPlaceholder="Tìm job theo mã, nguồn kích hoạt hoặc trạng thái"
       primaryAction="Tạo đợt gửi"
       columns={[
-        { key: "job", label: "Mã đợt gửi" },
+        { key: "job", label: "Mã đợt gửi", fieldType: "readonly" },
         { key: "nguon", label: "Nguồn", className: "w-[180px]" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
-        { key: "guiLuc", label: "Gửi lúc", className: "w-[160px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: ["Chờ gửi", "Đang gửi", "Thành công", "Cảnh báo", "Lỗi"] },
+        { key: "guiLuc", label: "Gửi lúc", className: "w-[160px]", fieldType: "datetime" },
       ]}
       rows={[
         { id: "push-1", job: "PUSH-2741", nguon: "Lịch / advisory", trangThai: "Chờ gửi", guiLuc: "27/03 18:00", actions: ["Mở", "Redrive"] },
@@ -652,9 +693,9 @@ export function VolunteersPage() {
       primaryAction="Thêm phụng sự viên"
       columns={[
         { key: "hoTen", label: "Họ tên" },
-        { key: "vaiTro", label: "Vai trò", className: "w-[180px]" },
+        { key: "vaiTro", label: "Vai trò", className: "w-[180px]", fieldType: "select", fieldOptions: ["Hỗ trợ phóng sanh", "Chăm sóc thành viên", "Điều phối lịch", "Hỗ trợ kỹ thuật", "Vận hành sự kiện"] },
         { key: "lienHe", label: "Liên hệ" },
-        { key: "trangThai", label: "Trạng thái", className: "w-[140px]" },
+        { key: "trangThai", label: "Trạng thái", className: "w-[140px]", fieldType: "select", fieldOptions: ["Hoạt động", "Tạm nghỉ", "Đã rời"] },
       ]}
       rows={[
         { id: "volunteer-1", hoTen: "Thanh Tịnh", vaiTro: "Hỗ trợ phóng sanh", lienHe: "0909 221 455", trangThai: "Hoạt động", actions: ["Mở"] },

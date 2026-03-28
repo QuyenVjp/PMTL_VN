@@ -52,6 +52,12 @@
     min-width: 44px;
   }
 
+  /* Radix Select trigger tự quản lý kích thước — exempt khỏi 44px global rule */
+  [data-slot="select-trigger"] {
+    min-height: unset;
+    min-width: unset;
+  }
+
   body {
     font-size: 16px;
     line-height: 1.5;

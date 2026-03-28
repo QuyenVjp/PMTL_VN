@@ -16,6 +16,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { EyeIcon, MoreHorizontalIcon, PencilLineIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { toast } from "sonner";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -39,14 +40,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { cn, toStr } from "@/lib/utils";
+
+// ── Types ─────────────────────────────────────────────────────────────
 
 export type WorkspaceStat = {
   label: string;
   value: string;
   note: string;
 };
+
+/**
+ * fieldType controls which input renders in create/edit dialogs.
+ *   "text"         → <Input> (default)
+ *   "textarea"     → <Textarea>
+ *   "select"       → <Select> requires fieldOptions
+ *   "date"         → <input type="date">  (yyyy-mm-dd)
+ *   "datetime"     → <input type="datetime-local"> — value stored as "dd/mm hh:mm" in rows
+ *   "number"       → <Input type="number">
+ *   "readonly"     → greyed-out Input, not editable
+ */
+export type WorkspaceFieldType = "text" | "textarea" | "select" | "date" | "datetime" | "number" | "readonly";
 
 export type WorkspaceColumn = {
   key: string;
@@ -56,6 +73,12 @@ export type WorkspaceColumn = {
   getFilterValue?: (row: WorkspaceRow) => string | string[] | undefined;
   enableHiding?: boolean;
   enableSorting?: boolean;
+  /** Which input widget to use in create/edit forms. Defaults to "text". */
+  fieldType?: WorkspaceFieldType;
+  /** Options for fieldType "select". */
+  fieldOptions?: string[];
+  /** Hide this column in create/edit dialogs (e.g. auto-generated IDs, timestamps). */
+  hideInForm?: boolean;
 };
 
 export type WorkspaceRow = {
@@ -101,90 +124,98 @@ type ColumnMeta = {
 
 type DialogMode = "create" | "view" | "edit" | "danger" | null;
 
+// ── Helpers ───────────────────────────────────────────────────────────
+
 const globalFilterFn: FilterFn<WorkspaceRow> = (row, _columnId, value) => {
   const query = `${value ?? ""}`.trim().toLowerCase();
-  if (!query) {
-    return true;
-  }
-
+  if (!query) return true;
   const haystack = Object.values(row.original)
     .flatMap((item): string[] => (Array.isArray(item) ? item.map(toStr) : [toStr(item)]))
     .join(" ")
     .toLowerCase();
-
   return haystack.includes(query);
 };
 
-function badgeVariant(value: string) {
-  const normalized = value.toLowerCase();
+/**
+ * Maps Vietnamese status labels to rich Tailwind color classes.
+ * Returns a string to pass as `className` on a `<Badge variant="outline">`.
+ * Order matters — more specific checks go first.
+ */
+function statusBadgeClass(value: string): string {
+  const n = value.toLowerCase().trim();
 
+  // Emerald — active / published / healthy
   if (
-    normalized.includes("khỏe") ||
-    normalized.includes("đang bật") ||
-    normalized.includes("đang xuất bản") ||
-    normalized.includes("hoạt động") ||
-    normalized.includes("ổn định") ||
-    normalized.includes("thành công") ||
-    normalized.includes("đã duyệt") ||
-    normalized.includes("đã xem")
-  ) {
-    return "secondary" as const;
-  }
+    n === "đang xuất bản" || n === "hoạt động" || n === "ổn định" ||
+    n === "thành công" || n === "đã duyệt" || n === "đang hiển thị" ||
+    n === "đang bật" || n === "hoàn tất" || n === "đang chạy" || n === "đang khỏe"
+  ) return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
 
+  // Sky — invited / new open / pending verification
   if (
-    normalized.includes("cảnh báo") ||
-    normalized.includes("chờ duyệt") ||
-    normalized.includes("nháp") ||
-    normalized.includes("đang xử lý") ||
-    normalized.includes("chờ gửi") ||
-    normalized.includes("cần cập nhật") ||
-    normalized.includes("mở mới") ||
-    normalized.includes("khẩn") ||
-    normalized.includes("tạm nghỉ")
-  ) {
-    return "outline" as const;
-  }
+    n === "đã mời" || n === "mở mới" || n === "chờ xác minh" || n === "chờ xác nhận"
+  ) return "border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-400";
 
-  if (normalized.includes("tắt") || normalized.includes("ẩn") || normalized.includes("khóa") || normalized.includes("sự cố")) {
-    return "default" as const;
-  }
+  // Blue — draft / pending approval / queued
+  if (
+    n === "nháp" || n === "chờ duyệt" || n === "chờ gửi" || n === "chờ rà soát"
+  ) return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
 
-  return "outline" as const;
+  // Amber — processing / needs update / editing
+  if (
+    n === "đang xử lý" || n === "cần cập nhật" || n === "cần chỉnh sửa" ||
+    n === "đang chỉnh sửa" || n === "đang gửi" || n === "chờ xử lý"
+  ) return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
+
+  // Orange — urgent / warning / incident
+  if (
+    n === "khẩn" || n === "cảnh báo" || n === "sự cố" || n.includes("cảnh báo")
+  ) return "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-400";
+
+  // Red — blocked / suspended / revoked / hidden
+  if (
+    n === "đang khóa" || n === "tạm khóa" || n === "đã thu hồi" ||
+    n === "đã ẩn" || n.includes("khóa") || n.includes("thu hồi")
+  ) return "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400";
+
+  // Zinc — paused / inactive / left
+  if (
+    n === "tạm nghỉ" || n === "đã rời" || n === "không hoạt động"
+  ) return "border-zinc-200 bg-zinc-100 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400";
+
+  return ""; // let Badge's own outline style handle unknown values
 }
 
 function renderCellValue(key: string, value: string | string[] | undefined) {
-  if (!value) {
-    return "—";
-  }
+  if (!value) return "—";
 
   if (Array.isArray(value)) {
     return (
       <div className="flex flex-wrap gap-2">
         {value.map((item) => (
-          <Badge key={`${key}-${item}`} variant="outline">
-            {item}
-          </Badge>
+          <Badge key={`${key}-${item}`} variant="outline">{item}</Badge>
         ))}
       </div>
     );
   }
 
-  if (key.toLowerCase().includes("trangthai") || key.toLowerCase().includes("uutien") || key.toLowerCase().includes("mucdo") || key.toLowerCase().includes("suckhoe")) {
-    return <Badge variant={badgeVariant(value)}>{value}</Badge>;
+  if (
+    key.toLowerCase().includes("trangthai") || key.toLowerCase().includes("uutien") ||
+    key.toLowerCase().includes("mucdo") || key.toLowerCase().includes("suckhoe")
+  ) {
+    return (
+      <Badge variant="outline" className={cn(statusBadgeClass(value))}>
+        {value}
+      </Badge>
+    );
   }
 
   return value;
 }
 
 function normalizeCellValue(value: unknown): string | string[] | undefined {
-  if (Array.isArray(value)) {
-    return value.filter((item): item is string => typeof item === "string");
-  }
-
-  if (typeof value === "string") {
-    return value;
-  }
-
+  if (Array.isArray(value)) return value.filter((item): item is string => typeof item === "string");
+  if (typeof value === "string") return value;
   return undefined;
 }
 
@@ -200,52 +231,54 @@ function getNowLabel() {
   return `${date} ${time}`;
 }
 
+/** Convert "27/03 14:20" → "2026-03-27T14:20" for datetime-local input */
+function toDateTimeLocal(value: string): string {
+  const match = /^(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})$/.exec(value.trim());
+  if (match) {
+    const [, day, month, hour, minute] = match;
+    const year = new Date().getFullYear();
+    return `${year}-${month}-${day}T${hour}:${minute}`;
+  }
+  // Already ISO-like or empty — return as-is
+  return value;
+}
+
+/** Convert "2026-03-27T14:20" → "27/03 14:20" for row storage */
+function fromDateTimeLocal(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value);
+  if (match) {
+    const [, , month, day, hour, minute] = match;
+    return `${day}/${month} ${hour}:${minute}`;
+  }
+  return value;
+}
+
+/** Convert "2026-03-27" → "27/03/2026" for date-only display */
+function fromDateOnly(value: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (match) {
+    const [, year, month, day] = match;
+    return `${day}/${month}/${year}`;
+  }
+  return value;
+}
+
 function createDraftRow(title: string, columns: WorkspaceColumn[], rows: WorkspaceRow[]) {
   const nextId = `${title.toLowerCase().replace(/\s+/g, "-")}-${rows.length + 1}`;
-  const draftRow: WorkspaceRow = {
-    id: nextId,
-    actions: ["Mở", "Giao owner", "Xóa"],
-  };
+  const draftRow: WorkspaceRow = { id: nextId, actions: ["Mở", "Giao owner", "Xóa"] };
 
   for (const column of columns) {
     const key = column.key.toLowerCase();
-
-    if (key.includes("trangthai")) {
-      draftRow[column.key] = "Nháp";
-      continue;
+    if (column.hideInForm) { draftRow[column.key] = ""; continue; }
+    if (key.includes("trangthai")) { draftRow[column.key] = column.fieldOptions?.[0] ?? "Nháp"; continue; }
+    if (key.includes("capnhat") || key.includes("lancuoi")) { draftRow[column.key] = getNowLabel(); continue; }
+    if (key.includes("email")) { draftRow[column.key] = `${nextId}@pmtl.local`; continue; }
+    if (key.includes("owner") || key.includes("phutrach") || key.includes("tacgia") || key.includes("nguoigui")) {
+      draftRow[column.key] = column.fieldOptions?.[0] ?? "Vận hành PMTL"; continue;
     }
-
-    if (key.includes("capnhat") || key.includes("lancuoi")) {
-      draftRow[column.key] = getNowLabel();
-      continue;
-    }
-
-    if (key.includes("email")) {
-      draftRow[column.key] = `${nextId}@pmtl.local`;
-      continue;
-    }
-
-    if (
-      key.includes("owner") ||
-      key.includes("phutrach") ||
-      key.includes("tacgia") ||
-      key.includes("nguoigui")
-    ) {
-      draftRow[column.key] = "Vận hành PMTL";
-      continue;
-    }
-
-    if (key.includes("mabaocao")) {
-      draftRow[column.key] = `RPT-${Math.floor(10000 + Math.random() * 89999)}`;
-      continue;
-    }
-
-    if (key.includes("job")) {
-      draftRow[column.key] = `JOB-${Math.floor(1000 + Math.random() * 8999)}`;
-      continue;
-    }
-
-    draftRow[column.key] = `${column.label} mới`;
+    if (key.includes("mabaocao")) { draftRow[column.key] = `RPT-${Math.floor(10000 + Math.random() * 89999)}`; continue; }
+    if (key.includes("job")) { draftRow[column.key] = `JOB-${Math.floor(1000 + Math.random() * 8999)}`; continue; }
+    draftRow[column.key] = "";
   }
 
   return draftRow;
@@ -271,33 +304,115 @@ function resolveActionUpdate(action: string, row: WorkspaceRow) {
     if (action === "Thay thế" || action === "Gửi lại" || action === "Redrive") next[statusKey] = "Đang xử lý";
     if (action === "Đổi vai trò") next[statusKey] = row[statusKey] ?? "Hoạt động";
   }
-
-  if (updatedAtKey) {
-    next[updatedAtKey] = getNowLabel();
-  }
+  if (updatedAtKey) next[updatedAtKey] = getNowLabel();
 
   return next;
 }
 
 function normalizeRowForForm(row: WorkspaceRow, columns: WorkspaceColumn[]) {
-  return columns.reduce<Record<string, string>>((accumulator, column) => {
+  return columns.reduce<Record<string, string>>((acc, column) => {
     const value = row[column.key];
-    accumulator[column.key] = Array.isArray(value) ? value.map(toStr).join(", ") : toStr(value);
-    return accumulator;
+    acc[column.key] = Array.isArray(value) ? value.map(toStr).join(", ") : toStr(value);
+    return acc;
   }, {});
 }
 
 function resolveActionMode(action: string): Exclude<DialogMode, null> {
-  if (action.startsWith("Mở") || action.startsWith("Xem")) {
-    return "view";
-  }
-
-  if (action.includes("Xóa") || action.includes("Ẩn") || action.includes("Khóa") || action.includes("Thu hồi")) {
-    return "danger";
-  }
-
+  if (action.startsWith("Mở") || action.startsWith("Xem")) return "view";
+  if (action.includes("Xóa") || action.includes("Ẩn") || action.includes("Khóa") || action.includes("Thu hồi")) return "danger";
   return "edit";
 }
+
+// ── Smart form field ──────────────────────────────────────────────────
+
+function WorkspaceFormField({
+  id,
+  column,
+  value,
+  onChange,
+}: {
+  id: string;
+  column: WorkspaceColumn;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const ft = column.fieldType ?? "text";
+
+  if (ft === "readonly") {
+    return <Input id={id} value={value} readOnly className="bg-muted text-muted-foreground" />;
+  }
+
+  if (ft === "select" && column.fieldOptions?.length) {
+    return (
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger id={id} className="w-full">
+          <SelectValue placeholder={`Chọn ${column.label.toLowerCase()}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {column.fieldOptions.map((opt) => (
+            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  }
+
+  if (ft === "textarea") {
+    return (
+      <Textarea
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={3}
+        className="resize-none"
+      />
+    );
+  }
+
+  if (ft === "datetime") {
+    return (
+      <Input
+        id={id}
+        type="datetime-local"
+        value={toDateTimeLocal(value)}
+        onChange={(e) => onChange(fromDateTimeLocal(e.target.value))}
+      />
+    );
+  }
+
+  if (ft === "date") {
+    return (
+      <Input
+        id={id}
+        type="date"
+        value={value}
+        onChange={(e) => onChange(fromDateOnly(e.target.value))}
+      />
+    );
+  }
+
+  if (ft === "number") {
+    return (
+      <Input
+        id={id}
+        type="number"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    );
+  }
+
+  // default: "text"
+  return (
+    <Input
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────
 
 export function WorkspaceTablePage({
   title,
@@ -312,7 +427,10 @@ export function WorkspaceTablePage({
   emptyMessage = "Không có dữ liệu phù hợp với bộ lọc hiện tại.",
   entityName,
 }: WorkspaceTablePageProps) {
-  const activeFilters = filters?.length ? filters : [{ label: "Tất cả", value: "all", predicate: () => true }];
+  const activeFilters = useMemo(
+    () => (filters?.length ? filters : [{ label: "Tất cả", value: "all", predicate: () => true }]),
+    [filters],
+  );
 
   const [activeFilter, setActiveFilter] = useState(activeFilters[0]?.value ?? "all");
   const [rowSelection, setRowSelection] = useState({});
@@ -321,21 +439,18 @@ export function WorkspaceTablePage({
   const [globalFilter, setGlobalFilter] = useState("");
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
   const [tableRows, setTableRows] = useState(rows);
-  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [dialogMode, setDialogMode] = useState<DialogMode>(null);
   const [activeAction, setActiveAction] = useState<string | null>(null);
   const [activeRow, setActiveRow] = useState<WorkspaceRow | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
+
   const actions = headerActions?.length
     ? headerActions
     : primaryAction
       ? [{ label: primaryAction, mode: "create" as const }]
       : [];
 
-  useEffect(() => {
-    setTableRows(rows);
-  }, [rows]);
-
+  useEffect(() => { setTableRows(rows); }, [rows]);
   useEffect(() => {
     setPagination((current) => ({ ...current, pageIndex: 0 }));
   }, [activeFilter, globalFilter, tableRows]);
@@ -359,7 +474,6 @@ export function WorkspaceTablePage({
               .filter(Boolean),
           ),
         ).slice(0, 8);
-
         return {
           columnId: column.key,
           title: column.label,
@@ -368,6 +482,8 @@ export function WorkspaceTablePage({
       })
       .filter((filter) => filter.options.length > 1);
   }, [columns, scopedRows]);
+
+  const hasActionsColumn = rows.some((row) => row.actions?.length);
 
   const tableColumns = useMemo<ColumnDef<WorkspaceRow>[]>(() => {
     const mappedColumns: ColumnDef<WorkspaceRow>[] = [
@@ -413,7 +529,7 @@ export function WorkspaceTablePage({
       })),
     ];
 
-    if (tableRows.some((row) => row.actions?.length)) {
+    if (hasActionsColumn) {
       mappedColumns.push({
         id: "actions",
         header: () => <div className="text-right">Thao tác</div>,
@@ -427,20 +543,18 @@ export function WorkspaceTablePage({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                {(row.original.actions ?? []).map((action: string, index: number, actions: string[]) => {
+                {(row.original.actions ?? []).map((action: string, index: number, acts: string[]) => {
                   const isDestructive =
-                    action.includes("Xóa") || action.includes("Ẩn") || action.includes("Khóa") || action.includes("Thu hồi");
-                  const previousAction = actions[index - 1];
-                  const previousDestructive =
-                    previousAction &&
-                    (previousAction.includes("Xóa") ||
-                      previousAction.includes("Ẩn") ||
-                      previousAction.includes("Khóa") ||
-                      previousAction.includes("Thu hồi"));
-
+                    action.includes("Xóa") || action.includes("Ẩn") ||
+                    action.includes("Khóa") || action.includes("Thu hồi");
+                  const prevAction = acts[index - 1];
+                  const prevDestructive = prevAction && (
+                    prevAction.includes("Xóa") || prevAction.includes("Ẩn") ||
+                    prevAction.includes("Khóa") || prevAction.includes("Thu hồi")
+                  );
                   return (
                     <React.Fragment key={`${row.original.id}-${action}`}>
-                      {isDestructive && !previousDestructive ? <div className="my-1 h-px bg-border" /> : null}
+                      {isDestructive && !prevDestructive ? <div className="my-1 h-px bg-border" /> : null}
                       <DropdownMenuItem
                         onClick={() => {
                           setActiveRow(row.original);
@@ -475,18 +589,12 @@ export function WorkspaceTablePage({
     }
 
     return mappedColumns;
-  }, [columns, tableRows]);
+  }, [columns, hasActionsColumn]);
 
   const table = useReactTable({
     data: scopedRows,
     columns: tableColumns,
-    state: {
-      rowSelection,
-      sorting,
-      columnVisibility,
-      globalFilter,
-      pagination,
-    },
+    state: { rowSelection, sorting, columnVisibility, globalFilter, pagination },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -525,10 +633,7 @@ export function WorkspaceTablePage({
       handlePrimaryAction(action.label, action.createDefaults);
       return;
     }
-
-    setFeedbackMessage(
-      action.feedbackMessage ?? `Đã thực thi thao tác "${action.label}" trong ${title.toLowerCase()}.`,
-    );
+    toast.success(action.feedbackMessage ?? `Đã thực thi thao tác "${action.label}" trong ${title.toLowerCase()}.`);
   };
 
   const handleBulkReview = () => {
@@ -537,22 +642,22 @@ export function WorkspaceTablePage({
       current.map((row) => (selectedIds.has(row.id) ? resolveActionUpdate("Nhận xử lý", row) : row)),
     );
     table.resetRowSelection();
-    setFeedbackMessage(`Đã gắn theo dõi ${selectedIds.size} mục trong ${title.toLowerCase()}.`);
+    toast.success(`Đã gắn theo dõi ${selectedIds.size} mục trong ${title.toLowerCase()}.`);
   };
 
   const commitDialog = () => {
-    if (!activeRow || !dialogMode) {
-      return;
-    }
+    if (!activeRow || !dialogMode) return;
 
     if (dialogMode === "create") {
       const created: WorkspaceRow = {
         ...activeRow,
-        ...Object.fromEntries(columns.map((column) => [column.key, formValues[column.key] ?? activeRow[column.key] ?? ""])),
+        ...Object.fromEntries(
+          columns.map((column) => [column.key, formValues[column.key] ?? activeRow[column.key] ?? ""])
+        ),
         actions: activeRow.actions ?? ["Mở", "Giao owner", "Xóa"],
       };
       setTableRows((current) => [created, ...current]);
-      setFeedbackMessage(`Đã tạo mới một mục trong ${title.toLowerCase()}.`);
+      toast.success(`Đã tạo mới trong ${title.toLowerCase()}.`);
       closeDialog();
       return;
     }
@@ -560,12 +665,14 @@ export function WorkspaceTablePage({
     if (dialogMode === "danger") {
       if ((activeAction ?? "").includes("Xóa")) {
         setTableRows((current) => current.filter((row) => row.id !== activeRow.id));
-        setFeedbackMessage(`Đã xóa mục khỏi ${title.toLowerCase()}.`);
+        toast.success(`Đã xóa mục khỏi ${title.toLowerCase()}.`);
       } else {
         setTableRows((current) =>
-          current.map((row) => (row.id === activeRow.id ? resolveActionUpdate(activeAction ?? "", row) : row)),
+          current.map((row) =>
+            row.id === activeRow.id ? resolveActionUpdate(activeAction ?? "", row) : row,
+          ),
         );
-        setFeedbackMessage(`${activeAction} · ${title}`);
+        toast.success(`${activeAction} · ${title}`);
       }
       closeDialog();
       return;
@@ -577,18 +684,24 @@ export function WorkspaceTablePage({
           row.id === activeRow.id
             ? {
                 ...resolveActionUpdate(activeAction ?? "", row),
-                ...Object.fromEntries(columns.map((column) => [column.key, formValues[column.key] ?? row[column.key] ?? ""])),
+                ...Object.fromEntries(
+                  columns.map((column) => [column.key, formValues[column.key] ?? row[column.key] ?? ""])
+                ),
               }
             : row,
         ),
       );
-      setFeedbackMessage(`${activeAction} · ${title}`);
+      toast.success(`Đã lưu thay đổi · ${title}`);
       closeDialog();
     }
   };
 
+  // Columns visible in create/edit forms
+  const formColumns = columns.filter((col) => !col.hideInForm);
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
@@ -613,6 +726,7 @@ export function WorkspaceTablePage({
         ) : null}
       </div>
 
+      {/* Stats */}
       {stats?.length ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
@@ -627,6 +741,7 @@ export function WorkspaceTablePage({
         </div>
       ) : null}
 
+      {/* Table card */}
       <Card>
         <CardContent className="space-y-4 pt-6">
           <DataTableToolbar table={table} searchPlaceholder={searchPlaceholder} filters={facetedFilters} />
@@ -647,10 +762,6 @@ export function WorkspaceTablePage({
             </div>
             <div className="text-sm text-muted-foreground">{visibleCount} mục hiển thị</div>
           </div>
-
-          {feedbackMessage ? (
-            <div className="rounded-xl border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">{feedbackMessage}</div>
-          ) : null}
 
           <ScrollArea orientation="horizontal" className="w-full rounded-md border">
             <Table>
@@ -715,8 +826,8 @@ export function WorkspaceTablePage({
               size="sm"
               variant="outline"
               onClick={() => {
-                const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id).join(", ");
-                setFeedbackMessage(`Đã chuẩn bị xuất danh sách: ${selectedRows || "chưa có lựa chọn"}.`);
+                const selected = table.getFilteredSelectedRowModel().rows.map((row) => row.original.id).join(", ");
+                toast.success(`Đã chuẩn bị xuất danh sách: ${selected || "chưa có lựa chọn"}.`);
               }}
             >
               Xuất danh sách
@@ -725,6 +836,7 @@ export function WorkspaceTablePage({
         </CardContent>
       </Card>
 
+      {/* Create / Edit / View / Danger dialog */}
       <Dialog open={dialogMode !== null} onOpenChange={(open) => (!open ? closeDialog() : null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
@@ -739,39 +851,43 @@ export function WorkspaceTablePage({
             </DialogTitle>
             <DialogDescription>
               {dialogMode === "view"
-                ? `Xem nhanh dữ liệu của ${title.toLowerCase()} mà không rời table.`
+                ? `Xem nhanh dữ liệu của ${title.toLowerCase()}.`
                 : dialogMode === "danger"
                   ? `Xác nhận thao tác ${activeAction?.toLowerCase()} trên mục đang chọn.`
-                  : `Cập nhật dữ liệu của ${title.toLowerCase()} bằng common form dùng chung.`}
+                  : dialogMode === "create"
+                    ? `Điền thông tin để tạo mới trong ${title.toLowerCase()}.`
+                    : `Chỉnh sửa thông tin mục đang chọn.`}
             </DialogDescription>
           </DialogHeader>
 
+          {/* View mode */}
           {dialogMode === "view" && activeRow ? (
             <div className="grid gap-3 md:grid-cols-2">
               {columns.map((column) => (
                 <div key={column.key} className="rounded-xl border p-4">
                   <p className="text-sm text-muted-foreground">{column.label}</p>
-                  <div className="mt-2 font-medium">{renderCellValue(column.key, normalizeCellValue(activeRow[column.key]))}</div>
+                  <div className="mt-2 font-medium">
+                    {renderCellValue(column.key, normalizeCellValue(activeRow[column.key]))}
+                  </div>
                 </div>
               ))}
             </div>
           ) : null}
 
+          {/* Create / Edit mode */}
           {(dialogMode === "create" || dialogMode === "edit") && activeRow ? (
             <div className="grid gap-4 md:grid-cols-2">
-              {columns.map((column) => (
+              {formColumns.map((column) => (
                 <div key={column.key} className="grid gap-2">
                   <label htmlFor={`${activeRow.id}-${column.key}`} className="text-sm font-medium">
                     {column.label}
                   </label>
-                  <Input
+                  <WorkspaceFormField
                     id={`${activeRow.id}-${column.key}`}
+                    column={column}
                     value={formValues[column.key] ?? ""}
-                    onChange={(event) =>
-                      setFormValues((current) => ({
-                        ...current,
-                        [column.key]: event.target.value,
-                      }))
+                    onChange={(newValue) =>
+                      setFormValues((current) => ({ ...current, [column.key]: newValue }))
                     }
                   />
                 </div>
@@ -779,21 +895,24 @@ export function WorkspaceTablePage({
             </div>
           ) : null}
 
+          {/* Danger mode */}
           {dialogMode === "danger" && activeRow ? (
-            <div className="rounded-xl border p-4">
-              <p className="font-medium">{activeAction}</p>
+            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+              <p className="font-medium text-destructive">{activeAction}</p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Mục đang chọn: {columns.map((column) => formValues[column.key]).find(Boolean) ?? activeRow.id}
               </p>
+              <p className="mt-1 text-sm text-muted-foreground">Thao tác này không thể hoàn tác.</p>
             </div>
           ) : null}
 
           <DialogFooter>
-            <Button variant="outline" onClick={closeDialog}>
-              Đóng
-            </Button>
+            <Button variant="outline" onClick={closeDialog}>Đóng</Button>
             {dialogMode !== "view" ? (
-              <Button onClick={commitDialog}>
+              <Button
+                onClick={commitDialog}
+                variant={dialogMode === "danger" ? "destructive" : "default"}
+              >
                 {dialogMode === "create" ? "Tạo mới" : dialogMode === "danger" ? "Xác nhận" : "Lưu thay đổi"}
               </Button>
             ) : null}

@@ -22,11 +22,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       log: process.env.NODE_ENV === "development" 
         ? ["query", "info", "warn", "error"]
         : ["error"],
-      omit: {
-        user: {
-          passwordHash: true,
-        },
-      },
     });
 
     this.extendedClient = this.$extends({

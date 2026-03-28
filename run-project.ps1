@@ -13,10 +13,10 @@ function Stop-DevPortProcesses {
   foreach ($port in $Ports) {
     $connections = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
     foreach ($connection in $connections) {
-      $pid = $connection.OwningProcess
-      if ($pid -and $pid -ne $PID) {
-        Write-Host "[pmtl-run] Reclaiming port $port from PID $pid..." -ForegroundColor Yellow
-        Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+      $owningProcessId = $connection.OwningProcess
+      if ($owningProcessId -and $owningProcessId -ne $PID) {
+        Write-Host "[pmtl-run] Reclaiming port $port from PID $owningProcessId..." -ForegroundColor Yellow
+        Stop-Process -Id $owningProcessId -Force -ErrorAction SilentlyContinue
       }
     }
   }

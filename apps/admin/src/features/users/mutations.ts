@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
+import { handleApiError } from "@/lib/handle-api-error.js";
 import { userAdminKeys } from "./queries.js";
 import type { UpdateProfileInput, ChangeRoleInput, BlockUserInput } from "./types.js";
 
@@ -10,9 +12,11 @@ export function useUpdateProfile() {
     mutationFn: ({ publicId, input }: { publicId: string; input: UpdateProfileInput }) =>
       adminClient.patch(`/admin/users/${publicId}/profile`, input),
     onSuccess: (_data, { publicId }) => {
+      toast.success("Đã cập nhật hồ sơ người dùng.");
       void qc.invalidateQueries({ queryKey: userAdminKeys.lists() });
       void qc.invalidateQueries({ queryKey: userAdminKeys.detail(publicId) });
     },
+    onError: handleApiError,
   });
 }
 
@@ -23,9 +27,11 @@ export function useChangeRole() {
     mutationFn: ({ publicId, input }: { publicId: string; input: ChangeRoleInput }) =>
       adminClient.patch(`/admin/users/${publicId}/role`, input),
     onSuccess: (_data, { publicId }) => {
+      toast.success("Đã cập nhật vai trò người dùng.");
       void qc.invalidateQueries({ queryKey: userAdminKeys.lists() });
       void qc.invalidateQueries({ queryKey: userAdminKeys.detail(publicId) });
     },
+    onError: handleApiError,
   });
 }
 
@@ -36,9 +42,11 @@ export function useBlockUser() {
     mutationFn: ({ publicId, input }: { publicId: string; input?: BlockUserInput }) =>
       adminClient.post(`/admin/users/${publicId}/block`, input),
     onSuccess: (_data, { publicId }) => {
+      toast.success("Đã khóa tài khoản. Tất cả phiên đăng nhập đã bị thu hồi.");
       void qc.invalidateQueries({ queryKey: userAdminKeys.lists() });
       void qc.invalidateQueries({ queryKey: userAdminKeys.detail(publicId) });
     },
+    onError: handleApiError,
   });
 }
 
@@ -49,9 +57,11 @@ export function useUnblockUser() {
     mutationFn: ({ publicId }: { publicId: string }) =>
       adminClient.post(`/admin/users/${publicId}/unblock`),
     onSuccess: (_data, { publicId }) => {
+      toast.success("Đã mở khóa tài khoản.");
       void qc.invalidateQueries({ queryKey: userAdminKeys.lists() });
       void qc.invalidateQueries({ queryKey: userAdminKeys.detail(publicId) });
     },
+    onError: handleApiError,
   });
 }
 
@@ -62,7 +72,9 @@ export function useRevokeAllSessions() {
     mutationFn: ({ publicId }: { publicId: string }) =>
       adminClient.post(`/admin/users/${publicId}/sessions/revoke-all`),
     onSuccess: (_data, { publicId }) => {
+      toast.success("Đã thu hồi tất cả phiên đăng nhập.");
       void qc.invalidateQueries({ queryKey: userAdminKeys.detail(publicId) });
     },
+    onError: handleApiError,
   });
 }

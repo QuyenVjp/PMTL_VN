@@ -6,7 +6,7 @@
  * then redirects to dashboard.
  */
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 import { AuthShell } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { adminClient } from "@/lib/api/admin-client";
 import { HttpError } from "@/lib/api/http-error";
+import { clearAuthCache } from "@/lib/auth";
 
 interface LoginResponse {
   user: {
@@ -25,7 +26,6 @@ interface LoginResponse {
 }
 
 export function SignInPage() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,18 +45,23 @@ export function SignInPage() {
       // Verify admin role
       if (result.user.role !== "ADMIN" && result.user.role !== "SUPER_ADMIN") {
         setError("Tài khoản không có quyền quản trị");
-        setLoading(false);
         return;
       }
 
-      // Cookies set by API (httpOnly) — navigate to dashboard
-      void navigate({ to: "/dashboard" });
+      // Cookie httpOnly đã được set bởi API.
+      // Clear module-level cache trước khi navigate để beforeLoad fetch lại user mới.
+      clearAuthCache();
+
+      // Dùng window.location để force full navigation — tránh TanStack Router
+      // dùng cached beforeLoad result (cachedUser = null) → redirect về login.
+      window.location.href = "/dashboard";
     } catch (err) {
       if (err instanceof HttpError) {
         setError(err.message);
       } else {
         setError("Lỗi kết nối, vui lòng thử lại");
       }
+    } finally {
       setLoading(false);
     }
   }

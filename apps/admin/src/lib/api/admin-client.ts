@@ -13,6 +13,7 @@ import { HttpError } from "./http-error.js";
 import type { ApiSuccessEnvelope, ApiErrorEnvelope } from "./envelopes.js";
 
 const BASE_URL = "/api";
+const REQUEST_TIMEOUT_MS = 15_000;
 
 interface RequestOptions {
   method?: string;
@@ -50,6 +51,7 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     headers,
     credentials: "include",
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
 
   // 204 No Content
@@ -57,7 +59,12 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     return undefined as T;
   }
 
-  const json: unknown = await response.json();
+  let json: unknown = null;
+  try {
+    json = await response.json();
+  } catch {
+    json = null;
+  }
 
   if (!response.ok) {
     // Extract from canon error envelope: { error: { code, message, status, requestId, details? } }
