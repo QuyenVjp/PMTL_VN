@@ -252,9 +252,22 @@ Khi nào phải hủy:
 - Tờ bị ướt, bị rách nghiêm trọng
 
 Cách hủy:
-- Không vứt tờ như rác thông thường
-- Thực hiện theo đúng quy trình hủy bỏ (xem tài liệu nguồn)
-- `needs_review: true` — cần rà soát wording chính xác
+- Nếu điền sai hoặc tờ bị làm bẩn, trước tiên chấm lại phần đã niệm sang một tờ mới còn trống.
+- Thưa với Bồ Tát việc điền sai/làm bẩn và xin hủy tờ cũ.
+- Bôi xóa tên ở phần xưng danh và phần ký tên của tờ cũ cần hủy.
+- Gấp tờ cũ nhiều lần thành miếng nhỏ.
+- Dùng giấy hoặc phong bì bọc lại rồi mới vứt bỏ.
+- Có thể xử lý chung với giấy phế liệu sạch, không vứt vào rác bẩn có mùi tanh.
+
+**Assets bổ sung cho flow hủy bỏ:**
+
+| Asset | Loại | Mô tả |
+|---|---|---|
+| `huy-nha-nho-dien-sai-b1-cham-lai.png` | Infographic | Chấm lại tờ mới khi tờ cũ điền sai |
+| `huy-nha-nho-dien-sai-b2-boi-xoa-ten.png` | Infographic | Bôi xóa tên phần xưng danh/ký tên trên tờ cũ |
+| `huy-nha-nho-dien-sai-b3-gap-va-boc.png` | Infographic | Gấp nhỏ và bọc giấy/phong bì trước khi bỏ |
+
+`needs_review`: `false` (đã đối chiếu bằng ảnh quy trình cập nhật ngày 2026-03-29)
 
 ---
 

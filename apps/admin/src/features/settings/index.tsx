@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { BellIcon, Loader2Icon, MonitorIcon, PaletteIcon, UserCogIcon, WrenchIcon } from "lucide-react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { BellIcon, ImagePlusIcon, Loader2Icon, MonitorIcon, PaletteIcon, Trash2Icon, UserCogIcon, WrenchIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -58,8 +58,22 @@ async function uploadAvatar(file: File): Promise<UploadResponse> {
     throw new Error(msg);
   }
 
-  const json = (await response.json()) as { data: UploadResponse };
-  return json.data;
+  const json = (await response.json()) as {
+    data?: UploadResponse | { data?: UploadResponse };
+  };
+  const outer = json.data;
+  const payload: UploadResponse | null =
+    outer && "url" in outer
+      ? outer
+      : outer && "data" in outer && outer.data
+        ? outer.data
+        : null;
+
+  if (!payload?.url) {
+    throw new Error("Upload thất bại: phản hồi không hợp lệ");
+  }
+
+  return payload;
 }
 
 export function SettingsPage() {
@@ -77,6 +91,7 @@ export function SettingsPage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previewObjectUrlRef = useRef<string | null>(null);
   const [preferences, setPreferences] = useState({
     theme,
     compactTables: true,
@@ -88,6 +103,54 @@ export function SettingsPage() {
 
   const activeItem = settingsNav.find((item) => item.key === section) ?? settingsNav[0];
 
+  useEffect(() => {
+    return () => {
+      if (previewObjectUrlRef.current?.startsWith("blob:")) {
+        URL.revokeObjectURL(previewObjectUrlRef.current);
+      }
+    };
+  }, []);
+
+  const openAvatarPicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  const clearAvatarSelection = () => {
+    if (previewObjectUrlRef.current?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewObjectUrlRef.current);
+    }
+    previewObjectUrlRef.current = null;
+    setAvatarFile(null);
+    setAvatarPreview(adminUser.avatar);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleAvatarFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Ảnh không được vượt quá 5MB");
+      return;
+    }
+
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      toast.error("Chỉ hỗ trợ PNG, JPG hoặc WebP");
+      return;
+    }
+
+    if (previewObjectUrlRef.current?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewObjectUrlRef.current);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    previewObjectUrlRef.current = previewUrl;
+    setAvatarPreview(previewUrl);
+    setAvatarFile(file);
+  };
+
   async function handleSaveProfile() {
     setSaving(true);
     try {
@@ -96,7 +159,7 @@ export function SettingsPage() {
       // Step 1: Upload avatar if a new file was selected
       if (avatarFile) {
         const uploaded = await uploadAvatar(avatarFile);
-        avatarUrl = uploaded.url;
+        avatarUrl = `/api/admin/media/${uploaded.publicId}/content`;
       }
 
       // Step 2: Update profile via PATCH /auth/profile
@@ -114,7 +177,13 @@ export function SettingsPage() {
       setAvatarFile(null);
       // Replace blob preview URL with the persisted CDN URL so the form
       // reflects the real stored avatar (blob URLs are ephemeral).
-      if (avatarUrl !== undefined) setAvatarPreview(avatarUrl);
+      if (avatarUrl !== undefined) {
+        if (previewObjectUrlRef.current?.startsWith("blob:")) {
+          URL.revokeObjectURL(previewObjectUrlRef.current);
+        }
+        previewObjectUrlRef.current = null;
+        setAvatarPreview(avatarUrl);
+      }
       toast.success("Đã cập nhật hồ sơ thành công");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Lỗi không xác định";
@@ -213,29 +282,43 @@ export function SettingsPage() {
                   <div className="grid gap-2">
                     <label className="text-sm font-medium">Ảnh đại diện</label>
                     <div className="flex flex-wrap items-center gap-4 rounded-xl border p-4">
-                      <Avatar className="size-16 rounded-2xl">
-                        <AvatarImage src={avatarPreview} alt={profile.displayName} />
-                        <AvatarFallback className="rounded-2xl">{adminUser.initials}</AvatarFallback>
-                      </Avatar>
+                      <button
+                        type="button"
+                        onClick={openAvatarPicker}
+                        className="rounded-2xl border border-transparent transition hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label="Chọn ảnh đại diện"
+                      >
+                        <Avatar className="size-16 rounded-2xl border">
+                          <AvatarImage src={avatarPreview} alt={profile.displayName} />
+                          <AvatarFallback className="rounded-2xl">{adminUser.initials}</AvatarFallback>
+                        </Avatar>
+                      </button>
                       <div className="grid gap-2">
-                        <Input
+                        <input
                           ref={fileInputRef}
                           type="file"
                           accept="image/png,image/jpeg,image/webp"
-                          onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            if (!file) return;
-
-                            if (file.size > 5 * 1024 * 1024) {
-                              toast.error("Ảnh không được vượt quá 5MB");
-                              return;
-                            }
-
-                            const previewUrl = URL.createObjectURL(file);
-                            setAvatarPreview(previewUrl);
-                            setAvatarFile(file);
-                          }}
+                          className="hidden"
+                          onChange={handleAvatarFileChange}
                         />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Button type="button" variant="outline" onClick={openAvatarPicker}>
+                            <ImagePlusIcon className="size-4" />
+                            Chọn ảnh
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={clearAvatarSelection}
+                            disabled={!avatarFile}
+                          >
+                            <Trash2Icon className="size-4" />
+                            Bỏ chọn
+                          </Button>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {avatarFile ? `Đã chọn: ${avatarFile.name}` : "Chưa chọn file"}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           PNG, JPG, WebP tối đa 5MB. Ảnh sẽ được upload khi bấm Cập nhật hồ sơ.
                         </p>

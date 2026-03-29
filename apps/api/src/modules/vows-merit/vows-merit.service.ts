@@ -46,6 +46,7 @@ export class VowsMeritService {
     await this.audit.append(auditContext, "admin.vow.create", "vow", vow.publicId, {
       memberPublicId: input.memberPublicId,
       vowType: input.vowType,
+      assistReason: input.assistReason,
     });
 
     return mapVowToAdminItem(vow);
@@ -61,6 +62,7 @@ export class VowsMeritService {
       memberPublicId: input.memberPublicId,
       animalType: input.animalType,
       quantity: input.quantity,
+      assistReason: input.assistReason,
     });
 
     return journal;

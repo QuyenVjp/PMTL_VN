@@ -1,6 +1,180 @@
+import { type ReactNode, useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
-import { usePublishPost } from "@/features/content/mutations";
+import { useCreatePost, useDeletePost, usePublishPost, useUpdatePost } from "@/features/content/mutations";
 import { usePosts } from "@/features/content/posts-context";
+import type { PostListItem } from "@/features/content/queries";
+
+function Field({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm font-medium">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function PostCreateDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
+  const createPost = useCreatePost();
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+
+  const reset = () => {
+    setTitle("");
+    setSlug("");
+    setExcerpt("");
+  };
+
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      toast.error("Tiêu đề không được để trống.");
+      return;
+    }
+    createPost.mutate(
+      {
+        title: title.trim(),
+        slug: slug.trim() || undefined,
+        excerpt: excerpt.trim() || undefined,
+        content: {},
+      },
+      {
+        onSuccess: () => {
+          reset();
+          onOpenChange(false);
+        },
+      },
+    );
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader className="text-start">
+          <DialogTitle>Tạo bài viết mới</DialogTitle>
+          <DialogDescription>Điền thông tin cơ bản để tạo bài viết mới.</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <Field label="Tiêu đề">
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nhập tiêu đề..." />
+          </Field>
+          <Field label="Slug">
+            <Input
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              placeholder="tự-động-tạo-từ-tiêu-đề"
+            />
+          </Field>
+          <Field label="Tóm tắt">
+            <Textarea
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              placeholder="Mô tả ngắn..."
+              rows={3}
+            />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Hủy
+          </Button>
+          <Button onClick={handleSubmit} disabled={createPost.isPending || !title.trim()}>
+            {createPost.isPending ? "Đang tạo..." : "Tạo"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PostEditDialog({
+  open,
+  onOpenChange,
+  currentRow,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  currentRow: PostListItem;
+}) {
+  const updatePost = useUpdatePost();
+  const [title, setTitle] = useState(currentRow.title);
+  const [slug, setSlug] = useState(currentRow.slug);
+  const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
+
+  useEffect(() => {
+    setTitle(currentRow.title);
+    setSlug(currentRow.slug);
+    setExcerpt(currentRow.excerpt ?? "");
+  }, [currentRow, open]);
+
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      toast.error("Tiêu đề không được để trống.");
+      return;
+    }
+    updatePost.mutate(
+      {
+        publicId: currentRow.id,
+        title: title.trim(),
+        slug: slug.trim() || undefined,
+        excerpt: excerpt.trim() || undefined,
+      },
+      { onSuccess: () => onOpenChange(false) },
+    );
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader className="text-start">
+          <DialogTitle>Chỉnh sửa bài viết</DialogTitle>
+          <DialogDescription>Cập nhật thông tin bài viết.</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <Field label="Tiêu đề">
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </Field>
+          <Field label="Slug">
+            <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
+          </Field>
+          <Field label="Tóm tắt">
+            <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={3} />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Hủy
+          </Button>
+          <Button onClick={handleSubmit} disabled={updatePost.isPending || !title.trim()}>
+            {updatePost.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function PostPublishDialog({
   open,
@@ -27,9 +201,38 @@ function PostPublishDialog({
       }
       confirmLabel="Xuất bản"
       isPending={publishPost.isPending}
-      onConfirm={() =>
-        publishPost.mutate(postId, { onSuccess: () => onOpenChange(false) })
+      onConfirm={() => publishPost.mutate(postId, { onSuccess: () => onOpenChange(false) })}
+    />
+  );
+}
+
+function PostDeleteDialog({
+  open,
+  onOpenChange,
+  postId,
+  postTitle,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  postId: string;
+  postTitle: string;
+}) {
+  const deletePost = useDeletePost();
+  return (
+    <WorkspaceConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Xoá bài viết"
+      description={
+        <>
+          Xoá <span className="font-semibold text-foreground">{postTitle}</span>? Thao tác này
+          không thể hoàn tác.
+        </>
       }
+      confirmLabel="Xoá"
+      variant="destructive"
+      isPending={deletePost.isPending}
+      onConfirm={() => deletePost.mutate(postId, { onSuccess: () => onOpenChange(false) })}
     />
   );
 }
@@ -39,17 +242,36 @@ export function PostsDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
-  if (!currentRow) return null;
-
   return (
-    <PostPublishDialog
-      open={open === "publish"}
-      onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
-      postId={currentRow.id}
-      postTitle={currentRow.title}
-    />
+    <>
+      <PostCreateDialog
+        open={open === "create"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
+      />
+      {currentRow && (
+        <>
+          <PostEditDialog
+            open={open === "edit"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("edit"))}
+            currentRow={currentRow}
+          />
+          <PostPublishDialog
+            open={open === "publish"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
+            postId={currentRow.id}
+            postTitle={currentRow.title}
+          />
+          <PostDeleteDialog
+            open={open === "delete"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
+            postId={currentRow.id}
+            postTitle={currentRow.title}
+          />
+        </>
+      )}
+    </>
   );
 }

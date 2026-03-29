@@ -9,11 +9,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +30,7 @@ import {
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { reportListOptions } from "@/features/moderation-reports/queries";
 import { useResolveReport } from "@/features/moderation-reports/mutations";
 import {
@@ -99,6 +100,7 @@ function ModerationReportsTable() {
 
   const columns = useMemo<ColumnDef<ModerationReportListItem>[]>(
     () => [
+      createSelectColumn<ModerationReportListItem>(),
       {
         accessorKey: "publicId",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Mã" />,
@@ -164,7 +166,7 @@ function ModerationReportsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: reports,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -198,6 +200,7 @@ function ModerationReportsTable() {
         isLoading={isLoading}
         emptyMessage="Không có báo cáo nào."
       />
+      <DataTableBulkActions table={table} entityName="báo cáo" />
     </div>
   );
 }
@@ -283,7 +286,7 @@ function ReportDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -319,3 +322,6 @@ export function ModerationReportsPage() {
     </ReportProvider>
   );
 }
+
+
+

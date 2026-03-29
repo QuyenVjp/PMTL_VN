@@ -9,15 +9,21 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Res,
+  StreamableFile,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiTags, ApiOperation, ApiConsumes } from "@nestjs/swagger";
 import { z } from "zod";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
+import type { Response } from "express";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { ConfigService } from "../../common/config/config.service.js";
 import { StorageService } from "./storage.service.js";
 import { NotFoundError } from "../../common/errors/app-error.js";
 
@@ -41,6 +47,7 @@ export class AdminMediaController {
   constructor(
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post("upload")
@@ -55,8 +62,18 @@ export class AdminMediaController {
       throw new BadRequestException("Chưa chọn file để upload");
     }
 
+    const fileBuffer = file.buffer?.length
+      ? file.buffer
+      : file.path
+        ? await fs.readFile(file.path)
+        : null;
+
+    if (!fileBuffer || fileBuffer.length === 0) {
+      throw new BadRequestException("File upload không hợp lệ hoặc rỗng");
+    }
+
     const asset = await this.storageService.uploadFile(
-      file.buffer,
+      fileBuffer,
       file.originalname,
       file.mimetype,
       user.id,
@@ -199,6 +216,44 @@ export class AdminMediaController {
         updatedAt: asset.updatedAt,
       },
     };
+  }
+
+  @Get(":publicId/content")
+  @ApiOperation({ summary: "Lấy binary media cho preview/avatar trong admin" })
+  async content(
+    @Param("publicId") publicId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const asset = await this.prisma.mediaAsset.findUnique({
+      where: { publicId },
+      select: {
+        storageKey: true,
+        mimeType: true,
+        url: true,
+      },
+    });
+
+    if (!asset) {
+      throw new NotFoundError("Media asset", publicId);
+    }
+
+    if (this.configService.storageAdapter !== "local") {
+      res.redirect(asset.url);
+      return;
+    }
+
+    const root = this.configService.localStorageRoot || "./uploads";
+    const absolutePath = path.resolve(root, asset.storageKey);
+    let buffer: Buffer;
+    try {
+      buffer = await fs.readFile(absolutePath);
+    } catch {
+      throw new NotFoundError("Media file", publicId);
+    }
+
+    res.setHeader("Content-Type", asset.mimeType);
+    res.setHeader("Cache-Control", "private, max-age=300");
+    return new StreamableFile(buffer);
   }
 
   @Delete(":publicId")

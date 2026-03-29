@@ -15,3 +15,16 @@ export function useUpdateCommunityPostStatus() {
     onError: () => toast.error("Không thể cập nhật trạng thái"),
   });
 }
+
+export function useDeleteCommunityPost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.delete(`/admin/community/posts/${publicId}`),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: communityPostKeys.lists() });
+      toast.success("Đã xoá bài đăng");
+    },
+    onError: () => toast.error("Không thể xoá bài đăng"),
+  });
+}

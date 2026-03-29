@@ -17,10 +17,15 @@ export const adminUserAuditQuerySchema = z.object({
 
 // --- Mutation schemas ---
 
+const avatarUrlSchema = z.union([
+  z.string().url(),
+  z.string().regex(/^\/[^\s]+$/, "Đường dẫn avatar không hợp lệ"),
+]);
+
 export const adminUpdateProfileSchema = z.object({
   displayName: z.string().min(2).max(50).optional(),
   email: z.string().email("Email không hợp lệ").optional(),
-  avatarUrl: z.string().url().optional().nullable(),
+  avatarUrl: avatarUrlSchema.optional().nullable(),
 });
 
 export const adminChangeRoleSchema = z.object({

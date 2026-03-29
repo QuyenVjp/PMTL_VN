@@ -9,9 +9,9 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { Trash2Icon } from "lucide-react";
 
 import {
@@ -21,7 +21,7 @@ import {
 } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { createSelectColumn } from "@/lib/table/select-column";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
@@ -104,30 +104,7 @@ function SessionsTable() {
 
   const columns = useMemo<ColumnDef<AdminSessionListItem>[]>(
     () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Chọn tất cả"
-            className="translate-y-[2px]"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Chọn dòng"
-            className="translate-y-[2px]"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
+      createSelectColumn<AdminSessionListItem>(),
       {
         accessorKey: "userDisplayName",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Người dùng" />,
@@ -188,7 +165,7 @@ function SessionsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: sessions,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -250,7 +227,7 @@ function SessionDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -302,3 +279,6 @@ export function SessionsPage() {
     </SessionProvider>
   );
 }
+
+
+

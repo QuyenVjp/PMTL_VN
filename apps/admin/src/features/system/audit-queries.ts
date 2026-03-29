@@ -20,8 +20,8 @@ export const auditKeys = {
 
 export function auditListOptions() {
   return queryOptions({
-    queryKey: auditKeys.list({ limit: 200 }),
+    queryKey: auditKeys.list({ limit: 100 }),
     queryFn: () =>
-      adminClient.get<ListEnvelope<AuditLogItem>>("/admin/audit-logs", { limit: 200, offset: 0 }),
+      adminClient.get<ListEnvelope<AuditLogItem>>("/admin/audit-logs", { limit: 100, offset: 0 }),
   });
 }

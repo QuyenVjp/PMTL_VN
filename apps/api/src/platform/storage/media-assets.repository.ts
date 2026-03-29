@@ -20,20 +20,22 @@ export class MediaAssetsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateMediaAssetInput) {
+    const createData: Prisma.MediaAssetCreateInput = {
+      publicId: data.publicId,
+      filename: data.filename,
+      mimeType: data.mimeType,
+      size: data.size,
+      storageKey: data.storageKey,
+      url: data.url,
+      uploader: { connect: { id: data.uploaderId } },
+      status: "UPLOADING",
+      ...(data.width !== undefined ? { width: data.width } : {}),
+      ...(data.height !== undefined ? { height: data.height } : {}),
+      ...(data.metadata !== undefined ? { metadata: data.metadata as Prisma.InputJsonValue } : {}),
+    };
+
     return this.prisma.mediaAsset.create({
-      data: {
-        publicId: data.publicId,
-        filename: data.filename,
-        mimeType: data.mimeType,
-        size: data.size,
-        storageKey: data.storageKey,
-        url: data.url,
-        uploaderId: data.uploaderId,
-        width: data.width,
-        height: data.height,
-        metadata: data.metadata as Prisma.InputJsonValue,
-        status: "UPLOADING",
-      },
+      data: createData,
     });
   }
 

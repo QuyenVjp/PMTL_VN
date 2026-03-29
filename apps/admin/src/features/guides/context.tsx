@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import type { GuideItem } from "@/features/guides/queries";
 
-export type GuideDialogType = "create" | "edit" | "publish" | null;
+export type GuideDialogType = "create" | "edit" | "publish" | "delete" | null;
 
 type GuidesContextValue = {
   open: GuideDialogType;

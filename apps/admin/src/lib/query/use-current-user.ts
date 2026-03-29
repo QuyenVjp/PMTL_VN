@@ -52,6 +52,16 @@ function roleLabel(role: string): string {
   return role;
 }
 
+function normalizeAvatarUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  // Backward compatibility for old local-storage URLs (http://127.0.0.1:3001/media/images/<publicId>.png)
+  const match = url.match(/\/media\/[^/]+\/([A-Za-z0-9_-]+)\.[A-Za-z0-9]+$/);
+  if (match?.[1]) {
+    return `/api/admin/media/${match[1]}/content`;
+  }
+  return url;
+}
+
 export interface CurrentUserDisplay {
   name: string;
   initials: string;
@@ -84,7 +94,7 @@ export function useCurrentUser(): CurrentUserDisplay {
     initials: makeInitials(data.displayName),
     email: data.email,
     role: roleLabel(data.role),
-    avatar: data.avatarUrl ?? undefined,
+    avatar: normalizeAvatarUrl(data.avatarUrl),
     publicId: data.id,
   };
 }

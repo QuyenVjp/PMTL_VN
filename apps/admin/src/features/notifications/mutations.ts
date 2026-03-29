@@ -39,3 +39,18 @@ export function useRedrivePushJob() {
     onError: handleApiError,
   });
 }
+
+/** Delete a push job */
+export function useDeletePushJob() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.delete(`/admin/notifications/push/jobs/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá đợt thông báo.");
+      void qc.invalidateQueries({ queryKey: pushKeys.lists() });
+      void qc.invalidateQueries({ queryKey: pushKeys.status() });
+    },
+    onError: handleApiError,
+  });
+}

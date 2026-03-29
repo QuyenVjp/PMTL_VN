@@ -9,18 +9,19 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { EyeOffIcon, ForwardIcon, MinusCircleIcon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import {
   moderationCommentListOptions,
   type ModerationCommentItem,
@@ -143,6 +144,7 @@ function ModerationCommentsTable() {
 
   const columns = useMemo<ColumnDef<ModerationCommentItem>[]>(
     () => [
+      createSelectColumn<ModerationCommentItem>(),
       {
         accessorKey: "description",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Nội dung" />,
@@ -206,7 +208,7 @@ function ModerationCommentsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: reports,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -241,6 +243,7 @@ function ModerationCommentsTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có báo cáo bình luận nào."
       />
+      <DataTableBulkActions table={table} entityName="báo cáo bình luận" />
     </div>
   );
 }
@@ -282,7 +285,7 @@ function CommentDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   if (!currentRow || !open) return null;
@@ -329,3 +332,6 @@ export function ModerationCommentsPage() {
     </CommentProvider>
   );
 }
+
+
+

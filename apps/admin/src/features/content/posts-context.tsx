@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import type { PostListItem } from "@/features/content/queries";
 
-export type PostDialogType = "publish" | null;
+export type PostDialogType = "create" | "edit" | "publish" | "delete" | null;
 
 type PostsContextValue = {
   open: PostDialogType;

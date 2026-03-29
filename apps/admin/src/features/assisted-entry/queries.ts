@@ -11,7 +11,8 @@ export interface VowHistoryItem {
   targetCount: number | null;
   currentCount: number;
   status: string;
-  user: { publicId: string; displayName: string; email: string };
+  member?: { publicId: string; displayName: string; email: string; avatarUrl?: string | null };
+  user?: { publicId: string; displayName: string; email: string; avatarUrl?: string | null };
   startDate: string;
   createdAt: string;
 }

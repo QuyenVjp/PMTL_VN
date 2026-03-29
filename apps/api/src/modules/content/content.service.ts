@@ -5,7 +5,7 @@ import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
-import { canCreatePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
+import { canCreatePost, canDeletePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
 import type {
   CreatePostInput, UpdatePostInput, ListPostsQuery,
   GuideQuery, CreateGuideInput, UpdateGuideInput,
@@ -97,14 +97,15 @@ export class ContentService {
     const post = await this.prisma.$transaction(async (tx) => {
       const created = await tx.post.create({
         data: {
+          id: nanoid(21),
           publicId,
           slug,
           title: input.title,
-          excerpt: input.excerpt,
           content: input.content as Prisma.InputJsonValue,
           authorId,
-          featuredImageId: input.featuredImageId,
           status: "DRAFT",
+          ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+          ...(input.featuredImageId !== undefined && { featuredImageId: input.featuredImageId }),
         },
         include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
       });
@@ -201,6 +202,28 @@ export class ContentService {
     return mapPostToResponse(updated, featuredImageUrl);
   }
 
+  async deletePost(
+    publicId: string,
+    userId: string,
+    userRole: UserRole,
+    auditContext: AuditContext,
+  ) {
+    const post = await this.repository.findByPublicId(publicId);
+    if (!post) {
+      throw new NotFoundException("Bài viết không tồn tại");
+    }
+    if (!canDeletePost(userRole) && !canEditPost(userRole, post.authorId, userId)) {
+      throw new ForbiddenException("Không có quyền xoá bài viết này");
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.post.delete({ where: { publicId } });
+      await this.audit.appendInTransaction(tx, auditContext, "content.delete", "post", publicId);
+    });
+
+    return { success: true };
+  }
+
   private generateSlug(title: string, publicId: string): string {
     const base = title
       .toLowerCase()
@@ -216,9 +239,11 @@ export class ContentService {
 
   // ======================== Guide methods ========================
 
-  async listGuides(query: GuideQuery) {
+  async listGuides(query: GuideQuery, userRole?: UserRole) {
     const where: Prisma.BeginnerGuideWhereInput = {};
-    if (query.status) where.status = query.status as ContentStatus;
+    const isAdmin = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
+    const status = isAdmin ? query.status : "PUBLISHED";
+    if (status) where.status = status as ContentStatus;
     if (query.category) where.category = query.category as GuideCategory;
     if (query.search) {
       where.OR = [
@@ -244,32 +269,38 @@ export class ContentService {
     };
   }
 
-  async getGuide(publicIdOrSlug: string) {
+  async getGuide(publicIdOrSlug: string, userRole?: UserRole) {
     const guide = await this.prisma.beginnerGuide.findFirst({
       where: { OR: [{ publicId: publicIdOrSlug }, { slug: publicIdOrSlug }] },
       include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });
     if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+    const isAdmin = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
+    if (!isAdmin && guide.status !== "PUBLISHED") {
+      throw new NotFoundException("Bài hướng dẫn không tồn tại");
+    }
     return guide;
   }
 
   async createGuide(input: CreateGuideInput, userId: string, auditContext: AuditContext) {
     const publicId = nanoid(21);
+    const slug = input.slug || this.generateSlug(input.title, publicId);
 
     // Check slug uniqueness
-    const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug: input.slug } });
+    const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug } });
     if (existing) throw new ConflictException("Slug đã tồn tại");
 
     const guide = await this.prisma.beginnerGuide.create({
       data: {
+        id: nanoid(21),
         publicId,
         title: input.title,
-        slug: input.slug,
+        slug,
         content: input.content as Prisma.InputJsonValue,
-        excerpt: input.excerpt,
         category: input.category as GuideCategory,
         status: "DRAFT",
         authorId: userId,
+        ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
       },
       include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });
@@ -318,6 +349,15 @@ export class ContentService {
     return updated;
   }
 
+  async deleteGuide(publicId: string, auditContext: AuditContext) {
+    const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
+    if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+
+    await this.prisma.beginnerGuide.delete({ where: { publicId } });
+    await this.audit.append(auditContext, "content.delete", "beginner_guide", publicId);
+    return { success: true };
+  }
+
   // ======================== Download methods ========================
 
   async adminListDownloads(query: DownloadQuery) {
@@ -362,15 +402,16 @@ export class ContentService {
 
     const download = await this.prisma.download.create({
       data: {
+        id: nanoid(21),
         publicId,
         title: input.title,
-        description: input.description,
         category: input.category as DownloadCategory,
         fileUrl: input.fileUrl,
         fileType: input.fileType,
         fileSize: input.fileSize,
         status: "DRAFT",
         uploaderId: userId,
+        ...(input.description !== undefined && { description: input.description }),
       },
       include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });

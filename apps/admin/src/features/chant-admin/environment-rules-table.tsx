@@ -1,31 +1,51 @@
-import * as React from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  flexRender,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
-  useReactTable,
-  type ColumnDef,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { BookMarkedIcon, BookOpenCheckIcon, PencilIcon } from "lucide-react";
 
+import {
+  DataTableBulkActions,
+  DataTableColumnHeader,
+  DataTableToolbar,
+} from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { getChantEnvironmentRulesQueryOptions } from "@/features/chant-admin/queries";
-import type {
-  ChantEnvironmentRuleRow,
-  ChantEnvironmentRulesResponse,
-} from "@/features/chant-admin/types";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
+import {
+  getChantEnvironmentRulesQueryOptions,
+} from "@/features/chant-admin/queries";
+import { useUpdateEnvironmentRule } from "@/features/chant-admin/mutations";
+import type { ChantEnvironmentRuleRow, ChantEnvironmentRulesResponse } from "@/features/chant-admin/types";
 
 const severityLabels: Record<string, string> = {
   advisory: "Khuyến cáo",
@@ -36,59 +56,29 @@ const severityLabels: Record<string, string> = {
 };
 
 const productizationLabels: Record<string, string> = {
-  do_not_automate: "Không tự động hóa",
+  do_not_automate: "Không tự động hoá",
   warning_card: "Warning card",
   checklist_item: "Checklist",
-  reference_only: "Reference only",
+  safe_lane_suggestion: "Safe lane",
+  drawer_note: "Ghi chú",
+  reference_only_note: "Chỉ tham khảo",
 };
 
-const columns: Array<ColumnDef<ChantEnvironmentRuleRow>> = [
-  {
-    accessorKey: "groupTitle",
-    header: "Nhóm",
-    cell: ({ row }) => (
-      <div>
-        <p className="font-medium text-foreground">{row.original.groupTitle}</p>
-        <p className="text-xs text-muted-foreground">{row.original.groupKey}</p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "title",
-    header: "Quy tắc",
-    cell: ({ row }) => (
-      <div className="space-y-1">
-        <p className="font-medium text-foreground">{row.original.title}</p>
-        <p className="max-w-[48rem] text-sm leading-6 text-muted-foreground">
-          {row.original.canonicalWording}
-        </p>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "severity",
-    header: "Mức độ",
-    cell: ({ row }) => (
-      <Badge variant="secondary">
-        {severityLabels[row.original.severity] ?? row.original.severity}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "productizationMode",
-    header: "Productization",
-    cell: ({ row }) => (
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">
-          {productizationLabels[row.original.productizationMode] ??
-            row.original.productizationMode}
-        </p>
-        {row.original.referenceOnly ? (
-          <p className="text-xs text-muted-foreground">reference-only</p>
-        ) : null}
-      </div>
-    ),
-  },
+const severityOptions = [
+  { label: "Khuyến cáo", value: "advisory" },
+  { label: "Lưu ý", value: "caution" },
+  { label: "Quan trọng", value: "strong_guardrail" },
+  { label: "Hướng dẫn", value: "quality_guidance" },
+  { label: "Tham khảo", value: "reference_only" },
+];
+
+const productizationOptions = [
+  { label: "Không tự động hoá", value: "do_not_automate" },
+  { label: "Warning card", value: "warning_card" },
+  { label: "Checklist", value: "checklist_item" },
+  { label: "Safe lane", value: "safe_lane_suggestion" },
+  { label: "Ghi chú", value: "drawer_note" },
+  { label: "Chỉ tham khảo", value: "reference_only_note" },
 ];
 
 function flattenEnvironmentRules(
@@ -108,182 +98,367 @@ function flattenEnvironmentRules(
   );
 }
 
-export function EnvironmentRulesTable() {
-  const { data, isLoading, error } = useQuery(getChantEnvironmentRulesQueryOptions());
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
-  const rows = React.useMemo(
-    () => (data ? flattenEnvironmentRules(data) : []),
-    [data],
+function EnvironmentRuleRowActions({
+  row,
+  onEdit,
+  onToggleReferenceOnly,
+}: {
+  row: ChantEnvironmentRuleRow;
+  onEdit: (row: ChantEnvironmentRuleRow) => void;
+  onToggleReferenceOnly: (row: ChantEnvironmentRuleRow) => void;
+}) {
+  return (
+    <WorkspaceRowActions
+      actions={[
+        {
+          label: "Chỉnh sửa",
+          icon: PencilIcon,
+          onClick: () => onEdit(row),
+        },
+        {
+          label: row.referenceOnly ? "Bỏ tham khảo" : "Đặt tham khảo",
+          icon: row.referenceOnly ? BookOpenCheckIcon : BookMarkedIcon,
+          onClick: () => onToggleReferenceOnly(row),
+        },
+      ]}
+    />
   );
+}
 
-  const table = useReactTable({
-    data: rows,
-    columns,
-    state: { globalFilter },
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    globalFilterFn: (row, _columnId, filterValue) => {
-      const haystack = [
-        row.original.groupTitle,
-        row.original.title,
-        row.original.canonicalWording,
-        row.original.ruleKey,
-      ]
-        .join(" ")
-        .toLowerCase();
+type EnvironmentRuleEditDialogProps = {
+  open: boolean;
+  row: ChantEnvironmentRuleRow | null;
+  onOpenChange: (open: boolean) => void;
+};
 
-      return haystack.includes(String(filterValue).toLowerCase());
-    },
-    initialState: {
-      pagination: { pageSize: 8 },
-    },
-  });
+function EnvironmentRuleEditDialog({
+  open,
+  row,
+  onOpenChange,
+}: EnvironmentRuleEditDialogProps) {
+  const updateRule = useUpdateEnvironmentRule();
+  const [title, setTitle] = useState("");
+  const [canonicalWording, setCanonicalWording] = useState("");
+  const [severity, setSeverity] = useState("advisory");
+  const [productizationMode, setProductizationMode] = useState("warning_card");
+  const [referenceOnly, setReferenceOnly] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 rounded-2xl border bg-card p-5 shadow-sm">
-        <div className="grid gap-4 md:grid-cols-3">
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
-        </div>
-        <Skeleton className="h-10 w-72" />
-        <Skeleton className="h-72" />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!row || !open) {
+      return;
+    }
+    setTitle(row.title);
+    setCanonicalWording(row.canonicalWording);
+    setSeverity(row.severity);
+    setProductizationMode(row.productizationMode);
+    setReferenceOnly(row.referenceOnly);
+  }, [open, row]);
 
-  if (error instanceof Error) {
-    return (
-      <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 shadow-sm">
-        <h2 className="text-base font-semibold text-foreground">
-          Không tải được dữ liệu
-        </h2>
-        <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-      </div>
-    );
-  }
-
-  if (!data) {
+  if (!row) {
     return null;
   }
 
-  return (
-    <div className="space-y-5">
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">Nhóm quy tắc</p>
-          <p className="mt-3 text-3xl font-semibold text-foreground">
-            {data.groupCards.length}
-          </p>
-        </div>
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">Tổng số quy tắc</p>
-          <p className="mt-3 text-3xl font-semibold text-foreground">{rows.length}</p>
-        </div>
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <p className="text-sm font-medium text-muted-foreground">Cập nhật lần cuối</p>
-          <p className="mt-3 text-lg font-semibold text-foreground">
-            {new Date(data.intro.updatedAt).toLocaleDateString("vi-VN")}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Workspace hiện đang read-only theo safe window.
-          </p>
-        </div>
-      </div>
+  const handleSave = () => {
+    updateRule.mutate(
+      {
+        ruleKey: row.ruleKey,
+        payload: {
+          title: title.trim(),
+          canonicalWording: canonicalWording.trim(),
+          severity,
+          productizationMode,
+          referenceOnly,
+        },
+      },
+      {
+        onSuccess: () => {
+          onOpenChange(false);
+        },
+      },
+    );
+  };
 
-      <section className="rounded-2xl border bg-card shadow-sm">
-        <div className="flex flex-col gap-4 border-b px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              Môi trường & thời gian
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              DataTable này dùng đúng pattern admin clarity-first: search cục bộ,
-              trạng thái rõ, không KPI giả, không demo chart.
-            </p>
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Chỉnh sửa quy tắc</DialogTitle>
+          <DialogDescription>
+            Cập nhật rule <span className="font-mono">{row.ruleKey}</span> trong nhóm{" "}
+            <span className="font-medium">{row.groupTitle}</span>.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Tiêu đề</label>
+            <Input value={title} onChange={(event) => setTitle(event.target.value)} />
           </div>
-          <div className="w-full max-w-sm">
-            <Input
-              value={globalFilter}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              placeholder="Tìm theo nhóm, rule key hoặc wording..."
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Nội dung chuẩn</label>
+            <Textarea
+              value={canonicalWording}
+              onChange={(event) => setCanonicalWording(event.target.value)}
+              rows={5}
             />
           </div>
-        </div>
 
-        <div className="px-5 py-4">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Mức độ</label>
+              <Select value={severity} onValueChange={setSeverity}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {severityOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
                   ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="py-10 text-center">
-                    <p className="text-sm font-medium text-foreground">
-                      Không có rule nào khớp bộ lọc
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Thử đổi từ khóa hoặc xóa bộ lọc hiện tại.
-                    </p>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Productization</label>
+              <Select value={productizationMode} onValueChange={setProductizationMode}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {productizationOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <label className="flex items-center gap-2 text-sm font-medium">
+            <input
+              type="checkbox"
+              checked={referenceOnly}
+              onChange={(event) => setReferenceOnly(event.target.checked)}
+              className="size-4 rounded border border-border"
+            />
+            Chỉ tham khảo (reference-only)
+          </label>
         </div>
 
-        <div className="flex flex-col gap-3 border-t px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-muted-foreground">
-            Trang {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Trước
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Sau
-            </Button>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Hủy
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={updateRule.isPending || !title.trim() || !canonicalWording.trim()}
+          >
+            {updateRule.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function EnvironmentRulesTable() {
+  const { data, isLoading } = useQuery(getChantEnvironmentRulesQueryOptions());
+  const updateRule = useUpdateEnvironmentRule();
+
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [editingRow, setEditingRow] = useState<ChantEnvironmentRuleRow | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
+
+  const rows = useMemo(() => (data ? flattenEnvironmentRules(data) : []), [data]);
+
+  const columns = useMemo<ColumnDef<ChantEnvironmentRuleRow>[]>(
+    () => [
+      createSelectColumn<ChantEnvironmentRuleRow>(),
+      {
+        accessorKey: "title",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Quy tắc" />,
+        cell: ({ row }) => (
+          <div className="space-y-1">
+            <div className="font-medium">{row.original.title}</div>
+            <div className="max-w-[48rem] truncate text-sm text-muted-foreground">
+              {row.original.canonicalWording}
+            </div>
           </div>
-        </div>
-      </section>
+        ),
+        meta: { label: "Quy tắc" },
+      },
+      {
+        accessorKey: "groupTitle",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Nhóm" />,
+        cell: ({ row }) => (
+          <div>
+            <div className="text-sm font-medium">{row.original.groupTitle}</div>
+            <div className="text-xs text-muted-foreground">{row.original.groupKey}</div>
+          </div>
+        ),
+        meta: { label: "Nhóm" },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "severity",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Mức độ" />,
+        cell: ({ row }) => (
+          <Badge variant="outline">
+            {severityLabels[row.original.severity] ?? row.original.severity}
+          </Badge>
+        ),
+        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
+        meta: { label: "Mức độ" },
+      },
+      {
+        accessorKey: "productizationMode",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Productization" />,
+        cell: ({ row }) => (
+          <div className="text-sm">
+            {productizationLabels[row.original.productizationMode] ??
+              row.original.productizationMode}
+          </div>
+        ),
+        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
+        meta: { label: "Productization" },
+        enableSorting: false,
+      },
+      {
+        id: "actions",
+        cell: ({ row }) => (
+          <EnvironmentRuleRowActions
+            row={row.original}
+            onEdit={(selectedRow) => {
+              setEditingRow(selectedRow);
+              setEditOpen(true);
+            }}
+            onToggleReferenceOnly={(selectedRow) => {
+              void updateRule.mutateAsync({
+                ruleKey: selectedRow.ruleKey,
+                payload: { referenceOnly: !selectedRow.referenceOnly },
+              });
+            }}
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
+    ],
+    [],
+  );
+
+  const table = useSafeReactTable({
+    data: rows,
+    columns,
+    state: { sorting, columnVisibility, columnFilters, rowSelection },
+    getRowId: (row) => row.ruleKey,
+    enableRowSelection: true,
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange: setColumnFilters,
+    onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+  });
+
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+
+  const markSelectedAsReferenceOnly = async () => {
+    if (!selectedRows.length) {
+      return;
+    }
+
+    await Promise.all(
+      selectedRows.map((row) =>
+        updateRule.mutateAsync({
+          ruleKey: row.ruleKey,
+          payload: { referenceOnly: true },
+        }),
+      ),
+    );
+    table.resetRowSelection();
+  };
+
+  const unmarkSelectedReferenceOnly = async () => {
+    if (!selectedRows.length) {
+      return;
+    }
+
+    await Promise.all(
+      selectedRows.map((row) =>
+        updateRule.mutateAsync({
+          ruleKey: row.ruleKey,
+          payload: { referenceOnly: false },
+        }),
+      ),
+    );
+    table.resetRowSelection();
+  };
+
+  return (
+    <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Tìm theo nhóm, rule key hoặc wording..."
+        searchKey="title"
+        viewButtonLabel="Xem"
+        filters={[
+          { columnId: "severity", title: "Mức độ", options: severityOptions },
+          {
+            columnId: "productizationMode",
+            title: "Productization",
+            options: productizationOptions,
+          },
+        ]}
+      />
+
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Không có quy tắc nào."
+      />
+
+      <DataTableBulkActions table={table} entityName="quy tắc">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={updateRule.isPending}
+          onClick={() => void markSelectedAsReferenceOnly()}
+        >
+          Đặt tham khảo
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={updateRule.isPending}
+          onClick={() => void unmarkSelectedReferenceOnly()}
+        >
+          Bỏ tham khảo
+        </Button>
+      </DataTableBulkActions>
+
+      <EnvironmentRuleEditDialog
+        open={editOpen}
+        row={editingRow}
+        onOpenChange={(open) => {
+          setEditOpen(open);
+          if (!open) {
+            setEditingRow(null);
+          }
+        }}
+      />
     </div>
   );
 }

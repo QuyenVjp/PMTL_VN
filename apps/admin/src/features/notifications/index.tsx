@@ -9,13 +9,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { PlusIcon, RefreshCwIcon } from "lucide-react";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,6 +35,7 @@ import {
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import {
   pushJobListOptions,
   pushStatusOptions,
@@ -44,12 +45,13 @@ import {
 } from "@/features/notifications/queries";
 import {
   useCreatePushJob,
+  useDeletePushJob,
   useRedrivePushJob,
 } from "@/features/notifications/mutations";
 
 // ── Context ──────────────────────────────────────────────────────────
 
-type NotifDialogType = "create" | "redrive" | null;
+type NotifDialogType = "create" | "redrive" | "delete" | null;
 
 type NotifContextValue = {
   open: NotifDialogType;
@@ -201,16 +203,30 @@ function CreatePushJobDialog({
 
 function NotifRowActions({ row }: { row: PushJobItem }) {
   const { setOpen, setCurrentRow } = useNotif();
-  if (row.status !== "FAILED") return null;
+  const actions = [];
+  if (row.status === "FAILED") {
+    actions.push({
+      label: "Gửi lại",
+      onClick: () => {
+        setCurrentRow(row);
+        setOpen("redrive");
+      },
+    });
+  }
+
+  actions.push({
+    label: "Xoá",
+    icon: Trash2Icon,
+    variant: "destructive" as const,
+    separator: true,
+    onClick: () => {
+      setCurrentRow(row);
+      setOpen("delete");
+    },
+  });
+
   return (
-    <WorkspaceRowActions
-      actions={[
-        {
-          label: "Gửi lại",
-          onClick: () => { setCurrentRow(row); setOpen("redrive"); },
-        },
-      ]}
-    />
+    <WorkspaceRowActions actions={actions} />
   );
 }
 
@@ -226,6 +242,7 @@ function NotificationsTable() {
 
   const columns = useMemo<ColumnDef<PushJobItem>[]>(
     () => [
+      createSelectColumn<PushJobItem>(),
       {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
@@ -294,7 +311,7 @@ function NotificationsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: jobs,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -326,6 +343,7 @@ function NotificationsTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có đợt gửi thông báo nào."
       />
+      <DataTableBulkActions table={table} entityName="job thông báo" />
     </div>
   );
 }
@@ -335,10 +353,11 @@ function NotificationsTable() {
 function NotifDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useNotif();
   const redrivePushJob = useRedrivePushJob();
+  const deletePushJob = useDeletePushJob();
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -348,21 +367,40 @@ function NotifDialogs() {
         onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
       />
       {currentRow && (
-        <WorkspaceConfirmDialog
-          open={open === "redrive"}
-          onOpenChange={(v) => (!v ? handleClose() : setOpen("redrive"))}
-          title="Gửi lại thông báo"
-          description={
-            <>
-              Gửi lại đợt thông báo <span className="font-semibold text-foreground">{currentRow.title}</span>?
-            </>
-          }
-          confirmLabel="Gửi lại"
-          isPending={redrivePushJob.isPending}
-          onConfirm={() =>
-            redrivePushJob.mutate(currentRow.publicId, { onSuccess: handleClose })
-          }
-        />
+        <>
+          <WorkspaceConfirmDialog
+            open={open === "redrive"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("redrive"))}
+            title="Gửi lại thông báo"
+            description={
+              <>
+                Gửi lại đợt thông báo <span className="font-semibold text-foreground">{currentRow.title}</span>?
+              </>
+            }
+            confirmLabel="Gửi lại"
+            isPending={redrivePushJob.isPending}
+            onConfirm={() =>
+              redrivePushJob.mutate(currentRow.publicId, { onSuccess: handleClose })
+            }
+          />
+          <WorkspaceConfirmDialog
+            open={open === "delete"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
+            title="Xoá đợt thông báo"
+            description={
+              <>
+                Xoá đợt gửi <span className="font-semibold text-foreground">{currentRow.title}</span>?
+                Hành động này không thể hoàn tác.
+              </>
+            }
+            confirmLabel="Xoá"
+            variant="destructive"
+            isPending={deletePushJob.isPending}
+            onConfirm={() =>
+              deletePushJob.mutate(currentRow.publicId, { onSuccess: handleClose })
+            }
+          />
+        </>
       )}
     </>
   );
@@ -419,3 +457,6 @@ export function NotificationsPage() {
     </NotifProvider>
   );
 }
+
+
+

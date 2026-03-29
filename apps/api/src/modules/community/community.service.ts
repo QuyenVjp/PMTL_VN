@@ -95,6 +95,21 @@ export class CommunityService {
     return updated;
   }
 
+  async adminDeletePost(publicId: string, adminId: string) {
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    await this.repo.deletePost(publicId);
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.delete",
+      "CommunityPost",
+      publicId,
+      { status: post.status },
+    );
+  }
+
   // ── Admin guestbook endpoints ──────────────────────────────────────
 
   async adminListGuestbook(query: GuestbookQuery) {
@@ -150,5 +165,20 @@ export class CommunityService {
     );
 
     return updated;
+  }
+
+  async adminDeleteGuestbookEntry(publicId: string, adminId: string) {
+    const entry = await this.repo.findAdminGuestbookEntryByPublicId(publicId);
+    if (!entry) throw new NotFoundException("Không tìm thấy bản ghi sổ lưu bút");
+
+    await this.repo.deleteGuestbookEntry(publicId);
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.guestbook.delete",
+      "GuestbookEntry",
+      publicId,
+      { status: entry.status },
+    );
   }
 }

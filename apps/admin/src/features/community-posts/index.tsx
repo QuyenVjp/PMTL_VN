@@ -9,27 +9,31 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircleIcon, EyeOffIcon, XCircleIcon } from "lucide-react";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { CheckCircleIcon, EyeOffIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import {
   communityPostListOptions,
   type CommunityPostItem,
 } from "@/features/community-posts/queries";
-import { useUpdateCommunityPostStatus } from "@/features/community-posts/mutations";
+import {
+  useDeleteCommunityPost,
+  useUpdateCommunityPostStatus,
+} from "@/features/community-posts/mutations";
 
 // ── Context ──────────────────────────────────────────────────────────
 
-type CommunityDialogType = "approve" | "reject" | "hide" | null;
+type CommunityDialogType = "approve" | "reject" | "hide" | "delete" | null;
 
 type CommunityContextValue = {
   open: CommunityDialogType;
@@ -115,6 +119,13 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
               },
             ]
           : []),
+        {
+          label: "Xoá",
+          icon: Trash2Icon,
+          onClick: () => open("delete"),
+          variant: "destructive" as const,
+          separator: true,
+        },
       ]}
     />
   );
@@ -132,6 +143,7 @@ function CommunityPostsTable() {
 
   const columns = useMemo<ColumnDef<CommunityPostItem>[]>(
     () => [
+      createSelectColumn<CommunityPostItem>(),
       {
         accessorKey: "content",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Nội dung" />,
@@ -193,7 +205,7 @@ function CommunityPostsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: posts,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -225,6 +237,7 @@ function CommunityPostsTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có bài đăng nào."
       />
+      <DataTableBulkActions table={table} entityName="bài đăng" />
     </div>
   );
 }
@@ -234,10 +247,11 @@ function CommunityPostsTable() {
 function CommunityDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useCommunity();
   const updateStatus = useUpdateCommunityPostStatus();
+  const deletePost = useDeleteCommunityPost();
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   const mutate = (status: string) =>
@@ -278,6 +292,21 @@ function CommunityDialogs() {
         isPending={updateStatus.isPending}
         onConfirm={() => mutate("REJECTED")}
       />
+      <WorkspaceConfirmDialog
+        open={open === "delete"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
+        title="Xoá bài đăng"
+        description={
+          <>
+            Xoá bài đăng <span className="font-semibold text-foreground">{currentRow.publicId}</span>?
+            Hành động này không thể hoàn tác.
+          </>
+        }
+        confirmLabel="Xoá"
+        variant="destructive"
+        isPending={deletePost.isPending}
+        onConfirm={() => deletePost.mutate(currentRow.publicId, { onSuccess: handleClose })}
+      />
     </>
   );
 }
@@ -302,3 +331,6 @@ export function CommunityPostsPage() {
     </CommunityProvider>
   );
 }
+
+
+

@@ -40,7 +40,7 @@ export function GuidesPage({
         <GuidesTable defaultCategory={defaultCategory} />
       </div>
 
-      <GuidesDialogs />
+      <GuidesDialogs defaultCategory={defaultCategory} />
     </GuidesProvider>
   );
 }

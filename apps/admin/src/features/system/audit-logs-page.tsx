@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
   type ColumnDef,
   type SortingState,
@@ -8,7 +9,6 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +83,7 @@ export function AuditLogsPage() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: logs,
     columns,
     state: { sorting, columnVisibility },
@@ -121,3 +121,5 @@ export function AuditLogsPage() {
     </div>
   );
 }
+
+

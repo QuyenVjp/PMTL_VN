@@ -10,13 +10,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { PencilIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,6 +41,7 @@ import {
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { eventListOptions, type CalendarEventItem } from "./queries.js";
 import {
   useCreateEvent,
@@ -304,6 +305,7 @@ function CalendarTable() {
 
   const columns = useMemo<ColumnDef<CalendarEventItem>[]>(
     () => [
+      createSelectColumn<CalendarEventItem>(),
       {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
@@ -385,7 +387,7 @@ function CalendarTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: events,
     columns,
     state: { sorting, columnFilters, rowSelection, columnVisibility },
@@ -421,6 +423,7 @@ function CalendarTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có sự kiện nào."
       />
+      <DataTableBulkActions table={table} entityName="sự kiện" />
     </div>
   );
 }
@@ -434,7 +437,7 @@ function CalendarDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -527,3 +530,6 @@ export function CalendarEventsPage() {
     </CalendarProvider>
   );
 }
+
+
+

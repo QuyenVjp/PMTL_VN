@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UsePipes } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UsePipes } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
@@ -91,6 +91,18 @@ export class AdminCommunityController {
     return this.communityService.adminUpdatePostStatus(publicId, input, user.id);
   }
 
+  @Delete("posts/:publicId")
+  @ApiOperation({ summary: "Xoá bài đăng cộng đồng" })
+  @ApiResponse({ status: 200, description: "Xoá thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  async deletePost(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    await this.communityService.adminDeletePost(publicId, user.id);
+    return { success: true };
+  }
+
   // ── Guestbook ─────────────────────────────────────────────────────
 
   @Get("guestbook")
@@ -129,5 +141,17 @@ export class AdminCommunityController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.adminUpdateGuestbookStatus(publicId, input, user.id);
+  }
+
+  @Delete("guestbook/:publicId")
+  @ApiOperation({ summary: "Xoá bản ghi sổ lưu bút" })
+  @ApiResponse({ status: 200, description: "Xoá thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  async deleteGuestbookEntry(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    await this.communityService.adminDeleteGuestbookEntry(publicId, user.id);
+    return { success: true };
   }
 }

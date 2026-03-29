@@ -9,24 +9,28 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { CheckCircleIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { guestbookListOptions, type GuestbookItem } from "@/features/guestbook/queries";
-import { useUpdateGuestbookStatus } from "@/features/guestbook/mutations";
+import {
+  useDeleteGuestbookEntry,
+  useUpdateGuestbookStatus,
+} from "@/features/guestbook/mutations";
 
 // ── Context ──────────────────────────────────────────────────────────
 
-type GuestbookDialogType = "approve" | "reject" | null;
+type GuestbookDialogType = "approve" | "reject" | "delete" | null;
 
 type GuestbookContextValue = {
   open: GuestbookDialogType;
@@ -105,6 +109,13 @@ function GuestbookRowActions({ row }: { row: GuestbookItem }) {
               },
             ]
           : []),
+        {
+          label: "Xoá",
+          icon: Trash2Icon,
+          onClick: () => open("delete"),
+          variant: "destructive" as const,
+          separator: true,
+        },
       ]}
     />
   );
@@ -122,6 +133,7 @@ function GuestbookTable() {
 
   const columns = useMemo<ColumnDef<GuestbookItem>[]>(
     () => [
+      createSelectColumn<GuestbookItem>(),
       {
         accessorKey: "content",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Nội dung" />,
@@ -186,7 +198,7 @@ function GuestbookTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: entries,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -218,6 +230,7 @@ function GuestbookTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có lưu niệm nào."
       />
+      <DataTableBulkActions table={table} entityName="lưu niệm" />
     </div>
   );
 }
@@ -227,10 +240,11 @@ function GuestbookTable() {
 function GuestbookDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useGuestbook();
   const updateStatus = useUpdateGuestbookStatus();
+  const deleteGuestbookEntry = useDeleteGuestbookEntry();
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   const mutate = (status: "APPROVED" | "REJECTED") =>
@@ -262,6 +276,23 @@ function GuestbookDialogs() {
         isPending={updateStatus.isPending}
         onConfirm={() => mutate("REJECTED")}
       />
+      <WorkspaceConfirmDialog
+        open={open === "delete"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
+        title="Xoá lưu niệm"
+        description={
+          <>
+            Xoá lưu niệm <span className="font-semibold text-foreground">{currentRow.publicId}</span>?
+            Hành động này không thể hoàn tác.
+          </>
+        }
+        confirmLabel="Xoá"
+        variant="destructive"
+        isPending={deleteGuestbookEntry.isPending}
+        onConfirm={() =>
+          deleteGuestbookEntry.mutate(currentRow.publicId, { onSuccess: handleClose })
+        }
+      />
     </>
   );
 }
@@ -286,3 +317,6 @@ export function GuestbookPage() {
     </GuestbookProvider>
   );
 }
+
+
+

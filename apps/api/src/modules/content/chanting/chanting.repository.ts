@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../../common/prisma/prisma.service.js";
+import type { Prisma } from "../../../generated/prisma/client.js";
 
 @Injectable()
 export class ChantingRepository {
@@ -44,5 +45,20 @@ export class ChantingRepository {
       },
       {} as Record<string, number>,
     );
+  }
+
+  async findRuleByKey(ruleKey: string) {
+    return this.prisma.chantEnvironmentRule.findUnique({
+      where: { ruleKey },
+      include: { group: true },
+    });
+  }
+
+  async updateRuleByKey(ruleKey: string, data: Prisma.ChantEnvironmentRuleUpdateInput) {
+    return this.prisma.chantEnvironmentRule.update({
+      where: { ruleKey },
+      data,
+      include: { group: true },
+    });
   }
 }

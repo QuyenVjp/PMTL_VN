@@ -155,3 +155,23 @@ export const q161ContentRulePackResponseSchema = z.object({
 });
 
 export type Q161ContentRulePackResponse = z.infer<typeof q161ContentRulePackResponseSchema>;
+
+export const adminUpdateEnvironmentRuleSchema = z
+  .object({
+    title: z.string().trim().min(1).optional(),
+    canonicalWording: z.string().trim().min(1).optional(),
+    severity: severitySchema.optional(),
+    productizationMode: productizationModeSchema.optional(),
+    safeLaneRefs: z.array(z.string().trim().min(1)).optional(),
+    avoidItems: z.array(z.string().trim().min(1)).optional(),
+    shortReason: z.string().trim().max(500).nullable().optional(),
+    sourceReference: z.string().trim().max(500).nullable().optional(),
+    versionNote: z.string().trim().max(500).nullable().optional(),
+    referenceOnly: z.boolean().optional(),
+    sortOrder: z.number().int().min(0).optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "Payload cập nhật không được để trống.",
+  });
+
+export type AdminUpdateEnvironmentRuleInput = z.infer<typeof adminUpdateEnvironmentRuleSchema>;

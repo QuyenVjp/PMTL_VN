@@ -9,16 +9,19 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircleIcon } from "lucide-react";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { postListOptions, type PostListItem } from "@/features/content/queries";
 import { usePosts } from "@/features/content/posts-context";
+import { usePublishPost, useDeletePost } from "@/features/content/mutations";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -49,6 +52,14 @@ function PostsRowActions({ row }: { row: PostListItem }) {
   const { setOpen, setCurrentRow } = usePosts();
 
   const actions = [
+    {
+      label: "Chỉnh sửa",
+      icon: PencilIcon,
+      onClick: () => {
+        setCurrentRow(row);
+        setOpen("edit");
+      },
+    },
     ...(row.status === "DRAFT"
       ? [
           {
@@ -61,9 +72,18 @@ function PostsRowActions({ row }: { row: PostListItem }) {
           },
         ]
       : []),
+    {
+      label: "Xoá",
+      icon: Trash2Icon,
+      onClick: () => {
+        setCurrentRow(row);
+        setOpen("delete");
+      },
+      variant: "destructive" as const,
+      separator: true,
+    },
   ];
 
-  if (actions.length === 0) return null;
   return <WorkspaceRowActions actions={actions} />;
 }
 
@@ -73,12 +93,16 @@ export function PostsTable() {
   const { data, isLoading } = useQuery(postListOptions({ limit: 100 }));
   const posts = data?.items ?? [];
 
+  const publishPost = usePublishPost();
+  const deletePost = useDeletePost();
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const columns = useMemo<ColumnDef<PostListItem>[]>(
     () => [
+      createSelectColumn<PostListItem>(),
       {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
@@ -129,7 +153,7 @@ export function PostsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: posts,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -162,6 +186,39 @@ export function PostsTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có bài viết nào."
       />
+      <DataTableBulkActions table={table} entityName="bài viết">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={publishPost.isPending}
+          onClick={async () => {
+            const selected = table.getFilteredSelectedRowModel().rows.map((r) => r.original);
+            const drafts = selected.filter((r) => r.status === "DRAFT");
+            if (!drafts.length) return;
+            await Promise.all(drafts.map((r) => publishPost.mutateAsync(r.id)));
+            table.resetRowSelection();
+          }}
+        >
+          <CheckCircleIcon className="mr-1.5 size-3.5" />
+          Xuất bản
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={deletePost.isPending}
+          onClick={async () => {
+            const selected = table.getFilteredSelectedRowModel().rows.map((r) => r.original);
+            if (!selected.length) return;
+            await Promise.all(selected.map((r) => deletePost.mutateAsync(r.id)));
+            table.resetRowSelection();
+          }}
+        >
+          <Trash2Icon className="mr-1.5 size-3.5" />
+          Xoá
+        </Button>
+      </DataTableBulkActions>
     </div>
   );
 }
+
+

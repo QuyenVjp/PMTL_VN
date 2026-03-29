@@ -11,7 +11,7 @@ export type SubmitContactInput = z.infer<typeof submitContactSchema>;
 
 export const contactQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
-  pageSize: z.coerce.number().int().min(1).max(50).default(20),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
   subject: z.enum(["general", "feedback", "support", "partnership", "report"]).optional(),
   status: z.enum(["new", "in_progress", "resolved", "closed"]).optional(),
 });
@@ -20,7 +20,7 @@ export type ContactQuery = z.infer<typeof contactQuerySchema>;
 
 // Volunteer schemas
 export const volunteerQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
   isActive: z.coerce.boolean().optional(),
 });

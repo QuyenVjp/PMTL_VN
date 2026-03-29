@@ -15,7 +15,7 @@ export function canPublishPost(role: UserRole): boolean {
 }
 
 export function canDeletePost(role: UserRole): boolean {
-  return role === "SUPER_ADMIN";
+  return role === "ADMIN" || role === "SUPER_ADMIN";
 }
 
 export function getPublicStatuses(): ContentStatus[] {

@@ -40,7 +40,7 @@ export function DownloadsPage({
         <DownloadsTable defaultCategory={defaultCategory} />
       </div>
 
-      <DownloadsDialogs />
+      <DownloadsDialogs defaultCategory={defaultCategory} />
     </DownloadsProvider>
   );
 }

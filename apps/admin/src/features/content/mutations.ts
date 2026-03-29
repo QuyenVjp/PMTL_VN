@@ -63,3 +63,16 @@ export function usePublishPost() {
     onError: handleApiError,
   });
 }
+
+export function useDeletePost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => adminClient.delete(`/content/posts/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá bài viết.");
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}

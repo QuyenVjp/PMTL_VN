@@ -232,6 +232,11 @@ Mục tiêu:
 
 ## 8a. `Kinh Văn Tự Tu` companion surface
 
+> Canon detail cho `Kinh Văn Tự Tu` được tách riêng tại:
+> `design/03-domains/content/REFERENCES/KINH-VAN-TU-TU-CONTENT-INVENTORY.MD`
+>
+> Mục 8a này chỉ giữ route pillar + index tóm tắt để không duplicate canonical wording.
+
 Route pillar đề xuất:
 
 ```text
@@ -243,16 +248,14 @@ Route pillar đề xuất:
 └─ /tai-xuong
 ```
 
-Nội dung source-derived nên có:
+Index nội dung source-derived bắt buộc:
 
 - phân biệt rõ `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`
-- cách ghi `Kính Tặng`
-- cách khấn trước khi niệm và xác định đây là `Kinh Văn Tự Tu`
-- các rule giờ giấc quan trọng cho những kinh như `Tâm Kinh`, `Chú Vãng Sinh`, `Lễ Phật Đại Sám Hối Văn`
-- cách chấm đỏ
-- cách để trống hoặc ghi ngày hoàn thành
-- cách bọc giấy đỏ / vải đỏ và cất giữ
-- các trường hợp sử dụng chính
+- cách ghi `Kính Tặng` và khấn trước khi niệm
+- quy trình đốt `Kinh Văn Tự Tu` khi có bàn thờ
+- checklist thao tác trong lúc đốt và hậu xử lý tro
+- flow hủy `Ngôi Nhà Nhỏ` khi điền sai hoặc bị làm bẩn
+- các rule giờ giấc/môi trường trọng yếu và cảnh báo không nhầm với lane khác
 
 Downloads cần có:
 

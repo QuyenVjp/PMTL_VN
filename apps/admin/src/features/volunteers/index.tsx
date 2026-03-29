@@ -9,13 +9,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +33,7 @@ import {
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { volunteerListOptions, type VolunteerItem } from "@/features/volunteers/queries";
 import {
   useCreateVolunteer,
@@ -221,6 +222,7 @@ function VolunteersTable() {
 
   const columns = useMemo<ColumnDef<VolunteerItem>[]>(
     () => [
+      createSelectColumn<VolunteerItem>(),
       {
         accessorKey: "displayName",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tên" />,
@@ -279,7 +281,7 @@ function VolunteersTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: volunteers,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -311,6 +313,7 @@ function VolunteersTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có phụng sự viên nào."
       />
+      <DataTableBulkActions table={table} entityName="phụng sự viên" />
     </div>
   );
 }
@@ -323,7 +326,7 @@ function VolunteersDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -398,3 +401,6 @@ export function VolunteersPage() {
     </VolunteersProvider>
   );
 }
+
+
+

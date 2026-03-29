@@ -1,8 +1,14 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
 import { Public } from "../../../common/decorators/public.decorator.js";
+import { Roles } from "../../../common/decorators/roles.decorator.js";
+import { ZodValidate } from "../../../common/validation/zod-validation.pipe.js";
 import { ChantingService } from "./chanting.service.js";
-import { groupKeySchema } from "./chanting.schemas.js";
+import {
+  adminUpdateEnvironmentRuleSchema,
+  groupKeySchema,
+  type AdminUpdateEnvironmentRuleInput,
+} from "./chanting.schemas.js";
 
 @ApiTags("content/chanting")
 @Controller("content/chanting")
@@ -70,5 +76,40 @@ export class ChantingController {
   })
   async getQ161RulePack() {
     return this.chantingService.getQ161RulePack();
+  }
+}
+
+@ApiTags("admin-content-chanting")
+@Controller("admin/content/chanting")
+@Roles("ADMIN", "SUPER_ADMIN")
+export class AdminChantingController {
+  constructor(private readonly chantingService: ChantingService) {}
+
+  @Get("environment-rules")
+  @ApiOperation({
+    summary: "Lấy dữ liệu quản trị môi trường & thời gian niệm kinh",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Dữ liệu nhóm quy tắc phục vụ admin workspace",
+  })
+  async getEnvironmentRulesPage() {
+    return this.chantingService.getEnvironmentRulesPage();
+  }
+
+  @Patch("environment-rules/:ruleKey")
+  @ApiOperation({
+    summary: "Cập nhật một quy tắc môi trường niệm kinh",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Nhóm quy tắc sau khi cập nhật thành công",
+  })
+  async updateEnvironmentRule(
+    @Param("ruleKey") ruleKey: string,
+    @Body(ZodValidate(adminUpdateEnvironmentRuleSchema))
+    input: AdminUpdateEnvironmentRuleInput,
+  ) {
+    return this.chantingService.adminUpdateEnvironmentRule(ruleKey, input);
   }
 }

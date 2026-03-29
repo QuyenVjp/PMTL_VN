@@ -8,7 +8,7 @@ export function UsersDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   if (!currentRow) return null;
@@ -38,3 +38,4 @@ export function UsersDialogs() {
     </>
   );
 }
+

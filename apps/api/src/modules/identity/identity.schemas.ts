@@ -25,9 +25,14 @@ export const resetPasswordSchema = z.object({
 });
 
 // Update profile
+const avatarUrlSchema = z.union([
+  z.string().url(),
+  z.string().regex(/^\/[^\s]+$/, "Đường dẫn avatar không hợp lệ"),
+]);
+
 export const updateProfileSchema = z.object({
   displayName: z.string().min(2).max(50).optional(),
-  avatarUrl: z.string().url().optional().nullable(),
+  avatarUrl: avatarUrlSchema.optional().nullable(),
 });
 
 // Change password

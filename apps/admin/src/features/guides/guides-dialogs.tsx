@@ -21,7 +21,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import type { GuideItem } from "@/features/guides/queries";
-import { useCreateGuide, usePublishGuide, useUpdateGuide } from "@/features/guides/mutations";
+import {
+  useCreateGuide,
+  useDeleteGuide,
+  usePublishGuide,
+  useUpdateGuide,
+} from "@/features/guides/mutations";
 import { useGuides } from "@/features/guides/context";
 
 // ── Shared field wrapper ─────────────────────────────────────────────
@@ -40,20 +45,29 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function GuideCreateDialog({
   open,
   onOpenChange,
+  defaultCategory,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  defaultCategory?: string;
 }) {
   const createGuide = useCreateGuide();
+  const resolvedDefaultCategory = defaultCategory ?? "BEGINNER";
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
-  const [category, setCategory] = useState("BEGINNER");
+  const [category, setCategory] = useState(resolvedDefaultCategory);
   const [excerpt, setExcerpt] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setCategory(resolvedDefaultCategory);
+    }
+  }, [open, resolvedDefaultCategory]);
 
   const reset = () => {
     setTitle("");
     setSlug("");
-    setCategory("BEGINNER");
+    setCategory(resolvedDefaultCategory);
     setExcerpt("");
   };
 
@@ -261,14 +275,48 @@ function GuidePublishDialog({
   );
 }
 
+function GuideDeleteDialog({
+  open,
+  onOpenChange,
+  currentRow,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  currentRow: GuideItem;
+}) {
+  const deleteGuide = useDeleteGuide();
+
+  return (
+    <WorkspaceConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Xoá hướng dẫn"
+      description={
+        <>
+          Xoá <span className="font-semibold text-foreground">{currentRow.title}</span>? Thao tác
+          này không thể hoàn tác.
+        </>
+      }
+      confirmLabel="Xoá"
+      variant="destructive"
+      isPending={deleteGuide.isPending}
+      onConfirm={() =>
+        deleteGuide.mutate(currentRow.publicId, {
+          onSuccess: () => onOpenChange(false),
+        })
+      }
+    />
+  );
+}
+
 // ── Dialog switcher ──────────────────────────────────────────────────
 
-export function GuidesDialogs() {
+export function GuidesDialogs({ defaultCategory }: { defaultCategory?: string } = {}) {
   const { open, setOpen, currentRow, setCurrentRow } = useGuides();
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -276,6 +324,7 @@ export function GuidesDialogs() {
       <GuideCreateDialog
         open={open === "create"}
         onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
+        defaultCategory={defaultCategory}
       />
       {currentRow && (
         <>
@@ -289,8 +338,14 @@ export function GuidesDialogs() {
             onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
             currentRow={currentRow}
           />
+          <GuideDeleteDialog
+            open={open === "delete"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
+            currentRow={currentRow}
+          />
         </>
       )}
     </>
   );
 }
+

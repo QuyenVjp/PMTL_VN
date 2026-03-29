@@ -41,12 +41,15 @@ export const auditActionSchema = z.enum([
 
   // Community actions
   "admin.community_post.update",
+  "admin.community_post.delete",
   "admin.guestbook.create",
   "admin.guestbook.update",
+  "admin.guestbook.delete",
 
   // Notification actions
   "admin.push_job.create",
   "admin.push_job.redrive",
+  "admin.push_job.delete",
 
   // Volunteer/contact actions
   "admin.volunteer.create",

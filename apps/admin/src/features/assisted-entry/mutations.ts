@@ -12,6 +12,7 @@ interface CreateVowInput {
   description: string;
   targetCount?: number;
   startDate: string;
+  assistReason: string;
 }
 
 interface CreateLifeReleaseInput {
@@ -21,6 +22,7 @@ interface CreateLifeReleaseInput {
   location: string;
   note?: string;
   journalDate: string;
+  assistReason: string;
 }
 
 // ── Mutations ───────────────────────────────────────────────────────

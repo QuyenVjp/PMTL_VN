@@ -10,13 +10,14 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceDataTable } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { DownloadsRowActions } from "@/features/downloads/data-table-row-actions";
 import { downloadListOptions, type DownloadItem } from "@/features/downloads/queries";
 
@@ -89,6 +90,7 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
 
   const columns = useMemo<ColumnDef<DownloadItem>[]>(
     () => [
+      createSelectColumn<DownloadItem>(),
       {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
@@ -156,7 +158,7 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: downloads,
     columns,
     state: { sorting, rowSelection, columnVisibility, columnFilters },
@@ -193,6 +195,9 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
         isLoading={isLoading}
         emptyMessage="Chưa có tài liệu nào."
       />
+      <DataTableBulkActions table={table} entityName="tài liệu" />
     </div>
   );
 }
+
+

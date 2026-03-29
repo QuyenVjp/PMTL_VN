@@ -209,6 +209,7 @@ Owner của launch-readiness truth là [implementation-mapping.md](./04-executio
 | [organizational-events-architecture.md](./03-domains/calendar/REFERENCES/ORGANIZATIONAL-EVENTS-ARCHITECTURE.MD) | Kiến trúc sự kiện tổ chức: agenda, speakers, CTA, assets |
 | [daily-practice-experience-architecture.md](./03-domains/content/REFERENCES/DAILY-PRACTICE-EXPERIENCE-ARCHITECTURE.MD) | Kiến trúc public/admin/tracker cho Kinh Bài Tập Hằng Ngày |
 | [daily-practice-content-inventory.md](./03-domains/content/REFERENCES/DAILY-PRACTICE-CONTENT-INVENTORY.MD) | Inventory canonical cho groups, guides, presets, FAQ, downloads |
+| [kinh-van-tu-tu-content-inventory.md](./03-domains/content/REFERENCES/KINH-VAN-TU-TU-CONTENT-INVENTORY.MD) | Inventory canonical cho Kinh Văn Tự Tu từ bộ ảnh hướng dẫn và route companion surface |
 | [life-release-experience-architecture.md](./03-domains/content/REFERENCES/LIFE-RELEASE-EXPERIENCE-ARCHITECTURE.MD) | Kiến trúc public/admin/journal bridge cho Phóng Sanh |
 | [life-release-content-inventory.md](./03-domains/content/REFERENCES/LIFE-RELEASE-CONTENT-INVENTORY.MD) | Inventory canonical cho nghi thức, variants, warnings, FAQ, downloads của Phóng Sanh |
 | [life-release-guide-nghi-thuc-co-ban.md](./03-domains/content/REFERENCES/LIFE-RELEASE-GUIDE-NGHI-THUC-CO-BAN.MD) | Canonical guide cho route nghi thức cơ bản của Phóng Sanh |

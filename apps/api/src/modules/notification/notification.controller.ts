@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query, UsePipes } from "@nestjs/common";
+import { Controller, Get, Post, Delete, Body, Param, Query, UsePipes } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
@@ -57,6 +57,20 @@ export class AdminNotificationController {
       actorId: user.id,
       actorType: "user",
     });
+  }
+
+  @Delete("push/jobs/:publicId")
+  @ApiOperation({ summary: "Xoá push job" })
+  @ApiResponse({ status: 200, description: "Đã xoá push job" })
+  async deleteJob(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param("publicId") publicId: string,
+  ) {
+    await this.notificationService.adminDeletePushJob(publicId, {
+      actorId: user.id,
+      actorType: "user",
+    });
+    return { success: true };
   }
 
   @Get("push/status")

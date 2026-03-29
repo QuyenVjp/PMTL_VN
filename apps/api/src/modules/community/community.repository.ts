@@ -87,6 +87,12 @@ export class CommunityRepository {
     });
   }
 
+  async deletePost(publicId: string) {
+    return this.prisma.communityPost.delete({
+      where: { publicId },
+    });
+  }
+
   // ── Guestbook ──────────────────────────────────────────────────────────
 
   async findManyAdminGuestbook(query: GuestbookQuery) {
@@ -138,6 +144,12 @@ export class CommunityRepository {
         approvedById: input.status === "APPROVED" ? adminId : entry.approvedById,
         approvedAt: input.status === "APPROVED" ? new Date() : entry.approvedAt,
       },
+    });
+  }
+
+  async deleteGuestbookEntry(publicId: string) {
+    return this.prisma.guestbookEntry.delete({
+      where: { publicId },
     });
   }
 }

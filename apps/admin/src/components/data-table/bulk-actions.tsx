@@ -28,8 +28,8 @@ export function DataTableBulkActions<TData>({
       return;
     }
 
-    const message = `Đã chọn ${selectedCount} ${entityName}${selectedCount > 1 ? "" : ""}. Có thể chạy thao tác hàng loạt.`;
-    queueMicrotask(() => setAnnouncement(message));
+    const message = `Đã chọn ${selectedCount} ${entityName}. Có thể chạy thao tác hàng loạt.`;
+    setAnnouncement(message);
     const timer = setTimeout(() => setAnnouncement(""), 3000);
     return () => clearTimeout(timer);
   }, [entityName, selectedCount]);
@@ -95,18 +95,18 @@ export function DataTableBulkActions<TData>({
         onKeyDown={handleKeyDown}
         aria-label={`Thao tác hàng loạt cho ${selectedCount} ${entityName}`}
         className={cn(
-          "fixed bottom-6 start-1/2 z-50 -translate-x-1/2 rounded-xl transition-all delay-100 duration-300 ease-out hover:scale-[1.02]",
+          "fixed bottom-6 start-1/2 z-50 -translate-x-1/2 rounded-2xl transition-all delay-100 duration-300 ease-out",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
         )}
       >
-        <div className="flex items-center gap-2 rounded-xl border bg-background/95 p-2 shadow-xl backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="flex items-center gap-2 rounded-2xl border border-border/70 bg-card/95 px-3 py-2 shadow-2xl backdrop-blur supports-backdrop-filter:bg-card/80">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="outline"
-                size="icon"
+                variant="ghost"
+                size="sm"
                 onClick={clearSelection}
-                className="size-7 rounded-full"
+                className="rounded-full px-2"
                 aria-label="Bỏ chọn"
                 title="Bỏ chọn (Escape)"
               >
@@ -121,7 +121,7 @@ export function DataTableBulkActions<TData>({
           <Separator className="h-5" orientation="vertical" />
 
           <div className="flex items-center gap-2 text-sm">
-            <Badge variant="default" className="min-w-8 rounded-lg">
+            <Badge variant="default" className="min-w-8 rounded-md px-2.5 py-1">
               {selectedCount}
             </Badge>
             <span>{entityName} được chọn</span>

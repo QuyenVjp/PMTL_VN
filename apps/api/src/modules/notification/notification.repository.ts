@@ -63,6 +63,12 @@ export class NotificationRepository {
     });
   }
 
+  async deletePushJob(publicId: string) {
+    return this.prisma.pushJob.delete({
+      where: { publicId },
+    });
+  }
+
   async countJobsByStatus() {
     const [total, pending, completed, failed] = await Promise.all([
       this.prisma.pushJob.count(),

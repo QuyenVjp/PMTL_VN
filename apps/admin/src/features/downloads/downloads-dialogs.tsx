@@ -69,22 +69,31 @@ function CategorySelect({
 function DownloadCreateDialog({
   open,
   onOpenChange,
+  defaultCategory,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  defaultCategory?: string;
 }) {
   const createDownload = useCreateDownload();
+  const resolvedDefaultCategory = defaultCategory ?? "GUIDE";
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("GUIDE");
+  const [category, setCategory] = useState(resolvedDefaultCategory);
   const [fileUrl, setFileUrl] = useState("");
   const [fileType, setFileType] = useState("");
   const [fileSize, setFileSize] = useState("");
 
+  useEffect(() => {
+    if (open) {
+      setCategory(resolvedDefaultCategory);
+    }
+  }, [open, resolvedDefaultCategory]);
+
   const reset = () => {
     setTitle("");
     setDescription("");
-    setCategory("GUIDE");
+    setCategory(resolvedDefaultCategory);
     setFileUrl("");
     setFileType("");
     setFileSize("");
@@ -306,12 +315,12 @@ function DownloadDeleteDialog({
 
 // ── Dialog switcher ──────────────────────────────────────────────────
 
-export function DownloadsDialogs() {
+export function DownloadsDialogs({ defaultCategory }: { defaultCategory?: string } = {}) {
   const { open, setOpen, currentRow, setCurrentRow } = useDownloads();
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   return (
@@ -319,6 +328,7 @@ export function DownloadsDialogs() {
       <DownloadCreateDialog
         open={open === "create"}
         onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
+        defaultCategory={defaultCategory}
       />
       {currentRow && (
         <>
@@ -342,3 +352,4 @@ export function DownloadsDialogs() {
     </>
   );
 }
+

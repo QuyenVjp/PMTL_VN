@@ -22,6 +22,7 @@ import {
 } from "@nestjs/common";
 import type { Response, Request } from "express";
 import { Logger } from "nestjs-pino";
+import { ZodError } from "zod";
 import { AppError } from "./app-error.js";
 
 interface CanonErrorEnvelope {
@@ -78,6 +79,22 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.warn(
         { code, statusCode, path: request.url, requestId },
         `HTTP exception: ${statusCode}`,
+      );
+    } else if (exception instanceof ZodError) {
+      statusCode = HttpStatus.BAD_REQUEST;
+      code = "VALIDATION_ERROR";
+      message = "Dữ liệu không hợp lệ";
+      details = {
+        issues: exception.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+          code: issue.code,
+        })),
+      };
+
+      this.logger.warn(
+        { code, statusCode, details, path: request.url, requestId },
+        "Zod validation error",
       );
     } else if (exception instanceof Error) {
       // No stack trace leak to production client

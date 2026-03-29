@@ -74,6 +74,10 @@ function timeAgo(iso: string): string {
   return `${Math.floor(hrs / 24)} ngày trước`;
 }
 
+function memberLabel(item: { member?: { displayName?: string }; user?: { displayName?: string } }) {
+  return item.member?.displayName ?? item.user?.displayName ?? "Thành viên không xác định";
+}
+
 function TableSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <div className="space-y-3">
@@ -228,7 +232,7 @@ function HistoryTab() {
                 {items.map((item) => (
                   <TableRow key={item.publicId}>
                     <TableCell className="font-medium">
-                      {item.user.displayName}
+                      {memberLabel(item)}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{vowTypeLabel(item.vowType)}</Badge>
@@ -272,13 +276,14 @@ function CreateVowForm() {
   const [member, setMember] = useState<MemberSearchResult | null>(null);
   const [vowType, setVowType] = useState("LIFE_RELEASE");
   const [description, setDescription] = useState("");
+  const [assistReason, setAssistReason] = useState("");
   const [targetCount, setTargetCount] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
   const createVow = useCreateVow();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!member || !description.trim()) return;
+    if (!member || !description.trim() || assistReason.trim().length < 10) return;
     createVow.mutate(
       {
         memberPublicId: member.publicId,
@@ -286,11 +291,13 @@ function CreateVowForm() {
         description: description.trim(),
         targetCount: targetCount ? Number(targetCount) : undefined,
         startDate,
+        assistReason: assistReason.trim(),
       },
       {
         onSuccess: () => {
           setMember(null);
           setDescription("");
+          setAssistReason("");
           setTargetCount("");
           setStartDate(new Date().toISOString().slice(0, 10));
         },
@@ -334,6 +341,18 @@ function CreateVowForm() {
               required
             />
           </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Lý do nhập hộ <span className="text-muted-foreground font-normal">(bắt buộc, tối thiểu 10 ký tự)</span>
+            </label>
+            <Textarea
+              value={assistReason}
+              onChange={(e) => setAssistReason(e.target.value)}
+              placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
+              rows={2}
+              required
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Mục tiêu (số lần)</label>
@@ -354,7 +373,7 @@ function CreateVowForm() {
               />
             </div>
           </div>
-          <Button type="submit" disabled={createVow.isPending || !member || !description.trim()}>
+          <Button type="submit" disabled={createVow.isPending || !member || !description.trim() || assistReason.trim().length < 10}>
             {createVow.isPending ? "Đang tạo..." : "Tạo phiếu phát nguyện"}
           </Button>
         </form>
@@ -371,12 +390,13 @@ function CreateLifeReleaseForm() {
   const [quantity, setQuantity] = useState("");
   const [location, setLocation] = useState("");
   const [note, setNote] = useState("");
+  const [assistReason, setAssistReason] = useState("");
   const [journalDate, setJournalDate] = useState(new Date().toISOString().slice(0, 10));
   const createJournal = useCreateLifeReleaseJournal();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!member || !animalType.trim() || !quantity || !location.trim()) return;
+    if (!member || !animalType.trim() || !quantity || !location.trim() || assistReason.trim().length < 10) return;
     createJournal.mutate(
       {
         memberPublicId: member.publicId,
@@ -385,6 +405,7 @@ function CreateLifeReleaseForm() {
         location: location.trim(),
         note: note.trim() || undefined,
         journalDate,
+        assistReason: assistReason.trim(),
       },
       {
         onSuccess: () => {
@@ -393,6 +414,7 @@ function CreateLifeReleaseForm() {
           setQuantity("");
           setLocation("");
           setNote("");
+          setAssistReason("");
           setJournalDate(new Date().toISOString().slice(0, 10));
         },
       },
@@ -451,6 +473,18 @@ function CreateLifeReleaseForm() {
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Lý do nhập hộ <span className="text-muted-foreground font-normal">(bắt buộc, tối thiểu 10 ký tự)</span>
+            </label>
+            <Textarea
+              value={assistReason}
+              onChange={(e) => setAssistReason(e.target.value)}
+              placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
+              rows={2}
+              required
+            />
+          </div>
+          <div className="space-y-2">
             <label className="text-sm font-medium">Ngày phóng sanh</label>
             <Input
               type="date"
@@ -461,7 +495,7 @@ function CreateLifeReleaseForm() {
           </div>
           <Button
             type="submit"
-            disabled={createJournal.isPending || !member || !animalType.trim() || !quantity || !location.trim()}
+            disabled={createJournal.isPending || !member || !animalType.trim() || !quantity || !location.trim() || assistReason.trim().length < 10}
           >
             {createJournal.isPending ? "Đang tạo..." : "Tạo phiếu phóng sanh"}
           </Button>

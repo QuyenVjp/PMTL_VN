@@ -1,13 +1,17 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CacheService } from "../../../common/cache/cache.service.js";
+import { Prisma, RuleProductizationMode, RuleSeverity } from "../../../generated/prisma/client.js";
 import { ChantingRepository } from "./chanting.repository.js";
 import { mapGroupToResponse } from "./chanting.mapper.js";
 import { mapQ161ForContent } from "../../wisdom-qa/q161-rule-pack.data.js";
 import type {
+  AdminUpdateEnvironmentRuleInput,
   ChantEnvironmentRulesPageResponse,
   ChantEnvironmentRuleGroupResponse,
   GroupKey,
+  ProductizationMode,
   Q161ContentRulePackResponse,
+  Severity,
 } from "./chanting.schemas.js";
 
 @Injectable()
@@ -151,4 +155,65 @@ export class ChantingService {
       return mapGroupToResponse(group);
     });
   }
+
+  async adminUpdateEnvironmentRule(
+    ruleKey: string,
+    input: AdminUpdateEnvironmentRuleInput,
+  ): Promise<ChantEnvironmentRuleGroupResponse> {
+    const existingRule = await this.repository.findRuleByKey(ruleKey);
+    if (!existingRule) {
+      throw new NotFoundException(`Quy tắc '${ruleKey}' không tồn tại`);
+    }
+
+    const data: Prisma.ChantEnvironmentRuleUpdateInput = {};
+
+    if (input.title !== undefined) data.title = input.title;
+    if (input.canonicalWording !== undefined) data.canonicalWording = input.canonicalWording;
+    if (input.severity !== undefined) data.severity = mapSeverityToDb(input.severity);
+    if (input.productizationMode !== undefined) {
+      data.productizationMode = mapProductizationModeToDb(input.productizationMode);
+    }
+    if (input.safeLaneRefs !== undefined) data.safeLaneRefs = input.safeLaneRefs.map((item) => item.trim());
+    if (input.avoidItems !== undefined) data.avoidItems = input.avoidItems.map((item) => item.trim());
+    if (input.shortReason !== undefined) data.shortReason = input.shortReason;
+    if (input.sourceReference !== undefined) data.sourceReference = input.sourceReference;
+    if (input.versionNote !== undefined) data.versionNote = input.versionNote;
+    if (input.referenceOnly !== undefined) data.referenceOnly = input.referenceOnly;
+    if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
+
+    const updated = await this.repository.updateRuleByKey(ruleKey, data);
+
+    await this.cacheService.del("content:chanting:environment-rules-page:v1");
+    await this.cacheService.del(`content:chanting:environment-group:${updated.group.groupKey}:v1`);
+
+    const refreshedGroup = await this.repository.findGroupByKey(updated.group.groupKey);
+    if (!refreshedGroup) {
+      throw new NotFoundException(`Nhóm quy tắc '${updated.group.groupKey}' không tồn tại`);
+    }
+
+    return mapGroupToResponse(refreshedGroup);
+  }
+}
+
+function mapSeverityToDb(value: Severity): RuleSeverity {
+  const map: Record<Severity, RuleSeverity> = {
+    advisory: RuleSeverity.ADVISORY,
+    caution: RuleSeverity.CAUTION,
+    strong_guardrail: RuleSeverity.STRONG_GUARDRAIL,
+    quality_guidance: RuleSeverity.QUALITY_GUIDANCE,
+    reference_only: RuleSeverity.REFERENCE_ONLY,
+  };
+  return map[value];
+}
+
+function mapProductizationModeToDb(value: ProductizationMode): RuleProductizationMode {
+  const map: Record<ProductizationMode, RuleProductizationMode> = {
+    warning_card: RuleProductizationMode.WARNING_CARD,
+    checklist_item: RuleProductizationMode.CHECKLIST_ITEM,
+    safe_lane_suggestion: RuleProductizationMode.SAFE_LANE_SUGGESTION,
+    drawer_note: RuleProductizationMode.DRAWER_NOTE,
+    reference_only_note: RuleProductizationMode.REFERENCE_ONLY_NOTE,
+    do_not_automate: RuleProductizationMode.DO_NOT_AUTOMATE,
+  };
+  return map[value];
 }

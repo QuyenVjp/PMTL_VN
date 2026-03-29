@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PencilIcon } from "lucide-react";
+import { CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
 
 import { WorkspaceRowActions } from "@/components/workspace";
 import type { GuideItem } from "@/features/guides/queries";
@@ -7,7 +7,7 @@ import { useGuides } from "@/features/guides/context";
 export function GuidesRowActions({ row }: { row: GuideItem }) {
   const { setOpen, setCurrentRow } = useGuides();
 
-  const open = (dialog: "edit" | "publish") => {
+  const open = (dialog: "edit" | "publish" | "delete") => {
     setCurrentRow(row);
     setOpen(dialog);
   };
@@ -26,10 +26,16 @@ export function GuidesRowActions({ row }: { row: GuideItem }) {
                 label: "Xuất bản",
                 icon: CheckCircleIcon,
                 onClick: () => open("publish"),
-                separator: true,
               },
             ]
           : []),
+        {
+          label: "Xoá",
+          icon: Trash2Icon,
+          onClick: () => open("delete"),
+          variant: "destructive" as const,
+          separator: true,
+        },
       ]}
     />
   );

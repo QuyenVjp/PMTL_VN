@@ -45,6 +45,31 @@ import {
 export class ContentController {
   constructor(private readonly contentService: ContentService) {}
 
+  @Get("admin/posts")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Danh sách bài viết (admin)" })
+  @ApiResponse({ status: 200, description: "Danh sách bài viết cho admin" })
+  async listAdminPosts(
+    @Query() query: ListPostsQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const validated = listPostsQuerySchema.parse(query);
+    return this.contentService.listPosts(validated, user.role);
+  }
+
+  @Get("admin/posts/:publicIdOrSlug")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Chi tiết bài viết (admin)" })
+  @ApiParam({ name: "publicIdOrSlug", description: "Public ID hoặc slug của bài viết" })
+  @ApiResponse({ status: 200, description: "Chi tiết bài viết cho admin" })
+  @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
+  async getAdminPost(
+    @Param("publicIdOrSlug") publicIdOrSlug: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.contentService.getPost(publicIdOrSlug, user.role);
+  }
+
   @Get("posts")
   @Public()
   @ApiOperation({ summary: "Danh sách bài viết" })
@@ -127,6 +152,25 @@ export class ContentController {
       userAgent: req.headers["user-agent"],
     });
   }
+
+  @Delete("posts/:publicId")
+  @ApiOperation({ summary: "Xoá bài viết" })
+  @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
+  @ApiResponse({ status: 200, description: "Bài viết đã được xoá" })
+  @ApiResponse({ status: 403, description: "Không có quyền" })
+  @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
+  async deletePost(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.deletePost(publicId, user.id, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
 }
 
 // ======================== Guide Controller ========================
@@ -136,14 +180,40 @@ export class ContentController {
 export class GuideController {
   constructor(private readonly contentService: ContentService) {}
 
+  @Get("admin")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Danh sách bài hướng dẫn (admin)" })
+  @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn cho admin" })
+  async listAdminGuides(
+    @Query() query: GuideQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const validated = guideQuerySchema.parse(query);
+    return this.contentService.listGuides(validated, user.role);
+  }
+
+  @Get("admin/:slugOrId")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Chi tiết bài hướng dẫn (admin)" })
+  @ApiParam({ name: "slugOrId", description: "Public ID hoặc slug" })
+  @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn cho admin" })
+  async getAdminGuide(
+    @Param("slugOrId") slugOrId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.contentService.getGuide(slugOrId, user.role);
+  }
+
   @Get()
   @Public()
   @ApiOperation({ summary: "Danh sách bài hướng dẫn" })
   @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn" })
-  async listGuides(@Query() query: GuideQuery) {
+  async listGuides(
+    @Query() query: GuideQuery,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
     const validated = guideQuerySchema.parse(query);
-    // Public: only published
-    return this.contentService.listGuides({ ...validated, status: validated.status || "PUBLISHED" });
+    return this.contentService.listGuides(validated, user?.role);
   }
 
   @Get(":slugOrId")
@@ -151,8 +221,11 @@ export class GuideController {
   @ApiOperation({ summary: "Chi tiết bài hướng dẫn" })
   @ApiParam({ name: "slugOrId", description: "Public ID hoặc slug" })
   @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn" })
-  async getGuide(@Param("slugOrId") slugOrId: string) {
-    return this.contentService.getGuide(slugOrId);
+  async getGuide(
+    @Param("slugOrId") slugOrId: string,
+    @CurrentUser() user?: AuthenticatedUser,
+  ) {
+    return this.contentService.getGuide(slugOrId, user?.role);
   }
 
   @Post()
@@ -204,6 +277,24 @@ export class GuideController {
     @Req() req: Request,
   ) {
     return this.contentService.publishGuide(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete(":publicId")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Xoá bài hướng dẫn" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã xoá" })
+  async deleteGuide(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.deleteGuide(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

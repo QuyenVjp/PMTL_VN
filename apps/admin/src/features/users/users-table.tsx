@@ -9,17 +9,17 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { ShieldCheckIcon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
 import {
@@ -42,27 +42,7 @@ export function UsersTable() {
 
   const columns = useMemo<ColumnDef<AdminUserListItem>[]>(
     () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Chọn tất cả"
-            className="translate-y-[2px]"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Chọn dòng"
-            className="translate-y-[2px]"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
+      createSelectColumn<AdminUserListItem>(),
       {
         accessorKey: "displayName",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tên" />,
@@ -132,7 +112,7 @@ export function UsersTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: users,
     columns,
     state: {
@@ -206,6 +186,9 @@ export function UsersTable() {
       </div>
 
       <DataTablePagination table={table} className="mt-auto" />
+      <DataTableBulkActions table={table} entityName="người dùng" />
     </div>
   );
 }
+
+

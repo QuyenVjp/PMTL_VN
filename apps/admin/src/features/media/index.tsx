@@ -9,18 +9,19 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { Trash2Icon } from "lucide-react";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { useDeleteMediaAsset } from "@/features/media/mutations";
 
@@ -123,6 +124,7 @@ function MediaAssetsTable() {
 
   const columns = useMemo<ColumnDef<MediaAssetListItem>[]>(
     () => [
+      createSelectColumn<MediaAssetListItem>(),
       {
         accessorKey: "filename",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tên file" />,
@@ -190,7 +192,7 @@ function MediaAssetsTable() {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: assets,
     columns,
     state: { sorting, rowSelection, columnVisibility },
@@ -223,6 +225,7 @@ function MediaAssetsTable() {
         isLoading={isLoading}
         emptyMessage="Chưa có media asset nào."
       />
+      <DataTableBulkActions table={table} entityName="media asset" />
     </div>
   );
 }
@@ -235,7 +238,7 @@ function MediaDialogs() {
 
   const handleClose = () => {
     setOpen(null);
-    setTimeout(() => setCurrentRow(null), 200);
+    setCurrentRow(null);
   };
 
   if (!currentRow) return null;
@@ -281,3 +284,6 @@ export function MediaAssetsPage() {
     </MediaProvider>
   );
 }
+
+
+

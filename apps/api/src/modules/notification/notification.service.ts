@@ -75,6 +75,20 @@ export class NotificationService {
     return mapPushJobToAdminItem(updated);
   }
 
+  async adminDeletePushJob(publicId: string, auditCtx: AuditContext) {
+    const job = await this.repository.findPushJobByPublicId(publicId);
+    if (!job) {
+      throw new NotFoundException("Push job không tồn tại");
+    }
+
+    await this.repository.deletePushJob(publicId);
+
+    await this.audit.append(auditCtx, "admin.push_job.delete", "push_job", publicId, {
+      status: job.status,
+      title: job.title,
+    });
+  }
+
   async adminGetPushStatus() {
     return this.repository.countJobsByStatus();
   }

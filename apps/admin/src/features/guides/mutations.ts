@@ -66,3 +66,16 @@ export function usePublishGuide() {
     onError: handleApiError,
   });
 }
+
+export function useDeleteGuide() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => adminClient.delete(`/content/beginner-guides/${publicId}`),
+    onSuccess: () => {
+      toast.success("Đã xoá hướng dẫn.");
+      void qc.invalidateQueries({ queryKey: guideKeys.lists() });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}

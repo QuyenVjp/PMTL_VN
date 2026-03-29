@@ -20,3 +20,16 @@ export function useUpdateGuestbookStatus() {
     onError: () => toast.error("Không thể cập nhật trạng thái"),
   });
 }
+
+export function useDeleteGuestbookEntry() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.delete(`/admin/community/guestbook/${publicId}`),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: guestbookKeys.lists() });
+      toast.success("Đã xoá lưu niệm");
+    },
+    onError: () => toast.error("Không thể xoá lưu niệm"),
+  });
+}

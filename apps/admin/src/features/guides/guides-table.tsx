@@ -10,13 +10,14 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
-import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceDataTable } from "@/components/workspace";
+import { createSelectColumn } from "@/lib/table/select-column";
 import { GuidesRowActions } from "@/features/guides/data-table-row-actions";
 import { guideListOptions, type GuideItem } from "@/features/guides/queries";
 
@@ -97,6 +98,7 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
 
   const columns = useMemo<ColumnDef<GuideItem>[]>(
     () => [
+      createSelectColumn<GuideItem>(),
       {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
@@ -159,7 +161,7 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
     [],
   );
 
-  const table = useReactTable({
+  const table = useSafeReactTable({
     data: guides,
     columns,
     state: { sorting, rowSelection, columnVisibility, columnFilters },
@@ -196,6 +198,9 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
         isLoading={isLoading}
         emptyMessage="Chưa có hướng dẫn nào."
       />
+      <DataTableBulkActions table={table} entityName="hướng dẫn" />
     </div>
   );
 }
+
+

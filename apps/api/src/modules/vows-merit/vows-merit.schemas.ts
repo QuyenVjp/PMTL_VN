@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const vowQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
   status: z.string().optional(),
   vowType: z.string().optional(),
@@ -15,6 +15,7 @@ export const assistedEntrySchema = z.object({
   description: z.string().min(5).max(2000),
   targetCount: z.number().int().min(1).optional(),
   startDate: z.string().datetime(),
+  assistReason: z.string().min(10).max(500),
 });
 export type AssistedEntryInput = z.infer<typeof assistedEntrySchema>;
 
@@ -25,6 +26,7 @@ export const lifeReleaseEntrySchema = z.object({
   location: z.string().max(500).optional(),
   note: z.string().max(2000).optional(),
   journalDate: z.string().datetime(),
+  assistReason: z.string().min(10).max(500),
 });
 export type LifeReleaseEntryInput = z.infer<typeof lifeReleaseEntrySchema>;
 
@@ -35,7 +37,7 @@ export const memberSearchSchema = z.object({
 export type MemberSearchQuery = z.infer<typeof memberSearchSchema>;
 
 export const assistedEntryHistorySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
 });
 export type AssistedEntryHistoryQuery = z.infer<typeof assistedEntryHistorySchema>;
