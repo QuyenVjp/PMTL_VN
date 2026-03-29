@@ -151,3 +151,38 @@ export type LifeReleaseJournal = Prisma.LifeReleaseJournalModel
  * 
  */
 export type ModerationReport = Prisma.ModerationReportModel
+/**
+ * Model LittleHouse
+ * 
+ */
+export type LittleHouse = Prisma.LittleHouseModel
+/**
+ * Model MeritTransfer
+ * 
+ */
+export type MeritTransfer = Prisma.MeritTransferModel
+/**
+ * Model DailyGongkeLog
+ * 
+ */
+export type DailyGongkeLog = Prisma.DailyGongkeLogModel
+/**
+ * Model RepentanceLog
+ * 
+ */
+export type RepentanceLog = Prisma.RepentanceLogModel
+/**
+ * Model AltarLog
+ * 
+ */
+export type AltarLog = Prisma.AltarLogModel
+/**
+ * Model PracticeProfile
+ * 
+ */
+export type PracticeProfile = Prisma.PracticeProfileModel
+/**
+ * Model ActivationLog
+ * 
+ */
+export type ActivationLog = Prisma.ActivationLogModel

@@ -155,3 +155,33 @@ export const ReportStatus = {
 } as const
 
 export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
+
+
+export const LittleHouseStatus = {
+  DRAFT: 'DRAFT',
+  SIGNED: 'SIGNED',
+  CHANTED: 'CHANTED',
+  BURNED: 'BURNED'
+} as const
+
+export type LittleHouseStatus = (typeof LittleHouseStatus)[keyof typeof LittleHouseStatus]
+
+
+export const AltarActionType = {
+  INCENSE: 'INCENSE',
+  MAINTENANCE: 'MAINTENANCE',
+  MOVE: 'MOVE',
+  HEART_INCENSE: 'HEART_INCENSE'
+} as const
+
+export type AltarActionType = (typeof AltarActionType)[keyof typeof AltarActionType]
+
+
+export const SymptomTag = {
+  PAIN: 'PAIN',
+  BAD_DREAM: 'BAD_DREAM',
+  FAMILY_CONFLICT: 'FAMILY_CONFLICT',
+  OTHER: 'OTHER'
+} as const
+
+export type SymptomTag = (typeof SymptomTag)[keyof typeof SymptomTag]

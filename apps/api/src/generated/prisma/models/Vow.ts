@@ -278,6 +278,7 @@ export type VowWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Vow"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferListRelationFilter | runtime.Types.Skip
 }
 
 export type VowOrderByWithRelationInput = {
@@ -295,6 +296,7 @@ export type VowOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalOrderByRelationAggregateInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type VowWhereUniqueInput = Prisma.AtLeast<{
@@ -315,6 +317,7 @@ export type VowWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Vow"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type VowOrderByWithAggregationInput = {
@@ -369,6 +372,7 @@ export type VowCreateInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutVowsInput
   entries?: Prisma.LifeReleaseJournalCreateNestedManyWithoutVowInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowUncheckedCreateInput = {
@@ -385,6 +389,7 @@ export type VowUncheckedCreateInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowUpdateInput = {
@@ -401,6 +406,7 @@ export type VowUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutVowsNestedInput | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowUncheckedUpdateInput = {
@@ -417,6 +423,7 @@ export type VowUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowCreateManyInput = {
@@ -533,6 +540,11 @@ export type VowNullableScalarRelationFilter = {
   isNot?: Prisma.VowWhereInput | null | runtime.Types.Skip
 }
 
+export type VowScalarRelationFilter = {
+  is?: Prisma.VowWhereInput | runtime.Types.Skip
+  isNot?: Prisma.VowWhereInput | runtime.Types.Skip
+}
+
 export type VowCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.VowCreateWithoutUserInput, Prisma.VowUncheckedCreateWithoutUserInput> | Prisma.VowCreateWithoutUserInput[] | Prisma.VowUncheckedCreateWithoutUserInput[] | runtime.Types.Skip
   connectOrCreate?: Prisma.VowCreateOrConnectWithoutUserInput | Prisma.VowCreateOrConnectWithoutUserInput[] | runtime.Types.Skip
@@ -599,6 +611,20 @@ export type VowUpdateOneWithoutEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VowUpdateToOneWithWhereWithoutEntriesInput, Prisma.VowUpdateWithoutEntriesInput>, Prisma.VowUncheckedUpdateWithoutEntriesInput> | runtime.Types.Skip
 }
 
+export type VowCreateNestedOneWithoutMeritTransfersInput = {
+  create?: Prisma.XOR<Prisma.VowCreateWithoutMeritTransfersInput, Prisma.VowUncheckedCreateWithoutMeritTransfersInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.VowCreateOrConnectWithoutMeritTransfersInput | runtime.Types.Skip
+  connect?: Prisma.VowWhereUniqueInput | runtime.Types.Skip
+}
+
+export type VowUpdateOneRequiredWithoutMeritTransfersNestedInput = {
+  create?: Prisma.XOR<Prisma.VowCreateWithoutMeritTransfersInput, Prisma.VowUncheckedCreateWithoutMeritTransfersInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.VowCreateOrConnectWithoutMeritTransfersInput | runtime.Types.Skip
+  upsert?: Prisma.VowUpsertWithoutMeritTransfersInput | runtime.Types.Skip
+  connect?: Prisma.VowWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VowUpdateToOneWithWhereWithoutMeritTransfersInput, Prisma.VowUpdateWithoutMeritTransfersInput>, Prisma.VowUncheckedUpdateWithoutMeritTransfersInput> | runtime.Types.Skip
+}
+
 export type VowCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -612,6 +638,7 @@ export type VowCreateWithoutUserInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalCreateNestedManyWithoutVowInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowUncheckedCreateWithoutUserInput = {
@@ -627,6 +654,7 @@ export type VowUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowCreateOrConnectWithoutUserInput = {
@@ -686,6 +714,7 @@ export type VowCreateWithoutEntriesInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutVowsInput
+  meritTransfers?: Prisma.MeritTransferCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowUncheckedCreateWithoutEntriesInput = {
@@ -701,6 +730,7 @@ export type VowUncheckedCreateWithoutEntriesInput = {
   endDate?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
 }
 
 export type VowCreateOrConnectWithoutEntriesInput = {
@@ -732,6 +762,7 @@ export type VowUpdateWithoutEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutVowsNestedInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowUncheckedUpdateWithoutEntriesInput = {
@@ -747,6 +778,87 @@ export type VowUncheckedUpdateWithoutEntriesInput = {
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+}
+
+export type VowCreateWithoutMeritTransfersInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  vowType: $Enums.VowType
+  description: string
+  targetCount?: number | null | runtime.Types.Skip
+  currentCount?: number | runtime.Types.Skip
+  status?: $Enums.VowStatus | runtime.Types.Skip
+  startDate: Date | string
+  endDate?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  user: Prisma.UserCreateNestedOneWithoutVowsInput
+  entries?: Prisma.LifeReleaseJournalCreateNestedManyWithoutVowInput | runtime.Types.Skip
+}
+
+export type VowUncheckedCreateWithoutMeritTransfersInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  userId: string
+  vowType: $Enums.VowType
+  description: string
+  targetCount?: number | null | runtime.Types.Skip
+  currentCount?: number | runtime.Types.Skip
+  status?: $Enums.VowStatus | runtime.Types.Skip
+  startDate: Date | string
+  endDate?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  entries?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutVowInput | runtime.Types.Skip
+}
+
+export type VowCreateOrConnectWithoutMeritTransfersInput = {
+  where: Prisma.VowWhereUniqueInput
+  create: Prisma.XOR<Prisma.VowCreateWithoutMeritTransfersInput, Prisma.VowUncheckedCreateWithoutMeritTransfersInput>
+}
+
+export type VowUpsertWithoutMeritTransfersInput = {
+  update: Prisma.XOR<Prisma.VowUpdateWithoutMeritTransfersInput, Prisma.VowUncheckedUpdateWithoutMeritTransfersInput>
+  create: Prisma.XOR<Prisma.VowCreateWithoutMeritTransfersInput, Prisma.VowUncheckedCreateWithoutMeritTransfersInput>
+  where?: Prisma.VowWhereInput | runtime.Types.Skip
+}
+
+export type VowUpdateToOneWithWhereWithoutMeritTransfersInput = {
+  where?: Prisma.VowWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.VowUpdateWithoutMeritTransfersInput, Prisma.VowUncheckedUpdateWithoutMeritTransfersInput>
+}
+
+export type VowUpdateWithoutMeritTransfersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  vowType?: Prisma.EnumVowTypeFieldUpdateOperationsInput | $Enums.VowType | runtime.Types.Skip
+  description?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  targetCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  currentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumVowStatusFieldUpdateOperationsInput | $Enums.VowStatus | runtime.Types.Skip
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  user?: Prisma.UserUpdateOneRequiredWithoutVowsNestedInput | runtime.Types.Skip
+  entries?: Prisma.LifeReleaseJournalUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+}
+
+export type VowUncheckedUpdateWithoutMeritTransfersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  vowType?: Prisma.EnumVowTypeFieldUpdateOperationsInput | $Enums.VowType | runtime.Types.Skip
+  description?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  targetCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  currentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumVowStatusFieldUpdateOperationsInput | $Enums.VowStatus | runtime.Types.Skip
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  entries?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowCreateManyUserInput = {
@@ -776,6 +888,7 @@ export type VowUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowUncheckedUpdateWithoutUserInput = {
@@ -791,6 +904,7 @@ export type VowUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   entries?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
+  meritTransfers?: Prisma.MeritTransferUncheckedUpdateManyWithoutVowNestedInput | runtime.Types.Skip
 }
 
 export type VowUncheckedUpdateManyWithoutUserInput = {
@@ -814,10 +928,12 @@ export type VowUncheckedUpdateManyWithoutUserInput = {
 
 export type VowCountOutputType = {
   entries: number
+  meritTransfers: number
 }
 
 export type VowCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   entries?: boolean | VowCountOutputTypeCountEntriesArgs
+  meritTransfers?: boolean | VowCountOutputTypeCountMeritTransfersArgs
 }
 
 /**
@@ -837,6 +953,13 @@ export type VowCountOutputTypeCountEntriesArgs<ExtArgs extends runtime.Types.Ext
   where?: Prisma.LifeReleaseJournalWhereInput | runtime.Types.Skip
 }
 
+/**
+ * VowCountOutputType without action
+ */
+export type VowCountOutputTypeCountMeritTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MeritTransferWhereInput | runtime.Types.Skip
+}
+
 
 export type VowSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
@@ -853,6 +976,7 @@ export type VowSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   entries?: boolean | Prisma.Vow$entriesArgs<ExtArgs> | runtime.Types.Skip
+  meritTransfers?: boolean | Prisma.Vow$meritTransfersArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.VowCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["vow"]>
 
@@ -907,6 +1031,7 @@ export type VowOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
 export type VowInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   entries?: boolean | Prisma.Vow$entriesArgs<ExtArgs> | runtime.Types.Skip
+  meritTransfers?: boolean | Prisma.Vow$meritTransfersArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.VowCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type VowIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -921,6 +1046,7 @@ export type $VowPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     entries: Prisma.$LifeReleaseJournalPayload<ExtArgs>[]
+    meritTransfers: Prisma.$MeritTransferPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1331,6 +1457,7 @@ export interface Prisma__VowClient<T, Null = never, ExtArgs extends runtime.Type
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   entries<T extends Prisma.Vow$entriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vow$entriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  meritTransfers<T extends Prisma.Vow$meritTransfersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vow$meritTransfersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MeritTransferPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1794,6 +1921,30 @@ export type Vow$entriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.LifeReleaseJournalScalarFieldEnum | Prisma.LifeReleaseJournalScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * Vow.meritTransfers
+ */
+export type Vow$meritTransfersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MeritTransfer
+   */
+  select?: Prisma.MeritTransferSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MeritTransfer
+   */
+  omit?: Prisma.MeritTransferOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MeritTransferInclude<ExtArgs> | null
+  where?: Prisma.MeritTransferWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.MeritTransferOrderByWithRelationInput | Prisma.MeritTransferOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.MeritTransferWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.MeritTransferScalarFieldEnum | Prisma.MeritTransferScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

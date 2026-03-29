@@ -76,6 +76,9 @@ search-check:
 skill-audit:
   py infra/tools/codex_actions.py skill-audit
 
+autoresearch:
+  py infra/tools/autoresearch/runner.py --max-iters 120 --patience 20 --min-delta 0.0001
+
 openspace *ARGS:
   py infra/tools/openspace_bridge.py {{ARGS}}
 

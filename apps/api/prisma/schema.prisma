@@ -122,6 +122,12 @@ model User {
   vows                Vow[]                @relation("vows")
   lifeReleaseJournals LifeReleaseJournal[] @relation("lifeReleaseJournals")
   lifeReleaseActors   LifeReleaseJournal[] @relation("lifeReleaseActors")
+  littleHouses        LittleHouse[]        @relation("littleHouses")
+  dailyGongkeLogs     DailyGongkeLog[]     @relation("dailyGongkeLogs")
+  repentanceLogs      RepentanceLog[]      @relation("repentanceLogs")
+  altarLogs           AltarLog[]           @relation("altarLogs")
+  activationLogs      ActivationLog[]      @relation("activationLogs")
+  practiceProfile     PracticeProfile?     @relation("practiceProfile")
 
   @@index([email])
   @@index([status])
@@ -559,8 +565,9 @@ model Vow {
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
-  user    User                    @relation("vows", fields: [userId], references: [id])
-  entries LifeReleaseJournal[]
+  user          User                    @relation("vows", fields: [userId], references: [id])
+  entries       LifeReleaseJournal[]
+  meritTransfers MeritTransfer[]
 
   @@index([userId])
   @@index([status])
@@ -614,4 +621,174 @@ model ModerationReport {
   @@index([targetType, targetId])
   @@index([reporterUserId])
   @@map("moderation_reports")
+}
+
+// ============================================================================
+// PRACTICE CORE MODULE ENUMS
+// ============================================================================
+
+enum LittleHouseStatus {
+  DRAFT
+  SIGNED
+  CHANTED
+  BURNED
+}
+
+enum AltarActionType {
+  INCENSE
+  MAINTENANCE
+  MOVE
+  HEART_INCENSE
+}
+
+enum SymptomTag {
+  PAIN
+  BAD_DREAM
+  FAMILY_CONFLICT
+  OTHER
+}
+
+// ============================================================================
+// PRACTICE CORE MODULE TABLES
+// Module owners: engagement (gongke, repentance, little house, activation, elderly)
+//                vows-merit (altar, merit transfer)
+// ============================================================================
+
+// Module 1 — LittleHouseLifecycle
+// Owner: engagement (self-state/lifecycle) + content (ritual copy ref)
+model LittleHouse {
+  id           String            @id @default(cuid())
+  publicId     String            @unique @map("public_id")
+  userId       String            @map("user_id")
+  recipient    String
+  sheetsCount  Int               @default(1) @map("sheets_count")
+  status       LittleHouseStatus @default(DRAFT)
+  burnDate     DateTime?         @map("burn_date")
+  postBurnNote String?           @map("post_burn_note")
+  specialCase  Boolean           @default(false) @map("special_case")
+  confirmedAt  DateTime?         @map("confirmed_at")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  user User @relation("littleHouses", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("little_houses")
+}
+
+// Module 2 — VowMeritEngine (merit transfer sub-record)
+// Owner: vows-merit
+model MeritTransfer {
+  id              String   @id @default(cuid())
+  publicId        String   @unique @map("public_id")
+  vowId           String   @map("vow_id")
+  transferPercent Int      @map("transfer_percent")
+  targetLabel     String   @map("target_label")
+  note            String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  vow Vow @relation(fields: [vowId], references: [id])
+
+  @@index([vowId])
+  @@map("merit_transfers")
+}
+
+// Module 3 — DailyGongkeTracker
+// Owner: engagement
+model DailyGongkeLog {
+  id             String   @id @default(cuid())
+  publicId       String   @unique @map("public_id")
+  userId         String   @map("user_id")
+  date           DateTime @db.Date
+  coreCountsJson Json     @map("core_counts_json")
+  busyMode       Boolean  @default(false) @map("busy_mode")
+  heartIncense   Boolean  @default(false) @map("heart_incense")
+  note           String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user User @relation("dailyGongkeLogs", fields: [userId], references: [id])
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@map("daily_gongke_logs")
+}
+
+// Module 4 — RepentanceJournal
+// Owner: engagement
+model RepentanceLog {
+  id          String   @id @default(cuid())
+  publicId    String   @unique @map("public_id")
+  userId      String   @map("user_id")
+  date        DateTime @db.Date
+  count       Int      @default(0)
+  privateNote String?  @map("private_note")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation("repentanceLogs", fields: [userId], references: [id])
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@map("repentance_logs")
+}
+
+// Module 5 — AltarMaintenanceGuard
+// Owner: vows-merit
+model AltarLog {
+  id                 String          @id @default(cuid())
+  publicId           String          @unique @map("public_id")
+  userId             String          @map("user_id")
+  date               DateTime        @db.Date
+  actionType         AltarActionType @map("action_type")
+  checklistStateJson Json            @map("checklist_state_json")
+  note               String?
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+
+  user User @relation("altarLogs", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@map("altar_logs")
+}
+
+// Module 6 — ElderlyPracticeMode
+// Owner: engagement
+model PracticeProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique @map("user_id")
+  elderlyMode      Boolean  @default(false) @map("elderly_mode")
+  assistMode       Boolean  @default(false) @map("assist_mode")
+  assistContactRef String?  @map("assist_contact_ref")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation("practiceProfile", fields: [userId], references: [id])
+
+  @@map("practice_profiles")
+}
+
+// Module 7 — LinhTinhActivationGuard
+// Owner: engagement
+model ActivationLog {
+  id                   String     @id @default(cuid())
+  publicId             String     @unique @map("public_id")
+  userId               String     @map("user_id")
+  date                 DateTime   @db.Date
+  symptomTag           SymptomTag @map("symptom_tag")
+  suggestedActionsJson Json       @map("suggested_actions_json")
+  privateNote          String?    @map("private_note")
+  createdAt            DateTime   @default(now()) @map("created_at")
+  updatedAt            DateTime   @updatedAt @map("updated_at")
+
+  user User @relation("activationLogs", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@map("activation_logs")
 }

@@ -72,7 +72,14 @@ export const ModelName = {
   Download: 'Download',
   Vow: 'Vow',
   LifeReleaseJournal: 'LifeReleaseJournal',
-  ModerationReport: 'ModerationReport'
+  ModerationReport: 'ModerationReport',
+  LittleHouse: 'LittleHouse',
+  MeritTransfer: 'MeritTransfer',
+  DailyGongkeLog: 'DailyGongkeLog',
+  RepentanceLog: 'RepentanceLog',
+  AltarLog: 'AltarLog',
+  PracticeProfile: 'PracticeProfile',
+  ActivationLog: 'ActivationLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -464,6 +471,111 @@ export const ModerationReportScalarFieldEnum = {
 } as const
 
 export type ModerationReportScalarFieldEnum = (typeof ModerationReportScalarFieldEnum)[keyof typeof ModerationReportScalarFieldEnum]
+
+
+export const LittleHouseScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  recipient: 'recipient',
+  sheetsCount: 'sheetsCount',
+  status: 'status',
+  burnDate: 'burnDate',
+  postBurnNote: 'postBurnNote',
+  specialCase: 'specialCase',
+  confirmedAt: 'confirmedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LittleHouseScalarFieldEnum = (typeof LittleHouseScalarFieldEnum)[keyof typeof LittleHouseScalarFieldEnum]
+
+
+export const MeritTransferScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  vowId: 'vowId',
+  transferPercent: 'transferPercent',
+  targetLabel: 'targetLabel',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MeritTransferScalarFieldEnum = (typeof MeritTransferScalarFieldEnum)[keyof typeof MeritTransferScalarFieldEnum]
+
+
+export const DailyGongkeLogScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  date: 'date',
+  coreCountsJson: 'coreCountsJson',
+  busyMode: 'busyMode',
+  heartIncense: 'heartIncense',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyGongkeLogScalarFieldEnum = (typeof DailyGongkeLogScalarFieldEnum)[keyof typeof DailyGongkeLogScalarFieldEnum]
+
+
+export const RepentanceLogScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  date: 'date',
+  count: 'count',
+  privateNote: 'privateNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RepentanceLogScalarFieldEnum = (typeof RepentanceLogScalarFieldEnum)[keyof typeof RepentanceLogScalarFieldEnum]
+
+
+export const AltarLogScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  date: 'date',
+  actionType: 'actionType',
+  checklistStateJson: 'checklistStateJson',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AltarLogScalarFieldEnum = (typeof AltarLogScalarFieldEnum)[keyof typeof AltarLogScalarFieldEnum]
+
+
+export const PracticeProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  elderlyMode: 'elderlyMode',
+  assistMode: 'assistMode',
+  assistContactRef: 'assistContactRef',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PracticeProfileScalarFieldEnum = (typeof PracticeProfileScalarFieldEnum)[keyof typeof PracticeProfileScalarFieldEnum]
+
+
+export const ActivationLogScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  date: 'date',
+  symptomTag: 'symptomTag',
+  suggestedActionsJson: 'suggestedActionsJson',
+  privateNote: 'privateNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ActivationLogScalarFieldEnum = (typeof ActivationLogScalarFieldEnum)[keyof typeof ActivationLogScalarFieldEnum]
 
 
 export const SortOrder = {

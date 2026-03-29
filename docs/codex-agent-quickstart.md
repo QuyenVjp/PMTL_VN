@@ -42,6 +42,20 @@ If the task crosses role boundaries, say which PMTL role should own the next han
 - Nếu task là live incident: `pmtl-ops-debugger` trước, không gọi `pmtl-release-hardener` quá sớm
 - Nếu verify path đã rõ và task nhỏ: implementer tự chạy verify, không cần `pmtl-quality-gate`
 
+## Autoresearch Fast Path
+
+Dùng lane này khi task là tối ưu metric định lượng (score, latency, accuracy, profit metric) bằng keep/revert loop:
+
+1. Đọc `docs/autoresearch.md`
+2. Đọc `infra/tools/autoresearch/program.md`
+3. Chạy `just autoresearch`
+
+Quy tắc bắt buộc:
+
+- chỉ sửa `infra/tools/autoresearch/train.py` trong vòng lặp
+- không sửa `infra/tools/autoresearch/prepare.py` khi đang tối ưu
+- score tăng mới giữ, còn lại revert
+
 ## Skill combos for fresh Codex chats
 
 | Surface | Primary combo | Notes |

@@ -39,6 +39,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/stores/search";
 import { dashboardStatsOptions, dashboardKeys } from "./queries.js";
+import { PracticeStatsOverview } from "@/features/practice";
 
 // ── Badge helpers ─────────────────────────────────────────────────────
 
@@ -658,6 +659,9 @@ export function DashboardOverview() {
           )}
         </CardContent>
       </Card>
+
+      {/* Practice Core modules stats — private aggregate, no member-level data */}
+      <PracticeStatsOverview />
     </div>
   );
 }

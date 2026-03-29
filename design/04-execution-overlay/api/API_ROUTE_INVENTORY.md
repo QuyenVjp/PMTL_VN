@@ -336,6 +336,78 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 > `practice sheet` là daily structured execution surface có snapshot baseline/profile context.
 > `private streak` và `baseline warning` có thể được projection trong aggregate/detail response, nhưng source write authority không được drift khỏi `engagement` owner routes ở trên.
 
+## Practice Core (me/* — Phase 1 implemented 2026-03-29)
+
+Routes thuộc namespace `me/` cho 8 practice core modules. Tất cả đều `member+` (global `AuthGuard` bảo vệ).
+
+### DailyGongkeTracker (Module 3)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/gongke` | `engagement` | member+ | query: `?month=YYYY-MM`, `?limit`, `?offset` |
+| `GET` | `/me/gongke/:date` | `engagement` | member+ | date format `YYYY-MM-DD` |
+| `POST` | `/me/gongke` | `engagement` | member+ | upsert by date; `@@unique([userId, date])` |
+
+### RepentanceJournal (Module 4)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/repentance` | `engagement` | member+ | query: `?month`, `?limit`, `?offset` |
+| `GET` | `/me/repentance/:date` | `engagement` | member+ | date format `YYYY-MM-DD` |
+| `POST` | `/me/repentance` | `engagement` | member+ | upsert by date; `privateNote` never exposed to non-owner |
+
+### LittleHouseLifecycle (Module 1)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/little-house` | `engagement` | member+ | query: `?status`, `?limit`, `?offset` |
+| `GET` | `/me/little-house/:publicId` | `engagement` | member+ | owner-only access |
+| `POST` | `/me/little-house` | `engagement` | member+ | creates in DRAFT state |
+| `POST` | `/me/little-house/advance` | `engagement` | member+ | lifecycle: DRAFT→SIGNED→CHANTED→BURNED |
+
+### ElderlyPracticeMode (Module 6)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/practice-profile` | `engagement` | member+ | getOrCreate; returns elderly/assist flags |
+| `PUT` | `/me/practice-profile` | `engagement` | member+ | upsert; owns `elderlyMode`, `assistMode`, `fontSize` |
+
+### LinhTinhActivationGuard (Module 7)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/activation` | `engagement` | member+ | query: `?from`, `?to`, `?limit`, `?offset` |
+| `POST` | `/me/activation` | `engagement` | member+ | stores symptom + advisory lane suggestions (non-diagnostic) |
+
+### PersonalMeritDashboard (Module 8)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/dashboard/merit-summary` | `engagement` | member+ | computed read model; 5 pháp bảo lanes; no materialized table |
+
+### VowMeritEngine — member-facing (Module 2)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/vows` | `vows-merit` | member+ | query: `?status`, `?limit`, `?offset` |
+| `GET` | `/me/vows/:publicId` | `vows-merit` | member+ | owner-only; includes `progressPercent`, `totalTransferPercent` |
+| `POST` | `/me/vows` | `vows-merit` | member+ | member self-created vow (tách với admin-assisted flow) |
+| `POST` | `/me/vows/progress` | `vows-merit` | member+ | add count to vow progress |
+| `POST` | `/me/vows/fulfill` | `vows-merit` | member+ | mark vow as COMPLETED |
+| `POST` | `/me/vows/merit-transfer` | `vows-merit` | member+ | add merit transfer; validates total ≤ 100% |
+
+### AltarMaintenanceGuard (Module 5)
+
+| Method | Route | Owner | Auth | Notes |
+|---|---|---|---|---|
+| `GET` | `/me/altar` | `vows-merit` | member+ | query: `?actionType`, `?from`, `?to`, `?limit`, `?offset` |
+| `GET` | `/me/altar/:publicId` | `vows-merit` | member+ | detail log |
+| `POST` | `/me/altar` | `vows-merit` | member+ | create altar log; `actionType` enum + `checklistState` |
+
+> Toàn bộ `me/*` routes đều private-first. Không có public read path. `practiceNote`, `privateNote`, `symptomTags` không bao giờ exposed ngoài owner.
+> `me/activation` chỉ lưu advisory lane suggestions — không phải chẩn đoán tâm linh hay y tế.
+> `me/dashboard/merit-summary` là computed projection, không phải materialized table; không dùng như source of truth cho vow counts.
+
 ## Member page aggregates
 
 | Method | Route | Owner | Auth |

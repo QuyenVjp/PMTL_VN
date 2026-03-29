@@ -45,6 +45,10 @@ Nếu mở chat mới và muốn route nhanh theo task shape, đọc:
 2. `.claude/agents/README.md`
 3. `docs/codex-agent-quickstart.md`
 
+Nếu task là tối ưu metric bằng loop thử nghiệm tự động, đọc thêm:
+
+4. `docs/autoresearch.md`
+
 Map nhanh:
 
 | Task shape | Role brief |
@@ -138,6 +142,7 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 - `pmtl-workflow-router`: điểm vào mặc định khi chưa biết nên gọi skill nào.
 - `.claude/agents/README.md`: index cho PMTL role briefs khi cần chọn implementer/reviewer/debug lane thật nhanh trong chat mới.
 - `docs/codex-agent-quickstart.md`: starter ngắn để mở chat Codex mới mà không phải nhắc lại cả operating model.
+- `docs/autoresearch.md` + `infra/tools/autoresearch/*`: lane chuẩn cho keep/revert optimization loop khi có metric số rõ ràng.
 - `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`: bộ Superpowers để làm rõ spec, chia plan, rồi thực thi.
 - `test-driven-development`, `systematic-debugging`, `verification-before-completion`: TDD, debug có hệ thống, và xác minh fix.
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.

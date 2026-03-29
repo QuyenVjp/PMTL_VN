@@ -16,6 +16,7 @@
 - `docs/architecture/skills-taxonomy.md`
 - `docs/agent-cheatsheet.md` for fast human and agent routing
 - `docs/agent-operating-model.md` for Codex role, subagent routing, and worker governance
+- `docs/autoresearch.md` when the task is metric optimization with keep/revert experiment loops
 - `design/02-platform-baseline/deploy-ops/AI_DEBUGGING_DISCIPLINE.md` when the task is debugging, root-cause analysis, or AI-assisted diagnosis
 - `design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md` when the task touches dependency upgrades, version drift, security advisories, migration policy, or “latest stack” decisions
 - `design/02-platform-baseline/dependency-version/MANAGED_PLATFORM_PATTERNS.md` when the task references Supabase-like features, managed-platform ideas, or asks what patterns PMTL should import without losing backend authority
@@ -152,6 +153,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Run smoke flow: `pnpm smoke:test`
 - Quality gates: `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm build`
 - Monitoring drills: `pnpm monitoring:test`, `pnpm telegram:test`
+- Autoresearch loop: `just autoresearch`
 
 ## External Workers
 - Codex may consult external CLI workers when the user explicitly asks for Gemini or Copilot input, or when a second opinion is materially useful.
