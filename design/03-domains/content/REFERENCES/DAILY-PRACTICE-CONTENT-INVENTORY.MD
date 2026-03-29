@@ -232,32 +232,36 @@ Mục tiêu:
 
 ## 8a. `Kinh Văn Tự Tu` companion surface
 
-> Canon detail cho `Kinh Văn Tự Tu` được tách riêng tại:
-> `design/03-domains/content/REFERENCES/KINH-VAN-TU-TU-CONTENT-INVENTORY.MD`
+> **Source-of-truth**: `design/03-domains/content/REFERENCES/KINH-VAN-TU-TU-CONTENT-INVENTORY.MD`
 >
-> Mục 8a này chỉ giữ route pillar + index tóm tắt để không duplicate canonical wording.
+> Mục này là **index tham chiếu** — không chứa canonical wording trực tiếp.
+> Mọi build-out nội dung cho surface `/kinh-van-tu-tu` phải đọc file canon trên trước.
+> Các lane khác (Ngôi Nhà Nhỏ, Kinh Bài Tập, admin) dùng mục 8a này làm điểm vào để tìm đúng section trong canon.
 
-Route pillar đề xuất:
+### Route pillar
 
 ```text
 /kinh-van-tu-tu
-├─ /bat-dau
-├─ /cach-dung
-├─ /bao-quan
-├─ /truong-hop-su-dung
-└─ /tai-xuong
+├─ /bat-dau               → §2.1 canon (Tam Đại Pháp Bảo, 3 lý do, testimony)
+├─ /cach-dung             → §2.2 canon (flow đốt có bàn thờ, do/don't, case_matrix)
+├─ /bao-quan              → §3.1 required blocks (warning_list, faq_block)
+├─ /truong-hop-su-dung    → §2.3 canon (hủy tờ sai/bẩn — link sang LITTLE-HOUSE §4.4)
+└─ /tai-xuong             → §3.1 download_panel + source_reference
 ```
 
-Index nội dung source-derived bắt buộc:
+### Mandatory checkpoints (các lane phải đảm bảo trước khi build)
 
-- phân biệt rõ `Kinh Bài Tập`, `Ngôi Nhà Nhỏ`, `Kinh Văn Tự Tu`
-- cách ghi `Kính Tặng` và khấn trước khi niệm
-- quy trình đốt `Kinh Văn Tự Tu` khi có bàn thờ
-- checklist thao tác trong lúc đốt và hậu xử lý tro
-- flow hủy `Ngôi Nhà Nhỏ` khi điền sai hoặc bị làm bẩn
-- các rule giờ giấc/môi trường trọng yếu và cảnh báo không nhầm với lane khác
+| # | Checkpoint | Section trong canon | Ghi chú |
+|---|---|---|---|
+| 1 | Phân biệt 3 surface (`Kinh Bài Tập` / `Ngôi Nhà Nhỏ` / `Kinh Văn Tự Tu`) | §3 Comparison matrix trong `DAILY-PRACTICE-CONTENT-INVENTORY.MD` | Không được merge hoặc ẩn boundary |
+| 2 | Block Tam Đại Pháp Bảo — 3 trụ + 3 lý do niệm kinh + social proof | §2.1 trong `KINH-VAN-TU-TU-CONTENT-INVENTORY.MD` | `three-pillar-grid` + `evidence_quote_list` bắt buộc |
+| 3 | Flow đốt có bàn thờ — đúng 4 bước + mẫu khấn + case_matrix loại tờ | §2.2 trong `KINH-VAN-TU-TU-CONTENT-INVENTORY.MD` | `step_sequence` có thứ tự, không rút gọn thành paragraph |
+| 4 | Do/don't khi đốt — đặc biệt không dùng đèn Phật, không niệm trong lúc đốt | §2.2 trong `KINH-VAN-TU-TU-CONTENT-INVENTORY.MD` | `do_dont_grid` bắt buộc |
+| 5 | Flow hủy tờ sai/bẩn — đúng 3 bước + guardrail | §4.4 trong `LITTLE-HOUSE-CONTENT-INVENTORY.MD` | Source-of-truth nằm ở Ngôi Nhà Nhỏ; link chéo, không duplicate |
+| 6 | Rule giờ giấc và môi trường | `CHANTING-ENVIRONMENT-RULES.MD` | Consumer của environment-rules canon — không tự định nghĩa rule mới |
+| 7 | Metadata bắt buộc cho mọi block nhạy cảm: `source_ref`, `version_note`, `last_human_review_at` | §3.2 trong `KINH-VAN-TU-TU-CONTENT-INVENTORY.MD` | Thiếu metadata → block bị gắn cờ `needs_review: true` |
 
-Downloads cần có:
+### Downloads cần có
 
 | Tên | Mục đích |
 |---|---|
@@ -291,3 +295,4 @@ Downloads cần có:
 | Version | Ngày | Ghi chú |
 |---|---|---|
 | `1.0` | `2026-03-20` | Tạo inventory canonical đầu tiên cho feature Kinh Bài Tập Hằng Ngày |
+| `1.1` | `2026-03-29` | §8a nâng cấp thành index tham chiếu có mandatory checkpoints; trỏ rõ source-of-truth cho từng checkpoint; route pillar annotated với section canon tương ứng |

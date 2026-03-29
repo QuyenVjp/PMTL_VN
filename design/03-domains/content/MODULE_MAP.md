@@ -202,3 +202,6 @@ markmap:
 - `chantPlans` là editorial/practice reference data; việc user chọn, theo, hoặc hoàn thành plan thuộc user-state module khác
 - `giới thiệu pháp môn` và `sơ học` là first-class content surface, không phải chỉ là vài post rời rạc
 - search source fields là content-owned because they describe editorial documents; bookmark/progress/practice projections không vì thế mà chuyển ownership vào content
+
+## Core Practice Reference
+- Xem `design/03-domains/PRACTICE_CORE_MODULES.md` để map các logic module lõi (Little House lifecycle, daily gongke, repentance, activation guard) sang implementation contracts.

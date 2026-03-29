@@ -118,3 +118,4 @@ initialExpandLevel: 3
 - share là capability public; share analytics không phải canonical source
 - canonical submit đi trước; alert/notify/review signal đi sau
 - tuyệt đối không hiển thị progress tu tập cá nhân bằng system-generated projection
+- các guideline chia sẻ hoằng pháp nhạy cảm tham chiếu thêm tại `REFERENCES/DHARMA_SHARING_MODERATION_NOTES.md`

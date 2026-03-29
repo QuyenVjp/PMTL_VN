@@ -19,6 +19,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import type { Response } from "express";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
+import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
@@ -219,6 +220,8 @@ export class AdminMediaController {
   }
 
   @Get(":publicId/content")
+  @Public()
+  @Roles()
   @ApiOperation({ summary: "Lấy binary media cho preview/avatar trong admin" })
   async content(
     @Param("publicId") publicId: string,

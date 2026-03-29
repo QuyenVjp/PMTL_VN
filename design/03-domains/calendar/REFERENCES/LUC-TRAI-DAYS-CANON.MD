@@ -128,3 +128,4 @@ Không được coi `POST /admin/calendar/lunar-overrides` là đủ E2E.
 - `luc_trai_days` là first-class rule family, không phải text snippet tùy hứng.
 - `dayRole`, `recommendedActions`, `warningProfile`, `fallbackSuggestions` nên là field data riêng hoặc enum-backed records.
 - Khi FE cần copy hiển thị, ưu tiên derive từ structured fields + source refs thay vì hardcode một đoạn rất dài.
+- Practical advisory wording cho member surfaces xem thêm `LUC-TRAI-DAYS-PRACTICE-NOTES.md`.

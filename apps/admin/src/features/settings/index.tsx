@@ -103,6 +103,14 @@ export function SettingsPage() {
 
   const activeItem = settingsNav.find((item) => item.key === section) ?? settingsNav[0];
 
+  // Sync avatarPreview when the query resolves (or after profile save invalidates it).
+  // Gated on !avatarFile so a staged-but-unsaved selection isn't overwritten.
+  useEffect(() => {
+    if (!avatarFile) {
+      setAvatarPreview(adminUser.avatar);
+    }
+  }, [adminUser.avatar, avatarFile]);
+
   useEffect(() => {
     return () => {
       if (previewObjectUrlRef.current?.startsWith("blob:")) {

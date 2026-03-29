@@ -241,33 +241,65 @@ Quy tắc điền:
 - Đọc câu thỉnh cầu ngắn nếu được hướng dẫn
 - Quán tưởng người nhận
 
-### 4.4 Nội dung canonical — Hủy bỏ khi sai
+### 4.4 Nội dung canonical — Hủy tờ điền sai hoặc bị làm bẩn
 
-**Block types**: `warning_list`, `step_sequence`
+> **Source-of-truth cho flow này.** Lane `Kinh Văn Tự Tu` trỏ sang đây (`§2.3` trong `KINH-VAN-TU-TU-CONTENT-INVENTORY.MD`).
+> Không được duplicate hoặc paraphrase riêng — dùng link chéo để đảm bảo wording đồng nhất.
 
-Khi nào phải hủy:
-- Viết sai Kính Tặng
-- Viết sai Tặng
-- Chấm sai ô (chấm nhầm, chấm chồng)
-- Tờ bị ướt, bị rách nghiêm trọng
+**Block types**: `trigger_list`, `step_sequence` (3 bước có thứ tự), `guardrail_block`, `image_asset_grid`
 
-Cách hủy:
-- Nếu điền sai hoặc tờ bị làm bẩn, trước tiên chấm lại phần đã niệm sang một tờ mới còn trống.
-- Thưa với Bồ Tát việc điền sai/làm bẩn và xin hủy tờ cũ.
-- Bôi xóa tên ở phần xưng danh và phần ký tên của tờ cũ cần hủy.
-- Gấp tờ cũ nhiều lần thành miếng nhỏ.
-- Dùng giấy hoặc phong bì bọc lại rồi mới vứt bỏ.
-- Có thể xử lý chung với giấy phế liệu sạch, không vứt vào rác bẩn có mùi tanh.
+#### Trigger — khi nào phải hủy tờ
 
-**Assets bổ sung cho flow hủy bỏ:**
-
-| Asset | Loại | Mô tả |
+| Trigger | Mức độ | Ghi chú |
 |---|---|---|
-| `huy-nha-nho-dien-sai-b1-cham-lai.png` | Infographic | Chấm lại tờ mới khi tờ cũ điền sai |
-| `huy-nha-nho-dien-sai-b2-boi-xoa-ten.png` | Infographic | Bôi xóa tên phần xưng danh/ký tên trên tờ cũ |
-| `huy-nha-nho-dien-sai-b3-gap-va-boc.png` | Infographic | Gấp nhỏ và bọc giấy/phong bì trước khi bỏ |
+| Viết sai Kính Tặng (tên người nhận) | Bắt buộc hủy | Kể cả sai dấu, sai chữ |
+| Viết sai Tặng (tên người tụng) | Bắt buộc hủy | Như trên |
+| Chấm nhầm ô, chấm chồng | Bắt buộc hủy | Không được xóa hoặc vẽ đè |
+| Tờ bị ướt / bị bẩn nghiêm trọng | Bắt buộc hủy | Tờ mất khả năng đọc hoặc bị ô nhiễm nặng |
+| Tờ bị rách ảnh hưởng đến nội kinh | Bắt buộc hủy | Rách nhẹ ở mép: tùy đánh giá |
 
-`needs_review`: `false` (đã đối chiếu bằng ảnh quy trình cập nhật ngày 2026-03-29)
+#### Quy trình hủy — 3 bước (theo thứ tự, không hoán đổi)
+
+**Bước 1 — Chấm lại phần đã niệm sang tờ mới**
+
+- Lấy một tờ Ngôi Nhà Nhỏ mới còn trống cùng loại (cùng số biến, cùng Kính Tặng / Tặng đúng).
+- Chấm lại tất cả các ô đã hoàn thành trên tờ cũ sang đúng ô tương ứng trên tờ mới.
+- **Không bắt đầu bước 2 nếu chưa xong bước 1.**
+
+**Bước 2 — Bôi xóa tên và thưa Bồ Tát**
+
+- Thưa với Bồ Tát về việc điền sai / làm bẩn và xin phép hủy tờ cũ.
+- Dùng bút (không cần bút đỏ) bôi đè lên:
+  - phần **xưng danh** (chỗ ghi Kính Tặng)
+  - phần **ký tên** (chỗ ghi Tặng)
+- Mục đích: tách danh tánh ra khỏi tờ cũ trước khi bỏ.
+
+**Bước 3 — Gấp nhỏ và bọc trước khi bỏ**
+
+- Gấp tờ cũ nhiều lần thành miếng nhỏ (mặt chữ quay vào trong).
+- Dùng tờ giấy sạch hoặc phong bì bọc kín lại.
+- Bỏ vào thùng rác sinh hoạt sạch hoặc chung với giấy phế liệu sạch.
+
+#### Guardrails bắt buộc
+
+| Rule | Chi tiết |
+|---|---|
+| Không vứt thẳng tờ chưa bọc | Tờ kinh phải được bọc giấy/phong bì trước khi bỏ |
+| Không vứt vào rác bẩn có mùi tanh | Chỉ rác sinh hoạt khô sạch hoặc giấy phế liệu |
+| Không đốt tờ sai | Tờ bị điền sai không nên đốt — hủy theo quy trình 3 bước |
+| Không bỏ qua bước xóa tên | Bước 2 là bắt buộc để tách danh tánh trước khi loại bỏ |
+| Không dùng tờ cũ tiếp tục niệm | Kể cả khi chỉ sai một chi tiết nhỏ |
+
+#### Asset inventory cho flow hủy bỏ
+
+| Asset | Loại | Ánh xạ bước | Mô tả |
+|---|---|---|---|
+| `huy-nha-nho-dien-sai-full.png` | Infographic poster | Toàn bộ 3 bước | Full poster theo bộ ảnh 2026-03-29 |
+| `huy-nha-nho-dien-sai-b1-cham-lai.png` | Infographic crop | Bước 1 | Chấm lại sang tờ mới, chú thích ô tương ứng |
+| `huy-nha-nho-dien-sai-b2-boi-xoa-ten.png` | Infographic crop | Bước 2 | Bôi xóa vùng xưng danh + ký tên |
+| `huy-nha-nho-dien-sai-b3-gap-va-boc.png` | Infographic crop | Bước 3 | Gấp nhỏ và bọc giấy/phong bì |
+
+`needs_review`: `false` — đối chiếu trực tiếp với bộ ảnh infographic cung cấp ngày 2026-03-29.
 
 ---
 
@@ -416,5 +448,6 @@ Case options hiển thị:
 | Version | Ngày | Thay đổi chính |
 |---|---|---|
 | 1.0 | 2026-03-20 | Tạo mới — inventory đầy đủ 5 nhóm |
+| 1.1 | 2026-03-29 | §4.4 nâng lên canonical: 3-bước có thứ tự + trigger table + guardrail block + asset inventory theo infographic; đăng ký làm source-of-truth cho flow hủy tờ điền sai/bẩn (KINH-VAN-TU-TU §2.3 trỏ về đây) |
 
 > Khi có thay đổi quy trình nghi thức: cập nhật version, ghi chú nội dung thay đổi, cập nhật `dateModified` trên tất cả trang liên quan.

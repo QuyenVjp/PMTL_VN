@@ -91,3 +91,6 @@ initialExpandLevel: 3
 - progress summary phải replay/recompute được từ source records
 - `assisted entry` là support workflow có kiểm soát cho admin, không phải cross-user write mặc định
 - ritual truth cho `phóng sanh` nằm ở `02-content`; `09-vows-merit` chỉ giữ journal + progress effects
+
+## Core Practice Reference
+- Xem `design/03-domains/PRACTICE_CORE_MODULES.md` để map `VowMeritEngine`, `Heart Incense`, `Family Relation`, `Altar Maintenance` vào contracts/schema.

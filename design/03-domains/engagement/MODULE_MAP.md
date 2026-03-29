@@ -91,3 +91,6 @@ markmap:
 - `7 biến` lane sơ học và `21 biến` nền tảng cho user đã qua beginner phase là content/wisdom-owned rule; engagement chỉ giữ profile + warning state
 - canonical self-owned sheets/houses luôn nằm trong Engagement, không nằm trong Content
 - `Kinh Bài Tập Hằng Ngày` public guide, preset, FAQ, time rules là content-owned; `practiceSheets` chỉ giữ self-state và context refs
+
+## Core Practice Reference
+- Xem `design/03-domains/PRACTICE_CORE_MODULES.md` cho `ElderlyPracticeMode`, `PersonalMeritDashboard`, và runtime ownership của self-state execution.

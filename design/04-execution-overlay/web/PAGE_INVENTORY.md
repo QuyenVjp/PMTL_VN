@@ -300,6 +300,9 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - download panel cho PDF và card mẫu khấn
 - CTA `Mở sổ tay phóng sanh` -> `/phong-sanh` (member+)
 
+**Handbook refs:**
+- `design/03-domains/content/REFERENCES/LIFE-RELEASE-RITUAL-CHECKLIST.md`
+
 **SEO**: Pillar page cho cluster `phóng sanh pháp môn tâm linh`.
 **Mobile note**: quick chooser hiển thị dạng card dọc, không accordion sâu.
 
@@ -678,6 +681,9 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Tags cloud
 - Subtitle giải nghĩa rõ: `Bài giảng Bạch thoại và sách nói`
 
+**Handbook refs:**
+- `design/03-domains/wisdom-qa/REFERENCES/BTPP-ADVANCED-READING-NOTES.md`
+
 ---
 
 ### 1.13a Q&A Library (Hỏi đáp)
@@ -808,6 +814,9 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Khu official highlights cho bài community do admin/content authority đăng
 - Reply / approval / community update notifications phải trỏ người dùng quay lại surface này qua `/thong-bao`
 
+**Handbook refs:**
+- `design/03-domains/community/REFERENCES/DHARMA_SHARING_MODERATION_NOTES.md`
+
 ---
 
 ### 1.15a Community Post Detail (Chi tiết bài cộng đồng)
@@ -937,6 +946,14 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Recent activity (optional)
 - Notification bell
 
+**Handbook refs:**
+- `design/03-domains/content/REFERENCES/REPENTANCE-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/MERIT-TRANSFER-PERCENTAGE.md`
+- `design/03-domains/vows-merit/REFERENCES/ALTAR-MAINTENANCE-CHECKLIST.md`
+- `design/03-domains/vows-merit/REFERENCES/PHAT-DAI-BAO-DUONG.md`
+- `design/03-domains/engagement/REFERENCES/PRIVATE-ENCOURAGEMENT-CARDS.md`
+- `design/03-domains/engagement/REFERENCES/CASE-STUDY-PRIVATE-NOTES.md`
+
 **Mobile**: Đây là màn hình sau login. Layout card-based. Max 3 quick actions.
 
 ---
@@ -973,6 +990,17 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - "Hoàn thành buổi tu" action khi đủ checklist
 - Note field (optional)
 
+**Handbook refs:**
+- `design/03-domains/content/REFERENCES/DAILY-GONGKE-STEPS.md`
+- `design/03-domains/content/REFERENCES/ELDERLY-GONGKE.md`
+- `design/03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD`
+- `design/03-domains/content/REFERENCES/DREAM-LOGIC.md`
+- `design/03-domains/content/REFERENCES/TEN-SMALL-MANTRAS-USAGE.md`
+- `design/03-domains/content/REFERENCES/SPIRIT-ACTIVATION-RESPONSE.md`
+- `design/03-domains/content/REFERENCES/DAIBI-SPECIAL-USES.md`
+- `design/03-domains/content/REFERENCES/HOME-SPIRIT-FAMILY-CONFLICT-NOTES.md`
+- `design/03-domains/vows-merit/REFERENCES/HEART-INCENSE-GUIDE.md`
+
 **Elderly note**: Checkbox PHẢI lớn (min 44px). Font tối thiểu 17px. High contrast.
 
 ---
@@ -990,6 +1018,10 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Progress bar tới hoàn thành
 - "Dâng nhà" button khi đủ số biến
 - History của các nhà đã hoàn thành
+
+**Handbook refs:**
+- `design/03-domains/content/REFERENCES/LITTLE-HOUSE-RITUAL-FLOW.md`
+- `design/03-domains/content/REFERENCES/LITTLE-HOUSE-SPECIAL-CASES.md`
 
 **Elderly note**: Interface này phải tương tự tờ giấy viết tay. Không có animation phức tạp. Large numbers.
 
@@ -1020,6 +1052,16 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Completed vows (collapsed section)
 - "Tạo nguyện mới" button
 - Each card: tên nguyện, loại, progress bar, status
+
+**Handbook refs:**
+- `design/03-domains/vows-merit/REFERENCES/VOW-BREACH-RECOVERY-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/VOWS-DREAM-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/FAMILY-RELATION-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/MARRIAGE-CAREER-FERTILITY-VOW-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/MARRIAGE-VOW-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/CAREER-VOW-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/BAO-THAI-TRACKER-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/PREGNANCY-BIRTH-VOW-GUIDE.md`
 
 ---
 
@@ -1066,6 +1108,11 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - "Ghi lại buổi phóng sanh" button
 - Monthly summary
 
+**Handbook refs:**
+- `design/03-domains/vows-merit/REFERENCES/VOWS-DREAM-GUIDE.md`
+- `design/03-domains/vows-merit/REFERENCES/MERIT-TRANSFER-PERCENTAGE.md`
+- `design/03-domains/content/REFERENCES/LIFE-RELEASE-RITUAL-CHECKLIST.md`
+
 ---
 
 ### 3.10 Log Life Release
@@ -1098,6 +1145,10 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 - Upcoming events / reminders
 - Integration với vow reminders
 - "Thiết lập nhắc nhở" link → /thong-bao
+
+**Handbook refs:**
+- `design/03-domains/calendar/REFERENCES/LUC-TRAI-DAYS-PRACTICE-NOTES.md`
+- `design/03-domains/calendar/REFERENCES/SPECIAL-DAYS-PRACTICE-NOTES.md`
 
 ---
 

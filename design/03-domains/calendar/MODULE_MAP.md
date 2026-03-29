@@ -153,3 +153,6 @@ markmap:
 - reminder logic không nằm trong current scope của calendar
 - `personalPracticeCalendarReadModel` là read model do calendar compose, không phải owner data mới
 - refresh/rebuild quan trọng phải có replay/recompute path rõ
+
+## Core Practice Reference
+- Xem `design/03-domains/PRACTICE_CORE_MODULES.md` cho vai trò calendar trong `DailyGongkeTracker` (day-context, advisory layer, special-day hooks).
