@@ -60,7 +60,7 @@ export function DataTablePagination<TData>({ table, className }: DataTablePagina
             <ChevronLeftIcon className="size-4" />
           </Button>
 
-          {pageNumbers.map((pageNumber, index) => (
+          {pageNumbers.map((pageNumber: number | string, index: number) => (
             <div key={`${pageNumber}-${index}`} className="flex items-center">
               {pageNumber === "..." ? (
                 <span className="px-1 text-sm text-muted-foreground">...</span>

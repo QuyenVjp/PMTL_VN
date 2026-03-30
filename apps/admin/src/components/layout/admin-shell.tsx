@@ -12,7 +12,7 @@ export function AdminShell({ children }: PropsWithChildren) {
       <AppSidebar />
       <SidebarInset className="@container/content">
         <Header />
-        <main className="flex-1 px-4 py-5 sm:px-6 lg:px-8">{children}</main>
+        <main id="content" className="flex-1 px-4 py-5 sm:px-6 lg:px-8">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

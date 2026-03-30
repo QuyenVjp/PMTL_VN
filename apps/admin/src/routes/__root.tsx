@@ -14,6 +14,8 @@ import { createRootRoute, createRoute, Outlet, redirect } from "@tanstack/react-
 import { Toaster } from "sonner";
 
 import { CommandMenu } from "@/components/command-menu";
+import { NavigationProgress } from "@/components/navigation-progress";
+import { SkipToMain } from "@/components/skip-to-main";
 
 import { AdminShell } from "@/components/layout/admin-shell";
 import { getCurrentUser } from "@/lib/auth";
@@ -120,6 +122,8 @@ function withSuspense(Component: ComponentType) {
 export const rootRoute = createRootRoute({
   component: () => (
     <>
+      <SkipToMain />
+      <NavigationProgress />
       <Outlet />
       <CommandMenu />
       <Toaster richColors position="top-center" />

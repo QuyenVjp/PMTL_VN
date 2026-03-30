@@ -26,7 +26,7 @@ import type { NavGroup } from "@/components/layout/types";
 
 export const sidebarNavGroups: NavGroup[] = [
   {
-    title: "Tổng quan",
+    title: "General",
     items: [{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }],
   },
   {
@@ -40,7 +40,16 @@ export const sidebarNavGroups: NavGroup[] = [
       { title: "Thư viện pháp môn", url: "/noi-dung/thu-vien-phap-mon", icon: Library },
       { title: "Tài liệu", url: "/noi-dung/tai-lieu", icon: ScrollText },
       { title: "Kinh sách", url: "/noi-dung/kinh-sach", icon: BookAudio },
-      { title: "Niệm kinh", url: "/noi-dung/niem-kinh/moi-truong-thoi-gian", icon: ListChecks },
+      { 
+        title: "Niệm kinh", 
+        icon: ListChecks,
+        items: [
+          { title: "Môi trường & thời gian", url: "/noi-dung/niem-kinh/moi-truong-thoi-gian" },
+          { title: "Bản kinh", url: "/noi-dung/niem-kinh/ban-kinh" },
+          { title: "Nghi thức", url: "/noi-dung/niem-kinh/nghi-thuc" },
+          { title: "Kế hoạch", url: "/noi-dung/niem-kinh/ke-hoach" }
+        ]
+      },
       { title: "Media", url: "/noi-dung/media", icon: Images },
     ],
   },

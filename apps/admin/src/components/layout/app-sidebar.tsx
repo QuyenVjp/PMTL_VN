@@ -1,7 +1,7 @@
 import { sidebarNavGroups } from "@/components/layout/sidebar-data";
 import { NavUser } from "@/components/layout/nav-user";
 import { NavGroup } from "@/components/layout/nav-group";
-import { WorkspaceSwitcher } from "@/components/layout/workspace-switcher";
+import { TeamSwitcher } from "@/components/layout/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +14,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
-        <WorkspaceSwitcher />
+        <TeamSwitcher />
       </SidebarHeader>
 
       <SidebarContent>

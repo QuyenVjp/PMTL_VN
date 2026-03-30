@@ -90,15 +90,7 @@ export function PracticeStatsOverview() {
   }
 
   if (isError || !stats) {
-    return (
-      <Card>
-        <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground">
-            Không thể tải thống kê practice. API endpoint chưa sẵn sàng hoặc có lỗi.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return null;
   }
 
   return (

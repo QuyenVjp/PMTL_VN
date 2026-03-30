@@ -1,30 +1,34 @@
-import type { ClassValue } from "clsx";
-import { clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-// Safe stringification for unknown values from WorkspaceRow / API responses
-export function toStr(v: unknown): string {
-  if (typeof v === "string") return v;
-  if (typeof v === "number" || typeof v === "boolean") return String(v);
-  return "";
+  return twMerge(clsx(inputs))
 }
 
 export function getPageNumbers(currentPage: number, totalPages: number) {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  const range = 2;
+  const pages: (number | string)[] = [];
+  
+  // Always include first page
+  pages.push(1);
+  
+  if (currentPage - range > 2) {
+    pages.push('...');
   }
-
-  if (currentPage <= 3) {
-    return [1, 2, 3, 4, "...", totalPages];
+  
+  // Add pages around current page
+  for (let i = Math.max(2, currentPage - range); i <= Math.min(totalPages - 1, currentPage + range); i++) {
+    pages.push(i);
   }
-
-  if (currentPage >= totalPages - 2) {
-    return [1, "...", totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  
+  if (currentPage + range < totalPages - 1) {
+    pages.push('...');
   }
-
-  return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+  
+  // Always include last page if it's different from first
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+  
+  return pages;
 }

@@ -46,15 +46,22 @@ export function Header({
   return (
     <header
       className={cn(
-        "z-40 h-12 border-b bg-background",
-        fixed ? "sticky top-0" : undefined,
-        offset > 10 ? "shadow-sm" : undefined,
+        'z-50 h-16',
+        fixed && 'header-fixed peer/header sticky top-0 w-[inherit]',
+        offset > 10 && fixed ? 'shadow' : 'shadow-none',
         className,
       )}
     >
-      <div className="flex h-full items-center gap-3 px-4 sm:px-6">
+      <div 
+        className={cn(
+          'relative flex h-full items-center gap-3 p-4 sm:gap-4',
+          offset > 10 &&
+            fixed &&
+            'after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg'
+        )}
+      >
         <SidebarTrigger variant="outline" className="max-md:scale-95" />
-        <Separator orientation="vertical" className="h-4" />
+        <Separator orientation="vertical" className="h-6" />
         <TopNav links={topNavLinks} className="min-w-0 flex-1" />
 
         <Search className="hidden md:flex" />
