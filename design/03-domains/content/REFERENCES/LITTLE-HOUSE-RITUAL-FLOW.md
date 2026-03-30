@@ -20,6 +20,45 @@
 5. Xử lý phần còn lại sau đốt theo hướng dẫn vệ sinh và tôn trọng nghi thức.
 6. Nhắc phần kiêng kị sau đốt ở mức nhẹ nhàng, không tạo sợ hãi.
 
+## Canonical Composition (Design Reference)
+- Cấu trúc một tờ `Ngôi Nhà Nhỏ` gồm 4 nhóm kinh/chú:
+  - `Đại Bi`: `27`
+  - `Tâm Kinh`: `49`
+  - `Vãng Sinh`: `84`
+  - `Thất Phật Diệt Tội`: `87`
+- UI tracker phải hiển thị rõ từng nhóm riêng; không gộp thành một counter duy nhất.
+- Việc chấm đỏ là thao tác ghi nhận tiến độ theo nhóm, cần map trực tiếp vào trạng thái sheet.
+
+## Writing/Marking Rules (Implementation Hints)
+- Trước khi niệm:
+  - điền trường người tặng và người nhận trước khi bắt đầu.
+  - dùng lane validation rõ cho thông tin định danh.
+- Trong lúc niệm:
+  - mỗi biến hoàn thành tương ứng một dấu ghi nhận tiến độ.
+  - không cho phép “chấm hàng loạt” không theo biến để tránh sai trạng thái sheet.
+- Hoàn tất:
+  - cho phép bước review trước khi khóa `chanted`.
+  - nếu user báo điền/chấm sai, mở nhánh xử lý lỗi thay vì ép tiếp tục trên tờ cũ.
+
+## Lifecycle State Contract
+- Trạng thái chuẩn nên đi theo:
+  - `draft` -> `signed` -> `chanted` -> `burned` -> `archived`
+- `signed` chỉ hợp lệ khi đã điền đủ trường người tặng/người nhận theo variant dùng.
+- `burned` cần có metadata tối thiểu:
+  - thời điểm
+  - điều kiện bối cảnh (ban ngày/đặc biệt)
+  - ghi chú hậu xử lý tro (tùy chọn)
+
+## Burn/Post-process Hints
+- Burn lane mặc định:
+  - đốt từng tờ, thao tác cẩn trọng
+  - có checklist dụng cụ phù hợp trước khi bắt đầu
+- Thời điểm:
+  - ưu tiên ban ngày; điều kiện bất lợi chỉ hiện advisory + xác nhận đặc biệt
+- Hậu xử lý:
+  - yêu cầu user chọn một phương án xử lý tro trong checklist để đóng phiên
+  - không để flow kết thúc mà thiếu post-process acknowledgement
+
 ## External Nuance Notes (for design only)
 - Có thể hiển thị caution về:
   - đốt từng tờ một
@@ -40,6 +79,9 @@
   - mơ xấu liên tiếp
   - trạng thái bất an mạnh
 - Khi có tag này, hệ thống chỉ gợi ý lane tăng cường theo source note; không tự chẩn đoán y tế.
+- Trong quá trình niệm:
+  - có thể thêm `energy-support hint` bằng Đại Bi ở đầu phiên hoặc khi user báo mệt.
+  - không ép một công thức duy nhất; giữ lane này ở mức hỗ trợ theo context.
 - Với tag liên quan mơ thấy Phật đài bất thường/mất tượng:
   - chỉ mở guidance card phục hồi nghi thức
   - không tự kết luận tâm linh tuyệt đối
@@ -58,6 +100,9 @@
 - Cho phép các câu cảnh báo như “nên…”, “khuyến nghị…”, “theo nguồn …”.
 - Không dùng câu tuyệt đối kiểu “nếu không làm X thì chắc chắn Y”.
 - Nếu có nhiều nguồn khác nhau, hiển thị bản tóm tắt trung tính + link nguồn.
+- Với cụm diễn đạt kiểu “tiền tệ tâm linh”:
+  - chỉ dùng trong `source context note`
+  - không dùng làm copy gamified hoặc cơ chế tính điểm.
 
 ## Implementation Notes
 - `content` giữ bản nghi thức và warning blocks.

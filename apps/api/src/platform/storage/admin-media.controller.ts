@@ -2,9 +2,11 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Param,
   Query,
+  Body,
   UseGuards,
   UseInterceptors,
   UploadedFile,
@@ -257,6 +259,33 @@ export class AdminMediaController {
     res.setHeader("Content-Type", asset.mimeType);
     res.setHeader("Cache-Control", "private, max-age=300");
     return new StreamableFile(buffer);
+  }
+
+  @Patch(":publicId")
+  @ApiOperation({ summary: "Cập nhật metadata media asset (admin)" })
+  async updateMetadata(
+    @Param("publicId") publicId: string,
+    @Body() body: Record<string, unknown>,
+  ) {
+    const schema = z.object({
+      altText:     z.string().max(500).optional(),
+      caption:     z.string().max(1000).optional(),
+      description: z.string().max(2000).optional(),
+    });
+    const parsed = schema.parse(body);
+
+    const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId } });
+    if (!asset) throw new NotFoundError("Media asset", publicId);
+
+    const existingMeta = (asset.metadata as Record<string, unknown> | null) ?? {};
+    const updatedMeta = { ...existingMeta, ...parsed };
+
+    await this.prisma.mediaAsset.update({
+      where: { publicId },
+      data: { metadata: updatedMeta },
+    });
+
+    return { data: { publicId, updated: true } };
   }
 
   @Delete(":publicId")

@@ -40,6 +40,21 @@ enum AssetStatus {
   DELETED
 }
 
+enum MediaCollectionType {
+  PHOTO_ALBUM
+  VIDEO_PLAYLIST
+  MIXED_GALLERY
+  FEATURED_STORY_GALLERY
+}
+
+enum MediaItemType {
+  IMAGE
+  VIDEO_EMBED
+  UPLOADED_VIDEO
+  POSTER
+  EXTERNAL_PLAYLIST_LINK
+}
+
 // ============================================================================
 // PLATFORM TABLES
 // ============================================================================
@@ -111,6 +126,7 @@ model User {
   sessions            Session[]
   posts               Post[]
   mediaAssets         MediaAsset[]
+  mediaCollections    MediaCollection[]    @relation("collectionCreator")
   communityPosts      CommunityPost[]      @relation("communityPosts")
   guestbookEntries    GuestbookEntry[]     @relation("guestbookEntries")
   guestbookApprovals  GuestbookEntry[]     @relation("guestbookApprovals")
@@ -171,11 +187,64 @@ model MediaAsset {
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
 
-  uploader User @relation(fields: [uploaderId], references: [id])
+  uploader         User                    @relation(fields: [uploaderId], references: [id])
+  collectionItems  MediaCollectionItem[]
+  coveredCollections MediaCollection[]     @relation("collectionCover")
 
   @@index([uploaderId])
   @@index([status])
   @@map("media_assets")
+}
+
+model MediaCollection {
+  id             String              @id @default(cuid())
+  publicId       String              @unique @map("public_id")
+  title          String
+  slug           String              @unique
+  description    String?
+  collectionType MediaCollectionType @map("collection_type")
+  coverMediaId   String?             @map("cover_media_id")
+  sourceNote     String?             @map("source_note")
+  featured       Boolean             @default(false)
+  sortOrder      Int                 @default(0) @map("sort_order")
+  status         ContentStatus       @default(DRAFT)
+  createdById    String              @map("created_by_id")
+  publishedAt    DateTime?           @map("published_at")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+
+  createdBy  User                  @relation("collectionCreator", fields: [createdById], references: [id])
+  coverMedia MediaAsset?           @relation("collectionCover", fields: [coverMediaId], references: [id])
+  items      MediaCollectionItem[]
+
+  @@index([status])
+  @@index([collectionType])
+  @@index([featured])
+  @@index([createdById])
+  @@map("media_collections")
+}
+
+model MediaCollectionItem {
+  id             String         @id @default(cuid())
+  publicId       String         @unique @map("public_id")
+  collectionId   String         @map("collection_id")
+  itemType       MediaItemType  @map("item_type")
+  mediaAssetId   String?        @map("media_asset_id")
+  externalUrl    String?        @map("external_url")
+  title          String?
+  caption        String?
+  ownerModule    String?        @map("owner_module")
+  ownerPublicRef String?        @map("owner_public_ref")
+  sortOrder      Int            @default(0) @map("sort_order")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  collection MediaCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  mediaAsset MediaAsset?     @relation(fields: [mediaAssetId], references: [id])
+
+  @@index([collectionId])
+  @@index([mediaAssetId])
+  @@map("media_collection_items")
 }
 
 model Post {
@@ -439,6 +508,29 @@ model Volunteer {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("volunteers")
+}
+
+enum ContactSubmissionStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model ContactSubmission {
+  id        String                  @id @default(cuid())
+  publicId  String                  @unique @default(nanoid()) @map("public_id")
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    ContactSubmissionStatus @default(PENDING)
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_submissions")
 }
 
 model ContactInfo {

@@ -15,6 +15,7 @@ export interface MediaAssetListItem {
   uploaderName: string;
   createdAt: string;
   updatedAt: string;
+  metadata?: Record<string, string> | null;
 }
 
 export interface MediaListFilters {

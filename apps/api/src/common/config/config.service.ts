@@ -10,6 +10,8 @@ import {
   emailConfig,
   revalidationConfig,
   cacheConfig,
+  searchConfig,
+  antivirusConfig,
 } from "./config.namespaces.js";
 
 @Injectable()
@@ -33,6 +35,10 @@ export class ConfigService {
     private readonly revalidation: ConfigType<typeof revalidationConfig>,
     @Inject(cacheConfig.KEY)
     private readonly cache: ConfigType<typeof cacheConfig>,
+    @Inject(searchConfig.KEY)
+    private readonly search: ConfigType<typeof searchConfig>,
+    @Inject(antivirusConfig.KEY)
+    private readonly antivirus: ConfigType<typeof antivirusConfig>,
   ) {}
 
   // Core
@@ -168,5 +174,39 @@ export class ConfigService {
   }
   get cacheTtlSeconds() {
     return this.cache.CACHE_TTL_SECONDS;
+  }
+
+  // Search
+  get searchEngine() {
+    return this.search.SEARCH_ENGINE;
+  }
+  get meiliHost() {
+    return this.search.MEILI_HOST;
+  }
+  get meiliApiKey() {
+    return this.search.MEILI_API_KEY;
+  }
+  get meiliIndexPrefix() {
+    return this.search.MEILI_INDEX_PREFIX;
+  }
+  get searchTimeoutMs() {
+    return this.search.SEARCH_TIMEOUT_MS;
+  }
+  get searchSqlFallbackEnabled() {
+    return this.search.SEARCH_SQL_FALLBACK_ENABLED;
+  }
+
+  // Antivirus
+  get clamavEnabled() {
+    return this.antivirus.CLAMAV_ENABLED;
+  }
+  get clamavHost() {
+    return this.antivirus.CLAMAV_HOST;
+  }
+  get clamavPort() {
+    return this.antivirus.CLAMAV_PORT;
+  }
+  get clamavTimeoutMs() {
+    return this.antivirus.CLAMAV_TIMEOUT_MS;
   }
 }

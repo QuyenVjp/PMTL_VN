@@ -9,6 +9,8 @@ import {
   emailConfigSchema,
   revalidationConfigSchema,
   cacheConfigSchema,
+  searchConfigSchema,
+  antivirusConfigSchema,
 } from "./config.schemas.js";
 
 export const coreConfig = registerAs("core", () => {
@@ -79,6 +81,22 @@ export const cacheConfig = registerAs("cache", () => {
   const parsed = cacheConfigSchema.safeParse(process.env);
   if (!parsed.success) {
     throw new Error(`Cache config validation failed: ${JSON.stringify(parsed.error.format())}`);
+  }
+  return parsed.data;
+});
+
+export const searchConfig = registerAs("search", () => {
+  const parsed = searchConfigSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(`Search config validation failed: ${JSON.stringify(parsed.error.format())}`);
+  }
+  return parsed.data;
+});
+
+export const antivirusConfig = registerAs("antivirus", () => {
+  const parsed = antivirusConfigSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(`Antivirus config validation failed: ${JSON.stringify(parsed.error.format())}`);
   }
   return parsed.data;
 });

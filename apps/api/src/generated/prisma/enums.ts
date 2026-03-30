@@ -46,6 +46,27 @@ export const AssetStatus = {
 export type AssetStatus = (typeof AssetStatus)[keyof typeof AssetStatus]
 
 
+export const MediaCollectionType = {
+  PHOTO_ALBUM: 'PHOTO_ALBUM',
+  VIDEO_PLAYLIST: 'VIDEO_PLAYLIST',
+  MIXED_GALLERY: 'MIXED_GALLERY',
+  FEATURED_STORY_GALLERY: 'FEATURED_STORY_GALLERY'
+} as const
+
+export type MediaCollectionType = (typeof MediaCollectionType)[keyof typeof MediaCollectionType]
+
+
+export const MediaItemType = {
+  IMAGE: 'IMAGE',
+  VIDEO_EMBED: 'VIDEO_EMBED',
+  UPLOADED_VIDEO: 'UPLOADED_VIDEO',
+  POSTER: 'POSTER',
+  EXTERNAL_PLAYLIST_LINK: 'EXTERNAL_PLAYLIST_LINK'
+} as const
+
+export type MediaItemType = (typeof MediaItemType)[keyof typeof MediaItemType]
+
+
 export const RuleSeverity = {
   ADVISORY: 'ADVISORY',
   CAUTION: 'CAUTION',
@@ -155,6 +176,16 @@ export const ReportStatus = {
 } as const
 
 export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
+
+
+export const ContactSubmissionStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type ContactSubmissionStatus = (typeof ContactSubmissionStatus)[keyof typeof ContactSubmissionStatus]
 
 
 export const LittleHouseStatus = {

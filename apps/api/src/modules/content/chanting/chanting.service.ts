@@ -12,7 +12,7 @@ import type {
   ProductizationMode,
   Q161ContentRulePackResponse,
   Severity,
-} from "./chanting.schemas.js";
+} from "../../../../packages/shared/src/schemas/content.js";
 
 @Injectable()
 export class ChantingService {

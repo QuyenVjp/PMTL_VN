@@ -17,6 +17,10 @@
   - mặc định cảnh báo tránh; nêu ngoại lệ ở mức tham khảo.
 - Trẻ em bệnh nặng:
   - hỗ trợ card “special-case plan”, không auto-khẳng định.
+- Dụng cụ đốt:
+  - khuyến nghị dùng dụng cụ sạch/chuyên dụng (bát/đĩa phù hợp), không đốt trực tiếp trên nền.
+- Trình tự đốt:
+  - ưu tiên từng tờ, thao tác cẩn trọng, ghi nhận phiên đốt theo ngữ cảnh thực tế.
 
 ## UI Rules
 - Khi user nhập số lượng vượt lane thường:
@@ -27,4 +31,3 @@
 ## References
 - `design/03-domains/content/REFERENCES/LITTLE-HOUSE-RITUAL-FLOW.md`
 - `design/05-references/external-research/XLFM_RITUAL_SOURCE_INDEX.md`
-

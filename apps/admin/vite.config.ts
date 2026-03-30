@@ -6,6 +6,22 @@ import { dirname, resolve } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+function resolveApiProxyTarget(): string {
+  const raw = process.env.VITE_API_BASE_URL?.trim();
+  if (!raw) {
+    return "http://127.0.0.1:3001";
+  }
+
+  // Accept both origin-only and /api-suffixed values from env.
+  // Vite proxy target must be origin to avoid /api/api/* duplication.
+  try {
+    const parsed = new URL(raw);
+    return parsed.origin;
+  } catch {
+    return "http://127.0.0.1:3001";
+  }
+}
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -18,15 +34,17 @@ export default defineConfig({
     host: "127.0.0.1",
     proxy: {
       "/api": {
-        // Dùng 127.0.0.1 thay localhost — Windows Node 18+ resolve localhost → ::1 (IPv6)
-        // mà API NestJS listen trên IPv4 → gây ECONNREFUSED
-        target: "http://127.0.0.1:3001",
+        target: resolveApiProxyTarget(),
         changeOrigin: true,
         configure: (proxy) => {
           proxy.on("error", (err) => {
             console.error("[vite-proxy] API unreachable:", err.message);
           });
         },
+      },
+      "/media": {
+        target: resolveApiProxyTarget(),
+        changeOrigin: true,
       },
     },
   },

@@ -304,6 +304,10 @@ def quality_gate(scope: str, skip_tests: bool, runtime: str) -> int:
         commands = [["pnpm", "--filter", "@pmtl/web", "typecheck"], ["pnpm", "--filter", "@pmtl/web", "lint"]]
         service = "web"
         required = {"web"}
+    elif scope in ("api", "cms"):
+        commands = [["pnpm", "--filter", "@pmtl/api", "typecheck"], ["pnpm", "--filter", "@pmtl/api", "lint"]]
+        service = "api"
+        required = {"postgres", "redis", "meilisearch"}
     else:
         commands = [["pnpm", "typecheck"], ["pnpm", "lint"]]
         service = "web"
@@ -312,6 +316,8 @@ def quality_gate(scope: str, skip_tests: bool, runtime: str) -> int:
     if not skip_tests:
         if scope == "web":
             commands.insert(0, ["pnpm", "--filter", "@pmtl/web", "test"])
+        elif scope in ("api", "cms"):
+            commands.insert(0, ["pnpm", "--filter", "@pmtl/api", "test"])
         else:
             commands.insert(0, ["pnpm", "test"])
 
@@ -539,7 +545,7 @@ def build_parser() -> argparse.ArgumentParser:
     bootstrap_parser.set_defaults(handler=lambda args: bootstrap())
 
     quality_parser = subparsers.add_parser("quality-gate")
-    quality_parser.add_argument("--scope", choices=["all", "web"], default="all")
+    quality_parser.add_argument("--scope", choices=["all", "web", "api", "cms"], default="all")
     quality_parser.add_argument("--skip-tests", action="store_true")
     quality_parser.add_argument("--runtime", choices=["auto", "host", "docker"], default="auto")
     quality_parser.set_defaults(handler=lambda args: quality_gate(args.scope, args.skip_tests, args.runtime))

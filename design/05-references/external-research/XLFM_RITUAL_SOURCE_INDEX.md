@@ -38,6 +38,8 @@
   - avoid touching ashes directly
   - caution for weather/time conditions and recipient-switch intervals
   - day cap references (commonly cited `21/day`) must be treated as source-backed caution unless owner canonizes as strict runtime validation
+  - common composition references: `27/49/84/87` should be modeled as structured fields in tracker UI
+  - signature and recipient clarity should be validated before advancing to burn state
 - Little House self-storage (zi cun):
   - pre-chant witness prayer pattern is referenced in Wenda materials
   - signature-first and delayed `jing zeng/date` write-at-use pattern is repeatedly cited
@@ -48,6 +50,7 @@
 - Daily gongke beginner sequence:
   - references include a fixed beginner order: purification mantra, invitation, core sutras, optional minor mantras, closing mantras, gratitude
   - time-window references exist (including avoid windows for weak users); use as advisory copy rather than hard block by default
+  - some sources mention soft prayer-scope limits per session (often cited as up to 3 wishes)
 - Dream vow:
   - dream number can be recorded as personal reminder
   - app must not auto-create or auto-force vow targets
@@ -66,6 +69,9 @@
   - pre-release chanting and opening prayer sequence are cited
   - release-step wording, handling accidental death during release, and multi-recipient separation are cited
   - cadence guidance (large once vs smaller recurring) is cited as practical recommendation
+  - preference for daytime release and calmer weather is frequently cited
+  - ecology-fit caution (species/water compatibility) should be rendered as operational warning
+  - funding-source nuance (self-paid vs proxy-for-others) appears in multiple Q&A lanes and should remain advisory, not moral scoring
 - Luc trai day references:
   - six-day monthly practice focus (`8/14/15/23/29/30`) is repeatedly cited
   - advisory copy should encourage vegetarian + practice uplift without hard coercion
@@ -94,6 +100,10 @@
 - Daily gongke:
   - beginner sequence and time-window references exist in external guide PDFs
   - keep as guidance layer, not fear-based enforcement logic
+- BTPP reading:
+  - “doc/nghe deu dan” is commonly positioned as wisdom-building lane
+  - strongest product use is reading-to-practice bridge, not standalone scoring
+  - merit-transfer narratives from reading should remain optional/private notes
 - Ten small mantras references:
   - role-based usage (career, safety, health, longevity, conflict, etc.) is frequently explained in themed talks
   - treat as optional enhancement after core practice lane, not replacement
@@ -106,6 +116,7 @@
 - Health testimonial references:
   - case stories can be used as private encouragement copy
   - avoid transforming testimonial into guaranteed medical outcome promise
+  - explicitly keep “ritual cannot replace medical care” disclaimer on sensitive surfaces
 - Special-case burn references:
   - mask usage, weather/night exception handling, and high-volume one-time burn are cited in some Q&A contexts
   - keep as explicit special-case lane with confirmation step
@@ -115,6 +126,9 @@
 - Home-spirit/family-conflict references:
   - references often map to reconciliation and calming practice lanes
   - avoid deterministic supernatural attribution in UI
+- Da Bei “energy support” references:
+  - Da Bei is frequently framed as baseline protection/energy lane in daily recitation
+  - increased counts in critical contexts should remain advisory guidance, not mandatory auto-rules
 
 ## Source Buckets (for quick lookup)
 - five-treasures and daily teachings:
@@ -154,10 +168,36 @@
 ## AI Search Requests
 - See `design/05-references/external-research/AI_SEARCH_REQUESTS_XLFM.md` for normalized crawler prompts.
 - See `design/05-references/external-research/THIN_AREAS_SEARCH_BACKLOG.md` for unresolved evidence lanes.
+- See `design/05-references/external-research/XLFM_FOUNDER_PROFILE_AND_RISK.md` for founder-profile and controversy handling boundaries.
+- See `design/05-references/external-research/XLFM_ENCYCLOPEDIA_INPUT_2026-03-29.md` for full owner-supplied encyclopedia archive.
 
 ## Verification Status
 - `external-reference`: collected and structured for design use
 - `owner-canonization`: pending content/vows owner review before converting any item to strict implementation rule
+
+## Encyclopedia Intake Normalization (2026-03-29)
+Mục này dùng để lọc các bản “bách khoa tổng hợp” dài trước khi đưa vào design canon.
+
+### Safe-to-Product (co the dua vao flow)
+- five treasures mapping (niem kinh, phat nguyen, phong sanh, bach thoai, dai sam hoi)
+- little-house composition `27/49/84/87`
+- little-house lifecycle + burn checklist + special-case caution lane
+- daily/weekly practice rhythm, busy fallback (`tam huong`), elderly-friendly operation
+- life-release checklist + incident handling when animals die during release
+- repentance journaling + activation-response advisory
+- private-first policy for dream/health/family logs
+
+### Research-Only / Contested (khong dua thang vao UI copy)
+- claims about supernatural certainty or guaranteed karmic outcomes
+- medical cure guarantees from testimonials
+- political/legal accusations and cult labels in specific jurisdictions
+- credential/award claims used as doctrinal proof (`JP`, ambassador titles, etc.)
+- framing rituals as deterministic “transaction engine” without disclaimer
+
+### Mandatory Product Guardrails
+- every sensitive health-related surface must keep medical disclaimer
+- no hard deterministic language (“chac chan”, “bat buoc 100%”) for contested claims
+- keep doctrinally sensitive numbers as `source-backed advisory` unless owner canonizes strict validation
 
 ## New Evidence (2024-2026, quote + raw link)
 - Elderly counting support:

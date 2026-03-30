@@ -1,0 +1,418 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pmtl.vn/schemas/content/practice-support-playbook.json",
+  "title": "PracticeSupportPlaybook",
+  "type": "object",
+  "required": [
+    "altarCare",
+    "littleHouseWritingRules",
+    "littleHouseAllocationGuidelines",
+    "heartIncense",
+    "nameChangeRitual",
+    "fetalKarmaResolution",
+    "recitationGuide",
+    "lifeReleaseSelectionGuide",
+    "vietnamHomePracticeGuide"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "altarCare": {
+      "$ref": "#/$defs/altarCare"
+    },
+    "littleHouseWritingRules": {
+      "$ref": "#/$defs/littleHouseWritingRules"
+    },
+    "littleHouseAllocationGuidelines": {
+      "$ref": "#/$defs/littleHouseAllocationGuidelines"
+    },
+    "heartIncense": {
+      "$ref": "#/$defs/heartIncense"
+    },
+    "nameChangeRitual": {
+      "$ref": "#/$defs/nameChangeRitual"
+    },
+    "fetalKarmaResolution": {
+      "$ref": "#/$defs/fetalKarmaResolution"
+    },
+    "recitationGuide": {
+      "$ref": "#/$defs/recitationGuide"
+    },
+    "lifeReleaseSelectionGuide": {
+      "$ref": "#/$defs/lifeReleaseSelectionGuide"
+    },
+    "vietnamHomePracticeGuide": {
+      "$ref": "#/$defs/vietnamHomePracticeGuide"
+    }
+  },
+  "$defs": {
+    "ruleItem": {
+      "type": "object",
+      "required": ["ruleCode", "label", "description", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "ruleCode": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "label": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "severity": { "type": "string", "enum": ["info", "warning", "critical"] }
+      }
+    },
+    "flowStep": {
+      "type": "object",
+      "required": ["stepNumber", "title", "action"],
+      "additionalProperties": false,
+      "properties": {
+        "stepNumber": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "action": { "type": "string", "minLength": 1 },
+        "mentalOnly": { "type": "boolean" }
+      }
+    },
+    "altarCare": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "locationRules",
+        "placementRules",
+        "offeringRules",
+        "maintenanceSteps",
+        "specialCases",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "locationRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "placementRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "offeringRules": {
+          "type": "object",
+          "required": ["water", "oilLamp", "fruit", "flowers", "incense"],
+          "additionalProperties": false,
+          "properties": {
+            "water": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+            "oilLamp": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+            "fruit": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+            "flowers": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+            "incense": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } }
+          }
+        },
+        "maintenanceSteps": { "type": "array", "items": { "$ref": "#/$defs/flowStep" } },
+        "specialCases": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "littleHouseWritingRules": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "namingRules",
+        "dottingRules",
+        "errorRecoveryRules",
+        "examples",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "namingRules": {
+          "type": "object",
+          "required": ["inkColor", "writeBeforeRecite", "recipientPatterns", "giverPattern", "dateFillRule"],
+          "additionalProperties": false,
+          "properties": {
+            "inkColor": { "type": "array", "items": { "type": "string" } },
+            "writeBeforeRecite": { "type": "boolean" },
+            "recipientPatterns": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "giverPattern": { "type": "string", "minLength": 1 },
+            "dateFillRule": { "type": "string", "minLength": 1 }
+          }
+        },
+        "dottingRules": {
+          "type": "object",
+          "required": ["dotColor", "timingRule", "shapeRule", "fillPercentGuideline", "sequenceGuideline"],
+          "additionalProperties": false,
+          "properties": {
+            "dotColor": { "type": "string", "minLength": 1 },
+            "timingRule": { "type": "string", "minLength": 1 },
+            "shapeRule": { "type": "string", "minLength": 1 },
+            "fillPercentGuideline": { "type": "string", "minLength": 1 },
+            "sequenceGuideline": { "type": "string", "minLength": 1 }
+          }
+        },
+        "errorRecoveryRules": {
+          "type": "object",
+          "required": ["doNotTear", "doNotBurnInvalidSheet", "disposeFlow", "rebuildFlow"],
+          "additionalProperties": false,
+          "properties": {
+            "doNotTear": { "type": "boolean" },
+            "doNotBurnInvalidSheet": { "type": "boolean" },
+            "disposeFlow": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "rebuildFlow": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "examples": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "littleHouseAllocationGuidelines": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "baseRange",
+        "scenarioGuidelines",
+        "combinationRules",
+        "continuityNotes",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "baseRange": { "type": "string", "minLength": 1 },
+        "scenarioGuidelines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["scenarioCode", "title", "suggestedRange", "recipientTemplate", "notes"],
+            "additionalProperties": false,
+            "properties": {
+              "scenarioCode": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+              "title": { "type": "string", "minLength": 1 },
+              "suggestedRange": { "type": "string", "minLength": 1 },
+              "recipientTemplate": { "type": "string", "minLength": 1 },
+              "notes": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "combinationRules": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "continuityNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "heartIncense": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "steps",
+        "travelModeRules",
+        "doNotRules",
+        "littleHouseEmergencyFlow",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "steps": { "type": "array", "minItems": 9, "items": { "$ref": "#/$defs/flowStep" } },
+        "travelModeRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "doNotRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "littleHouseEmergencyFlow": { "type": "array", "items": { "$ref": "#/$defs/flowStep" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "nameChangeRitual": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "overview",
+        "preparationRules",
+        "timingRules",
+        "withAltarFlow",
+        "withoutAltarFlow",
+        "successSignals",
+        "postRitualNotes",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "overview": { "type": "string", "minLength": 1 },
+        "preparationRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "timingRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "withAltarFlow": { "type": "array", "items": { "$ref": "#/$defs/flowStep" } },
+        "withoutAltarFlow": { "type": "array", "items": { "$ref": "#/$defs/flowStep" } },
+        "successSignals": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "postRitualNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "fetalKarmaResolution": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "overview",
+        "littleHouseRules",
+        "repentanceRules",
+        "additionalMantras",
+        "dreamSignals",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "overview": { "type": "string", "minLength": 1 },
+        "littleHouseRules": {
+          "type": "object",
+          "required": ["recipientTemplate", "baseRangePerChild", "escalationRange"],
+          "additionalProperties": false,
+          "properties": {
+            "recipientTemplate": { "type": "string", "minLength": 1 },
+            "baseRangePerChild": { "type": "string", "minLength": 1 },
+            "escalationRange": { "type": "string", "minLength": 1 }
+          }
+        },
+        "repentanceRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "additionalMantras": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "purpose", "prayerHint"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "purpose": { "type": "string", "minLength": 1 },
+              "prayerHint": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "dreamSignals": {
+          "type": "object",
+          "required": ["resolvedSignals", "unresolvedSignals"],
+          "additionalProperties": false,
+          "properties": {
+            "resolvedSignals": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+            "unresolvedSignals": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "recitationGuide": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "overview",
+        "coreRecitations",
+        "minorMantras",
+        "timeRules",
+        "applicationScenarios",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "overview": { "type": "string", "minLength": 1 },
+        "coreRecitations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "purpose", "baselineCount", "intensiveCount"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "purpose": { "type": "string", "minLength": 1 },
+              "baselineCount": { "type": "string", "minLength": 1 },
+              "intensiveCount": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "minorMantras": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "useCase", "typicalRange"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "useCase": { "type": "string", "minLength": 1 },
+              "typicalRange": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "timeRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "applicationScenarios": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "lifeReleaseSelectionGuide": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "overview",
+        "speciesSelectionRules",
+        "ecologyRules",
+        "ritualFlow",
+        "emergencyHandling",
+        "recommendedTiming",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "overview": { "type": "string", "minLength": 1 },
+        "speciesSelectionRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "ecologyRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "ritualFlow": { "type": "array", "items": { "$ref": "#/$defs/flowStep" } },
+        "emergencyHandling": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "recommendedTiming": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "vietnamHomePracticeGuide": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "overview",
+        "homeAltarRules",
+        "heartIncenseFallbackRules",
+        "littleHouseDisciplineRules",
+        "familyCoordinationRules",
+        "complianceAndEthicsRules",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "overview": { "type": "string", "minLength": 1 },
+        "homeAltarRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "heartIncenseFallbackRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "littleHouseDisciplineRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "familyCoordinationRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "complianceAndEthicsRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

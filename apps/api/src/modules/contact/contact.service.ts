@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { CacheService } from "../../common/cache/cache.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import type {
   SubmitContactInput,
@@ -10,26 +11,106 @@ import type {
   UpdateVolunteerInput,
   UpdateContactInfoInput,
 } from "./contact.schemas.js";
+import type { ContactSubmissionStatus } from "../../generated/prisma/enums.js";
 
 @Injectable()
 export class ContactService {
+  private readonly logger = new Logger(ContactService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly cache: CacheService,
   ) {}
 
   // ── Existing contact form methods ──────────────────────────────────
 
-  submit(input: SubmitContactInput) {
-    return { id: "placeholder", name: input.name, subject: input.subject };
+  async submit(input: SubmitContactInput) {
+    const submission = await this.prisma.contactSubmission.create({
+      data: {
+        name: input.name,
+        email: input.email,
+        subject: input.subject,
+        message: input.message,
+        status: "PENDING" as ContactSubmissionStatus,
+      },
+    });
+    
+    this.logger.log(`Contact submission created: ${submission.publicId}`);
+    
+    // Invalidate contact list cache when new submission is added
+    // Clear main listing page caches
+    await Promise.all([
+      this.cache.del('contacts:list:{"page":1,"pageSize":10}'),
+      this.cache.del('contacts:list:{"page":1,"pageSize":20}'),
+      this.cache.del('contacts:list:{"page":1,"pageSize":50}')
+    ]);
+    
+    return { publicId: submission.publicId };
   }
 
-  listContacts(query: ContactQuery) {
-    return { data: [], total: 0, page: query.page, pageSize: query.pageSize };
+  async listContacts(query: ContactQuery) {
+    // Cache key based on query parameters
+    const cacheKey = `contacts:list:${JSON.stringify(query)}`;
+    
+    // Try cache first
+    const cached = await this.cache.getJson<any>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    
+    const where: Record<string, unknown> = {};
+    if (query.subject) {
+      where.subject = query.subject;
+    }
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    const skip = (query.page - 1) * query.pageSize;
+    const [data, total] = await Promise.all([
+      this.prisma.contactSubmission.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: query.pageSize,
+        select: {
+          publicId: true,
+          name: true,
+          email: true,
+          subject: true,
+          message: true,
+          status: true,
+          createdAt: true,
+        },
+      }),
+      this.prisma.contactSubmission.count({ where }),
+    ]);
+
+    const result = {
+      data,
+      total,
+      page: query.page,
+      pageSize: query.pageSize,
+      totalPages: Math.ceil(total / query.pageSize),
+    };
+    
+    // Cache for 120 seconds
+    await this.cache.setJson(cacheKey, result, 120);
+    
+    return result;
   }
 
-  getContactById(id: string) {
-    return { id, message: "Chức năng đang phát triển" };
+  async getContactById(publicId: string) {
+    const submission = await this.prisma.contactSubmission.findUnique({
+      where: { publicId },
+    });
+    
+    if (!submission) {
+      throw new NotFoundException("Liên hệ không tồn tại");
+    }
+
+    return submission;
   }
 
   // ── Volunteer CRUD ─────────────────────────────────────────────────

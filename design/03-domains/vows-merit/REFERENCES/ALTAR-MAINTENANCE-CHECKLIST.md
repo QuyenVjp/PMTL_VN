@@ -8,6 +8,11 @@
 - Checklist bảo dưỡng/bảo trì Phật đài hằng ngày theo hướng thực hành.
 - Dùng cho reminder + private journal entries, không dùng để “chấm điểm công đức”.
 
+## Relationship
+- File này là checklist implementation.
+- Canonical umbrella nằm ở:
+  - `PHAT-DAI-BAO-DUONG.md`
+
 ## Daily Maintenance Checklist
 1. Lau bụi nhẹ bằng dụng cụ sạch, thao tác cẩn trọng.
 2. Xử lý hương/tro gọn, tôn kính, không dùng miệng thổi.

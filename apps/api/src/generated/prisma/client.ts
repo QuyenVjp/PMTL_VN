@@ -72,6 +72,16 @@ export type Session = Prisma.SessionModel
  */
 export type MediaAsset = Prisma.MediaAssetModel
 /**
+ * Model MediaCollection
+ * 
+ */
+export type MediaCollection = Prisma.MediaCollectionModel
+/**
+ * Model MediaCollectionItem
+ * 
+ */
+export type MediaCollectionItem = Prisma.MediaCollectionItemModel
+/**
  * Model Post
  * 
  */
@@ -111,6 +121,11 @@ export type CalendarEvent = Prisma.CalendarEventModel
  * 
  */
 export type Volunteer = Prisma.VolunteerModel
+/**
+ * Model ContactSubmission
+ * 
+ */
+export type ContactSubmission = Prisma.ContactSubmissionModel
 /**
  * Model ContactInfo
  * 

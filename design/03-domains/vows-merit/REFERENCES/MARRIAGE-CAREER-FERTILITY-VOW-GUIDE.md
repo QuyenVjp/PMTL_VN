@@ -11,6 +11,14 @@
   - cầu con
 - Dùng để chuẩn hóa template vow và reminder copy, không biến thành “wish-engine”.
 
+## Canonical Role
+- Đây là file `umbrella/canonical` cho 3 lane.
+- File con chi tiết:
+  - `MARRIAGE-VOW-GUIDE.md`
+  - `CAREER-VOW-GUIDE.md`
+  - `PREGNANCY-BIRTH-VOW-GUIDE.md`
+  - `BAO-THAI-TRACKER-GUIDE.md`
+
 ## Design Direction
 - Mỗi lane có 3 phần:
   - core practice baseline (daily core)
@@ -19,6 +27,19 @@
 - UI phải nhấn mạnh:
   - “không gắng cầu, tùy duyên”
   - “không theo đuổi kết quả bằng mọi giá”
+
+## Vow Construction Rules (Canonical for Product)
+- Vow nên có đủ:
+  - `noi_dung_nguyen` (cụ thể, đo được theo chặng)
+  - `thoi_han_du_kien`
+  - `cam_ket_hanh_vi` (đạo đức/hợp pháp/không hại người)
+- Mỗi lần cầu nên giới hạn `2-3` mục tiêu chính (gợi ý mềm, không khóa cứng).
+- Không cho phép template wording:
+  - ép buộc người khác
+  - thao túng quan hệ
+  - “chắc chắn phải đạt bằng mọi giá”
+- Khi user muốn nguyện lớn:
+  - gợi ý chia milestone nhỏ để theo dõi và hoàn nguyện theo chặng.
 
 ## Lane Notes (advisory)
 - Nhân duyên:
@@ -35,6 +56,9 @@
 - Không game hóa: không badge/leaderboard.
 - Không hiển thị dữ liệu lane này ở community.
 - Cảnh báo phải là “tham khảo theo nguồn”, không phán xét đạo đức người dùng.
+- Có `completion lane` sau khi user báo đã được linh ứng:
+  - gợi ý hoàn nguyện ở mức thực hành phù hợp
+  - không ép nộp minh chứng công khai.
 
 ## References
 - `design/05-references/external-research/XLFM_RITUAL_SOURCE_INDEX.md`

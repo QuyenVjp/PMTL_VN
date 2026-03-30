@@ -11,6 +11,8 @@ import {
   emailConfig,
   revalidationConfig,
   cacheConfig,
+  searchConfig,
+  antivirusConfig,
 } from "./config.namespaces.js";
 
 @Global()
@@ -30,6 +32,8 @@ import {
         emailConfig,
         revalidationConfig,
         cacheConfig,
+        searchConfig,
+        antivirusConfig,
       ],
     }),
   ],

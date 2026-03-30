@@ -8,6 +8,11 @@
 - Chuẩn hóa cách app xử lý ghi chú mộng/cảm ứng theo hướng `không chấp trước`.
 - Tránh suy diễn tự động và tránh tạo tâm lý sợ hãi cho user, đặc biệt user lớn tuổi.
 
+## Relationship
+- File này là logic xử lý ở lane `content/engagement`.
+- Với lane vow-specific, xem thêm:
+  - `design/03-domains/vows-merit/REFERENCES/VOWS-DREAM-GUIDE.md`
+
 ## Core Principle
 - Dream note là dữ liệu tham khảo cá nhân.
 - Hệ thống không tự kết luận đúng/sai tâm linh.

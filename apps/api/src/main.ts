@@ -9,14 +9,16 @@
  * This ensures DI injection works correctly for all global concerns.
  */
 import { NestFactory } from "@nestjs/core";
+import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger } from "nestjs-pino";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import { resolve } from "node:path";
 import { AppModule } from "./app.module.js";
 import { ConfigService } from "./common/config/config.service.js";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
 
@@ -32,6 +34,11 @@ async function bootstrap() {
   // Security headers (pipeline position #3 — helmet)
   app.use(helmet());
   app.use(cookieParser());
+
+  // Serve uploaded files at /media (bypasses global /api prefix intentionally)
+  // PUBLIC_MEDIA_BASE_URL is expected to point here: http://host:port/media
+  const storageRoot = resolve(configService.localStorageRoot || "./uploads");
+  app.useStaticAssets(storageRoot, { prefix: "/media" });
 
   // CORS — only WEB_ORIGIN and ADMIN_ORIGIN allowed
   app.enableCors({

@@ -1,7 +1,7 @@
 set shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
 
 bootstrap:
-  py infra/tools/codex_actions.py bootstrap
+  python infra/tools/codex_actions.py bootstrap
 
 dev-core:
   pnpm dev:core
@@ -25,6 +25,9 @@ host-full:
   pnpm dev:host:full
 
 admin-dev:
+  pnpm dev:host:admin:stack
+
+admin-dev-only:
   pnpm dev:host:admin
 
 admin-run:
@@ -47,40 +50,44 @@ dev-rebuild:
   pnpm dev:rebuild
 
 verify-web:
-  py infra/tools/codex_actions.py quality-gate --scope web
+  python infra/tools/codex_actions.py quality-gate --scope web
 
+verify-api:
+  python infra/tools/codex_actions.py quality-gate --scope api
+
+# Legacy alias for backward compatibility
 verify-cms:
-  py infra/tools/codex_actions.py quality-gate --scope cms
+  python infra/tools/codex_actions.py quality-gate --scope cms
 
 verify-all:
-  py infra/tools/codex_actions.py quality-gate --scope all
+  python infra/tools/codex_actions.py quality-gate --scope all
 
 smoke:
-  py infra/tools/codex_actions.py smoke-suite --suite smoke
+  python infra/tools/codex_actions.py smoke-suite --suite smoke
 
 mcp-smoke:
-  py infra/tools/codex_actions.py mcp-smoke
+  python infra/tools/codex_actions.py mcp-smoke
 
 monitoring:
-  py infra/tools/codex_actions.py smoke-suite --suite monitoring
+  python infra/tools/codex_actions.py smoke-suite --suite monitoring
 
 telegram:
-  py infra/tools/codex_actions.py smoke-suite --suite telegram
+  python infra/tools/codex_actions.py smoke-suite --suite telegram
 
 auth-check:
-  py infra/tools/codex_actions.py auth-flow
+  python infra/tools/codex_actions.py auth-flow
 
 search-check:
-  py infra/tools/codex_actions.py search-sync --all-pages
+  python infra/tools/codex_actions.py search-sync --all-pages
 
 skill-audit:
-  py infra/tools/codex_actions.py skill-audit
+  python infra/tools/codex_actions.py skill-audit
 
 autoresearch:
-  py infra/tools/autoresearch/runner.py --max-iters 120 --patience 20 --min-delta 0.0001
+  python infra/tools/autoresearch/runner.py --max-iters 120 --patience 20 --min-delta 0.0001
 
 openspace *ARGS:
-  py infra/tools/openspace_bridge.py {{ARGS}}
+  python infra/tools/openspace_bridge.py {{ARGS}}
 
 # ─── CI / Deploy / Backup ─────────────────────────────────────────────────────
 

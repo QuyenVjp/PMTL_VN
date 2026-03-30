@@ -15,6 +15,18 @@
    - ritual support options theo nguồn tham chiếu
    - nhắc theo dõi sức khỏe và đi khám khi cần
 3. Cho phép gắn tag `linh_tinh_kich_hoat?` vào nhật ký private.
+4. Nếu symptom xuất hiện sau lane sám hối:
+   - mở card “kết hợp hỗ trợ” (repentance + little-house + theo dõi sức khỏe) ở mức advisory
+   - không tự tạo nghĩa vụ cứng.
+
+## Activation Handling Rules
+- Khi user gắn tag kích hoạt:
+  - cho phép gợi ý range hỗ trợ (không auto-set target).
+  - ưu tiên nhịp ngắn theo chặng, tránh dồn quá tải một lần.
+- Nếu user báo symptom kéo dài nhiều ngày:
+  - tăng mức nhắc khám/bác sĩ trước.
+  - vẫn giữ wording trung tính, không dọa.
+- Không auto-link symptom thành “chắc chắn do nghiệp”.
 
 ## UX Rules
 - Không dùng chữ gây hoảng loạn.
@@ -28,4 +40,3 @@
 - `design/05-references/external-research/XLFM_RITUAL_SOURCE_INDEX.md`
 - `design/03-domains/content/REFERENCES/REPENTANCE-GUIDE.md`
 - `design/03-domains/content/REFERENCES/LITTLE-HOUSE-RITUAL-FLOW.md`
-

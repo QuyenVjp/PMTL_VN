@@ -7,10 +7,10 @@ import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
 import { canCreatePost, canDeletePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
 import type {
-  CreatePostInput, UpdatePostInput, ListPostsQuery,
-  GuideQuery, CreateGuideInput, UpdateGuideInput,
-  DownloadQuery, CreateDownloadInput, UpdateDownloadInput,
-} from "./content.schemas.js";
+  CreatePostRequest, UpdatePostRequest, ListPostsQuery,
+  GuideQuery, CreateGuideRequest, UpdateGuideRequest,
+  DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
+} from "../../../packages/shared/src/schemas/content.js";
 import { type UserRole, type ContentStatus, type Prisma, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
 @Injectable()
@@ -76,7 +76,7 @@ export class ContentService {
   }
 
   async createPost(
-    input: CreatePostInput,
+    input: CreatePostRequest,
     authorId: string,
     userRole: UserRole,
     auditContext: AuditContext,
@@ -122,7 +122,7 @@ export class ContentService {
 
   async updatePost(
     publicId: string,
-    input: UpdatePostInput,
+    input: UpdatePostRequest,
     userId: string,
     userRole: UserRole,
     auditContext: AuditContext,
@@ -282,7 +282,7 @@ export class ContentService {
     return guide;
   }
 
-  async createGuide(input: CreateGuideInput, userId: string, auditContext: AuditContext) {
+  async createGuide(input: CreateGuideRequest, userId: string, auditContext: AuditContext) {
     const publicId = nanoid(21);
     const slug = input.slug || this.generateSlug(input.title, publicId);
 
@@ -309,7 +309,7 @@ export class ContentService {
     return guide;
   }
 
-  async updateGuide(publicId: string, input: UpdateGuideInput, auditContext: AuditContext) {
+  async updateGuide(publicId: string, input: UpdateGuideRequest, auditContext: AuditContext) {
     const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
     if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
 
@@ -397,7 +397,7 @@ export class ContentService {
     return download;
   }
 
-  async adminCreateDownload(input: CreateDownloadInput, userId: string, auditContext: AuditContext) {
+  async adminCreateDownload(input: CreateDownloadRequest, userId: string, auditContext: AuditContext) {
     const publicId = nanoid(21);
 
     const download = await this.prisma.download.create({
@@ -420,7 +420,7 @@ export class ContentService {
     return download;
   }
 
-  async adminUpdateDownload(publicId: string, input: UpdateDownloadInput, auditContext: AuditContext) {
+  async adminUpdateDownload(publicId: string, input: UpdateDownloadRequest, auditContext: AuditContext) {
     const download = await this.prisma.download.findUnique({ where: { publicId } });
     if (!download) throw new NotFoundException("Tài liệu không tồn tại");
 

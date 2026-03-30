@@ -402,6 +402,292 @@ Mỗi trang có: route, tiêu đề, auth level, module owner, nội dung chính
 
 ---
 
+### 1.5a Newcomer FAQ Handbook (FAQ thực chiến cho người mới)
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/faq-thuc-chien` |
+| Title | FAQ thực chiến cho người mới |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- FAQ tổng quan (chapter 10)
+- FAQ chi tiết theo section (chapter 11)
+- Case study có disclaimer rõ ràng (chapter 12)
+- Filter theo section/tag + quick search trong FAQ
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/faq-handbook`
+- Không để FE tự ráp từ nhiều `beginner-guides` hoặc post rời.
+
+---
+
+### 1.5b Newcomer Onboarding 30 Days (Lộ trình 30 ngày)
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/lo-trinh-30-ngay` |
+| Title | Lộ trình tu tập 30 ngày |
+| Auth | `public` (member có progress state bổ sung) |
+| Module owner | Content + Engagement |
+
+**Nội dung:**
+- Plan theo 4 tuần với mục tiêu/việc cần làm
+- Checklist từng task
+- Safety rules bắt buộc (khung giờ, điều kiện thời tiết, lưu ý nền tảng)
+- CTA chuyển sang `/tu-tap/bai-tap` hoặc `/tu-tap/nha-nho`
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/onboarding-roadmap`
+- nếu signed-in có thể đọc thêm progress từ engagement, nhưng roadmap canonical vẫn là content aggregate.
+
+---
+
+### 1.5ba Newcomer Encyclopedia (Bách khoa 9 phần)
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/bach-khoa` |
+| Title | Bách khoa Pháp Môn Tâm Linh |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- TOC 9 phần
+- Chapter summary blocks
+- liên kết nhanh tới FAQ, case studies, onboarding, glossary, audio overview
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/encyclopedia`
+
+---
+
+### 1.5bb Newcomer Onboarding 90 Days
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/lo-trinh-90-ngay` |
+| Title | Hướng dẫn 90 ngày cho Beginner Việt Nam |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Plan 3 tháng
+- Checklist dạng bảng theo từng giai đoạn
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/onboarding-90d`
+
+---
+
+### 1.5bc Newcomer Glossary
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/thuat-ngu` |
+| Title | Glossary Trung - Việt - Anh |
+| Auth | `public` |
+| Module owner | Content |
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/glossary`
+
+---
+
+### 1.5bd Newcomer Audio Overview
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/audio-tom-tat` |
+| Title | Audio tóm tắt 4 phút |
+| Auth | `public` |
+| Module owner | Content |
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/newcomer/audio-overview`
+
+---
+
+### 1.5c Practice Support - Altar Care (Phật đài và bảo dưỡng)
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/phat-dai` |
+| Title | Cách thiết lập Phật đài và bảo dưỡng |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Rule vị trí đặt bàn thờ
+- Trật tự sắp xếp Bồ Tát
+- Rule vật phẩm cúng dường
+- Quy trình bảo dưỡng và xử lý tình huống đặc biệt
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/altar-care`
+
+---
+
+### 1.5d Practice Support - Little House Writing Rules
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/nha-nho/viet-va-cham-do` |
+| Title | Quy tắc viết tên và chấm đỏ Ngôi Nhà Nhỏ |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Quy tắc ghi tên người tặng/người nhận
+- Quy tắc chấm đỏ chuẩn
+- Quy trình xử lý sheet viết sai/chấm lem
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/little-house-writing-rules`
+
+---
+
+### 1.5e Practice Support - Little House Allocation Guide
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/nha-nho/dinh-muc-so-to` |
+| Title | Định mức số tờ Ngôi Nhà Nhỏ theo tình huống |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Mức khởi điểm cho người mới
+- Định mức theo scenario (đau nhức, thai nhi, người mất, mâu thuẫn...)
+- Rule kết hợp với Lễ Phật Đại Sám Hối Văn
+- Nhắc duy trì dài hạn
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/little-house-allocation-guidelines`
+
+---
+
+### 1.5f Practice Support - Heart Incense
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/tam-huong` |
+| Title | Nghi thức Tâm Hương khi đi xa |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Flow 9 bước Tâm Hương
+- Edge cases và điều cấm
+- Luồng xử lý NNN khi đi công tác
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/heart-incense`
+
+---
+
+### 1.5g Practice Support - Name Change Ritual
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/doi-ten-tam-linh` |
+| Title | Nghi thức Đơn Thăng Văn đổi tên |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Chuẩn bị mẫu đơn và cách điền
+- Khung giờ/ngày khuyến nghị
+- Flow có bàn thờ và không có bàn thờ
+- Dấu hiệu thành công + lưu ý hậu nghi thức
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/name-change-ritual`
+
+---
+
+### 1.5h Practice Support - Fetal Karma Resolution
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/sieu-do-thai-nhi` |
+| Title | Hóa giải nghiệp thai nhi và quy tắc thực hành |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Cách ghi NNN cho thai nhi
+- Số lượng theo tình huống
+- Kết hợp sám hối và mantra bổ trợ
+- Nhận biết qua tín hiệu giấc mơ
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/fetal-karma-resolution`
+
+---
+
+### 1.5i Practice Support - Recitation Guide
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/niem-kinh-thuc-hanh` |
+| Title | Hướng dẫn Niệm Kinh và Thập Tiểu Chú |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- 3 kinh/chú nền tảng và tác dụng
+- Ma trận thập tiểu chú theo nhu cầu
+- Rule giờ giấc và thời tiết quan trọng
+- Gợi ý áp dụng theo từng bối cảnh
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/recitation-guide`
+
+---
+
+### 1.5j Practice Support - Life Release Selection Guide
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/phong-sanh/chon-loai-va-sinh-thai` |
+| Title | Chọn loài phóng sanh và nguyên tắc sinh thái |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Tiêu chí chọn đối tượng cận kề bị giết thịt
+- Rule sinh thái bắt buộc
+- Flow nghi thức đi kèm niệm kinh
+- Xử lý tình huống có sinh vật tử vong
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/life-release-selection-guide`
+
+---
+
+### 1.5k Practice Support - Vietnam Home Practice Guide
+
+| Field | Value |
+|---|---|
+| Route | `/huong-dan/tu-tu-tai-gia-viet-nam` |
+| Title | Tự tu tại gia ở Việt Nam: checklist kỷ luật |
+| Auth | `public` |
+| Module owner | Content |
+
+**Nội dung:**
+- Rule lập/bảo dưỡng Phật đài tại gia
+- Fallback Tâm Hương khi không có bàn thờ
+- Kỷ luật niệm kinh và NNN
+- Ứng xử với gia đình không cùng niềm tin
+- Cảnh báo đạo đức và tuân thủ pháp luật sở tại
+
+**Contract owner notes:**
+- API aggregate owner: `GET /content/practice-support/vietnam-home-practice-guide`
+
+---
+
 ### 1.6 Downloads (Tài liệu tải xuống)
 
 | Field | Value |
@@ -1511,11 +1797,11 @@ Similar pattern cho:
 
 | Section | Count |
 |---|---|
-| Public pages | 25 |
+| Public pages | 28 |
 | Auth pages | 5 |
 | Member pages | 14 |
 | Admin pages | 22 |
-| **Total** | **66 pages** |
+| **Total** | **69 pages** |
 
 ---
 

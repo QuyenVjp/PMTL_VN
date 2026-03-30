@@ -15,6 +15,13 @@
   - reminder/check-in riêng tư
 - Các mốc số lượng (ví dụ `108`) chỉ hiển thị dạng `tham khảo theo nguồn`, không áp cứng như system rule.
 
+## Vow Discipline Policy
+- Một vow đã tạo được xem là cam kết có kỷ luật; hệ thống cần nhắc user theo dõi định kỳ.
+- App không dùng mô hình trừng phạt tự động.
+- Khi user báo “khó giữ nguyện”:
+  - ưu tiên lane `chỉnh vow plan` (chia nhỏ milestone, kéo giãn tiến độ hợp lý)
+  - sau đó mới mở lane recovery tham khảo.
+
 ## Recovery Window Note (source-backed caution)
 - Với nội dung liên quan `24 giờ đầu sau khi vi phạm`, dùng wording:
   - “Theo một số Wenda, giai đoạn sớm có thể cần xử lý tập trung hơn; app chỉ ghi nhận và gợi ý tham khảo.”
@@ -30,6 +37,9 @@
   - không auto-phán định “chắc chắn vi phạm”
 - Cho phép user chọn nhịp thực hành theo chặng, tránh giao gánh nặng một lần.
 - Cho phép bật cờ “cần người hướng dẫn hỗ trợ” nhưng không ép liên hệ.
+- Nếu user đạt lại nhịp ổn định:
+  - cho phép đóng recovery lane và quay về vow tracking bình thường
+  - không giữ nhãn “vi phạm” như stigma vĩnh viễn.
 
 ## Warning Policy
 - Không dùng ngôn từ trừng phạt.

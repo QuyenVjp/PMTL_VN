@@ -132,6 +132,21 @@ Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping
 | public editorial detail | `PublicContentDetailDto` | list item fields + `bodyHtml`, `seoTitle`, `seoDescription`, `breadcrumbs[]`, `relatedItems[]` | không leak moderation/editor notes |
 | grouped content landing | `GroupedContentLandingDto` | `groupKey`, `title`, `intro`, `summaryBlocks[]`, `guideCards[]`, `faqHighlights[]`, `downloads[]`, `primaryCta` | dùng cho `Little House`, `Daily Practice`, `Life Release` group pages |
 | grouped content guide detail | `GroupedContentGuideDetailDto` | `publicId`, `slug`, `groupKey`, `title`, `summaryBox`, `toc[]`, `contentBlocks[]`, `warnings[]`, `faq[]`, `downloads[]`, `prevNext` | block anatomy phải ổn định cho RSC |
+| newcomer faq handbook | `NewcomerFaqHandbookDto` | `publicId`, `slug`, `title`, `intro`, `generalFaq[]`, `faqSections[]`, `faqEntries[]`, `caseStudies[]`, `disclaimerBlock`, `updatedAt` | owner cho chapter 10-12 aggregate, để BE/FE codegen không tự ráp từ nhiều bài rời |
+| newcomer onboarding roadmap | `NewcomerOnboardingRoadmapDto` | `publicId`, `slug`, `title`, `intro`, `durationDays`, `weeks[]`, `completionChecklist[]`, `safetyRules[]`, `nextActions[]`, `updatedAt` | owner cho chapter 13 (lộ trình 30 ngày), support checklist rendering |
+| newcomer onboarding 90d | `NewcomerOnboarding90dDto` | `publicId`, `slug`, `title`, `intro`, `months[]`, `tableChecklist[]`, `updatedAt` | owner cho lộ trình 90 ngày bản Việt |
+| newcomer encyclopedia package | `NewcomerEncyclopediaDto` | `publicId`, `slug`, `title`, `toc[]`, `chapters[]`, `faqQuick[]`, `topCaseStudies[]`, `onboarding90dRef`, `glossaryRef`, `audioOverviewRef`, `updatedAt` | package aggregate cho bản bách khoa 9 phần |
+| newcomer glossary | `NewcomerGlossaryDto` | `publicId`, `slug`, `title`, `entries[]`, `updatedAt` | owner cho glossary Trung-Việt-Anh |
+| newcomer audio overview | `NewcomerAudioOverviewDto` | `publicId`, `slug`, `title`, `durationMinutes`, `scriptBlocks[]`, `updatedAt` | owner cho script audio tóm tắt |
+| practice support altar care | `PracticeSupportAltarCareDto` | `publicId`, `slug`, `title`, `locationRules[]`, `placementRules[]`, `offeringRules[]`, `maintenanceSteps[]`, `specialCases[]`, `updatedAt` | owner cho guide vận hành Phật đài và bảo dưỡng |
+| practice support little-house writing rules | `PracticeSupportLittleHouseWritingRulesDto` | `publicId`, `slug`, `title`, `namingRules`, `dottingRules`, `errorRecoveryRules`, `examples[]`, `updatedAt` | owner cho quy tắc viết/chấm NNN để codegen form validation |
+| practice support little-house allocation guidelines | `PracticeSupportLittleHouseAllocationGuidelinesDto` | `publicId`, `slug`, `title`, `baseRange`, `scenarioGuidelines[]`, `combinationRules[]`, `continuityNotes[]`, `updatedAt` | owner cho định mức số tờ NNN theo tình huống |
+| practice support heart-incense | `PracticeSupportHeartIncenseDto` | `publicId`, `slug`, `title`, `steps[]`, `travelModeRules[]`, `doNotRules[]`, `littleHouseEmergencyFlow[]`, `updatedAt` | owner cho nghi thức Tâm Hương 9 bước |
+| practice support name-change ritual | `PracticeSupportNameChangeRitualDto` | `publicId`, `slug`, `title`, `overview`, `preparationRules[]`, `timingRules[]`, `withAltarFlow[]`, `withoutAltarFlow[]`, `successSignals[]`, `postRitualNotes[]`, `updatedAt` | owner cho nghi thức Đơn Thăng Văn đổi tên |
+| practice support fetal-karma resolution | `PracticeSupportFetalKarmaResolutionDto` | `publicId`, `slug`, `title`, `overview`, `littleHouseRules`, `repentanceRules[]`, `additionalMantras[]`, `dreamSignals[]`, `updatedAt` | owner cho guideline hóa giải nghiệp thai nhi |
+| practice support recitation guide | `PracticeSupportRecitationGuideDto` | `publicId`, `slug`, `title`, `overview`, `coreRecitations[]`, `minorMantras[]`, `timeRules[]`, `applicationScenarios[]`, `updatedAt` | owner cho tổng hợp niệm kinh (kinh lớn + thập tiểu chú) |
+| practice support life-release selection guide | `PracticeSupportLifeReleaseSelectionGuideDto` | `publicId`, `slug`, `title`, `overview`, `speciesSelectionRules[]`, `ecologyRules[]`, `ritualFlow[]`, `emergencyHandling[]`, `recommendedTiming[]`, `updatedAt` | owner cho quy tắc chọn loài phóng sanh và bảo toàn sinh thái |
+| practice support vietnam home-practice guide | `PracticeSupportVietnamHomePracticeGuideDto` | `publicId`, `slug`, `title`, `overview`, `homeAltarRules[]`, `heartIncenseFallbackRules[]`, `littleHouseDisciplineRules[]`, `familyCoordinationRules[]`, `complianceAndEthicsRules[]`, `updatedAt` | owner cho lane tự tu tại gia ở Việt Nam |
 | public search result item | `SearchResultItemDto` | `publicId`, `docType`, `entryType?`, `sourceFamily?`, `title`, `excerpt`, `href`, `publishedAt?`, `highlight?` | shared shape cho `/search`, `/tim-kiem`, wisdom-aware search cards |
 | public search results page | `SearchResultsPageDto` | `query`, `appliedFilters`, `items[]`, `pagination`, `tabCounts`, `filterFacets`, `engine`, `suggestedQueries[]` | owner cho `/tim-kiem`; không để client tự đếm/tabulate từ raw list |
 | wisdom list | `WisdomListItemDto` | `publicId`, `slug`, `entryType`, `sourceFamily`, `titleVietnamese`, `summaryVietnamese`, `sourceCode`, `publishedAt`, `hasAudio` | không đưa full original text vào list |
@@ -162,6 +177,21 @@ Nó là cầu nối giữa domain contracts, route canon, và page/admin mapping
 | personal practice calendar page | `PersonalPracticeCalendarPageDto` | `todayLunar`, `advisorySummary`, `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | owner cho `/lich-ca-nhan`; không nhét full event detail vào page aggregate |
 | admin download detail | `AdminDownloadDetailDto` | `publicId`, `title`, `downloadType`, `targetAudience`, `status`, `versionNote`, `sourceReference`, `fileRef`, `surfaceRefs[]`, `updatedAt` | owner cho `/admin/content/downloads/:publicId`; download workspace không tự ráp metadata từ raw asset |
 | admin sutra detail | `AdminSutraDetailDto` | `publicId`, `slug`, `title`, `status`, `language`, `summary`, `volumes[]`, `audioCompanion?`, `glossaryRefs[]`, `updatedAt` | owner cho `/admin/content/sutras/:publicId`; nested sutra tree phải đến từ 1 detail aggregate |
+| admin newcomer faq handbook detail | `AdminNewcomerFaqHandbookDto` | `publicId`, `slug`, `title`, `intro`, `generalFaq[]`, `faqSections[]`, `faqEntries[]`, `caseStudies[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/faq-handbook`; editor lane cho chapter 10-12 |
+| admin newcomer onboarding roadmap detail | `AdminNewcomerOnboardingRoadmapDto` | `publicId`, `slug`, `title`, `intro`, `durationDays`, `weeks[]`, `completionChecklist[]`, `safetyRules[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/onboarding-roadmap`; editor lane cho chapter 13 |
+| admin newcomer onboarding 90d detail | `AdminNewcomerOnboarding90dDto` | `publicId`, `slug`, `title`, `intro`, `months[]`, `tableChecklist[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/onboarding-90d` |
+| admin newcomer encyclopedia detail | `AdminNewcomerEncyclopediaDto` | `publicId`, `slug`, `title`, `toc[]`, `chapters[]`, `faqQuick[]`, `topCaseStudies[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/encyclopedia` |
+| admin newcomer glossary detail | `AdminNewcomerGlossaryDto` | `publicId`, `slug`, `title`, `entries[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/glossary` |
+| admin newcomer audio overview detail | `AdminNewcomerAudioOverviewDto` | `publicId`, `slug`, `title`, `durationMinutes`, `scriptBlocks[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/newcomer/audio-overview` |
+| admin practice support altar care detail | `AdminPracticeSupportAltarCareDto` | `publicId`, `slug`, `title`, `locationRules[]`, `placementRules[]`, `offeringRules[]`, `maintenanceSteps[]`, `specialCases[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/altar-care` |
+| admin practice support little-house writing rules detail | `AdminPracticeSupportLittleHouseWritingRulesDto` | `publicId`, `slug`, `title`, `namingRules`, `dottingRules`, `errorRecoveryRules`, `examples[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/little-house-writing-rules` |
+| admin practice support little-house allocation guidelines detail | `AdminPracticeSupportLittleHouseAllocationGuidelinesDto` | `publicId`, `slug`, `title`, `baseRange`, `scenarioGuidelines[]`, `combinationRules[]`, `continuityNotes[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/little-house-allocation-guidelines` |
+| admin practice support heart-incense detail | `AdminPracticeSupportHeartIncenseDto` | `publicId`, `slug`, `title`, `steps[]`, `travelModeRules[]`, `doNotRules[]`, `littleHouseEmergencyFlow[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/heart-incense` |
+| admin practice support name-change ritual detail | `AdminPracticeSupportNameChangeRitualDto` | `publicId`, `slug`, `title`, `overview`, `preparationRules[]`, `timingRules[]`, `withAltarFlow[]`, `withoutAltarFlow[]`, `successSignals[]`, `postRitualNotes[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/name-change-ritual` |
+| admin practice support fetal-karma resolution detail | `AdminPracticeSupportFetalKarmaResolutionDto` | `publicId`, `slug`, `title`, `overview`, `littleHouseRules`, `repentanceRules[]`, `additionalMantras[]`, `dreamSignals[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/fetal-karma-resolution` |
+| admin practice support recitation guide detail | `AdminPracticeSupportRecitationGuideDto` | `publicId`, `slug`, `title`, `overview`, `coreRecitations[]`, `minorMantras[]`, `timeRules[]`, `applicationScenarios[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/recitation-guide` |
+| admin practice support life-release selection guide detail | `AdminPracticeSupportLifeReleaseSelectionGuideDto` | `publicId`, `slug`, `title`, `overview`, `speciesSelectionRules[]`, `ecologyRules[]`, `ritualFlow[]`, `emergencyHandling[]`, `recommendedTiming[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/life-release-selection-guide` |
+| admin practice support vietnam home-practice guide detail | `AdminPracticeSupportVietnamHomePracticeGuideDto` | `publicId`, `slug`, `title`, `overview`, `homeAltarRules[]`, `heartIncenseFallbackRules[]`, `littleHouseDisciplineRules[]`, `familyCoordinationRules[]`, `complianceAndEthicsRules[]`, `reviewStatus`, `versionNote`, `updatedAt` | owner cho `/admin/content/practice-support/vietnam-home-practice-guide` |
 | admin table common | `AdminTableRowDto` | `publicId`, `status`, `createdAt`, `updatedAt`, `lastModifiedBy?` | base shape cho tables |
 | admin search status | `AdminSearchStatusDto` | `requestedEngine`, `actualEngine`, `indexFreshnessSeconds`, `documentCount`, `pendingJobs`, `lastSuccessfulReindexAt`, `meiliHealth`, `sqlFallbackAvailable`, `bootstrapFallbackActive` | owner cho `/admin/search/status` và `operational-status` |
 | admin search indexing job | `AdminSearchIndexingJobDto` | `publicId`, `source`, `triggerType`, `status`, `startedAt`, `finishedAt`, `durationMs`, `rowsIndexed`, `rowsDeleted`, `actorUserId?`, `requestId?`, `errorSummary?` | không nhét raw logs vào DTO detail |
@@ -596,6 +626,244 @@ Dùng khi route canon moderation comment detail được scaffold:
   - `practiceReminderEnabled`
   - `eventReminderEnabled`
 
+### `NewcomerFaqHandbookDto`
+
+- `generalFaq[]` giữ nhóm FAQ nhập môn (chapter 10).
+- `faqSections[]` là taxonomy để render section tabs:
+  - `sectionKey`
+  - `title`
+  - `orderNo`
+- `faqEntries[]` phải có:
+  - `publicId`
+  - `question`
+  - `answer`
+  - `sectionKey`
+  - `priority`
+  - `tags[]`
+  - `sourceTier`
+- `caseStudies[]` phải có:
+  - `publicId`
+  - `title`
+  - `summary`
+  - `year`
+  - `evidenceTier`
+  - `riskLabel`
+  - `claimedOutcomes[]`
+- `disclaimerBlock` là required:
+  - `medical`
+  - `legal`
+  - `doctrinal`
+- không trộn raw testimonial wall vào `faqEntries[]`; case studies là lane riêng (chapter 12).
+
+### `NewcomerOnboardingRoadmapDto`
+
+- `durationDays` mặc định `30`.
+- `weeks[]` phải ổn định theo thứ tự `1..4`, mỗi week gồm:
+  - `weekNumber`
+  - `title`
+  - `goal`
+  - `tasks[]`
+  - `warnings[]`
+- `tasks[]` phải có:
+  - `taskKey`
+  - `title`
+  - `description`
+  - `taskKind`
+  - `isRequired`
+  - `cadence`
+  - `checklist[]`
+- `taskKind` canonical values:
+  - `recitation`
+  - `study`
+  - `ritual`
+  - `vow`
+  - `life_release`
+  - `faq_review`
+- `safetyRules[]` là required để chặn FE bỏ qua khung giờ/cảnh báo nền tảng.
+
+### `NewcomerOnboarding90dDto`
+
+- `months[]` cố định 3 phase:
+  - `monthNumber`
+  - `goal`
+  - `checklist[]`
+- `tableChecklist[]` là format bảng cho onboarding Việt, để FE render trực tiếp.
+- DTO này không thay `NewcomerOnboardingRoadmapDto`; nó là lane dài hạn (90 ngày) tách riêng.
+
+### `NewcomerEncyclopediaDto`
+
+- `toc[]` giữ mục lục 9 phần.
+- `chapters[]` phải có:
+  - `chapterNumber`
+  - `title`
+  - `summaryBlocks[]`
+- `faqQuick[]` là shortlist FAQ hiển thị nhanh, không thay `faq-handbook`.
+- `topCaseStudies[]` là shortlist card, detail đầy đủ vẫn qua `case-studies`.
+- `onboarding90dRef`, `glossaryRef`, `audioOverviewRef` là stable refs để FE prefetch đúng route.
+
+### `NewcomerGlossaryDto`
+
+- `entries[]` mỗi item gồm:
+  - `term`
+  - `hanzi?`
+  - `vietnamese`
+  - `english`
+  - `note?`
+
+### `NewcomerAudioOverviewDto`
+
+- `durationMinutes` và `scriptBlocks[]` là required.
+- `scriptBlocks[]` gồm:
+  - `speaker`
+  - `toneHint?`
+  - `text`
+- lane này là script content owner; media asset/audio file mapping là aux layer riêng.
+
+### `AdminNewcomerFaqHandbookDto`
+
+- giữ cùng vocabulary với `NewcomerFaqHandbookDto`; admin chỉ được thêm:
+  - `reviewStatus`
+  - `versionNote`
+  - `lastReviewedAt`
+- không mở field raw moderation notes vào public mirror.
+
+### `AdminNewcomerOnboardingRoadmapDto`
+
+- giữ cùng vocabulary với `NewcomerOnboardingRoadmapDto`; admin chỉ được thêm:
+  - `reviewStatus`
+  - `versionNote`
+- `lastReviewedAt`
+- nếu đổi baseline warning wording, phải bump `versionNote` để FE invalidate roadmap cache đúng scope.
+
+### `PracticeSupportAltarCareDto`
+
+- `locationRules[]` phải explicit từng điều cấm/khuyến nghị:
+  - `ruleCode`
+  - `label`
+  - `description`
+  - `severity`
+- `offeringRules[]` giữ rule theo nhóm:
+  - `water`
+  - `oilLamp`
+  - `fruit`
+  - `flowers`
+  - `incense`
+- `specialCases[]` tối thiểu gồm:
+  - `travel`
+  - `moving-home`
+  - `temporary-rental`
+- DTO này là owner để render checklist vận hành, không để FE scrape từ prose.
+
+### `PracticeSupportLittleHouseWritingRulesDto`
+
+- `namingRules` phải giữ:
+  - `inkColor`
+  - `writeBeforeRecite`
+  - `recipientPatterns[]`
+  - `giverPattern`
+  - `dateFillRule`
+- `dottingRules` phải giữ:
+  - `dotColor`
+  - `timingRule`
+  - `shapeRule`
+  - `fillPercentGuideline`
+  - `sequenceGuideline`
+- `errorRecoveryRules` là required:
+  - `doNotTear`
+  - `doNotBurnInvalidSheet`
+  - `disposeFlow[]`
+  - `rebuildFlow[]`
+
+### `PracticeSupportLittleHouseAllocationGuidelinesDto`
+
+- `baseRange` giữ mức khởi điểm cho newcomer.
+- `scenarioGuidelines[]` mỗi item gồm:
+  - `scenarioCode`
+  - `title`
+  - `suggestedRange`
+  - `recipientTemplate`
+  - `notes`
+- `combinationRules[]` dùng cho các case đi kèm `Lễ Phật Đại Sám Hối Văn`.
+- `continuityNotes[]` bắt buộc có nội dung duy trì dài hạn, tránh hiểu sai là one-off.
+
+### `PracticeSupportHeartIncenseDto`
+
+- `steps[]` phải đủ 9 bước, mỗi bước có:
+  - `stepNumber`
+  - `title`
+  - `action`
+  - `mentalOnly` (boolean)
+- `travelModeRules[]` chứa quy tắc khi đi công tác/ở trọ.
+- `doNotRules[]` chứa cấm kỵ edge cases.
+- `littleHouseEmergencyFlow[]` là luồng rút gọn khi cần xử lý NNN gấp trong travel mode.
+
+### `PracticeSupportNameChangeRitualDto`
+
+- `preparationRules[]` phải có:
+  - `formType`
+  - `paperColor`
+  - `requiredFields[]`
+- `timingRules[]` phải có:
+  - `preferredLunarDays[]`
+  - `timeWindows[]`
+  - `weatherRequirement`
+- `withAltarFlow[]` và `withoutAltarFlow[]` là 2 flow tách biệt, không trộn.
+- `postRitualNotes[]` phải gồm:
+  - `nameActivationWindow`
+  - `temporaryNamingFallback`
+  - `retryPolicy`
+
+### `PracticeSupportFetalKarmaResolutionDto`
+
+- `littleHouseRules` phải có:
+  - `recipientTemplate`
+  - `baseRangePerChild`
+  - `escalationRange`
+- `repentanceRules[]` phải explicit `Li Fo` frequency guardrails.
+- `additionalMantras[]` dùng cho mantra bổ trợ (ví dụ Công Đức Bảo Sơn).
+- `dreamSignals[]` phải tách rõ:
+  - `resolvedSignals[]`
+  - `unresolvedSignals[]`
+
+### `PracticeSupportRecitationGuideDto`
+
+- `coreRecitations[]` mỗi item gồm:
+  - `name`
+  - `purpose`
+  - `baselineCount`
+  - `intensiveCount`
+- `minorMantras[]` mỗi item gồm:
+  - `name`
+  - `useCase`
+  - `typicalRange`
+- `timeRules[]` phải encode rule severity cho các khung giờ nhạy cảm.
+- `applicationScenarios[]` là danh sách guidance ngắn, không nhúng long-form prose.
+
+### `PracticeSupportLifeReleaseSelectionGuideDto`
+
+- `speciesSelectionRules[]` là rule chọn đối tượng cận kề bị giết thịt.
+- `ecologyRules[]` là rule sinh thái bắt buộc khi thả.
+- `ritualFlow[]` giữ theo `stepNumber` để FE render checklist.
+- `emergencyHandling[]` chứa lane xử lý khi có sinh vật tử vong trong quá trình.
+- `recommendedTiming[]` là mốc ngày/khung thời điểm khuyến nghị.
+
+### `PracticeSupportVietnamHomePracticeGuideDto`
+
+- `homeAltarRules[]` là lane đặt bàn thờ và cúng dường tại gia.
+- `heartIncenseFallbackRules[]` là lane fallback khi không có bàn thờ.
+- `littleHouseDisciplineRules[]` là lane kỷ luật NNN cho người tự tu.
+- `familyCoordinationRules[]` là lane ứng xử với người thân chưa đồng thuận.
+- `complianceAndEthicsRules[]` bắt buộc có rule tuân thủ pháp luật sở tại.
+
+### `AdminPracticeSupport*Dto`
+
+- Tất cả admin practice-support DTO giữ cùng vocabulary public DTO tương ứng.
+- Chỉ được thêm metadata admin:
+  - `reviewStatus`
+  - `versionNote`
+  - `lastReviewedAt`
+- Không được mở raw note nội bộ ra public mirror.
+
 ### `PracticeProfileDto`
 
 - `experienceTier` canonical values:
@@ -785,6 +1053,21 @@ Không được coi là đủ để scaffold nếu mới chỉ có tên DTO mà 
 | search results aggregate | query params tối thiểu: `q`, `tab?`, `docType?`, `entryType?`, `sourceFamily?`, `cursor?`, `limit?`; default: `tab = all`, `limit = route default`, không tự thêm hidden filter | `SearchResultsPageDto` + stable `SearchResultItemDto[]`, `tabCounts`, `filterFacets`, `engine`, `pagination` | `search.query_invalid`, `search.query_too_short`, `search.engine_unavailable`, `search.cursor_invalid` | search module phải trả canonical `href`, `engine`, `tabCounts`; client không được derive |
 | offline bundle list page | query params tối thiểu: `cursor?`, `pageSize?`, `freshnessStatus?`; default: first page nếu thiếu `cursor`, canonical page size từ route owner, `freshnessStatus = all` | `OfflineBundleListPageDto` + `items[]`, `pagination`, `syncSummary`, `pendingDeltaBadge`, `hasMore` | `auth.session_missing`, `offline.bundle_list_unavailable`, `offline.sync_degraded` | owner là offline bundle aggregate read; page không loop qua từng bundle detail để tự tính badge |
 | personal practice calendar page | query params tối thiểu: `month`, `tz?`; `month` là bắt buộc, `tz` default theo user setting hoặc server fallback | `PersonalPracticeCalendarPageDto` + `calendarDays[]`, `upcomingEvents[]`, `reminderSummary`, `activeVowReminders[]` | `auth.session_missing`, `calendar.month_invalid`, `calendar.aggregate_unavailable` | calendar module là owner của month grid projection; không preload advisory detail cho từng ngày |
+| newcomer faq handbook aggregate | query params chỉ cho phép `section?`, `tag?`, `q?`; default load full handbook | `NewcomerFaqHandbookDto` với `generalFaq[]`, `faqSections[]`, `faqEntries[]`, `caseStudies[]`, `disclaimerBlock` | `content.handbook_not_found`, `content.handbook_query_invalid` | content aggregate owner; FE không tự ráp từ nhiều post/beginner-guide rời |
+| newcomer onboarding roadmap aggregate | query params chỉ cho phép `track?`; default `track = standard-30d` | `NewcomerOnboardingRoadmapDto` với `weeks[]`, `completionChecklist[]`, `safetyRules[]`, `nextActions[]` | `content.roadmap_not_found`, `content.roadmap_query_invalid` | content owner cho chapter 13 roadmap; engagement chỉ attach progress aux khi signed-in |
+| newcomer onboarding 90d aggregate | query params chỉ cho phép `locale?`; default `locale = vi-VN` | `NewcomerOnboarding90dDto` với `months[]`, `tableChecklist[]` | `content.roadmap90d_not_found`, `content.roadmap90d_query_invalid` | owner cho bản 90 ngày Việt, không ghép client-side từ roadmap 30d |
+| newcomer encyclopedia aggregate | query params chỉ cho phép `part?`; default load toàn bộ package | `NewcomerEncyclopediaDto` với `toc[]`, `chapters[]`, refs tới faq/glossary/audio/onboarding | `content.encyclopedia_not_found`, `content.encyclopedia_query_invalid` | package aggregate, tránh FE scrape markdown dài |
+| newcomer glossary aggregate | query params chỉ cho phép `q?`; default full list | `NewcomerGlossaryDto` với `entries[]` | `content.glossary_not_found`, `content.glossary_query_invalid` | owner cho glossary Trung-Việt-Anh |
+| newcomer audio overview aggregate | query params chỉ cho phép `version?`; default latest | `NewcomerAudioOverviewDto` với `durationMinutes`, `scriptBlocks[]` | `content.audio_overview_not_found`, `content.audio_overview_query_invalid` | owner cho script audio, không hardcode ở FE |
+| practice support altar-care aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportAltarCareDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | content owner của ritual operations baseline |
+| practice support little-house-writing aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportLittleHouseWritingRulesDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | không để FE tự suy luận regex/tip từ prose rời |
+| practice support little-house-allocation aggregate | query params chỉ cho phép `scenario?`; default full guideline | `PracticeSupportLittleHouseAllocationGuidelinesDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho định mức NNN theo tình huống |
+| practice support heart-incense aggregate | query params chỉ cho phép `mode?`; default `standard-travel` | `PracticeSupportHeartIncenseDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho flow Tâm Hương + emergency NNN flow khi travel |
+| practice support name-change aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportNameChangeRitualDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho Đơn Thăng Văn đổi tên |
+| practice support fetal-karma aggregate | query params chỉ cho phép `scenario?`; default full guideline | `PracticeSupportFetalKarmaResolutionDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho lane hóa giải nghiệp thai nhi |
+| practice support recitation aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportRecitationGuideDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho lane niệm kinh và thập tiểu chú |
+| practice support life-release selection aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportLifeReleaseSelectionGuideDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho lane chọn loài phóng sanh và nghi thức đi kèm |
+| practice support vietnam home-practice aggregate | query params chỉ cho phép `version?`; default latest published | `PracticeSupportVietnamHomePracticeGuideDto` | `content.practice_support_not_found`, `content.practice_support_query_invalid` | owner cho lane tu học tại gia Việt Nam + kỷ luật pháp lý/đạo đức |
 | member practice profile | body/query shape tối thiểu: `GET` không bắt query ngoài `tz?`; `PATCH` body chỉ được gồm `experienceTier`, `baselineMode`, `skipBeginnerTrack`, `privateStreakEnabled` | `PracticeProfileDto` | `auth.session_missing`, `engagement.practice_profile_invalid`, `engagement.practice_profile_conflict` | practice profile là authority riêng; không nhét vào auth profile hay daily sheet payload tùy hứng |
 | member practice log list/self-state | `GET /engagement/practice-logs` dùng list query canon; `GET/PUT /engagement/practice-logs/self` chỉ nhận self-save body với completed counts/note/clientEventId, không nhận profile-level fields | `PracticeLogItemDto[]` hoặc `PracticeLogSelfStateDto` | `auth.session_missing`, `engagement.practice_log_invalid`, `engagement.practice_log_conflict` | `practiceLogs` là historical/self-save lane riêng; không collapse vào `practiceSheets` chỉ vì đều thuộc practice module |
 | member practice sheet detail/mutation | `PATCH`/`complete` body chỉ được mutate self-owned completion fields; profile-level fields không được update qua sheet route | `PracticeSheetDetailDto` hoặc `PracticeSheetMutationResultDto` với `sheet`, `profile`, `baselineWarning?`, `privateStreak?` | `auth.session_missing`, `engagement.practice_sheet_invalid`, `engagement.practice_sheet_transition_invalid`, `engagement.practice_foundation_warning` | sheet route phải trả đủ aggregate để client không fan-out thêm `/practice-profile` sau mỗi save nếu response đã có projection |
@@ -799,6 +1082,21 @@ Mỗi row phải map được sang route canon hiện có trong `design/04-execu
 - search results aggregate -> hiện map vào `GET /search`
 - offline bundle list page -> hiện map vào `GET /offline-bundles`
 - personal practice calendar page -> hiện map vào `GET /calendar/personal-practice`
+- newcomer faq handbook aggregate -> hiện map vào `GET /content/newcomer/faq-handbook`
+- newcomer onboarding roadmap aggregate -> hiện map vào `GET /content/newcomer/onboarding-roadmap`
+- newcomer onboarding 90d aggregate -> hiện map vào `GET /content/newcomer/onboarding-90d`
+- newcomer encyclopedia aggregate -> hiện map vào `GET /content/newcomer/encyclopedia`
+- newcomer glossary aggregate -> hiện map vào `GET /content/newcomer/glossary`
+- newcomer audio overview aggregate -> hiện map vào `GET /content/newcomer/audio-overview`
+- practice support altar-care aggregate -> hiện map vào `GET /content/practice-support/altar-care`
+- practice support little-house-writing aggregate -> hiện map vào `GET /content/practice-support/little-house-writing-rules`
+- practice support little-house-allocation aggregate -> hiện map vào `GET /content/practice-support/little-house-allocation-guidelines`
+- practice support heart-incense aggregate -> hiện map vào `GET /content/practice-support/heart-incense`
+- practice support name-change aggregate -> hiện map vào `GET /content/practice-support/name-change-ritual`
+- practice support fetal-karma aggregate -> hiện map vào `GET /content/practice-support/fetal-karma-resolution`
+- practice support recitation aggregate -> hiện map vào `GET /content/practice-support/recitation-guide`
+- practice support life-release selection aggregate -> hiện map vào `GET /content/practice-support/life-release-selection-guide`
+- practice support vietnam home-practice aggregate -> hiện map vào `GET /content/practice-support/vietnam-home-practice-guide`
 - member practice profile -> hiện map vào `GET/PATCH /engagement/practice-profile`
 - member practice log list/self-state -> hiện map vào `GET /engagement/practice-logs` và `GET/PUT /engagement/practice-logs/self`
 - member practice sheet detail/mutation -> hiện map vào `GET/PATCH /engagement/practice-sheets/:publicId` và `POST /engagement/practice-sheets/:publicId/complete`
@@ -826,6 +1124,53 @@ Lane `practice profile + baseline guard + private streak` phải dùng naming �
 - shared enum/value schemas:
   - `practiceExperienceTierSchema`
   - `practiceBaselineModeSchema`
+
+Additional naming canon cho newcomer handbook lane:
+
+- request schemas:
+  - `newcomerFaqHandbookQuerySchema`
+  - `newcomerOnboardingRoadmapQuerySchema`
+  - `newcomerOnboarding90dQuerySchema`
+  - `newcomerEncyclopediaQuerySchema`
+  - `newcomerGlossaryQuerySchema`
+  - `newcomerAudioOverviewQuerySchema`
+  - `adminNewcomerFaqHandbookPatchSchema`
+  - `adminNewcomerOnboardingRoadmapPatchSchema`
+  - `adminNewcomerOnboarding90dPatchSchema`
+  - `adminNewcomerEncyclopediaPatchSchema`
+  - `adminNewcomerGlossaryPatchSchema`
+  - `adminNewcomerAudioOverviewPatchSchema`
+  - `adminNewcomerCaseStudyUpsertSchema`
+- response schemas:
+  - `newcomerFaqHandbookDtoSchema`
+  - `newcomerOnboardingRoadmapDtoSchema`
+  - `newcomerOnboarding90dDtoSchema`
+  - `newcomerEncyclopediaDtoSchema`
+  - `newcomerGlossaryDtoSchema`
+  - `newcomerAudioOverviewDtoSchema`
+  - `newcomerFaqEntrySchema`
+  - `newcomerCaseStudySchema`
+  - `newcomerRoadmapWeekSchema`
+  - `newcomerRoadmapTaskSchema`
+
+Additional naming canon cho practice-support lane:
+
+- request schemas:
+  - `practiceSupportVersionQuerySchema`
+  - `practiceSupportScenarioQuerySchema`
+  - `adminPracticeSupportPatchSchema`
+- response schemas:
+  - `practiceSupportAltarCareDtoSchema`
+  - `practiceSupportLittleHouseWritingRulesDtoSchema`
+  - `practiceSupportLittleHouseAllocationGuidelinesDtoSchema`
+  - `practiceSupportHeartIncenseDtoSchema`
+  - `practiceSupportNameChangeRitualDtoSchema`
+  - `practiceSupportFetalKarmaResolutionDtoSchema`
+  - `practiceSupportRecitationGuideDtoSchema`
+  - `practiceSupportLifeReleaseSelectionGuideDtoSchema`
+  - `practiceSupportVietnamHomePracticeGuideDtoSchema`
+  - `practiceSupportRuleItemSchema`
+  - `practiceSupportFlowStepSchema`
 
 Rules:
 
@@ -882,4 +1227,3 @@ Khi một route family đã có row trong file này:
 - Các mutation trong `engagement`, `vows-merit`, `calendar`, `notification` modules mà ảnh hưởng dashboard state phải invalidate `['dashboard']` root key → không invalidate chỉ section key riêng lẻ.
 - Server-side invalidation authority thuộc `apps/api`; client không được tự quyết định invalidation schedule dựa trên timer hoặc scroll event.
 - `advisorySummary` trong dashboard phải đến từ aggregate hoặc phải là aux với query key riêng nếu phase-gated; không để RSC tự gọi calendar API rồi merge.
-

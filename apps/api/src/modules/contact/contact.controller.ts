@@ -37,6 +37,7 @@ export class ContactController {
   }
 
   @Get()
+  @Roles("ADMIN", "SUPER_ADMIN")
   @UsePipes(ZodValidate(contactQuerySchema))
   @ApiOperation({ summary: "Danh sách liên hệ (admin)" })
   @ApiResponse({ status: 200, description: "Danh sách liên hệ" })
@@ -44,11 +45,12 @@ export class ContactController {
     return this.contactService.listContacts(query);
   }
 
-  @Get(":id")
+  @Get(":publicId")
+  @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Chi tiết liên hệ (admin)" })
   @ApiResponse({ status: 200, description: "Chi tiết liên hệ" })
-  getById(@Param("id") id: string) {
-    return this.contactService.getContactById(id);
+  getById(@Param("publicId") publicId: string) {
+    return this.contactService.getContactById(publicId);
   }
 }
 

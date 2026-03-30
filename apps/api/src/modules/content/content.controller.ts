@@ -23,22 +23,22 @@ import {
   createPostSchema,
   updatePostSchema,
   listPostsQuerySchema,
-  type CreatePostInput,
-  type UpdatePostInput,
+  type CreatePostRequest,
+  type UpdatePostRequest,
   type ListPostsQuery,
   guideQuerySchema,
   createGuideSchema,
   updateGuideSchema,
   type GuideQuery,
-  type CreateGuideInput,
-  type UpdateGuideInput,
+  type CreateGuideRequest,
+  type UpdateGuideRequest,
   downloadQuerySchema,
   createDownloadSchema,
   updateDownloadSchema,
   type DownloadQuery,
-  type CreateDownloadInput,
-  type UpdateDownloadInput,
-} from "./content.schemas.js";
+  type CreateDownloadRequest,
+  type UpdateDownloadRequest,
+} from "../../../packages/shared/src/schemas/content.js";
 
 @ApiTags("content")
 @Controller("content")
@@ -101,7 +101,7 @@ export class ContentController {
   @ApiResponse({ status: 201, description: "Bài viết đã được tạo" })
   @ApiResponse({ status: 403, description: "Không có quyền" })
   async createPost(
-    @Body(ZodValidate(createPostSchema)) input: CreatePostInput,
+    @Body(ZodValidate(createPostSchema)) input: CreatePostRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -121,7 +121,7 @@ export class ContentController {
   @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
   async updatePost(
     @Param("publicId") publicId: string,
-    @Body(ZodValidate(updatePostSchema)) input: UpdatePostInput,
+    @Body(ZodValidate(updatePostSchema)) input: UpdatePostRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -234,7 +234,7 @@ export class GuideController {
   @ApiOperation({ summary: "Tạo bài hướng dẫn" })
   @ApiResponse({ status: 201, description: "Đã tạo bài hướng dẫn" })
   async createGuide(
-    @Body(ZodValidate(createGuideSchema)) input: CreateGuideInput,
+    @Body(ZodValidate(createGuideSchema)) input: CreateGuideRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -253,7 +253,7 @@ export class GuideController {
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateGuide(
     @Param("publicId") publicId: string,
-    @Body(ZodValidate(updateGuideSchema)) input: UpdateGuideInput,
+    @Body(ZodValidate(updateGuideSchema)) input: UpdateGuideRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -332,7 +332,7 @@ export class AdminDownloadController {
   @ApiOperation({ summary: "Tạo tài liệu" })
   @ApiResponse({ status: 201, description: "Đã tạo tài liệu" })
   async createDownload(
-    @Body(ZodValidate(createDownloadSchema)) input: CreateDownloadInput,
+    @Body(ZodValidate(createDownloadSchema)) input: CreateDownloadRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
@@ -350,7 +350,7 @@ export class AdminDownloadController {
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateDownload(
     @Param("publicId") publicId: string,
-    @Body(ZodValidate(updateDownloadSchema)) input: UpdateDownloadInput,
+    @Body(ZodValidate(updateDownloadSchema)) input: UpdateDownloadRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {

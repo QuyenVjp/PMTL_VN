@@ -1,0 +1,689 @@
+{
+  "faqHandbook": {
+    "publicId": "faqhb-2026-0001",
+    "slug": "faq-thuc-chien-nguoi-moi",
+    "title": "FAQ Thuc Chien Cho Nguoi Moi PMTL",
+    "intro": "Bo du lieu chuan hoa chapter 10-12 cho BE/FE codegen.",
+    "generalFaq": [
+      {
+        "publicId": "faqg-0001",
+        "question": "Phap Mon Tam Linh la gi?",
+        "answer": "Phap mon thuoc truyen thong Dai thua, tap trung vao Ngu Dai Phap Bao de giai quyet kho khan doi song va huong tu tap.",
+        "sectionKey": "general",
+        "priority": 1,
+        "tags": ["tong-quan", "nguoi-moi"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faqg-0002",
+        "question": "Tu hoc co ton phi khong?",
+        "answer": "Theo tai lieu noi bo, phap mon huong den viec tu hoc mien phi, chi doi hoi su kien tri va tinh tan.",
+        "sectionKey": "general",
+        "priority": 2,
+        "tags": ["chi-phi", "tu-hoc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faqg-0003",
+        "question": "Moi lan cau xin nen cau may viec?",
+        "answer": "Nen giu toi da 1-3 viec cu the de tranh phan tan nguyen luc.",
+        "sectionKey": "general",
+        "priority": 3,
+        "tags": ["cau-nguyen", "nguyen-luc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faqg-0004",
+        "question": "Co the niem kinh cho nguoi than khong?",
+        "answer": "Co the, nhung can xung ro ten doi tuong va giu dung nghi thuc theo huong dan.",
+        "sectionKey": "general",
+        "priority": 4,
+        "tags": ["niem-ho", "gia-dinh"],
+        "sourceTier": "official-guide"
+      }
+    ],
+    "faqSections": [
+      {
+        "sectionKey": "little-house",
+        "title": "Nghi thuc NNN",
+        "orderNo": 1
+      },
+      {
+        "sectionKey": "daily-recitation",
+        "title": "Niem kinh hang ngay",
+        "orderNo": 2
+      },
+      {
+        "sectionKey": "altar-offering",
+        "title": "Phat dai va cung duong",
+        "orderNo": 3
+      },
+      {
+        "sectionKey": "vow-release-dream",
+        "title": "Hua nguyen, phong sinh, giac mo",
+        "orderNo": 4
+      },
+      {
+        "sectionKey": "policy-vn",
+        "title": "Phap ly va van hanh tai VN",
+        "orderNo": 5
+      }
+    ],
+    "faqEntries": [
+      {
+        "publicId": "faq-0001",
+        "question": "In NNN bang giay mau gi?",
+        "answer": "Dung giay vang chanh theo mau chuan.",
+        "sectionKey": "little-house",
+        "priority": 1,
+        "tags": ["nnn", "giay"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0002",
+        "question": "Viet NNN bang but nao?",
+        "answer": "Noi dung ten dung but xanh/den, cham vong tron dung but do.",
+        "sectionKey": "little-house",
+        "priority": 2,
+        "tags": ["nnn", "viet-ten"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0003",
+        "question": "Cham do NNN nhu the nao?",
+        "answer": "Cham vao giua vong tron, khong danh dau cheo, khong lem.",
+        "sectionKey": "little-house",
+        "priority": 3,
+        "tags": ["nnn", "cham-do"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0004",
+        "question": "Gio dot NNN tot nhat?",
+        "answer": "Thuong uu tien ban ngay khi troi on dinh.",
+        "sectionKey": "little-house",
+        "priority": 4,
+        "tags": ["nnn", "thoi-gian"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0005",
+        "question": "Dung dung cu gi de dot NNN?",
+        "answer": "Dung kep/nhiep va dung cu sach, thao tac nhe, khong cau tha.",
+        "sectionKey": "little-house",
+        "priority": 5,
+        "tags": ["nnn", "nghi-thuc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0006",
+        "question": "Xu ly tro NNN the nao?",
+        "answer": "Thu gom gon gang va bo dung noi quy dinh ve ve sinh.",
+        "sectionKey": "little-house",
+        "priority": 6,
+        "tags": ["nnn", "tro"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0007",
+        "question": "Co duoc dot chung NNN voi vang ma khong?",
+        "answer": "Khong khuyen nghi dot chung; can tach biet nghiem tuc theo huong dan.",
+        "sectionKey": "little-house",
+        "priority": 7,
+        "tags": ["nnn", "kieng-ky"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0008",
+        "question": "Viet sai NNN xu ly ra sao?",
+        "answer": "Khong xu ly tuy tien; theo dung quy trinh huy va lam lai dung phap.",
+        "sectionKey": "little-house",
+        "priority": 8,
+        "tags": ["nnn", "loi-sai"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0009",
+        "question": "Co duoc tu ton NNN khong?",
+        "answer": "Co the, nhung phai theo dung quy trinh va muc dich.",
+        "sectionKey": "little-house",
+        "priority": 9,
+        "tags": ["nnn", "tu-ton"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0010",
+        "question": "Neu nha co hien tuong la thi lam sao?",
+        "answer": "Uu tien giu binh tinh, tham chieu huong dan chinh thong va xu ly dung nghi thuc.",
+        "sectionKey": "little-house",
+        "priority": 10,
+        "tags": ["nnn", "nha-o"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0011",
+        "question": "Khung gio nao can tranh niem kinh?",
+        "answer": "Can tranh khung gio duoc liệt ke trong huong dan thuc hanh an toan.",
+        "sectionKey": "daily-recitation",
+        "priority": 11,
+        "tags": ["niem-kinh", "gio-giac"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0012",
+        "question": "Kinh nao can han che niem ban dem?",
+        "answer": "Mot so bai nhay cam theo thoi diem, can bam huong dan canon.",
+        "sectionKey": "daily-recitation",
+        "priority": 12,
+        "tags": ["niem-kinh", "ban-dem"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0013",
+        "question": "Dang niem bi gian doan thi sao?",
+        "answer": "Dung cau tam dung theo huong dan, xong viec tiep tuc dung quy trinh.",
+        "sectionKey": "daily-recitation",
+        "priority": 13,
+        "tags": ["niem-kinh", "gian-doan"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0014",
+        "question": "Nen doc thanh tieng hay doc tham?",
+        "answer": "Giu am luong vua du, on dinh nhip, tranh gang suc.",
+        "sectionKey": "daily-recitation",
+        "priority": 14,
+        "tags": ["niem-kinh", "ky-thuat"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0015",
+        "question": "Dau hieu kich hoat nghiep khi sam hoi la gi?",
+        "answer": "Co the co cam giac kho chiu; xu ly theo huong dan ket hop phap bao.",
+        "sectionKey": "daily-recitation",
+        "priority": 15,
+        "tags": ["sam-hoi", "canh-bao"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0016",
+        "question": "Nuoc Dai Bi dung nhu the nao?",
+        "answer": "Giup tang tinh trang nghiem, dung dung cach va giu ve sinh.",
+        "sectionKey": "altar-offering",
+        "priority": 16,
+        "tags": ["phat-dai", "nuoc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0017",
+        "question": "Moi vi tren ban tho can may coc nuoc?",
+        "answer": "Theo bo cuc huong dan, su dung nhat quan va sach se.",
+        "sectionKey": "altar-offering",
+        "priority": 17,
+        "tags": ["phat-dai", "bo-cuc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0018",
+        "question": "Trai cay nao nen tranh cung?",
+        "answer": "Can theo danh sach kiêng ky trong huong dan chuan.",
+        "sectionKey": "altar-offering",
+        "priority": 18,
+        "tags": ["phat-dai", "cung-duong"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0019",
+        "question": "So luong trai cay cung the nao?",
+        "answer": "Ap dung nguyen tac so luong theo tung tang dia, nhat quan.",
+        "sectionKey": "altar-offering",
+        "priority": 19,
+        "tags": ["phat-dai", "so-luong"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0020",
+        "question": "Dung loai dau nao cho den dau?",
+        "answer": "Uu tien loai dau duoc phep theo huong dan, tranh mui qua manh.",
+        "sectionKey": "altar-offering",
+        "priority": 20,
+        "tags": ["phat-dai", "den-dau"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0021",
+        "question": "Tat den dau bang cach nao?",
+        "answer": "Tat dung cach, khong thao tac vo y theo thoi quen thong thuong.",
+        "sectionKey": "altar-offering",
+        "priority": 21,
+        "tags": ["phat-dai", "an-toan"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0022",
+        "question": "Huong tram (Grand Incense) dung khi nao?",
+        "answer": "Dung trong ngay dac biet theo huong dan, giu tinh trang nghiem.",
+        "sectionKey": "altar-offering",
+        "priority": 22,
+        "tags": ["phat-dai", "ngay-dac-biet"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0023",
+        "question": "Vi pham nguyen luc co hau qua gi?",
+        "answer": "Can xem nghiem tuc, sam hoi va dieu chinh theo huong dan.",
+        "sectionKey": "vow-release-dream",
+        "priority": 23,
+        "tags": ["hua-nguyen", "ky-luat"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0024",
+        "question": "Phong sinh ma sinh vat chet thi sao?",
+        "answer": "Xu ly theo nghi thuc sieu do duoc quy dinh.",
+        "sectionKey": "vow-release-dream",
+        "priority": 24,
+        "tags": ["phong-sinh", "xu-ly"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0025",
+        "question": "Mo thay rung rang ham duoi co y nghia gi?",
+        "answer": "Duoc coi la dau hieu can than trong; uu tien tang canh bao va hoa giai som.",
+        "sectionKey": "vow-release-dream",
+        "priority": 25,
+        "tags": ["giac-mo", "canh-bao"],
+        "sourceTier": "community-summary"
+      },
+      {
+        "publicId": "faq-0026",
+        "question": "Mo thay nguoi la mac do den la gi?",
+        "answer": "Duoc dien giai la can xu ly nghiep duyen, can bam huong dan tu hoc dung phap.",
+        "sectionKey": "vow-release-dream",
+        "priority": 26,
+        "tags": ["giac-mo", "nghiep-duyen"],
+        "sourceTier": "community-summary"
+      },
+      {
+        "publicId": "faq-0027",
+        "question": "Phap mon co bi tranh cai khong?",
+        "answer": "Co tranh cai o mot so noi; can tiep can than trong, ton trong phap luat so tai.",
+        "sectionKey": "policy-vn",
+        "priority": 27,
+        "tags": ["phap-ly", "rui-ro"],
+        "sourceTier": "editorial-safety-note"
+      },
+      {
+        "publicId": "faq-0028",
+        "question": "Phat tu Viet Nam tu hoc cach nao?",
+        "answer": "Chu yeu tu hoc tai gia, bam tai lieu chuan va khong to chuc trai phep.",
+        "sectionKey": "policy-vn",
+        "priority": 28,
+        "tags": ["viet-nam", "tu-hoc"],
+        "sourceTier": "editorial-safety-note"
+      },
+      {
+        "publicId": "faq-0029",
+        "question": "Don doi ten tam linh dung de lam gi?",
+        "answer": "Dung de dong bo ten su dung trong nghi thuc theo huong dan.",
+        "sectionKey": "policy-vn",
+        "priority": 29,
+        "tags": ["doi-ten", "nghi-thuc"],
+        "sourceTier": "official-guide"
+      },
+      {
+        "publicId": "faq-0030",
+        "question": "Lam sao de nguoi nha ung ho ma khong cai va?",
+        "answer": "Uu tien on hoa, tranh tranh chap, van dong bang hanh vi va thuc hanh ben bi.",
+        "sectionKey": "policy-vn",
+        "priority": 30,
+        "tags": ["gia-dinh", "giao-tiep"],
+        "sourceTier": "official-guide"
+      }
+    ],
+    "caseStudies": [
+      {
+        "publicId": "case-0001",
+        "slug": "vo-sinh-10-nam-thai-tu-nhien",
+        "title": "Vo sinh 10 nam co thai tu nhien",
+        "summary": "Case ke ve qua trinh phat nguyen, phong sinh va duy tri cong khoa.",
+        "year": 2016,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "high",
+        "claimedOutcomes": ["mang-thai-tu-nhien", "on-dinh-tam-ly"]
+      },
+      {
+        "publicId": "case-0002",
+        "slug": "phoi-ke-hoai-tu-xuong-hoi-phuc",
+        "title": "Hoi phuc tu benh phoi ke va hoai tu xuong",
+        "summary": "Case testimonial ket hop sam hoi, NNN, phong sinh va an chay.",
+        "year": 2017,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "high",
+        "claimedOutcomes": ["cai-thien-the-trang", "giam-phu-thuoc-thiet-bi"]
+      },
+      {
+        "publicId": "case-0003",
+        "slug": "ung-thu-co-tu-cung-vuot-tram-cam",
+        "title": "Vuot ung thu co tu cung va tram cam",
+        "summary": "Case nhan manh vai tro ky luat va phat nguyen dai han.",
+        "year": 2016,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "high",
+        "claimedOutcomes": ["on-dinh-tinh-than", "cai-thien-chi-so-suc-khoe"]
+      },
+      {
+        "publicId": "case-0004",
+        "slug": "tre-nghien-game-chi-tieu-qua-da",
+        "title": "Tre vi thanh nien giam nghien game va tieu xai",
+        "summary": "Case gia dinh ket hop niem kinh, giai ket chu va theo doi dai han.",
+        "year": 2022,
+        "evidenceTier": "community-compiled",
+        "riskLabel": "medium",
+        "claimedOutcomes": ["giam-nghien-game", "on-dinh-ne-nep"]
+      },
+      {
+        "publicId": "case-0005",
+        "slug": "hoc-sinh-cai-thien-diem-thi",
+        "title": "Hoc sinh cai thien diem thi manh",
+        "summary": "Case chia se ve ky luat hoc tap va niem kinh deu dan.",
+        "year": 2016,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "medium",
+        "claimedOutcomes": ["cai-thien-diem-so", "tap-trung-hoc-tap"]
+      },
+      {
+        "publicId": "case-0006",
+        "slug": "sinh-no-an-toan-o-tuoi-cao",
+        "title": "Case sinh no an toan o tuoi cao",
+        "summary": "Case gia dinh ket hop cau nguyen va giu tam on dinh truoc ca mo.",
+        "year": 2015,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "high",
+        "claimedOutcomes": ["ca-mo-an-toan", "tam-ly-vung"]
+      },
+      {
+        "publicId": "case-0007",
+        "slug": "hoa-giai-xung-dot-me-con",
+        "title": "Hoa giai xung dot me con",
+        "summary": "Case nhan manh doc BTPP va dieu chinh thai do giao tiep.",
+        "year": 2021,
+        "evidenceTier": "community-compiled",
+        "riskLabel": "medium",
+        "claimedOutcomes": ["cai-thien-quan-he-gia-dinh"]
+      },
+      {
+        "publicId": "case-0008",
+        "slug": "hoi-phuc-sau-phau-thuat-dau-goi",
+        "title": "Hoi phuc sau phau thuat dau goi",
+        "summary": "Case ket hop tap luyen kien tri va thuc hanh tu hoc deu.",
+        "year": 2018,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "medium",
+        "claimedOutcomes": ["hoi-phuc-van-dong"]
+      },
+      {
+        "publicId": "case-0009",
+        "slug": "tre-noi-loan-tro-lai-hoc-tap",
+        "title": "Tre noi loan tro lai hoc tap",
+        "summary": "Case gia dinh ket hop Tâm Kinh, giai ket chu va theo doi hanh vi.",
+        "year": 2014,
+        "evidenceTier": "community-compiled",
+        "riskLabel": "medium",
+        "claimedOutcomes": ["on-dinh-hoc-duong", "giam-hanh-vi-xau"]
+      },
+      {
+        "publicId": "case-0010",
+        "slug": "cai-thien-khoi-u-vu",
+        "title": "Case cai thien khoi u vu",
+        "summary": "Case testimonial ket hop phong sinh va an chay.",
+        "year": 2015,
+        "evidenceTier": "self-reported-testimonial",
+        "riskLabel": "high",
+        "claimedOutcomes": ["cai-thien-trieu-chung"]
+      }
+    ],
+    "disclaimerBlock": {
+      "medical": "Noi dung nay khong thay the chan doan, theo doi, hay dieu tri y khoa. Nguoi benh bat buoc phoi hop bac si.",
+      "legal": "Nguoi hoc phai tuan thu phap luat dia phuong, khong to chuc quyen gop hay hoat dong trai phep.",
+      "doctrinal": "Noi dung la tai lieu huong dan tu hoc, khong duoc xem la tuyen bo giao nghia chinh thong cho moi truyen thong Phat giao."
+    },
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "onboardingRoadmap": {
+    "publicId": "onb30-2026-0001",
+    "slug": "lo-trinh-tu-hoc-30-ngay",
+    "title": "Lo Trinh Tu Hoc 30 Ngay Cho Nguoi Moi",
+    "intro": "Roadmap 4 tuan de nguoi moi vao nen nep, tranh ngop va giu dung phap.",
+    "durationDays": 30,
+    "weeks": [
+      {
+        "weekNumber": 1,
+        "title": "Xay dung nen tang va khoi dong",
+        "goal": "Lam quen bai tap hang ngay, giu nhip de va deu.",
+        "tasks": [
+          {
+            "taskKey": "w1-read-core-three",
+            "title": "Doc troi 3 kinh cot loi",
+            "description": "Chu Dai Bi, Tam Kinh, Le Phat Dai Sam Hoi Van.",
+            "taskKind": "recitation",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Doc du tieu de kinh",
+              "Giu nhip on dinh",
+              "Ghi lai muc do hoan thanh"
+            ]
+          },
+          {
+            "taskKey": "w1-daily-count",
+            "title": "Niem hang ngay theo baseline",
+            "description": "Duy tri Chu Dai Bi 3-7 bien va Tam Kinh 3-7 bien.",
+            "taskKind": "recitation",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Niem dung khung gio an toan",
+              "Khong bo buoi lien tiep"
+            ]
+          },
+          {
+            "taskKey": "w1-read-btpp",
+            "title": "Doc BTPP moi ngay 1 bai",
+            "description": "Tap trung hieu ly nhan qua va tam thai ung dung.",
+            "taskKind": "study",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Doc 1 bai/ngay",
+              "Ghi 1 ghi chu rut ra"
+            ]
+          }
+        ],
+        "warnings": [
+          "Tranh niem tu 02:00 den 05:00.",
+          "Tam Kinh/Vang Sinh chu can than trong khung gio dem theo guideline."
+        ]
+      },
+      {
+        "weekNumber": 2,
+        "title": "Kich hoat NNN va ky luat nghi thuc",
+        "goal": "Nham quy trinh NNN dung chuan va ket hop sam hoi nen.",
+        "tasks": [
+          {
+            "taskKey": "w2-prepare-nnn",
+            "title": "Chuan bi dung bo vat dung NNN",
+            "description": "In mau, but, dung cu dot, noi dot sach se.",
+            "taskKind": "ritual",
+            "isRequired": true,
+            "cadence": "one-time",
+            "checklist": [
+              "Co mau in chuan",
+              "Co but dung mau",
+              "Co dung cu dot phu hop"
+            ]
+          },
+          {
+            "taskKey": "w2-apply-writing-rule",
+            "title": "Thuc hanh dung quy tac viet/cham",
+            "description": "Viet thong tin truoc khi niem, cham dung quy tac.",
+            "taskKind": "ritual",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Khong bo qua buoc ghi ten",
+              "Khong danh dau sai mau"
+            ]
+          },
+          {
+            "taskKey": "w2-repentance-1-3",
+            "title": "Dua Le Phat vao bai tap",
+            "description": "Bat dau 1-3 bien/ngay theo suc.",
+            "taskKind": "recitation",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Theo doi phan ung co the",
+              "Giu lich deu"
+            ]
+          }
+        ],
+        "warnings": [
+          "Khong dot ban dem neu khong thuoc tinh huong khan cap.",
+          "Khong xu ly tro tuy tien."
+        ]
+      },
+      {
+        "weekNumber": 3,
+        "title": "Ket noi tam linh va phat nguyen vua suc",
+        "goal": "Lap ket noi on dinh (Phat dai hoac Tam Huong) va nguyen nho ro rang.",
+        "tasks": [
+          {
+            "taskKey": "w3-altar-or-heart-incense",
+            "title": "Chon lane Phat dai hoac Tam Huong",
+            "description": "Neu du dieu kien lap Phat dai; neu khong, dung Tam Huong dung cach.",
+            "taskKind": "ritual",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Co quy trinh co dinh moi ngay",
+              "Khong thao tac tuy hung"
+            ]
+          },
+          {
+            "taskKey": "w3-small-vow",
+            "title": "Phat nguyen nho, cu the",
+            "description": "Nguyen vua suc, toi da 1-2 muc tieu cau xin cu the.",
+            "taskKind": "vow",
+            "isRequired": true,
+            "cadence": "one-time",
+            "checklist": [
+              "Viet ro noi dung nguyen",
+              "Dat moc theo doi"
+            ]
+          }
+        ],
+        "warnings": [
+          "Khong phat nguyen qua suc ngay tu dau.",
+          "Khong bien loi nguyen thanh danh sach mong cau qua nhieu."
+        ]
+      },
+      {
+        "weekNumber": 4,
+        "title": "Hoan thien Ngu Dai Phap Bao",
+        "goal": "Bo sung Phong sinh va chu nho theo nhu cau thuc te.",
+        "tasks": [
+          {
+            "taskKey": "w4-life-release",
+            "title": "Thuc hanh Phong sinh dung nghi thuc",
+            "description": "Di phong sinh ngay phu hop va thao tac nhe nhang.",
+            "taskKind": "life_release",
+            "isRequired": true,
+            "cadence": "weekly",
+            "checklist": [
+              "Co bai niem mo dau",
+              "Co loi khan ro rang",
+              "Xu ly truong hop sinh vat chet theo huong dan"
+            ]
+          },
+          {
+            "taskKey": "w4-add-minor-mantras",
+            "title": "Them chu nho theo tinh huong",
+            "description": "Chuan De, Giai Ket, Tieu Tai, Vang Sinh theo nhu cau.",
+            "taskKind": "recitation",
+            "isRequired": true,
+            "cadence": "daily",
+            "checklist": [
+              "Chon dung muc tieu",
+              "Khong truong ky qua tai"
+            ]
+          },
+          {
+            "taskKey": "w4-review-faq",
+            "title": "On lai FAQ thuc chien",
+            "description": "Ra soat cac canh bao de tranh sai pham co ban.",
+            "taskKind": "faq_review",
+            "isRequired": true,
+            "cadence": "weekly",
+            "checklist": [
+              "Doc lai section NNN",
+              "Doc lai section khung gio",
+              "Doc lai section phap ly"
+            ]
+          }
+        ],
+        "warnings": [
+          "Kien tri va deu quan trong hon tang tai dot ngot.",
+          "Moi dau hieu suc khoe bat thuong can uu tien kham y khoa."
+        ]
+      }
+    ],
+    "completionChecklist": [
+      "Duy tri duoc nhip niem co ban 30 ngay",
+      "Biet su dung FAQ de tu kiem loi sai",
+      "Biet phan biet lane beginner va lane standard",
+      "Co ke hoach tiep tuc sau 30 ngay"
+    ],
+    "safetyRules": [
+      {
+        "code": "time-window-restriction",
+        "label": "Khung gio niem an toan",
+        "description": "Tranh khung gio nhay cam va giu lich nghi hop ly.",
+        "severity": "critical"
+      },
+      {
+        "code": "weather-sensitivity",
+        "label": "Dieu kien thoi tiet",
+        "description": "Mot so bai va nghi thuc can than trong khi thoi tiet khac nghiet.",
+        "severity": "warning"
+      },
+      {
+        "code": "medical-priority",
+        "label": "Uu tien y khoa",
+        "description": "Noi dung tam linh khong thay the tham kham va dieu tri y khoa.",
+        "severity": "critical"
+      },
+      {
+        "code": "legal-compliance",
+        "label": "Tuan thu phap luat",
+        "description": "Tu hoc dung phap, khong to chuc tai chinh trai phep.",
+        "severity": "critical"
+      }
+    ],
+    "nextActions": [
+      {
+        "label": "Mo FAQ thuc chien",
+        "href": "/huong-dan/faq-thuc-chien"
+      },
+      {
+        "label": "Bat dau cong khoa hang ngay",
+        "href": "/tu-tap/bai-tap"
+      },
+      {
+        "label": "Theo doi NNN",
+        "href": "/tu-tap/nha-nho"
+      }
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  }
+}

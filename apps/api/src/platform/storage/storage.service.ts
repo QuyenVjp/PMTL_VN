@@ -16,9 +16,10 @@
  * ✓ Virus scan stub (hook for future ClamAV integration)
  * ✓ Audit logging via caller responsibility (appendInTransaction)
  */
-import { Injectable, BadRequestException, ForbiddenException } from "@nestjs/common";
+import { Injectable, BadRequestException, ForbiddenException, Logger } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { fileTypeFromBuffer } from "file-type";
+import net from "node:net";
 import { ConfigService } from "../../common/config/config.service.js";
 import { LocalStorageAdapter } from "./local-storage.adapter.js";
 import { MediaAssetsRepository } from "./media-assets.repository.js";
@@ -31,6 +32,7 @@ type AllowedMimeType = (typeof ALL_ALLOWED_TYPES)[number];
 @Injectable()
 export class StorageService {
   private readonly adapter: StorageInterface;
+  private readonly logger = new Logger(StorageService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -72,8 +74,8 @@ export class StorageService {
       throw new BadRequestException(`File vượt quá dung lượng cho phép (${maxSize}MB)`);
     }
 
-    // Step 4: Virus scan stub — hook for future ClamAV integration
-    await this.virusScanStub(buffer);
+    // Step 4: Virus scan (optional by env)
+    await this.virusScan(buffer);
 
     // Step 5: Secure filename — NEVER trust client filename
     const publicId = nanoid(21);
@@ -171,15 +173,85 @@ export class StorageService {
     return ALL_ALLOWED_TYPES.includes(mimeType as AllowedMimeType);
   }
 
-  /**
-   * Virus scan stub — Phase 1: no-op.
-   * When ClamAV is available, replace with actual scan via clamdscan or REST API.
-   * Constitution: upload hardening requires virus scan stub.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private async virusScanStub(buffer: Buffer): Promise<void> {
-    // TODO: integrate ClamAV when available on VPS
-    // const result = await clamav.scanBuffer(buffer);
-    // if (result.isInfected) throw new BadRequestException("File bị phát hiện mã độc");
+  private async virusScan(buffer: Buffer): Promise<void> {
+    if (!this.configService.clamavEnabled) {
+      return;
+    }
+    const result = await this.scanWithClamavInstream(buffer);
+    if (!result.ok) {
+      throw new BadRequestException(`ClamAV scan lỗi: ${result.reason}`);
+    }
+    if (result.infected) {
+      throw new BadRequestException("File bị phát hiện mã độc");
+    }
+  }
+
+  private async scanWithClamavInstream(buffer: Buffer): Promise<{ ok: boolean; infected: boolean; reason?: string }> {
+    return await new Promise((resolve) => {
+      const socket = net.createConnection({
+        host: this.configService.clamavHost,
+        port: this.configService.clamavPort,
+      });
+
+      const timeout = setTimeout(() => {
+        socket.destroy();
+        resolve({ ok: false, infected: false, reason: "scan_timeout" });
+      }, this.configService.clamavTimeoutMs);
+
+      let response = "";
+
+      socket.on("connect", () => {
+        try {
+          socket.write("zINSTREAM\0");
+
+          const chunkSize = 64 * 1024;
+          for (let offset = 0; offset < buffer.length; offset += chunkSize) {
+            const end = Math.min(offset + chunkSize, buffer.length);
+            const chunk = buffer.subarray(offset, end);
+            const lenBuf = Buffer.alloc(4);
+            lenBuf.writeUInt32BE(chunk.length, 0);
+            socket.write(lenBuf);
+            socket.write(chunk);
+          }
+
+          const endBuf = Buffer.alloc(4);
+          endBuf.writeUInt32BE(0, 0);
+          socket.write(endBuf);
+          socket.end();
+        } catch (error) {
+          clearTimeout(timeout);
+          socket.destroy();
+          resolve({
+            ok: false,
+            infected: false,
+            reason: error instanceof Error ? error.message : "scan_write_failed",
+          });
+        }
+      });
+
+      socket.on("data", (data) => {
+        response += data.toString("utf8");
+      });
+
+      socket.on("end", () => {
+        clearTimeout(timeout);
+        const normalized = response.toUpperCase();
+        if (normalized.includes("FOUND")) {
+          resolve({ ok: true, infected: true });
+          return;
+        }
+        if (normalized.includes("OK")) {
+          resolve({ ok: true, infected: false });
+          return;
+        }
+        resolve({ ok: false, infected: false, reason: response || "scan_unknown_response" });
+      });
+
+      socket.on("error", (error) => {
+        clearTimeout(timeout);
+        this.logger.warn(`ClamAV unavailable: ${error.message}`);
+        resolve({ ok: false, infected: false, reason: "clamav_unreachable" });
+      });
+    });
   }
 }

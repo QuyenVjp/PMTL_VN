@@ -1,0 +1,541 @@
+{
+  "altarCare": {
+    "publicId": "ps-altar-0001",
+    "slug": "thiet-lap-va-bao-duong-phat-dai",
+    "title": "Thiet Lap Phat Dai Va Bao Duong",
+    "locationRules": [
+      {
+        "ruleCode": "clean-bright-near-window",
+        "label": "Vi tri sach va sang",
+        "description": "Dat ban tho noi sach se, sang sua, uu tien gan cua so nhung co diem tua vung.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "avoid-kitchen-toilet-opposite",
+        "label": "Tranh vi tri xung",
+        "description": "Khong dat doi dien bep, gan nha ve sinh, duoi may lanh, tren TV/tu lanh.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "cabinet-fallback",
+        "label": "Giai phap tu co cua",
+        "description": "Neu khong gian han che, dung tu go co cua, mo khi dang huong, dong khi xong.",
+        "severity": "warning"
+      }
+    ],
+    "placementRules": [
+      {
+        "ruleCode": "guanyin-center",
+        "label": "Quán Thế Âm ở trung tâm",
+        "description": "Khi thờ nhiều vị theo pháp môn, giữ trật tự vị trí canon, Quán Thế Âm ở giữa.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "statue-height",
+        "label": "Do cao ton tuong",
+        "description": "Tuong/anh dat cao hon tam mat mot chut.",
+        "severity": "info"
+      }
+    ],
+    "offeringRules": {
+      "water": [
+        {
+          "ruleCode": "one-cup-per-bodhisattva",
+          "label": "Moi vi mot coc rieng",
+          "description": "Nuoc sach, coc tron trang, thay nuoc hang ngay; khong uong truc tiep tu coc cung.",
+          "severity": "critical"
+        }
+      ],
+      "oilLamp": [
+        {
+          "ruleCode": "vegetable-oil-only",
+          "label": "Dung dau thuc vat",
+          "description": "Dung dau olive/bap/hat cai; tranh dau mui manh.",
+          "severity": "critical"
+        },
+        {
+          "ruleCode": "extinguish-before-incense-end",
+          "label": "Tat den truoc khi huong tan",
+          "description": "Tat bang nap day, khong thoi mieng.",
+          "severity": "critical"
+        }
+      ],
+      "fruit": [
+        {
+          "ruleCode": "odd-count-per-layer",
+          "label": "So le tren moi tang",
+          "description": "Xep trai cay theo nguyen tac so le tren moi tang dia.",
+          "severity": "warning"
+        }
+      ],
+      "flowers": [
+        {
+          "ruleCode": "avoid-thorny-flowers",
+          "label": "Tranh hoa co gai",
+          "description": "Khong dat hoa co gai/chau cay co dat len ban tho.",
+          "severity": "warning"
+        }
+      ],
+      "incense": [
+        {
+          "ruleCode": "fixed-offering-time",
+          "label": "Gio dang huong co dinh",
+          "description": "Dang huong deu dan theo khung gio co dinh, ngay dac biet co the tang muc dang huong.",
+          "severity": "info"
+        }
+      ]
+    },
+    "maintenanceSteps": [
+      { "stepNumber": 1, "title": "Kiem tra vat pham", "action": "Thay nuoc, hoa, trai cay moi truoc khi di xa." },
+      { "stepNumber": 2, "title": "Lau don nhe", "action": "Lau nhe ban ngay bang khan sach, tranh cham vao tuong tuy tien." },
+      { "stepNumber": 3, "title": "Bao tri den dau", "action": "Bo sung dau, tat dung cach, khong de den vuot quy tac." }
+    ],
+    "specialCases": [
+      {
+        "ruleCode": "travel-with-photo",
+        "label": "Di xa mang anh ban tho",
+        "description": "Co the chup anh ban tho (khi khong dang huong), boc vai do de duyn tri Tam Huong.",
+        "severity": "info"
+      },
+      {
+        "ruleCode": "move-home-sequence",
+        "label": "Thu tu khi chuyen nha",
+        "description": "Thinh ban tho theo nghi thuc, uu tien lap ban tho o nha moi som.",
+        "severity": "critical"
+      }
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "littleHouseWritingRules": {
+    "publicId": "ps-lhw-0001",
+    "slug": "quy-tac-viet-va-cham-do-nnn",
+    "title": "Quy Tac Viet Ten Va Cham Do NNN",
+    "namingRules": {
+      "inkColor": ["blue", "black"],
+      "writeBeforeRecite": true,
+      "recipientPatterns": [
+        "Oan gia trai chu cua [Ho ten]",
+        "Dua tre cua [Ho ten me]",
+        "Oan gia trai chu cua ngoi nha cua [Ho ten]"
+      ],
+      "giverPattern": "[Ho ten nguoi niem]",
+      "dateFillRule": "Dien ngay sau khi hoan tat niem va cham do."
+    },
+    "dottingRules": {
+      "dotColor": "red",
+      "timingRule": "Chi cham sau khi niem xong.",
+      "shapeRule": "Cham vao giua vong tron, khong V/X, khong lem vien.",
+      "fillPercentGuideline": "Khoang 80 phan tram dien tich vong tron.",
+      "sequenceGuideline": "Uu tien cham tu duoi len tren."
+    },
+    "errorRecoveryRules": {
+      "doNotTear": true,
+      "doNotBurnInvalidSheet": true,
+      "disposeFlow": [
+        "Gach bo thong tin sai.",
+        "Gap gon to sai, boc giay sach, bo rac sinh hoat.",
+        "Khans xin xac nhan to sai khong con gia tri."
+      ],
+      "rebuildFlow": [
+        "Lay to moi.",
+        "Cham lai phan da niem theo dung quy tac."
+      ]
+    },
+    "examples": [
+      "To sai ten nguoi nhan -> huy dung flow, khong xé, khong dot.",
+      "Cham lem vien -> xu ly nhu to sai, tao to moi."
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "littleHouseAllocationGuidelines": {
+    "publicId": "ps-lha-0001",
+    "slug": "dinh-muc-nnn-theo-tinh-huong",
+    "title": "Dinh Muc So To NNN Theo Tinh Huong",
+    "baseRange": "Nguoi moi: 4 den 10 to cho Oan gia trai chu cua [Ho ten day du].",
+    "scenarioGuidelines": [
+      {
+        "scenarioCode": "unexplained-body-pain",
+        "title": "Dau nhuc khong ro nguyen nhan",
+        "suggestedRange": "7 den 9 to",
+        "recipientTemplate": "Oan gia trai chu cua [Ho ten]",
+        "notes": "Dung nhu dot mo dau, theo doi phan ung va tiep tuc theo thuc te."
+      },
+      {
+        "scenarioCode": "abortion-or-miscarriage",
+        "title": "Tung say thai/pha thai",
+        "suggestedRange": "7 den 21 to moi thai nhi",
+        "recipientTemplate": "Dua tre cua [Ho ten nguoi me]",
+        "notes": "So luong thuc te co the cao hon tuy nghiep luc."
+      },
+      {
+        "scenarioCode": "dream-of-deceased",
+        "title": "Mo thay nguoi da khuất",
+        "suggestedRange": "7 to moi nguoi; thuong can 21+ cho sieu do",
+        "recipientTemplate": "[Ho ten nguoi da khuất]",
+        "notes": "Neu mo thay nguoi la mac do den: 4 to moi nguoi."
+      },
+      {
+        "scenarioCode": "relationship-conflict",
+        "title": "Hoa giai mau thuan",
+        "suggestedRange": "7 to/dot, co the lap lai",
+        "recipientTemplate": "[Ho ten] hoa giai oan ket",
+        "notes": "Danh gia theo tien trinh quan he, khong dot ngot qua tai."
+      },
+      {
+        "scenarioCode": "spirit-in-house",
+        "title": "Nha co dau hieu bat on",
+        "suggestedRange": "4 den 7 to",
+        "recipientTemplate": "Oan gia trai chu cua ngoi nha cua [Ho ten chu nha]",
+        "notes": "Ket hop ra soat yeu to ky thuat nha o."
+      }
+    ],
+    "combinationRules": [
+      "Neu Le Phat Dai Sam Hoi Van 3 bien/ngay, can duy tri NNN toi thieu tuong ung moi tuan.",
+      "Neu tang cuong Le Phat, can tang NNN theo nguyen tac can bang nghiep-khau."
+    ],
+    "continuityNotes": [
+      "NNN la lane duy tri dai han, khong phai one-off.",
+      "Khi hoan canh doi (benh vien, vieng mo, xung dot lon), can danh gia va dieu chinh dot moi."
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "heartIncense": {
+    "publicId": "ps-heart-0001",
+    "slug": "tam-huong-9-buoc",
+    "title": "Nghi Thuc Tam Huong 9 Buoc",
+    "steps": [
+      { "stepNumber": 1, "title": "Chuan bi", "action": "Rua tay, chon noi yen tinh, dinh tam.", "mentalOnly": false },
+      { "stepNumber": 2, "title": "Tinh khau", "action": "Niem Tinh Khau Nghiep Chan Ngon theo huong dan.", "mentalOnly": false },
+      { "stepNumber": 3, "title": "Quan tuong moi huong", "action": "Quan tuong thap den, moi 3 nen huong.", "mentalOnly": true },
+      { "stepNumber": 4, "title": "Thinh an", "action": "Niem tham cau thinh an 3 lan.", "mentalOnly": true },
+      { "stepNumber": 5, "title": "Quan tuong dang huong", "action": "Quan tuong cam huong vao lu.", "mentalOnly": true },
+      { "stepNumber": 6, "title": "Quan tuong le bai", "action": "Quan tuong quy lay 3 lay.", "mentalOnly": true },
+      { "stepNumber": 7, "title": "Cam ta", "action": "Niem tham loi cam ta.", "mentalOnly": true },
+      { "stepNumber": 8, "title": "Niem That Phat", "action": "Niem 7 bien That Phat Diet Toi Chan Ngon.", "mentalOnly": true },
+      { "stepNumber": 9, "title": "Hoan tat", "action": "Quan tuong le ket thuc.", "mentalOnly": true }
+    ],
+    "travelModeRules": [
+      {
+        "ruleCode": "mental-visualization-only",
+        "label": "Thuc hien bang quan tuong",
+        "description": "Ngoai viec chap tay ban dau, cac dong tac dang huong/le bai uu tien thuc hien trong tam.",
+        "severity": "critical"
+      }
+    ],
+    "doNotRules": [
+      {
+        "ruleCode": "no-physical-imitation-without-altar",
+        "label": "Khong lam dong tac gia ben ngoai",
+        "description": "Tranh thao tac vat ly mo phong khi khong co ban tho phu hop.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "no-direct-worship-to-random-screen-image",
+        "label": "Khong bai lay tuy tien vao hinh man hinh",
+        "description": "Hinh anh tren man hinh chi de dinh tam ban dau.",
+        "severity": "warning"
+      }
+    ],
+    "littleHouseEmergencyFlow": [
+      { "stepNumber": 1, "title": "Dung Tam Huong den buoc thinh an", "action": "Hoan tat buoc 1 den 4 cua Tam Huong.", "mentalOnly": true },
+      { "stepNumber": 2, "title": "Niem bo sung", "action": "Niem 1 bien Chu Dai Bi va 1 bien Tam Kinh.", "mentalOnly": false },
+      { "stepNumber": 3, "title": "Khans chuyen giao NNN", "action": "Nang NNN ngang tran, khans xin chuyen giao.", "mentalOnly": true },
+      { "stepNumber": 4, "title": "Dot dung quy tac", "action": "Dot dung goc quy dinh va thu gom tro dung cach.", "mentalOnly": false }
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "nameChangeRitual": {
+    "publicId": "ps-name-0001",
+    "slug": "don-thang-van-doi-ten",
+    "title": "Don Thang Van Doi Ten",
+    "overview": "Nghiep vu cap nhat ten moi cho muc dich tam linh de dung tren NNN va bai khan.",
+    "preparationRules": [
+      {
+        "ruleCode": "yellow-a4-form",
+        "label": "In don giay vang A4",
+        "description": "Su dung mau don chuan, in hoac viet tay tren giay A4 mau vang.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "fill-old-and-new-name",
+        "label": "Dien ten cu va ten moi day du",
+        "description": "Dien ten goc, ten moi, dia diem, ngay dot don theo duong lich.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "new-name-for-little-house-after-ritual",
+        "label": "Dung ten moi tren NNN sau nghi thuc",
+        "description": "Sau khi hoan tat nghi thuc co the dung ten moi; giai doan chuyen tiep co the ghi ten cu (ten moi).",
+        "severity": "warning"
+      }
+    ],
+    "timingRules": [
+      {
+        "ruleCode": "sunny-day-preferred",
+        "label": "Uu tien ngay nang",
+        "description": "Thuc hien vao ngay thoi tiet on dinh, han che mua bao.",
+        "severity": "warning"
+      },
+      {
+        "ruleCode": "lunar-1-or-15-preferred",
+        "label": "Uu tien mung 1 hoac 15 am",
+        "description": "Khung ngay duoc uu tien cho nghiep vu doi ten tam linh.",
+        "severity": "info"
+      },
+      {
+        "ruleCode": "time-window-6-8-16",
+        "label": "Khung gio uu tien",
+        "description": "Uu tien 6h, 8h sang hoac 16h chieu.",
+        "severity": "info"
+      }
+    ],
+    "withAltarFlow": [
+      { "stepNumber": 1, "title": "Dang den va huong", "action": "Thap den dau va dang huong tai Phat dai." },
+      { "stepNumber": 2, "title": "Doc don", "action": "Quy doc noi dung don thang van doi ten." },
+      { "stepNumber": 3, "title": "Tri chu", "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh." },
+      { "stepNumber": 4, "title": "Hoa don", "action": "Dot don tu tren xuong duoi, dam bao chay het." }
+    ],
+    "withoutAltarFlow": [
+      { "stepNumber": 1, "title": "Den chua", "action": "Toi chua, le Phat va quy truoc tuong Quan The Am." },
+      { "stepNumber": 2, "title": "Khan xac nhan doi ten", "action": "Xung ten cu va ten moi, cau xin chung minh." },
+      { "stepNumber": 3, "title": "Tri chu", "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh." },
+      { "stepNumber": 4, "title": "Hoa don dung noi quy", "action": "Dot don tai khu hoa vang/lu huong theo quy dinh." }
+    ],
+    "successSignals": [
+      "Cam thay nhe long, tam trang on dinh hon sau nghi thuc.",
+      "Qua trinh dung ten moi trong bai khan va NNN on dinh, it tro ngai."
+    ],
+    "postRitualNotes": [
+      "Thoi gian hoi tu ten moi thuong can 3 thang den 100 ngay.",
+      "Nen xung ten moi trong bai niem hang ngay de on dinh ket noi.",
+      "Neu thay bat on keo dai, co the thuc hien lai nghi thuc."
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "fetalKarmaResolution": {
+    "publicId": "ps-fetal-0001",
+    "slug": "hoa-giai-nghiep-thai-nhi",
+    "title": "Hoa Giai Nghiep Thai Nhi",
+    "overview": "Lane ho tro cho truong hop say thai/pha thai/ngoai tu cung voi trong tam NNN va sam hoi.",
+    "littleHouseRules": {
+      "recipientTemplate": "Dua tre cua [Ho ten day du cua me]",
+      "baseRangePerChild": "7 den 21 to moi thai nhi",
+      "escalationRange": "Co the tang theo dot 49 hoac 108 khi nghiep luc nang"
+    },
+    "repentanceRules": [
+      {
+        "ruleCode": "daily-lifo-repentance",
+        "label": "Duy tri Le Phat Dai Sam Hoi Van",
+        "description": "Dua Le Phat vao bai tap hang ngay theo kha nang va phac do ca nhan.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "pair-repentance-with-little-house",
+        "label": "Sam hoi phai di kem NNN",
+        "description": "Khi tang cuong sam hoi can duy tri NNN de can bang lane tra nghiep.",
+        "severity": "critical"
+      }
+    ],
+    "additionalMantras": [
+      {
+        "name": "Cong Duc Bao Son Than Chu",
+        "purpose": "Bo tro ket noi cong duc va nguyen luc cho doi tuong duoc hoi huong.",
+        "prayerHint": "Khan ro doi tuong la dua tre cua [Ho ten me] truoc khi niem."
+      }
+    ],
+    "dreamSignals": {
+      "resolvedSignals": [
+        "Mo thay tre em sach se, vui ve, den chao roi di.",
+        "Mo thay tre duoc dan di khoi boi canh am toi."
+      ],
+      "unresolvedSignals": [
+        "Mo thay tre khoc, lanh, quan ao te tai.",
+        "Mo thay canh bi quay roi lap lai, can tiep tuc NNN."
+      ]
+    },
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "recitationGuide": {
+    "publicId": "ps-recite-0001",
+    "slug": "niem-kinh-hang-ngay",
+    "title": "Niem Kinh Hang Ngay",
+    "overview": "Tong hop bo kinh nen tang va thap tieu chu, kem quy tac khung gio va ung dung theo tinh huong.",
+    "coreRecitations": [
+      {
+        "name": "Chu Dai Bi",
+        "purpose": "Tang cong luc, ho than, bo tro xu ly giai doan kho khan.",
+        "baselineCount": "3 den 7 bien/ngay",
+        "intensiveCount": "21 den 49 bien/ngay theo dot ho tro"
+      },
+      {
+        "name": "Tam Kinh",
+        "purpose": "Khai tri tue, on dinh cam xuc, bo tro hoa giai quan he.",
+        "baselineCount": "3 den 7 bien/ngay",
+        "intensiveCount": "49 bien/ngay theo phac do dac thu"
+      },
+      {
+        "name": "Le Phat Dai Sam Hoi Van",
+        "purpose": "Sam hoi nghiep cu va giam chuong ngai nghiep luc.",
+        "baselineCount": "1 den 3 bien/ngay",
+        "intensiveCount": "3 den 5 bien/ngay, khong vuot nguong owner rule"
+      }
+    ],
+    "minorMantras": [
+      { "name": "Vang Sinh Chu", "useCase": "Sieu do dong vat nho tung sat hai/an thit.", "typicalRange": "21/27/49 bien" },
+      { "name": "Giai Ket Chu", "useCase": "Hoa giai mau thuan gia dinh, dong nghiep.", "typicalRange": "21/27/49 bien" },
+      { "name": "Tieu Tai Cat Tuong Than Chu", "useCase": "Ho tro giai nan dot xuat.", "typicalRange": "21/27/49 bien" },
+      { "name": "Chuan De Than Chu", "useCase": "Cau hoc tap, cong viec, thi cu.", "typicalRange": "21/27/49 bien" },
+      { "name": "Cong Duc Bao Son Than Chu", "useCase": "Chuyen hoa viec thien thanh cong duc.", "typicalRange": "21/27/49 bien" }
+    ],
+    "timeRules": [
+      {
+        "ruleCode": "no-chanting-2-to-5-am",
+        "label": "Tranh khung 2h-5h",
+        "description": "Khung gio can than trong, tranh niem kinh trong khoang nay.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "heart-and-rebirth-before-10pm",
+        "label": "Tam Kinh/Vang Sinh truoc 22h",
+        "description": "Han che Tam Kinh va Vang Sinh sau 22h va khi thoi tiet xau.",
+        "severity": "critical"
+      }
+    ],
+    "applicationScenarios": [
+      "Tang cuong Chu Dai Bi khi truoc phau thuat hoac giai doan ap luc cao.",
+      "Tang Tam Kinh khi can on dinh cam xuc va tap trung tri tue.",
+      "Khi tang Le Phat can doi ung NNN theo lane can bang nghiep."
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "lifeReleaseSelectionGuide": {
+    "publicId": "ps-release-0001",
+    "slug": "chon-loai-dong-vat-phong-sanh",
+    "title": "Chon Loai Dong Vat Phong Sanh",
+    "overview": "Huong dan lua chon doi tuong phong sanh va nghiem ngat bao toan he sinh thai.",
+    "speciesSelectionRules": [
+      {
+        "ruleCode": "rescue-near-slaughter-first",
+        "label": "Uu tien doi tuong can ke giet mo",
+        "description": "Uu tien sinh vat dang cho bi giết mo de toi uu y nghia cuu mang.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "use-owner-or-beneficiary-money",
+        "label": "Uu tien dung nguon tien dung chu the",
+        "description": "Nen dung tien cua ban than hoac nguoi duoc hoi huong.",
+        "severity": "warning"
+      }
+    ],
+    "ecologyRules": [
+      {
+        "ruleCode": "freshwater-saltwater-match",
+        "label": "Dung moi truong nuoc",
+        "description": "Khong tha ca nuoc ngot ra bien va nguoc lai.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "avoid-polluted-or-heavy-netting-zones",
+        "label": "Tranh vung o nhiem/bat manh",
+        "description": "Tranh noi nuoc ban, danh bat day dac, nguy co tai sat hai cao.",
+        "severity": "critical"
+      }
+    ],
+    "ritualFlow": [
+      { "stepNumber": 1, "title": "Tren duong di", "action": "Niem Chu Dai Bi de giu tam va on dinh nang luong." },
+      { "stepNumber": 2, "title": "Toi noi tha", "action": "Cam ta, niem 1 Dai Bi, 1 Tam Kinh, 7 That Phat Diet Toi." },
+      { "stepNumber": 3, "title": "Khan ro muc tieu", "action": "Noi ro ten chu the, so luong vat mang va nguyen vong phu hop." },
+      { "stepNumber": 4, "title": "Tha nhe nhang", "action": "Tha dung cach, tiep tuc giu tam niem on dinh." }
+    ],
+    "emergencyHandling": [
+      {
+        "ruleCode": "recite-rebirth-for-dead-animals",
+        "label": "Niem Vang Sinh khi co con chet",
+        "description": "Neu co vat mang chet trong luc van chuyen thi can niem Vang Sinh theo dinh muc canhanh.",
+        "severity": "critical"
+      }
+    ],
+    "recommendedTiming": [
+      "Uu tien mung 1, 15 am lich hoac ngay Via.",
+      "Uu tien ngay nang on dinh va truoc cac dot kho khan lon."
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  },
+  "vietnamHomePracticeGuide": {
+    "publicId": "ps-vnhome-0001",
+    "slug": "tu-tu-tai-gia-viet-nam",
+    "title": "Tu Tu Tai Gia Viet Nam",
+    "overview": "Checklist ky luat cho nguoi tu hoc tai gia trong boi canh khong co Quan Am Duong chinh thuc.",
+    "homeAltarRules": [
+      {
+        "ruleCode": "altar-clean-bright-stable",
+        "label": "Phat dai sach-sang-vung",
+        "description": "Dat noi sach sang, tua tuong vung, tranh vi tri xung khac.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "offering-hygiene-discipline",
+        "label": "Ky luat nuoc-den-hoa-trai",
+        "description": "Thay nuoc hang ngay, dung dau thuc vat, giu quy tac hoa trai canon.",
+        "severity": "critical"
+      }
+    ],
+    "heartIncenseFallbackRules": [
+      {
+        "ruleCode": "mental-ritual-only",
+        "label": "Tam Huong bang quan tuong",
+        "description": "Khi khong co ban tho thi thao tac dang huong/le bai thuc hien trong tam.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "add-dabei-xinjing-before-emergency-burn",
+        "label": "Bo sung 1 Dai Bi + 1 Tam Kinh",
+        "description": "Neu dot NNN khi di xa, bo sung 1 Dai Bi + 1 Tam Kinh truoc khi dot.",
+        "severity": "critical"
+      }
+    ],
+    "littleHouseDisciplineRules": [
+      {
+        "ruleCode": "write-names-before-reciting",
+        "label": "Viet ten truoc khi niem",
+        "description": "Ghi Kinh Tang/Tang truoc khi niem; cham do dung quy tac.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "burning-time-weather-guard",
+        "label": "Gio giac va thoi tiet",
+        "description": "Tranh dot sau lan mat troi va khi mua bao, sam chop.",
+        "severity": "critical"
+      }
+    ],
+    "familyCoordinationRules": [
+      {
+        "ruleCode": "no-forcing-no-argument",
+        "label": "Khong ep buoc, khong tranh cai",
+        "description": "Xu ly bat dong trong gia dinh bang thai do on hoa, tranh khau nghiep.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "heart-sutra-for-family-softening",
+        "label": "Niem Tam Kinh ho tro gia dinh",
+        "description": "Duy tri lane niem Tam Kinh cho nguoi than theo huong dan can bang.",
+        "severity": "warning"
+      }
+    ],
+    "complianceAndEthicsRules": [
+      {
+        "ruleCode": "follow-local-laws",
+        "label": "Tuan thu phap luat so tai",
+        "description": "Tu hoc tren nen tang tu nguyen, khong tham gia hoat dong tai chinh bat hop phap.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "avoid-political-conflict",
+        "label": "Tranh tranh cai chinh tri",
+        "description": "Giu ky luat chanh tin, tap trung vao tu sua ban than.",
+        "severity": "warning"
+      }
+    ],
+    "updatedAt": "2026-03-29T12:00:00Z"
+  }
+}

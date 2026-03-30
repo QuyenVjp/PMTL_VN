@@ -148,6 +148,23 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/content/posts/:publicId/publish` | `content` | editor+ |
 | `GET` | `/content/beginner-guides` | `content` | public |
 | `GET` | `/content/beginner-guides/:slug` | `content` | public |
+| `GET` | `/content/newcomer/faq-handbook` | `content` | public |
+| `GET` | `/content/newcomer/onboarding-roadmap` | `content` | public |
+| `GET` | `/content/newcomer/onboarding-90d` | `content` | public |
+| `GET` | `/content/newcomer/encyclopedia` | `content` | public |
+| `GET` | `/content/newcomer/glossary` | `content` | public |
+| `GET` | `/content/newcomer/audio-overview` | `content` | public |
+| `GET` | `/content/newcomer/case-studies` | `content` | public |
+| `GET` | `/content/newcomer/case-studies/:slug` | `content` | public |
+| `GET` | `/content/practice-support/altar-care` | `content` | public |
+| `GET` | `/content/practice-support/little-house-writing-rules` | `content` | public |
+| `GET` | `/content/practice-support/little-house-allocation-guidelines` | `content` | public |
+| `GET` | `/content/practice-support/heart-incense` | `content` | public |
+| `GET` | `/content/practice-support/name-change-ritual` | `content` | public |
+| `GET` | `/content/practice-support/fetal-karma-resolution` | `content` | public |
+| `GET` | `/content/practice-support/recitation-guide` | `content` | public |
+| `GET` | `/content/practice-support/life-release-selection-guide` | `content` | public |
+| `GET` | `/content/practice-support/vietnam-home-practice-guide` | `content` | public |
 | `GET` | `/content/guides` | `content` | public |
 | `GET` | `/content/downloads` | `content` | public |
 | `GET` | `/content/sutras` | `content` | public |
@@ -239,6 +256,39 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 | `POST` | `/admin/content/life-release/faq` | `content` | editor+ |
 | `PATCH` | `/admin/content/life-release/faq/:publicId` | `content` | editor+ |
 | `POST` | `/admin/content/life-release/publish` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/faq-handbook` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/faq-handbook` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/onboarding-roadmap` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/onboarding-roadmap` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/onboarding-90d` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/onboarding-90d` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/encyclopedia` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/encyclopedia` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/glossary` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/glossary` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/audio-overview` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/audio-overview` | `content` | editor+ |
+| `GET` | `/admin/content/newcomer/case-studies` | `content` | editor+ |
+| `POST` | `/admin/content/newcomer/case-studies` | `content` | editor+ |
+| `PATCH` | `/admin/content/newcomer/case-studies/:publicId` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/altar-care` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/altar-care` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/little-house-writing-rules` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/little-house-writing-rules` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/little-house-allocation-guidelines` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/little-house-allocation-guidelines` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/heart-incense` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/heart-incense` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/name-change-ritual` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/name-change-ritual` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/fetal-karma-resolution` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/fetal-karma-resolution` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/recitation-guide` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/recitation-guide` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/life-release-selection-guide` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/life-release-selection-guide` | `content` | editor+ |
+| `GET` | `/admin/content/practice-support/vietnam-home-practice-guide` | `content` | editor+ |
+| `PATCH` | `/admin/content/practice-support/vietnam-home-practice-guide` | `content` | editor+ |
 | `GET` | `/admin/content/media-library/overview` | `content` | editor+ |
 | `POST` | `/admin/content/media-library/collections` | `content` | editor+ |
 | `PATCH` | `/admin/content/media-library/collections/:publicId` | `content` | editor+ |
@@ -267,6 +317,10 @@ Nếu một feature nghe giống managed-platform feature như auth, signed uplo
 > `GET /content/chant-hub` là public support aggregate cho `/niem-kinh`; không để web tự ghép chant items + ritual templates + guide refs từ nhiều route.
 > `GET /content/chanting/environment-rules` là public support aggregate cho `/niem-kinh/luu-y-moi-truong-va-thoi-gian`; không trả raw FAQ blob hoặc để web tự chắp rule từ component demo.
 > `chant-items` là unit-level chant content; `chant-ritual-templates` là multi-step ritual owner như `thắp tâm hương`; `chant-plans` chỉ compose từ owner records chứ không chôn raw ritual flow.
+> `GET /content/newcomer/faq-handbook` và `GET /content/newcomer/onboarding-roadmap` là codegen-facing aggregate cho chapter 10-13 (FAQ + case studies + roadmap 30 ngày); FE không tự ráp từ nhiều post rời.
+> `GET /content/newcomer/encyclopedia` là package aggregate cho bản 9 phần (toc + chapters + glossary + audio overview + onboarding 90 ngày); FE không tách parse từ bài markdown thô.
+> `GET /content/practice-support/*` là lane chuẩn hóa rulebook vận hành (Phật đài, NNN writing/dotting, định mức số tờ, Tâm Hương); không để FE parse prose dài từ bài rời.
+> `name-change-ritual` và `fetal-karma-resolution` là practice-support owner surfaces (đổi tên tâm linh + siêu độ thai nhi), không embed rời trong FAQ snippet.
 > `GET /admin/content/downloads*` là admin owner lane cho workspace `/admin/noi-dung/tai-lieu`; public `/content/downloads` vẫn chỉ là read surface.
 > `GET /admin/content/sutras*` là admin owner lane cho workspace `/admin/noi-dung/kinh-sach`; `baihua audiobook` tiếp tục đi qua `/admin/wisdom/baihua/*`.
 

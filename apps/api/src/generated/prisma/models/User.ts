@@ -241,6 +241,7 @@ export type UserWhereInput = {
   sessions?: Prisma.SessionListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionListRelationFilter | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
@@ -276,6 +277,7 @@ export type UserOrderByWithRelationInput = {
   sessions?: Prisma.SessionOrderByRelationAggregateInput | runtime.Types.Skip
   posts?: Prisma.PostOrderByRelationAggregateInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetOrderByRelationAggregateInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionOrderByRelationAggregateInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostOrderByRelationAggregateInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
@@ -314,6 +316,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sessions?: Prisma.SessionListRelationFilter | runtime.Types.Skip
   posts?: Prisma.PostListRelationFilter | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionListRelationFilter | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
@@ -385,6 +388,7 @@ export type UserCreateInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -420,6 +424,7 @@ export type UserUncheckedCreateInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -455,6 +460,7 @@ export type UserUpdateInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -490,6 +496,7 @@ export type UserUncheckedUpdateInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -647,6 +654,20 @@ export type UserUpdateOneRequiredWithoutMediaAssetsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutMediaAssetsInput | runtime.Types.Skip
   connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMediaAssetsInput, Prisma.UserUpdateWithoutMediaAssetsInput>, Prisma.UserUncheckedUpdateWithoutMediaAssetsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutMediaCollectionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMediaCollectionsInput, Prisma.UserUncheckedCreateWithoutMediaCollectionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMediaCollectionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutMediaCollectionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMediaCollectionsInput, Prisma.UserUncheckedCreateWithoutMediaCollectionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMediaCollectionsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutMediaCollectionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMediaCollectionsInput, Prisma.UserUpdateWithoutMediaCollectionsInput>, Prisma.UserUncheckedUpdateWithoutMediaCollectionsInput> | runtime.Types.Skip
 }
 
 export type UserCreateNestedOneWithoutPostsInput = {
@@ -920,6 +941,7 @@ export type UserCreateWithoutSessionsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -954,6 +976,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1004,6 +1027,7 @@ export type UserUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1038,6 +1062,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1072,6 +1097,7 @@ export type UserCreateWithoutMediaAssetsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1106,6 +1132,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1156,6 +1183,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1190,6 +1218,163 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutMediaCollectionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutMediaCollectionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutMediaCollectionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMediaCollectionsInput, Prisma.UserUncheckedCreateWithoutMediaCollectionsInput>
+}
+
+export type UserUpsertWithoutMediaCollectionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMediaCollectionsInput, Prisma.UserUncheckedUpdateWithoutMediaCollectionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMediaCollectionsInput, Prisma.UserUncheckedCreateWithoutMediaCollectionsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutMediaCollectionsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMediaCollectionsInput, Prisma.UserUncheckedUpdateWithoutMediaCollectionsInput>
+}
+
+export type UserUpdateWithoutMediaCollectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1224,6 +1409,7 @@ export type UserCreateWithoutPostsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1258,6 +1444,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1308,6 +1495,7 @@ export type UserUpdateWithoutPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1342,6 +1530,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1377,6 +1566,7 @@ export type UserCreateWithoutCommunityPostsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1411,6 +1601,7 @@ export type UserUncheckedCreateWithoutCommunityPostsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1461,6 +1652,7 @@ export type UserUpdateWithoutCommunityPostsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1495,6 +1687,7 @@ export type UserUncheckedUpdateWithoutCommunityPostsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1529,6 +1722,7 @@ export type UserCreateWithoutGuestbookEntriesInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1563,6 +1757,7 @@ export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1602,6 +1797,7 @@ export type UserCreateWithoutGuestbookApprovalsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1636,6 +1832,7 @@ export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1686,6 +1883,7 @@ export type UserUpdateWithoutGuestbookEntriesInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1720,6 +1918,7 @@ export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1765,6 +1964,7 @@ export type UserUpdateWithoutGuestbookApprovalsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1799,6 +1999,7 @@ export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1833,6 +2034,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1867,6 +2069,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -1917,6 +2120,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1951,6 +2155,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -1985,6 +2190,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2019,6 +2225,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2069,6 +2276,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2103,6 +2311,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2137,6 +2346,7 @@ export type UserCreateWithoutPushJobsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2171,6 +2381,7 @@ export type UserUncheckedCreateWithoutPushJobsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2221,6 +2432,7 @@ export type UserUpdateWithoutPushJobsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2255,6 +2467,7 @@ export type UserUncheckedUpdateWithoutPushJobsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2289,6 +2502,7 @@ export type UserCreateWithoutBeginnerGuidesInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2323,6 +2537,7 @@ export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2373,6 +2588,7 @@ export type UserUpdateWithoutBeginnerGuidesInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2407,6 +2623,7 @@ export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2441,6 +2658,7 @@ export type UserCreateWithoutDownloadsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2475,6 +2693,7 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2525,6 +2744,7 @@ export type UserUpdateWithoutDownloadsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2559,6 +2779,7 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2593,6 +2814,7 @@ export type UserCreateWithoutVowsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2627,6 +2849,7 @@ export type UserUncheckedCreateWithoutVowsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2677,6 +2900,7 @@ export type UserUpdateWithoutVowsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2711,6 +2935,7 @@ export type UserUncheckedUpdateWithoutVowsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2745,6 +2970,7 @@ export type UserCreateWithoutLifeReleaseJournalsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2779,6 +3005,7 @@ export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2818,6 +3045,7 @@ export type UserCreateWithoutLifeReleaseActorsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2852,6 +3080,7 @@ export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -2902,6 +3131,7 @@ export type UserUpdateWithoutLifeReleaseJournalsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2936,6 +3166,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -2981,6 +3212,7 @@ export type UserUpdateWithoutLifeReleaseActorsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3015,6 +3247,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3049,6 +3282,7 @@ export type UserCreateWithoutLittleHousesInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3083,6 +3317,7 @@ export type UserUncheckedCreateWithoutLittleHousesInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3133,6 +3368,7 @@ export type UserUpdateWithoutLittleHousesInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3167,6 +3403,7 @@ export type UserUncheckedUpdateWithoutLittleHousesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3201,6 +3438,7 @@ export type UserCreateWithoutDailyGongkeLogsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3235,6 +3473,7 @@ export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3285,6 +3524,7 @@ export type UserUpdateWithoutDailyGongkeLogsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3319,6 +3559,7 @@ export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3353,6 +3594,7 @@ export type UserCreateWithoutRepentanceLogsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3387,6 +3629,7 @@ export type UserUncheckedCreateWithoutRepentanceLogsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3437,6 +3680,7 @@ export type UserUpdateWithoutRepentanceLogsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3471,6 +3715,7 @@ export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3505,6 +3750,7 @@ export type UserCreateWithoutAltarLogsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3539,6 +3785,7 @@ export type UserUncheckedCreateWithoutAltarLogsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3589,6 +3836,7 @@ export type UserUpdateWithoutAltarLogsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3623,6 +3871,7 @@ export type UserUncheckedUpdateWithoutAltarLogsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3657,6 +3906,7 @@ export type UserCreateWithoutPracticeProfileInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3691,6 +3941,7 @@ export type UserUncheckedCreateWithoutPracticeProfileInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3741,6 +3992,7 @@ export type UserUpdateWithoutPracticeProfileInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3775,6 +4027,7 @@ export type UserUncheckedUpdateWithoutPracticeProfileInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3809,6 +4062,7 @@ export type UserCreateWithoutActivationLogsInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3843,6 +4097,7 @@ export type UserUncheckedCreateWithoutActivationLogsInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
@@ -3893,6 +4148,7 @@ export type UserUpdateWithoutActivationLogsInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3927,6 +4183,7 @@ export type UserUncheckedUpdateWithoutActivationLogsInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
@@ -3954,6 +4211,7 @@ export type UserCountOutputType = {
   sessions: number
   posts: number
   mediaAssets: number
+  mediaCollections: number
   communityPosts: number
   guestbookEntries: number
   guestbookApprovals: number
@@ -3976,6 +4234,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   posts?: boolean | UserCountOutputTypeCountPostsArgs
   mediaAssets?: boolean | UserCountOutputTypeCountMediaAssetsArgs
+  mediaCollections?: boolean | UserCountOutputTypeCountMediaCollectionsArgs
   communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
   guestbookEntries?: boolean | UserCountOutputTypeCountGuestbookEntriesArgs
   guestbookApprovals?: boolean | UserCountOutputTypeCountGuestbookApprovalsArgs
@@ -4023,6 +4282,13 @@ export type UserCountOutputTypeCountPostsArgs<ExtArgs extends runtime.Types.Exte
  */
 export type UserCountOutputTypeCountMediaAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMediaCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MediaCollectionWhereInput | runtime.Types.Skip
 }
 
 /**
@@ -4154,6 +4420,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.User$postsArgs<ExtArgs> | runtime.Types.Skip
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
+  mediaCollections?: boolean | Prisma.User$mediaCollectionsArgs<ExtArgs> | runtime.Types.Skip
   communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
   guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
   guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
@@ -4224,6 +4491,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs> | runtime.Types.Skip
   posts?: boolean | Prisma.User$postsArgs<ExtArgs> | runtime.Types.Skip
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
+  mediaCollections?: boolean | Prisma.User$mediaCollectionsArgs<ExtArgs> | runtime.Types.Skip
   communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
   guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
   guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
@@ -4252,6 +4520,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     posts: Prisma.$PostPayload<ExtArgs>[]
     mediaAssets: Prisma.$MediaAssetPayload<ExtArgs>[]
+    mediaCollections: Prisma.$MediaCollectionPayload<ExtArgs>[]
     communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
     guestbookEntries: Prisma.$GuestbookEntryPayload<ExtArgs>[]
     guestbookApprovals: Prisma.$GuestbookEntryPayload<ExtArgs>[]
@@ -4680,6 +4949,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   posts<T extends Prisma.User$postsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mediaAssets<T extends Prisma.User$mediaAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  mediaCollections<T extends Prisma.User$mediaCollectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaCollectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   communityPosts<T extends Prisma.User$communityPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   guestbookEntries<T extends Prisma.User$guestbookEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   guestbookApprovals<T extends Prisma.User$guestbookApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5200,6 +5470,30 @@ export type User$mediaAssetsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.MediaAssetScalarFieldEnum | Prisma.MediaAssetScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.mediaCollections
+ */
+export type User$mediaCollectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaCollection
+   */
+  select?: Prisma.MediaCollectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaCollection
+   */
+  omit?: Prisma.MediaCollectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaCollectionInclude<ExtArgs> | null
+  where?: Prisma.MediaCollectionWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.MediaCollectionOrderByWithRelationInput | Prisma.MediaCollectionOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.MediaCollectionWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.MediaCollectionScalarFieldEnum | Prisma.MediaCollectionScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

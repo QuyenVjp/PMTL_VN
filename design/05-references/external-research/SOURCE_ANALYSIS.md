@@ -104,6 +104,18 @@ Owner:
   - auto-publish machine translation
   - canonical truth owner
 
+## Encyclopedia Ingestion Rule
+- Nếu nhận một bản tổng hợp dài (kiểu encyclopedia), phải tách ra 2 lane:
+  - `implementation-safe`: workflow, checklist, owner mapping, data/UX guardrails
+  - `research-only`: claim tranh cãi, cáo buộc chính trị/pháp lý, miracle/cure testimonials
+- Không đưa nguyên khối encyclopedia vào public copy.
+- Trước khi chuyển thành canon:
+  - map vào file owner cụ thể ở `03-domains/*/REFERENCES`
+  - gắn nhãn `advisory` hoặc `contested` khi cần
+  - thêm disclaimer y tế/tâm linh cho nội dung nhạy cảm.
+- Archive hiện tại:
+  - `design/05-references/external-research/XLFM_ENCYCLOPEDIA_INPUT_2026-03-29.md`
+
 ## Student note (Ghi chú cho sinh viên)
 
 Mỗi khi phân vân có nên thêm tính năng không, tự hỏi:

@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pmtl.vn/schemas/content/newcomer-faq-handbook.json",
+  "title": "NewcomerFaqHandbook",
+  "type": "object",
+  "required": [
+    "publicId",
+    "slug",
+    "title",
+    "intro",
+    "generalFaq",
+    "faqSections",
+    "faqEntries",
+    "caseStudies",
+    "disclaimerBlock",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "publicId": {
+      "type": "string",
+      "minLength": 8
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "intro": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generalFaq": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/faqEntry"
+      }
+    },
+    "faqSections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/faqSection"
+      }
+    },
+    "faqEntries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/faqEntry"
+      }
+    },
+    "caseStudies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/caseStudy"
+      }
+    },
+    "disclaimerBlock": {
+      "$ref": "#/$defs/disclaimerBlock"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "faqSection": {
+      "type": "object",
+      "required": [
+        "sectionKey",
+        "title",
+        "orderNo"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sectionKey": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "orderNo": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "faqEntry": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "question",
+        "answer",
+        "sectionKey",
+        "priority",
+        "tags",
+        "sourceTier"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "minLength": 8
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sectionKey": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sourceTier": {
+          "type": "string",
+          "enum": [
+            "official-guide",
+            "community-summary",
+            "editorial-safety-note"
+          ]
+        }
+      }
+    },
+    "caseStudy": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "summary",
+        "year",
+        "evidenceTier",
+        "riskLabel",
+        "claimedOutcomes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": {
+          "type": "string",
+          "minLength": 8
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "year": {
+          "type": "integer",
+          "minimum": 1900
+        },
+        "evidenceTier": {
+          "type": "string",
+          "enum": [
+            "self-reported-testimonial",
+            "community-compiled",
+            "source-backed"
+          ]
+        },
+        "riskLabel": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "claimedOutcomes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "disclaimerBlock": {
+      "type": "object",
+      "required": [
+        "medical",
+        "legal",
+        "doctrinal"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "medical": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "doctrinal": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

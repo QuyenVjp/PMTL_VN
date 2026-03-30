@@ -57,6 +57,8 @@ export const ModelName = {
   User: 'User',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
+  MediaCollection: 'MediaCollection',
+  MediaCollectionItem: 'MediaCollectionItem',
   Post: 'Post',
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
   ChantEnvironmentRule: 'ChantEnvironmentRule',
@@ -65,6 +67,7 @@ export const ModelName = {
   GuestbookEntry: 'GuestbookEntry',
   CalendarEvent: 'CalendarEvent',
   Volunteer: 'Volunteer',
+  ContactSubmission: 'ContactSubmission',
   ContactInfo: 'ContactInfo',
   PushSubscription: 'PushSubscription',
   PushJob: 'PushJob',
@@ -191,6 +194,46 @@ export const MediaAssetScalarFieldEnum = {
 } as const
 
 export type MediaAssetScalarFieldEnum = (typeof MediaAssetScalarFieldEnum)[keyof typeof MediaAssetScalarFieldEnum]
+
+
+export const MediaCollectionScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  collectionType: 'collectionType',
+  coverMediaId: 'coverMediaId',
+  sourceNote: 'sourceNote',
+  featured: 'featured',
+  sortOrder: 'sortOrder',
+  status: 'status',
+  createdById: 'createdById',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaCollectionScalarFieldEnum = (typeof MediaCollectionScalarFieldEnum)[keyof typeof MediaCollectionScalarFieldEnum]
+
+
+export const MediaCollectionItemScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  collectionId: 'collectionId',
+  itemType: 'itemType',
+  mediaAssetId: 'mediaAssetId',
+  externalUrl: 'externalUrl',
+  title: 'title',
+  caption: 'caption',
+  ownerModule: 'ownerModule',
+  ownerPublicRef: 'ownerPublicRef',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaCollectionItemScalarFieldEnum = (typeof MediaCollectionItemScalarFieldEnum)[keyof typeof MediaCollectionItemScalarFieldEnum]
 
 
 export const PostScalarFieldEnum = {
@@ -331,6 +374,21 @@ export const VolunteerScalarFieldEnum = {
 } as const
 
 export type VolunteerScalarFieldEnum = (typeof VolunteerScalarFieldEnum)[keyof typeof VolunteerScalarFieldEnum]
+
+
+export const ContactSubmissionScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  email: 'email',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactSubmissionScalarFieldEnum = (typeof ContactSubmissionScalarFieldEnum)[keyof typeof ContactSubmissionScalarFieldEnum]
 
 
 export const ContactInfoScalarFieldEnum = {

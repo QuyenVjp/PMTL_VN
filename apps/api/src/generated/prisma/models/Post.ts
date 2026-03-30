@@ -507,10 +507,6 @@ export type PostUncheckedUpdateManyWithoutAuthorNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[] | runtime.Types.Skip
 }
 
-export type EnumContentStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ContentStatus | runtime.Types.Skip
-}
-
 export type PostCreateWithoutAuthorInput = {
   id?: string | runtime.Types.Skip
   publicId: string

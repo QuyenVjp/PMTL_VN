@@ -100,6 +100,38 @@
   - `site:lujunhong2or.com 佛台 屏风 家人`
   - `site:lujunhong2or.com 房子 要经者 重新 恭请`
 
+## Thin Area 13 - Recitation timing and style constraints
+- Need:
+  - quote rõ về khung giờ nhạy cảm (đặc biệt 2-5 AM) ở mức khuyến nghị
+  - quote về đọc tiêu đề kinh/chú và cách phát âm đọc nhẩm
+- Query:
+  - `site:xinlingfamen.info 念经 凌晨 两点 五点`
+  - `site:lujunhong2or.com 念经 要念完整标题`
+
+## Thin Area 14 - Prayer scope per session
+- Need:
+  - quote về số lượng điều cầu mỗi lần (ví dụ không quá 3)
+  - phân biệt recommendation vs hard-rule
+- Query:
+  - `site:lujunhong2or.com 祈求 不要超过三个`
+  - `site:xinlingfamen.info 念经 祈求 几个`
+
+## Thin Area 15 - Heart Sutra timing/weather constraints
+- Need:
+  - quote cụ thể cho khung giờ và điều kiện thời tiết của Tâm Kinh
+  - tách rõ guidance mềm vs cấm tuyệt đối
+- Query:
+  - `site:xinlingfamen.info 心经 晚上 十点`
+  - `site:lujunhong2or.com 心经 下雨 阴天`
+
+## Thin Area 16 - Heart Sutra for emotional stabilization
+- Need:
+  - quote cho bối cảnh tâm lý/cảm xúc (trầm cảm, bất ổn cảm xúc)
+  - count band khuyến nghị theo bối cảnh
+- Query:
+  - `site:lujunhong2or.com 心经 抑郁 21 49`
+  - `site:xinlingfamen.info 心经 情绪 稳定`
+
 ## Output Format Required From AI Lane
 - `claim`
 - `exact quote` (short)

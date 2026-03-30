@@ -83,4 +83,5 @@ Owner modules:
 
 - Nếu một feature mới không map được vào bảng trên, phải xem lại owner module (module sở hữu) trước khi code.
 - Không để `03-community` nuốt mất các self-owned thực hành cốt lõi.
-
+- Nếu cần copy hiển thị public, ưu tiên dùng bản product-safe:
+  - `design/03-domains/content/REFERENCES/FIVE-TREASURES-PRACTICE-SUMMARY.md`

@@ -167,7 +167,7 @@ export function SettingsPage() {
       // Step 1: Upload avatar if a new file was selected
       if (avatarFile) {
         const uploaded = await uploadAvatar(avatarFile);
-        avatarUrl = `/api/admin/media/${uploaded.publicId}/content`;
+        avatarUrl = uploaded.url;
       }
 
       // Step 2: Update profile via PATCH /auth/profile
@@ -190,7 +190,8 @@ export function SettingsPage() {
           URL.revokeObjectURL(previewObjectUrlRef.current);
         }
         previewObjectUrlRef.current = null;
-        setAvatarPreview(avatarUrl);
+        // Use pathname so Vite proxy (/media → API) serves the image
+        try { setAvatarPreview(new URL(avatarUrl).pathname); } catch { setAvatarPreview(avatarUrl); }
       }
       toast.success("Đã cập nhật hồ sơ thành công");
     } catch (err) {

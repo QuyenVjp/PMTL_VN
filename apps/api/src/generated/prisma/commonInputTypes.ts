@@ -304,6 +304,57 @@ export type EnumAssetStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAssetStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type EnumMediaCollectionTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaCollectionType | Prisma.EnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | $Enums.MediaCollectionType | runtime.Types.Skip
+}
+
+export type EnumContentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
+}
+
+export type EnumMediaCollectionTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaCollectionType | Prisma.EnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaCollectionTypeWithAggregatesFilter<$PrismaModel> | $Enums.MediaCollectionType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumContentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContentStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumMediaItemTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaItemType | Prisma.EnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | $Enums.MediaItemType | runtime.Types.Skip
+}
+
+export type EnumMediaItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaItemType | Prisma.EnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.MediaItemType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -326,13 +377,6 @@ export type JsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter | runtime.Types.Skip
-}
-
-export type EnumContentStatusFilter<$PrismaModel = never> = {
-  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
 }
 
 export type JsonWithAggregatesFilter<$PrismaModel = never> =
@@ -360,16 +404,6 @@ export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedJsonFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedJsonFilter<$PrismaModel> | runtime.Types.Skip
-}
-
-export type EnumContentStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedEnumContentStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type EnumRuleSeverityFilter<$PrismaModel = never> = {
@@ -455,6 +489,23 @@ export type EnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumEventStatusFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumEventStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumContactSubmissionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContactSubmissionStatus | Prisma.EnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | $Enums.ContactSubmissionStatus | runtime.Types.Skip
+}
+
+export type EnumContactSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContactSubmissionStatus | Prisma.EnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContactSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContactSubmissionStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type EnumPushJobStatusFilter<$PrismaModel = never> = {
@@ -886,11 +937,55 @@ export type NestedEnumAssetStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAssetStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type NestedEnumMediaCollectionTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaCollectionType | Prisma.EnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | $Enums.MediaCollectionType | runtime.Types.Skip
+}
+
 export type NestedEnumContentStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
   in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
   notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
   not?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
+}
+
+export type NestedEnumMediaCollectionTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaCollectionType | Prisma.EnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaCollectionType[] | Prisma.ListEnumMediaCollectionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaCollectionTypeWithAggregatesFilter<$PrismaModel> | $Enums.MediaCollectionType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumMediaCollectionTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumContentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContentStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumMediaItemTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaItemType | Prisma.EnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | $Enums.MediaItemType | runtime.Types.Skip
+}
+
+export type NestedEnumMediaItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaItemType | Prisma.EnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.MediaItemType[] | Prisma.ListEnumMediaItemTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumMediaItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.MediaItemType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =
@@ -915,16 +1010,6 @@ export type NestedJsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter | runtime.Types.Skip
-}
-
-export type NestedEnumContentStatusWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ContentStatus | Prisma.EnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  notIn?: $Enums.ContentStatus[] | Prisma.ListEnumContentStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedEnumContentStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContentStatus | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedEnumContentStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type NestedEnumRuleSeverityFilter<$PrismaModel = never> = {
@@ -1010,6 +1095,23 @@ export type NestedEnumEventStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumEventStatusFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumEventStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumContactSubmissionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContactSubmissionStatus | Prisma.EnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | $Enums.ContactSubmissionStatus | runtime.Types.Skip
+}
+
+export type NestedEnumContactSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ContactSubmissionStatus | Prisma.EnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ContactSubmissionStatus[] | Prisma.ListEnumContactSubmissionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumContactSubmissionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ContactSubmissionStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumContactSubmissionStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type NestedEnumPushJobStatusFilter<$PrismaModel = never> = {

@@ -10,7 +10,7 @@ import type {
   Severity,
   ProductizationMode,
   GroupKey,
-} from "./chanting.schemas.js";
+} from "../../../../packages/shared/src/schemas/content.js";
 
 // Map DB enum to API string
 function mapSeverity(dbValue: RuleSeverity): Severity {

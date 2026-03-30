@@ -70,6 +70,7 @@
 ## References
 - `design/03-domains/content/REFERENCES/DAILY-PRACTICE-CONTENT-INVENTORY.MD`
 - `design/03-domains/content/REFERENCES/DAILY-PRACTICE-EXPERIENCE-ARCHITECTURE.MD`
+- `design/03-domains/content/REFERENCES/NIEM-KINH-CORE-RULES.md`
 - `design/03-domains/content/REFERENCES/CHANTING-ENVIRONMENT-RULES.MD`
 - `design/03-domains/content/REFERENCES/DREAM-LOGIC.md`
 - `design/03-domains/content/REFERENCES/ELDERLY-GONGKE.md`

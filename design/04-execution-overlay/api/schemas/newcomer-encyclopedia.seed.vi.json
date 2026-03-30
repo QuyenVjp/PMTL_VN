@@ -1,0 +1,180 @@
+{
+  "encyclopedia": {
+    "publicId": "ency9-2026-0001",
+    "slug": "bach-khoa-9-phan-pmtl-vn",
+    "title": "Bách khoa Pháp Môn Tâm Linh - Bản 9 phần",
+    "toc": [
+      "Tổng quan & lịch sử",
+      "Ngũ Đại Pháp Bảo",
+      "Ngôi Nhà Nhỏ",
+      "Phật đài, bảo dưỡng & kiêng kỵ",
+      "Tu theo từng đối tượng",
+      "Lịch tu & ngày đặc biệt",
+      "FAQ thực chiến",
+      "Top case study",
+      "Hướng dẫn Beginner 90 ngày"
+    ],
+    "chapters": [
+      {
+        "chapterNumber": 1,
+        "title": "Tổng quan & lịch sử",
+        "summaryBlocks": [
+          "Định nghĩa pháp môn và bối cảnh truyền bá.",
+          "Lưu ý pháp lý/đạo đức cho Phật tử Việt Nam."
+        ]
+      },
+      {
+        "chapterNumber": 2,
+        "title": "Ngũ Đại Pháp Bảo",
+        "summaryBlocks": [
+          "Niệm kinh, Hứa nguyện, Phóng sinh, Bạch Thoại, Đại Sám Hối.",
+          "Nhấn mạnh nguyên tắc phối hợp thay vì dùng rời rạc."
+        ]
+      },
+      {
+        "chapterNumber": 3,
+        "title": "Ngôi Nhà Nhỏ",
+        "summaryBlocks": [
+          "Rule viết-niệm-chấm-đốt.",
+          "Flow 6 bước và edge cases bắt buộc."
+        ]
+      },
+      {
+        "chapterNumber": 4,
+        "title": "Thiết Phật đài & bảo dưỡng",
+        "summaryBlocks": [
+          "Quy tắc vị trí, vật phẩm cúng dường.",
+          "Kiêng kỵ và xử lý tình huống đặc biệt."
+        ]
+      },
+      {
+        "chapterNumber": 5,
+        "title": "Tu theo từng đối tượng",
+        "summaryBlocks": [
+          "Bảng protocol cho người già, bệnh nặng, trầm cảm, thai nhi, con nghiện game."
+        ]
+      },
+      {
+        "chapterNumber": 6,
+        "title": "Lịch tu & ngày đặc biệt",
+        "summaryBlocks": [
+          "Ngày mùng 1, 15, ngày vía.",
+          "Cách dùng Tâm Hương và khuyến đạo người nhà."
+        ]
+      },
+      {
+        "chapterNumber": 7,
+        "title": "FAQ thực chiến",
+        "summaryBlocks": [
+          "FAQ vận hành ngắn gọn, ưu tiên lỗi thực tế hay gặp."
+        ]
+      },
+      {
+        "chapterNumber": 8,
+        "title": "Top case study",
+        "summaryBlocks": [
+          "Case dạng testimonial để tham khảo động lực tu học.",
+          "Không thay thế bằng chứng y khoa/khuyến nghị chuyên môn."
+        ]
+      },
+      {
+        "chapterNumber": 9,
+        "title": "Hướng dẫn Beginner 90 ngày",
+        "summaryBlocks": [
+          "3 giai đoạn: khởi động - trả nợ - hoàn thiện.",
+          "Checklist thực thi phù hợp bối cảnh Việt Nam."
+        ]
+      }
+    ],
+    "faqQuick": [
+      { "label": "FAQ thực chiến", "href": "/huong-dan/faq-thuc-chien" }
+    ],
+    "topCaseStudies": [
+      { "label": "Case study tiêu biểu", "href": "/content/newcomer/case-studies" }
+    ],
+    "onboarding90dRef": { "label": "Lộ trình 90 ngày", "href": "/huong-dan/lo-trinh-90-ngay" },
+    "glossaryRef": { "label": "Glossary", "href": "/huong-dan/thuat-ngu" },
+    "audioOverviewRef": { "label": "Audio 4 phút", "href": "/huong-dan/audio-tom-tat" },
+    "updatedAt": "2026-03-29T13:30:00Z"
+  },
+  "onboarding90d": {
+    "publicId": "onb90-2026-0001",
+    "slug": "beginner-90-ngay-viet-nam",
+    "title": "Beginner 90 ngày cho Phật tử Việt Nam",
+    "intro": "Lộ trình 3 tháng để đi từ làm quen đến vận hành đầy đủ 5 pháp bảo.",
+    "months": [
+      {
+        "monthNumber": 1,
+        "goal": "Khởi động nền tảng niệm kinh và học Bạch Thoại.",
+        "checklist": [
+          "Đại Bi 3-7 biến/ngày",
+          "Tâm Kinh 3-7 biến/ngày",
+          "Đọc Bạch Thoại 1 bài/ngày"
+        ]
+      },
+      {
+        "monthNumber": 2,
+        "goal": "Bắt đầu lane NNN và giữ kỷ luật sám hối.",
+        "checklist": [
+          "Áp dụng quy tắc viết/chấm NNN",
+          "Sám hối 1-3 biến/ngày",
+          "Duy trì đợt NNN định kỳ"
+        ]
+      },
+      {
+        "monthNumber": 3,
+        "goal": "Hoàn thiện bằng phát nguyện, phóng sinh và chú nhỏ theo nhu cầu.",
+        "checklist": [
+          "Phát nguyện vừa sức",
+          "Phóng sinh theo ngày phù hợp",
+          "Thêm chú nhỏ theo tình huống"
+        ]
+      }
+    ],
+    "tableChecklist": [
+      "Tháng 1: khởi động",
+      "Tháng 2: trả nợ",
+      "Tháng 3: hoàn thiện"
+    ],
+    "updatedAt": "2026-03-29T13:30:00Z"
+  },
+  "glossary": {
+    "publicId": "gloss-2026-0001",
+    "slug": "tu-dien-thuat-ngu-pmtl",
+    "title": "Glossary Trung - Việt - Anh",
+    "entries": [
+      { "term": "Xin Ling Fa Men", "hanzi": "心灵法门", "vietnamese": "Pháp Môn Tâm Linh", "english": "Guan Yin Citta Dharma Door" },
+      { "term": "Xiao Fang Zi", "hanzi": "小房子", "vietnamese": "Tiểu Phương Tử (Ngôi Nhà Nhỏ)", "english": "Little House" },
+      { "term": "Bai Hua Fo Fa", "hanzi": "白话佛法", "vietnamese": "Bạch Thoại Phật Pháp", "english": "Buddhism in Plain Terms" },
+      { "term": "Heart Incense", "hanzi": "心香", "vietnamese": "Tâm Hương", "english": "Heart Incense" }
+    ],
+    "updatedAt": "2026-03-29T13:30:00Z"
+  },
+  "audioOverview": {
+    "publicId": "audioov-2026-0001",
+    "slug": "audio-tom-tat-4-phut",
+    "title": "Audio tóm tắt 4 phút",
+    "durationMinutes": 4,
+    "scriptBlocks": [
+      {
+        "speaker": "Host Nam",
+        "toneHint": "trầm ấm",
+        "text": "Mở đầu bối cảnh đau khổ đời sống và mục tiêu tu học."
+      },
+      {
+        "speaker": "Host Nữ",
+        "toneHint": "truyền cảm",
+        "text": "Tóm tắt 5 pháp bảo và lưu ý cho người Việt tự tu tại gia."
+      },
+      {
+        "speaker": "Host Nam",
+        "text": "Nhấn mạnh quy tắc NNN và kỷ luật thực hành."
+      },
+      {
+        "speaker": "Host Nữ",
+        "text": "Đóng bằng thông điệp kiên trì, phối hợp với đời sống thực tế."
+      }
+    ],
+    "updatedAt": "2026-03-29T13:30:00Z"
+  }
+}

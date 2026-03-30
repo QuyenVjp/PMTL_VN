@@ -54,12 +54,13 @@ function roleLabel(role: string): string {
 
 function normalizeAvatarUrl(url: string | null | undefined): string | undefined {
   if (!url) return undefined;
-  // Backward compatibility for old local-storage URLs (http://127.0.0.1:3001/media/images/<publicId>.png)
-  const match = url.match(/\/media\/[^/]+\/([A-Za-z0-9_-]+)\.[A-Za-z0-9]+$/);
-  if (match?.[1]) {
-    return `/api/admin/media/${match[1]}/content`;
+  // Strip host so /media/... is served via Vite proxy (/media → API static assets)
+  try {
+    const { pathname } = new URL(url);
+    return pathname;
+  } catch {
+    return url; // already a relative path
   }
-  return url;
 }
 
 export interface CurrentUserDisplay {

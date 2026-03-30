@@ -22,5 +22,6 @@
 ## References
 - `design/03-domains/calendar/REFERENCES/PRACTICE_ADVISORY_MODEL.MD`
 - `design/03-domains/calendar/REFERENCES/LUC-TRAI-DAYS-CANON.MD`
+- `design/03-domains/calendar/REFERENCES/examples/advisory-q161-rule-pack.md`
+- `design/03-domains/wisdom-qa/REFERENCES/examples/q161-le-phat-dai-sam-hoi-van-special-days.md`
 - `design/05-references/external-research/XLFM_RITUAL_SOURCE_INDEX.md`
-

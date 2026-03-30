@@ -81,6 +81,32 @@ export const cacheConfigSchema = z.object({
   CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(300),
 });
 
+// Search config schema
+export const searchConfigSchema = z.object({
+  SEARCH_ENGINE: z.enum(["meilisearch", "sql"]).default("meilisearch"),
+  MEILI_HOST: z.string().url().default("http://127.0.0.1:7700"),
+  MEILI_API_KEY: z.string().optional(),
+  MEILI_INDEX_PREFIX: z.string().default("pmtl_"),
+  SEARCH_TIMEOUT_MS: z.coerce.number().int().positive().default(3000),
+  SEARCH_SQL_FALLBACK_ENABLED: z
+    .string()
+    .transform((v) => v === "true")
+    .pipe(z.boolean())
+    .default(true),
+});
+
+// Antivirus config schema
+export const antivirusConfigSchema = z.object({
+  CLAMAV_ENABLED: z
+    .string()
+    .transform((v) => v === "true")
+    .pipe(z.boolean())
+    .default(false),
+  CLAMAV_HOST: z.string().default("127.0.0.1"),
+  CLAMAV_PORT: z.coerce.number().int().positive().default(3310),
+  CLAMAV_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
+});
+
 // Combined env schema for validation
 export const envSchema = z.object({
   ...coreConfigSchema.shape,
@@ -92,6 +118,8 @@ export const envSchema = z.object({
   ...emailConfigSchema.shape,
   ...revalidationConfigSchema.shape,
   ...cacheConfigSchema.shape,
+  ...searchConfigSchema.shape,
+  ...antivirusConfigSchema.shape,
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

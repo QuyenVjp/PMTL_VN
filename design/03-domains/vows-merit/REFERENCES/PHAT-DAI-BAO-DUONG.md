@@ -8,6 +8,12 @@
 - Checklist bảo dưỡng Phật đài theo nhịp hằng ngày và khi đi xa.
 - Giữ UX nhẹ nhàng, không biến thành lane “phán lỗi”.
 
+## Canonical Role
+- Đây là file `umbrella/canonical` cho lane Phật đài.
+- File checklist triển khai chi tiết:
+  - `ALTAR-MAINTENANCE-CHECKLIST.md`
+  - `ALTAR_INCENSE_RESPECT_CHECKLIST.md`
+
 ## Daily Checklist (Offline-First)
 1. Kiểm tra tay sạch và trạng thái tâm ổn trước khi thao tác.
 2. Kiểm tra luồng gió điều hòa không thổi trực diện.

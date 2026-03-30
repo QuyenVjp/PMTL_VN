@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pmtl.vn/schemas/content/newcomer-encyclopedia.json",
+  "title": "NewcomerEncyclopediaPackage",
+  "type": "object",
+  "required": [
+    "encyclopedia",
+    "onboarding90d",
+    "glossary",
+    "audioOverview"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "encyclopedia": { "$ref": "#/$defs/encyclopedia" },
+    "onboarding90d": { "$ref": "#/$defs/onboarding90d" },
+    "glossary": { "$ref": "#/$defs/glossary" },
+    "audioOverview": { "$ref": "#/$defs/audioOverview" }
+  },
+  "$defs": {
+    "refLink": {
+      "type": "object",
+      "required": ["label", "href"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "href": { "type": "string", "minLength": 1 }
+      }
+    },
+    "chapterSummary": {
+      "type": "object",
+      "required": ["chapterNumber", "title", "summaryBlocks"],
+      "additionalProperties": false,
+      "properties": {
+        "chapterNumber": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "summaryBlocks": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "encyclopedia": {
+      "type": "object",
+      "required": [
+        "publicId",
+        "slug",
+        "title",
+        "toc",
+        "chapters",
+        "faqQuick",
+        "topCaseStudies",
+        "onboarding90dRef",
+        "glossaryRef",
+        "audioOverviewRef",
+        "updatedAt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "toc": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "chapters": { "type": "array", "minItems": 9, "items": { "$ref": "#/$defs/chapterSummary" } },
+        "faqQuick": { "type": "array", "items": { "$ref": "#/$defs/refLink" } },
+        "topCaseStudies": { "type": "array", "items": { "$ref": "#/$defs/refLink" } },
+        "onboarding90dRef": { "$ref": "#/$defs/refLink" },
+        "glossaryRef": { "$ref": "#/$defs/refLink" },
+        "audioOverviewRef": { "$ref": "#/$defs/refLink" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "onboarding90d": {
+      "type": "object",
+      "required": ["publicId", "slug", "title", "intro", "months", "tableChecklist", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "intro": { "type": "string", "minLength": 1 },
+        "months": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["monthNumber", "goal", "checklist"],
+            "additionalProperties": false,
+            "properties": {
+              "monthNumber": { "type": "integer", "minimum": 1, "maximum": 3 },
+              "goal": { "type": "string", "minLength": 1 },
+              "checklist": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+            }
+          }
+        },
+        "tableChecklist": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "glossary": {
+      "type": "object",
+      "required": ["publicId", "slug", "title", "entries", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["term", "vietnamese", "english"],
+            "additionalProperties": false,
+            "properties": {
+              "term": { "type": "string", "minLength": 1 },
+              "hanzi": { "type": "string" },
+              "vietnamese": { "type": "string", "minLength": 1 },
+              "english": { "type": "string", "minLength": 1 },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "audioOverview": {
+      "type": "object",
+      "required": ["publicId", "slug", "title", "durationMinutes", "scriptBlocks", "updatedAt"],
+      "additionalProperties": false,
+      "properties": {
+        "publicId": { "type": "string", "minLength": 8 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "durationMinutes": { "type": "integer", "minimum": 1 },
+        "scriptBlocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["speaker", "text"],
+            "additionalProperties": false,
+            "properties": {
+              "speaker": { "type": "string", "minLength": 1 },
+              "toneHint": { "type": "string" },
+              "text": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

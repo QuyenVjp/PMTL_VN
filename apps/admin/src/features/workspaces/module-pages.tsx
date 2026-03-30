@@ -21,14 +21,7 @@ export { ModerationCommentsPage } from "@/features/moderation-comments/index.js"
 
 import { DownloadsPage as _DownloadsPage } from "@/features/downloads/index.js";
 
-export function MediaLibraryPage() {
-  return (
-    <_DownloadsPage
-      title="Thư viện pháp môn"
-      description="Điều phối tài liệu media, pháp môn phục vụ thành viên."
-    />
-  );
-}
+export { MediaLibraryPage } from "@/features/media-library/index.js";
 
 export function SutrasPage() {
   return (
