@@ -103,7 +103,7 @@ File này không được dùng để:
 
 ---
 
-## 📊 Chi Tiết Từng Component
+## [CHART] Chi Tiết Từng Component
 
 ### 1. **pmtl-postgres** — Database (source of truth (nguồn dữ liệu gốc đáng tin cậy nhất))
 
@@ -869,7 +869,7 @@ example.com {
 
 ---
 
-## 🚀 Deployment Topology
+## [LAUNCH] Deployment Topology
 
 ### Development (Docker Compose)
 
@@ -951,7 +951,7 @@ Không cần nhảy lên object storage ngay nếu:
 
 ---
 
-## 📝 Configuration Checklist
+## [NOTE] Configuration Checklist
 
 Before production launch:
 
@@ -974,4 +974,5 @@ Before production launch:
 - [ ] Logging pipeline (Pino → file → ELK/CloudWatch?, or just file)
 - [ ] Disaster recovery plan (how to restore Postgres?)
 - [ ] Load test (find bottleneck before production)
+
 

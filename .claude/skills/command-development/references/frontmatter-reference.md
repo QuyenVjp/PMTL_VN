@@ -48,14 +48,14 @@ description: Generate API documentation
 - Avoid redundant "command" or "slash command"
 
 **Good:**
-- ✅ "Review PR for code quality and security"
-- ✅ "Deploy application to specified environment"
-- ✅ "Generate comprehensive API documentation"
+- [OK] "Review PR for code quality and security"
+- [OK] "Deploy application to specified environment"
+- [OK] "Generate comprehensive API documentation"
 
 **Bad:**
-- ❌ "This command reviews PRs" (unnecessary "This command")
-- ❌ "Review" (too vague)
-- ❌ "A command that reviews pull requests for code quality, security issues, and best practices" (too long)
+- [FAIL] "This command reviews PRs" (unnecessary "This command")
+- [FAIL] "Review" (too vague)
+- [FAIL] "A command that reviews pull requests for code quality, security issues, and best practices" (too long)
 
 ### allowed-tools
 
@@ -423,21 +423,21 @@ Type "APPROVED" to confirm deployment.
 description: Missing quote
 allowed-tools: Read, Write
 model: sonnet
----  # ❌ Missing closing quote above
+---  # [FAIL] Missing closing quote above
 ```
 
 **Fix:** Validate YAML syntax
 
 **Incorrect tool specification:**
 ```yaml
-allowed-tools: Bash  # ❌ Missing command filter
+allowed-tools: Bash  # [FAIL] Missing command filter
 ```
 
 **Fix:** Use `Bash(git:*)` format
 
 **Invalid model name:**
 ```yaml
-model: gpt4  # ❌ Not a valid Claude model
+model: gpt4  # [FAIL] Not a valid Claude model
 ```
 
 **Fix:** Use `sonnet`, `opus`, or `haiku`
@@ -461,3 +461,4 @@ Before committing command:
 5. **Manual-only sparingly:** Only use disable-model-invocation when necessary
 6. **Clear descriptions:** Make commands discoverable in `/help`
 7. **Test thoroughly:** Verify frontmatter works as expected
+

@@ -446,7 +446,7 @@ echo "  max_size: $MAX_SIZE" >&2
 
 # Verify expected values
 if [[ "$ENABLED" != "true" ]] && [[ "$ENABLED" != "false" ]]; then
-  echo "⚠️  Unexpected enabled value: $ENABLED" >&2
+  echo "[WARN]️  Unexpected enabled value: $ENABLED" >&2
 fi
 ```
 
@@ -514,12 +514,12 @@ else
 
   # Validate values
   if [[ "$ENABLED" != "true" ]] && [[ "$ENABLED" != "false" ]]; then
-    echo "⚠️  Invalid enabled value, using default" >&2
+    echo "[WARN]️  Invalid enabled value, using default" >&2
     ENABLED=true
   fi
 
   if ! [[ "$MAX_SIZE" =~ ^[0-9]+$ ]]; then
-    echo "⚠️  Invalid max_size, using default" >&2
+    echo "[WARN]️  Invalid max_size, using default" >&2
     MAX_SIZE=1000000
   fi
 fi
@@ -547,3 +547,4 @@ esac
 ```
 
 This provides robust settings handling with defaults, validation, and error recovery.
+

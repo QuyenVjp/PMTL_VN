@@ -137,9 +137,9 @@ When a user requests a content quality audit:
 
 | Veto Item | Status | Action |
 |-----------|--------|--------|
-| T04: Disclosure Statements | ✅ Pass / ⚠️ VETO | [If VETO: "Add disclosure banner at page top immediately"] |
-| C01: Intent Alignment | ✅ Pass / ⚠️ VETO | [If VETO: "Rewrite title and first paragraph"] |
-| R10: Content Consistency | ✅ Pass / ⚠️ VETO | [If VETO: "Verify all data before publishing"] |
+| T04: Disclosure Statements | [OK] Pass / [WARN]️ VETO | [If VETO: "Add disclosure banner at page top immediately"] |
+| C01: Intent Alignment | [OK] Pass / [WARN]️ VETO | [If VETO: "Rewrite title and first paragraph"] |
+| R10: Content Consistency | [OK] Pass / [WARN]️ VETO | [If VETO: "Verify all data before publishing"] |
 ```
 
 If any veto item triggers, flag it prominently at the top of the report and recommend immediate action before continuing the full audit.
@@ -199,7 +199,7 @@ Calculate scores and generate the final report:
 - **Audit Date**: [date]
 - **Total Score**: [score]/100 ([rating])
 - **GEO Score**: [score]/100 | **SEO Score**: [score]/100
-- **Veto Status**: ✅ No triggers / ⚠️ [item] triggered
+- **Veto Status**: [OK] No triggers / [WARN]️ [item] triggered
 
 ### Dimension Scores
 
@@ -316,7 +316,7 @@ See [references/item-reference.md](./references/item-reference.md) for a complet
 1. **Start with veto items** — T04, C01, R10 are deal-breakers regardless of total score
    > These veto items are consistent with the CORE-EEAT benchmark (Section 3), which defines them as items that can override the overall score.
 2. **Focus on high-weight dimensions** — Different content types prioritize different dimensions
-3. **GEO-First items matter most for AI visibility** — Prioritize items tagged GEO 🎯 if AI citation is the goal
+3. **GEO-First items matter most for AI visibility** — Prioritize items tagged GEO [GOAL] if AI citation is the goal
 4. **Some EEAT items need site-level data** — Don't penalize content for things only observable at the site level (backlinks, brand recognition)
 5. **Use the weighted score, not just the raw average** — A product review with strong Exclusivity matters more than strong Authority
 6. **Re-audit after improvements** — Run again to verify score improvements and catch regressions
@@ -334,3 +334,4 @@ See [references/item-reference.md](./references/item-reference.md) for a complet
 - [geo-content-optimizer](../../build/geo-content-optimizer/) — Optimize for GEO-First items
 - [content-refresher](../../optimize/content-refresher/) — Update content to improve weak dimensions
 - [on-page-seo-auditor](../../optimize/on-page-seo-auditor/) — Technical on-page audit (complements this skill)
+

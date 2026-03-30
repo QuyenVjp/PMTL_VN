@@ -598,15 +598,15 @@ CTA Ghost: "Khám phá nội dung" — ghost button, warm-gray-600
 ### Global rules
 
 ```
-✅ Dùng: fade-in-up (opacity 0→1, translateY 20px→0) khi element vào viewport
-✅ Dùng: stagger cho list items (100ms delay giữa các item)
-✅ Duration: 400ms ease-out
-✅ Trigger: IntersectionObserver, threshold 0.15
+[OK] Dùng: fade-in-up (opacity 0→1, translateY 20px→0) khi element vào viewport
+[OK] Dùng: stagger cho list items (100ms delay giữa các item)
+[OK] Duration: 400ms ease-out
+[OK] Trigger: IntersectionObserver, threshold 0.15
 
-❌ Không: parallax phức tạp trên mobile (performance)
-❌ Không: slide-in từ trái/phải (gây layout shift)
-❌ Không: animation loop (chỉ play once)
-❌ Không: reduce-motion media query phải được respect
+[FAIL] Không: parallax phức tạp trên mobile (performance)
+[FAIL] Không: slide-in từ trái/phải (gây layout shift)
+[FAIL] Không: animation loop (chỉ play once)
+[FAIL] Không: reduce-motion media query phải được respect
 ```
 
 ### Prefers-reduce-motion
@@ -680,3 +680,4 @@ og:type: website
 - Phone mockup animation: pure CSS hoặc Framer Motion — KHÔNG dùng video (bandwidth)
 - Community entries: seed data hoặc admin-curated — KHÔNG tự động pull random guestbook
 - Dark section (Section 5): test contrast WCAG AA trên cả text và icon
+

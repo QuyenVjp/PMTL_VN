@@ -156,13 +156,13 @@ When a user requests schema markup:
    
    | Rich Result Type | Eligibility | Impact |
    |------------------|-------------|--------|
-   | FAQ | ✅/❌ | High - Expands SERP presence |
-   | How-To | ✅/❌ | Medium - Shows steps in SERP |
-   | Product | ✅/❌ | High - Shows price, availability |
-   | Review | ✅/❌ | High - Shows star ratings |
-   | Article | ✅/❌ | Medium - Shows publish date, author |
-   | Breadcrumb | ✅/❌ | Medium - Shows navigation path |
-   | Video | ✅/❌ | High - Shows video thumbnail |
+   | FAQ | [OK]/[FAIL] | High - Expands SERP presence |
+   | How-To | [OK]/[FAIL] | Medium - Shows steps in SERP |
+   | Product | [OK]/[FAIL] | High - Shows price, availability |
+   | Review | [OK]/[FAIL] | High - Shows star ratings |
+   | Article | [OK]/[FAIL] | Medium - Shows publish date, author |
+   | Breadcrumb | [OK]/[FAIL] | Medium - Shows navigation path |
+   | Video | [OK]/[FAIL] | High - Shows video thumbnail |
    
    **Recommended Schema Types**:
    1. [Primary schema type] - [reason]
@@ -347,4 +347,5 @@ Learn SEO from scratch with our comprehensive guide...
 - [on-page-seo-auditor](../../optimize/on-page-seo-auditor/) — Audit existing schema
 - [technical-seo-checker](../../optimize/technical-seo-checker/) — Technical validation
 - [entity-optimizer](../../cross-cutting/entity-optimizer/) — Entity audit informs Organization, Person, Product schema
+
 

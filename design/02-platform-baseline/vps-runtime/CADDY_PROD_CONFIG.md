@@ -111,10 +111,10 @@ graph LR
 
 | Record | Type | Value | Proxy |
 |---|---|---|---|
-| `pmtl.vn` | A | `<VPS_IP>` | ✅ Proxied |
-| `www` | CNAME | `pmtl.vn` | ✅ Proxied |
-| `api` | A | `<VPS_IP>` | ✅ Proxied |
-| `admin` | A | `<VPS_IP>` | ✅ Proxied |
+| `pmtl.vn` | A | `<VPS_IP>` | [OK] Proxied |
+| `www` | CNAME | `pmtl.vn` | [OK] Proxied |
+| `api` | A | `<VPS_IP>` | [OK] Proxied |
+| `admin` | A | `<VPS_IP>` | [OK] Proxied |
 
 **Lưu ý**: Khi dùng Cloudflare proxy, Caddy cần `tls internal` hoặc dùng Cloudflare Origin Certificate thay vì Let's Encrypt public, vì traffic từ Cloudflare đến VPS là encrypted riêng.
 
@@ -142,3 +142,4 @@ pmtl.vn {
 - Không dùng nginx nếu đã dùng Caddy (tránh 2 reverse proxy)
 - Không tắt HTTPS trên production
 - Không để admin panel public không có auth layer hoặc IP restriction
+

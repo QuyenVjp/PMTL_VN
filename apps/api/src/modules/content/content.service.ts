@@ -10,7 +10,7 @@ import type {
   CreatePostRequest, UpdatePostRequest, ListPostsQuery,
   GuideQuery, CreateGuideRequest, UpdateGuideRequest,
   DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
-} from "../../../packages/shared/src/schemas/content.js";
+} from "./content.schemas.js";
 import { type UserRole, type ContentStatus, type Prisma, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
 @Injectable()

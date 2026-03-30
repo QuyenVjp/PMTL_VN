@@ -84,3 +84,18 @@ export function usePublishDownload() {
     onError: handleApiError,
   });
 }
+
+export function useUnpublishDownload() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.patch(`/admin/content/downloads/${publicId}`, { status: "DRAFT" }),
+    onSuccess: (_data, publicId) => {
+      toast.success("Đã gỡ xuất bản tài liệu.");
+      void qc.invalidateQueries({ queryKey: downloadKeys.lists() });
+      void qc.invalidateQueries({ queryKey: downloadKeys.detail(publicId) });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}

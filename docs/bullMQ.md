@@ -65,7 +65,7 @@ const job = await this.fooFlowProducer.add({
 
 ### Read more:
 
-* 💡 [Queues Technique](https://docs.nestjs.com/techniques/queues)
+* [IDEA] [Queues Technique](https://docs.nestjs.com/techniques/queues)
 
 
 # Producers
@@ -135,7 +135,7 @@ const job = await this.fooFlowProducer.add({
 
 ### Read more:
 
-* 💡 [Queues Technique](https://docs.nestjs.com/techniques/queues)
+* [IDEA] [Queues Technique](https://docs.nestjs.com/techniques/queues)
 
 # Connections
 
@@ -263,7 +263,7 @@ There are many other options available such as priorities, backoff settings, lif
 
 ## Read more:
 
-* 💡 [Queue API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html)
+* [IDEA] [Queue API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html)
 # Workers
 
 Workers are the actual instances that perform some job based on the jobs that are added in the queue. A worker is equivalent to a "message" receiver in a traditional message queue. The worker's duty is to complete the job. If it succeeds, the job will be moved to the "completed" status. If the worker throws an exception during its processing, the job will automatically be moved to the "failed" status.
@@ -401,8 +401,8 @@ const worker = new Worker<MyData, MyReturn>(queueName, async (job: Job) => {});
 
 ## Read more:
 
-* 💡 [Worker API Reference](https://api.docs.bullmq.io/classes/v5.Worker.html)
-* 💡 [Queue Events API Reference](https://api.docs.bullmq.io/classes/v5.QueueEvents.html)
+* [IDEA] [Worker API Reference](https://api.docs.bullmq.io/classes/v5.Worker.html)
+* [IDEA] [Queue Events API Reference](https://api.docs.bullmq.io/classes/v5.QueueEvents.html)
 # Concurrency
 
 By default, there is no limit on the number of jobs that workers can run in parallel for every group. Even using a rate limit, that would only limit the processing speed, but still you could have an unbounded number of jobs processed simultaneously in every group.
@@ -573,9 +573,9 @@ By removing rate limit key, workers will be able to pick jobs again and your rat
 
 ## Read more:
 
-* 💡 [Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Worker.html#ratelimit)
-* 💡 [Get Rate Limit Ttl API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getratelimitttl)
-* 💡 [Remove Rate Limit Key API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeratelimitkey)
+* [IDEA] [Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Worker.html#ratelimit)
+* [IDEA] [Get Rate Limit Ttl API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getratelimitttl)
+* [IDEA] [Remove Rate Limit Key API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeratelimitkey)
 # Retrying failing jobs
 
 As your queues process jobs, it is inevitable that over time some of these jobs will fail. In BullMQ, a job is considered failed in the following scenarios:
@@ -787,7 +787,7 @@ const worker = new Worker('foo', async job => doSomeProcessing(), {
 
 ## Read more:
 
-* 💡 [Stop Retrying Jobs](https://docs.bullmq.io/patterns/stop-retrying-jobs)
+* [IDEA] [Stop Retrying Jobs](https://docs.bullmq.io/patterns/stop-retrying-jobs)
 # Events
 
 All classes in BullMQ emit useful events that inform on the lifecycles of the jobs that are running in the queue. Every class is an `EventEmitter` and emits different events.
@@ -879,10 +879,10 @@ await queue.trimEvents(10) # leaves 10 events
 
 ## Read more:
 
-* 💡 [Queue Events API Reference](https://api.docs.bullmq.io/classes/v5.QueueEvents.html)
-* 💡 [Queue Events Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html)
-* 💡 [Queue Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueListener.html)
-* 💡 [Worker Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.WorkerListener.html)
+* [IDEA] [Queue Events API Reference](https://api.docs.bullmq.io/classes/v5.QueueEvents.html)
+* [IDEA] [Queue Events Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html)
+* [IDEA] [Queue Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueListener.html)
+* [IDEA] [Worker Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.WorkerListener.html)
 # Idempotent jobs
 
 In order to take advantage of [the ability to retry failed jobs](https://docs.bullmq.io/guide/retrying-failing-jobs), your jobs should be designed with failure in mind.
@@ -952,9 +952,9 @@ await queue.removeGlobalConcurrency();
 
 ## Read more:
 
-* 💡 [Set Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#setglobalconcurrency)
-* 💡 [Get Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getglobalconcurrency)
-* 💡 [Remove Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeglobalconcurrency)
+* [IDEA] [Set Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#setglobalconcurrency)
+* [IDEA] [Get Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getglobalconcurrency)
+* [IDEA] [Remove Global Concurrency API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeglobalconcurrency)
 # Global Rate Limit
 
 The global rate limit config is a queue option that determines how many jobs are allowed to be processed in a specific period of time.
@@ -992,10 +992,10 @@ await queue.removeGlobalRateLimit();
 
 ## Read more:
 
-* 💡 [Set Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#setglobalratelimit)
-* 💡 [Get Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getglobalratelimit)
-* 💡 [Get Rate Limit Ttl API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getratelimitttl)
-* 💡 [Remove Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeglobalratelimit)
+* [IDEA] [Set Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#setglobalratelimit)
+* [IDEA] [Get Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getglobalratelimit)
+* [IDEA] [Get Rate Limit Ttl API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getratelimitttl)
+* [IDEA] [Remove Global Rate Limit API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removeglobalratelimit)
 # Deduplication
 
 Sometimes, you may want to decide when you want to stop deduplicating jobs.
@@ -1061,10 +1061,10 @@ In this way, you can deduplicate a job when using job schedulers.
 
 ## Read more:
 
-* 💡 [Add Job API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#add)
-* 💡 [Deduplication Reference](https://docs.bullmq.io/guide/jobs/deduplication)
-* 💡 [Remove Deduplication Key API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#removededuplicationkey)
-* 💡 [Upsert Job Scheduler API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#upsertJobScheduler)
+* [IDEA] [Add Job API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#add)
+* [IDEA] [Deduplication Reference](https://docs.bullmq.io/guide/jobs/deduplication)
+* [IDEA] [Remove Deduplication Key API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#removededuplicationkey)
+* [IDEA] [Upsert Job Scheduler API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#upsertJobScheduler)
 # Job Ids
 
 All jobs in BullMQ need to have a unique job id. This id is used to construct a key to store the data in Redis, and as a pointer to the job as it is moved between the different states it can be in during its lifetime.
@@ -1099,7 +1099,7 @@ Custom job ids must not contain the **:** separator as it will be translated in 
 
 ## Read more:
 
-* 💡 [Duplicated Event Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html#duplicated)
+* [IDEA] [Duplicated Event Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html#duplicated)
 # Delayed
 
 Delayed jobs are a special type of job that is placed into a special "delayed set", instead of being processed as fast as possible. After the delay time has passed, the job is processed as a regular job.
@@ -1145,7 +1145,7 @@ Only jobs currently in the **delayed** state can have their delay changed.
 
 ## Read more:
 
-* 💡 [Change Delay API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#changedelay)
+* [IDEA] [Change Delay API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#changedelay)
 # Prioritized
 
 Jobs can also include a `priority` option. Using priorities, job processing order will be affected by the specified `priority` instead of following a FIFO or LIFO pattern.
@@ -1223,10 +1223,10 @@ const counts = await queue.getCountsPerPriority([1, 0]);
 
 ## Read more:
 
-* 📋 [Faster Priority jobs](https://bullmq.io/news/062123/faster-priority-jobs/)
-* 💡 [Change Priority API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#changepriority)
-* 💡 [Get Prioritized API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getprioritized)
-* 💡 [Get Counts per Priority API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getcountsperpriority)
+* [LIST] [Faster Priority jobs](https://bullmq.io/news/062123/faster-priority-jobs/)
+* [IDEA] [Change Priority API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#changepriority)
+* [IDEA] [Get Prioritized API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getprioritized)
+* [IDEA] [Get Counts per Priority API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getcountsperpriority)
 # Repeatable
 
 {% hint style="danger" %}
@@ -1480,9 +1480,9 @@ The code above will not create a new repeatable meta job, it will just update th
 
 ### Read more:
 
-* 💡 [Repeat Strategy API Reference](https://api.docs.bullmq.io/types/v5.RepeatStrategy.html)
-* 💡 [Remove Repeatable Job API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removerepeatable)
-* 💡 [Remove Repeatable Job by Key API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removerepeatablebykey)
+* [IDEA] [Repeat Strategy API Reference](https://api.docs.bullmq.io/types/v5.RepeatStrategy.html)
+* [IDEA] [Remove Repeatable Job API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removerepeatable)
+* [IDEA] [Remove Repeatable Job by Key API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#removerepeatablebykey)
 # Job Schedulers
 
 A Job Scheduler acts as a factory , producing jobs based on specified "repeat" settings. The Job Scheduler is highly flexible, accommodating various scenarios, including jobs produced at fixed intervals, according to cron expressions, or based on custom requirements. For historical reasons, jobs produced by the Job Scheduler are often referred to as ‘Repeatable Jobs’.
@@ -1533,7 +1533,7 @@ Since jobs produced by the Job Scheduler will get a special job ID in order to g
 
 ## Read more:
 
-* 💡 [Upsert Job Scheduler API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#upsertjobscheduler)
+* [IDEA] [Upsert Job Scheduler API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#upsertjobscheduler)
 # Metrics
 
 BullMQ provides a simple metrics gathering functionality that allows you to track the performance of your queues. Workers can count the number of jobs they have processed **per minute** and store this data in a list inside Redis so that it can be queried later.
@@ -1590,7 +1590,7 @@ Note that the `getMetrics` method also accepts a `start` and `end` argument (`0`
 
 ## Read more:
 
-* 💡 [Get Metrics API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getmetrics)
+* [IDEA] [Get Metrics API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#getmetrics)
 # Prometheus
 
 BullMQ provides a simple API to export metrics to Prometheus. To use it, create an endpoint in your web server that calls `exportPrometheusMetrics()`, and configure Prometheus to scrape metrics from this endpoint.
@@ -1739,7 +1739,7 @@ These additional labels allow you to filter and group metrics in Prometheus or G
 
 ## Read more:
 
-* 💡 [Export Prometheus Metrics API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#exportprometheusmetrics)
+* [IDEA] [Export Prometheus Metrics API Reference](https://api.docs.bullmq.io/classes/v5.Queue.html#exportprometheusmetrics)
 # Telemetry
 
 BullMQ provides a Telemetry interface that can be used to integrate it with any external telemetry backends. Currently we support the [OpenTelemetry](https://opentelemetry.io) specification, which is the new de-facto standard for telemetry purposes, however the interface if flexible enough to support any other backends in the future.
@@ -2102,7 +2102,7 @@ export class AppModule {}
 
 ### Read more:
 
-* 💡 [Queues Technique](https://docs.nestjs.com/techniques/queues)
+* [IDEA] [Queues Technique](https://docs.nestjs.com/techniques/queues)
 # Queue Events Listeners
 
 To register a QueueEvents instance, you need to use the **`QueueEventsListener`** decorator:
@@ -2149,9 +2149,9 @@ export class AppModule {}
 
 ## Read more:
 
-* 💡 [Queues Technique](https://docs.nestjs.com/techniques/queues)
-* 💡 [Register Queue API Reference](https://nestjs.bullmq.pro/classes/BullModule.html#registerQueue)
-* 💡 [Queue Events Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html)
+* [IDEA] [Queues Technique](https://docs.nestjs.com/techniques/queues)
+* [IDEA] [Register Queue API Reference](https://nestjs.bullmq.pro/classes/BullModule.html#registerQueue)
+* [IDEA] [Queue Events Listener API Reference](https://api.docs.bullmq.io/interfaces/v5.QueueEventsListener.html)
 # Going to production
 
 In this chapter, we will offer crucial considerations and tips to help you achieve a robust solution when deploying your BullMQ-based application to production.
@@ -2407,7 +2407,7 @@ const { children, job } = limitedTree;
 
 ## Read more:
 
-* 💡 [Get Flow API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#getflow)
+* [IDEA] [Get Flow API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#getflow)
 # Fail Parent
 
 In certain workflows, you may need a parent job to fail immediately if any of its child jobs fail. The `failParentOnFailure` option allows you to achieve this behaviour. When set to true on a child job, it ensures that if the child fails, its parent job is also marked as failed. This effect can propagate recursively up the job hierarchy, potentially causing grandparents or higher-level ancestors to fail as well, depending on the configuration.
@@ -2478,7 +2478,7 @@ This option is particularly useful in workflows where the success of a parent jo
 
 ## Read more:
 
-* 💡 [Add Flow API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#add)
+* [IDEA] [Add Flow API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#add)
 # Continue Parent
 
 {% hint style="info" %}
@@ -2721,7 +2721,7 @@ This call can only succeed or fail, and all or none of the jobs will be added.
 
 ## Read more:
 
-* 💡 [Add Bulk API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#addbulk)
+* [IDEA] [Add Bulk API Reference](https://api.docs.bullmq.io/classes/v5.FlowProducer.html#addbulk)
 # Throttle jobs
 
 Sometimes, you may want to enqueue a job in reaction to a frequently occurring event, without running that job for *every* event. For example, you may want to send an email to a user when they update their profile, but you don't want to send an email for every single update if they make many changes in rapid succession.
@@ -2786,7 +2786,7 @@ const worker = new Worker(
 
 ## Read more:
 
-* 💡 [Move To Wait API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#movetowait)
+* [IDEA] [Move To Wait API Reference](https://api.docs.bullmq.io/classes/v5.Job.html#movetowait)
 # Timeout jobs
 
 BullMQ does not provide a specific mechanism to timeout jobs, however this can be accomplished in many cases with a custom timeout code in the worker's process function.
@@ -2861,3 +2861,4 @@ const queue = new Queue('{cluster}');
 ```
 
 Note that If you use several queues in the same cluster, you should use different prefixes so that the queues are evenly placed in the cluster nodes, potentially increasing performance and memory usage.
+

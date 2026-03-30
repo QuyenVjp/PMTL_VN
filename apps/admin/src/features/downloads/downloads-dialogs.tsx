@@ -25,7 +25,6 @@ import {
   useCreateDownload,
   useDeleteDownload,
   usePublishDownload,
-  useUpdateDownload,
 } from "@/features/downloads/mutations";
 import { useDownloads } from "@/features/downloads/context";
 
@@ -174,82 +173,6 @@ function DownloadCreateDialog({
   );
 }
 
-// ── Edit dialog ──────────────────────────────────────────────────────
-
-function DownloadEditDialog({
-  open,
-  onOpenChange,
-  currentRow,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  currentRow: DownloadItem;
-}) {
-  const updateDownload = useUpdateDownload();
-  const [title, setTitle] = useState(currentRow.title);
-  const [category, setCategory] = useState(currentRow.category);
-  const [description, setDescription] = useState(currentRow.description ?? "");
-
-  useEffect(() => {
-    setTitle(currentRow.title);
-    setCategory(currentRow.category);
-    setDescription(currentRow.description ?? "");
-  }, [currentRow, open]);
-
-  const handleSubmit = () => {
-    if (!title.trim()) {
-      toast.error("Tiêu đề không được để trống.");
-      return;
-    }
-    updateDownload.mutate(
-      {
-        publicId: currentRow.publicId,
-        title: title.trim(),
-        category,
-        description: description.trim() || undefined,
-      },
-      { onSuccess: () => onOpenChange(false) },
-    );
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="text-start">
-          <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
-          <DialogDescription>Cập nhật thông tin tài liệu.</DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-          </Field>
-          <Field label="Danh mục">
-            <CategorySelect value={category} onValueChange={setCategory} />
-          </Field>
-          <Field label="Mô tả">
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Mô tả ngắn..."
-              rows={2}
-            />
-          </Field>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Hủy
-          </Button>
-          <Button onClick={handleSubmit} disabled={updateDownload.isPending || !title.trim()}>
-            {updateDownload.isPending ? "Đang lưu..." : "Lưu thay đổi"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 // ── Publish + Delete confirm dialogs ─────────────────────────────────
 
 function DownloadPublishDialog({
@@ -332,11 +255,6 @@ export function DownloadsDialogs({ defaultCategory }: { defaultCategory?: string
       />
       {currentRow && (
         <>
-          <DownloadEditDialog
-            open={open === "edit"}
-            onOpenChange={(v) => (!v ? handleClose() : setOpen("edit"))}
-            currentRow={currentRow}
-          />
           <DownloadPublishDialog
             open={open === "publish"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}

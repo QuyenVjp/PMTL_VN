@@ -450,7 +450,7 @@ Email tổ chức, hotline, Fanpage, Zalo OA — admin có thể cập nhật kh
 ## Quy Tắc Vàng Toàn Hệ Thống
 
 ```
-❌ KHÔNG BAO GIỜ:
+[FAIL] KHÔNG BAO GIỜ:
 ─────────────────────────────────────────────────────────
 ✗ Hiển thị số biến/progress tu học của người dùng công khai
 ✗ So sánh, leaderboard, điểm số giữa các thành viên
@@ -463,7 +463,7 @@ Email tổ chức, hotline, Fanpage, Zalo OA — admin có thể cập nhật kh
 ✗ Public practice log (tu học là riêng tư)
 ✗ "Share your progress" kêu gọi public hóa tiến độ tu học
 
-✅ LUÔN LUÔN:
+[OK] LUÔN LUÔN:
 ─────────────────────────────────────────────────────────
 ✓ Advisory lấy từ lời dạy chính thống có người biên soạn
 ✓ "Ngày đặc biệt" lấy từ lịch âm + rule pháp môn
@@ -481,16 +481,16 @@ Email tổ chức, hotline, Fanpage, Zalo OA — admin có thể cập nhật kh
 
 | Hành động | Khách (chưa đăng nhập) | Hội viên | Admin (PSV) |
 |---|---|---|---|
-| Đọc bài hướng dẫn, Bạch Thoại, Q&A | ✅ | ✅ | ✅ |
-| Đọc hướng dẫn phóng sanh | ✅ | ✅ | ✅ |
-| Xem lịch sự kiện | ✅ | ✅ | ✅ |
-| Lưu buổi tu, Practice Sheet | ❌ | ✅ | ✅ |
-| Ngôi Nhà Nhỏ tracker | ❌ | ✅ | ✅ |
-| Phát nguyện, nhật ký phóng sanh | ❌ | ✅ | ✅ |
-| Bookmark kinh văn | ❌ (soft gate) | ✅ | ✅ |
-| Gửi guestbook, bình luận | ❌ | ✅ | ✅ |
-| Duyệt guestbook, kiểm duyệt | ❌ | ❌ | ✅ |
-| Biên soạn nội dung (kinh, guide) | ❌ | ❌ | ✅ |
+| Đọc bài hướng dẫn, Bạch Thoại, Q&A | [OK] | [OK] | [OK] |
+| Đọc hướng dẫn phóng sanh | [OK] | [OK] | [OK] |
+| Xem lịch sự kiện | [OK] | [OK] | [OK] |
+| Lưu buổi tu, Practice Sheet | [FAIL] | [OK] | [OK] |
+| Ngôi Nhà Nhỏ tracker | [FAIL] | [OK] | [OK] |
+| Phát nguyện, nhật ký phóng sanh | [FAIL] | [OK] | [OK] |
+| Bookmark kinh văn | [FAIL] (soft gate) | [OK] | [OK] |
+| Gửi guestbook, bình luận | [FAIL] | [OK] | [OK] |
+| Duyệt guestbook, kiểm duyệt | [FAIL] | [FAIL] | [OK] |
+| Biên soạn nội dung (kinh, guide) | [FAIL] | [FAIL] | [OK] |
 
 ---
 
@@ -515,3 +515,4 @@ Email tổ chức, hotline, Fanpage, Zalo OA — admin có thể cập nhật kh
 | **Lịch phóng sanh theo vùng** | Gợi ý địa điểm phóng sanh uy tín theo khu vực |
 
 > **Nguyên tắc thêm feature**: Nếu feature không giúp người tu học *hiểu đúng pháp môn*, *thực hành hằng ngày*, hoặc *tra đúng nguồn* — hỏi lại trước khi build.
+

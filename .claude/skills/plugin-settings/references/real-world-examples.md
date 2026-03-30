@@ -188,7 +188,7 @@ if [[ "$COMPLETION_PROMISE" != "null" ]] && [[ -n "$COMPLETION_PROMISE" ]]; then
   PROMISE_TEXT=$(echo "$LAST_OUTPUT" | perl -0777 -pe 's/.*?<promise>(.*?)<\/promise>.*/$1/s; s/^\s+|\s+$//g')
 
   if [[ "$PROMISE_TEXT" = "$COMPLETION_PROMISE" ]]; then
-    echo "✅ Ralph loop: Detected completion"
+    echo "[OK] Ralph loop: Detected completion"
     rm "$RALPH_STATE_FILE"
     exit 0
   fi
@@ -329,7 +329,7 @@ fi
 
 ## Anti-Patterns to Avoid
 
-### ❌ Hardcoded Paths
+### [FAIL] Hardcoded Paths
 
 ```bash
 # BAD
@@ -339,7 +339,7 @@ FILE="/Users/alice/.claude/my-plugin.local.md"
 FILE=".claude/my-plugin.local.md"
 ```
 
-### ❌ Unquoted Variables
+### [FAIL] Unquoted Variables
 
 ```bash
 # BAD
@@ -349,7 +349,7 @@ echo $VALUE
 echo "$VALUE"
 ```
 
-### ❌ Non-Atomic Updates
+### [FAIL] Non-Atomic Updates
 
 ```bash
 # BAD: Can corrupt file if interrupted
@@ -361,7 +361,7 @@ sed "s/field: .*/field: $VALUE/" "$FILE" > "$TEMP_FILE"
 mv "$TEMP_FILE" "$FILE"
 ```
 
-### ❌ No Default Values
+### [FAIL] No Default Values
 
 ```bash
 # BAD: Fails if field missing
@@ -373,7 +373,7 @@ fi
 MAX=${MAX:-10}
 ```
 
-### ❌ Ignoring Edge Cases
+### [FAIL] Ignoring Edge Cases
 
 ```bash
 # BAD: Assumes exactly 2 --- markers
@@ -393,3 +393,4 @@ The `.claude/plugin-name.local.md` pattern provides:
 - Supports both structured config (YAML) and freeform content (markdown)
 
 Use this pattern for any plugin that needs user-configurable behavior or state persistence.
+

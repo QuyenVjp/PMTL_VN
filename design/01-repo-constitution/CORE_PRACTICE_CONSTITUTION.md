@@ -232,43 +232,43 @@ Các bước 1, 5, 6, 7, 8 là enrichment — quan trọng nhưng không blockin
 ### Không gamify tu tập
 
 ```
-❌ Streak counter với "penalty" khi bỏ ngày
-❌ Badge / achievement khi đạt mốc biến
-❌ Leaderboard hay so sánh giữa các member
-❌ "Level" người tu học
-❌ XP, điểm, coins, hay bất kỳ virtual currency
-❌ Celebration animation khi hoàn thành vow (animation nhẹ OK — nổ confetti KHÔNG)
+[FAIL] Streak counter với "penalty" khi bỏ ngày
+[FAIL] Badge / achievement khi đạt mốc biến
+[FAIL] Leaderboard hay so sánh giữa các member
+[FAIL] "Level" người tu học
+[FAIL] XP, điểm, coins, hay bất kỳ virtual currency
+[FAIL] Celebration animation khi hoàn thành vow (animation nhẹ OK — nổ confetti KHÔNG)
 ```
 
 ### Không biến tu tập thành social performance
 
 ```
-❌ Public practice logs (số biến, số buổi hiển thị cho người khác)
-❌ "Bạn bè cũng đang tu học" prompts
-❌ Activity feed theo kiểu social media
-❌ Public vow progress (ai phát nguyện gì là riêng tư)
-❌ "Share your progress" CTA để dụ user public data của họ
+[FAIL] Public practice logs (số biến, số buổi hiển thị cho người khác)
+[FAIL] "Bạn bè cũng đang tu học" prompts
+[FAIL] Activity feed theo kiểu social media
+[FAIL] Public vow progress (ai phát nguyện gì là riêng tư)
+[FAIL] "Share your progress" CTA để dụ user public data của họ
 ```
 
 ### Không thay thế thầy bằng AI
 
 ```
-❌ AI trả lời câu hỏi Phật pháp theo real-time
-❌ AI "đánh giá" buổi tu học của user
-❌ AI gợi ý "ngày tốt/xấu" theo thuật toán
-❌ Chatbot hỗ trợ tinh thần tự động
-✅ Search trong kho tàng lời dạy có thẩm quyền: OK
-✅ Advisory được soạn bởi nội dung có thẩm quyền: OK
+[FAIL] AI trả lời câu hỏi Phật pháp theo real-time
+[FAIL] AI "đánh giá" buổi tu học của user
+[FAIL] AI gợi ý "ngày tốt/xấu" theo thuật toán
+[FAIL] Chatbot hỗ trợ tinh thần tự động
+[OK] Search trong kho tàng lời dạy có thẩm quyền: OK
+[OK] Advisory được soạn bởi nội dung có thẩm quyền: OK
 ```
 
 ### Không tự nâng cấp kiến trúc
 
 ```
-❌ Thêm Valkey/Redis trước khi Phase 2
-❌ Thêm BullMQ queue trước khi Phase 2
-❌ Thêm Meilisearch trước khi Phase 2
-❌ Thêm role editor/moderator trước khi có use case thật
-❌ Outbox events trước khi Phase 2
+[FAIL] Thêm Valkey/Redis trước khi Phase 2
+[FAIL] Thêm BullMQ queue trước khi Phase 2
+[FAIL] Thêm Meilisearch trước khi Phase 2
+[FAIL] Thêm role editor/moderator trước khi có use case thật
+[FAIL] Outbox events trước khi Phase 2
 Ref chi tiết: PHASE_GOVERNOR.md (nếu tồn tại) hoặc design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md
 ```
 
@@ -365,3 +365,4 @@ Ref chi tiết: PHASE_GOVERNOR.md (nếu tồn tại) hoặc design/02-platform-
 5. **"Lưu buổi tu" không có side effect ngoài engagement module** ở Phase 1 — không trigger notification, không trigger outbox, không ghi vào Ngôi Nhà Nhỏ tự động. User tự làm từng bước.
 
 6. **Ngôi Nhà Nhỏ là manual update** — user tự nhập số biến, không tự động tổng hợp từ practice logs. Đây là thiết kế có chủ ý (tôn trọng hành vi tu học thật).
+

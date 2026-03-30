@@ -591,19 +591,19 @@ Mỗi module backend tối thiểu nên có:
 ### Pattern cho phép
 
 ```
-✅ Calendar inject WisdomQueryService (Wisdom-QA export)
-✅ Moderation inject ContentQueryService (Content export)
-✅ Search nhận SearchDocumentDto từ source module qua direct call
-✅ Notification inject từ bất kỳ module nào qua exported interface
+[OK] Calendar inject WisdomQueryService (Wisdom-QA export)
+[OK] Moderation inject ContentQueryService (Content export)
+[OK] Search nhận SearchDocumentDto từ source module qua direct call
+[OK] Notification inject từ bất kỳ module nào qua exported interface
 ```
 
 ### Pattern CẤM
 
 ```
-❌ Calendar import WisdomQaModule vào imports[] → circular risk
-❌ Module A gọi Module B qua internal repository (bypass service layer)
-❌ Module tự query DB table thuộc module khác
-❌ Shared package import từ apps/* (ngược chiều)
+[FAIL] Calendar import WisdomQaModule vào imports[] → circular risk
+[FAIL] Module A gọi Module B qua internal repository (bypass service layer)
+[FAIL] Module tự query DB table thuộc module khác
+[FAIL] Shared package import từ apps/* (ngược chiều)
 ```
 
 ### Khi cần bidirectional communication
@@ -682,3 +682,4 @@ interface AuditService {
 - mọi launch-blocker flow phải map vào [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
 - cross-module communication phải qua exported service interface, không import toàn bộ module
 - audit mandatory events phải trong cùng DB transaction với write
+

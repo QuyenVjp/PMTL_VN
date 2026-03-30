@@ -26,11 +26,11 @@ Referenced from [SKILL.md](../SKILL.md).
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| File exists | ✅ | 200 response |
-| Valid syntax | ⚠️ | Wildcard pattern `Disallow: /*?` too aggressive — blocks faceted pages |
-| Sitemap declared | ❌ | No Sitemap directive in robots.txt |
-| Important pages blocked | ⚠️ | /pricing/ blocked by `Disallow: /pricing` rule |
-| Assets blocked | ✅ | CSS/JS accessible |
+| File exists | [OK] | 200 response |
+| Valid syntax | [WARN]️ | Wildcard pattern `Disallow: /*?` too aggressive — blocks faceted pages |
+| Sitemap declared | [FAIL] | No Sitemap directive in robots.txt |
+| Important pages blocked | [WARN]️ | /pricing/ blocked by `Disallow: /pricing` rule |
+| Assets blocked | [OK] | CSS/JS accessible |
 
 **Issues Found**:
 - Sitemap URL not declared in robots.txt
@@ -43,9 +43,9 @@ Referenced from [SKILL.md](../SKILL.md).
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Sitemap exists | ✅ | Valid XML, 287 URLs |
-| Only indexable URLs | ❌ | 23 noindex URLs included |
-| Includes lastmod | ⚠️ | All dates set to 2023-01-01 — not accurate |
+| Sitemap exists | [OK] | Valid XML, 287 URLs |
+| Only indexable URLs | [FAIL] | 23 noindex URLs included |
+| Includes lastmod | [WARN]️ | All dates set to 2023-01-01 — not accurate |
 
 **Crawlability Score**: 5/10
 
@@ -55,18 +55,18 @@ Referenced from [SKILL.md](../SKILL.md).
 
 | Metric | Mobile | Desktop | Target | Status |
 |--------|--------|---------|--------|--------|
-| LCP (Largest Contentful Paint) | 4.8s | 2.1s | <2.5s | ❌ Mobile / ✅ Desktop |
-| FID (First Input Delay) | 45ms | 12ms | <100ms | ✅ / ✅ |
-| CLS (Cumulative Layout Shift) | 0.24 | 0.08 | <0.1 | ❌ Mobile / ✅ Desktop |
-| INP (Interaction to Next Paint) | 380ms | 140ms | <200ms | ❌ Mobile / ✅ Desktop |
+| LCP (Largest Contentful Paint) | 4.8s | 2.1s | <2.5s | [FAIL] Mobile / [OK] Desktop |
+| FID (First Input Delay) | 45ms | 12ms | <100ms | [OK] / [OK] |
+| CLS (Cumulative Layout Shift) | 0.24 | 0.08 | <0.1 | [FAIL] Mobile / [OK] Desktop |
+| INP (Interaction to Next Paint) | 380ms | 140ms | <200ms | [FAIL] Mobile / [OK] Desktop |
 
 ### Additional Performance Metrics
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Time to First Byte (TTFB) | 1,240ms | ❌ |
-| Page Size | 3.8MB | ❌ |
-| Requests | 94 | ⚠️ |
+| Time to First Byte (TTFB) | 1,240ms | [FAIL] |
+| Page Size | 3.8MB | [FAIL] |
+| Requests | 94 | [WARN]️ |
 
 **LCP Issues**:
 - Uncompressed hero image (2.4MB PNG): Convert to WebP, est. save 1.9MB
@@ -83,10 +83,10 @@ Referenced from [SKILL.md](../SKILL.md).
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| SSL certificate valid | ✅ | Expires: 2025-03-22 |
-| HTTPS enforced | ⚠️ | http://cloudhosting.com returns 200 instead of 301 redirect |
-| Mixed content | ❌ | 7 images loaded over HTTP on /features/ page |
-| HSTS enabled | ❌ | Header not present |
+| SSL certificate valid | [OK] | Expires: 2025-03-22 |
+| HTTPS enforced | [WARN]️ | http://cloudhosting.com returns 200 instead of 301 redirect |
+| Mixed content | [FAIL] | 7 images loaded over HTTP on /features/ page |
+| HSTS enabled | [FAIL] | Header not present |
 
 **Security Score**: 5/10
 
@@ -96,7 +96,7 @@ Referenced from [SKILL.md](../SKILL.md).
 
 | Schema Type | Pages | Valid | Errors |
 |-------------|-------|-------|--------|
-| Organization | 1 (homepage) | ✅ | None |
+| Organization | 1 (homepage) | [OK] | None |
 | Article | 0 | — | Missing on 48 blog posts |
 | Product | 0 | — | Missing on 5 plan pages |
 | FAQ | 0 | — | Missing on 12 pages with FAQ content |
@@ -167,3 +167,4 @@ Score Breakdown:
 - [ ] Site architecture is logical
 - [ ] Internal linking is strong
 ```
+

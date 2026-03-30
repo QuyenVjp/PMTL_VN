@@ -7,10 +7,10 @@ Tests Status Powered By pino Powered By pino-http Supports NestJS 9 Supports Nes
 Keep your NestJS logs while gaining all the benefits of pino and pino-http: structured JSON logs, exceptional performance, and automatic request context tracking.
 
 // Other loggers - violate NestJS parameter order
-this.logger.log(context, 'message'); // ❌ context first, message second
+this.logger.log(context, 'message'); // [FAIL] context first, message second
 
 // With pino-nestjs - respect NestJS parameter order
-this.logger.log('message', context); // ✅ message first, context second
+this.logger.log('message', context); // [OK] message first, context second
 Copy to clipboardErrorCopied
 Table of contents
 Table of contents
@@ -127,18 +127,18 @@ Comparison with other NestJS loggers
 To understand the motivation, see nestjs-pino#2004.
 
 Logger	Nest App Logger	Logger Service	Auto-bind Request Data	NestJS Parameter Order	Active Maintenance
-nest-winston	✅	✅	❌	✅	✅
-nestjs-pino-logger	✅	✅	❌	❓	❌
-nestjs-pino	✅	✅	✅	❌	✅
-pino-nestjs (you’re here!)	✅	✅	✅	✅	✅
+nest-winston	[OK]	[OK]	[FAIL]	[OK]	[OK]
+nestjs-pino-logger	[OK]	[OK]	[FAIL]	❓	[FAIL]
+nestjs-pino	[OK]	[OK]	[OK]	[FAIL]	[OK]
+pino-nestjs (you’re here!)	[OK]	[OK]	[OK]	[OK]	[OK]
 Respecting NestJS parameter order
 This library differs from some other NestJS loggers by respecting the parameter order of the NestJS logger.
 
 // Other loggers - violate NestJS parameter order
-this.logger.log(context, 'message'); // ❌ context first, message second
+this.logger.log(context, 'message'); // [FAIL] context first, message second
 
 // With pino-nestjs - respect NestJS parameter order
-this.logger.log('message', context); // ✅ message first, context second
+this.logger.log('message', context); // [OK] message first, context second
 Copy to clipboardErrorCopied
 This makes it a drop-in replacement for the default NestJS logger.
 

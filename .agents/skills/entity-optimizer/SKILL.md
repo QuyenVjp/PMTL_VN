@@ -159,11 +159,11 @@ Establish the entity's current state across all systems.
 
 | Platform | Status | Details |
 |----------|--------|---------|
-| Google Knowledge Panel | ✅ Present / ❌ Absent / ⚠️ Incorrect | [details] |
-| Wikidata | ✅ Listed / ❌ Not listed | [QID if exists] |
-| Wikipedia | ✅ Article / ⚠️ Mentioned only / ❌ Absent | [notability assessment] |
-| Google Knowledge Graph API | ✅ Entity found / ❌ Not found | [entity ID, types, score] |
-| Schema.org on site | ✅ Complete / ⚠️ Partial / ❌ Missing | [Organization/Person/Product schema] |
+| Google Knowledge Panel | [OK] Present / [FAIL] Absent / [WARN]️ Incorrect | [details] |
+| Wikidata | [OK] Listed / [FAIL] Not listed | [QID if exists] |
+| Wikipedia | [OK] Article / [WARN]️ Mentioned only / [FAIL] Absent | [notability assessment] |
+| Google Knowledge Graph API | [OK] Entity found / [FAIL] Not found | [entity ID, types, score] |
+| Schema.org on site | [OK] Complete / [WARN]️ Partial / [FAIL] Missing | [Organization/Person/Product schema] |
 
 #### AI Entity Resolution Test
 
@@ -177,10 +177,10 @@ Test how AI systems identify this entity by querying:
 
 | AI System | Recognizes Entity? | Description Accuracy | Cites Entity's Content? |
 |-----------|-------------------|---------------------|------------------------|
-| ChatGPT | ✅ / ⚠️ / ❌ | [accuracy notes] | [yes/no/partially] |
-| Claude | ✅ / ⚠️ / ❌ | [accuracy notes] | [yes/no/partially] |
-| Perplexity | ✅ / ⚠️ / ❌ | [accuracy notes] | [yes/no/partially] |
-| Google AI Overview | ✅ / ⚠️ / ❌ | [accuracy notes] | [yes/no/partially] |
+| ChatGPT | [OK] / [WARN]️ / [FAIL] | [accuracy notes] | [yes/no/partially] |
+| Claude | [OK] / [WARN]️ / [FAIL] | [accuracy notes] | [yes/no/partially] |
+| Perplexity | [OK] / [WARN]️ / [FAIL] | [accuracy notes] | [yes/no/partially] |
+| Google AI Overview | [OK] / [WARN]️ / [FAIL] | [accuracy notes] | [yes/no/partially] |
 ```
 
 ### Step 2: Entity Signal Audit
@@ -213,12 +213,12 @@ Evaluate each signal as Pass / Fail / Partial with a specific action for each ga
 
 | Category | Status | Key Findings |
 |----------|--------|-------------|
-| Structured Data | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
-| Knowledge Base | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
-| Consistency (NAP+E) | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
-| Content-Based | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
-| Third-Party | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
-| AI-Specific | ✅ Strong / ⚠️ Gaps / ❌ Missing | [key findings] |
+| Structured Data | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
+| Knowledge Base | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
+| Consistency (NAP+E) | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
+| Content-Based | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
+| Third-Party | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
+| AI-Specific | [OK] Strong / [WARN]️ Gaps / [FAIL] Missing | [key findings] |
 
 ### Critical Issues
 
@@ -328,3 +328,4 @@ Detailed guides for entity optimization:
 - [backlink-analyzer](../../monitor/backlink-analyzer/) — Branded backlinks strengthen entity signals
 - [performance-reporter](../../monitor/performance-reporter/) — Track branded search and Knowledge Panel metrics
 - [memory-management](../memory-management/) — Store entity audit results for tracking over time
+

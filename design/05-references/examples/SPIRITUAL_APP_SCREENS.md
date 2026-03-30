@@ -157,8 +157,8 @@ Days: M T W T F S S — each 32×32px circle
   - NO streak indicator, NO glow animation — chỉ render trạng thái thực tế
 
 Sub-text: "Đã tu X ngày trong tuần này" — 13px warm-gray-500
-  ❌ KHÔNG dùng "Chuỗi X ngày" — streak framing là gamification
-  ❌ KHÔNG highlight "current day" với gold glow/pulse — tránh game feel
+  [FAIL] KHÔNG dùng "Chuỗi X ngày" — streak framing là gamification
+  [FAIL] KHÔNG highlight "current day" với gold glow/pulse — tránh game feel
 ```
 
 ### Greeting logic
@@ -202,7 +202,7 @@ Elderly-first design — mọi target 48px+.
 │                                    │
 │  DANH SÁCH BÀI NIỆM               │
 │  ┌──────────────────────────────┐  │
-│  │ ☑ Bài 1: [Tên bài]          │  │
+│  │ [CHECK] Bài 1: [Tên bài]          │  │
 │  │  ▷ Nghe hướng dẫn           │  │
 │  │  [Companion guide ↓]        │  │
 │  └──────────────────────────────┘  │
@@ -695,7 +695,7 @@ Phase 1: SQL-based. Phase 2+: Meilisearch. UI không đổi.
 ```
 ┌────────────────────────────────────┐
 │  ┌──────────────────────────────┐  │
-│  │ 🔍 Tìm kiếm...              │  │
+│  │ [SEARCH] Tìm kiếm...              │  │
 │  └──────────────────────────────┘  │
 │                                    │
 │  [Tab: Tất cả] [Bạch Thoại] [Hỏi] │
@@ -911,3 +911,4 @@ Nav items:
 
 Bottom: User mini-profile + settings link
 ```
+

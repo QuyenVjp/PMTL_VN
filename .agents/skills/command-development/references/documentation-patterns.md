@@ -160,7 +160,7 @@ Current branch: !`git branch --show-current`
 
 <!-- Production deploys must come from main/master -->
 if [ "$1" = "production" ] && [ "$(git branch --show-current)" != "main" ]; then
-  ⚠️  WARNING: Not on main branch for production deploy
+  [WARN]️  WARNING: Not on main branch for production deploy
   This is unusual. Confirm this is intentional.
 fi
 
@@ -313,7 +313,7 @@ description: Command with good error messages
 # Validation Command
 
 if [ -z "$1" ]; then
-  ❌ ERROR: Missing required argument
+  [FAIL] ERROR: Missing required argument
 
   The 'file-path' argument is required.
 
@@ -329,7 +329,7 @@ if [ -z "$1" ]; then
 fi
 
 if [ ! -f "$1" ]; then
-  ❌ ERROR: File not found: $1
+  [FAIL] ERROR: File not found: $1
 
   The specified file does not exist or is not accessible.
 
@@ -363,7 +363,7 @@ Running operation...
 !`risky-operation.sh`
 
 if [ $? -ne 0 ]; then
-  ❌ OPERATION FAILED
+  [FAIL] OPERATION FAILED
 
   The operation encountered an error and could not complete.
 
@@ -737,3 +737,4 @@ Before releasing a command:
 - [ ] Troubleshooting section complete
 
 With good documentation, commands become self-service, reducing support burden and improving user experience.
+

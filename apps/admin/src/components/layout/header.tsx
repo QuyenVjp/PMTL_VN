@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { BellIcon, Settings2Icon, SparklesIcon } from "lucide-react";
+import { BellIcon, Settings2Icon, SparklesIcon, SearchIcon, HeartIcon, FlagIcon } from "lucide-react";
 
 import { UserMenu } from "@/components/layout/user-menu";
 import { Search } from "@/components/search";
@@ -46,15 +46,15 @@ export function Header({
   return (
     <header
       className={cn(
-        "z-40 h-16 border-b bg-background",
+        "z-40 h-12 border-b bg-background",
         fixed ? "sticky top-0" : undefined,
         offset > 10 ? "shadow-sm" : undefined,
         className,
       )}
     >
-      <div className="flex h-full items-center gap-4 px-4 sm:px-6">
-        <SidebarTrigger variant="outline" className="max-md:scale-110" />
-        <Separator orientation="vertical" className="h-6" />
+      <div className="flex h-full items-center gap-3 px-4 sm:px-6">
+        <SidebarTrigger variant="outline" className="max-md:scale-95" />
+        <Separator orientation="vertical" className="h-4" />
         <TopNav links={topNavLinks} className="min-w-0 flex-1" />
 
         <Search className="hidden md:flex" />
@@ -69,10 +69,16 @@ export function Header({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link to="/he-thong/cai-dat">Cài đặt admin</Link>
+                <Link to="/he-thong/cai-dat">
+                  <Settings2Icon className="size-4" />
+                  Cài đặt admin
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/he-thong/tim-kiem">Tìm kiếm</Link>
+                <Link to="/he-thong/tim-kiem">
+                  <SearchIcon className="size-4" />
+                  Tìm kiếm
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/he-thong/thong-bao">
@@ -81,10 +87,16 @@ export function Header({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/he-thong/health">Health</Link>
+                <Link to="/he-thong/health">
+                  <HeartIcon className="size-4" />
+                  Health
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/he-thong/feature-flags">Feature flags</Link>
+                <Link to="/he-thong/feature-flags">
+                  <FlagIcon className="size-4" />
+                  Feature flags
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/ho-tro/phat-nguyen/nhap-ho">

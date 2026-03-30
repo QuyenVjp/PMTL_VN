@@ -235,43 +235,43 @@ You are an expert [domain] orchestrator specializing in coordinating [complex wo
 
 **Use second person (addressing the agent):**
 ```
-✅ You are responsible for...
-✅ You will analyze...
-✅ Your process should...
+[OK] You are responsible for...
+[OK] You will analyze...
+[OK] Your process should...
 
-❌ The agent is responsible for...
-❌ This agent will analyze...
-❌ I will analyze...
+[FAIL] The agent is responsible for...
+[FAIL] This agent will analyze...
+[FAIL] I will analyze...
 ```
 
 ### Clarity and Specificity
 
 **Be specific, not vague:**
 ```
-✅ Check for SQL injection by examining all database queries for parameterization
-❌ Look for security issues
+[OK] Check for SQL injection by examining all database queries for parameterization
+[FAIL] Look for security issues
 
-✅ Provide file:line references for each finding
-❌ Show where issues are
+[OK] Provide file:line references for each finding
+[FAIL] Show where issues are
 
-✅ Categorize as critical (security), major (bugs), or minor (style)
-❌ Rate the severity of issues
+[OK] Categorize as critical (security), major (bugs), or minor (style)
+[FAIL] Rate the severity of issues
 ```
 
 ### Actionable Instructions
 
 **Give concrete steps:**
 ```
-✅ Read the file using the Read tool, then search for patterns using Grep
-❌ Analyze the code
+[OK] Read the file using the Read tool, then search for patterns using Grep
+[FAIL] Analyze the code
 
-✅ Generate test file at test/path/to/file.test.ts
-❌ Create tests
+[OK] Generate test file at test/path/to/file.test.ts
+[FAIL] Create tests
 ```
 
 ## Common Pitfalls
 
-### ❌ Vague Responsibilities
+### [FAIL] Vague Responsibilities
 
 ```markdown
 **Your Core Responsibilities:**
@@ -282,7 +282,7 @@ You are an expert [domain] orchestrator specializing in coordinating [complex wo
 
 **Why bad:** Not specific enough to guide behavior.
 
-### ✅ Specific Responsibilities
+### [OK] Specific Responsibilities
 
 ```markdown
 **Your Core Responsibilities:**
@@ -291,7 +291,7 @@ You are an expert [domain] orchestrator specializing in coordinating [complex wo
 3. Recommend specific type improvements with examples
 ```
 
-### ❌ Missing Process Steps
+### [FAIL] Missing Process Steps
 
 ```markdown
 Analyze the code and provide feedback.
@@ -299,7 +299,7 @@ Analyze the code and provide feedback.
 
 **Why bad:** Agent doesn't know HOW to analyze.
 
-### ✅ Clear Process
+### [OK] Clear Process
 
 ```markdown
 **Analysis Process:**
@@ -310,7 +310,7 @@ Analyze the code and provide feedback.
 5. List findings with file:line references
 ```
 
-### ❌ Undefined Output
+### [FAIL] Undefined Output
 
 ```markdown
 Provide a report.
@@ -318,7 +318,7 @@ Provide a report.
 
 **Why bad:** Agent doesn't know what format to use.
 
-### ✅ Defined Output Format
+### [OK] Defined Output Format
 
 ```markdown
 **Output Format:**
@@ -409,3 +409,4 @@ Effective system prompts are:
 - **Testable**: Defines measurable standards
 
 Use the patterns above as templates, customize for your domain, and iterate based on agent performance.
+

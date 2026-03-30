@@ -228,7 +228,7 @@ Duration: 1.5s
 Timing: ease-in-out
 Color: warm-gray-100
 Shape: match component shape (rounded-lg for cards)
-❌ KHÔNG dùng shimmer (gradient slide) — distracting cho elderly
+[FAIL] KHÔNG dùng shimmer (gradient slide) — distracting cho elderly
 ```
 
 ---
@@ -241,7 +241,7 @@ Shape: match component shape (rounded-lg for cards)
 Default: 150ms ease — buttons, hovers
 Slow: 200ms ease-out — modals, drawers
 Page: 300ms ease — route transitions (nếu dùng)
-❌ KHÔNG animate practice forms — elderly cần stability
+[FAIL] KHÔNG animate practice forms — elderly cần stability
 ```
 
 ### Motion discipline
@@ -374,3 +374,4 @@ Chi tiết admin architecture: `design/02-platform-baseline/admin-runtime/ADMIN_
 - Practice screens ưu tiên legibility over aesthetics
 - Gold accent (#B8860B) dùng cho 1 focal point per screen, không rải khắp nơi
 - Admin components ưu tiên data density, web components ưu tiên readability
+

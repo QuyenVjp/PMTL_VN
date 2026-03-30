@@ -32,10 +32,10 @@ graph LR
   C["VNPT Cloud VN\n~80-150k/tháng\n1vCPU 1GB RAM"]
   D["Vultr Singapore\n~$6/tháng (~155k)\n1vCPU 1GB RAM NVMe"]
   E["DigitalOcean SG\n~$6/tháng\n1vCPU 1GB RAM"]
-  F["Hetzner Finland\n~€4/tháng (~108k)\n2vCPU 2GB RAM ⭐"]
+  F["Hetzner Finland\n~€4/tháng (~108k)\n2vCPU 2GB RAM [STAR]"]
 
-  BestVN["✅ Best VN latency\n+ VND payment"]
-  BestValue["✅ Best RAM/price ratio"]
+  BestVN["[OK] Best VN latency\n+ VND payment"]
+  BestValue["[OK] Best RAM/price ratio"]
 
   A --> BestVN
   B --> BestVN
@@ -165,3 +165,4 @@ Một deploy ~3-5 phút → có thể deploy ~100-400 lần/tháng miễn phí.
 - [ ] Dùng Uptime Kuma self-host thay Statuspage paid
 - [ ] Optimize `max_connections` Postgres để tiết kiệm RAM
 - [ ] Tắt Prometheus/Grafana khi chưa cần (defer đến RAM 2GB)
+

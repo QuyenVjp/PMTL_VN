@@ -12,7 +12,7 @@ import type {
   ProductizationMode,
   Q161ContentRulePackResponse,
   Severity,
-} from "../../../../packages/shared/src/schemas/content.js";
+} from "./chanting.schemas.js";
 
 @Injectable()
 export class ChantingService {
@@ -173,8 +173,8 @@ export class ChantingService {
     if (input.productizationMode !== undefined) {
       data.productizationMode = mapProductizationModeToDb(input.productizationMode);
     }
-    if (input.safeLaneRefs !== undefined) data.safeLaneRefs = input.safeLaneRefs.map((item) => item.trim());
-    if (input.avoidItems !== undefined) data.avoidItems = input.avoidItems.map((item) => item.trim());
+    if (input.safeLaneRefs !== undefined) data.safeLaneRefs = input.safeLaneRefs.map((item: string) => item.trim());
+    if (input.avoidItems !== undefined) data.avoidItems = input.avoidItems.map((item: string) => item.trim());
     if (input.shortReason !== undefined) data.shortReason = input.shortReason;
     if (input.sourceReference !== undefined) data.sourceReference = input.sourceReference;
     if (input.versionNote !== undefined) data.versionNote = input.versionNote;

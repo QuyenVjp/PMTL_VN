@@ -876,7 +876,7 @@ In Zod 3, they were stored in a `ZodEffects` class that wrapped the original sch
 z.string()
   .refine(val => val.includes("@"))
   .min(5);
-// ^ ❌ Property 'min' does not exist on type ZodEffects<ZodString, string, string>
+// ^ [FAIL] Property 'min' does not exist on type ZodEffects<ZodString, string, string>
 ```
 
 In Zod 4, refinements are stored inside the schemas themselves, so the code above works as expected.
@@ -884,7 +884,7 @@ In Zod 4, refinements are stored inside the schemas themselves, so the code abov
 ```ts
 z.string()
   .refine(val => val.includes("@"))
-  .min(5); // ✅
+  .min(5); // [OK]
 ```
 
 ### `.overwrite()`
@@ -1128,8 +1128,8 @@ myRegistry.clear(); // wipe registry
 TypeScript enforces that the metadata for each schema matches the registry's **metadata type**.
 
 ```ts
-myRegistry.add(mySchema, { description: "A cool schema!" }); // ✅
-myRegistry.add(mySchema, { description: 123 }); // ❌
+myRegistry.add(mySchema, { description: "A cool schema!" }); // [OK]
+myRegistry.add(mySchema, { description: 123 }); // [FAIL]
 ```
 
 > **Special handling for `id`** —  Zod registries treat the `id` property specially. An `Error` will be thrown if multiple schemas are registered with the same `id` value. This is true for all registries, including the global registry.
@@ -1321,8 +1321,8 @@ import * as z from "zod";
 
 const myRegistry = z.registry<{ description: string }, z.ZodString>();
 
-myRegistry.add(z.string(), { description: "A number" }); // ✅
-myRegistry.add(z.number(), { description: "A number" }); // ❌ 
+myRegistry.add(z.string(), { description: "A number" }); // [OK]
+myRegistry.add(z.number(), { description: "A number" }); // [FAIL] 
 //             ^ 'ZodNumber' is not assignable to parameter of type 'ZodString' 
 ```
 # JSON Schema
@@ -1382,17 +1382,17 @@ z.toJSONSchema(schema)
 All schema & checks are converted to their closest JSON Schema equivalent. Some types have no analog and cannot be reasonably represented. See the [`unrepresentable`](#unrepresentable) section below for more information on handling these cases.
 
 ```ts
-z.bigint(); // ❌
-z.int64(); // ❌
-z.symbol(); // ❌
-z.undefined(); // ❌
-z.void(); // ❌
-z.date(); // ❌
-z.map(); // ❌
-z.set(); // ❌
-z.transform(); // ❌
-z.nan(); // ❌
-z.custom(); // ❌
+z.bigint(); // [FAIL]
+z.int64(); // [FAIL]
+z.symbol(); // [FAIL]
+z.undefined(); // [FAIL]
+z.void(); // [FAIL]
+z.date(); // [FAIL]
+z.map(); // [FAIL]
+z.set(); // [FAIL]
+z.transform(); // [FAIL]
+z.nan(); // [FAIL]
+z.custom(); // [FAIL]
 ```
 
 A second argument can be used to customize the conversion logic.
@@ -1529,17 +1529,17 @@ z.toJSONSchema(schema);
 The following APIs are not representable in JSON Schema. By default, Zod will throw an error if they are encountered. It is unsound to attempt a conversion to JSON Schema; you should modify your schemas  as they have no equivalent in JSON. An error will be thrown if any of these are encountered.
 
 ```ts
-z.bigint(); // ❌
-z.int64(); // ❌
-z.symbol(); // ❌
-z.undefined(); // ❌
-z.void(); // ❌
-z.date(); // ❌
-z.map(); // ❌
-z.set(); // ❌
-z.transform(); // ❌
-z.nan(); // ❌
-z.custom(); // ❌
+z.bigint(); // [FAIL]
+z.int64(); // [FAIL]
+z.symbol(); // [FAIL]
+z.undefined(); // [FAIL]
+z.void(); // [FAIL]
+z.date(); // [FAIL]
+z.map(); // [FAIL]
+z.set(); // [FAIL]
+z.transform(); // [FAIL]
+z.nan(); // [FAIL]
+z.custom(); // [FAIL]
 ```
 
 By default, Zod will throw an error if any of these are encountered.
@@ -2018,10 +2018,10 @@ stringToDate.parse(12345);
 // no complaints from TypeScript (fails at runtime)
 
 stringToDate.decode(12345); 
-// ❌ TypeScript error: Argument of type 'number' is not assignable to parameter of type 'string'.
+// [FAIL] TypeScript error: Argument of type 'number' is not assignable to parameter of type 'string'.
 
 stringToDate.encode(12345); 
-// ❌ TypeScript error: Argument of type 'number' is not assignable to parameter of type 'Date'.
+// [FAIL] TypeScript error: Argument of type 'number' is not assignable to parameter of type 'Date'.
 ```
 
 Why the difference? Encoding and decoding imply *transformation*. In many cases, the inputs to these methods are already strongly typed in application code, so z.decode/z.encode accept strongly typed inputs to surface mistakes at compile time.
@@ -2098,7 +2098,7 @@ schema.encode(new Date("2000-01-01"));
 // => Date
 
 schema.encode(new Date("1999-01-01"));
-// => ❌ ZodError: [
+// => [FAIL] ZodError: [
 //   {
 //     "code": "custom",
 //     "path": [],
@@ -2178,13 +2178,13 @@ stringbool.encode(false);   // => "no"
 
 ### Transforms
 
-⚠️ — The `.transform()` API implements a *unidirectional* transformation. If any `.transform()` exists anywhere in your schema, attempting a `z.encode()` operation will throw a *runtime error* (not a `ZodError`).
+[WARN]️ — The `.transform()` API implements a *unidirectional* transformation. If any `.transform()` exists anywhere in your schema, attempting a `z.encode()` operation will throw a *runtime error* (not a `ZodError`).
 
 ```ts
 const schema = z.string().transform(val => val.length);
 
 schema.encode(1234); 
-// ❌ Error: Encountered unidirectional transform during encode: ZodTransform
+// [FAIL] Error: Encountered unidirectional transform during encode: ZodTransform
 ```
 
 {/* ### Success
@@ -2198,7 +2198,7 @@ schema.encode(1234);
   // => true
 
   z.encode(successSchema, true);    
-  // ❌ Error: Encountered unidirectional transform during encode: ZodSuccess
+  // [FAIL] Error: Encountered unidirectional transform during encode: ZodSuccess
   ``` */}
 
 ## Useful codecs
@@ -2674,14 +2674,14 @@ export type IssueFormats =
   | z.ZodUnrecognizedKeysIssue // ♻️ renamed to z.core.$ZodIssueUnrecognizedKeys
   | z.ZodInvalidUnionIssue // ♻️ renamed to z.core.$ZodIssueInvalidUnion
   | z.ZodCustomIssue // ♻️ renamed to z.core.$ZodIssueCustom
-  | z.ZodInvalidEnumValueIssue // ❌ merged in z.core.$ZodIssueInvalidValue
-  | z.ZodInvalidLiteralIssue // ❌ merged into z.core.$ZodIssueInvalidValue
-  | z.ZodInvalidUnionDiscriminatorIssue // ❌ throws an Error at schema creation time
-  | z.ZodInvalidArgumentsIssue // ❌ z.function throws ZodError directly
-  | z.ZodInvalidReturnTypeIssue // ❌ z.function throws ZodError directly
-  | z.ZodInvalidDateIssue // ❌ merged into invalid_type
-  | z.ZodInvalidIntersectionTypesIssue // ❌ removed (throws regular Error)
-  | z.ZodNotFiniteIssue // ❌ infinite values no longer accepted (invalid_type)
+  | z.ZodInvalidEnumValueIssue // [FAIL] merged in z.core.$ZodIssueInvalidValue
+  | z.ZodInvalidLiteralIssue // [FAIL] merged into z.core.$ZodIssueInvalidValue
+  | z.ZodInvalidUnionDiscriminatorIssue // [FAIL] throws an Error at schema creation time
+  | z.ZodInvalidArgumentsIssue // [FAIL] z.function throws ZodError directly
+  | z.ZodInvalidReturnTypeIssue // [FAIL] z.function throws ZodError directly
+  | z.ZodInvalidDateIssue // [FAIL] merged into invalid_type
+  | z.ZodInvalidIntersectionTypesIssue // [FAIL] removed (throws regular Error)
+  | z.ZodNotFiniteIssue // [FAIL] infinite values no longer accepted (invalid_type)
 ```
 
 While certain Zod 4 issue types have been merged, dropped, and modified, each issue remains structurally similar to Zod 3 counterpart (identical, in most cases). All issues still conform to the same base interface as Zod 3, so most common error handling logic will work without modification.
@@ -2736,12 +2736,12 @@ myError.issues.push({
   The `.and()` method on `ZodType` has been dropped in favor of `z.intersection(A, B)`. Not only is this method rarely used, there are few good reasons to use intersections at all. The `.and()` API prevented bundlers from treeshaking `ZodIntersection`, a fairly large and complex class. 
 
   ```ts
-  z.object({ a: z.string() }).and(z.object({ b: z.number() })); // ❌
+  z.object({ a: z.string() }).and(z.object({ b: z.number() })); // [FAIL]
 
   // use z.intersection
-  z.intersection(z.object({ a: z.string() }), z.object({ b: z.number() })); // ✅
+  z.intersection(z.object({ a: z.string() }), z.object({ b: z.number() })); // [OK]
   // or .extend() when possible
-  z.object({ a: z.string() }).extend(z.object({ b: z.number() })); // ✅
+  z.object({ a: z.string() }).extend(z.object({ b: z.number() })); // [OK]
   ``` */}
 
 ## `z.number()`
@@ -2788,8 +2788,8 @@ z.iso.duration();
 The method forms (`z.string().email()`) still exist and work as before, but are now deprecated.
 
 ```ts
-z.string().email(); // ❌ deprecated
-z.email(); // ✅ 
+z.string().email(); // [FAIL] deprecated
+z.email(); // [OK] 
 ```
 
 ### stricter `.uuid()`
@@ -2810,9 +2810,9 @@ Padding is no longer allowed in `z.base64url()` (formerly `z.string().base64url(
 This has been replaced with separate `.ipv4()` and `.ipv6()` methods. Use `z.union()` to combine them if you need to accept both.
 
 ```ts
-z.string().ip() // ❌
-z.ipv4() // ✅
-z.ipv6() // ✅
+z.string().ip() // [FAIL]
+z.ipv4() // [OK]
+z.ipv6() // [OK]
 ```
 
 ### updates `z.string().ipv6()`
@@ -2824,9 +2824,9 @@ Validation now happens using the `new URL()` constructor, which is far more robu
 Similarly, this has been replaced with separate `.cidrv4()` and `.cidrv6()` methods. Use `z.union()` to combine them if you need to accept both.
 
 ```ts
-z.string().cidr() // ❌
-z.cidrv4() // ✅
-z.cidrv6() // ✅
+z.string().cidr() // [FAIL]
+z.cidrv4() // [OK]
+z.cidrv6() // [OK]
 ```
 
 ## `z.coerce` updates
@@ -2960,15 +2960,15 @@ enum Color {
   Blue = "blue",
 }
 
-const ColorSchema = z.enum(Color); // ✅
+const ColorSchema = z.enum(Color); // [OK]
 ```
 
 As part of this refactor of `ZodEnum`, a number of long-deprecated and redundant features have been removed. These were all identical and only existed for historical reasons.
 
 ```ts
-ColorSchema.enum.Red; // ✅ => "Red" (canonical API)
-ColorSchema.Enum.Red; // ❌ removed
-ColorSchema.Values.Red; // ❌ removed
+ColorSchema.enum.Red; // [OK] => "Red" (canonical API)
+ColorSchema.Enum.Red; // [FAIL] removed
+ColorSchema.Values.Red; // [FAIL] removed
 ```
 
 ## `z.array()`
@@ -3069,7 +3069,7 @@ Zod's new parsing architecture does not eagerly evaluate the `path` array. This 
 
 ```ts
 z.string().superRefine((val, ctx) => {
-  ctx.path; // ❌ no longer available
+  ctx.path; // [FAIL] no longer available
 });
 ```
 
@@ -3126,7 +3126,7 @@ Symbols aren't considered literal values, nor can they be simply compared with `
 Previously all Zod classes defined a static `.create()` method. These are now implemented as standalone factory functions.
 
 ```ts
-z.ZodString.create(); // ❌ 
+z.ZodString.create(); // [FAIL] 
 ```
 
 ## `z.record()`
@@ -3137,11 +3137,11 @@ Before, `z.record()` could be used with a single argument. This is no longer sup
 
 ```ts
 // Zod 3
-z.record(z.string()); // ✅
+z.record(z.string()); // [OK]
 
 // Zod 4
-z.record(z.string()); // ❌
-z.record(z.string(), z.string()); // ✅
+z.record(z.string()); // [FAIL]
+z.record(z.string(), z.string()); // [OK]
 ```
 
 ### improves enum support
@@ -3341,3 +3341,4 @@ Branding is now handled with a direct modification to the inferred type, instead
   - ZodEnum and ZodNativeEnum are merged
   - `.Values` and `.Enum` are removed. Use `.enum` instead.
   - `.options` is removed */}
+

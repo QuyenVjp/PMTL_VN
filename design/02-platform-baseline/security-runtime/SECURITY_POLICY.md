@@ -103,7 +103,7 @@ Nó không phải wish list (danh sách mong muốn). Nếu một mục trong đ
   - login (đăng nhập)
   - register (đăng ký)
   - forgot password (quên mật khẩu)
-  - **refresh token** (làm mới token) — ⚠️ endpoint này dễ bị miss, attacker brute-force refresh tokens nếu không có guard
+  - **refresh token** (làm mới token) — [WARN]️ endpoint này dễ bị miss, attacker brute-force refresh tokens nếu không có guard
   - reset password (đặt lại mật khẩu)
   - email verification / resend (xác minh / gửi lại xác minh)
   - upload (tải lên)
@@ -418,3 +418,4 @@ Những quyết định trên phải được ánh xạ (map) tiếp vào:
 - [manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md)
 - [upload-media-asset.md](../../03-domains/content/USE_CASES/upload-media-asset.md)
 - [implementation-mapping.md](../../04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md)
+

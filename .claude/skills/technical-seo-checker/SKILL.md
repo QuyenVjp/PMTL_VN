@@ -153,12 +153,12 @@ When a user requests a technical SEO audit:
    
    | Check | Status | Notes |
    |-------|--------|-------|
-   | File exists | ✅/❌ | [notes] |
-   | Valid syntax | ✅/⚠️/❌ | [errors found] |
-   | Sitemap declared | ✅/❌ | [sitemap URL] |
-   | Important pages blocked | ✅/⚠️/❌ | [blocked paths] |
-   | Assets blocked | ✅/⚠️/❌ | [CSS/JS blocked?] |
-   | Correct user-agents | ✅/⚠️/❌ | [notes] |
+   | File exists | [OK]/[FAIL] | [notes] |
+   | Valid syntax | [OK]/[WARN]️/[FAIL] | [errors found] |
+   | Sitemap declared | [OK]/[FAIL] | [sitemap URL] |
+   | Important pages blocked | [OK]/[WARN]️/[FAIL] | [blocked paths] |
+   | Assets blocked | [OK]/[WARN]️/[FAIL] | [CSS/JS blocked?] |
+   | Correct user-agents | [OK]/[WARN]️/[FAIL] | [notes] |
    
    **Issues Found**:
    - [Issue 1]
@@ -183,14 +183,14 @@ When a user requests a technical SEO audit:
    
    | Check | Status | Notes |
    |-------|--------|-------|
-   | Sitemap exists | ✅/❌ | [notes] |
-   | Valid XML format | ✅/⚠️/❌ | [errors] |
-   | In robots.txt | ✅/❌ | [notes] |
-   | Submitted to ~~search console | ✅/⚠️/❌ | [notes] |
+   | Sitemap exists | [OK]/[FAIL] | [notes] |
+   | Valid XML format | [OK]/[WARN]️/[FAIL] | [errors] |
+   | In robots.txt | [OK]/[FAIL] | [notes] |
+   | Submitted to ~~search console | [OK]/[WARN]️/[FAIL] | [notes] |
    | URLs count | [X] | [appropriate?] |
-   | Only indexable URLs | ✅/⚠️/❌ | [notes] |
-   | Includes priority | ✅/⚠️ | [notes] |
-   | Includes lastmod | ✅/⚠️ | [accurate?] |
+   | Only indexable URLs | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Includes priority | [OK]/[WARN]️ | [notes] |
+   | Includes lastmod | [OK]/[WARN]️ | [accurate?] |
    
    **Issues Found**:
    - [Issue 1]
@@ -238,11 +238,11 @@ When a user requests a technical SEO audit:
    
    | Check | Status | Notes |
    |-------|--------|-------|
-   | Canonicals present | ✅/⚠️/❌ | [X]% of pages |
-   | Self-referencing | ✅/⚠️/❌ | [notes] |
-   | Consistent (HTTP/HTTPS) | ✅/⚠️/❌ | [notes] |
-   | Consistent (www/non-www) | ✅/⚠️/❌ | [notes] |
-   | No conflicting signals | ✅/⚠️/❌ | [notes] |
+   | Canonicals present | [OK]/[WARN]️/[FAIL] | [X]% of pages |
+   | Self-referencing | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Consistent (HTTP/HTTPS) | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Consistent (www/non-www) | [OK]/[WARN]️/[FAIL] | [notes] |
+   | No conflicting signals | [OK]/[WARN]️/[FAIL] | [notes] |
    
    ### Duplicate Content Issues
    
@@ -327,4 +327,5 @@ When a user requests a technical SEO audit:
 - [internal-linking-optimizer](../internal-linking-optimizer/) — Fix link issues
 - [alert-manager](../../monitor/alert-manager/) — Set up alerts for technical issues found
 - [content-quality-auditor](../../cross-cutting/content-quality-auditor/) — Full 80-item CORE-EEAT audit
+
 

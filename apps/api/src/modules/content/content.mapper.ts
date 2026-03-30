@@ -1,5 +1,5 @@
 import type { Post, User } from "../../generated/prisma/client.js";
-import type { PostResponse } from "../../../packages/shared/src/schemas/content.js";
+import type { PostResponse } from "./content.schemas.js";
 
 type PostWithAuthor = Post & {
   author: Pick<User, "publicId" | "displayName" | "avatarUrl">;

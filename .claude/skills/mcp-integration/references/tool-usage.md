@@ -382,7 +382,7 @@ Steps:
 
 **Good error messages:**
 ```
-❌ "Could not create task. Please check:
+[FAIL] "Could not create task. Please check:
    1. You're logged into Asana
    2. You have access to workspace 'Engineering'
    3. The project 'Q1 Goals' exists"
@@ -390,7 +390,7 @@ Steps:
 
 **Poor error messages:**
 ```
-❌ "Error: MCP tool returned 403"
+[FAIL] "Error: MCP tool returned 403"
 ```
 
 ### Documentation
@@ -536,3 +536,4 @@ Effective MCP tool usage requires:
 6. **Testing thoroughly** before deployment
 
 Follow these patterns for robust MCP tool integration in your plugin commands and agents.
+

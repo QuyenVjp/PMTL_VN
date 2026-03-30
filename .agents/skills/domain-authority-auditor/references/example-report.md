@@ -17,15 +17,15 @@ Full example audit output for reference. See the [SKILL.md](../SKILL.md) for the
 - **Domain Type**: Content Publisher
 - **Audit Date**: 2025-02-03
 - **CITE Score**: 69.9/100 (Medium)
-- **Veto Status**: ✅ No triggers
+- **Veto Status**: [OK] No triggers
 
 #### Veto Check (Emergency Brake)
 
 | Veto Item | Status | Action |
 |-----------|--------|--------|
-| T03: Link-Traffic Coherence | ✅ Pass | Link growth correlates with traffic growth |
-| T05: Backlink Profile Uniqueness | ✅ Pass | No PBN patterns detected; diverse link sources |
-| T09: Penalty & Deindex History | ✅ Pass | No manual actions; clean penalty history |
+| T03: Link-Traffic Coherence | [OK] Pass | Link growth correlates with traffic growth |
+| T05: Backlink Profile Uniqueness | [OK] Pass | No PBN patterns detected; diverse link sources |
+| T09: Penalty & Deindex History | [OK] Pass | No manual actions; clean penalty history |
 
 ### Dimension Scores
 
@@ -97,3 +97,4 @@ Sorted by: weight × points lost (highest impact first)
 - For content audit: use [content-quality-auditor](../content-quality-auditor/) on key pages
 - For tracking progress: run `/seo:report` with CITE score trends quarterly
 ```
+

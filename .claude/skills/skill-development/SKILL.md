@@ -452,14 +452,14 @@ Before finalizing a skill:
 
 ### Mistake 1: Weak Trigger Description
 
-❌ **Bad:**
+[FAIL] **Bad:**
 ```yaml
 description: Provides guidance for working with hooks.
 ```
 
 **Why bad:** Vague, no specific trigger phrases, not third person
 
-✅ **Good:**
+[OK] **Good:**
 ```yaml
 description: This skill should be used when the user asks to "create a hook", "add a PreToolUse hook", "validate tool use", or mentions hook events. Provides comprehensive hooks API guidance.
 ```
@@ -468,7 +468,7 @@ description: This skill should be used when the user asks to "create a hook", "a
 
 ### Mistake 2: Too Much in SKILL.md
 
-❌ **Bad:**
+[FAIL] **Bad:**
 ```
 skill-name/
 └── SKILL.md  (8,000 words - everything in one file)
@@ -476,7 +476,7 @@ skill-name/
 
 **Why bad:** Bloats context when skill loads, detailed content always loaded
 
-✅ **Good:**
+[OK] **Good:**
 ```
 skill-name/
 ├── SKILL.md  (1,800 words - core essentials)
@@ -489,7 +489,7 @@ skill-name/
 
 ### Mistake 3: Second Person Writing
 
-❌ **Bad:**
+[FAIL] **Bad:**
 ```markdown
 You should start by reading the configuration file.
 You need to validate the input.
@@ -498,7 +498,7 @@ You can use the grep tool to search.
 
 **Why bad:** Second person, not imperative form
 
-✅ **Good:**
+[OK] **Good:**
 ```markdown
 Start by reading the configuration file.
 Validate the input before processing.
@@ -509,7 +509,7 @@ Use the grep tool to search for patterns.
 
 ### Mistake 4: Missing Resource References
 
-❌ **Bad:**
+[FAIL] **Bad:**
 ```markdown
 # SKILL.md
 
@@ -520,7 +520,7 @@ Use the grep tool to search for patterns.
 
 **Why bad:** Claude doesn't know references exist
 
-✅ **Good:**
+[OK] **Good:**
 ```markdown
 # SKILL.md
 
@@ -581,7 +581,7 @@ Good for: Complex domains with validation utilities
 
 ## Best Practices Summary
 
-✅ **DO:**
+[OK] **DO:**
 - Use third-person in description ("This skill should be used when...")
 - Include specific trigger phrases ("create X", "configure Y")
 - Keep SKILL.md lean (1,500-2,000 words)
@@ -592,7 +592,7 @@ Good for: Complex domains with validation utilities
 - Create utility scripts for common operations
 - Study plugin-dev's skills as templates
 
-❌ **DON'T:**
+[FAIL] **DON'T:**
 - Use second person anywhere
 - Have vague trigger conditions
 - Put everything in SKILL.md (>3,000 words without references/)
@@ -635,3 +635,4 @@ To create a skill for your plugin:
 8. **Iterate**: Improve based on usage
 
 Focus on strong trigger descriptions, progressive disclosure, and imperative writing style for effective skills that load when needed and provide targeted guidance.
+

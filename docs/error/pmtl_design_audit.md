@@ -31,21 +31,21 @@ The DTO shape plan's `Contract closure requirements` table (lines 775-784) refer
 
 | Referenced error code | Found in registry? |
 |---|---|
-| `identity.unauthorized` | ❌ No — registry uses `auth.*` family |
-| `dashboard.aggregate_unavailable` | ✅ Yes |
-| `calendar.advisory_unavailable` | ❌ No — registry has `calendar.aggregate_unavailable` but not `advisory_unavailable` |
-| `engagement.practice_profile_invalid` | ❌ No — entire `engagement.*` family missing |
-| `engagement.practice_profile_conflict` | ❌ No |
-| `engagement.practice_log_invalid` | ❌ No |
-| `engagement.practice_log_conflict` | ❌ No |
-| `engagement.practice_sheet_invalid` | ❌ No |
-| `engagement.practice_sheet_transition_invalid` | ❌ No |
-| `engagement.practice_foundation_warning` | ❌ No |
-| `wisdom.offline.version_stale` | ❌ No — `wisdom.*` family missing |
-| `wisdom.offline.bundle_not_found` | ❌ No |
-| `wisdom.offline.device_fingerprint_required` | ❌ No |
-| `offline.bundle_list_unavailable` | ✅ Yes |
-| `offline.sync_degraded` | ✅ Yes |
+| `identity.unauthorized` | [FAIL] No — registry uses `auth.*` family |
+| `dashboard.aggregate_unavailable` | [OK] Yes |
+| `calendar.advisory_unavailable` | [FAIL] No — registry has `calendar.aggregate_unavailable` but not `advisory_unavailable` |
+| `engagement.practice_profile_invalid` | [FAIL] No — entire `engagement.*` family missing |
+| `engagement.practice_profile_conflict` | [FAIL] No |
+| `engagement.practice_log_invalid` | [FAIL] No |
+| `engagement.practice_log_conflict` | [FAIL] No |
+| `engagement.practice_sheet_invalid` | [FAIL] No |
+| `engagement.practice_sheet_transition_invalid` | [FAIL] No |
+| `engagement.practice_foundation_warning` | [FAIL] No |
+| `wisdom.offline.version_stale` | [FAIL] No — `wisdom.*` family missing |
+| `wisdom.offline.bundle_not_found` | [FAIL] No |
+| `wisdom.offline.device_fingerprint_required` | [FAIL] No |
+| `offline.bundle_list_unavailable` | [OK] Yes |
+| `offline.sync_degraded` | [OK] Yes |
 
 **Impact**: Codegen will either invent error codes or use wrong family prefixes. The DTO plan says `phải cập nhật ERROR_CODE_REGISTRY trước khi scaffold` but the registry itself is incomplete.
 
@@ -60,7 +60,7 @@ The DTO shape plan's `Contract closure requirements` table (lines 775-784) refer
 | Surface | DTO plan says | Loader contract says |
 |---|---|---|
 | `OfflineBundleListPageDto` | cursor pagination (line 718-722) | Just says `pagination` without specifying type |
-| `/bach-thoai`, `/hoi-dap` | offset pagination (line 700-705) | offset (line 186-189) ✅ consistent |
+| `/bach-thoai`, `/hoi-dap` | offset pagination (line 700-705) | offset (line 186-189) [OK] consistent |
 
 The DTO plan explicitly says offline bundle list `ưu tiên cursor semantics` (line 722), but the route inventory and loader contract don't echo this decision. If codegen reads the loader contract first, it may default to offset.
 
@@ -244,14 +244,14 @@ DTO_SHAPE_PLAN references cache expectations but there's no unified "never cache
 
 | Check | Status | Notes |
 |---|---|---|
-| DTO names match between DTO_SHAPE_PLAN ↔ PAGE_LOADER_CONTRACTS | ✅ Consistent | All primary loader DTOs match |
-| Error codes in DTO_SHAPE_PLAN exist in ERROR_CODE_REGISTRY | ❌ 13 missing | See P0-1 |
-| Route paths in PAGE_LOADER_CONTRACTS exist in API_ROUTE_INVENTORY | ✅ Consistent | Spot-checked 15 routes |
-| Env vars in ENV_INVENTORY referenced by scaffold docs | ✅ Consistent | All Phase 1 vars referenced correctly |
+| DTO names match between DTO_SHAPE_PLAN ↔ PAGE_LOADER_CONTRACTS | [OK] Consistent | All primary loader DTOs match |
+| Error codes in DTO_SHAPE_PLAN exist in ERROR_CODE_REGISTRY | [FAIL] 13 missing | See P0-1 |
+| Route paths in PAGE_LOADER_CONTRACTS exist in API_ROUTE_INVENTORY | [OK] Consistent | Spot-checked 15 routes |
+| Env vars in ENV_INVENTORY referenced by scaffold docs | [OK] Consistent | All Phase 1 vars referenced correctly |
 | Prisma tables in schema plan match domain DBML owners | 🟡 Partial | Child/junction tables not in summary table (P0-4) |
-| Pagination types consistent across DTO/loader/route docs | ❌ 1 conflict | Offline bundle cursor vs unspecified (P0-2) |
-| Phase gating consistent across IMPLEMENTATION_MAPPING ↔ SCAFFOLD_ORDER | ✅ Consistent | Both enforce same Step 0-7 window |
-| Feature flag keys match between CODING_READINESS and route inventory conditions | ✅ Consistent | 8 flags verified |
+| Pagination types consistent across DTO/loader/route docs | [FAIL] 1 conflict | Offline bundle cursor vs unspecified (P0-2) |
+| Phase gating consistent across IMPLEMENTATION_MAPPING ↔ SCAFFOLD_ORDER | [OK] Consistent | Both enforce same Step 0-7 window |
+| Feature flag keys match between CODING_READINESS and route inventory conditions | [OK] Consistent | 8 flags verified |
 
 ---
 
@@ -297,3 +297,4 @@ DTO_SHAPE_PLAN references cache expectations but there's no unified "never cache
 6. **Scaffold step blockers** (APPS_API_SCAFFOLD_ORDER) — each step has explicit "do not move on until" gates
 7. **Bug prediction section** (CODING_READINESS) — proactive identification of 8 bugs with pre-applied fixes
 8. **Bilingual documentation** — Vietnamese context preserved alongside technical English terms
+

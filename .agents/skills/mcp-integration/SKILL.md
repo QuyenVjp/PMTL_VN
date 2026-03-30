@@ -346,33 +346,33 @@ Integrate multiple MCP servers:
 Always use secure connections:
 
 ```json
-✅ "url": "https://mcp.example.com/sse"
-❌ "url": "http://mcp.example.com/sse"
+[OK] "url": "https://mcp.example.com/sse"
+[FAIL] "url": "http://mcp.example.com/sse"
 ```
 
 ### Token Management
 
 **DO:**
-- ✅ Use environment variables for tokens
-- ✅ Document required env vars in README
-- ✅ Let OAuth flow handle authentication
+- [OK] Use environment variables for tokens
+- [OK] Document required env vars in README
+- [OK] Let OAuth flow handle authentication
 
 **DON'T:**
-- ❌ Hardcode tokens in configuration
-- ❌ Commit tokens to git
-- ❌ Share tokens in documentation
+- [FAIL] Hardcode tokens in configuration
+- [FAIL] Commit tokens to git
+- [FAIL] Share tokens in documentation
 
 ### Permission Scoping
 
 Pre-allow only necessary MCP tools:
 
 ```markdown
-✅ allowed-tools: [
+[OK] allowed-tools: [
   "mcp__plugin_api_server__read_data",
   "mcp__plugin_api_server__create_item"
 ]
 
-❌ allowed-tools: ["mcp__plugin_api_server__*"]
+[FAIL] allowed-tools: ["mcp__plugin_api_server__*"]
 ```
 
 ## Error Handling
@@ -497,20 +497,20 @@ Look for:
 ### Best Practices
 
 **DO:**
-- ✅ Use ${CLAUDE_PLUGIN_ROOT} for portable paths
-- ✅ Document required environment variables
-- ✅ Use secure connections (HTTPS/WSS)
-- ✅ Pre-allow specific MCP tools in commands
-- ✅ Test MCP integration before publishing
-- ✅ Handle connection and tool errors gracefully
+- [OK] Use ${CLAUDE_PLUGIN_ROOT} for portable paths
+- [OK] Document required environment variables
+- [OK] Use secure connections (HTTPS/WSS)
+- [OK] Pre-allow specific MCP tools in commands
+- [OK] Test MCP integration before publishing
+- [OK] Handle connection and tool errors gracefully
 
 **DON'T:**
-- ❌ Hardcode absolute paths
-- ❌ Commit credentials to git
-- ❌ Use HTTP instead of HTTPS
-- ❌ Pre-allow all tools with wildcards
-- ❌ Skip error handling
-- ❌ Forget to document setup
+- [FAIL] Hardcode absolute paths
+- [FAIL] Commit credentials to git
+- [FAIL] Use HTTP instead of HTTPS
+- [FAIL] Pre-allow all tools with wildcards
+- [FAIL] Skip error handling
+- [FAIL] Forget to document setup
 
 ## Additional Resources
 
@@ -552,3 +552,4 @@ To add MCP integration to a plugin:
 9. Document MCP integration in plugin README
 
 Focus on stdio for custom/local servers, SSE for hosted services with OAuth.
+

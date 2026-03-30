@@ -21,11 +21,11 @@ This is a complete example output showing the expected format for SERP analysis 
 
 | Feature | Present | Analysis |
 |---------|---------|----------|
-| AI Overview | ✅ | Lists steps, cites 3 sources |
-| Featured Snippet | ✅ | Step-by-step list from Buzzsprout |
-| People Also Ask | ✅ | 4 questions visible, expandable |
-| Video Results | ✅ | 3 YouTube videos mid-page |
-| Image Pack | ❌ | |
+| AI Overview | [OK] | Lists steps, cites 3 sources |
+| Featured Snippet | [OK] | Step-by-step list from Buzzsprout |
+| People Also Ask | [OK] | 4 questions visible, expandable |
+| Video Results | [OK] | 3 YouTube videos mid-page |
+| Image Pack | [FAIL] | |
 
 ### Top 5 Results Analysis
 
@@ -83,3 +83,4 @@ Given high difficulty, consider:
 3. Create supporting video content for video carousel
 4. Focus on PAA optimization for quick wins
 ```
+

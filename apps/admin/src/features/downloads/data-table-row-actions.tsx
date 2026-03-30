@@ -1,4 +1,4 @@
-import { CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, EyeIcon, Trash2Icon } from "lucide-react";
 
 import { WorkspaceRowActions } from "@/components/workspace";
 import type { DownloadItem } from "@/features/downloads/queries";
@@ -7,7 +7,7 @@ import { useDownloads } from "@/features/downloads/context";
 export function DownloadsRowActions({ row }: { row: DownloadItem }) {
   const { setOpen, setCurrentRow } = useDownloads();
 
-  const open = (dialog: "edit" | "publish" | "delete") => {
+  const open = (dialog: "detail" | "publish" | "delete") => {
     setCurrentRow(row);
     setOpen(dialog);
   };
@@ -16,9 +16,9 @@ export function DownloadsRowActions({ row }: { row: DownloadItem }) {
     <WorkspaceRowActions
       actions={[
         {
-          label: "Chỉnh sửa",
-          icon: PencilIcon,
-          onClick: () => open("edit"),
+          label: "Xem chi tiết",
+          icon: EyeIcon,
+          onClick: () => open("detail"),
         },
         ...(row.status === "DRAFT"
           ? [

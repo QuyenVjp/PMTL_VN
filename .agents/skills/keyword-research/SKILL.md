@@ -231,10 +231,10 @@ When a user requests keyword research:
    
    | Scenario | Volume | Difficulty | Intent | Priority |
    |----------|--------|------------|--------|----------|
-   | Quick Win | Low-Med | Low | High | ⭐⭐⭐⭐⭐ |
-   | Growth | High | Medium | High | ⭐⭐⭐⭐ |
-   | Long-term | High | High | High | ⭐⭐⭐ |
-   | Research | Low | Low | Low | ⭐⭐ |
+   | Quick Win | Low-Med | Low | High | [STAR][STAR][STAR][STAR][STAR] |
+   | Growth | High | Medium | High | [STAR][STAR][STAR][STAR] |
+   | Long-term | High | High | High | [STAR][STAR][STAR] |
+   | Research | Low | Low | Low | [STAR][STAR] |
    ```
 
 7. **Identify GEO Opportunities**
@@ -344,4 +344,5 @@ When a user requests keyword research:
 - [seo-content-writer](../../build/seo-content-writer/) — Create content for target keywords
 - [geo-content-optimizer](../../build/geo-content-optimizer/) — Optimize for AI citations
 - [rank-tracker](../../monitor/rank-tracker/) — Monitor keyword position changes over time
+
 

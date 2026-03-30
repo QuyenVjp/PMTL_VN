@@ -91,7 +91,7 @@ for tool in git jq node; do
 done
 
 if [ -n "$MISSING_DEPS" ]; then
-  ❌ ERROR: Missing required dependencies:$MISSING_DEPS
+  [FAIL] ERROR: Missing required dependencies:$MISSING_DEPS
 
   INSTALLATION:
   - git: https://git-scm.com/downloads
@@ -155,7 +155,7 @@ if echo "$FEATURES" | grep -q "github"; then
   echo "✓ GitHub integration available"
 else
   # Reduced functionality without GitHub
-  echo "⚠ Limited functionality: GitHub CLI not installed"
+  echo "[WARN] Limited functionality: GitHub CLI not installed"
   echo "  Install 'gh' for full features"
 fi
 
@@ -215,7 +215,7 @@ description: Command with tips
 
 ---
 
-💡 TIP: Did you know?
+[IDEA] TIP: Did you know?
 
 You can speed up this command with the --fast flag:
   /command --fast [args]
@@ -248,7 +248,7 @@ fi
 
 <!-- Suggest similar commands if not found -->
 if [ "$1" != "valid-option1" ] && [ "$1" != "valid-option2" ]; then
-  ❌ Unknown option: $1
+  [FAIL] Unknown option: $1
 
   Did you mean:
   - valid-option1 (most similar)
@@ -433,7 +433,7 @@ Command version: 2.1.0
 Plugin version: [detect from plugin.json]
 
 if [  "$PLUGIN_VERSION" < "2.0.0" ]; then
-  ❌ ERROR: Incompatible plugin version
+  [FAIL] ERROR: Incompatible plugin version
 
   This command requires plugin version >= 2.0.0
   Current version: $PLUGIN_VERSION
@@ -459,7 +459,7 @@ description: Command with deprecation warnings
 # Deprecation Check
 
 if [ "$1" = "--old-flag" ]; then
-  ⚠️  DEPRECATION WARNING
+  [WARN]️  DEPRECATION WARNING
 
   The --old-flag option is deprecated as of v2.0.0
   It will be removed in v3.0.0 (est. June 2025)
@@ -585,8 +585,8 @@ This helps improve the command for everyone.
 Rate this command:
 - 👍 Helpful
 - 👎 Not helpful
-- 🐛 Found a bug
-- 💡 Have a suggestion
+- [BUG] Found a bug
+- [IDEA] Have a suggestion
 
 Reply with an emoji or:
 - /command feedback
@@ -714,7 +714,7 @@ if [ $? -eq 0 ]; then
 
   ✓ Operation complete
 else
-  ❌ Changes failed validation
+  [FAIL] Changes failed validation
 
   Rolling back...
   rm -rf $TEMP_DIR
@@ -902,3 +902,4 @@ fi
 5. **Ethical**: Privacy-respecting, user consent
 
 With these considerations, commands become marketplace-ready and delight users across diverse environments and use cases.
+

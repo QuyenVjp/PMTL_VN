@@ -148,12 +148,12 @@ When a user requests an on-page SEO audit:
    
    | Criterion | Status | Notes |
    |-----------|--------|-------|
-   | Length (50-60 chars) | ✅/⚠️/❌ | [notes] |
-   | Keyword included | ✅/⚠️/❌ | Position: [front/middle/end] |
-   | Keyword at front | ✅/⚠️/❌ | [notes] |
-   | Unique across site | ✅/⚠️/❌ | [notes] |
-   | Compelling/clickable | ✅/⚠️/❌ | [notes] |
-   | Matches intent | ✅/⚠️/❌ | [notes] |
+   | Length (50-60 chars) | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Keyword included | [OK]/[WARN]️/[FAIL] | Position: [front/middle/end] |
+   | Keyword at front | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Unique across site | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Compelling/clickable | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Matches intent | [OK]/[WARN]️/[FAIL] | [notes] |
    
    **Title Score**: [X]/10
    
@@ -177,12 +177,12 @@ When a user requests an on-page SEO audit:
    
    | Criterion | Status | Notes |
    |-----------|--------|-------|
-   | Length (150-160 chars) | ✅/⚠️/❌ | [notes] |
-   | Keyword included | ✅/⚠️/❌ | [notes] |
-   | Call-to-action present | ✅/⚠️/❌ | [notes] |
-   | Unique across site | ✅/⚠️/❌ | [notes] |
-   | Accurately describes page | ✅/⚠️/❌ | [notes] |
-   | Compelling copy | ✅/⚠️/❌ | [notes] |
+   | Length (150-160 chars) | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Keyword included | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Call-to-action present | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Unique across site | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Accurately describes page | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Compelling copy | [OK]/[WARN]️/[FAIL] | [notes] |
    
    **Description Score**: [X]/10
    
@@ -212,12 +212,12 @@ When a user requests an on-page SEO audit:
    
    | Criterion | Status | Notes |
    |-----------|--------|-------|
-   | Single H1 | ✅/⚠️/❌ | Found: [X] H1s |
-   | H1 includes keyword | ✅/⚠️/❌ | [notes] |
-   | Logical hierarchy | ✅/⚠️/❌ | [notes] |
-   | H2s include keywords | ✅/⚠️/❌ | [X]/[Y] contain keywords |
-   | No skipped levels | ✅/⚠️/❌ | [notes] |
-   | Descriptive headers | ✅/⚠️/❌ | [notes] |
+   | Single H1 | [OK]/[WARN]️/[FAIL] | Found: [X] H1s |
+   | H1 includes keyword | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Logical hierarchy | [OK]/[WARN]️/[FAIL] | [notes] |
+   | H2s include keywords | [OK]/[WARN]️/[FAIL] | [X]/[Y] contain keywords |
+   | No skipped levels | [OK]/[WARN]️/[FAIL] | [notes] |
+   | Descriptive headers | [OK]/[WARN]️/[FAIL] | [notes] |
    
    **Header Score**: [X]/10
    
@@ -301,4 +301,5 @@ When a user requests an on-page SEO audit:
 - [content-quality-auditor](../../cross-cutting/content-quality-auditor/) — Full 80-item CORE-EEAT audit
 - [internal-linking-optimizer](../internal-linking-optimizer/) — Optimize internal link structure
 - [schema-markup-generator](../../build/schema-markup-generator/) — Validate and generate schema markup
+
 

@@ -444,9 +444,9 @@ export default function App() {
       <button
         type="button"
         onClick={() => {
-          setValue("lastName", "luo"); // ✅
-          setValue("firstName", true); // ❌: true is not string
-          errors.bill; // ❌: property bill does not exist
+          setValue("lastName", "luo"); // [OK]
+          setValue("firstName", true); // [FAIL]: true is not string
+          errors.bill; // [FAIL]: property bill does not exist
         }}
       >
         SetValue

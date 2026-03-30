@@ -235,11 +235,11 @@ When a user requests GEO optimization:
    ### AI Query Coverage
 
    This content is now optimized to answer:
-   - "What is [topic]?" ✅
-   - "How does [topic] work?" ✅
-   - "Why is [topic] important?" ✅
-   - "[Topic] vs [alternative]" ✅
-   - "Best [topic] for [use case]" ✅
+   - "What is [topic]?" [OK]
+   - "How does [topic] work?" [OK]
+   - "Why is [topic] important?" [OK]
+   - "[Topic] vs [alternative]" [OK]
+   - "Best [topic] for [use case]" [OK]
    ```
 
 5. **CORE-EEAT GEO Self-Check**
@@ -251,22 +251,22 @@ When a user requests GEO optimization:
 
     | ID | Standard | Status | Notes |
     |----|----------|--------|-------|
-    | C02 | Direct Answer in first 150 words | ✅/⚠️/❌ | [notes] |
-    | C04 | Key terms defined on first use | ✅/⚠️/❌ | [notes] |
-    | C09 | Structured FAQ with Schema | ✅/⚠️/❌ | [notes] |
-    | O02 | Summary Box / Key Takeaways | ✅/⚠️/❌ | [notes] |
-    | O03 | Comparisons in tables | ✅/⚠️/❌ | [notes] |
-    | O05 | JSON-LD Schema Markup | ✅/⚠️/❌ | [notes] |
-    | O06 | Section chunking (3–5 sentences) | ✅/⚠️/❌ | [notes] |
-    | R01 | ≥5 precise data points with units | ✅/⚠️/❌ | [notes] |
-    | R02 | ≥1 citation per 500 words | ✅/⚠️/❌ | [notes] |
-    | R04 | Claims backed by evidence | ✅/⚠️/❌ | [notes] |
-    | R07 | Full entity names | ✅/⚠️/❌ | [notes] |
-    | E01 | Original first-party data | ✅/⚠️/❌ | [notes] |
-    | Exp10 | Limitations acknowledged | ✅/⚠️/❌ | [notes] |
-    | Ept08 | Reasoning transparency | ✅/⚠️/❌ | [notes] |
+    | C02 | Direct Answer in first 150 words | [OK]/[WARN]️/[FAIL] | [notes] |
+    | C04 | Key terms defined on first use | [OK]/[WARN]️/[FAIL] | [notes] |
+    | C09 | Structured FAQ with Schema | [OK]/[WARN]️/[FAIL] | [notes] |
+    | O02 | Summary Box / Key Takeaways | [OK]/[WARN]️/[FAIL] | [notes] |
+    | O03 | Comparisons in tables | [OK]/[WARN]️/[FAIL] | [notes] |
+    | O05 | JSON-LD Schema Markup | [OK]/[WARN]️/[FAIL] | [notes] |
+    | O06 | Section chunking (3–5 sentences) | [OK]/[WARN]️/[FAIL] | [notes] |
+    | R01 | ≥5 precise data points with units | [OK]/[WARN]️/[FAIL] | [notes] |
+    | R02 | ≥1 citation per 500 words | [OK]/[WARN]️/[FAIL] | [notes] |
+    | R04 | Claims backed by evidence | [OK]/[WARN]️/[FAIL] | [notes] |
+    | R07 | Full entity names | [OK]/[WARN]️/[FAIL] | [notes] |
+    | E01 | Original first-party data | [OK]/[WARN]️/[FAIL] | [notes] |
+    | Exp10 | Limitations acknowledged | [OK]/[WARN]️/[FAIL] | [notes] |
+    | Ept08 | Reasoning transparency | [OK]/[WARN]️/[FAIL] | [notes] |
 
-    **Items Needing Attention**: [list any ⚠️/❌ items]
+    **Items Needing Attention**: [list any [WARN]️/[FAIL] items]
 
     _For full 80-item audit, use [content-quality-auditor](../../cross-cutting/content-quality-auditor/)_
     ```
@@ -347,4 +347,5 @@ Changes: added clear definition, 2 stats with sources, structured list, DMA/Emar
 - [content-refresher](../../optimize/content-refresher/) — Update content for freshness
 - [content-quality-auditor](../../cross-cutting/content-quality-auditor/) — Full 80-item CORE-EEAT audit
 - [serp-analysis](../../research/serp-analysis/) — Analyze AI Overview patterns
+
 

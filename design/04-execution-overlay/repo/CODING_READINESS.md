@@ -11,51 +11,51 @@ File này trả lời: **"Có thể code ngay chưa? Còn thiếu gì? Lỗi nà
 
 | Hạng mục | Trạng thái | Ghi chú |
 |---|---|---|
-| Backend architecture | ✅ Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, feature-status đọc ở `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md`, exact version/runtime pins đọc ở `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`, còn `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` chỉ giữ Nest 11 scaffold nuance; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
-| Platform modules | ✅ Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md) |
-| Security baseline | ✅ Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
-| DB schema | ✅ Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` |
-| UI/UX design | ✅ Sẵn sàng | `design/02-platform-baseline/web-runtime/` và `design/04-execution-overlay/web/` đã có owner docs cho IA/navigation, landing, homepage, app screens, tokens, and route contracts; xem `ROOT_DOC_OWNERSHIP.md` |
-| Frontend architecture | ✅ Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` |
-| Library choices | ✅ Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
-| Zod 4 policy | ✅ Design-locked | source-of-truth chain, schema placement, error policy, metadata/JSON Schema/codecs stance — `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md` |
-| Bug prediction (8/8) | ✅ Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
-| Feature flags list | ✅ Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
-| Rate-limit values | ✅ Design-locked | 13 endpoints với exact limits — xem Phần 5; wiring chỉ được cắm khi route tương ứng tới đúng scaffold step |
-| Webhook replay protection | ✅ Sẵn sàng | signature verify + dedup persistence đã chốt ở `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` + `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
-| Migration order | ✅ Sẵn sàng | 12 bước chi tiết — xem Phần 6 |
-| Testing strategy | ✅ Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md` |
-| Deploy runbook | ✅ Sẵn sàng | Docker Compose, deploy/rollback commands, SSL verify — `design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md` |
-| Migration strategy | ✅ Sẵn sàng | Prisma commands, multi-step examples, seed — `design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md` |
-| Infra baseline | ✅ Sẵn sàng | Trimmed to ~170 lines, no duplication — `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` |
-| SVG asset workflow | ✅ Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `design/05-references/starter-patterns/SVG_PRECISION_WORKFLOW.md` |
-| Skill/tool alignment | ✅ Fixed | AGENTS routing đã chốt NestJS rebuild; các skills CMS legacy đã bị deprecate hoặc loại khỏi luồng code mới; external baseline hiện chỉ dùng `Gemini + Copilot` |
-| OpenAPI spec | ✅ Design-locked | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới; runtime artifact vẫn pending implementation |
-| Deferred/excluded advanced tech design | ✅ Sẵn sàng | Các component `planned` / `explicit exclusion` đều có design doc rõ — xem `DECISIONS.md` section 15 |
-| Email provider decision | ✅ Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `design/02-platform-baseline/security-runtime/EMAIL_PROVIDER_DECISION.md` |
-| Storage lifecycle | ✅ Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `design/02-platform-baseline/data-runtime/STORAGE_LIFECYCLE.md` |
-| Cache topology | ✅ Sẵn sàng | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime — `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md` |
-| Secret management | ✅ Sẵn sàng | Rotation procedures per secret, compromise response, .gitignore — `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md` |
-| CI/CD gates | ✅ Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback, concurrency + least-privilege permissions + cache guidance — `design/02-platform-baseline/deploy-ops/CICD_DEPLOY_GATES.md` |
-| WAF + anti-bot | ✅ Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `design/02-platform-baseline/edge-delivery/WAF_ANTIBOT_STRATEGY.md` |
-| External web-check readiness | ✅ Sẵn sàng ở mức design | owner split giữa design-vs-runtime evidence cho TLS/headers/DNS/crawl/metadata/email-auth đã được khóa — `design/05-references/framework-docs/EXTERNAL_WEB_CHECK_READINESS.md` |
-| Health contract | ✅ Sẵn sàng | Exact check lists per endpoint, failure runbook — `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md` |
-| Admin module specs | ✅ Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md` |
-| Admin page/API/query mapping | ✅ Sẵn sàng | page route -> API group -> query keys -> invalidation rules — `design/04-execution-overlay/admin/ADMIN_PAGE_API_MAPPING.md` |
-| Admin scaffold backlog | ✅ Sẵn sàng | rollout order + `queries.ts` / `mutations.ts` plan cho từng feature — `design/04-execution-overlay/admin/APPS_ADMIN_SCAFFOLD_BACKLOG.md` |
-| Admin feature query plan | ✅ Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `design/04-execution-overlay/admin/ADMIN_FEATURE_QUERY_PLAN.md` |
-| Wisdom naming & IA canon | ✅ Sẵn sàng | route slug, hub IA, glossary, source taxonomy, FAQ/warnings cho BTPP và Little House cross-surface — `design/03-domains/wisdom-qa/REFERENCES/BTPP-LIBRARY-CANON.MD` |
-| Wisdom translation automation | ✅ Sẵn sàng | auto-ingest/auto-translate lane đã có orchestrator + duplicate guard + slug preview + import-job lifecycle ở design level — `design/02-platform-baseline/optional-scale/TRANSLATION_AUTOMATION_ARCHITECTURE.md` |
-| Wisdom-QA family audit | ✅ Sẵn sàng | audit theo family, anti-drift rules, và gap list để scaffold không đoán taxonomy — `design/04-execution-overlay/api/WISDOM_QA_FAMILY_AUDIT.md` |
-| XLCH official alignment | ✅ Sẵn sàng | official family map và alignment backlog từ `xlch.org` đã được ghi riêng để tránh gộp sai BTPP/Hỏi đáp/Khai thị — `design/05-references/external-research/XLCH_OFFICIAL_ALIGNMENT.md` |
-| Env inventory | ✅ Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `design/04-execution-overlay/repo/ENV_INVENTORY.md` |
-| pgvector decision | ✅ Sẵn sàng | Explicit exclusion với trigger conditions rõ — `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
-| Push notification architecture | ✅ Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md` |
-| Observability architecture | ✅ Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
-| Verification toolchain matrix | ✅ Design-locked | Trail of Bits skills đã được khóa vào testing/debugging/security verification thay vì chỉ inventory/catalog |
+| Backend architecture | [OK] Design-ready | 11 modules có docs core; controller/provider/module discipline của Nest đã khóa trong `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`, feature-status đọc ở `design/02-platform-baseline/api-runtime/NEST_FEATURE_ADOPTION_MATRIX.md`, exact version/runtime pins đọc ở `design/02-platform-baseline/dependency-version/VERSION_MATRIX.md`, còn `design/02-platform-baseline/api-runtime/NESTJS_11_ADOPTION.md` chỉ giữ Nest 11 scaffold nuance; readiness này chỉ nói design đủ để lập kế hoạch scaffold, không có nghĩa apps/api đã implementation-ready rộng |
+| Platform modules | [OK] Design-ready | 11 modules có spec đầy đủ; Phase 1 vẫn chỉ được scaffold theo thứ tự Step 0-4 trong [APPS_API_SCAFFOLD_ORDER.md](../api/APPS_API_SCAFFOLD_ORDER.md) |
+| Security baseline | [OK] Design-locked | Auth, upload, CSRF, rate-limit đã chốt ở mức design; launch blockers runtime vẫn còn trong `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
+| DB schema | [OK] Sẵn sàng | Prisma schema plan có: enums, FK graph, naming, merge process — `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` |
+| UI/UX design | [OK] Sẵn sàng | `design/02-platform-baseline/web-runtime/` và `design/04-execution-overlay/web/` đã có owner docs cho IA/navigation, landing, homepage, app screens, tokens, and route contracts; xem `ROOT_DOC_OWNERSHIP.md` |
+| Frontend architecture | [OK] Sẵn sàng | Full library stack, proxy boundary, SEO, PWA, caching; đã bổ sung Next.js 16 cache rules + TanStack Query v5 option discipline — `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` |
+| Library choices | [OK] Sẵn sàng | Chốt toàn bộ trong `DECISIONS.md` section 14; đã thêm Prisma safety defaults (`omit`, `strictUndefinedChecks`, `Prisma.skip`) |
+| Zod 4 policy | [OK] Design-locked | source-of-truth chain, schema placement, error policy, metadata/JSON Schema/codecs stance — `design/02-platform-baseline/api-runtime/ZOD_4_RUNTIME_POLICY.md` |
+| Bug prediction (8/8) | [OK] Đã fix | Tất cả 8 bugs đã có fix trong design docs — xem Phần 3 |
+| Feature flags list | [OK] Sẵn sàng | 8 flags cụ thể — xem Phần 4 |
+| Rate-limit values | [OK] Design-locked | 13 endpoints với exact limits — xem Phần 5; wiring chỉ được cắm khi route tương ứng tới đúng scaffold step |
+| Webhook replay protection | [OK] Sẵn sàng | signature verify + dedup persistence đã chốt ở `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` + `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` |
+| Migration order | [OK] Sẵn sàng | 12 bước chi tiết — xem Phần 6 |
+| Testing strategy | [OK] Sẵn sàng | Vitest + Supertest, coverage targets, CI/CD, test DB — `design/02-platform-baseline/deploy-ops/TESTING_STRATEGY.md` |
+| Deploy runbook | [OK] Sẵn sàng | Docker Compose, deploy/rollback commands, SSL verify — `design/02-platform-baseline/deploy-ops/DEPLOY_RUNBOOK.md` |
+| Migration strategy | [OK] Sẵn sàng | Prisma commands, multi-step examples, seed — `design/02-platform-baseline/data-runtime/MIGRATION_STRATEGY.md` |
+| Infra baseline | [OK] Sẵn sàng | Trimmed to ~170 lines, no duplication — `design/02-platform-baseline/edge-delivery/INFRA_BASELINE.md` |
+| SVG asset workflow | [OK] Sẵn sàng | Deterministic SVG rulebook cho diagrams/icons/mockups trong `design/` — `design/05-references/starter-patterns/SVG_PRECISION_WORKFLOW.md` |
+| Skill/tool alignment | [OK] Fixed | AGENTS routing đã chốt NestJS rebuild; các skills CMS legacy đã bị deprecate hoặc loại khỏi luồng code mới; external baseline hiện chỉ dùng `Gemini + Copilot` |
+| OpenAPI spec | [OK] Design-locked | Strategy chốt: auto-gen từ NestJS Swagger decorators — xem GAP 5 bên dưới; runtime artifact vẫn pending implementation |
+| Deferred/excluded advanced tech design | [OK] Sẵn sàng | Các component `planned` / `explicit exclusion` đều có design doc rõ — xem `DECISIONS.md` section 15 |
+| Email provider decision | [OK] Sẵn sàng | Brevo SMTP chốt, delivery failure policy, retry, anti-enumeration — `design/02-platform-baseline/security-runtime/EMAIL_PROVIDER_DECISION.md` |
+| Storage lifecycle | [OK] Sẵn sàng | 5 cleanup jobs, asset states, upload quota — `design/02-platform-baseline/data-runtime/STORAGE_LIFECYCLE.md` |
+| Cache topology | [OK] Sẵn sàng | 4-layer cache, invalidation rules, ISR, TanStack Query staleTime — `design/02-platform-baseline/data-runtime/CACHE_TOPOLOGY.md` |
+| Secret management | [OK] Sẵn sàng | Rotation procedures per secret, compromise response, .gitignore — `design/02-platform-baseline/security-runtime/SECRET_MANAGEMENT.md` |
+| CI/CD gates | [OK] Sẵn sàng | GitHub Actions, 4 automated + 1 human gate, rollback, concurrency + least-privilege permissions + cache guidance — `design/02-platform-baseline/deploy-ops/CICD_DEPLOY_GATES.md` |
+| WAF + anti-bot | [OK] Sẵn sàng | Cloudflare WAF rules, honeypot, CSP nonce, security headers — `design/02-platform-baseline/edge-delivery/WAF_ANTIBOT_STRATEGY.md` |
+| External web-check readiness | [OK] Sẵn sàng ở mức design | owner split giữa design-vs-runtime evidence cho TLS/headers/DNS/crawl/metadata/email-auth đã được khóa — `design/05-references/framework-docs/EXTERNAL_WEB_CHECK_READINESS.md` |
+| Health contract | [OK] Sẵn sàng | Exact check lists per endpoint, failure runbook — `design/02-platform-baseline/api-runtime/HEALTH_CONTRACT.md` |
+| Admin module specs | [OK] Sẵn sàng | 24 workspaces với filters/bulk/states/query-invalidation — `design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md` |
+| Admin page/API/query mapping | [OK] Sẵn sàng | page route -> API group -> query keys -> invalidation rules — `design/04-execution-overlay/admin/ADMIN_PAGE_API_MAPPING.md` |
+| Admin scaffold backlog | [OK] Sẵn sàng | rollout order + `queries.ts` / `mutations.ts` plan cho từng feature — `design/04-execution-overlay/admin/APPS_ADMIN_SCAFFOLD_BACKLOG.md` |
+| Admin feature query plan | [OK] Sẵn sàng | query key factory plan + query/mutation export plan + invalidation graph per feature — `design/04-execution-overlay/admin/ADMIN_FEATURE_QUERY_PLAN.md` |
+| Wisdom naming & IA canon | [OK] Sẵn sàng | route slug, hub IA, glossary, source taxonomy, FAQ/warnings cho BTPP và Little House cross-surface — `design/03-domains/wisdom-qa/REFERENCES/BTPP-LIBRARY-CANON.MD` |
+| Wisdom translation automation | [OK] Sẵn sàng | auto-ingest/auto-translate lane đã có orchestrator + duplicate guard + slug preview + import-job lifecycle ở design level — `design/02-platform-baseline/optional-scale/TRANSLATION_AUTOMATION_ARCHITECTURE.md` |
+| Wisdom-QA family audit | [OK] Sẵn sàng | audit theo family, anti-drift rules, và gap list để scaffold không đoán taxonomy — `design/04-execution-overlay/api/WISDOM_QA_FAMILY_AUDIT.md` |
+| XLCH official alignment | [OK] Sẵn sàng | official family map và alignment backlog từ `xlch.org` đã được ghi riêng để tránh gộp sai BTPP/Hỏi đáp/Khai thị — `design/05-references/external-research/XLCH_OFFICIAL_ALIGNMENT.md` |
+| Env inventory | [OK] Sẵn sàng | 50+ env vars bao gồm Phase 2+ và CI/CD secrets — `design/04-execution-overlay/repo/ENV_INVENTORY.md` |
+| pgvector decision | [OK] Sẵn sàng | Explicit exclusion với trigger conditions rõ — `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
+| Push notification architecture | [OK] Sẵn sàng | VAPID Web Push, worker handler, service worker, admin ops — `design/02-platform-baseline/optional-scale/PUSH_NOTIFICATION_ARCHITECTURE.md` |
+| Observability architecture | [OK] Sẵn sàng | Phase 1 health/metrics, Phase 2 Prometheus/Grafana, Phase 3 OTEL — `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
+| Verification toolchain matrix | [OK] Design-locked | Trail of Bits skills đã được khóa vào testing/debugging/security verification thay vì chỉ inventory/catalog |
 
 **VERDICT**: `DESIGN-READY FOR PHASED IMPLEMENTATION PLANNING`
-Tất cả hạng mục design trọng yếu đều ✅ ở mức thiết kế. File này **không** có nghĩa runtime đã sẵn sàng hoặc launch đã an toàn.
+Tất cả hạng mục design trọng yếu đều [OK] ở mức thiết kế. File này **không** có nghĩa runtime đã sẵn sàng hoặc launch đã an toàn.
 
 ### Readiness split bắt buộc
 
@@ -134,25 +134,25 @@ Trail of Bits skills không còn chỉ là inventory. Chúng đã được cắm
 
 ## Phần 2: Gaps còn lại (ít)
 
-### ✅ GAP 1: Prisma schema tổng hợp — FIXED
+### [OK] GAP 1: Prisma schema tổng hợp — FIXED
 
 **Đã tạo**: `design/04-execution-overlay/data/PRISMA_SCHEMA_PLAN.md` — enums, FK dependency graph, naming conventions, merge process, 12-step migration order.
 
 ---
 
-### ✅ GAP 2: Feature flags — FIXED
+### [OK] GAP 2: Feature flags — FIXED
 
 8 flags cụ thể — xem Phần 4 bên dưới.
 
 ---
 
-### ✅ GAP 3: Rate-limit values — FIXED
+### [OK] GAP 3: Rate-limit values — FIXED
 
 13 endpoints với exact limits — xem Phần 5 bên dưới.
 
 ---
 
-### ✅ GAP 4: Skill conflict — FIXED ở routing layer
+### [OK] GAP 4: Skill conflict — FIXED ở routing layer
 
 **Trạng thái hiện tại**:
 - `AGENTS.md` đã chốt `design-first` + `apps/web + apps/api + apps/admin`
@@ -164,7 +164,7 @@ Trail of Bits skills không còn chỉ là inventory. Chúng đã được cắm
 
 ---
 
-### ✅ GAP 5: OpenAPI spec — DESIGN-CLOSED, RUNTIME PENDING
+### [OK] GAP 5: OpenAPI spec — DESIGN-CLOSED, RUNTIME PENDING
 
 **Strategy**: OpenAPI runtime artifact đi qua `@nestjs/swagger`, nhưng contract authority vẫn là owner docs + Zod schemas. Không viết spec bằng tay, và cũng không biến swagger decorators thành source of truth thứ hai.
 
@@ -198,54 +198,54 @@ Trail of Bits skills không còn chỉ là inventory. Chúng đã được cắm
 
 ## Phần 3: Lỗi sẽ xảy ra nếu code ngay (Bug prediction) — ĐÃ FIX TẤT CẢ
 
-### ✅ Bug 1: Module sẽ import lẫn nhau (circular dependency) — FIXED
+### [OK] Bug 1: Module sẽ import lẫn nhau (circular dependency) — FIXED
 **Fix đã áp dụng**: Thêm "Cross-module communication" section vào `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`.
 Chốt: modules communicate qua exported service interface, không import toàn bộ module. Bidirectional → dùng event pattern.
 **Ref**: `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md` mục "Cross-module communication"
 
 ---
 
-### ✅ Bug 2: Audit fail không block write-path — FIXED
+### [OK] Bug 2: Audit fail không block write-path — FIXED
 **Fix đã áp dụng**: Thêm "Audit transaction enforcement" section vào `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md`.
 Chốt: audit mandatory events PHẢI trong cùng `prisma.$transaction()`. AuditService có `appendInTransaction()` cho writes, `appendAsync()` chỉ cho read analytics.
 **Ref**: `design/02-platform-baseline/api-runtime/NEST_REQUEST_PIPELINE.md` mục "Audit transaction enforcement"
 
 ---
 
-### ✅ Bug 3: Rate-limit bị bypass trên refresh endpoint — FIXED
+### [OK] Bug 3: Rate-limit bị bypass trên refresh endpoint — FIXED
 **Fix đã áp dụng**: Thêm `refresh token` vào danh sách rate-limit bắt buộc trong `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md`.
 Chốt: `/api/auth/refresh` phải có 30 req / 15 phút / per-IP.
 **Ref**: `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` phần rate-limit
 
 ---
 
-### ✅ Bug 4: Search trả data chưa published — FIXED
+### [OK] Bug 4: Search trả data chưa published — FIXED
 **Fix đã áp dụng**: Thêm mandatory WHERE clause vào `design/03-domains/search/REFERENCES/UNIFIED_INDEX_MAPPING.md`.
 Chốt: `WHERE status = 'published' AND published_at IS NOT NULL AND published_at <= NOW()`. Wisdom-QA thêm `review_status IN ('translated_reviewed', 'source_verified')`. Filter ở repository layer.
 **Ref**: `design/03-domains/search/REFERENCES/UNIFIED_INDEX_MAPPING.md` phần "Phase 1 query contract"
 
 ---
 
-### ✅ Bug 5: Calendar advisory copy text vào event record — FIXED (đã có từ trước)
+### [OK] Bug 5: Calendar advisory copy text vào event record — FIXED (đã có từ trước)
 **Doc đã có**: `design/03-domains/calendar/REFERENCES/ADVISORY-OWNERSHIP.MD` chốt rõ Calendar chỉ lưu `sourceRefs`, không copy text.
 **Ref**: `design/03-domains/calendar/REFERENCES/ADVISORY-OWNERSHIP.MD`
 
 ---
 
-### ✅ Bug 6: Upload không có MIME sniffing — chỉ check extension — FIXED
+### [OK] Bug 6: Upload không có MIME sniffing — chỉ check extension — FIXED
 **Fix đã áp dụng**: Thêm `file-type` npm library requirement vào `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` với code examples đúng/sai.
 Chốt: dùng `fileTypeFromBuffer(buffer)` so sánh với allowlist, không dùng extension check.
 **Ref**: `design/02-platform-baseline/security-runtime/SECURITY_POLICY.md` phần upload hardening
 
 ---
 
-### ✅ Bug 7: Assisted entry dùng chung schema với member self-create — FIXED (đã có từ trước)
+### [OK] Bug 7: Assisted entry dùng chung schema với member self-create — FIXED (đã có từ trước)
 **Doc đã có**: `design/03-domains/vows-merit/REFERENCES/ASSISTED_ENTRY_WORKFLOW.md` có `AssistedLifeReleaseSchema` riêng.
 **Ref**: `design/03-domains/vows-merit/REFERENCES/ASSISTED_ENTRY_WORKFLOW.md`
 
 ---
 
-### ✅ Bug 8: Frontend gọi API trực tiếp bypass proxy — FIXED
+### [OK] Bug 8: Frontend gọi API trực tiếp bypass proxy — FIXED
 **Fix đã áp dụng**: Viết lại toàn bộ `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` với proxy boundary enforcement.
 Chốt: Browser KHÔNG BAO GIỜ gọi `apps/api` trực tiếp. Server Components → server-side fetch. Client Components → `/api/proxy/*` route handler. `API_INTERNAL_URL` chỉ server-side biết.
 **Ref**: `design/02-platform-baseline/web-runtime/FRONTEND_ARCHITECTURE.md` mục "Proxy boundary"
@@ -387,27 +387,27 @@ Bước 12 — Contact (reference users):
 ## Phần 7: Skill alignment với NestJS rebuild
 
 ### Role briefs / skills ALIGNED (dùng được):
-- `.claude/agents/pmtl-architect.md` ✅ — check placement, ownership, scaffold order, handoff readiness
-- `.claude/agents/pmtl-api-builder.md` ✅ — backend implementation lane cho `apps/api`
-- `.claude/agents/pmtl-data-runtime-keeper.md` ✅ — Prisma/migration/transaction-sensitive data lane
-- `.claude/agents/pmtl-canon-sync.md` ✅ — sync lại owner docs khi design/code drift
-- `.agents/skills/pmtl-vn-architecture/SKILL.md` ✅ — NestJS rebuild architecture anchor
-- `.agents/skills/pmtl-production-baseline/SKILL.md` ✅ — runtime/logging/validation baseline
-- `.agents/skills/pmtl-fe-implementation` ✅ — Next.js frontend rules
-- `.agents/skills/pmtl-fe-craft` ✅ — frontend craftsmanship
-- `.agents/skills/pmtl-ui-behavior` ✅ — UI interaction rules
-- `.agents/skills/pmtl-ui-style-system` ✅ — design variants
-- `.agents/skills/pmtl-vercel-precision` ✅ — UI refinement
-- `.agents/skills/pmtl-verify-quality-gate` ✅ — quality checks
-- `.agents/skills/pmtl-creative-designer` ✅ — visual identity
-- `.agents/skills/shadcn/ui` ✅ — component library
-- `seo-content-writer` ✅ — viết nội dung chuẩn SEO tiếng Việt
-- `on-page-seo-auditor` ✅ — audit on-page SEO cho từng route
-- `technical-seo-checker` ✅ — kiểm tra technical SEO (Core Web Vitals, structured data)
-- `meta-tags-optimizer` ✅ — tối ưu meta tags, OG tags, `og:locale: vi_VN`
-- `schema-markup-generator` ✅ — tạo Schema.org JSON-LD (Article, FAQPage, HowTo, Book, Event)
-- `geo-content-optimizer` ✅ — GEO optimization cho AI citation (ChatGPT, Perplexity, Google AI Overviews)
-- `svg-precision` ✅ — deterministic SVG cho icons, diagrams, charts, UI mockups tĩnh, technical drawings trong `design/`
+- `.claude/agents/pmtl-architect.md` [OK] — check placement, ownership, scaffold order, handoff readiness
+- `.claude/agents/pmtl-api-builder.md` [OK] — backend implementation lane cho `apps/api`
+- `.claude/agents/pmtl-data-runtime-keeper.md` [OK] — Prisma/migration/transaction-sensitive data lane
+- `.claude/agents/pmtl-canon-sync.md` [OK] — sync lại owner docs khi design/code drift
+- `.agents/skills/pmtl-vn-architecture/SKILL.md` [OK] — NestJS rebuild architecture anchor
+- `.agents/skills/pmtl-production-baseline/SKILL.md` [OK] — runtime/logging/validation baseline
+- `.agents/skills/pmtl-fe-implementation` [OK] — Next.js frontend rules
+- `.agents/skills/pmtl-fe-craft` [OK] — frontend craftsmanship
+- `.agents/skills/pmtl-ui-behavior` [OK] — UI interaction rules
+- `.agents/skills/pmtl-ui-style-system` [OK] — design variants
+- `.agents/skills/pmtl-vercel-precision` [OK] — UI refinement
+- `.agents/skills/pmtl-verify-quality-gate` [OK] — quality checks
+- `.agents/skills/pmtl-creative-designer` [OK] — visual identity
+- `.agents/skills/shadcn/ui` [OK] — component library
+- `seo-content-writer` [OK] — viết nội dung chuẩn SEO tiếng Việt
+- `on-page-seo-auditor` [OK] — audit on-page SEO cho từng route
+- `technical-seo-checker` [OK] — kiểm tra technical SEO (Core Web Vitals, structured data)
+- `meta-tags-optimizer` [OK] — tối ưu meta tags, OG tags, `og:locale: vi_VN`
+- `schema-markup-generator` [OK] — tạo Schema.org JSON-LD (Article, FAQPage, HowTo, Book, Event)
+- `geo-content-optimizer` [OK] — GEO optimization cho AI citation (ChatGPT, Perplexity, Google AI Overviews)
+- `svg-precision` [OK] — deterministic SVG cho icons, diagrams, charts, UI mockups tĩnh, technical drawings trong `design/`
 
 ### Skills / role artifacts DEPRECATED / CONFLICT (không dùng cho code mới):
 | Skill hoặc artifact | Vấn đề | Action |
@@ -475,3 +475,4 @@ Wave 6 — Notifications + Offline
 - [ ] Tạo Prisma schema từ migration order ở trên
 - [ ] Seed `feature_flags` table với flags list ở Phần 4
 - [ ] Confirm rate-limit store: `rate_limit_records` Postgres table (phase 1)
+

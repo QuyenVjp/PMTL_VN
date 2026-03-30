@@ -89,15 +89,15 @@ PMTL_VN
 ### Tiếng Việt có dấu trong URL
 
 ```
-✅ Slug từ content: ASCII slug, no diacritics
+[OK] Slug từ content: ASCII slug, no diacritics
    e.g., "Vô thường là gì?" → /bach-thoai/vo-thuong-la-gi
 
-✅ Route segments: lowercase, hyphen-separated, no diacritics
+[OK] Route segments: lowercase, hyphen-separated, no diacritics
    e.g., /phat-nguyen, /tu-tap/bai-tap, /lich-ca-nhan
 
-❌ Không dùng %20 hay encode dấu tiếng Việt trong URL
-❌ Không dùng underscore trong routes
-❌ Không dùng CamelCase trong routes
+[FAIL] Không dùng %20 hay encode dấu tiếng Việt trong URL
+[FAIL] Không dùng underscore trong routes
+[FAIL] Không dùng CamelCase trong routes
 ```
 
 ### ID-based vs slug-based
@@ -439,7 +439,7 @@ Tab order:
   3. Main content (top to bottom)
   4. Footer
 
-❌ Không dùng tabIndex > 0 (dùng 0 hoặc -1 chỉ)
+[FAIL] Không dùng tabIndex > 0 (dùng 0 hoặc -1 chỉ)
 ```
 
 ### ARIA landmarks
@@ -486,3 +486,4 @@ Respect prefers-reduced-motion:
 | Float action button (FAB) | Che nội dung, elderly khó | Fixed bottom bar button |
 | Infinite scroll trên practice history | Elderly mất chỗ | Pagination or "Load more" |
 | URL chứa state (modal open) | Broken sharing | History push chỉ cho route changes |
+

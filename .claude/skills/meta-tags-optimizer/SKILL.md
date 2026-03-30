@@ -232,8 +232,8 @@ When a user requests meta tag optimization:
 
    | Check | Status | Notes |
    |-------|--------|-------|
-   | **C01 Intent Alignment**: Title promise matches actual content delivery | ✅/⚠️/❌ | [Does the title accurately represent what the page delivers?] |
-   | **C02 Direct Answer**: Meta description reflects the core answer available in first 150 words | ✅/⚠️/❌ | [Does the description preview the direct answer?] |
+   | **C01 Intent Alignment**: Title promise matches actual content delivery | [OK]/[WARN]️/[FAIL] | [Does the title accurately represent what the page delivers?] |
+   | **C02 Direct Answer**: Meta description reflects the core answer available in first 150 words | [OK]/[WARN]️/[FAIL] | [Does the description preview the direct answer?] |
 
    **If C01 fails**: Title is misleading — rewrite to match actual content.
    **If C02 fails**: Content may need restructuring to front-load the answer, or description should better reflect available content.
@@ -301,17 +301,17 @@ When a user requests meta tag optimization:
 ```html
 <title>How to Start a Podcast in [current year]: Complete Beginner's Guide</title>
 ```
-**Length**: ~55 characters ✅
-**Keyword**: "how to start a podcast" at front ✅
-**Power Words**: "Complete", "Beginner's" ✅
+**Length**: ~55 characters [OK]
+**Keyword**: "how to start a podcast" at front [OK]
+**Power Words**: "Complete", "Beginner's" [OK]
 
 ### Meta Description
 ```html
 <meta name="description" content="Learn how to start a podcast in [current year] with our step-by-step guide. Covers equipment, hosting, recording, and launching your first episode. Start podcasting today!">
 ```
-**Length**: ~163 characters ✅
-**Keyword**: Included naturally ✅
-**CTA**: "Start podcasting today!" ✅
+**Length**: ~163 characters [OK]
+**Keyword**: Included naturally [OK]
+**CTA**: "Start podcasting today!" [OK]
 
 _Complete meta tag block (with OG, Twitter, Article tags) generated using template from [references/meta-tag-code-templates.md](./references/meta-tag-code-templates.md)._
 
@@ -347,4 +347,5 @@ _Complete meta tag block (with OG, Twitter, Article tags) generated using templa
 - [schema-markup-generator](../schema-markup-generator/) — Add structured data
 - [on-page-seo-auditor](../../optimize/on-page-seo-auditor/) — Audit all meta tags
 - [serp-analysis](../../research/serp-analysis/) — Analyze competitor meta tags
+
 

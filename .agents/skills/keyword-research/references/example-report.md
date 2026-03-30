@@ -49,11 +49,11 @@ This is a complete example output showing the expected format for keyword resear
 
 | Keyword | Type | AI Potential | Recommended Format |
 |---------|------|--------------|-------------------|
-| what is project management | Definition | ⭐⭐⭐⭐⭐ | Clear definition + methodology |
-| agile vs waterfall | Comparison | ⭐⭐⭐⭐⭐ | Side-by-side comparison table |
-| project management methodologies | List | ⭐⭐⭐⭐ | Comprehensive list with pros/cons |
-| how to create a project plan | How-to | ⭐⭐⭐⭐ | Step-by-step guide |
-| project management best practices | List | ⭐⭐⭐⭐ | Numbered best practices |
+| what is project management | Definition | [STAR][STAR][STAR][STAR][STAR] | Clear definition + methodology |
+| agile vs waterfall | Comparison | [STAR][STAR][STAR][STAR][STAR] | Side-by-side comparison table |
+| project management methodologies | List | [STAR][STAR][STAR][STAR] | Comprehensive list with pros/cons |
+| how to create a project plan | How-to | [STAR][STAR][STAR][STAR] | Step-by-step guide |
+| project management best practices | List | [STAR][STAR][STAR][STAR] | Numbered best practices |
 
 ## Topic Clusters
 
@@ -94,3 +94,4 @@ Cluster articles:
 3. **Week 3-4**: Build out cluster content with internal linking
 4. **Ongoing**: Track rankings and adjust strategy based on performance
 ```
+

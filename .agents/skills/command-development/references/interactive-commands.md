@@ -533,7 +533,7 @@ Reason: User might want any combination
 **Bad multi-select use:**
 ```markdown
 Question: "Which database engine?"
-multiSelect: true  // ❌ Should be single-select
+multiSelect: true  // [FAIL] Should be single-select
 
 Reason: Can only use one database engine
 ```
@@ -918,3 +918,4 @@ These require explanation, so questions work better than arguments.
 - Show progress through workflow
 
 With AskUserQuestion, commands become interactive wizards that guide users through complex decisions while maintaining the clarity that simple arguments provide for straightforward inputs.
+

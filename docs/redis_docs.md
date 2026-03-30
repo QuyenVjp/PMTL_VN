@@ -139,12 +139,12 @@ Common error types
 node-redis throws errors as rejected promises. Common error types include:
 
 Error	When it occurs	Recoverable	Recommended action
-ECONNREFUSED	Connection refused	✅	Retry with backoff or fall back
-ETIMEDOUT	Command timeout	✅	Retry with backoff
-ECONNRESET	Connection reset by peer	✅	Retry with backoff
-EAI_AGAIN	DNS resolution failure	✅	Retry with backoff
-ReplyError (WRONGTYPE)	Type mismatch	❌	Fix schema or code
-ReplyError (BUSY, TRYAGAIN, LOADING)	Redis busy/loading	⚠️	Retry with backoff (bounded)
+ECONNREFUSED	Connection refused	[OK]	Retry with backoff or fall back
+ETIMEDOUT	Command timeout	[OK]	Retry with backoff
+ECONNRESET	Connection reset by peer	[OK]	Retry with backoff
+EAI_AGAIN	DNS resolution failure	[OK]	Retry with backoff
+ReplyError (WRONGTYPE)	Type mismatch	[FAIL]	Fix schema or code
+ReplyError (BUSY, TRYAGAIN, LOADING)	Redis busy/loading	[WARN]️	Retry with backoff (bounded)
 See Categories of errors for a more detailed discussion of these errors and their causes.
 
 Async/await in examples 
@@ -269,21 +269,21 @@ Checklist
 Each item in the checklist below links to the section for a recommendation. Use the checklist icons to record your progress in implementing the recommendations.
 
 
-❌
+[FAIL]
 Handling errors
 
-❌
+[FAIL]
 Handling reconnections
 
-❌
+[FAIL]
 Connection timeouts
 
-❌
+[FAIL]
 Command execution reliability
 
-❌
+[FAIL]
 Smart client handoffs
-✅ = 0/5, ❌ = 5/5, 🔍 = 0/5,
+[OK] = 0/5, [FAIL] = 5/5, [SEARCH] = 0/5,
 (∅ = 0)
 Recommendations 
 Handling errors 

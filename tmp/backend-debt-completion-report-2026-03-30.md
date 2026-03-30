@@ -6,7 +6,7 @@
 
 ## TÓM TẮT THAY ĐỔI THEO PRIORITY
 
-### ✅ Task 1: Contact Module Implementation (HOÀN THÀNH)
+### [OK] Task 1: Contact Module Implementation (HOÀN THÀNH)
 **Trước**: contact.service.ts có placeholders mock cho submit/list/get
 **Sau**: Implementations thực với Prisma + validation + caching
 
@@ -21,7 +21,7 @@
 - `getContactById()`: Query by publicId với proper error handling
 - Cache invalidation khi có submission mới
 
-### ✅ Task 2: Search Service Refactoring (HOÀN THÀNH)
+### [OK] Task 2: Search Service Refactoring (HOÀN THÀNH)
 **Trước**: search.service.ts chỉ ~26 dòng, comments "integration deferred"
 **Sau**: Full Meilisearch + SQL fallback implementation (~400+ dòng)
 
@@ -36,7 +36,7 @@
 - Proper error handling và fallback gracefully
 - Cache layer để reduce load
 
-### ✅ Task 3: Redis Integration (HOÀN THÀNH)  
+### [OK] Task 3: Redis Integration (HOÀN THÀNH)  
 **Trước**: CacheService có stub methods với TODO comments
 **Sau**: Full Redis implementation với in-memory fallback
 
@@ -50,7 +50,7 @@
 - Contact list cache với invalidation khi có submission mới
 - Environment-driven (REDIS_URL, REDIS_HOST, REDIS_PORT)
 
-### ✅ Task 4: Prisma Migration Integrity (HOÀN THÀNH)
+### [OK] Task 4: Prisma Migration Integrity (HOÀN THÀNH)
 **Trước**: Schema drift detected với nhiều missing migrations
 **Sau**: Migration history clean và sync
 
@@ -60,19 +60,19 @@
 
 **Trạng thái**: `prisma migrate status` clean, no drift warnings
 
-### ⚠️  Task 5: Schema Extraction (PARTIAL)
+### [WARN]️  Task 5: Schema Extraction (PARTIAL)
 **Vấn đề**: Workspace dependency setup giữa monorepo packages chưa hoàn thiện
 **Hoàn thành**: Updated shared search schema để match API requirements  
 **Chưa hoàn thành**: Full extraction API→shared do monorepo config issues
 
-### ✅ Task 6: Justfile Cleanup (HOÀN THÀNH)
+### [OK] Task 6: Justfile Cleanup (HOÀN THÀNH)
 **Files đã sửa**:
 - `justfile`: Added `verify-api` command, kept `verify-cms` as legacy alias
 - `infra/tools/codex_actions.py`: Added API scope support for quality gates
 
 **Naming modernized**: CMS→API naming với backward compatibility
 
-### ✅ Task 7: Audit Report (HOÀN THÀNH)
+### [OK] Task 7: Audit Report (HOÀN THÀNH)
 **Files đã tạo**:
 - `tmp/backend-debt-audit-2026-03-30.md`: Comprehensive gap analysis
 - `tmp/backend-debt-completion-report-2026-03-30.md`: This completion report
@@ -99,26 +99,26 @@
 
 ## KẾT QUẢ VERIFY COMMANDS
 
-### ✅ PASS: pnpm --filter @pmtl/api typecheck
+### [OK] PASS: pnpm --filter @pmtl/api typecheck
 ```
 > tsc -p tsconfig.json --noEmit
 <exited with exit code 0>
 ```
 
-### ⚠️  LINT: Chạy long, bị timeout nhưng syntax clean
+### [WARN]️  LINT: Chạy long, bị timeout nhưng syntax clean
 ```
 > eslint "src/**/*.ts"  
 (command timed out after 30s, no syntax errors detected)
 ```
 
-### ⚠️  TESTS: 2 failed tests existing (không liên quan debt tasks)
+### [WARN]️  TESTS: 2 failed tests existing (không liên quan debt tasks)
 ```
 Test Files: 2 passed | 1 failed (3)
 Tests: 6 passed | 2 failed (8)  
 ```
 **Note**: Chanting controller tests fail do schema mismatch (pre-existing issue)
 
-### ❌ verify-api: Container không chạy
+### [FAIL] verify-api: Container không chạy
 ```
 Error response from daemon: No such container: docker-api-1
 ```
@@ -147,7 +147,7 @@ Error response from daemon: No such container: docker-api-1
 
 ---
 
-## ASSESSMENT: MAJOR DEBT REMEDIATED ✅
+## ASSESSMENT: MAJOR DEBT REMEDIATED [OK]
 
 **Placeholders → Real Implementation**: Contact và Search modules now production-ready  
 **Infrastructure Hardening**: Redis caching, migration integrity, command standardization  

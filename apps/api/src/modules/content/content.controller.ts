@@ -38,7 +38,7 @@ import {
   type DownloadQuery,
   type CreateDownloadRequest,
   type UpdateDownloadRequest,
-} from "../../../packages/shared/src/schemas/content.js";
+} from "./content.schemas.js";
 
 @ApiTags("content")
 @Controller("content")

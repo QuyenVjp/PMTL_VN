@@ -646,21 +646,21 @@ echo "$output" | jq .
 ### Best Practices
 
 **DO:**
-- ✅ Use prompt-based hooks for complex logic
-- ✅ Use ${CLAUDE_PLUGIN_ROOT} for portability
-- ✅ Validate all inputs in command hooks
-- ✅ Quote all bash variables
-- ✅ Set appropriate timeouts
-- ✅ Return structured JSON output
-- ✅ Test hooks thoroughly
+- [OK] Use prompt-based hooks for complex logic
+- [OK] Use ${CLAUDE_PLUGIN_ROOT} for portability
+- [OK] Validate all inputs in command hooks
+- [OK] Quote all bash variables
+- [OK] Set appropriate timeouts
+- [OK] Return structured JSON output
+- [OK] Test hooks thoroughly
 
 **DON'T:**
-- ❌ Use hardcoded paths
-- ❌ Trust user input without validation
-- ❌ Create long-running hooks
-- ❌ Rely on hook execution order
-- ❌ Modify global state unpredictably
-- ❌ Log sensitive information
+- [FAIL] Use hardcoded paths
+- [FAIL] Trust user input without validation
+- [FAIL] Create long-running hooks
+- [FAIL] Rely on hook execution order
+- [FAIL] Modify global state unpredictably
+- [FAIL] Log sensitive information
 
 ## Additional Resources
 
@@ -710,3 +710,4 @@ To implement hooks in a plugin:
 9. Document hooks in plugin README
 
 Focus on prompt-based hooks for most use cases. Reserve command hooks for performance-critical or deterministic checks.
+

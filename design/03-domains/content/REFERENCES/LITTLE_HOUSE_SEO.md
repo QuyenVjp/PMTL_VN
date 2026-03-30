@@ -197,16 +197,16 @@ So sánh PMTL_VN vs phapmontamlinh.vn cho Ngôi Nhà Nhỏ:
 | Feature | phapmontamlinh.vn | PMTL_VN (target) |
 |---|---|---|
 | IA | 13 links phẳng | 5 nhóm có hierarchy |
-| HowTo schema | Không | ✅ Có |
-| FAQPage schema | Không | ✅ Có |
-| BreadcrumbList | Không | ✅ Có |
-| Bảng số lượng theo tình huống | Văn bản thuần | ✅ Bảng có cấu trúc |
-| Hình minh họa đúng/sai | Ít | ✅ image_compare block đầy đủ |
-| PDF download (self-hosted) | Google Drive | ✅ CDN nội bộ |
-| Tracker cá nhân | Không | ✅ /tu-tap/nha-nho |
-| Tích hợp lịch âm (số lượng) | Không | ✅ Calendar module |
-| Quick summary / TL;DR | Không | ✅ Đầu mỗi trang |
-| Mobile-first | Unclear | ✅ Ưu tiên 1 |
+| HowTo schema | Không | [OK] Có |
+| FAQPage schema | Không | [OK] Có |
+| BreadcrumbList | Không | [OK] Có |
+| Bảng số lượng theo tình huống | Văn bản thuần | [OK] Bảng có cấu trúc |
+| Hình minh họa đúng/sai | Ít | [OK] image_compare block đầy đủ |
+| PDF download (self-hosted) | Google Drive | [OK] CDN nội bộ |
+| Tracker cá nhân | Không | [OK] /tu-tap/nha-nho |
+| Tích hợp lịch âm (số lượng) | Không | [OK] Calendar module |
+| Quick summary / TL;DR | Không | [OK] Đầu mỗi trang |
+| Mobile-first | Unclear | [OK] Ưu tiên 1 |
 
 ---
 
@@ -244,3 +244,4 @@ So sánh PMTL_VN vs phapmontamlinh.vn cho Ngôi Nhà Nhỏ:
   <priority>0.8</priority>
 </url>
 ```
+

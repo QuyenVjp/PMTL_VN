@@ -95,17 +95,18 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 
 | Gate | Blocker? | Status |
 |------|----------|--------|
-| `/api/health/ready` passes | ✅ BLOCKER | [ ] |
-| SSL cert valid | ✅ BLOCKER | [ ] |
-| Auth flow working | ✅ BLOCKER | [ ] |
-| pg_dump cron active | ✅ BLOCKER | [ ] |
-| Restore drill done | ✅ BLOCKER | [ ] |
-| Uptime Kuma alert | ✅ BLOCKER | [ ] |
-| Netdata health + local-only exposure | ✅ BLOCKER | [ ] |
-| Rate limit working | ✅ BLOCKER | [ ] |
+| `/api/health/ready` passes | [OK] BLOCKER | [ ] |
+| SSL cert valid | [OK] BLOCKER | [ ] |
+| Auth flow working | [OK] BLOCKER | [ ] |
+| pg_dump cron active | [OK] BLOCKER | [ ] |
+| Restore drill done | [OK] BLOCKER | [ ] |
+| Uptime Kuma alert | [OK] BLOCKER | [ ] |
+| Netdata health + local-only exposure | [OK] BLOCKER | [ ] |
+| Rate limit working | [OK] BLOCKER | [ ] |
 | Prometheus/Grafana | ⏳ Phase 2 | — |
 | Woodpecker CI live | ⏳ Phase 2 | — |
 
 ---
 
 *Owner: `design/02-platform-baseline/vps-runtime/` · Last updated: 2026-03-27*
+

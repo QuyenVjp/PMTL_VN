@@ -50,6 +50,10 @@ export type UpdatePostInput = z.infer<typeof updatePostSchema>;
 export type ListPostsQuery = z.infer<typeof listPostsQuerySchema>;
 export type PostResponse = z.infer<typeof postResponseSchema>;
 
+// Type aliases for compatibility with controller imports
+export type CreatePostRequest = CreatePostInput;
+export type UpdatePostRequest = UpdatePostInput;
+
 // --------------- Guide schemas ---------------
 
 export const guideQuerySchema = z.object({
@@ -72,6 +76,10 @@ export type CreateGuideInput = z.infer<typeof createGuideSchema>;
 
 export const updateGuideSchema = createGuideSchema.partial();
 export type UpdateGuideInput = z.infer<typeof updateGuideSchema>;
+
+// Type aliases for compatibility with controller imports
+export type CreateGuideRequest = CreateGuideInput;
+export type UpdateGuideRequest = UpdateGuideInput;
 
 // --------------- Download schemas ---------------
 
@@ -96,3 +104,7 @@ export type CreateDownloadInput = z.infer<typeof createDownloadSchema>;
 
 export const updateDownloadSchema = createDownloadSchema.partial();
 export type UpdateDownloadInput = z.infer<typeof updateDownloadSchema>;
+
+// Type aliases for compatibility with controller imports  
+export type CreateDownloadRequest = CreateDownloadInput;
+export type UpdateDownloadRequest = UpdateDownloadInput;

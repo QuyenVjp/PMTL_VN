@@ -4,6 +4,7 @@ import { ActivityIcon, CheckCircleIcon, AlertTriangleIcon, RefreshCwIcon } from 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { searchStatusOptions, useReindexMutation } from "@/features/system/search-queries.js";
 
 // ── Re-exports from feature modules ─────────────────────────────────
@@ -132,8 +133,33 @@ export function SearchOpsPage() {
       {status && status.indexes.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Indexes</CardTitle>
-            <CardDescription>Danh sách index và trạng thái. Reindex khi cần đồng bộ lại dữ liệu.</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Indexes</CardTitle>
+                <CardDescription>Danh sách index và trạng thái. Reindex khi cần đồng bộ lại dữ liệu.</CardDescription>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  if (status?.indexes) {
+                    status.indexes.forEach(idx => {
+                      reindex.mutate(idx.name);
+                    });
+                  }
+                }}
+                disabled={reindex.isPending}
+                className={cn(
+                  "transition-all duration-200",
+                  reindex.isPending && "animate-pulse"
+                )}
+              >
+                <RefreshCwIcon className={cn(
+                  "mr-2 size-4 transition-transform duration-200",
+                  reindex.isPending && "animate-spin"
+                )} />
+                Reindex tất cả
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -148,9 +174,18 @@ export function SearchOpsPage() {
                     size="sm"
                     disabled={reindex.isPending}
                     onClick={() => reindex.mutate(idx.name)}
+                    className={cn(
+                      "transition-all duration-200",
+                      reindex.isPending && "animate-pulse"
+                    )}
                   >
-                    <RefreshCwIcon className="mr-1.5 size-3.5" />
-                    Reindex
+                    <RefreshCwIcon 
+                      className={cn(
+                        "mr-1.5 size-3.5 transition-transform duration-200",
+                        reindex.isPending && "animate-spin"
+                      )} 
+                    />
+                    {reindex.isPending ? "Đang xử lý..." : "Reindex"}
                   </Button>
                 </div>
               ))}

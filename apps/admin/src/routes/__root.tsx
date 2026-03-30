@@ -122,7 +122,7 @@ export const rootRoute = createRootRoute({
     <>
       <Outlet />
       <CommandMenu />
-      <Toaster richColors position="bottom-right" />
+      <Toaster richColors position="top-center" />
     </>
   ),
 });

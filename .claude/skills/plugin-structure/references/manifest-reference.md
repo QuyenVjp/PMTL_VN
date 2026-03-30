@@ -36,8 +36,8 @@ The unique identifier for the plugin. Used for:
 ```
 
 **Examples**:
-- ✅ Good: `api-tester`, `code-review`, `git-workflow-automation`
-- ❌ Bad: `API Tester`, `code_review`, `-git-workflow`, `test-`
+- [OK] Good: `api-tester`, `code-review`, `git-workflow-automation`
+- [FAIL] Bad: `API Tester`, `code_review`, `-git-workflow`, `test-`
 
 #### version
 
@@ -77,10 +77,10 @@ Brief explanation of plugin purpose and functionality.
 - Keep under 200 characters for marketplace display
 
 **Examples**:
-- ✅ "Generates comprehensive test suites from code analysis and coverage reports"
-- ✅ "Integrates with Jira for automatic issue tracking and sprint management"
-- ❌ "A plugin that helps you do testing stuff"
-- ❌ "This is a very long description that goes on and on about every single feature..."
+- [OK] "Generates comprehensive test suites from code analysis and coverage reports"
+- [OK] "Integrates with Jira for automatic issue tracking and sprint management"
+- [FAIL] "A plugin that helps you do testing stuff"
+- [FAIL] "This is a very long description that goes on and on about every single feature..."
 
 ### Metadata Fields
 
@@ -341,13 +341,13 @@ All paths in component fields must follow these rules:
 4. **Forward slashes only**: Even on Windows
 
 **Examples**:
-- ✅ `"./commands"`
-- ✅ `"./src/commands"`
-- ✅ `"./configs/hooks.json"`
-- ❌ `"/Users/name/plugin/commands"`
-- ❌ `"commands"` (missing `./`)
-- ❌ `"../shared/commands"`
-- ❌ `".\\commands"` (backslash)
+- [OK] `"./commands"`
+- [OK] `"./src/commands"`
+- [OK] `"./configs/hooks.json"`
+- [FAIL] `"/Users/name/plugin/commands"`
+- [FAIL] `"commands"` (missing `./`)
+- [FAIL] `"../shared/commands"`
+- [FAIL] `".\\commands"` (backslash)
 
 ### Resolution Order
 
@@ -397,52 +397,52 @@ Claude Code validates the manifest on plugin load:
 **Invalid name format**:
 ```json
 {
-  "name": "My Plugin"  // ❌ Contains spaces
+  "name": "My Plugin"  // [FAIL] Contains spaces
 }
 ```
 Fix: Use kebab-case
 ```json
 {
-  "name": "my-plugin"  // ✅
+  "name": "my-plugin"  // [OK]
 }
 ```
 
 **Absolute path**:
 ```json
 {
-  "commands": "/Users/name/commands"  // ❌ Absolute path
+  "commands": "/Users/name/commands"  // [FAIL] Absolute path
 }
 ```
 Fix: Use relative path
 ```json
 {
-  "commands": "./commands"  // ✅
+  "commands": "./commands"  // [OK]
 }
 ```
 
 **Missing ./ prefix**:
 ```json
 {
-  "hooks": "hooks/hooks.json"  // ❌ No ./
+  "hooks": "hooks/hooks.json"  // [FAIL] No ./
 }
 ```
 Fix: Add ./ prefix
 ```json
 {
-  "hooks": "./hooks/hooks.json"  // ✅
+  "hooks": "./hooks/hooks.json"  // [OK]
 }
 ```
 
 **Invalid version**:
 ```json
 {
-  "version": "1.0"  // ❌ Not semantic versioning
+  "version": "1.0"  // [FAIL] Not semantic versioning
 }
 ```
 Fix: Use MAJOR.MINOR.PATCH
 ```json
 {
-  "version": "1.0.0"  // ✅
+  "version": "1.0.0"  // [OK]
 }
 ```
 
@@ -550,3 +550,4 @@ Full configuration with all features:
 3. **Validate manifest**: Use validation tools
 4. **Include README**: Document installation and usage
 5. **Specify license file**: Include LICENSE file in plugin root
+

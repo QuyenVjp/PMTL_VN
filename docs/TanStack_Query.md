@@ -1217,7 +1217,7 @@ Updates via `setQueryData` must be performed in an _immutable_ way. **DO NOT** a
 ```tsx
 queryClient.setQueryData(['posts', { id }], (oldData) => {
   if (oldData) {
-    // ❌ do not try this
+    // [FAIL] do not try this
     oldData.title = 'my new post title'
   }
   return oldData
@@ -1225,7 +1225,7 @@ queryClient.setQueryData(['posts', { id }], (oldData) => {
 
 queryClient.setQueryData(
   ['posts', { id }],
-  // ✅ this is the way
+  // [OK] this is the way
   (oldData) =>
     oldData
       ? {
@@ -1855,7 +1855,7 @@ function Todos() {
 
   return (
     <div>
-      // 🚀 applying the filter will enable and execute the query
+      // [LAUNCH] applying the filter will enable and execute the query
       <FiltersForm onApply={setFilter} />
       {data && <TodosTable data={data} />}
     </div>
@@ -1897,7 +1897,7 @@ function Todos() {
 
   return (
     <div>
-      // 🚀 applying the filter will enable and execute the query
+      // [LAUNCH] applying the filter will enable and execute the query
       <FiltersForm onApply={setFilter} />
       {data && <TodosTable data={data} />}
     </div>
@@ -4999,8 +4999,8 @@ async function App() {
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [x] 🔧 Fixable
+- [x] [OK] Recommended
+- [x] [TOOL] Fixable
 # Disallow putting the result of query hooks directly in a React hook dependency array
 
 The object returned from the following query hooks is **not** referentially stable:
@@ -5052,8 +5052,8 @@ function Component() {
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [ ] 🔧 Fixable
+- [x] [OK] Recommended
+- [ ] [TOOL] Fixable
 # Disallow object rest destructuring on query results
 
 Use object rest destructuring on query results automatically subscribes to every field of the query result, which may cause unnecessary re-renders.
@@ -5094,8 +5094,8 @@ Since you are not using tracked queries, you are responsible for specifying whic
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [ ] 🔧 Fixable
+- [x] [OK] Recommended
+- [ ] [TOOL] Fixable
 # Exhaustive dependencies for query keys
 
 Query keys should be seen like a dependency array to your query function: Every variable that is used inside the queryFn should be added to the query key.
@@ -5188,8 +5188,8 @@ If you don't care about the rules of the query keys, then you will not need this
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [x] 🔧 Fixable
+- [x] [OK] Recommended
+- [x] [TOOL] Fixable
 # Ensure correct order of inference sensitive properties for infinite queries
 
 For the following functions, the property order of the passed in object matters due to type inference:
@@ -5248,8 +5248,8 @@ const query = useInfiniteQuery({
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [x] 🔧 Fixable
+- [x] [OK] Recommended
+- [x] [TOOL] Fixable
 # Disallow returning void from query functions
 
 Query functions must return a value that will be cached by TanStack Query. Functions that don't return a value (void functions) can lead to unexpected behavior and might indicate a mistake in the implementation.
@@ -5284,8 +5284,8 @@ useQuery({
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [ ] 🔧 Fixable
+- [x] [OK] Recommended
+- [ ] [TOOL] Fixable
 # Ensure correct order of inference-sensitive properties in useMutation()
 
 For the following functions, the property order of the passed in object matters due to type inference:
@@ -5354,8 +5354,8 @@ const mutation = useMutation({
 
 ## Attributes
 
-- [x] ✅ Recommended
-- [x] 🔧 Fixable
+- [x] [OK] Recommended
+- [x] [TOOL] Fixable
 Next.js app with prefetching
 → Folder: nextjs-app-prefetching
 Link: https://github.com/TanStack/query/tree/main/examples/react/nextjs-app-prefetching

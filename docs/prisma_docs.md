@@ -2113,12 +2113,12 @@ Client middleware removed [#client-middleware-removed]
 The client middleware API has been removed. If possible, use [Client Extensions](/orm/prisma-client/client-extensions).
 
 ```ts
-// ❌ Old (removed)
+// [FAIL] Old (removed)
 prisma.$use(async (params, next) => {
   // middleware logic
   return next(params);
 });
-// ✅ New (use extensions)
+// [OK] New (use extensions)
 const prisma = new PrismaClient().$extends({
   query: {
     user: {
@@ -5311,11 +5311,11 @@ The isolation levels available for each database connector are as follows:
 
 | Database    | `ReadUncommitted` | `ReadCommitted` | `RepeatableRead` | `Snapshot` | `Serializable` |
 | ----------- | ----------------- | --------------- | ---------------- | ---------- | -------------- |
-| PostgreSQL  | ✔️                | ✔️              | ✔️               | No         | ✔️             |
-| MySQL       | ✔️                | ✔️              | ✔️               | No         | ✔️             |
-| SQL Server  | ✔️                | ✔️              | ✔️               | ✔️         | ✔️             |
-| CockroachDB | No                | No              | No               | No         | ✔️             |
-| SQLite      | No                | No              | No               | No         | ✔️             |
+| PostgreSQL  | [OK]️                | [OK]️              | [OK]️               | No         | [OK]️             |
+| MySQL       | [OK]️                | [OK]️              | [OK]️               | No         | [OK]️             |
+| SQL Server  | [OK]️                | [OK]️              | [OK]️               | [OK]️         | [OK]️             |
+| CockroachDB | No                | No              | No               | No         | [OK]️             |
+| SQLite      | No                | No              | No               | No         | [OK]️             |
 
 By default, Prisma Client sets the isolation level to the value currently configured in your database.
 
@@ -5494,7 +5494,7 @@ When to use bulk operations [#when-to-use-bulk-operations]
 
 Consider bulk operations as a solution if:
 
-* ✔ You want to update a batch of the *same type* of record, like a batch of emails
+* [OK] You want to update a batch of the *same type* of record, like a batch of emails
 
 Scenario: Marking emails as read [#scenario-marking-emails-as-read]
 
@@ -5574,8 +5574,8 @@ When to use the $transaction([]) API [#when-to-use-the-transaction-api]
 
 Consider the `$transaction([])` API if:
 
-* ✔ You want to update a batch that includes different types of records, such as emails and users. The records do not need to be related in any way.
-* ✔ You want to batch raw SQL queries (`$executeRaw`) - for example, for features that Prisma Client does not yet support.
+* [OK] You want to update a batch that includes different types of records, such as emails and users. The records do not need to be related in any way.
+* [OK] You want to batch raw SQL queries (`$executeRaw`) - for example, for features that Prisma Client does not yet support.
 
 Scenario: Privacy legislation [#scenario-privacy-legislation]
 
@@ -5743,7 +5743,7 @@ Idempotency is something you can and should actively design into your applicatio
 
 When to design an idempotent API [#when-to-design-an-idempotent-api]
 
-* ✔ You need to be able to retry the same logic without creating unwanted side-effects in the databases
+* [OK] You need to be able to retry the same logic without creating unwanted side-effects in the databases
 
 Scenario: Upgrading a Slack team [#scenario-upgrading-a-slack-team]
 
@@ -5862,7 +5862,7 @@ Optimistic concurrency control [#optimistic-concurrency-control]
 
 Optimistic concurrency control (OCC) is a model for handling concurrent operations on a single entity that does not rely on 🔒 locking. Instead, we **optimistically** assume that a record will remain unchanged in between reading and writing, and use a concurrency token (a timestamp or version field) to detect changes to a record.
 
-If a ❌ conflict occurs (someone else has changed the record since you read it), you cancel the transaction. Depending on your scenario, you can then:
+If a [FAIL] conflict occurs (someone else has changed the record since you read it), you cancel the transaction. Depending on your scenario, you can then:
 
 * Re-try the transaction (book another cinema seat)
 * Throw an error (alert the user that they are about to overwrite changes made by someone else)
@@ -5871,8 +5871,8 @@ This section describes how to build your own optimistic concurrency control. See
 
 When to use optimistic concurrency control [#when-to-use-optimistic-concurrency-control]
 
-* ✔ You anticipate a high number of concurrent requests (multiple people booking cinema seats)
-* ✔ You anticipate that conflicts between those concurrent requests will be rare
+* [OK] You anticipate a high number of concurrent requests (multiple people booking cinema seats)
+* [OK] You anticipate that conflicts between those concurrent requests will be rare
 
 Avoiding locks in an application with a high number of concurrent requests makes the application more resilient to load and more scalable overall. Although locking is not inherently bad, locking in a high concurrency environment can lead to unintended consequences - even if you are locking individual rows, and only for a short amount of time. For more information, see:
 
@@ -6840,7 +6840,7 @@ Prisma Schema loaded from prisma/schema.prisma
 
 Introspecting based on datasource defined in prisma/schema.prisma …
 
-✔ Introspected 4 models and wrote them into prisma/schema.prisma in 239ms
+[OK] Introspected 4 models and wrote them into prisma/schema.prisma in 239ms
 
 Run prisma generate to generate Prisma Client.
 ```
@@ -8059,12 +8059,12 @@ The following table shows which referential action each database supports.
 
 | Database      | Cascade | Restrict | NoAction | SetNull | SetDefault |
 | :------------ | :------ | :------- | :------- | :------ | :--------- |
-| PostgreSQL    | ✔️      | ✔️       | ✔️       | ✔️⌘     | ✔️         |
-| MySQL/MariaDB | ✔️      | ✔️       | ✔️       | ✔️      | ❌ (✔️†)    |
-| SQLite        | ✔️      | ✔️       | ✔️       | ✔️      | ✔️         |
-| SQL Server    | ✔️      | ❌‡       | ✔️       | ✔️      | ✔️         |
-| CockroachDB   | ✔️      | ✔️       | ✔️       | ✔️      | ✔️         |
-| MongoDB       | ✔️      | ✔️       | ✔️       | ✔️      | ❌          |
+| PostgreSQL    | [OK]️      | [OK]️       | [OK]️       | [OK]️⌘     | [OK]️         |
+| MySQL/MariaDB | [OK]️      | [OK]️       | [OK]️       | [OK]️      | [FAIL] ([OK]️†)    |
+| SQLite        | [OK]️      | [OK]️       | [OK]️       | [OK]️      | [OK]️         |
+| SQL Server    | [OK]️      | [FAIL]‡       | [OK]️       | [OK]️      | [OK]️         |
+| CockroachDB   | [OK]️      | [OK]️       | [OK]️       | [OK]️      | [OK]️         |
+| MongoDB       | [OK]️      | [OK]️       | [OK]️       | [OK]️      | [FAIL]          |
 
 * † See [special cases for MySQL](#mysqlmariadb).
 * ⌘ See [special cases for PostgreSQL](#postgresql).
@@ -8818,12 +8818,12 @@ Supported Operator Classes for GIN [#supported-operator-classes-for-gin]
 
 Prisma ORM generally supports operator classes provided by PostgreSQL in versions 10 and later. If the operator class requires the field type to be of a type Prisma ORM does not yet support, using the `raw` function with a string input allows you to use these operator classes without validation.
 
-The default operator class (marked with ✅) can be omitted from the index definition.
+The default operator class (marked with [OK]) can be omitted from the index definition.
 
 | Operator class | Allowed field type (native types) | Default | Other                         |
 | -------------- | --------------------------------- | ------- | ----------------------------- |
-| `ArrayOps`     | Any array                         | ✅       | Also available in CockroachDB |
-| `JsonbOps`     | `Json` (`@db.JsonB`)              | ✅       | Also available in CockroachDB |
+| `ArrayOps`     | Any array                         | [OK]       | Also available in CockroachDB |
+| `JsonbOps`     | `Json` (`@db.JsonB`)              | [OK]       | Also available in CockroachDB |
 | `JsonbPathOps` | `Json` (`@db.JsonB`)              |         |                               |
 | `raw("other")` |                                   |         |                               |
 
@@ -8912,12 +8912,12 @@ Supported Operator Classes for SP-GiST [#supported-operator-classes-for-sp-gist]
 
 Prisma ORM generally supports operator classes provided by PostgreSQL in versions 10 and later. If the operator class requires the field type to be of a type Prisma ORM does not yet support, using the `raw` function with a string input allows you to use these operator classes without validation.
 
-The default operator class (marked with ✅) can be omitted from the index definition.
+The default operator class (marked with [OK]) can be omitted from the index definition.
 
 | Operator class | Allowed field type (native types)    | Default | Supported PostgreSQL versions |
 | -------------- | ------------------------------------ | ------- | ----------------------------- |
-| `InetOps`      | `String` (`@db.Inet`)                | ✅       | 10+                           |
-| `TextOps`      | `String` (`@db.Text`, `@db.VarChar`) | ✅       |                               |
+| `InetOps`      | `String` (`@db.Inet`)                | [OK]       | 10+                           |
+| `TextOps`      | `String` (`@db.Text`, `@db.VarChar`) | [OK]       |                               |
 | `raw("other")` |                                      |         |                               |
 
 Read more about built-in operator classes from [official PostgreSQL documentation](https://www.postgresql.org/docs/14/spgist-builtin-opclasses.html).
@@ -8956,61 +8956,61 @@ Supported Operator Classes for BRIN [#supported-operator-classes-for-brin]
 
 Prisma ORM generally supports operator classes provided by PostgreSQL in versions 10 and later, and some supported operators are only available from PostgreSQL versions 14 and later. If the operator class requires the field type to be of a type Prisma ORM does not yet support, using the `raw` function with a string input allows you to use these operator classes without validation.
 
-The default operator class (marked with ✅) can be omitted from the index definition.
+The default operator class (marked with [OK]) can be omitted from the index definition.
 
 | Operator class              | Allowed field type (native types)    | Default | Supported PostgreSQL versions |
 | --------------------------- | ------------------------------------ | ------- | ----------------------------- |
-| `BitMinMaxOps`              | `String` (`@db.Bit`)                 | ✅       |                               |
-| `VarBitMinMaxOps`           | `String` (`@db.VarBit`)              | ✅       |                               |
+| `BitMinMaxOps`              | `String` (`@db.Bit`)                 | [OK]       |                               |
+| `VarBitMinMaxOps`           | `String` (`@db.VarBit`)              | [OK]       |                               |
 | `BpcharBloomOps`            | `String` (`@db.Char`)                |         | 14+                           |
-| `BpcharMinMaxOps`           | `String` (`@db.Char`)                | ✅       |                               |
+| `BpcharMinMaxOps`           | `String` (`@db.Char`)                | [OK]       |                               |
 | `ByteaBloomOps`             | `Bytes` (`@db.Bytea`)                |         | 14+                           |
-| `ByteaMinMaxOps`            | `Bytes` (`@db.Bytea`)                | ✅       |                               |
+| `ByteaMinMaxOps`            | `Bytes` (`@db.Bytea`)                | [OK]       |                               |
 | `DateBloomOps`              | `DateTime` (`@db.Date`)              |         | 14+                           |
-| `DateMinMaxOps`             | `DateTime` (`@db.Date`)              | ✅       |                               |
+| `DateMinMaxOps`             | `DateTime` (`@db.Date`)              | [OK]       |                               |
 | `DateMinMaxMultiOps`        | `DateTime` (`@db.Date`)              |         | 14+                           |
 | `Float4BloomOps`            | `Float` (`@db.Real`)                 |         | 14+                           |
-| `Float4MinMaxOps`           | `Float` (`@db.Real`)                 | ✅       |                               |
+| `Float4MinMaxOps`           | `Float` (`@db.Real`)                 | [OK]       |                               |
 | `Float4MinMaxMultiOps`      | `Float` (`@db.Real`)                 |         | 14+                           |
 | `Float8BloomOps`            | `Float` (`@db.DoublePrecision`)      |         | 14+                           |
-| `Float8MinMaxOps`           | `Float` (`@db.DoublePrecision`)      | ✅       |                               |
+| `Float8MinMaxOps`           | `Float` (`@db.DoublePrecision`)      | [OK]       |                               |
 | `Float8MinMaxMultiOps`      | `Float` (`@db.DoublePrecision`)      |         | 14+                           |
-| `InetInclusionOps`          | `String` (`@db.Inet`)                | ✅       | 14+                           |
+| `InetInclusionOps`          | `String` (`@db.Inet`)                | [OK]       | 14+                           |
 | `InetBloomOps`              | `String` (`@db.Inet`)                |         | 14+                           |
 | `InetMinMaxOps`             | `String` (`@db.Inet`)                |         |                               |
 | `InetMinMaxMultiOps`        | `String` (`@db.Inet`)                |         | 14+                           |
 | `Int2BloomOps`              | `Int` (`@db.SmallInt`)               |         | 14+                           |
-| `Int2MinMaxOps`             | `Int` (`@db.SmallInt`)               | ✅       |                               |
+| `Int2MinMaxOps`             | `Int` (`@db.SmallInt`)               | [OK]       |                               |
 | `Int2MinMaxMultiOps`        | `Int` (`@db.SmallInt`)               |         | 14+                           |
 | `Int4BloomOps`              | `Int` (`@db.Integer`)                |         | 14+                           |
-| `Int4MinMaxOps`             | `Int` (`@db.Integer`)                | ✅       |                               |
+| `Int4MinMaxOps`             | `Int` (`@db.Integer`)                | [OK]       |                               |
 | `Int4MinMaxMultiOps`        | `Int` (`@db.Integer`)                |         | 14+                           |
 | `Int8BloomOps`              | `BigInt` (`@db.BigInt`)              |         | 14+                           |
-| `Int8MinMaxOps`             | `BigInt` (`@db.BigInt`)              | ✅       |                               |
+| `Int8MinMaxOps`             | `BigInt` (`@db.BigInt`)              | [OK]       |                               |
 | `Int8MinMaxMultiOps`        | `BigInt` (`@db.BigInt`)              |         | 14+                           |
 | `NumericBloomOps`           | `Decimal` (`@db.Decimal`)            |         | 14+                           |
-| `NumericMinMaxOps`          | `Decimal` (`@db.Decimal`)            | ✅       |                               |
+| `NumericMinMaxOps`          | `Decimal` (`@db.Decimal`)            | [OK]       |                               |
 | `NumericMinMaxMultiOps`     | `Decimal` (`@db.Decimal`)            |         | 14+                           |
 | `OidBloomOps`               | `Int` (`@db.Oid`)                    |         | 14+                           |
-| `OidMinMaxOps`              | `Int` (`@db.Oid`)                    | ✅       |                               |
+| `OidMinMaxOps`              | `Int` (`@db.Oid`)                    | [OK]       |                               |
 | `OidMinMaxMultiOps`         | `Int` (`@db.Oid`)                    |         | 14+                           |
 | `TextBloomOps`              | `String` (`@db.Text`, `@db.VarChar`) |         | 14+                           |
-| `TextMinMaxOps`             | `String` (`@db.Text`, `@db.VarChar`) | ✅       |                               |
+| `TextMinMaxOps`             | `String` (`@db.Text`, `@db.VarChar`) | [OK]       |                               |
 | `TextMinMaxMultiOps`        | `String` (`@db.Text`, `@db.VarChar`) |         | 14+                           |
 | `TimestampBloomOps`         | `DateTime` (`@db.Timestamp`)         |         | 14+                           |
-| `TimestampMinMaxOps`        | `DateTime` (`@db.Timestamp`)         | ✅       |                               |
+| `TimestampMinMaxOps`        | `DateTime` (`@db.Timestamp`)         | [OK]       |                               |
 | `TimestampMinMaxMultiOps`   | `DateTime` (`@db.Timestamp`)         |         | 14+                           |
 | `TimestampTzBloomOps`       | `DateTime` (`@db.Timestamptz`)       |         | 14+                           |
-| `TimestampTzMinMaxOps`      | `DateTime` (`@db.Timestamptz`)       | ✅       |                               |
+| `TimestampTzMinMaxOps`      | `DateTime` (`@db.Timestamptz`)       | [OK]       |                               |
 | `TimestampTzMinMaxMultiOps` | `DateTime` (`@db.Timestamptz`)       |         | 14+                           |
 | `TimeBloomOps`              | `DateTime` (`@db.Time`)              |         | 14+                           |
-| `TimeMinMaxOps`             | `DateTime` (`@db.Time`)              | ✅       |                               |
+| `TimeMinMaxOps`             | `DateTime` (`@db.Time`)              | [OK]       |                               |
 | `TimeMinMaxMultiOps`        | `DateTime` (`@db.Time`)              |         | 14+                           |
 | `TimeTzBloomOps`            | `DateTime` (`@db.Timetz`)            |         | 14+                           |
-| `TimeTzMinMaxOps`           | `DateTime` (`@db.Timetz`)            | ✅       |                               |
+| `TimeTzMinMaxOps`           | `DateTime` (`@db.Timetz`)            | [OK]       |                               |
 | `TimeTzMinMaxMultiOps`      | `DateTime` (`@db.Timetz`)            |         | 14+                           |
 | `UuidBloomOps`              | `String` (`@db.Uuid`)                |         | 14+                           |
-| `UuidMinMaxOps`             | `String` (`@db.Uuid`)                | ✅       |                               |
+| `UuidMinMaxOps`             | `String` (`@db.Uuid`)                | [OK]       |                               |
 | `UuidMinMaxMultiOps`        | `String` (`@db.Uuid`)                |         | 14+                           |
 | `raw("other")`              |                                      |         |                               |
 
@@ -9766,7 +9766,7 @@ Whenever you make changes to your database that are reflected in the Prisma sche
 
 Databases can handle a limited number of concurrent connections. Each connection requires RAM, which means that simply increasing the database connection limit without scaling available resources:
 
-* ✔ might allow more processes to connect *but*
+* [OK] might allow more processes to connect *but*
 * ✘ significantly affects **database performance**, and can result in the database being **shut down** due to **exhaustion of system resources**
 
 The way your application **manages connections** also impacts performance. This guide describes how to approach connection management in [serverless environments](#serverless-environments-faas) and [long-running processes](#long-running-processes).
@@ -9788,8 +9788,8 @@ PrismaClient in long-running applications [#prismaclient-in-long-running-applica
 
 In **long-running** applications, we recommend that you:
 
-* ✔ Create **one** instance of `PrismaClient` and re-use it across your application
-* ✔ Assign `PrismaClient` to a global variable *in dev environments only* to [prevent hot reloading from creating new instances](#prevent-hot-reloading-from-creating-new-instances-of-prismaclient)
+* [OK] Create **one** instance of `PrismaClient` and re-use it across your application
+* [OK] Assign `PrismaClient` to a global variable *in dev environments only* to [prevent hot reloading from creating new instances](#prevent-hot-reloading-from-creating-new-instances-of-prismaclient)
 
 Re-using a single PrismaClient instance [#re-using-a-single-prismaclient-instance]
 
@@ -10740,12 +10740,12 @@ const deleteUsers = prisma.user.deleteMany();
 await prisma.$transaction([deleteProfile, deletePosts, deleteUsers]);
 ```
 
-✅ **Pros**:
+[OK] **Pros**:
 
 * Works well when you know the structure of your schema ahead of time
 * Synchronously deletes each tables data
 
-❌ **Cons**:
+[FAIL] **Cons**:
 
 * When working with relational databases, this function doesn't scale as well as having a more generic solution which looks up and `TRUNCATE`s your tables regardless of their relational constraints. Note that this scaling issue does not apply when using the MongoDB connector.
 
@@ -10820,12 +10820,12 @@ The second tab shows performing the same function but with a MySQL database. In 
   </CodeBlockTab>
 </CodeBlockTabs>
 
-✅ **Pros**:
+[OK] **Pros**:
 
 * Scalable
 * Very fast
 
-❌ **Cons**:
+[FAIL] **Cons**:
 
 * Can't undo the operation
 * Using reserved SQL key words as tables names can cause issues when trying to run a raw query
@@ -11356,10 +11356,10 @@ In most cases, a nested `create` will be preferable unless the [`skipDuplicates`
 
 | Feature                               | `create` | `createMany` | Notes                                                                                                                                                                                           |
 | :------------------------------------ | :------- | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supports nesting additional relations | ✔        | ✘ \*         | For example, you can create a user, several posts, and several comments per post in one query.<br />\* You can manually set a foreign key in a has-one relation - for example: `{ authorId: 9}` |
-| Supports 1-n relations                | ✔        | ✔            | For example, you can create a user and multiple posts (one user has many posts)                                                                                                                 |
-| Supports m-n relations                | ✔        | ✘            | For example, you can create a post and several categories (one post can have many categories, and one category can have many posts)                                                             |
-| Supports skipping duplicate records   | ✘        | ✔            | Use `skipDuplicates` query option.                                                                                                                                                              |
+| Supports nesting additional relations | [OK]        | ✘ \*         | For example, you can create a user, several posts, and several comments per post in one query.<br />\* You can manually set a foreign key in a has-one relation - for example: `{ authorId: 9}` |
+| Supports 1-n relations                | [OK]        | [OK]            | For example, you can create a user and multiple posts (one user has many posts)                                                                                                                 |
+| Supports m-n relations                | [OK]        | ✘            | For example, you can create a post and several categories (one post can have many categories, and one category can have many posts)                                                             |
+| Supports skipping duplicate records   | ✘        | [OK]            | Use `skipDuplicates` query option.                                                                                                                                                              |
 
 Using nested create [#using-nested-create]
 
@@ -12317,11 +12317,11 @@ The isolation levels available for each database connector are as follows:
 
 | Database    | `ReadUncommitted` | `ReadCommitted` | `RepeatableRead` | `Snapshot` | `Serializable` |
 | ----------- | ----------------- | --------------- | ---------------- | ---------- | -------------- |
-| PostgreSQL  | ✔️                | ✔️              | ✔️               | No         | ✔️             |
-| MySQL       | ✔️                | ✔️              | ✔️               | No         | ✔️             |
-| SQL Server  | ✔️                | ✔️              | ✔️               | ✔️         | ✔️             |
-| CockroachDB | No                | No              | No               | No         | ✔️             |
-| SQLite      | No                | No              | No               | No         | ✔️             |
+| PostgreSQL  | [OK]️                | [OK]️              | [OK]️               | No         | [OK]️             |
+| MySQL       | [OK]️                | [OK]️              | [OK]️               | No         | [OK]️             |
+| SQL Server  | [OK]️                | [OK]️              | [OK]️               | [OK]️         | [OK]️             |
+| CockroachDB | No                | No              | No               | No         | [OK]️             |
+| SQLite      | No                | No              | No               | No         | [OK]️             |
 
 By default, Prisma Client sets the isolation level to the value currently configured in your database.
 
@@ -12500,7 +12500,7 @@ When to use bulk operations [#when-to-use-bulk-operations]
 
 Consider bulk operations as a solution if:
 
-* ✔ You want to update a batch of the *same type* of record, like a batch of emails
+* [OK] You want to update a batch of the *same type* of record, like a batch of emails
 
 Scenario: Marking emails as read [#scenario-marking-emails-as-read]
 
@@ -12580,8 +12580,8 @@ When to use the $transaction([]) API [#when-to-use-the-transaction-api]
 
 Consider the `$transaction([])` API if:
 
-* ✔ You want to update a batch that includes different types of records, such as emails and users. The records do not need to be related in any way.
-* ✔ You want to batch raw SQL queries (`$executeRaw`) - for example, for features that Prisma Client does not yet support.
+* [OK] You want to update a batch that includes different types of records, such as emails and users. The records do not need to be related in any way.
+* [OK] You want to batch raw SQL queries (`$executeRaw`) - for example, for features that Prisma Client does not yet support.
 
 Scenario: Privacy legislation [#scenario-privacy-legislation]
 
@@ -12749,7 +12749,7 @@ Idempotency is something you can and should actively design into your applicatio
 
 When to design an idempotent API [#when-to-design-an-idempotent-api]
 
-* ✔ You need to be able to retry the same logic without creating unwanted side-effects in the databases
+* [OK] You need to be able to retry the same logic without creating unwanted side-effects in the databases
 
 Scenario: Upgrading a Slack team [#scenario-upgrading-a-slack-team]
 
@@ -12868,7 +12868,7 @@ Optimistic concurrency control [#optimistic-concurrency-control]
 
 Optimistic concurrency control (OCC) is a model for handling concurrent operations on a single entity that does not rely on 🔒 locking. Instead, we **optimistically** assume that a record will remain unchanged in between reading and writing, and use a concurrency token (a timestamp or version field) to detect changes to a record.
 
-If a ❌ conflict occurs (someone else has changed the record since you read it), you cancel the transaction. Depending on your scenario, you can then:
+If a [FAIL] conflict occurs (someone else has changed the record since you read it), you cancel the transaction. Depending on your scenario, you can then:
 
 * Re-try the transaction (book another cinema seat)
 * Throw an error (alert the user that they are about to overwrite changes made by someone else)
@@ -12877,8 +12877,8 @@ This section describes how to build your own optimistic concurrency control. See
 
 When to use optimistic concurrency control [#when-to-use-optimistic-concurrency-control]
 
-* ✔ You anticipate a high number of concurrent requests (multiple people booking cinema seats)
-* ✔ You anticipate that conflicts between those concurrent requests will be rare
+* [OK] You anticipate a high number of concurrent requests (multiple people booking cinema seats)
+* [OK] You anticipate that conflicts between those concurrent requests will be rare
 
 Avoiding locks in an application with a high number of concurrent requests makes the application more resilient to load and more scalable overall. Although locking is not inherently bad, locking in a high concurrency environment can lead to unintended consequences - even if you are locking individual rows, and only for a short amount of time. For more information, see:
 
@@ -13325,7 +13325,7 @@ const User = objectType({
 
 Solution 1: Batching queries with the fluent API [#solution-1-batching-queries-with-the-fluent-api]
 
-Use `findUnique()` in combination with [the fluent API](/orm/prisma-client/queries/relation-queries#fluent-api) (`.posts()`) as shown to return a user's posts. Even though the resolver is called once per user, the Prisma dataloader in Prisma Client **✔ batches the `findUnique()` queries**.
+Use `findUnique()` in combination with [the fluent API](/orm/prisma-client/queries/relation-queries#fluent-api) (`.posts()`) as shown to return a user's posts. Even though the resolver is called once per user, the Prisma dataloader in Prisma Client **[OK] batches the `findUnique()` queries**.
 
 <CalloutContainer type="info">
   <CalloutDescription>
@@ -15379,7 +15379,7 @@ model Profile {
 </CodeBlockTabs>
 
 ```text
-⚠️  There will be data loss when applying the migration:
+[WARN]️  There will be data loss when applying the migration:
 
 • The migration will add a unique constraint covering the columns `[profileId]` on the table `User`. If there are existing duplicate values, the migration will fail.
 ```
@@ -15919,7 +15919,7 @@ migrations/
 
 Your database is now in sync with your schema.
 
-✔ Generated Prisma Client (2.19.0-dev.29) to .\node_modules\@prisma\client in 190ms
+[OK] Generated Prisma Client (2.19.0-dev.29) to .\node_modules\@prisma\client in 190ms
 ```
 
 * Push the migration to production **without running `migrate deploy`**. Instead, mark the migration created in the previous step as 'already applied' so that Prisma Migrate does not attempt to apply your hotfix a second time:
@@ -17451,7 +17451,7 @@ Successfully authenticated as amanyoyoyo@gmail.com.
 Let's set up your Prisma Postgres database!
 ✓ Select your region: ap-southeast-1 - Asia Pacific (Singapore)
 ✓ Enter a project name: My Prisma Project
-✓ Success! Your Prisma Postgres database is ready ✅
+✓ Success! Your Prisma Postgres database is ready [OK]
 
 We found an existing schema.prisma file in your current project directory.
 
@@ -17717,7 +17717,7 @@ prisma generate
 ```
 
 ```text no-copy
-✔ Generated Prisma Client to ./node_modules/.prisma/client in 61ms
+[OK] Generated Prisma Client to ./node_modules/.prisma/client in 61ms
 
 You can now start using Prisma Client in your code:
 
@@ -17744,7 +17744,7 @@ prisma generate --watch
 ```text no-copy
 Watching... /home/prismauser/prisma/prisma-play/prisma/schema.prisma
 
-✔ Generated Prisma Client to ./node_modules/.prisma/client in 45ms
+[OK] Generated Prisma Client to ./node_modules/.prisma/client in 45ms
 ```
 
 Run the generate command with only a specific generator [#run-the-generate-command-with-only-a-specific-generator]
@@ -17784,7 +17784,7 @@ prisma validate
 ```text no-copy
 Environment variables loaded from .env
 Prisma schema loaded from prisma/schema.prisma
-The schema at /absolute/path/prisma/schema.prisma is valid 🚀
+The schema at /absolute/path/prisma/schema.prisma is valid [LAUNCH]
 ```
 
 Validate a schema with validation errors [#validate-a-schema-with-validation-errors]
@@ -18032,7 +18032,7 @@ prisma dev
 ```bash no-copy wrap
 $ npx prisma dev
 Fetching latest updates for this subcommand...
-✔  Great Success! 😉👍
+[OK]  Great Success! 😉👍
 
    Your  prisma dev  server default is ready and listening on ports 63567-63569.
 
@@ -18706,7 +18706,7 @@ prisma db pull
 ```text no-copy
 Introspecting based on datasource defined in schema.prisma …
 
-✔ Introspected 2 models and wrote them into schema.prisma in 38ms
+[OK] Introspected 2 models and wrote them into schema.prisma in 38ms
 
 Run prisma generate to generate Prisma Client.
 ```
@@ -18720,7 +18720,7 @@ prisma db pull --schema=./alternative/schema.prisma
 ```text no-copy
 Introspecting based on datasource defined in alternative/schema.prisma …
 
-✔ Introspected 2 models and wrote them into alternative/schema.prisma in 60ms
+[OK] Introspected 2 models and wrote them into alternative/schema.prisma in 60ms
 
 Run prisma generate to generate Prisma Client.
 ```
@@ -25857,7 +25857,7 @@ const userId = 42;
 const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${userId};`;
 ```
 
-✔ Benefits of using the tagged template versions of `$queryRaw` and `$executeRaw` include:
+[OK] Benefits of using the tagged template versions of `$queryRaw` and `$executeRaw` include:
 
 * Prisma Client escapes all variables.
 * Tagged templates are database-agnostic - you do not need to remember if variables should be written as `$1` (PostgreSQL) or `?` (MySQL).
@@ -25950,7 +25950,7 @@ $queryRaw`...`; // Tagged template
 $executeRaw`...`; // Tagged template
 ```
 
-The following example is safe ✅ from SQL Injection:
+The following example is safe [OK] from SQL Injection:
 
 ```ts
 const inputString = `'Sarah' UNION SELECT id, title FROM "Post"`;
@@ -25965,7 +25965,7 @@ However, it is also possible to use these methods in unsafe ways.
 
 One way is by artificially generating a tagged template that unsafely concatenates user input.
 
-The following example is vulnerable ❌ to SQL Injection:
+The following example is vulnerable [FAIL] to SQL Injection:
 
 ```ts
 // Unsafely generate query text
@@ -25988,7 +25988,7 @@ console.log(result);
 
 Another way to make these methods vulnerable is misuse of the `Prisma.raw` function.
 
-The following examples are all vulnerable ❌ to SQL Injection:
+The following examples are all vulnerable [FAIL] to SQL Injection:
 
 ```ts
 const inputString = `'Sarah' UNION SELECT id, title FROM "Post"`;
@@ -26019,7 +26019,7 @@ Building raw queries separate to query execution [#building-raw-queries-separate
 
 If you want to build your raw queries elsewhere or separate to your parameters you will need to use one of the following methods.
 
-In this example, the `sql` helper method is used to build the query text by safely including the variable. It is safe ✅ from SQL Injection:
+In this example, the `sql` helper method is used to build the query text by safely including the variable. It is safe [OK] from SQL Injection:
 
 ```ts
 // inputString can be untrusted input
@@ -26032,7 +26032,7 @@ const result = await prisma.$queryRaw(query);
 console.log(result);
 ```
 
-In this example which is safe ✅ from SQL Injection, the `sql` helper method is used to build the query text including a parameter marker for the input value. Each variable is represented by a marker symbol (`?` for MySQL, `$1`, `$2`, and so on for PostgreSQL). Note that the examples just show PostgreSQL queries.
+In this example which is safe [OK] from SQL Injection, the `sql` helper method is used to build the query text including a parameter marker for the input value. Each variable is represented by a marker symbol (`?` for MySQL, `$1`, `$2`, and so on for PostgreSQL). Note that the examples just show PostgreSQL queries.
 
 ```ts
 // Version for Typescript
@@ -26058,7 +26058,7 @@ Building raw queries elsewhere or in stages [#building-raw-queries-elsewhere-or-
 
 If you want to build your raw queries somewhere other than where the query is executed, the ideal way to do this is to create an `Sql` object from the segments of your query and pass it the parameter value.
 
-In the following example we have two variables to parameterize. The example is safe ✅ from SQL Injection as long as the query strings being passed to `Prisma.sql` only contain trusted content:
+In the following example we have two variables to parameterize. The example is safe [OK] from SQL Injection as long as the query strings being passed to `Prisma.sql` only contain trusted content:
 
 ```ts
 // Example is safe if the text query below is completely trusted content
@@ -26077,7 +26077,7 @@ console.log(result);
 
 If you want to build your raw queries into one large string, this is still possible but requires some care as it is uses the potentially dangerous `Prisma.raw` method. You also need to build your query using the correct parameter markers for your database as Prisma won't be able to provide markers for the relevant database as it usually is.
 
-The following example is safe ✅ from SQL Injection as long as the query strings being passed to `Prisma.raw` only contain trusted content:
+The following example is safe [OK] from SQL Injection as long as the query strings being passed to `Prisma.raw` only contain trusted content:
 
 ```ts
 // Version for Typescript
@@ -26106,7 +26106,7 @@ Using $queryRawUnsafe and $executeRawUnsafe unsafely [#using-queryrawunsafe-and-
 
 If you cannot use tagged templates, you can instead use [`$queryRawUnsafe`](/orm/prisma-client/using-raw-sql/raw-queries#queryrawunsafe) or [`$executeRawUnsafe`](/orm/prisma-client/using-raw-sql/raw-queries#executerawunsafe). However, **be aware that these functions significantly increase the risk of SQL injection vulnerabilities in your code**.
 
-The following example concatenates `query` and `inputString`. Prisma Client ❌ **cannot** escape `inputString` in this example, which makes it vulnerable to SQL injection:
+The following example concatenates `query` and `inputString`. Prisma Client [FAIL] **cannot** escape `inputString` in this example, which makes it vulnerable to SQL injection:
 
 ```ts
 const inputString = '"Sarah" UNION SELECT id, title, content FROM Post'; // SQL Injection
@@ -26120,7 +26120,7 @@ Parameterized queries [#parameterized-queries]
 
 As an alternative to tagged templates, `$queryRawUnsafe` supports standard parameterized queries where each variable is represented by a symbol (`?` for MySQL, `$1`, `$2`, and so on for PostgreSQL). Note that the examples just show PostgreSQL queries.
 
-The following example is safe ✅ from SQL Injection:
+The following example is safe [OK] from SQL Injection:
 
 ```ts
 const userName = "Sarah";
@@ -26140,7 +26140,7 @@ As with tagged templates, Prisma Client escapes all variables when they are prov
 
 Parameterized PostgreSQL ILIKE query [#parameterized-postgresql-ilike-query]
 
-When you use `ILIKE`, the `%` wildcard character(s) should be included in the variable itself, not the query (`string`). This example is safe ✅ from SQL Injection.
+When you use `ILIKE`, the `%` wildcard character(s) should be included in the variable itself, not the query (`string`). This example is safe [OK] from SQL Injection.
 
 ```ts
 const userName = "Sarah";
@@ -27442,3 +27442,4 @@ The `test` script does the following:
 3. Executes the tests.
 
 Once you are satisfied you can run `yarn docker:down` to destroy the container, its database and any test data.
+

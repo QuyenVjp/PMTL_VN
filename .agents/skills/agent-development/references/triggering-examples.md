@@ -250,7 +250,7 @@ Large PR mentioned, use thorough analysis mode.
 
 ## Common Mistakes
 
-### ❌ Missing Context
+### [FAIL] Missing Context
 
 ```markdown
 <example>
@@ -261,7 +261,7 @@ assistant: "I'll use the code-reviewer agent."
 
 **Why bad:** No context about what led to this request.
 
-### ✅ With Context
+### [OK] With Context
 
 ```markdown
 <example>
@@ -274,7 +274,7 @@ Auth code written, review for security and best practices.
 </example>
 ```
 
-### ❌ No Commentary
+### [FAIL] No Commentary
 
 ```markdown
 <example>
@@ -286,7 +286,7 @@ assistant: "I'll use the reviewer agent."
 
 **Why bad:** Doesn't explain WHY agent triggers.
 
-### ✅ With Commentary
+### [OK] With Commentary
 
 ```markdown
 <example>
@@ -299,7 +299,7 @@ Code review request triggers agent to check quality, security, and adherence to 
 </example>
 ```
 
-### ❌ Agent Responds Directly
+### [FAIL] Agent Responds Directly
 
 ```markdown
 <example>
@@ -310,7 +310,7 @@ assistant: "I found the following issues: [lists issues]"
 
 **Why bad:** Shows agent's output, not triggering.
 
-### ✅ Shows Triggering
+### [OK] Shows Triggering
 
 ```markdown
 <example>
@@ -470,7 +470,7 @@ Revise examples to show only correct triggering scenarios.
 
 ## Best Practices Summary
 
-✅ **DO:**
+[OK] **DO:**
 - Include 2-4 concrete, specific examples
 - Show both explicit and proactive triggering
 - Provide clear context for each example
@@ -478,7 +478,7 @@ Revise examples to show only correct triggering scenarios.
 - Vary user message phrasing
 - Show Claude using Agent tool
 
-❌ **DON'T:**
+[FAIL] **DON'T:**
 - Use generic, vague examples
 - Omit context or commentary
 - Show only one type of triggering
@@ -489,3 +489,4 @@ Revise examples to show only correct triggering scenarios.
 ## Conclusion
 
 Well-crafted examples are crucial for reliable agent triggering. Invest time in creating diverse, specific examples that clearly demonstrate when and why the agent should be used.
+

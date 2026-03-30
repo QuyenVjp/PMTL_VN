@@ -194,10 +194,10 @@ When running `domain-authority-auditor` after this analysis, the following data 
 
 | Domain | DA | HubSpot | Salesforce | Mailchimp | Opportunity |
 |--------|-----|---------|------------|-----------|-------------|
-| g2.com | 91 | ✅ | ✅ | ✅ | Get listed/reviewed |
-| capterra.com | 89 | ✅ | ✅ | ✅ | Submit for review |
-| entrepreneur.com | 92 | ✅ | ✅ | ❌ | Pitch guest post |
-| techcrunch.com | 94 | ✅ | ❌ | ✅ | PR/news pitch |
+| g2.com | 91 | [OK] | [OK] | [OK] | Get listed/reviewed |
+| capterra.com | 89 | [OK] | [OK] | [OK] | Submit for review |
+| entrepreneur.com | 92 | [OK] | [OK] | [FAIL] | Pitch guest post |
+| techcrunch.com | 94 | [OK] | [FAIL] | [OK] | PR/news pitch |
 
 ### Top 5 Immediate Opportunities
 
@@ -251,4 +251,5 @@ If you acquire links from top 10 opportunities:
 - [alert-manager](../alert-manager/) — Set up link alerts
 - [performance-reporter](../performance-reporter/) — Include in reports
 - [entity-optimizer](../../cross-cutting/entity-optimizer/) — Branded backlinks strengthen entity signals
+
 

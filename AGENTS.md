@@ -9,6 +9,12 @@
   - `infra/AGENTS.override.md`
 - Put repeatable workflows in `.agents/skills/*`.
 
+## App-Level Constitutions
+- **Admin FE Constitution** — `apps/admin/AGENTS.override.md`: feature module structure, state management, workspace component usage, query/mutation patterns, forbidden patterns, detail sheet standard.
+- **API BE Constitution** — `apps/api/AGENTS.override.md`: module structure, Zod validation, error handling, auth guards, publicId rules, response format, Prisma rules, audit requirements.
+- These override files are the single source of truth for their respective apps.
+- **Read the relevant constitution before writing any code in `apps/admin/` or `apps/api/`.**
+
 ## Read First
 - `AUDIT_VERIFIED_2026.md` when present
 - `TEAM_GUIDE.md`

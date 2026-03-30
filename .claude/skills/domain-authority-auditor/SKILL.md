@@ -155,9 +155,9 @@ When a user requests a domain authority audit:
 
 | Veto Item | Status | Action |
 |-----------|--------|--------|
-| T03: Link-Traffic Coherence | ✅ Pass / ⚠️ VETO | [If VETO: "Audit backlink profile; disavow toxic links"] |
-| T05: Backlink Profile Uniqueness | ✅ Pass / ⚠️ VETO | [If VETO: "Flag as manipulation network; investigate link sources"] |
-| T09: Penalty & Deindex History | ✅ Pass / ⚠️ VETO | [If VETO: "Address penalty first; all other optimization is futile"] |
+| T03: Link-Traffic Coherence | [OK] Pass / [WARN]️ VETO | [If VETO: "Audit backlink profile; disavow toxic links"] |
+| T05: Backlink Profile Uniqueness | [OK] Pass / [WARN]️ VETO | [If VETO: "Flag as manipulation network; investigate link sources"] |
+| T09: Penalty & Deindex History | [OK] Pass / [WARN]️ VETO | [If VETO: "Address penalty first; all other optimization is futile"] |
 ```
 
 If any veto item triggers, flag it prominently at the top of the report. CITE Score is capped at 39 (Poor) regardless of other scores.
@@ -232,7 +232,7 @@ Calculate scores and generate the final report:
 - **Domain Type**: [type]
 - **Audit Date**: [date]
 - **CITE Score**: [score]/100 ([rating])
-- **Veto Status**: ✅ No triggers / ⚠️ [item] triggered — Score capped at 39
+- **Veto Status**: [OK] No triggers / [WARN]️ [item] triggered — Score capped at 39
 
 ### Dimension Scores
 
@@ -346,3 +346,4 @@ See [references/example-report.md](./references/example-report.md) for a complet
 - [competitor-analysis](../../research/competitor-analysis/) — Compare CITE scores across competitors
 - [performance-reporter](../../monitor/performance-reporter/) — Track CITE score trends over time
 - [entity-optimizer](../entity-optimizer/) — Entity presence audit; complements CITE I dimension
+

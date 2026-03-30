@@ -6,13 +6,13 @@ Last updated: 2026-03-28
 
 | Module | Repository | Mapper | Policy | Notes |
 |---|---|---|---|---|
-| calendar | ✅ | ✅ | ✅ | Added 2026-03-28 |
-| community | ✅ | ✅ | ✅ | Added 2026-03-28; two entities (posts + guestbook) in one repository |
-| content | ✅ | ✅ | ✅ | Pre-existing |
-| identity | — | ✅ | ✅ | Pre-existing; no repository (auth-heavy, PrismaService acceptable) |
-| moderation | — | ✅ | ✅ | Added mapper + policy 2026-03-27 |
-| notification | ✅ | ✅ | — | Added repository + mapper 2026-03-27 |
-| vows-merit | ✅ | ✅ | ✅ | Added 2026-03-28; covers Vow + LifeReleaseJournal aggregates |
+| calendar | [OK] | [OK] | [OK] | Added 2026-03-28 |
+| community | [OK] | [OK] | [OK] | Added 2026-03-28; two entities (posts + guestbook) in one repository |
+| content | [OK] | [OK] | [OK] | Pre-existing |
+| identity | — | [OK] | [OK] | Pre-existing; no repository (auth-heavy, PrismaService acceptable) |
+| moderation | — | [OK] | [OK] | Added mapper + policy 2026-03-27 |
+| notification | [OK] | [OK] | — | Added repository + mapper 2026-03-27 |
+| vows-merit | [OK] | [OK] | [OK] | Added 2026-03-28; covers Vow + LifeReleaseJournal aggregates |
 | contact | — | — | — | Low complexity; simple inserts only, extraction not warranted |
 | engagement | — | — | — | Stub service (no real Prisma queries yet); nothing to extract |
 | search | — | — | — | Projection/fan-out layer, not domain authority; different pattern |
@@ -32,3 +32,4 @@ Last updated: 2026-03-28
 - Modules with only 1-3 trivial Prisma calls (contact, wisdom-qa) do not need a repository; extraction adds noise without benefit.
 - `search` module is a projection/fan-out layer, not a domain repository. Different architectural pattern applies.
 - No remaining extraction candidates. All modules with real Prisma queries now have repositories.
+

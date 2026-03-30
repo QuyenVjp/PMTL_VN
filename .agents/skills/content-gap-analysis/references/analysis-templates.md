@@ -129,10 +129,10 @@ Gap: Keywords they all have, you don't: [X]
 
 | Topic Area | You | Comp 1 | Comp 2 | Comp 3 | Gap? |
 |------------|-----|--------|--------|--------|------|
-| [Topic 1] | ✅ [X] | ✅ [X] | ✅ [X] | ✅ [X] | No |
-| [Topic 2] | ❌ 0 | ✅ [X] | ✅ [X] | ✅ [X] | **Yes** |
-| [Topic 3] | ✅ [X] | ✅ [X] | ❌ 0 | ✅ [X] | Partial |
-| [Topic 4] | ❌ 0 | ✅ [X] | ✅ [X] | ❌ 0 | **Yes** |
+| [Topic 1] | [OK] [X] | [OK] [X] | [OK] [X] | [OK] [X] | No |
+| [Topic 2] | [FAIL] 0 | [OK] [X] | [OK] [X] | [OK] [X] | **Yes** |
+| [Topic 3] | [OK] [X] | [OK] [X] | [FAIL] 0 | [OK] [X] | Partial |
+| [Topic 4] | [FAIL] 0 | [OK] [X] | [OK] [X] | [FAIL] 0 | **Yes** |
 
 ### Missing Topic Clusters
 
@@ -333,3 +333,4 @@ Track these to measure gap-filling success:
 | Traffic from new content | [X] | [X] | [X] |
 | AI citations | [X] | [X] | [X] |
 ```
+

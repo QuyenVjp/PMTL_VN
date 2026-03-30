@@ -439,7 +439,7 @@ rm -rf "$CLAUDE_PROJECT_DIR"
 
 ## Common Pitfalls
 
-### ❌ Assuming Hook Order
+### [FAIL] Assuming Hook Order
 
 ```bash
 # BAD: Assumes hooks run in specific order
@@ -447,7 +447,7 @@ rm -rf "$CLAUDE_PROJECT_DIR"
 # This can fail because hooks run in parallel!
 ```
 
-### ❌ Long-Running Hooks
+### [FAIL] Long-Running Hooks
 
 ```bash
 # BAD: Hook takes 2 minutes to run
@@ -455,7 +455,7 @@ sleep 120
 # This will timeout and block the workflow
 ```
 
-### ❌ Uncaught Exceptions
+### [FAIL] Uncaught Exceptions
 
 ```bash
 # BAD: Script crashes on unexpected input
@@ -463,7 +463,7 @@ file_path=$(echo "$input" | jq -r '.tool_input.file_path')
 cat "$file_path"  # Fails if file doesn't exist
 ```
 
-### ✅ Proper Error Handling
+### [OK] Proper Error Handling
 
 ```bash
 # GOOD: Handles errors gracefully
@@ -477,3 +477,4 @@ fi
 ## Conclusion
 
 Advanced hook patterns enable sophisticated automation while maintaining reliability and performance. Use these techniques when basic hooks are insufficient, but always prioritize simplicity and maintainability.
+

@@ -197,7 +197,7 @@ Handle these situations:
 
 ### Best Practices
 
-✅ **DO:**
+[OK] **DO:**
 - Write in second person ("You are...", "You will...")
 - Be specific about responsibilities
 - Provide step-by-step process
@@ -206,7 +206,7 @@ Handle these situations:
 - Address edge cases
 - Keep under 10,000 characters
 
-❌ **DON'T:**
+[FAIL] **DON'T:**
 - Write in first person ("I am...", "I will...")
 - Be vague or generic
 - Omit process steps
@@ -262,8 +262,8 @@ See `examples/agent-creation-prompt.md` for complete template.
 ### Identifier Validation
 
 ```
-✅ Valid: code-reviewer, test-gen, api-analyzer-v2
-❌ Invalid: ag (too short), -start (starts with hyphen), my_agent (underscore)
+[OK] Valid: code-reviewer, test-gen, api-analyzer-v2
+[FAIL] Invalid: ag (too short), -start (starts with hyphen), my_agent (underscore)
 ```
 
 **Rules:**
@@ -359,20 +359,20 @@ Output: [What to provide]
 ### Best Practices
 
 **DO:**
-- ✅ Include 2-4 concrete examples in description
-- ✅ Write specific triggering conditions
-- ✅ Use `inherit` for model unless specific need
-- ✅ Choose appropriate tools (least privilege)
-- ✅ Write clear, structured system prompts
-- ✅ Test agent triggering thoroughly
+- [OK] Include 2-4 concrete examples in description
+- [OK] Write specific triggering conditions
+- [OK] Use `inherit` for model unless specific need
+- [OK] Choose appropriate tools (least privilege)
+- [OK] Write clear, structured system prompts
+- [OK] Test agent triggering thoroughly
 
 **DON'T:**
-- ❌ Use generic descriptions without examples
-- ❌ Omit triggering conditions
-- ❌ Give all agents same color
-- ❌ Grant unnecessary tool access
-- ❌ Write vague system prompts
-- ❌ Skip testing
+- [FAIL] Use generic descriptions without examples
+- [FAIL] Omit triggering conditions
+- [FAIL] Give all agents same color
+- [FAIL] Grant unnecessary tool access
+- [FAIL] Write vague system prompts
+- [FAIL] Skip testing
 
 ## Additional Resources
 
@@ -413,3 +413,4 @@ To create an agent for a plugin:
 9. Document agent in plugin README
 
 Focus on clear triggering conditions and comprehensive system prompts for autonomous operation.
+

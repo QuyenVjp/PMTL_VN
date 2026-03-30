@@ -223,10 +223,10 @@ When a user requests internal linking optimization:
    
    | Anchor Text | Count | Target Pages | Assessment |
    |-------------|-------|--------------|------------|
-   | "click here" | [X] | [X] pages | ❌ Not descriptive |
-   | "read more" | [X] | [X] pages | ❌ Not descriptive |
-   | "[exact keyword]" | [X] | [page] | ⚠️ May be over-optimized |
-   | "[descriptive phrase]" | [X] | [page] | ✅ Good |
+   | "click here" | [X] | [X] pages | [FAIL] Not descriptive |
+   | "read more" | [X] | [X] pages | [FAIL] Not descriptive |
+   | "[exact keyword]" | [X] | [page] | [WARN]️ May be over-optimized |
+   | "[descriptive phrase]" | [X] | [page] | [OK] Good |
    
    ### Anchor Text Distribution by Page
    
@@ -234,8 +234,8 @@ When a user requests internal linking optimization:
    
    | Anchor Text | Source Page | Status |
    |-------------|-------------|--------|
-   | "[anchor 1]" | [source URL] | ✅/⚠️/❌ |
-   | "[anchor 2]" | [source URL] | ✅/⚠️/❌ |
+   | "[anchor 1]" | [source URL] | [OK]/[WARN]️/[FAIL] |
+   | "[anchor 2]" | [source URL] | [OK]/[WARN]️/[FAIL] |
    
    **Issues Found**:
    - Over-optimized anchors: [X] instances
@@ -311,3 +311,4 @@ When a user requests internal linking optimization:
 - [technical-seo-checker](../technical-seo-checker/) — Check crawlability
 - [content-quality-auditor](../../cross-cutting/content-quality-auditor/) — Full 80-item CORE-EEAT audit
 - [schema-markup-generator](../../build/schema-markup-generator/) — Breadcrumb and navigation schema
+

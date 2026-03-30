@@ -74,16 +74,16 @@ Where [x] = height of logo mark
 ## Incorrect Usage
 
 ### Absolute Don'ts
-- ❌ Stretch or compress logo
-- ❌ Rotate at angles
-- ❌ Add drop shadows
-- ❌ Apply gradient fills
-- ❌ Use unapproved colors
-- ❌ Add strokes or outlines
-- ❌ Place on busy backgrounds
-- ❌ Crop any portion
-- ❌ Rearrange elements
-- ❌ Add additional elements
+- [FAIL] Stretch or compress logo
+- [FAIL] Rotate at angles
+- [FAIL] Add drop shadows
+- [FAIL] Apply gradient fills
+- [FAIL] Use unapproved colors
+- [FAIL] Add strokes or outlines
+- [FAIL] Place on busy backgrounds
+- [FAIL] Crop any portion
+- [FAIL] Rearrange elements
+- [FAIL] Add additional elements
 
 ### Visual Examples
 ```
@@ -183,3 +183,4 @@ For non-standard uses:
 2. Include context (medium, audience)
 3. Wait for brand team approval
 4. Document approved exceptions
+

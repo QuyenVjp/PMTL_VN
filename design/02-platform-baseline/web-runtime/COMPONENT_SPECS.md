@@ -756,7 +756,7 @@ Mỗi card/list component phải có skeleton variant.
 
 ```
 ┌─────────────────────────────┐
-│         ⚠️                   │
+│         [WARN]️                   │
 │   Đã xảy ra lỗi             │
 │   Vui lòng thử lại          │
 │   [Thử lại]  [Về trang chủ]│
@@ -769,7 +769,7 @@ Mỗi card/list component phải có skeleton variant.
 Fixed top banner khi offline.
 
 ```
-⚠ Bạn đang offline. Một số tính năng không khả dụng.
+[WARN] Bạn đang offline. Một số tính năng không khả dụng.
 ```
 
 ---
@@ -781,7 +781,7 @@ Fixed top banner khi offline.
 | success | green | ✓ | Save successful, action completed |
 | error | red | ✗ | Save failed, request error |
 | info | blue | ℹ | Neutral information |
-| warning | amber | ⚠ | Action has consequences |
+| warning | amber | [WARN] | Action has consequences |
 
 **Rules**: Auto-dismiss sau 4s. Không stack > 3 toasts. Always dismissible.
 
@@ -872,3 +872,4 @@ Implement theo thứ tự:
 8. `CommentThread` + `ReportModal` (community)
 9. `VowCard` + forms (vows-merit)
 10. Admin `DataTable` + `ModerationActions`
+

@@ -33,7 +33,7 @@ graph TB
     API_DOMAIN["Domain Modules (11)\nidentity · content · community · engagement\nmoderation · search · calendar\nnotification · vows-merit · wisdom-qa · contact"]
   end
 
-  subgraph L8["🔍 SEARCH (Meilisearch)"]
+  subgraph L8["[SEARCH] SEARCH (Meilisearch)"]
     MEILI["Meilisearch v1.12\nSearch-first launch\nSQL fallback khi degraded\nVietnamese full-text"]
   end
 
@@ -49,7 +49,7 @@ graph TB
     DC["docker-compose.prod.yml\nNamed volumes · Bridge network\nHealthcheck trên mọi service\nrestart: unless-stopped"]
   end
 
-  subgraph L4["📊 MONITORING & LOGGING"]
+  subgraph L4["[CHART] MONITORING & LOGGING"]
     UK["Uptime Kuma\n5-min health check\nTelegram alert"]
     PROM["Prometheus + Grafana\n(Phase 2, RAM > 2GB)"]
     LOKI["Loki + Promtail\nLog aggregation"]
@@ -119,7 +119,7 @@ sequenceDiagram
 ```mermaid
 graph LR
   subgraph Phase1["Phase 1 — Launch (hiện tại)"]
-    P1["✅ Caddy + Docker Compose\n✅ web + api + admin\n✅ Postgres 16\n✅ Meilisearch (Search-first)\n✅ Cloudflare Free CDN\n✅ Uptime Kuma\n✅ pg_dump backup\n✅ Brevo email free"]
+    P1["[OK] Caddy + Docker Compose\n[OK] web + api + admin\n[OK] Postgres 16\n[OK] Meilisearch (Search-first)\n[OK] Cloudflare Free CDN\n[OK] Uptime Kuma\n[OK] pg_dump backup\n[OK] Brevo email free"]
   end
 
   subgraph Phase2["Phase 2 — Scale (khi có trigger)"]
@@ -127,7 +127,7 @@ graph LR
   end
 
   subgraph Excluded["Excluded (không bao giờ trong VPS plan này)"]
-    EX["❌ pgvector\n❌ AWS/GCP/Azure\n❌ Render/Railway/Fly.io\n❌ Managed Postgres cloud\n❌ Paid monitoring SaaS"]
+    EX["[FAIL] pgvector\n[FAIL] AWS/GCP/Azure\n[FAIL] Render/Railway/Fly.io\n[FAIL] Managed Postgres cloud\n[FAIL] Paid monitoring SaaS"]
   end
 
   Phase1 -->|"trigger met"| Phase2
@@ -154,3 +154,4 @@ graph LR
 | **VPS** | BizFly / Vultr / Hetzner | **~100-200k VND/tháng** |
 | **Domain** | Sẵn | **$0** |
 | **TỔNG** | | **~100-200k VND/tháng** |
+

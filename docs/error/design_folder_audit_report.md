@@ -21,7 +21,7 @@
 11. [🟠 REFERENCES LAYER (05) — VẤN ĐỀ](#11--references-layer-05--vấn-đề)
 12. [🔴 06-prompts — FOLDER TRỐNG](#12--06-prompts--folder-trống)
 13. [🔴 ĐÁNH GIÁ TỔNG THỂ LOGIC LIÊN FILE](#13--đánh-giá-tổng-thể-logic-liên-file)
-14. [📋 ĐỀ XUẤT HÀNH ĐỘNG ƯU TIÊN](#14--đề-xuất-hành-động-ưu-tiên)
+14. [[LIST] ĐỀ XUẤT HÀNH ĐỘNG ƯU TIÊN](#14--đề-xuất-hành-động-ưu-tiên)
 
 ---
 
@@ -47,7 +47,7 @@ design/                          (~120+ files)
 
 ### [VERSION_MATRIX.md](file:///c:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/VERSION_MATRIX.md) vs [DEPENDENCY_GOVERNANCE.md](file:///c:/Users/ADMIN/DEV2/PMTL_VN/design/02-platform-baseline/dependency-version/DEPENDENCY_GOVERNANCE.md)
 
-| Package | VERSION_MATRIX (design pin) | DEP_GOVERNANCE (approved current) | ⚠️ Drift |
+| Package | VERSION_MATRIX (design pin) | DEP_GOVERNANCE (approved current) | [WARN]️ Drift |
 |---|---|---|---|
 | **Next.js** | `16.2.1` | `16.1.6` | 🔴 **Minor version khác** |
 | **React** | `19.2.4` | `19.2.0` | 🔴 **Patch khác** |
@@ -58,10 +58,10 @@ design/                          (~120+ files)
 | **Vite** | `8.0.2` | `8.x stable` | 🟡 Governance không pin exact |
 | **TanStack Router** | `1.168.3` | *(generic "latest stable")* | 🟡 Governance không pin |
 | **TanStack Table** | `8.21.3` | *(generic "latest stable")* | 🟡 Governance không pin |
-| **NestJS** | `11.1.17` | `11.1.17` | ✅ Khớp |
+| **NestJS** | `11.1.17` | `11.1.17` | [OK] Khớp |
 | **Prisma** | `7.5.0` | `7.x stable` | 🟡 Governance không pin exact |
 | **Pino** | `10.3.1` | `10.0.x` (min `10.0.0`) | 🔴 **Minor khác** |
-| **Zod** | `4.3.6` | `4.3.6` | ✅ Khớp |
+| **Zod** | `4.3.6` | `4.3.6` | [OK] Khớp |
 | **BullMQ** | `5.71.1` | *(generic "latest stable")* | 🟡 Không pin |
 | **Meilisearch** | `1.40.0` | *(generic "latest stable")* | 🟡 Không pin |
 | **Valkey** | `9.0.3` | *(generic "latest stable")* | 🟡 Không pin |
@@ -409,7 +409,7 @@ Ratio ~10% meta-layer. Acceptable for a large system nhưng **20 files meta cho 
 
 ---
 
-## 14. 📋 ĐỀ XUẤT HÀNH ĐỘNG ƯU TIÊN
+## 14. [LIST] ĐỀ XUẤT HÀNH ĐỘNG ƯU TIÊN
 
 ### 🔴 P0 — Sửa ngay (version drift = AI sẽ scaffold sai)
 
@@ -456,3 +456,4 @@ Ratio ~10% meta-layer. Acceptable for a large system nhưng **20 files meta cho 
 
 > [!IMPORTANT]
 > **Verdict tổng thể**: Design folder có **ambition kiến trúc rất cao** và **cấu trúc layer rõ ràng**. Nhưng bản thân nó đang mắc đúng lỗi mà nó cảnh báo: **docs nhiều không đồng nghĩa docs mạnh** (ROOT_DOC_OWNERSHIP.md L159). Version drift giữa 2 file authority là **critical bug** cần fix trước khi bất kỳ AI agent nào scaffold code. Nội dung trùng lặp ở 5 chỗ cho cùng 1 danh sách là vi phạm chính rule anti-duplication mà design/ tự đặt ra.
+

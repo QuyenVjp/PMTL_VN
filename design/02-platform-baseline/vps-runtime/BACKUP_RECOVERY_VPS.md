@@ -52,7 +52,7 @@ docker exec "${CONTAINER}" \
 
 # Kiểm tra dump không rỗng
 if [ ! -s "${DUMP_FILE}" ]; then
-  ${TELEGRAM_SCRIPT} "❌ pg_dump EMPTY: ${DUMP_FILE}"
+  ${TELEGRAM_SCRIPT} "[FAIL] pg_dump EMPTY: ${DUMP_FILE}"
   exit 1
 fi
 
@@ -65,7 +65,7 @@ find "${BACKUP_DIR}" -name "*.sql.gz" -mtime "+${KEEP_DAYS}" -delete
 # Thông báo Telegram thành công (weekly only, tránh spam)
 DOW=$(date +%u)  # 1=Mon, 7=Sun
 if [ "${DOW}" = "1" ]; then
-  ${TELEGRAM_SCRIPT} "✅ DB backup weekly OK: ${SIZE}"
+  ${TELEGRAM_SCRIPT} "[OK] DB backup weekly OK: ${SIZE}"
 fi
 ```
 
@@ -151,7 +151,7 @@ if [ -z "${DUMP_FILE}" ]; then
   exit 1
 fi
 
-echo "⚠️  Restore sẽ DROP và tạo lại database ${DB_NAME}"
+echo "[WARN]️  Restore sẽ DROP và tạo lại database ${DB_NAME}"
 echo "Nhập 'yes' để tiếp tục:"
 read -r CONFIRM
 [ "${CONFIRM}" != "yes" ] && exit 0
@@ -166,7 +166,7 @@ docker exec "${CONTAINER}" psql -U "${DB_USER}" -c "CREATE DATABASE ${DB_NAME};"
 # Restore
 gunzip -c "${DUMP_FILE}" | docker exec -i "${CONTAINER}" psql -U "${DB_USER}" -d "${DB_NAME}"
 
-echo "✅ Restore xong: ${DUMP_FILE}"
+echo "[OK] Restore xong: ${DUMP_FILE}"
 
 # Restart apps
 docker compose -f /opt/pmtl/infra/docker/docker-compose.prod.yml start api web admin
@@ -202,6 +202,7 @@ Theo `design/04-execution-overlay/repo/RESTORE_DRILL_LOG.md`:
 # Thêm vào healthcheck cron:
 DISK_USAGE=$(df /opt/pmtl | awk 'NR==2 {print $5}' | tr -d '%')
 if [ "${DISK_USAGE}" -gt 80 ]; then
-  /opt/pmtl/scripts/alert.sh "⚠️ Disk usage: ${DISK_USAGE}% — cần dọn dẹp"
+  /opt/pmtl/scripts/alert.sh "[WARN]️ Disk usage: ${DISK_USAGE}% — cần dọn dẹp"
 fi
 ```
+

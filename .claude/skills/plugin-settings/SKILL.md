@@ -314,12 +314,12 @@ After creating or editing, restart Claude Code for changes to take effect.
 
 ### File Naming
 
-✅ **DO:**
+[OK] **DO:**
 - Use `.claude/plugin-name.local.md` format
 - Match plugin name exactly
 - Use `.local.md` suffix for user-local files
 
-❌ **DON'T:**
+[FAIL] **DON'T:**
 - Use different directory (not `.claude/`)
 - Use inconsistent naming
 - Use `.md` without `.local` (might be committed)
@@ -359,7 +359,7 @@ MAX=$(echo "$FRONTMATTER" | grep '^max_value:' | sed 's/max_value: *//')
 
 # Validate numeric range
 if ! [[ "$MAX" =~ ^[0-9]+$ ]] || [[ $MAX -lt 1 ]] || [[ $MAX -gt 100 ]]; then
-  echo "⚠️  Invalid max_value in settings (must be 1-100)" >&2
+  echo "[WARN]️  Invalid max_value in settings (must be 1-100)" >&2
   MAX=10  # Use default
 fi
 ```
@@ -409,7 +409,7 @@ FILE_PATH=$(echo "$FRONTMATTER" | grep '^data_file:' | sed 's/data_file: *//')
 
 # Check for path traversal
 if [[ "$FILE_PATH" == *".."* ]]; then
-  echo "⚠️  Invalid path in settings (path traversal)" >&2
+  echo "[WARN]️  Invalid path in settings (path traversal)" >&2
   exit 2
 fi
 ```
@@ -542,3 +542,4 @@ To add settings to a plugin:
 7. Remind users that changes require Claude Code restart
 
 Focus on keeping settings simple and providing good defaults when settings file doesn't exist.
+

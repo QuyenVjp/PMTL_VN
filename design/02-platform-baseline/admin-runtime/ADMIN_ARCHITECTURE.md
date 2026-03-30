@@ -359,7 +359,7 @@ async function adminGuard() {
 
 ```
 ┌──────────────────────────────────┐
-│ 🔍 Tìm kiếm...                  │
+│ [SEARCH] Tìm kiếm...                  │
 ├──────────────────────────────────┤
 │ Điều hướng                       │
 │  → Dashboard                     │
@@ -449,3 +449,4 @@ Không dùng serif headings cho admin — professional density > contemplative m
 - TanStack Router file-based routing — route files auto-generate route tree
 - DataTable pattern is composable — mỗi feature có columns + toolbar + row-actions riêng
 - shadcn/ui components dùng chung giữa admin features — không duplicate
+

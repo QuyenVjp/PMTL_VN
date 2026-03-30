@@ -268,7 +268,7 @@ EOF
 
 ### DO
 
-✅ **Use environment variables:**
+[OK] **Use environment variables:**
 ```json
 {
   "headers": {
@@ -277,19 +277,19 @@ EOF
 }
 ```
 
-✅ **Document required variables in README**
+[OK] **Document required variables in README**
 
-✅ **Use HTTPS/WSS always**
+[OK] **Use HTTPS/WSS always**
 
-✅ **Implement token rotation**
+[OK] **Implement token rotation**
 
-✅ **Store tokens securely (env vars, not files)**
+[OK] **Store tokens securely (env vars, not files)**
 
-✅ **Let OAuth handle authentication when available**
+[OK] **Let OAuth handle authentication when available**
 
 ### DON'T
 
-❌ **Hardcode tokens:**
+[FAIL] **Hardcode tokens:**
 ```json
 {
   "headers": {
@@ -298,15 +298,15 @@ EOF
 }
 ```
 
-❌ **Commit tokens to git**
+[FAIL] **Commit tokens to git**
 
-❌ **Share tokens in documentation**
+[FAIL] **Share tokens in documentation**
 
-❌ **Use HTTP instead of HTTPS**
+[FAIL] **Use HTTP instead of HTTPS**
 
-❌ **Store tokens in plugin files**
+[FAIL] **Store tokens in plugin files**
 
-❌ **Log tokens or sensitive headers**
+[FAIL] **Log tokens or sensitive headers**
 
 ## Multi-Tenancy Patterns
 
@@ -547,3 +547,4 @@ Choose the authentication method that matches your MCP server's requirements:
 - **Dynamic headers** for complex auth flows
 
 Always prioritize security and provide clear setup documentation for users.
+

@@ -13,21 +13,21 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Metric | Mobile | Desktop | Target | Status |
 |--------|--------|---------|--------|--------|
-| LCP (Largest Contentful Paint) | [X]s | [X]s | <2.5s | ✅/⚠️/❌ |
-| FID (First Input Delay) | [X]ms | [X]ms | <100ms | ✅/⚠️/❌ |
-| CLS (Cumulative Layout Shift) | [X] | [X] | <0.1 | ✅/⚠️/❌ |
-| INP (Interaction to Next Paint) | [X]ms | [X]ms | <200ms | ✅/⚠️/❌ |
+| LCP (Largest Contentful Paint) | [X]s | [X]s | <2.5s | [OK]/[WARN]️/[FAIL] |
+| FID (First Input Delay) | [X]ms | [X]ms | <100ms | [OK]/[WARN]️/[FAIL] |
+| CLS (Cumulative Layout Shift) | [X] | [X] | <0.1 | [OK]/[WARN]️/[FAIL] |
+| INP (Interaction to Next Paint) | [X]ms | [X]ms | <200ms | [OK]/[WARN]️/[FAIL] |
 
 ### Additional Performance Metrics
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Time to First Byte (TTFB) | [X]ms | ✅/⚠️/❌ |
-| First Contentful Paint (FCP) | [X]s | ✅/⚠️/❌ |
-| Speed Index | [X] | ✅/⚠️/❌ |
-| Total Blocking Time | [X]ms | ✅/⚠️/❌ |
-| Page Size | [X]MB | ✅/⚠️/❌ |
-| Requests | [X] | ✅/⚠️/❌ |
+| Time to First Byte (TTFB) | [X]ms | [OK]/[WARN]️/[FAIL] |
+| First Contentful Paint (FCP) | [X]s | [OK]/[WARN]️/[FAIL] |
+| Speed Index | [X] | [OK]/[WARN]️/[FAIL] |
+| Total Blocking Time | [X]ms | [OK]/[WARN]️/[FAIL] |
+| Page Size | [X]MB | [OK]/[WARN]️/[FAIL] |
+| Requests | [X] | [OK]/[WARN]️/[FAIL] |
 
 ### Performance Issues
 
@@ -70,12 +70,12 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Mobile-friendly overall | ✅/❌ | [notes] |
-| Viewport configured | ✅/❌ | [viewport tag] |
-| Text readable | ✅/⚠️/❌ | Font size: [X]px |
-| Tap targets sized | ✅/⚠️/❌ | [notes] |
-| Content fits viewport | ✅/❌ | [notes] |
-| No horizontal scroll | ✅/❌ | [notes] |
+| Mobile-friendly overall | [OK]/[FAIL] | [notes] |
+| Viewport configured | [OK]/[FAIL] | [viewport tag] |
+| Text readable | [OK]/[WARN]️/[FAIL] | Font size: [X]px |
+| Tap targets sized | [OK]/[WARN]️/[FAIL] | [notes] |
+| Content fits viewport | [OK]/[FAIL] | [notes] |
+| No horizontal scroll | [OK]/[FAIL] | [notes] |
 
 ### Responsive Design Check
 
@@ -91,10 +91,10 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Mobile version has all content | ✅/⚠️/❌ | [notes] |
-| Mobile has same structured data | ✅/⚠️/❌ | [notes] |
-| Mobile has same meta tags | ✅/⚠️/❌ | [notes] |
-| Mobile images have alt text | ✅/⚠️/❌ | [notes] |
+| Mobile version has all content | [OK]/[WARN]️/[FAIL] | [notes] |
+| Mobile has same structured data | [OK]/[WARN]️/[FAIL] | [notes] |
+| Mobile has same meta tags | [OK]/[WARN]️/[FAIL] | [notes] |
+| Mobile images have alt text | [OK]/[WARN]️/[FAIL] | [notes] |
 
 **Mobile Score**: [X]/10
 ```
@@ -110,21 +110,21 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| SSL certificate valid | ✅/❌ | Expires: [date] |
-| HTTPS enforced | ✅/❌ | [redirects properly?] |
-| Mixed content | ✅/⚠️/❌ | [X] issues |
-| HSTS enabled | ✅/⚠️ | [notes] |
-| Certificate chain | ✅/⚠️/❌ | [notes] |
+| SSL certificate valid | [OK]/[FAIL] | Expires: [date] |
+| HTTPS enforced | [OK]/[FAIL] | [redirects properly?] |
+| Mixed content | [OK]/[WARN]️/[FAIL] | [X] issues |
+| HSTS enabled | [OK]/[WARN]️ | [notes] |
+| Certificate chain | [OK]/[WARN]️/[FAIL] | [notes] |
 
 ### Security Headers
 
 | Header | Present | Value | Recommended |
 |--------|---------|-------|-------------|
-| Content-Security-Policy | ✅/❌ | [value] | [recommendation] |
-| X-Frame-Options | ✅/❌ | [value] | DENY or SAMEORIGIN |
-| X-Content-Type-Options | ✅/❌ | [value] | nosniff |
-| X-XSS-Protection | ✅/❌ | [value] | 1; mode=block |
-| Referrer-Policy | ✅/❌ | [value] | [recommendation] |
+| Content-Security-Policy | [OK]/[FAIL] | [value] | [recommendation] |
+| X-Frame-Options | [OK]/[FAIL] | [value] | DENY or SAMEORIGIN |
+| X-Content-Type-Options | [OK]/[FAIL] | [value] | nosniff |
+| X-XSS-Protection | [OK]/[FAIL] | [value] | 1; mode=block |
+| Referrer-Policy | [OK]/[FAIL] | [value] | [recommendation] |
 
 **Security Score**: [X]/10
 ```
@@ -140,13 +140,13 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| HTTPS URLs | ✅/⚠️/❌ | [X]% HTTPS |
-| Lowercase URLs | ✅/⚠️/❌ | [notes] |
-| No special characters | ✅/⚠️/❌ | [notes] |
-| Readable/descriptive | ✅/⚠️/❌ | [notes] |
-| Appropriate length | ✅/⚠️/❌ | Avg: [X] chars |
-| Keywords in URLs | ✅/⚠️/❌ | [notes] |
-| Consistent structure | ✅/⚠️/❌ | [notes] |
+| HTTPS URLs | [OK]/[WARN]️/[FAIL] | [X]% HTTPS |
+| Lowercase URLs | [OK]/[WARN]️/[FAIL] | [notes] |
+| No special characters | [OK]/[WARN]️/[FAIL] | [notes] |
+| Readable/descriptive | [OK]/[WARN]️/[FAIL] | [notes] |
+| Appropriate length | [OK]/[WARN]️/[FAIL] | Avg: [X] chars |
+| Keywords in URLs | [OK]/[WARN]️/[FAIL] | [notes] |
+| Consistent structure | [OK]/[WARN]️/[FAIL] | [notes] |
 
 ### URL Issues Found
 
@@ -183,8 +183,8 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Schema Type | Pages | Valid | Errors |
 |-------------|-------|-------|--------|
-| [Type 1] | [X] | ✅/❌ | [errors] |
-| [Type 2] | [X] | ✅/❌ | [errors] |
+| [Type 1] | [X] | [OK]/[FAIL] | [errors] |
+| [Type 2] | [X] | [OK]/[FAIL] | [errors] |
 
 ### Validation Results
 
@@ -217,18 +217,18 @@ Detailed output templates for technical-seo-checker steps 3-9. Referenced from [
 
 | Check | Status | Notes |
 |-------|--------|-------|
-| Hreflang tags present | ✅/❌ | [notes] |
-| Self-referencing | ✅/⚠️/❌ | [notes] |
-| Return tags present | ✅/⚠️/❌ | [notes] |
-| Valid language codes | ✅/⚠️/❌ | [notes] |
-| x-default tag | ✅/⚠️ | [notes] |
+| Hreflang tags present | [OK]/[FAIL] | [notes] |
+| Self-referencing | [OK]/[WARN]️/[FAIL] | [notes] |
+| Return tags present | [OK]/[WARN]️/[FAIL] | [notes] |
+| Valid language codes | [OK]/[WARN]️/[FAIL] | [notes] |
+| x-default tag | [OK]/[WARN]️ | [notes] |
 
 ### Language/Region Targeting
 
 | Language | URL | Hreflang | Status |
 |----------|-----|----------|--------|
-| [en-US] | [URL] | [tag] | ✅/⚠️/❌ |
-| [es-ES] | [URL] | [tag] | ✅/⚠️/❌ |
+| [en-US] | [URL] | [tag] | [OK]/[WARN]️/[FAIL] |
+| [es-ES] | [URL] | [tag] | [OK]/[WARN]️/[FAIL] |
 
 **International Score**: [X]/10
 ```
@@ -309,3 +309,4 @@ Set up alerts for:
 - Index coverage changes
 - Security issues
 ```
+

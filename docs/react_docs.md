@@ -3375,10 +3375,10 @@ export function createConnection() {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting...');
+      console.log('[OK] Connecting...');
     },
     disconnect() {
-      console.log('❌ Disconnected.');
+      console.log('[FAIL] Disconnected.');
     }
   };
 }
@@ -3390,13 +3390,13 @@ input { display: block; margin-bottom: 20px; }
 
 </Sandpack>
 
-This Effect only runs on mount, so you might expect `"✅ Connecting..."` to be printed once in the console. **However, if you check the console, `"✅ Connecting..."` gets printed twice. Why does it happen?**
+This Effect only runs on mount, so you might expect `"[OK] Connecting..."` to be printed once in the console. **However, if you check the console, `"[OK] Connecting..."` gets printed twice. Why does it happen?**
 
 Imagine the `ChatRoom` component is a part of a larger app with many different screens. The user starts their journey on the `ChatRoom` page. The component mounts and calls `connection.connect()`. Then imagine the user navigates to another screen--for example, to the Settings page. The `ChatRoom` component unmounts. Finally, the user clicks Back and `ChatRoom` mounts again. This would set up a second connection--but the first connection was never destroyed! As the user navigates across the app, the connections would keep piling up.
 
 Bugs like this are easy to miss without extensive manual testing. To help you spot them quickly, in development React remounts every component once immediately after its initial mount.
 
-Seeing the `"✅ Connecting..."` log twice helps you notice the real issue: your code doesn't close the connection when the component unmounts.
+Seeing the `"[OK] Connecting..."` log twice helps you notice the real issue: your code doesn't close the connection when the component unmounts.
 
 To fix the issue, return a *cleanup function* from your Effect:
 
@@ -3433,10 +3433,10 @@ export function createConnection() {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting...');
+      console.log('[OK] Connecting...');
     },
     disconnect() {
-      console.log('❌ Disconnected.');
+      console.log('[FAIL] Disconnected.');
     }
   };
 }
@@ -3450,13 +3450,13 @@ input { display: block; margin-bottom: 20px; }
 
 Now you get three console logs in development:
 
-1. `"✅ Connecting..."`
-2. `"❌ Disconnected."`
-3. `"✅ Connecting..."`
+1. `"[OK] Connecting..."`
+2. `"[FAIL] Disconnected."`
+3. `"[OK] Connecting..."`
 
 **This is the correct behavior in development.** By remounting your component, React verifies that navigating away and back would not break your code. Disconnecting and then connecting again is exactly what should happen! When you implement the cleanup well, there should be no user-visible difference between running the Effect once vs running it, cleaning it up, and running it again. There's an extra connect/disconnect call pair because React is probing your code for bugs in development. This is normal--don't try to make it go away!
 
-**In production, you would only see `"✅ Connecting..."` printed once.** Remounting components only happens in development to help you find Effects that need cleanup. You can turn off [Strict Mode](/reference/react/StrictMode) to opt out of the development behavior, but we recommend keeping it on. This lets you find many bugs like the one above.
+**In production, you would only see `"[OK] Connecting..."` printed once.** Remounting components only happens in development to help you find Effects that need cleanup. You can turn off [Strict Mode](/reference/react/StrictMode) to opt out of the development behavior, but we recommend keeping it on. This lets you find many bugs like the one above.
 
 ## How to handle the Effect firing twice in development? {/*how-to-handle-the-effect-firing-twice-in-development*/}
 
@@ -3483,7 +3483,7 @@ A common pitfall for preventing Effects firing twice in development is to use a 
   }, []);
 ```
 
-This makes it so you only see `"✅ Connecting..."` once in development, but it doesn't fix the bug.
+This makes it so you only see `"[OK] Connecting..."` once in development, but it doesn't fix the bug.
 
 When the user navigates away, the connection still isn't closed and when they navigate back, a new connection is created. As the user navigates across the app, the connections would keep piling up, the same as it would before the "fix".
 
@@ -3657,7 +3657,7 @@ Buying is not caused by rendering; it's caused by a specific interaction. It sho
 
 ```js {2-3}
   function handleClick() {
-    // ✅ Buying is an event because it is caused by a particular interaction.
+    // [OK] Buying is an event because it is caused by a particular interaction.
     fetch('/api/buy', { method: 'POST' });
   }
 ```
@@ -4539,7 +4539,7 @@ This is more complicated than necessary. It is inefficient too: it does an entir
 function Form() {
   const [firstName, setFirstName] = useState('Taylor');
   const [lastName, setLastName] = useState('Swift');
-  // ✅ Good: calculated during rendering
+  // [OK] Good: calculated during rendering
   const fullName = firstName + ' ' + lastName;
   // ...
 }
@@ -4570,7 +4570,7 @@ Like in the earlier example, this is both unnecessary and inefficient. First, re
 ```js {3-4}
 function TodoList({ todos, filter }) {
   const [newTodo, setNewTodo] = useState('');
-  // ✅ This is fine if getFilteredTodos() is not slow.
+  // [OK] This is fine if getFilteredTodos() is not slow.
   const visibleTodos = getFilteredTodos(todos, filter);
   // ...
 }
@@ -4592,7 +4592,7 @@ import { useMemo, useState } from 'react';
 function TodoList({ todos, filter }) {
   const [newTodo, setNewTodo] = useState('');
   const visibleTodos = useMemo(() => {
-    // ✅ Does not re-run unless todos or filter change
+    // [OK] Does not re-run unless todos or filter change
     return getFilteredTodos(todos, filter);
   }, [todos, filter]);
   // ...
@@ -4606,7 +4606,7 @@ import { useMemo, useState } from 'react';
 
 function TodoList({ todos, filter }) {
   const [newTodo, setNewTodo] = useState('');
-  // ✅ Does not re-run getFilteredTodos() unless todos or filter change
+  // [OK] Does not re-run getFilteredTodos() unless todos or filter change
   const visibleTodos = useMemo(() => getFilteredTodos(todos, filter), [todos, filter]);
   // ...
 }
@@ -4677,7 +4677,7 @@ export default function ProfilePage({ userId }) {
 }
 
 function Profile({ userId }) {
-  // ✅ This and any other state below will reset on key change automatically
+  // [OK] This and any other state below will reset on key change automatically
   const [comment, setComment] = useState('');
   // ...
 }
@@ -4735,7 +4735,7 @@ When you update a component during rendering, React throws away the returned JSX
 function List({ items }) {
   const [isReverse, setIsReverse] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-  // ✅ Best: Calculate everything during rendering
+  // [OK] Best: Calculate everything during rendering
   const selection = items.find(item => item.id === selectedId) ?? null;
   // ...
 }
@@ -4774,7 +4774,7 @@ This Effect is unnecessary. It will also most likely cause bugs. For example, le
 
 ```js {2-6,9,13}
 function ProductPage({ product, addToCart }) {
-  // ✅ Good: Event-specific logic is called from event handlers
+  // [OK] Good: Event-specific logic is called from event handlers
   function buyProduct() {
     addToCart(product);
     showNotification(`Added ${product.name} to the shopping cart!`);
@@ -4803,7 +4803,7 @@ function Form() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  // ✅ Good: This logic should run because the component was displayed
+  // [OK] Good: This logic should run because the component was displayed
   useEffect(() => {
     post('/analytics/event', { eventName: 'visit_form' });
   }, []);
@@ -4835,14 +4835,14 @@ function Form() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  // ✅ Good: This logic runs because the component was displayed
+  // [OK] Good: This logic runs because the component was displayed
   useEffect(() => {
     post('/analytics/event', { eventName: 'visit_form' });
   }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
-    // ✅ Good: Event-specific logic is in the event handler
+    // [OK] Good: Event-specific logic is in the event handler
     post('/api/register', { firstName, lastName });
   }
   // ...
@@ -4911,7 +4911,7 @@ function Game() {
   const [goldCardCount, setGoldCardCount] = useState(0);
   const [round, setRound] = useState(1);
 
-  // ✅ Calculate what you can during rendering
+  // [OK] Calculate what you can during rendering
   const isGameOver = round > 5;
 
   function handlePlaceCard(nextCard) {
@@ -4919,7 +4919,7 @@ function Game() {
       throw Error('Game already ended.');
     }
 
-    // ✅ Calculate all the next state in the event handler
+    // [OK] Calculate all the next state in the event handler
     setCard(nextCard);
     if (nextCard.gold) {
       if (goldCardCount < 3) {
@@ -4971,7 +4971,7 @@ function App() {
   useEffect(() => {
     if (!didInit) {
       didInit = true;
-      // ✅ Only runs once per app load
+      // [OK] Only runs once per app load
       loadDataFromLocalStorage();
       checkAuthToken();
     }
@@ -4984,7 +4984,7 @@ You can also run it during module initialization and before the app renders:
 
 ```js {1,5}
 if (typeof window !== 'undefined') { // Check if we're running in the browser.
-   // ✅ Only runs once per app load
+   // [OK] Only runs once per app load
   checkAuthToken();
   loadDataFromLocalStorage();
 }
@@ -5034,7 +5034,7 @@ function Toggle({ onChange }) {
   const [isOn, setIsOn] = useState(false);
 
   function updateToggle(nextIsOn) {
-    // ✅ Good: Perform all updates during the event that caused them
+    // [OK] Good: Perform all updates during the event that caused them
     setIsOn(nextIsOn);
     onChange(nextIsOn);
   }
@@ -5060,7 +5060,7 @@ With this approach, both the `Toggle` component and its parent component update 
 You might also be able to remove the state altogether, and instead receive `isOn` from the parent component:
 
 ```js {1,2}
-// ✅ Also good: the component is fully controlled by its parent
+// [OK] Also good: the component is fully controlled by its parent
 function Toggle({ isOn, onChange }) {
   function handleClick() {
     onChange(!isOn);
@@ -5109,7 +5109,7 @@ In React, data flows from the parent components to their children. When you see 
 function Parent() {
   const data = useSomeAPI();
   // ...
-  // ✅ Good: Passing data down to the child
+  // [OK] Good: Passing data down to the child
   return <Child data={data} />;
 }
 
@@ -5166,7 +5166,7 @@ function subscribe(callback) {
 }
 
 function useOnlineStatus() {
-  // ✅ Good: Subscribing to an external store with a built-in Hook
+  // [OK] Good: Subscribing to an external store with a built-in Hook
   return useSyncExternalStore(
     subscribe, // React won't resubscribe for as long as you pass the same function
     () => navigator.onLine, // How to get the value on the client
@@ -6493,10 +6493,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -6511,9 +6511,9 @@ button { margin-left: 10px; }
 
 Notice that when the component mounts for the first time, you see three logs:
 
-1. `✅ Connecting to "general" room at https://localhost:1234...` *(development-only)*
-1. `❌ Disconnected from "general" room at https://localhost:1234.` *(development-only)*
-1. `✅ Connecting to "general" room at https://localhost:1234...`
+1. `[OK] Connecting to "general" room at https://localhost:1234...` *(development-only)*
+1. `[FAIL] Disconnected from "general" room at https://localhost:1234.` *(development-only)*
+1. `[OK] Connecting to "general" room at https://localhost:1234...`
 
 The first two logs are development-only. In development, React always remounts each component once.
 
@@ -6689,10 +6689,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -6722,7 +6722,7 @@ function ChatRoom() {
     return () => {
       connection.disconnect();
     };
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -6769,10 +6769,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -6888,10 +6888,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -6917,7 +6917,7 @@ function ChatRoom({ roomId }) { // roomId is reactive
     return () => {
       connection.disconnect();
     };
-  }, [serverUrl, roomId]); // ✅ All dependencies declared
+  }, [serverUrl, roomId]); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -6947,7 +6947,7 @@ function ChatRoom() {
     return () => {
       connection.disconnect();
     };
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -6964,7 +6964,7 @@ function ChatRoom() {
     return () => {
       connection.disconnect();
     };
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -7079,10 +7079,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -7154,10 +7154,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -7631,10 +7631,10 @@ export function createEncryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ 🔐 Connecting to "' + roomId + '... (encrypted)');
+      console.log('[OK] 🔐 Connecting to "' + roomId + '... (encrypted)');
     },
     disconnect() {
-      console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
+      console.log('[FAIL] 🔐 Disconnected from "' + roomId + '" room (encrypted)');
     }
   };
 }
@@ -7643,10 +7643,10 @@ export function createUnencryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '... (unencrypted)');
+      console.log('[OK] Connecting to "' + roomId + '... (unencrypted)');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room (unencrypted)');
     }
   };
 }
@@ -7728,10 +7728,10 @@ export function createEncryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ 🔐 Connecting to "' + roomId + '... (encrypted)');
+      console.log('[OK] 🔐 Connecting to "' + roomId + '... (encrypted)');
     },
     disconnect() {
-      console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
+      console.log('[FAIL] 🔐 Disconnected from "' + roomId + '" room (encrypted)');
     }
   };
 }
@@ -7740,10 +7740,10 @@ export function createUnencryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '... (unencrypted)');
+      console.log('[OK] Connecting to "' + roomId + '... (unencrypted)');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room (unencrypted)');
     }
   };
 }
@@ -7823,10 +7823,10 @@ export function createEncryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ 🔐 Connecting to "' + roomId + '... (encrypted)');
+      console.log('[OK] 🔐 Connecting to "' + roomId + '... (encrypted)');
     },
     disconnect() {
-      console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
+      console.log('[FAIL] 🔐 Disconnected from "' + roomId + '" room (encrypted)');
     }
   };
 }
@@ -7835,10 +7835,10 @@ export function createUnencryptedConnection(roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '... (unencrypted)');
+      console.log('[OK] Connecting to "' + roomId + '... (unencrypted)');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room (unencrypted)');
     }
   };
 }
@@ -8493,10 +8493,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -8608,7 +8608,7 @@ function ChatRoom({ roomId, theme }) {
     return () => {
       connection.disconnect()
     };
-  }, [roomId, theme]); // ✅ All dependencies declared
+  }, [roomId, theme]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -8783,7 +8783,7 @@ function ChatRoom({ roomId, theme }) {
     });
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -8956,7 +8956,7 @@ Think about what you want the code to do. You *want* to log a separate visit for
 function Page({ url }) {
   useEffect(() => {
     logVisit(url);
-  }, [url]); // ✅ All dependencies declared
+  }, [url]); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -8990,7 +8990,7 @@ function Page({ url }) {
 
   useEffect(() => {
     onVisit(url);
-  }, [url]); // ✅ All dependencies declared
+  }, [url]); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -9254,7 +9254,7 @@ function useTimer(callback, delay) {
 
   useEffect(() => {
     const id = setInterval(() => {
-      onTick(); // ✅ Good: Only called locally inside an Effect
+      onTick(); // [OK] Good: Only called locally inside an Effect
     }, delay);
     return () => {
       clearInterval(id);
@@ -10189,10 +10189,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -10213,7 +10213,7 @@ function ChatRoom({ roomId }) {
     const connection = createConnection(serverUrl, roomId);
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -10264,10 +10264,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -10292,7 +10292,7 @@ function ChatRoom({ roomId }) { // This is a reactive value
     const connection = createConnection(serverUrl, roomId); // This Effect reads that reactive value
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // ✅ So you must specify that reactive value as a dependency of your Effect
+  }, [roomId]); // [OK] So you must specify that reactive value as a dependency of your Effect
   // ...
 }
 ```
@@ -10325,7 +10325,7 @@ function ChatRoom() {
     const connection = createConnection(serverUrl, roomId);
     connection.connect();
     return () => connection.disconnect();
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -10356,10 +10356,10 @@ export function createConnection(serverUrl, roomId) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -10516,7 +10516,7 @@ function Form() {
       post('/api/register');
       showNotification('Successfully registered!', theme);
     }
-  }, [submitted, theme]); // ✅ All dependencies declared
+  }, [submitted, theme]); // [OK] All dependencies declared
 
   function handleSubmit() {
     setSubmitted(true);
@@ -10535,7 +10535,7 @@ function Form() {
   const theme = useContext(ThemeContext);
 
   function handleSubmit() {
-    // ✅ Good: Event-specific logic is called from event handlers
+    // [OK] Good: Event-specific logic is called from event handlers
     post('/api/register');
     showNotification('Successfully registered!', theme);
   }  
@@ -10569,7 +10569,7 @@ function ShippingForm({ country }) {
     return () => {
       ignore = true;
     };
-  }, [country]); // ✅ All dependencies declared
+  }, [country]); // [OK] All dependencies declared
 
   // ...
 ```
@@ -10606,7 +10606,7 @@ function ShippingForm({ country }) {
     return () => {
       ignore = true;
     };
-  }, [country, city]); // ✅ All dependencies declared
+  }, [country, city]); // [OK] All dependencies declared
 
   // ...
 ```
@@ -10635,7 +10635,7 @@ function ShippingForm({ country }) {
     return () => {
       ignore = true;
     };
-  }, [country]); // ✅ All dependencies declared
+  }, [country]); // [OK] All dependencies declared
 
   const [city, setCity] = useState(null);
   const [areas, setAreas] = useState(null);
@@ -10653,7 +10653,7 @@ function ShippingForm({ country }) {
         ignore = true;
       };
     }
-  }, [city]); // ✅ All dependencies declared
+  }, [city]); // [OK] All dependencies declared
 
   // ...
 ```
@@ -10690,7 +10690,7 @@ function ChatRoom({ roomId }) {
       setMessages([...messages, receivedMessage]);
     });
     return () => connection.disconnect();
-  }, [roomId, messages]); // ✅ All dependencies declared
+  }, [roomId, messages]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10710,7 +10710,7 @@ function ChatRoom({ roomId }) {
       setMessages(msgs => [...msgs, receivedMessage]);
     });
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10754,7 +10754,7 @@ function ChatRoom({ roomId }) {
       }
     });
     return () => connection.disconnect();
-  }, [roomId, isMuted]); // ✅ All dependencies declared
+  }, [roomId, isMuted]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10783,7 +10783,7 @@ function ChatRoom({ roomId }) {
       onMessage(receivedMessage);
     });
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10804,7 +10804,7 @@ function ChatRoom({ roomId, onReceiveMessage }) {
       onReceiveMessage(receivedMessage);
     });
     return () => connection.disconnect();
-  }, [roomId, onReceiveMessage]); // ✅ All dependencies declared
+  }, [roomId, onReceiveMessage]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10836,7 +10836,7 @@ function ChatRoom({ roomId, onReceiveMessage }) {
       onMessage(receivedMessage);
     });
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10856,7 +10856,7 @@ function Chat({ roomId, notificationCount }) {
 
   useEffect(() => {
     onVisit(roomId);
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 }
 ```
@@ -10889,7 +10889,7 @@ This object is declared in the component body, so it's a [reactive value.](/lear
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, [options]); // ✅ All dependencies declared
+  }, [options]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -10954,10 +10954,10 @@ export function createConnection({ serverUrl, roomId }) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -11008,7 +11008,7 @@ function ChatRoom() {
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11032,7 +11032,7 @@ function ChatRoom() {
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, []); // ✅ All dependencies declared
+  }, []); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11056,7 +11056,7 @@ function ChatRoom({ roomId }) {
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11131,10 +11131,10 @@ export function createConnection({ serverUrl, roomId }) {
   // A real implementation would actually connect to the server
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -11169,7 +11169,7 @@ function ChatRoom({ roomId }) {
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId]); // ✅ All dependencies declared
+  }, [roomId]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11187,7 +11187,7 @@ function ChatRoom({ options }) {
     const connection = createConnection(options);
     connection.connect();
     return () => connection.disconnect();
-  }, [options]); // ✅ All dependencies declared
+  }, [options]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11217,7 +11217,7 @@ function ChatRoom({ options }) {
     });
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId, serverUrl]); // ✅ All dependencies declared
+  }, [roomId, serverUrl]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11253,7 +11253,7 @@ function ChatRoom({ getOptions }) {
     });
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId, serverUrl]); // ✅ All dependencies declared
+  }, [roomId, serverUrl]); // [OK] All dependencies declared
   // ...
 ```
 
@@ -11295,13 +11295,13 @@ export default function Timer() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log('✅ Creating an interval');
+    console.log('[OK] Creating an interval');
     const id = setInterval(() => {
       console.log('⏰ Interval tick');
       setCount(count + 1);
     }, 1000);
     return () => {
-      console.log('❌ Clearing an interval');
+      console.log('[FAIL] Clearing an interval');
       clearInterval(id);
     };
   }, [count]);
@@ -11327,13 +11327,13 @@ export default function Timer() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log('✅ Creating an interval');
+    console.log('[OK] Creating an interval');
     const id = setInterval(() => {
       console.log('⏰ Interval tick');
       setCount(c => c + 1);
     }, 1000);
     return () => {
-      console.log('❌ Clearing an interval');
+      console.log('[FAIL] Clearing an interval');
       clearInterval(id);
     };
   }, []);
@@ -11664,10 +11664,10 @@ export function createConnection({ serverUrl, roomId }) {
   }
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -11762,10 +11762,10 @@ export function createConnection({ serverUrl, roomId }) {
   }
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -11853,10 +11853,10 @@ export function createConnection({ serverUrl, roomId }) {
   }
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
     },
     disconnect() {
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl);
     }
   };
 }
@@ -12005,7 +12005,7 @@ export function createEncryptedConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ 🔐 Connecting to "' + roomId + '" room... (encrypted)');
+      console.log('[OK] 🔐 Connecting to "' + roomId + '" room... (encrypted)');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -12020,7 +12020,7 @@ export function createEncryptedConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
+      console.log('[FAIL] 🔐 Disconnected from "' + roomId + '" room (encrypted)');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -12046,7 +12046,7 @@ export function createUnencryptedConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room (unencrypted)...');
+      console.log('[OK] Connecting to "' + roomId + '" room (unencrypted)...');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -12061,7 +12061,7 @@ export function createUnencryptedConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room (unencrypted)');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -12181,7 +12181,7 @@ export default function ChatRoom({ roomId, isEncrypted, onMessage }) { // Reacti
     connection.on('message', (msg) => onReceiveMessage(msg));
     connection.connect();
     return () => connection.disconnect();
-  }, [roomId, isEncrypted]); // ✅ All dependencies declared
+  }, [roomId, isEncrypted]); // [OK] All dependencies declared
 ```
 
 As a result, the chat re-connects only when something meaningful (`roomId` or `isEncrypted`) changes:
@@ -12305,7 +12305,7 @@ export function createEncryptedConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ 🔐 Connecting to "' + roomId + '" room... (encrypted)');
+      console.log('[OK] 🔐 Connecting to "' + roomId + '" room... (encrypted)');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -12320,7 +12320,7 @@ export function createEncryptedConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
+      console.log('[FAIL] 🔐 Disconnected from "' + roomId + '" room (encrypted)');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -12346,7 +12346,7 @@ export function createUnencryptedConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room (unencrypted)...');
+      console.log('[OK] Connecting to "' + roomId + '" room (unencrypted)...');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -12361,7 +12361,7 @@ export function createUnencryptedConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room (unencrypted)');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -12461,7 +12461,7 @@ export default function StatusBar() {
     };
   }, []);
 
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  return <h1>{isOnline ? '[OK] Online' : '[FAIL] Disconnected'}</h1>;
 }
 ```
 
@@ -12496,7 +12496,7 @@ export default function SaveButton() {
   }, []);
 
   function handleSaveClick() {
-    console.log('✅ Progress saved');
+    console.log('[OK] Progress saved');
   }
 
   return (
@@ -12520,14 +12520,14 @@ Imagine for a moment that, similar to [`useState`](/reference/react/useState) an
 ```js {2,7}
 function StatusBar() {
   const isOnline = useOnlineStatus();
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  return <h1>{isOnline ? '[OK] Online' : '[FAIL] Disconnected'}</h1>;
 }
 
 function SaveButton() {
   const isOnline = useOnlineStatus();
 
   function handleSaveClick() {
-    console.log('✅ Progress saved');
+    console.log('[OK] Progress saved');
   }
 
   return (
@@ -12570,14 +12570,14 @@ import { useOnlineStatus } from './useOnlineStatus.js';
 
 function StatusBar() {
   const isOnline = useOnlineStatus();
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  return <h1>{isOnline ? '[OK] Online' : '[FAIL] Disconnected'}</h1>;
 }
 
 function SaveButton() {
   const isOnline = useOnlineStatus();
 
   function handleSaveClick() {
-    console.log('✅ Progress saved');
+    console.log('[OK] Progress saved');
   }
 
   return (
@@ -12659,7 +12659,7 @@ function useSorted(items) {
   return items.slice().sort();
 }
 
-// ✅ Good: A regular function that doesn't use Hooks
+// [OK] Good: A regular function that doesn't use Hooks
 function getSorted(items) {
   return items.slice().sort();
 }
@@ -12671,7 +12671,7 @@ This ensures that your code can call this regular function anywhere, including c
 function List({ items, shouldSort }) {
   let displayedItems = items;
   if (shouldSort) {
-    // ✅ It's ok to call getSorted() conditionally because it's not a Hook
+    // [OK] It's ok to call getSorted() conditionally because it's not a Hook
     displayedItems = getSorted(items);
   }
   // ...
@@ -12681,7 +12681,7 @@ function List({ items, shouldSort }) {
 You should give `use` prefix to a function (and thus make it a Hook) if it uses at least one Hook inside of it:
 
 ```js
-// ✅ Good: A Hook that uses other Hooks
+// [OK] Good: A Hook that uses other Hooks
 function useAuth() {
   return useContext(Auth);
 }
@@ -12690,7 +12690,7 @@ function useAuth() {
 Technically, this isn't enforced by React. In principle, you could make a Hook that doesn't call other Hooks. This is often confusing and limiting so it's best to avoid that pattern. However, there may be rare cases where it is helpful. For example, maybe your function doesn't use any Hooks right now, but you plan to add some Hook calls to it in the future. Then it makes sense to name it with the `use` prefix:
 
 ```js {3-4}
-// ✅ Good: A Hook that will likely use some other Hooks later
+// [OK] Good: A Hook that will likely use some other Hooks later
 function useAuth() {
   // TODO: Replace with this line when authentication is implemented:
   // return useContext(Auth);
@@ -12940,7 +12940,7 @@ export function createConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -12955,7 +12955,7 @@ export function createConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl + '');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl + '');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -13148,7 +13148,7 @@ export function createConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -13163,7 +13163,7 @@ export function createConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl + '');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl + '');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -13300,7 +13300,7 @@ export function useChatRoom({ serverUrl, roomId, onReceiveMessage }) {
       onReceiveMessage(msg);
     });
     return () => connection.disconnect();
-  }, [roomId, serverUrl, onReceiveMessage]); // ✅ All dependencies declared
+  }, [roomId, serverUrl, onReceiveMessage]); // [OK] All dependencies declared
 }
 ```
 
@@ -13326,7 +13326,7 @@ export function useChatRoom({ serverUrl, roomId, onReceiveMessage }) {
       onMessage(msg);
     });
     return () => connection.disconnect();
-  }, [roomId, serverUrl]); // ✅ All dependencies declared
+  }, [roomId, serverUrl]); // [OK] All dependencies declared
 }
 ```
 
@@ -13426,7 +13426,7 @@ export function createConnection({ serverUrl, roomId }) {
   let messageCallback;
   return {
     connect() {
-      console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
+      console.log('[OK] Connecting to "' + roomId + '" room at ' + serverUrl + '...');
       clearInterval(intervalId);
       intervalId = setInterval(() => {
         if (messageCallback) {
@@ -13441,7 +13441,7 @@ export function createConnection({ serverUrl, roomId }) {
     disconnect() {
       clearInterval(intervalId);
       messageCallback = null;
-      console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl + '');
+      console.log('[FAIL] Disconnected from "' + roomId + '" room at ' + serverUrl + '');
     },
     on(event, callback) {
       if (messageCallback) {
@@ -13592,15 +13592,15 @@ Start by choosing your custom Hook's name. If you struggle to pick a clear name,
 
 Ideally, your custom Hook's name should be clear enough that even a person who doesn't write code often could have a good guess about what your custom Hook does, what it takes, and what it returns:
 
-* ✅ `useData(url)`
-* ✅ `useImpressionLog(eventName, extraData)`
-* ✅ `useChatRoom(options)`
+* [OK] `useData(url)`
+* [OK] `useImpressionLog(eventName, extraData)`
+* [OK] `useChatRoom(options)`
 
 When you synchronize with an external system, your custom Hook name may be more technical and use jargon specific to that system. It's good as long as it would be clear to a person familiar with that system:
 
-* ✅ `useMediaQuery(query)`
-* ✅ `useSocket(url)`
-* ✅ `useIntersectionObserver(ref, options)`
+* [OK] `useMediaQuery(query)`
+* [OK] `useSocket(url)`
+* [OK] `useIntersectionObserver(ref, options)`
 
 **Keep custom Hooks focused on concrete high-level use cases.** Avoid creating and using custom "lifecycle" Hooks that act as alternatives and convenience wrappers for the `useEffect` API itself:
 
@@ -13640,7 +13640,7 @@ If you're writing an Effect, start by using the React API directly:
 function ChatRoom({ roomId }) {
   const [serverUrl, setServerUrl] = useState('https://localhost:1234');
 
-  // ✅ Good: two raw Effects separated by purpose
+  // [OK] Good: two raw Effects separated by purpose
 
   useEffect(() => {
     const connection = createConnection({ serverUrl, roomId });
@@ -13662,7 +13662,7 @@ Then, you can (but don't have to) extract custom Hooks for different high-level 
 function ChatRoom({ roomId }) {
   const [serverUrl, setServerUrl] = useState('https://localhost:1234');
 
-  // ✅ Great: custom Hooks named after their purpose
+  // [OK] Great: custom Hooks named after their purpose
   useChatRoom({ serverUrl, roomId });
   useImpressionLog('visit_chat', { roomId });
   // ...
@@ -13686,14 +13686,14 @@ import { useOnlineStatus } from './useOnlineStatus.js';
 
 function StatusBar() {
   const isOnline = useOnlineStatus();
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  return <h1>{isOnline ? '[OK] Online' : '[FAIL] Disconnected'}</h1>;
 }
 
 function SaveButton() {
   const isOnline = useOnlineStatus();
 
   function handleSaveClick() {
-    console.log('✅ Progress saved');
+    console.log('[OK] Progress saved');
   }
 
   return (
@@ -13749,14 +13749,14 @@ import { useOnlineStatus } from './useOnlineStatus.js';
 
 function StatusBar() {
   const isOnline = useOnlineStatus();
-  return <h1>{isOnline ? '✅ Online' : '❌ Disconnected'}</h1>;
+  return <h1>{isOnline ? '[OK] Online' : '[FAIL] Disconnected'}</h1>;
 }
 
 function SaveButton() {
   const isOnline = useOnlineStatus();
 
   function handleSaveClick() {
-    console.log('✅ Progress saved');
+    console.log('[OK] Progress saved');
   }
 
   return (
@@ -14575,10 +14575,10 @@ For some reason, the callback that updates the page background never runs. Add s
 
 ```js {2,5}
   useEffect(() => {
-    console.log('✅ Setting up an interval with delay ', delay)
+    console.log('[OK] Setting up an interval with delay ', delay)
     const id = setInterval(onTick, delay);
     return () => {
-      console.log('❌ Clearing an interval with delay ', delay)
+      console.log('[FAIL] Clearing an interval with delay ', delay)
       clearInterval(id);
     };
   }, [onTick, delay]);
@@ -15074,7 +15074,7 @@ export default function Gallery() {
   // ...
 }
 
-// ✅ Declare components at the top level
+// [OK] Declare components at the top level
 function Profile() {
   // ...
 }
@@ -17909,13 +17909,13 @@ export default function PackingList() {
 
 </Sandpack>
 
-Notice that some of the `Item` components have their `isPacked` prop set to `true` instead of `false`. You want to add a checkmark (✅) to packed items if `isPacked={true}`.
+Notice that some of the `Item` components have their `isPacked` prop set to `true` instead of `false`. You want to add a checkmark ([OK]) to packed items if `isPacked={true}`.
 
 You can write this as an [`if`/`else` statement](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else) like so:
 
 ```js
 if (isPacked) {
-  return <li className="item">{name} ✅</li>;
+  return <li className="item">{name} [OK]</li>;
 }
 return <li className="item">{name}</li>;
 ```
@@ -17927,7 +17927,7 @@ If the `isPacked` prop is `true`, this code **returns a different JSX tree.** Wi
 ```js
 function Item({ name, isPacked }) {
   if (isPacked) {
-    return <li className="item">{name} ✅</li>;
+    return <li className="item">{name} [OK]</li>;
   }
   return <li className="item">{name}</li>;
 }
@@ -18016,7 +18016,7 @@ In practice, returning `null` from a component isn't common because it might sur
 In the previous example, you controlled which (if any!) JSX tree would be returned by the component. You may already have noticed some duplication in the render output:
 
 ```js
-<li className="item">{name} ✅</li>
+<li className="item">{name} [OK]</li>
 ```
 
 is very similar to
@@ -18029,7 +18029,7 @@ Both of the conditional branches return `<li className="item">...</li>`:
 
 ```js
 if (isPacked) {
-  return <li className="item">{name} ✅</li>;
+  return <li className="item">{name} [OK]</li>;
 }
 return <li className="item">{name}</li>;
 ```
@@ -18044,7 +18044,7 @@ Instead of this:
 
 ```js
 if (isPacked) {
-  return <li className="item">{name} ✅</li>;
+  return <li className="item">{name} [OK]</li>;
 }
 return <li className="item">{name}</li>;
 ```
@@ -18054,12 +18054,12 @@ You can write this:
 ```js
 return (
   <li className="item">
-    {isPacked ? name + ' ✅' : name}
+    {isPacked ? name + ' [OK]' : name}
   </li>
 );
 ```
 
-You can read it as *"if `isPacked` is true, then (`?`) render `name + ' ✅'`, otherwise (`:`) render `name`"*.
+You can read it as *"if `isPacked` is true, then (`?`) render `name + ' [OK]'`, otherwise (`:`) render `name`"*.
 
 <DeepDive>
 
@@ -18079,7 +18079,7 @@ function Item({ name, isPacked }) {
     <li className="item">
       {isPacked ? (
         <del>
-          {name + ' ✅'}
+          {name + ' [OK]'}
         </del>
       ) : (
         name
@@ -18122,7 +18122,7 @@ Another common shortcut you'll encounter is the [JavaScript logical AND (`&&`) o
 ```js
 return (
   <li className="item">
-    {name} {isPacked && '✅'}
+    {name} {isPacked && '[OK]'}
   </li>
 );
 ```
@@ -18137,7 +18137,7 @@ Here it is in action:
 function Item({ name, isPacked }) {
   return (
     <li className="item">
-      {name} {isPacked && '✅'}
+      {name} {isPacked && '[OK]'}
     </li>
   );
 }
@@ -18194,7 +18194,7 @@ Use an `if` statement to reassign a JSX expression to `itemContent` if `isPacked
 
 ```js
 if (isPacked) {
-  itemContent = name + " ✅";
+  itemContent = name + " [OK]";
 }
 ```
 
@@ -18214,7 +18214,7 @@ This style is the most verbose, but it's also the most flexible. Here it is in a
 function Item({ name, isPacked }) {
   let itemContent = name;
   if (isPacked) {
-    itemContent = name + " ✅";
+    itemContent = name + " [OK]";
   }
   return (
     <li className="item">
@@ -18258,7 +18258,7 @@ function Item({ name, isPacked }) {
   if (isPacked) {
     itemContent = (
       <del>
-        {name + " ✅"}
+        {name + " [OK]"}
       </del>
     );
   }
@@ -18313,7 +18313,7 @@ If you're not familiar with JavaScript, this variety of styles might seem overwh
 
 #### Show an icon for incomplete items with `? :` {/*show-an-icon-for-incomplete-items-with--*/}
 
-Use the conditional operator (`cond ? a : b`) to render a ❌ if `isPacked` isn’t `true`.
+Use the conditional operator (`cond ? a : b`) to render a [FAIL] if `isPacked` isn’t `true`.
 
 <Sandpack>
 
@@ -18321,7 +18321,7 @@ Use the conditional operator (`cond ? a : b`) to render a ❌ if `isPacked` isn�
 function Item({ name, isPacked }) {
   return (
     <li className="item">
-      {name} {isPacked && '✅'}
+      {name} {isPacked && '[OK]'}
     </li>
   );
 }
@@ -18359,7 +18359,7 @@ export default function PackingList() {
 function Item({ name, isPacked }) {
   return (
     <li className="item">
-      {name} {isPacked ? '✅' : '❌'}
+      {name} {isPacked ? '[OK]' : '[FAIL]'}
     </li>
   );
 }
@@ -29463,5 +29463,6 @@ The `updateDOM` function you wrote shows what React does under the hood when you
 ## Sitemap
 
 [Overview of all docs pages](/llms.txt)
+
 
 

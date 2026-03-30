@@ -55,12 +55,12 @@ Rule:
 
 | Feature | Config | Status |
 |---|---|---|
-| DDoS protection | Always-on (free) | ✅ Phase 1 |
-| Bot Fight Mode | Enable in Security settings | ✅ Phase 1 |
-| Managed WAF ruleset | OWASP Core ruleset | ✅ Phase 1 |
-| Rate limiting (basic) | Custom rules, free tier limited | ✅ Phase 1 |
-| IP blocking | Security → Tools → IP Access Rules | ✅ Phase 1 |
-| Country blocking | Not needed (VN-only, but don't block non-VN) | ❌ Not applied |
+| DDoS protection | Always-on (free) | [OK] Phase 1 |
+| Bot Fight Mode | Enable in Security settings | [OK] Phase 1 |
+| Managed WAF ruleset | OWASP Core ruleset | [OK] Phase 1 |
+| Rate limiting (basic) | Custom rules, free tier limited | [OK] Phase 1 |
+| IP blocking | Security → Tools → IP Access Rules | [OK] Phase 1 |
+| Country blocking | Not needed (VN-only, but don't block non-VN) | [FAIL] Not applied |
 
 ### Cloudflare WAF rules (Phase 1 — exact policy)
 
@@ -329,3 +329,4 @@ Rule:
 | Honeypot working | Submit guestbook with honeypot field → fake 200, audit log entry |
 | Rate limit fires | 6th guestbook in 1 hour → 429 |
 | CSP valid | Mozilla Observatory score ≥ B+ |
+

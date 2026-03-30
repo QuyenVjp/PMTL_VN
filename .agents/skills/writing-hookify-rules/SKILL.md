@@ -109,7 +109,7 @@ The markdown content after frontmatter is shown to Claude when the rule triggers
 
 **Example:**
 ```markdown
-⚠️ **Console.log detected!**
+[WARN]️ **Console.log detected!**
 
 You're adding console.log to production code.
 
@@ -372,3 +372,4 @@ Warning message
 
 **Operators:**
 - `regex_match`, `contains`, `equals`, `not_contains`, `starts_with`, `ends_with`
+

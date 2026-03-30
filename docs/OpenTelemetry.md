@@ -3808,7 +3808,7 @@ List of available OpenTelemetry Collector receivers
 Receivers collect telemetry data from various sources and formats. For more information on how to configure receivers, see the Collector configuration documentation.
 
 Note
-Components marked with ⚠️ are unmaintained and have no active codeowners. They may not receive regular updates or bug fixes.
+Components marked with [WARN]️ are unmaintained and have no active codeowners. They may not receive regular updates or bug fixes.
 
 Name	Distributions1	Traces2	Metrics2	Logs2
 activedirectorydsreceiver	contrib	-	beta	-
@@ -3860,7 +3860,7 @@ jmxreceiver	contrib	-	deprecated	-
 journaldreceiver	contrib, K8s	-	-	alpha
 k8sclusterreceiver	contrib, K8s	-	beta	development
 k8seventsreceiver	contrib, K8s	-	-	alpha
-k8slogreceiver ⚠️	contrib	-	-	unmaintained
+k8slogreceiver [WARN]️	contrib	-	-	unmaintained
 k8sobjectsreceiver	contrib, K8s	-	-	beta
 kafkametricsreceiver	contrib	-	beta	-
 kafkareceiver	contrib, core	beta	beta	beta
@@ -3978,11 +3978,11 @@ List of available OpenTelemetry Collector exporters
 Exporters send telemetry data to observability backends and destinations. For more information on how to configure exporters, see the Collector configuration documentation.
 
 Note
-Components marked with ⚠️ are unmaintained and have no active codeowners. They may not receive regular updates or bug fixes.
+Components marked with [WARN]️ are unmaintained and have no active codeowners. They may not receive regular updates or bug fixes.
 
 Name	Distributions1	Traces2	Metrics2	Logs2
 alertmanagerexporter	contrib	development	-	-
-alibabacloudlogserviceexporter ⚠️	contrib	unmaintained	unmaintained	unmaintained
+alibabacloudlogserviceexporter [WARN]️	contrib	unmaintained	unmaintained	unmaintained
 awscloudwatchlogsexporter	contrib	-	-	alpha
 awsemfexporter	contrib	-	beta	-
 awskinesisexporter	contrib	beta	beta	beta

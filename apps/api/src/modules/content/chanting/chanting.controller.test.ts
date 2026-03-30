@@ -7,7 +7,7 @@ import { PrismaService } from "../../../common/prisma/prisma.service.js";
 import {
   chantEnvironmentRuleGroupResponseSchema,
   chantEnvironmentRulesPageResponseSchema,
-} from "../../../../packages/shared/src/schemas/content.js";
+} from "./chanting.schemas.js";
 import {
   RuleProductizationMode,
   RuleSeverity,

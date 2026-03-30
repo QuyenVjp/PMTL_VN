@@ -15,13 +15,13 @@ Detailed output templates for on-page-seo-auditor steps 5-11. Referenced from [S
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Sufficient length | ✅/⚠️/❌ | [comparison to ranking content] |
-| Comprehensive coverage | ✅/⚠️/❌ | [notes] |
-| Unique value/insights | ✅/⚠️/❌ | [notes] |
-| Up-to-date information | ✅/⚠️/❌ | [notes] |
-| Proper formatting | ✅/⚠️/❌ | [notes] |
-| Readability | ✅/⚠️/❌ | [notes] |
-| E-E-A-T signals | ✅/⚠️/❌ | [notes] |
+| Sufficient length | [OK]/[WARN]️/[FAIL] | [comparison to ranking content] |
+| Comprehensive coverage | [OK]/[WARN]️/[FAIL] | [notes] |
+| Unique value/insights | [OK]/[WARN]️/[FAIL] | [notes] |
+| Up-to-date information | [OK]/[WARN]️/[FAIL] | [notes] |
+| Proper formatting | [OK]/[WARN]️/[FAIL] | [notes] |
+| Readability | [OK]/[WARN]️/[FAIL] | [notes] |
+| E-E-A-T signals | [OK]/[WARN]️/[FAIL] | [notes] |
 
 **Content Elements Present**:
 - [ ] Introduction with keyword
@@ -60,22 +60,22 @@ Detailed output templates for on-page-seo-auditor steps 5-11. Referenced from [S
 
 | Location | Present | Notes |
 |----------|---------|-------|
-| Title tag | ✅/❌ | Position: [X] |
-| Meta description | ✅/❌ | [notes] |
-| H1 | ✅/❌ | [notes] |
-| First 100 words | ✅/❌ | Word position: [X] |
-| H2 headings | ✅/❌ | In [X]/[Y] H2s |
-| Body content | ✅/❌ | [X] occurrences |
-| URL slug | ✅/❌ | [notes] |
-| Image alt text | ✅/❌ | In [X]/[Y] images |
-| Conclusion | ✅/❌ | [notes] |
+| Title tag | [OK]/[FAIL] | Position: [X] |
+| Meta description | [OK]/[FAIL] | [notes] |
+| H1 | [OK]/[FAIL] | [notes] |
+| First 100 words | [OK]/[FAIL] | Word position: [X] |
+| H2 headings | [OK]/[FAIL] | In [X]/[Y] H2s |
+| Body content | [OK]/[FAIL] | [X] occurrences |
+| URL slug | [OK]/[FAIL] | [notes] |
+| Image alt text | [OK]/[FAIL] | In [X]/[Y] images |
+| Conclusion | [OK]/[FAIL] | [notes] |
 
 ### Secondary Keywords
 
 | Keyword | Occurrences | Status |
 |---------|-------------|--------|
-| [keyword 1] | [X] | ✅/⚠️/❌ |
-| [keyword 2] | [X] | ✅/⚠️/❌ |
+| [keyword 1] | [X] | [OK]/[WARN]️/[FAIL] |
+| [keyword 2] | [X] | [OK]/[WARN]️/[FAIL] |
 
 ### LSI/Related Terms
 
@@ -103,12 +103,12 @@ Detailed output templates for on-page-seo-auditor steps 5-11. Referenced from [S
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Number of internal links | ✅/⚠️/❌ | [X] (recommend 3-5+) |
-| Relevant anchor text | ✅/⚠️/❌ | [notes] |
-| Links to related content | ✅/⚠️/❌ | [notes] |
-| Links to important pages | ✅/⚠️/❌ | [notes] |
-| No broken links | ✅/⚠️/❌ | [X] broken found |
-| Natural placement | ✅/⚠️/❌ | [notes] |
+| Number of internal links | [OK]/[WARN]️/[FAIL] | [X] (recommend 3-5+) |
+| Relevant anchor text | [OK]/[WARN]️/[FAIL] | [notes] |
+| Links to related content | [OK]/[WARN]️/[FAIL] | [notes] |
+| Links to important pages | [OK]/[WARN]️/[FAIL] | [notes] |
+| No broken links | [OK]/[WARN]️/[FAIL] | [X] broken found |
+| Natural placement | [OK]/[WARN]️/[FAIL] | [notes] |
 
 **Current Internal Links**:
 1. "[Anchor text]" → [URL]
@@ -138,17 +138,17 @@ Detailed output templates for on-page-seo-auditor steps 5-11. Referenced from [S
 
 | Image | Alt Text | File Name | Size | Status |
 |-------|----------|-----------|------|--------|
-| [img1] | [alt or "missing"] | [filename] | [KB] | ✅/⚠️/❌ |
-| [img2] | [alt or "missing"] | [filename] | [KB] | ✅/⚠️/❌ |
+| [img1] | [alt or "missing"] | [filename] | [KB] | [OK]/[WARN]️/[FAIL] |
+| [img2] | [alt or "missing"] | [filename] | [KB] | [OK]/[WARN]️/[FAIL] |
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| All images have alt text | ✅/⚠️/❌ | [X]/[Y] have alt |
-| Alt text includes keywords | ✅/⚠️/❌ | [notes] |
-| Descriptive file names | ✅/⚠️/❌ | [notes] |
-| Appropriate file sizes | ✅/⚠️/❌ | [notes] |
-| Modern formats (WebP) | ✅/⚠️/❌ | [notes] |
-| Lazy loading enabled | ✅/⚠️/❌ | [notes] |
+| All images have alt text | [OK]/[WARN]️/[FAIL] | [X]/[Y] have alt |
+| Alt text includes keywords | [OK]/[WARN]️/[FAIL] | [notes] |
+| Descriptive file names | [OK]/[WARN]️/[FAIL] | [notes] |
+| Appropriate file sizes | [OK]/[WARN]️/[FAIL] | [notes] |
+| Modern formats (WebP) | [OK]/[WARN]️/[FAIL] | [notes] |
+| Lazy loading enabled | [OK]/[WARN]️/[FAIL] | [notes] |
 
 **Image Score**: [X]/10
 
@@ -167,14 +167,14 @@ Detailed output templates for on-page-seo-auditor steps 5-11. Referenced from [S
 
 | Element | Current Value | Status | Recommendation |
 |---------|---------------|--------|----------------|
-| URL | [URL] | ✅/⚠️/❌ | [notes] |
-| URL length | [X] chars | ✅/⚠️/❌ | [notes] |
-| URL keywords | [present/absent] | ✅/⚠️/❌ | [notes] |
-| Canonical tag | [URL or "missing"] | ✅/⚠️/❌ | [notes] |
-| Mobile-friendly | [yes/no] | ✅/⚠️/❌ | [notes] |
-| Page speed | [X]s | ✅/⚠️/❌ | [notes] |
-| HTTPS | [yes/no] | ✅/⚠️/❌ | [notes] |
-| Schema markup | [types or "none"] | ✅/⚠️/❌ | [notes] |
+| URL | [URL] | [OK]/[WARN]️/[FAIL] | [notes] |
+| URL length | [X] chars | [OK]/[WARN]️/[FAIL] | [notes] |
+| URL keywords | [present/absent] | [OK]/[WARN]️/[FAIL] | [notes] |
+| Canonical tag | [URL or "missing"] | [OK]/[WARN]️/[FAIL] | [notes] |
+| Mobile-friendly | [yes/no] | [OK]/[WARN]️/[FAIL] | [notes] |
+| Page speed | [X]s | [OK]/[WARN]️/[FAIL] | [notes] |
+| HTTPS | [yes/no] | [OK]/[WARN]️/[FAIL] | [notes] |
+| Schema markup | [types or "none"] | [OK]/[WARN]️/[FAIL] | [notes] |
 
 **Technical Score**: [X]/10
 ```
@@ -192,23 +192,23 @@ Content-relevant items from the 80-item benchmark:
 
 | ID | Check Item | Status | Notes |
 |----|-----------|--------|-------|
-| C01 | Intent Alignment | ✅/⚠️/❌ | Title promise = content delivery |
-| C02 | Direct Answer | ✅/⚠️/❌ | Core answer in first 150 words |
-| C09 | FAQ Coverage | ✅/⚠️/❌ | Structured FAQ present |
-| C10 | Semantic Closure | ✅/⚠️/❌ | Conclusion answers opening |
-| O01 | Heading Hierarchy | ✅/⚠️/❌ | H1→H2→H3, no skipping |
-| O02 | Summary Box | ✅/⚠️/❌ | TL;DR or Key Takeaways |
-| O03 | Data Tables | ✅/⚠️/❌ | Comparisons in tables |
-| O05 | Schema Markup | ✅/⚠️/❌ | Appropriate JSON-LD |
-| O06 | Section Chunking | ✅/⚠️/❌ | Single topic per section |
-| R01 | Data Precision | ✅/⚠️/❌ | ≥5 precise numbers |
-| R02 | Citation Density | ✅/⚠️/❌ | ≥1 per 500 words |
-| R06 | Timestamp | ✅/⚠️/❌ | Updated <1 year |
-| R08 | Internal Link Graph | ✅/⚠️/❌ | Descriptive anchors |
-| R10 | Content Consistency | ✅/⚠️/❌ | No contradictions |
-| Exp01 | First-Person Narrative | ✅/⚠️/❌ | "I tested" or "We found" |
-| Ept01 | Author Identity | ✅/⚠️/❌ | Byline + bio present |
-| T04 | Disclosure Statements | ✅/⚠️/❌ | Affiliate links disclosed |
+| C01 | Intent Alignment | [OK]/[WARN]️/[FAIL] | Title promise = content delivery |
+| C02 | Direct Answer | [OK]/[WARN]️/[FAIL] | Core answer in first 150 words |
+| C09 | FAQ Coverage | [OK]/[WARN]️/[FAIL] | Structured FAQ present |
+| C10 | Semantic Closure | [OK]/[WARN]️/[FAIL] | Conclusion answers opening |
+| O01 | Heading Hierarchy | [OK]/[WARN]️/[FAIL] | H1→H2→H3, no skipping |
+| O02 | Summary Box | [OK]/[WARN]️/[FAIL] | TL;DR or Key Takeaways |
+| O03 | Data Tables | [OK]/[WARN]️/[FAIL] | Comparisons in tables |
+| O05 | Schema Markup | [OK]/[WARN]️/[FAIL] | Appropriate JSON-LD |
+| O06 | Section Chunking | [OK]/[WARN]️/[FAIL] | Single topic per section |
+| R01 | Data Precision | [OK]/[WARN]️/[FAIL] | ≥5 precise numbers |
+| R02 | Citation Density | [OK]/[WARN]️/[FAIL] | ≥1 per 500 words |
+| R06 | Timestamp | [OK]/[WARN]️/[FAIL] | Updated <1 year |
+| R08 | Internal Link Graph | [OK]/[WARN]️/[FAIL] | Descriptive anchors |
+| R10 | Content Consistency | [OK]/[WARN]️/[FAIL] | No contradictions |
+| Exp01 | First-Person Narrative | [OK]/[WARN]️/[FAIL] | "I tested" or "We found" |
+| Ept01 | Author Identity | [OK]/[WARN]️/[FAIL] | Byline + bio present |
+| T04 | Disclosure Statements | [OK]/[WARN]️/[FAIL] | Affiliate links disclosed |
 
 **CORE-EEAT Quick Score**: [X]/17 items passing
 
@@ -313,3 +313,4 @@ After implementing these changes:
 - Estimated CTR improvement: [X]%
 - Estimated traffic increase: [X]%
 ```
+

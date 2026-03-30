@@ -8,7 +8,7 @@ import {
   adminUpdateEnvironmentRuleSchema,
   groupKeySchema,
   type AdminUpdateEnvironmentRuleInput,
-} from "../../../../packages/shared/src/schemas/content.js";
+} from "./chanting.schemas.js";
 
 @ApiTags("content/chanting")
 @Controller("content/chanting")

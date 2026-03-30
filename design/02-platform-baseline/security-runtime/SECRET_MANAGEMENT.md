@@ -116,7 +116,7 @@ Rules:
 
 ### Rotate JWT secrets (ACCESS + REFRESH)
 
-⚠️ **Impact**: All existing sessions are invalidated when JWT secrets rotate.
+[WARN]️ **Impact**: All existing sessions are invalidated when JWT secrets rotate.
 Plan for a maintenance window or implement grace period (old key still valid for 15 min).
 
 ```bash
@@ -225,7 +225,7 @@ docker compose -f docker-compose.prod.yml restart api web
 
 ### Rotate VAPID keys (Web Push)
 
-⚠️ **Impact**: All existing push subscriptions are invalidated. Users must re-subscribe.
+[WARN]️ **Impact**: All existing push subscriptions are invalidated. Users must re-subscribe.
 
 ```bash
 # Step 1 — Generate new VAPID keys
@@ -366,3 +366,4 @@ Track rotations here. Add row after each rotation:
 | JWT rotation tested | Rotate secret → all sessions invalidated → users re-login |
 | SMTP rotation tested | New key → password reset email received |
 | Pre-commit hook blocks | Stage `.env` with values → commit fails |
+
