@@ -33,6 +33,7 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -43,12 +44,18 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
@@ -75,7 +82,7 @@ import {
   useAddCollectionItem,
   useRemoveCollectionItem,
 } from "./mutations.js";
-import { mediaListOptions } from "@/features/media/queries.js";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
 
 // ── Context ────────────────────────────────────────────────────────────
 
@@ -153,6 +160,10 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function mediaPath(url: string): string {
+  try { return new URL(url).pathname; } catch { return url; }
+}
+
 // ── Row actions ────────────────────────────────────────────────────────
 
 function CollectionRowActions({ row }: { row: CollectionListItem }) {
@@ -226,7 +237,7 @@ function CollectionsTable() {
               <div className="size-10 shrink-0 overflow-hidden rounded border border-border bg-muted flex items-center justify-center">
                 {coverImageUrl ? (
                   <img
-                    src={coverImageUrl}
+                    src={mediaPath(coverImageUrl)}
                     alt={title}
                     className="size-full object-cover"
                     loading="lazy"
@@ -342,9 +353,9 @@ function CollectionsTable() {
         table={table}
         columns={columns}
         isLoading={isLoading}
-        emptyMessage="Chưa có collection nào. Nhấn 'Tạo collection' để bắt đầu."
+        emptyMessage="Chưa có bộ sưu tập nào. Nhấn 'Tạo bộ sưu tập' để bắt đầu."
       />
-      <DataTableBulkActions table={table} entityName="collection" />
+      <DataTableBulkActions table={table} entityName="bộ sưu tập" />
     </div>
   );
 }
@@ -360,6 +371,93 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+// ── Image grid picker ──────────────────────────────────────────────────
+
+function ImageGridPicker({
+  images,
+  value,
+  onChange,
+}: {
+  images: MediaAssetListItem[];
+  value: string;
+  onChange: (publicId: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const selected = images.find((a) => a.publicId === value);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-full justify-start gap-3 h-auto py-2 px-3"
+        >
+          {selected ? (
+            <>
+              <img
+                src={mediaPath(selected.url)}
+                alt={selected.filename}
+                className="size-8 rounded object-cover shrink-0"
+              />
+              <span className="flex-1 text-left text-sm truncate">{selected.filename}</span>
+              <span
+                className="text-xs text-muted-foreground shrink-0"
+                onClick={(e) => { e.stopPropagation(); onChange(""); }}
+              >
+                ✕
+              </span>
+            </>
+          ) : (
+            <span className="text-sm text-muted-foreground">Chọn ảnh đại diện...</span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[420px] p-3" align="start">
+        {images.length === 0 ? (
+          <p className="py-4 text-center text-sm text-muted-foreground">Chưa có ảnh nào.</p>
+        ) : (
+          <ScrollArea className="h-[280px]">
+            <div className="grid grid-cols-4 gap-2 pr-2">
+              {images.map((a) => (
+                <button
+                  key={a.publicId}
+                  type="button"
+                  onClick={() => { onChange(a.publicId); setOpen(false); }}
+                  className={`group relative aspect-square overflow-hidden rounded-lg border-2 transition-all ${
+                    value === a.publicId
+                      ? "border-primary ring-2 ring-primary/30"
+                      : "border-transparent hover:border-muted-foreground/40"
+                  }`}
+                >
+                  <img
+                    src={mediaPath(a.url)}
+                    alt={a.filename}
+                    className="size-full object-cover"
+                    loading="lazy"
+                  />
+                  {value === a.publicId && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-primary/20">
+                      <div className="rounded-full bg-primary p-0.5 text-primary-foreground">
+                        <svg className="size-3" viewBox="0 0 12 12" fill="currentColor">
+                          <path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-1 pb-1 pt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <p className="truncate text-[10px] text-white leading-tight">{a.filename}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 // ── Create dialog ──────────────────────────────────────────────────────
 
 function CreateCollectionDialog({
@@ -370,17 +468,29 @@ function CreateCollectionDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const create = useCreateCollection();
-  const [title,          setTitle]          = useState("");
-  const [slug,           setSlug]           = useState("");
-  const [collectionType, setCollectionType] = useState<CollectionType>("PHOTO_ALBUM");
-  const [description,    setDescription]    = useState("");
-  const [featured,       setFeatured]       = useState(false);
+  const { data: assetsEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 100 }),
+    enabled: open,
+  });
+  const assets = assetsEnvelope?.data ?? [];
+  const imageAssets = assets.filter((a) => a.mimeType.startsWith("image/"));
+
+  const [title,                setTitle]                = useState("");
+  const [slug,                 setSlug]                 = useState("");
+  const [collectionType,       setCollectionType]       = useState<CollectionType>("PHOTO_ALBUM");
+  const [description,          setDescription]          = useState("");
+  const [coverMediaPublicId,   setCoverMediaPublicId]   = useState("");
+  const [featured,             setFeatured]             = useState(false);
 
   const slugEdited = useRef(false);
 
   function reset() {
-    setTitle(""); setSlug(""); setCollectionType("PHOTO_ALBUM");
-    setDescription(""); setFeatured(false);
+    setTitle("");
+    setSlug("");
+    setCollectionType("PHOTO_ALBUM");
+    setDescription("");
+    setCoverMediaPublicId("");
+    setFeatured(false);
     slugEdited.current = false;
   }
 
@@ -401,7 +511,14 @@ function CreateCollectionDialog({
       return;
     }
     create.mutate(
-      { title: title.trim(), slug: slug.trim(), collectionType, description: description.trim() || undefined, featured },
+      {
+        title: title.trim(),
+        slug: slug.trim(),
+        collectionType,
+        description: description.trim() || undefined,
+        coverMediaPublicId: coverMediaPublicId || undefined,
+        featured
+      },
       { onSuccess: () => { reset(); onOpenChange(false); } },
     );
   }
@@ -410,7 +527,7 @@ function CreateCollectionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>Tạo collection mới</DialogTitle>
+          <DialogTitle>Tạo bộ sưu tập mới</DialogTitle>
           <DialogDescription>Điền thông tin để tạo album/playlist cho thư viện pháp môn.</DialogDescription>
         </DialogHeader>
 
@@ -426,7 +543,7 @@ function CreateCollectionDialog({
               className="font-mono text-sm"
             />
           </Field>
-          <Field label="Loại collection">
+          <Field label="Loại bộ sưu tập">
             <Select value={collectionType} onValueChange={(v) => setCollectionType(v as CollectionType)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -436,18 +553,26 @@ function CreateCollectionDialog({
               </SelectContent>
             </Select>
           </Field>
+          <Field label="Ảnh đại diện (nếu có)">
+            <ImageGridPicker
+              images={imageAssets}
+              value={coverMediaPublicId}
+              onChange={setCoverMediaPublicId}
+            />
+          </Field>
           <Field label="Mô tả">
             <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Mô tả ngắn..." rows={2} />
           </Field>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="featured-create"
               checked={featured}
-              onChange={(e) => setFeatured(e.target.checked)}
-              className="rounded border"
+              onCheckedChange={(checked) => setFeatured(checked === true)}
             />
-            Đánh dấu nổi bật
-          </label>
+            <label htmlFor="featured-create" className="text-sm font-medium cursor-pointer">
+              Đánh dấu nổi bật
+            </label>
+          </div>
         </div>
 
         <DialogFooter>
@@ -507,8 +632,8 @@ function EditCollectionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>Chỉnh sửa collection</DialogTitle>
-          <DialogDescription>Cập nhật thông tin collection.</DialogDescription>
+          <DialogTitle>Chỉnh sửa bộ sưu tập</DialogTitle>
+          <DialogDescription>Cập nhật thông tin bộ sưu tập.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -524,10 +649,16 @@ function EditCollectionDialog({
           <Field label="Ghi chú nguồn">
             <Textarea value={sourceNote} onChange={(e) => setSourceNote(e.target.value)} rows={2} placeholder="Nguồn / provenance..." />
           </Field>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="rounded border" />
-            Đánh dấu nổi bật
-          </label>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="featured-edit"
+              checked={featured}
+              onCheckedChange={(checked) => setFeatured(checked === true)}
+            />
+            <label htmlFor="featured-edit" className="text-sm font-medium cursor-pointer">
+              Đánh dấu nổi bật
+            </label>
+          </div>
         </div>
 
         <DialogFooter>
@@ -552,12 +683,16 @@ function CollectionItemsSheet({
   onOpenChange: (v: boolean) => void;
   collection: CollectionListItem;
 }) {
-  const { data: itemsEnvelope, isLoading: itemsLoading } = useQuery(
-    collectionItemsOptions(collection.publicId),
-  );
+  const { data: itemsEnvelope, isLoading: itemsLoading } = useQuery({
+    ...collectionItemsOptions(collection.publicId),
+    enabled: open,
+  });
   const items = itemsEnvelope?.data ?? [];
 
-  const { data: assetsEnvelope } = useQuery(mediaListOptions({ limit: 100 }));
+  const { data: assetsEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 50 }),
+    enabled: open,
+  });
   const assets = assetsEnvelope?.data ?? [];
   const imageAssets = assets.filter((a) => a.mimeType.startsWith("image/"));
 
@@ -584,7 +719,7 @@ function CollectionItemsSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-[480px] sm:max-w-[480px] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Items — {collection.title}</SheetTitle>
+          <SheetTitle>Nội dung — {collection.title}</SheetTitle>
         </SheetHeader>
 
         <div className="mt-4 space-y-6">
@@ -609,27 +744,11 @@ function CollectionItemsSheet({
             </div>
 
             {addMode === "asset" ? (
-              <Select value={selectedAssetId} onValueChange={setSelectedAssetId}>
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Chọn ảnh từ Media Assets..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {imageAssets.map((a) => (
-                    <SelectItem key={a.publicId} value={a.publicId}>
-                      <span className="flex items-center gap-2">
-                        <img
-                          src={`/api/admin/media/${a.publicId}/content`}
-                          className="size-5 rounded object-cover"
-                          loading="lazy"
-                          alt=""
-                        />
-                        <span className="truncate max-w-[260px]">{a.filename}</span>
-                        <span className="text-muted-foreground shrink-0">{formatFileSize(a.size)}</span>
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <ImageGridPicker
+                images={imageAssets}
+                value={selectedAssetId}
+                onChange={setSelectedAssetId}
+              />
             ) : (
               <Input
                 value={externalUrl}
@@ -641,7 +760,7 @@ function CollectionItemsSheet({
 
             <Button size="sm" onClick={handleAdd} disabled={addItem.isPending} className="w-full">
               <PlusIcon className="mr-1.5 size-3.5" />
-              {addItem.isPending ? "Đang thêm..." : "Thêm vào collection"}
+              {addItem.isPending ? "Đang thêm..." : "Thêm vào bộ sưu tập"}
             </Button>
           </div>
 
@@ -663,9 +782,9 @@ function CollectionItemsSheet({
                     className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"
                   >
                     <div className="size-10 shrink-0 overflow-hidden rounded border bg-muted flex items-center justify-center">
-                      {item.mediaAssetPublicId ? (
+                      {item.mediaAssetUrl ? (
                         <img
-                          src={`/api/admin/media/${item.mediaAssetPublicId}/content`}
+                          src={mediaPath(item.mediaAssetUrl)}
                           className="size-full object-cover"
                           loading="lazy"
                           alt=""
@@ -737,11 +856,11 @@ function MediaLibraryDialogs() {
           <WorkspaceConfirmDialog
             open={open === "publish"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
-            title="Xuất bản collection"
+            title="Xuất bản bộ sưu tập"
             description={
               <>
                 Xuất bản <span className="font-semibold text-foreground">{currentRow.title}</span>?
-                Collection sẽ hiển thị công khai ngay lập tức.
+                Bộ sưu tập sẽ hiển thị công khai ngay lập tức.
               </>
             }
             confirmLabel="Xuất bản"
@@ -752,11 +871,11 @@ function MediaLibraryDialogs() {
           <WorkspaceConfirmDialog
             open={open === "unpublish"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("unpublish"))}
-            title="Gỡ xuất bản collection"
+            title="Gỡ xuất bản bộ sưu tập"
             description={
               <>
                 Gỡ xuất bản <span className="font-semibold text-foreground">{currentRow.title}</span>?
-                Collection sẽ không còn hiển thị công khai.
+                Bộ sưu tập sẽ không còn hiển thị công khai.
               </>
             }
             confirmLabel="Gỡ xuất bản"
@@ -767,11 +886,11 @@ function MediaLibraryDialogs() {
           <WorkspaceConfirmDialog
             open={open === "delete"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
-            title="Xoá collection"
+            title="Xoá bộ sưu tập"
             description={
               <>
                 Xoá <span className="font-semibold text-foreground">{currentRow.title}</span>?
-                Tất cả items trong collection cũng sẽ bị xoá. Thao tác này không thể hoàn tác.
+                Tất cả nội dung trong bộ sưu tập cũng sẽ bị xoá. Thao tác này không thể hoàn tác.
               </>
             }
             confirmLabel="Xoá"
@@ -799,7 +918,7 @@ function MediaLibraryHeader() {
       </div>
       <Button onClick={() => setOpen("create")}>
         <PlusIcon className="mr-2 size-4" />
-        Tạo collection
+        Tạo bộ sưu tập
       </Button>
     </div>
   );

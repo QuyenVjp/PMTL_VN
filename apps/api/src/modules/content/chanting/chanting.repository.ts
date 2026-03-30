@@ -61,4 +61,42 @@ export class ChantingRepository {
       include: { group: true },
     });
   }
+
+  // ============================================================================
+  // Chanting Sessions
+  // ============================================================================
+
+  async findChantingSessions(args: Prisma.ChantingSessionFindManyArgs) {
+    return this.prisma.chantingSession.findMany(args);
+  }
+
+  async countChantingSessions(args: Prisma.ChantingSessionCountArgs) {
+    return this.prisma.chantingSession.count(args);
+  }
+
+  async findChantingSessionById(sessionId: string, options?: Omit<Prisma.ChantingSessionFindUniqueArgs, 'where'>) {
+    return this.prisma.chantingSession.findUnique({
+      where: { id: sessionId },
+      ...options,
+    });
+  }
+
+  async createChantingSession(data: Prisma.ChantingSessionUncheckedCreateInput) {
+    return this.prisma.chantingSession.create({
+      data,
+    });
+  }
+
+  async updateChantingSession(sessionId: string, data: Prisma.ChantingSessionUncheckedUpdateInput) {
+    return this.prisma.chantingSession.update({
+      where: { id: sessionId },
+      data,
+    });
+  }
+
+  async deleteChantingSession(sessionId: string) {
+    return this.prisma.chantingSession.delete({
+      where: { id: sessionId },
+    });
+  }
 }

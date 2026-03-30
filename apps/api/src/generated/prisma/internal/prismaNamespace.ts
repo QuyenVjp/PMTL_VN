@@ -411,6 +411,7 @@ export const ModelName = {
   PushJob: 'PushJob',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
+  ChantingSession: 'ChantingSession',
   Vow: 'Vow',
   LifeReleaseJournal: 'LifeReleaseJournal',
   ModerationReport: 'ModerationReport',
@@ -436,7 +437,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "calendarEvent" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "pushJob" | "beginnerGuide" | "download" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
+    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "calendarEvent" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "pushJob" | "beginnerGuide" | "download" | "chantingSession" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2068,6 +2069,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ChantingSession: {
+      payload: Prisma.$ChantingSessionPayload<ExtArgs>
+      fields: Prisma.ChantingSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ChantingSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ChantingSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.ChantingSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ChantingSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        findMany: {
+          args: Prisma.ChantingSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>[]
+        }
+        create: {
+          args: Prisma.ChantingSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        createMany: {
+          args: Prisma.ChantingSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ChantingSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.ChantingSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        update: {
+          args: Prisma.ChantingSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ChantingSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ChantingSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ChantingSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ChantingSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ChantingSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.ChantingSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateChantingSession>
+        }
+        groupBy: {
+          args: Prisma.ChantingSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantingSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ChantingSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ChantingSessionCountAggregateOutputType> | number
+        }
+      }
+    }
     Vow: {
       payload: Prisma.$VowPayload<ExtArgs>
       fields: Prisma.VowFieldRefs
@@ -3226,6 +3301,21 @@ export const DownloadScalarFieldEnum = {
 export type DownloadScalarFieldEnum = (typeof DownloadScalarFieldEnum)[keyof typeof DownloadScalarFieldEnum]
 
 
+export const ChantingSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sessionDate: 'sessionDate',
+  startTime: 'startTime',
+  durationMinutes: 'durationMinutes',
+  location: 'location',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantingSessionScalarFieldEnum = (typeof ChantingSessionScalarFieldEnum)[keyof typeof ChantingSessionScalarFieldEnum]
+
+
 export const VowScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -3927,6 +4017,7 @@ export type GlobalOmitConfig = {
   pushJob?: Prisma.PushJobOmit
   beginnerGuide?: Prisma.BeginnerGuideOmit
   download?: Prisma.DownloadOmit
+  chantingSession?: Prisma.ChantingSessionOmit
   vow?: Prisma.VowOmit
   lifeReleaseJournal?: Prisma.LifeReleaseJournalOmit
   moderationReport?: Prisma.ModerationReportOmit

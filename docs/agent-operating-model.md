@@ -65,6 +65,20 @@ Before doing substantial work, Codex should be able to answer these 5 questions:
 
 If these are not clear, Codex should gather context first instead of coding by instinct.
 
+## CornHub-First Default
+
+For any non-trivial bugfix, refactor, or feature in PMTL_VN, Codex should default to a CornHub-first workflow before broad file reading:
+
+1. `corn_code_search`
+2. `corn_code_context`
+3. `corn_code_impact` before shared or risky edits
+4. `corn_detect_changes` when the worktree is dirty
+5. implementation + targeted verification
+6. `corn_knowledge_store` for reusable fix patterns
+7. `corn_quality_report` or an explicit skip reason
+
+For substantial tasks, add `corn_session_start` and `corn_session_end`.
+
 ## Lane Ownership Gaps
 
 PMTL currently has stronger repo-local skill coverage for frontend/UI than for backend/runtime/security.

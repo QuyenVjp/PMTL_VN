@@ -349,6 +349,21 @@ export class ContentService {
     return updated;
   }
 
+  async unpublishGuide(publicId: string, auditContext: AuditContext) {
+    const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
+    if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+    if (guide.status !== "PUBLISHED") throw new ConflictException("Bài hướng dẫn chưa được xuất bản");
+
+    const updated = await this.prisma.beginnerGuide.update({
+      where: { publicId },
+      data: { status: "DRAFT", publishedAt: null },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+
+    await this.audit.append(auditContext, "content.unpublish", "beginner_guide", publicId);
+    return updated;
+  }
+
   async deleteGuide(publicId: string, auditContext: AuditContext) {
     const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
     if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
@@ -441,11 +456,12 @@ export class ContentService {
     return updated;
   }
 
-  async adminDeleteDownload(publicId: string) {
+  async adminDeleteDownload(publicId: string, auditContext: AuditContext) {
     const download = await this.prisma.download.findUnique({ where: { publicId } });
     if (!download) throw new NotFoundException("Tài liệu không tồn tại");
 
     await this.prisma.download.delete({ where: { publicId } });
+    await this.audit.append(auditContext, "content.delete", "download", publicId);
     return { success: true };
   }
 

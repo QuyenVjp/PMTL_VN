@@ -135,6 +135,7 @@ model User {
   pushJobs            PushJob[]            @relation("pushJobs")
   beginnerGuides      BeginnerGuide[]      @relation("beginnerGuides")
   downloads           Download[]           @relation("downloads")
+  chantingSessions    ChantingSession[]    @relation("chantingSessions")
   vows                Vow[]                @relation("vows")
   lifeReleaseJournals LifeReleaseJournal[] @relation("lifeReleaseJournals")
   lifeReleaseActors   LifeReleaseJournal[] @relation("lifeReleaseActors")
@@ -637,6 +638,24 @@ model Download {
   @@index([status])
   @@index([category])
   @@map("downloads")
+}
+
+model ChantingSession {
+  id              String    @id @default(cuid())
+  userId          String    @map("user_id")
+  sessionDate     DateTime  @db.Date @map("session_date")
+  startTime       String    @map("start_time") // HH:mm format
+  durationMinutes Int       @map("duration_minutes")
+  location        String?
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user User @relation("chantingSessions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionDate])
+  @@map("chanting_sessions")
 }
 
 // ============================================================================

@@ -23,6 +23,7 @@ import {
 import type { Response, Request } from "express";
 import { Logger } from "nestjs-pino";
 import { ZodError } from "zod";
+import { Prisma } from "../../generated/prisma/client.js";
 import { AppError } from "./app-error.js";
 
 interface CanonErrorEnvelope {
@@ -95,6 +96,33 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.warn(
         { code, statusCode, details, path: request.url, requestId },
         "Zod validation error",
+      );
+    } else if (exception instanceof Prisma.PrismaClientKnownRequestError) {
+      // P2002 unique constraint, P2025 not found, etc.
+      if (exception.code === "P2002") {
+        statusCode = HttpStatus.CONFLICT;
+        code = "CONFLICT";
+        message = "Dữ liệu đã tồn tại (unique constraint).";
+      } else if (exception.code === "P2025") {
+        statusCode = HttpStatus.NOT_FOUND;
+        code = "NOT_FOUND";
+        message = "Không tìm thấy bản ghi liên quan.";
+      } else {
+        statusCode = HttpStatus.BAD_REQUEST;
+        code = "DB_ERROR";
+        message = "Lỗi truy vấn dữ liệu.";
+      }
+      this.logger.error(
+        { prismaCode: exception.code, meta: exception.meta, path: request.url, requestId },
+        `Prisma error ${exception.code}: ${exception.message}`,
+      );
+    } else if (exception instanceof Prisma.PrismaClientValidationError) {
+      statusCode = HttpStatus.BAD_REQUEST;
+      code = "VALIDATION_ERROR";
+      message = "Dữ liệu không hợp lệ (Prisma validation).";
+      this.logger.error(
+        { err: { message: exception.message }, path: request.url, requestId },
+        `Prisma validation error`,
       );
     } else if (exception instanceof Error) {
       // No stack trace leak to production client

@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "corn-hub": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\ADMIN\\CornMCP\\apps\\corn-mcp\\dist\\cli.js"
+      ],
+      "env": {
+        "DASHBOARD_API_URL": "http://localhost:4000",
+        "QDRANT_URL": "http://localhost:6333",
+        "MCP_SERVER_NAME": "corn-hub-local",
+        "MCP_SERVER_VERSION": "0.1.0"
+      }
+    }
+  }
+}

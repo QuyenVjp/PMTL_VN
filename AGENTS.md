@@ -68,6 +68,7 @@
 
 ## Skill Routing
 - Workflow routing and skill selection order: `.agents/skills/pmtl-workflow-router/SKILL.md`
+- CornHub-first bugfix / refactor / feature workflow: `.agents/skills/pmtl-cornhub-workflow/SKILL.md`
 - Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
 - External AI CLI routing and worker selection: `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
@@ -125,6 +126,19 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 
 ## MCP Routing
 - Workspace MCP stack lives in `.mcp.json`. Prefer MCPs when they provide fresher docs, runtime internals, browser evidence, or infra state that repo files cannot provide.
+- CornHub priority rule for this repo:
+  - If the current client exposes the `corn-hub` MCP server, use CornHub first for codebase exploration, symbol lookup, impact analysis, change detection, session memory, and quality-gate workflows before falling back to raw file search.
+  - Prefer `corn_code_search` for discovery, `corn_code_context` for symbol understanding, `corn_code_impact` before risky edits, and `corn_detect_changes` before working on shared or dirty branches.
+  - If CornHub is unavailable or returns insufficient results, say so briefly, then continue with direct repo inspection.
+- CornHub Bugfix Workflow for this repo:
+  - For any non-trivial bugfix, refactor, or feature in this repo, start with CornMCP.
+  - Use `corn_code_search` to find the exact symbol or feature entry point.
+  - Use `corn_code_context` before editing.
+  - Use `corn_code_impact` before modifying shared logic, DTOs, hooks, services, or reused components.
+  - Use `corn_detect_changes` if the worktree is dirty or multiple agents may be touching the same area.
+  - After implementation and verification, store the key fix pattern with `corn_knowledge_store`.
+  - End with `corn_quality_report` or state explicitly why Corn quality tools were skipped.
+  - For larger tasks, also prefer `corn_session_start` at the beginning and `corn_session_end` at the end.
 - OpenSpace is the default execution lane for Claude Code task runs in this repo. Prefer the `openspace` MCP server first for implementation/debug tasks unless a task explicitly requires another MCP.
 - Do not hardcode provider API keys for OpenSpace in repo config. Prefer host-agent integration and environment-driven model/key resolution.
 - Use `context7` first for current library/framework docs across the wider stack: Next.js, React, TanStack, RHF, Zod, Motion, Docker, cloud SDKs, etc.

@@ -250,6 +250,7 @@ export type UserWhereInput = {
   pushJobs?: Prisma.PushJobListRelationFilter | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideListRelationFilter | runtime.Types.Skip
   downloads?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionListRelationFilter | runtime.Types.Skip
   vows?: Prisma.VowListRelationFilter | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
@@ -286,6 +287,7 @@ export type UserOrderByWithRelationInput = {
   pushJobs?: Prisma.PushJobOrderByRelationAggregateInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideOrderByRelationAggregateInput | runtime.Types.Skip
   downloads?: Prisma.DownloadOrderByRelationAggregateInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionOrderByRelationAggregateInput | runtime.Types.Skip
   vows?: Prisma.VowOrderByRelationAggregateInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalOrderByRelationAggregateInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalOrderByRelationAggregateInput | runtime.Types.Skip
@@ -325,6 +327,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pushJobs?: Prisma.PushJobListRelationFilter | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideListRelationFilter | runtime.Types.Skip
   downloads?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionListRelationFilter | runtime.Types.Skip
   vows?: Prisma.VowListRelationFilter | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalListRelationFilter | runtime.Types.Skip
@@ -397,6 +400,7 @@ export type UserCreateInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -433,6 +437,7 @@ export type UserUncheckedCreateInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -469,6 +474,7 @@ export type UserUpdateInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -505,6 +511,7 @@ export type UserUncheckedUpdateInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -798,6 +805,20 @@ export type UserUpdateOneRequiredWithoutDownloadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDownloadsInput, Prisma.UserUpdateWithoutDownloadsInput>, Prisma.UserUncheckedUpdateWithoutDownloadsInput> | runtime.Types.Skip
 }
 
+export type UserCreateNestedOneWithoutChantingSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChantingSessionsInput, Prisma.UserUncheckedCreateWithoutChantingSessionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChantingSessionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutChantingSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChantingSessionsInput, Prisma.UserUncheckedCreateWithoutChantingSessionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChantingSessionsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutChantingSessionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChantingSessionsInput, Prisma.UserUpdateWithoutChantingSessionsInput>, Prisma.UserUncheckedUpdateWithoutChantingSessionsInput> | runtime.Types.Skip
+}
+
 export type UserCreateNestedOneWithoutVowsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutVowsInput, Prisma.UserUncheckedCreateWithoutVowsInput> | runtime.Types.Skip
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutVowsInput | runtime.Types.Skip
@@ -950,6 +971,7 @@ export type UserCreateWithoutSessionsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -985,6 +1007,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1036,6 +1059,7 @@ export type UserUpdateWithoutSessionsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1071,6 +1095,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1106,6 +1131,7 @@ export type UserCreateWithoutMediaAssetsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1141,6 +1167,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1192,6 +1219,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1227,6 +1255,7 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1262,6 +1291,7 @@ export type UserCreateWithoutMediaCollectionsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1297,6 +1327,7 @@ export type UserUncheckedCreateWithoutMediaCollectionsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1348,6 +1379,7 @@ export type UserUpdateWithoutMediaCollectionsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1383,6 +1415,7 @@ export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1418,6 +1451,7 @@ export type UserCreateWithoutPostsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1453,6 +1487,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1504,6 +1539,7 @@ export type UserUpdateWithoutPostsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1539,6 +1575,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1574,6 +1611,7 @@ export type UserCreateWithoutCommunityPostsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1609,6 +1647,7 @@ export type UserUncheckedCreateWithoutCommunityPostsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1660,6 +1699,7 @@ export type UserUpdateWithoutCommunityPostsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1695,6 +1735,7 @@ export type UserUncheckedUpdateWithoutCommunityPostsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1730,6 +1771,7 @@ export type UserCreateWithoutGuestbookEntriesInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1765,6 +1807,7 @@ export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1805,6 +1848,7 @@ export type UserCreateWithoutGuestbookApprovalsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1840,6 +1884,7 @@ export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -1891,6 +1936,7 @@ export type UserUpdateWithoutGuestbookEntriesInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1926,6 +1972,7 @@ export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -1972,6 +2019,7 @@ export type UserUpdateWithoutGuestbookApprovalsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2007,6 +2055,7 @@ export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2042,6 +2091,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2077,6 +2127,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2128,6 +2179,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2163,6 +2215,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2198,6 +2251,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2233,6 +2287,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2284,6 +2339,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2319,6 +2375,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2354,6 +2411,7 @@ export type UserCreateWithoutPushJobsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2389,6 +2447,7 @@ export type UserUncheckedCreateWithoutPushJobsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2440,6 +2499,7 @@ export type UserUpdateWithoutPushJobsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2475,6 +2535,7 @@ export type UserUncheckedUpdateWithoutPushJobsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2510,6 +2571,7 @@ export type UserCreateWithoutBeginnerGuidesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2545,6 +2607,7 @@ export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2596,6 +2659,7 @@ export type UserUpdateWithoutBeginnerGuidesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2631,6 +2695,7 @@ export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2666,6 +2731,7 @@ export type UserCreateWithoutDownloadsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2701,6 +2767,7 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -2752,6 +2819,7 @@ export type UserUpdateWithoutDownloadsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2787,6 +2855,167 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutChantingSessionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutChantingSessionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutChantingSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChantingSessionsInput, Prisma.UserUncheckedCreateWithoutChantingSessionsInput>
+}
+
+export type UserUpsertWithoutChantingSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChantingSessionsInput, Prisma.UserUncheckedUpdateWithoutChantingSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChantingSessionsInput, Prisma.UserUncheckedCreateWithoutChantingSessionsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutChantingSessionsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChantingSessionsInput, Prisma.UserUncheckedUpdateWithoutChantingSessionsInput>
+}
+
+export type UserUpdateWithoutChantingSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutChantingSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -2823,6 +3052,7 @@ export type UserCreateWithoutVowsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2858,6 +3088,7 @@ export type UserUncheckedCreateWithoutVowsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2909,6 +3140,7 @@ export type UserUpdateWithoutVowsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2944,6 +3176,7 @@ export type UserUncheckedUpdateWithoutVowsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2979,6 +3212,7 @@ export type UserCreateWithoutLifeReleaseJournalsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3014,6 +3248,7 @@ export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3054,6 +3289,7 @@ export type UserCreateWithoutLifeReleaseActorsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3089,6 +3325,7 @@ export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3140,6 +3377,7 @@ export type UserUpdateWithoutLifeReleaseJournalsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3175,6 +3413,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3221,6 +3460,7 @@ export type UserUpdateWithoutLifeReleaseActorsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3256,6 +3496,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3291,6 +3532,7 @@ export type UserCreateWithoutLittleHousesInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3326,6 +3568,7 @@ export type UserUncheckedCreateWithoutLittleHousesInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3377,6 +3620,7 @@ export type UserUpdateWithoutLittleHousesInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3412,6 +3656,7 @@ export type UserUncheckedUpdateWithoutLittleHousesInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3447,6 +3692,7 @@ export type UserCreateWithoutDailyGongkeLogsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3482,6 +3728,7 @@ export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3533,6 +3780,7 @@ export type UserUpdateWithoutDailyGongkeLogsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3568,6 +3816,7 @@ export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3603,6 +3852,7 @@ export type UserCreateWithoutRepentanceLogsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3638,6 +3888,7 @@ export type UserUncheckedCreateWithoutRepentanceLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3689,6 +3940,7 @@ export type UserUpdateWithoutRepentanceLogsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3724,6 +3976,7 @@ export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3759,6 +4012,7 @@ export type UserCreateWithoutAltarLogsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3794,6 +4048,7 @@ export type UserUncheckedCreateWithoutAltarLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3845,6 +4100,7 @@ export type UserUpdateWithoutAltarLogsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3880,6 +4136,7 @@ export type UserUncheckedUpdateWithoutAltarLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -3915,6 +4172,7 @@ export type UserCreateWithoutPracticeProfileInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -3950,6 +4208,7 @@ export type UserUncheckedCreateWithoutPracticeProfileInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -4001,6 +4260,7 @@ export type UserUpdateWithoutPracticeProfileInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -4036,6 +4296,7 @@ export type UserUncheckedUpdateWithoutPracticeProfileInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -4071,6 +4332,7 @@ export type UserCreateWithoutActivationLogsInput = {
   pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -4106,6 +4368,7 @@ export type UserUncheckedCreateWithoutActivationLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
@@ -4157,6 +4420,7 @@ export type UserUpdateWithoutActivationLogsInput = {
   pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -4192,6 +4456,7 @@ export type UserUncheckedUpdateWithoutActivationLogsInput = {
   pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
@@ -4220,6 +4485,7 @@ export type UserCountOutputType = {
   pushJobs: number
   beginnerGuides: number
   downloads: number
+  chantingSessions: number
   vows: number
   lifeReleaseJournals: number
   lifeReleaseActors: number
@@ -4243,6 +4509,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pushJobs?: boolean | UserCountOutputTypeCountPushJobsArgs
   beginnerGuides?: boolean | UserCountOutputTypeCountBeginnerGuidesArgs
   downloads?: boolean | UserCountOutputTypeCountDownloadsArgs
+  chantingSessions?: boolean | UserCountOutputTypeCountChantingSessionsArgs
   vows?: boolean | UserCountOutputTypeCountVowsArgs
   lifeReleaseJournals?: boolean | UserCountOutputTypeCountLifeReleaseJournalsArgs
   lifeReleaseActors?: boolean | UserCountOutputTypeCountLifeReleaseActorsArgs
@@ -4350,6 +4617,13 @@ export type UserCountOutputTypeCountDownloadsArgs<ExtArgs extends runtime.Types.
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountChantingSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChantingSessionWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountVowsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.VowWhereInput | runtime.Types.Skip
 }
@@ -4429,6 +4703,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pushJobs?: boolean | Prisma.User$pushJobsArgs<ExtArgs> | runtime.Types.Skip
   beginnerGuides?: boolean | Prisma.User$beginnerGuidesArgs<ExtArgs> | runtime.Types.Skip
   downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs> | runtime.Types.Skip
+  chantingSessions?: boolean | Prisma.User$chantingSessionsArgs<ExtArgs> | runtime.Types.Skip
   vows?: boolean | Prisma.User$vowsArgs<ExtArgs> | runtime.Types.Skip
   lifeReleaseJournals?: boolean | Prisma.User$lifeReleaseJournalsArgs<ExtArgs> | runtime.Types.Skip
   lifeReleaseActors?: boolean | Prisma.User$lifeReleaseActorsArgs<ExtArgs> | runtime.Types.Skip
@@ -4500,6 +4775,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pushJobs?: boolean | Prisma.User$pushJobsArgs<ExtArgs> | runtime.Types.Skip
   beginnerGuides?: boolean | Prisma.User$beginnerGuidesArgs<ExtArgs> | runtime.Types.Skip
   downloads?: boolean | Prisma.User$downloadsArgs<ExtArgs> | runtime.Types.Skip
+  chantingSessions?: boolean | Prisma.User$chantingSessionsArgs<ExtArgs> | runtime.Types.Skip
   vows?: boolean | Prisma.User$vowsArgs<ExtArgs> | runtime.Types.Skip
   lifeReleaseJournals?: boolean | Prisma.User$lifeReleaseJournalsArgs<ExtArgs> | runtime.Types.Skip
   lifeReleaseActors?: boolean | Prisma.User$lifeReleaseActorsArgs<ExtArgs> | runtime.Types.Skip
@@ -4529,6 +4805,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pushJobs: Prisma.$PushJobPayload<ExtArgs>[]
     beginnerGuides: Prisma.$BeginnerGuidePayload<ExtArgs>[]
     downloads: Prisma.$DownloadPayload<ExtArgs>[]
+    chantingSessions: Prisma.$ChantingSessionPayload<ExtArgs>[]
     vows: Prisma.$VowPayload<ExtArgs>[]
     lifeReleaseJournals: Prisma.$LifeReleaseJournalPayload<ExtArgs>[]
     lifeReleaseActors: Prisma.$LifeReleaseJournalPayload<ExtArgs>[]
@@ -4958,6 +5235,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pushJobs<T extends Prisma.User$pushJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   beginnerGuides<T extends Prisma.User$beginnerGuidesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$beginnerGuidesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BeginnerGuidePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   downloads<T extends Prisma.User$downloadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$downloadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chantingSessions<T extends Prisma.User$chantingSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chantingSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChantingSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   vows<T extends Prisma.User$vowsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$vowsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lifeReleaseJournals<T extends Prisma.User$lifeReleaseJournalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lifeReleaseJournalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lifeReleaseActors<T extends Prisma.User$lifeReleaseActorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lifeReleaseActorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseJournalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5686,6 +5964,30 @@ export type User$downloadsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.DownloadScalarFieldEnum | Prisma.DownloadScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.chantingSessions
+ */
+export type User$chantingSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChantingSession
+   */
+  select?: Prisma.ChantingSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChantingSession
+   */
+  omit?: Prisma.ChantingSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChantingSessionInclude<ExtArgs> | null
+  where?: Prisma.ChantingSessionWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.ChantingSessionOrderByWithRelationInput | Prisma.ChantingSessionOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.ChantingSessionWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.ChantingSessionScalarFieldEnum | Prisma.ChantingSessionScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

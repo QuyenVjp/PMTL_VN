@@ -166,6 +166,7 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 ### 2. PMTL core
 
 - `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
+- `pmtl-cornhub-workflow`: workflow CornHub-first cho bugfix/refactor/feature không trivial; ép `corn_code_search` -> `corn_code_context` -> `corn_code_impact` -> knowledge capture -> quality report.
 - `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, hiện baseline là Gemini và Copilot cho docs research, second opinion, và task split theo thế mạnh từng CLI.
 - `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
 - `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL cho `apps/web`.
@@ -182,6 +183,14 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 | `apps/admin` workspace/page | `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system` | dùng `frontend-design` để lái admin shell/workspace |
 | public premium polish | thêm `pmtl-creative-designer` sau khi structure đúng canon | đánh bóng trước khi route/data/state đúng |
 | dense admin audit/review | `pmtl-admin-ui` -> `ui-ux-pro-max` advisory pass | trộn generic SaaS/dashboard patterns vào PMTL canon |
+
+## CornHub fast path
+
+- Với mọi bugfix/refactor/feature không trivial trong PMTL, bắt đầu bằng `pmtl-cornhub-workflow`.
+- Thứ tự tối thiểu: `corn_code_search` -> `corn_code_context` -> nếu đụng shared logic thì `corn_code_impact`.
+- Nếu worktree dirty hoặc nhiều agent có thể đang sửa cùng vùng: thêm `corn_detect_changes`.
+- Sau khi verify xong, lưu pattern tái sử dụng bằng `corn_knowledge_store`.
+- Kết task bằng `corn_quality_report` hoặc nói rõ vì sao skip.
 
 ### 3. Frontend, UI, design
 

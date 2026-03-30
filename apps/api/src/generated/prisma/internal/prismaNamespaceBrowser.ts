@@ -73,6 +73,7 @@ export const ModelName = {
   PushJob: 'PushJob',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
+  ChantingSession: 'ChantingSession',
   Vow: 'Vow',
   LifeReleaseJournal: 'LifeReleaseJournal',
   ModerationReport: 'ModerationReport',
@@ -474,6 +475,21 @@ export const DownloadScalarFieldEnum = {
 } as const
 
 export type DownloadScalarFieldEnum = (typeof DownloadScalarFieldEnum)[keyof typeof DownloadScalarFieldEnum]
+
+
+export const ChantingSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sessionDate: 'sessionDate',
+  startTime: 'startTime',
+  durationMinutes: 'durationMinutes',
+  location: 'location',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChantingSessionScalarFieldEnum = (typeof ChantingSessionScalarFieldEnum)[keyof typeof ChantingSessionScalarFieldEnum]
 
 
 export const VowScalarFieldEnum = {

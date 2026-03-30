@@ -21,6 +21,7 @@ export const auditActionSchema = z.enum([
   "content.create",
   "content.update",
   "content.publish",
+  "content.unpublish",
   "content.archive",
   "content.delete",
   

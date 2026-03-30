@@ -128,6 +128,11 @@ export type BeginnerGuide = Prisma.BeginnerGuideModel
  */
 export type Download = Prisma.DownloadModel
 /**
+ * Model ChantingSession
+ * 
+ */
+export type ChantingSession = Prisma.ChantingSessionModel
+/**
  * Model Vow
  * 
  */

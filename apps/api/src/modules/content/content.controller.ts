@@ -175,12 +175,12 @@ export class ContentController {
 
 // ======================== Guide Controller ========================
 
-@ApiTags("beginner-guides")
-@Controller("content/beginner-guides")
+@ApiTags("guides")
+@Controller("admin/content/guides")
 export class GuideController {
   constructor(private readonly contentService: ContentService) {}
 
-  @Get("admin")
+  @Get()
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Danh sách bài hướng dẫn (admin)" })
   @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn cho admin" })
@@ -192,40 +192,16 @@ export class GuideController {
     return this.contentService.listGuides(validated, user.role);
   }
 
-  @Get("admin/:slugOrId")
+  @Get(":id")
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Chi tiết bài hướng dẫn (admin)" })
-  @ApiParam({ name: "slugOrId", description: "Public ID hoặc slug" })
+  @ApiParam({ name: "id", description: "Public ID hoặc slug" })
   @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn cho admin" })
   async getAdminGuide(
-    @Param("slugOrId") slugOrId: string,
+    @Param("id") id: string,
     @CurrentUser() user: AuthenticatedUser,
   ) {
-    return this.contentService.getGuide(slugOrId, user.role);
-  }
-
-  @Get()
-  @Public()
-  @ApiOperation({ summary: "Danh sách bài hướng dẫn" })
-  @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn" })
-  async listGuides(
-    @Query() query: GuideQuery,
-    @CurrentUser() user?: AuthenticatedUser,
-  ) {
-    const validated = guideQuerySchema.parse(query);
-    return this.contentService.listGuides(validated, user?.role);
-  }
-
-  @Get(":slugOrId")
-  @Public()
-  @ApiOperation({ summary: "Chi tiết bài hướng dẫn" })
-  @ApiParam({ name: "slugOrId", description: "Public ID hoặc slug" })
-  @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn" })
-  async getGuide(
-    @Param("slugOrId") slugOrId: string,
-    @CurrentUser() user?: AuthenticatedUser,
-  ) {
-    return this.contentService.getGuide(slugOrId, user?.role);
+    return this.contentService.getGuide(id, user.role);
   }
 
   @Post()
@@ -246,18 +222,18 @@ export class GuideController {
     });
   }
 
-  @Patch(":publicId")
+  @Patch(":id")
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Cập nhật bài hướng dẫn" })
-  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiParam({ name: "id", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })
   async updateGuide(
-    @Param("publicId") publicId: string,
+    @Param("id") id: string,
     @Body(ZodValidate(updateGuideSchema)) input: UpdateGuideRequest,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
-    return this.contentService.updateGuide(publicId, input, {
+    return this.contentService.updateGuide(id, input, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,
@@ -265,18 +241,18 @@ export class GuideController {
     });
   }
 
-  @Post(":publicId/publish")
+  @Post(":id/publish")
   @Roles("ADMIN", "SUPER_ADMIN")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Xuất bản bài hướng dẫn" })
-  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiParam({ name: "id", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã xuất bản" })
   async publishGuide(
-    @Param("publicId") publicId: string,
+    @Param("id") id: string,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
-    return this.contentService.publishGuide(publicId, {
+    return this.contentService.publishGuide(id, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,
@@ -284,17 +260,36 @@ export class GuideController {
     });
   }
 
-  @Delete(":publicId")
+  @Post(":id/unpublish")
   @Roles("ADMIN", "SUPER_ADMIN")
-  @ApiOperation({ summary: "Xoá bài hướng dẫn" })
-  @ApiParam({ name: "publicId", description: "Public ID" })
-  @ApiResponse({ status: 200, description: "Đã xoá" })
-  async deleteGuide(
-    @Param("publicId") publicId: string,
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Huỷ xuất bản bài hướng dẫn" })
+  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã huỷ xuất bản" })
+  async unpublishGuide(
+    @Param("id") id: string,
     @CurrentUser() user: AuthenticatedUser,
     @Req() req: Request,
   ) {
-    return this.contentService.deleteGuide(publicId, {
+    return this.contentService.unpublishGuide(id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Delete(":id")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Xoá bài hướng dẫn" })
+  @ApiParam({ name: "id", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã xoá" })
+  async deleteGuide(
+    @Param("id") id: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.deleteGuide(id, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,
@@ -366,8 +361,17 @@ export class AdminDownloadController {
   @ApiOperation({ summary: "Xóa tài liệu" })
   @ApiParam({ name: "publicId", description: "Public ID" })
   @ApiResponse({ status: 200, description: "Đã xóa" })
-  async deleteDownload(@Param("publicId") publicId: string) {
-    return this.contentService.adminDeleteDownload(publicId);
+  async deleteDownload(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.adminDeleteDownload(publicId, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
   }
 
   @Post(":publicId/publish")

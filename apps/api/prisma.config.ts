@@ -1,7 +1,7 @@
 import path from "node:path";
 import { defineConfig } from "prisma/config";
 
-const fallbackDatasourceUrl = "postgresql://pmtl:pmtl@127.0.0.1:5432/pmtl";
+const fallbackDatasourceUrl = "postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl";
 
 export default defineConfig({
   earlyAccess: true,

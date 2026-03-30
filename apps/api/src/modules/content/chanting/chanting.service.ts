@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { CacheService } from "../../../common/cache/cache.service.js";
+import { AuditService } from "../../../platform/audit/audit.service.js";
 import { Prisma, RuleProductizationMode, RuleSeverity } from "../../../generated/prisma/client.js";
 import { ChantingRepository } from "./chanting.repository.js";
 import { mapGroupToResponse } from "./chanting.mapper.js";
 import { mapQ161ForContent } from "../../wisdom-qa/q161-rule-pack.data.js";
+import type { AuditContext } from "../../../platform/audit/audit.service.js";
 import type {
   AdminUpdateEnvironmentRuleInput,
   ChantEnvironmentRulesPageResponse,
@@ -12,6 +14,8 @@ import type {
   ProductizationMode,
   Q161ContentRulePackResponse,
   Severity,
+  CreateChantingSessionInput,
+  UpdateChantingSessionInput,
 } from "./chanting.schemas.js";
 
 @Injectable()
@@ -19,6 +23,7 @@ export class ChantingService {
   constructor(
     private readonly repository: ChantingRepository,
     private readonly cacheService: CacheService,
+    private readonly audit: AuditService,
   ) {}
 
   /**
@@ -192,6 +197,262 @@ export class ChantingService {
     }
 
     return mapGroupToResponse(refreshedGroup);
+  }
+
+  // ============================================================================
+  // Chanting Sessions
+  // ============================================================================
+
+  /**
+   * Get user's chanting sessions with pagination
+   */
+  async getUserChantingSessions(page: number, limit: number, userId: string): Promise<any> {
+    const offset = (page - 1) * limit;
+    
+    const [sessions, total] = await Promise.all([
+      this.repository.findChantingSessions({
+        where: { userId },
+        orderBy: [{ sessionDate: 'desc' }, { startTime: 'desc' }],
+        skip: offset,
+        take: limit,
+      }),
+      this.repository.countChantingSessions({ where: { userId } }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      sessions: sessions.map(this.mapChantingSessionToResponse),
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
+
+  /**
+   * Create a new chanting session
+   */
+  async createChantingSession(input: CreateChantingSessionInput, userId: string, auditCtx: AuditContext): Promise<any> {
+    const session = await this.repository.createChantingSession({
+      ...input,
+      userId,
+    });
+
+    // Audit log the creation
+    await this.audit.append(
+      auditCtx,
+      "content.create",
+      "chanting_session",
+      session.id,
+      {
+        sessionDate: input.sessionDate,
+        durationMinutes: input.durationMinutes,
+        location: input.location,
+      }
+    );
+
+    return this.mapChantingSessionToResponse(session);
+  }
+
+  /**
+   * Get a specific chanting session
+   */
+  async getChantingSession(sessionId: string, userId: string): Promise<any> {
+    const session = await this.repository.findChantingSessionById(sessionId);
+    
+    if (!session) {
+      throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
+    }
+
+    // Check if session belongs to current user
+    if (session.userId !== userId) {
+      throw new ForbiddenException('Không có quyền truy cập phiên niệm kinh này');
+    }
+
+    return this.mapChantingSessionToResponse(session);
+  }
+
+  /**
+   * Update a chanting session
+   */
+  async updateChantingSession(sessionId: string, input: UpdateChantingSessionInput, userId: string, auditCtx: AuditContext): Promise<any> {
+    const session = await this.repository.findChantingSessionById(sessionId);
+    
+    if (!session) {
+      throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
+    }
+
+    // Check ownership
+    if (session.userId !== userId) {
+      throw new ForbiddenException('Không có quyền cập nhật phiên niệm kinh này');
+    }
+
+    const updatedSession = await this.repository.updateChantingSession(sessionId, input);
+
+    // Audit log the update
+    await this.audit.append(
+      auditCtx,
+      "content.update",
+      "chanting_session",
+      sessionId,
+      {
+        changes: input,
+      }
+    );
+
+    return this.mapChantingSessionToResponse(updatedSession);
+  }
+
+  /**
+   * Delete a chanting session
+   */
+  async deleteChantingSession(sessionId: string, userId: string, auditCtx: AuditContext): Promise<{ success: boolean }> {
+    const session = await this.repository.findChantingSessionById(sessionId);
+    
+    if (!session) {
+      throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
+    }
+
+    // Check ownership
+    if (session.userId !== userId) {
+      throw new ForbiddenException('Không có quyền xóa phiên niệm kinh này');
+    }
+
+    await this.repository.deleteChantingSession(sessionId);
+
+    // Audit log the deletion
+    await this.audit.append(
+      auditCtx,
+      "content.delete",
+      "chanting_session",
+      sessionId,
+      {
+        sessionDate: session.sessionDate.toISOString().split('T')[0],
+        durationMinutes: session.durationMinutes,
+      }
+    );
+
+    return { success: true };
+  }
+
+  // ============================================================================
+  // Admin Chanting Sessions
+  // ============================================================================
+
+  /**
+   * Get all chanting sessions for admin (with optional user filter)
+   */
+  async getAllChantingSessions(page: number, limit: number, userId?: string, auditCtx?: AuditContext): Promise<any> {
+    const offset = (page - 1) * limit;
+    const where = userId ? { userId } : {};
+    
+    const [sessions, total] = await Promise.all([
+      this.repository.findChantingSessions({
+        where,
+        orderBy: [{ sessionDate: 'desc' }, { startTime: 'desc' }],
+        skip: offset,
+        take: limit,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              displayName: true,
+            },
+          },
+        },
+      }),
+      this.repository.countChantingSessions({ where }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      sessions: sessions.map((session: any) => ({
+        ...this.mapChantingSessionToResponse(session),
+        user: session.user,
+      })),
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
+
+  /**
+   * Get chanting session details for admin
+   */
+  async getChantingSessionAdmin(sessionId: string, auditCtx?: AuditContext): Promise<any> {
+    const session = await this.repository.findChantingSessionById(sessionId, {
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            displayName: true,
+            role: true,
+          },
+        },
+      },
+    });
+    
+    if (!session) {
+      throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
+    }
+
+    return {
+      ...this.mapChantingSessionToResponse(session),
+      user: (session as any).user,
+    };
+  }
+
+  /**
+   * Delete chanting session as admin
+   */
+  async deleteChantingSessionAdmin(sessionId: string, auditCtx?: AuditContext): Promise<{ success: boolean }> {
+    const session = await this.repository.findChantingSessionById(sessionId);
+    
+    if (!session) {
+      throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
+    }
+
+    await this.repository.deleteChantingSession(sessionId);
+
+    // Audit log the admin deletion
+    if (auditCtx) {
+      await this.audit.append(
+        auditCtx,
+        "content.delete",
+        "chanting_session",
+        sessionId,
+        {
+          userId: session.userId,
+          sessionDate: session.sessionDate.toISOString().split('T')[0],
+          durationMinutes: session.durationMinutes,
+        }
+      );
+    }
+
+    return { success: true };
+  }
+
+  // ============================================================================
+  // Private helpers
+  // ============================================================================
+
+  private mapChantingSessionToResponse(session: any): any {
+    return {
+      id: session.id,
+      userId: session.userId,
+      sessionDate: session.sessionDate.toISOString().split('T')[0], // YYYY-MM-DD
+      startTime: session.startTime, // Already in string format from Prisma TIME
+      durationMinutes: session.durationMinutes,
+      location: session.location,
+      notes: session.notes,
+      createdAt: session.createdAt.toISOString(),
+      updatedAt: session.updatedAt.toISOString(),
+    };
   }
 }
 

@@ -175,3 +175,42 @@ export const adminUpdateEnvironmentRuleSchema = z
   });
 
 export type AdminUpdateEnvironmentRuleInput = z.infer<typeof adminUpdateEnvironmentRuleSchema>;
+
+// ============================================================================
+// Chanting Sessions
+// ============================================================================
+
+export const chantingSessionResponseSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  sessionDate: z.string(), // YYYY-MM-DD format
+  startTime: z.string(), // HH:mm format  
+  durationMinutes: z.number().int().positive(),
+  location: z.string().nullable(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+
+export const createChantingSessionSchema = z.object({
+  sessionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD format"),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/, "Must be HH:mm format"),
+  durationMinutes: z.number().int().min(1).max(1440), // Max 24 hours
+  location: z.string().trim().min(1).max(255).nullable().optional(),
+  notes: z.string().trim().max(1000).nullable().optional(),
+});
+
+export const updateChantingSessionSchema = createChantingSessionSchema.partial();
+
+export const chantingSessionsListSchema = z.object({
+  sessions: z.array(chantingSessionResponseSchema),
+  total: z.number().int().nonnegative(),
+  page: z.number().int().positive(),
+  limit: z.number().int().positive(),
+  totalPages: z.number().int().nonnegative(),
+});
+
+export type ChantingSessionResponse = z.infer<typeof chantingSessionResponseSchema>;
+export type CreateChantingSessionInput = z.infer<typeof createChantingSessionSchema>;
+export type UpdateChantingSessionInput = z.infer<typeof updateChantingSessionSchema>;
+export type ChantingSessionsListResponse = z.infer<typeof chantingSessionsListSchema>;

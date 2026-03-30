@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -238,15 +239,16 @@ function EnvironmentRuleEditDialog({
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-sm font-medium">
-            <input
-              type="checkbox"
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="reference-only"
               checked={referenceOnly}
-              onChange={(event) => setReferenceOnly(event.target.checked)}
-              className="size-4 rounded border border-border"
+              onCheckedChange={(checked) => setReferenceOnly(checked === true)}
             />
-            Chỉ tham khảo (reference-only)
-          </label>
+            <label htmlFor="reference-only" className="text-sm font-medium cursor-pointer">
+              Chỉ tham khảo (reference-only)
+            </label>
+          </div>
         </div>
 
         <DialogFooter>
