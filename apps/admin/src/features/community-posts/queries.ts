@@ -10,6 +10,7 @@ export interface CommunityPostItem {
   commentCount: number;
   reportCount: number;
   isHidden: boolean;
+  isPinned: boolean;
   author: { publicId: string; displayName: string; email: string };
   createdAt: string;
   updatedAt: string;

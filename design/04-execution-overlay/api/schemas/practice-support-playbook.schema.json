@@ -317,7 +317,10 @@
         "coreRecitations",
         "minorMantras",
         "timeRules",
+        "interruptionRules",
+        "workplacePracticeRules",
         "applicationScenarios",
+        "longTermAspirationNotes",
         "updatedAt"
       ],
       "additionalProperties": false,
@@ -354,7 +357,10 @@
           }
         },
         "timeRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "interruptionRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "workplacePracticeRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
         "applicationScenarios": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "longTermAspirationNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
     },
@@ -397,6 +403,11 @@
         "heartIncenseFallbackRules",
         "littleHouseDisciplineRules",
         "familyCoordinationRules",
+        "sacredItemRules",
+        "accidentalViolationRecovery",
+        "vegetarianDisciplineRules",
+        "officeNutritionNotes",
+        "supplementalDietNotes",
         "complianceAndEthicsRules",
         "updatedAt"
       ],
@@ -410,6 +421,11 @@
         "heartIncenseFallbackRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
         "littleHouseDisciplineRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
         "familyCoordinationRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "sacredItemRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "accidentalViolationRecovery": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "vegetarianDisciplineRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
+        "officeNutritionNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "supplementalDietNotes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
         "complianceAndEthicsRules": { "type": "array", "items": { "$ref": "#/$defs/ruleItem" } },
         "updatedAt": { "type": "string", "format": "date-time" }
       }

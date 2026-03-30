@@ -7,9 +7,10 @@ import { AdminMediaLibraryService } from "./admin-media-library.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
 import { StorageModule } from "../../platform/storage/storage.module.js";
 import { ChantingModule } from "./chanting/chanting.module.js";
+import { PracticeSupportModule } from "./practice-support/practice-support.module.js";
 
 @Module({
-  imports: [AuditModule, StorageModule, ChantingModule],
+  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule],
   controllers: [ContentController, GuideController, AdminDownloadController, AdminMediaLibraryController],
   providers: [ContentService, ContentRepository, AdminMediaLibraryService],
   exports: [ContentService],

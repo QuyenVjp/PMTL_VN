@@ -104,6 +104,12 @@
     min-width: unset;
   }
 
+  /* Radix focus guards use tabindex and must stay effectively invisible */
+  [data-radix-focus-guard] {
+    min-height: unset;
+    min-width: unset;
+  }
+
   /* Sidebar nav buttons & icon-only buttons inherit from ShadCN sidebar primitives */
   [data-sidebar="menu-button"],
   [data-sidebar="menu-action"] {
@@ -139,6 +145,7 @@
 /* Override Radix scroll locking for sticky headers */
 body[data-scroll-locked] {
   overflow: unset !important;
+  pointer-events: auto !important;
 }
 
 .CollapsibleContent {

@@ -15,11 +15,14 @@ export interface VolunteerItem {
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface VolunteerFilters {
   limit?: number;
   offset?: number;
+  isActive?: boolean;
+  search?: string;
 }
 
 // ── Query key factory ───────────────────────────────────────────────
@@ -37,6 +40,13 @@ export function volunteerListOptions(filters: VolunteerFilters = {}) {
     limit: filters.limit ?? 50,
     offset: filters.offset ?? 0,
   };
+
+  if (filters.isActive !== undefined) {
+    params.isActive = filters.isActive;
+  }
+  if (filters.search) {
+    params.search = filters.search;
+  }
 
   return queryOptions({
     queryKey: volunteerKeys.list(filters),

@@ -48,6 +48,7 @@ export type CommunityPostMinAggregateOutputType = {
   commentCount: number | null
   reportCount: number | null
   isHidden: boolean | null
+  isPinned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +63,7 @@ export type CommunityPostMaxAggregateOutputType = {
   commentCount: number | null
   reportCount: number | null
   isHidden: boolean | null
+  isPinned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -76,6 +78,7 @@ export type CommunityPostCountAggregateOutputType = {
   commentCount: number
   reportCount: number
   isHidden: number
+  isPinned: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +107,7 @@ export type CommunityPostMinAggregateInputType = {
   commentCount?: true | runtime.Types.Skip
   reportCount?: true | runtime.Types.Skip
   isHidden?: true | runtime.Types.Skip
+  isPinned?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -118,6 +122,7 @@ export type CommunityPostMaxAggregateInputType = {
   commentCount?: true | runtime.Types.Skip
   reportCount?: true | runtime.Types.Skip
   isHidden?: true | runtime.Types.Skip
+  isPinned?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -132,6 +137,7 @@ export type CommunityPostCountAggregateInputType = {
   commentCount?: true | runtime.Types.Skip
   reportCount?: true | runtime.Types.Skip
   isHidden?: true | runtime.Types.Skip
+  isPinned?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -233,6 +239,7 @@ export type CommunityPostGroupByOutputType = {
   commentCount: number
   reportCount: number
   isHidden: boolean
+  isPinned: boolean
   createdAt: Date
   updatedAt: Date
   _count: CommunityPostCountAggregateOutputType | null
@@ -270,6 +277,7 @@ export type CommunityPostWhereInput = {
   commentCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   reportCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -285,6 +293,7 @@ export type CommunityPostOrderByWithRelationInput = {
   commentCount?: Prisma.SortOrder | runtime.Types.Skip
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
   isHidden?: Prisma.SortOrder | runtime.Types.Skip
+  isPinned?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -303,6 +312,7 @@ export type CommunityPostWhereUniqueInput = Prisma.AtLeast<{
   commentCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   reportCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -318,6 +328,7 @@ export type CommunityPostOrderByWithAggregationInput = {
   commentCount?: Prisma.SortOrder | runtime.Types.Skip
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
   isHidden?: Prisma.SortOrder | runtime.Types.Skip
+  isPinned?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.CommunityPostCountOrderByAggregateInput | runtime.Types.Skip
@@ -340,6 +351,7 @@ export type CommunityPostScalarWhereWithAggregatesInput = {
   commentCount?: Prisma.IntWithAggregatesFilter<"CommunityPost"> | number | runtime.Types.Skip
   reportCount?: Prisma.IntWithAggregatesFilter<"CommunityPost"> | number | runtime.Types.Skip
   isHidden?: Prisma.BoolWithAggregatesFilter<"CommunityPost"> | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolWithAggregatesFilter<"CommunityPost"> | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
 }
@@ -353,6 +365,7 @@ export type CommunityPostCreateInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutCommunityPostsInput
@@ -368,6 +381,7 @@ export type CommunityPostUncheckedCreateInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -381,6 +395,7 @@ export type CommunityPostUpdateInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutCommunityPostsNestedInput | runtime.Types.Skip
@@ -396,6 +411,7 @@ export type CommunityPostUncheckedUpdateInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -410,6 +426,7 @@ export type CommunityPostCreateManyInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -423,6 +440,7 @@ export type CommunityPostUpdateManyMutationInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -437,6 +455,7 @@ export type CommunityPostUncheckedUpdateManyInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -461,6 +480,7 @@ export type CommunityPostCountOrderByAggregateInput = {
   commentCount?: Prisma.SortOrder | runtime.Types.Skip
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
   isHidden?: Prisma.SortOrder | runtime.Types.Skip
+  isPinned?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -481,6 +501,7 @@ export type CommunityPostMaxOrderByAggregateInput = {
   commentCount?: Prisma.SortOrder | runtime.Types.Skip
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
   isHidden?: Prisma.SortOrder | runtime.Types.Skip
+  isPinned?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -495,6 +516,7 @@ export type CommunityPostMinOrderByAggregateInput = {
   commentCount?: Prisma.SortOrder | runtime.Types.Skip
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
   isHidden?: Prisma.SortOrder | runtime.Types.Skip
+  isPinned?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -560,6 +582,7 @@ export type CommunityPostCreateWithoutAuthorInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -573,6 +596,7 @@ export type CommunityPostUncheckedCreateWithoutAuthorInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -616,6 +640,7 @@ export type CommunityPostScalarWhereInput = {
   commentCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   reportCount?: Prisma.IntFilter<"CommunityPost"> | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFilter<"CommunityPost"> | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
 }
@@ -629,6 +654,7 @@ export type CommunityPostCreateManyAuthorInput = {
   commentCount?: number | runtime.Types.Skip
   reportCount?: number | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -642,6 +668,7 @@ export type CommunityPostUpdateWithoutAuthorInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -655,6 +682,7 @@ export type CommunityPostUncheckedUpdateWithoutAuthorInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -668,6 +696,7 @@ export type CommunityPostUncheckedUpdateManyWithoutAuthorInput = {
   commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -684,6 +713,7 @@ export type CommunityPostSelect<ExtArgs extends runtime.Types.Extensions.Interna
   commentCount?: boolean | runtime.Types.Skip
   reportCount?: boolean | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -699,6 +729,7 @@ export type CommunityPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   commentCount?: boolean | runtime.Types.Skip
   reportCount?: boolean | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -714,6 +745,7 @@ export type CommunityPostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   commentCount?: boolean | runtime.Types.Skip
   reportCount?: boolean | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -729,11 +761,12 @@ export type CommunityPostSelectScalar = {
   commentCount?: boolean | runtime.Types.Skip
   reportCount?: boolean | runtime.Types.Skip
   isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type CommunityPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "authorId" | "content" | "status" | "heartCount" | "commentCount" | "reportCount" | "isHidden" | "createdAt" | "updatedAt", ExtArgs["result"]["communityPost"], runtime.Types.Skip>
+export type CommunityPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "authorId" | "content" | "status" | "heartCount" | "commentCount" | "reportCount" | "isHidden" | "isPinned" | "createdAt" | "updatedAt", ExtArgs["result"]["communityPost"], runtime.Types.Skip>
 export type CommunityPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -759,6 +792,7 @@ export type $CommunityPostPayload<ExtArgs extends runtime.Types.Extensions.Inter
     commentCount: number
     reportCount: number
     isHidden: boolean
+    isPinned: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["communityPost"]>
@@ -1194,6 +1228,7 @@ export interface CommunityPostFieldRefs {
   readonly commentCount: Prisma.FieldRef<"CommunityPost", 'Int'>
   readonly reportCount: Prisma.FieldRef<"CommunityPost", 'Int'>
   readonly isHidden: Prisma.FieldRef<"CommunityPost", 'Boolean'>
+  readonly isPinned: Prisma.FieldRef<"CommunityPost", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"CommunityPost", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CommunityPost", 'DateTime'>
 }

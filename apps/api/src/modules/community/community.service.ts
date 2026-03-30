@@ -10,6 +10,9 @@ import type {
   CreateCommunityPostInput,
   CreateGuestbookEntryInput,
   GuestbookQuery,
+  CreateVolunteerInput,
+  UpdateVolunteerInput,
+  VolunteerQuery,
 } from "./community.schemas.js";
 
 @Injectable()
@@ -110,6 +113,72 @@ export class CommunityService {
     );
   }
 
+  // ── Admin post actions ──────────────────────────────────────────────
+
+  async adminPinPost(publicId: string, adminId: string) {
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    await this.repo.updatePost(publicId, { isPinned: true });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.update",
+      "community_post",
+      publicId,
+    );
+
+    return { data: { publicId, pinned: true } };
+  }
+
+  async adminUnpinPost(publicId: string, adminId: string) {
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    await this.repo.updatePost(publicId, { isPinned: false });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.update",
+      "community_post",
+      publicId,
+    );
+
+    return { data: { publicId, pinned: false } };
+  }
+
+  async adminHidePost(publicId: string, adminId: string) {
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    await this.repo.updatePost(publicId, { isHidden: true });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.update",
+      "community_post",
+      publicId,
+    );
+
+    return { data: { publicId, hidden: true } };
+  }
+
+  async adminRestorePost(publicId: string, adminId: string) {
+    const post = await this.repo.findAdminPostByPublicId(publicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    await this.repo.updatePost(publicId, { isHidden: false });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.community_post.update",
+      "community_post",
+      publicId,
+    );
+
+    return { data: { publicId, hidden: false } };
+  }
+
   // ── Admin guestbook endpoints ──────────────────────────────────────
 
   async adminListGuestbook(query: GuestbookQuery) {
@@ -180,5 +249,103 @@ export class CommunityService {
       publicId,
       { status: entry.status },
     );
+  }
+
+  // ── Admin volunteer endpoints ───────────────────────────────────────
+
+  async adminListVolunteers(query: VolunteerQuery) {
+    const { data, total } = await this.repo.findManyVolunteers(query);
+    return {
+      data,
+      meta: {
+        pagination: {
+          total,
+          limit: query.limit,
+          offset: query.offset,
+          hasMore: query.offset + query.limit < total,
+        },
+      },
+    };
+  }
+
+  async adminCreateVolunteer(input: CreateVolunteerInput, adminId: string) {
+    const volunteer = await this.repo.createVolunteer(input, nanoid());
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "content.create",
+      "volunteer",
+      volunteer.publicId,
+    );
+
+    return volunteer;
+  }
+
+  async adminGetVolunteer(publicId: string) {
+    const volunteer = await this.repo.findVolunteerByPublicId(publicId);
+    if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
+    return volunteer;
+  }
+
+  async adminUpdateVolunteer(publicId: string, input: UpdateVolunteerInput, adminId: string) {
+    const volunteer = await this.repo.findVolunteerByPublicId(publicId);
+    if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
+
+    const updated = await this.repo.updateVolunteer(publicId, input);
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "content.update",
+      "volunteer",
+      publicId,
+    );
+
+    return updated;
+  }
+
+  async adminDeleteVolunteer(publicId: string, adminId: string) {
+    const volunteer = await this.repo.findVolunteerByPublicId(publicId);
+    if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
+
+    await this.repo.deleteVolunteer(publicId);
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "content.delete",
+      "volunteer",
+      publicId,
+    );
+  }
+
+  async adminActivateVolunteer(publicId: string, adminId: string) {
+    const volunteer = await this.repo.findVolunteerByPublicId(publicId);
+    if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
+
+    await this.repo.updateVolunteer(publicId, { isActive: true });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.volunteer.update",
+      "volunteer",
+      publicId,
+    );
+
+    return { data: { publicId, isActive: true } };
+  }
+
+  async adminDeactivateVolunteer(publicId: string, adminId: string) {
+    const volunteer = await this.repo.findVolunteerByPublicId(publicId);
+    if (!volunteer) throw new NotFoundException("Không tìm thấy tình nguyện viên");
+
+    await this.repo.updateVolunteer(publicId, { isActive: false });
+
+    await this.audit.append(
+      { actorId: adminId, actorType: "admin" },
+      "admin.volunteer.update",
+      "volunteer",
+      publicId,
+    );
+
+    return { data: { publicId, isActive: false } };
   }
 }

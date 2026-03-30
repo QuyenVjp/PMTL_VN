@@ -1,0 +1,6 @@
+# Runtime Practice Support Data
+
+This directory stores runtime-mutable practice support content.
+Files here are owned by the API at runtime and are not design canon.
+
+Bootstrap data comes from `design/04-execution-overlay/api/schemas/practice-support.seed.vi.json`.

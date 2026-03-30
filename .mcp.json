@@ -1,5 +1,21 @@
 {
   "mcpServers": {
+    "corn-hub": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\ADMIN\\CornMCP\\apps\\corn-mcp\\dist\\cli.js"
+      ],
+      "env": {
+        "DASHBOARD_API_URL": "http://localhost:4000",
+        "QDRANT_URL": "http://localhost:6333",
+        "MCP_SERVER_NAME": "corn-hub-local",
+        "MCP_SERVER_VERSION": "0.1.0",
+        "OPENAI_API_KEY": "pa-2Cpmw4cfnW3H8BuMVjpSJP9SHP39nkm4IPOpsCV-zVX",
+        "OPENAI_API_BASE": "https://api.voyageai.com/v1",
+        "MEM9_EMBEDDING_MODEL": "voyage-code-3"
+      }
+    },
     "stitch": {
       "type": "stdio",
       "command": "cmd",

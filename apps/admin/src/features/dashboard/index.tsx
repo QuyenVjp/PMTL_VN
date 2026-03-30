@@ -45,7 +45,6 @@ import { cn } from "@/lib/utils";
 import { useSearch } from "@/stores/search";
 import { dashboardStatsOptions, dashboardKeys } from "./queries.js";
 import { healthExtendedOptions } from "@/features/system/health-queries.js";
-import { PracticeStatsOverview } from "@/features/practice";
 import { toast } from "sonner";
 
 // ── Badge helpers ─────────────────────────────────────────────────────
@@ -845,9 +844,6 @@ export function DashboardOverview() {
           )}
         </CardContent>
       </Card>
-
-      {/* Practice Core modules stats — private aggregate, no member-level data */}
-      <PracticeStatsOverview />
     </div>
   );
 }

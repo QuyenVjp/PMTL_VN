@@ -54,6 +54,49 @@
   - nếu user chọn “tụng thay”, yêu cầu điền rõ người nhận.
   - nếu user chọn nhiều người nhận, yêu cầu tách record theo từng đối tượng.
 
+## Interruption Rules
+- Ở môi trường công sở hoặc bối cảnh dễ bị gián đoạn:
+  - nếu đang niệm bài dài mà bị sếp/đồng nghiệp/cuộc gọi ngắt quãng:
+    - cho phép lane `tam-dung-ngan`
+    - đọc `Ong Lai Mu Suo He` 1 lần trước khi dừng
+    - xử lý xong việc thì đọc lại `Ong Lai Mu Suo He` 1 lần rồi tiếp tục phần còn dang dở
+- Nếu đang niệm bài chú ngắn:
+  - ưu tiên niệm lại từ đầu sau khi bị ngắt
+- Product rule:
+  - hiển thị dưới dạng `resume guidance`
+  - không auto-split count hoặc tự cộng biến cho phần bị ngắt
+
+## Workplace / Busy-mode Rules
+- Công ty hoặc nơi đông người vẫn có thể là lane thực hành hợp lệ nếu:
+  - tìm được chỗ tương đối yên
+  - niệm nhỏ vừa đủ cho chính mình nghe
+  - không đọc quá to
+  - không đọc thầm tuyệt đối kiểu chỉ lướt trong đầu
+- `Tuyet doi khong` mang kinh sách hoặc thực hành trong nhà vệ sinh.
+- Với môi trường công sở:
+  - `Tâm Hương` là fallback chuẩn trước khi vào công khóa
+  - chỉ cho phép quán tưởng trong tâm
+  - không biểu diễn động tác chắp tay/cắm hương/lạy thật giữa nơi làm việc
+- Mọi kinh/chú đều phải đọc đầy đủ tiêu đề trước khi vào nội dung chính.
+
+## Weather-sensitive Rules
+- Nếu trời mưa to, sấm chớp, hoặc âm u nặng:
+  - tạm dừng lane `Tâm Kinh`
+  - tạm dừng lane `Vãng Sinh Chú`
+  - ưu tiên lane an toàn hơn như `Chú Đại Bi` hoặc các chú ngắn phù hợp
+- Đây là `source-backed caution`, không phải hard-fail validator cho mọi flow.
+
+## Long-term Aspiration Lane
+- Trong product canon, `Niệm Kinh` không chỉ là lane giải quyết rắc rối đời sống trước mắt.
+- Cần giữ thêm lớp `aspiration note` cho người dùng nâng cao:
+  - mục tiêu dài hạn là thanh lọc nghiệp lực và tiến về giải thoát khỏi luân hồi
+  - `Vãng Sinh Chú` và `Kinh A Di Đà` là lane tham khảo cho nguyện lực Tịnh độ trong bối cảnh phù hợp
+  - với người cao tuổi hoặc người có nguyện vãng sinh rõ, có thể hiển thị note tham khảo về `Kinh A Di Đà 3-7 bien/ngay`
+  - ở giai đoạn lâm chung hoặc quá yếu, lane tối giản là xưng niệm danh hiệu `Nam mo Dai Tu Dai Bi Quan The Am Bo Tat`
+- Product rule:
+  - chỉ giữ ở mức `orientation / aspiration`
+  - không claim chắc chắn “thoát luân hồi” như một machine outcome
+
 ## UX Contract
 - Có `Busy mode` và `Heart incense fallback`.
 - Không fear-based popup.

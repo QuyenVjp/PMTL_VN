@@ -24,7 +24,7 @@ import {
 import { createSelectColumn } from "@/lib/table/select-column";
 import { guestbookListOptions, type GuestbookItem } from "@/features/guestbook/queries";
 import {
-  useDeleteGuestbookEntry,
+  useDeleteGuestbook,
   useUpdateGuestbookStatus,
 } from "@/features/guestbook/mutations";
 
@@ -240,7 +240,7 @@ function GuestbookTable() {
 function GuestbookDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useGuestbook();
   const updateStatus = useUpdateGuestbookStatus();
-  const deleteGuestbookEntry = useDeleteGuestbookEntry();
+  const deleteGuestbookEntry = useDeleteGuestbook();
 
   const handleClose = () => {
     setOpen(null);

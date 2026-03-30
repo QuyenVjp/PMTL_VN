@@ -82,6 +82,21 @@ export type MediaCollection = Prisma.MediaCollectionModel
  */
 export type MediaCollectionItem = Prisma.MediaCollectionItemModel
 /**
+ * Model PostCategory
+ * 
+ */
+export type PostCategory = Prisma.PostCategoryModel
+/**
+ * Model PostTag
+ * 
+ */
+export type PostTag = Prisma.PostTagModel
+/**
+ * Model PostTagMap
+ * 
+ */
+export type PostTagMap = Prisma.PostTagMapModel
+/**
  * Model Post
  * 
  */

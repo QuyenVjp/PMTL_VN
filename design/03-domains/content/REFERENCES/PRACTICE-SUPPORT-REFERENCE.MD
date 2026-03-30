@@ -34,6 +34,10 @@ initialExpandLevel: 3
   - `design/03-domains/content/REFERENCES/CHANT-ITEMS-CATALOG.MD`
   - `design/03-domains/content/REFERENCES/PRACTICE-UI-CHECKLISTS.MD`
   - `design/03-domains/content/REFERENCES/LITTLE-HOUSE-SPEC.MD`
+  - `design/03-domains/content/REFERENCES/NIEM-KINH-CORE-RULES.md`
+  - `design/03-domains/content/REFERENCES/SACRED-ITEMS-AND-PROTECTION-CARD-RULES.md`
+  - `design/03-domains/vows-merit/REFERENCES/VEGETARIAN-PRACTICE-AND-VOW-GUIDE.md`
+  - `design/03-domains/wisdom-qa/REFERENCES/AFFINITY-WITH-BUDDHISM-NOTES.md`
 
 ## Quy ước nguồn trích xuất
 

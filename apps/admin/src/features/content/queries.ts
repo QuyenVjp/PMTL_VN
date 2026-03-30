@@ -8,13 +8,15 @@ export interface PostListItem {
   id: string;
   slug: string;
   title: string;
+  postType: string;
+  sourceRef: string | null;
   excerpt: string | null;
   status: string;
-  author: {
-    id: string;
-    displayName: string;
-    avatarUrl: string | null;
-  };
+  featured: boolean;
+  allowComments: boolean;
+  author: { id: string; displayName: string; avatarUrl: string | null };
+  primaryCategory: { id: string; name: string; slug: string } | null;
+  tags: { id: string; name: string; slug: string }[];
   featuredImageUrl: string | null;
   publishedAt: string | null;
   createdAt: string;
@@ -23,7 +25,6 @@ export interface PostListItem {
 
 export interface PostDetail extends PostListItem {
   content: unknown;
-  featuredImageId: string | null;
 }
 
 export interface PostListFilters {
@@ -31,6 +32,8 @@ export interface PostListFilters {
   limit?: number;
   search?: string;
   status?: string;
+  postType?: string;
+  featured?: boolean;
 }
 
 export const postKeys = {

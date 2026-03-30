@@ -3,6 +3,15 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope, SingleEnvelope } from "@/lib/api/envelopes.js";
 import type { AdminUserListItem, AdminUserDetail, UserListFilters } from "./types.js";
 
+function mediaPath(url: string | null | undefined): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
+
 /** Query key factory — keeps cache keys consistent across the feature */
 export const userAdminKeys = {
   all: ["admin-users"] as const,
@@ -26,7 +35,16 @@ export function userListOptions(filters: UserListFilters = {}) {
 
   return queryOptions({
     queryKey: userAdminKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<AdminUserListItem>>("/admin/users", params),
+    queryFn: async () => {
+      const envelope = await adminClient.get<ListEnvelope<AdminUserListItem>>("/admin/users", params);
+      return {
+        ...envelope,
+        data: envelope.data.map((user) => ({
+          ...user,
+          avatarUrl: mediaPath(user.avatarUrl),
+        })),
+      };
+    },
   });
 }
 
@@ -34,7 +52,16 @@ export function userListOptions(filters: UserListFilters = {}) {
 export function userDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: userAdminKeys.detail(publicId),
-    queryFn: () => adminClient.get<SingleEnvelope<AdminUserDetail>>(`/admin/users/${publicId}`),
+    queryFn: async () => {
+      const envelope = await adminClient.get<SingleEnvelope<AdminUserDetail>>(`/admin/users/${publicId}`);
+      return {
+        ...envelope,
+        data: {
+          ...envelope.data,
+          avatarUrl: mediaPath(envelope.data.avatarUrl),
+        },
+      };
+    },
     enabled: !!publicId,
   });
 }

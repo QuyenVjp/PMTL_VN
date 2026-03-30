@@ -59,6 +59,9 @@ export const ModelName = {
   MediaAsset: 'MediaAsset',
   MediaCollection: 'MediaCollection',
   MediaCollectionItem: 'MediaCollectionItem',
+  PostCategory: 'PostCategory',
+  PostTag: 'PostTag',
+  PostTagMap: 'PostTagMap',
   Post: 'Post',
   ChantEnvironmentRuleGroup: 'ChantEnvironmentRuleGroup',
   ChantEnvironmentRule: 'ChantEnvironmentRule',
@@ -237,16 +240,54 @@ export const MediaCollectionItemScalarFieldEnum = {
 export type MediaCollectionItemScalarFieldEnum = (typeof MediaCollectionItemScalarFieldEnum)[keyof typeof MediaCollectionItemScalarFieldEnum]
 
 
+export const PostCategoryScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PostCategoryScalarFieldEnum = (typeof PostCategoryScalarFieldEnum)[keyof typeof PostCategoryScalarFieldEnum]
+
+
+export const PostTagScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PostTagScalarFieldEnum = (typeof PostTagScalarFieldEnum)[keyof typeof PostTagScalarFieldEnum]
+
+
+export const PostTagMapScalarFieldEnum = {
+  postId: 'postId',
+  tagId: 'tagId'
+} as const
+
+export type PostTagMapScalarFieldEnum = (typeof PostTagMapScalarFieldEnum)[keyof typeof PostTagMapScalarFieldEnum]
+
+
 export const PostScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
   slug: 'slug',
   title: 'title',
+  postType: 'postType',
+  sourceRef: 'sourceRef',
   excerpt: 'excerpt',
   content: 'content',
   status: 'status',
   authorId: 'authorId',
+  primaryCategoryId: 'primaryCategoryId',
   featuredImageId: 'featuredImageId',
+  featured: 'featured',
+  allowComments: 'allowComments',
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -318,6 +359,7 @@ export const CommunityPostScalarFieldEnum = {
   commentCount: 'commentCount',
   reportCount: 'reportCount',
   isHidden: 'isHidden',
+  isPinned: 'isPinned',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -448,6 +490,8 @@ export const BeginnerGuideScalarFieldEnum = {
   content: 'content',
   excerpt: 'excerpt',
   category: 'category',
+  sortOrder: 'sortOrder',
+  versionNote: 'versionNote',
   status: 'status',
   authorId: 'authorId',
   publishedAt: 'publishedAt',

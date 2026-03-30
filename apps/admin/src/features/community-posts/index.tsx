@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { CheckCircleIcon, EyeOffIcon, Trash2Icon, XCircleIcon } from "lucide-react";
+import { CheckCircleIcon, EyeOffIcon, EyeIcon, PinIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -29,11 +29,15 @@ import {
 import {
   useDeleteCommunityPost,
   useUpdateCommunityPostStatus,
+  useHidePost,
+  useRestorePost,
+  usePinPost,
+  useUnpinPost,
 } from "@/features/community-posts/mutations";
 
 // ── Context ──────────────────────────────────────────────────────────
 
-type CommunityDialogType = "approve" | "reject" | "hide" | "delete" | null;
+type CommunityDialogType = "approve" | "reject" | "hide" | "restore" | "pin" | "unpin" | "delete" | null;
 
 type CommunityContextValue = {
   open: CommunityDialogType;
@@ -105,9 +109,15 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
         ...(row.status !== "APPROVED"
           ? [{ label: "Duyệt", icon: CheckCircleIcon, onClick: () => open("approve") }]
           : []),
-        ...(row.status === "APPROVED"
+        ...(row.status === "APPROVED" && !row.isHidden
           ? [{ label: "Ẩn", icon: EyeOffIcon, onClick: () => open("hide") }]
           : []),
+        ...(row.isHidden
+          ? [{ label: "Khôi phục", icon: EyeIcon, onClick: () => open("restore") }]
+          : []),
+        ...(!row.isPinned
+          ? [{ label: "Ghim", icon: PinIcon, onClick: () => open("pin") }]
+          : [{ label: "Bỏ ghim", icon: PinIcon, onClick: () => open("unpin") }]),
         ...(row.status !== "REJECTED"
           ? [
               {
@@ -115,7 +125,7 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
                 icon: XCircleIcon,
                 onClick: () => open("reject"),
                 variant: "destructive" as const,
-                separator: row.status !== "APPROVED",
+                separator: true,
               },
             ]
           : []),
@@ -124,7 +134,7 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
           icon: Trash2Icon,
           onClick: () => open("delete"),
           variant: "destructive" as const,
-          separator: true,
+          separator: row.status === "REJECTED",
         },
       ]}
     />
@@ -176,6 +186,22 @@ function CommunityPostsTable() {
         enableSorting: false,
       },
       {
+        accessorKey: "heartCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tim" />,
+        cell: ({ row }) => (
+          <div className="tabular-nums text-muted-foreground">{row.original.heartCount}</div>
+        ),
+        meta: { label: "Tim" },
+      },
+      {
+        accessorKey: "commentCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Bình luận" />,
+        cell: ({ row }) => (
+          <div className="tabular-nums text-muted-foreground">{row.original.commentCount}</div>
+        ),
+        meta: { label: "Bình luận" },
+      },
+      {
         accessorKey: "reportCount",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Báo cáo" />,
         cell: ({ row }) => (
@@ -184,6 +210,18 @@ function CommunityPostsTable() {
           </div>
         ),
         meta: { label: "Báo cáo" },
+      },
+      {
+        accessorKey: "isPinned",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Ghim" />,
+        cell: ({ row }) =>
+          row.original.isPinned ? (
+            <Badge variant="outline" className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400">
+              Đã ghim
+            </Badge>
+          ) : null,
+        meta: { label: "Ghim" },
+        enableSorting: false,
       },
       {
         accessorKey: "createdAt",
@@ -248,17 +286,15 @@ function CommunityDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useCommunity();
   const updateStatus = useUpdateCommunityPostStatus();
   const deletePost = useDeleteCommunityPost();
+  const hidePost = useHidePost();
+  const restorePost = useRestorePost();
+  const pinPost = usePinPost();
+  const unpinPost = useUnpinPost();
 
   const handleClose = () => {
     setOpen(null);
     setCurrentRow(null);
   };
-
-  const mutate = (status: string) =>
-    updateStatus.mutate(
-      { publicId: currentRow!.publicId, status },
-      { onSuccess: handleClose },
-    );
 
   if (!currentRow) return null;
 
@@ -271,7 +307,12 @@ function CommunityDialogs() {
         description="Bài đăng sẽ hiển thị công khai trong cộng đồng."
         confirmLabel="Duyệt"
         isPending={updateStatus.isPending}
-        onConfirm={() => mutate("APPROVED")}
+        onConfirm={() =>
+          updateStatus.mutate(
+            { publicId: currentRow.publicId, status: "APPROVED" },
+            { onSuccess: handleClose },
+          )
+        }
       />
       <WorkspaceConfirmDialog
         open={open === "hide"}
@@ -279,8 +320,35 @@ function CommunityDialogs() {
         title="Ẩn bài đăng"
         description="Bài đăng sẽ bị ẩn khỏi cộng đồng nhưng không bị xoá."
         confirmLabel="Ẩn"
-        isPending={updateStatus.isPending}
-        onConfirm={() => mutate("HIDDEN")}
+        isPending={hidePost.isPending}
+        onConfirm={() => hidePost.mutate(currentRow.publicId, { onSuccess: handleClose })}
+      />
+      <WorkspaceConfirmDialog
+        open={open === "restore"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("restore"))}
+        title="Khôi phục bài đăng"
+        description="Bài đăng sẽ hiển thị trở lại trong cộng đồng."
+        confirmLabel="Khôi phục"
+        isPending={restorePost.isPending}
+        onConfirm={() => restorePost.mutate(currentRow.publicId, { onSuccess: handleClose })}
+      />
+      <WorkspaceConfirmDialog
+        open={open === "pin"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("pin"))}
+        title="Ghim bài đăng"
+        description="Bài đăng sẽ được hiển thị ở vị trí ưu tiên đầu danh sách."
+        confirmLabel="Ghim"
+        isPending={pinPost.isPending}
+        onConfirm={() => pinPost.mutate(currentRow.publicId, { onSuccess: handleClose })}
+      />
+      <WorkspaceConfirmDialog
+        open={open === "unpin"}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen("unpin"))}
+        title="Bỏ ghim bài đăng"
+        description="Bài đăng sẽ không còn được ưu tiên hiển thị."
+        confirmLabel="Bỏ ghim"
+        isPending={unpinPost.isPending}
+        onConfirm={() => unpinPost.mutate(currentRow.publicId, { onSuccess: handleClose })}
       />
       <WorkspaceConfirmDialog
         open={open === "reject"}
@@ -290,7 +358,12 @@ function CommunityDialogs() {
         confirmLabel="Từ chối"
         variant="destructive"
         isPending={updateStatus.isPending}
-        onConfirm={() => mutate("REJECTED")}
+        onConfirm={() =>
+          updateStatus.mutate(
+            { publicId: currentRow.publicId, status: "REJECTED" },
+            { onSuccess: handleClose },
+          )
+        }
       />
       <WorkspaceConfirmDialog
         open={open === "delete"}
@@ -298,7 +371,8 @@ function CommunityDialogs() {
         title="Xoá bài đăng"
         description={
           <>
-            Xoá bài đăng <span className="font-semibold text-foreground">{currentRow.publicId}</span>?
+            Xoá bài đăng của{" "}
+            <span className="font-semibold text-foreground">{currentRow.author.displayName}</span>?
             Hành động này không thể hoàn tác.
           </>
         }

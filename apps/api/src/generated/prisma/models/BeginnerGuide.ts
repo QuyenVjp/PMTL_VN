@@ -20,8 +20,18 @@ export type BeginnerGuideModel = runtime.Types.Result.DefaultSelection<Prisma.$B
 
 export type AggregateBeginnerGuide = {
   _count: BeginnerGuideCountAggregateOutputType | null
+  _avg: BeginnerGuideAvgAggregateOutputType | null
+  _sum: BeginnerGuideSumAggregateOutputType | null
   _min: BeginnerGuideMinAggregateOutputType | null
   _max: BeginnerGuideMaxAggregateOutputType | null
+}
+
+export type BeginnerGuideAvgAggregateOutputType = {
+  sortOrder: number | null
+}
+
+export type BeginnerGuideSumAggregateOutputType = {
+  sortOrder: number | null
 }
 
 export type BeginnerGuideMinAggregateOutputType = {
@@ -31,6 +41,8 @@ export type BeginnerGuideMinAggregateOutputType = {
   slug: string | null
   excerpt: string | null
   category: $Enums.GuideCategory | null
+  sortOrder: number | null
+  versionNote: string | null
   status: $Enums.ContentStatus | null
   authorId: string | null
   publishedAt: Date | null
@@ -45,6 +57,8 @@ export type BeginnerGuideMaxAggregateOutputType = {
   slug: string | null
   excerpt: string | null
   category: $Enums.GuideCategory | null
+  sortOrder: number | null
+  versionNote: string | null
   status: $Enums.ContentStatus | null
   authorId: string | null
   publishedAt: Date | null
@@ -60,6 +74,8 @@ export type BeginnerGuideCountAggregateOutputType = {
   content: number
   excerpt: number
   category: number
+  sortOrder: number
+  versionNote: number
   status: number
   authorId: number
   publishedAt: number
@@ -69,6 +85,14 @@ export type BeginnerGuideCountAggregateOutputType = {
 }
 
 
+export type BeginnerGuideAvgAggregateInputType = {
+  sortOrder?: true | runtime.Types.Skip
+}
+
+export type BeginnerGuideSumAggregateInputType = {
+  sortOrder?: true | runtime.Types.Skip
+}
+
 export type BeginnerGuideMinAggregateInputType = {
   id?: true | runtime.Types.Skip
   publicId?: true | runtime.Types.Skip
@@ -76,6 +100,8 @@ export type BeginnerGuideMinAggregateInputType = {
   slug?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  versionNote?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
@@ -90,6 +116,8 @@ export type BeginnerGuideMaxAggregateInputType = {
   slug?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  versionNote?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
@@ -105,6 +133,8 @@ export type BeginnerGuideCountAggregateInputType = {
   content?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
+  sortOrder?: true | runtime.Types.Skip
+  versionNote?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
@@ -151,6 +181,18 @@ export type BeginnerGuideAggregateArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BeginnerGuideAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BeginnerGuideSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BeginnerGuideMinAggregateInputType
@@ -181,6 +223,8 @@ export type BeginnerGuideGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   _count?: BeginnerGuideCountAggregateInputType | true
+  _avg?: BeginnerGuideAvgAggregateInputType
+  _sum?: BeginnerGuideSumAggregateInputType
   _min?: BeginnerGuideMinAggregateInputType
   _max?: BeginnerGuideMaxAggregateInputType
 }
@@ -193,12 +237,16 @@ export type BeginnerGuideGroupByOutputType = {
   content: runtime.JsonValue
   excerpt: string | null
   category: $Enums.GuideCategory
+  sortOrder: number
+  versionNote: string | null
   status: $Enums.ContentStatus
   authorId: string
   publishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: BeginnerGuideCountAggregateOutputType | null
+  _avg: BeginnerGuideAvgAggregateOutputType | null
+  _sum: BeginnerGuideSumAggregateOutputType | null
   _min: BeginnerGuideMinAggregateOutputType | null
   _max: BeginnerGuideMaxAggregateOutputType | null
 }
@@ -229,6 +277,8 @@ export type BeginnerGuideWhereInput = {
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
+  versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFilter<"BeginnerGuide"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"BeginnerGuide"> | Date | string | null | runtime.Types.Skip
@@ -245,6 +295,8 @@ export type BeginnerGuideOrderByWithRelationInput = {
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  versionNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
@@ -264,6 +316,8 @@ export type BeginnerGuideWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
+  versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFilter<"BeginnerGuide"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"BeginnerGuide"> | Date | string | null | runtime.Types.Skip
@@ -280,14 +334,18 @@ export type BeginnerGuideOrderByWithAggregationInput = {
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  versionNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.BeginnerGuideCountOrderByAggregateInput | runtime.Types.Skip
+  _avg?: Prisma.BeginnerGuideAvgOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.BeginnerGuideMaxOrderByAggregateInput | runtime.Types.Skip
   _min?: Prisma.BeginnerGuideMinOrderByAggregateInput | runtime.Types.Skip
+  _sum?: Prisma.BeginnerGuideSumOrderByAggregateInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideScalarWhereWithAggregatesInput = {
@@ -301,6 +359,8 @@ export type BeginnerGuideScalarWhereWithAggregatesInput = {
   content?: Prisma.JsonWithAggregatesFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableWithAggregatesFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryWithAggregatesFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntWithAggregatesFilter<"BeginnerGuide"> | number | runtime.Types.Skip
+  versionNote?: Prisma.StringNullableWithAggregatesFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"BeginnerGuide"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringWithAggregatesFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"BeginnerGuide"> | Date | string | null | runtime.Types.Skip
@@ -316,6 +376,8 @@ export type BeginnerGuideCreateInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -331,6 +393,8 @@ export type BeginnerGuideUncheckedCreateInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   authorId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
@@ -346,6 +410,8 @@ export type BeginnerGuideUpdateInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -361,6 +427,8 @@ export type BeginnerGuideUncheckedUpdateInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
@@ -376,6 +444,8 @@ export type BeginnerGuideCreateManyInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   authorId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
@@ -391,6 +461,8 @@ export type BeginnerGuideUpdateManyMutationInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -405,6 +477,8 @@ export type BeginnerGuideUncheckedUpdateManyInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
@@ -430,11 +504,17 @@ export type BeginnerGuideCountOrderByAggregateInput = {
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  versionNote?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type BeginnerGuideAvgOrderByAggregateInput = {
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type BeginnerGuideMaxOrderByAggregateInput = {
@@ -444,6 +524,8 @@ export type BeginnerGuideMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  versionNote?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -458,11 +540,17 @@ export type BeginnerGuideMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
+  versionNote?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type BeginnerGuideSumOrderByAggregateInput = {
+  sortOrder?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type BeginnerGuideCreateNestedManyWithoutAuthorInput = {
@@ -519,6 +607,8 @@ export type BeginnerGuideCreateWithoutAuthorInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -533,6 +623,8 @@ export type BeginnerGuideUncheckedCreateWithoutAuthorInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -576,6 +668,8 @@ export type BeginnerGuideScalarWhereInput = {
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
+  versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFilter<"BeginnerGuide"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"BeginnerGuide"> | Date | string | null | runtime.Types.Skip
@@ -591,6 +685,8 @@ export type BeginnerGuideCreateManyAuthorInput = {
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -605,6 +701,8 @@ export type BeginnerGuideUpdateWithoutAuthorInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -619,6 +717,8 @@ export type BeginnerGuideUncheckedUpdateWithoutAuthorInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -633,6 +733,8 @@ export type BeginnerGuideUncheckedUpdateManyWithoutAuthorInput = {
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -649,6 +751,8 @@ export type BeginnerGuideSelect<ExtArgs extends runtime.Types.Extensions.Interna
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  versionNote?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
@@ -665,6 +769,8 @@ export type BeginnerGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  versionNote?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
@@ -681,6 +787,8 @@ export type BeginnerGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  versionNote?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
@@ -697,6 +805,8 @@ export type BeginnerGuideSelectScalar = {
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
+  sortOrder?: boolean | runtime.Types.Skip
+  versionNote?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
@@ -704,7 +814,7 @@ export type BeginnerGuideSelectScalar = {
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type BeginnerGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "content" | "excerpt" | "category" | "status" | "authorId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["beginnerGuide"], runtime.Types.Skip>
+export type BeginnerGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "content" | "excerpt" | "category" | "sortOrder" | "versionNote" | "status" | "authorId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["beginnerGuide"], runtime.Types.Skip>
 export type BeginnerGuideInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -728,6 +838,8 @@ export type $BeginnerGuidePayload<ExtArgs extends runtime.Types.Extensions.Inter
     content: runtime.JsonValue
     excerpt: string | null
     category: $Enums.GuideCategory
+    sortOrder: number
+    versionNote: string | null
     status: $Enums.ContentStatus
     authorId: string
     publishedAt: Date | null
@@ -1164,6 +1276,8 @@ export interface BeginnerGuideFieldRefs {
   readonly content: Prisma.FieldRef<"BeginnerGuide", 'Json'>
   readonly excerpt: Prisma.FieldRef<"BeginnerGuide", 'String'>
   readonly category: Prisma.FieldRef<"BeginnerGuide", 'GuideCategory'>
+  readonly sortOrder: Prisma.FieldRef<"BeginnerGuide", 'Int'>
+  readonly versionNote: Prisma.FieldRef<"BeginnerGuide", 'String'>
   readonly status: Prisma.FieldRef<"BeginnerGuide", 'ContentStatus'>
   readonly authorId: Prisma.FieldRef<"BeginnerGuide", 'String'>
   readonly publishedAt: Prisma.FieldRef<"BeginnerGuide", 'DateTime'>

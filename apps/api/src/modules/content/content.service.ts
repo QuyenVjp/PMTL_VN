@@ -28,7 +28,10 @@ export class ContentService {
 
     const { posts, total } = await this.repository.findMany({
       status: status as ContentStatus | undefined,
+      postType: query.postType as import("../../generated/prisma/client.js").PostType | undefined,
       authorId: query.authorId,
+      categoryId: query.categoryId,
+      featured: query.featured,
       page: query.page,
       limit: query.limit,
     });
@@ -101,13 +104,25 @@ export class ContentService {
           publicId,
           slug,
           title: input.title,
+          postType: (input.postType ?? "ARTICLE") as import("../../generated/prisma/client.js").PostType,
           content: input.content as Prisma.InputJsonValue,
           authorId,
           status: "DRAFT",
           ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+          ...(input.sourceRef !== undefined && { sourceRef: input.sourceRef }),
           ...(input.featuredImageId !== undefined && { featuredImageId: input.featuredImageId }),
+          ...(input.primaryCategoryId !== undefined && { primaryCategoryId: input.primaryCategoryId }),
+          ...(input.featured !== undefined && { featured: input.featured }),
+          ...(input.allowComments !== undefined && { allowComments: input.allowComments }),
+          ...(input.tagIds?.length && {
+            tags: { create: input.tagIds.map((tagId) => ({ tagId })) },
+          }),
         },
-        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
+        },
       });
       await this.audit.appendInTransaction(tx, auditContext, "content.create", "post", publicId);
       return created;
@@ -146,17 +161,36 @@ export class ContentService {
 
     // Bug 2 fix: post update + audit in same transaction
     const updated = await this.prisma.$transaction(async (tx) => {
-      const postUpdateData: Record<string, unknown> = {};
+      const postUpdateData: Prisma.PostUpdateInput = {};
       if (input.title !== undefined) postUpdateData.title = input.title;
       if (input.slug !== undefined) postUpdateData.slug = input.slug;
+      if (input.postType !== undefined) postUpdateData.postType = input.postType as import("../../generated/prisma/client.js").PostType;
+      if (input.sourceRef !== undefined) postUpdateData.sourceRef = input.sourceRef;
       if (input.excerpt !== undefined) postUpdateData.excerpt = input.excerpt;
       if (input.content !== undefined) postUpdateData.content = input.content as Prisma.InputJsonValue;
       if (input.featuredImageId !== undefined) postUpdateData.featuredImageId = input.featuredImageId;
+      if (input.featured !== undefined) postUpdateData.featured = input.featured;
+      if (input.allowComments !== undefined) postUpdateData.allowComments = input.allowComments;
+      if (input.primaryCategoryId !== undefined) {
+        postUpdateData.primaryCategory = input.primaryCategoryId
+          ? { connect: { id: input.primaryCategoryId } }
+          : { disconnect: true };
+      }
+      if (input.tagIds !== undefined) {
+        postUpdateData.tags = {
+          deleteMany: {},
+          create: input.tagIds.map((tagId) => ({ tagId })),
+        };
+      }
 
       const result = await tx.post.update({
         where: { publicId },
         data: postUpdateData,
-        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
+        },
       });
       await this.audit.appendInTransaction(tx, auditContext, "content.update", "post", publicId);
       return result;
@@ -189,7 +223,11 @@ export class ContentService {
       const result = await tx.post.update({
         where: { publicId },
         data: { status: "PUBLISHED", publishedAt: new Date() },
-        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
+        },
       });
       await this.audit.appendInTransaction(tx, auditContext, "content.publish", "post", publicId);
       return result;
@@ -256,7 +294,7 @@ export class ContentService {
       this.prisma.beginnerGuide.findMany({
         where,
         include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
         skip: query.offset,
         take: query.limit,
       }),
@@ -301,6 +339,8 @@ export class ContentService {
         status: "DRAFT",
         authorId: userId,
         ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+        ...(input.versionNote !== undefined && { versionNote: input.versionNote }),
       },
       include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });
@@ -326,6 +366,8 @@ export class ContentService {
         ...(input.content !== undefined && { content: input.content as Prisma.InputJsonValue }),
         ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
         ...(input.category !== undefined && { category: input.category as GuideCategory }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+        ...(input.versionNote !== undefined && { versionNote: input.versionNote }),
       },
       include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
     });

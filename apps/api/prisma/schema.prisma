@@ -33,6 +33,13 @@ enum ContentStatus {
   ARCHIVED
 }
 
+enum PostType {
+  ARTICLE
+  TRANSCRIPT
+  SOURCE_NOTE
+  EVENT_RECAP
+}
+
 enum AssetStatus {
   UPLOADING
   READY
@@ -248,24 +255,71 @@ model MediaCollectionItem {
   @@map("media_collection_items")
 }
 
-model Post {
-  id          String        @id @default(cuid())
-  publicId    String        @unique @map("public_id")
-  slug        String        @unique
-  title       String
-  excerpt     String?
-  content     Json
-  status      ContentStatus @default(DRAFT)
-  authorId    String        @map("author_id")
-  featuredImageId String?   @map("featured_image_id")
-  publishedAt DateTime?     @map("published_at")
-  createdAt   DateTime      @default(now()) @map("created_at")
-  updatedAt   DateTime      @updatedAt @map("updated_at")
+model PostCategory {
+  id          String   @id @default(cuid())
+  publicId    String   @unique @map("public_id")
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  author User @relation(fields: [authorId], references: [id])
+  posts Post[]
+
+  @@map("post_categories")
+}
+
+model PostTag {
+  id        String   @id @default(cuid())
+  publicId  String   @unique @map("public_id")
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  posts PostTagMap[]
+
+  @@map("post_tags")
+}
+
+model PostTagMap {
+  postId String @map("post_id")
+  tagId  String @map("tag_id")
+
+  post Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  PostTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tag_map")
+}
+
+model Post {
+  id                String        @id @default(cuid())
+  publicId          String        @unique @map("public_id")
+  slug              String        @unique
+  title             String
+  postType          PostType      @default(ARTICLE) @map("post_type")
+  sourceRef         String?       @map("source_ref")
+  excerpt           String?
+  content           Json
+  status            ContentStatus @default(DRAFT)
+  authorId          String        @map("author_id")
+  primaryCategoryId String?       @map("primary_category_id")
+  featuredImageId   String?       @map("featured_image_id")
+  featured          Boolean       @default(false)
+  allowComments     Boolean       @default(true) @map("allow_comments")
+  publishedAt       DateTime?     @map("published_at")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  author          User          @relation(fields: [authorId], references: [id])
+  primaryCategory PostCategory? @relation(fields: [primaryCategoryId], references: [id])
+  tags            PostTagMap[]
 
   @@index([authorId])
   @@index([status])
+  @@index([postType])
+  @@index([featured])
   @@index([publishedAt])
   @@map("posts")
 }
@@ -433,6 +487,7 @@ model CommunityPost {
   commentCount     Int                 @default(0) @map("comment_count")
   reportCount      Int                 @default(0) @map("report_count")
   isHidden         Boolean             @default(false) @map("is_hidden")
+  isPinned         Boolean             @default(false) @map("is_pinned")
   createdAt        DateTime            @default(now()) @map("created_at")
   updatedAt        DateTime            @updatedAt @map("updated_at")
 
@@ -603,6 +658,8 @@ model BeginnerGuide {
   content     Json
   excerpt     String?
   category    GuideCategory @default(BEGINNER)
+  sortOrder   Int           @default(0) @map("sort_order")
+  versionNote String?       @map("version_note")
   status      ContentStatus @default(DRAFT)
   authorId    String        @map("author_id")
   publishedAt DateTime?     @map("published_at")

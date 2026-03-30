@@ -13,12 +13,18 @@ import {
   createGuestbookEntrySchema,
   guestbookQuerySchema,
   adminUpdateGuestbookSchema,
+  createVolunteerSchema,
+  updateVolunteerSchema,
+  volunteerQuerySchema,
   type CreateCommunityPostInput,
   type CommunityPostQuery,
   type AdminUpdateCommunityPostInput,
   type CreateGuestbookEntryInput,
   type GuestbookQuery,
   type AdminUpdateGuestbookInput,
+  type CreateVolunteerInput,
+  type UpdateVolunteerInput,
+  type VolunteerQuery,
 } from "./community.schemas.js";
 
 @ApiTags("community")
@@ -103,6 +109,38 @@ export class AdminCommunityController {
     return { success: true };
   }
 
+  @Post("posts/:publicId/pin")
+  @ApiOperation({ summary: "Ghim bài đăng" })
+  @ApiResponse({ status: 200, description: "Ghim thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  pinPost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminPinPost(publicId, user.id);
+  }
+
+  @Post("posts/:publicId/unpin")
+  @ApiOperation({ summary: "Bỏ ghim bài đăng" })
+  @ApiResponse({ status: 200, description: "Bỏ ghim thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  unpinPost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminUnpinPost(publicId, user.id);
+  }
+
+  @Post("posts/:publicId/hide")
+  @ApiOperation({ summary: "Ẩn bài đăng" })
+  @ApiResponse({ status: 200, description: "Ẩn thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  hidePost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminHidePost(publicId, user.id);
+  }
+
+  @Post("posts/:publicId/restore")
+  @ApiOperation({ summary: "Khôi phục bài đăng" })
+  @ApiResponse({ status: 200, description: "Khôi phục thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  restorePost(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminRestorePost(publicId, user.id);
+  }
+
   // ── Guestbook ─────────────────────────────────────────────────────
 
   @Get("guestbook")
@@ -153,5 +191,73 @@ export class AdminCommunityController {
   ) {
     await this.communityService.adminDeleteGuestbookEntry(publicId, user.id);
     return { success: true };
+  }
+
+  // ── Volunteers ────────────────────────────────────────────────────────
+
+  @Get("volunteers")
+  @UsePipes(ZodValidate(volunteerQuerySchema))
+  @ApiOperation({ summary: "Danh sách tình nguyện viên (quản trị)" })
+  @ApiResponse({ status: 200, description: "Lấy danh sách thành công" })
+  listVolunteers(@Query() query: VolunteerQuery) {
+    return this.communityService.adminListVolunteers(query);
+  }
+
+  @Post("volunteers")
+  @ApiOperation({ summary: "Tạo tình nguyện viên" })
+  @ApiResponse({ status: 201, description: "Tạo thành công" })
+  createVolunteer(
+    @Body(ZodValidate(createVolunteerSchema)) input: CreateVolunteerInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.adminCreateVolunteer(input, user.id);
+  }
+
+  @Get("volunteers/:publicId")
+  @ApiOperation({ summary: "Chi tiết tình nguyện viên" })
+  @ApiResponse({ status: 200, description: "Chi tiết tình nguyện viên" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  getVolunteer(@Param("publicId") publicId: string) {
+    return this.communityService.adminGetVolunteer(publicId);
+  }
+
+  @Patch("volunteers/:publicId")
+  @ApiOperation({ summary: "Cập nhật tình nguyện viên" })
+  @ApiResponse({ status: 200, description: "Cập nhật thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  updateVolunteer(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(updateVolunteerSchema)) input: UpdateVolunteerInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.adminUpdateVolunteer(publicId, input, user.id);
+  }
+
+  @Delete("volunteers/:publicId")
+  @ApiOperation({ summary: "Xoá tình nguyện viên" })
+  @ApiResponse({ status: 200, description: "Xoá thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  async deleteVolunteer(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    await this.communityService.adminDeleteVolunteer(publicId, user.id);
+    return { success: true };
+  }
+
+  @Post("volunteers/:publicId/activate")
+  @ApiOperation({ summary: "Kích hoạt tình nguyện viên" })
+  @ApiResponse({ status: 200, description: "Kích hoạt thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  activateVolunteer(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminActivateVolunteer(publicId, user.id);
+  }
+
+  @Post("volunteers/:publicId/deactivate")
+  @ApiOperation({ summary: "Vô hiệu hoá tình nguyện viên" })
+  @ApiResponse({ status: 200, description: "Vô hiệu hoá thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy" })
+  deactivateVolunteer(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.communityService.adminDeactivateVolunteer(publicId, user.id);
   }
 }

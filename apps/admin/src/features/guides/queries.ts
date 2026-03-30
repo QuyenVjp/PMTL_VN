@@ -49,6 +49,6 @@ export function guideListOptions(filters: GuideListFilters = {}) {
   return queryOptions({
     queryKey: guideKeys.list(filters),
     queryFn: () =>
-      adminClient.get<ListEnvelope<GuideItem>>("/content/beginner-guides/admin", params),
+      adminClient.get<ListEnvelope<GuideItem>>("/admin/content/guides", params),
   });
 }

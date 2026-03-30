@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, PencilIcon, StarIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,13 @@ const statusOptions = [
   { label: "Đã ẩn", value: "ARCHIVED" },
 ];
 
+const postTypeOptions = [
+  { label: "Bài viết", value: "ARTICLE" },
+  { label: "Bản ghi", value: "TRANSCRIPT" },
+  { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
+  { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
+];
+
 function statusBadgeClass(s: string): string {
   if (s === "PUBLISHED")
     return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
@@ -44,6 +51,24 @@ function statusLabel(s: string): string {
   if (s === "DRAFT") return "Nháp";
   if (s === "ARCHIVED") return "Đã ẩn";
   return s;
+}
+
+function postTypeLabel(t: string): string {
+  const map: Record<string, string> = {
+    ARTICLE: "Bài viết",
+    TRANSCRIPT: "Bản ghi",
+    SOURCE_NOTE: "Ghi chú nguồn",
+    EVENT_RECAP: "Tóm tắt sự kiện",
+  };
+  return map[t] ?? t;
+}
+
+function postTypeBadgeClass(t: string): string {
+  if (t === "ARTICLE") return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
+  if (t === "TRANSCRIPT") return "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400";
+  if (t === "SOURCE_NOTE") return "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-400";
+  if (t === "EVENT_RECAP") return "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-400";
+  return "";
 }
 
 // ── Row actions ───────────────────────────────────────────────────────
@@ -107,10 +132,27 @@ export function PostsTable() {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
         cell: ({ row }) => (
-          <div className="max-w-[320px] truncate font-medium">{row.original.title}</div>
+          <div className="flex items-center gap-1.5 max-w-[300px]">
+            {row.original.featured && (
+              <StarIcon className="size-3.5 shrink-0 text-amber-500 fill-amber-500" />
+            )}
+            <span className="truncate font-medium">{row.original.title}</span>
+          </div>
         ),
         meta: { label: "Tiêu đề" },
         enableHiding: false,
+      },
+      {
+        accessorKey: "postType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
+        cell: ({ row }) => (
+          <Badge variant="outline" className={postTypeBadgeClass(row.original.postType)}>
+            {postTypeLabel(row.original.postType)}
+          </Badge>
+        ),
+        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
+        meta: { label: "Loại" },
+        enableSorting: false,
       },
       {
         accessorKey: "status",
@@ -131,6 +173,17 @@ export function PostsTable() {
           <div className="text-nowrap">{row.original.author.displayName}</div>
         ),
         meta: { label: "Tác giả" },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "primaryCategory",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Danh mục" />,
+        cell: ({ row }) => (
+          <div className="text-nowrap text-muted-foreground text-sm">
+            {row.original.primaryCategory?.name ?? "—"}
+          </div>
+        ),
+        meta: { label: "Danh mục" },
         enableSorting: false,
       },
       {
@@ -177,7 +230,10 @@ export function PostsTable() {
         searchPlaceholder="Lọc bài viết..."
         searchKey="title"
         viewButtonLabel="Xem"
-        filters={[{ columnId: "status", title: "Trạng thái", options: statusOptions }]}
+        filters={[
+          { columnId: "postType", title: "Loại", options: postTypeOptions },
+          { columnId: "status", title: "Trạng thái", options: statusOptions },
+        ]}
       />
 
       <WorkspaceDataTable

@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -105,18 +106,22 @@ function VolunteerFormDialog({
 
   const [displayName, setDisplayName] = useState(currentRow?.displayName ?? "");
   const [role, setRole] = useState(currentRow?.role ?? "");
+  const [avatarUrl, setAvatarUrl] = useState(currentRow?.avatarUrl ?? "");
   const [phone, setPhone] = useState(currentRow?.phone ?? "");
   const [zaloLink, setZaloLink] = useState(currentRow?.zaloLink ?? "");
   const [bio, setBio] = useState(currentRow?.bio ?? "");
   const [sortOrder, setSortOrder] = useState(String(currentRow?.sortOrder ?? "0"));
+  const [isActive, setIsActive] = useState(currentRow?.isActive ?? true);
 
   useEffect(() => {
     setDisplayName(currentRow?.displayName ?? "");
     setRole(currentRow?.role ?? "");
+    setAvatarUrl(currentRow?.avatarUrl ?? "");
     setPhone(currentRow?.phone ?? "");
     setZaloLink(currentRow?.zaloLink ?? "");
     setBio(currentRow?.bio ?? "");
     setSortOrder(String(currentRow?.sortOrder ?? "0"));
+    setIsActive(currentRow?.isActive ?? true);
   }, [currentRow, open]);
 
   const isPending = createVolunteer.isPending || updateVolunteer.isPending;
@@ -130,10 +135,12 @@ function VolunteerFormDialog({
     const shared = {
       displayName: displayName.trim(),
       role: role.trim(),
+      avatarUrl: avatarUrl.trim() || undefined,
       phone: phone.trim() || undefined,
       zaloLink: zaloLink.trim() || undefined,
       bio: bio.trim() || undefined,
       sortOrder: Number(sortOrder) || 0,
+      isActive,
     };
 
     if (isEdit && currentRow) {
@@ -165,6 +172,9 @@ function VolunteerFormDialog({
           <Field label="Vai trò">
             <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Ví dụ: Điều phối viên" />
           </Field>
+          <Field label="Ảnh đại diện (URL)">
+            <Input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." />
+          </Field>
           <Field label="Số điện thoại">
             <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0912..." />
           </Field>
@@ -174,9 +184,24 @@ function VolunteerFormDialog({
           <Field label="Giới thiệu">
             <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Mô tả ngắn..." rows={2} />
           </Field>
-          <Field label="Thứ tự hiển thị">
-            <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
-          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Thứ tự hiển thị">
+              <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
+            </Field>
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium">Trạng thái</span>
+              <div className="flex items-center gap-2 pt-1">
+                <Checkbox
+                  id="volunteer-active"
+                  checked={isActive}
+                  onCheckedChange={(v) => setIsActive(v === true)}
+                />
+                <label htmlFor="volunteer-active" className="text-sm cursor-pointer">
+                  Đang hoạt động
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
         <DialogFooter>

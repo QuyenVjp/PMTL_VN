@@ -355,6 +355,13 @@ export type EnumMediaItemTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type EnumPostTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostType | Prisma.EnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | $Enums.PostType | runtime.Types.Skip
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -377,6 +384,16 @@ export type JsonFilterBase<$PrismaModel = never> = {
   gt?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   gte?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | runtime.Types.Skip
   not?: runtime.InputJsonValue | Prisma.JsonFieldRefInput<$PrismaModel> | Prisma.JsonNullValueFilter | runtime.Types.Skip
+}
+
+export type EnumPostTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostType | Prisma.EnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPostTypeWithAggregatesFilter<$PrismaModel> | $Enums.PostType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type JsonWithAggregatesFilter<$PrismaModel = never> =
@@ -986,6 +1003,23 @@ export type NestedEnumMediaItemTypeWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumMediaItemTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumPostTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostType | Prisma.EnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | $Enums.PostType | runtime.Types.Skip
+}
+
+export type NestedEnumPostTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PostType | Prisma.EnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PostType[] | Prisma.ListEnumPostTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPostTypeWithAggregatesFilter<$PrismaModel> | $Enums.PostType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumPostTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type NestedJsonFilter<$PrismaModel = never> =

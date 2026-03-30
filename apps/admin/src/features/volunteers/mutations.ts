@@ -7,6 +7,7 @@ import { volunteerKeys } from "./queries.js";
 export interface CreateVolunteerInput {
   displayName: string;
   role: string;
+  avatarUrl?: string;
   phone?: string;
   zaloLink?: string;
   bio?: string;
@@ -17,6 +18,7 @@ export interface CreateVolunteerInput {
 export interface UpdateVolunteerInput {
   displayName?: string;
   role?: string;
+  avatarUrl?: string;
   phone?: string;
   zaloLink?: string;
   bio?: string;
@@ -31,7 +33,7 @@ export function useCreateVolunteer() {
     mutationFn: (input: CreateVolunteerInput) =>
       adminClient.post("/admin/volunteers", input),
     onSuccess: () => {
-      toast.success("Đã thêm phụng sự viên mới.");
+      toast.success("Đã thêm tình nguyện viên mới.");
       void qc.invalidateQueries({ queryKey: volunteerKeys.lists() });
     },
     onError: handleApiError,
@@ -45,7 +47,7 @@ export function useUpdateVolunteer() {
     mutationFn: ({ publicId, input }: { publicId: string; input: UpdateVolunteerInput }) =>
       adminClient.patch(`/admin/volunteers/${publicId}`, input),
     onSuccess: () => {
-      toast.success("Đã cập nhật phụng sự viên.");
+      toast.success("Đã cập nhật tình nguyện viên.");
       void qc.invalidateQueries({ queryKey: volunteerKeys.lists() });
     },
     onError: handleApiError,
@@ -59,7 +61,35 @@ export function useDeleteVolunteer() {
     mutationFn: (publicId: string) =>
       adminClient.delete(`/admin/volunteers/${publicId}`),
     onSuccess: () => {
-      toast.success("Đã xoá phụng sự viên.");
+      toast.success("Đã xoá tình nguyện viên.");
+      void qc.invalidateQueries({ queryKey: volunteerKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
+
+/** Activate a volunteer */
+export function useActivateVolunteer() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.post(`/admin/volunteers/${publicId}/activate`),
+    onSuccess: () => {
+      toast.success("Đã kích hoạt tình nguyện viên.");
+      void qc.invalidateQueries({ queryKey: volunteerKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
+
+/** Deactivate a volunteer */
+export function useDeactivateVolunteer() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) =>
+      adminClient.post(`/admin/volunteers/${publicId}/deactivate`),
+    onSuccess: () => {
+      toast.success("Đã vô hiệu hoá tình nguyện viên.");
       void qc.invalidateQueries({ queryKey: volunteerKeys.lists() });
     },
     onError: handleApiError,

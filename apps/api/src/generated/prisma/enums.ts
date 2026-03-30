@@ -36,6 +36,16 @@ export const ContentStatus = {
 export type ContentStatus = (typeof ContentStatus)[keyof typeof ContentStatus]
 
 
+export const PostType = {
+  ARTICLE: 'ARTICLE',
+  TRANSCRIPT: 'TRANSCRIPT',
+  SOURCE_NOTE: 'SOURCE_NOTE',
+  EVENT_RECAP: 'EVENT_RECAP'
+} as const
+
+export type PostType = (typeof PostType)[keyof typeof PostType]
+
+
 export const AssetStatus = {
   UPLOADING: 'UPLOADING',
   READY: 'READY',

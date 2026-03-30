@@ -23,8 +23,10 @@ import { WorkspaceConfirmDialog } from "@/components/workspace";
 import type { DownloadItem } from "@/features/downloads/queries";
 import {
   useCreateDownload,
+  useUpdateDownload,
   useDeleteDownload,
   usePublishDownload,
+  useUnpublishDownload,
 } from "@/features/downloads/mutations";
 import { useDownloads } from "@/features/downloads/context";
 
@@ -173,6 +175,95 @@ function DownloadCreateDialog({
   );
 }
 
+// ── Edit dialog ──────────────────────────────────────────────────────
+
+function DownloadEditDialog({
+  open,
+  onOpenChange,
+  currentRow,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  currentRow: DownloadItem;
+}) {
+  const updateDownload = useUpdateDownload();
+  const [title, setTitle] = useState(currentRow.title);
+  const [description, setDescription] = useState(currentRow.description ?? "");
+  const [category, setCategory] = useState(currentRow.category);
+  const [fileUrl, setFileUrl] = useState(currentRow.fileUrl);
+  const [fileType, setFileType] = useState(currentRow.fileType);
+  const [fileSize, setFileSize] = useState(String(currentRow.fileSize));
+
+  useEffect(() => {
+    setTitle(currentRow.title);
+    setDescription(currentRow.description ?? "");
+    setCategory(currentRow.category);
+    setFileUrl(currentRow.fileUrl);
+    setFileType(currentRow.fileType);
+    setFileSize(String(currentRow.fileSize));
+  }, [currentRow, open]);
+
+  const handleSubmit = () => {
+    if (!title.trim() || !fileUrl.trim() || !fileType.trim()) {
+      toast.error("Tiêu đề, đường dẫn file và loại file không được để trống.");
+      return;
+    }
+    updateDownload.mutate(
+      {
+        publicId: currentRow.publicId,
+        title: title.trim(),
+        description: description.trim() || undefined,
+        category,
+        fileUrl: fileUrl.trim(),
+        fileType: fileType.trim(),
+        fileSize: Number(fileSize) || 0,
+      },
+      { onSuccess: () => onOpenChange(false) },
+    );
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader className="text-start">
+          <DialogTitle>Chỉnh sửa tài liệu</DialogTitle>
+          <DialogDescription>Cập nhật thông tin tài liệu.</DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4">
+          <Field label="Tiêu đề">
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </Field>
+          <Field label="Danh mục">
+            <CategorySelect value={category} onValueChange={setCategory} />
+          </Field>
+          <Field label="Đường dẫn file">
+            <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Loại file">
+              <Input value={fileType} onChange={(e) => setFileType(e.target.value)} placeholder="PDF, DOCX..." />
+            </Field>
+            <Field label="Kích thước (bytes)">
+              <Input type="number" value={fileSize} onChange={(e) => setFileSize(e.target.value)} placeholder="0" />
+            </Field>
+          </div>
+          <Field label="Mô tả">
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Mô tả ngắn..." />
+          </Field>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+          <Button onClick={handleSubmit} disabled={updateDownload.isPending || !title.trim()}>
+            {updateDownload.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 // ── Publish + Delete confirm dialogs ─────────────────────────────────
 
 function DownloadPublishDialog({
@@ -240,6 +331,7 @@ function DownloadDeleteDialog({
 
 export function DownloadsDialogs({ defaultCategory }: { defaultCategory?: string } = {}) {
   const { open, setOpen, currentRow, setCurrentRow } = useDownloads();
+  const unpublishDownload = useUnpublishDownload();
 
   const handleClose = () => {
     setOpen(null);
@@ -255,10 +347,29 @@ export function DownloadsDialogs({ defaultCategory }: { defaultCategory?: string
       />
       {currentRow && (
         <>
+          <DownloadEditDialog
+            open={open === "edit"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("edit"))}
+            currentRow={currentRow}
+          />
           <DownloadPublishDialog
             open={open === "publish"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
             currentRow={currentRow}
+          />
+          <WorkspaceConfirmDialog
+            open={open === "unpublish"}
+            onOpenChange={(v) => (!v ? handleClose() : setOpen("unpublish"))}
+            title="Gỡ xuất bản tài liệu"
+            description={
+              <>
+                Gỡ xuất bản <span className="font-semibold text-foreground">{currentRow.title}</span>?
+                Tài liệu sẽ chuyển về nháp.
+              </>
+            }
+            confirmLabel="Gỡ xuất bản"
+            isPending={unpublishDownload.isPending}
+            onConfirm={() => unpublishDownload.mutate(currentRow.publicId, { onSuccess: handleClose })}
           />
           <DownloadDeleteDialog
             open={open === "delete"}

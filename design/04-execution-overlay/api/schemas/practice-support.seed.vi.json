@@ -359,7 +359,7 @@
     "publicId": "ps-recite-0001",
     "slug": "niem-kinh-hang-ngay",
     "title": "Niem Kinh Hang Ngay",
-    "overview": "Tong hop bo kinh nen tang va thap tieu chu, kem quy tac khung gio va ung dung theo tinh huong.",
+    "overview": "Tong hop bo kinh nen tang va thap tieu chu, kem quy tac khung gio, interruption/workplace guidance, va note nguyen luc dai han.",
     "coreRecitations": [
       {
         "name": "Chu Dai Bi",
@@ -399,12 +399,66 @@
         "label": "Tam Kinh/Vang Sinh truoc 22h",
         "description": "Han che Tam Kinh va Vang Sinh sau 22h va khi thoi tiet xau.",
         "severity": "critical"
+      },
+      {
+        "ruleCode": "read-full-title-before-recitation",
+        "label": "Doc day du tieu de",
+        "description": "Moi kinh/chu deu phai doc day du tieu de truoc khi vao noi dung chinh.",
+        "severity": "warning"
+      }
+    ],
+    "interruptionRules": [
+      {
+        "ruleCode": "pause-long-sutra-with-ong-lai-mu-suo-he",
+        "label": "Tam dung bai dai bang cau noi tiep",
+        "description": "Neu dang niem bai dai ma bi cong viec ngat quang, doc 'Ong Lai Mu Suo He' 1 lan truoc khi dung va 1 lan nua khi tro lai roi tiep tuc phan con do.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "restart-short-mantra-after-interruption",
+        "label": "Bai ngan thi niem lai tu dau",
+        "description": "Neu dang niem bai chu ngan ma bi ngat quang, uu tien niem lai bai do tu dau.",
+        "severity": "warning"
+      }
+    ],
+    "workplacePracticeRules": [
+      {
+        "ruleCode": "office-chanting-needs-quiet-and-low-voice",
+        "label": "Cong so thi niem nho va tim cho yen",
+        "description": "O cong ty hoac noi dong nguoi, chi nen niem nho vua du cho minh nghe va tim noi tuong doi yen tinh.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "no-toilet-recitation-or-script-carry",
+        "label": "Khong niem va khong mang kinh vao nha ve sinh",
+        "description": "Tuyet doi khong niem kinh trong nha ve sinh va khong mang kinh sach vao do.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "office-heart-incense-is-mental-only",
+        "label": "Tam Huong o cong ty chi duoc quan tuong",
+        "description": "Neu mo dau cong khoa o cong ty thi dung Tam Huong bang quan tuong, khong mo phong dong tac dang huong hay le bai bang than the.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "storm-switch-to-safer-lane",
+        "label": "Troi giong thi doi sang lane an toan",
+        "description": "Khi mua to, sam chop, am u nang, tam dung Tam Kinh va Vang Sinh Chu; uu tien Chu Dai Bi hoac cac chu ngan phu hop.",
+        "severity": "critical"
       }
     ],
     "applicationScenarios": [
       "Tang cuong Chu Dai Bi khi truoc phau thuat hoac giai doan ap luc cao.",
       "Tang Tam Kinh khi can on dinh cam xuc va tap trung tri tue.",
-      "Khi tang Le Phat can doi ung NNN theo lane can bang nghiep."
+      "Khi tang Le Phat can doi ung NNN theo lane can bang nghiep.",
+      "Neu phai thuc hanh o cong ty, uu tien Tam Huong va nhip niem nho, on dinh, khong khoa truong.",
+      "Neu can ho tro nguoi than hoac nguyen luc Tinh do, bo sung lane tham khao Vang Sinh Chu hoac Kinh A Di Da theo bối canh phu hop."
+    ],
+    "longTermAspirationNotes": [
+      "Niệm kinh trong app phai duoc mo ta nhu lane thanh loc nghiep va on dinh tam, khong chi la cach giai quyet su co truoc mat.",
+      "Vang Sinh Chu va Kinh A Di Da la lane tham khao cho nguyen luc Tinh do; khong duoc dien dat nhu machine guarantee ve ket qua tam linh.",
+      "Voi nguoi cao tuoi hoac nguoi co nguyen vang sinh ro, co the hien note tham khao ve Kinh A Di Da 3-7 bien/ngay.",
+      "Trong tinh huong lam chung, lane toi gian duoc nhac toi la xung niem danh hieu 'Nam mo Dai Tu Dai Bi Quan The Am Bo Tat' voi tam thanh."
     ],
     "updatedAt": "2026-03-29T12:00:00Z"
   },
@@ -465,7 +519,7 @@
     "publicId": "ps-vnhome-0001",
     "slug": "tu-tu-tai-gia-viet-nam",
     "title": "Tu Tu Tai Gia Viet Nam",
-    "overview": "Checklist ky luat cho nguoi tu hoc tai gia trong boi canh khong co Quan Am Duong chinh thuc.",
+    "overview": "Checklist ky luat cho nguoi tu hoc tai gia trong boi canh khong co Quan Am Duong chinh thuc, gom ca discipline vat pham ho than mang theo nguoi.",
     "homeAltarRules": [
       {
         "ruleCode": "altar-clean-bright-stable",
@@ -521,6 +575,80 @@
         "description": "Duy tri lane niem Tam Kinh cho nguoi than theo huong dan can bang.",
         "severity": "warning"
       }
+    ],
+    "sacredItemRules": [
+      {
+        "ruleCode": "keep-sacred-items-high-and-clean",
+        "label": "Vat pham phai duoc giu cao va sach",
+        "description": "The ho than, bua ho menh, vong co co hinh Bo Tat can duoc giu o vi tri cao, gan nguc, sach se, khong thap hon that lung.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "do-not-bring-sacred-items-into-toilet",
+        "label": "Khong mang vat pham vao nha ve sinh",
+        "description": "Khong mang vat pham co hinh Bo Tat/kinh van vao nha ve sinh, phong tam, hoac noi o ue.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "no-direct-worship-to-worn-items",
+        "label": "Khong le bai truc tiep vao vat dang deo",
+        "description": "Vat pham mang theo nguoi khong phai object de bai lay truc tiep; neu can cau nguyen o ben ngoai thi dung Tam Huong.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "wash-hands-before-touching",
+        "label": "Rua tay truoc khi cham vao vat pham",
+        "description": "Khong dung tay ban, khong thoi mieng vao vat pham, va tranh de nguoi khac cham vao tuy tien.",
+        "severity": "warning"
+      }
+    ],
+    "accidentalViolationRecovery": [
+      {
+        "ruleCode": "remove-and-clean-gently-after-forgetting",
+        "label": "Nho ra thi thao ngay va lau nhe",
+        "description": "Neu vo y mang vat pham vao noi khong sach, thao ra ngay khi nho, dung khan sach lau nhe neu can, khong hoang loan.",
+        "severity": "warning"
+      },
+      {
+        "ruleCode": "light-repentance-lane-after-accidental-violation",
+        "label": "Di lane sam hoi nhe",
+        "description": "Sau loi vo y, co the tham khao lane That Phat Diet Toi 21/27/49 hoac Le Phat Dai Sam Hoi Van muc nhe, voi khan nguyen ro loi vo y va tam khong tai pham.",
+        "severity": "warning"
+      }
+    ],
+    "vegetarianDisciplineRules": [
+      {
+        "ruleCode": "vegetarian-vow-can-scale-by-capacity",
+        "label": "Phat nguyen an chay theo tung nac",
+        "description": "Co the bat dau tu mung 1 va ngay Ram, tang dan len 15 ngay, 20+ ngay, roi an chay truong tron doi theo kha nang giu nguyen.",
+        "severity": "warning"
+      },
+      {
+        "ruleCode": "no-killing-and-no-fresh-killed-food",
+        "label": "Khong sat sinh va khong an do moi giet",
+        "description": "Nguoi tu hoc can tranh sat sinh, khong an sinh vat vua moi bi giet mo hoac do tuoi song.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "offered-oil-only-for-cooked-vegetarian-food",
+        "label": "Dau da cung chi dung cho mon chay nau chin",
+        "description": "Dau thuc vat da dang cung chi duoc dung cho mon chay va phai nau chin truoc khi dung; khong dung de nau mon man.",
+        "severity": "critical"
+      },
+      {
+        "ruleCode": "balanced-vegetarian-diet-is-guidance-not-medical-claim",
+        "label": "An chay can can bang",
+        "description": "An chay can duoc to chuc can bang de ho tro suc khoe; app chi giu note guidance, khong claim y khoa tuyet doi.",
+        "severity": "warning"
+      }
+    ],
+    "officeNutritionNotes": [
+      "Nguoi lam viec van phong co the uu tien cac bua chay gon nhe, can bang, de giu su tinh tao va khong nang bung.",
+      "Co the tham khao lane thuc pham bo tro nhu cac loai hat, tao do, trai cay thanh, sua hoac sua hat de duy tri nang luong trong ngay."
+    ],
+    "supplementalDietNotes": [
+      "Ngoai bo source canon hien tai, co the tham khao them lane ovo-lacto vegetarian (trung cong nghiep khong thu tinh va sua), nhung neu dua vao app phai gan nhan supplemental note ro rang.",
+      "Lane ngu vi tan, ca phe, cacao va goi y thuc pham cu the theo thi truong Viet Nam la phan tham khao ngoai bo source hien tai; khong duoc bien thanh hard validation."
     ],
     "complianceAndEthicsRules": [
       {

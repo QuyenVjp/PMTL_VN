@@ -69,6 +69,9 @@ export const auditActionSchema = z.enum([
   "admin.guide.update",
   "admin.guide.publish",
 
+  // Practice support actions
+  "admin.practice_support.update",
+
   // Vow / merit actions
   "admin.vow.create",
   "admin.vow.update",

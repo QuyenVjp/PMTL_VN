@@ -8,17 +8,27 @@ import { dashboardKeys } from "@/features/dashboard/queries.js";
 interface CreatePostInput {
   title: string;
   slug?: string;
+  postType?: string;
+  sourceRef?: string;
   excerpt?: string;
   content?: unknown;
-  status?: string;
+  primaryCategoryId?: string;
+  tagIds?: string[];
+  featured?: boolean;
+  allowComments?: boolean;
 }
 
 interface UpdatePostInput {
   title?: string;
   slug?: string;
-  excerpt?: string;
+  postType?: string;
+  sourceRef?: string | null;
+  excerpt?: string | null;
   content?: unknown;
-  status?: string;
+  primaryCategoryId?: string | null;
+  tagIds?: string[];
+  featured?: boolean;
+  allowComments?: boolean;
 }
 
 export function useCreatePost() {

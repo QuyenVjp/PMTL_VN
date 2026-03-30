@@ -7,6 +7,9 @@ import type {
   CreateCommunityPostInput,
   CreateGuestbookEntryInput,
   GuestbookQuery,
+  CreateVolunteerInput,
+  UpdateVolunteerInput,
+  VolunteerQuery,
 } from "./community.schemas.js";
 
 const AUTHOR_PUBLIC_SELECT = {
@@ -87,6 +90,13 @@ export class CommunityRepository {
     });
   }
 
+  async updatePost(publicId: string, data: { isPinned?: boolean; isHidden?: boolean }) {
+    return this.prisma.communityPost.update({
+      where: { publicId },
+      data,
+    });
+  }
+
   async deletePost(publicId: string) {
     return this.prisma.communityPost.delete({
       where: { publicId },
@@ -149,6 +159,76 @@ export class CommunityRepository {
 
   async deleteGuestbookEntry(publicId: string) {
     return this.prisma.guestbookEntry.delete({
+      where: { publicId },
+    });
+  }
+
+  // ── Volunteers ─────────────────────────────────────────────────────────
+
+  async findManyVolunteers(query: VolunteerQuery) {
+    const where: Record<string, unknown> = {};
+    if (query.isActive !== undefined) where.isActive = query.isActive;
+    if (query.search) {
+      where.OR = [
+        { displayName: { contains: query.search, mode: "insensitive" } },
+        { role: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.prisma.volunteer.findMany({
+        where,
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+        take: query.limit,
+        skip: query.offset,
+      }),
+      this.prisma.volunteer.count({ where }),
+    ]);
+
+    return { data, total };
+  }
+
+  async findVolunteerByPublicId(publicId: string) {
+    return this.prisma.volunteer.findUnique({
+      where: { publicId },
+    });
+  }
+
+  async createVolunteer(input: CreateVolunteerInput, publicId: string) {
+    return this.prisma.volunteer.create({
+      data: {
+        publicId,
+        displayName: input.displayName,
+        role: input.role,
+        avatarUrl: input.avatarUrl ?? null,
+        phone: input.phone ?? null,
+        zaloLink: input.zaloLink ?? null,
+        bio: input.bio ?? null,
+        sortOrder: input.sortOrder ?? 0,
+        isActive: input.isActive ?? true,
+      },
+    });
+  }
+
+  async updateVolunteer(publicId: string, input: UpdateVolunteerInput) {
+    const data: Record<string, unknown> = {};
+    if (input.displayName !== undefined) data.displayName = input.displayName;
+    if (input.role !== undefined) data.role = input.role;
+    if (input.avatarUrl !== undefined) data.avatarUrl = input.avatarUrl ?? null;
+    if (input.phone !== undefined) data.phone = input.phone ?? null;
+    if (input.zaloLink !== undefined) data.zaloLink = input.zaloLink ?? null;
+    if (input.bio !== undefined) data.bio = input.bio ?? null;
+    if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
+    if (input.isActive !== undefined) data.isActive = input.isActive;
+
+    return this.prisma.volunteer.update({
+      where: { publicId },
+      data,
+    });
+  }
+
+  async deleteVolunteer(publicId: string) {
+    return this.prisma.volunteer.delete({
       where: { publicId },
     });
   }

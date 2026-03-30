@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import type { DownloadItem } from "@/features/downloads/queries";
 
-export type DownloadDialogType = "create" | "edit" | "detail" | "publish" | "delete" | null;
+export type DownloadDialogType = "create" | "edit" | "detail" | "publish" | "unpublish" | "delete" | null;
 
 type DownloadsContextValue = {
   open: DownloadDialogType;

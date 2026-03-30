@@ -12,6 +12,8 @@ interface CreateGuideInput {
   slug?: string;
   category: string;
   excerpt?: string;
+  sortOrder?: number;
+  versionNote?: string;
 }
 
 interface UpdateGuideInput {
@@ -19,6 +21,8 @@ interface UpdateGuideInput {
   slug?: string;
   category?: string;
   excerpt?: string;
+  sortOrder?: number;
+  versionNote?: string;
   status?: string;
 }
 
@@ -27,8 +31,7 @@ interface UpdateGuideInput {
 export function useCreateGuide() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: CreateGuideInput) =>
-      adminClient.post("/content/beginner-guides", input),
+    mutationFn: (input: CreateGuideInput) => adminClient.post("/admin/content/guides", input),
     onSuccess: () => {
       toast.success("Đã tạo hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
@@ -42,7 +45,7 @@ export function useUpdateGuide() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, ...input }: UpdateGuideInput & { publicId: string }) =>
-      adminClient.patch(`/content/beginner-guides/${publicId}`, input),
+      adminClient.patch(`/admin/content/guides/${publicId}`, input),
     onSuccess: (_data, { publicId }) => {
       toast.success("Đã cập nhật hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
@@ -56,8 +59,7 @@ export function useUpdateGuide() {
 export function usePublishGuide() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (publicId: string) =>
-      adminClient.post(`/content/beginner-guides/${publicId}/publish`),
+    mutationFn: (publicId: string) => adminClient.post(`/admin/content/guides/${publicId}/publish`),
     onSuccess: () => {
       toast.success("Đã xuất bản hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });
@@ -70,7 +72,7 @@ export function usePublishGuide() {
 export function useDeleteGuide() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (publicId: string) => adminClient.delete(`/content/beginner-guides/${publicId}`),
+    mutationFn: (publicId: string) => adminClient.delete(`/admin/content/guides/${publicId}`),
     onSuccess: () => {
       toast.success("Đã xoá hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guideKeys.lists() });

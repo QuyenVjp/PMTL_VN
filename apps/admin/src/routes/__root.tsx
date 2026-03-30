@@ -98,6 +98,9 @@ const VolunteersPage = lazy(() =>
 const AssistedEntryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.AssistedEntryPage })),
 );
+const PracticeHomePracticeGuidePage = lazy(() =>
+  import("@/features/practice-support-home-guide").then((mod) => ({ default: mod.PracticeHomePracticeGuidePage })),
+);
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -331,6 +334,12 @@ const assistedEntryRoute = createRoute({
   component: withSuspense(AssistedEntryPage),
 });
 
+const practiceHomeGuideRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/tu-tu-tai-gia",
+  component: withSuspense(PracticeHomePracticeGuidePage),
+});
+
 // ── Route Tree Assembly ──────────────────────────────────────────────
 
 export const routeTree = rootRoute.addChildren([
@@ -353,6 +362,7 @@ export const routeTree = rootRoute.addChildren([
     sutrasRoute,
     mediaRoute,
     niemKinhRoutes,
+    practiceHomeGuideRoute,
     // Cộng đồng
     communityPostsRoute,
     guestbookRoute,
