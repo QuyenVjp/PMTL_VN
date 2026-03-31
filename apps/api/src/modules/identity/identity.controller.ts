@@ -158,6 +158,15 @@ export class IdentityController {
     return this.identityService.getProfile(user.id);
   }
 
+  @Get("me/data-export")
+  @RateLimit("data.export")
+  @ApiOperation({ summary: "Xuất toàn bộ dữ liệu cá nhân (PDPA — NĐ 13/2023)" })
+  @ApiResponse({ status: 200, description: "Dữ liệu cá nhân đầy đủ" })
+  @ApiResponse({ status: 429, description: "Giới hạn 2 lần/ngày" })
+  async exportMyData(@CurrentUser() user: AuthenticatedUser) {
+    return this.identityService.exportPersonalData(user.id);
+  }
+
   @Patch("profile")
   @ApiOperation({ summary: "Cập nhật hồ sơ" })
   @ApiResponse({ status: 200, description: "Đã cập nhật" })

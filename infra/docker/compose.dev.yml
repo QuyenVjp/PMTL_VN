@@ -81,6 +81,12 @@ services:
       - lock_timeout=5000
       - -c
       - statement_timeout=30000
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - pg_stat_statements.max=10000
     env_file:
       - .env.dev
     ports:

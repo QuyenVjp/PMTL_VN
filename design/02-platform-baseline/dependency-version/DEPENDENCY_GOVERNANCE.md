@@ -390,7 +390,117 @@ Rule of thumb:
 
 ---
 
-## 11. Decision log for future updates
+## 11. Supply Chain Security & SBOM
+
+### 11.1 Software Bill of Materials (SBOM)
+
+PMTL bắt buộc generate SBOM cho mỗi production release để:
+- Track tất cả dependencies (direct + transitive)
+- Audit trail cho compliance (PDPA, SOC2)
+- Vulnerability correlation với CVE databases
+- License compliance verification
+
+### 11.2 SBOM Format
+
+Primary: CycloneDX JSON (machine-readable)
+Secondary: SPDX (compatibility khi cần)
+
+### 11.3 CI Pipeline Integration
+
+```yaml
+# .github/workflows/ci.yml - SBOM generation
+sbom:
+  runs-on: ubuntu-latest
+  needs: [quality, test]
+  steps:
+    - uses: actions/checkout@v4
+    
+    - name: Generate SBOM (CycloneDX)
+      run: |
+        npx @cyclonedx/cyclonedx-npm --output-format json \
+          --output-file sbom.json \
+          --package-lock-only
+    
+    - name: Upload SBOM artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sbom-${{ github.sha }}
+        path: sbom.json
+        retention-days: 90
+    
+    - name: SBOM to Dependency-Track (optional)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl -X POST "${{ secrets.DTRACK_URL }}/api/v1/bom" \
+          -H "X-Api-Key: ${{ secrets.DTRACK_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d @sbom.json
+```
+
+### 11.4 SBOM Local Generation
+
+```bash
+# Generate SBOM locally
+pnpm sbom:generate
+
+# Verify dependencies against known vulnerabilities
+pnpm sbom:audit
+```
+
+Package.json scripts:
+```json
+{
+  "scripts": {
+    "sbom:generate": "npx @cyclonedx/cyclonedx-npm --output-format json --output-file sbom.json",
+    "sbom:audit": "npx @cyclonedx/cyclonedx-npm --validate && trivy sbom sbom.json"
+  }
+}
+```
+
+### 11.5 Dependency Pinning
+
+```jsonc
+// package.json - strict pinning cho production deps
+{
+  "dependencies": {
+    "next": "16.0.1",      // ✅ Exact version
+    "@prisma/client": "7.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0" // ✅ Range OK for dev-only
+  }
+}
+```
+
+Rules:
+- Production runtime deps: exact version (`16.0.1`)
+- Dev-only deps: minor range OK (`^5.8.0`)
+- No `*` or `latest` anywhere
+- `pnpm-lock.yaml` phải được commit
+
+### 11.6 Trivy Integration
+
+```yaml
+# Already in ci.yml security job
+- name: Trivy vulnerability scanner
+  uses: aquasecurity/trivy-action@master
+  with:
+    scan-type: "fs"
+    severity: "CRITICAL,HIGH"
+    exit-code: "1"  # Fail CI on vulnerabilities
+```
+
+### 11.7 Dependency-Track (Phase 2)
+
+Optional centralized SBOM management:
+- Continuous vulnerability monitoring
+- License risk scoring
+- Component aging alerts
+- Policy enforcement
+
+---
+
+## 12. Decision log for future updates
 
 Khi policy trong file này đổi, PR phải nói rõ:
 

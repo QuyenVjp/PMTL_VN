@@ -335,6 +335,95 @@ export class IdentityService {
     return { success: true };
   }
 
+  /**
+   * PDPA personal data export — Nghị định 13/2023/NĐ-CP.
+   * Returns all personal data held for the authenticated user.
+   * Excludes: passwordHash, internal audit logs, system fields.
+   */
+  async exportPersonalData(userId: string) {
+    const [user, sessions, communityPosts, communityComments, vows, gongkeLogs, repentanceLogs, lifeReleaseJournals, notificationPrefs] =
+      await Promise.all([
+        this.prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            publicId: true,
+            email: true,
+            displayName: true,
+            avatarUrl: true,
+            role: true,
+            status: true,
+            emailVerifiedAt: true,
+            lastLoginAt: true,
+            createdAt: true,
+          },
+        }),
+        this.prisma.session.findMany({
+          where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
+          select: { id: true, userAgent: true, ipAddress: true, createdAt: true, expiresAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 50,
+        }),
+        this.prisma.communityPost.findMany({
+          where: { authorId: userId },
+          select: { publicId: true, content: true, isPinned: true, isHidden: true, createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 200,
+        }),
+        this.prisma.communityComment.findMany({
+          where: { authorId: userId },
+          select: { content: true, isHidden: true, createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 500,
+        }),
+        this.prisma.vow.findMany({
+          where: { userId },
+          select: { publicId: true, description: true, vowType: true, status: true, startDate: true, endDate: true, createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 200,
+        }),
+        this.prisma.dailyGongkeLog.findMany({
+          where: { userId },
+          select: { date: true, coreCountsJson: true, note: true, createdAt: true },
+          orderBy: { date: "desc" },
+          take: 365,
+        }),
+        this.prisma.repentanceLog.findMany({
+          where: { userId },
+          select: { date: true, count: true, privateNote: true, createdAt: true },
+          orderBy: { date: "desc" },
+          take: 200,
+        }),
+        this.prisma.lifeReleaseJournal.findMany({
+          where: { userId },
+          select: { publicId: true, journalDate: true, animalType: true, quantity: true, location: true, note: true, createdAt: true },
+          orderBy: { journalDate: "desc" },
+          take: 200,
+        }),
+        this.prisma.notificationPreference.findUnique({
+          where: { userId },
+          select: { practiceReminders: true, eventReminders: true, communityUpdates: true, quietHoursStart: true, quietHoursEnd: true },
+        }),
+      ]);
+
+    return {
+      exportedAt: new Date().toISOString(),
+      legalBasis: "Nghị định 13/2023/NĐ-CP — quyền truy cập và di chuyển dữ liệu cá nhân",
+      profile: user,
+      activeSessions: sessions,
+      communityActivity: {
+        posts: communityPosts,
+        comments: communityComments,
+      },
+      practiceData: {
+        vows,
+        dailyGongke: gongkeLogs,
+        repentanceLogs,
+        lifeReleaseJournals,
+      },
+      notificationPreferences: notificationPrefs,
+    };
+  }
+
   private async generateAccessToken(user: { id: string; email: string; role: UserRole }, sessionId: string): Promise<string> {
     const secret = new TextEncoder().encode(this.config.jwtAccessSecret);
     const payload: Omit<JwtAccessPayload, "iat" | "exp"> = {

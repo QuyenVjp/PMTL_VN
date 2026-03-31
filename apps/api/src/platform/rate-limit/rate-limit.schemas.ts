@@ -14,6 +14,7 @@ export const rateLimitEndpointSchema = z.enum([
   "community.comment",
   "moderation.report",
   "guestbook.entry",
+  "data.export",
   "global.api",
 ]);
 
@@ -41,5 +42,6 @@ export const RATE_LIMIT_CONFIGS: Record<RateLimitEndpoint, RateLimitConfig> = {
   "community.comment": { endpoint: "community.comment", windowSeconds: 300, maxRequests: 20 },
   "moderation.report": { endpoint: "moderation.report", windowSeconds: 3600, maxRequests: 10 },
   "guestbook.entry": { endpoint: "guestbook.entry", windowSeconds: 86400, maxRequests: 3 },
+  "data.export": { endpoint: "data.export", windowSeconds: 86400, maxRequests: 2 },
   "global.api": { endpoint: "global.api", windowSeconds: 60, maxRequests: 100 },
 };
