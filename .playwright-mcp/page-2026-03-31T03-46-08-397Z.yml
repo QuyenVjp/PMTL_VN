@@ -1,0 +1,1503 @@
+- generic [ref=e2]:
+  - region
+  - generic [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#start-of-content"
+    - banner [ref=e6]:
+      - heading "Navigation Menu" [level=2] [ref=e7]
+      - generic [ref=e8]:
+        - link "Homepage" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+        - generic [ref=e13]:
+          - navigation "Global" [ref=e16]:
+            - list [ref=e17]:
+              - listitem [ref=e18]:
+                - button "Platform" [ref=e20] [cursor=pointer]:
+                  - text: Platform
+                  - img [ref=e21]
+              - listitem [ref=e23]:
+                - button "Solutions" [ref=e25] [cursor=pointer]:
+                  - text: Solutions
+                  - img [ref=e26]
+              - listitem [ref=e28]:
+                - button "Resources" [ref=e30] [cursor=pointer]:
+                  - text: Resources
+                  - img [ref=e31]
+              - listitem [ref=e33]:
+                - button "Open Source" [ref=e35] [cursor=pointer]:
+                  - text: Open Source
+                  - img [ref=e36]
+              - listitem [ref=e38]:
+                - button "Enterprise" [ref=e40] [cursor=pointer]:
+                  - text: Enterprise
+                  - img [ref=e41]
+              - listitem [ref=e43]:
+                - link "Pricing" [ref=e44] [cursor=pointer]:
+                  - /url: https://github.com/pricing
+                  - generic [ref=e45]: Pricing
+          - generic [ref=e46]:
+            - button "Search or jump to…" [ref=e49] [cursor=pointer]:
+              - img [ref=e51]
+              - generic [ref=e53]: Search or jump to...
+              - img [ref=e55]
+            - link "Sign in" [ref=e59] [cursor=pointer]:
+              - /url: /login?return_to=https%3A%2F%2Fgithub.com%2Fluongnv89%2Fclaude-howto
+            - link "Sign up" [ref=e60] [cursor=pointer]:
+              - /url: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E&source=header-repo&source_repo=luongnv89%2Fclaude-howto
+            - button "Appearance settings" [ref=e63] [cursor=pointer]:
+              - img
+  - main [ref=e67]:
+    - generic [ref=e68]:
+      - generic [ref=e69]:
+        - generic [ref=e71]:
+          - img [ref=e72]
+          - link "luongnv89" [ref=e75] [cursor=pointer]:
+            - /url: /luongnv89
+          - generic [ref=e76]: /
+          - strong [ref=e77]:
+            - link "claude-howto" [ref=e78] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto
+          - generic [ref=e79]: Public
+        - generic [ref=e80]:
+          - list:
+            - listitem [ref=e81]:
+              - button "Sponsor luongnv89/claude-howto" [ref=e83] [cursor=pointer]:
+                - generic [ref=e85]:
+                  - img [ref=e86]
+                  - text: Sponsor
+            - listitem [ref=e88]:
+              - link "You must be signed in to change notification settings" [ref=e89] [cursor=pointer]:
+                - /url: /login?return_to=%2Fluongnv89%2Fclaude-howto
+                - img [ref=e90]
+                - text: Notifications
+            - listitem [ref=e92]:
+              - link "Fork 1k" [ref=e93] [cursor=pointer]:
+                - /url: /login?return_to=%2Fluongnv89%2Fclaude-howto
+                - img [ref=e94]
+                - text: Fork
+                - generic "1,037" [ref=e96]: 1k
+            - listitem [ref=e97]:
+              - link "You must be signed in to star a repository" [ref=e99] [cursor=pointer]:
+                - /url: /login?return_to=%2Fluongnv89%2Fclaude-howto
+                - img [ref=e100]
+                - text: Star
+                - generic "10284 users starred this repository" [ref=e102]: 10.3k
+      - navigation "Repository" [ref=e103]:
+        - list [ref=e104]:
+          - listitem [ref=e105]:
+            - link "Code" [ref=e106] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto
+              - img [ref=e107]
+              - generic [ref=e109]: Code
+          - listitem [ref=e110]:
+            - link "Issues 3" [ref=e111] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/issues
+              - img [ref=e112]
+              - generic [ref=e115]: Issues
+              - generic "3" [ref=e116]
+          - listitem [ref=e117]:
+            - link "Pull requests 10" [ref=e118] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/pulls
+              - img [ref=e119]
+              - generic [ref=e121]: Pull requests
+              - generic "10" [ref=e122]
+          - listitem [ref=e123]:
+            - link "Actions" [ref=e124] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/actions
+              - img [ref=e125]
+              - generic [ref=e127]: Actions
+          - listitem [ref=e128]:
+            - link "Projects" [ref=e129] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/projects
+              - img [ref=e130]
+              - generic [ref=e132]: Projects
+          - listitem [ref=e133]:
+            - link "Security" [ref=e134] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/security
+              - img [ref=e135]
+              - generic [ref=e137]: Security
+          - listitem [ref=e138]:
+            - link "Insights" [ref=e139] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/pulse
+              - img [ref=e140]
+              - generic [ref=e142]: Insights
+    - generic [ref=e155]:
+      - heading "luongnv89/claude-howto" [level=1] [ref=e157]
+      - generic [ref=e158]:
+        - generic [ref=e161]:
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - button "main branch" [ref=e165] [cursor=pointer]:
+                - generic [ref=e166]:
+                  - generic [ref=e168]:
+                    - img [ref=e170]
+                    - generic [ref=e173]: main
+                  - generic:
+                    - img
+              - generic [ref=e174]:
+                - link "1 Branch" [ref=e175] [cursor=pointer]:
+                  - /url: /luongnv89/claude-howto/branches
+                  - generic [ref=e176]:
+                    - generic:
+                      - img
+                    - generic [ref=e178]:
+                      - strong [ref=e179]: "1"
+                      - text: Branch
+                - link "4 Tags" [ref=e180] [cursor=pointer]:
+                  - /url: /luongnv89/claude-howto/tags
+                  - generic [ref=e181]:
+                    - generic:
+                      - img
+                    - generic [ref=e183]:
+                      - strong [ref=e184]: "4"
+                      - text: Tags
+            - generic [ref=e185]:
+              - generic [ref=e189]:
+                - img [ref=e191]
+                - combobox "Go to file" [ref=e193]
+              - button "Code" [ref=e194] [cursor=pointer]:
+                - generic [ref=e195]:
+                  - generic:
+                    - img
+                  - generic [ref=e196]: Code
+                  - generic:
+                    - img
+          - generic [ref=e197]:
+            - generic [ref=e198]:
+              - heading "Folders and files" [level=2] [ref=e199]
+              - table "Folders and files" [ref=e200]:
+                - rowgroup:
+                  - row "Name Last commit message Last commit date":
+                    - columnheader "Name"
+                    - columnheader "Last commit message":
+                      - generic "Last commit message"
+                    - columnheader "Last commit date":
+                      - generic "Last commit date"
+                - rowgroup [ref=e201]:
+                  - 'row "Latest commit luongnv89 commits by luongnv89 refactor(advanced-features): narrow auto-mode permissions baseline Open commit details success Commit 2790fb2 · Mar 31, 20266 hours ago History 127 Commits" [ref=e202]':
+                    - 'cell "Latest commit luongnv89 commits by luongnv89 refactor(advanced-features): narrow auto-mode permissions baseline Open commit details success Commit 2790fb2 · Mar 31, 20266 hours ago History 127 Commits" [ref=e203]':
+                      - generic [ref=e204]:
+                        - heading "Latest commit" [level=2] [ref=e205]
+                        - generic [ref=e206]:
+                          - generic [ref=e209]:
+                            - link "luongnv89" [ref=e210] [cursor=pointer]:
+                              - /url: /luongnv89
+                              - img "luongnv89" [ref=e211]
+                            - link "commits by luongnv89" [ref=e212] [cursor=pointer]:
+                              - /url: /luongnv89/claude-howto/commits?author=luongnv89
+                              - text: luongnv89
+                          - generic [ref=e213]:
+                            - 'link "refactor(advanced-features): narrow auto-mode permissions baseline" [ref=e216] [cursor=pointer]':
+                              - /url: /luongnv89/claude-howto/commit/2790fb2b17bffc907f20cec8347effaed011e275
+                            - button "Open commit details" [ref=e217] [cursor=pointer]:
+                              - img [ref=e218]
+                            - button "success" [ref=e220] [cursor=pointer]:
+                              - img [ref=e221]
+                        - generic [ref=e223]:
+                          - generic [ref=e225]:
+                            - link "Commit 2790fb2" [ref=e226] [cursor=pointer]:
+                              - /url: /luongnv89/claude-howto/commit/2790fb2b17bffc907f20cec8347effaed011e275
+                              - text: 2790fb2
+                            - text: ·
+                            - generic "Mar 31, 2026, 4:42 AM GMT+7" [ref=e227]: Mar 31, 20266 hours ago
+                          - generic [ref=e228]:
+                            - heading "History" [level=2] [ref=e229]
+                            - link "127 Commits" [ref=e230] [cursor=pointer]:
+                              - /url: /luongnv89/claude-howto/commits/main/
+                              - generic [ref=e231]:
+                                - generic:
+                                  - img
+                                - generic [ref=e232]: 127 Commits
+                  - 'row ".claude/skills, (Directory) chore(release): v2.2.0 Mar 26, 20265 days ago" [ref=e233]':
+                    - cell ".claude/skills, (Directory)" [ref=e234]:
+                      - generic [ref=e235]:
+                        - img [ref=e236]
+                        - link ".claude/skills, (Directory)" [ref=e241] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/.claude/skills
+                          - text: .claude/skills
+                    - 'cell "chore(release): v2.2.0" [ref=e242]':
+                      - 'link "chore(release): v2.2.0" [ref=e245] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/167a53acbcf679485fe1521df1b226b149ded098
+                    - cell "Mar 26, 20265 days ago" [ref=e246]:
+                      - generic [ref=e247]: Mar 26, 20265 days ago
+                  - 'row ".github, (Directory) fix(docs): Update broken URLs, deprecations, and outdated references Mar 13, 20263 weeks ago" [ref=e248]':
+                    - cell ".github, (Directory)" [ref=e249]:
+                      - generic [ref=e250]:
+                        - img [ref=e251]
+                        - link ".github, (Directory)" [ref=e256] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/.github
+                          - text: .github
+                    - 'cell "fix(docs): Update broken URLs, deprecations, and outdated references" [ref=e257]':
+                      - 'link "fix(docs): Update broken URLs, deprecations, and outdated references" [ref=e260] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/8fe452029f9c14ca3a4bcafa319f10bc517e31a1
+                    - cell "Mar 13, 20263 weeks ago" [ref=e261]:
+                      - generic [ref=e262]: Mar 13, 20263 weeks ago
+                  - 'row "01-slash-commands, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e263]':
+                    - cell "01-slash-commands, (Directory)" [ref=e264]:
+                      - generic [ref=e265]:
+                        - img [ref=e266]
+                        - link "01-slash-commands, (Directory)" [ref=e271] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/01-slash-commands
+                          - text: 01-slash-commands
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e272]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e275] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e276]:
+                      - generic [ref=e277]: Mar 26, 20265 days ago
+                  - 'row "02-memory, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e278]':
+                    - cell "02-memory, (Directory)" [ref=e279]:
+                      - generic [ref=e280]:
+                        - img [ref=e281]
+                        - link "02-memory, (Directory)" [ref=e286] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/02-memory
+                          - text: 02-memory
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e287]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e290] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e291]:
+                      - generic [ref=e292]: Mar 26, 20265 days ago
+                  - 'row "03-skills, (Directory) docs(03-skills): Introduce luongnv89/skills collection and luongnv89/… Mar 30, 2026yesterday" [ref=e293]':
+                    - cell "03-skills, (Directory)" [ref=e294]:
+                      - generic [ref=e295]:
+                        - img [ref=e296]
+                        - link "03-skills, (Directory)" [ref=e301] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/03-skills
+                          - text: 03-skills
+                    - 'cell "docs(03-skills): Introduce luongnv89/skills collection and luongnv89/…" [ref=e302]':
+                      - 'link "docs(03-skills): Introduce luongnv89/skills collection and luongnv89/…" [ref=e305] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/7e3c0b69c14fc272b4f5d3ee42fea4fcf439e0f3
+                    - cell "Mar 30, 2026yesterday" [ref=e306]:
+                      - generic [ref=e307]: Mar 30, 2026yesterday
+                  - 'row "04-subagents, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e308]':
+                    - cell "04-subagents, (Directory)" [ref=e309]:
+                      - generic [ref=e310]:
+                        - img [ref=e311]
+                        - link "04-subagents, (Directory)" [ref=e316] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/04-subagents
+                          - text: 04-subagents
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e317]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e320] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e321]:
+                      - generic [ref=e322]: Mar 26, 20265 days ago
+                  - 'row "05-mcp, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e323]':
+                    - cell "05-mcp, (Directory)" [ref=e324]:
+                      - generic [ref=e325]:
+                        - img [ref=e326]
+                        - link "05-mcp, (Directory)" [ref=e331] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/05-mcp
+                          - text: 05-mcp
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e332]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e335] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e336]:
+                      - generic [ref=e337]: Mar 26, 20265 days ago
+                  - 'row "06-hooks, (Directory) refactor(hooks): Replace auto-adapt hook with one-time permissions se… Mar 31, 20266 hours ago" [ref=e338]':
+                    - cell "06-hooks, (Directory)" [ref=e339]:
+                      - generic [ref=e340]:
+                        - img [ref=e341]
+                        - link "06-hooks, (Directory)" [ref=e346] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/06-hooks
+                          - text: 06-hooks
+                    - 'cell "refactor(hooks): Replace auto-adapt hook with one-time permissions se…" [ref=e347]':
+                      - 'link "refactor(hooks): Replace auto-adapt hook with one-time permissions se…" [ref=e350] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/995a5d6c12a871780c9453da22c82b4bd20586df
+                    - cell "Mar 31, 20266 hours ago" [ref=e351]:
+                      - generic [ref=e352]: Mar 31, 20266 hours ago
+                  - 'row "07-plugins, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e353]':
+                    - cell "07-plugins, (Directory)" [ref=e354]:
+                      - generic [ref=e355]:
+                        - img [ref=e356]
+                        - link "07-plugins, (Directory)" [ref=e361] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/07-plugins
+                          - text: 07-plugins
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e362]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e365] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e366]:
+                      - generic [ref=e367]: Mar 26, 20265 days ago
+                  - 'row "08-checkpoints, (Directory) docs(08-checkpoints): Introduce cc-context-stats for context zone mon… Mar 30, 2026yesterday" [ref=e368]':
+                    - cell "08-checkpoints, (Directory)" [ref=e369]:
+                      - generic [ref=e370]:
+                        - img [ref=e371]
+                        - link "08-checkpoints, (Directory)" [ref=e376] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/08-checkpoints
+                          - text: 08-checkpoints
+                    - 'cell "docs(08-checkpoints): Introduce cc-context-stats for context zone mon…" [ref=e377]':
+                      - 'link "docs(08-checkpoints): Introduce cc-context-stats for context zone mon…" [ref=e380] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/d41b335cbc40832d83656184c5a67ca4952bad4f
+                    - cell "Mar 30, 2026yesterday" [ref=e381]:
+                      - generic [ref=e382]: Mar 30, 2026yesterday
+                  - 'row "09-advanced-features, (Directory) refactor(advanced-features): narrow auto-mode permissions baseline Mar 31, 20266 hours ago" [ref=e383]':
+                    - cell "09-advanced-features, (Directory)" [ref=e384]:
+                      - generic [ref=e385]:
+                        - img [ref=e386]
+                        - link "09-advanced-features, (Directory)" [ref=e391] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/09-advanced-features
+                          - text: 09-advanced-features
+                    - 'cell "refactor(advanced-features): narrow auto-mode permissions baseline" [ref=e392]':
+                      - 'link "refactor(advanced-features): narrow auto-mode permissions baseline" [ref=e395] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/2790fb2b17bffc907f20cec8347effaed011e275
+                    - cell "Mar 31, 20266 hours ago" [ref=e396]:
+                      - generic [ref=e397]: Mar 31, 20266 hours ago
+                  - 'row "10-cli, (Directory) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e398]':
+                    - cell "10-cli, (Directory)" [ref=e399]:
+                      - generic [ref=e400]:
+                        - img [ref=e401]
+                        - link "10-cli, (Directory)" [ref=e406] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/10-cli
+                          - text: 10-cli
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e407]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e410] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e411]:
+                      - generic [ref=e412]: Mar 26, 20265 days ago
+                  - 'row "assets/logo, (Directory) design: Redesign logo to compass-bracket mark with minimal palette Feb 18, 2026last month" [ref=e413]':
+                    - cell "assets/logo, (Directory)" [ref=e414]:
+                      - generic [ref=e415]:
+                        - img [ref=e416]
+                        - link "assets/logo, (Directory)" [ref=e421] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/assets/logo
+                          - text: assets/logo
+                    - 'cell "design: Redesign logo to compass-bracket mark with minimal palette" [ref=e422]':
+                      - 'link "design: Redesign logo to compass-bracket mark with minimal palette" [ref=e425] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/20779dbf79fe1fc14e333e31c10e0ee4686773a7
+                    - cell "Feb 18, 2026last month" [ref=e426]:
+                      - generic [ref=e427]: Feb 18, 2026last month
+                  - 'row "prompts, (Directory) chore: Update gitignore and improve Remotion video prompt Jan 23, 20262 months ago" [ref=e428]':
+                    - cell "prompts, (Directory)" [ref=e429]:
+                      - generic [ref=e430]:
+                        - img [ref=e431]
+                        - link "prompts, (Directory)" [ref=e436] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/prompts
+                          - text: prompts
+                    - 'cell "chore: Update gitignore and improve Remotion video prompt" [ref=e437]':
+                      - 'link "chore: Update gitignore and improve Remotion video prompt" [ref=e440] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/1b4e29bf8cab08a3460d71e71d4abff6e9865171
+                    - cell "Jan 23, 20262 months ago" [ref=e441]:
+                      - generic [ref=e442]: Jan 23, 20262 months ago
+                  - 'row "resources, (Directory) design: Redesign logo to compass-bracket mark with minimal palette Feb 18, 2026last month" [ref=e443]':
+                    - cell "resources, (Directory)" [ref=e444]:
+                      - generic [ref=e445]:
+                        - img [ref=e446]
+                        - link "resources, (Directory)" [ref=e451] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/resources
+                          - text: resources
+                    - 'cell "design: Redesign logo to compass-bracket mark with minimal palette" [ref=e452]':
+                      - 'link "design: Redesign logo to compass-bracket mark with minimal palette" [ref=e455] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/20779dbf79fe1fc14e333e31c10e0ee4686773a7
+                    - cell "Feb 18, 2026last month" [ref=e456]:
+                      - generic [ref=e457]: Feb 18, 2026last month
+                  - 'row "scripts, (Directory) refactor: Add new V2.0 logo with dark/light mode support to all markd… Jan 9, 20262 months ago" [ref=e458]':
+                    - cell "scripts, (Directory)" [ref=e459]:
+                      - generic [ref=e460]:
+                        - img [ref=e461]
+                        - link "scripts, (Directory)" [ref=e466] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/scripts
+                          - text: scripts
+                    - 'cell "refactor: Add new V2.0 logo with dark/light mode support to all markd…" [ref=e467]':
+                      - 'link "refactor: Add new V2.0 logo with dark/light mode support to all markd…" [ref=e470] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/58e586f09b36667f6e15fe0c59d38a9daf279c95
+                    - cell "Jan 9, 20262 months ago" [ref=e471]:
+                      - generic [ref=e472]: Jan 9, 20262 months ago
+                  - row "slides, (Directory) Add slides/ folder to store some good slides Jan 6, 20262 months ago" [ref=e473]:
+                    - cell "slides, (Directory)" [ref=e474]:
+                      - generic [ref=e475]:
+                        - img [ref=e476]
+                        - link "slides, (Directory)" [ref=e481] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/tree/main/slides
+                          - text: slides
+                    - cell "Add slides/ folder to store some good slides" [ref=e482]:
+                      - link "Add slides/ folder to store some good slides" [ref=e485] [cursor=pointer]:
+                        - /url: /luongnv89/claude-howto/commit/e136b581d903215236adc8db913d98526ccc86a3
+                    - cell "Jan 6, 20262 months ago" [ref=e486]:
+                      - generic [ref=e487]: Jan 6, 20262 months ago
+                  - 'row ".cspell.json, (File) fix(ci): Add missing cSpell words and README sections for CI compliance Mar 26, 20265 days ago" [ref=e488]':
+                    - cell ".cspell.json, (File)" [ref=e489]:
+                      - generic [ref=e490]:
+                        - img [ref=e491]
+                        - link ".cspell.json, (File)" [ref=e496] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/.cspell.json
+                          - text: .cspell.json
+                    - 'cell "fix(ci): Add missing cSpell words and README sections for CI compliance" [ref=e497]':
+                      - 'link "fix(ci): Add missing cSpell words and README sections for CI compliance" [ref=e500] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/93f9d515136ea11f41e484d54110dc2abe9237dc
+                    - cell "Mar 26, 20265 days ago" [ref=e501]:
+                      - generic [ref=e502]: Mar 26, 20265 days ago
+                  - 'row ".gitignore, (File) fix(ci): Add Sandboxing to cSpell dictionary Mar 13, 20263 weeks ago" [ref=e503]':
+                    - cell ".gitignore, (File)" [ref=e504]:
+                      - generic [ref=e505]:
+                        - img [ref=e506]
+                        - link ".gitignore, (File)" [ref=e511] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/.gitignore
+                          - text: .gitignore
+                    - 'cell "fix(ci): Add Sandboxing to cSpell dictionary" [ref=e512]':
+                      - 'link "fix(ci): Add Sandboxing to cSpell dictionary" [ref=e515] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/b80ce6fb786dc6088362f2526da3733dbac6d25f
+                    - cell "Mar 13, 20263 weeks ago" [ref=e516]:
+                      - generic [ref=e517]: Mar 13, 20263 weeks ago
+                  - 'row ".pre-commit-config.yaml, (File) ci: Add DevOps quality assurance with pre-commit hooks and GitHub Act… Dec 11, 20253 months ago" [ref=e518]':
+                    - cell ".pre-commit-config.yaml, (File)" [ref=e519]:
+                      - generic [ref=e520]:
+                        - img [ref=e521]
+                        - link ".pre-commit-config.yaml, (File)" [ref=e526] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/.pre-commit-config.yaml
+                          - text: .pre-commit-config.yaml
+                    - 'cell "ci: Add DevOps quality assurance with pre-commit hooks and GitHub Act…" [ref=e527]':
+                      - 'link "ci: Add DevOps quality assurance with pre-commit hooks and GitHub Act…" [ref=e530] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/540508f39241ca28a70dd9e8a58924809263d335
+                    - cell "Dec 11, 20253 months ago" [ref=e531]:
+                      - generic [ref=e532]: Dec 11, 20253 months ago
+                  - 'row "CATALOG.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e533]':
+                    - cell "CATALOG.md, (File)" [ref=e534]:
+                      - generic [ref=e535]:
+                        - img [ref=e536]
+                        - link "CATALOG.md, (File)" [ref=e541] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/CATALOG.md
+                          - text: CATALOG.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e542]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e545] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e546]:
+                      - generic [ref=e547]: Mar 26, 20265 days ago
+                  - 'row "CHANGELOG.md, (File) chore(release): v2.2.0 Mar 26, 20265 days ago" [ref=e548]':
+                    - cell "CHANGELOG.md, (File)" [ref=e549]:
+                      - generic [ref=e550]:
+                        - img [ref=e551]
+                        - link "CHANGELOG.md, (File)" [ref=e556] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/CHANGELOG.md
+                          - text: CHANGELOG.md
+                    - 'cell "chore(release): v2.2.0" [ref=e557]':
+                      - 'link "chore(release): v2.2.0" [ref=e560] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/167a53acbcf679485fe1521df1b226b149ded098
+                    - cell "Mar 26, 20265 days ago" [ref=e561]:
+                      - generic [ref=e562]: Mar 26, 20265 days ago
+                  - 'row "CODE_OF_CONDUCT.md, (File) docs: Add comprehensive Code of Conduct and update documentation Jan 9, 20262 months ago" [ref=e563]':
+                    - cell "CODE_OF_CONDUCT.md, (File)" [ref=e564]:
+                      - generic [ref=e565]:
+                        - img [ref=e566]
+                        - link "CODE_OF_CONDUCT.md, (File)" [ref=e571] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/CODE_OF_CONDUCT.md
+                          - text: CODE_OF_CONDUCT.md
+                    - 'cell "docs: Add comprehensive Code of Conduct and update documentation" [ref=e572]':
+                      - 'link "docs: Add comprehensive Code of Conduct and update documentation" [ref=e575] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/c8d60700b5e9901a68236c810ee6f0683313c27f
+                    - cell "Jan 9, 20262 months ago" [ref=e576]:
+                      - generic [ref=e577]: Jan 9, 20262 months ago
+                  - 'row "CONTRIBUTING.md, (File) fix: Resolve dead links in documentation files Jan 15, 20262 months ago" [ref=e578]':
+                    - cell "CONTRIBUTING.md, (File)" [ref=e579]:
+                      - generic [ref=e580]:
+                        - img [ref=e581]
+                        - link "CONTRIBUTING.md, (File)" [ref=e586] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/CONTRIBUTING.md
+                          - text: CONTRIBUTING.md
+                    - 'cell "fix: Resolve dead links in documentation files" [ref=e587]':
+                      - 'link "fix: Resolve dead links in documentation files" [ref=e590] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/59a87f10c891ff8a9a402baa46516f5f97d1cb3c
+                    - cell "Jan 15, 20262 months ago" [ref=e591]:
+                      - generic [ref=e592]: Jan 15, 20262 months ago
+                  - 'row "INDEX.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e593]':
+                    - cell "INDEX.md, (File)" [ref=e594]:
+                      - generic [ref=e595]:
+                        - img [ref=e596]
+                        - link "INDEX.md, (File)" [ref=e601] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/INDEX.md
+                          - text: INDEX.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e602]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e605] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e606]:
+                      - generic [ref=e607]: Mar 26, 20265 days ago
+                  - 'row "LEARNING-ROADMAP.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e608]':
+                    - cell "LEARNING-ROADMAP.md, (File)" [ref=e609]:
+                      - generic [ref=e610]:
+                        - img [ref=e611]
+                        - link "LEARNING-ROADMAP.md, (File)" [ref=e616] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/LEARNING-ROADMAP.md
+                          - text: LEARNING-ROADMAP.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e617]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e620] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e621]:
+                      - generic [ref=e622]: Mar 26, 20265 days ago
+                  - 'row "LICENSE, (File) docs: Add MIT License and update license references in README and CON… Jan 9, 20262 months ago" [ref=e623]':
+                    - cell "LICENSE, (File)" [ref=e624]:
+                      - generic [ref=e625]:
+                        - img [ref=e626]
+                        - link "LICENSE, (File)" [ref=e631] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/LICENSE
+                          - text: LICENSE
+                    - 'cell "docs: Add MIT License and update license references in README and CON…" [ref=e632]':
+                      - 'link "docs: Add MIT License and update license references in README and CON…" [ref=e635] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/c1a1c68be5b2a8027b879a68642d85064553efe6
+                    - cell "Jan 9, 20262 months ago" [ref=e636]:
+                      - generic [ref=e637]: Jan 9, 20262 months ago
+                  - 'row "QUICK_REFERENCE.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e638]':
+                    - cell "QUICK_REFERENCE.md, (File)" [ref=e639]:
+                      - generic [ref=e640]:
+                        - img [ref=e641]
+                        - link "QUICK_REFERENCE.md, (File)" [ref=e646] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/QUICK_REFERENCE.md
+                          - text: QUICK_REFERENCE.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e647]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e650] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e651]:
+                      - generic [ref=e652]: Mar 26, 20265 days ago
+                  - 'row "README.backup.md, (File) docs: Rewrite README as landing-page-structured guide Mar 18, 20262 weeks ago" [ref=e653]':
+                    - cell "README.backup.md, (File)" [ref=e654]:
+                      - generic [ref=e655]:
+                        - img [ref=e656]
+                        - link "README.backup.md, (File)" [ref=e661] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/README.backup.md
+                          - text: README.backup.md
+                    - 'cell "docs: Rewrite README as landing-page-structured guide" [ref=e662]':
+                      - 'link "docs: Rewrite README as landing-page-structured guide" [ref=e665] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/32a07768b09bc22ec9ab6a6f74c1d4b0829d5830
+                    - cell "Mar 18, 20262 weeks ago" [ref=e666]:
+                      - generic [ref=e667]: Mar 18, 20262 weeks ago
+                  - 'row "README.md, (File) docs: Update README stats to reflect current GitHub metrics (5,900+ s… Mar 30, 2026yesterday" [ref=e668]':
+                    - cell "README.md, (File)" [ref=e669]:
+                      - generic [ref=e670]:
+                        - img [ref=e671]
+                        - link "README.md, (File)" [ref=e676] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/README.md
+                          - text: README.md
+                    - 'cell "docs: Update README stats to reflect current GitHub metrics (5,900+ s…" [ref=e677]':
+                      - 'link "docs: Update README stats to reflect current GitHub metrics (5,900+ s…" [ref=e680] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/50015255956b7bae398f6641df95cccc02afe5ae
+                    - cell "Mar 30, 2026yesterday" [ref=e681]:
+                      - generic [ref=e682]: Mar 30, 2026yesterday
+                  - 'row "RELEASE_NOTES.md, (File) chore(release): v2.2.0 Mar 26, 20265 days ago" [ref=e683]':
+                    - cell "RELEASE_NOTES.md, (File)" [ref=e684]:
+                      - generic [ref=e685]:
+                        - img [ref=e686]
+                        - link "RELEASE_NOTES.md, (File)" [ref=e691] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/RELEASE_NOTES.md
+                          - text: RELEASE_NOTES.md
+                    - 'cell "chore(release): v2.2.0" [ref=e692]':
+                      - 'link "chore(release): v2.2.0" [ref=e695] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/167a53acbcf679485fe1521df1b226b149ded098
+                    - cell "Mar 26, 20265 days ago" [ref=e696]:
+                      - generic [ref=e697]: Mar 26, 20265 days ago
+                  - 'row "SECURITY.md, (File) fix: Repair dead links in SECURITY.md and update spell check dictionary Jan 9, 20262 months ago" [ref=e698]':
+                    - cell "SECURITY.md, (File)" [ref=e699]:
+                      - generic [ref=e700]:
+                        - img [ref=e701]
+                        - link "SECURITY.md, (File)" [ref=e706] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/SECURITY.md
+                          - text: SECURITY.md
+                    - 'cell "fix: Repair dead links in SECURITY.md and update spell check dictionary" [ref=e707]':
+                      - 'link "fix: Repair dead links in SECURITY.md and update spell check dictionary" [ref=e710] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/9b34a69acd9cd27f118f2be7008d9f0a544dd236
+                    - cell "Jan 9, 20262 months ago" [ref=e711]:
+                      - generic [ref=e712]: Jan 9, 20262 months ago
+                  - 'row "STYLE_GUIDE.md, (File) fix(docs): Update broken URLs, deprecations, and outdated references Mar 13, 20263 weeks ago" [ref=e713]':
+                    - cell "STYLE_GUIDE.md, (File)" [ref=e714]:
+                      - generic [ref=e715]:
+                        - img [ref=e716]
+                        - link "STYLE_GUIDE.md, (File)" [ref=e721] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/STYLE_GUIDE.md
+                          - text: STYLE_GUIDE.md
+                    - 'cell "fix(docs): Update broken URLs, deprecations, and outdated references" [ref=e722]':
+                      - 'link "fix(docs): Update broken URLs, deprecations, and outdated references" [ref=e725] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/8fe452029f9c14ca3a4bcafa319f10bc517e31a1
+                    - cell "Mar 13, 20263 weeks ago" [ref=e726]:
+                      - generic [ref=e727]: Mar 13, 20263 weeks ago
+                  - 'row "claude-howto-logo.png, (File) docs: Add blog post link and convert logo to PNG format Nov 9, 20254 months ago" [ref=e728]':
+                    - cell "claude-howto-logo.png, (File)" [ref=e729]:
+                      - generic [ref=e730]:
+                        - img [ref=e731]
+                        - link "claude-howto-logo.png, (File)" [ref=e736] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/claude-howto-logo.png
+                          - text: claude-howto-logo.png
+                    - 'cell "docs: Add blog post link and convert logo to PNG format" [ref=e737]':
+                      - 'link "docs: Add blog post link and convert logo to PNG format" [ref=e740] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/1df7ed4916fdf25da72edc84ae1b8b6d32a9d042
+                    - cell "Nov 9, 20254 months ago" [ref=e741]:
+                      - generic [ref=e742]: Nov 9, 20254 months ago
+                  - 'row "claude-howto-logo.svg, (File) design: Redesign logo with green terminal aesthetic Jan 9, 20262 months ago" [ref=e743]':
+                    - cell "claude-howto-logo.svg, (File)" [ref=e744]:
+                      - generic [ref=e745]:
+                        - img [ref=e746]
+                        - link "claude-howto-logo.svg, (File)" [ref=e751] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/claude-howto-logo.svg
+                          - text: claude-howto-logo.svg
+                    - 'cell "design: Redesign logo with green terminal aesthetic" [ref=e752]':
+                      - 'link "design: Redesign logo with green terminal aesthetic" [ref=e755] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/6e699c2f4772e1b324e09f4eab500d58e9ec40d1
+                    - cell "Jan 9, 20262 months ago" [ref=e756]:
+                      - generic [ref=e757]: Jan 9, 20262 months ago
+                  - 'row "claude_concepts_guide.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e758]':
+                    - cell "claude_concepts_guide.md, (File)" [ref=e759]:
+                      - generic [ref=e760]:
+                        - img [ref=e761]
+                        - link "claude_concepts_guide.md, (File)" [ref=e766] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/claude_concepts_guide.md
+                          - text: claude_concepts_guide.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e767]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e770] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e771]:
+                      - generic [ref=e772]: Mar 26, 20265 days ago
+                  - 'row "clean-code-rules.md, (File) docs: Add clean-code-reviewer subagent and rules reference Jan 9, 20262 months ago" [ref=e773]':
+                    - cell "clean-code-rules.md, (File)" [ref=e774]:
+                      - generic [ref=e775]:
+                        - img [ref=e776]
+                        - link "clean-code-rules.md, (File)" [ref=e781] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/clean-code-rules.md
+                          - text: clean-code-rules.md
+                    - 'cell "docs: Add clean-code-reviewer subagent and rules reference" [ref=e782]':
+                      - 'link "docs: Add clean-code-reviewer subagent and rules reference" [ref=e785] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/fdbc458ede883299574e00e82bb9d386bdce6198
+                    - cell "Jan 9, 20262 months ago" [ref=e786]:
+                      - generic [ref=e787]: Jan 9, 20262 months ago
+                  - 'row "coverage.xml, (File) refactor: Move Python configuration and requirements files to scripts… Jan 9, 20262 months ago" [ref=e788]':
+                    - cell "coverage.xml, (File)" [ref=e789]:
+                      - generic [ref=e790]:
+                        - img [ref=e791]
+                        - link "coverage.xml, (File)" [ref=e796] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/coverage.xml
+                          - text: coverage.xml
+                    - 'cell "refactor: Move Python configuration and requirements files to scripts…" [ref=e797]':
+                      - 'link "refactor: Move Python configuration and requirements files to scripts…" [ref=e800] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/c2130fc769be10b940588a17e0b073926cb55509
+                    - cell "Jan 9, 20262 months ago" [ref=e801]:
+                      - generic [ref=e802]: Jan 9, 20262 months ago
+                  - 'row "resources.md, (File) docs: Sync all tutorials and references with Claude Code v2.1.84 Mar 26, 20265 days ago" [ref=e803]':
+                    - cell "resources.md, (File)" [ref=e804]:
+                      - generic [ref=e805]:
+                        - img [ref=e806]
+                        - link "resources.md, (File)" [ref=e811] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/resources.md
+                          - text: resources.md
+                    - 'cell "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e812]':
+                      - 'link "docs: Sync all tutorials and references with Claude Code v2.1.84" [ref=e815] [cursor=pointer]':
+                        - /url: /luongnv89/claude-howto/commit/f78c09474086f0b43e601647315e12f0da687d4f
+                    - cell "Mar 26, 20265 days ago" [ref=e816]:
+                      - generic [ref=e817]: Mar 26, 20265 days ago
+            - generic [ref=e819]:
+              - generic [ref=e820]:
+                - heading "Repository files navigation" [level=2] [ref=e821]
+                - navigation "Repository files" [ref=e822]:
+                  - list [ref=e823]:
+                    - listitem [ref=e824]:
+                      - link "README" [ref=e825] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e827]
+                        - generic [ref=e829]: README
+                    - listitem [ref=e830]:
+                      - link "Code of conduct" [ref=e831] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e833]
+                        - generic [ref=e835]: Code of conduct
+                    - listitem [ref=e836]:
+                      - link "Contributing" [ref=e837] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e839]
+                        - generic [ref=e841]: Contributing
+                    - listitem [ref=e842]:
+                      - link "MIT license" [ref=e843] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e845]
+                        - generic [ref=e847]: MIT license
+                    - listitem [ref=e848]:
+                      - link "Security" [ref=e849] [cursor=pointer]:
+                        - /url: "#"
+                        - img [ref=e851]
+                        - generic [ref=e853]: Security
+                - button "Outline" [ref=e854] [cursor=pointer]:
+                  - img [ref=e855]
+              - article [ref=e858]:
+                - img "Claude How To" [ref=e861]
+                - paragraph [ref=e862]:
+                  - link "GitHub Stars" [ref=e863] [cursor=pointer]:
+                    - /url: https://github.com/luongnv89/claude-howto/stargazers
+                    - img "GitHub Stars" [ref=e864]
+                  - link "GitHub Forks" [ref=e865] [cursor=pointer]:
+                    - /url: https://github.com/luongnv89/claude-howto/network/members
+                    - img "GitHub Forks" [ref=e866]
+                  - 'link "License: MIT" [ref=e867] [cursor=pointer]':
+                    - /url: /luongnv89/claude-howto/blob/main/LICENSE
+                    - 'img "License: MIT" [ref=e868]'
+                  - link "Version" [ref=e869] [cursor=pointer]:
+                    - /url: /luongnv89/claude-howto/blob/main/CHANGELOG.md
+                    - img "Version" [ref=e870]
+                  - link "Claude Code" [ref=e871] [cursor=pointer]:
+                    - /url: https://code.claude.com
+                    - img "Claude Code" [ref=e872]
+                - generic [ref=e873]:
+                  - heading "Master Claude Code in a Weekend" [level=1] [ref=e874]
+                  - 'link "Permalink: Master Claude Code in a Weekend" [ref=e875] [cursor=pointer]':
+                    - /url: "#master-claude-code-in-a-weekend"
+                    - img [ref=e876]
+                - paragraph [ref=e878]:
+                  - text: Go from typing
+                  - code [ref=e879]: claude
+                  - text: to orchestrating agents, hooks, skills, and MCP servers — with visual tutorials, copy-paste templates, and a guided learning path.
+                - paragraph [ref=e880]:
+                  - strong [ref=e881]:
+                    - link "Get Started in 15 Minutes" [ref=e882] [cursor=pointer]:
+                      - /url: "#-get-started-in-15-minutes"
+                  - text: "|"
+                  - strong [ref=e883]:
+                    - link "Find Your Level" [ref=e884] [cursor=pointer]:
+                      - /url: "#-not-sure-where-to-start"
+                  - text: "|"
+                  - strong [ref=e885]:
+                    - link "Browse the Feature Catalog" [ref=e886] [cursor=pointer]:
+                      - /url: /luongnv89/claude-howto/blob/main/CATALOG.md
+                - separator [ref=e887]
+                - generic [ref=e888]:
+                  - heading "Table of Contents" [level=2] [ref=e889]
+                  - 'link "Permalink: Table of Contents" [ref=e890] [cursor=pointer]':
+                    - /url: "#table-of-contents"
+                    - img [ref=e891]
+                - list [ref=e893]:
+                  - listitem [ref=e894]:
+                    - link "The Problem" [ref=e895] [cursor=pointer]:
+                      - /url: "#the-problem"
+                  - listitem [ref=e896]:
+                    - link "How Claude How To Fixes This" [ref=e897] [cursor=pointer]:
+                      - /url: "#how-claude-how-to-fixes-this"
+                  - listitem [ref=e898]:
+                    - link "How It Works" [ref=e899] [cursor=pointer]:
+                      - /url: "#how-it-works"
+                  - listitem [ref=e900]:
+                    - link "Not Sure Where to Start?" [ref=e901] [cursor=pointer]:
+                      - /url: "#-not-sure-where-to-start"
+                  - listitem [ref=e902]:
+                    - link "Get Started in 15 Minutes" [ref=e903] [cursor=pointer]:
+                      - /url: "#-get-started-in-15-minutes"
+                  - listitem [ref=e904]:
+                    - link "What Can You Build With This?" [ref=e905] [cursor=pointer]:
+                      - /url: "#what-can-you-build-with-this"
+                  - listitem [ref=e906]:
+                    - link "FAQ" [ref=e907] [cursor=pointer]:
+                      - /url: "#faq"
+                  - listitem [ref=e908]:
+                    - link "Contributing" [ref=e909] [cursor=pointer]:
+                      - /url: "#contributing"
+                  - listitem [ref=e910]:
+                    - link "License" [ref=e911] [cursor=pointer]:
+                      - /url: "#license"
+                - separator [ref=e912]
+                - generic [ref=e913]:
+                  - heading "The Problem" [level=2] [ref=e914]
+                  - 'link "Permalink: The Problem" [ref=e915] [cursor=pointer]':
+                    - /url: "#the-problem"
+                    - img [ref=e916]
+                - paragraph [ref=e918]: You installed Claude Code. You ran a few prompts. Now what?
+                - list [ref=e919]:
+                  - listitem [ref=e920]:
+                    - strong [ref=e921]: The official docs describe features — but don't show you how to combine them.
+                    - text: You know slash commands exist, but not how to chain them with hooks, memory, and subagents into a workflow that actually saves hours.
+                  - listitem [ref=e922]:
+                    - strong [ref=e923]: There's no clear learning path.
+                    - text: Should you learn MCP before hooks? Skills before subagents? You end up skimming everything and mastering nothing.
+                  - listitem [ref=e924]:
+                    - strong [ref=e925]: Examples are too basic.
+                    - text: A "hello world" slash command doesn't help you build a production code review pipeline that uses memory, delegates to specialized agents, and runs security scans automatically.
+                - paragraph [ref=e926]: You're leaving 90% of Claude Code's power on the table — and you don't know what you don't know.
+                - separator [ref=e927]
+                - generic [ref=e928]:
+                  - heading "How Claude How To Fixes This" [level=2] [ref=e929]
+                  - 'link "Permalink: How Claude How To Fixes This" [ref=e930] [cursor=pointer]':
+                    - /url: "#how-claude-how-to-fixes-this"
+                    - img [ref=e931]
+                - paragraph [ref=e933]:
+                  - text: This isn't another feature reference. It's a
+                  - strong [ref=e934]: structured, visual, example-driven guide
+                  - text: that teaches you to use every Claude Code feature with real-world templates you can copy into your project today.
+                - table [ref=e936]:
+                  - rowgroup [ref=e937]:
+                    - row "Official Docs This Guide" [ref=e938]:
+                      - columnheader [ref=e939]
+                      - columnheader "Official Docs" [ref=e940]
+                      - columnheader "This Guide" [ref=e941]
+                  - rowgroup [ref=e942]:
+                    - row "Format Reference documentation Visual tutorials with Mermaid diagrams" [ref=e943]:
+                      - cell "Format" [ref=e944]:
+                        - strong [ref=e945]: Format
+                      - cell "Reference documentation" [ref=e946]
+                      - cell "Visual tutorials with Mermaid diagrams" [ref=e947]
+                    - row "Depth Feature descriptions How it works under the hood" [ref=e948]:
+                      - cell "Depth" [ref=e949]:
+                        - strong [ref=e950]: Depth
+                      - cell "Feature descriptions" [ref=e951]
+                      - cell "How it works under the hood" [ref=e952]
+                    - row "Examples Basic snippets Production-ready templates you use immediately" [ref=e953]:
+                      - cell "Examples" [ref=e954]:
+                        - strong [ref=e955]: Examples
+                      - cell "Basic snippets" [ref=e956]
+                      - cell "Production-ready templates you use immediately" [ref=e957]
+                    - row "Structure Feature-organized Progressive learning path (beginner to advanced)" [ref=e958]:
+                      - cell "Structure" [ref=e959]:
+                        - strong [ref=e960]: Structure
+                      - cell "Feature-organized" [ref=e961]
+                      - cell "Progressive learning path (beginner to advanced)" [ref=e962]
+                    - row "Onboarding Self-directed Guided roadmap with time estimates" [ref=e963]:
+                      - cell "Onboarding" [ref=e964]:
+                        - strong [ref=e965]: Onboarding
+                      - cell "Self-directed" [ref=e966]
+                      - cell "Guided roadmap with time estimates" [ref=e967]
+                    - row "Self-Assessment None Interactive quizzes to find your gaps and build a personalized path" [ref=e968]:
+                      - cell "Self-Assessment" [ref=e969]:
+                        - strong [ref=e970]: Self-Assessment
+                      - cell "None" [ref=e971]
+                      - cell "Interactive quizzes to find your gaps and build a personalized path" [ref=e972]
+                - generic [ref=e973]:
+                  - heading "What you get:" [level=3] [ref=e974]
+                  - 'link "Permalink: What you get:" [ref=e975] [cursor=pointer]':
+                    - /url: "#what-you-get"
+                    - img [ref=e976]
+                - list [ref=e978]:
+                  - listitem [ref=e979]:
+                    - strong [ref=e980]: 10 tutorial modules
+                    - text: covering every Claude Code feature — from slash commands to custom agent teams
+                  - listitem [ref=e981]:
+                    - strong [ref=e982]: Copy-paste configs
+                    - text: — slash commands, CLAUDE.md templates, hook scripts, MCP configs, subagent definitions, and full plugin bundles
+                  - listitem [ref=e983]:
+                    - strong [ref=e984]: Mermaid diagrams
+                    - text: showing how each feature works internally, so you understand
+                    - emphasis [ref=e985]: why
+                    - text: ", not just"
+                    - emphasis [ref=e986]: how
+                  - listitem [ref=e987]:
+                    - strong [ref=e988]: A guided learning path
+                    - text: that takes you from beginner to power user in 11-13 hours
+                  - listitem [ref=e989]:
+                    - strong [ref=e990]: Built-in self-assessment
+                    - text: — run
+                    - code [ref=e991]: /self-assessment
+                    - text: or
+                    - code [ref=e992]: /lesson-quiz hooks
+                    - text: directly in Claude Code to identify gaps
+                - paragraph [ref=e993]:
+                  - strong [ref=e994]:
+                    - link "Start the Learning Path ->" [ref=e995] [cursor=pointer]:
+                      - /url: /luongnv89/claude-howto/blob/main/LEARNING-ROADMAP.md
+                - separator [ref=e996]
+                - generic [ref=e997]:
+                  - heading "How It Works" [level=2] [ref=e998]
+                  - 'link "Permalink: How It Works" [ref=e999] [cursor=pointer]':
+                    - /url: "#how-it-works"
+                    - img [ref=e1000]
+                - generic [ref=e1002]:
+                  - heading "1. Find your level" [level=3] [ref=e1003]
+                  - 'link "Permalink: 1. Find your level" [ref=e1004] [cursor=pointer]':
+                    - /url: "#1-find-your-level"
+                    - img [ref=e1005]
+                - paragraph [ref=e1007]:
+                  - text: Take the
+                  - link "self-assessment quiz" [ref=e1008] [cursor=pointer]:
+                    - /url: /luongnv89/claude-howto/blob/main/LEARNING-ROADMAP.md#-find-your-level
+                  - text: or run
+                  - code [ref=e1009]: /self-assessment
+                  - text: in Claude Code. Get a personalized roadmap based on what you already know.
+                - generic [ref=e1010]:
+                  - heading "2. Follow the guided path" [level=3] [ref=e1011]
+                  - 'link "Permalink: 2. Follow the guided path" [ref=e1012] [cursor=pointer]':
+                    - /url: "#2-follow-the-guided-path"
+                    - img [ref=e1013]
+                - paragraph [ref=e1015]: Work through 10 modules in order — each builds on the last. Copy templates directly into your project as you learn.
+                - generic [ref=e1016]:
+                  - heading "3. Combine features into workflows" [level=3] [ref=e1017]
+                  - 'link "Permalink: 3. Combine features into workflows" [ref=e1018] [cursor=pointer]':
+                    - /url: "#3-combine-features-into-workflows"
+                    - img [ref=e1019]
+                - paragraph [ref=e1021]: The real power is in combining features. Learn to wire slash commands + memory + subagents + hooks into automated pipelines that handle code reviews, deployments, and documentation generation.
+                - generic [ref=e1022]:
+                  - heading "4. Test your understanding" [level=3] [ref=e1023]
+                  - 'link "Permalink: 4. Test your understanding" [ref=e1024] [cursor=pointer]':
+                    - /url: "#4-test-your-understanding"
+                    - img [ref=e1025]
+                - paragraph [ref=e1027]:
+                  - text: Run
+                  - code [ref=e1028]: /lesson-quiz [topic]
+                  - text: after each module. The quiz pinpoints what you missed so you can fill gaps fast.
+                - paragraph [ref=e1029]:
+                  - strong [ref=e1030]:
+                    - link "Get Started in 15 Minutes" [ref=e1031] [cursor=pointer]:
+                      - /url: "#-get-started-in-15-minutes"
+                - separator [ref=e1032]
+                - generic [ref=e1033]:
+                  - heading "Trusted by 5,900+ Developers" [level=2] [ref=e1034]
+                  - 'link "Permalink: Trusted by 5,900+ Developers" [ref=e1035] [cursor=pointer]':
+                    - /url: "#trusted-by-5900-developers"
+                    - img [ref=e1036]
+                - list [ref=e1038]:
+                  - listitem [ref=e1039]:
+                    - strong [ref=e1040]: 5,900+ GitHub stars
+                    - text: from developers who use Claude Code daily
+                  - listitem [ref=e1041]:
+                    - strong [ref=e1042]: 690+ forks
+                    - text: — teams adapting this guide for their own workflows
+                  - listitem [ref=e1043]:
+                    - strong [ref=e1044]: Actively maintained
+                    - text: "— synced with every Claude Code release (latest: v2.2.0, March 2026)"
+                  - listitem [ref=e1045]:
+                    - strong [ref=e1046]: Community-driven
+                    - text: — contributions from developers who share their real-world configurations
+                - paragraph [ref=e1047]:
+                  - link "Star History Chart" [ref=e1048] [cursor=pointer]:
+                    - /url: https://star-history.com/#luongnv89/claude-howto&Date
+                    - img "Star History Chart" [ref=e1049]
+                - separator [ref=e1050]
+                - generic [ref=e1051]:
+                  - heading "Not Sure Where to Start?" [level=2] [ref=e1052]
+                  - 'link "Permalink: Not Sure Where to Start?" [ref=e1053] [cursor=pointer]':
+                    - /url: "#not-sure-where-to-start"
+                    - img [ref=e1054]
+                - paragraph [ref=e1056]: "Take the self-assessment or pick your level:"
+                - table [ref=e1058]:
+                  - rowgroup [ref=e1059]:
+                    - row "Level You can... Start here Time" [ref=e1060]:
+                      - columnheader "Level" [ref=e1061]
+                      - columnheader "You can..." [ref=e1062]
+                      - columnheader "Start here" [ref=e1063]
+                      - columnheader "Time" [ref=e1064]
+                  - rowgroup [ref=e1065]:
+                    - row "Beginner Start Claude Code and chat Slash Commands ~2.5 hours" [ref=e1066]:
+                      - cell "Beginner" [ref=e1067]:
+                        - strong [ref=e1068]: Beginner
+                      - cell "Start Claude Code and chat" [ref=e1069]
+                      - cell "Slash Commands" [ref=e1070]:
+                        - link "Slash Commands" [ref=e1071] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/01-slash-commands
+                      - cell "~2.5 hours" [ref=e1072]
+                    - row "Intermediate Use CLAUDE.md and custom commands Skills ~3.5 hours" [ref=e1073]:
+                      - cell "Intermediate" [ref=e1074]:
+                        - strong [ref=e1075]: Intermediate
+                      - cell "Use CLAUDE.md and custom commands" [ref=e1076]
+                      - cell "Skills" [ref=e1077]:
+                        - link "Skills" [ref=e1078] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/03-skills
+                      - cell "~3.5 hours" [ref=e1079]
+                    - row "Advanced Configure MCP servers and hooks Advanced Features ~5 hours" [ref=e1080]:
+                      - cell "Advanced" [ref=e1081]:
+                        - strong [ref=e1082]: Advanced
+                      - cell "Configure MCP servers and hooks" [ref=e1083]
+                      - cell "Advanced Features" [ref=e1084]:
+                        - link "Advanced Features" [ref=e1085] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/09-advanced-features
+                      - cell "~5 hours" [ref=e1086]
+                - paragraph [ref=e1087]:
+                  - strong [ref=e1088]: "Full learning path with all 10 modules:"
+                - table [ref=e1090]:
+                  - rowgroup [ref=e1091]:
+                    - row "Order Module Level Time" [ref=e1092]:
+                      - columnheader "Order" [ref=e1093]
+                      - columnheader "Module" [ref=e1094]
+                      - columnheader "Level" [ref=e1095]
+                      - columnheader "Time" [ref=e1096]
+                  - rowgroup [ref=e1097]:
+                    - row "1 Slash Commands Beginner 30 min" [ref=e1098]:
+                      - cell "1" [ref=e1099]
+                      - cell "Slash Commands" [ref=e1100]:
+                        - link "Slash Commands" [ref=e1101] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/01-slash-commands
+                      - cell "Beginner" [ref=e1102]
+                      - cell "30 min" [ref=e1103]
+                    - row "2 Memory Beginner+ 45 min" [ref=e1104]:
+                      - cell "2" [ref=e1105]
+                      - cell "Memory" [ref=e1106]:
+                        - link "Memory" [ref=e1107] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/02-memory
+                      - cell "Beginner+" [ref=e1108]
+                      - cell "45 min" [ref=e1109]
+                    - row "3 Checkpoints Intermediate 45 min" [ref=e1110]:
+                      - cell "3" [ref=e1111]
+                      - cell "Checkpoints" [ref=e1112]:
+                        - link "Checkpoints" [ref=e1113] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/08-checkpoints
+                      - cell "Intermediate" [ref=e1114]
+                      - cell "45 min" [ref=e1115]
+                    - row "4 CLI Basics Beginner+ 30 min" [ref=e1116]:
+                      - cell "4" [ref=e1117]
+                      - cell "CLI Basics" [ref=e1118]:
+                        - link "CLI Basics" [ref=e1119] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/10-cli
+                      - cell "Beginner+" [ref=e1120]
+                      - cell "30 min" [ref=e1121]
+                    - row "5 Skills Intermediate 1 hour" [ref=e1122]:
+                      - cell "5" [ref=e1123]
+                      - cell "Skills" [ref=e1124]:
+                        - link "Skills" [ref=e1125] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/03-skills
+                      - cell "Intermediate" [ref=e1126]
+                      - cell "1 hour" [ref=e1127]
+                    - row "6 Hooks Intermediate 1 hour" [ref=e1128]:
+                      - cell "6" [ref=e1129]
+                      - cell "Hooks" [ref=e1130]:
+                        - link "Hooks" [ref=e1131] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/06-hooks
+                      - cell "Intermediate" [ref=e1132]
+                      - cell "1 hour" [ref=e1133]
+                    - row "7 MCP Intermediate+ 1 hour" [ref=e1134]:
+                      - cell "7" [ref=e1135]
+                      - cell "MCP" [ref=e1136]:
+                        - link "MCP" [ref=e1137] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/05-mcp
+                      - cell "Intermediate+" [ref=e1138]
+                      - cell "1 hour" [ref=e1139]
+                    - row "8 Subagents Intermediate+ 1.5 hours" [ref=e1140]:
+                      - cell "8" [ref=e1141]
+                      - cell "Subagents" [ref=e1142]:
+                        - link "Subagents" [ref=e1143] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/04-subagents
+                      - cell "Intermediate+" [ref=e1144]
+                      - cell "1.5 hours" [ref=e1145]
+                    - row "9 Advanced Features Advanced 2-3 hours" [ref=e1146]:
+                      - cell "9" [ref=e1147]
+                      - cell "Advanced Features" [ref=e1148]:
+                        - link "Advanced Features" [ref=e1149] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/09-advanced-features
+                      - cell "Advanced" [ref=e1150]
+                      - cell "2-3 hours" [ref=e1151]
+                    - row "10 Plugins Advanced 2 hours" [ref=e1152]:
+                      - cell "10" [ref=e1153]
+                      - cell "Plugins" [ref=e1154]:
+                        - link "Plugins" [ref=e1155] [cursor=pointer]:
+                          - /url: /luongnv89/claude-howto/blob/main/07-plugins
+                      - cell "Advanced" [ref=e1156]
+                      - cell "2 hours" [ref=e1157]
+                - paragraph [ref=e1158]:
+                  - strong [ref=e1159]:
+                    - link "Complete Learning Roadmap ->" [ref=e1160] [cursor=pointer]:
+                      - /url: /luongnv89/claude-howto/blob/main/LEARNING-ROADMAP.md
+                - separator [ref=e1161]
+                - generic [ref=e1162]:
+                  - heading "Get Started in 15 Minutes" [level=2] [ref=e1163]
+                  - 'link "Permalink: Get Started in 15 Minutes" [ref=e1164] [cursor=pointer]':
+                    - /url: "#get-started-in-15-minutes"
+                    - img [ref=e1165]
+                - generic [ref=e1167]:
+                  - generic [ref=e1168]:
+                    - generic [ref=e1169]: "# 1. Clone the guide"
+                    - text: git clone https://github.com/luongnv89/claude-howto.git cd claude-howto
+                    - generic [ref=e1170]: "# 2. Copy your first slash command"
+                    - text: mkdir -p /path/to/your-project/.claude/commands cp 01-slash-commands/optimize.md /path/to/your-project/.claude/commands/
+                    - generic [ref=e1171]: "# 3. Try it — in Claude Code, type:"
+                    - generic [ref=e1172]: "# /optimize"
+                    - generic [ref=e1173]: "# 4. Ready for more? Set up project memory:"
+                    - text: cp 02-memory/project-CLAUDE.md /path/to/your-project/CLAUDE.md
+                    - generic [ref=e1174]: "# 5. Install a skill:"
+                    - text: cp -r 03-skills/code-review ~/.claude/skills/
+                  - button "Copy" [ref=e1176] [cursor=pointer]:
+                    - img [ref=e1177]
+                - paragraph [ref=e1180]:
+                  - text: Want the full setup? Here's the
+                  - strong [ref=e1181]: 1-hour essential setup
+                  - text: ":"
+                - generic [ref=e1182]:
+                  - generic [ref=e1183]:
+                    - generic [ref=e1184]: "# Slash commands (15 min)"
+                    - text: cp 01-slash-commands/*.md .claude/commands/
+                    - generic [ref=e1185]: "# Project memory (15 min)"
+                    - text: cp 02-memory/project-CLAUDE.md ./CLAUDE.md
+                    - generic [ref=e1186]: "# Install a skill (15 min)"
+                    - text: cp -r 03-skills/code-review ~/.claude/skills/
+                    - generic [ref=e1187]: "# Weekend goal: add hooks, subagents, MCP, and plugins"
+                    - generic [ref=e1188]: "# Follow the learning path for guided setup"
+                  - button "Copy" [ref=e1190] [cursor=pointer]:
+                    - img [ref=e1191]
+                - paragraph [ref=e1194]:
+                  - strong [ref=e1195]:
+                    - link "View the Full Installation Reference" [ref=e1196] [cursor=pointer]:
+                      - /url: "#installation-quick-reference"
+                - separator [ref=e1197]
+                - generic [ref=e1198]:
+                  - heading "What Can You Build With This?" [level=2] [ref=e1199]
+                  - 'link "Permalink: What Can You Build With This?" [ref=e1200] [cursor=pointer]':
+                    - /url: "#what-can-you-build-with-this"
+                    - img [ref=e1201]
+                - table [ref=e1204]:
+                  - rowgroup [ref=e1205]:
+                    - row "Use Case Features You'll Combine" [ref=e1206]:
+                      - columnheader "Use Case" [ref=e1207]
+                      - columnheader "Features You'll Combine" [ref=e1208]
+                  - rowgroup [ref=e1209]:
+                    - row "Automated Code Review Slash Commands + Subagents + Memory + MCP" [ref=e1210]:
+                      - cell "Automated Code Review" [ref=e1211]:
+                        - strong [ref=e1212]: Automated Code Review
+                      - cell "Slash Commands + Subagents + Memory + MCP" [ref=e1213]
+                    - row "Team Onboarding Memory + Slash Commands + Plugins" [ref=e1214]:
+                      - cell "Team Onboarding" [ref=e1215]:
+                        - strong [ref=e1216]: Team Onboarding
+                      - cell "Memory + Slash Commands + Plugins" [ref=e1217]
+                    - row "CI/CD Automation CLI Reference + Hooks + Background Tasks" [ref=e1218]:
+                      - cell "CI/CD Automation" [ref=e1219]:
+                        - strong [ref=e1220]: CI/CD Automation
+                      - cell "CLI Reference + Hooks + Background Tasks" [ref=e1221]
+                    - row "Documentation Generation Skills + Subagents + Plugins" [ref=e1222]:
+                      - cell "Documentation Generation" [ref=e1223]:
+                        - strong [ref=e1224]: Documentation Generation
+                      - cell "Skills + Subagents + Plugins" [ref=e1225]
+                    - row "Security Audits Subagents + Skills + Hooks (read-only mode)" [ref=e1226]:
+                      - cell "Security Audits" [ref=e1227]:
+                        - strong [ref=e1228]: Security Audits
+                      - cell "Subagents + Skills + Hooks (read-only mode)" [ref=e1229]
+                    - row "DevOps Pipelines Plugins + MCP + Hooks + Background Tasks" [ref=e1230]:
+                      - cell "DevOps Pipelines" [ref=e1231]:
+                        - strong [ref=e1232]: DevOps Pipelines
+                      - cell "Plugins + MCP + Hooks + Background Tasks" [ref=e1233]
+                    - row "Complex Refactoring Checkpoints + Planning Mode + Hooks" [ref=e1234]:
+                      - cell "Complex Refactoring" [ref=e1235]:
+                        - strong [ref=e1236]: Complex Refactoring
+                      - cell "Checkpoints + Planning Mode + Hooks" [ref=e1237]
+                - separator [ref=e1238]
+                - generic [ref=e1239]:
+                  - heading "FAQ" [level=2] [ref=e1240]
+                  - 'link "Permalink: FAQ" [ref=e1241] [cursor=pointer]':
+                    - /url: "#faq"
+                    - img [ref=e1242]
+                - paragraph [ref=e1244]:
+                  - strong [ref=e1245]: Is this free?
+                  - text: Yes. MIT licensed, free forever. Use it in personal projects, at work, in your team — no restrictions beyond including the license notice.
+                - paragraph [ref=e1246]:
+                  - strong [ref=e1247]: Is this maintained?
+                  - text: "Actively. The guide is synced with every Claude Code release. Current version: v2.2.0 (March 2026), compatible with Claude Code 2.1+."
+                - paragraph [ref=e1248]:
+                  - strong [ref=e1249]: How is this different from the official docs?
+                  - text: The official docs are a feature reference. This guide is a tutorial with diagrams, production-ready templates, and a progressive learning path. They complement each other — start here to learn, reference the docs when you need specifics.
+                - paragraph [ref=e1250]:
+                  - strong [ref=e1251]: How long does it take to go through everything?
+                  - text: 11-13 hours for the full path. But you'll get immediate value in 15 minutes — just copy a slash command template and try it.
+                - paragraph [ref=e1252]:
+                  - strong [ref=e1253]: Can I use this with Claude Sonnet / Haiku / Opus?
+                  - text: Yes. All templates work with Claude Sonnet 4.6, Claude Opus 4.6, and Claude Haiku 4.5.
+                - paragraph [ref=e1254]:
+                  - strong [ref=e1255]: Can I contribute?
+                  - text: Absolutely. See
+                  - link "CONTRIBUTING.md" [ref=e1256] [cursor=pointer]:
+                    - /url: /luongnv89/claude-howto/blob/main/CONTRIBUTING.md
+                  - text: for guidelines. We welcome new examples, bug fixes, documentation improvements, and community templates.
+                - paragraph [ref=e1257]:
+                  - strong [ref=e1258]: Can I read this offline?
+                  - text: Yes. Run
+                  - code [ref=e1259]: uv run scripts/build_epub.py
+                  - text: to generate an EPUB ebook with all content and rendered diagrams.
+                - separator [ref=e1260]
+                - generic [ref=e1261]:
+                  - heading "Start Mastering Claude Code Today" [level=2] [ref=e1262]
+                  - 'link "Permalink: Start Mastering Claude Code Today" [ref=e1263] [cursor=pointer]':
+                    - /url: "#start-mastering-claude-code-today"
+                    - img [ref=e1264]
+                - paragraph [ref=e1266]: You already have Claude Code installed. The only thing between you and 10x productivity is knowing how to use it. This guide gives you the structured path, the visual explanations, and the copy-paste templates to get there.
+                - paragraph [ref=e1267]: MIT licensed. Free forever. Clone it, fork it, make it yours.
+                - paragraph [ref=e1268]:
+                  - strong [ref=e1269]:
+                    - link "Start the Learning Path ->" [ref=e1270] [cursor=pointer]:
+                      - /url: /luongnv89/claude-howto/blob/main/LEARNING-ROADMAP.md
+                  - text: "|"
+                  - strong [ref=e1271]:
+                    - link "Browse the Feature Catalog" [ref=e1272] [cursor=pointer]:
+                      - /url: /luongnv89/claude-howto/blob/main/CATALOG.md
+                  - text: "|"
+                  - strong [ref=e1273]:
+                    - link "Get Started in 15 Minutes" [ref=e1274] [cursor=pointer]:
+                      - /url: "#-get-started-in-15-minutes"
+                - separator [ref=e1275]
+                - group [ref=e1276]:
+                  - generic "Quick Navigation — All Features" [ref=e1277] [cursor=pointer]
+                - group [ref=e1278]:
+                  - generic "Feature Comparison" [ref=e1279] [cursor=pointer]
+                - group [ref=e1280]:
+                  - generic "Installation Quick Reference" [ref=e1281] [cursor=pointer]
+                - group [ref=e1282]:
+                  - generic "01. Slash Commands" [ref=e1283] [cursor=pointer]
+                - group [ref=e1284]:
+                  - generic "02. Memory" [ref=e1285] [cursor=pointer]
+                - group [ref=e1286]:
+                  - generic "03. Skills" [ref=e1287] [cursor=pointer]
+                - group [ref=e1288]:
+                  - generic "04. Subagents" [ref=e1289] [cursor=pointer]
+                - group [ref=e1290]:
+                  - generic "05. MCP Protocol" [ref=e1291] [cursor=pointer]
+                - group [ref=e1292]:
+                  - generic "06. Hooks" [ref=e1293] [cursor=pointer]
+                - group [ref=e1294]:
+                  - generic "07. Plugins" [ref=e1295] [cursor=pointer]
+                - group [ref=e1296]:
+                  - generic "08. Checkpoints and Rewind" [ref=e1297] [cursor=pointer]
+                - group [ref=e1298]:
+                  - generic "09. Advanced Features" [ref=e1299] [cursor=pointer]
+                - group [ref=e1300]:
+                  - generic "10. CLI Reference" [ref=e1301] [cursor=pointer]
+                - group [ref=e1302]:
+                  - generic "Example Workflows" [ref=e1303] [cursor=pointer]
+                - group [ref=e1304]:
+                  - generic "Directory Structure" [ref=e1305] [cursor=pointer]
+                - group [ref=e1306]:
+                  - generic "Best Practices" [ref=e1307] [cursor=pointer]
+                - group [ref=e1308]:
+                  - generic "Troubleshooting" [ref=e1309] [cursor=pointer]
+                - group [ref=e1310]:
+                  - generic "Testing" [ref=e1311] [cursor=pointer]
+                - group [ref=e1312]:
+                  - generic "EPUB Generation" [ref=e1313] [cursor=pointer]
+                - group [ref=e1314]:
+                  - generic "Contributing" [ref=e1315] [cursor=pointer]
+                - group [ref=e1316]:
+                  - generic "Additional Resources" [ref=e1317] [cursor=pointer]
+                - separator [ref=e1318]
+                - generic [ref=e1319]:
+                  - heading "Contributing" [level=2] [ref=e1320]
+                  - 'link "Permalink: Contributing" [ref=e1321] [cursor=pointer]':
+                    - /url: "#contributing"
+                    - img [ref=e1322]
+                - paragraph [ref=e1324]:
+                  - text: We welcome contributions! Please see our
+                  - link "Contributing Guide" [ref=e1325] [cursor=pointer]:
+                    - /url: /luongnv89/claude-howto/blob/main/CONTRIBUTING.md
+                  - text: for details on how to get started.
+                - generic [ref=e1326]:
+                  - heading "Contributors" [level=2] [ref=e1327]
+                  - 'link "Permalink: Contributors" [ref=e1328] [cursor=pointer]':
+                    - /url: "#contributors"
+                    - img [ref=e1329]
+                - paragraph [ref=e1331]: Thanks to everyone who has contributed to this project!
+                - table [ref=e1333]:
+                  - rowgroup [ref=e1334]:
+                    - row "Contributor PRs" [ref=e1335]:
+                      - columnheader "Contributor" [ref=e1336]
+                      - columnheader "PRs" [ref=e1337]
+                  - rowgroup [ref=e1338]:
+                    - 'row "wjhrdy #1 - add a tool to create an epub" [ref=e1339]':
+                      - cell "wjhrdy" [ref=e1340]:
+                        - link "wjhrdy" [ref=e1341] [cursor=pointer]:
+                          - /url: https://github.com/wjhrdy
+                      - cell "#1 - add a tool to create an epub" [ref=e1342]:
+                        - link "#1 - add a tool to create an epub" [ref=e1343] [cursor=pointer]:
+                          - /url: https://github.com/luongnv89/claude-howto/pull/1
+                    - 'row "VikalpP #7 - fix(docs): Use tilde fences for nested code blocks in concepts guide" [ref=e1344]':
+                      - cell "VikalpP" [ref=e1345]:
+                        - link "VikalpP" [ref=e1346] [cursor=pointer]:
+                          - /url: https://github.com/VikalpP
+                      - 'cell "#7 - fix(docs): Use tilde fences for nested code blocks in concepts guide" [ref=e1347]':
+                        - 'link "#7 - fix(docs): Use tilde fences for nested code blocks in concepts guide" [ref=e1348] [cursor=pointer]':
+                          - /url: https://github.com/luongnv89/claude-howto/pull/7
+                - separator [ref=e1349]
+                - generic [ref=e1350]:
+                  - heading "License" [level=2] [ref=e1351]
+                  - 'link "Permalink: License" [ref=e1352] [cursor=pointer]':
+                    - /url: "#license"
+                    - img [ref=e1353]
+                - paragraph [ref=e1355]:
+                  - text: MIT License - see
+                  - link "LICENSE" [ref=e1356] [cursor=pointer]:
+                    - /url: /luongnv89/claude-howto/blob/main/LICENSE
+                  - text: . Free to use, modify, and distribute. The only requirement is including the license notice.
+                - separator [ref=e1357]
+                - paragraph [ref=e1358]:
+                  - strong [ref=e1359]: Last Updated
+                  - text: ": March 2026"
+                  - strong [ref=e1360]: Claude Code Version
+                  - text: ": 2.1+"
+                  - strong [ref=e1361]: Compatible Models
+                  - text: ": Claude Sonnet 4.6, Claude Opus 4.6, Claude Haiku 4.5"
+        - generic [ref=e1365]:
+          - generic [ref=e1368]:
+            - heading "About" [level=2] [ref=e1369]
+            - paragraph [ref=e1370]: A visual, example-driven guide to Claude Code — from basic concepts to advanced agents, with copy-paste templates that bring immediate value.
+            - heading "Topics" [level=3] [ref=e1371]
+            - generic [ref=e1373]:
+              - link "tutorial" [ref=e1374] [cursor=pointer]:
+                - /url: /topics/tutorial
+              - link "guide" [ref=e1375] [cursor=pointer]:
+                - /url: /topics/guide
+              - link "claude-code" [ref=e1376] [cursor=pointer]:
+                - /url: /topics/claude-code
+            - heading "Resources" [level=3] [ref=e1377]
+            - link "Readme" [ref=e1379] [cursor=pointer]:
+              - /url: "#readme-ov-file"
+              - img [ref=e1380]
+              - text: Readme
+            - heading "License" [level=3] [ref=e1382]
+            - link "MIT license" [ref=e1384] [cursor=pointer]:
+              - /url: "#MIT-1-ov-file"
+              - img [ref=e1385]
+              - text: MIT license
+            - heading "Code of conduct" [level=3] [ref=e1387]
+            - link "Code of conduct" [ref=e1389] [cursor=pointer]:
+              - /url: "#coc-ov-file"
+              - img [ref=e1390]
+              - text: Code of conduct
+            - heading "Contributing" [level=3] [ref=e1392]
+            - link "Contributing" [ref=e1394] [cursor=pointer]:
+              - /url: "#contributing-ov-file"
+              - img [ref=e1395]
+              - text: Contributing
+            - heading "Security policy" [level=3] [ref=e1397]
+            - link "Security policy" [ref=e1399] [cursor=pointer]:
+              - /url: "#security-ov-file"
+              - img [ref=e1400]
+              - text: Security policy
+            - link "Activity" [ref=e1403] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/activity
+              - img [ref=e1404]
+              - text: Activity
+            - heading "Stars" [level=3] [ref=e1406]
+            - link "10.3k stars" [ref=e1408] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/stargazers
+              - img [ref=e1409]
+              - strong [ref=e1411]: 10.3k
+              - text: stars
+            - heading "Watchers" [level=3] [ref=e1412]
+            - link "57 watching" [ref=e1414] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/watchers
+              - img [ref=e1415]
+              - strong [ref=e1417]: "57"
+              - text: watching
+            - heading "Forks" [level=3] [ref=e1418]
+            - link "1k forks" [ref=e1420] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/forks
+              - img [ref=e1421]
+              - strong [ref=e1423]: 1k
+              - text: forks
+            - link "Report repository" [ref=e1425] [cursor=pointer]:
+              - /url: /contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Fluongnv89%2Fclaude-howto&report=luongnv89+%28user%29
+          - generic [ref=e1427]:
+            - heading "Releases 4" [level=2] [ref=e1428]:
+              - link "Releases 4" [ref=e1429] [cursor=pointer]:
+                - /url: /luongnv89/claude-howto/releases
+                - text: Releases
+                - generic "4" [ref=e1430]
+            - link "v2.2.0 Latest Mar 26, 20265 days ago" [ref=e1431] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/releases/tag/v2.2.0
+              - img [ref=e1432]
+              - generic [ref=e1434]:
+                - generic [ref=e1435]:
+                  - generic [ref=e1436]: v2.2.0
+                  - 'generic "Label: Latest" [ref=e1437]': Latest
+                - generic [ref=e1438]: Mar 26, 20265 days ago
+            - link "+ 3 releases" [ref=e1440] [cursor=pointer]:
+              - /url: /luongnv89/claude-howto/releases
+          - generic [ref=e1442]:
+            - heading "Sponsor this project" [level=2] [ref=e1443]
+            - list [ref=e1444]:
+              - listitem [ref=e1445]:
+                - link "@luongnv89" [ref=e1446] [cursor=pointer]:
+                  - /url: /luongnv89
+                  - img "@luongnv89" [ref=e1447]
+                - link "luongnv89 Luong NGUYEN" [ref=e1449] [cursor=pointer]:
+                  - /url: /luongnv89
+                  - strong [ref=e1450]: luongnv89
+                  - text: Luong NGUYEN
+                - link "Sponsor @luongnv89" [ref=e1451] [cursor=pointer]:
+                  - /url: /sponsors/luongnv89
+                  - img [ref=e1454]
+            - list [ref=e1456]:
+              - listitem [ref=e1457]:
+                - img "buy_me_a_coffee" [ref=e1459]
+                - link "buymeacoffee.com/luongnv89" [ref=e1461] [cursor=pointer]:
+                  - /url: https://buymeacoffee.com/luongnv89
+                  - generic [ref=e1462]:
+                    - text: buymeacoffee.com/
+                    - strong [ref=e1463]: luongnv89
+            - link "Learn more about GitHub Sponsors" [ref=e1465] [cursor=pointer]:
+              - /url: /sponsors
+          - generic [ref=e1467]:
+            - heading "Packages" [level=2] [ref=e1468]:
+              - link "Packages" [ref=e1469] [cursor=pointer]:
+                - /url: /users/luongnv89/packages?repo_name=claude-howto
+            - generic [ref=e1470]: No packages published
+          - generic [ref=e1472]:
+            - heading "Contributors 4" [level=2] [ref=e1473]:
+              - link "Contributors 4" [ref=e1474] [cursor=pointer]:
+                - /url: /luongnv89/claude-howto/graphs/contributors
+                - text: Contributors
+                - generic "4" [ref=e1475]
+            - list [ref=e1476]:
+              - listitem [ref=e1477]:
+                - link "@luongnv89" [ref=e1478] [cursor=pointer]:
+                  - /url: https://github.com/luongnv89
+                  - img "@luongnv89" [ref=e1479]
+                - link "luongnv89 Luong NGUYEN" [ref=e1481] [cursor=pointer]:
+                  - /url: https://github.com/luongnv89
+                  - strong [ref=e1482]: luongnv89
+                  - text: Luong NGUYEN
+              - listitem [ref=e1483]:
+                - link "@claude" [ref=e1484] [cursor=pointer]:
+                  - /url: https://github.com/claude
+                  - img "@claude" [ref=e1485]
+                - link "claude Claude" [ref=e1487] [cursor=pointer]:
+                  - /url: https://github.com/claude
+                  - strong [ref=e1488]: claude
+                  - text: Claude
+              - listitem [ref=e1489]:
+                - link "@wjhrdy" [ref=e1490] [cursor=pointer]:
+                  - /url: https://github.com/wjhrdy
+                  - img "@wjhrdy" [ref=e1491]
+                - link "wjhrdy Willy Hardy" [ref=e1493] [cursor=pointer]:
+                  - /url: https://github.com/wjhrdy
+                  - strong [ref=e1494]: wjhrdy
+                  - text: Willy Hardy
+              - listitem [ref=e1495]:
+                - link "@VikalpP" [ref=e1496] [cursor=pointer]:
+                  - /url: https://github.com/VikalpP
+                  - img "@VikalpP" [ref=e1497]
+                - link "VikalpP Vikalp Panseriya" [ref=e1499] [cursor=pointer]:
+                  - /url: https://github.com/VikalpP
+                  - strong [ref=e1500]: VikalpP
+                  - text: Vikalp Panseriya
+          - generic [ref=e1502]:
+            - heading "Languages" [level=2] [ref=e1503]
+            - list [ref=e1509]:
+              - listitem [ref=e1510]:
+                - link "Python 91.9%" [ref=e1511] [cursor=pointer]:
+                  - /url: /luongnv89/claude-howto/search?l=python
+                  - img [ref=e1512]
+                  - generic [ref=e1514]: Python
+                  - generic [ref=e1515]: 91.9%
+              - listitem [ref=e1516]:
+                - link "Shell 6.3%" [ref=e1517] [cursor=pointer]:
+                  - /url: /luongnv89/claude-howto/search?l=shell
+                  - img [ref=e1518]
+                  - generic [ref=e1520]: Shell
+                  - generic [ref=e1521]: 6.3%
+              - listitem [ref=e1522]:
+                - link "JavaScript 1.8%" [ref=e1523] [cursor=pointer]:
+                  - /url: /luongnv89/claude-howto/search?l=javascript
+                  - img [ref=e1524]
+                  - generic [ref=e1526]: JavaScript
+                  - generic [ref=e1527]: 1.8%
+  - contentinfo [ref=e1529]:
+    - heading "Footer" [level=2] [ref=e1530]
+    - generic [ref=e1531]:
+      - generic [ref=e1532]:
+        - link "GitHub Homepage" [ref=e1533] [cursor=pointer]:
+          - /url: https://github.com
+          - img [ref=e1534]
+        - generic [ref=e1536]: © 2026 GitHub, Inc.
+      - navigation "Footer" [ref=e1537]:
+        - heading "Footer navigation" [level=3] [ref=e1538]
+        - list "Footer navigation" [ref=e1539]:
+          - listitem [ref=e1540]:
+            - link "Terms" [ref=e1541] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+          - listitem [ref=e1542]:
+            - link "Privacy" [ref=e1543] [cursor=pointer]:
+              - /url: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+          - listitem [ref=e1544]:
+            - link "Security" [ref=e1545] [cursor=pointer]:
+              - /url: https://github.com/security
+          - listitem [ref=e1546]:
+            - link "Status" [ref=e1547] [cursor=pointer]:
+              - /url: https://www.githubstatus.com/
+          - listitem [ref=e1548]:
+            - link "Community" [ref=e1549] [cursor=pointer]:
+              - /url: https://github.community/
+          - listitem [ref=e1550]:
+            - link "Docs" [ref=e1551] [cursor=pointer]:
+              - /url: https://docs.github.com/
+          - listitem [ref=e1552]:
+            - link "Contact" [ref=e1553] [cursor=pointer]:
+              - /url: https://support.github.com?tags=dotcom-footer
+          - listitem [ref=e1554]:
+            - button "Manage cookies" [ref=e1556] [cursor=pointer]
+          - listitem [ref=e1557]:
+            - button "Do not share my personal information" [ref=e1559] [cursor=pointer]

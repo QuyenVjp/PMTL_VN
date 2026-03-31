@@ -32,6 +32,10 @@ Mục tiêu là:
   - runtime failures, Docker recovery, incident/debug lanes
 - `pmtl-doc-researcher`
   - official-doc research, drift checks, fact correction
+- `pmtl-test-engineer`
+  - viết tests, expand coverage, verify test quality (Jest cho api, Vitest cho web)
+- `pmtl-security-auditor`
+  - dedicated security audit pass — read-only, covers auth/upload/injection/rate-limit/CSRF
 
 ## External compare workers
 
