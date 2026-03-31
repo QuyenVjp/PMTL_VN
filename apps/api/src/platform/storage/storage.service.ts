@@ -19,6 +19,7 @@
 import { Injectable, BadRequestException, ForbiddenException, Logger } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { fileTypeFromBuffer } from "file-type";
+import { SignJWT } from "jose";
 import net from "node:net";
 import { ConfigService } from "../../common/config/config.service.js";
 import { LocalStorageAdapter } from "./local-storage.adapter.js";
@@ -150,6 +151,22 @@ export class StorageService {
 
   async getUserAssets(uploaderId: string) {
     return this.mediaRepo.findByUploader(uploaderId);
+  }
+
+  /**
+   * Generate a short-lived signed token for accessing a media file.
+   * The token embeds the storageKey so it can only be used for that exact file.
+   * Used when MEDIA_REQUIRE_SIGNED_URL=true.
+   */
+  async generateMediaToken(storageKey: string, ttlMinutes = 15): Promise<string> {
+    const rawSecret =
+      this.configService.mediaSignedUrlSecret ?? this.configService.jwtAccessSecret;
+    const secretBytes = new TextEncoder().encode(rawSecret);
+    return new SignJWT({ key: storageKey, purpose: "media" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime(`${ttlMinutes}m`)
+      .sign(secretBytes);
   }
 
   // --- Private hardening helpers ---

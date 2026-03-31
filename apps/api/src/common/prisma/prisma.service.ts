@@ -19,11 +19,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
     super({
       adapter,
-      log: process.env.NODE_ENV === "development" 
+      log: process.env.NODE_ENV === "development"
         ? ["query", "info", "warn", "error"]
         : ["error"],
     });
 
+    // Slow query logger — all models, all operations
     this.extendedClient = this.$extends({
       query: {
         $allModels: {
@@ -31,12 +32,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             const startedAt = Date.now();
             const result = await query(args);
             const durationMs = Date.now() - startedAt;
-
             if (durationMs >= 250 && typeof model === "string") {
               // Emit only slow-query info to keep logs cheap in production.
               slowQueryLogger.warn(`${model}.${operation} took ${durationMs}ms`);
             }
-
             return result;
           },
         },

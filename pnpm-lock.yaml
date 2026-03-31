@@ -79,7 +79,7 @@ importers:
         version: 6.1.1(typescript@5.9.3)(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
       vitest:
         specifier: ^4.1.0
-        version: 4.1.0(@opentelemetry/api@1.9.0)(@types/node@24.12.0)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.12.0)(typescript@5.9.3))(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+        version: 4.1.0(@opentelemetry/api@1.9.1)(@types/node@24.12.0)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.12.0)(typescript@5.9.3))(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
 
   apps/admin:
     dependencies:
@@ -279,6 +279,9 @@ importers:
       '@nestjs/throttler':
         specifier: 6.5.0
         version: 6.5.0(@nestjs/common@11.1.17(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.17)(reflect-metadata@0.2.2)
+      '@opentelemetry/api':
+        specifier: ^1.9.1
+        version: 1.9.1
       '@prisma/adapter-pg':
         specifier: 7.5.0
         version: 7.5.0
@@ -372,7 +375,7 @@ importers:
         version: 5.9.2
       vitest:
         specifier: 4.1.0
-        version: 4.1.0(@opentelemetry/api@1.9.0)(@types/node@24.5.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.5.2)(typescript@5.9.2))(vite@8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+        version: 4.1.0(@opentelemetry/api@1.9.1)(@types/node@24.5.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.5.2)(typescript@5.9.2))(vite@8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
 
   apps/web:
     dependencies:
@@ -390,7 +393,7 @@ importers:
         version: 5.95.2(react@19.2.4)
       next:
         specifier: 16.2.1
-        version: 16.2.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4)
+        version: 16.2.1(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4)
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -1619,8 +1622,8 @@ packages:
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
 
-  '@opentelemetry/api@1.9.0':
-    resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
+  '@opentelemetry/api@1.9.1':
+    resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
     engines: {node: '>=8.0.0'}
 
   '@oxc-project/types@0.122.0':
@@ -8552,8 +8555,7 @@ snapshots:
 
   '@open-draft/until@2.1.0': {}
 
-  '@opentelemetry/api@1.9.0':
-    optional: true
+  '@opentelemetry/api@1.9.1': {}
 
   '@oxc-project/types@0.122.0': {}
 
@@ -9612,7 +9614,7 @@ snapshots:
       '@vitest/browser': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))(vitest@4.1.2)
       '@vitest/browser-playwright': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(playwright@1.58.2)(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))(vitest@4.1.2)
       '@vitest/runner': 4.1.2
-      vitest: 4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
     transitivePeerDependencies:
       - react
       - react-dom
@@ -10446,7 +10448,7 @@ snapshots:
       '@vitest/mocker': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
       playwright: 1.58.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -10462,7 +10464,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
       ws: 8.19.0
     transitivePeerDependencies:
       - bufferutil
@@ -10482,7 +10484,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.0.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
+      vitest: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
     optionalDependencies:
       '@vitest/browser': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))(vitest@4.1.2)
 
@@ -12931,7 +12933,7 @@ snapshots:
       pino-http: 10.5.0
       rxjs: 7.8.1
 
-  next@16.2.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4):
+  next@16.2.1(@opentelemetry/api@1.9.1)(@playwright/test@1.58.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.77.4):
     dependencies:
       '@next/env': 16.2.1
       '@swc/helpers': 0.5.15
@@ -12940,7 +12942,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
-      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.4)
+      styled-jsx: 5.1.6(react@19.2.4)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.1
       '@next/swc-darwin-x64': 16.2.1
@@ -12950,7 +12952,7 @@ snapshots:
       '@next/swc-linux-x64-musl': 16.2.1
       '@next/swc-win32-arm64-msvc': 16.2.1
       '@next/swc-win32-x64-msvc': 16.2.1
-      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/api': 1.9.1
       '@playwright/test': 1.58.2
       sass: 1.77.4
       sharp: 0.34.5
@@ -14277,12 +14279,10 @@ snapshots:
     dependencies:
       '@tokenizer/token': 0.3.0
 
-  styled-jsx@5.1.6(@babel/core@7.29.0)(react@19.2.4):
+  styled-jsx@5.1.6(react@19.2.4):
     dependencies:
       client-only: 0.0.1
       react: 19.2.4
-    optionalDependencies:
-      '@babel/core': 7.29.0
 
   superagent@10.3.0:
     dependencies:
@@ -14732,7 +14732,7 @@ snapshots:
       terser: 5.46.0
       tsx: 4.21.0
 
-  vitest@4.1.0(@opentelemetry/api@1.9.0)(@types/node@24.12.0)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.12.0)(typescript@5.9.3))(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
+  vitest@4.1.0(@opentelemetry/api@1.9.1)(@types/node@24.12.0)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.12.0)(typescript@5.9.3))(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
     dependencies:
       '@vitest/expect': 4.1.0
       '@vitest/mocker': 4.1.0(msw@2.12.14(@types/node@24.12.0)(typescript@5.9.3))(vite@8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
@@ -14755,14 +14755,14 @@ snapshots:
       vite: 8.0.2(@types/node@24.12.0)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/api': 1.9.1
       '@types/node': 24.12.0
       happy-dom: 20.8.4
       jsdom: 29.0.0(@noble/hashes@1.8.0)
     transitivePeerDependencies:
       - msw
 
-  vitest@4.1.0(@opentelemetry/api@1.9.0)(@types/node@24.5.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.5.2)(typescript@5.9.2))(vite@8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
+  vitest@4.1.0(@opentelemetry/api@1.9.1)(@types/node@24.5.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@24.5.2)(typescript@5.9.2))(vite@8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
     dependencies:
       '@vitest/expect': 4.1.0
       '@vitest/mocker': 4.1.0(msw@2.12.14(@types/node@24.5.2)(typescript@5.9.2))(vite@8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
@@ -14785,14 +14785,14 @@ snapshots:
       vite: 8.0.2(@types/node@24.5.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/api': 1.9.1
       '@types/node': 24.5.2
       happy-dom: 20.8.4
       jsdom: 29.0.0(@noble/hashes@1.8.0)
     transitivePeerDependencies:
       - msw
 
-  vitest@4.1.2(@opentelemetry/api@1.9.0)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
+  vitest@4.1.2(@opentelemetry/api@1.9.1)(@types/node@22.13.2)(@vitest/browser-playwright@4.1.2)(happy-dom@20.8.4)(jsdom@29.0.0(@noble/hashes@1.8.0))(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)):
     dependencies:
       '@vitest/expect': 4.1.2
       '@vitest/mocker': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))
@@ -14815,7 +14815,7 @@ snapshots:
       vite: 8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/api': 1.9.1
       '@types/node': 22.13.2
       '@vitest/browser-playwright': 4.1.2(msw@2.12.14(@types/node@22.13.2)(typescript@5.8.3))(playwright@1.58.2)(vite@8.0.2(@types/node@22.13.2)(esbuild@0.27.4)(jiti@2.6.1)(sass@1.77.4)(terser@5.46.0)(tsx@4.21.0))(vitest@4.1.2)
       happy-dom: 20.8.4

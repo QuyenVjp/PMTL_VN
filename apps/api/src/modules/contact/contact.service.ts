@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
+import { EncryptionService } from "../../common/encryption/encryption.service.js";
 import type {
   SubmitContactInput,
   ContactQuery,
@@ -21,31 +22,38 @@ export class ContactService {
     private readonly prisma: PrismaService,
     private readonly audit: AuditService,
     private readonly cache: CacheService,
+    private readonly encryption: EncryptionService,
   ) {}
 
   // ── Existing contact form methods ──────────────────────────────────
 
   async submit(input: SubmitContactInput) {
+    // Encrypt PII fields — name and message are personal data under PDPA NĐ 13/2023.
+    // email is NOT encrypted — admin needs it as a reply address (functional requirement).
+    const [encryptedName, encryptedMessage] = await Promise.all([
+      this.encryption.encrypt(input.name),
+      this.encryption.encrypt(input.message),
+    ]);
+
     const submission = await this.prisma.contactSubmission.create({
       data: {
-        name: input.name,
+        name: encryptedName ?? input.name,
         email: input.email,
         subject: input.subject,
-        message: input.message,
+        message: encryptedMessage ?? input.message,
         status: "PENDING" as ContactSubmissionStatus,
       },
     });
-    
+
     this.logger.log(`Contact submission created: ${submission.publicId}`);
-    
+
     // Invalidate contact list cache when new submission is added
-    // Clear main listing page caches
     await Promise.all([
       this.cache.del('contacts:list:{"page":1,"pageSize":10}'),
       this.cache.del('contacts:list:{"page":1,"pageSize":20}'),
-      this.cache.del('contacts:list:{"page":1,"pageSize":50}')
+      this.cache.del('contacts:list:{"page":1,"pageSize":50}'),
     ]);
-    
+
     return { publicId: submission.publicId };
   }
 
@@ -68,7 +76,7 @@ export class ContactService {
     }
 
     const skip = (query.page - 1) * query.pageSize;
-    const [data, total] = await Promise.all([
+    const [rows, total] = await Promise.all([
       this.prisma.contactSubmission.findMany({
         where,
         orderBy: { createdAt: "desc" },
@@ -87,6 +95,15 @@ export class ContactService {
       this.prisma.contactSubmission.count({ where }),
     ]);
 
+    // Decrypt PII fields — cache stores plaintext so callers always get readable data
+    const data = await Promise.all(
+      rows.map(async (row) => ({
+        ...row,
+        name: (await this.encryption.decrypt(row.name)) ?? row.name,
+        message: (await this.encryption.decrypt(row.message)) ?? row.message,
+      })),
+    );
+
     const result = {
       data,
       total,
@@ -94,10 +111,10 @@ export class ContactService {
       pageSize: query.pageSize,
       totalPages: Math.ceil(total / query.pageSize),
     };
-    
+
     // Cache for 120 seconds
     await this.cache.setJson(cacheKey, result, 120);
-    
+
     return result;
   }
 
@@ -105,12 +122,21 @@ export class ContactService {
     const submission = await this.prisma.contactSubmission.findUnique({
       where: { publicId },
     });
-    
+
     if (!submission) {
       throw new NotFoundException("Liên hệ không tồn tại");
     }
 
-    return submission;
+    const [name, message] = await Promise.all([
+      this.encryption.decrypt(submission.name),
+      this.encryption.decrypt(submission.message),
+    ]);
+
+    return {
+      ...submission,
+      name: name ?? submission.name,
+      message: message ?? submission.message,
+    };
   }
 
   // ── Volunteer CRUD ─────────────────────────────────────────────────

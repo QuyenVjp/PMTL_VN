@@ -133,6 +133,12 @@ export class ConfigService {
   get maxVideoMb() {
     return this.storage.MAX_VIDEO_MB;
   }
+  get mediaRequireSignedUrl() {
+    return this.storage.MEDIA_REQUIRE_SIGNED_URL;
+  }
+  get mediaSignedUrlSecret() {
+    return this.storage.MEDIA_SIGNED_URL_SECRET;
+  }
 
   // Email
   get smtpHost() {

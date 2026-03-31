@@ -12,12 +12,62 @@ import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger } from "nestjs-pino";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { jwtVerify } from "jose";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import type { Request, Response, NextFunction } from "express";
 import { resolve } from "node:path";
 import { AppModule } from "./app.module.js";
 import { ConfigService } from "./common/config/config.service.js";
+
+/**
+ * Graceful shutdown handler for SIGTERM/SIGINT signals.
+ * Enterprise 2026 requirement: Drain active requests before shutdown.
+ */
+function setupGracefulShutdown(app: NestExpressApplication, logger: Logger) {
+  let isShuttingDown = false;
+
+  const shutdown = async (signal: string) => {
+    if (isShuttingDown) {
+      logger.warn(`${signal} received during shutdown - forcing exit`);
+      process.exit(1);
+    }
+
+    isShuttingDown = true;
+    logger.log({ msg: "graceful_shutdown.started", signal });
+
+    // 1. Stop accepting new connections
+    const server = app.getHttpServer();
+    server.close(() => {
+      logger.log({ msg: "graceful_shutdown.http_closed" });
+    });
+
+    // 2. Wait for active requests to drain (max 30 seconds)
+    const drainTimeout = setTimeout(() => {
+      logger.warn({ msg: "graceful_shutdown.drain_timeout" });
+      process.exit(1);
+    }, 30000);
+
+    try {
+      // 3. Close app (triggers OnModuleDestroy hooks: Prisma disconnect, etc.)
+      await app.close();
+      clearTimeout(drainTimeout);
+      
+      logger.log({ msg: "graceful_shutdown.completed", signal });
+      process.exit(0);
+    } catch (error) {
+      clearTimeout(drainTimeout);
+      logger.error({
+        msg: "graceful_shutdown.error",
+        error: (error as Error).message,
+      });
+      process.exit(1);
+    }
+  };
+
+  process.on("SIGTERM", () => void shutdown("SIGTERM"));
+  process.on("SIGINT", () => void shutdown("SIGINT"));
+}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -29,6 +79,9 @@ async function bootstrap() {
   app.useLogger(logger);
 
   const configService = app.get(ConfigService);
+
+  // Graceful shutdown signal handlers (Enterprise 2026 requirement)
+  setupGracefulShutdown(app, logger);
 
   // Global prefix — locked at bootstrap
   app.setGlobalPrefix("api");
@@ -69,6 +122,38 @@ async function bootstrap() {
   // Serve uploaded files at /media (bypasses global /api prefix intentionally)
   // PUBLIC_MEDIA_BASE_URL is expected to point here: http://host:port/media
   const storageRoot = resolve(configService.localStorageRoot || "./uploads");
+
+  // Signed URL gate — opt-in via MEDIA_REQUIRE_SIGNED_URL=true.
+  // When enabled, every /media/* request must carry ?token=<signed-jwt> where
+  // the token's `key` claim matches the requested path exactly.
+  // Default OFF so existing web frontend URLs continue to work unchanged.
+  if (configService.mediaRequireSignedUrl) {
+    const rawSecret =
+      configService.mediaSignedUrlSecret ?? configService.jwtAccessSecret;
+    const secretBytes = new TextEncoder().encode(rawSecret);
+    app.use("/media", async (req: Request, res: Response, next: NextFunction) => {
+      const rawToken = req.query["token"];
+      const token = Array.isArray(rawToken) ? String(rawToken[0]) : String(rawToken ?? "");
+      if (!token) {
+        res.status(401).json({ message: "Media token required" });
+        return;
+      }
+      try {
+        const { payload } = await jwtVerify(token, secretBytes);
+        // req.url under the /media mount is the sub-path, e.g. "/images/abc.jpg?token=..."
+        // storageKey format is "images/abc.jpg" (no leading slash, no query string)
+        const requestedKey = req.url.split("?")[0].replace(/^\//, "");
+        if (payload["key"] !== requestedKey || payload["purpose"] !== "media") {
+          res.status(403).json({ message: "Media token key mismatch" });
+          return;
+        }
+        next();
+      } catch {
+        res.status(401).json({ message: "Media token invalid or expired" });
+      }
+    });
+  }
+
   app.useStaticAssets(storageRoot, { prefix: "/media" });
 
   // CORS — only WEB_ORIGIN and ADMIN_ORIGIN allowed

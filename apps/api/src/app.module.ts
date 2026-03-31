@@ -27,6 +27,8 @@ import { CacheModule } from "./common/cache/cache.module.js";
 import { LoggerModule } from "./common/logging/logger.module.js";
 import { ValidationModule } from "./common/validation/validation.module.js";
 import { PrismaModule } from "./common/prisma/prisma.module.js";
+import { EncryptionModule } from "./common/encryption/encryption.module.js";
+import { TracingModule } from "./common/tracing/tracing.module.js";
 
 // Common global concerns — registered via providers for DI
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware.js";
@@ -66,6 +68,8 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
   imports: [
     // ── Common ──────────────────────────────────────
     ConfigModule,
+    EncryptionModule,
+    TracingModule,
     CacheModule,
     LoggerModule,
     ValidationModule,

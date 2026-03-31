@@ -51,6 +51,13 @@ export const storageConfigSchema = z.object({
   MAX_IMAGE_MB: z.coerce.number().positive().default(10),
   MAX_DOCUMENT_MB: z.coerce.number().positive().default(25),
   MAX_VIDEO_MB: z.coerce.number().positive().default(100),
+  // Signed URL gate for /media/* — off by default for backward compat
+  MEDIA_REQUIRE_SIGNED_URL: z
+    .string()
+    .transform((v) => v === "true")
+    .pipe(z.boolean())
+    .default(false),
+  MEDIA_SIGNED_URL_SECRET: z.string().min(32).optional(),
 });
 
 // Email config schema

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { z } from "zod";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { EncryptionService } from "../../common/encryption/encryption.service.js";
 
 export const updatePracticeProfileSchema = z.object({
   elderlyMode: z.boolean().optional(),
@@ -13,33 +14,41 @@ export type UpdatePracticeProfileInput = z.infer<typeof updatePracticeProfileSch
 export class PracticeProfileService {
   private readonly logger = new Logger(PracticeProfileService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly encryption: EncryptionService,
+  ) {}
 
   async getOrCreate(userId: string) {
     const existing = await this.prisma.practiceProfile.findUnique({
       where: { userId },
     });
-    if (existing) return this.toDto(existing);
+    if (existing) return this.toDto(existing, await this.encryption.decrypt(existing.assistContactRef));
 
     const created = await this.prisma.practiceProfile.create({
       data: { userId, elderlyMode: false, assistMode: false },
     });
-    return this.toDto(created);
+    return this.toDto(created, null);
   }
 
   async update(input: UpdatePracticeProfileInput, userId: string) {
+    // Encrypt PII field before persisting — assistContactRef is emergency contact data
+    const encryptedRef = input.assistContactRef != null
+      ? await this.encryption.encrypt(input.assistContactRef)
+      : input.assistContactRef; // null or undefined pass through
+
     const profile = await this.prisma.practiceProfile.upsert({
       where: { userId },
       create: {
         userId,
         elderlyMode: input.elderlyMode ?? false,
         assistMode: input.assistMode ?? false,
-        assistContactRef: input.assistContactRef ?? null,
+        assistContactRef: encryptedRef ?? null,
       },
       update: {
         ...(input.elderlyMode !== undefined ? { elderlyMode: input.elderlyMode } : {}),
         ...(input.assistMode !== undefined ? { assistMode: input.assistMode } : {}),
-        ...(input.assistContactRef !== undefined ? { assistContactRef: input.assistContactRef } : {}),
+        ...(input.assistContactRef !== undefined ? { assistContactRef: encryptedRef ?? null } : {}),
       },
     });
 
@@ -49,21 +58,19 @@ export class PracticeProfileService {
       elderlyMode: profile.elderlyMode,
       assistMode: profile.assistMode,
     });
-    return this.toDto(profile);
+    // Decrypt for response — callers receive plaintext, DB stores ciphertext
+    const decryptedRef = await this.encryption.decrypt(profile.assistContactRef);
+    return this.toDto(profile, decryptedRef);
   }
 
-  private toDto(profile: {
-    userId: string;
-    elderlyMode: boolean;
-    assistMode: boolean;
-    assistContactRef: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-  }) {
+  private toDto(
+    profile: { elderlyMode: boolean; assistMode: boolean; createdAt: Date; updatedAt: Date },
+    decryptedRef: string | null,
+  ) {
     return {
       elderlyMode: profile.elderlyMode,
       assistMode: profile.assistMode,
-      assistContactRef: profile.assistContactRef,
+      assistContactRef: decryptedRef,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
     };

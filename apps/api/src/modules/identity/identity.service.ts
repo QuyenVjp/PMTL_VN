@@ -7,6 +7,7 @@ import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { SessionsService } from "../../platform/sessions/sessions.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
+import { TraceService } from "../../common/tracing/trace.service.js";
 import { canUserLogin } from "./identity.policy.js";
 import { mapUserToAuthResponse } from "./identity.mapper.js";
 import type { LoginInput, RegisterInput, UpdateProfileInput, ChangePasswordInput, ForgotPasswordInput, ResetPasswordInput } from "./identity.schemas.js";
@@ -27,6 +28,7 @@ export class IdentityService {
     private readonly config: ConfigService,
     private readonly sessions: SessionsService,
     private readonly audit: AuditService,
+    private readonly tracing: TraceService,
   ) {}
 
   /**
@@ -72,6 +74,13 @@ export class IdentityService {
       await this.audit.appendInTransaction(
         tx, auditContext, "auth.login", "session", session.id,
       );
+    });
+
+    this.logger.log({
+      msg: "auth.login.success",
+      userId: user.id,
+      sessionId: session.id,
+      ...this.tracing.getCurrentTraceContext(),
     });
 
     return {
@@ -333,6 +342,51 @@ export class IdentityService {
     });
 
     return { success: true };
+  }
+
+  /**
+   * PDPA right to erasure — Nghị định 13/2023/NĐ-CP Điều 16.
+   * Soft-deletes the account: status → DELETED, email anonymised.
+   * Hard delete is deferred 30 days to allow audit/dispute resolution.
+   * All active sessions are revoked immediately.
+   */
+  async requestAccountDeletion(
+    userId: string,
+    metadata: { actorId: string; actorType: "user"; ipAddress?: string; userAgent?: string },
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new BadRequestException("Tài khoản không tồn tại");
+    }
+
+    const anonymisedEmail = `deleted_${user.publicId}@pmtl.deleted`;
+
+    await this.prisma.$transaction(async (tx) => {
+      // Soft-delete: anonymise PII and mark DELETED
+      await tx.user.update({
+        where: { id: userId },
+        data: {
+          status: "DELETED" as const,
+          email: anonymisedEmail,
+          displayName: "Tài khoản đã xóa",
+          avatarUrl: null,
+        },
+      });
+
+      // Revoke all active sessions immediately
+      await tx.session.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+
+      await this.audit.appendInTransaction(tx, metadata, "user.delete", "user", userId);
+    });
+
+    return {
+      success: true,
+      message: "Yêu cầu xóa tài khoản đã được ghi nhận. Dữ liệu sẽ bị xóa vĩnh viễn sau 30 ngày.",
+      scheduledDeletionDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+    };
   }
 
   /**

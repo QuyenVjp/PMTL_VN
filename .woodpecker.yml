@@ -147,10 +147,59 @@ steps:
       - event: push
         branch: main
 
+  # ─── Sign Images with Cosign ─────────────────────────────────────────────────
+  sign-api:
+    image: gcr.io/projectsigstore/cosign:v2.4.1
+    depends_on: [scan-api]
+    environment:
+      COSIGN_PASSWORD:
+        from_secret: COSIGN_PASSWORD
+      COSIGN_PRIVATE_KEY:
+        from_secret: COSIGN_PRIVATE_KEY
+    commands:
+      - echo "$COSIGN_PRIVATE_KEY" > cosign.key
+      - cosign sign --key cosign.key --yes ghcr.io/${CI_REPO_OWNER}/pmtl-vn-api:${CI_COMMIT_SHA}
+      - rm cosign.key
+    when:
+      - event: push
+        branch: main
+
+  sign-web:
+    image: gcr.io/projectsigstore/cosign:v2.4.1
+    depends_on: [scan-web]
+    environment:
+      COSIGN_PASSWORD:
+        from_secret: COSIGN_PASSWORD
+      COSIGN_PRIVATE_KEY:
+        from_secret: COSIGN_PRIVATE_KEY
+    commands:
+      - echo "$COSIGN_PRIVATE_KEY" > cosign.key
+      - cosign sign --key cosign.key --yes ghcr.io/${CI_REPO_OWNER}/pmtl-vn-web:${CI_COMMIT_SHA}
+      - rm cosign.key
+    when:
+      - event: push
+        branch: main
+
+  sign-admin:
+    image: gcr.io/projectsigstore/cosign:v2.4.1
+    depends_on: [build-admin]
+    environment:
+      COSIGN_PASSWORD:
+        from_secret: COSIGN_PASSWORD
+      COSIGN_PRIVATE_KEY:
+        from_secret: COSIGN_PRIVATE_KEY
+    commands:
+      - echo "$COSIGN_PRIVATE_KEY" > cosign.key
+      - cosign sign --key cosign.key --yes ghcr.io/${CI_REPO_OWNER}/pmtl-vn-admin:${CI_COMMIT_SHA}
+      - rm cosign.key
+    when:
+      - event: push
+        branch: main
+
   # ─── Deploy to VPS (main branch only) ────────────────────────────────────────
   deploy:
     image: appleboy/drone-ssh
-    depends_on: [scan-api, scan-web, build-admin]
+    depends_on: [sign-api, sign-web, sign-admin]
     settings:
       host:
         from_secret: VPS_HOST

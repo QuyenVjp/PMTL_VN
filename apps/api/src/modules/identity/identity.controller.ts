@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Patch,
+  Delete,
   Body,
   Req,
   Res,
@@ -156,6 +157,29 @@ export class IdentityController {
   @ApiResponse({ status: 200, description: "Thông tin người dùng" })
   async me(@CurrentUser() user: AuthenticatedUser) {
     return this.identityService.getProfile(user.id);
+  }
+
+  @Delete("me/account")
+  @RateLimit("auth.login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Yêu cầu xóa tài khoản (PDPA — NĐ 13/2023 Điều 16)" })
+  @ApiResponse({ status: 200, description: "Yêu cầu đã ghi nhận, xóa sau 30 ngày" })
+  async deleteMyAccount(
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.identityService.requestAccountDeletion(user.id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+
+    // Clear cookies immediately — sessions already revoked in service
+    this.clearAuthCookies(res);
+
+    return result;
   }
 
   @Get("me/data-export")
