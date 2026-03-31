@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
+import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapQ161ForCalendar } from "../wisdom-qa/q161-rule-pack.data.js";
 import { mapEventToAdminItem } from "./calendar.mapper.js";
 import { CalendarRepository } from "./calendar.repository.js";
@@ -22,16 +23,24 @@ export class CalendarService {
     private readonly prisma: PrismaService,
     private readonly cacheService: CacheService,
     private readonly audit: AuditService,
+    private readonly storage: StorageService,
   ) {}
 
   // ── Public ──────────────────────────────────────────────────────────────
 
   async listEvents(query: EventQuery) {
     const { data, total, offset, limit } = await this.repo.findManyPublished(query);
+    const mapped = await Promise.all(
+      data.map(async (event) => ({
+        ...event,
+        coverImageUrl: (await this.storage.resolveAssetUrl(event.coverImage?.publicId)) ?? event.coverImage?.url ?? null,
+        posterImageUrl: (await this.storage.resolveAssetUrl(event.posterImage?.publicId)) ?? event.posterImage?.url ?? null,
+      })),
+    );
     return {
-      data,
+      data: mapped,
       meta: {
-        pagination: { total, limit, offset, hasMore: offset + data.length < total },
+        pagination: { total, limit, offset, hasMore: offset + mapped.length < total },
       },
     };
   }
@@ -39,7 +48,11 @@ export class CalendarService {
   async getEventByPublicId(publicId: string) {
     const event = await this.repo.findPublicByPublicId(publicId);
     if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
-    return event;
+    return {
+      ...event,
+      coverImageUrl: (await this.storage.resolveAssetUrl(event.coverImage?.publicId)) ?? event.coverImage?.url ?? null,
+      posterImageUrl: (await this.storage.resolveAssetUrl(event.posterImage?.publicId)) ?? event.posterImage?.url ?? null,
+    };
   }
 
   // ── Admin ───────────────────────────────────────────────────────────────
@@ -47,10 +60,20 @@ export class CalendarService {
   async adminListEvents(query: AdminEventQuery) {
     const { data, total } = await this.repo.findManyAdmin(query);
     const { limit, offset } = query;
+    const mapped = await Promise.all(
+      data.map(async (event) => {
+        const base = mapEventToAdminItem(event);
+        return {
+          ...base,
+          coverImageUrl: (await this.storage.resolveAssetUrl(base.coverImagePublicId)) ?? base.coverImageUrl,
+          posterImageUrl: (await this.storage.resolveAssetUrl(base.posterImagePublicId)) ?? base.posterImageUrl,
+        };
+      }),
+    );
     return {
-      data: data.map(mapEventToAdminItem),
+      data: mapped,
       meta: {
-        pagination: { total, limit, offset, hasMore: offset + data.length < total },
+        pagination: { total, limit, offset, hasMore: offset + mapped.length < total },
       },
     };
   }
@@ -58,7 +81,12 @@ export class CalendarService {
   async adminGetEvent(publicId: string) {
     const event = await this.repo.findAdminByPublicId(publicId);
     if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
-    return mapEventToAdminItem(event);
+    const base = mapEventToAdminItem(event);
+    return {
+      ...base,
+      coverImageUrl: (await this.storage.resolveAssetUrl(base.coverImagePublicId)) ?? base.coverImageUrl,
+      posterImageUrl: (await this.storage.resolveAssetUrl(base.posterImagePublicId)) ?? base.posterImageUrl,
+    };
   }
 
   async adminCreateEvent(input: AdminCreateEventInput, userId: string) {

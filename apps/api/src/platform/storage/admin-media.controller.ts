@@ -125,6 +125,7 @@ export class AdminMediaController {
           filename: true,
           mimeType: true,
           size: true,
+          storageKey: true,
           url: true,
           width: true,
           height: true,
@@ -143,13 +144,13 @@ export class AdminMediaController {
       this.prisma.mediaAsset.count({ where }),
     ]);
 
-    return {
-      data: assets.map((a) => ({
+    const data = await Promise.all(
+      assets.map(async (a) => ({
         publicId: a.publicId,
         filename: a.filename,
         mimeType: a.mimeType,
         size: a.size,
-        url: a.url,
+        url: (await this.storageService.resolveAssetUrl(a.publicId)) ?? a.url,
         width: a.width,
         height: a.height,
         status: a.status,
@@ -158,6 +159,10 @@ export class AdminMediaController {
         createdAt: a.createdAt,
         updatedAt: a.updatedAt,
       })),
+    );
+
+    return {
+      data,
       meta: {
         pagination: {
           total,
@@ -209,7 +214,7 @@ export class AdminMediaController {
         mimeType: asset.mimeType,
         size: asset.size,
         storageKey: asset.storageKey,
-        url: asset.url,
+        url: (await this.storageService.resolveAssetUrl(asset.publicId)) ?? asset.url,
         width: asset.width,
         height: asset.height,
         status: asset.status,

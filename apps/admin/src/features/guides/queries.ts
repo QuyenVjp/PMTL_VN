@@ -9,6 +9,8 @@ export interface GuideItem {
   title: string;
   slug: string;
   excerpt: string | null;
+  coverMediaPublicId: string | null;
+  coverImageUrl: string | null;
   category: string;
   status: string;
   author: { publicId: string; displayName: string; avatarUrl: string | null };

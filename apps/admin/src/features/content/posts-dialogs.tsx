@@ -1,5 +1,8 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ChangeEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { ImagePlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { FieldError } from "@/components/ui/field-error";
 import {
   Select,
   SelectContent,
@@ -20,10 +24,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { useCreatePost, useDeletePost, usePublishPost, useUpdatePost } from "@/features/content/mutations";
 import { usePosts } from "@/features/content/posts-context";
 import type { PostListItem } from "@/features/content/queries";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
+import { useUploadMediaAsset } from "@/features/media/mutations.js";
 
 const POST_TYPE_OPTIONS = [
   { label: "Bài viết", value: "ARTICLE" },
@@ -31,6 +39,124 @@ const POST_TYPE_OPTIONS = [
   { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
+const EXCERPT_MAX_LENGTH = 500;
+
+function mediaPath(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
+
+function extractUploadPublicId(payload: unknown): string | undefined {
+  const asRecord = payload as Record<string, unknown> | null;
+  if (!asRecord) return undefined;
+  const direct = asRecord.publicId;
+  if (typeof direct === "string") return direct;
+
+  const data = asRecord.data as Record<string, unknown> | undefined;
+  if (!data) return undefined;
+  const nestedDirect = data.publicId;
+  if (typeof nestedDirect === "string") return nestedDirect;
+
+  const nestedData = data.data as Record<string, unknown> | undefined;
+  if (!nestedData) return undefined;
+  return typeof nestedData.publicId === "string" ? nestedData.publicId : undefined;
+}
+
+function FeaturedImageField({
+  open,
+  value,
+  onChange,
+}: {
+  open: boolean;
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  const uploadMedia = useUploadMediaAsset();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const { data: mediaEnvelope, isLoading } = useQuery({
+    ...mediaListOptions({ limit: 100, mimeType: "image/" }),
+    enabled: open,
+  });
+
+  const images = useMemo(
+    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [mediaEnvelope],
+  );
+
+  const selected = images.find((item) => item.publicId === value);
+
+  const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const result = await uploadMedia.mutateAsync(file);
+      const publicId = extractUploadPublicId(result);
+      if (!publicId) {
+        toast.error("Upload xong nhưng không đọc được media ID.");
+        return;
+      }
+      onChange(publicId);
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  return (
+    <Field label="Ảnh đại diện bài viết">
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onUpload} />
+      <div className="flex items-center gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
+          <ImagePlusIcon className="size-4" />
+          Upload ảnh mới
+        </Button>
+        <Button type="button" variant="ghost" size="sm" onClick={() => onChange("")} disabled={!value}>
+          Bỏ chọn ảnh
+        </Button>
+      </div>
+      {selected ? (
+        <div className="flex items-center gap-3 rounded-md border p-2">
+          <img src={mediaPath(selected.url)} alt={selected.filename} className="size-12 rounded object-cover" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium">{selected.filename}</p>
+            <p className="text-xs text-muted-foreground">{selected.publicId}</p>
+          </div>
+        </div>
+      ) : null}
+      <div className="rounded-md border p-2">
+        {isLoading ? (
+          <p className="text-sm text-muted-foreground">Đang tải ảnh...</p>
+        ) : images.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Chưa có ảnh trong thư viện media.</p>
+        ) : (
+          <ScrollArea className="h-[160px]">
+            <div className="grid grid-cols-5 gap-2 pr-2">
+              {images.map((img) => {
+                const active = value === img.publicId;
+                return (
+                  <button
+                    key={img.publicId}
+                    type="button"
+                    onClick={() => onChange(img.publicId)}
+                    className={cn(
+                      "overflow-hidden rounded border-2 transition",
+                      active ? "border-primary" : "border-transparent hover:border-muted-foreground/50",
+                    )}
+                  >
+                    <img src={mediaPath(img.url)} alt={img.filename} className="aspect-square w-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        )}
+      </div>
+    </Field>
+  );
+}
 
 function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
   return (
@@ -74,14 +200,21 @@ function PostCreateDialog({
   const [excerpt, setExcerpt] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
+  const [featuredImageId, setFeaturedImageId] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const reset = () => {
     setTitle(""); setSlug(""); setPostType("ARTICLE");
-    setSourceRef(""); setExcerpt(""); setFeatured(false); setAllowComments(true);
+    setSourceRef(""); setExcerpt(""); setFeatured(false); setAllowComments(true); setFeaturedImageId("");
+    setFieldErrors({});
   };
 
   const handleSubmit = () => {
-    if (!title.trim()) { toast.error("Tiêu đề không được để trống."); return; }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     createPost.mutate(
       {
         title: title.trim(),
@@ -89,11 +222,15 @@ function PostCreateDialog({
         postType,
         sourceRef: sourceRef.trim() || undefined,
         excerpt: excerpt.trim() || undefined,
+        featuredImageId: featuredImageId || undefined,
         content: {},
         featured,
         allowComments,
       },
-      { onSuccess: () => { reset(); onOpenChange(false); } },
+      {
+        onSuccess: () => { reset(); onOpenChange(false); },
+        onError: (error) => { setFieldErrors(extractValidationFieldErrors(error)); },
+      },
     );
   };
 
@@ -107,7 +244,16 @@ function PostCreateDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nhập tiêu đề..." />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              placeholder="Nhập tiêu đề..."
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
@@ -128,8 +274,23 @@ function PostCreateDialog({
             <Input value={sourceRef} onChange={(e) => setSourceRef(e.target.value)} placeholder="VD: Pháp thoại 2024-08-08..." />
           </Field>
           <Field label="Tóm tắt">
-            <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Mô tả ngắn..." rows={2} />
+            <Textarea
+              value={excerpt}
+              onChange={(e) => {
+                setExcerpt(e.target.value);
+                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
+              }}
+              placeholder="Mô tả ngắn..."
+              maxLength={EXCERPT_MAX_LENGTH}
+              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
+              rows={2}
+            />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <FieldError message={fieldErrors.excerpt} />
+              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
+            </div>
           </Field>
+          <FeaturedImageField open={open} value={featuredImageId} onChange={setFeaturedImageId} />
           <div className="flex gap-6 pt-1">
             <CheckField label="Bài nổi bật" checked={featured} onCheckedChange={setFeatured} hint="Hiển thị ở vị trí ưu tiên" />
             <CheckField label="Cho phép bình luận" checked={allowComments} onCheckedChange={setAllowComments} />
@@ -164,6 +325,9 @@ function PostEditDialog({
   const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
   const [featured, setFeatured] = useState(currentRow.featured);
   const [allowComments, setAllowComments] = useState(currentRow.allowComments);
+  const [featuredImageId, setFeaturedImageId] = useState("");
+  const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -173,10 +337,17 @@ function PostEditDialog({
     setExcerpt(currentRow.excerpt ?? "");
     setFeatured(currentRow.featured);
     setAllowComments(currentRow.allowComments);
+    setFeaturedImageId("");
+    setFeaturedImageChanged(false);
+    setFieldErrors({});
   }, [currentRow, open]);
 
   const handleSubmit = () => {
-    if (!title.trim()) { toast.error("Tiêu đề không được để trống."); return; }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     updatePost.mutate(
       {
         publicId: currentRow.id,
@@ -185,10 +356,16 @@ function PostEditDialog({
         postType,
         sourceRef: sourceRef.trim() || null,
         excerpt: excerpt.trim() || null,
+        ...(featuredImageChanged
+          ? { featuredImageId: featuredImageId || null }
+          : {}),
         featured,
         allowComments,
       },
-      { onSuccess: () => onOpenChange(false) },
+      {
+        onSuccess: () => onOpenChange(false),
+        onError: (error) => { setFieldErrors(extractValidationFieldErrors(error)); },
+      },
     );
   };
 
@@ -202,7 +379,15 @@ function PostEditDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
@@ -223,8 +408,32 @@ function PostEditDialog({
             <Input value={sourceRef} onChange={(e) => setSourceRef(e.target.value)} placeholder="VD: Pháp thoại 2024-08-08..." />
           </Field>
           <Field label="Tóm tắt">
-            <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} />
+            <Textarea
+              value={excerpt}
+              onChange={(e) => {
+                setExcerpt(e.target.value);
+                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
+              }}
+              maxLength={EXCERPT_MAX_LENGTH}
+              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
+              rows={2}
+            />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <FieldError message={fieldErrors.excerpt} />
+              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
+            </div>
           </Field>
+          <FeaturedImageField
+            open={open}
+            value={featuredImageId}
+            onChange={(next) => {
+              setFeaturedImageId(next);
+              setFeaturedImageChanged(true);
+            }}
+          />
+          {!featuredImageChanged && currentRow.featuredImageUrl ? (
+            <div className="text-xs text-muted-foreground">Ảnh hiện tại đang giữ nguyên nếu không chọn lại.</div>
+          ) : null}
           <div className="flex gap-6 pt-1">
             <CheckField label="Bài nổi bật" checked={featured} onCheckedChange={setFeatured} hint="Hiển thị ở vị trí ưu tiên" />
             <CheckField label="Cho phép bình luận" checked={allowComments} onCheckedChange={setAllowComments} />

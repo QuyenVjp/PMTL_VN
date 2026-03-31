@@ -276,6 +276,7 @@ export type PostWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   primaryCategory?: Prisma.XOR<Prisma.PostCategoryNullableScalarRelationFilter, Prisma.PostCategoryWhereInput> | null | runtime.Types.Skip
+  featuredImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
   tags?: Prisma.PostTagMapListRelationFilter | runtime.Types.Skip
 }
 
@@ -299,6 +300,7 @@ export type PostOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryOrderByWithRelationInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
@@ -325,6 +327,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   primaryCategory?: Prisma.XOR<Prisma.PostCategoryNullableScalarRelationFilter, Prisma.PostCategoryWhereInput> | null | runtime.Types.Skip
+  featuredImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
   tags?: Prisma.PostTagMapListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId" | "slug">
 
@@ -384,7 +387,6 @@ export type PostCreateInput = {
   excerpt?: string | null | runtime.Types.Skip
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: string | null | runtime.Types.Skip
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
@@ -392,6 +394,7 @@ export type PostCreateInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   primaryCategory?: Prisma.PostCategoryCreateNestedOneWithoutPostsInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetCreateNestedOneWithoutPostFeaturedImagesInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
@@ -426,7 +429,6 @@ export type PostUpdateInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
@@ -434,6 +436,7 @@ export type PostUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryUpdateOneWithoutPostsNestedInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetUpdateOneWithoutPostFeaturedImagesNestedInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
@@ -488,7 +491,6 @@ export type PostUpdateManyMutationInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
@@ -631,6 +633,48 @@ export type PostUncheckedUpdateManyWithoutAuthorNestedInput = {
   deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[] | runtime.Types.Skip
 }
 
+export type PostCreateNestedManyWithoutFeaturedImageInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput> | Prisma.PostCreateWithoutFeaturedImageInput[] | Prisma.PostUncheckedCreateWithoutFeaturedImageInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeaturedImageInput | Prisma.PostCreateOrConnectWithoutFeaturedImageInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCreateManyFeaturedImageInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PostUncheckedCreateNestedManyWithoutFeaturedImageInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput> | Prisma.PostCreateWithoutFeaturedImageInput[] | Prisma.PostUncheckedCreateWithoutFeaturedImageInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeaturedImageInput | Prisma.PostCreateOrConnectWithoutFeaturedImageInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCreateManyFeaturedImageInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PostUpdateManyWithoutFeaturedImageNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput> | Prisma.PostCreateWithoutFeaturedImageInput[] | Prisma.PostUncheckedCreateWithoutFeaturedImageInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeaturedImageInput | Prisma.PostCreateOrConnectWithoutFeaturedImageInput[] | runtime.Types.Skip
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutFeaturedImageInput | Prisma.PostUpsertWithWhereUniqueWithoutFeaturedImageInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCreateManyFeaturedImageInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutFeaturedImageInput | Prisma.PostUpdateWithWhereUniqueWithoutFeaturedImageInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutFeaturedImageInput | Prisma.PostUpdateManyWithWhereWithoutFeaturedImageInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type PostUncheckedUpdateManyWithoutFeaturedImageNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput> | Prisma.PostCreateWithoutFeaturedImageInput[] | Prisma.PostUncheckedCreateWithoutFeaturedImageInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutFeaturedImageInput | Prisma.PostCreateOrConnectWithoutFeaturedImageInput[] | runtime.Types.Skip
+  upsert?: Prisma.PostUpsertWithWhereUniqueWithoutFeaturedImageInput | Prisma.PostUpsertWithWhereUniqueWithoutFeaturedImageInput[] | runtime.Types.Skip
+  createMany?: Prisma.PostCreateManyFeaturedImageInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PostWhereUniqueInput | Prisma.PostWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PostUpdateWithWhereUniqueWithoutFeaturedImageInput | Prisma.PostUpdateWithWhereUniqueWithoutFeaturedImageInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PostUpdateManyWithWhereWithoutFeaturedImageInput | Prisma.PostUpdateManyWithWhereWithoutFeaturedImageInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PostScalarWhereInput | Prisma.PostScalarWhereInput[] | runtime.Types.Skip
+}
+
 export type PostCreateNestedManyWithoutPrimaryCategoryInput = {
   create?: Prisma.XOR<Prisma.PostCreateWithoutPrimaryCategoryInput, Prisma.PostUncheckedCreateWithoutPrimaryCategoryInput> | Prisma.PostCreateWithoutPrimaryCategoryInput[] | Prisma.PostUncheckedCreateWithoutPrimaryCategoryInput[] | runtime.Types.Skip
   connectOrCreate?: Prisma.PostCreateOrConnectWithoutPrimaryCategoryInput | Prisma.PostCreateOrConnectWithoutPrimaryCategoryInput[] | runtime.Types.Skip
@@ -701,13 +745,13 @@ export type PostCreateWithoutAuthorInput = {
   excerpt?: string | null | runtime.Types.Skip
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: string | null | runtime.Types.Skip
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryCreateNestedOneWithoutPostsInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetCreateNestedOneWithoutPostFeaturedImagesInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
@@ -780,6 +824,72 @@ export type PostScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
 }
 
+export type PostCreateWithoutFeaturedImageInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  slug: string
+  title: string
+  postType?: $Enums.PostType | runtime.Types.Skip
+  sourceRef?: string | null | runtime.Types.Skip
+  excerpt?: string | null | runtime.Types.Skip
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  featured?: boolean | runtime.Types.Skip
+  allowComments?: boolean | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  author: Prisma.UserCreateNestedOneWithoutPostsInput
+  primaryCategory?: Prisma.PostCategoryCreateNestedOneWithoutPostsInput | runtime.Types.Skip
+  tags?: Prisma.PostTagMapCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type PostUncheckedCreateWithoutFeaturedImageInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  slug: string
+  title: string
+  postType?: $Enums.PostType | runtime.Types.Skip
+  sourceRef?: string | null | runtime.Types.Skip
+  excerpt?: string | null | runtime.Types.Skip
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  authorId: string
+  primaryCategoryId?: string | null | runtime.Types.Skip
+  featured?: boolean | runtime.Types.Skip
+  allowComments?: boolean | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  tags?: Prisma.PostTagMapUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type PostCreateOrConnectWithoutFeaturedImageInput = {
+  where: Prisma.PostWhereUniqueInput
+  create: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput>
+}
+
+export type PostCreateManyFeaturedImageInputEnvelope = {
+  data: Prisma.PostCreateManyFeaturedImageInput | Prisma.PostCreateManyFeaturedImageInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type PostUpsertWithWhereUniqueWithoutFeaturedImageInput = {
+  where: Prisma.PostWhereUniqueInput
+  update: Prisma.XOR<Prisma.PostUpdateWithoutFeaturedImageInput, Prisma.PostUncheckedUpdateWithoutFeaturedImageInput>
+  create: Prisma.XOR<Prisma.PostCreateWithoutFeaturedImageInput, Prisma.PostUncheckedCreateWithoutFeaturedImageInput>
+}
+
+export type PostUpdateWithWhereUniqueWithoutFeaturedImageInput = {
+  where: Prisma.PostWhereUniqueInput
+  data: Prisma.XOR<Prisma.PostUpdateWithoutFeaturedImageInput, Prisma.PostUncheckedUpdateWithoutFeaturedImageInput>
+}
+
+export type PostUpdateManyWithWhereWithoutFeaturedImageInput = {
+  where: Prisma.PostScalarWhereInput
+  data: Prisma.XOR<Prisma.PostUpdateManyMutationInput, Prisma.PostUncheckedUpdateManyWithoutFeaturedImageInput>
+}
+
 export type PostCreateWithoutPrimaryCategoryInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -790,13 +900,13 @@ export type PostCreateWithoutPrimaryCategoryInput = {
   excerpt?: string | null | runtime.Types.Skip
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: string | null | runtime.Types.Skip
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
+  featuredImage?: Prisma.MediaAssetCreateNestedOneWithoutPostFeaturedImagesInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
@@ -856,7 +966,6 @@ export type PostCreateWithoutTagsInput = {
   excerpt?: string | null | runtime.Types.Skip
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   status?: $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: string | null | runtime.Types.Skip
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
@@ -864,6 +973,7 @@ export type PostCreateWithoutTagsInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
   primaryCategory?: Prisma.PostCategoryCreateNestedOneWithoutPostsInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetCreateNestedOneWithoutPostFeaturedImagesInput | runtime.Types.Skip
 }
 
 export type PostUncheckedCreateWithoutTagsInput = {
@@ -912,7 +1022,6 @@ export type PostUpdateWithoutTagsInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
@@ -920,6 +1029,7 @@ export type PostUpdateWithoutTagsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryUpdateOneWithoutPostsNestedInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetUpdateOneWithoutPostFeaturedImagesNestedInput | runtime.Types.Skip
 }
 
 export type PostUncheckedUpdateWithoutTagsInput = {
@@ -971,13 +1081,13 @@ export type PostUpdateWithoutAuthorInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryUpdateOneWithoutPostsNestedInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetUpdateOneWithoutPostFeaturedImagesNestedInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
@@ -1020,6 +1130,84 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
+export type PostCreateManyFeaturedImageInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  slug: string
+  title: string
+  postType?: $Enums.PostType | runtime.Types.Skip
+  sourceRef?: string | null | runtime.Types.Skip
+  excerpt?: string | null | runtime.Types.Skip
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  authorId: string
+  primaryCategoryId?: string | null | runtime.Types.Skip
+  featured?: boolean | runtime.Types.Skip
+  allowComments?: boolean | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type PostUpdateWithoutFeaturedImageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  postType?: Prisma.EnumPostTypeFieldUpdateOperationsInput | $Enums.PostType | runtime.Types.Skip
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
+  primaryCategory?: Prisma.PostCategoryUpdateOneWithoutPostsNestedInput | runtime.Types.Skip
+  tags?: Prisma.PostTagMapUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
+export type PostUncheckedUpdateWithoutFeaturedImageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  postType?: Prisma.EnumPostTypeFieldUpdateOperationsInput | $Enums.PostType | runtime.Types.Skip
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  primaryCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  tags?: Prisma.PostTagMapUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
+export type PostUncheckedUpdateManyWithoutFeaturedImageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  postType?: Prisma.EnumPostTypeFieldUpdateOperationsInput | $Enums.PostType | runtime.Types.Skip
+  sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  primaryCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
 export type PostCreateManyPrimaryCategoryInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -1049,13 +1237,13 @@ export type PostUpdateWithoutPrimaryCategoryInput = {
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
-  featuredImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
+  featuredImage?: Prisma.MediaAssetUpdateOneWithoutPostFeaturedImagesNestedInput | runtime.Types.Skip
   tags?: Prisma.PostTagMapUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
@@ -1149,6 +1337,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
   tags?: boolean | Prisma.Post$tagsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["post"]>
@@ -1173,6 +1362,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1195,6 +1385,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["post"]>
 
 export type PostSelectScalar = {
@@ -1221,16 +1412,19 @@ export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
   tags?: boolean | Prisma.Post$tagsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type PostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
 }
 export type PostIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
+  featuredImage?: boolean | Prisma.Post$featuredImageArgs<ExtArgs> | runtime.Types.Skip
 }
 
 export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1238,6 +1432,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     author: Prisma.$UserPayload<ExtArgs>
     primaryCategory: Prisma.$PostCategoryPayload<ExtArgs> | null
+    featuredImage: Prisma.$MediaAssetPayload<ExtArgs> | null
     tags: Prisma.$PostTagMapPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1654,6 +1849,7 @@ export interface Prisma__PostClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   primaryCategory<T extends Prisma.Post$primaryCategoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$primaryCategoryArgs<ExtArgs>>): Prisma.Prisma__PostCategoryClient<runtime.Types.Result.GetResult<Prisma.$PostCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  featuredImage<T extends Prisma.Post$featuredImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$featuredImageArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tags<T extends Prisma.Post$tagsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Post$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PostTagMapPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2118,6 +2314,25 @@ export type Post$primaryCategoryArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.PostCategoryInclude<ExtArgs> | null
   where?: Prisma.PostCategoryWhereInput | runtime.Types.Skip
+}
+
+/**
+ * Post.featuredImage
+ */
+export type Post$featuredImageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
 }
 
 /**

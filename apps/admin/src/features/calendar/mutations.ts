@@ -11,6 +11,8 @@ export interface CreateEventInput {
   endAt?: string;
   location?: string;
   eventType: string;
+  coverImagePublicId?: string;
+  posterImagePublicId?: string;
 }
 
 export interface UpdateEventInput {
@@ -20,6 +22,8 @@ export interface UpdateEventInput {
   endAt?: string;
   location?: string;
   eventType?: string;
+  coverImagePublicId?: string | null;
+  posterImagePublicId?: string | null;
 }
 
 /** Create a new calendar event */

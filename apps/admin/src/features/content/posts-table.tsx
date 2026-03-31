@@ -24,6 +24,13 @@ import { usePosts } from "@/features/content/posts-context";
 import { usePublishPost, useDeletePost } from "@/features/content/mutations";
 
 // ── Helpers ───────────────────────────────────────────────────────────
+function mediaPath(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
 
 const statusOptions = [
   { label: "Đã xuất bản", value: "PUBLISHED" },
@@ -132,11 +139,23 @@ export function PostsTable() {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
         cell: ({ row }) => (
-          <div className="flex items-center gap-1.5 max-w-[300px]">
-            {row.original.featured && (
-              <StarIcon className="size-3.5 shrink-0 text-amber-500 fill-amber-500" />
-            )}
-            <span className="truncate font-medium">{row.original.title}</span>
+          <div className="flex items-center gap-2 max-w-[320px]">
+            <div className="size-9 shrink-0 overflow-hidden rounded border bg-muted">
+              {row.original.featuredImageUrl ? (
+                <img
+                  src={mediaPath(row.original.featuredImageUrl)}
+                  alt={row.original.title}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+              ) : null}
+            </div>
+            <div className="flex min-w-0 items-center gap-1.5">
+              {row.original.featured && (
+                <StarIcon className="size-3.5 shrink-0 text-amber-500 fill-amber-500" />
+              )}
+              <span className="truncate font-medium">{row.original.title}</span>
+            </div>
           </div>
         ),
         meta: { label: "Tiêu đề" },
@@ -276,5 +295,4 @@ export function PostsTable() {
     </div>
   );
 }
-
 

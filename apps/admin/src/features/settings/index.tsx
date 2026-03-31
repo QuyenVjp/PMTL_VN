@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { adminClient } from "@/lib/api/admin-client";
+import { buildCsrfHeader } from "@/lib/csrf.js";
 import { clearAuthCache } from "@/lib/auth";
 import { currentUserQueryKey, useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
@@ -46,6 +47,7 @@ async function uploadAvatar(file: File): Promise<UploadResponse> {
 
   const response = await fetch("/api/admin/media/upload", {
     method: "POST",
+    headers: buildCsrfHeader("POST"),
     credentials: "include",
     body: formData,
   });

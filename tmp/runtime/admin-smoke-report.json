@@ -1,10 +1,10 @@
 {
   "ok": true,
   "baseUrl": "http://127.0.0.1:3002",
-  "routeCount": 30,
+  "routeCount": 32,
   "failedCount": 0,
   "warnedCount": 0,
-  "generatedAt": "2026-03-30T14:05:53.857Z",
+  "generatedAt": "2026-03-31T05:36:13.168Z",
   "results": [
     {
       "path": "/cong-dong/bai-dang",
@@ -366,6 +366,30 @@
       "heading": "Thư viện pháp môn",
       "primaryAction": "Tạo bộ sưu tập",
       "dialogOpened": true,
+      "requestFailures": [],
+      "consoleErrors": [],
+      "notes": []
+    },
+    {
+      "path": "/noi-dung/tu-tu-tai-gia",
+      "sourceFile": "apps/admin/src/routes/__root.tsx",
+      "status": "ok",
+      "title": "PMTL Admin",
+      "heading": "Hướng dẫn tự tu tại gia",
+      "primaryAction": null,
+      "dialogOpened": false,
+      "requestFailures": [],
+      "consoleErrors": [],
+      "notes": []
+    },
+    {
+      "path": "/tri-tue",
+      "sourceFile": "apps/admin/src/routes/__root.tsx",
+      "status": "ok",
+      "title": "PMTL Admin",
+      "heading": "Tri Tuệ",
+      "primaryAction": null,
+      "dialogOpened": false,
       "requestFailures": [],
       "consoleErrors": [],
       "notes": []

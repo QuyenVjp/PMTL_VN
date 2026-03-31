@@ -118,5 +118,13 @@
   {
     "path": "/noi-dung/thu-vien-phap-mon",
     "sourceFile": "apps/admin/src/routes/__root.tsx"
+  },
+  {
+    "path": "/noi-dung/tu-tu-tai-gia",
+    "sourceFile": "apps/admin/src/routes/__root.tsx"
+  },
+  {
+    "path": "/tri-tue",
+    "sourceFile": "apps/admin/src/routes/__root.tsx"
   }
 ]

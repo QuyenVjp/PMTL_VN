@@ -206,6 +206,12 @@ model MediaAsset {
   uploader         User                    @relation(fields: [uploaderId], references: [id])
   collectionItems  MediaCollectionItem[]
   coveredCollections MediaCollection[]     @relation("collectionCover")
+  postFeaturedImages Post[]                @relation("postFeaturedImage")
+  guideCoverMedia BeginnerGuide[]          @relation("guideCoverMedia")
+  downloadFileMedia Download[]             @relation("downloadFileMedia")
+  downloadThumbnailMedia Download[]        @relation("downloadThumbnailMedia")
+  calendarCoverImages CalendarEvent[]      @relation("calendarCoverImage")
+  calendarPosterImages CalendarEvent[]     @relation("calendarPosterImage")
 
   @@index([uploaderId])
   @@index([status])
@@ -322,6 +328,7 @@ model Post {
 
   author          User          @relation(fields: [authorId], references: [id])
   primaryCategory PostCategory? @relation(fields: [primaryCategoryId], references: [id])
+  featuredImage   MediaAsset?   @relation("postFeaturedImage", fields: [featuredImageId], references: [id])
   tags            PostTagMap[]
 
   @@index([authorId])
@@ -539,6 +546,8 @@ model CalendarEvent {
   endAt         DateTime?   @map("end_at")
   location      String?
   eventType     String      @default("general") @map("event_type")
+  coverImageId  String?     @map("cover_image_id")
+  posterImageId String?     @map("poster_image_id")
   status        EventStatus @default(DRAFT)
   createdById   String      @map("created_by_id")
   publishedAt   DateTime?   @map("published_at")
@@ -546,10 +555,14 @@ model CalendarEvent {
   updatedAt     DateTime    @updatedAt @map("updated_at")
 
   createdBy User @relation("calendarEvents", fields: [createdById], references: [id])
+  coverImage MediaAsset? @relation("calendarCoverImage", fields: [coverImageId], references: [id])
+  posterImage MediaAsset? @relation("calendarPosterImage", fields: [posterImageId], references: [id])
 
   @@index([status])
   @@index([startAt])
   @@index([createdById])
+  @@index([coverImageId])
+  @@index([posterImageId])
   @@map("calendar_events")
 }
 
@@ -696,6 +709,7 @@ model BeginnerGuide {
   slug        String        @unique
   content     Json
   excerpt     String?
+  coverMediaId String?       @map("cover_media_id")
   category    GuideCategory @default(BEGINNER)
   sortOrder   Int           @default(0) @map("sort_order")
   versionNote String?       @map("version_note")
@@ -706,10 +720,12 @@ model BeginnerGuide {
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
   author User @relation("beginnerGuides", fields: [authorId], references: [id])
+  coverMedia MediaAsset? @relation("guideCoverMedia", fields: [coverMediaId], references: [id])
 
   @@index([authorId])
   @@index([status])
   @@index([category])
+  @@index([coverMediaId])
   @@map("beginner_guides")
 }
 
@@ -718,6 +734,8 @@ model Download {
   publicId    String           @unique @map("public_id")
   title       String
   description String?
+  fileMediaId String?           @map("file_media_id")
+  thumbnailMediaId String?      @map("thumbnail_media_id")
   category    DownloadCategory @default(GUIDE)
   fileUrl     String           @map("file_url")
   fileType    String           @map("file_type")
@@ -729,10 +747,14 @@ model Download {
   updatedAt   DateTime         @updatedAt @map("updated_at")
 
   uploader User @relation("downloads", fields: [uploaderId], references: [id])
+  fileMedia MediaAsset? @relation("downloadFileMedia", fields: [fileMediaId], references: [id])
+  thumbnailMedia MediaAsset? @relation("downloadThumbnailMedia", fields: [thumbnailMediaId], references: [id])
 
   @@index([uploaderId])
   @@index([status])
   @@index([category])
+  @@index([fileMediaId])
+  @@index([thumbnailMediaId])
   @@map("downloads")
 }
 

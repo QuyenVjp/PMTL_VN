@@ -122,7 +122,11 @@ export class ContentRepository {
     if (rest.sourceRef !== undefined) updateData.sourceRef = rest.sourceRef;
     if (rest.excerpt !== undefined) updateData.excerpt = rest.excerpt;
     if (rest.content !== undefined) updateData.content = rest.content as Prisma.InputJsonValue;
-    if (rest.featuredImageId !== undefined) updateData.featuredImageId = rest.featuredImageId;
+    if (rest.featuredImageId !== undefined) {
+      updateData.featuredImage = rest.featuredImageId
+        ? { connect: { id: rest.featuredImageId } }
+        : { disconnect: true };
+    }
     if (rest.primaryCategoryId !== undefined) {
       updateData.primaryCategory = rest.primaryCategoryId
         ? { connect: { id: rest.primaryCategoryId } }

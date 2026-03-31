@@ -31,6 +31,8 @@ type AllowedMimeType = (typeof ALL_ALLOWED_TYPES)[number];
 
 @Injectable()
 export class StorageService {
+  private static readonly MISSING_IMAGE_DATA_URI =
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
   private readonly adapter: StorageInterface;
   private readonly logger = new Logger(StorageService.name);
 
@@ -130,6 +132,20 @@ export class StorageService {
 
   async getAsset(publicId: string) {
     return this.mediaRepo.findByPublicId(publicId);
+  }
+
+  async resolveAssetUrl(publicId: string | null | undefined): Promise<string | null> {
+    if (!publicId) return null;
+    const asset = await this.mediaRepo.findByPublicId(publicId);
+    if (!asset) return null;
+    if (this.configService.storageAdapter === "local") {
+      const exists = await this.adapter.exists(asset.storageKey);
+      if (!exists) {
+        this.logger.warn(`Media binary missing for asset ${publicId} (${asset.storageKey})`);
+        return StorageService.MISSING_IMAGE_DATA_URI;
+      }
+    }
+    return asset.url;
   }
 
   async getUserAssets(uploaderId: string) {

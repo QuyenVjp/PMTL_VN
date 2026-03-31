@@ -12,6 +12,10 @@ export interface CalendarEventItem {
   endAt: string | null;
   location: string | null;
   eventType: string;
+  coverImagePublicId: string | null;
+  posterImagePublicId: string | null;
+  coverImageUrl: string | null;
+  posterImageUrl: string | null;
   status: string;
   createdBy: { publicId: string; displayName: string };
   publishedAt: string | null;

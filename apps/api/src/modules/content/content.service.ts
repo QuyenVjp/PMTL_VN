@@ -38,9 +38,7 @@ export class ContentService {
 
     const items = await Promise.all(
       posts.map(async (post) => {
-        const featuredImageUrl = post.featuredImageId
-          ? (await this.storage.getAsset(post.featuredImageId))?.url
-          : null;
+        const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
         return mapPostToResponse(post, featuredImageUrl);
       }),
     );
@@ -71,9 +69,7 @@ export class ContentService {
       throw new NotFoundException("Bài viết không tồn tại");
     }
 
-    const featuredImageUrl = post.featuredImageId
-      ? (await this.storage.getAsset(post.featuredImageId))?.url
-      : null;
+    const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
 
     return mapPostToResponse(post, featuredImageUrl);
   }
@@ -95,6 +91,7 @@ export class ContentService {
     if (await this.repository.slugExists(slug)) {
       throw new ConflictException("Slug đã tồn tại");
     }
+    const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
 
     // Bug 2 fix: post creation + audit in same transaction
     const post = await this.prisma.$transaction(async (tx) => {
@@ -110,7 +107,7 @@ export class ContentService {
           status: "DRAFT",
           ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
           ...(input.sourceRef !== undefined && { sourceRef: input.sourceRef }),
-          ...(input.featuredImageId !== undefined && { featuredImageId: input.featuredImageId }),
+          ...(featuredImageId !== undefined && { featuredImageId }),
           ...(input.primaryCategoryId !== undefined && { primaryCategoryId: input.primaryCategoryId }),
           ...(input.featured !== undefined && { featured: input.featured }),
           ...(input.allowComments !== undefined && { allowComments: input.allowComments }),
@@ -128,9 +125,7 @@ export class ContentService {
       return created;
     });
 
-    const featuredImageUrl = post.featuredImageId
-      ? (await this.storage.getAsset(post.featuredImageId))?.url
-      : null;
+    const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
 
     return mapPostToResponse(post, featuredImageUrl);
   }
@@ -158,6 +153,7 @@ export class ContentService {
         throw new ConflictException("Slug đã tồn tại");
       }
     }
+    const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
 
     // Bug 2 fix: post update + audit in same transaction
     const updated = await this.prisma.$transaction(async (tx) => {
@@ -168,7 +164,11 @@ export class ContentService {
       if (input.sourceRef !== undefined) postUpdateData.sourceRef = input.sourceRef;
       if (input.excerpt !== undefined) postUpdateData.excerpt = input.excerpt;
       if (input.content !== undefined) postUpdateData.content = input.content as Prisma.InputJsonValue;
-      if (input.featuredImageId !== undefined) postUpdateData.featuredImageId = input.featuredImageId;
+      if (featuredImageId !== undefined) {
+        postUpdateData.featuredImage = featuredImageId
+          ? { connect: { id: featuredImageId } }
+          : { disconnect: true };
+      }
       if (input.featured !== undefined) postUpdateData.featured = input.featured;
       if (input.allowComments !== undefined) postUpdateData.allowComments = input.allowComments;
       if (input.primaryCategoryId !== undefined) {
@@ -196,9 +196,7 @@ export class ContentService {
       return result;
     });
 
-    const featuredImageUrl = updated.featuredImageId
-      ? (await this.storage.getAsset(updated.featuredImageId))?.url
-      : null;
+    const featuredImageUrl = await this.storage.resolveAssetUrl(updated.featuredImageId);
 
     return mapPostToResponse(updated, featuredImageUrl);
   }
@@ -233,9 +231,7 @@ export class ContentService {
       return result;
     });
 
-    const featuredImageUrl = updated.featuredImageId
-      ? (await this.storage.getAsset(updated.featuredImageId))?.url
-      : null;
+    const featuredImageUrl = await this.storage.resolveAssetUrl(updated.featuredImageId);
 
     return mapPostToResponse(updated, featuredImageUrl);
   }
@@ -275,6 +271,17 @@ export class ContentService {
     return `${base}-${publicId.substring(0, 8)}`;
   }
 
+  private async normalizeFeaturedImageId(value: string | null | undefined): Promise<string | null | undefined> {
+    if (value === undefined) return undefined;
+    if (value === null) return null;
+    if (value.trim().length === 0) return null;
+    const asset = await this.storage.getAsset(value);
+    if (!asset) {
+      throw new NotFoundException("Ảnh đại diện không tồn tại");
+    }
+    return asset.publicId;
+  }
+
   // ======================== Guide methods ========================
 
   async listGuides(query: GuideQuery, userRole?: UserRole) {
@@ -293,7 +300,10 @@ export class ContentService {
     const [data, total] = await Promise.all([
       this.prisma.beginnerGuide.findMany({
         where,
-        include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          coverMedia: { select: { publicId: true, url: true } },
+        },
         orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
         skip: query.offset,
         take: query.limit,
@@ -301,8 +311,16 @@ export class ContentService {
       this.prisma.beginnerGuide.count({ where }),
     ]);
 
+    const mapped = await Promise.all(
+      data.map(async (guide) => ({
+        ...guide,
+        coverMediaPublicId: guide.coverMedia?.publicId ?? null,
+        coverImageUrl: (await this.storage.resolveAssetUrl(guide.coverMedia?.publicId)) ?? guide.coverMedia?.url ?? null,
+      })),
+    );
+
     return {
-      data,
+      data: mapped,
       meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
     };
   }
@@ -310,14 +328,21 @@ export class ContentService {
   async getGuide(publicIdOrSlug: string, userRole?: UserRole) {
     const guide = await this.prisma.beginnerGuide.findFirst({
       where: { OR: [{ publicId: publicIdOrSlug }, { slug: publicIdOrSlug }] },
-      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        coverMedia: { select: { publicId: true, url: true } },
+      },
     });
     if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
     const isAdmin = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
     if (!isAdmin && guide.status !== "PUBLISHED") {
       throw new NotFoundException("Bài hướng dẫn không tồn tại");
     }
-    return guide;
+    return {
+      ...guide,
+      coverMediaPublicId: guide.coverMedia?.publicId ?? null,
+      coverImageUrl: (await this.storage.resolveAssetUrl(guide.coverMedia?.publicId)) ?? guide.coverMedia?.url ?? null,
+    };
   }
 
   async createGuide(input: CreateGuideRequest, userId: string, auditContext: AuditContext) {
@@ -327,6 +352,8 @@ export class ContentService {
     // Check slug uniqueness
     const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug } });
     if (existing) throw new ConflictException("Slug đã tồn tại");
+
+    const coverMediaId = await this.resolveMediaIdByPublicId(input.coverMediaPublicId);
 
     const guide = await this.prisma.beginnerGuide.create({
       data: {
@@ -339,14 +366,22 @@ export class ContentService {
         status: "DRAFT",
         authorId: userId,
         ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+        ...(coverMediaId !== undefined && { coverMediaId }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.versionNote !== undefined && { versionNote: input.versionNote }),
       },
-      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        coverMedia: { select: { publicId: true, url: true } },
+      },
     });
 
     await this.audit.append(auditContext, "content.create", "beginner_guide", publicId);
-    return guide;
+    return {
+      ...guide,
+      coverMediaPublicId: guide.coverMedia?.publicId ?? null,
+      coverImageUrl: (await this.storage.resolveAssetUrl(guide.coverMedia?.publicId)) ?? guide.coverMedia?.url ?? null,
+    };
   }
 
   async updateGuide(publicId: string, input: UpdateGuideRequest, auditContext: AuditContext) {
@@ -358,6 +393,8 @@ export class ContentService {
       if (existing) throw new ConflictException("Slug đã tồn tại");
     }
 
+    const coverMediaId = await this.resolveMediaIdByPublicId(input.coverMediaPublicId);
+
     const updated = await this.prisma.beginnerGuide.update({
       where: { publicId },
       data: {
@@ -365,15 +402,23 @@ export class ContentService {
         ...(input.slug !== undefined && { slug: input.slug }),
         ...(input.content !== undefined && { content: input.content as Prisma.InputJsonValue }),
         ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
+        ...(coverMediaId !== undefined && { coverMediaId }),
         ...(input.category !== undefined && { category: input.category as GuideCategory }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.versionNote !== undefined && { versionNote: input.versionNote }),
       },
-      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        coverMedia: { select: { publicId: true, url: true } },
+      },
     });
 
     await this.audit.append(auditContext, "content.update", "beginner_guide", publicId);
-    return updated;
+    return {
+      ...updated,
+      coverMediaPublicId: updated.coverMedia?.publicId ?? null,
+      coverImageUrl: (await this.storage.resolveAssetUrl(updated.coverMedia?.publicId)) ?? updated.coverMedia?.url ?? null,
+    };
   }
 
   async publishGuide(publicId: string, auditContext: AuditContext) {
@@ -431,7 +476,11 @@ export class ContentService {
     const [data, total] = await Promise.all([
       this.prisma.download.findMany({
         where,
-        include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+        include: {
+          uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+          thumbnailMedia: { select: { publicId: true, url: true } },
+        },
         orderBy: { createdAt: "desc" },
         skip: query.offset,
         take: query.limit,
@@ -439,8 +488,18 @@ export class ContentService {
       this.prisma.download.count({ where }),
     ]);
 
+    const mapped = await Promise.all(
+      data.map(async (download) => ({
+        ...download,
+        fileMediaPublicId: download.fileMedia?.publicId ?? null,
+        thumbnailMediaPublicId: download.thumbnailMedia?.publicId ?? null,
+        thumbnailUrl:
+          (await this.storage.resolveAssetUrl(download.thumbnailMedia?.publicId)) ?? download.thumbnailMedia?.url ?? null,
+      })),
+    );
+
     return {
-      data,
+      data: mapped,
       meta: { pagination: { total, limit: query.limit, offset: query.offset, hasMore: query.offset + query.limit < total } },
     };
   }
@@ -448,14 +507,27 @@ export class ContentService {
   async adminGetDownload(publicId: string) {
     const download = await this.prisma.download.findUnique({
       where: { publicId },
-      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+        thumbnailMedia: { select: { publicId: true, url: true } },
+      },
     });
     if (!download) throw new NotFoundException("Tài liệu không tồn tại");
-    return download;
+    return {
+      ...download,
+      fileMediaPublicId: download.fileMedia?.publicId ?? null,
+      thumbnailMediaPublicId: download.thumbnailMedia?.publicId ?? null,
+      thumbnailUrl:
+        (await this.storage.resolveAssetUrl(download.thumbnailMedia?.publicId)) ?? download.thumbnailMedia?.url ?? null,
+    };
   }
 
   async adminCreateDownload(input: CreateDownloadRequest, userId: string, auditContext: AuditContext) {
     const publicId = nanoid(21);
+    const fileMediaId = await this.resolveMediaIdByPublicId(input.fileMediaPublicId);
+    const thumbnailMediaId = await this.resolveMediaIdByPublicId(input.thumbnailMediaPublicId);
+    const fileAsset = input.fileMediaPublicId ? await this.storage.getAsset(input.fileMediaPublicId) : null;
 
     const download = await this.prisma.download.create({
       data: {
@@ -463,23 +535,38 @@ export class ContentService {
         publicId,
         title: input.title,
         category: input.category as DownloadCategory,
-        fileUrl: input.fileUrl,
-        fileType: input.fileType,
-        fileSize: input.fileSize,
+        fileUrl: input.fileUrl || fileAsset?.url || "",
+        fileType: input.fileType || fileAsset?.mimeType || "application/octet-stream",
+        fileSize: input.fileSize || fileAsset?.size || 0,
+        ...(fileMediaId !== undefined && { fileMediaId }),
+        ...(thumbnailMediaId !== undefined && { thumbnailMediaId }),
         status: "DRAFT",
         uploaderId: userId,
         ...(input.description !== undefined && { description: input.description }),
       },
-      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+        thumbnailMedia: { select: { publicId: true, url: true } },
+      },
     });
 
     await this.audit.append(auditContext, "content.create", "download", publicId);
-    return download;
+    return {
+      ...download,
+      fileMediaPublicId: download.fileMedia?.publicId ?? null,
+      thumbnailMediaPublicId: download.thumbnailMedia?.publicId ?? null,
+      thumbnailUrl:
+        (await this.storage.resolveAssetUrl(download.thumbnailMedia?.publicId)) ?? download.thumbnailMedia?.url ?? null,
+    };
   }
 
   async adminUpdateDownload(publicId: string, input: UpdateDownloadRequest, auditContext: AuditContext) {
     const download = await this.prisma.download.findUnique({ where: { publicId } });
     if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+    const fileMediaId = await this.resolveMediaIdByPublicId(input.fileMediaPublicId);
+    const thumbnailMediaId = await this.resolveMediaIdByPublicId(input.thumbnailMediaPublicId);
+    const fileAsset = input.fileMediaPublicId ? await this.storage.getAsset(input.fileMediaPublicId) : null;
 
     const updated = await this.prisma.download.update({
       where: { publicId },
@@ -487,15 +574,27 @@ export class ContentService {
         ...(input.title !== undefined && { title: input.title }),
         ...(input.description !== undefined && { description: input.description }),
         ...(input.category !== undefined && { category: input.category as DownloadCategory }),
-        ...(input.fileUrl !== undefined && { fileUrl: input.fileUrl }),
-        ...(input.fileType !== undefined && { fileType: input.fileType }),
-        ...(input.fileSize !== undefined && { fileSize: input.fileSize }),
+        ...(input.fileUrl !== undefined && { fileUrl: input.fileUrl || fileAsset?.url || download.fileUrl }),
+        ...(input.fileType !== undefined && { fileType: input.fileType || fileAsset?.mimeType || download.fileType }),
+        ...(input.fileSize !== undefined && { fileSize: input.fileSize || fileAsset?.size || download.fileSize }),
+        ...(fileMediaId !== undefined && { fileMediaId }),
+        ...(thumbnailMediaId !== undefined && { thumbnailMediaId }),
       },
-      include: { uploader: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+      include: {
+        uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+        thumbnailMedia: { select: { publicId: true, url: true } },
+      },
     });
 
     await this.audit.append(auditContext, "content.update", "download", publicId);
-    return updated;
+    return {
+      ...updated,
+      fileMediaPublicId: updated.fileMedia?.publicId ?? null,
+      thumbnailMediaPublicId: updated.thumbnailMedia?.publicId ?? null,
+      thumbnailUrl:
+        (await this.storage.resolveAssetUrl(updated.thumbnailMedia?.publicId)) ?? updated.thumbnailMedia?.url ?? null,
+    };
   }
 
   async adminDeleteDownload(publicId: string, auditContext: AuditContext) {
@@ -520,5 +619,16 @@ export class ContentService {
 
     await this.audit.append(auditContext, "content.publish", "download", publicId);
     return updated;
+  }
+
+  private async resolveMediaIdByPublicId(publicId: string | null | undefined): Promise<string | null | undefined> {
+    if (publicId === undefined) return undefined;
+    if (publicId === null) return null;
+    if (publicId.trim().length === 0) return null;
+    const asset = await this.storage.getAsset(publicId);
+    if (!asset) {
+      throw new NotFoundException("Media không tồn tại");
+    }
+    return asset.id;
   }
 }

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
+import { buildCsrfHeader } from "@/lib/csrf.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
 import { mediaKeys } from "./queries.js";
 import { dashboardKeys } from "@/features/dashboard/queries.js";
@@ -11,8 +12,10 @@ export function useUploadMediaAsset() {
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
+
       const res = await fetch("/api/admin/media/upload", {
         method: "POST",
+        headers: buildCsrfHeader("POST"),
         body: formData,
         credentials: "include",
       });

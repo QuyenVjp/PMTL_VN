@@ -14,6 +14,8 @@ interface CreateDownloadInput {
   fileUrl: string;
   fileType: string;
   fileSize: number;
+  fileMediaPublicId?: string;
+  thumbnailMediaPublicId?: string;
 }
 
 interface UpdateDownloadInput {
@@ -23,6 +25,8 @@ interface UpdateDownloadInput {
   fileUrl?: string;
   fileType?: string;
   fileSize?: number;
+  fileMediaPublicId?: string | null;
+  thumbnailMediaPublicId?: string | null;
   status?: string;
 }
 

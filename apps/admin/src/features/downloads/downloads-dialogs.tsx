@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +24,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import type { DownloadItem } from "@/features/downloads/queries";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
+import { useUploadMediaAsset } from "@/features/media/mutations.js";
 import {
   useCreateDownload,
   useUpdateDownload,
@@ -29,6 +34,14 @@ import {
   useUnpublishDownload,
 } from "@/features/downloads/mutations";
 import { useDownloads } from "@/features/downloads/context";
+
+function mediaPath(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
 
 // ── Shared field wrapper ─────────────────────────────────────────────
 
@@ -84,6 +97,21 @@ function DownloadCreateDialog({
   const [fileUrl, setFileUrl] = useState("");
   const [fileType, setFileType] = useState("");
   const [fileSize, setFileSize] = useState("");
+  const [fileMediaPublicId, setFileMediaPublicId] = useState("");
+  const [thumbnailMediaPublicId, setThumbnailMediaPublicId] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const uploadMedia = useUploadMediaAsset();
+  const uploadDocRef = useRef<HTMLInputElement>(null);
+  const uploadThumbRef = useRef<HTMLInputElement>(null);
+  const { data: mediaEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 100 }),
+    enabled: open,
+  });
+  const assets = mediaEnvelope?.data ?? [];
+  const imageAssets = useMemo(
+    () => assets.filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [assets],
+  );
 
   useEffect(() => {
     if (open) {
@@ -98,13 +126,18 @@ function DownloadCreateDialog({
     setFileUrl("");
     setFileType("");
     setFileSize("");
+    setFileMediaPublicId("");
+    setThumbnailMediaPublicId("");
+    setFieldErrors({});
   };
 
   const handleSubmit = () => {
-    if (!title.trim() || !fileUrl.trim() || !fileType.trim()) {
-      toast.error("Tiêu đề, đường dẫn file và loại file không được để trống.");
-      return;
-    }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (!fileUrl.trim()) nextErrors.fileUrl = "Đường dẫn file không được để trống.";
+    if (!fileType.trim()) nextErrors.fileType = "Loại file không được để trống.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     createDownload.mutate(
       {
         title: title.trim(),
@@ -113,11 +146,16 @@ function DownloadCreateDialog({
         fileUrl: fileUrl.trim(),
         fileType: fileType.trim(),
         fileSize: Number(fileSize) || 0,
+        fileMediaPublicId: fileMediaPublicId || undefined,
+        thumbnailMediaPublicId: thumbnailMediaPublicId || undefined,
       },
       {
         onSuccess: () => {
           reset();
           onOpenChange(false);
+        },
+        onError: (error) => {
+          setFieldErrors(extractValidationFieldErrors(error));
         },
       },
     );
@@ -133,16 +171,43 @@ function DownloadCreateDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nhập tiêu đề..." />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              placeholder="Nhập tiêu đề..."
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Danh mục">
             <CategorySelect value={category} onValueChange={setCategory} />
           </Field>
           <Field label="Đường dẫn file">
-            <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+            <Input
+              value={fileUrl}
+              onChange={(e) => {
+                setFileUrl(e.target.value);
+                if (fieldErrors.fileUrl) setFieldErrors((prev) => ({ ...prev, fileUrl: "" }));
+              }}
+              placeholder="https://..."
+              className={invalidFieldClass(Boolean(fieldErrors.fileUrl))}
+            />
+            <FieldError message={fieldErrors.fileUrl} />
           </Field>
           <Field label="Loại file">
-            <Input value={fileType} onChange={(e) => setFileType(e.target.value)} placeholder="PDF, DOCX, MP4..." />
+            <Input
+              value={fileType}
+              onChange={(e) => {
+                setFileType(e.target.value);
+                if (fieldErrors.fileType) setFieldErrors((prev) => ({ ...prev, fileType: "" }));
+              }}
+              placeholder="PDF, DOCX, MP4..."
+              className={invalidFieldClass(Boolean(fieldErrors.fileType))}
+            />
+            <FieldError message={fieldErrors.fileType} />
           </Field>
           <Field label="Kích thước (bytes)">
             <Input
@@ -151,6 +216,102 @@ function DownloadCreateDialog({
               onChange={(e) => setFileSize(e.target.value)}
               placeholder="0"
             />
+          </Field>
+          <Field label="File media nội bộ (tuỳ chọn)">
+            <input
+              ref={uploadDocRef}
+              type="file"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string; url?: string; mimeType?: string; size?: number } } | null;
+                  const publicId = payload?.data?.publicId;
+                  if (publicId) setFileMediaPublicId(publicId);
+                  if (payload?.data?.url) setFileUrl(payload.data.url);
+                  if (payload?.data?.mimeType) setFileType(payload.data.mimeType);
+                  if (typeof payload?.data?.size === "number") setFileSize(String(payload.data.size));
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadDocRef.current?.click()}>
+                Upload file
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setFileMediaPublicId("")} disabled={!fileMediaPublicId}>
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={fileMediaPublicId || "__none__"}
+              onValueChange={(value) => setFileMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn file từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {assets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Thumbnail media (tuỳ chọn)">
+            <input
+              ref={uploadThumbRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string } } | null;
+                  const publicId = payload?.data?.publicId;
+                  if (publicId) setThumbnailMediaPublicId(publicId);
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadThumbRef.current?.click()}>
+                Upload thumbnail
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setThumbnailMediaPublicId("")}
+                disabled={!thumbnailMediaPublicId}
+              >
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={thumbnailMediaPublicId || "__none__"}
+              onValueChange={(value) => setThumbnailMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn thumbnail từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {imageAssets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
           <Field label="Mô tả">
             <Textarea
@@ -193,6 +354,21 @@ function DownloadEditDialog({
   const [fileUrl, setFileUrl] = useState(currentRow.fileUrl);
   const [fileType, setFileType] = useState(currentRow.fileType);
   const [fileSize, setFileSize] = useState(String(currentRow.fileSize));
+  const [fileMediaPublicId, setFileMediaPublicId] = useState(currentRow.fileMediaPublicId ?? "");
+  const [thumbnailMediaPublicId, setThumbnailMediaPublicId] = useState(currentRow.thumbnailMediaPublicId ?? "");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const uploadMedia = useUploadMediaAsset();
+  const uploadDocRef = useRef<HTMLInputElement>(null);
+  const uploadThumbRef = useRef<HTMLInputElement>(null);
+  const { data: mediaEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 100 }),
+    enabled: open,
+  });
+  const assets = mediaEnvelope?.data ?? [];
+  const imageAssets = useMemo(
+    () => assets.filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [assets],
+  );
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -201,13 +377,18 @@ function DownloadEditDialog({
     setFileUrl(currentRow.fileUrl);
     setFileType(currentRow.fileType);
     setFileSize(String(currentRow.fileSize));
+    setFileMediaPublicId(currentRow.fileMediaPublicId ?? "");
+    setThumbnailMediaPublicId(currentRow.thumbnailMediaPublicId ?? "");
+    setFieldErrors({});
   }, [currentRow, open]);
 
   const handleSubmit = () => {
-    if (!title.trim() || !fileUrl.trim() || !fileType.trim()) {
-      toast.error("Tiêu đề, đường dẫn file và loại file không được để trống.");
-      return;
-    }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (!fileUrl.trim()) nextErrors.fileUrl = "Đường dẫn file không được để trống.";
+    if (!fileType.trim()) nextErrors.fileType = "Loại file không được để trống.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     updateDownload.mutate(
       {
         publicId: currentRow.publicId,
@@ -217,8 +398,15 @@ function DownloadEditDialog({
         fileUrl: fileUrl.trim(),
         fileType: fileType.trim(),
         fileSize: Number(fileSize) || 0,
+        fileMediaPublicId: fileMediaPublicId || null,
+        thumbnailMediaPublicId: thumbnailMediaPublicId || null,
       },
-      { onSuccess: () => onOpenChange(false) },
+      {
+        onSuccess: () => onOpenChange(false),
+        onError: (error) => {
+          setFieldErrors(extractValidationFieldErrors(error));
+        },
+      },
     );
   };
 
@@ -232,22 +420,152 @@ function DownloadEditDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Danh mục">
             <CategorySelect value={category} onValueChange={setCategory} />
           </Field>
           <Field label="Đường dẫn file">
-            <Input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://..." />
+            <Input
+              value={fileUrl}
+              onChange={(e) => {
+                setFileUrl(e.target.value);
+                if (fieldErrors.fileUrl) setFieldErrors((prev) => ({ ...prev, fileUrl: "" }));
+              }}
+              placeholder="https://..."
+              className={invalidFieldClass(Boolean(fieldErrors.fileUrl))}
+            />
+            <FieldError message={fieldErrors.fileUrl} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Loại file">
-              <Input value={fileType} onChange={(e) => setFileType(e.target.value)} placeholder="PDF, DOCX..." />
+              <Input
+                value={fileType}
+                onChange={(e) => {
+                  setFileType(e.target.value);
+                  if (fieldErrors.fileType) setFieldErrors((prev) => ({ ...prev, fileType: "" }));
+                }}
+                placeholder="PDF, DOCX..."
+                className={invalidFieldClass(Boolean(fieldErrors.fileType))}
+              />
+              <FieldError message={fieldErrors.fileType} />
             </Field>
             <Field label="Kích thước (bytes)">
               <Input type="number" value={fileSize} onChange={(e) => setFileSize(e.target.value)} placeholder="0" />
             </Field>
           </div>
+          <Field label="File media nội bộ (tuỳ chọn)">
+            <input
+              ref={uploadDocRef}
+              type="file"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string; url?: string; mimeType?: string; size?: number } } | null;
+                  const publicId = payload?.data?.publicId;
+                  if (publicId) setFileMediaPublicId(publicId);
+                  if (payload?.data?.url) setFileUrl(payload.data.url);
+                  if (payload?.data?.mimeType) setFileType(payload.data.mimeType);
+                  if (typeof payload?.data?.size === "number") setFileSize(String(payload.data.size));
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadDocRef.current?.click()}>
+                Upload file
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setFileMediaPublicId("")} disabled={!fileMediaPublicId}>
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={fileMediaPublicId || "__none__"}
+              onValueChange={(value) => setFileMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn file từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {assets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+          <Field label="Thumbnail media (tuỳ chọn)">
+            <input
+              ref={uploadThumbRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string } } | null;
+                  const publicId = payload?.data?.publicId;
+                  if (publicId) setThumbnailMediaPublicId(publicId);
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadThumbRef.current?.click()}>
+                Upload thumbnail
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setThumbnailMediaPublicId("")}
+                disabled={!thumbnailMediaPublicId}
+              >
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={thumbnailMediaPublicId || "__none__"}
+              onValueChange={(value) => setThumbnailMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn thumbnail từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {imageAssets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {currentRow.thumbnailUrl ? (
+              <img
+                src={mediaPath(currentRow.thumbnailUrl)}
+                alt={currentRow.title}
+                className="h-16 w-auto rounded border object-cover"
+                loading="lazy"
+              />
+            ) : null}
+          </Field>
           <Field label="Mô tả">
             <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Mô tả ngắn..." />
           </Field>
@@ -381,4 +699,3 @@ export function DownloadsDialogs({ defaultCategory }: { defaultCategory?: string
     </>
   );
 }
-

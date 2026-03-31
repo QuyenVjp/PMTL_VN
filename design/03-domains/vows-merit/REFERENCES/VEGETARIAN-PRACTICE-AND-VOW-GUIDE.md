@@ -84,6 +84,18 @@
   - các bữa chay cân bằng, gọn nhẹ
 - Đây là lane `energy support`, không phải clinical nutrition engine.
 
+## Wenda Food-Treasure Note
+- Theo lane `Wenda20170120 15:28`, có thể giữ note tham khảo cho nhóm thực phẩm được nhắc đến theo hướng hỗ trợ thông khí/thải độc:
+  - đan sâm (vừa phải)
+  - nhân sâm / tây dương sâm
+  - nấm / nấm hương
+  - đậu nành
+  - củ cải (ưu tiên củ cải trắng)
+  - đậu xanh
+- Product wording phải giữ:
+  - trọng tâm đạo đức `không sát sinh vì tham dục`
+  - không chuyển thành medical claim chữa bệnh
+
 ## UX Rules
 - Ăn chay là lane hỗ trợ tu tập, không phải cơ chế shame.
 - Khi user trượt vow:
@@ -97,3 +109,4 @@
 - `design/03-domains/vows-merit/REFERENCES/VOW-BREACH-RECOVERY-GUIDE.md`
 - `design/03-domains/content/REFERENCES/FIVE-TREASURES-PRACTICE-SUMMARY.md`
 - `design/03-domains/content/REFERENCES/SACRED-ITEMS-AND-PROTECTION-CARD-RULES.md`
+- `design/03-domains/vows-merit/REFERENCES/WENDA20170120-FOOD-TREASURES.md`

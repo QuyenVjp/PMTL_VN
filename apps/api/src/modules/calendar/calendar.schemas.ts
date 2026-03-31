@@ -88,6 +88,8 @@ export const adminCreateEventSchema = z.object({
   endAt: z.string().datetime().optional(),
   location: z.string().check(z.maxLength(300)).optional(),
   eventType: z.string().check(z.minLength(1), z.maxLength(100)).default("general"),
+  coverImagePublicId: z.string().optional(),
+  posterImagePublicId: z.string().optional(),
 }).check(
   z.refine(
     (value) => !value.endAt || new Date(value.endAt).getTime() >= new Date(value.startAt).getTime(),
@@ -104,6 +106,8 @@ export const adminUpdateEventSchema = z.object({
   endAt: z.string().datetime().optional(),
   location: z.string().check(z.maxLength(300)).optional(),
   eventType: z.string().check(z.minLength(1), z.maxLength(100)).optional(),
+  coverImagePublicId: z.string().optional().nullable(),
+  posterImagePublicId: z.string().optional().nullable(),
 });
 
 export type AdminUpdateEventInput = z.infer<typeof adminUpdateEventSchema>;

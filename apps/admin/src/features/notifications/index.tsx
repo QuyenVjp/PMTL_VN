@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { PlusIcon, RefreshCwIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,7 @@ import {
   useDeletePushJob,
   useRedrivePushJob,
 } from "@/features/notifications/mutations";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 
 // ── Context ──────────────────────────────────────────────────────────
 
@@ -151,17 +153,27 @@ function CreatePushJobDialog({
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  const reset = () => { setTitle(""); setBody(""); setTargetAudience(""); };
+  const reset = () => { setTitle(""); setBody(""); setTargetAudience(""); setFieldErrors({}); };
 
   const handleSubmit = () => {
-    if (!title.trim() || !body.trim()) {
-      toast.error("Tiêu đề và nội dung không được để trống.");
-      return;
-    }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (!body.trim()) nextErrors.body = "Nội dung không được để trống.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     createPushJob.mutate(
       { title: title.trim(), body: body.trim(), targetAudience: targetAudience.trim() || undefined },
-      { onSuccess: () => { reset(); onOpenChange(false); } },
+      {
+        onSuccess: () => {
+          reset();
+          onOpenChange(false);
+        },
+        onError: (error) => {
+          setFieldErrors(extractValidationFieldErrors(error));
+        },
+      },
     );
   };
 
@@ -176,11 +188,30 @@ function CreatePushJobDialog({
         <div className="space-y-4">
           <label className="grid gap-2">
             <span className="text-sm font-medium">Tiêu đề</span>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Thông báo mới từ PMTL..." />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              placeholder="Thông báo mới từ PMTL..."
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </label>
           <label className="grid gap-2">
             <span className="text-sm font-medium">Nội dung</span>
-            <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Nội dung thông báo..." rows={3} />
+            <Textarea
+              value={body}
+              onChange={(e) => {
+                setBody(e.target.value);
+                if (fieldErrors.body) setFieldErrors((prev) => ({ ...prev, body: "" }));
+              }}
+              placeholder="Nội dung thông báo..."
+              rows={3}
+              className={invalidFieldClass(Boolean(fieldErrors.body))}
+            />
+            <FieldError message={fieldErrors.body} />
           </label>
           <label className="grid gap-2">
             <span className="text-sm font-medium">Đối tượng (tuỳ chọn)</span>

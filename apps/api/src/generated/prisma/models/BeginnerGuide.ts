@@ -40,6 +40,7 @@ export type BeginnerGuideMinAggregateOutputType = {
   title: string | null
   slug: string | null
   excerpt: string | null
+  coverMediaId: string | null
   category: $Enums.GuideCategory | null
   sortOrder: number | null
   versionNote: string | null
@@ -56,6 +57,7 @@ export type BeginnerGuideMaxAggregateOutputType = {
   title: string | null
   slug: string | null
   excerpt: string | null
+  coverMediaId: string | null
   category: $Enums.GuideCategory | null
   sortOrder: number | null
   versionNote: string | null
@@ -73,6 +75,7 @@ export type BeginnerGuideCountAggregateOutputType = {
   slug: number
   content: number
   excerpt: number
+  coverMediaId: number
   category: number
   sortOrder: number
   versionNote: number
@@ -99,6 +102,7 @@ export type BeginnerGuideMinAggregateInputType = {
   title?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
+  coverMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   sortOrder?: true | runtime.Types.Skip
   versionNote?: true | runtime.Types.Skip
@@ -115,6 +119,7 @@ export type BeginnerGuideMaxAggregateInputType = {
   title?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
+  coverMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   sortOrder?: true | runtime.Types.Skip
   versionNote?: true | runtime.Types.Skip
@@ -132,6 +137,7 @@ export type BeginnerGuideCountAggregateInputType = {
   slug?: true | runtime.Types.Skip
   content?: true | runtime.Types.Skip
   excerpt?: true | runtime.Types.Skip
+  coverMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   sortOrder?: true | runtime.Types.Skip
   versionNote?: true | runtime.Types.Skip
@@ -236,6 +242,7 @@ export type BeginnerGuideGroupByOutputType = {
   slug: string
   content: runtime.JsonValue
   excerpt: string | null
+  coverMediaId: string | null
   category: $Enums.GuideCategory
   sortOrder: number
   versionNote: string | null
@@ -276,6 +283,7 @@ export type BeginnerGuideWhereInput = {
   slug?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
   versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
@@ -285,6 +293,7 @@ export type BeginnerGuideWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"BeginnerGuide"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"BeginnerGuide"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }
 
 export type BeginnerGuideOrderByWithRelationInput = {
@@ -294,6 +303,7 @@ export type BeginnerGuideOrderByWithRelationInput = {
   slug?: Prisma.SortOrder | runtime.Types.Skip
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  coverMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
   versionNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
@@ -303,6 +313,7 @@ export type BeginnerGuideOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
+  coverMedia?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideWhereUniqueInput = Prisma.AtLeast<{
@@ -315,6 +326,7 @@ export type BeginnerGuideWhereUniqueInput = Prisma.AtLeast<{
   title?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
   versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
@@ -324,6 +336,7 @@ export type BeginnerGuideWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"BeginnerGuide"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"BeginnerGuide"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }, "id" | "publicId" | "slug">
 
 export type BeginnerGuideOrderByWithAggregationInput = {
@@ -333,6 +346,7 @@ export type BeginnerGuideOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder | runtime.Types.Skip
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  coverMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
   versionNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
@@ -358,6 +372,7 @@ export type BeginnerGuideScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   content?: Prisma.JsonWithAggregatesFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableWithAggregatesFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.StringNullableWithAggregatesFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryWithAggregatesFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntWithAggregatesFilter<"BeginnerGuide"> | number | runtime.Types.Skip
   versionNote?: Prisma.StringNullableWithAggregatesFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
@@ -383,6 +398,7 @@ export type BeginnerGuideCreateInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutBeginnerGuidesInput
+  coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutGuideCoverMediaInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideUncheckedCreateInput = {
@@ -392,6 +408,7 @@ export type BeginnerGuideUncheckedCreateInput = {
   slug: string
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
+  coverMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: number | runtime.Types.Skip
   versionNote?: string | null | runtime.Types.Skip
@@ -417,6 +434,7 @@ export type BeginnerGuideUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutBeginnerGuidesNestedInput | runtime.Types.Skip
+  coverMedia?: Prisma.MediaAssetUpdateOneWithoutGuideCoverMediaNestedInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideUncheckedUpdateInput = {
@@ -426,6 +444,7 @@ export type BeginnerGuideUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
@@ -443,6 +462,7 @@ export type BeginnerGuideCreateManyInput = {
   slug: string
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
+  coverMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: number | runtime.Types.Skip
   versionNote?: string | null | runtime.Types.Skip
@@ -476,6 +496,7 @@ export type BeginnerGuideUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
@@ -503,6 +524,7 @@ export type BeginnerGuideCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder | runtime.Types.Skip
   content?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
+  coverMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
   versionNote?: Prisma.SortOrder | runtime.Types.Skip
@@ -523,6 +545,7 @@ export type BeginnerGuideMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
+  coverMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
   versionNote?: Prisma.SortOrder | runtime.Types.Skip
@@ -539,6 +562,7 @@ export type BeginnerGuideMinOrderByAggregateInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   excerpt?: Prisma.SortOrder | runtime.Types.Skip
+  coverMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
   versionNote?: Prisma.SortOrder | runtime.Types.Skip
@@ -595,6 +619,48 @@ export type BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput = {
   deleteMany?: Prisma.BeginnerGuideScalarWhereInput | Prisma.BeginnerGuideScalarWhereInput[] | runtime.Types.Skip
 }
 
+export type BeginnerGuideCreateNestedManyWithoutCoverMediaInput = {
+  create?: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput> | Prisma.BeginnerGuideCreateWithoutCoverMediaInput[] | Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput | Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.BeginnerGuideCreateManyCoverMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type BeginnerGuideUncheckedCreateNestedManyWithoutCoverMediaInput = {
+  create?: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput> | Prisma.BeginnerGuideCreateWithoutCoverMediaInput[] | Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput | Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.BeginnerGuideCreateManyCoverMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type BeginnerGuideUpdateManyWithoutCoverMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput> | Prisma.BeginnerGuideCreateWithoutCoverMediaInput[] | Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput | Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.BeginnerGuideUpsertWithWhereUniqueWithoutCoverMediaInput | Prisma.BeginnerGuideUpsertWithWhereUniqueWithoutCoverMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.BeginnerGuideCreateManyCoverMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.BeginnerGuideUpdateWithWhereUniqueWithoutCoverMediaInput | Prisma.BeginnerGuideUpdateWithWhereUniqueWithoutCoverMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.BeginnerGuideUpdateManyWithWhereWithoutCoverMediaInput | Prisma.BeginnerGuideUpdateManyWithWhereWithoutCoverMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.BeginnerGuideScalarWhereInput | Prisma.BeginnerGuideScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type BeginnerGuideUncheckedUpdateManyWithoutCoverMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput> | Prisma.BeginnerGuideCreateWithoutCoverMediaInput[] | Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput | Prisma.BeginnerGuideCreateOrConnectWithoutCoverMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.BeginnerGuideUpsertWithWhereUniqueWithoutCoverMediaInput | Prisma.BeginnerGuideUpsertWithWhereUniqueWithoutCoverMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.BeginnerGuideCreateManyCoverMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.BeginnerGuideWhereUniqueInput | Prisma.BeginnerGuideWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.BeginnerGuideUpdateWithWhereUniqueWithoutCoverMediaInput | Prisma.BeginnerGuideUpdateWithWhereUniqueWithoutCoverMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.BeginnerGuideUpdateManyWithWhereWithoutCoverMediaInput | Prisma.BeginnerGuideUpdateManyWithWhereWithoutCoverMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.BeginnerGuideScalarWhereInput | Prisma.BeginnerGuideScalarWhereInput[] | runtime.Types.Skip
+}
+
 export type EnumGuideCategoryFieldUpdateOperationsInput = {
   set?: $Enums.GuideCategory | runtime.Types.Skip
 }
@@ -613,6 +679,7 @@ export type BeginnerGuideCreateWithoutAuthorInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutGuideCoverMediaInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideUncheckedCreateWithoutAuthorInput = {
@@ -622,6 +689,7 @@ export type BeginnerGuideUncheckedCreateWithoutAuthorInput = {
   slug: string
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
+  coverMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: number | runtime.Types.Skip
   versionNote?: string | null | runtime.Types.Skip
@@ -667,6 +735,7 @@ export type BeginnerGuideScalarWhereInput = {
   slug?: Prisma.StringFilter<"BeginnerGuide"> | string | runtime.Types.Skip
   content?: Prisma.JsonFilter<"BeginnerGuide"> | runtime.Types.Skip
   excerpt?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFilter<"BeginnerGuide"> | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFilter<"BeginnerGuide"> | number | runtime.Types.Skip
   versionNote?: Prisma.StringNullableFilter<"BeginnerGuide"> | string | null | runtime.Types.Skip
@@ -677,6 +746,66 @@ export type BeginnerGuideScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"BeginnerGuide"> | Date | string | runtime.Types.Skip
 }
 
+export type BeginnerGuideCreateWithoutCoverMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  excerpt?: string | null | runtime.Types.Skip
+  category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  author: Prisma.UserCreateNestedOneWithoutBeginnerGuidesInput
+}
+
+export type BeginnerGuideUncheckedCreateWithoutCoverMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  excerpt?: string | null | runtime.Types.Skip
+  category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  authorId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type BeginnerGuideCreateOrConnectWithoutCoverMediaInput = {
+  where: Prisma.BeginnerGuideWhereUniqueInput
+  create: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput>
+}
+
+export type BeginnerGuideCreateManyCoverMediaInputEnvelope = {
+  data: Prisma.BeginnerGuideCreateManyCoverMediaInput | Prisma.BeginnerGuideCreateManyCoverMediaInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type BeginnerGuideUpsertWithWhereUniqueWithoutCoverMediaInput = {
+  where: Prisma.BeginnerGuideWhereUniqueInput
+  update: Prisma.XOR<Prisma.BeginnerGuideUpdateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedUpdateWithoutCoverMediaInput>
+  create: Prisma.XOR<Prisma.BeginnerGuideCreateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedCreateWithoutCoverMediaInput>
+}
+
+export type BeginnerGuideUpdateWithWhereUniqueWithoutCoverMediaInput = {
+  where: Prisma.BeginnerGuideWhereUniqueInput
+  data: Prisma.XOR<Prisma.BeginnerGuideUpdateWithoutCoverMediaInput, Prisma.BeginnerGuideUncheckedUpdateWithoutCoverMediaInput>
+}
+
+export type BeginnerGuideUpdateManyWithWhereWithoutCoverMediaInput = {
+  where: Prisma.BeginnerGuideScalarWhereInput
+  data: Prisma.XOR<Prisma.BeginnerGuideUpdateManyMutationInput, Prisma.BeginnerGuideUncheckedUpdateManyWithoutCoverMediaInput>
+}
+
 export type BeginnerGuideCreateManyAuthorInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -684,6 +813,7 @@ export type BeginnerGuideCreateManyAuthorInput = {
   slug: string
   content: Prisma.JsonNullValueInput | runtime.InputJsonValue
   excerpt?: string | null | runtime.Types.Skip
+  coverMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: number | runtime.Types.Skip
   versionNote?: string | null | runtime.Types.Skip
@@ -707,6 +837,7 @@ export type BeginnerGuideUpdateWithoutAuthorInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  coverMedia?: Prisma.MediaAssetUpdateOneWithoutGuideCoverMediaNestedInput | runtime.Types.Skip
 }
 
 export type BeginnerGuideUncheckedUpdateWithoutAuthorInput = {
@@ -716,6 +847,7 @@ export type BeginnerGuideUncheckedUpdateWithoutAuthorInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
@@ -732,10 +864,79 @@ export type BeginnerGuideUncheckedUpdateManyWithoutAuthorInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type BeginnerGuideCreateManyCoverMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  excerpt?: string | null | runtime.Types.Skip
+  category?: $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  versionNote?: string | null | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  authorId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type BeginnerGuideUpdateWithoutCoverMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  author?: Prisma.UserUpdateOneRequiredWithoutBeginnerGuidesNestedInput | runtime.Types.Skip
+}
+
+export type BeginnerGuideUncheckedUpdateWithoutCoverMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type BeginnerGuideUncheckedUpdateManyWithoutCoverMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  excerpt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumGuideCategoryFieldUpdateOperationsInput | $Enums.GuideCategory | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  versionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -750,6 +951,7 @@ export type BeginnerGuideSelect<ExtArgs extends runtime.Types.Extensions.Interna
   slug?: boolean | runtime.Types.Skip
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
+  coverMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   sortOrder?: boolean | runtime.Types.Skip
   versionNote?: boolean | runtime.Types.Skip
@@ -759,6 +961,7 @@ export type BeginnerGuideSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["beginnerGuide"]>
 
 export type BeginnerGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -768,6 +971,7 @@ export type BeginnerGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   slug?: boolean | runtime.Types.Skip
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
+  coverMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   sortOrder?: boolean | runtime.Types.Skip
   versionNote?: boolean | runtime.Types.Skip
@@ -777,6 +981,7 @@ export type BeginnerGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["beginnerGuide"]>
 
 export type BeginnerGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -786,6 +991,7 @@ export type BeginnerGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   slug?: boolean | runtime.Types.Skip
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
+  coverMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   sortOrder?: boolean | runtime.Types.Skip
   versionNote?: boolean | runtime.Types.Skip
@@ -795,6 +1001,7 @@ export type BeginnerGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["beginnerGuide"]>
 
 export type BeginnerGuideSelectScalar = {
@@ -804,6 +1011,7 @@ export type BeginnerGuideSelectScalar = {
   slug?: boolean | runtime.Types.Skip
   content?: boolean | runtime.Types.Skip
   excerpt?: boolean | runtime.Types.Skip
+  coverMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   sortOrder?: boolean | runtime.Types.Skip
   versionNote?: boolean | runtime.Types.Skip
@@ -814,21 +1022,25 @@ export type BeginnerGuideSelectScalar = {
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type BeginnerGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "content" | "excerpt" | "category" | "sortOrder" | "versionNote" | "status" | "authorId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["beginnerGuide"], runtime.Types.Skip>
+export type BeginnerGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "content" | "excerpt" | "coverMediaId" | "category" | "sortOrder" | "versionNote" | "status" | "authorId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["beginnerGuide"], runtime.Types.Skip>
 export type BeginnerGuideInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 export type BeginnerGuideIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 export type BeginnerGuideIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  coverMedia?: boolean | Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 
 export type $BeginnerGuidePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BeginnerGuide"
   objects: {
     author: Prisma.$UserPayload<ExtArgs>
+    coverMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -837,6 +1049,7 @@ export type $BeginnerGuidePayload<ExtArgs extends runtime.Types.Extensions.Inter
     slug: string
     content: runtime.JsonValue
     excerpt: string | null
+    coverMediaId: string | null
     category: $Enums.GuideCategory
     sortOrder: number
     versionNote: string | null
@@ -1240,6 +1453,7 @@ readonly fields: BeginnerGuideFieldRefs;
 export interface Prisma__BeginnerGuideClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  coverMedia<T extends Prisma.BeginnerGuide$coverMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BeginnerGuide$coverMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1275,6 +1489,7 @@ export interface BeginnerGuideFieldRefs {
   readonly slug: Prisma.FieldRef<"BeginnerGuide", 'String'>
   readonly content: Prisma.FieldRef<"BeginnerGuide", 'Json'>
   readonly excerpt: Prisma.FieldRef<"BeginnerGuide", 'String'>
+  readonly coverMediaId: Prisma.FieldRef<"BeginnerGuide", 'String'>
   readonly category: Prisma.FieldRef<"BeginnerGuide", 'GuideCategory'>
   readonly sortOrder: Prisma.FieldRef<"BeginnerGuide", 'Int'>
   readonly versionNote: Prisma.FieldRef<"BeginnerGuide", 'String'>
@@ -1681,6 +1896,25 @@ export type BeginnerGuideDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many BeginnerGuides to delete.
    */
   limit?: number | runtime.Types.Skip
+}
+
+/**
+ * BeginnerGuide.coverMedia
+ */
+export type BeginnerGuide$coverMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
 }
 
 /**

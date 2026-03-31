@@ -9,6 +9,9 @@ export interface DownloadItem {
   title: string;
   description: string | null;
   category: string;
+  fileMediaPublicId: string | null;
+  thumbnailMediaPublicId: string | null;
+  thumbnailUrl: string | null;
   fileUrl: string;
   fileType: string;
   fileSize: number;

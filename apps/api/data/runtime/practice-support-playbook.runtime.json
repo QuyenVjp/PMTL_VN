@@ -86,9 +86,21 @@
       ]
     },
     "maintenanceSteps": [
-      { "stepNumber": 1, "title": "Kiem tra vat pham", "action": "Thay nuoc, hoa, trai cay moi truoc khi di xa." },
-      { "stepNumber": 2, "title": "Lau don nhe", "action": "Lau nhe ban ngay bang khan sach, tranh cham vao tuong tuy tien." },
-      { "stepNumber": 3, "title": "Bao tri den dau", "action": "Bo sung dau, tat dung cach, khong de den vuot quy tac." }
+      {
+        "stepNumber": 1,
+        "title": "Kiem tra vat pham",
+        "action": "Thay nuoc, hoa, trai cay moi truoc khi di xa."
+      },
+      {
+        "stepNumber": 2,
+        "title": "Lau don nhe",
+        "action": "Lau nhe ban ngay bang khan sach, tranh cham vao tuong tuy tien."
+      },
+      {
+        "stepNumber": 3,
+        "title": "Bao tri den dau",
+        "action": "Bo sung dau, tat dung cach, khong de den vuot quy tac."
+      }
     ],
     "specialCases": [
       {
@@ -111,7 +123,10 @@
     "slug": "quy-tac-viet-va-cham-do-nnn",
     "title": "Quy Tac Viet Ten Va Cham Do NNN",
     "namingRules": {
-      "inkColor": ["blue", "black"],
+      "inkColor": [
+        "blue",
+        "black"
+      ],
       "writeBeforeRecite": true,
       "recipientPatterns": [
         "Oan gia trai chu cua [Ho ten]",
@@ -204,15 +219,60 @@
     "slug": "tam-huong-9-buoc",
     "title": "Nghi Thuc Tam Huong 9 Buoc",
     "steps": [
-      { "stepNumber": 1, "title": "Chuan bi", "action": "Rua tay, chon noi yen tinh, dinh tam.", "mentalOnly": false },
-      { "stepNumber": 2, "title": "Tinh khau", "action": "Niem Tinh Khau Nghiep Chan Ngon theo huong dan.", "mentalOnly": false },
-      { "stepNumber": 3, "title": "Quan tuong moi huong", "action": "Quan tuong thap den, moi 3 nen huong.", "mentalOnly": true },
-      { "stepNumber": 4, "title": "Thinh an", "action": "Niem tham cau thinh an 3 lan.", "mentalOnly": true },
-      { "stepNumber": 5, "title": "Quan tuong dang huong", "action": "Quan tuong cam huong vao lu.", "mentalOnly": true },
-      { "stepNumber": 6, "title": "Quan tuong le bai", "action": "Quan tuong quy lay 3 lay.", "mentalOnly": true },
-      { "stepNumber": 7, "title": "Cam ta", "action": "Niem tham loi cam ta.", "mentalOnly": true },
-      { "stepNumber": 8, "title": "Niem That Phat", "action": "Niem 7 bien That Phat Diet Toi Chan Ngon.", "mentalOnly": true },
-      { "stepNumber": 9, "title": "Hoan tat", "action": "Quan tuong le ket thuc.", "mentalOnly": true }
+      {
+        "stepNumber": 1,
+        "title": "Chuan bi",
+        "action": "Rua tay, chon noi yen tinh, dinh tam.",
+        "mentalOnly": false
+      },
+      {
+        "stepNumber": 2,
+        "title": "Tinh khau",
+        "action": "Niem Tinh Khau Nghiep Chan Ngon theo huong dan.",
+        "mentalOnly": false
+      },
+      {
+        "stepNumber": 3,
+        "title": "Quan tuong moi huong",
+        "action": "Quan tuong thap den, moi 3 nen huong.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 4,
+        "title": "Thinh an",
+        "action": "Niem tham cau thinh an 3 lan.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 5,
+        "title": "Quan tuong dang huong",
+        "action": "Quan tuong cam huong vao lu.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 6,
+        "title": "Quan tuong le bai",
+        "action": "Quan tuong quy lay 3 lay.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 7,
+        "title": "Cam ta",
+        "action": "Niem tham loi cam ta.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 8,
+        "title": "Niem That Phat",
+        "action": "Niem 7 bien That Phat Diet Toi Chan Ngon.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 9,
+        "title": "Hoan tat",
+        "action": "Quan tuong le ket thuc.",
+        "mentalOnly": true
+      }
     ],
     "travelModeRules": [
       {
@@ -237,10 +297,30 @@
       }
     ],
     "littleHouseEmergencyFlow": [
-      { "stepNumber": 1, "title": "Dung Tam Huong den buoc thinh an", "action": "Hoan tat buoc 1 den 4 cua Tam Huong.", "mentalOnly": true },
-      { "stepNumber": 2, "title": "Niem bo sung", "action": "Niem 1 bien Chu Dai Bi va 1 bien Tam Kinh.", "mentalOnly": false },
-      { "stepNumber": 3, "title": "Khans chuyen giao NNN", "action": "Nang NNN ngang tran, khans xin chuyen giao.", "mentalOnly": true },
-      { "stepNumber": 4, "title": "Dot dung quy tac", "action": "Dot dung goc quy dinh va thu gom tro dung cach.", "mentalOnly": false }
+      {
+        "stepNumber": 1,
+        "title": "Dung Tam Huong den buoc thinh an",
+        "action": "Hoan tat buoc 1 den 4 cua Tam Huong.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 2,
+        "title": "Niem bo sung",
+        "action": "Niem 1 bien Chu Dai Bi va 1 bien Tam Kinh.",
+        "mentalOnly": false
+      },
+      {
+        "stepNumber": 3,
+        "title": "Khans chuyen giao NNN",
+        "action": "Nang NNN ngang tran, khans xin chuyen giao.",
+        "mentalOnly": true
+      },
+      {
+        "stepNumber": 4,
+        "title": "Dot dung quy tac",
+        "action": "Dot dung goc quy dinh va thu gom tro dung cach.",
+        "mentalOnly": false
+      }
     ],
     "updatedAt": "2026-03-29T12:00:00Z"
   },
@@ -290,16 +370,48 @@
       }
     ],
     "withAltarFlow": [
-      { "stepNumber": 1, "title": "Dang den va huong", "action": "Thap den dau va dang huong tai Phat dai." },
-      { "stepNumber": 2, "title": "Doc don", "action": "Quy doc noi dung don thang van doi ten." },
-      { "stepNumber": 3, "title": "Tri chu", "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh." },
-      { "stepNumber": 4, "title": "Hoa don", "action": "Dot don tu tren xuong duoi, dam bao chay het." }
+      {
+        "stepNumber": 1,
+        "title": "Dang den va huong",
+        "action": "Thap den dau va dang huong tai Phat dai."
+      },
+      {
+        "stepNumber": 2,
+        "title": "Doc don",
+        "action": "Quy doc noi dung don thang van doi ten."
+      },
+      {
+        "stepNumber": 3,
+        "title": "Tri chu",
+        "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh."
+      },
+      {
+        "stepNumber": 4,
+        "title": "Hoa don",
+        "action": "Dot don tu tren xuong duoi, dam bao chay het."
+      }
     ],
     "withoutAltarFlow": [
-      { "stepNumber": 1, "title": "Den chua", "action": "Toi chua, le Phat va quy truoc tuong Quan The Am." },
-      { "stepNumber": 2, "title": "Khan xac nhan doi ten", "action": "Xung ten cu va ten moi, cau xin chung minh." },
-      { "stepNumber": 3, "title": "Tri chu", "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh." },
-      { "stepNumber": 4, "title": "Hoa don dung noi quy", "action": "Dot don tai khu hoa vang/lu huong theo quy dinh." }
+      {
+        "stepNumber": 1,
+        "title": "Den chua",
+        "action": "Toi chua, le Phat va quy truoc tuong Quan The Am."
+      },
+      {
+        "stepNumber": 2,
+        "title": "Khan xac nhan doi ten",
+        "action": "Xung ten cu va ten moi, cau xin chung minh."
+      },
+      {
+        "stepNumber": 3,
+        "title": "Tri chu",
+        "action": "Niem 7 bien Chu Dai Bi va 7 bien Tam Kinh."
+      },
+      {
+        "stepNumber": 4,
+        "title": "Hoa don dung noi quy",
+        "action": "Dot don tai khu hoa vang/lu huong theo quy dinh."
+      }
     ],
     "successSignals": [
       "Cam thay nhe long, tam trang on dinh hon sau nghi thuc.",
@@ -381,11 +493,31 @@
       }
     ],
     "minorMantras": [
-      { "name": "Vang Sinh Chu", "useCase": "Sieu do dong vat nho tung sat hai/an thit.", "typicalRange": "21/27/49 bien" },
-      { "name": "Giai Ket Chu", "useCase": "Hoa giai mau thuan gia dinh, dong nghiep.", "typicalRange": "21/27/49 bien" },
-      { "name": "Tieu Tai Cat Tuong Than Chu", "useCase": "Ho tro giai nan dot xuat.", "typicalRange": "21/27/49 bien" },
-      { "name": "Chuan De Than Chu", "useCase": "Cau hoc tap, cong viec, thi cu.", "typicalRange": "21/27/49 bien" },
-      { "name": "Cong Duc Bao Son Than Chu", "useCase": "Chuyen hoa viec thien thanh cong duc.", "typicalRange": "21/27/49 bien" }
+      {
+        "name": "Vang Sinh Chu",
+        "useCase": "Sieu do dong vat nho tung sat hai/an thit.",
+        "typicalRange": "21/27/49 bien"
+      },
+      {
+        "name": "Giai Ket Chu",
+        "useCase": "Hoa giai mau thuan gia dinh, dong nghiep.",
+        "typicalRange": "21/27/49 bien"
+      },
+      {
+        "name": "Tieu Tai Cat Tuong Than Chu",
+        "useCase": "Ho tro giai nan dot xuat.",
+        "typicalRange": "21/27/49 bien"
+      },
+      {
+        "name": "Chuan De Than Chu",
+        "useCase": "Cau hoc tap, cong viec, thi cu.",
+        "typicalRange": "21/27/49 bien"
+      },
+      {
+        "name": "Cong Duc Bao Son Than Chu",
+        "useCase": "Chuyen hoa viec thien thanh cong duc.",
+        "typicalRange": "21/27/49 bien"
+      }
     ],
     "timeRules": [
       {
@@ -496,10 +628,26 @@
       }
     ],
     "ritualFlow": [
-      { "stepNumber": 1, "title": "Tren duong di", "action": "Niem Chu Dai Bi de giu tam va on dinh nang luong." },
-      { "stepNumber": 2, "title": "Toi noi tha", "action": "Cam ta, niem 1 Dai Bi, 1 Tam Kinh, 7 That Phat Diet Toi." },
-      { "stepNumber": 3, "title": "Khan ro muc tieu", "action": "Noi ro ten chu the, so luong vat mang va nguyen vong phu hop." },
-      { "stepNumber": 4, "title": "Tha nhe nhang", "action": "Tha dung cach, tiep tuc giu tam niem on dinh." }
+      {
+        "stepNumber": 1,
+        "title": "Tren duong di",
+        "action": "Niem Chu Dai Bi de giu tam va on dinh nang luong."
+      },
+      {
+        "stepNumber": 2,
+        "title": "Toi noi tha",
+        "action": "Cam ta, niem 1 Dai Bi, 1 Tam Kinh, 7 That Phat Diet Toi."
+      },
+      {
+        "stepNumber": 3,
+        "title": "Khan ro muc tieu",
+        "action": "Noi ro ten chu the, so luong vat mang va nguyen vong phu hop."
+      },
+      {
+        "stepNumber": 4,
+        "title": "Tha nhe nhang",
+        "action": "Tha dung cach, tiep tuc giu tam niem on dinh."
+      }
     ],
     "emergencyHandling": [
       {
@@ -640,23 +788,15 @@
         "label": "An chay can can bang",
         "description": "An chay can duoc to chuc can bang de ho tro suc khoe; app chi giu note guidance, khong claim y khoa tuyet doi.",
         "severity": "warning"
-      },
-      {
-        "ruleCode": "food-abundance-is-sufficient-no-killing-needed",
-        "label": "Thuc pham nhan gian da du, khong can sat sinh",
-        "description": "Theo lane khai thi Wenda, rau-cu-dau-ngu-coc da du cho sinh ton; product wording can nhan manh giam tham duc an uong, khong xay niem vui tren dau kho sinh mang khac.",
-        "severity": "critical"
       }
     ],
     "officeNutritionNotes": [
       "Nguoi lam viec van phong co the uu tien cac bua chay gon nhe, can bang, de giu su tinh tao va khong nang bung.",
-      "Co the tham khao lane thuc pham bo tro nhu cac loai hat, tao do, trai cay thanh, sua hoac sua hat de duy tri nang luong trong ngay.",
-      "Theo Wenda20170120 15:28, lane thuc pham ho tro thong khi-thai doc co the nhac den nam/nam huong, dau nanh, cu cai trang va dau xanh o muc guidance can bang."
+      "Co the tham khao lane thuc pham bo tro nhu cac loai hat, tao do, trai cay thanh, sua hoac sua hat de duy tri nang luong trong ngay."
     ],
     "supplementalDietNotes": [
       "Ngoai bo source canon hien tai, co the tham khao them lane ovo-lacto vegetarian (trung cong nghiep khong thu tinh va sua), nhung neu dua vao app phai gan nhan supplemental note ro rang.",
-      "Lane ngu vi tan, ca phe, cacao va goi y thuc pham cu the theo thi truong Viet Nam la phan tham khao ngoai bo source hien tai; khong duoc bien thanh hard validation.",
-      "Cac item nhu dan sam, nhan sam, tay duong sam, nam huong, dau nanh, cu cai, dau xanh thuoc lane tham khao theo Wenda; neu dua vao app phai gan nhan source code/time va khong duoc doi thanh tu van y khoa dieu tri benh."
+      "Lane ngu vi tan, ca phe, cacao va goi y thuc pham cu the theo thi truong Viet Nam la phan tham khao ngoai bo source hien tai; khong duoc bien thanh hard validation."
     ],
     "complianceAndEthicsRules": [
       {

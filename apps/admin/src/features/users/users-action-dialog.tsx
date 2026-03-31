@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ import {
   useBlockUser,
   useUnblockUser,
 } from "@/features/users/mutations";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -62,18 +64,21 @@ export function UsersActionDialog({
   const [displayName, setDisplayName] = useState(currentRow.displayName);
   const [email, setEmail] = useState(currentRow.email);
   const [role, setRole] = useState<ApiUserRole>(currentRow.role);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     setDisplayName(currentRow.displayName);
     setEmail(currentRow.email);
     setRole(currentRow.role);
+    setFieldErrors({});
   }, [currentRow, open]);
 
   const handleSubmit = () => {
-    if (!displayName.trim() || !email.trim()) {
-      toast.error("Tên hiển thị và email không được để trống.");
-      return;
-    }
+    const nextErrors: FieldErrors = {};
+    if (!displayName.trim()) nextErrors.displayName = "Tên hiển thị không được để trống.";
+    if (!email.trim()) nextErrors.email = "Email không được để trống.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
 
     const profileChanged =
       displayName !== currentRow.displayName || email !== currentRow.email;
@@ -107,7 +112,11 @@ export function UsersActionDialog({
       return;
     }
 
-    Promise.all(promises).then(() => onOpenChange(false)).catch(() => {});
+    Promise.all(promises)
+      .then(() => onOpenChange(false))
+      .catch((error) => {
+        setFieldErrors(extractValidationFieldErrors(error));
+      });
   };
 
   const isPending =
@@ -140,10 +149,27 @@ export function UsersActionDialog({
           </div>
 
           <Field label="Tên hiển thị">
-            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+            <Input
+              value={displayName}
+              onChange={(e) => {
+                setDisplayName(e.target.value);
+                if (fieldErrors.displayName) setFieldErrors((prev) => ({ ...prev, displayName: "" }));
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.displayName))}
+            />
+            <FieldError message={fieldErrors.displayName} />
           </Field>
           <Field label="Email">
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (fieldErrors.email) setFieldErrors((prev) => ({ ...prev, email: "" }));
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.email))}
+            />
+            <FieldError message={fieldErrors.email} />
           </Field>
           <Field label="Vai trò">
             <Select value={role} onValueChange={(v) => setRole(v as ApiUserRole)}>

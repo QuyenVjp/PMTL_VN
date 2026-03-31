@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { NotFoundError, ConflictError } from "../../common/errors/app-error.js";
+import { StorageService } from "../../platform/storage/storage.service.js";
 import type {
   createCollectionSchema,
   updateCollectionSchema,
@@ -21,7 +22,10 @@ type ListItemsDto         = z.infer<typeof listItemsSchema>;
 
 @Injectable()
 export class AdminMediaLibraryService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly storageService: StorageService,
+  ) {}
 
   // ── Collections ───────────────────────────────────────────────────
 
@@ -66,8 +70,7 @@ export class AdminMediaLibraryService {
       this.prisma.mediaCollection.count({ where }),
     ]);
 
-    return {
-      data: collections.map((c) => ({
+    const data = await Promise.all(collections.map(async (c) => ({
         publicId:       c.publicId,
         title:          c.title,
         slug:           c.slug,
@@ -79,12 +82,15 @@ export class AdminMediaLibraryService {
         status:         c.status,
         publishedAt:    c.publishedAt,
         itemCount:      c._count.items,
-        coverImageUrl:  c.coverMedia?.url ?? null,
+        coverImageUrl:  await this.storageService.resolveAssetUrl(c.coverMedia?.publicId) ?? c.coverMedia?.url ?? null,
         coverMediaPublicId: c.coverMedia?.publicId ?? null,
         createdByName:  c.createdBy.displayName,
         createdAt:      c.createdAt,
         updatedAt:      c.updatedAt,
-      })),
+      })));
+
+    return {
+      data,
       meta: {
         pagination: { total, limit: dto.limit, offset: dto.offset, hasMore: dto.offset + dto.limit < total },
       },
@@ -127,7 +133,7 @@ export class AdminMediaLibraryService {
         status:             c.status,
         publishedAt:        c.publishedAt,
         itemCount:          c._count.items,
-        coverImageUrl:      c.coverMedia?.url ?? null,
+        coverImageUrl:      await this.storageService.resolveAssetUrl(c.coverMedia?.publicId) ?? c.coverMedia?.url ?? null,
         coverMediaPublicId: c.coverMedia?.publicId ?? null,
         createdByName:      c.createdBy.displayName,
         createdAt:          c.createdAt,
@@ -258,8 +264,7 @@ export class AdminMediaLibraryService {
       },
     });
 
-    return {
-      data: items.map((item) => ({
+    const data = await Promise.all(items.map(async (item) => ({
         publicId:           item.publicId,
         itemType:           item.itemType,
         externalUrl:        item.externalUrl,
@@ -270,13 +275,16 @@ export class AdminMediaLibraryService {
         sortOrder:          item.sortOrder,
         createdAt:          item.createdAt,
         mediaAssetPublicId: item.mediaAsset?.publicId ?? null,
-        mediaAssetUrl:      item.mediaAsset?.url ?? null,
+        mediaAssetUrl:      await this.storageService.resolveAssetUrl(item.mediaAsset?.publicId) ?? item.mediaAsset?.url ?? null,
         mediaAssetFilename: item.mediaAsset?.filename ?? null,
         mediaAssetMimeType: item.mediaAsset?.mimeType ?? null,
         mediaAssetWidth:    item.mediaAsset?.width ?? null,
         mediaAssetHeight:   item.mediaAsset?.height ?? null,
         mediaAssetSize:     item.mediaAsset?.size ?? null,
-      })),
+      })));
+
+    return {
+      data,
     };
   }
 
@@ -302,11 +310,11 @@ export class AdminMediaLibraryService {
         collectionId:   collection.id,
         itemType:       dto.itemType,
         mediaAssetId,
-        externalUrl:    dto.externalUrl,
-        title:          dto.title,
-        caption:        dto.caption,
-        ownerModule:    dto.ownerModule,
-        ownerPublicRef: dto.ownerPublicRef,
+        ...(dto.externalUrl    !== undefined ? { externalUrl: dto.externalUrl }       : {}),
+        ...(dto.title          !== undefined ? { title: dto.title }                   : {}),
+        ...(dto.caption        !== undefined ? { caption: dto.caption }               : {}),
+        ...(dto.ownerModule    !== undefined ? { ownerModule: dto.ownerModule }       : {}),
+        ...(dto.ownerPublicRef !== undefined ? { ownerPublicRef: dto.ownerPublicRef } : {}),
         sortOrder:      dto.sortOrder ?? (maxSort._max.sortOrder ?? 0) + 1,
       },
     });

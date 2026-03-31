@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { HttpError } from "@/lib/api/http-error";
+import { extractValidationFieldErrors } from "@/lib/form-validation.js";
 
 /**
  * Unified API error handler for React Query mutations.
@@ -12,6 +13,13 @@ export function handleApiError(error: unknown): void {
   if (error instanceof HttpError) {
     // 401 is handled by the auth guard (redirect to sign-in) — no toast needed.
     if (error.isUnauthorized) return;
+
+    const fieldErrors = extractValidationFieldErrors(error);
+    const firstFieldError = Object.values(fieldErrors)[0];
+    if (firstFieldError) {
+      toast.error(firstFieldError);
+      return;
+    }
 
     // Surface the server's own message — already in Vietnamese from the API.
     toast.error(error.message);

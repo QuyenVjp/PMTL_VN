@@ -11,6 +11,7 @@ interface CreatePostInput {
   postType?: string;
   sourceRef?: string;
   excerpt?: string;
+  featuredImageId?: string;
   content?: unknown;
   primaryCategoryId?: string;
   tagIds?: string[];
@@ -24,6 +25,7 @@ interface UpdatePostInput {
   postType?: string;
   sourceRef?: string | null;
   excerpt?: string | null;
+  featuredImageId?: string | null;
   content?: unknown;
   primaryCategoryId?: string | null;
   tagIds?: string[];

@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { FieldError } from "@/components/ui/field-error";
 import {
   Select,
   SelectContent,
@@ -20,7 +23,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 import type { GuideItem } from "@/features/guides/queries";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
+import { useUploadMediaAsset } from "@/features/media/mutations.js";
 import {
   useCreateGuide,
   useDeleteGuide,
@@ -28,6 +34,16 @@ import {
   useUpdateGuide,
 } from "@/features/guides/mutations";
 import { useGuides } from "@/features/guides/context";
+
+const EXCERPT_MAX_LENGTH = 500;
+
+function mediaPath(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return url;
+  }
+}
 
 // ── Shared field wrapper ─────────────────────────────────────────────
 
@@ -60,6 +76,18 @@ function GuideCreateDialog({
   const [excerpt, setExcerpt] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
+  const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const uploadMedia = useUploadMediaAsset();
+  const uploadRef = useRef<HTMLInputElement>(null);
+  const { data: mediaEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 100, mimeType: "image/" }),
+    enabled: open,
+  });
+  const imageAssets = useMemo(
+    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [mediaEnvelope],
+  );
 
   useEffect(() => {
     if (open) {
@@ -74,19 +102,27 @@ function GuideCreateDialog({
     setExcerpt("");
     setSortOrder("0");
     setVersionNote("");
+    setCoverMediaPublicId("");
+    setFieldErrors({});
   };
 
   const handleSubmit = () => {
-    if (!title.trim()) {
-      toast.error("Tiêu đề không được để trống.");
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (hasFieldErrors(nextErrors)) {
+      setFieldErrors(nextErrors);
+      toast.error(Object.values(nextErrors)[0]);
       return;
     }
+    setFieldErrors({});
     createGuide.mutate(
       {
         title: title.trim(),
         slug: slug.trim() || undefined,
         category,
         excerpt: excerpt.trim() || undefined,
+        coverMediaPublicId: coverMediaPublicId || undefined,
         sortOrder: Number(sortOrder) || 0,
         versionNote: versionNote.trim() || undefined,
       },
@@ -94,6 +130,9 @@ function GuideCreateDialog({
         onSuccess: () => {
           reset();
           onOpenChange(false);
+        },
+        onError: (error) => {
+          setFieldErrors(extractValidationFieldErrors(error));
         },
       },
     );
@@ -111,9 +150,16 @@ function GuideCreateDialog({
           <Field label="Tiêu đề">
             <Input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) {
+                  setFieldErrors((prev) => ({ ...prev, title: "" }));
+                }
+              }}
               placeholder="Nhập tiêu đề..."
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
             />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
@@ -148,10 +194,21 @@ function GuideCreateDialog({
           <Field label="Tóm tắt">
             <Textarea
               value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
+              onChange={(e) => {
+                setExcerpt(e.target.value);
+                if (fieldErrors.excerpt) {
+                  setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
+                }
+              }}
               placeholder="Mô tả ngắn cho bài hướng dẫn..."
+              maxLength={EXCERPT_MAX_LENGTH}
+              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
               rows={2}
             />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <FieldError message={fieldErrors.excerpt} />
+              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
+            </div>
           </Field>
           <Field label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">
             <Input
@@ -159,6 +216,56 @@ function GuideCreateDialog({
               onChange={(e) => setVersionNote(e.target.value)}
               placeholder="VD: Cập nhật theo pháp thoại 2025..."
             />
+          </Field>
+          <Field label="Ảnh cover">
+            <input
+              ref={uploadRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string }; publicId?: string } | null;
+                  const publicId = payload?.data?.publicId ?? payload?.publicId;
+                  if (publicId) setCoverMediaPublicId(publicId);
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadRef.current?.click()}>
+                Upload ảnh mới
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setCoverMediaPublicId("")}
+                disabled={!coverMediaPublicId}
+              >
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={coverMediaPublicId || "__none__"}
+              onValueChange={(value) => setCoverMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn ảnh từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {imageAssets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
         </div>
 
@@ -193,6 +300,18 @@ function GuideEditDialog({
   const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
+  const [coverMediaPublicId, setCoverMediaPublicId] = useState(currentRow.coverMediaPublicId ?? "");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const uploadMedia = useUploadMediaAsset();
+  const uploadRef = useRef<HTMLInputElement>(null);
+  const { data: mediaEnvelope } = useQuery({
+    ...mediaListOptions({ limit: 100, mimeType: "image/" }),
+    enabled: open,
+  });
+  const imageAssets = useMemo(
+    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [mediaEnvelope],
+  );
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -201,13 +320,20 @@ function GuideEditDialog({
     setExcerpt(currentRow.excerpt ?? "");
     setSortOrder("0");
     setVersionNote("");
+    setCoverMediaPublicId(currentRow.coverMediaPublicId ?? "");
+    setFieldErrors({});
   }, [currentRow, open]);
 
   const handleSubmit = () => {
-    if (!title.trim()) {
-      toast.error("Tiêu đề không được để trống.");
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (hasFieldErrors(nextErrors)) {
+      setFieldErrors(nextErrors);
+      toast.error(Object.values(nextErrors)[0]);
       return;
     }
+    setFieldErrors({});
     updateGuide.mutate(
       {
         publicId: currentRow.publicId,
@@ -215,10 +341,16 @@ function GuideEditDialog({
         slug: slug.trim() || undefined,
         category,
         excerpt: excerpt.trim() || undefined,
+        coverMediaPublicId: coverMediaPublicId || null,
         sortOrder: Number(sortOrder) || undefined,
         versionNote: versionNote.trim() || undefined,
       },
-      { onSuccess: () => onOpenChange(false) },
+      {
+        onSuccess: () => onOpenChange(false),
+        onError: (error) => {
+          setFieldErrors(extractValidationFieldErrors(error));
+        },
+      },
     );
   };
 
@@ -232,7 +364,17 @@ function GuideEditDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) {
+                  setFieldErrors((prev) => ({ ...prev, title: "" }));
+                }
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
@@ -264,10 +406,21 @@ function GuideEditDialog({
           <Field label="Tóm tắt">
             <Textarea
               value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
+              onChange={(e) => {
+                setExcerpt(e.target.value);
+                if (fieldErrors.excerpt) {
+                  setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
+                }
+              }}
               placeholder="Mô tả ngắn..."
+              maxLength={EXCERPT_MAX_LENGTH}
+              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
               rows={2}
             />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <FieldError message={fieldErrors.excerpt} />
+              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
+            </div>
           </Field>
           <Field label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">
             <Input
@@ -275,6 +428,64 @@ function GuideEditDialog({
               onChange={(e) => setVersionNote(e.target.value)}
               placeholder="VD: Cập nhật theo pháp thoại 2025..."
             />
+          </Field>
+          <Field label="Ảnh cover">
+            <input
+              ref={uploadRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const payload = result as { data?: { publicId?: string }; publicId?: string } | null;
+                  const publicId = payload?.data?.publicId ?? payload?.publicId;
+                  if (publicId) setCoverMediaPublicId(publicId);
+                } finally {
+                  event.target.value = "";
+                }
+              }}
+            />
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => uploadRef.current?.click()}>
+                Upload ảnh mới
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setCoverMediaPublicId("")}
+                disabled={!coverMediaPublicId}
+              >
+                Bỏ chọn
+              </Button>
+            </div>
+            <Select
+              value={coverMediaPublicId || "__none__"}
+              onValueChange={(value) => setCoverMediaPublicId(value === "__none__" ? "" : value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn ảnh từ media..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Không chọn</SelectItem>
+                {imageAssets.map((asset) => (
+                  <SelectItem key={asset.publicId} value={asset.publicId}>
+                    {asset.filename}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {currentRow.coverImageUrl ? (
+              <img
+                src={mediaPath(currentRow.coverImageUrl)}
+                alt={currentRow.title}
+                className="h-20 w-auto rounded border object-cover"
+                loading="lazy"
+              />
+            ) : null}
           </Field>
         </div>
 
@@ -400,4 +611,3 @@ export function GuidesDialogs({ defaultCategory }: { defaultCategory?: string } 
     </>
   );
 }
-

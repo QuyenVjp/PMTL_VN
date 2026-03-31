@@ -1,7 +1,12 @@
-import type { CalendarEvent, User } from "../../generated/prisma/client.js";
+import type { CalendarEvent, MediaAsset, User } from "../../generated/prisma/client.js";
 
 type CreatorRow = Pick<User, "publicId" | "displayName" | "email">;
-type EventWithCreator = CalendarEvent & { createdBy: CreatorRow };
+type AssetRow = Pick<MediaAsset, "publicId" | "url">;
+type EventWithCreator = CalendarEvent & {
+  createdBy: CreatorRow;
+  coverImage?: AssetRow | null;
+  posterImage?: AssetRow | null;
+};
 
 export function mapEventToAdminItem(event: EventWithCreator) {
   return {
@@ -12,6 +17,10 @@ export function mapEventToAdminItem(event: EventWithCreator) {
     endAt: event.endAt?.toISOString() ?? null,
     location: event.location,
     eventType: event.eventType,
+    coverImagePublicId: event.coverImage?.publicId ?? null,
+    posterImagePublicId: event.posterImage?.publicId ?? null,
+    coverImageUrl: event.coverImage?.url ?? null,
+    posterImageUrl: event.posterImage?.url ?? null,
     status: event.status,
     publishedAt: event.publishedAt?.toISOString() ?? null,
     createdBy: {

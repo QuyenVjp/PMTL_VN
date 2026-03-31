@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +44,7 @@ import {
   type CreateVolunteerInput,
   type UpdateVolunteerInput,
 } from "@/features/volunteers/mutations";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 
 // ── Context ──────────────────────────────────────────────────────────
 
@@ -112,6 +114,7 @@ function VolunteerFormDialog({
   const [bio, setBio] = useState(currentRow?.bio ?? "");
   const [sortOrder, setSortOrder] = useState(String(currentRow?.sortOrder ?? "0"));
   const [isActive, setIsActive] = useState(currentRow?.isActive ?? true);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     setDisplayName(currentRow?.displayName ?? "");
@@ -122,15 +125,21 @@ function VolunteerFormDialog({
     setBio(currentRow?.bio ?? "");
     setSortOrder(String(currentRow?.sortOrder ?? "0"));
     setIsActive(currentRow?.isActive ?? true);
+    setFieldErrors({});
   }, [currentRow, open]);
 
   const isPending = createVolunteer.isPending || updateVolunteer.isPending;
 
   const handleSubmit = () => {
-    if (!displayName.trim() || !role.trim()) {
-      toast.error("Tên và vai trò không được để trống.");
+    const nextErrors: FieldErrors = {};
+    if (!displayName.trim()) nextErrors.displayName = "Tên không được để trống.";
+    if (!role.trim()) nextErrors.role = "Vai trò không được để trống.";
+    if (hasFieldErrors(nextErrors)) {
+      setFieldErrors(nextErrors);
+      toast.error(Object.values(nextErrors)[0]);
       return;
     }
+    setFieldErrors({});
 
     const shared = {
       displayName: displayName.trim(),
@@ -146,11 +155,15 @@ function VolunteerFormDialog({
     if (isEdit && currentRow) {
       updateVolunteer.mutate(
         { publicId: currentRow.publicId, input: shared as UpdateVolunteerInput },
-        { onSuccess: () => onOpenChange(false) },
+        {
+          onSuccess: () => onOpenChange(false),
+          onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
+        },
       );
     } else {
       createVolunteer.mutate(shared as CreateVolunteerInput, {
         onSuccess: () => onOpenChange(false),
+        onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
       });
     }
   };
@@ -167,10 +180,28 @@ function VolunteerFormDialog({
 
         <div className="space-y-4">
           <Field label="Tên hiển thị">
-            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Tên phụng sự viên..." />
+            <Input
+              value={displayName}
+              onChange={(e) => {
+                setDisplayName(e.target.value);
+                if (fieldErrors.displayName) setFieldErrors((prev) => ({ ...prev, displayName: "" }));
+              }}
+              placeholder="Tên phụng sự viên..."
+              className={invalidFieldClass(Boolean(fieldErrors.displayName))}
+            />
+            <FieldError message={fieldErrors.displayName} />
           </Field>
           <Field label="Vai trò">
-            <Input value={role} onChange={(e) => setRole(e.target.value)} placeholder="Ví dụ: Điều phối viên" />
+            <Input
+              value={role}
+              onChange={(e) => {
+                setRole(e.target.value);
+                if (fieldErrors.role) setFieldErrors((prev) => ({ ...prev, role: "" }));
+              }}
+              placeholder="Ví dụ: Điều phối viên"
+              className={invalidFieldClass(Boolean(fieldErrors.role))}
+            />
+            <FieldError message={fieldErrors.role} />
           </Field>
           <Field label="Ảnh đại diện (URL)">
             <Input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." />
@@ -426,6 +457,5 @@ export function VolunteersPage() {
     </VolunteersProvider>
   );
 }
-
 
 

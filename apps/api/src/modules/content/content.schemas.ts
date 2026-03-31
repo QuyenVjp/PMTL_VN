@@ -93,6 +93,7 @@ export const createGuideSchema = z.object({
   slug: z.string().min(3).max(200).optional(),
   content: z.record(z.string(), z.unknown()).default({}),
   excerpt: z.string().max(500).optional(),
+  coverMediaPublicId: z.string().optional(),
   category: z.enum(["BEGINNER", "DAILY_PRACTICE", "LITTLE_HOUSE", "LIFE_RELEASE", "GENERAL"]),
   sortOrder: z.number().int().min(0).default(0),
   versionNote: z.string().max(500).optional(),
@@ -104,6 +105,7 @@ export const updateGuideSchema = z.object({
   slug: z.string().min(3).max(200).optional(),
   content: z.record(z.string(), z.unknown()).optional(),
   excerpt: z.string().max(500).optional(),
+  coverMediaPublicId: z.string().optional().nullable(),
   category: z.enum(["BEGINNER", "DAILY_PRACTICE", "LITTLE_HOUSE", "LIFE_RELEASE", "GENERAL"]).optional(),
   sortOrder: z.number().int().min(0).optional(),
   versionNote: z.string().max(500).optional(),
@@ -119,6 +121,8 @@ export const guideResponseSchema = z.object({
   slug: z.string(),
   content: z.record(z.string(), z.unknown()),
   excerpt: z.string().nullable(),
+  coverMediaPublicId: z.string().nullable(),
+  coverImageUrl: z.string().nullable(),
   category: z.string(),
   sortOrder: z.number(),
   versionNote: z.string().nullable(),
@@ -157,10 +161,15 @@ export const createDownloadSchema = z.object({
   fileUrl: z.string().min(1),
   fileType: z.string().min(1),
   fileSize: z.number().int().min(0).default(0),
+  fileMediaPublicId: z.string().optional(),
+  thumbnailMediaPublicId: z.string().optional(),
 });
 export type CreateDownloadInput = z.infer<typeof createDownloadSchema>;
 
-export const updateDownloadSchema = createDownloadSchema.partial();
+export const updateDownloadSchema = createDownloadSchema.partial().extend({
+  fileMediaPublicId: z.string().optional().nullable(),
+  thumbnailMediaPublicId: z.string().optional().nullable(),
+});
 export type UpdateDownloadInput = z.infer<typeof updateDownloadSchema>;
 
 // Type aliases for compatibility with controller imports  

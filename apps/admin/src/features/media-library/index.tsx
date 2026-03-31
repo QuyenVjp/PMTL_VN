@@ -17,7 +17,7 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
 } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
   FileImageIcon,
@@ -30,6 +30,11 @@ import {
   VideoIcon,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { adminClient } from "@/lib/api/admin-client.js";
+import { FieldError } from "@/components/ui/field-error";
+import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
+import { handleApiError } from "@/lib/handle-api-error.js";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -70,8 +75,10 @@ import { createSelectColumn } from "@/lib/table/select-column";
 import {
   collectionsListOptions,
   collectionItemsOptions,
+  mediaLibraryKeys,
   type CollectionListItem,
   type CollectionType,
+  type CollectionItem,
 } from "./queries.js";
 import {
   useCreateCollection,
@@ -468,12 +475,15 @@ function CreateCollectionDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const create = useCreateCollection();
-  const { data: assetsEnvelope } = useQuery({
-    ...mediaListOptions({ limit: 100 }),
+  const qc = useQueryClient();
+  
+  const { data: assetsEnvelope, isLoading: assetsLoading, error: assetsError } = useQuery({
+    ...mediaListOptions({ limit: 100 }), // Backend max is 100
     enabled: open,
   });
   const assets = assetsEnvelope?.data ?? [];
-  const imageAssets = assets.filter((a) => a.mimeType.startsWith("image/"));
+  const imageAssets = assets.filter((a: MediaAssetListItem) => a.mimeType.startsWith("image/"));
+  const videoAssets = assets.filter((a: MediaAssetListItem) => a.mimeType.startsWith("video/"));
 
   const [title,                setTitle]                = useState("");
   const [slug,                 setSlug]                 = useState("");
@@ -481,8 +491,18 @@ function CreateCollectionDialog({
   const [description,          setDescription]          = useState("");
   const [coverMediaPublicId,   setCoverMediaPublicId]   = useState("");
   const [featured,             setFeatured]             = useState(false);
+  const [selectedMediaIds,     setSelectedMediaIds]     = useState<string[]>([]);
+  const [isSubmitting,         setIsSubmitting]         = useState(false);
+  const [fieldErrors,          setFieldErrors]          = useState<FieldErrors>({});
 
   const slugEdited = useRef(false);
+
+  // Filter available media based on collection type
+  const availableMedia = useMemo(() => {
+    if (collectionType === "PHOTO_ALBUM") return imageAssets;
+    if (collectionType === "VIDEO_PLAYLIST") return videoAssets;
+    return assets; // MIXED_GALLERY and others can have both
+  }, [collectionType, imageAssets, videoAssets, assets]);
 
   function reset() {
     setTitle("");
@@ -491,6 +511,9 @@ function CreateCollectionDialog({
     setDescription("");
     setCoverMediaPublicId("");
     setFeatured(false);
+    setSelectedMediaIds([]);
+    setIsSubmitting(false);
+    setFieldErrors({});
     slugEdited.current = false;
   }
 
@@ -500,48 +523,111 @@ function CreateCollectionDialog({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  useEffect(() => {
+    // Clear selection when collection type changes
+    setSelectedMediaIds([]);
+  }, [collectionType]);
+
   function handleTitleChange(v: string) {
     setTitle(v);
     if (!slugEdited.current) setSlug(slugify(v));
   }
 
-  function handleSubmit() {
-    if (!title.trim() || !slug.trim()) {
-      toast.error("Tiêu đề và slug không được để trống.");
-      return;
-    }
-    create.mutate(
-      {
+  function toggleMediaSelection(publicId: string) {
+    setSelectedMediaIds((prev) =>
+      prev.includes(publicId)
+        ? prev.filter((id) => id !== publicId)
+        : [...prev, publicId]
+    );
+  }
+
+  async function handleSubmit() {
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (!slug.trim()) nextErrors.slug = "Slug không được để trống.";
+    if (selectedMediaIds.length === 0) nextErrors.selectedMediaIds = "Vui lòng chọn ít nhất một media item.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
+
+    setIsSubmitting(true);
+    
+    try {
+      // Step 1: Create collection
+      const result = await create.mutateAsync({
         title: title.trim(),
         slug: slug.trim(),
         collectionType,
         description: description.trim() || undefined,
         coverMediaPublicId: coverMediaPublicId || undefined,
         featured
-      },
-      { onSuccess: () => { reset(); onOpenChange(false); } },
-    );
+      });
+
+      const collectionPublicId = result.publicId;
+
+      // Step 2: Add items in batch
+      const itemType = collectionType === "VIDEO_PLAYLIST" ? "UPLOADED_VIDEO" : "IMAGE";
+      
+      await Promise.all(
+        selectedMediaIds.map((mediaPublicId, index) =>
+          adminClient.post<void>(
+            `/admin/content/media-library/collections/${collectionPublicId}/items`,
+            {
+              itemType,
+              mediaAssetPublicId: mediaPublicId,
+              sortOrder: index,
+            }
+          )
+        )
+      );
+
+      toast.success(`Đã tạo bộ sưu tập với ${selectedMediaIds.length} items.`);
+      void qc.invalidateQueries({ queryKey: mediaLibraryKeys.collections() });
+      reset();
+      onOpenChange(false);
+    } catch (err) {
+      const serverErrors = extractValidationFieldErrors(err);
+      if (hasFieldErrors(serverErrors)) {
+        setFieldErrors(serverErrors);
+      }
+      handleApiError(err);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-start">
           <DialogTitle>Tạo bộ sưu tập mới</DialogTitle>
-          <DialogDescription>Điền thông tin để tạo album/playlist cho thư viện pháp môn.</DialogDescription>
+          <DialogDescription>Điền thông tin và chọn media items cho album/playlist.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="Ảnh pháp hội 2026..." />
+            <Input
+              value={title}
+              onChange={(e) => {
+                handleTitleChange(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              placeholder="Ảnh pháp hội 2026..."
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug (URL)">
             <Input
               value={slug}
-              onChange={(e) => { slugEdited.current = true; setSlug(e.target.value); }}
+              onChange={(e) => {
+                slugEdited.current = true;
+                setSlug(e.target.value);
+                if (fieldErrors.slug) setFieldErrors((prev) => ({ ...prev, slug: "" }));
+              }}
               placeholder="anh-phap-hoi-2026"
-              className="font-mono text-sm"
+              className={cn("font-mono text-sm", invalidFieldClass(Boolean(fieldErrors.slug)))}
             />
+            <FieldError message={fieldErrors.slug} />
           </Field>
           <Field label="Loại bộ sưu tập">
             <Select value={collectionType} onValueChange={(v) => setCollectionType(v as CollectionType)}>
@@ -553,6 +639,70 @@ function CreateCollectionDialog({
               </SelectContent>
             </Select>
           </Field>
+          
+          <Field label={`Chọn media items (${selectedMediaIds.length} đã chọn)`}>
+            <div className="border rounded-md p-3 bg-muted/20">
+              {assetsLoading ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Đang tải media...
+                </p>
+              ) : assetsError ? (
+                <p className="text-sm text-destructive text-center py-8">
+                  Lỗi khi tải media. Vui lòng thử lại.
+                </p>
+              ) : availableMedia.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Chưa có media nào. Vui lòng upload ảnh/video trước.
+                </p>
+              ) : (
+                <ScrollArea className="h-[280px]">
+                  <div className="grid grid-cols-4 gap-3 pr-3">
+                    {availableMedia.map((media) => {
+                      const isSelected = selectedMediaIds.includes(media.publicId);
+                      return (
+                        <button
+                          key={media.publicId}
+                          type="button"
+                          onClick={() => toggleMediaSelection(media.publicId)}
+                          className={cn(
+                            "relative group rounded-md overflow-hidden border-2 transition-all hover:scale-105",
+                            isSelected ? "border-primary ring-2 ring-primary/20" : "border-transparent hover:border-muted-foreground/30"
+                          )}
+                        >
+                          <div className="aspect-square bg-muted">
+                            {media.mimeType.startsWith("image/") ? (
+                              <img
+                                src={mediaPath(media.url)}
+                                alt={media.filename}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <VideoIcon className="size-12 text-muted-foreground" />
+                              </div>
+                            )}
+                          </div>
+                          <div className={cn(
+                            "absolute top-2 right-2 size-5 rounded-full border-2 flex items-center justify-center transition-colors",
+                            isSelected
+                              ? "bg-primary border-primary text-primary-foreground"
+                              : "bg-background/80 border-muted-foreground/50 text-transparent group-hover:border-muted-foreground"
+                          )}>
+                            {isSelected && "✓"}
+                          </div>
+                          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-1.5">
+                            <p className="text-xs text-white truncate font-medium">{media.filename}</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </ScrollArea>
+              )}
+            </div>
+            <FieldError message={fieldErrors.selectedMediaIds} />
+          </Field>
+          
           <Field label="Ảnh đại diện (nếu có)">
             <ImageGridPicker
               images={imageAssets}
@@ -576,9 +726,12 @@ function CreateCollectionDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={create.isPending || !title.trim() || !slug.trim()}>
-            {create.isPending ? "Đang tạo..." : "Tạo"}
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Hủy</Button>
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting || !title.trim() || !slug.trim() || selectedMediaIds.length === 0}
+          >
+            {isSubmitting ? "Đang tạo..." : "Tạo"}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -603,6 +756,7 @@ function EditCollectionDialog({
   const [description, setDescription] = useState(currentRow.description ?? "");
   const [sourceNote,  setSourceNote]  = useState(currentRow.sourceNote ?? "");
   const [featured,    setFeatured]    = useState(currentRow.featured);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   useEffect(() => {
     if (!open) return;
@@ -611,10 +765,14 @@ function EditCollectionDialog({
     setDescription(currentRow.description ?? "");
     setSourceNote(currentRow.sourceNote ?? "");
     setFeatured(currentRow.featured);
+    setFieldErrors({});
   }, [currentRow, open]);
 
   function handleSubmit() {
-    if (!title.trim()) { toast.error("Tiêu đề không được để trống."); return; }
+    const nextErrors: FieldErrors = {};
+    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
+    setFieldErrors({});
     update.mutate(
       {
         publicId:    currentRow.publicId,
@@ -638,7 +796,15 @@ function EditCollectionDialog({
 
         <div className="space-y-4">
           <Field label="Tiêu đề">
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+            <Input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
+              }}
+              className={invalidFieldClass(Boolean(fieldErrors.title))}
+            />
+            <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug">
             <Input value={slug} onChange={(e) => setSlug(e.target.value)} className="font-mono text-sm" />
@@ -694,7 +860,7 @@ function CollectionItemsSheet({
     enabled: open,
   });
   const assets = assetsEnvelope?.data ?? [];
-  const imageAssets = assets.filter((a) => a.mimeType.startsWith("image/"));
+  const imageAssets = assets.filter((a: MediaAssetListItem) => a.mimeType.startsWith("image/"));
 
   const addItem    = useAddCollectionItem(collection.publicId);
   const removeItem = useRemoveCollectionItem(collection.publicId);
@@ -702,14 +868,27 @@ function CollectionItemsSheet({
   const [selectedAssetId, setSelectedAssetId] = useState("");
   const [externalUrl,     setExternalUrl]     = useState("");
   const [addMode,         setAddMode]         = useState<"asset" | "embed">("asset");
+  const [addErrors,       setAddErrors]       = useState<FieldErrors>({});
 
   function handleAdd() {
     if (addMode === "asset") {
-      if (!selectedAssetId) { toast.error("Chọn ảnh để thêm."); return; }
+      if (!selectedAssetId) {
+        const nextErrors = { selectedAssetId: "Chọn ảnh để thêm." };
+        setAddErrors(nextErrors);
+        toast.error(nextErrors.selectedAssetId);
+        return;
+      }
+      setAddErrors({});
       addItem.mutate({ itemType: "IMAGE", mediaAssetPublicId: selectedAssetId });
       setSelectedAssetId("");
     } else {
-      if (!externalUrl.trim()) { toast.error("Nhập URL video để thêm."); return; }
+      if (!externalUrl.trim()) {
+        const nextErrors = { externalUrl: "Nhập URL video để thêm." };
+        setAddErrors(nextErrors);
+        toast.error(nextErrors.externalUrl);
+        return;
+      }
+      setAddErrors({});
       addItem.mutate({ itemType: "VIDEO_EMBED", externalUrl: externalUrl.trim() });
       setExternalUrl("");
     }
@@ -747,16 +926,23 @@ function CollectionItemsSheet({
               <ImageGridPicker
                 images={imageAssets}
                 value={selectedAssetId}
-                onChange={setSelectedAssetId}
+                onChange={(next) => {
+                  setSelectedAssetId(next);
+                  if (addErrors.selectedAssetId) setAddErrors((prev) => ({ ...prev, selectedAssetId: "" }));
+                }}
               />
             ) : (
               <Input
                 value={externalUrl}
-                onChange={(e) => setExternalUrl(e.target.value)}
+                onChange={(e) => {
+                  setExternalUrl(e.target.value);
+                  if (addErrors.externalUrl) setAddErrors((prev) => ({ ...prev, externalUrl: "" }));
+                }}
                 placeholder="https://youtube.com/watch?v=..."
-                className="text-sm"
+                className={cn("text-sm", invalidFieldClass(Boolean(addErrors.externalUrl)))}
               />
             )}
+            <FieldError message={addMode === "asset" ? addErrors.selectedAssetId : addErrors.externalUrl} />
 
             <Button size="sm" onClick={handleAdd} disabled={addItem.isPending} className="w-full">
               <PlusIcon className="mr-1.5 size-3.5" />
@@ -776,7 +962,7 @@ function CollectionItemsSheet({
               </div>
             ) : (
               <div className="space-y-2">
-                {items.map((item) => (
+                {items.map((item: CollectionItem) => (
                   <div
                     key={item.publicId}
                     className="flex items-center gap-3 rounded-lg border bg-background px-3 py-2"

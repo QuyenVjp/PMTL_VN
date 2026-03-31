@@ -39,6 +39,8 @@ export type DownloadMinAggregateOutputType = {
   publicId: string | null
   title: string | null
   description: string | null
+  fileMediaId: string | null
+  thumbnailMediaId: string | null
   category: $Enums.DownloadCategory | null
   fileUrl: string | null
   fileType: string | null
@@ -55,6 +57,8 @@ export type DownloadMaxAggregateOutputType = {
   publicId: string | null
   title: string | null
   description: string | null
+  fileMediaId: string | null
+  thumbnailMediaId: string | null
   category: $Enums.DownloadCategory | null
   fileUrl: string | null
   fileType: string | null
@@ -71,6 +75,8 @@ export type DownloadCountAggregateOutputType = {
   publicId: number
   title: number
   description: number
+  fileMediaId: number
+  thumbnailMediaId: number
   category: number
   fileUrl: number
   fileType: number
@@ -97,6 +103,8 @@ export type DownloadMinAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   title?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  fileMediaId?: true | runtime.Types.Skip
+  thumbnailMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   fileUrl?: true | runtime.Types.Skip
   fileType?: true | runtime.Types.Skip
@@ -113,6 +121,8 @@ export type DownloadMaxAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   title?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  fileMediaId?: true | runtime.Types.Skip
+  thumbnailMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   fileUrl?: true | runtime.Types.Skip
   fileType?: true | runtime.Types.Skip
@@ -129,6 +139,8 @@ export type DownloadCountAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   title?: true | runtime.Types.Skip
   description?: true | runtime.Types.Skip
+  fileMediaId?: true | runtime.Types.Skip
+  thumbnailMediaId?: true | runtime.Types.Skip
   category?: true | runtime.Types.Skip
   fileUrl?: true | runtime.Types.Skip
   fileType?: true | runtime.Types.Skip
@@ -232,6 +244,8 @@ export type DownloadGroupByOutputType = {
   publicId: string
   title: string
   description: string | null
+  fileMediaId: string | null
+  thumbnailMediaId: string | null
   category: $Enums.DownloadCategory
   fileUrl: string
   fileType: string
@@ -271,6 +285,8 @@ export type DownloadWhereInput = {
   publicId?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   title?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFilter<"Download"> | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   fileType?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
@@ -281,6 +297,8 @@ export type DownloadWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  fileMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
+  thumbnailMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }
 
 export type DownloadOrderByWithRelationInput = {
@@ -288,6 +306,8 @@ export type DownloadOrderByWithRelationInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  fileMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   fileUrl?: Prisma.SortOrder | runtime.Types.Skip
   fileType?: Prisma.SortOrder | runtime.Types.Skip
@@ -298,6 +318,8 @@ export type DownloadOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   uploader?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
+  fileMedia?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
 }
 
 export type DownloadWhereUniqueInput = Prisma.AtLeast<{
@@ -308,6 +330,8 @@ export type DownloadWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DownloadWhereInput | Prisma.DownloadWhereInput[] | runtime.Types.Skip
   title?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFilter<"Download"> | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   fileType?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
@@ -318,6 +342,8 @@ export type DownloadWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  fileMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
+  thumbnailMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type DownloadOrderByWithAggregationInput = {
@@ -325,6 +351,8 @@ export type DownloadOrderByWithAggregationInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  fileMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   fileUrl?: Prisma.SortOrder | runtime.Types.Skip
   fileType?: Prisma.SortOrder | runtime.Types.Skip
@@ -349,6 +377,8 @@ export type DownloadScalarWhereWithAggregatesInput = {
   publicId?: Prisma.StringWithAggregatesFilter<"Download"> | string | runtime.Types.Skip
   title?: Prisma.StringWithAggregatesFilter<"Download"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableWithAggregatesFilter<"Download"> | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.StringNullableWithAggregatesFilter<"Download"> | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.StringNullableWithAggregatesFilter<"Download"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryWithAggregatesFilter<"Download"> | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringWithAggregatesFilter<"Download"> | string | runtime.Types.Skip
   fileType?: Prisma.StringWithAggregatesFilter<"Download"> | string | runtime.Types.Skip
@@ -374,6 +404,8 @@ export type DownloadCreateInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
+  fileMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadFileMediaInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadThumbnailMediaInput | runtime.Types.Skip
 }
 
 export type DownloadUncheckedCreateInput = {
@@ -381,6 +413,8 @@ export type DownloadUncheckedCreateInput = {
   publicId: string
   title: string
   description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl: string
   fileType: string
@@ -406,6 +440,8 @@ export type DownloadUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
+  fileMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadFileMediaNestedInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadThumbnailMediaNestedInput | runtime.Types.Skip
 }
 
 export type DownloadUncheckedUpdateInput = {
@@ -413,6 +449,8 @@ export type DownloadUncheckedUpdateInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
@@ -429,6 +467,8 @@ export type DownloadCreateManyInput = {
   publicId: string
   title: string
   description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl: string
   fileType: string
@@ -460,6 +500,8 @@ export type DownloadUncheckedUpdateManyInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
@@ -486,6 +528,8 @@ export type DownloadCountOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  fileMediaId?: Prisma.SortOrder | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   fileUrl?: Prisma.SortOrder | runtime.Types.Skip
   fileType?: Prisma.SortOrder | runtime.Types.Skip
@@ -506,6 +550,8 @@ export type DownloadMaxOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  fileMediaId?: Prisma.SortOrder | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   fileUrl?: Prisma.SortOrder | runtime.Types.Skip
   fileType?: Prisma.SortOrder | runtime.Types.Skip
@@ -522,6 +568,8 @@ export type DownloadMinOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   description?: Prisma.SortOrder | runtime.Types.Skip
+  fileMediaId?: Prisma.SortOrder | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.SortOrder | runtime.Types.Skip
   category?: Prisma.SortOrder | runtime.Types.Skip
   fileUrl?: Prisma.SortOrder | runtime.Types.Skip
   fileType?: Prisma.SortOrder | runtime.Types.Skip
@@ -579,6 +627,90 @@ export type DownloadUncheckedUpdateManyWithoutUploaderNestedInput = {
   deleteMany?: Prisma.DownloadScalarWhereInput | Prisma.DownloadScalarWhereInput[] | runtime.Types.Skip
 }
 
+export type DownloadCreateNestedManyWithoutFileMediaInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput> | Prisma.DownloadCreateWithoutFileMediaInput[] | Prisma.DownloadUncheckedCreateWithoutFileMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutFileMediaInput | Prisma.DownloadCreateOrConnectWithoutFileMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyFileMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type DownloadCreateNestedManyWithoutThumbnailMediaInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput> | Prisma.DownloadCreateWithoutThumbnailMediaInput[] | Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput | Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyThumbnailMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type DownloadUncheckedCreateNestedManyWithoutFileMediaInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput> | Prisma.DownloadCreateWithoutFileMediaInput[] | Prisma.DownloadUncheckedCreateWithoutFileMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutFileMediaInput | Prisma.DownloadCreateOrConnectWithoutFileMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyFileMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput> | Prisma.DownloadCreateWithoutThumbnailMediaInput[] | Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput | Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyThumbnailMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type DownloadUpdateManyWithoutFileMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput> | Prisma.DownloadCreateWithoutFileMediaInput[] | Prisma.DownloadUncheckedCreateWithoutFileMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutFileMediaInput | Prisma.DownloadCreateOrConnectWithoutFileMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.DownloadUpsertWithWhereUniqueWithoutFileMediaInput | Prisma.DownloadUpsertWithWhereUniqueWithoutFileMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyFileMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.DownloadUpdateWithWhereUniqueWithoutFileMediaInput | Prisma.DownloadUpdateWithWhereUniqueWithoutFileMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.DownloadUpdateManyWithWhereWithoutFileMediaInput | Prisma.DownloadUpdateManyWithWhereWithoutFileMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.DownloadScalarWhereInput | Prisma.DownloadScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type DownloadUpdateManyWithoutThumbnailMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput> | Prisma.DownloadCreateWithoutThumbnailMediaInput[] | Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput | Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.DownloadUpsertWithWhereUniqueWithoutThumbnailMediaInput | Prisma.DownloadUpsertWithWhereUniqueWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyThumbnailMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.DownloadUpdateWithWhereUniqueWithoutThumbnailMediaInput | Prisma.DownloadUpdateWithWhereUniqueWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.DownloadUpdateManyWithWhereWithoutThumbnailMediaInput | Prisma.DownloadUpdateManyWithWhereWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.DownloadScalarWhereInput | Prisma.DownloadScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateManyWithoutFileMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput> | Prisma.DownloadCreateWithoutFileMediaInput[] | Prisma.DownloadUncheckedCreateWithoutFileMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutFileMediaInput | Prisma.DownloadCreateOrConnectWithoutFileMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.DownloadUpsertWithWhereUniqueWithoutFileMediaInput | Prisma.DownloadUpsertWithWhereUniqueWithoutFileMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyFileMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.DownloadUpdateWithWhereUniqueWithoutFileMediaInput | Prisma.DownloadUpdateWithWhereUniqueWithoutFileMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.DownloadUpdateManyWithWhereWithoutFileMediaInput | Prisma.DownloadUpdateManyWithWhereWithoutFileMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.DownloadScalarWhereInput | Prisma.DownloadScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput> | Prisma.DownloadCreateWithoutThumbnailMediaInput[] | Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput | Prisma.DownloadCreateOrConnectWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.DownloadUpsertWithWhereUniqueWithoutThumbnailMediaInput | Prisma.DownloadUpsertWithWhereUniqueWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.DownloadCreateManyThumbnailMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.DownloadWhereUniqueInput | Prisma.DownloadWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.DownloadUpdateWithWhereUniqueWithoutThumbnailMediaInput | Prisma.DownloadUpdateWithWhereUniqueWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.DownloadUpdateManyWithWhereWithoutThumbnailMediaInput | Prisma.DownloadUpdateManyWithWhereWithoutThumbnailMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.DownloadScalarWhereInput | Prisma.DownloadScalarWhereInput[] | runtime.Types.Skip
+}
+
 export type EnumDownloadCategoryFieldUpdateOperationsInput = {
   set?: $Enums.DownloadCategory | runtime.Types.Skip
 }
@@ -596,6 +728,8 @@ export type DownloadCreateWithoutUploaderInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  fileMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadFileMediaInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadThumbnailMediaInput | runtime.Types.Skip
 }
 
 export type DownloadUncheckedCreateWithoutUploaderInput = {
@@ -603,6 +737,8 @@ export type DownloadUncheckedCreateWithoutUploaderInput = {
   publicId: string
   title: string
   description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl: string
   fileType: string
@@ -647,6 +783,8 @@ export type DownloadScalarWhereInput = {
   publicId?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   title?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   description?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.StringNullableFilter<"Download"> | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFilter<"Download"> | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   fileType?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
@@ -658,11 +796,133 @@ export type DownloadScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
 }
 
+export type DownloadCreateWithoutFileMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
+  thumbnailMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadThumbnailMediaInput | runtime.Types.Skip
+}
+
+export type DownloadUncheckedCreateWithoutFileMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type DownloadCreateOrConnectWithoutFileMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  create: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput>
+}
+
+export type DownloadCreateManyFileMediaInputEnvelope = {
+  data: Prisma.DownloadCreateManyFileMediaInput | Prisma.DownloadCreateManyFileMediaInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type DownloadCreateWithoutThumbnailMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
+  fileMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadFileMediaInput | runtime.Types.Skip
+}
+
+export type DownloadUncheckedCreateWithoutThumbnailMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type DownloadCreateOrConnectWithoutThumbnailMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  create: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput>
+}
+
+export type DownloadCreateManyThumbnailMediaInputEnvelope = {
+  data: Prisma.DownloadCreateManyThumbnailMediaInput | Prisma.DownloadCreateManyThumbnailMediaInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type DownloadUpsertWithWhereUniqueWithoutFileMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  update: Prisma.XOR<Prisma.DownloadUpdateWithoutFileMediaInput, Prisma.DownloadUncheckedUpdateWithoutFileMediaInput>
+  create: Prisma.XOR<Prisma.DownloadCreateWithoutFileMediaInput, Prisma.DownloadUncheckedCreateWithoutFileMediaInput>
+}
+
+export type DownloadUpdateWithWhereUniqueWithoutFileMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  data: Prisma.XOR<Prisma.DownloadUpdateWithoutFileMediaInput, Prisma.DownloadUncheckedUpdateWithoutFileMediaInput>
+}
+
+export type DownloadUpdateManyWithWhereWithoutFileMediaInput = {
+  where: Prisma.DownloadScalarWhereInput
+  data: Prisma.XOR<Prisma.DownloadUpdateManyMutationInput, Prisma.DownloadUncheckedUpdateManyWithoutFileMediaInput>
+}
+
+export type DownloadUpsertWithWhereUniqueWithoutThumbnailMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  update: Prisma.XOR<Prisma.DownloadUpdateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedUpdateWithoutThumbnailMediaInput>
+  create: Prisma.XOR<Prisma.DownloadCreateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedCreateWithoutThumbnailMediaInput>
+}
+
+export type DownloadUpdateWithWhereUniqueWithoutThumbnailMediaInput = {
+  where: Prisma.DownloadWhereUniqueInput
+  data: Prisma.XOR<Prisma.DownloadUpdateWithoutThumbnailMediaInput, Prisma.DownloadUncheckedUpdateWithoutThumbnailMediaInput>
+}
+
+export type DownloadUpdateManyWithWhereWithoutThumbnailMediaInput = {
+  where: Prisma.DownloadScalarWhereInput
+  data: Prisma.XOR<Prisma.DownloadUpdateManyMutationInput, Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaInput>
+}
+
 export type DownloadCreateManyUploaderInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   title: string
   description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
   category?: $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl: string
   fileType: string
@@ -686,6 +946,8 @@ export type DownloadUpdateWithoutUploaderInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  fileMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadFileMediaNestedInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadThumbnailMediaNestedInput | runtime.Types.Skip
 }
 
 export type DownloadUncheckedUpdateWithoutUploaderInput = {
@@ -693,6 +955,8 @@ export type DownloadUncheckedUpdateWithoutUploaderInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
@@ -708,11 +972,149 @@ export type DownloadUncheckedUpdateManyWithoutUploaderInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
   fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type DownloadCreateManyFileMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  thumbnailMediaId?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type DownloadCreateManyThumbnailMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  fileMediaId?: string | null | runtime.Types.Skip
+  category?: $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl: string
+  fileType: string
+  fileSize?: number | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type DownloadUpdateWithoutFileMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
+  thumbnailMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadThumbnailMediaNestedInput | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateWithoutFileMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateManyWithoutFileMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  thumbnailMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type DownloadUpdateWithoutThumbnailMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
+  fileMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadFileMediaNestedInput | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateWithoutThumbnailMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type DownloadUncheckedUpdateManyWithoutThumbnailMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  fileMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  category?: Prisma.EnumDownloadCategoryFieldUpdateOperationsInput | $Enums.DownloadCategory | runtime.Types.Skip
+  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -725,6 +1127,8 @@ export type DownloadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   publicId?: boolean | runtime.Types.Skip
   title?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  fileMediaId?: boolean | runtime.Types.Skip
+  thumbnailMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   fileUrl?: boolean | runtime.Types.Skip
   fileType?: boolean | runtime.Types.Skip
@@ -735,6 +1139,8 @@ export type DownloadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["download"]>
 
 export type DownloadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -742,6 +1148,8 @@ export type DownloadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   publicId?: boolean | runtime.Types.Skip
   title?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  fileMediaId?: boolean | runtime.Types.Skip
+  thumbnailMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   fileUrl?: boolean | runtime.Types.Skip
   fileType?: boolean | runtime.Types.Skip
@@ -752,6 +1160,8 @@ export type DownloadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["download"]>
 
 export type DownloadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -759,6 +1169,8 @@ export type DownloadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   publicId?: boolean | runtime.Types.Skip
   title?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  fileMediaId?: boolean | runtime.Types.Skip
+  thumbnailMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   fileUrl?: boolean | runtime.Types.Skip
   fileType?: boolean | runtime.Types.Skip
@@ -769,6 +1181,8 @@ export type DownloadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["download"]>
 
 export type DownloadSelectScalar = {
@@ -776,6 +1190,8 @@ export type DownloadSelectScalar = {
   publicId?: boolean | runtime.Types.Skip
   title?: boolean | runtime.Types.Skip
   description?: boolean | runtime.Types.Skip
+  fileMediaId?: boolean | runtime.Types.Skip
+  thumbnailMediaId?: boolean | runtime.Types.Skip
   category?: boolean | runtime.Types.Skip
   fileUrl?: boolean | runtime.Types.Skip
   fileType?: boolean | runtime.Types.Skip
@@ -787,27 +1203,37 @@ export type DownloadSelectScalar = {
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type DownloadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "description" | "category" | "fileUrl" | "fileType" | "fileSize" | "status" | "uploaderId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["download"], runtime.Types.Skip>
+export type DownloadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "description" | "fileMediaId" | "thumbnailMediaId" | "category" | "fileUrl" | "fileType" | "fileSize" | "status" | "uploaderId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["download"], runtime.Types.Skip>
 export type DownloadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 export type DownloadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 export type DownloadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
+  thumbnailMedia?: boolean | Prisma.Download$thumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
 }
 
 export type $DownloadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Download"
   objects: {
     uploader: Prisma.$UserPayload<ExtArgs>
+    fileMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
+    thumbnailMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     publicId: string
     title: string
     description: string | null
+    fileMediaId: string | null
+    thumbnailMediaId: string | null
     category: $Enums.DownloadCategory
     fileUrl: string
     fileType: string
@@ -1212,6 +1638,8 @@ readonly fields: DownloadFieldRefs;
 export interface Prisma__DownloadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   uploader<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  fileMedia<T extends Prisma.Download$fileMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Download$fileMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  thumbnailMedia<T extends Prisma.Download$thumbnailMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Download$thumbnailMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1245,6 +1673,8 @@ export interface DownloadFieldRefs {
   readonly publicId: Prisma.FieldRef<"Download", 'String'>
   readonly title: Prisma.FieldRef<"Download", 'String'>
   readonly description: Prisma.FieldRef<"Download", 'String'>
+  readonly fileMediaId: Prisma.FieldRef<"Download", 'String'>
+  readonly thumbnailMediaId: Prisma.FieldRef<"Download", 'String'>
   readonly category: Prisma.FieldRef<"Download", 'DownloadCategory'>
   readonly fileUrl: Prisma.FieldRef<"Download", 'String'>
   readonly fileType: Prisma.FieldRef<"Download", 'String'>
@@ -1652,6 +2082,44 @@ export type DownloadDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Limit how many Downloads to delete.
    */
   limit?: number | runtime.Types.Skip
+}
+
+/**
+ * Download.fileMedia
+ */
+export type Download$fileMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+}
+
+/**
+ * Download.thumbnailMedia
+ */
+export type Download$thumbnailMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
 }
 
 /**

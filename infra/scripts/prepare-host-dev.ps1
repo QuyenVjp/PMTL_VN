@@ -107,13 +107,35 @@ try {
   Push-Location $apiRoot
   try {
     Write-Host "[host-prepare] Applying Prisma schema..." -ForegroundColor Cyan
-    & $prismaCli db push --schema=./prisma/schema.prisma
-    if ($LASTEXITCODE -ne 0) {
+    $maxRetries = 8
+    $retryDelaySec = 4
+    $pushDone = $false
+    for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
+      $pushOutput = & $prismaCli db push --schema=./prisma/schema.prisma 2>&1
+      $outputStr = ($pushOutput | Out-String)
+      if ($LASTEXITCODE -eq 0) {
+        $pushDone = $true
+        break
+      }
+      if ($outputStr -match "P1001|Can't reach database|connection refused") {
+        if ($attempt -lt $maxRetries) {
+          Write-Host "[host-prepare] DB chưa sẵn sàng (thử $attempt/$maxRetries), đợi ${retryDelaySec}s..." -ForegroundColor Yellow
+          Start-Sleep -Seconds $retryDelaySec
+          continue
+        }
+        throw "Không thể kết nối database sau $maxRetries lần thử. Kiểm tra Docker compose (postgres).`nChi tiết: $outputStr"
+      }
+      # Non-connection error → schema drift
       Write-Host "[host-prepare] Schema drift detected. Force-resetting local dev schema..." -ForegroundColor Yellow
       & $prismaCli db push --schema=./prisma/schema.prisma --force-reset
       if ($LASTEXITCODE -ne 0) {
         throw "Lệnh 'prisma db push --force-reset' thất bại."
       }
+      $pushDone = $true
+      break
+    }
+    if (-not $pushDone) {
+      throw "prisma db push không hoàn thành sau $maxRetries lần thử."
     }
 
     Write-Host "[host-prepare] Seeding host dev data..." -ForegroundColor Cyan

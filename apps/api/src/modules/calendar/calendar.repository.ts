@@ -16,6 +16,8 @@ const PUBLIC_EVENT_SELECT = {
     location: true,
     eventType: true,
     publishedAt: true,
+    coverImage: { select: { publicId: true, url: true } },
+    posterImage: { select: { publicId: true, url: true } },
   },
 } as const;
 
@@ -69,7 +71,11 @@ export class CalendarRepository {
         orderBy: { createdAt: "desc" },
         skip: offset,
         take: limit,
-        include: { createdBy: CREATOR_SELECT },
+        include: {
+          createdBy: CREATOR_SELECT,
+          coverImage: { select: { publicId: true, url: true } },
+          posterImage: { select: { publicId: true, url: true } },
+        },
       }),
       this.prisma.calendarEvent.count({ where }),
     ]);
@@ -80,11 +86,26 @@ export class CalendarRepository {
   async findAdminByPublicId(publicId: string) {
     return this.prisma.calendarEvent.findUnique({
       where: { publicId },
-      include: { createdBy: CREATOR_SELECT },
+      include: {
+        createdBy: CREATOR_SELECT,
+        coverImage: { select: { publicId: true, url: true } },
+        posterImage: { select: { publicId: true, url: true } },
+      },
     });
   }
 
   async createEvent(input: AdminCreateEventInput, createdById: string, publicId: string) {
+    let coverImageId: string | undefined;
+    if (input.coverImagePublicId) {
+      const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId: input.coverImagePublicId } });
+      if (asset) coverImageId = asset.id;
+    }
+    let posterImageId: string | undefined;
+    if (input.posterImagePublicId) {
+      const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId: input.posterImagePublicId } });
+      if (asset) posterImageId = asset.id;
+    }
+
     return this.prisma.calendarEvent.create({
       data: {
         publicId,
@@ -93,6 +114,8 @@ export class CalendarRepository {
         eventType: input.eventType ?? "general",
         status: "DRAFT",
         createdById,
+        ...(coverImageId !== undefined && { coverImageId }),
+        ...(posterImageId !== undefined && { posterImageId }),
         ...(input.description !== undefined && { description: input.description }),
         ...(input.endAt !== undefined && { endAt: new Date(input.endAt) }),
         ...(input.location !== undefined && { location: input.location }),
@@ -108,6 +131,22 @@ export class CalendarRepository {
     if (input.endAt !== undefined) data.endAt = new Date(input.endAt);
     if (input.location !== undefined) data.location = input.location;
     if (input.eventType !== undefined) data.eventType = input.eventType;
+    if (input.coverImagePublicId !== undefined) {
+      if (input.coverImagePublicId === null || input.coverImagePublicId.trim().length === 0) {
+        data.coverImageId = null;
+      } else {
+        const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId: input.coverImagePublicId } });
+        data.coverImageId = asset?.id ?? null;
+      }
+    }
+    if (input.posterImagePublicId !== undefined) {
+      if (input.posterImagePublicId === null || input.posterImagePublicId.trim().length === 0) {
+        data.posterImageId = null;
+      } else {
+        const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId: input.posterImagePublicId } });
+        data.posterImageId = asset?.id ?? null;
+      }
+    }
 
     return this.prisma.calendarEvent.update({ where: { publicId }, data });
   }
