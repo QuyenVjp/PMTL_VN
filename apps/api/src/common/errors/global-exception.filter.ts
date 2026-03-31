@@ -107,6 +107,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         statusCode = HttpStatus.NOT_FOUND;
         code = "NOT_FOUND";
         message = "Không tìm thấy bản ghi liên quan.";
+      } else if (exception.code === "P2021" || exception.code === "P2022") {
+        statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        code = "DB_SCHEMA_MISMATCH";
+        message = "Schema cơ sở dữ liệu chưa đồng bộ với API.";
+        details = {
+          prismaCode: exception.code,
+          hint: "Chạy migration mới nhất: pnpm --filter @pmtl/api prisma:migrate:deploy",
+        };
       } else {
         statusCode = HttpStatus.BAD_REQUEST;
         code = "DB_ERROR";

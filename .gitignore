@@ -29,3 +29,13 @@ tmp/reference/
 
 *storybook.log
 storybook-static
+
+# Agent/tool runtime dirs — never commit
+.claude/
+.playwright-mcp/
+
+# Generated/temp dirs
+tmp/
+backups/
+logs/
+scaffolds/

@@ -109,11 +109,15 @@ export interface AddItemInput {
 export function useAddCollectionItem(collectionPublicId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: AddItemInput) =>
-      adminClient.post<void>(
+    mutationFn: (body: AddItemInput) => {
+      if (!collectionPublicId) {
+        throw new Error("Collection ID is required to add items");
+      }
+      return adminClient.post<void>(
         `/admin/content/media-library/collections/${collectionPublicId}/items`,
         body,
-      ),
+      );
+    },
     onSuccess: () => {
       toast.success("Đã thêm item.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.items(collectionPublicId) });
@@ -126,10 +130,14 @@ export function useAddCollectionItem(collectionPublicId: string) {
 export function useRemoveCollectionItem(collectionPublicId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (itemPublicId: string) =>
-      adminClient.delete<void>(
+    mutationFn: (itemPublicId: string) => {
+      if (!collectionPublicId) {
+        throw new Error("Collection ID is required to remove items");
+      }
+      return adminClient.delete<void>(
         `/admin/content/media-library/collections/${collectionPublicId}/items/${itemPublicId}`,
-      ),
+      );
+    },
     onSuccess: () => {
       toast.success("Đã xoá item.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.items(collectionPublicId) });

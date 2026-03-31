@@ -173,6 +173,36 @@ Blueprint đó chốt:
 | [manage-auth-session.md](../../03-domains/identity/USE_CASES/manage-auth-session.md) | auth controller + auth service + session/token tables + audit append + rate limit | **implemented** (2026-03-27) | `identity.controller.ts` + `identity.service.ts`: login/refresh/logout/logoutAll/me/profile/changePassword. Session persistence via `sessions.service.ts`. Audit-in-transaction (Bug 2 fix). AuthGuard + RolesGuard + RateLimitGuard chain. Cookie-first JWT via jose. |
 | [upload-media-asset.md](../../03-domains/content/USE_CASES/upload-media-asset.md) | upload controller + media service + storage adapter + media_assets table + asset status handling | **implemented** (2026-03-27) | `storage.service.ts`: full upload pipeline (MIME allowlist → magic bytes sniffing → size limit → virus scan stub → secure filename → adapter upload → asset record → status READY). `storage.schemas.ts`: `MIME_TO_EXTENSIONS` exhaustive map. Delete auth: owner OR ADMIN/SUPER_ADMIN. |
 
+## Domain module implementations (Triển khai module domain — 2026-03-31)
+
+Các module domain sau đã được implement đầy đủ routes + service logic trong đợt 2026-03-31.
+
+| Module | Key artifacts | Status | Routes / surfaces |
+|---|---|---|---|
+| identity — password reset | `identity.controller.ts`, `identity.service.ts`, `identity.schemas.ts` | **implemented** (2026-03-31) | `POST /auth/forgot-password` (public, rate-limited, anti-enumeration). `POST /auth/reset-password` (public, rate-limited, SHA-256 token hash, 1h expiry, all sessions revoked on success). Prisma `PasswordResetToken` model. |
+| community — social features | `community.controller.ts`, `community.service.ts`, `community.repository.ts` | **implemented** (2026-03-31) | `POST /community/posts/:publicId/heart` (toggle). `GET /community/posts/:publicId/comments` (public, paginated). `POST /community/posts/:publicId/comments` (authenticated, rate-limited). `POST /community/posts/:publicId/report` (authenticated). Prisma `CommunityComment` + `CommunityHeart` models. |
+| community — guestbook | `guestbook.controller.ts` in community module | **implemented** (2026-03-31) | `GET /guestbook` (public). `POST /guestbook` (authenticated, rate-limited). |
+| contact — public surfaces | `contact.controller.ts`, `contact.service.ts` | **implemented** (2026-03-31) | `GET /contact/info` (public, cached 300s). `GET /contact/volunteers` (public, cached 300s, active only). |
+| calendar — event lifecycle | `calendar.controller.ts`, `calendar.service.ts`, `calendar.repository.ts` | **implemented** (2026-03-31) | `POST /admin/calendar/events/:publicId/agenda-items` (CRUD). `POST /admin/calendar/events/:publicId/agenda-items/reorder`. `POST /admin/calendar/events/:publicId/reschedule`. `POST /admin/calendar/events/:publicId/cancel`. `GET /calendar/events/:publicId/agenda` (public). Prisma `EventAgendaItem` model. |
+| notification — member preferences | `member-notification.controller.ts`, `notification.service.ts`, `notification.repository.ts` | **implemented** (2026-03-31) | `GET /notifications/preferences`. `PATCH /notifications/preferences`. `POST /notifications/push/subscribe`. `POST /notifications/push/unsubscribe`. Prisma `NotificationPreference` model. |
+| moderation — public report + comment moderation | `public-moderation.controller.ts`, `admin-comment-moderation.controller.ts` | **implemented** (2026-03-31) | `POST /moderation/reports` (public, rate-limited). `GET /admin/moderation/comments` (paginated). `POST /admin/moderation/comments/:id/hide`. `POST /admin/moderation/comments/:id/restore`. |
+| vows-merit — life release journal + milestones | `life-release-member.controller.ts`, `life-release-member.service.ts` | **implemented** (2026-03-31) | `GET /me/life-release-journal` (paginated). `GET /me/life-release-journal/:publicId`. `POST /me/life-release-journal`. `PATCH /me/life-release-journal/:publicId`. `POST /me/vows/:publicId/milestones`. |
+| content — public surfaces | `public-beginner-guide.controller.ts`, `public-download.controller.ts`, `public-chant-items.controller.ts` | **implemented** (2026-03-31) | `GET /content/beginner-guides` (list, cached 300s). `GET /content/beginner-guides/:slug` (detail). `GET /content/downloads` (list, cached 300s). `GET /content/downloads/:slugOrPublicId` (detail). `GET /content/chant-items/environment-rules` (cached 300s). |
+| wisdom-qa — authority profiles + public hub | `wisdom-hub.controller.ts`, `admin-wisdom.controller.ts` | **implemented** (2026-03-31) | `GET /wisdom/entries` (public, paginated). `GET /wisdom/entries/:slugOrPublicId` (public detail). Admin: `GET/POST/PATCH/DELETE /admin/wisdom/authority-profiles`. `POST /admin/wisdom/entries/duplicate-check`. Prisma `WisdomAuthorityProfile` model. |
+
+### Security hardening (2026-03-31)
+
+| Fix | Artifact | Detail |
+|---|---|---|
+| Rate-limit on register | `identity.controller.ts` | `@RateLimit("auth.login")` added to `POST /auth/register` — was previously unprotected |
+| Rate-limit on change-password | `identity.controller.ts` | `@RateLimit("auth.login")` added to `POST /auth/change-password` — was previously unprotected |
+
+### Admin frontend (2026-03-31)
+
+| Feature | Artifacts | Detail |
+|---|---|---|
+| Contact info editor | `apps/admin/src/features/contact-info/` (index.tsx, queries.ts, mutations.ts) | Full form: title, email, phone, address, social links (Facebook, YouTube, Zalo). Route `/he-thong/thong-tin-lien-he`. Sidebar entry added. |
+
 ## Deferred and explicitly excluded advanced components (Các thành phần nâng cao đang tạm hoãn hoặc bị loại rõ ràng)
 
 Full architecture docs exist cho toàn bộ các component `planned`, và decision doc rõ ràng tồn tại cho component `explicit exclusion`.

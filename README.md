@@ -1,16 +1,19 @@
 # PMTL_VN
 
-> Codebase đạt **9.8/10 sau tối ưu 2026** — ready deploy VPS self-host production.
+Monorepo cho nền tảng hoằng pháp Pháp Môn Tâm Linh Việt Nam.
 
-Monorepo cho nền tảng hoằng pháp PMTL, dùng **Next.js 16 + NestJS 11 + Prisma 7 + Meilisearch + Docker Compose**. Deploy VPS self-host, ngân sách ~100-200k VND/tháng.
+**Stack:** Next.js 16 + NestJS 11 + Prisma 7 + Meilisearch + Docker Compose.
+**Deploy target:** VPS self-host (~100-200k VND/tháng).
+
+> **Status:** Pre-launch. Backend API đã có đủ 11 domain modules với routes + service logic thật. Admin SPA hoạt động. Web frontend đang rebuild. Chưa có production deployment.
 
 ## Kiến trúc
 
 ```text
 apps/
-  web/          # Next.js 16 — SSR + RSC, elderly-first UX
-  api/          # NestJS 11 — backend authority, 11 domain modules
-  admin/        # Vite + React — admin SPA, shadcn/ui
+  web/          # Next.js 16 — SSR + RSC (đang rebuild)
+  api/          # NestJS 11 — backend authority
+  admin/        # Vite + React 19 — admin SPA, shadcn/ui
 packages/
   shared/       # Zod schemas, types, enums, utils (framework-agnostic)
   ui/           # Shared UI components
@@ -18,35 +21,42 @@ packages/
 infra/
   docker/       # compose.dev.yml, compose.prod.yml, env examples
   caddy/        # Reverse proxy config
-  scripts/      # Deploy, backup, healthcheck scripts
-  tools/        # CLI tools, multi-agent routing
+  scripts/      # Deploy, backup, healthcheck scripts (bash + PowerShell)
+  tools/        # CLI tools, multi-agent routing (Python)
 design/         # Source of truth — 7 canonical layers
 ```
 
-## API Domain Modules (11/11)
+## API Domain Modules
 
-| Module | Route prefix | Status |
-|--------|-------------|--------|
-| identity | `/api/auth` | Implemented |
-| content | `/api/content` | Implemented |
-| moderation | `/api/moderation` | Implemented |
-| community | `/api/community` | Scaffold |
-| engagement | `/api/engagement` | Scaffold |
-| search | `/api/search` | Scaffold |
-| calendar | `/api/calendar` | Scaffold |
-| notification | `/api/notifications` | Scaffold |
-| contact | `/api/contact` | Scaffold |
-| vows-merit | `/api/vows-merit` | Scaffold |
-| wisdom-qa | `/api/wisdom-qa` | Scaffold |
+| Module | Route prefix | Status | Key surfaces |
+|--------|-------------|--------|--------------|
+| identity | `/api/auth` | Implemented | login, register, refresh, logout, profile, password reset |
+| content | `/api/content` | Implemented | posts CRUD, guides, downloads, chant items, media library |
+| community | `/api/community` | Implemented | posts, comments, hearts, reports, guestbook |
+| engagement | `/api/engagement` | Implemented | reactions, bookmarks, gongke, repentance, little house, practice profile |
+| search | `/api/search` | Implemented | Meilisearch global search, reindex |
+| calendar | `/api/calendar` | Implemented | events, agenda items, reschedule, cancel, advisory |
+| notification | `/api/notifications` | Implemented | preferences, push subscribe/unsubscribe, push jobs |
+| contact | `/api/contact` | Implemented | contact form, public info, volunteer directory |
+| vows-merit | `/api/vows-merit` | Implemented | vows, milestones, merit transfer, life release journal, altar |
+| wisdom-qa | `/api/wisdom-qa` | Implemented | Q&A, authority profiles, rule packs |
+| moderation | `/api/moderation` | Implemented | reports, decisions, comment moderation |
 
-Platform modules: health, audit, sessions, rate-limit, feature-flags, metrics, storage — all implemented.
+Platform modules: health, audit, sessions, rate-limit, feature-flags, metrics, storage, webhook — all implemented.
+
+## What's NOT done yet
+
+- **Web frontend:** Đang rebuild theo `design/`. Nhiều page chưa kết nối API mới.
+- **Production deployment:** Chưa deploy lần nào. Xem [Production Checklist](design/02-platform-baseline/vps-runtime/PRODUCTION_CHECKLIST.md).
+- **E2E tests:** Chưa có. Unit test coverage thấp.
+- **Advanced infra:** Valkey cache, BullMQ workers, OTEL tracing — planned, chưa activate.
+- **Offline bundles:** Design xong, chưa implement.
 
 ## Quick Start
 
 ```bash
-# Prerequisites: Node >= 20.18, pnpm >= 10.30.3, Docker
+# Prerequisites: Node >= 20.18, pnpm >= 10, Docker
 
-# Install deps
 pnpm install
 
 # Dev (Docker — recommended)
@@ -54,7 +64,7 @@ just dev-core          # web + postgres + meilisearch + redis
 just dev-full          # core + caddy
 
 # Dev (host — fallback)
-just host-prepare      # prepare env
+just host-prepare
 just host-full         # web + api + admin on host
 
 # Admin only
@@ -67,23 +77,22 @@ just admin-dev         # Vite dev server on :3002
 just verify-web        # lint + typecheck for web
 just verify-cms        # lint + typecheck for api
 just verify-all        # full repo verification
-just ci                # full CI locally (lint + typecheck + test)
 just smoke             # smoke tests
 just auth-check        # auth flow test
 just search-check      # search sync test
 ```
 
-## Deploy VPS
+## Scripts & Tooling
 
-```bash
-just deploy-vps <sha>  # SSH deploy to production VPS
-just backup-vietnix    # Trigger backup to Vietnix/MinIO
-```
+Repo scripts dùng 3 ngôn ngữ tùy context:
 
-CI: `.woodpecker.yml` (self-hosted Woodpecker CI, no GitHub Actions billing).
-Monorepo cache: hỗ trợ Turborepo remote cache qua `TURBO_TOKEN` + `TURBO_TEAM` + `TURBO_API`.
+| Language | Usage | Lý do |
+|----------|-------|-------|
+| Bash | Docker, deploy, backup, CI | Chạy trên Linux VPS production |
+| PowerShell | Windows dev host preparation | Dev machine chính là Windows |
+| Python | CLI tools, multi-agent routing | Cross-platform, agent SDK integration |
 
-See `design/02-platform-baseline/vps-runtime/PRODUCTION_CHECKLIST.md` for go-live checklist.
+Entry point chính là `justfile` — tất cả dev commands đi qua `just`.
 
 ## Tech Stack
 
@@ -103,19 +112,20 @@ See `design/02-platform-baseline/vps-runtime/PRODUCTION_CHECKLIST.md` for go-liv
 | Reverse Proxy | Caddy | 2.10 |
 | CDN | Cloudflare Free | — |
 
+## Design docs
+
+- `design/` — canonical source of truth (7 layers). Xem `design/README.md` cho reading order.
+- `design/04-execution-overlay/repo/IMPLEMENTATION_MAPPING.md` — ánh xạ design → code thật.
+- `CLAUDE.md` — Claude Code operating contract.
+- `AGENTS.md` — subagent role specs.
+
 ## Constraints
 
-- **VPS self-host only**: No Render, Railway, Fly.io, AWS, GCP.
+- **VPS self-host only**: Không dùng Render, Railway, Fly.io, AWS, GCP.
 - **Budget**: ~100-200k VND/tháng (VPS only cost).
-- **Domain logic**: 03-domains/ (11 Phật pháp domains) is sacred — never simplify.
-- **Elderly UX**: All public UI must be accessible for elderly users.
+- **Domain logic**: `design/03-domains/` (11 Phật pháp domains) là source of truth.
+- **Elderly accessibility**: Public UI cần accessible cho người lớn tuổi — đang address trong web rebuild.
 
-## Documentation
+## License
 
-- `DESIGN_OVERVIEW.md` — bản rút gọn kiến trúc + performance map
-- `design/` — canonical source of truth (7 layers)
-- `design/README.md` — entry point and reading order
-- `design/AI_ENTRYPOINT.md` — AI orientation
-- `CLAUDE.md` — Claude Code operating contract
-- `AGENTS.md` — subagent role specs
-- `TEAM_GUIDE.md` — dev workflow guide
+All rights reserved. Xem [LICENSE](LICENSE).

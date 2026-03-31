@@ -1033,11 +1033,13 @@ function MediaLibraryDialogs() {
             currentRow={currentRow}
           />
 
-          <CollectionItemsSheet
-            open={open === "items"}
-            onOpenChange={(v) => (!v ? handleClose() : setOpen("items"))}
-            collection={currentRow}
-          />
+          {currentRow && (
+            <CollectionItemsSheet
+              open={open === "items"}
+              onOpenChange={(v) => (!v ? handleClose() : setOpen("items"))}
+              collection={currentRow}
+            />
+          )}
 
           <WorkspaceConfirmDialog
             open={open === "publish"}

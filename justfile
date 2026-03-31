@@ -36,6 +36,9 @@ admin-run:
 admin-build:
   pnpm build:admin
 
+storybook:
+  pnpm storybook
+
 admin-check:
   pnpm typecheck:admin
   pnpm build:admin

@@ -28,6 +28,7 @@
     "claude:setup": "pwsh -ExecutionPolicy Bypass -File ./infra/scripts/bootstrap-claude-code.ps1",
     "claude:doctor": "pwsh -ExecutionPolicy Bypass -File ./infra/scripts/claude-code-doctor.ps1",
     "admin:run": "pwsh -ExecutionPolicy Bypass -File ./infra/scripts/start-host-admin-stack.ps1",
+    "storybook": "pnpm --filter @pmtl/admin storybook",
     "dev:host:web": "pnpm --filter @pmtl/web dev",
     "db:reset:dev": "tsx infra/scripts/reset-dev-db.ts",
     "reindex:posts": "echo \"TODO: replace CMS reindex with apps/api search ops\"",
