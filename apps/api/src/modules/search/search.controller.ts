@@ -2,6 +2,7 @@ import { Controller, Get, Post, Param, Query, UsePipes } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { SearchService } from "./search.service.js";
 import { searchQuerySchema, type SearchQuery } from "./search.schemas.js";
 
@@ -12,6 +13,7 @@ export class SearchController {
 
   @Get()
   @Public()
+  @RateLimit("search.query")
   @UsePipes(ZodValidate(searchQuerySchema))
   @ApiOperation({ summary: "Tìm kiếm nội dung (Meilisearch)" })
   @ApiResponse({ status: 200, description: "Kết quả tìm kiếm" })

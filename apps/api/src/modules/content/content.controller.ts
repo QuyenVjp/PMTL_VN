@@ -16,6 +16,7 @@ import type { Request } from "express";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { ContentService } from "./content.service.js";
@@ -96,6 +97,7 @@ export class ContentController {
   }
 
   @Post("posts")
+  @RateLimit("content.create")
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Tạo bài viết mới" })
   @ApiResponse({ status: 201, description: "Bài viết đã được tạo" })
@@ -114,6 +116,7 @@ export class ContentController {
   }
 
   @Patch("posts/:publicId")
+  @RateLimit("content.update")
   @ApiOperation({ summary: "Cập nhật bài viết" })
   @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
   @ApiResponse({ status: 200, description: "Bài viết đã được cập nhật" })

@@ -101,6 +101,9 @@ const AssistedEntryPage = lazy(() =>
 const PracticeHomePracticeGuidePage = lazy(() =>
   import("@/features/practice-support-home-guide").then((mod) => ({ default: mod.PracticeHomePracticeGuidePage })),
 );
+const WisdomPage = lazy(() =>
+  import("@/features/wisdom-baihoa").then((mod) => ({ default: mod.WisdomPage })),
+);
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -340,6 +343,13 @@ const practiceHomeGuideRoute = createRoute({
   component: withSuspense(PracticeHomePracticeGuidePage),
 });
 
+// Tri Tuệ (Wisdom)
+const wisdomRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/tri-tue",
+  component: withSuspense(WisdomPage),
+});
+
 // ── Route Tree Assembly ──────────────────────────────────────────────
 
 export const routeTree = rootRoute.addChildren([
@@ -383,5 +393,7 @@ export const routeTree = rootRoute.addChildren([
     healthRoute,
     // Hỗ trợ
     assistedEntryRoute,
+    // Tri Tuệ
+    wisdomRoute,
   ]),
 ]);

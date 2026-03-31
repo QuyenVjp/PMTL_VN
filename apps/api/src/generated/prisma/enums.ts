@@ -56,6 +56,16 @@ export const AssetStatus = {
 export type AssetStatus = (typeof AssetStatus)[keyof typeof AssetStatus]
 
 
+export const WisdomEntryType = {
+  BACH_THOAI: 'BACH_THOAI',
+  KHAI_THI: 'KHAI_THI',
+  PHAT_NGON: 'PHAT_NGON',
+  PHAP_HOI: 'PHAP_HOI'
+} as const
+
+export type WisdomEntryType = (typeof WisdomEntryType)[keyof typeof WisdomEntryType]
+
+
 export const MediaCollectionType = {
   PHOTO_ALBUM: 'PHOTO_ALBUM',
   VIDEO_PLAYLIST: 'VIDEO_PLAYLIST',

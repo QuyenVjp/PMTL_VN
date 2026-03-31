@@ -36,12 +36,32 @@ export function createAdminClient(baseUrl: string) {
     return url.toString();
   }
 
+  function getCsrfToken(): string | undefined {
+    try {
+      return document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("csrf_token="))
+        ?.split("=")[1];
+    } catch {
+      return undefined;
+    }
+  }
+
   async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { method = "GET", body, params } = options;
 
     const headers: Record<string, string> = { Accept: "application/json" };
     if (body !== undefined) {
       headers["Content-Type"] = "application/json";
+    }
+
+    // Double-submit cookie CSRF: read non-httpOnly csrf_token cookie and forward as header.
+    // Server CsrfGuard verifies header === cookie on all mutation routes.
+    if (!["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase())) {
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        headers["X-CSRF-Token"] = csrfToken;
+      }
     }
 
     const response = await fetch(buildUrl(path, params), {

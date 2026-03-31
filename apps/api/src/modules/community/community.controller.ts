@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { CommunityService } from "./community.service.js";
@@ -51,6 +52,7 @@ export class CommunityController {
   }
 
   @Post("posts")
+  @RateLimit("community.post")
   @ApiOperation({ summary: "Tạo bài đăng cộng đồng" })
   @ApiResponse({ status: 201, description: "Tạo thành công" })
   createPost(

@@ -23,6 +23,7 @@ import type { Response } from "express";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
@@ -54,6 +55,7 @@ export class AdminMediaController {
   ) {}
 
   @Post("upload")
+  @RateLimit("upload.media")
   @ApiOperation({ summary: "Upload media file (admin)" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 10 * 1024 * 1024 } }))

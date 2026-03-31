@@ -60,3 +60,67 @@ export const q161RulePackResponseSchema = z.object({
 });
 
 export type Q161RulePackResponse = z.infer<typeof q161RulePackResponseSchema>;
+
+// ── Admin Wisdom Entry schemas ───────────────────────────────────────
+
+export const wisdomEntryQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  status: z.string().optional(),
+  entryType: z.string().optional(),
+  search: z.string().optional(),
+});
+export type WisdomEntryQuery = z.infer<typeof wisdomEntryQuerySchema>;
+
+export const createWisdomEntrySchema = z.object({
+  title: z.string().min(3).max(300),
+  slug: z.string().min(3).max(200).optional(),
+  entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]).default("BACH_THOAI"),
+  sourceFamily: z.string().max(100).optional(),
+  sourceUrl: z.string().max(500).optional(),
+  sourceCode: z.string().max(200).optional(),
+  originalText: z.string().optional(),
+  translatedText: z.string().optional(),
+  excerpt: z.string().max(500).optional(),
+  tags: z.array(z.string().max(50)).max(10).default([]),
+});
+export type CreateWisdomEntryInput = z.infer<typeof createWisdomEntrySchema>;
+
+export const updateWisdomEntrySchema = z.object({
+  title: z.string().min(3).max(300).optional(),
+  slug: z.string().min(3).max(200).optional(),
+  entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]).optional(),
+  sourceFamily: z.string().max(100).optional(),
+  sourceUrl: z.string().max(500).optional(),
+  sourceCode: z.string().max(200).optional(),
+  originalText: z.string().optional(),
+  translatedText: z.string().optional(),
+  excerpt: z.string().max(500).optional(),
+  tags: z.array(z.string().max(50)).max(10).optional(),
+});
+export type UpdateWisdomEntryInput = z.infer<typeof updateWisdomEntrySchema>;
+
+export const wisdomEntryResponseSchema = z.object({
+  id: z.string(),
+  publicId: z.string(),
+  title: z.string(),
+  slug: z.string(),
+  entryType: z.string(),
+  sourceFamily: z.string().nullable(),
+  sourceUrl: z.string().nullable(),
+  sourceCode: z.string().nullable(),
+  originalText: z.string().nullable(),
+  translatedText: z.string().nullable(),
+  excerpt: z.string().nullable(),
+  tags: z.array(z.string()),
+  status: z.string(),
+  author: z.object({
+    publicId: z.string(),
+    displayName: z.string(),
+    avatarUrl: z.string().nullable(),
+  }),
+  publishedAt: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type WisdomEntryResponse = z.infer<typeof wisdomEntryResponseSchema>;

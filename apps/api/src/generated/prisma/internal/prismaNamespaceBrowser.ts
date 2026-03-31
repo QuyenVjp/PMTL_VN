@@ -74,6 +74,7 @@ export const ModelName = {
   ContactInfo: 'ContactInfo',
   PushSubscription: 'PushSubscription',
   PushJob: 'PushJob',
+  WisdomEntry: 'WisdomEntry',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
   ChantingSession: 'ChantingSession',
@@ -480,6 +481,29 @@ export const PushJobScalarFieldEnum = {
 } as const
 
 export type PushJobScalarFieldEnum = (typeof PushJobScalarFieldEnum)[keyof typeof PushJobScalarFieldEnum]
+
+
+export const WisdomEntryScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  slug: 'slug',
+  entryType: 'entryType',
+  sourceFamily: 'sourceFamily',
+  sourceUrl: 'sourceUrl',
+  sourceCode: 'sourceCode',
+  originalText: 'originalText',
+  translatedText: 'translatedText',
+  excerpt: 'excerpt',
+  tags: 'tags',
+  status: 'status',
+  authorId: 'authorId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomEntryScalarFieldEnum = (typeof WisdomEntryScalarFieldEnum)[keyof typeof WisdomEntryScalarFieldEnum]
 
 
 export const BeginnerGuideScalarFieldEnum = {

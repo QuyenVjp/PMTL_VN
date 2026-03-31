@@ -542,6 +542,23 @@ export type EnumPushJobStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPushJobStatusFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type EnumWisdomEntryTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomEntryType | Prisma.EnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | $Enums.WisdomEntryType | runtime.Types.Skip
+}
+
+export type EnumWisdomEntryTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomEntryType | Prisma.EnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomEntryTypeWithAggregatesFilter<$PrismaModel> | $Enums.WisdomEntryType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
 export type EnumGuideCategoryFilter<$PrismaModel = never> = {
   equals?: $Enums.GuideCategory | Prisma.EnumGuideCategoryFieldRefInput<$PrismaModel> | runtime.Types.Skip
   in?: $Enums.GuideCategory[] | Prisma.ListEnumGuideCategoryFieldRefInput<$PrismaModel> | runtime.Types.Skip
@@ -1163,6 +1180,23 @@ export type NestedEnumPushJobStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumPushJobStatusFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumPushJobStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumWisdomEntryTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomEntryType | Prisma.EnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | $Enums.WisdomEntryType | runtime.Types.Skip
+}
+
+export type NestedEnumWisdomEntryTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomEntryType | Prisma.EnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomEntryType[] | Prisma.ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomEntryTypeWithAggregatesFilter<$PrismaModel> | $Enums.WisdomEntryType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumWisdomEntryTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 export type NestedEnumGuideCategoryFilter<$PrismaModel = never> = {

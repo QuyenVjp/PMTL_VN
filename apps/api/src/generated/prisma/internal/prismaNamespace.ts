@@ -412,6 +412,7 @@ export const ModelName = {
   ContactInfo: 'ContactInfo',
   PushSubscription: 'PushSubscription',
   PushJob: 'PushJob',
+  WisdomEntry: 'WisdomEntry',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
   ChantingSession: 'ChantingSession',
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "postCategory" | "postTag" | "postTagMap" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "calendarEvent" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "pushJob" | "beginnerGuide" | "download" | "chantingSession" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
+    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "postCategory" | "postTag" | "postTagMap" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "calendarEvent" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "pushJob" | "wisdomEntry" | "beginnerGuide" | "download" | "chantingSession" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2146,6 +2147,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WisdomEntry: {
+      payload: Prisma.$WisdomEntryPayload<ExtArgs>
+      fields: Prisma.WisdomEntryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WisdomEntryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WisdomEntryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        findFirst: {
+          args: Prisma.WisdomEntryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WisdomEntryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        findMany: {
+          args: Prisma.WisdomEntryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>[]
+        }
+        create: {
+          args: Prisma.WisdomEntryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        createMany: {
+          args: Prisma.WisdomEntryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WisdomEntryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>[]
+        }
+        delete: {
+          args: Prisma.WisdomEntryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        update: {
+          args: Prisma.WisdomEntryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        deleteMany: {
+          args: Prisma.WisdomEntryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WisdomEntryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WisdomEntryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>[]
+        }
+        upsert: {
+          args: Prisma.WisdomEntryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomEntryPayload>
+        }
+        aggregate: {
+          args: Prisma.WisdomEntryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWisdomEntry>
+        }
+        groupBy: {
+          args: Prisma.WisdomEntryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WisdomEntryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WisdomEntryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WisdomEntryCountAggregateOutputType> | number
+        }
+      }
+    }
     BeginnerGuide: {
       payload: Prisma.$BeginnerGuidePayload<ExtArgs>
       fields: Prisma.BeginnerGuideFieldRefs
@@ -3528,6 +3603,29 @@ export const PushJobScalarFieldEnum = {
 export type PushJobScalarFieldEnum = (typeof PushJobScalarFieldEnum)[keyof typeof PushJobScalarFieldEnum]
 
 
+export const WisdomEntryScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  slug: 'slug',
+  entryType: 'entryType',
+  sourceFamily: 'sourceFamily',
+  sourceUrl: 'sourceUrl',
+  sourceCode: 'sourceCode',
+  originalText: 'originalText',
+  translatedText: 'translatedText',
+  excerpt: 'excerpt',
+  tags: 'tags',
+  status: 'status',
+  authorId: 'authorId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomEntryScalarFieldEnum = (typeof WisdomEntryScalarFieldEnum)[keyof typeof WisdomEntryScalarFieldEnum]
+
+
 export const BeginnerGuideScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -4056,6 +4154,20 @@ export type ListEnumPushJobStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'WisdomEntryType'
+ */
+export type EnumWisdomEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WisdomEntryType'>
+    
+
+
+/**
+ * Reference to a field of type 'WisdomEntryType[]'
+ */
+export type ListEnumWisdomEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WisdomEntryType[]'>
+    
+
+
+/**
  * Reference to a field of type 'GuideCategory'
  */
 export type EnumGuideCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GuideCategory'>
@@ -4298,6 +4410,7 @@ export type GlobalOmitConfig = {
   contactInfo?: Prisma.ContactInfoOmit
   pushSubscription?: Prisma.PushSubscriptionOmit
   pushJob?: Prisma.PushJobOmit
+  wisdomEntry?: Prisma.WisdomEntryOmit
   beginnerGuide?: Prisma.BeginnerGuideOmit
   download?: Prisma.DownloadOmit
   chantingSession?: Prisma.ChantingSessionOmit

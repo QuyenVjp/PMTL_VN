@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryOptions } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
@@ -15,15 +15,14 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { PowerIcon } from "lucide-react";
-import { toast } from "sonner";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { adminClient } from "@/lib/api/admin-client.js";
-import { handleApiError } from "@/lib/handle-api-error.js";
 import { createSelectColumn } from "@/lib/table/select-column";
+import { flagKeys, useUpdateFeatureFlag } from "./mutations.js";
 
 interface FeatureFlag {
   key: string;
@@ -34,11 +33,6 @@ interface FeatureFlag {
   updatedAt: string;
 }
 
-const flagKeys = {
-  all: ["admin-feature-flags"] as const,
-  list: () => [...flagKeys.all, "list"] as const,
-};
-
 const statusOptions = [
   { label: "Đang bật", value: "enabled" },
   { label: "Đang tắt", value: "disabled" },
@@ -48,19 +42,6 @@ function flagListOptions() {
   return queryOptions({
     queryKey: flagKeys.list(),
     queryFn: () => adminClient.get<{ data: FeatureFlag[] }>("/admin/feature-flags"),
-  });
-}
-
-function useToggleFlag() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ key, enabled }: { key: string; enabled: boolean }) =>
-      adminClient.patch(`/admin/feature-flags/${key}`, { enabled }),
-    onSuccess: (_data, { key, enabled }) => {
-      toast.success(enabled ? `Đã bật cờ "${key}".` : `Đã tắt cờ "${key}".`);
-      void queryClient.invalidateQueries({ queryKey: flagKeys.list() });
-    },
-    onError: handleApiError,
   });
 }
 
@@ -87,7 +68,7 @@ function FeatureFlagRowActions({
 export function FeatureFlagsPage() {
   const queryClient = useQueryClient();
   const { data: envelope, isLoading } = useQuery(flagListOptions());
-  const toggleFlag = useToggleFlag();
+  const updateFlag = useUpdateFeatureFlag();
 
   const flags = envelope?.data ?? [];
 
@@ -144,13 +125,13 @@ export function FeatureFlagsPage() {
       {
         id: "actions",
         cell: ({ row }) => (
-          <FeatureFlagRowActions row={row.original} onToggle={(flag) => toggleFlag.mutate({ key: flag.key, enabled: !flag.enabled })} />
+          <FeatureFlagRowActions row={row.original} onToggle={(flag) => updateFlag.mutate({ key: flag.key, enabled: !flag.enabled })} />
         ),
         enableSorting: false,
         enableHiding: false,
       },
     ],
-    [toggleFlag],
+    [updateFlag],
   );
 
   const table = useSafeReactTable({
@@ -179,7 +160,7 @@ export function FeatureFlagsPage() {
     }
     await Promise.all(
       selectedRows.map((flag) =>
-        toggleFlag.mutateAsync({ key: flag.key, enabled }),
+        updateFlag.mutateAsync({ key: flag.key, enabled }),
       ),
     );
     table.resetRowSelection();
@@ -222,7 +203,7 @@ export function FeatureFlagsPage() {
           <Button
             size="sm"
             variant="outline"
-            disabled={toggleFlag.isPending}
+            disabled={updateFlag.isPending}
             onClick={() => void bulkToggle(true)}
           >
             Bật đã chọn
@@ -230,7 +211,7 @@ export function FeatureFlagsPage() {
           <Button
             size="sm"
             variant="outline"
-            disabled={toggleFlag.isPending}
+            disabled={updateFlag.isPending}
             onClick={() => void bulkToggle(false)}
           >
             Tắt đã chọn

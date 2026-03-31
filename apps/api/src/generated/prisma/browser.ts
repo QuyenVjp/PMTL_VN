@@ -133,6 +133,11 @@ export type PushSubscription = Prisma.PushSubscriptionModel
  */
 export type PushJob = Prisma.PushJobModel
 /**
+ * Model WisdomEntry
+ * 
+ */
+export type WisdomEntry = Prisma.WisdomEntryModel
+/**
  * Model BeginnerGuide
  * 
  */

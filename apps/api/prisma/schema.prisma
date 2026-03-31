@@ -47,6 +47,13 @@ enum AssetStatus {
   DELETED
 }
 
+enum WisdomEntryType {
+  BACH_THOAI
+  KHAI_THI
+  PHAT_NGON
+  PHAP_HOI
+}
+
 enum MediaCollectionType {
   PHOTO_ALBUM
   VIDEO_PLAYLIST
@@ -152,6 +159,7 @@ model User {
   altarLogs           AltarLog[]           @relation("altarLogs")
   activationLogs      ActivationLog[]      @relation("activationLogs")
   practiceProfile     PracticeProfile?     @relation("practiceProfile")
+  wisdomEntries       WisdomEntry[]        @relation("wisdomEntries")
 
   @@index([email])
   @@index([status])
@@ -644,6 +652,37 @@ model PushJob {
   @@index([status])
   @@index([createdById])
   @@map("push_jobs")
+}
+
+// ============================================================================
+// WISDOM TABLES
+// ============================================================================
+
+model WisdomEntry {
+  id             String          @id @default(cuid())
+  publicId       String          @unique @map("public_id")
+  title          String
+  slug           String          @unique
+  entryType      WisdomEntryType @default(BACH_THOAI) @map("entry_type")
+  sourceFamily   String?         @map("source_family")
+  sourceUrl      String?         @map("source_url")
+  sourceCode     String?         @map("source_code")
+  originalText   String?         @map("original_text")
+  translatedText String?         @map("translated_text")
+  excerpt        String?
+  tags           String[]
+  status         ContentStatus   @default(DRAFT)
+  authorId       String          @map("author_id")
+  publishedAt    DateTime?       @map("published_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  author User @relation("wisdomEntries", fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([status])
+  @@index([entryType])
+  @@map("wisdom_entries")
 }
 
 // ============================================================================

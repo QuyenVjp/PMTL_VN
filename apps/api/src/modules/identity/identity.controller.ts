@@ -11,9 +11,11 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { randomBytes } from "node:crypto";
 import type { Request, Response } from "express";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { IdentityService } from "./identity.service.js";
@@ -43,6 +45,7 @@ export class IdentityController {
 
   @Post("login")
   @Public()
+  @RateLimit("auth.login")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Đăng nhập" })
   @ApiResponse({ status: 200, description: "Đăng nhập thành công" })
@@ -75,6 +78,7 @@ export class IdentityController {
 
   @Post("refresh")
   @Public()
+  @RateLimit("auth.refresh")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Làm mới token" })
   @ApiResponse({ status: 200, description: "Token đã được làm mới" })
@@ -184,8 +188,7 @@ export class IdentityController {
 
   private setAuthCookies(res: Response, accessToken: string, refreshToken: string) {
     const domain = this.resolveCookieDomain();
-    const cookieOptions = {
-      httpOnly: true,
+    const baseOptions = {
       secure: this.configService.cookieSecure,
       sameSite: "lax" as const,
       path: "/",
@@ -193,28 +196,38 @@ export class IdentityController {
     };
 
     res.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
-      ...cookieOptions,
+      ...baseOptions,
+      httpOnly: true,
       maxAge: this.configService.accessTokenTtlMinutes * 60 * 1000,
     });
 
     res.cookie(REFRESH_TOKEN_COOKIE, refreshToken, {
-      ...cookieOptions,
+      ...baseOptions,
+      httpOnly: true,
+      maxAge: this.configService.refreshTokenTtlDays * 24 * 60 * 60 * 1000,
+    });
+
+    // Non-httpOnly CSRF token — JS-readable for double-submit cookie pattern
+    const csrfToken = randomBytes(32).toString("hex");
+    res.cookie("csrf_token", csrfToken, {
+      ...baseOptions,
+      httpOnly: false,
       maxAge: this.configService.refreshTokenTtlDays * 24 * 60 * 60 * 1000,
     });
   }
 
   private clearAuthCookies(res: Response) {
     const domain = this.resolveCookieDomain();
-    const cookieOptions = {
-      httpOnly: true,
+    const baseOptions = {
       secure: this.configService.cookieSecure,
       sameSite: "lax" as const,
       path: "/",
       ...(domain ? { domain } : {}),
     };
 
-    res.clearCookie(ACCESS_TOKEN_COOKIE, cookieOptions);
-    res.clearCookie(REFRESH_TOKEN_COOKIE, cookieOptions);
+    res.clearCookie(ACCESS_TOKEN_COOKIE, { ...baseOptions, httpOnly: true });
+    res.clearCookie(REFRESH_TOKEN_COOKIE, { ...baseOptions, httpOnly: true });
+    res.clearCookie("csrf_token", { ...baseOptions, httpOnly: false });
   }
 
   private extractCookieValue(req: Request, key: string): string | undefined {

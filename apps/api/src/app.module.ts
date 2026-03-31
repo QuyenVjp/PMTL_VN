@@ -10,6 +10,7 @@
  *   4. AuthGuard (APP_GUARD #1 — authn)
  *   5. RolesGuard (APP_GUARD #2 — authz after authn)
  *   6. RateLimitGuard (APP_GUARD #3 — per-route metadata)
+ *   6b. CsrfGuard (APP_GUARD #4 — double-submit cookie CSRF)
  *   7. ZodValidationPipe (APP_PIPE — boundary validation)
  *   8. Controller → Service (thin controller calls service)
  *   9. ResponseInterceptor (APP_INTERCEPTOR — success envelope)
@@ -32,6 +33,7 @@ import { RequestIdMiddleware } from "./common/middleware/request-id.middleware.j
 import { AuthGuard } from "./common/auth/auth.guard.js";
 import { RolesGuard } from "./common/auth/roles.guard.js";
 import { RateLimitGuard } from "./platform/rate-limit/rate-limit.guard.js";
+import { CsrfGuard } from "./platform/csrf/csrf.guard.js";
 import { ZodValidationPipe } from "./common/validation/zod-validation.pipe.js";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor.js";
 import { GlobalExceptionFilter } from "./common/errors/global-exception.filter.js";
@@ -94,10 +96,11 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     WisdomQaModule,
   ],
   providers: [
-    // Guard chain: authn → authz → rate-limit (order matters)
+    // Guard chain: authn → authz → rate-limit → csrf (order matters)
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_GUARD, useClass: RateLimitGuard },
+    { provide: APP_GUARD, useClass: CsrfGuard },
 
     // Boundary validation authority — Zod, NOT class-validator
     { provide: APP_PIPE, useClass: ZodValidationPipe },
