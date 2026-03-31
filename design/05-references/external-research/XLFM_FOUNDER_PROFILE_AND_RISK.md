@@ -77,6 +77,7 @@ Lưu ý:
 - `https://lujunhong2or.com/`
 - `https://www.orientalradio.com.sg/`
 - `https://www.xinlingfamen.info/web/article/`
+- `design/05-references/external-research/ORIENTALRADIO_MASTER_JUN_HONG_LU_TIMELINE_2026-03-31.md`
 
 ## Integration Targets
 - `design/03-domains/community/REFERENCES/DHARMA_SHARING_MODERATION_NOTES.md`
