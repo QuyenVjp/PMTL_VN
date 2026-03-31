@@ -26,3 +26,6 @@ tmp/aider/
 tmp/aider-runtime/
 tmp/reference/
 .aider*
+
+*storybook.log
+storybook-static

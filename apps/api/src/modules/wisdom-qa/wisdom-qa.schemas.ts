@@ -124,3 +124,48 @@ export const wisdomEntryResponseSchema = z.object({
   updatedAt: z.string(),
 });
 export type WisdomEntryResponse = z.infer<typeof wisdomEntryResponseSchema>;
+
+// ── Authority Profile schemas ───────────────────────────────────────
+
+export const createAuthorityProfileSchema = z.object({
+  name: z.string().min(2).max(200),
+  title: z.string().max(200).optional(),
+  description: z.string().max(2000).optional(),
+  sourceFamily: z.string().max(100).optional(),
+});
+export type CreateAuthorityProfileInput = z.infer<typeof createAuthorityProfileSchema>;
+
+export const updateAuthorityProfileSchema = z.object({
+  name: z.string().min(2).max(200).optional(),
+  title: z.string().max(200).optional(),
+  description: z.string().max(2000).optional(),
+  sourceFamily: z.string().max(100).optional(),
+});
+export type UpdateAuthorityProfileInput = z.infer<typeof updateAuthorityProfileSchema>;
+
+export const authorityProfileQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  isActive: z
+    .enum(["true", "false"])
+    .transform((v) => v === "true")
+    .optional(),
+});
+export type AuthorityProfileQuery = z.infer<typeof authorityProfileQuerySchema>;
+
+// ── Public wisdom entries hub schemas ───────────────────────────────
+
+export const wisdomEntryPublicQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  type: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]).optional(),
+  sourceFamily: z.string().max(100).optional(),
+});
+export type WisdomEntryPublicQuery = z.infer<typeof wisdomEntryPublicQuerySchema>;
+
+// ── Duplicate check schema ──────────────────────────────────────────
+
+export const duplicateCheckSchema = z.object({
+  title: z.string().min(1).max(300),
+});
+export type DuplicateCheckInput = z.infer<typeof duplicateCheckSchema>;

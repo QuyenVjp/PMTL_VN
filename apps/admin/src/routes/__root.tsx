@@ -95,6 +95,9 @@ const NotificationsPage = lazy(() =>
 const VolunteersPage = lazy(() =>
   import("@/features/volunteers").then((mod) => ({ default: mod.VolunteersPage })),
 );
+const ContactInfoPage = lazy(() =>
+  import("@/features/contact-info").then((mod) => ({ default: mod.ContactInfoPage })),
+);
 const AssistedEntryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.AssistedEntryPage })),
 );
@@ -324,6 +327,12 @@ const volunteersRoute = createRoute({
   component: withSuspense(VolunteersPage),
 });
 
+const contactInfoRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong/thong-tin-lien-he",
+  component: withSuspense(ContactInfoPage),
+});
+
 const healthRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/he-thong/health",
@@ -390,6 +399,7 @@ export const routeTree = rootRoute.addChildren([
     searchRoute,
     notificationsRoute,
     volunteersRoute,
+    contactInfoRoute,
     healthRoute,
     // Hỗ trợ
     assistedEntryRoute,

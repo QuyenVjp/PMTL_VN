@@ -111,3 +111,46 @@ export const adminUpdateEventSchema = z.object({
 });
 
 export type AdminUpdateEventInput = z.infer<typeof adminUpdateEventSchema>;
+
+// ── Agenda item schemas ────────────────────────────────────────────────
+
+export const createAgendaItemSchema = z.object({
+  title: z.string().check(z.minLength(1), z.maxLength(300)),
+  description: z.string().check(z.maxLength(2000)).optional(),
+  startTime: z.string().check(z.maxLength(20)).optional(),
+  endTime: z.string().check(z.maxLength(20)).optional(),
+  sortOrder: z.number().check(z.int(), z.gte(0)).optional(),
+});
+
+export type CreateAgendaItemInput = z.infer<typeof createAgendaItemSchema>;
+
+export const updateAgendaItemSchema = z.object({
+  title: z.string().check(z.minLength(1), z.maxLength(300)).optional(),
+  description: z.string().check(z.maxLength(2000)).optional().nullable(),
+  startTime: z.string().check(z.maxLength(20)).optional().nullable(),
+  endTime: z.string().check(z.maxLength(20)).optional().nullable(),
+  sortOrder: z.number().check(z.int(), z.gte(0)).optional(),
+});
+
+export type UpdateAgendaItemInput = z.infer<typeof updateAgendaItemSchema>;
+
+export const reorderAgendaItemsSchema = z.object({
+  items: z.array(
+    z.object({
+      publicId: z.string().check(z.minLength(1)),
+      sortOrder: z.number().check(z.int(), z.gte(0)),
+    }),
+  ).check(z.minLength(1)),
+});
+
+export type ReorderAgendaItemsInput = z.infer<typeof reorderAgendaItemsSchema>;
+
+// ── Event lifecycle schemas ────────────────────────────────────────────
+
+export const rescheduleEventSchema = z.object({
+  startAt: z.string().datetime(),
+  endAt: z.string().datetime().optional(),
+  note: z.string().check(z.maxLength(500)).optional(),
+});
+
+export type RescheduleEventInput = z.infer<typeof rescheduleEventSchema>;

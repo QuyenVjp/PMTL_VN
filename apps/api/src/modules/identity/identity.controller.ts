@@ -24,10 +24,14 @@ import {
   registerSchema,
   updateProfileSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
   type LoginInput,
   type RegisterInput,
   type UpdateProfileInput,
   type ChangePasswordInput,
+  type ForgotPasswordInput,
+  type ResetPasswordInput,
 } from "./identity.schemas.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { UnauthorizedError } from "../../common/errors/app-error.js";
@@ -67,6 +71,7 @@ export class IdentityController {
 
   @Post("register")
   @Public()
+  @RateLimit("auth.login")
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(ZodValidate(registerSchema))
   @ApiOperation({ summary: "Đăng ký tài khoản mới" })
@@ -170,6 +175,7 @@ export class IdentityController {
   }
 
   @Post("change-password")
+  @RateLimit("auth.login")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Đổi mật khẩu" })
   @ApiResponse({ status: 200, description: "Đã đổi mật khẩu" })
@@ -184,6 +190,31 @@ export class IdentityController {
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
     });
+  }
+
+  @Post("forgot-password")
+  @Public()
+  @RateLimit("auth.login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Yêu cầu đặt lại mật khẩu" })
+  @ApiResponse({ status: 200, description: "Yêu cầu đã được xử lý" })
+  async forgotPassword(
+    @Body(ZodValidate(forgotPasswordSchema)) input: ForgotPasswordInput,
+  ) {
+    return this.identityService.requestPasswordReset(input);
+  }
+
+  @Post("reset-password")
+  @Public()
+  @RateLimit("auth.login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Đặt lại mật khẩu bằng token" })
+  @ApiResponse({ status: 200, description: "Mật khẩu đã được đặt lại" })
+  @ApiResponse({ status: 400, description: "Token không hợp lệ hoặc đã hết hạn" })
+  async resetPassword(
+    @Body(ZodValidate(resetPasswordSchema)) input: ResetPasswordInput,
+  ) {
+    return this.identityService.resetPassword(input);
   }
 
   private setAuthCookies(res: Response, accessToken: string, refreshToken: string) {

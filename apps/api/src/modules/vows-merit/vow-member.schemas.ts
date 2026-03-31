@@ -46,3 +46,34 @@ export const memberVowQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 export type MemberVowQuery = z.infer<typeof memberVowQuerySchema>;
+
+export const createMilestoneSchema = z.object({
+  addCount: z.number().int().min(1).max(100000),
+  note: z.string().max(500).optional(),
+});
+export type CreateMilestoneInput = z.infer<typeof createMilestoneSchema>;
+
+export const memberLifeReleaseQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+export type MemberLifeReleaseQuery = z.infer<typeof memberLifeReleaseQuerySchema>;
+
+export const createLifeReleaseJournalSchema = z.object({
+  animalType: z.string().min(1).max(100),
+  quantity: z.number().int().min(1),
+  location: z.string().max(500).optional(),
+  note: z.string().max(2000).optional(),
+  journalDate: z.string().datetime(),
+  vowPublicId: z.string().min(1).optional(),
+});
+export type CreateLifeReleaseJournalInput = z.infer<typeof createLifeReleaseJournalSchema>;
+
+export const updateLifeReleaseJournalSchema = z.object({
+  animalType: z.string().min(1).max(100).optional(),
+  quantity: z.number().int().min(1).optional(),
+  location: z.string().max(500).optional(),
+  note: z.string().max(2000).optional(),
+  journalDate: z.string().datetime().optional(),
+});
+export type UpdateLifeReleaseJournalInput = z.infer<typeof updateLifeReleaseJournalSchema>;

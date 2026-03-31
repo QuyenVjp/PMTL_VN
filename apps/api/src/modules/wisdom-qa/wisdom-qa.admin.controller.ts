@@ -21,9 +21,17 @@ import {
   wisdomEntryQuerySchema,
   createWisdomEntrySchema,
   updateWisdomEntrySchema,
+  authorityProfileQuerySchema,
+  createAuthorityProfileSchema,
+  updateAuthorityProfileSchema,
+  duplicateCheckSchema,
   type WisdomEntryQuery,
   type CreateWisdomEntryInput,
   type UpdateWisdomEntryInput,
+  type AuthorityProfileQuery,
+  type CreateAuthorityProfileInput,
+  type UpdateAuthorityProfileInput,
+  type DuplicateCheckInput,
 } from "./wisdom-qa.schemas.js";
 
 @ApiTags("admin-wisdom")
@@ -116,6 +124,87 @@ export class WisdomQaAdminController {
     @Req() req: Request,
   ) {
     return this.wisdomQaService.deleteWisdomEntry(id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: (req as any).ip,
+      userAgent: (req as any).headers["user-agent"],
+    });
+  }
+
+  // ── Duplicate Check ─────────────────────────────────────────────────
+
+  @Post("entries/duplicate-check")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Kiểm tra trùng lặp bài tri tuệ" })
+  @ApiResponse({ status: 200, description: "Kết quả kiểm tra trùng lặp" })
+  duplicateCheck(
+    @Body(ZodValidate(duplicateCheckSchema)) input: DuplicateCheckInput,
+  ) {
+    return this.wisdomQaService.checkDuplicateEntry(input);
+  }
+
+  // ── Authority Profiles ──────────────────────────────────────────────
+
+  @Get("authority-profiles")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Danh sách hồ sơ authority (admin)" })
+  @ApiResponse({ status: 200, description: "Danh sách hồ sơ authority" })
+  listAuthorityProfiles(
+    @Query(ZodValidate(authorityProfileQuerySchema)) query: AuthorityProfileQuery,
+  ) {
+    return this.wisdomQaService.listAuthorityProfiles(query);
+  }
+
+  @Post("authority-profiles")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Tạo hồ sơ authority" })
+  @ApiResponse({ status: 201, description: "Đã tạo hồ sơ authority" })
+  createAuthorityProfile(
+    @Body(ZodValidate(createAuthorityProfileSchema)) input: CreateAuthorityProfileInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.wisdomQaService.createAuthorityProfile(input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: (req as any).ip,
+      userAgent: (req as any).headers["user-agent"],
+    });
+  }
+
+  @Patch("authority-profiles/:publicId")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Cập nhật hồ sơ authority" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật hồ sơ authority" })
+  updateAuthorityProfile(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(updateAuthorityProfileSchema)) input: UpdateAuthorityProfileInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.wisdomQaService.updateAuthorityProfile(publicId, input, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: (req as any).ip,
+      userAgent: (req as any).headers["user-agent"],
+    });
+  }
+
+  @Delete("authority-profiles/:publicId")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Vô hiệu hoá hồ sơ authority (soft delete)" })
+  @ApiParam({ name: "publicId", description: "Public ID" })
+  @ApiResponse({ status: 200, description: "Đã vô hiệu hoá hồ sơ authority" })
+  deleteAuthorityProfile(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.wisdomQaService.deleteAuthorityProfile(publicId, {
       actorId: user.id,
       actorType: "user",
       ipAddress: (req as any).ip,

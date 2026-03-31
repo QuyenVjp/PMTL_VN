@@ -39,6 +39,12 @@ export const auditActionSchema = z.enum([
   "admin.calendar_event.update",
   "admin.calendar_event.delete",
   "admin.calendar_event.publish",
+  "admin.calendar_event.reschedule",
+  "admin.calendar_event.cancel",
+  "admin.calendar_event.agenda_item.create",
+  "admin.calendar_event.agenda_item.update",
+  "admin.calendar_event.agenda_item.delete",
+  "admin.calendar_event.agenda_item.reorder",
 
   // Community actions
   "admin.community_post.update",
@@ -47,10 +53,22 @@ export const auditActionSchema = z.enum([
   "admin.guestbook.update",
   "admin.guestbook.delete",
 
+  // Community public social actions
+  "community.heart.add",
+  "community.heart.remove",
+  "community.comment.create",
+  "community.report.create",
+  "community.guestbook.create",
+
   // Notification actions
   "admin.push_job.create",
   "admin.push_job.redrive",
   "admin.push_job.delete",
+
+  // Member notification actions
+  "member.preferences.update",
+  "member.push.subscribe",
+  "member.push.unsubscribe",
 
   // Volunteer/contact actions
   "admin.volunteer.create",

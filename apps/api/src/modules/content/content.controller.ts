@@ -39,6 +39,10 @@ import {
   type DownloadQuery,
   type CreateDownloadRequest,
   type UpdateDownloadRequest,
+  beginnerGuidePublicQuerySchema,
+  type BeginnerGuidePublicQuery,
+  downloadPublicQuerySchema,
+  type DownloadPublicQuery,
 } from "./content.schemas.js";
 
 @ApiTags("content")
@@ -393,5 +397,75 @@ export class AdminDownloadController {
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
     });
+  }
+}
+
+// ======================== Public Beginner Guide Controller ========================
+
+@ApiTags("content")
+@Controller("content/beginner-guides")
+export class PublicBeginnerGuideController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @Public()
+  @ApiOperation({ summary: "Danh sách bài hướng dẫn sơ học (công khai)" })
+  @ApiResponse({ status: 200, description: "Danh sách bài hướng dẫn đã xuất bản" })
+  async listPublicGuides(@Query() query: BeginnerGuidePublicQuery) {
+    const validated = beginnerGuidePublicQuerySchema.parse(query);
+    return this.contentService.publicListBeginnerGuides(validated);
+  }
+
+  @Get(":slugOrPublicId")
+  @Public()
+  @ApiOperation({ summary: "Chi tiết bài hướng dẫn sơ học (công khai)" })
+  @ApiParam({ name: "slugOrPublicId", description: "Slug hoặc Public ID của bài hướng dẫn" })
+  @ApiResponse({ status: 200, description: "Chi tiết bài hướng dẫn" })
+  @ApiResponse({ status: 404, description: "Bài hướng dẫn không tồn tại" })
+  async getPublicGuide(@Param("slugOrPublicId") slugOrPublicId: string) {
+    return this.contentService.publicGetBeginnerGuide(slugOrPublicId);
+  }
+}
+
+// ======================== Public Download Controller ========================
+
+@ApiTags("content")
+@Controller("content/downloads")
+export class PublicDownloadController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @Public()
+  @ApiOperation({ summary: "Danh sách tài liệu tải về (công khai)" })
+  @ApiResponse({ status: 200, description: "Danh sách tài liệu đã xuất bản" })
+  async listPublicDownloads(@Query() query: DownloadPublicQuery) {
+    const validated = downloadPublicQuerySchema.parse(query);
+    return this.contentService.publicListDownloads(validated);
+  }
+
+  @Get(":publicId")
+  @Public()
+  @ApiOperation({ summary: "Chi tiết tài liệu tải về (công khai)" })
+  @ApiParam({ name: "publicId", description: "Public ID của tài liệu" })
+  @ApiResponse({ status: 200, description: "Chi tiết tài liệu" })
+  @ApiResponse({ status: 404, description: "Tài liệu không tồn tại" })
+  async getPublicDownload(@Param("publicId") publicId: string) {
+    return this.contentService.publicGetDownload(publicId);
+  }
+}
+
+// ======================== Public Chant Items Controller ========================
+
+@ApiTags("content")
+@Controller("content/chant-items")
+export class PublicChantItemsController {
+  constructor(private readonly contentService: ContentService) {}
+
+  @Get()
+  @Public()
+  @ApiOperation({ summary: "Danh sách quy tắc niệm kinh (công khai)" })
+  @ApiResponse({ status: 200, description: "Nhóm quy tắc niệm kinh với các quy tắc con" })
+  async listPublicChantItems() {
+    return this.contentService.publicListChantItems();
   }
 }

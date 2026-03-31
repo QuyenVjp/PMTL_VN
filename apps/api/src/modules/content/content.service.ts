@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException, ConflictException } 
 import { nanoid } from "nanoid";
 import { ContentRepository } from "./content.repository.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { CacheService } from "../../common/cache/cache.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
@@ -10,6 +11,7 @@ import type {
   CreatePostRequest, UpdatePostRequest, ListPostsQuery,
   GuideQuery, CreateGuideRequest, UpdateGuideRequest,
   DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
+  BeginnerGuidePublicQuery, DownloadPublicQuery,
 } from "./content.schemas.js";
 import { type UserRole, type ContentStatus, type Prisma, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
@@ -18,6 +20,7 @@ export class ContentService {
   constructor(
     private readonly repository: ContentRepository,
     private readonly prisma: PrismaService,
+    private readonly cacheService: CacheService,
     private readonly audit: AuditService,
     private readonly storage: StorageService,
   ) {}
@@ -619,6 +622,213 @@ export class ContentService {
 
     await this.audit.append(auditContext, "content.publish", "download", publicId);
     return updated;
+  }
+
+  // ======================== Public beginner-guide read methods ========================
+
+  async publicListBeginnerGuides(query: BeginnerGuidePublicQuery) {
+    const cacheKey = `content:public:beginner-guides:list:${query.limit}:${query.offset}:${query.category ?? "all"}`;
+    return this.cacheService.getOrSet(cacheKey, 300, async () => {
+      const where: Prisma.BeginnerGuideWhereInput = { status: "PUBLISHED" };
+      if (query.category) where.category = query.category as GuideCategory;
+
+      const [data, total] = await Promise.all([
+        this.prisma.beginnerGuide.findMany({
+          where,
+          include: {
+            author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+            coverMedia: { select: { publicId: true, url: true } },
+          },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+          skip: query.offset,
+          take: query.limit,
+        }),
+        this.prisma.beginnerGuide.count({ where }),
+      ]);
+
+      const items = await Promise.all(
+        data.map(async (guide) => ({
+          publicId: guide.publicId,
+          title: guide.title,
+          slug: guide.slug,
+          excerpt: guide.excerpt,
+          category: guide.category,
+          sortOrder: guide.sortOrder,
+          coverImageUrl:
+            (await this.storage.resolveAssetUrl(guide.coverMedia?.publicId)) ?? guide.coverMedia?.url ?? null,
+          author: {
+            displayName: guide.author.displayName,
+            avatarUrl: guide.author.avatarUrl,
+          },
+          publishedAt: guide.publishedAt?.toISOString() ?? null,
+        })),
+      );
+
+      return {
+        data: items,
+        meta: {
+          pagination: {
+            total,
+            limit: query.limit,
+            offset: query.offset,
+            hasMore: query.offset + query.limit < total,
+          },
+        },
+      };
+    });
+  }
+
+  async publicGetBeginnerGuide(slugOrPublicId: string) {
+    const cacheKey = `content:public:beginner-guide:${slugOrPublicId}`;
+    return this.cacheService.getOrSet(cacheKey, 300, async () => {
+      const guide = await this.prisma.beginnerGuide.findFirst({
+        where: {
+          OR: [{ publicId: slugOrPublicId }, { slug: slugOrPublicId }],
+          status: "PUBLISHED",
+        },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          coverMedia: { select: { publicId: true, url: true } },
+        },
+      });
+      if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
+
+      return {
+        publicId: guide.publicId,
+        title: guide.title,
+        slug: guide.slug,
+        content: guide.content as Record<string, unknown>,
+        excerpt: guide.excerpt,
+        category: guide.category,
+        sortOrder: guide.sortOrder,
+        versionNote: guide.versionNote,
+        coverImageUrl:
+          (await this.storage.resolveAssetUrl(guide.coverMedia?.publicId)) ?? guide.coverMedia?.url ?? null,
+        author: {
+          displayName: guide.author.displayName,
+          avatarUrl: guide.author.avatarUrl,
+        },
+        publishedAt: guide.publishedAt?.toISOString() ?? null,
+        updatedAt: guide.updatedAt.toISOString(),
+      };
+    });
+  }
+
+  // ======================== Public download read methods ========================
+
+  async publicListDownloads(query: DownloadPublicQuery) {
+    const cacheKey = `content:public:downloads:list:${query.limit}:${query.offset}:${query.category ?? "all"}`;
+    return this.cacheService.getOrSet(cacheKey, 300, async () => {
+      const where: Prisma.DownloadWhereInput = { status: "PUBLISHED" };
+      if (query.category) where.category = query.category as DownloadCategory;
+
+      const [data, total] = await Promise.all([
+        this.prisma.download.findMany({
+          where,
+          include: {
+            uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+            fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+            thumbnailMedia: { select: { publicId: true, url: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          skip: query.offset,
+          take: query.limit,
+        }),
+        this.prisma.download.count({ where }),
+      ]);
+
+      const items = await Promise.all(
+        data.map(async (download) => ({
+          publicId: download.publicId,
+          title: download.title,
+          description: download.description,
+          category: download.category,
+          fileUrl: download.fileMedia?.url ?? download.fileUrl,
+          fileType: download.fileMedia?.mimeType ?? download.fileType,
+          fileSize: download.fileMedia?.size ?? download.fileSize,
+          thumbnailUrl:
+            (await this.storage.resolveAssetUrl(download.thumbnailMedia?.publicId)) ?? download.thumbnailMedia?.url ?? null,
+          publishedAt: download.publishedAt?.toISOString() ?? null,
+        })),
+      );
+
+      return {
+        data: items,
+        meta: {
+          pagination: {
+            total,
+            limit: query.limit,
+            offset: query.offset,
+            hasMore: query.offset + query.limit < total,
+          },
+        },
+      };
+    });
+  }
+
+  async publicGetDownload(publicId: string) {
+    const cacheKey = `content:public:download:${publicId}`;
+    return this.cacheService.getOrSet(cacheKey, 300, async () => {
+      const download = await this.prisma.download.findFirst({
+        where: { publicId, status: "PUBLISHED" },
+        include: {
+          uploader: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          fileMedia: { select: { publicId: true, url: true, mimeType: true, size: true } },
+          thumbnailMedia: { select: { publicId: true, url: true } },
+        },
+      });
+      if (!download) throw new NotFoundException("Tài liệu không tồn tại");
+
+      return {
+        publicId: download.publicId,
+        title: download.title,
+        description: download.description,
+        category: download.category,
+        fileUrl: download.fileMedia?.url ?? download.fileUrl,
+        fileType: download.fileMedia?.mimeType ?? download.fileType,
+        fileSize: download.fileMedia?.size ?? download.fileSize,
+        thumbnailUrl:
+          (await this.storage.resolveAssetUrl(download.thumbnailMedia?.publicId)) ?? download.thumbnailMedia?.url ?? null,
+        publishedAt: download.publishedAt?.toISOString() ?? null,
+        createdAt: download.createdAt.toISOString(),
+      };
+    });
+  }
+
+  // ======================== Public chant-items read method ========================
+
+  async publicListChantItems() {
+    return this.cacheService.getOrSet("content:public:chant-items:v1", 300, async () => {
+      const groups = await this.prisma.chantEnvironmentRuleGroup.findMany({
+        include: {
+          rules: {
+            orderBy: { sortOrder: "asc" },
+          },
+        },
+        orderBy: { sortOrder: "asc" },
+      });
+
+      return {
+        data: groups.map((group) => ({
+          groupKey: group.groupKey,
+          title: group.title,
+          summary: group.summary,
+          rules: group.rules.map((rule) => ({
+            ruleKey: rule.ruleKey,
+            title: rule.title,
+            canonicalWording: rule.canonicalWording,
+            severity: rule.severity.toLowerCase(),
+            productizationMode: rule.productizationMode.toLowerCase(),
+            safeLaneRefs: rule.safeLaneRefs.length > 0 ? rule.safeLaneRefs : undefined,
+            avoidItems: rule.avoidItems.length > 0 ? rule.avoidItems : undefined,
+            shortReason: rule.shortReason,
+            sourceReference: rule.sourceReference,
+            referenceOnly: rule.referenceOnly,
+          })),
+          lastReviewedAt: group.lastReviewedAt.toISOString(),
+        })),
+      };
+    });
   }
 
   private async resolveMediaIdByPublicId(publicId: string | null | undefined): Promise<string | null | undefined> {

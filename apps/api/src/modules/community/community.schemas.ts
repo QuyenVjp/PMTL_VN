@@ -38,6 +38,25 @@ export const adminUpdateGuestbookSchema = z.object({
 });
 export type AdminUpdateGuestbookInput = z.infer<typeof adminUpdateGuestbookSchema>;
 
+// Comment schemas
+export const createCommentSchema = z.object({
+  content: z.string().min(1, "Nội dung không được trống").max(2000),
+});
+export type CreateCommentInput = z.infer<typeof createCommentSchema>;
+
+export const commentQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+export type CommentQuery = z.infer<typeof commentQuerySchema>;
+
+// Report schemas
+export const createReportSchema = z.object({
+  reasonCode: z.string().min(1).max(50),
+  description: z.string().max(1000).optional(),
+});
+export type CreateReportInput = z.infer<typeof createReportSchema>;
+
 // Volunteer schemas
 export const createVolunteerSchema = z.object({
   displayName: z.string().min(1).max(100),

@@ -13,6 +13,11 @@ import type {
   WisdomEntryQuery,
   CreateWisdomEntryInput,
   UpdateWisdomEntryInput,
+  CreateAuthorityProfileInput,
+  UpdateAuthorityProfileInput,
+  AuthorityProfileQuery,
+  WisdomEntryPublicQuery,
+  DuplicateCheckInput,
 } from "./wisdom-qa.schemas.js";
 import { type WisdomEntryType, type ContentStatus, type Prisma } from "../../generated/prisma/client.js";
 
@@ -156,5 +161,139 @@ export class WisdomQaService {
 
     await this.prisma.wisdomEntry.delete({ where: { publicId } });
     await this.audit.append(auditContext, "content.delete", "wisdom_entry", publicId);
+  }
+
+  // ── Admin: Authority Profiles ───────────────────────────────────────
+
+  async listAuthorityProfiles(query: AuthorityProfileQuery) {
+    const where: Prisma.WisdomAuthorityProfileWhereInput = {};
+    if (query.isActive !== undefined) where.isActive = query.isActive;
+
+    const [data, total] = await Promise.all([
+      this.prisma.wisdomAuthorityProfile.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.wisdomAuthorityProfile.count({ where }),
+    ]);
+
+    return { data, meta: { total, limit: query.limit, offset: query.offset } };
+  }
+
+  async createAuthorityProfile(input: CreateAuthorityProfileInput, auditContext: AuditContext) {
+    const profile = await this.prisma.wisdomAuthorityProfile.create({
+      data: {
+        publicId: nanoid(12),
+        name: input.name,
+        title: input.title,
+        description: input.description,
+        sourceFamily: input.sourceFamily,
+      },
+    });
+
+    await this.audit.append(auditContext, "content.create", "wisdom_authority_profile", profile.publicId);
+    return profile;
+  }
+
+  async updateAuthorityProfile(publicId: string, input: UpdateAuthorityProfileInput, auditContext: AuditContext) {
+    const profile = await this.prisma.wisdomAuthorityProfile.findUnique({ where: { publicId } });
+    if (!profile) throw new NotFoundException("Hồ sơ authority không tồn tại");
+
+    const updated = await this.prisma.wisdomAuthorityProfile.update({
+      where: { publicId },
+      data: {
+        ...(input.name !== undefined && { name: input.name }),
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.sourceFamily !== undefined && { sourceFamily: input.sourceFamily }),
+      },
+    });
+
+    await this.audit.append(auditContext, "content.update", "wisdom_authority_profile", publicId);
+    return updated;
+  }
+
+  async deleteAuthorityProfile(publicId: string, auditContext: AuditContext) {
+    const profile = await this.prisma.wisdomAuthorityProfile.findUnique({ where: { publicId } });
+    if (!profile) throw new NotFoundException("Hồ sơ authority không tồn tại");
+
+    const updated = await this.prisma.wisdomAuthorityProfile.update({
+      where: { publicId },
+      data: { isActive: false },
+    });
+
+    await this.audit.append(auditContext, "content.delete", "wisdom_authority_profile", publicId);
+    return updated;
+  }
+
+  // ── Public: Wisdom Entries Hub ──────────────────────────────────────
+
+  async listPublicWisdomEntries(query: WisdomEntryPublicQuery) {
+    const where: Prisma.WisdomEntryWhereInput = {
+      status: "PUBLISHED",
+    };
+    if (query.type) where.entryType = query.type as WisdomEntryType;
+    if (query.sourceFamily) where.sourceFamily = query.sourceFamily;
+
+    const [data, total] = await Promise.all([
+      this.prisma.wisdomEntry.findMany({
+        where,
+        select: {
+          publicId: true,
+          title: true,
+          slug: true,
+          entryType: true,
+          sourceFamily: true,
+          excerpt: true,
+          tags: true,
+          publishedAt: true,
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        },
+        orderBy: { publishedAt: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.wisdomEntry.count({ where }),
+    ]);
+
+    return { data, meta: { total, limit: query.limit, offset: query.offset } };
+  }
+
+  async getPublicWisdomEntry(slugOrPublicId: string) {
+    const entry = await this.prisma.wisdomEntry.findFirst({
+      where: {
+        status: "PUBLISHED",
+        OR: [{ slug: slugOrPublicId }, { publicId: slugOrPublicId }],
+      },
+      include: { author: { select: { publicId: true, displayName: true, avatarUrl: true } } },
+    });
+    if (!entry) throw new NotFoundException("Bài tri tuệ không tồn tại hoặc chưa xuất bản");
+    return entry;
+  }
+
+  // ── Admin: Duplicate Check ──────────────────────────────────────────
+
+  async checkDuplicateEntry(input: DuplicateCheckInput) {
+    const matches = await this.prisma.wisdomEntry.findMany({
+      where: {
+        title: { contains: input.title, mode: "insensitive" },
+      },
+      select: {
+        publicId: true,
+        title: true,
+        slug: true,
+        entryType: true,
+        status: true,
+      },
+      take: 10,
+    });
+
+    return {
+      duplicateFound: matches.length > 0,
+      matchCount: matches.length,
+      matches,
+    };
   }
 }

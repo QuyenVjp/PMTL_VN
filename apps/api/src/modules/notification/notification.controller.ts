@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Body, Param, Query, UsePipes } from "@nestjs/common";
+import { Controller, Get, Patch, Post, Delete, Body, Param, Query, UsePipes } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
@@ -8,9 +8,71 @@ import { NotificationService } from "./notification.service.js";
 import {
   adminPushJobQuerySchema,
   adminCreatePushJobSchema,
+  updatePreferencesSchema,
+  pushSubscribeSchema,
+  pushUnsubscribeSchema,
   type AdminPushJobQuery,
   type AdminCreatePushJobInput,
+  type UpdatePreferencesInput,
+  type PushSubscribeInput,
+  type PushUnsubscribeInput,
 } from "./notification.schemas.js";
+
+// ─── Member-facing Notification Controller ──────────────────────────────────
+
+@ApiTags("notifications")
+@Controller("notifications")
+export class MemberNotificationController {
+  constructor(private readonly notificationService: NotificationService) {}
+
+  @Get("preferences")
+  @ApiOperation({ summary: "Lấy tuỳ chọn thông báo của tôi" })
+  @ApiResponse({ status: 200, description: "Tuỳ chọn thông báo" })
+  getPreferences(@CurrentUser() user: AuthenticatedUser) {
+    return this.notificationService.getPreferences(user.id);
+  }
+
+  @Patch("preferences")
+  @ApiOperation({ summary: "Cập nhật tuỳ chọn thông báo" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật tuỳ chọn" })
+  updatePreferences(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body(ZodValidate(updatePreferencesSchema)) input: UpdatePreferencesInput,
+  ) {
+    return this.notificationService.updatePreferences(user.id, input, {
+      actorId: user.id,
+      actorType: "user",
+    });
+  }
+
+  @Post("push/subscribe")
+  @ApiOperation({ summary: "Đăng ký nhận push notification" })
+  @ApiResponse({ status: 201, description: "Đã đăng ký push" })
+  subscribe(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body(ZodValidate(pushSubscribeSchema)) input: PushSubscribeInput,
+  ) {
+    return this.notificationService.subscribe(user.id, input, {
+      actorId: user.id,
+      actorType: "user",
+    });
+  }
+
+  @Post("push/unsubscribe")
+  @ApiOperation({ summary: "Huỷ đăng ký push notification" })
+  @ApiResponse({ status: 200, description: "Đã huỷ đăng ký push" })
+  unsubscribe(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body(ZodValidate(pushUnsubscribeSchema)) input: PushUnsubscribeInput,
+  ) {
+    return this.notificationService.unsubscribe(user.id, input, {
+      actorId: user.id,
+      actorType: "user",
+    });
+  }
+}
+
+// ─── Admin Notification Controller ──────────────────────────────────────────
 
 @ApiTags("admin-notifications")
 @Controller("admin/notifications")

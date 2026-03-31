@@ -52,4 +52,27 @@ export class ModerationRepository {
       },
     });
   }
+
+  async createReport(data: {
+    publicId: string;
+    reporterUserId: string;
+    targetType: string;
+    targetId: string;
+    reasonCode: string;
+    description?: string;
+  }) {
+    return this.prisma.moderationReport.create({ data });
+  }
+
+  async findDuplicatePendingReport(reporterUserId: string, targetType: string, targetId: string) {
+    return this.prisma.moderationReport.findFirst({
+      where: {
+        reporterUserId,
+        targetType,
+        targetId,
+        status: "PENDING",
+      },
+    });
+  }
+
 }

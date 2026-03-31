@@ -393,6 +393,7 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   RateLimitRecord: 'RateLimitRecord',
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
   MediaCollection: 'MediaCollection',
@@ -406,13 +407,18 @@ export const ModelName = {
   WebhookDelivery: 'WebhookDelivery',
   CommunityPost: 'CommunityPost',
   GuestbookEntry: 'GuestbookEntry',
+  CommunityComment: 'CommunityComment',
+  CommunityHeart: 'CommunityHeart',
   CalendarEvent: 'CalendarEvent',
+  EventAgendaItem: 'EventAgendaItem',
   Volunteer: 'Volunteer',
   ContactSubmission: 'ContactSubmission',
   ContactInfo: 'ContactInfo',
   PushSubscription: 'PushSubscription',
+  NotificationPreference: 'NotificationPreference',
   PushJob: 'PushJob',
   WisdomEntry: 'WisdomEntry',
+  WisdomAuthorityProfile: 'WisdomAuthorityProfile',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
   ChantingSession: 'ChantingSession',
@@ -441,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "postCategory" | "postTag" | "postTagMap" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "calendarEvent" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "pushJob" | "wisdomEntry" | "beginnerGuide" | "download" | "chantingSession" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
+    modelProps: "featureFlag" | "auditLog" | "rateLimitRecord" | "user" | "passwordResetToken" | "session" | "mediaAsset" | "mediaCollection" | "mediaCollectionItem" | "postCategory" | "postTag" | "postTagMap" | "post" | "chantEnvironmentRuleGroup" | "chantEnvironmentRule" | "webhookDelivery" | "communityPost" | "guestbookEntry" | "communityComment" | "communityHeart" | "calendarEvent" | "eventAgendaItem" | "volunteer" | "contactSubmission" | "contactInfo" | "pushSubscription" | "notificationPreference" | "pushJob" | "wisdomEntry" | "wisdomAuthorityProfile" | "beginnerGuide" | "download" | "chantingSession" | "vow" | "lifeReleaseJournal" | "moderationReport" | "littleHouse" | "meritTransfer" | "dailyGongkeLog" | "repentanceLog" | "altarLog" | "practiceProfile" | "activationLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -738,6 +744,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
         }
       }
     }
@@ -1703,6 +1783,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CommunityComment: {
+      payload: Prisma.$CommunityCommentPayload<ExtArgs>
+      fields: Prisma.CommunityCommentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommunityCommentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommunityCommentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        findFirst: {
+          args: Prisma.CommunityCommentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommunityCommentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        findMany: {
+          args: Prisma.CommunityCommentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>[]
+        }
+        create: {
+          args: Prisma.CommunityCommentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        createMany: {
+          args: Prisma.CommunityCommentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommunityCommentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>[]
+        }
+        delete: {
+          args: Prisma.CommunityCommentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        update: {
+          args: Prisma.CommunityCommentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommunityCommentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommunityCommentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommunityCommentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommunityCommentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityCommentPayload>
+        }
+        aggregate: {
+          args: Prisma.CommunityCommentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommunityComment>
+        }
+        groupBy: {
+          args: Prisma.CommunityCommentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityCommentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommunityCommentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityCommentCountAggregateOutputType> | number
+        }
+      }
+    }
+    CommunityHeart: {
+      payload: Prisma.$CommunityHeartPayload<ExtArgs>
+      fields: Prisma.CommunityHeartFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CommunityHeartFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CommunityHeartFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        findFirst: {
+          args: Prisma.CommunityHeartFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CommunityHeartFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        findMany: {
+          args: Prisma.CommunityHeartFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>[]
+        }
+        create: {
+          args: Prisma.CommunityHeartCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        createMany: {
+          args: Prisma.CommunityHeartCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CommunityHeartCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>[]
+        }
+        delete: {
+          args: Prisma.CommunityHeartDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        update: {
+          args: Prisma.CommunityHeartUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        deleteMany: {
+          args: Prisma.CommunityHeartDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CommunityHeartUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CommunityHeartUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>[]
+        }
+        upsert: {
+          args: Prisma.CommunityHeartUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CommunityHeartPayload>
+        }
+        aggregate: {
+          args: Prisma.CommunityHeartAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCommunityHeart>
+        }
+        groupBy: {
+          args: Prisma.CommunityHeartGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityHeartGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CommunityHeartCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CommunityHeartCountAggregateOutputType> | number
+        }
+      }
+    }
     CalendarEvent: {
       payload: Prisma.$CalendarEventPayload<ExtArgs>
       fields: Prisma.CalendarEventFieldRefs
@@ -1774,6 +2002,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CalendarEventCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CalendarEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    EventAgendaItem: {
+      payload: Prisma.$EventAgendaItemPayload<ExtArgs>
+      fields: Prisma.EventAgendaItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EventAgendaItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EventAgendaItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        findFirst: {
+          args: Prisma.EventAgendaItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EventAgendaItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        findMany: {
+          args: Prisma.EventAgendaItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>[]
+        }
+        create: {
+          args: Prisma.EventAgendaItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        createMany: {
+          args: Prisma.EventAgendaItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EventAgendaItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>[]
+        }
+        delete: {
+          args: Prisma.EventAgendaItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        update: {
+          args: Prisma.EventAgendaItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.EventAgendaItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EventAgendaItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EventAgendaItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.EventAgendaItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventAgendaItemPayload>
+        }
+        aggregate: {
+          args: Prisma.EventAgendaItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEventAgendaItem>
+        }
+        groupBy: {
+          args: Prisma.EventAgendaItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventAgendaItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EventAgendaItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventAgendaItemCountAggregateOutputType> | number
         }
       }
     }
@@ -2073,6 +2375,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NotificationPreference: {
+      payload: Prisma.$NotificationPreferencePayload<ExtArgs>
+      fields: Prisma.NotificationPreferenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationPreferenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NotificationPreferenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        findFirst: {
+          args: Prisma.NotificationPreferenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NotificationPreferenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        findMany: {
+          args: Prisma.NotificationPreferenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        create: {
+          args: Prisma.NotificationPreferenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        createMany: {
+          args: Prisma.NotificationPreferenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NotificationPreferenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        delete: {
+          args: Prisma.NotificationPreferenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        update: {
+          args: Prisma.NotificationPreferenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        deleteMany: {
+          args: Prisma.NotificationPreferenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NotificationPreferenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NotificationPreferenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>[]
+        }
+        upsert: {
+          args: Prisma.NotificationPreferenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPreferencePayload>
+        }
+        aggregate: {
+          args: Prisma.NotificationPreferenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotificationPreference>
+        }
+        groupBy: {
+          args: Prisma.NotificationPreferenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationPreferenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NotificationPreferenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NotificationPreferenceCountAggregateOutputType> | number
+        }
+      }
+    }
     PushJob: {
       payload: Prisma.$PushJobPayload<ExtArgs>
       fields: Prisma.PushJobFieldRefs
@@ -2218,6 +2594,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.WisdomEntryCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.WisdomEntryCountAggregateOutputType> | number
+        }
+      }
+    }
+    WisdomAuthorityProfile: {
+      payload: Prisma.$WisdomAuthorityProfilePayload<ExtArgs>
+      fields: Prisma.WisdomAuthorityProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WisdomAuthorityProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WisdomAuthorityProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.WisdomAuthorityProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WisdomAuthorityProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        findMany: {
+          args: Prisma.WisdomAuthorityProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>[]
+        }
+        create: {
+          args: Prisma.WisdomAuthorityProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        createMany: {
+          args: Prisma.WisdomAuthorityProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WisdomAuthorityProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.WisdomAuthorityProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        update: {
+          args: Prisma.WisdomAuthorityProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.WisdomAuthorityProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WisdomAuthorityProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WisdomAuthorityProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.WisdomAuthorityProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WisdomAuthorityProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.WisdomAuthorityProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWisdomAuthorityProfile>
+        }
+        groupBy: {
+          args: Prisma.WisdomAuthorityProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WisdomAuthorityProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WisdomAuthorityProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WisdomAuthorityProfileCountAggregateOutputType> | number
         }
       }
     }
@@ -3287,6 +3737,18 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
 export const SessionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -3503,6 +3965,30 @@ export const GuestbookEntryScalarFieldEnum = {
 export type GuestbookEntryScalarFieldEnum = (typeof GuestbookEntryScalarFieldEnum)[keyof typeof GuestbookEntryScalarFieldEnum]
 
 
+export const CommunityCommentScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  postId: 'postId',
+  authorId: 'authorId',
+  content: 'content',
+  isHidden: 'isHidden',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommunityCommentScalarFieldEnum = (typeof CommunityCommentScalarFieldEnum)[keyof typeof CommunityCommentScalarFieldEnum]
+
+
+export const CommunityHeartScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityHeartScalarFieldEnum = (typeof CommunityHeartScalarFieldEnum)[keyof typeof CommunityHeartScalarFieldEnum]
+
+
 export const CalendarEventScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -3522,6 +4008,22 @@ export const CalendarEventScalarFieldEnum = {
 } as const
 
 export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+export const EventAgendaItemScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  eventId: 'eventId',
+  title: 'title',
+  description: 'description',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EventAgendaItemScalarFieldEnum = (typeof EventAgendaItemScalarFieldEnum)[keyof typeof EventAgendaItemScalarFieldEnum]
 
 
 export const VolunteerScalarFieldEnum = {
@@ -3577,6 +4079,8 @@ export const PushSubscriptionScalarFieldEnum = {
   publicId: 'publicId',
   userId: 'userId',
   endpoint: 'endpoint',
+  keyP256dh: 'keyP256dh',
+  keyAuth: 'keyAuth',
   isActive: 'isActive',
   subscribedAt: 'subscribedAt',
   createdAt: 'createdAt',
@@ -3584,6 +4088,21 @@ export const PushSubscriptionScalarFieldEnum = {
 } as const
 
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  practiceReminders: 'practiceReminders',
+  eventReminders: 'eventReminders',
+  communityUpdates: 'communityUpdates',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const PushJobScalarFieldEnum = {
@@ -3626,6 +4145,21 @@ export const WisdomEntryScalarFieldEnum = {
 } as const
 
 export type WisdomEntryScalarFieldEnum = (typeof WisdomEntryScalarFieldEnum)[keyof typeof WisdomEntryScalarFieldEnum]
+
+
+export const WisdomAuthorityProfileScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  title: 'title',
+  description: 'description',
+  sourceFamily: 'sourceFamily',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomAuthorityProfileScalarFieldEnum = (typeof WisdomAuthorityProfileScalarFieldEnum)[keyof typeof WisdomAuthorityProfileScalarFieldEnum]
 
 
 export const BeginnerGuideScalarFieldEnum = {
@@ -4396,6 +4930,7 @@ export type GlobalOmitConfig = {
   auditLog?: Prisma.AuditLogOmit
   rateLimitRecord?: Prisma.RateLimitRecordOmit
   user?: Prisma.UserOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
   session?: Prisma.SessionOmit
   mediaAsset?: Prisma.MediaAssetOmit
   mediaCollection?: Prisma.MediaCollectionOmit
@@ -4409,13 +4944,18 @@ export type GlobalOmitConfig = {
   webhookDelivery?: Prisma.WebhookDeliveryOmit
   communityPost?: Prisma.CommunityPostOmit
   guestbookEntry?: Prisma.GuestbookEntryOmit
+  communityComment?: Prisma.CommunityCommentOmit
+  communityHeart?: Prisma.CommunityHeartOmit
   calendarEvent?: Prisma.CalendarEventOmit
+  eventAgendaItem?: Prisma.EventAgendaItemOmit
   volunteer?: Prisma.VolunteerOmit
   contactSubmission?: Prisma.ContactSubmissionOmit
   contactInfo?: Prisma.ContactInfoOmit
   pushSubscription?: Prisma.PushSubscriptionOmit
+  notificationPreference?: Prisma.NotificationPreferenceOmit
   pushJob?: Prisma.PushJobOmit
   wisdomEntry?: Prisma.WisdomEntryOmit
+  wisdomAuthorityProfile?: Prisma.WisdomAuthorityProfileOmit
   beginnerGuide?: Prisma.BeginnerGuideOmit
   download?: Prisma.DownloadOmit
   chantingSession?: Prisma.ChantingSessionOmit

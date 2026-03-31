@@ -1,4 +1,5 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from "@nestjs/common";
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from "@nestjs/common";
+import { randomBytes, createHash } from "node:crypto";
 import { nanoid } from "nanoid";
 import * as argon2 from "argon2";
 import * as jose from "jose";
@@ -8,12 +9,19 @@ import { SessionsService } from "../../platform/sessions/sessions.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { canUserLogin } from "./identity.policy.js";
 import { mapUserToAuthResponse } from "./identity.mapper.js";
-import type { LoginInput, RegisterInput, UpdateProfileInput, ChangePasswordInput } from "./identity.schemas.js";
+import type { LoginInput, RegisterInput, UpdateProfileInput, ChangePasswordInput, ForgotPasswordInput, ResetPasswordInput } from "./identity.schemas.js";
 import type { JwtAccessPayload } from "../../common/auth/auth-request.types.js";
 import type { UserRole } from "../../generated/prisma/client.js";
 
+/** Number of bytes for password-reset token (48 bytes = 96 hex chars). */
+const RESET_TOKEN_BYTES = 48;
+/** Password-reset token validity window. */
+const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
+
 @Injectable()
 export class IdentityService {
+  private readonly logger = new Logger(IdentityService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly config: ConfigService,
@@ -216,6 +224,111 @@ export class IdentityService {
       });
       await this.audit.appendInTransaction(
         tx, auditContext, "user.update", "user", user.publicId, { field: "password" },
+      );
+    });
+
+    return { success: true };
+  }
+
+  // ─── Password Reset (public, anti-enumeration) ───────────────────────
+
+  /**
+   * Request password reset — always returns success regardless of whether
+   * the email exists (anti-enumeration). Generates a random token, stores
+   * its SHA-256 hash, and logs the plaintext token for dev use.
+   */
+  async requestPasswordReset(input: ForgotPasswordInput) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email.toLowerCase() },
+    });
+
+    // Anti-enumeration: return silently if user not found
+    if (!user) {
+      return { success: true };
+    }
+
+    const plainToken = randomBytes(RESET_TOKEN_BYTES).toString("hex");
+    const tokenHash = createHash("sha256").update(plainToken).digest("hex");
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+    await this.prisma.$transaction(async (tx) => {
+      // Invalidate any previous unused tokens for this user
+      await tx.passwordResetToken.updateMany({
+        where: { userId: user.id, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+
+      await tx.passwordResetToken.create({
+        data: {
+          userId: user.id,
+          tokenHash,
+          expiresAt,
+        },
+      });
+
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: user.id, actorType: "user" },
+        "auth.password_reset_request",
+        "user",
+        user.publicId,
+      );
+    });
+
+    // DEV: log token so it can be used without email integration
+    this.logger.log({
+      msg: "Password reset token generated (dev only)",
+      userId: user.id,
+      token: plainToken,
+    });
+
+    return { success: true };
+  }
+
+  /**
+   * Reset password using a valid token. SHA-256 hashes the incoming token
+   * and looks up by exact match. Updates password, marks token used,
+   * invalidates all sessions, and audit-logs the action.
+   */
+  async resetPassword(input: ResetPasswordInput) {
+    const tokenHash = createHash("sha256").update(input.token).digest("hex");
+
+    const resetToken = await this.prisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
+      throw new BadRequestException("Token không hợp lệ hoặc đã hết hạn");
+    }
+
+    const newPasswordHash = await argon2.hash(input.password);
+
+    await this.prisma.$transaction(async (tx) => {
+      // Update user password
+      await tx.user.update({
+        where: { id: resetToken.userId },
+        data: { passwordHash: newPasswordHash },
+      });
+
+      // Mark token as used
+      await tx.passwordResetToken.update({
+        where: { id: resetToken.id },
+        data: { usedAt: new Date() },
+      });
+
+      // Invalidate all user sessions (security: password was compromised)
+      await tx.session.updateMany({
+        where: { userId: resetToken.userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: resetToken.userId, actorType: "user" },
+        "auth.password_reset_complete",
+        "user",
+        resetToken.userId,
+        { field: "password" },
       );
     });
 

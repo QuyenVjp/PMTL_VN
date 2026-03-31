@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { NotificationRepository } from "./notification.repository.js";
 import { mapPushJobToAdminItem } from "./notification.mapper.js";
-import type { AdminPushJobQuery, AdminCreatePushJobInput } from "./notification.schemas.js";
+import type {
+  AdminPushJobQuery,
+  AdminCreatePushJobInput,
+  UpdatePreferencesInput,
+  PushSubscribeInput,
+  PushUnsubscribeInput,
+} from "./notification.schemas.js";
 
 @Injectable()
 export class NotificationService {
@@ -95,5 +101,94 @@ export class NotificationService {
 
   async adminGetSubscriptionStats() {
     return this.repository.countSubscriptions();
+  }
+
+  // ─── Member: Notification Preferences ───────────────────────────────────────
+
+  async getPreferences(userId: string) {
+    return this.repository.findPreferencesByUserId(userId);
+  }
+
+  async updatePreferences(
+    userId: string,
+    input: UpdatePreferencesInput,
+    auditCtx: AuditContext,
+  ) {
+    const result = await this.repository.upsertPreferences(userId, input);
+
+    await this.audit.append(auditCtx, "member.preferences.update", "notification_preference", userId, {
+      ...input,
+    });
+
+    return {
+      userId: result.userId,
+      practiceReminders: result.practiceReminders,
+      eventReminders: result.eventReminders,
+      communityUpdates: result.communityUpdates,
+      quietHoursStart: result.quietHoursStart,
+      quietHoursEnd: result.quietHoursEnd,
+    };
+  }
+
+  // ─── Member: Push Subscriptions ─────────────────────────────────────────────
+
+  async subscribe(
+    userId: string,
+    input: PushSubscribeInput,
+    auditCtx: AuditContext,
+  ) {
+    const existing = await this.repository.findSubscriptionByEndpoint(userId, input.endpoint);
+
+    if (existing && existing.isActive) {
+      throw new ConflictException("Thiết bị đã đăng ký nhận thông báo");
+    }
+
+    let subscription;
+    if (existing) {
+      // Reactivate an inactive subscription with fresh keys
+      subscription = await this.repository.reactivateSubscription(
+        existing.id,
+        input.keys.p256dh,
+        input.keys.auth,
+      );
+    } else {
+      subscription = await this.repository.createSubscription({
+        publicId: nanoid(),
+        userId,
+        endpoint: input.endpoint,
+        keyP256dh: input.keys.p256dh,
+        keyAuth: input.keys.auth,
+      });
+    }
+
+    await this.audit.append(auditCtx, "member.push.subscribe", "push_subscription", subscription.publicId, {
+      endpoint: input.endpoint,
+      reactivated: !!existing,
+    });
+
+    return {
+      publicId: subscription.publicId,
+      endpoint: subscription.endpoint,
+      isActive: subscription.isActive,
+      subscribedAt: subscription.subscribedAt.toISOString(),
+    };
+  }
+
+  async unsubscribe(
+    userId: string,
+    input: PushUnsubscribeInput,
+    auditCtx: AuditContext,
+  ) {
+    const result = await this.repository.deactivateSubscriptionByEndpoint(userId, input.endpoint);
+
+    if (!result) {
+      throw new NotFoundException("Không tìm thấy đăng ký thông báo cho thiết bị này");
+    }
+
+    await this.audit.append(auditCtx, "member.push.unsubscribe", "push_subscription", result.publicId, {
+      endpoint: input.endpoint,
+    });
+
+    return { success: true };
   }
 }

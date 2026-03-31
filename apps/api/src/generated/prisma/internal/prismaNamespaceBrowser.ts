@@ -55,6 +55,7 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   RateLimitRecord: 'RateLimitRecord',
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
   MediaCollection: 'MediaCollection',
@@ -68,13 +69,18 @@ export const ModelName = {
   WebhookDelivery: 'WebhookDelivery',
   CommunityPost: 'CommunityPost',
   GuestbookEntry: 'GuestbookEntry',
+  CommunityComment: 'CommunityComment',
+  CommunityHeart: 'CommunityHeart',
   CalendarEvent: 'CalendarEvent',
+  EventAgendaItem: 'EventAgendaItem',
   Volunteer: 'Volunteer',
   ContactSubmission: 'ContactSubmission',
   ContactInfo: 'ContactInfo',
   PushSubscription: 'PushSubscription',
+  NotificationPreference: 'NotificationPreference',
   PushJob: 'PushJob',
   WisdomEntry: 'WisdomEntry',
+  WisdomAuthorityProfile: 'WisdomAuthorityProfile',
   BeginnerGuide: 'BeginnerGuide',
   Download: 'Download',
   ChantingSession: 'ChantingSession',
@@ -165,6 +171,18 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {
@@ -383,6 +401,30 @@ export const GuestbookEntryScalarFieldEnum = {
 export type GuestbookEntryScalarFieldEnum = (typeof GuestbookEntryScalarFieldEnum)[keyof typeof GuestbookEntryScalarFieldEnum]
 
 
+export const CommunityCommentScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  postId: 'postId',
+  authorId: 'authorId',
+  content: 'content',
+  isHidden: 'isHidden',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommunityCommentScalarFieldEnum = (typeof CommunityCommentScalarFieldEnum)[keyof typeof CommunityCommentScalarFieldEnum]
+
+
+export const CommunityHeartScalarFieldEnum = {
+  id: 'id',
+  postId: 'postId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityHeartScalarFieldEnum = (typeof CommunityHeartScalarFieldEnum)[keyof typeof CommunityHeartScalarFieldEnum]
+
+
 export const CalendarEventScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -402,6 +444,22 @@ export const CalendarEventScalarFieldEnum = {
 } as const
 
 export type CalendarEventScalarFieldEnum = (typeof CalendarEventScalarFieldEnum)[keyof typeof CalendarEventScalarFieldEnum]
+
+
+export const EventAgendaItemScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  eventId: 'eventId',
+  title: 'title',
+  description: 'description',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EventAgendaItemScalarFieldEnum = (typeof EventAgendaItemScalarFieldEnum)[keyof typeof EventAgendaItemScalarFieldEnum]
 
 
 export const VolunteerScalarFieldEnum = {
@@ -457,6 +515,8 @@ export const PushSubscriptionScalarFieldEnum = {
   publicId: 'publicId',
   userId: 'userId',
   endpoint: 'endpoint',
+  keyP256dh: 'keyP256dh',
+  keyAuth: 'keyAuth',
   isActive: 'isActive',
   subscribedAt: 'subscribedAt',
   createdAt: 'createdAt',
@@ -464,6 +524,21 @@ export const PushSubscriptionScalarFieldEnum = {
 } as const
 
 export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  practiceReminders: 'practiceReminders',
+  eventReminders: 'eventReminders',
+  communityUpdates: 'communityUpdates',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
 
 
 export const PushJobScalarFieldEnum = {
@@ -506,6 +581,21 @@ export const WisdomEntryScalarFieldEnum = {
 } as const
 
 export type WisdomEntryScalarFieldEnum = (typeof WisdomEntryScalarFieldEnum)[keyof typeof WisdomEntryScalarFieldEnum]
+
+
+export const WisdomAuthorityProfileScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  title: 'title',
+  description: 'description',
+  sourceFamily: 'sourceFamily',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomAuthorityProfileScalarFieldEnum = (typeof WisdomAuthorityProfileScalarFieldEnum)[keyof typeof WisdomAuthorityProfileScalarFieldEnum]
 
 
 export const BeginnerGuideScalarFieldEnum = {

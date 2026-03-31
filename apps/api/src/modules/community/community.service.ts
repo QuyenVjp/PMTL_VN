@@ -13,6 +13,9 @@ import type {
   CreateVolunteerInput,
   UpdateVolunteerInput,
   VolunteerQuery,
+  CommentQuery,
+  CreateCommentInput,
+  CreateReportInput,
 } from "./community.schemas.js";
 
 @Injectable()
@@ -56,6 +59,111 @@ export class CommunityService {
     );
 
     return post;
+  }
+
+  // ── Public social endpoints ────────────────────────────────────────
+
+  async toggleHeart(postPublicId: string, userId: string) {
+    const post = await this.repo.findPublicPostByPublicId(postPublicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    const result = await this.repo.toggleHeart(post.id, userId);
+
+    await this.audit.append(
+      { actorId: userId, actorType: "user" },
+      result.hearted ? "community.heart.add" : "community.heart.remove",
+      "CommunityPost",
+      postPublicId,
+    );
+
+    return { data: result };
+  }
+
+  async listComments(postPublicId: string, query: CommentQuery) {
+    const post = await this.repo.findPublicPostByPublicId(postPublicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    const { data, total } = await this.repo.findManyComments(post.id, query);
+    return {
+      data,
+      meta: {
+        pagination: {
+          total,
+          limit: query.limit,
+          offset: query.offset,
+          hasMore: query.offset + query.limit < total,
+        },
+      },
+    };
+  }
+
+  async createComment(postPublicId: string, input: CreateCommentInput, userId: string) {
+    const post = await this.repo.findPublicPostByPublicId(postPublicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    const comment = await this.repo.createComment(post.id, input, userId, nanoid());
+
+    await this.audit.append(
+      { actorId: userId, actorType: "user" },
+      "community.comment.create",
+      "CommunityComment",
+      comment.publicId,
+    );
+
+    return comment;
+  }
+
+  async reportPost(postPublicId: string, input: CreateReportInput, userId: string) {
+    const post = await this.repo.findPublicPostByPublicId(postPublicId);
+    if (!post) throw new NotFoundException("Không tìm thấy bài đăng");
+
+    const report = await this.repo.createReport(
+      "community_post",
+      post.id,
+      input,
+      userId,
+      nanoid(),
+    );
+
+    await this.audit.append(
+      { actorId: userId, actorType: "user" },
+      "community.report.create",
+      "ModerationReport",
+      report.publicId,
+      { targetType: "community_post", targetId: postPublicId },
+    );
+
+    return { data: { publicId: report.publicId } };
+  }
+
+  // ── Public guestbook endpoints ────────────────────────────────────
+
+  async publicListGuestbook(query: GuestbookQuery) {
+    const { data, total } = await this.repo.findManyPublicGuestbook(query);
+    return {
+      data,
+      meta: {
+        pagination: {
+          total,
+          limit: query.limit,
+          offset: query.offset,
+          hasMore: query.offset + query.limit < total,
+        },
+      },
+    };
+  }
+
+  async publicCreateGuestbookEntry(input: CreateGuestbookEntryInput, userId: string) {
+    const entry = await this.repo.createGuestbookEntry(input, userId, nanoid());
+
+    await this.audit.append(
+      { actorId: userId, actorType: "user" },
+      "community.guestbook.create",
+      "GuestbookEntry",
+      entry.publicId,
+    );
+
+    return entry;
   }
 
   // ── Admin post endpoints ───────────────────────────────────────────

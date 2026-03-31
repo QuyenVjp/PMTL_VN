@@ -1,6 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
-import type { AdminCreateEventInput, AdminEventQuery, AdminUpdateEventInput, EventQuery } from "./calendar.schemas.js";
+import type {
+  AdminCreateEventInput,
+  AdminEventQuery,
+  AdminUpdateEventInput,
+  CreateAgendaItemInput,
+  EventQuery,
+  ReorderAgendaItemsInput,
+  UpdateAgendaItemInput,
+} from "./calendar.schemas.js";
 
 const CREATOR_SELECT = {
   select: { publicId: true, displayName: true, email: true },
@@ -159,6 +167,90 @@ export class CalendarRepository {
     return this.prisma.calendarEvent.update({
       where: { publicId },
       data: { status: "PUBLISHED", publishedAt: new Date() },
+    });
+  }
+
+  // ── Agenda items ─────────────────────────────────────────────────────
+
+  async findAgendaItemsByEventPublicId(eventPublicId: string) {
+    const event = await this.prisma.calendarEvent.findUnique({
+      where: { publicId: eventPublicId },
+      select: { id: true },
+    });
+    if (!event) return null;
+
+    return this.prisma.eventAgendaItem.findMany({
+      where: { eventId: event.id },
+      orderBy: { sortOrder: "asc" },
+    });
+  }
+
+  async createAgendaItem(eventId: string, input: CreateAgendaItemInput, publicId: string) {
+    return this.prisma.eventAgendaItem.create({
+      data: {
+        publicId,
+        eventId,
+        title: input.title,
+        ...(input.description !== undefined && { description: input.description }),
+        ...(input.startTime !== undefined && { startTime: input.startTime }),
+        ...(input.endTime !== undefined && { endTime: input.endTime }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
+      },
+    });
+  }
+
+  async findAgendaItemByPublicId(itemPublicId: string) {
+    return this.prisma.eventAgendaItem.findUnique({
+      where: { publicId: itemPublicId },
+      include: { event: { select: { publicId: true } } },
+    });
+  }
+
+  async updateAgendaItem(itemPublicId: string, input: UpdateAgendaItemInput) {
+    const data: Record<string, unknown> = {};
+    if (input.title !== undefined) data.title = input.title;
+    if (input.description !== undefined) data.description = input.description;
+    if (input.startTime !== undefined) data.startTime = input.startTime;
+    if (input.endTime !== undefined) data.endTime = input.endTime;
+    if (input.sortOrder !== undefined) data.sortOrder = input.sortOrder;
+
+    return this.prisma.eventAgendaItem.update({
+      where: { publicId: itemPublicId },
+      data,
+    });
+  }
+
+  async deleteAgendaItem(itemPublicId: string) {
+    await this.prisma.eventAgendaItem.delete({ where: { publicId: itemPublicId } });
+  }
+
+  async reorderAgendaItems(items: ReorderAgendaItemsInput["items"]) {
+    await this.prisma.$transaction(
+      items.map((item) =>
+        this.prisma.eventAgendaItem.update({
+          where: { publicId: item.publicId },
+          data: { sortOrder: item.sortOrder },
+        }),
+      ),
+    );
+  }
+
+  // ── Event lifecycle ──────────────────────────────────────────────────
+
+  async rescheduleEvent(publicId: string, startAt: Date, endAt?: Date) {
+    return this.prisma.calendarEvent.update({
+      where: { publicId },
+      data: {
+        startAt,
+        ...(endAt !== undefined && { endAt }),
+      },
+    });
+  }
+
+  async cancelEvent(publicId: string) {
+    return this.prisma.calendarEvent.update({
+      where: { publicId },
+      data: { status: "CANCELLED" },
     });
   }
 }

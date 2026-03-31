@@ -10,6 +10,9 @@ import type {
   CreateVolunteerInput,
   UpdateVolunteerInput,
   VolunteerQuery,
+  CommentQuery,
+  CreateCommentInput,
+  CreateReportInput,
 } from "./community.schemas.js";
 
 const AUTHOR_PUBLIC_SELECT = {
@@ -161,6 +164,125 @@ export class CommunityRepository {
     return this.prisma.guestbookEntry.delete({
       where: { publicId },
     });
+  }
+
+  // ── Hearts ─────────────────────────────────────────────────────────────
+
+  async findHeart(postId: string, userId: string) {
+    return this.prisma.communityHeart.findUnique({
+      where: { postId_userId: { postId, userId } },
+    });
+  }
+
+  async toggleHeart(postId: string, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.communityHeart.findUnique({
+        where: { postId_userId: { postId, userId } },
+      });
+
+      if (existing) {
+        await tx.communityHeart.delete({
+          where: { postId_userId: { postId, userId } },
+        });
+        const post = await tx.communityPost.update({
+          where: { id: postId },
+          data: { heartCount: { decrement: 1 } },
+        });
+        return { hearted: false, heartCount: post.heartCount };
+      }
+
+      await tx.communityHeart.create({
+        data: { postId, userId },
+      });
+      const post = await tx.communityPost.update({
+        where: { id: postId },
+        data: { heartCount: { increment: 1 } },
+      });
+      return { hearted: true, heartCount: post.heartCount };
+    });
+  }
+
+  // ── Comments ──────────────────────────────────────────────────────────
+
+  async findManyComments(postId: string, query: CommentQuery) {
+    const where = { postId, isHidden: false };
+
+    const [data, total] = await Promise.all([
+      this.prisma.communityComment.findMany({
+        where,
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: query.limit,
+        skip: query.offset,
+      }),
+      this.prisma.communityComment.count({ where }),
+    ]);
+
+    return { data, total };
+  }
+
+  async createComment(postId: string, input: CreateCommentInput, authorId: string, publicId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const comment = await tx.communityComment.create({
+        data: { publicId, postId, authorId, content: input.content },
+      });
+      await tx.communityPost.update({
+        where: { id: postId },
+        data: { commentCount: { increment: 1 } },
+      });
+      return comment;
+    });
+  }
+
+  // ── Reports ───────────────────────────────────────────────────────────
+
+  async createReport(
+    targetType: string,
+    targetId: string,
+    input: CreateReportInput,
+    reporterUserId: string,
+    publicId: string,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const report = await tx.moderationReport.create({
+        data: {
+          publicId,
+          reporterUserId,
+          targetType,
+          targetId,
+          reasonCode: input.reasonCode,
+          description: input.description ?? null,
+        },
+      });
+      await tx.communityPost.update({
+        where: { id: targetId },
+        data: { reportCount: { increment: 1 } },
+      });
+      return report;
+    });
+  }
+
+  // ── Public Guestbook ──────────────────────────────────────────────────
+
+  async findManyPublicGuestbook(query: GuestbookQuery) {
+    const where = { status: "APPROVED" as const };
+
+    const [data, total] = await Promise.all([
+      this.prisma.guestbookEntry.findMany({
+        where,
+        include: {
+          author: { select: { publicId: true, displayName: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: query.limit,
+        skip: query.offset,
+      }),
+      this.prisma.guestbookEntry.count({ where }),
+    ]);
+
+    return { data, total };
   }
 
   // ── Volunteers ─────────────────────────────────────────────────────────

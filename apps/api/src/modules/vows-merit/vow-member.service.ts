@@ -7,6 +7,7 @@ import type {
   FulfillVowInput,
   AddMeritTransferInput,
   MemberVowQuery,
+  CreateMilestoneInput,
 } from "./vow-member.schemas.js";
 
 @Injectable()
@@ -154,6 +155,49 @@ export class VowMemberService {
     });
     if (!vow) throw new NotFoundException("Nguyện lực không tồn tại");
     return this.toDto(vow, vow.meritTransfers);
+  }
+
+  async recordMilestone(vowPublicId: string, input: CreateMilestoneInput, userId: string) {
+    const vow = await this.prisma.vow.findFirst({
+      where: { publicId: vowPublicId, userId },
+    });
+    if (!vow) throw new NotFoundException("Nguyện lực không tồn tại");
+    if (vow.status !== "ACTIVE") {
+      throw new BadRequestException("Chỉ có thể ghi nhận cột mốc cho nguyện lực đang active");
+    }
+
+    const newCount = vow.currentCount + input.addCount;
+    const isCompleted = vow.targetCount !== null && newCount >= vow.targetCount;
+
+    const updated = await this.prisma.vow.update({
+      where: { id: vow.id },
+      data: {
+        currentCount: newCount,
+        ...(isCompleted ? { status: "COMPLETED" } : {}),
+      },
+      include: { meritTransfers: true },
+    });
+
+    this.logger.log({
+      msg: "vow.milestone_recorded",
+      userId,
+      vowPublicId,
+      addCount: input.addCount,
+      newTotal: newCount,
+      note: input.note,
+      autoCompleted: isCompleted,
+    });
+
+    return {
+      data: {
+        ...this.toDto(updated, updated.meritTransfers),
+        milestone: {
+          addCount: input.addCount,
+          note: input.note ?? null,
+          autoCompleted: isCompleted,
+        },
+      },
+    };
   }
 
   private toDto(

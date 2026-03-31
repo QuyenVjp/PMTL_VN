@@ -45,6 +45,22 @@ export class ContactController {
     return this.contactService.listContacts(query);
   }
 
+  @Get("info")
+  @Public()
+  @ApiOperation({ summary: "Thông tin liên hệ công khai" })
+  @ApiResponse({ status: 200, description: "Thông tin liên hệ" })
+  publicInfo() {
+    return this.contactService.publicGetContactInfo();
+  }
+
+  @Get("volunteers")
+  @Public()
+  @ApiOperation({ summary: "Danh sách tình nguyện viên công khai" })
+  @ApiResponse({ status: 200, description: "Danh sách tình nguyện viên đang hoạt động" })
+  publicVolunteers() {
+    return this.contactService.publicListVolunteers();
+  }
+
   @Get(":publicId")
   @Roles("ADMIN", "SUPER_ADMIN")
   @ApiOperation({ summary: "Chi tiết liên hệ (admin)" })

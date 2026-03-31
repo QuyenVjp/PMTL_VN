@@ -172,6 +172,24 @@ export const updateDownloadSchema = createDownloadSchema.partial().extend({
 });
 export type UpdateDownloadInput = z.infer<typeof updateDownloadSchema>;
 
-// Type aliases for compatibility with controller imports  
+// Type aliases for compatibility with controller imports
 export type CreateDownloadRequest = CreateDownloadInput;
 export type UpdateDownloadRequest = UpdateDownloadInput;
+
+// --------------- Public beginner-guide query schema ---------------
+
+export const beginnerGuidePublicQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  category: z.enum(["BEGINNER", "DAILY_PRACTICE", "LITTLE_HOUSE", "LIFE_RELEASE", "GENERAL"]).optional(),
+});
+export type BeginnerGuidePublicQuery = z.infer<typeof beginnerGuidePublicQuerySchema>;
+
+// --------------- Public download query schema ---------------
+
+export const downloadPublicQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ"]).optional(),
+});
+export type DownloadPublicQuery = z.infer<typeof downloadPublicQuerySchema>;

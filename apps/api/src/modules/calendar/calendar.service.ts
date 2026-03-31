@@ -12,8 +12,12 @@ import type {
   AdminEventQuery,
   AdminUpdateEventInput,
   AdvisoryRuntimeStatusResponse,
+  CreateAgendaItemInput,
   EventQuery,
   Q161CalendarRulePackResponse,
+  ReorderAgendaItemsInput,
+  RescheduleEventInput,
+  UpdateAgendaItemInput,
 } from "./calendar.schemas.js";
 
 @Injectable()
@@ -149,6 +153,127 @@ export class CalendarService {
         title: updated.title,
       });
     }
+
+    return updated;
+  }
+
+  // ── Agenda items ─────────────────────────────────────────────────────────
+
+  async getPublicAgenda(eventPublicId: string) {
+    const items = await this.repo.findAgendaItemsByEventPublicId(eventPublicId);
+    if (items === null) throw new NotFoundException("Không tìm thấy sự kiện");
+    return { data: items };
+  }
+
+  async adminCreateAgendaItem(eventPublicId: string, input: CreateAgendaItemInput, actorId: string) {
+    const event = await this.repo.findAdminByPublicId(eventPublicId);
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const item = await this.repo.createAgendaItem(event.id, input, nanoid());
+
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.create", "calendar_event", event.id, {
+      eventPublicId,
+      agendaItemPublicId: item.publicId,
+      title: input.title,
+    });
+
+    return item;
+  }
+
+  async adminUpdateAgendaItem(eventPublicId: string, itemPublicId: string, input: UpdateAgendaItemInput, actorId: string) {
+    const event = await this.repo.findAdminByPublicId(eventPublicId);
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const existing = await this.repo.findAgendaItemByPublicId(itemPublicId);
+    if (!existing || existing.event.publicId !== eventPublicId) {
+      throw new NotFoundException("Không tìm thấy mục chương trình");
+    }
+
+    const updated = await this.repo.updateAgendaItem(itemPublicId, input);
+
+    const changedFields = Object.keys(input).filter((k) => input[k as keyof typeof input] !== undefined);
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.update", "calendar_event", event.id, {
+      eventPublicId,
+      agendaItemPublicId: itemPublicId,
+      changedFields,
+    });
+
+    return updated;
+  }
+
+  async adminDeleteAgendaItem(eventPublicId: string, itemPublicId: string, actorId: string) {
+    const event = await this.repo.findAdminByPublicId(eventPublicId);
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const existing = await this.repo.findAgendaItemByPublicId(itemPublicId);
+    if (!existing || existing.event.publicId !== eventPublicId) {
+      throw new NotFoundException("Không tìm thấy mục chương trình");
+    }
+
+    await this.repo.deleteAgendaItem(itemPublicId);
+
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.delete", "calendar_event", event.id, {
+      eventPublicId,
+      agendaItemPublicId: itemPublicId,
+      title: existing.title,
+    });
+
+    return { success: true };
+  }
+
+  async adminReorderAgendaItems(eventPublicId: string, input: ReorderAgendaItemsInput, actorId: string) {
+    const event = await this.repo.findAdminByPublicId(eventPublicId);
+    if (!event) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    await this.repo.reorderAgendaItems(input.items);
+
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.agenda_item.reorder", "calendar_event", event.id, {
+      eventPublicId,
+      itemCount: input.items.length,
+    });
+
+    return { success: true };
+  }
+
+  // ── Event lifecycle ─────────────────────────────────────────────────────
+
+  async adminRescheduleEvent(publicId: string, input: RescheduleEventInput, actorId: string) {
+    const existing = await this.repo.findAdminByPublicId(publicId);
+    if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const updated = await this.repo.rescheduleEvent(
+      publicId,
+      new Date(input.startAt),
+      input.endAt ? new Date(input.endAt) : undefined,
+    );
+
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.reschedule", "calendar_event", updated.id, {
+      publicId,
+      previousStartAt: existing.startAt.toISOString(),
+      newStartAt: input.startAt,
+      ...(input.note && { note: input.note }),
+    });
+
+    return updated;
+  }
+
+  async adminCancelEvent(publicId: string, actorId: string) {
+    const existing = await this.repo.findAdminByPublicId(publicId);
+    if (!existing) throw new NotFoundException("Không tìm thấy sự kiện");
+
+    const updated = await this.repo.cancelEvent(publicId);
+
+    const auditCtx: AuditContext = { actorId, actorType: "user" };
+    await this.audit.append(auditCtx, "admin.calendar_event.cancel", "calendar_event", updated.id, {
+      publicId,
+      title: updated.title,
+      previousStatus: existing.status,
+    });
 
     return updated;
   }

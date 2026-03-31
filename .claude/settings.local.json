@@ -63,7 +63,16 @@
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -name *client* -type f)",
       "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src -name *query* -type f)",
       "Bash(npx tsc:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(find C:/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src/routes -type f -name *.tsx)",
+      "Bash(find ./node_modules -path *zod* -name *.d.ts)",
+      "Bash(done)",
+      "Bash(wc -l C:/Users/ADMIN/DEV2/PMTL_VN/apps/admin/src/features/*/queries.ts)",
+      "Bash(npm info:*)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src/modules -name *.controller.ts)",
+      "Bash(npx storybook@latest init --yes)",
+      "Bash(curl -s --max-time 10 http://localhost:6006/index.json)",
+      "Bash(find /c/Users/ADMIN/DEV2/PMTL_VN/apps/api/src -name main.*)"
     ]
   },
   "enableAllProjectMcpServers": true,

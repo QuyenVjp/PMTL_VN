@@ -17,6 +17,9 @@ import {
   createVolunteerSchema,
   updateVolunteerSchema,
   volunteerQuerySchema,
+  createCommentSchema,
+  commentQuerySchema,
+  createReportSchema,
   type CreateCommunityPostInput,
   type CommunityPostQuery,
   type AdminUpdateCommunityPostInput,
@@ -26,6 +29,9 @@ import {
   type CreateVolunteerInput,
   type UpdateVolunteerInput,
   type VolunteerQuery,
+  type CreateCommentInput,
+  type CommentQuery,
+  type CreateReportInput,
 } from "./community.schemas.js";
 
 @ApiTags("community")
@@ -60,6 +66,56 @@ export class CommunityController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.createPost(input, user.id);
+  }
+
+  @Post("posts/:publicId/heart")
+  @RateLimit("community.post")
+  @ApiOperation({ summary: "Thả / bỏ tim bài đăng" })
+  @ApiResponse({ status: 200, description: "Cập nhật tim thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy bài đăng" })
+  toggleHeart(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.toggleHeart(publicId, user.id);
+  }
+
+  @Get("posts/:publicId/comments")
+  @Public()
+  @ApiOperation({ summary: "Danh sách bình luận bài đăng" })
+  @ApiResponse({ status: 200, description: "Lấy danh sách bình luận thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy bài đăng" })
+  listComments(
+    @Param("publicId") publicId: string,
+    @Query(ZodValidate(commentQuerySchema)) query: CommentQuery,
+  ) {
+    return this.communityService.listComments(publicId, query);
+  }
+
+  @Post("posts/:publicId/comments")
+  @RateLimit("community.post")
+  @ApiOperation({ summary: "Bình luận bài đăng" })
+  @ApiResponse({ status: 201, description: "Bình luận thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy bài đăng" })
+  createComment(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(createCommentSchema)) input: CreateCommentInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.createComment(publicId, input, user.id);
+  }
+
+  @Post("posts/:publicId/report")
+  @RateLimit("community.post")
+  @ApiOperation({ summary: "Báo cáo bài đăng" })
+  @ApiResponse({ status: 201, description: "Báo cáo thành công" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy bài đăng" })
+  reportPost(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(createReportSchema)) input: CreateReportInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.reportPost(publicId, input, user.id);
   }
 }
 
@@ -261,5 +317,30 @@ export class AdminCommunityController {
   @ApiResponse({ status: 404, description: "Không tìm thấy" })
   deactivateVolunteer(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
     return this.communityService.adminDeactivateVolunteer(publicId, user.id);
+  }
+}
+
+@ApiTags("guestbook")
+@Controller("guestbook")
+export class GuestbookController {
+  constructor(private readonly communityService: CommunityService) {}
+
+  @Get()
+  @Public()
+  @ApiOperation({ summary: "Danh sách sổ lưu bút công khai" })
+  @ApiResponse({ status: 200, description: "Lấy danh sách thành công" })
+  listGuestbook(@Query(ZodValidate(guestbookQuerySchema)) query: GuestbookQuery) {
+    return this.communityService.publicListGuestbook(query);
+  }
+
+  @Post()
+  @RateLimit("community.post")
+  @ApiOperation({ summary: "Gửi lưu bút" })
+  @ApiResponse({ status: 201, description: "Gửi lưu bút thành công" })
+  createGuestbookEntry(
+    @Body(ZodValidate(createGuestbookEntrySchema)) input: CreateGuestbookEntryInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.publicCreateGuestbookEntry(input, user.id);
   }
 }

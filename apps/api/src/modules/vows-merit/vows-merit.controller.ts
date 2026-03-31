@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Body,
   Param,
   Query,
@@ -18,6 +19,7 @@ import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js"
 import { VowsMeritService } from "./vows-merit.service.js";
 import { VowMemberService } from "./vow-member.service.js";
 import { AltarService } from "./altar.service.js";
+import { LifeReleaseMemberService } from "./life-release-member.service.js";
 import {
   assistedEntryHistorySchema,
   memberSearchSchema,
@@ -34,11 +36,19 @@ import {
   fulfillVowSchema,
   addMeritTransferSchema,
   memberVowQuerySchema,
+  createMilestoneSchema,
+  memberLifeReleaseQuerySchema,
+  createLifeReleaseJournalSchema,
+  updateLifeReleaseJournalSchema,
   type CreateVowInput,
   type UpdateVowProgressInput,
   type FulfillVowInput,
   type AddMeritTransferInput,
   type MemberVowQuery,
+  type CreateMilestoneInput,
+  type MemberLifeReleaseQuery,
+  type CreateLifeReleaseJournalInput,
+  type UpdateLifeReleaseJournalInput,
 } from "./vow-member.schemas.js";
 import {
   createAltarLogSchema,
@@ -171,6 +181,68 @@ export class MemberVowsController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.vowMemberService.addMeritTransfer(input, user.id);
+  }
+
+  @Post(":publicId/milestones")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Ghi nhận cột mốc nguyện lực" })
+  @ApiParam({ name: "publicId", description: "Public ID của nguyện lực" })
+  @ApiResponse({ status: 201, description: "Cột mốc đã được ghi nhận" })
+  @ApiResponse({ status: 404, description: "Nguyện lực không tồn tại" })
+  recordMilestone(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(createMilestoneSchema)) input: CreateMilestoneInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.vowMemberService.recordMilestone(publicId, input, user.id);
+  }
+}
+
+// ─── Member: Life Release Journal ───────────────────────────────────────────
+
+@ApiTags("me-life-release")
+@Controller("me/life-release-journal")
+export class MemberLifeReleaseController {
+  constructor(private readonly lifeReleaseMemberService: LifeReleaseMemberService) {}
+
+  @Get()
+  @ApiOperation({ summary: "Danh sách nhật ký phóng sanh của tôi" })
+  list(
+    @Query(ZodValidate(memberLifeReleaseQuerySchema)) query: MemberLifeReleaseQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.lifeReleaseMemberService.list(user.id, query);
+  }
+
+  @Get(":publicId")
+  @ApiOperation({ summary: "Chi tiết nhật ký phóng sanh" })
+  @ApiParam({ name: "publicId" })
+  getDetail(@Param("publicId") publicId: string, @CurrentUser() user: AuthenticatedUser) {
+    return this.lifeReleaseMemberService.getDetail(publicId, user.id);
+  }
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Tạo nhật ký phóng sanh" })
+  @ApiResponse({ status: 201, description: "Nhật ký phóng sanh đã được tạo" })
+  create(
+    @Body(ZodValidate(createLifeReleaseJournalSchema)) input: CreateLifeReleaseJournalInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.lifeReleaseMemberService.create(input, user.id);
+  }
+
+  @Patch(":publicId")
+  @ApiOperation({ summary: "Cập nhật nhật ký phóng sanh" })
+  @ApiParam({ name: "publicId" })
+  @ApiResponse({ status: 200, description: "Cập nhật thành công" })
+  @ApiResponse({ status: 404, description: "Nhật ký phóng sanh không tồn tại" })
+  update(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(updateLifeReleaseJournalSchema)) input: UpdateLifeReleaseJournalInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.lifeReleaseMemberService.update(publicId, input, user.id);
   }
 }
 

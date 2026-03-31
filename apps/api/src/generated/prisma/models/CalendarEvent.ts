@@ -265,6 +265,7 @@ export type CalendarEventWhereInput = {
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   coverImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
   posterImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemListRelationFilter | runtime.Types.Skip
 }
 
 export type CalendarEventOrderByWithRelationInput = {
@@ -286,6 +287,7 @@ export type CalendarEventOrderByWithRelationInput = {
   createdBy?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
   coverImage?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
@@ -310,6 +312,7 @@ export type CalendarEventWhereUniqueInput = Prisma.AtLeast<{
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   coverImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
   posterImage?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type CalendarEventOrderByWithAggregationInput = {
@@ -370,6 +373,7 @@ export type CalendarEventCreateInput = {
   createdBy: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
   coverImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarCoverImagesInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarPosterImagesInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedCreateInput = {
@@ -388,6 +392,7 @@ export type CalendarEventUncheckedCreateInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventUpdateInput = {
@@ -406,6 +411,7 @@ export type CalendarEventUpdateInput = {
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput | runtime.Types.Skip
   coverImage?: Prisma.MediaAssetUpdateOneWithoutCalendarCoverImagesNestedInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetUpdateOneWithoutCalendarPosterImagesNestedInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateInput = {
@@ -424,6 +430,7 @@ export type CalendarEventUncheckedUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventCreateManyInput = {
@@ -539,6 +546,11 @@ export type CalendarEventMinOrderByAggregateInput = {
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type CalendarEventScalarRelationFilter = {
+  is?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
+  isNot?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
 }
 
 export type CalendarEventCreateNestedManyWithoutCreatedByInput = {
@@ -671,6 +683,20 @@ export type EnumEventStatusFieldUpdateOperationsInput = {
   set?: $Enums.EventStatus | runtime.Types.Skip
 }
 
+export type CalendarEventCreateNestedOneWithoutAgendaItemsInput = {
+  create?: Prisma.XOR<Prisma.CalendarEventCreateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedCreateWithoutAgendaItemsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CalendarEventCreateOrConnectWithoutAgendaItemsInput | runtime.Types.Skip
+  connect?: Prisma.CalendarEventWhereUniqueInput | runtime.Types.Skip
+}
+
+export type CalendarEventUpdateOneRequiredWithoutAgendaItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.CalendarEventCreateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedCreateWithoutAgendaItemsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CalendarEventCreateOrConnectWithoutAgendaItemsInput | runtime.Types.Skip
+  upsert?: Prisma.CalendarEventUpsertWithoutAgendaItemsInput | runtime.Types.Skip
+  connect?: Prisma.CalendarEventWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CalendarEventUpdateToOneWithWhereWithoutAgendaItemsInput, Prisma.CalendarEventUpdateWithoutAgendaItemsInput>, Prisma.CalendarEventUncheckedUpdateWithoutAgendaItemsInput> | runtime.Types.Skip
+}
+
 export type CalendarEventCreateWithoutCreatedByInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -686,6 +712,7 @@ export type CalendarEventCreateWithoutCreatedByInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   coverImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarCoverImagesInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarPosterImagesInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedCreateWithoutCreatedByInput = {
@@ -703,6 +730,7 @@ export type CalendarEventUncheckedCreateWithoutCreatedByInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventCreateOrConnectWithoutCreatedByInput = {
@@ -767,6 +795,7 @@ export type CalendarEventCreateWithoutCoverImageInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   createdBy: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
   posterImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarPosterImagesInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedCreateWithoutCoverImageInput = {
@@ -784,6 +813,7 @@ export type CalendarEventUncheckedCreateWithoutCoverImageInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventCreateOrConnectWithoutCoverImageInput = {
@@ -811,6 +841,7 @@ export type CalendarEventCreateWithoutPosterImageInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   createdBy: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
   coverImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarCoverImagesInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedCreateWithoutPosterImageInput = {
@@ -828,6 +859,7 @@ export type CalendarEventUncheckedCreateWithoutPosterImageInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedCreateNestedManyWithoutEventInput | runtime.Types.Skip
 }
 
 export type CalendarEventCreateOrConnectWithoutPosterImageInput = {
@@ -872,6 +904,94 @@ export type CalendarEventUpdateManyWithWhereWithoutPosterImageInput = {
   data: Prisma.XOR<Prisma.CalendarEventUpdateManyMutationInput, Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageInput>
 }
 
+export type CalendarEventCreateWithoutAgendaItemsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  startAt: Date | string
+  endAt?: Date | string | null | runtime.Types.Skip
+  location?: string | null | runtime.Types.Skip
+  eventType?: string | runtime.Types.Skip
+  status?: $Enums.EventStatus | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  createdBy: Prisma.UserCreateNestedOneWithoutCalendarEventsInput
+  coverImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarCoverImagesInput | runtime.Types.Skip
+  posterImage?: Prisma.MediaAssetCreateNestedOneWithoutCalendarPosterImagesInput | runtime.Types.Skip
+}
+
+export type CalendarEventUncheckedCreateWithoutAgendaItemsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  description?: string | null | runtime.Types.Skip
+  startAt: Date | string
+  endAt?: Date | string | null | runtime.Types.Skip
+  location?: string | null | runtime.Types.Skip
+  eventType?: string | runtime.Types.Skip
+  coverImageId?: string | null | runtime.Types.Skip
+  posterImageId?: string | null | runtime.Types.Skip
+  status?: $Enums.EventStatus | runtime.Types.Skip
+  createdById: string
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type CalendarEventCreateOrConnectWithoutAgendaItemsInput = {
+  where: Prisma.CalendarEventWhereUniqueInput
+  create: Prisma.XOR<Prisma.CalendarEventCreateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedCreateWithoutAgendaItemsInput>
+}
+
+export type CalendarEventUpsertWithoutAgendaItemsInput = {
+  update: Prisma.XOR<Prisma.CalendarEventUpdateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedUpdateWithoutAgendaItemsInput>
+  create: Prisma.XOR<Prisma.CalendarEventCreateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedCreateWithoutAgendaItemsInput>
+  where?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
+}
+
+export type CalendarEventUpdateToOneWithWhereWithoutAgendaItemsInput = {
+  where?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.CalendarEventUpdateWithoutAgendaItemsInput, Prisma.CalendarEventUncheckedUpdateWithoutAgendaItemsInput>
+}
+
+export type CalendarEventUpdateWithoutAgendaItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput | runtime.Types.Skip
+  coverImage?: Prisma.MediaAssetUpdateOneWithoutCalendarCoverImagesNestedInput | runtime.Types.Skip
+  posterImage?: Prisma.MediaAssetUpdateOneWithoutCalendarPosterImagesNestedInput | runtime.Types.Skip
+}
+
+export type CalendarEventUncheckedUpdateWithoutAgendaItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  startAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  endAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  eventType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  coverImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  posterImageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  status?: Prisma.EnumEventStatusFieldUpdateOperationsInput | $Enums.EventStatus | runtime.Types.Skip
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
 export type CalendarEventCreateManyCreatedByInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -904,6 +1024,7 @@ export type CalendarEventUpdateWithoutCreatedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   coverImage?: Prisma.MediaAssetUpdateOneWithoutCalendarCoverImagesNestedInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetUpdateOneWithoutCalendarPosterImagesNestedInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateWithoutCreatedByInput = {
@@ -921,6 +1042,7 @@ export type CalendarEventUncheckedUpdateWithoutCreatedByInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateManyWithoutCreatedByInput = {
@@ -989,6 +1111,7 @@ export type CalendarEventUpdateWithoutCoverImageInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput | runtime.Types.Skip
   posterImage?: Prisma.MediaAssetUpdateOneWithoutCalendarPosterImagesNestedInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateWithoutCoverImageInput = {
@@ -1006,6 +1129,7 @@ export type CalendarEventUncheckedUpdateWithoutCoverImageInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateManyWithoutCoverImageInput = {
@@ -1040,6 +1164,7 @@ export type CalendarEventUpdateWithoutPosterImageInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   createdBy?: Prisma.UserUpdateOneRequiredWithoutCalendarEventsNestedInput | runtime.Types.Skip
   coverImage?: Prisma.MediaAssetUpdateOneWithoutCalendarCoverImagesNestedInput | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateWithoutPosterImageInput = {
@@ -1057,6 +1182,7 @@ export type CalendarEventUncheckedUpdateWithoutPosterImageInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  agendaItems?: Prisma.EventAgendaItemUncheckedUpdateManyWithoutEventNestedInput | runtime.Types.Skip
 }
 
 export type CalendarEventUncheckedUpdateManyWithoutPosterImageInput = {
@@ -1076,6 +1202,35 @@ export type CalendarEventUncheckedUpdateManyWithoutPosterImageInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
+
+/**
+ * Count Type CalendarEventCountOutputType
+ */
+
+export type CalendarEventCountOutputType = {
+  agendaItems: number
+}
+
+export type CalendarEventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  agendaItems?: boolean | CalendarEventCountOutputTypeCountAgendaItemsArgs
+}
+
+/**
+ * CalendarEventCountOutputType without action
+ */
+export type CalendarEventCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarEventCountOutputType
+   */
+  select?: Prisma.CalendarEventCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CalendarEventCountOutputType without action
+ */
+export type CalendarEventCountOutputTypeCountAgendaItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EventAgendaItemWhereInput | runtime.Types.Skip
+}
 
 
 export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1097,6 +1252,8 @@ export type CalendarEventSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   coverImage?: boolean | Prisma.CalendarEvent$coverImageArgs<ExtArgs> | runtime.Types.Skip
   posterImage?: boolean | Prisma.CalendarEvent$posterImageArgs<ExtArgs> | runtime.Types.Skip
+  agendaItems?: boolean | Prisma.CalendarEvent$agendaItemsArgs<ExtArgs> | runtime.Types.Skip
+  _count?: boolean | Prisma.CalendarEventCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["calendarEvent"]>
 
 export type CalendarEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1164,6 +1321,8 @@ export type CalendarEventInclude<ExtArgs extends runtime.Types.Extensions.Intern
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   coverImage?: boolean | Prisma.CalendarEvent$coverImageArgs<ExtArgs> | runtime.Types.Skip
   posterImage?: boolean | Prisma.CalendarEvent$posterImageArgs<ExtArgs> | runtime.Types.Skip
+  agendaItems?: boolean | Prisma.CalendarEvent$agendaItemsArgs<ExtArgs> | runtime.Types.Skip
+  _count?: boolean | Prisma.CalendarEventCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type CalendarEventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1182,6 +1341,7 @@ export type $CalendarEventPayload<ExtArgs extends runtime.Types.Extensions.Inter
     createdBy: Prisma.$UserPayload<ExtArgs>
     coverImage: Prisma.$MediaAssetPayload<ExtArgs> | null
     posterImage: Prisma.$MediaAssetPayload<ExtArgs> | null
+    agendaItems: Prisma.$EventAgendaItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1596,6 +1756,7 @@ export interface Prisma__CalendarEventClient<T, Null = never, ExtArgs extends ru
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   coverImage<T extends Prisma.CalendarEvent$coverImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CalendarEvent$coverImageArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   posterImage<T extends Prisma.CalendarEvent$posterImageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CalendarEvent$posterImageArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  agendaItems<T extends Prisma.CalendarEvent$agendaItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CalendarEvent$agendaItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventAgendaItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2076,6 +2237,30 @@ export type CalendarEvent$posterImageArgs<ExtArgs extends runtime.Types.Extensio
    */
   include?: Prisma.MediaAssetInclude<ExtArgs> | null
   where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+}
+
+/**
+ * CalendarEvent.agendaItems
+ */
+export type CalendarEvent$agendaItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EventAgendaItem
+   */
+  select?: Prisma.EventAgendaItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EventAgendaItem
+   */
+  omit?: Prisma.EventAgendaItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EventAgendaItemInclude<ExtArgs> | null
+  where?: Prisma.EventAgendaItemWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.EventAgendaItemOrderByWithRelationInput | Prisma.EventAgendaItemOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.EventAgendaItemWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.EventAgendaItemScalarFieldEnum | Prisma.EventAgendaItemScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

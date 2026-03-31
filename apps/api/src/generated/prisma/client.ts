@@ -62,6 +62,11 @@ export type RateLimitRecord = Prisma.RateLimitRecordModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model Session
  * 
  */
@@ -127,10 +132,25 @@ export type CommunityPost = Prisma.CommunityPostModel
  */
 export type GuestbookEntry = Prisma.GuestbookEntryModel
 /**
+ * Model CommunityComment
+ * 
+ */
+export type CommunityComment = Prisma.CommunityCommentModel
+/**
+ * Model CommunityHeart
+ * 
+ */
+export type CommunityHeart = Prisma.CommunityHeartModel
+/**
  * Model CalendarEvent
  * 
  */
 export type CalendarEvent = Prisma.CalendarEventModel
+/**
+ * Model EventAgendaItem
+ * 
+ */
+export type EventAgendaItem = Prisma.EventAgendaItemModel
 /**
  * Model Volunteer
  * 
@@ -152,6 +172,11 @@ export type ContactInfo = Prisma.ContactInfoModel
  */
 export type PushSubscription = Prisma.PushSubscriptionModel
 /**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
  * Model PushJob
  * 
  */
@@ -161,6 +186,11 @@ export type PushJob = Prisma.PushJobModel
  * 
  */
 export type WisdomEntry = Prisma.WisdomEntryModel
+/**
+ * Model WisdomAuthorityProfile
+ * 
+ */
+export type WisdomAuthorityProfile = Prisma.WisdomAuthorityProfileModel
 /**
  * Model BeginnerGuide
  * 

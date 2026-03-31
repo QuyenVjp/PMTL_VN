@@ -1,5 +1,12 @@
 import { Module } from "@nestjs/common";
-import { ContentController, GuideController, AdminDownloadController } from "./content.controller.js";
+import {
+  ContentController,
+  GuideController,
+  AdminDownloadController,
+  PublicBeginnerGuideController,
+  PublicDownloadController,
+  PublicChantItemsController,
+} from "./content.controller.js";
 import { ContentService } from "./content.service.js";
 import { ContentRepository } from "./content.repository.js";
 import { AdminMediaLibraryController } from "./admin-media-library.controller.js";
@@ -11,7 +18,15 @@ import { PracticeSupportModule } from "./practice-support/practice-support.modul
 
 @Module({
   imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule],
-  controllers: [ContentController, GuideController, AdminDownloadController, AdminMediaLibraryController],
+  controllers: [
+    ContentController,
+    GuideController,
+    AdminDownloadController,
+    PublicBeginnerGuideController,
+    PublicDownloadController,
+    PublicChantItemsController,
+    AdminMediaLibraryController,
+  ],
   providers: [ContentService, ContentRepository, AdminMediaLibraryService],
   exports: [ContentService],
 })

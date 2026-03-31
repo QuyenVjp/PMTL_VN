@@ -23,10 +23,18 @@ import {
   adminEventQuerySchema,
   adminCreateEventSchema,
   adminUpdateEventSchema,
+  createAgendaItemSchema,
+  updateAgendaItemSchema,
+  reorderAgendaItemsSchema,
+  rescheduleEventSchema,
   type EventQuery,
   type AdminEventQuery,
   type AdminCreateEventInput,
   type AdminUpdateEventInput,
+  type CreateAgendaItemInput,
+  type UpdateAgendaItemInput,
+  type ReorderAgendaItemsInput,
+  type RescheduleEventInput,
 } from "./calendar.schemas.js";
 
 // ── Public controller ─────────────────────────────────────────────────────
@@ -51,6 +59,14 @@ export class CalendarController {
   @ApiResponse({ status: 200, description: "Chi tiết sự kiện" })
   getEvent(@Param("publicId") publicId: string) {
     return this.calendarService.getEventByPublicId(publicId);
+  }
+
+  @Get("events/:publicId/agenda")
+  @Public()
+  @ApiOperation({ summary: "Chương trình sự kiện" })
+  @ApiResponse({ status: 200, description: "Danh sách mục chương trình" })
+  getEventAgenda(@Param("publicId") publicId: string) {
+    return this.calendarService.getPublicAgenda(publicId);
   }
 
   @Get("advisory/rule-packs/q161")
@@ -128,5 +144,70 @@ export class AdminCalendarController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.calendarService.adminPublishEvent(publicId, user.id);
+  }
+
+  // ── Agenda items ─────────────────────────────────────────────────────
+
+  @Post("events/:publicId/agenda-items")
+  @ApiOperation({ summary: "Thêm mục chương trình (admin)" })
+  @ApiResponse({ status: 201, description: "Tạo thành công" })
+  async createAgendaItem(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(createAgendaItemSchema)) input: CreateAgendaItemInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminCreateAgendaItem(publicId, input, user.id);
+  }
+
+  @Patch("events/:publicId/agenda-items/:itemPublicId")
+  @ApiOperation({ summary: "Cập nhật mục chương trình (admin)" })
+  async updateAgendaItem(
+    @Param("publicId") publicId: string,
+    @Param("itemPublicId") itemPublicId: string,
+    @Body(ZodValidate(updateAgendaItemSchema)) input: UpdateAgendaItemInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminUpdateAgendaItem(publicId, itemPublicId, input, user.id);
+  }
+
+  @Delete("events/:publicId/agenda-items/:itemPublicId")
+  @ApiOperation({ summary: "Xoá mục chương trình (admin)" })
+  async deleteAgendaItem(
+    @Param("publicId") publicId: string,
+    @Param("itemPublicId") itemPublicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminDeleteAgendaItem(publicId, itemPublicId, user.id);
+  }
+
+  @Post("events/:publicId/agenda-items/reorder")
+  @ApiOperation({ summary: "Sắp xếp lại chương trình (admin)" })
+  async reorderAgendaItems(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(reorderAgendaItemsSchema)) input: ReorderAgendaItemsInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminReorderAgendaItems(publicId, input, user.id);
+  }
+
+  // ── Event lifecycle ──────────────────────────────────────────────────
+
+  @Post("events/:publicId/reschedule")
+  @ApiOperation({ summary: "Dời lịch sự kiện (admin)" })
+  async rescheduleEvent(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(rescheduleEventSchema)) input: RescheduleEventInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminRescheduleEvent(publicId, input, user.id);
+  }
+
+  @Post("events/:publicId/cancel")
+  @ApiOperation({ summary: "Huỷ sự kiện (admin)" })
+  async cancelEvent(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.calendarService.adminCancelEvent(publicId, user.id);
   }
 }

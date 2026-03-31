@@ -281,6 +281,8 @@ export type CommunityPostWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentListRelationFilter | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartListRelationFilter | runtime.Types.Skip
 }
 
 export type CommunityPostOrderByWithRelationInput = {
@@ -297,6 +299,8 @@ export type CommunityPostOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentOrderByRelationAggregateInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type CommunityPostWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +320,8 @@ export type CommunityPostWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentListRelationFilter | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type CommunityPostOrderByWithAggregationInput = {
@@ -369,6 +375,8 @@ export type CommunityPostCreateInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutCommunityPostsInput
+  comments?: Prisma.CommunityCommentCreateNestedManyWithoutPostInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
 export type CommunityPostUncheckedCreateInput = {
@@ -384,6 +392,8 @@ export type CommunityPostUncheckedCreateInput = {
   isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
 export type CommunityPostUpdateInput = {
@@ -399,6 +409,8 @@ export type CommunityPostUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutCommunityPostsNestedInput | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
 export type CommunityPostUncheckedUpdateInput = {
@@ -414,6 +426,8 @@ export type CommunityPostUncheckedUpdateInput = {
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
 export type CommunityPostCreateManyInput = {
@@ -527,6 +541,11 @@ export type CommunityPostSumOrderByAggregateInput = {
   reportCount?: Prisma.SortOrder | runtime.Types.Skip
 }
 
+export type CommunityPostScalarRelationFilter = {
+  is?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+  isNot?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+}
+
 export type CommunityPostCreateNestedManyWithoutAuthorInput = {
   create?: Prisma.XOR<Prisma.CommunityPostCreateWithoutAuthorInput, Prisma.CommunityPostUncheckedCreateWithoutAuthorInput> | Prisma.CommunityPostCreateWithoutAuthorInput[] | Prisma.CommunityPostUncheckedCreateWithoutAuthorInput[] | runtime.Types.Skip
   connectOrCreate?: Prisma.CommunityPostCreateOrConnectWithoutAuthorInput | Prisma.CommunityPostCreateOrConnectWithoutAuthorInput[] | runtime.Types.Skip
@@ -573,6 +592,34 @@ export type EnumCommunityPostStatusFieldUpdateOperationsInput = {
   set?: $Enums.CommunityPostStatus | runtime.Types.Skip
 }
 
+export type CommunityPostCreateNestedOneWithoutCommentsInput = {
+  create?: Prisma.XOR<Prisma.CommunityPostCreateWithoutCommentsInput, Prisma.CommunityPostUncheckedCreateWithoutCommentsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CommunityPostCreateOrConnectWithoutCommentsInput | runtime.Types.Skip
+  connect?: Prisma.CommunityPostWhereUniqueInput | runtime.Types.Skip
+}
+
+export type CommunityPostUpdateOneRequiredWithoutCommentsNestedInput = {
+  create?: Prisma.XOR<Prisma.CommunityPostCreateWithoutCommentsInput, Prisma.CommunityPostUncheckedCreateWithoutCommentsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CommunityPostCreateOrConnectWithoutCommentsInput | runtime.Types.Skip
+  upsert?: Prisma.CommunityPostUpsertWithoutCommentsInput | runtime.Types.Skip
+  connect?: Prisma.CommunityPostWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityPostUpdateToOneWithWhereWithoutCommentsInput, Prisma.CommunityPostUpdateWithoutCommentsInput>, Prisma.CommunityPostUncheckedUpdateWithoutCommentsInput> | runtime.Types.Skip
+}
+
+export type CommunityPostCreateNestedOneWithoutHeartsInput = {
+  create?: Prisma.XOR<Prisma.CommunityPostCreateWithoutHeartsInput, Prisma.CommunityPostUncheckedCreateWithoutHeartsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CommunityPostCreateOrConnectWithoutHeartsInput | runtime.Types.Skip
+  connect?: Prisma.CommunityPostWhereUniqueInput | runtime.Types.Skip
+}
+
+export type CommunityPostUpdateOneRequiredWithoutHeartsNestedInput = {
+  create?: Prisma.XOR<Prisma.CommunityPostCreateWithoutHeartsInput, Prisma.CommunityPostUncheckedCreateWithoutHeartsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.CommunityPostCreateOrConnectWithoutHeartsInput | runtime.Types.Skip
+  upsert?: Prisma.CommunityPostUpsertWithoutHeartsInput | runtime.Types.Skip
+  connect?: Prisma.CommunityPostWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityPostUpdateToOneWithWhereWithoutHeartsInput, Prisma.CommunityPostUpdateWithoutHeartsInput>, Prisma.CommunityPostUncheckedUpdateWithoutHeartsInput> | runtime.Types.Skip
+}
+
 export type CommunityPostCreateWithoutAuthorInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -585,6 +632,8 @@ export type CommunityPostCreateWithoutAuthorInput = {
   isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentCreateNestedManyWithoutPostInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
 export type CommunityPostUncheckedCreateWithoutAuthorInput = {
@@ -599,6 +648,8 @@ export type CommunityPostUncheckedCreateWithoutAuthorInput = {
   isPinned?: boolean | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
 }
 
 export type CommunityPostCreateOrConnectWithoutAuthorInput = {
@@ -645,6 +696,166 @@ export type CommunityPostScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"CommunityPost"> | Date | string | runtime.Types.Skip
 }
 
+export type CommunityPostCreateWithoutCommentsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  content: string
+  status?: $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: number | runtime.Types.Skip
+  commentCount?: number | runtime.Types.Skip
+  reportCount?: number | runtime.Types.Skip
+  isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  author: Prisma.UserCreateNestedOneWithoutCommunityPostsInput
+  hearts?: Prisma.CommunityHeartCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type CommunityPostUncheckedCreateWithoutCommentsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  authorId: string
+  content: string
+  status?: $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: number | runtime.Types.Skip
+  commentCount?: number | runtime.Types.Skip
+  reportCount?: number | runtime.Types.Skip
+  isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type CommunityPostCreateOrConnectWithoutCommentsInput = {
+  where: Prisma.CommunityPostWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommunityPostCreateWithoutCommentsInput, Prisma.CommunityPostUncheckedCreateWithoutCommentsInput>
+}
+
+export type CommunityPostUpsertWithoutCommentsInput = {
+  update: Prisma.XOR<Prisma.CommunityPostUpdateWithoutCommentsInput, Prisma.CommunityPostUncheckedUpdateWithoutCommentsInput>
+  create: Prisma.XOR<Prisma.CommunityPostCreateWithoutCommentsInput, Prisma.CommunityPostUncheckedCreateWithoutCommentsInput>
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+}
+
+export type CommunityPostUpdateToOneWithWhereWithoutCommentsInput = {
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.CommunityPostUpdateWithoutCommentsInput, Prisma.CommunityPostUncheckedUpdateWithoutCommentsInput>
+}
+
+export type CommunityPostUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumCommunityPostStatusFieldUpdateOperationsInput | $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  author?: Prisma.UserUpdateOneRequiredWithoutCommunityPostsNestedInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
+export type CommunityPostUncheckedUpdateWithoutCommentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumCommunityPostStatusFieldUpdateOperationsInput | $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
+export type CommunityPostCreateWithoutHeartsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  content: string
+  status?: $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: number | runtime.Types.Skip
+  commentCount?: number | runtime.Types.Skip
+  reportCount?: number | runtime.Types.Skip
+  isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  author: Prisma.UserCreateNestedOneWithoutCommunityPostsInput
+  comments?: Prisma.CommunityCommentCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type CommunityPostUncheckedCreateWithoutHeartsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  authorId: string
+  content: string
+  status?: $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: number | runtime.Types.Skip
+  commentCount?: number | runtime.Types.Skip
+  reportCount?: number | runtime.Types.Skip
+  isHidden?: boolean | runtime.Types.Skip
+  isPinned?: boolean | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
+}
+
+export type CommunityPostCreateOrConnectWithoutHeartsInput = {
+  where: Prisma.CommunityPostWhereUniqueInput
+  create: Prisma.XOR<Prisma.CommunityPostCreateWithoutHeartsInput, Prisma.CommunityPostUncheckedCreateWithoutHeartsInput>
+}
+
+export type CommunityPostUpsertWithoutHeartsInput = {
+  update: Prisma.XOR<Prisma.CommunityPostUpdateWithoutHeartsInput, Prisma.CommunityPostUncheckedUpdateWithoutHeartsInput>
+  create: Prisma.XOR<Prisma.CommunityPostCreateWithoutHeartsInput, Prisma.CommunityPostUncheckedCreateWithoutHeartsInput>
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+}
+
+export type CommunityPostUpdateToOneWithWhereWithoutHeartsInput = {
+  where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.CommunityPostUpdateWithoutHeartsInput, Prisma.CommunityPostUncheckedUpdateWithoutHeartsInput>
+}
+
+export type CommunityPostUpdateWithoutHeartsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumCommunityPostStatusFieldUpdateOperationsInput | $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  author?: Prisma.UserUpdateOneRequiredWithoutCommunityPostsNestedInput | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
+export type CommunityPostUncheckedUpdateWithoutHeartsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  content?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumCommunityPostStatusFieldUpdateOperationsInput | $Enums.CommunityPostStatus | runtime.Types.Skip
+  heartCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  commentCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  reportCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  isHidden?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+}
+
 export type CommunityPostCreateManyAuthorInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -671,6 +882,8 @@ export type CommunityPostUpdateWithoutAuthorInput = {
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
 export type CommunityPostUncheckedUpdateWithoutAuthorInput = {
@@ -685,6 +898,8 @@ export type CommunityPostUncheckedUpdateWithoutAuthorInput = {
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  comments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
+  hearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
 }
 
 export type CommunityPostUncheckedUpdateManyWithoutAuthorInput = {
@@ -702,6 +917,44 @@ export type CommunityPostUncheckedUpdateManyWithoutAuthorInput = {
 }
 
 
+/**
+ * Count Type CommunityPostCountOutputType
+ */
+
+export type CommunityPostCountOutputType = {
+  comments: number
+  hearts: number
+}
+
+export type CommunityPostCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  comments?: boolean | CommunityPostCountOutputTypeCountCommentsArgs
+  hearts?: boolean | CommunityPostCountOutputTypeCountHeartsArgs
+}
+
+/**
+ * CommunityPostCountOutputType without action
+ */
+export type CommunityPostCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityPostCountOutputType
+   */
+  select?: Prisma.CommunityPostCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * CommunityPostCountOutputType without action
+ */
+export type CommunityPostCountOutputTypeCountCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityCommentWhereInput | runtime.Types.Skip
+}
+
+/**
+ * CommunityPostCountOutputType without action
+ */
+export type CommunityPostCountOutputTypeCountHeartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityHeartWhereInput | runtime.Types.Skip
+}
+
 
 export type CommunityPostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
@@ -717,6 +970,9 @@ export type CommunityPostSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  comments?: boolean | Prisma.CommunityPost$commentsArgs<ExtArgs> | runtime.Types.Skip
+  hearts?: boolean | Prisma.CommunityPost$heartsArgs<ExtArgs> | runtime.Types.Skip
+  _count?: boolean | Prisma.CommunityPostCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["communityPost"]>
 
 export type CommunityPostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -769,6 +1025,9 @@ export type CommunityPostSelectScalar = {
 export type CommunityPostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "authorId" | "content" | "status" | "heartCount" | "commentCount" | "reportCount" | "isHidden" | "isPinned" | "createdAt" | "updatedAt", ExtArgs["result"]["communityPost"], runtime.Types.Skip>
 export type CommunityPostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  comments?: boolean | Prisma.CommunityPost$commentsArgs<ExtArgs> | runtime.Types.Skip
+  hearts?: boolean | Prisma.CommunityPost$heartsArgs<ExtArgs> | runtime.Types.Skip
+  _count?: boolean | Prisma.CommunityPostCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type CommunityPostIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -781,6 +1040,8 @@ export type $CommunityPostPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "CommunityPost"
   objects: {
     author: Prisma.$UserPayload<ExtArgs>
+    comments: Prisma.$CommunityCommentPayload<ExtArgs>[]
+    hearts: Prisma.$CommunityHeartPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1190,6 +1451,8 @@ readonly fields: CommunityPostFieldRefs;
 export interface Prisma__CommunityPostClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  comments<T extends Prisma.CommunityPost$commentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommunityPost$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  hearts<T extends Prisma.CommunityPost$heartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CommunityPost$heartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityHeartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1629,6 +1892,54 @@ export type CommunityPostDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many CommunityPosts to delete.
    */
   limit?: number | runtime.Types.Skip
+}
+
+/**
+ * CommunityPost.comments
+ */
+export type CommunityPost$commentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityComment
+   */
+  select?: Prisma.CommunityCommentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityComment
+   */
+  omit?: Prisma.CommunityCommentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityCommentInclude<ExtArgs> | null
+  where?: Prisma.CommunityCommentWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.CommunityCommentOrderByWithRelationInput | Prisma.CommunityCommentOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.CommunityCommentWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.CommunityCommentScalarFieldEnum | Prisma.CommunityCommentScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * CommunityPost.hearts
+ */
+export type CommunityPost$heartsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityHeart
+   */
+  select?: Prisma.CommunityHeartSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityHeart
+   */
+  omit?: Prisma.CommunityHeartOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityHeartInclude<ExtArgs> | null
+  where?: Prisma.CommunityHeartWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.CommunityHeartOrderByWithRelationInput | Prisma.CommunityHeartOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.CommunityHeartWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.CommunityHeartScalarFieldEnum | Prisma.CommunityHeartScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

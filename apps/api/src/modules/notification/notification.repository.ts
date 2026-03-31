@@ -1,9 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
-import type { AdminPushJobQuery } from "./notification.schemas.js";
+import type {
+  AdminPushJobQuery,
+  UpdatePreferencesInput,
+} from "./notification.schemas.js";
 
 const CREATOR_SELECT = {
   select: { publicId: true, displayName: true, email: true },
+} as const;
+
+/** Default preferences returned when no persisted row exists yet. */
+const DEFAULT_PREFERENCES = {
+  practiceReminders: true,
+  eventReminders: true,
+  communityUpdates: true,
+  quietHoursStart: null,
+  quietHoursEnd: null,
 } as const;
 
 @Injectable()
@@ -85,5 +97,92 @@ export class NotificationRepository {
       this.prisma.pushSubscription.count({ where: { isActive: false } }),
     ]);
     return { active, inactive, total: active + inactive };
+  }
+
+  // ─── Member: Notification Preferences ───────────────────────────────────────
+
+  async findPreferencesByUserId(userId: string) {
+    const row = await this.prisma.notificationPreference.findUnique({
+      where: { userId },
+    });
+    if (!row) {
+      return { userId, persisted: false as const, ...DEFAULT_PREFERENCES };
+    }
+    return {
+      userId: row.userId,
+      persisted: true as const,
+      practiceReminders: row.practiceReminders,
+      eventReminders: row.eventReminders,
+      communityUpdates: row.communityUpdates,
+      quietHoursStart: row.quietHoursStart,
+      quietHoursEnd: row.quietHoursEnd,
+    };
+  }
+
+  async upsertPreferences(userId: string, input: UpdatePreferencesInput) {
+    return this.prisma.notificationPreference.upsert({
+      where: { userId },
+      create: {
+        userId,
+        practiceReminders: input.practiceReminders ?? true,
+        eventReminders: input.eventReminders ?? true,
+        communityUpdates: input.communityUpdates ?? true,
+        quietHoursStart: input.quietHoursStart ?? null,
+        quietHoursEnd: input.quietHoursEnd ?? null,
+      },
+      update: {
+        ...(input.practiceReminders !== undefined && { practiceReminders: input.practiceReminders }),
+        ...(input.eventReminders !== undefined && { eventReminders: input.eventReminders }),
+        ...(input.communityUpdates !== undefined && { communityUpdates: input.communityUpdates }),
+        ...(input.quietHoursStart !== undefined && { quietHoursStart: input.quietHoursStart }),
+        ...(input.quietHoursEnd !== undefined && { quietHoursEnd: input.quietHoursEnd }),
+      },
+    });
+  }
+
+  // ─── Member: Push Subscriptions ─────────────────────────────────────────────
+
+  async findSubscriptionByEndpoint(userId: string, endpoint: string) {
+    return this.prisma.pushSubscription.findFirst({
+      where: { userId, endpoint },
+    });
+  }
+
+  async createSubscription(input: {
+    publicId: string;
+    userId: string;
+    endpoint: string;
+    keyP256dh: string;
+    keyAuth: string;
+  }) {
+    return this.prisma.pushSubscription.create({
+      data: {
+        publicId: input.publicId,
+        userId: input.userId,
+        endpoint: input.endpoint,
+        keyP256dh: input.keyP256dh,
+        keyAuth: input.keyAuth,
+        isActive: true,
+      },
+    });
+  }
+
+  async reactivateSubscription(id: string, keyP256dh: string, keyAuth: string) {
+    return this.prisma.pushSubscription.update({
+      where: { id },
+      data: { isActive: true, keyP256dh, keyAuth, subscribedAt: new Date() },
+    });
+  }
+
+  async deactivateSubscriptionByEndpoint(userId: string, endpoint: string) {
+    const sub = await this.prisma.pushSubscription.findFirst({
+      where: { userId, endpoint, isActive: true },
+    });
+    if (!sub) return null;
+
+    return this.prisma.pushSubscription.update({
+      where: { id: sub.id },
+      data: { isActive: false },
+    });
   }
 }

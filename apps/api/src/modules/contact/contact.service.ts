@@ -214,6 +214,38 @@ export class ContactService {
     return { deleted: true };
   }
 
+  // ── Public endpoints ────────────────────────────────────────────────
+
+  async publicGetContactInfo() {
+    const cacheKey = "contact-info:public";
+    const cached = await this.cache.getJson<any>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const info = await this.prisma.contactInfo.findFirst();
+    const result = info ?? { title: null, email: null, phone: null, address: null, socialLinks: null };
+
+    await this.cache.setJson(cacheKey, result, 300);
+    return result;
+  }
+
+  async publicListVolunteers() {
+    const cacheKey = "volunteers:public";
+    const cached = await this.cache.getJson<any>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const data = await this.prisma.volunteer.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    });
+
+    await this.cache.setJson(cacheKey, data, 300);
+    return data;
+  }
+
   // ── Contact Info (singleton) ───────────────────────────────────────
 
   async adminGetContactInfo() {
