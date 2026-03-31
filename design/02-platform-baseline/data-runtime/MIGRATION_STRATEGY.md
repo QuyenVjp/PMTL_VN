@@ -233,3 +233,183 @@ Seed production phải tạo:
 - [ ] Post-migration smoke checklist ready
 - [ ] `prisma migrate status` shows expected state
 - [ ] Data migration script tested on staging/copy first
+
+---
+
+## Zero-Downtime Schema Evolution 2026
+
+Enterprise 2026 yêu cầu không có outage khi thay đổi schema. Section này chốt kỹ thuật và quy trình.
+
+### Nguyên tắc cốt lõi
+
+1. **Không bao giờ lock toàn bộ table** khi production đang chạy
+2. **Mọi migration phải backward-compatible** trong ít nhất 1 deploy window
+3. **Index creation phải CONCURRENTLY** trên Postgres
+4. **Column drop chỉ sau khi app code không còn đọc/ghi**
+
+### Zero-downtime migration patterns
+
+| Pattern | Khi nào dùng | Steps |
+|---|---|---|
+| **Add nullable column** | Thêm field mới | 1. Add nullable → 2. Deploy code xử lý cả có/không có → 3. Backfill → 4. Add NOT NULL constraint (nếu cần) |
+| **Rename column** | Đổi tên field | 1. Add new column → 2. Dual-write (code ghi cả hai) → 3. Backfill old→new → 4. Switch read path → 5. Drop old (migration riêng) |
+| **Change column type** | Đổi kiểu dữ liệu | 1. Add new column type mới → 2. Dual-write → 3. Backfill+convert → 4. Switch read → 5. Drop old |
+| **Add index** | Tăng tốc query | 1. `CREATE INDEX CONCURRENTLY` (không lock) → 2. Verify index usage |
+| **Drop column** | Xóa field | 1. Remove code dependency → 2. Deploy → 3. Drop column (migration riêng) |
+
+### Shadow database configuration
+
+```typescript
+// prisma.config.ts — Shadow DB cho migration dev/diff workflows
+import { defineConfig } from "@prisma/config";
+
+export default defineConfig({
+  earlyAccess: true,
+  schema: "./prisma/schema.prisma",
+  migrate: {
+    // Shadow DB dùng riêng cho diff/dev, không phải production
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
+  },
+});
+```
+
+Env setup:
+```bash
+# .env.local hoặc CI secrets
+SHADOW_DATABASE_URL="postgresql://user:pass@localhost:5433/pmtl_shadow"
+```
+
+Rules:
+- Shadow DB không bao giờ là production DB
+- Shadow DB credential không được deploy vào container
+- Dùng database riêng biệt hoặc schema riêng
+
+### Concurrent index creation
+
+```sql
+-- ❌ SAI: Lock table trong production
+CREATE INDEX idx_posts_published ON posts(published_at);
+
+-- ✅ ĐÚNG: Không lock table
+CREATE INDEX CONCURRENTLY idx_posts_published ON posts(published_at);
+```
+
+Prisma migration cho concurrent index:
+```sql
+-- migrations/YYYYMMDD_add_index_concurrently/migration.sql
+-- Prisma không tự động dùng CONCURRENTLY, phải viết raw SQL
+
+-- disable transaction (required for CONCURRENTLY)
+-- https://www.prisma.io/docs/orm/prisma-migrate/workflows/customizing-migrations
+CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_posts_published" ON "posts"("published_at");
+```
+
+### Backfill script template
+
+```typescript
+// scripts/backfill-public-id.ts
+import { PrismaClient } from "@prisma/client";
+import { nanoid } from "nanoid";
+import pino from "pino";
+
+const prisma = new PrismaClient();
+const logger = pino({ name: "backfill-public-id" });
+
+const BATCH_SIZE = 1000;
+const DELAY_MS = 100; // tránh overwhelm DB
+
+async function backfill() {
+  let processed = 0;
+  let hasMore = true;
+
+  logger.info({ msg: "backfill.start", table: "posts" });
+
+  while (hasMore) {
+    const batch = await prisma.post.findMany({
+      where: { publicId: null },
+      take: BATCH_SIZE,
+      select: { id: true },
+    });
+
+    if (batch.length === 0) {
+      hasMore = false;
+      break;
+    }
+
+    // Batch update
+    await prisma.$transaction(
+      batch.map((row) =>
+        prisma.post.update({
+          where: { id: row.id },
+          data: { publicId: nanoid(21) },
+        })
+      )
+    );
+
+    processed += batch.length;
+    logger.info({ msg: "backfill.progress", processed, batchSize: batch.length });
+
+    // Rate limit để không overwhelm production
+    await new Promise((r) => setTimeout(r, DELAY_MS));
+  }
+
+  logger.info({ msg: "backfill.complete", totalProcessed: processed });
+}
+
+backfill()
+  .catch((e) => {
+    logger.error({ msg: "backfill.failed", error: e.message });
+    process.exit(1);
+  })
+  .finally(() => prisma.$disconnect());
+```
+
+Usage:
+```bash
+# Test trên staging trước
+DATABASE_URL="..." npx ts-node scripts/backfill-public-id.ts
+
+# Production với monitoring
+DATABASE_URL="..." LOG_LEVEL=info npx ts-node scripts/backfill-public-id.ts 2>&1 | tee backfill.log
+```
+
+### Rollback plan template
+
+| Phase | Action | Rollback |
+|---|---|---|
+| 1. Schema expand | Add nullable column | Drop column (safe nếu code chưa dùng) |
+| 2. Code dual-write | Deploy code ghi cả old+new | Rollback code version |
+| 3. Backfill | Script fill data | Chạy lại backfill hoặc truncate new column |
+| 4. Code switch | Switch read path sang new | Rollback code version |
+| 5. Schema contract | Drop old column | **KHÔNG rollback được** → Restore từ backup |
+
+### Large table migration strategy
+
+Với table > 1M rows:
+
+1. **Estimate lock time**: `EXPLAIN ANALYZE` trên staging
+2. **Schedule maintenance window** nếu cần (dù minimal)
+3. **Use batched backfill** với progress logging
+4. **Monitor connections** trong quá trình migration
+5. **Have rollback script ready** trước khi bắt đầu
+
+```sql
+-- Estimate row count và size
+SELECT 
+  relname as table,
+  reltuples as row_estimate,
+  pg_size_pretty(pg_total_relation_size(relid)) as total_size
+FROM pg_catalog.pg_statio_user_tables
+WHERE relname = 'posts';
+```
+
+### Migration checklist (Zero-Downtime)
+
+- [ ] Migration script reviewed cho table locks
+- [ ] `CREATE INDEX CONCURRENTLY` được dùng cho tất cả indexes
+- [ ] Backfill script đã test trên staging với production-like data
+- [ ] Rollback plan documented và tested
+- [ ] App code backward-compatible với cả old và new schema
+- [ ] Monitoring alerts configured cho migration duration
+- [ ] Communication plan cho team nếu migration kéo dài
+- [ ] Shadow DB configured (nếu dùng Prisma diff workflows)

@@ -89,6 +89,175 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 - [ ] Brevo SMTP credentials rotated từ dev sang production account
 - [ ] Git repo không có secrets: `git log --all --oneline | head -20` + secret scan
 
+## 7. Container Security Hardening Canon (Enterprise 2026)
+
+Section này chốt container hardening requirements vượt qua baseline distroless.
+
+### 7.1 Dockerfile Security Template
+
+```dockerfile
+# ─── Stage: runtime (hardened) ─────────────────────────────────────────────────
+FROM gcr.io/distroless/nodejs20-debian12:nonroot AS runtime
+
+# Run as non-root user (already set by :nonroot tag, nhưng explicit cho clarity)
+USER nonroot:nonroot
+
+# Metadata
+LABEL org.opencontainers.image.source="https://github.com/pmtl-vn/pmtl_vn"
+LABEL org.opencontainers.image.description="PMTL API Service"
+LABEL org.opencontainers.image.vendor="PMTL Vietnam"
+
+WORKDIR /app
+
+# Copy artifacts with explicit ownership
+COPY --chown=nonroot:nonroot --from=builder /app/dist ./dist
+COPY --chown=nonroot:nonroot --from=builder /app/node_modules ./node_modules
+
+ENV NODE_ENV=production
+
+# Expose port > 1024 (non-privileged)
+EXPOSE 3001
+
+# No shell available in distroless, use array syntax
+CMD ["dist/main.js"]
+```
+
+### 7.2 Compose Security Options (compose.prod.yml)
+
+```yaml
+services:
+  api:
+    image: ${API_IMAGE}
+    security_opt:
+      - no-new-privileges:true
+      # Seccomp profile - chặn syscalls nguy hiểm
+      - seccomp:/etc/docker/seccomp-pmtl.json
+    # Read-only root filesystem
+    read_only: true
+    # Tmpfs cho writable paths cần thiết
+    tmpfs:
+      - /tmp:mode=1777,size=100m
+      - /app/.cache:mode=1777,size=50m
+    # Drop ALL capabilities, chỉ add lại những gì cần
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE  # Chỉ nếu cần bind port < 1024
+    # User namespace isolation (nếu Docker daemon configured)
+    userns_mode: host
+```
+
+### 7.3 Seccomp Profile Template
+
+Tạo file `/etc/docker/seccomp-pmtl.json`:
+
+```json
+{
+  "defaultAction": "SCMP_ACT_ERRNO",
+  "defaultErrnoRet": 1,
+  "architectures": ["SCMP_ARCH_X86_64", "SCMP_ARCH_AARCH64"],
+  "syscalls": [
+    {
+      "names": [
+        "accept", "accept4", "access", "arch_prctl", "bind", "brk",
+        "chdir", "clock_getres", "clock_gettime", "clock_nanosleep",
+        "clone", "clone3", "close", "connect", "dup", "dup2", "dup3",
+        "epoll_create", "epoll_create1", "epoll_ctl", "epoll_pwait", "epoll_wait",
+        "execve", "exit", "exit_group", "faccessat", "faccessat2",
+        "fadvise64", "fchdir", "fchown", "fcntl", "fdatasync",
+        "fgetxattr", "flock", "fstat", "fstatfs", "fsync",
+        "ftruncate", "futex", "getcwd", "getdents", "getdents64",
+        "getegid", "geteuid", "getgid", "getgroups", "getpeername",
+        "getpgid", "getpid", "getppid", "getpriority", "getrandom",
+        "getresgid", "getresuid", "getrlimit", "getsockname", "getsockopt",
+        "gettid", "getuid", "ioctl", "lseek", "madvise", "membarrier",
+        "memfd_create", "mincore", "mkdir", "mkdirat", "mmap", "mprotect",
+        "mremap", "munmap", "nanosleep", "newfstatat", "open", "openat",
+        "openat2", "pipe", "pipe2", "poll", "ppoll", "prctl", "pread64",
+        "preadv", "prlimit64", "pwrite64", "pwritev", "read", "readlink",
+        "readlinkat", "readv", "recvfrom", "recvmmsg", "recvmsg", "rename",
+        "renameat", "renameat2", "restart_syscall", "rmdir", "rseq",
+        "rt_sigaction", "rt_sigprocmask", "rt_sigreturn", "sched_getaffinity",
+        "sched_yield", "select", "sendfile", "sendmmsg", "sendmsg", "sendto",
+        "set_robust_list", "set_tid_address", "setgid", "setgroups",
+        "setpgid", "setresgid", "setresuid", "setsid", "setsockopt", "setuid",
+        "shutdown", "sigaltstack", "socket", "socketpair", "splice",
+        "stat", "statfs", "statx", "symlink", "symlinkat", "sysinfo",
+        "tgkill", "umask", "uname", "unlink", "unlinkat", "utimensat",
+        "wait4", "waitid", "write", "writev"
+      ],
+      "action": "SCMP_ACT_ALLOW"
+    }
+  ]
+}
+```
+
+### 7.4 Image Signing với Cosign
+
+```bash
+# Install cosign
+brew install cosign  # macOS
+# hoặc
+go install github.com/sigstore/cosign/v2/cmd/cosign@latest
+
+# Generate key pair (chỉ 1 lần)
+cosign generate-key-pair
+
+# Sign image sau khi build
+cosign sign --key cosign.key ghcr.io/pmtl-vn/api:v1.0.0
+
+# Verify signature trước khi deploy
+cosign verify --key cosign.pub ghcr.io/pmtl-vn/api:v1.0.0
+```
+
+### 7.5 Trivy Scan Gate (CI/CD)
+
+```yaml
+# .woodpecker/security.yml
+steps:
+  trivy-scan:
+    image: aquasec/trivy:latest
+    commands:
+      - trivy image --exit-code 1 --severity CRITICAL,HIGH ${API_IMAGE}
+      - trivy image --exit-code 1 --severity CRITICAL,HIGH ${WEB_IMAGE}
+    when:
+      event: [push, pull_request]
+      branch: [main, staging]
+```
+
+### 7.6 Container Hardening Checklist
+
+- [ ] Base image: `gcr.io/distroless/nodejs20-debian12:nonroot`
+- [ ] Non-root user: `USER nonroot:nonroot`
+- [ ] `security_opt: no-new-privileges:true`
+- [ ] `cap_drop: ALL` trong compose
+- [ ] `cap_add` chỉ những capabilities thật sự cần
+- [ ] `read_only: true` + tmpfs cho writable paths
+- [ ] Seccomp profile applied (`seccomp:/etc/docker/seccomp-pmtl.json`)
+- [ ] Trivy scan pass (no CRITICAL/HIGH vulnerabilities)
+- [ ] Image signed với Cosign
+- [ ] Image digest pinned (không dùng floating tags)
+- [ ] No secrets baked into image layers
+- [ ] HEALTHCHECK defined với non-shell command
+
+### 7.7 Runtime Security Verification
+
+```bash
+# Verify running container security
+docker inspect pmtl-api --format '{{json .HostConfig.SecurityOpt}}'
+# Expected: ["no-new-privileges:true","seccomp=..."]
+
+docker inspect pmtl-api --format '{{json .HostConfig.CapDrop}}'
+# Expected: ["ALL"]
+
+docker inspect pmtl-api --format '{{json .HostConfig.ReadonlyRootfs}}'
+# Expected: true
+
+# Verify user
+docker exec pmtl-api whoami
+# Should fail (no shell in distroless) or return "nonroot"
+```
+
 ---
 
 ## Launch Gate Summary

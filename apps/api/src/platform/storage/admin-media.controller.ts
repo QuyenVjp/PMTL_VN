@@ -29,6 +29,7 @@ import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js"
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { StorageService } from "./storage.service.js";
+import { AuditService } from "../../platform/audit/audit.service.js";
 import { NotFoundError } from "../../common/errors/app-error.js";
 
 const mediaListQuerySchema = z.object({
@@ -52,6 +53,7 @@ export class AdminMediaController {
     private readonly prisma: PrismaService,
     private readonly storageService: StorageService,
     private readonly configService: ConfigService,
+    private readonly audit: AuditService,
   ) {}
 
   @Post("upload")
@@ -82,6 +84,14 @@ export class AdminMediaController {
       file.originalname,
       file.mimetype,
       user.id,
+    );
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.upload",
+      "media_asset",
+      asset.publicId,
+      { filename: asset.filename, mimeType: asset.mimeType, size: asset.size },
     );
 
     return {
@@ -297,7 +307,10 @@ export class AdminMediaController {
 
   @Delete(":publicId")
   @ApiOperation({ summary: "Soft-delete media asset (admin)" })
-  async softDelete(@Param("publicId") publicId: string) {
+  async softDelete(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
     const asset = await this.prisma.mediaAsset.findUnique({
       where: { publicId },
     });
@@ -310,6 +323,14 @@ export class AdminMediaController {
       where: { publicId },
       data: { status: "DELETED" },
     });
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.delete",
+      "media_asset",
+      publicId,
+      { filename: asset.filename, mimeType: asset.mimeType },
+    );
 
     return { data: { publicId, deleted: true } };
   }

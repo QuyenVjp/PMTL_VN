@@ -35,7 +35,10 @@ export class AuthGuard implements CanActivate {
 
     try {
       const secret = new TextEncoder().encode(this.configService.jwtAccessSecret);
-      const { payload } = await jose.jwtVerify<JwtAccessPayload>(token, secret);
+      const { payload } = await jose.jwtVerify<JwtAccessPayload>(token, secret, {
+        issuer: "pmtl-api",
+        audience: "pmtl-web",
+      });
 
       const user = await this.prisma.user.findUnique({
         where: { id: payload.sub },
@@ -75,6 +78,9 @@ export class AuthGuard implements CanActivate {
     } catch (error) {
       if (error instanceof jose.errors.JWTExpired) {
         throw new UnauthorizedException("Token đã hết hạn");
+      }
+      if (error instanceof jose.errors.JWTClaimValidationFailed) {
+        throw new UnauthorizedException("Token không hợp lệ");
       }
       if (error instanceof jose.errors.JWTInvalid) {
         throw new UnauthorizedException("Token không hợp lệ");

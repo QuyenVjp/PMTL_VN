@@ -348,6 +348,8 @@ export class IdentityService {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime(`${this.config.accessTokenTtlMinutes}m`)
+      .setIssuer("pmtl-api")
+      .setAudience("pmtl-web")
       .sign(secret);
   }
 }

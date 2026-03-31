@@ -128,10 +128,29 @@ steps:
       - event: push
         branch: main
 
+  # ─── Security Scan ───────────────────────────────────────────────────────────
+  scan-api:
+    image: aquasec/trivy
+    depends_on: [build-api]
+    commands:
+      - trivy image --exit-code 1 --severity CRITICAL --no-progress ghcr.io/${CI_REPO_OWNER}/pmtl-vn-api:${CI_COMMIT_SHA}
+    when:
+      - event: push
+        branch: main
+
+  scan-web:
+    image: aquasec/trivy
+    depends_on: [build-web]
+    commands:
+      - trivy image --exit-code 1 --severity CRITICAL --no-progress ghcr.io/${CI_REPO_OWNER}/pmtl-vn-web:${CI_COMMIT_SHA}
+    when:
+      - event: push
+        branch: main
+
   # ─── Deploy to VPS (main branch only) ────────────────────────────────────────
   deploy:
     image: appleboy/drone-ssh
-    depends_on: [build-api, build-web, build-admin]
+    depends_on: [scan-api, scan-web, build-admin]
     settings:
       host:
         from_secret: VPS_HOST
