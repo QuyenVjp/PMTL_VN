@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { VitePWA } from "vite-plugin-pwa";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -23,7 +24,57 @@ function resolveApiProxyTarget(): string {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      workbox: {
+        // Network-first for API — always prefer fresh data from server
+        runtimeCaching: [
+          {
+            urlPattern: /^\/api\/.*/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "pmtl-admin-api",
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 },
+            },
+          },
+          // Cache-first for static assets (JS/CSS/fonts/images)
+          {
+            urlPattern: /\.(js|css|woff2?|png|svg|ico)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "pmtl-admin-assets",
+              expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 },
+            },
+          },
+        ],
+        // Offline fallback: serve the SPA shell when network unavailable
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//, /^\/admin\/queues/],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+      },
+      manifest: {
+        name: "PMTL Admin",
+        short_name: "PMTL",
+        description: "PMTL Admin — quản trị nội dung & kiểm duyệt",
+        theme_color: "#1e293b",
+        background_color: "#0f172a",
+        display: "standalone",
+        start_url: "/",
+        icons: [
+          { src: "/favicon.ico", sizes: "64x64", type: "image/x-icon" },
+        ],
+      },
+      devOptions: {
+        // Enable PWA in dev for testing offline fallback
+        enabled: false,
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),

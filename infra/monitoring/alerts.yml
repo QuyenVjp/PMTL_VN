@@ -80,3 +80,114 @@ groups:
         annotations:
           summary: "Phân vùng gốc của máy chủ đã dùng quá 90%"
           description: "Dung lượng đĩa ở filesystem gốc trên {{ $labels.instance }} vượt 90% liên tục hơn 15 phút."
+
+  # SLO / Error-budget alerts — SLI spec: design/02-platform-baseline/deploy-ops/SLA_SLO.md
+  # Metrics source: Caddy built-in Prometheus exporter (caddy_http_request_duration_seconds_*)
+  # Target SLO: 99.9% availability, p95 < 500ms, p99 < 2s (30-day rolling window)
+  - name: pmtl-slo
+    rules:
+      # Availability — error rate > 0.1% (burning error budget)
+      - alert: APIAvailabilityBudgetBurn
+        expr: |
+          (
+            1 - (
+              sum(rate(caddy_http_request_duration_seconds_count{code=~"2..|3.."}[5m]))
+              /
+              sum(rate(caddy_http_request_duration_seconds_count[5m]))
+            )
+          ) > 0.001
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "API error rate đang vượt ngưỡng SLO (>0.1%)"
+          description: "Tỷ lệ lỗi {{ $value | humanizePercentage }} đang đốt cháy error budget (ngưỡng: 0.1%)."
+
+      # Availability — error rate > 1% (critical, immediate action)
+      - alert: APIAvailabilityCritical
+        expr: |
+          (
+            1 - (
+              sum(rate(caddy_http_request_duration_seconds_count{code=~"2..|3.."}[1m]))
+              /
+              sum(rate(caddy_http_request_duration_seconds_count[1m]))
+            )
+          ) > 0.01
+        for: 1m
+        labels:
+          severity: critical
+          service: api
+        annotations:
+          summary: "API đang gặp lỗi nghiêm trọng (>1%)"
+          description: "Tỷ lệ lỗi {{ $value | humanizePercentage }} — cần xử lý ngay lập tức."
+
+      # Latency — p95 > 500ms
+      - alert: APILatencyP95High
+        expr: |
+          histogram_quantile(0.95,
+            sum(rate(caddy_http_request_duration_seconds_bucket[5m])) by (le, handler)
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "API p95 latency vượt 500ms"
+          description: "Handler {{ $labels.handler }} p95 latency: {{ $value | humanizeDuration }}."
+
+      # Latency — p99 > 2s
+      - alert: APILatencyP99Critical
+        expr: |
+          histogram_quantile(0.99,
+            sum(rate(caddy_http_request_duration_seconds_bucket[5m])) by (le, handler)
+          ) > 2.0
+        for: 2m
+        labels:
+          severity: critical
+          service: api
+        annotations:
+          summary: "API p99 latency vượt 2 giây"
+          description: "Handler {{ $labels.handler }} p99 latency: {{ $value | humanizeDuration }} — SLO vi phạm."
+
+      # Search fallback — SQL mode active (Meilisearch likely unavailable)
+      # Requires SearchService to emit gauge: search_engine_mode{mode="sql-fallback"} 1
+      - alert: SearchFallbackActive
+        expr: search_engine_mode{mode="sql-fallback"} == 1
+        for: 5m
+        labels:
+          severity: warning
+          service: search
+        annotations:
+          summary: "Search đang chạy SQL fallback mode"
+          description: "Meilisearch có thể đang gián đoạn. Search đang dùng SQL fallback."
+
+      # Error budget — 75% of 30-day allowance consumed (early warning)
+      - alert: ErrorBudget75Consumed
+        expr: |
+          (
+            sum(increase(caddy_http_request_duration_seconds_count{code=~"5.."}[30d]))
+            /
+            (sum(increase(caddy_http_request_duration_seconds_count[30d])) * 0.001)
+          ) > 0.75
+        labels:
+          severity: warning
+          service: api
+        annotations:
+          summary: "75% error budget tháng đã tiêu thụ"
+          description: "Đã dùng {{ $value | humanizePercentage }} error budget 30 ngày. Cần rà soát độ tin cậy."
+
+      # Error budget — 90% consumed (feature freeze recommended per SLA_SLO.md)
+      - alert: ErrorBudget90Consumed
+        expr: |
+          (
+            sum(increase(caddy_http_request_duration_seconds_count{code=~"5.."}[30d]))
+            /
+            (sum(increase(caddy_http_request_duration_seconds_count[30d])) * 0.001)
+          ) > 0.90
+        labels:
+          severity: critical
+          service: api
+        annotations:
+          summary: "90% error budget tháng đã tiêu thụ — đề xuất đóng băng tính năng"
+          description: "Đã dùng {{ $value | humanizePercentage }} error budget. Theo SLA_SLO.md: dừng merge feature, chỉ fix reliability."

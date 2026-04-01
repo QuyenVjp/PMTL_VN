@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SpeculationRules } from "./speculation-rules";
 
 export const metadata: Metadata = {
   title: {
@@ -32,6 +33,8 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         {children}
+        {/* Speculation Rules for elderly-first UX: prerender critical content */}
+        <SpeculationRules />
         <script
           dangerouslySetInnerHTML={{
             __html: `

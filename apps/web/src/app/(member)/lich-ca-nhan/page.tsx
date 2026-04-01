@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { getServerApiBaseUrl } from "@/lib/api-base";
 
 export const metadata: Metadata = { title: "Lịch cá nhân" };
@@ -24,6 +25,7 @@ async function getTodayAdvisory(): Promise<AdvisoryResponse | null> {
 }
 
 export default async function LichCaNhanPage() {
+  await connection();
   const advisory = await getTodayAdvisory();
   const today = new Date().toLocaleDateString("vi-VN", {
     weekday: "long",

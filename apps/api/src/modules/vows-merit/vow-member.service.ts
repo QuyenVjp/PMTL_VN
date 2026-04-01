@@ -43,10 +43,11 @@ export class VowMemberService {
       throw new BadRequestException("Chỉ có thể cập nhật tiến độ nguyện lực đang active");
     }
 
-    const newCount = vow.currentCount + input.addCount;
+    // Atomic increment — avoids read-modify-write race condition when concurrent
+    // requests update the same vow simultaneously.
     const updated = await this.prisma.vow.update({
       where: { id: vow.id },
-      data: { currentCount: newCount },
+      data: { currentCount: { increment: input.addCount } },
     });
 
     this.logger.log({
@@ -54,7 +55,7 @@ export class VowMemberService {
       userId,
       publicId: input.publicId,
       addCount: input.addCount,
-      newTotal: newCount,
+      newTotal: updated.currentCount,
     });
     return this.toDto(updated, []);
   }
@@ -166,24 +167,37 @@ export class VowMemberService {
       throw new BadRequestException("Chỉ có thể ghi nhận cột mốc cho nguyện lực đang active");
     }
 
-    const newCount = vow.currentCount + input.addCount;
-    const isCompleted = vow.targetCount !== null && newCount >= vow.targetCount;
-
-    const updated = await this.prisma.vow.update({
-      where: { id: vow.id },
-      data: {
-        currentCount: newCount,
-        ...(isCompleted ? { status: "COMPLETED" } : {}),
-      },
-      include: { meritTransfers: true },
+    // Atomic increment then check completion using DB-returned value — avoids
+    // read-modify-write race. isCompleted must use the DB's actual new count,
+    // not the stale pre-read value.
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const afterIncrement = await tx.vow.update({
+        where: { id: vow.id },
+        data: { currentCount: { increment: input.addCount } },
+      });
+      const isCompleted = afterIncrement.targetCount !== null
+        && afterIncrement.currentCount >= afterIncrement.targetCount;
+      if (isCompleted) {
+        return tx.vow.update({
+          where: { id: vow.id },
+          data: { status: "COMPLETED" },
+          include: { meritTransfers: true },
+        });
+      }
+      return tx.vow.findUniqueOrThrow({
+        where: { id: vow.id },
+        include: { meritTransfers: true },
+      });
     });
+
+    const isCompleted = vow.targetCount !== null && updated.currentCount >= vow.targetCount;
 
     this.logger.log({
       msg: "vow.milestone_recorded",
       userId,
       vowPublicId,
       addCount: input.addCount,
-      newTotal: newCount,
+      newTotal: updated.currentCount,
       note: input.note,
       autoCompleted: isCompleted,
     });

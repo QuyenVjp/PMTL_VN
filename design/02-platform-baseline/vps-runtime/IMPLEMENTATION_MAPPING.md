@@ -130,6 +130,26 @@ Mapping giữa gaps đã fix và code thực thi (evidence).
 
 ---
 
+## 10. Speculation Rules API (Elderly-first UX)
+
+**Status**: ✅ IMPLEMENTED
+
+**Files**:
+- `apps/admin/src/components/performance/speculation-rules-admin.tsx` - Static + dynamic speculation rules cho admin (conservative eagerness, progressive enhancement).
+- `apps/admin/src/main.tsx` - Inject `SpeculationRulesAdmin` tại app root.
+- `apps/admin/src/components/performance/speculation-rules-admin.test.tsx` - Vitest xác nhận script `type="speculationrules"` được inject khi browser hỗ trợ.
+- `apps/web/src/app/speculation-rules.tsx` - Web speculation rules (moderate cho prerender, conservative cho prefetch) + dynamic hover/scroll.
+- `apps/web/src/app/layout.tsx` - Inject `SpeculationRules` trong root layout.
+
+**Verification**:
+- `pnpm -C apps/admin exec vitest run src/components/performance/speculation-rules-admin.test.tsx --environment jsdom`
+- `pnpm -C apps/admin typecheck`
+- `pnpm -C apps/admin build`
+- `pnpm -C apps/web typecheck`
+- `pnpm -C apps/web build`
+
+---
+
 ## Summary
 
 | Gap | Status | Files | Tests |
@@ -143,5 +163,6 @@ Mapping giữa gaps đã fix và code thực thi (evidence).
 | Service Worker | ✅ Done | 3 files | DevTools offline |
 | Offline Cache | ✅ Done | sw.js | Navigate offline |
 | OTel Trace | ✅ Done | 1 file | Inject in logger |
+| Speculation Rules API | ✅ Done | 5 files | Vitest + build/typecheck |
 
-**Total**: 10 gaps, 10 ✅ done, 19+ new files, 5+ test cases
+**Total**: 11 gaps, 11 ✅ done, 24+ files touched, 6+ verification runs

@@ -30,10 +30,8 @@ export class ContactService {
   async submit(input: SubmitContactInput) {
     // Encrypt PII fields — name and message are personal data under PDPA NĐ 13/2023.
     // email is NOT encrypted — admin needs it as a reply address (functional requirement).
-    const [encryptedName, encryptedMessage] = await Promise.all([
-      this.encryption.encrypt(input.name),
-      this.encryption.encrypt(input.message),
-    ]);
+    const encryptedName = this.encryption.encrypt(input.name);
+    const encryptedMessage = this.encryption.encrypt(input.message);
 
     const submission = await this.prisma.contactSubmission.create({
       data: {
@@ -62,7 +60,7 @@ export class ContactService {
     const cacheKey = `contacts:list:${JSON.stringify(query)}`;
     
     // Try cache first
-    const cached = await this.cache.getJson<any>(cacheKey);
+    const cached = await this.cache.getJson(cacheKey);
     if (cached) {
       return cached;
     }
@@ -96,13 +94,11 @@ export class ContactService {
     ]);
 
     // Decrypt PII fields — cache stores plaintext so callers always get readable data
-    const data = await Promise.all(
-      rows.map(async (row) => ({
-        ...row,
-        name: (await this.encryption.decrypt(row.name)) ?? row.name,
-        message: (await this.encryption.decrypt(row.message)) ?? row.message,
-      })),
-    );
+    const data = rows.map((row) => ({
+      ...row,
+      name: this.encryption.decrypt(row.name) ?? row.name,
+      message: this.encryption.decrypt(row.message) ?? row.message,
+    }));
 
     const result = {
       data,
@@ -127,10 +123,8 @@ export class ContactService {
       throw new NotFoundException("Liên hệ không tồn tại");
     }
 
-    const [name, message] = await Promise.all([
-      this.encryption.decrypt(submission.name),
-      this.encryption.decrypt(submission.message),
-    ]);
+    const name = this.encryption.decrypt(submission.name);
+    const message = this.encryption.decrypt(submission.message);
 
     return {
       ...submission,
@@ -244,7 +238,7 @@ export class ContactService {
 
   async publicGetContactInfo() {
     const cacheKey = "contact-info:public";
-    const cached = await this.cache.getJson<any>(cacheKey);
+    const cached = await this.cache.getJson(cacheKey);
     if (cached) {
       return cached;
     }
@@ -258,7 +252,7 @@ export class ContactService {
 
   async publicListVolunteers() {
     const cacheKey = "volunteers:public";
-    const cached = await this.cache.getJson<any>(cacheKey);
+    const cached = await this.cache.getJson(cacheKey);
     if (cached) {
       return cached;
     }

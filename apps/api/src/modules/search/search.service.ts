@@ -2,6 +2,8 @@ import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { CacheService } from "../../common/cache/cache.service.js";
+import { CircuitBreakerService } from "../../common/resilience/circuit-breaker.service.js";
+import type CircuitBreaker from "opossum";
 import type { SearchQuery } from "./search.schemas.js";
 
 type SearchIndex = "posts" | "events" | "guides" | "downloads" | "community";
@@ -19,12 +21,26 @@ type SearchHit = {
 export class SearchService {
   private readonly logger = new Logger(SearchService.name);
   private readonly searchableIndexes: SearchIndex[] = ["posts", "events", "guides", "downloads", "community"];
+  private meiliBreaker!: CircuitBreaker<[string, string, unknown?], unknown>;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly cache: CacheService,
-  ) {}
+    private readonly circuitBreaker: CircuitBreakerService,
+  ) {
+    // Circuit breaker wraps the raw Meilisearch HTTP call.
+    // Opens at 50% failure rate; falls back to SQL search automatically.
+    this.meiliBreaker = this.circuitBreaker.create(
+      "meilisearch",
+      (method: string, path: string, body?: unknown) => this.meiliRequestRaw(method, path, body),
+      { timeout: 3000, errorThresholdPercentage: 50, resetTimeout: 15000, volumeThreshold: 5 },
+    );
+    this.meiliBreaker.fallback(() => {
+      this.logger.warn({ msg: "search.meilisearch.circuit_open_fallback" });
+      return null; // null signals callers to use SQL fallback
+    });
+  }
 
   private getCacheKey(query: SearchQuery): string {
     const { q, index, limit, offset } = query;
@@ -161,7 +177,12 @@ export class SearchService {
     return headers;
   }
 
+  /** Routes through circuit breaker — falls back to null when circuit is open */
   private async meiliRequest(method: string, path: string, body?: unknown): Promise<unknown> {
+    return this.meiliBreaker.fire(method, path, body);
+  }
+
+  private async meiliRequestRaw(method: string, path: string, body?: unknown): Promise<unknown> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.configService.searchTimeoutMs);
     try {

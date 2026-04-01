@@ -8,6 +8,8 @@
  * APP_INTERCEPTOR providers in AppModule — NOT via app.useGlobal*() here.
  * This ensures DI injection works correctly for all global concerns.
  */
+// OTel must initialize before NestFactory — side-effect import, no-op if OTEL_EXPORTER_OTLP_ENDPOINT unset
+import "./common/tracing/otel.bootstrap.js";
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { Logger } from "nestjs-pino";
@@ -133,7 +135,9 @@ async function bootstrap() {
     const secretBytes = new TextEncoder().encode(rawSecret);
     app.use("/media", async (req: Request, res: Response, next: NextFunction) => {
       const rawToken = req.query["token"];
-      const token = Array.isArray(rawToken) ? String(rawToken[0]) : String(rawToken ?? "");
+      const token = Array.isArray(rawToken)
+        ? (typeof rawToken[0] === "string" ? rawToken[0] : "")
+        : (typeof rawToken === "string" ? rawToken : "");
       if (!token) {
         res.status(401).json({ message: "Media token required" });
         return;

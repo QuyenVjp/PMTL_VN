@@ -7,6 +7,7 @@ import { ThemeSync } from "@/stores/theme-sync";
 import { CommandPaletteShortcut } from "@/stores/command-shortcut";
 import { queryClient } from "@/lib/query/query-client.js";
 import { routeTree } from "@/routes/__root.js";
+import { SpeculationRulesAdmin } from "@/components/performance/speculation-rules-admin";
 import "@/index.css";
 
 const router = createRouter({ routeTree });
@@ -25,6 +26,7 @@ if (rootElement) {
       <QueryClientProvider client={queryClient}>
         <ThemeSync />
         <CommandPaletteShortcut />
+        <SpeculationRulesAdmin />
         <RouterProvider router={router} />
       </QueryClientProvider>
     </StrictMode>,

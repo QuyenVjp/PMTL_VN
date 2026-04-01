@@ -13,6 +13,21 @@ export default defineConfig({
     pool: "forks",
     maxWorkers: 1,
     minWorkers: 1,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov", "json-summary"],
+      reportsDirectory: "./coverage",
+      include: ["src/**/*.ts"],
+      exclude: [
+        "src/**/*.test.ts",
+        "src/**/*.spec.ts",
+        "src/generated/**",
+        "src/**/*.module.ts",
+        "src/**/*.schemas.ts",
+        "src/**/*.mapper.ts",
+        "src/main.ts",
+      ],
+    },
   },
   resolve: {
     alias: {

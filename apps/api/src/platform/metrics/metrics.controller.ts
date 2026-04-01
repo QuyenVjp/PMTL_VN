@@ -1,5 +1,6 @@
-import { Controller, Get, Header } from "@nestjs/common";
+import { Controller, Get, Res } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import type { Response } from "express";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { MetricsService } from "./metrics.service.js";
 
@@ -10,10 +11,14 @@ export class MetricsController {
 
   @Get()
   @Public()
-  @Header("Content-Type", "text/plain; charset=utf-8")
   @ApiOperation({ summary: "Get Prometheus metrics" })
   @ApiResponse({ status: 200, description: "Prometheus metrics in text format" })
-  getMetrics(): string {
-    return this.metricsService.getMetrics();
+  async getMetrics(@Res() res: Response): Promise<void> {
+    const [body, contentType] = await Promise.all([
+      this.metricsService.getMetrics(),
+      Promise.resolve(this.metricsService.contentType()),
+    ]);
+    res.setHeader("Content-Type", contentType);
+    res.end(body);
   }
 }

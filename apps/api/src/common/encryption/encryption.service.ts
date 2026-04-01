@@ -47,14 +47,14 @@ export class EncryptionService {
     // hits Node's default 32MB ceiling. Explicit 64MB avoids the boundary failure.
     this.derivedKey = scryptSync(this.masterKey, this.APP_SALT, this.keyLength, {
       N: 32768, r: 8, p: 1, maxmem: 67108864,
-    }) as Buffer;
+    });
     return this.derivedKey;
   }
 
   /**
    * Encrypt plaintext. Returns base64(nonce[12] | authTag[16] | ciphertext).
    */
-  async encrypt(plaintext: string | null): Promise<string | null> {
+  encrypt(plaintext: string | null): string | null {
     if (!plaintext) return null;
     try {
       const key = this.getDEK();
@@ -72,7 +72,7 @@ export class EncryptionService {
   /**
    * Decrypt ciphertext. Expects base64(nonce[12] | authTag[16] | ciphertext).
    */
-  async decrypt(encrypted: string | null): Promise<string | null> {
+  decrypt(encrypted: string | null): string | null {
     if (!encrypted) return null;
     try {
       const key = this.getDEK();
@@ -89,29 +89,29 @@ export class EncryptionService {
     }
   }
 
-  async encryptFields<T extends Record<string, unknown>>(
+  encryptFields<T extends Record<string, unknown>>(
     obj: T,
     fields: Array<keyof T>
-  ): Promise<T> {
+  ): T {
     const result = { ...obj };
     for (const field of fields) {
       const value = obj[field];
       if (typeof value === "string") {
-        result[field] = (await this.encrypt(value)) as T[keyof T];
+        result[field] = this.encrypt(value) as T[keyof T];
       }
     }
     return result;
   }
 
-  async decryptFields<T extends Record<string, unknown>>(
+  decryptFields<T extends Record<string, unknown>>(
     obj: T,
     fields: Array<keyof T>
-  ): Promise<T> {
+  ): T {
     const result = { ...obj };
     for (const field of fields) {
       const value = obj[field];
       if (typeof value === "string") {
-        result[field] = (await this.decrypt(value)) as T[keyof T];
+        result[field] = this.decrypt(value) as T[keyof T];
       }
     }
     return result;

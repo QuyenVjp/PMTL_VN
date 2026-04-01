@@ -424,7 +424,32 @@ async function networkFirstWithTimeout(request, cacheName, timeout) {
 }
 ```
 
+### 12.3 Speculation Rules API (Elderly-first)
+
+- [x] Admin đã bật Speculation Rules với `eagerness: "conservative"` cho các route ưu tiên:
+  - `apps/admin/src/components/performance/speculation-rules-admin.tsx`
+  - `apps/admin/src/main.tsx`
+- [x] Web đã có Speculation Rules component (progressive enhancement, moderate/conservative):
+  - `apps/web/src/app/speculation-rules.tsx`
+  - `apps/web/src/app/layout.tsx`
+- [x] Dynamic rules theo hover/scroll đã triển khai cho intent rõ ràng (sidebar/table ở admin; kinh điển/lời nguyện ở web)
+- [x] Test đã thêm cho admin:
+  - `apps/admin/src/components/performance/speculation-rules-admin.test.tsx`
+
+Evidence:
+- `apps/admin/src/components/performance/speculation-rules-admin.tsx` (script injection + progressive enhancement + dynamic hover/scroll)
+- `apps/admin/src/main.tsx` (mount `SpeculationRulesAdmin`)
+- `apps/web/src/app/speculation-rules.tsx` (web static + dynamic speculation rules)
+- `apps/web/src/app/layout.tsx` (mount `SpeculationRules`)
+- `apps/admin/src/components/performance/speculation-rules-admin.test.tsx` (vitest)
+
+Verification commands:
+- `pnpm -C apps/admin exec vitest run src/components/performance/speculation-rules-admin.test.tsx --environment jsdom`
+- `pnpm -C apps/admin typecheck`
+- `pnpm -C apps/admin build`
+- `pnpm -C apps/web typecheck`
+- `pnpm -C apps/web build`
+
 ---
 
 *Owner: `design/02-platform-baseline/vps-runtime/` · Last updated: 2026-03-31*
-

@@ -23,7 +23,7 @@ export class PracticeProfileService {
     const existing = await this.prisma.practiceProfile.findUnique({
       where: { userId },
     });
-    if (existing) return this.toDto(existing, await this.encryption.decrypt(existing.assistContactRef));
+    if (existing) return this.toDto(existing, this.encryption.decrypt(existing.assistContactRef));
 
     const created = await this.prisma.practiceProfile.create({
       data: { userId, elderlyMode: false, assistMode: false },
@@ -34,7 +34,7 @@ export class PracticeProfileService {
   async update(input: UpdatePracticeProfileInput, userId: string) {
     // Encrypt PII field before persisting — assistContactRef is emergency contact data
     const encryptedRef = input.assistContactRef != null
-      ? await this.encryption.encrypt(input.assistContactRef)
+      ? this.encryption.encrypt(input.assistContactRef)
       : input.assistContactRef; // null or undefined pass through
 
     const profile = await this.prisma.practiceProfile.upsert({
@@ -59,7 +59,7 @@ export class PracticeProfileService {
       assistMode: profile.assistMode,
     });
     // Decrypt for response — callers receive plaintext, DB stores ciphertext
-    const decryptedRef = await this.encryption.decrypt(profile.assistContactRef);
+    const decryptedRef = this.encryption.decrypt(profile.assistContactRef);
     return this.toDto(profile, decryptedRef);
   }
 

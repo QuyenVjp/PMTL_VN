@@ -29,6 +29,11 @@ import { ValidationModule } from "./common/validation/validation.module.js";
 import { PrismaModule } from "./common/prisma/prisma.module.js";
 import { EncryptionModule } from "./common/encryption/encryption.module.js";
 import { TracingModule } from "./common/tracing/tracing.module.js";
+import { ResilienceModule } from "./common/resilience/resilience.module.js";
+import { NestCacheModule } from "./common/nestcache/nest-cache.module.js";
+import { PassportModule } from "@nestjs/passport";
+import { JwtStrategy } from "./common/auth/strategies/jwt.strategy.js";
+import { QueueModule } from "./platform/queue/queue.module.js";
 
 // Common global concerns — registered via providers for DI
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware.js";
@@ -70,12 +75,16 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     ConfigModule,
     EncryptionModule,
     TracingModule,
+    ResilienceModule,
+    NestCacheModule,
     CacheModule,
     LoggerModule,
     ValidationModule,
     PrismaModule,
+    PassportModule.register({ defaultStrategy: "jwt" }),
 
     // ── Platform ────────────────────────────────────
+    QueueModule,
     HealthModule,
     MetricsModule,
     AuditModule,
@@ -100,6 +109,9 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     WisdomQaModule,
   ],
   providers: [
+    // Passport JWT strategy — validates tokens for AuthGuard
+    JwtStrategy,
+
     // Guard chain: authn → authz → rate-limit → csrf (order matters)
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },
