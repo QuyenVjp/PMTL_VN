@@ -30,13 +30,23 @@ export class EncryptionService {
   private readonly APP_SALT = Buffer.from("pmtl-pii-aes256gcm-v1", "utf8");
 
   constructor() {
-    this.masterKey = process.env.ENCRYPTION_MASTER_KEY || "";
+    const rawKey = process.env.ENCRYPTION_MASTER_KEY || "";
+    if (rawKey && rawKey.length >= 32) {
+      this.masterKey = rawKey;
+      return;
+    }
 
-    if (!this.masterKey || this.masterKey.length < 32) {
+    const isProd = (process.env.NODE_ENV || "").toLowerCase() === "production";
+    if (isProd) {
       throw new Error(
         "ENCRYPTION_MASTER_KEY must be set (min 32 chars). Generate with: openssl rand -hex 32",
       );
     }
+
+    this.masterKey = "dev-encryption-master-key-1234567890ab";
+    this.logger.warn(
+      "ENCRYPTION_MASTER_KEY missing, using development fallback key. Do not use this in production.",
+    );
   }
 
   private getDEK(): Buffer {

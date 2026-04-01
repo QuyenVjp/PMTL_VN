@@ -20,6 +20,8 @@ import { WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { GuidesRowActions } from "@/features/guides/data-table-row-actions";
 import { guideListOptions, type GuideItem } from "@/features/guides/queries";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Options for toolbar faceted filters ─────────────────────────────
 
@@ -88,6 +90,15 @@ type GuidesTableProps = {
 export function GuidesTable({ defaultCategory }: GuidesTableProps) {
   const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
   const guides = envelope?.data ?? [];
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const mediaUrlByPublicId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const asset of mediaEnvelope?.data ?? []) {
+      const typedAsset = asset as MediaAssetListItem;
+      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+    }
+    return map;
+  }, [mediaEnvelope]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -103,7 +114,25 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
         cell: ({ row }) => (
-          <div className="max-w-[320px] truncate font-medium">{row.original.title}</div>
+          <div className="flex items-center gap-2 max-w-[320px]">
+            <div className="size-9 shrink-0 overflow-hidden rounded border bg-muted">
+              {(() => {
+                const mediaUrl = row.original.coverMediaPublicId
+                  ? mediaUrlByPublicId.get(row.original.coverMediaPublicId)
+                  : undefined;
+                const src = resolveMediaSrc(row.original.coverImageUrl ?? mediaUrl);
+                return src ? (
+                <img
+                  src={src ?? undefined}
+                  alt={row.original.title}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+                ) : null;
+              })()}
+            </div>
+            <div className="truncate font-medium">{row.original.title}</div>
+          </div>
         ),
         meta: { label: "Tiêu đề" },
         enableHiding: false,
@@ -158,7 +187,7 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
         enableHiding: false,
       },
     ],
-    [],
+    [mediaUrlByPublicId],
   );
 
   const table = useSafeReactTable({

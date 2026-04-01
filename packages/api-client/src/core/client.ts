@@ -87,19 +87,21 @@ export function createAdminClient(baseUrl: string) {
     if (!response.ok) {
       const envelope = json as ApiErrorEnvelope;
       const err = envelope?.error;
-      if (err) {
+      if (err?.code && err?.message) {
         const payload: ApiErrorPayload = {
-          code: err.code ?? "UNKNOWN_ERROR",
-          message: err.message ?? "Lỗi không xác định",
+          code: err.code,
+          message: err.message,
         };
         if (err.details !== undefined) {
           payload.details = err.details;
         }
         throw new HttpError(response.status, payload);
       }
+      // Non-JSON or unparseable response (e.g. proxy ECONNREFUSED, nginx 502)
+      // — surface as a network error, not a fake API message
       throw new HttpError(response.status, {
-        code: "UNKNOWN_ERROR",
-        message: "Lỗi không xác định",
+        code: "NETWORK_ERROR",
+        message: "Không thể kết nối máy chủ. Vui lòng kiểm tra lại hoặc thử sau.",
       });
     }
 

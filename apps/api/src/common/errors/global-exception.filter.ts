@@ -103,6 +103,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         statusCode = HttpStatus.CONFLICT;
         code = "CONFLICT";
         message = "Dữ liệu đã tồn tại (unique constraint).";
+      } else if (exception.code === "P2003") {
+        statusCode = HttpStatus.BAD_REQUEST;
+        code = "INVALID_REFERENCE";
+        message = "Dữ liệu tham chiếu không hợp lệ (khóa ngoại).";
       } else if (exception.code === "P2025") {
         statusCode = HttpStatus.NOT_FOUND;
         code = "NOT_FOUND";

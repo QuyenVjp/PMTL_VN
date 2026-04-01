@@ -22,6 +22,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
+import { resolveMediaSrc } from "@/lib/media-src";
 import {
   initials,
   roleLabel,
@@ -49,7 +50,7 @@ export function UsersTable() {
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <Avatar className="size-9 rounded-xl">
-              <AvatarImage src={row.original.avatarUrl ?? undefined} alt={row.original.displayName} />
+              <AvatarImage src={resolveMediaSrc(row.original.avatarUrl) ?? undefined} alt={row.original.displayName} />
               <AvatarFallback className="rounded-xl">{initials(row.original.displayName)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">

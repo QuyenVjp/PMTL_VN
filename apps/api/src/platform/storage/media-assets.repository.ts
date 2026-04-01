@@ -45,6 +45,12 @@ export class MediaAssetsRepository {
     });
   }
 
+  async findById(id: string) {
+    return this.prisma.mediaAsset.findUnique({
+      where: { id },
+    });
+  }
+
   async updateStatus(publicId: string, status: AssetStatus) {
     return this.prisma.mediaAsset.update({
       where: { publicId },

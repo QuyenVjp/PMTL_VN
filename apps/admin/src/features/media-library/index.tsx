@@ -90,6 +90,7 @@ import {
   useRemoveCollectionItem,
 } from "./mutations.js";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Context ────────────────────────────────────────────────────────────
 
@@ -167,10 +168,6 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function mediaPath(url: string): string {
-  try { return new URL(url).pathname; } catch { return url; }
-}
-
 // ── Row actions ────────────────────────────────────────────────────────
 
 function CollectionRowActions({ row }: { row: CollectionListItem }) {
@@ -244,7 +241,7 @@ function CollectionsTable() {
               <div className="size-10 shrink-0 overflow-hidden rounded border border-border bg-muted flex items-center justify-center">
                 {coverImageUrl ? (
                   <img
-                    src={mediaPath(coverImageUrl)}
+                    src={resolveMediaSrc(coverImageUrl) ?? undefined}
                     alt={title}
                     className="size-full object-cover"
                     loading="lazy"
@@ -403,7 +400,7 @@ function ImageGridPicker({
           {selected ? (
             <>
               <img
-                src={mediaPath(selected.url)}
+                src={resolveMediaSrc(selected.url) ?? undefined}
                 alt={selected.filename}
                 className="size-8 rounded object-cover shrink-0"
               />
@@ -438,7 +435,7 @@ function ImageGridPicker({
                   }`}
                 >
                   <img
-                    src={mediaPath(a.url)}
+                    src={resolveMediaSrc(a.url) ?? undefined}
                     alt={a.filename}
                     className="size-full object-cover"
                     loading="lazy"
@@ -672,7 +669,7 @@ function CreateCollectionDialog({
                           <div className="aspect-square bg-muted">
                             {media.mimeType.startsWith("image/") ? (
                               <img
-                                src={mediaPath(media.url)}
+                                src={resolveMediaSrc(media.url) ?? undefined}
                                 alt={media.filename}
                                 className="w-full h-full object-cover"
                               />
@@ -970,7 +967,7 @@ function CollectionItemsSheet({
                     <div className="size-10 shrink-0 overflow-hidden rounded border bg-muted flex items-center justify-center">
                       {item.mediaAssetUrl ? (
                         <img
-                          src={mediaPath(item.mediaAssetUrl)}
+                          src={resolveMediaSrc(item.mediaAssetUrl) ?? undefined}
                           className="size-full object-cover"
                           loading="lazy"
                           alt=""

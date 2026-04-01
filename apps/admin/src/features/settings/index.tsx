@@ -16,6 +16,7 @@ import { buildCsrfHeader } from "@/lib/csrf.js";
 import { clearAuthCache } from "@/lib/auth";
 import { currentUserQueryKey, useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 const settingsNav = [
   { key: "profile", title: "Hồ sơ", icon: UserCogIcon },
@@ -108,9 +109,7 @@ export function SettingsPage() {
   // Sync avatarPreview when the query resolves (or after profile save invalidates it).
   // Gated on !avatarFile so a staged-but-unsaved selection isn't overwritten.
   useEffect(() => {
-    if (!avatarFile) {
-      setAvatarPreview(adminUser.avatar);
-    }
+    if (!avatarFile) setAvatarPreview(resolveMediaSrc(adminUser.avatar) ?? undefined);
   }, [adminUser.avatar, avatarFile]);
 
   useEffect(() => {
@@ -131,7 +130,7 @@ export function SettingsPage() {
     }
     previewObjectUrlRef.current = null;
     setAvatarFile(null);
-    setAvatarPreview(adminUser.avatar);
+    setAvatarPreview(resolveMediaSrc(adminUser.avatar) ?? undefined);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -192,8 +191,7 @@ export function SettingsPage() {
           URL.revokeObjectURL(previewObjectUrlRef.current);
         }
         previewObjectUrlRef.current = null;
-        // Use pathname so Vite proxy (/media → API) serves the image
-        try { setAvatarPreview(new URL(avatarUrl).pathname); } catch { setAvatarPreview(avatarUrl); }
+        setAvatarPreview(resolveMediaSrc(avatarUrl) ?? undefined);
       }
       toast.success("Đã cập nhật hồ sơ thành công");
     } catch (err) {
@@ -230,7 +228,7 @@ export function SettingsPage() {
           <div className="rounded-2xl border bg-card p-3">
             <div className="mb-3 flex items-center gap-3 rounded-xl border bg-muted/30 p-3">
               <Avatar className="size-12 rounded-xl">
-                <AvatarImage src={adminUser.avatar} alt={adminUser.name} />
+                <AvatarImage src={resolveMediaSrc(adminUser.avatar) ?? undefined} alt={adminUser.name} />
                 <AvatarFallback className="rounded-xl">{adminUser.initials}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">
@@ -300,7 +298,7 @@ export function SettingsPage() {
                         aria-label="Chọn ảnh đại diện"
                       >
                         <Avatar className="size-16 rounded-2xl border">
-                          <AvatarImage src={avatarPreview} alt={profile.displayName} />
+                          <AvatarImage src={resolveMediaSrc(avatarPreview) ?? undefined} alt={profile.displayName} />
                           <AvatarFallback className="rounded-2xl">{adminUser.initials}</AvatarFallback>
                         </Avatar>
                       </button>

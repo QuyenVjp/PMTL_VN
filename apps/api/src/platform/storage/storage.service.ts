@@ -149,6 +149,20 @@ export class StorageService {
     return asset.url;
   }
 
+  async resolveAssetUrlById(id: string | null | undefined): Promise<string | null> {
+    if (!id) return null;
+    const asset = await this.mediaRepo.findById(id);
+    if (!asset) return null;
+    if (this.configService.storageAdapter === "local") {
+      const exists = await this.adapter.exists(asset.storageKey);
+      if (!exists) {
+        this.logger.warn(`Media binary missing for asset id ${id} (${asset.storageKey})`);
+        return asset.url;
+      }
+    }
+    return asset.url;
+  }
+
   async getUserAssets(uploaderId: string) {
     return this.mediaRepo.findByUploader(uploaderId);
   }

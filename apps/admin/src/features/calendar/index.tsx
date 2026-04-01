@@ -29,6 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -37,6 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar as DateCalendar } from "@/components/ui/calendar";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
@@ -55,6 +57,10 @@ import {
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
 import { useUploadMediaAsset } from "@/features/media/mutations.js";
+import { resolveMediaSrc } from "@/lib/media-src";
+import { ImageAssetPicker } from "@/components/media/image-asset-picker";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
+import { cn } from "@/lib/utils";
 
 // ── Context ──────────────────────────────────────────────────────────
 
@@ -136,17 +142,93 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function DateTimeField({
+  value,
+  onChange,
+  placeholder,
+  invalid,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  placeholder: string;
+  invalid?: boolean;
+}) {
+  const parsed = parseLocalDateTime(value);
+  const timeValue = parsed
+    ? `${String(parsed.getHours()).padStart(2, "0")}:${String(parsed.getMinutes()).padStart(2, "0")}`
+    : "00:00";
+
+  return (
+    <div className="grid gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className={cn("justify-start text-left font-normal", invalid && "border-destructive")}
+          >
+            {value ? formatDateTimeDisplay(value) : placeholder}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-3" align="start">
+          <div className="space-y-3">
+            <DateCalendar
+              mode="single"
+              selected={parsed}
+              onSelect={(date) => {
+                if (!date) return;
+                onChange(mergeDateTimePart(value, date));
+              }}
+            />
+            <Input
+              type="time"
+              value={timeValue}
+              onChange={(event) => {
+                onChange(mergeDateTimePart(value, undefined, event.target.value));
+              }}
+            />
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
 function toLocalDatetimeValue(iso: string | null | undefined): string {
   if (!iso) return "";
   return new Date(iso).toISOString().slice(0, 16);
 }
 
-function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
+function parseLocalDateTime(value: string): Date | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return undefined;
+  return parsed;
+}
+
+function formatDateTimeDisplay(value: string): string {
+  const parsed = parseLocalDateTime(value);
+  if (!parsed) return "Chọn ngày giờ";
+  return parsed.toLocaleString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function mergeDateTimePart(value: string, nextDate?: Date, nextTime?: string): string {
+  const base = parseLocalDateTime(value) ?? new Date();
+  const merged = new Date(base);
+  if (nextDate) {
+    merged.setFullYear(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
   }
+  if (nextTime) {
+    const [h, m] = nextTime.split(":");
+    merged.setHours(Number(h), Number(m), 0, 0);
+  }
+  return new Date(merged.getTime() - merged.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
 
 // ── Create / Edit form dialog ─────────────────────────────────────────
@@ -265,8 +347,7 @@ function EventFormDialog({
     if (!file) return;
     try {
       const result = await uploadMedia.mutateAsync(file);
-      const payload = result as { data?: { publicId?: string }; publicId?: string } | null;
-      const publicId = payload?.data?.publicId ?? payload?.publicId;
+      const publicId = extractUploadMediaPayload(result)?.publicId;
       if (publicId) {
         setForm((f) => ({ ...f, [key]: publicId }));
       }
@@ -303,19 +384,23 @@ function EventFormDialog({
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Bắt đầu *">
-              <Input
-                type="datetime-local"
+              <DateTimeField
                 value={form.startAt}
-                onChange={(e) => {
-                  set("startAt")(e);
+                onChange={(next) => {
+                  setForm((f) => ({ ...f, startAt: next }));
                   if (fieldErrors.startAt) setFieldErrors((prev) => ({ ...prev, startAt: "" }));
                 }}
-                className={invalidFieldClass(Boolean(fieldErrors.startAt))}
+                placeholder="Chọn ngày bắt đầu"
+                invalid={Boolean(fieldErrors.startAt)}
               />
               <FieldError message={fieldErrors.startAt} />
             </Field>
             <Field label="Kết thúc">
-              <Input type="datetime-local" value={form.endAt} onChange={set("endAt")} />
+              <DateTimeField
+                value={form.endAt}
+                onChange={(next) => setForm((f) => ({ ...f, endAt: next }))}
+                placeholder="Chọn ngày kết thúc"
+              />
             </Field>
           </div>
           <Field label="Địa điểm">
@@ -343,24 +428,12 @@ function EventFormDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={form.coverImagePublicId || "__none__"}
-              onValueChange={(value) =>
-                setForm((f) => ({ ...f, coverImagePublicId: value === "__none__" ? "" : value }))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Chọn ảnh cover từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={form.coverImagePublicId}
+              onChange={(publicId) => setForm((f) => ({ ...f, coverImagePublicId: publicId }))}
+              placeholder="Chọn ảnh cover từ thư viện..."
+            />
           </Field>
           <Field label="Ảnh poster sự kiện">
             <input
@@ -384,24 +457,12 @@ function EventFormDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={form.posterImagePublicId || "__none__"}
-              onValueChange={(value) =>
-                setForm((f) => ({ ...f, posterImagePublicId: value === "__none__" ? "" : value }))
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Chọn ảnh poster từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={form.posterImagePublicId}
+              onChange={(publicId) => setForm((f) => ({ ...f, posterImagePublicId: publicId }))}
+              placeholder="Chọn ảnh poster từ thư viện..."
+            />
           </Field>
           <Field label="Loại sự kiện *">
             <Select value={form.eventType} onValueChange={(v) => setForm((f) => ({ ...f, eventType: v }))}>
@@ -454,6 +515,15 @@ function CalendarRowActions({ row }: { row: CalendarEventItem }) {
 function CalendarTable() {
   const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
   const events = envelope?.data ?? [];
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const mediaUrlByPublicId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const asset of mediaEnvelope?.data ?? []) {
+      const typedAsset = asset as MediaAssetListItem;
+      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+    }
+    return map;
+  }, [mediaEnvelope]);
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "startAt", desc: true }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -470,7 +540,14 @@ function CalendarTable() {
           <div className="flex items-center gap-2 max-w-[260px]">
             {row.original.coverImageUrl ? (
               <img
-                src={mediaPath(row.original.coverImageUrl)}
+                src={resolveMediaSrc(row.original.coverImageUrl) ?? undefined}
+                alt={row.original.title}
+                className="size-8 shrink-0 rounded border object-cover"
+                loading="lazy"
+              />
+            ) : row.original.coverImagePublicId ? (
+              <img
+                src={resolveMediaSrc(mediaUrlByPublicId.get(row.original.coverImagePublicId)) ?? undefined}
                 alt={row.original.title}
                 className="size-8 shrink-0 rounded border object-cover"
                 loading="lazy"
@@ -551,7 +628,7 @@ function CalendarTable() {
         enableHiding: false,
       },
     ],
-    [],
+    [mediaUrlByPublicId],
   );
 
   const table = useSafeReactTable({

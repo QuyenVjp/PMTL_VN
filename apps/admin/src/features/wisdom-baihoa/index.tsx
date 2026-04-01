@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpenIcon, CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { BookOpenIcon, CheckCircleIcon, PencilIcon, SparklesIcon, Trash2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
@@ -49,6 +49,8 @@ import {
   useUpdateWisdomEntry,
   usePublishWisdomEntry,
   useDeleteWisdomEntry,
+  useSuggestWisdomSlug,
+  useCreateWisdomTranslationDraft,
 } from "./mutations";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 
@@ -156,14 +158,29 @@ function WisdomRowActions({ row }: { row: WisdomEntryItem }) {
 
 function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const create = useCreateWisdomEntry();
+  const suggestSlug = useSuggestWisdomSlug();
+  const createDraft = useCreateWisdomTranslationDraft();
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
   const [entryType, setEntryType] = useState<"BACH_THOAI" | "KHAI_THI" | "PHAT_NGON" | "PHAP_HOI">("BACH_THOAI");
   const [sourceCode, setSourceCode] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
+  const [originalText, setOriginalText] = useState("");
+  const [translatedText, setTranslatedText] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  const reset = () => { setTitle(""); setEntryType("BACH_THOAI"); setSourceCode(""); setSourceUrl(""); setExcerpt(""); setFieldErrors({}); };
+  const reset = () => {
+    setTitle("");
+    setSlug("");
+    setEntryType("BACH_THOAI");
+    setSourceCode("");
+    setSourceUrl("");
+    setOriginalText("");
+    setTranslatedText("");
+    setExcerpt("");
+    setFieldErrors({});
+  };
 
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
@@ -174,9 +191,12 @@ function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChang
     create.mutate(
       {
         title: title.trim(),
+        slug: slug.trim() || undefined,
         entryType,
         sourceCode: sourceCode.trim() || undefined,
         sourceUrl: sourceUrl.trim() || undefined,
+        originalText: originalText.trim() || undefined,
+        translatedText: translatedText.trim() || undefined,
         excerpt: excerpt.trim() || undefined,
       },
       {
@@ -205,6 +225,31 @@ function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChang
               className={invalidFieldClass(Boolean(fieldErrors.title))}
             />
             <FieldError message={fieldErrors.title} />
+          </Field>
+          <Field label="Slug">
+            <div className="flex gap-2">
+              <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="tu-dong-tao-neu-de-trong" />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={suggestSlug.isPending || !title.trim()}
+                onClick={() =>
+                  suggestSlug.mutate(
+                    { title: title.trim(), sourceCode: sourceCode.trim() || undefined },
+                    {
+                      onSuccess: (res) => {
+                        setSlug(res.slug);
+                        toast.success("Đã gợi ý slug.");
+                      },
+                    },
+                  )
+                }
+              >
+                <SparklesIcon className="mr-1 size-4" />
+                {suggestSlug.isPending ? "Đang gợi ý..." : "Gợi ý slug"}
+              </Button>
+            </div>
           </Field>
           <Field label="Loại bài">
             <Select value={entryType} onValueChange={(v) => setEntryType(v as typeof entryType)}>
@@ -239,6 +284,40 @@ function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChang
               <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
             </div>
           </Field>
+          <Field label="Nguyên văn gốc">
+            <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc..." rows={4} />
+          </Field>
+          <Field label="Bản dịch tiếng Việt">
+            <div className="grid gap-2">
+              <Textarea value={translatedText} onChange={(e) => setTranslatedText(e.target.value)} placeholder="Bản dịch nháp..." rows={4} />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={createDraft.isPending || !originalText.trim()}
+                  onClick={() =>
+                    createDraft.mutate(
+                      {
+                        originalText: originalText.trim(),
+                        title: title.trim() || undefined,
+                        sourceCode: sourceCode.trim() || undefined,
+                      },
+                      {
+                        onSuccess: (res) => {
+                          setTranslatedText(res.translatedText);
+                          toast.success("Đã tạo bản dịch nháp.");
+                        },
+                      },
+                    )
+                  }
+                >
+                  <SparklesIcon className="mr-1 size-4" />
+                  {createDraft.isPending ? "Đang dịch..." : "Tạo bản dịch nháp"}
+                </Button>
+              </div>
+            </div>
+          </Field>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
@@ -263,7 +342,10 @@ function WisdomEditDialog({
   currentRow: WisdomEntryItem;
 }) {
   const update = useUpdateWisdomEntry();
+  const suggestSlug = useSuggestWisdomSlug();
+  const createDraft = useCreateWisdomTranslationDraft();
   const [title, setTitle] = useState(currentRow.title);
+  const [slug, setSlug] = useState(currentRow.slug);
   const [entryType, setEntryType] = useState(currentRow.entryType);
   const [sourceCode, setSourceCode] = useState(currentRow.sourceCode ?? "");
   const [sourceUrl, setSourceUrl] = useState(currentRow.sourceUrl ?? "");
@@ -275,6 +357,7 @@ function WisdomEditDialog({
 
   React.useEffect(() => {
     setTitle(currentRow.title);
+    setSlug(currentRow.slug);
     setEntryType(currentRow.entryType);
     setSourceCode(currentRow.sourceCode ?? "");
     setSourceUrl(currentRow.sourceUrl ?? "");
@@ -295,6 +378,7 @@ function WisdomEditDialog({
       {
         publicId: currentRow.publicId,
         title: title.trim(),
+        slug: slug.trim() || undefined,
         entryType,
         sourceCode: sourceCode.trim() || undefined,
         sourceUrl: sourceUrl.trim() || undefined,
@@ -328,6 +412,31 @@ function WisdomEditDialog({
               className={invalidFieldClass(Boolean(fieldErrors.title))}
             />
             <FieldError message={fieldErrors.title} />
+          </Field>
+          <Field label="Slug">
+            <div className="flex gap-2">
+              <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="duong-dan-bai-viet" />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={suggestSlug.isPending || !title.trim()}
+                onClick={() =>
+                  suggestSlug.mutate(
+                    { title: title.trim(), sourceCode: sourceCode.trim() || undefined },
+                    {
+                      onSuccess: (res) => {
+                        setSlug(res.slug);
+                        toast.success("Đã gợi ý slug.");
+                      },
+                    },
+                  )
+                }
+              >
+                <SparklesIcon className="mr-1 size-4" />
+                {suggestSlug.isPending ? "Đang gợi ý..." : "Gợi ý slug"}
+              </Button>
+            </div>
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Loại bài">
@@ -371,7 +480,35 @@ function WisdomEditDialog({
             <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc (Hoa văn)..." rows={4} />
           </Field>
           <Field label="Bản dịch tiếng Việt">
-            <Textarea value={translatedText} onChange={(e) => setTranslatedText(e.target.value)} placeholder="Bản dịch Việt..." rows={4} />
+            <div className="grid gap-2">
+              <Textarea value={translatedText} onChange={(e) => setTranslatedText(e.target.value)} placeholder="Bản dịch Việt..." rows={4} />
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={createDraft.isPending || !originalText.trim()}
+                  onClick={() =>
+                    createDraft.mutate(
+                      {
+                        originalText: originalText.trim(),
+                        title: title.trim() || undefined,
+                        sourceCode: sourceCode.trim() || undefined,
+                      },
+                      {
+                        onSuccess: (res) => {
+                          setTranslatedText(res.translatedText);
+                          toast.success("Đã tạo bản dịch nháp.");
+                        },
+                      },
+                    )
+                  }
+                >
+                  <SparklesIcon className="mr-1 size-4" />
+                  {createDraft.isPending ? "Đang dịch..." : "Tạo bản dịch nháp"}
+                </Button>
+              </div>
+            </div>
           </Field>
         </div>
         <DialogFooter>

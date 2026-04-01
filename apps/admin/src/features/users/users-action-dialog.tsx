@@ -37,6 +37,7 @@ import {
   useUnblockUser,
 } from "@/features/users/mutations";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -134,7 +135,7 @@ export function UsersActionDialog({
         <div className="space-y-4">
           <div className="flex items-center gap-4">
             <Avatar className="size-16 rounded-2xl">
-              <AvatarImage src={currentRow.avatarUrl ?? undefined} alt={currentRow.displayName} />
+              <AvatarImage src={resolveMediaSrc(currentRow.avatarUrl) ?? undefined} alt={currentRow.displayName} />
               <AvatarFallback className="rounded-2xl text-lg">
                 {initials(currentRow.displayName)}
               </AvatarFallback>

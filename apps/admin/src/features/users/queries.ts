@@ -2,15 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope, SingleEnvelope } from "@/lib/api/envelopes.js";
 import type { AdminUserListItem, AdminUserDetail, UserListFilters } from "./types.js";
-
-function mediaPath(url: string | null | undefined): string | null {
-  if (!url) return null;
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
+import { resolveMediaSrc } from "@/lib/media-src";
 
 /** Query key factory — keeps cache keys consistent across the feature */
 export const userAdminKeys = {
@@ -41,7 +33,7 @@ export function userListOptions(filters: UserListFilters = {}) {
         ...envelope,
         data: envelope.data.map((user) => ({
           ...user,
-          avatarUrl: mediaPath(user.avatarUrl),
+          avatarUrl: resolveMediaSrc(user.avatarUrl),
         })),
       };
     },
@@ -58,7 +50,7 @@ export function userDetailOptions(publicId: string) {
         ...envelope,
         data: {
           ...envelope.data,
-          avatarUrl: mediaPath(envelope.data.avatarUrl),
+          avatarUrl: resolveMediaSrc(envelope.data.avatarUrl),
         },
       };
     },

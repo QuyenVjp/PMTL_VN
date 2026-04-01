@@ -29,6 +29,7 @@ import {
 import { createSelectColumn } from "@/lib/table/select-column";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { useDeleteMediaAsset, useUpdateMediaAsset, useUploadMediaAsset } from "@/features/media/mutations";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Context ──────────────────────────────────────────────────────────
 
@@ -64,11 +65,6 @@ function useMedia() {
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────
-
-/** Strip host from stored URL so Vite proxy can forward /media/... */
-function mediaPath(url: string): string {
-  try { return new URL(url).pathname; } catch { return url; }
-}
 
 const statusOptions = [
   { label: "Sẵn sàng", value: "READY" },
@@ -166,7 +162,7 @@ function MediaAssetsTable() {
               >
                 {isImage ? (
                   <img
-                    src={mediaPath(row.original.url)}
+                    src={resolveMediaSrc(row.original.url) ?? undefined}
                     alt={filename}
                     className="size-full object-cover"
                     loading="lazy"
@@ -391,7 +387,7 @@ function MediaLightbox() {
         <div className="relative">
           {isImage ? (
             <img
-              src={mediaPath(currentRow.url)}
+              src={resolveMediaSrc(currentRow.url) ?? undefined}
               alt={currentRow.filename}
               className="max-h-[80vh] w-full object-contain bg-black/5"
             />
@@ -461,7 +457,7 @@ function MediaDetailSheet() {
           <div className="overflow-hidden rounded-lg border bg-muted aspect-video flex items-center justify-center">
             {isImage ? (
               <img
-                src={mediaPath(currentRow.url)}
+                src={resolveMediaSrc(currentRow.url) ?? undefined}
                 alt={currentRow.filename}
                 className="max-h-full max-w-full object-contain"
               />

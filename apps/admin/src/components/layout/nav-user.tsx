@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -28,7 +29,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={resolveMediaSrc(user.avatar) ?? undefined} alt={user.name} />
                 <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-start text-sm leading-tight group-data-[collapsible=icon]:hidden">
@@ -47,7 +48,7 @@ export function NavUser() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex items-center gap-3 px-1 py-1">
                 <Avatar className="size-9 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={resolveMediaSrc(user.avatar) ?? undefined} alt={user.name} />
                   <AvatarFallback className="rounded-lg">{user.initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid text-start">

@@ -19,6 +19,7 @@ import { PowerIcon } from "lucide-react";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { adminClient } from "@/lib/api/admin-client.js";
 import { createSelectColumn } from "@/lib/table/select-column";
@@ -121,6 +122,28 @@ export function FeatureFlagsPage() {
           </div>
         ),
         meta: { label: "Cập nhật" },
+      },
+      {
+        id: "quickToggle",
+        header: () => <div className="text-right text-xs text-muted-foreground">Bật/tắt nhanh</div>,
+        cell: ({ row }) => {
+          const flag = row.original;
+          return (
+            <div className="flex justify-end">
+              <Switch
+                checked={flag.enabled}
+                disabled={updateFlag.isPending}
+                aria-label={`Bật tắt cờ ${flag.key}`}
+                onCheckedChange={(checked) => {
+                  if (checked === flag.enabled) return;
+                  updateFlag.mutate({ key: flag.key, enabled: checked });
+                }}
+              />
+            </div>
+          );
+        },
+        enableSorting: false,
+        enableHiding: false,
       },
       {
         id: "actions",

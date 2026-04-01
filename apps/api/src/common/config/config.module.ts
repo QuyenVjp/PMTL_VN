@@ -13,6 +13,7 @@ import {
   cacheConfig,
   searchConfig,
   antivirusConfig,
+  aiConfig,
 } from "./config.namespaces.js";
 
 @Global()
@@ -34,6 +35,7 @@ import {
         cacheConfig,
         searchConfig,
         antivirusConfig,
+        aiConfig,
       ],
     }),
   ],

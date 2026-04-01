@@ -114,6 +114,13 @@ export const antivirusConfigSchema = z.object({
   CLAMAV_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
 });
 
+// AI assistant config schema
+export const aiConfigSchema = z.object({
+  GEMINI_API_KEY: z.string().optional(),
+  GEMINI_MODEL: z.string().default("gemini-flash-latest"),
+  GEMINI_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
+});
+
 // Combined env schema for validation
 export const envSchema = z.object({
   ...coreConfigSchema.shape,
@@ -127,6 +134,7 @@ export const envSchema = z.object({
   ...cacheConfigSchema.shape,
   ...searchConfigSchema.shape,
   ...antivirusConfigSchema.shape,
+  ...aiConfigSchema.shape,
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

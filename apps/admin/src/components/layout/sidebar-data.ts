@@ -34,8 +34,10 @@ export const sidebarNavGroups: NavGroup[] = [
     title: "Nội dung",
     items: [
       { title: "Bài viết", url: "/noi-dung/bai-viet", icon: Newspaper },
+      { title: "Bạch thoại Phật pháp", url: "/noi-dung/bach-thoai", icon: BookOpen },
       { title: "Hướng dẫn", url: "/noi-dung/huong-dan", icon: BookOpen },
       { title: "Kinh bài tập", url: "/noi-dung/kinh-bai-tap", icon: NotebookTabs },
+      { title: "Kinh văn tự tu", url: "/noi-dung/kinh-van-tu-tu", icon: NotebookTabs },
       { title: "Ngôi nhà nhỏ", url: "/noi-dung/ngoi-nha-nho", icon: HeartHandshake },
       { title: "Phóng sanh", url: "/noi-dung/phong-sanh", icon: Sparkles },
       { title: "Thư viện pháp môn", url: "/noi-dung/thu-vien-phap-mon", icon: Library },
@@ -78,6 +80,7 @@ export const sidebarNavGroups: NavGroup[] = [
   {
     title: "Hệ thống",
     items: [
+      { title: "Tổng quan hệ thống", url: "/he-thong", icon: Settings2 },
       { title: "Cài đặt admin", url: "/he-thong/cai-dat", icon: Settings2 },
       { title: "Feature flags", url: "/he-thong/feature-flags", icon: ShieldCheck },
       { title: "Audit logs", url: "/he-thong/audit-logs", icon: ScrollText },

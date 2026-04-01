@@ -4,11 +4,13 @@ import { WisdomQaAdminController } from "./wisdom-qa.admin.controller.js";
 import { WisdomHubController } from "./wisdom-hub.controller.js";
 import { WisdomQaService } from "./wisdom-qa.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
+import { FeatureFlagsModule } from "../../platform/feature-flags/feature-flags.module.js";
+import { WisdomGeminiService } from "./wisdom-gemini.service.js";
 
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, FeatureFlagsModule],
   controllers: [WisdomQaController, WisdomQaAdminController, WisdomHubController],
-  providers: [WisdomQaService],
+  providers: [WisdomQaService, WisdomGeminiService],
   exports: [WisdomQaService],
 })
 export class WisdomQaModule {}

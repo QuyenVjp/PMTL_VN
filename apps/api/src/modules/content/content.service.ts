@@ -41,7 +41,7 @@ export class ContentService {
 
     const items = await Promise.all(
       posts.map(async (post) => {
-        const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
+        const featuredImageUrl = await this.storage.resolveAssetUrlById(post.featuredImageId);
         return mapPostToResponse(post, featuredImageUrl);
       }),
     );
@@ -72,7 +72,7 @@ export class ContentService {
       throw new NotFoundException("Bài viết không tồn tại");
     }
 
-    const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
+    const featuredImageUrl = await this.storage.resolveAssetUrlById(post.featuredImageId);
 
     return mapPostToResponse(post, featuredImageUrl);
   }
@@ -128,7 +128,7 @@ export class ContentService {
       return created;
     });
 
-    const featuredImageUrl = await this.storage.resolveAssetUrl(post.featuredImageId);
+    const featuredImageUrl = await this.storage.resolveAssetUrlById(post.featuredImageId);
 
     return mapPostToResponse(post, featuredImageUrl);
   }
@@ -199,7 +199,7 @@ export class ContentService {
       return result;
     });
 
-    const featuredImageUrl = await this.storage.resolveAssetUrl(updated.featuredImageId);
+    const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
 
     return mapPostToResponse(updated, featuredImageUrl);
   }
@@ -234,7 +234,7 @@ export class ContentService {
       return result;
     });
 
-    const featuredImageUrl = await this.storage.resolveAssetUrl(updated.featuredImageId);
+    const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
 
     return mapPostToResponse(updated, featuredImageUrl);
   }
@@ -282,7 +282,8 @@ export class ContentService {
     if (!asset) {
       throw new NotFoundException("Ảnh đại diện không tồn tại");
     }
-    return asset.publicId;
+    // posts.featured_image_id references MediaAsset.id (internal id), not publicId.
+    return asset.id;
   }
 
   // ======================== Guide methods ========================

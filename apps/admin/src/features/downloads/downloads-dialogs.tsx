@@ -34,14 +34,9 @@ import {
   useUnpublishDownload,
 } from "@/features/downloads/mutations";
 import { useDownloads } from "@/features/downloads/context";
-
-function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
+import { resolveMediaSrc } from "@/lib/media-src";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
+import { ImageAssetPicker } from "@/components/media/image-asset-picker";
 
 // ── Shared field wrapper ─────────────────────────────────────────────
 
@@ -112,6 +107,8 @@ function DownloadCreateDialog({
     () => assets.filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
     [assets],
   );
+  const selectedFileAsset = assets.find((asset) => asset.publicId === fileMediaPublicId) ?? null;
+  const selectedThumbnailAsset = imageAssets.find((asset) => asset.publicId === thumbnailMediaPublicId) ?? null;
 
   useEffect(() => {
     if (open) {
@@ -227,12 +224,12 @@ function DownloadCreateDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string; url?: string; mimeType?: string; size?: number } } | null;
-                  const publicId = payload?.data?.publicId;
+                  const payload = extractUploadMediaPayload(result);
+                  const publicId = payload?.publicId;
                   if (publicId) setFileMediaPublicId(publicId);
-                  if (payload?.data?.url) setFileUrl(payload.data.url);
-                  if (payload?.data?.mimeType) setFileType(payload.data.mimeType);
-                  if (typeof payload?.data?.size === "number") setFileSize(String(payload.data.size));
+                  if (payload?.url) setFileUrl(payload.url);
+                  if (payload?.mimeType) setFileType(payload.mimeType);
+                  if (typeof payload?.size === "number") setFileSize(String(payload.size));
                 } finally {
                   event.target.value = "";
                 }
@@ -248,7 +245,16 @@ function DownloadCreateDialog({
             </div>
             <Select
               value={fileMediaPublicId || "__none__"}
-              onValueChange={(value) => setFileMediaPublicId(value === "__none__" ? "" : value)}
+              onValueChange={(value) => {
+                const nextId = value === "__none__" ? "" : value;
+                setFileMediaPublicId(nextId);
+                const selected = assets.find((asset) => asset.publicId === nextId);
+                if (selected) {
+                  setFileUrl(selected.url);
+                  setFileType(selected.mimeType);
+                  setFileSize(String(selected.size));
+                }
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Chọn file từ media..." />
@@ -262,6 +268,11 @@ function DownloadCreateDialog({
                 ))}
               </SelectContent>
             </Select>
+            {selectedFileAsset ? (
+              <p className="text-xs text-muted-foreground">
+                Đã chọn file: {selectedFileAsset.filename}
+              </p>
+            ) : null}
           </Field>
           <Field label="Thumbnail media (tuỳ chọn)">
             <input
@@ -274,8 +285,8 @@ function DownloadCreateDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string } } | null;
-                  const publicId = payload?.data?.publicId;
+                  const payload = extractUploadMediaPayload(result);
+                  const publicId = payload?.publicId;
                   if (publicId) setThumbnailMediaPublicId(publicId);
                 } finally {
                   event.target.value = "";
@@ -296,22 +307,26 @@ function DownloadCreateDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={thumbnailMediaPublicId || "__none__"}
-              onValueChange={(value) => setThumbnailMediaPublicId(value === "__none__" ? "" : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn thumbnail từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={thumbnailMediaPublicId}
+              onChange={setThumbnailMediaPublicId}
+              placeholder="Chọn thumbnail từ thư viện..."
+            />
+            {selectedThumbnailAsset ? (
+              <div className="flex items-center gap-2 rounded border p-2">
+                <img
+                  src={resolveMediaSrc(selectedThumbnailAsset.url) ?? undefined}
+                  alt={selectedThumbnailAsset.filename}
+                  className="size-12 rounded border object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{selectedThumbnailAsset.filename}</p>
+                  <p className="text-xs text-muted-foreground">{selectedThumbnailAsset.publicId}</p>
+                </div>
+              </div>
+            ) : null}
           </Field>
           <Field label="Mô tả">
             <Textarea
@@ -369,6 +384,8 @@ function DownloadEditDialog({
     () => assets.filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
     [assets],
   );
+  const selectedFileAsset = assets.find((asset) => asset.publicId === fileMediaPublicId) ?? null;
+  const selectedThumbnailAsset = imageAssets.find((asset) => asset.publicId === thumbnailMediaPublicId) ?? null;
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -472,12 +489,12 @@ function DownloadEditDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string; url?: string; mimeType?: string; size?: number } } | null;
-                  const publicId = payload?.data?.publicId;
+                  const payload = extractUploadMediaPayload(result);
+                  const publicId = payload?.publicId;
                   if (publicId) setFileMediaPublicId(publicId);
-                  if (payload?.data?.url) setFileUrl(payload.data.url);
-                  if (payload?.data?.mimeType) setFileType(payload.data.mimeType);
-                  if (typeof payload?.data?.size === "number") setFileSize(String(payload.data.size));
+                  if (payload?.url) setFileUrl(payload.url);
+                  if (payload?.mimeType) setFileType(payload.mimeType);
+                  if (typeof payload?.size === "number") setFileSize(String(payload.size));
                 } finally {
                   event.target.value = "";
                 }
@@ -493,7 +510,16 @@ function DownloadEditDialog({
             </div>
             <Select
               value={fileMediaPublicId || "__none__"}
-              onValueChange={(value) => setFileMediaPublicId(value === "__none__" ? "" : value)}
+              onValueChange={(value) => {
+                const nextId = value === "__none__" ? "" : value;
+                setFileMediaPublicId(nextId);
+                const selected = assets.find((asset) => asset.publicId === nextId);
+                if (selected) {
+                  setFileUrl(selected.url);
+                  setFileType(selected.mimeType);
+                  setFileSize(String(selected.size));
+                }
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Chọn file từ media..." />
@@ -507,6 +533,11 @@ function DownloadEditDialog({
                 ))}
               </SelectContent>
             </Select>
+            {selectedFileAsset ? (
+              <p className="text-xs text-muted-foreground">
+                Đã chọn file: {selectedFileAsset.filename}
+              </p>
+            ) : null}
           </Field>
           <Field label="Thumbnail media (tuỳ chọn)">
             <input
@@ -519,8 +550,8 @@ function DownloadEditDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string } } | null;
-                  const publicId = payload?.data?.publicId;
+                  const payload = extractUploadMediaPayload(result);
+                  const publicId = payload?.publicId;
                   if (publicId) setThumbnailMediaPublicId(publicId);
                 } finally {
                   event.target.value = "";
@@ -541,25 +572,28 @@ function DownloadEditDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={thumbnailMediaPublicId || "__none__"}
-              onValueChange={(value) => setThumbnailMediaPublicId(value === "__none__" ? "" : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn thumbnail từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {currentRow.thumbnailUrl ? (
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={thumbnailMediaPublicId}
+              onChange={setThumbnailMediaPublicId}
+              placeholder="Chọn thumbnail từ thư viện..."
+            />
+            {selectedThumbnailAsset ? (
+              <div className="flex items-center gap-2 rounded border p-2">
+                <img
+                  src={resolveMediaSrc(selectedThumbnailAsset.url) ?? undefined}
+                  alt={selectedThumbnailAsset.filename}
+                  className="size-12 rounded border object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{selectedThumbnailAsset.filename}</p>
+                  <p className="text-xs text-muted-foreground">{selectedThumbnailAsset.publicId}</p>
+                </div>
+              </div>
+            ) : currentRow.thumbnailUrl ? (
               <img
-                src={mediaPath(currentRow.thumbnailUrl)}
+                src={resolveMediaSrc(currentRow.thumbnailUrl) ?? undefined}
                 alt={currentRow.title}
                 className="h-16 w-auto rounded border object-cover"
                 loading="lazy"

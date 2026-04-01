@@ -1,19 +1,24 @@
 /**
  * NestCacheModule — @nestjs/cache-manager v3 global cache registration.
  *
- * Uses cache-manager v6 (keyv-based) with @keyv/redis for Redis backend.
- * Falls back to in-memory (no Redis URL configured) for local dev.
- * TTL default: 300s. Key prefix: "pmtl:".
+ * Uses cache-manager's built-in in-memory store (no Keyv, no @keyv/redis).
+ * TTL default: 300s. Key prefix handled per caller.
  *
- * Note: coexists with the custom CacheService (apps/api/src/common/cache/).
- * Use @Cache() decorator on controller methods for auto-caching.
- * Use CacheService directly for manual cache operations with fine-grained control.
+ * WHY no Keyv/Redis here:
+ *   @nestjs/cache-manager's cachingFactory wraps stores in `new CJS-Keyv(store)`.
+ *   Our ESM dist imports Keyv via ESM; cache-manager loads Keyv via CJS.
+ *   ESM class !== CJS class → instanceof check always fails → double-wrap crash
+ *   (`_checkIterableAdapter: Cannot read opts.url of undefined`).
+ *   Passing no `stores` bypasses cachingFactory entirely — cache-manager creates
+ *   its own default in-memory cache with no Keyv involved.
+ *
+ * Redis-backed caching is CacheService's responsibility (apps/api/src/common/cache/).
+ * Use @Cache() decorator for lightweight in-memory auto-caching on controller methods.
+ * Use CacheService directly for fine-grained Redis cache operations.
  */
 import { Module, Global } from "@nestjs/common";
 import { CacheModule } from "@nestjs/cache-manager";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import Keyv from "keyv";
-import { createKeyv } from "@keyv/redis";
 
 @Global()
 @Module({
@@ -22,27 +27,10 @@ import { createKeyv } from "@keyv/redis";
       isGlobal: true,
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => {
-        const valkeyUrl = config.get<string>("VALKEY_URL");
         const ttlMs = (config.get<number>("CACHE_TTL_SECONDS") ?? 300) * 1000;
-
-        if (valkeyUrl) {
-          return {
-            ttl: ttlMs,
-            stores: [
-              new Keyv({
-                store: createKeyv(valkeyUrl),
-                namespace: "pmtl",
-                ttl: ttlMs,
-              }),
-            ],
-          };
-        }
-
-        // In-memory store (local dev without Redis) — Keyv() with no store arg uses Map
-        return {
-          ttl: ttlMs,
-          stores: [new Keyv({ namespace: "pmtl", ttl: ttlMs })],
-        };
+        // No `stores` — cache-manager uses its own built-in in-memory cache.
+        // This avoids the ESM/CJS Keyv instanceof mismatch crash entirely.
+        return { ttl: ttlMs };
       },
       inject: [ConfigService],
     }),

@@ -86,6 +86,10 @@ export const auditActionSchema = z.enum([
   "admin.guide.create",
   "admin.guide.update",
   "admin.guide.publish",
+  
+  // Wisdom AI assist actions
+  "admin.wisdom.ai.slug_suggest",
+  "admin.wisdom.ai.translation_draft",
 
   // Practice support actions
   "admin.practice_support.update",

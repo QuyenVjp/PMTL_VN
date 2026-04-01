@@ -25,6 +25,8 @@ import {
   createAuthorityProfileSchema,
   updateAuthorityProfileSchema,
   duplicateCheckSchema,
+  suggestSlugSchema,
+  translationDraftSchema,
   type WisdomEntryQuery,
   type CreateWisdomEntryInput,
   type UpdateWisdomEntryInput,
@@ -32,6 +34,8 @@ import {
   type CreateAuthorityProfileInput,
   type UpdateAuthorityProfileInput,
   type DuplicateCheckInput,
+  type SuggestSlugInput,
+  type TranslationDraftInput,
 } from "./wisdom-qa.schemas.js";
 
 @ApiTags("admin-wisdom")
@@ -142,6 +146,40 @@ export class WisdomQaAdminController {
     @Body(ZodValidate(duplicateCheckSchema)) input: DuplicateCheckInput,
   ) {
     return this.wisdomQaService.checkDuplicateEntry(input);
+  }
+
+  @Post("entries/slug-suggest")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Gợi ý slug bằng Gemini (có feature flag)" })
+  suggestSlug(
+    @Body(ZodValidate(suggestSlugSchema)) input: SuggestSlugInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.wisdomQaService.suggestSlug(input, {
+      actorId: user.id,
+      actorType: "admin",
+      ipAddress: (req as any).ip,
+      userAgent: (req as any).headers["user-agent"],
+    });
+  }
+
+  @Post("entries/translate-draft")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Tạo bản dịch nháp bằng Gemini (có feature flag)" })
+  createTranslationDraft(
+    @Body(ZodValidate(translationDraftSchema)) input: TranslationDraftInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.wisdomQaService.createTranslationDraft(input, {
+      actorId: user.id,
+      actorType: "admin",
+      ipAddress: (req as any).ip,
+      userAgent: (req as any).headers["user-agent"],
+    });
   }
 
   // ── Authority Profiles ──────────────────────────────────────────────

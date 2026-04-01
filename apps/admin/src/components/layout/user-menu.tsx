@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 export function UserMenu() {
   const user = useCurrentUser();
@@ -26,7 +27,7 @@ export function UserMenu() {
           aria-label="Mở menu người dùng"
         >
           <Avatar className="size-10">
-            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarImage src={resolveMediaSrc(user.avatar) ?? undefined} alt={user.name} />
             <AvatarFallback className="bg-transparent text-sm font-semibold">{user.initials}</AvatarFallback>
           </Avatar>
         </Button>
@@ -35,7 +36,7 @@ export function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex items-center gap-3 px-1 py-1">
             <Avatar className="size-9">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={resolveMediaSrc(user.avatar) ?? undefined} alt={user.name} />
               <AvatarFallback className="text-sm font-semibold">{user.initials}</AvatarFallback>
             </Avatar>
             <div className="grid text-start">

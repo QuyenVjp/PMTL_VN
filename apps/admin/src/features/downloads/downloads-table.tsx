@@ -20,6 +20,8 @@ import { WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DownloadsRowActions } from "@/features/downloads/data-table-row-actions";
 import { downloadListOptions, type DownloadItem } from "@/features/downloads/queries";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Options ──────────────────────────────────────────────────────────
 
@@ -80,6 +82,15 @@ type DownloadsTableProps = {
 export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
   const downloads = envelope?.data ?? [];
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const mediaUrlByPublicId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const asset of mediaEnvelope?.data ?? []) {
+      const typedAsset = asset as MediaAssetListItem;
+      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+    }
+    return map;
+  }, [mediaEnvelope]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -95,7 +106,25 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
         accessorKey: "title",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Tiêu đề" />,
         cell: ({ row }) => (
-          <div className="max-w-[280px] truncate font-medium">{row.original.title}</div>
+          <div className="flex items-center gap-2 max-w-[280px]">
+            <div className="size-9 shrink-0 overflow-hidden rounded border bg-muted">
+              {(() => {
+                const mediaUrl = row.original.thumbnailMediaPublicId
+                  ? mediaUrlByPublicId.get(row.original.thumbnailMediaPublicId)
+                  : undefined;
+                const src = resolveMediaSrc(row.original.thumbnailUrl ?? mediaUrl);
+                return src ? (
+                <img
+                  src={src ?? undefined}
+                  alt={row.original.title}
+                  className="size-full object-cover"
+                  loading="lazy"
+                />
+                ) : null;
+              })()}
+            </div>
+            <div className="truncate font-medium">{row.original.title}</div>
+          </div>
         ),
         meta: { label: "Tiêu đề" },
         enableHiding: false,
@@ -155,7 +184,7 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
         enableHiding: false,
       },
     ],
-    [],
+    [mediaUrlByPublicId],
   );
 
   const table = useSafeReactTable({

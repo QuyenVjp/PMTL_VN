@@ -11,6 +11,7 @@ import {
   cacheConfigSchema,
   searchConfigSchema,
   antivirusConfigSchema,
+  aiConfigSchema,
 } from "./config.schemas.js";
 
 export const coreConfig = registerAs("core", () => {
@@ -97,6 +98,14 @@ export const antivirusConfig = registerAs("antivirus", () => {
   const parsed = antivirusConfigSchema.safeParse(process.env);
   if (!parsed.success) {
     throw new Error(`Antivirus config validation failed: ${JSON.stringify(parsed.error.format())}`);
+  }
+  return parsed.data;
+});
+
+export const aiConfig = registerAs("ai", () => {
+  const parsed = aiConfigSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(`AI config validation failed: ${JSON.stringify(parsed.error.format())}`);
   }
   return parsed.data;
 });

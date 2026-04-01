@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const featureFlagKeySchema = z.enum([
+export const featureFlagKeys = [
   "notification.push.enabled",
   "notification.email.enabled",
   "offline.bundle.enabled",
@@ -9,7 +9,11 @@ export const featureFlagKeySchema = z.enum([
   "community.comments.enabled",
   "engagement.tracking.enabled",
   "maintenance.mode.enabled",
-]);
+  "wisdom.ai.slug_suggest.enabled",
+  "wisdom.ai.translation_draft.enabled",
+] as const;
+
+export const featureFlagKeySchema = z.enum(featureFlagKeys);
 
 export const createFeatureFlagSchema = z.object({
   key: featureFlagKeySchema,

@@ -34,6 +34,17 @@ interface UpdateWisdomEntryInput {
   tags?: string[];
 }
 
+interface SuggestSlugInput {
+  title: string;
+  sourceCode?: string;
+}
+
+interface TranslationDraftInput {
+  originalText: string;
+  title?: string;
+  sourceCode?: string;
+}
+
 // ── Mutations ────────────────────────────────────────────────────────
 
 export function useCreateWisdomEntry() {
@@ -88,6 +99,22 @@ export function useDeleteWisdomEntry() {
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
       void qc.invalidateQueries({ queryKey: dashboardKeys.all });
     },
+    onError: handleApiError,
+  });
+}
+
+export function useSuggestWisdomSlug() {
+  return useMutation({
+    mutationFn: (input: SuggestSlugInput) =>
+      adminClient.post<{ slug: string; model: string }>("/admin/wisdom/entries/slug-suggest", input),
+    onError: handleApiError,
+  });
+}
+
+export function useCreateWisdomTranslationDraft() {
+  return useMutation({
+    mutationFn: (input: TranslationDraftInput) =>
+      adminClient.post<{ translatedText: string; model: string }>("/admin/wisdom/entries/translate-draft", input),
     onError: handleApiError,
   });
 }

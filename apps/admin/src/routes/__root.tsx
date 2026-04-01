@@ -339,6 +339,20 @@ const healthRoute = createRoute({
   component: withSuspense(HealthPage),
 });
 
+// System landing (canon)
+const systemRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong",
+  component: withSuspense(SettingsPage),
+});
+
+// Calendar detail workspace alias (canon compatibility)
+const calendarDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong/lich/$eventId",
+  component: withSuspense(CalendarEventsPage),
+});
+
 // Hỗ trợ (Support)
 const assistedEntryRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
@@ -348,12 +362,26 @@ const assistedEntryRoute = createRoute({
 
 const practiceHomeGuideRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-van-tu-tu",
+  component: withSuspense(PracticeHomePracticeGuidePage),
+});
+
+// Legacy alias for old self-cultivation URL
+const practiceHomeGuideLegacyRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/tu-tu-tai-gia",
   component: withSuspense(PracticeHomePracticeGuidePage),
 });
 
 // Tri Tuệ (Wisdom)
 const wisdomRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/bach-thoai",
+  component: withSuspense(WisdomPage),
+});
+
+// Legacy alias for old bookmarked route
+const wisdomLegacyRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/tri-tue",
   component: withSuspense(WisdomPage),
@@ -382,6 +410,7 @@ export const routeTree = rootRoute.addChildren([
     mediaRoute,
     niemKinhRoutes,
     practiceHomeGuideRoute,
+    practiceHomeGuideLegacyRoute,
     // Cộng đồng
     communityPostsRoute,
     guestbookRoute,
@@ -395,7 +424,9 @@ export const routeTree = rootRoute.addChildren([
     featureFlagsRoute,
     auditLogsRoute,
     settingsRoute,
+    systemRoute,
     calendarRoute,
+    calendarDetailRoute,
     searchRoute,
     notificationsRoute,
     volunteersRoute,
@@ -405,5 +436,6 @@ export const routeTree = rootRoute.addChildren([
     assistedEntryRoute,
     // Tri Tuệ
     wisdomRoute,
+    wisdomLegacyRoute,
   ]),
 ]);

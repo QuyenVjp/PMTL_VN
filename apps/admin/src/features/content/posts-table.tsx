@@ -22,15 +22,7 @@ import { createSelectColumn } from "@/lib/table/select-column";
 import { postListOptions, type PostListItem } from "@/features/content/queries";
 import { usePosts } from "@/features/content/posts-context";
 import { usePublishPost, useDeletePost } from "@/features/content/mutations";
-
-// ── Helpers ───────────────────────────────────────────────────────────
-function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
+import { resolveMediaSrc } from "@/lib/media-src";
 
 const statusOptions = [
   { label: "Đã xuất bản", value: "PUBLISHED" },
@@ -143,7 +135,7 @@ export function PostsTable() {
             <div className="size-9 shrink-0 overflow-hidden rounded border bg-muted">
               {row.original.featuredImageUrl ? (
                 <img
-                  src={mediaPath(row.original.featuredImageUrl)}
+                  src={resolveMediaSrc(row.original.featuredImageUrl) ?? undefined}
                   alt={row.original.title}
                   className="size-full object-cover"
                   loading="lazy"
@@ -295,4 +287,3 @@ export function PostsTable() {
     </div>
   );
 }
-

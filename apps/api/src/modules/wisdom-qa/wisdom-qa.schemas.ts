@@ -169,3 +169,30 @@ export const duplicateCheckSchema = z.object({
   title: z.string().min(1).max(300),
 });
 export type DuplicateCheckInput = z.infer<typeof duplicateCheckSchema>;
+
+// ── Gemini assist schemas ───────────────────────────────────────────
+
+export const suggestSlugSchema = z.object({
+  title: z.string().min(3).max(300),
+  sourceCode: z.string().max(200).optional(),
+});
+export type SuggestSlugInput = z.infer<typeof suggestSlugSchema>;
+
+export const suggestSlugResponseSchema = z.object({
+  slug: z.string().min(3).max(200),
+  model: z.string(),
+});
+export type SuggestSlugResponse = z.infer<typeof suggestSlugResponseSchema>;
+
+export const translationDraftSchema = z.object({
+  originalText: z.string().min(5).max(20000),
+  title: z.string().max(300).optional(),
+  sourceCode: z.string().max(200).optional(),
+});
+export type TranslationDraftInput = z.infer<typeof translationDraftSchema>;
+
+export const translationDraftResponseSchema = z.object({
+  translatedText: z.string().min(5),
+  model: z.string(),
+});
+export type TranslationDraftResponse = z.infer<typeof translationDraftResponseSchema>;

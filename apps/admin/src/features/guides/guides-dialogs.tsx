@@ -27,6 +27,9 @@ import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type F
 import type { GuideItem } from "@/features/guides/queries";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
 import { useUploadMediaAsset } from "@/features/media/mutations.js";
+import { resolveMediaSrc } from "@/lib/media-src";
+import { ImageAssetPicker } from "@/components/media/image-asset-picker";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
 import {
   useCreateGuide,
   useDeleteGuide,
@@ -36,14 +39,6 @@ import {
 import { useGuides } from "@/features/guides/context";
 
 const EXCERPT_MAX_LENGTH = 500;
-
-function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
 
 // ── Shared field wrapper ─────────────────────────────────────────────
 
@@ -228,8 +223,7 @@ function GuideCreateDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string }; publicId?: string } | null;
-                  const publicId = payload?.data?.publicId ?? payload?.publicId;
+                  const publicId = extractUploadMediaPayload(result)?.publicId;
                   if (publicId) setCoverMediaPublicId(publicId);
                 } finally {
                   event.target.value = "";
@@ -250,22 +244,12 @@ function GuideCreateDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={coverMediaPublicId || "__none__"}
-              onValueChange={(value) => setCoverMediaPublicId(value === "__none__" ? "" : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn ảnh từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={coverMediaPublicId}
+              onChange={setCoverMediaPublicId}
+              placeholder="Chọn ảnh cover từ thư viện..."
+            />
           </Field>
         </div>
 
@@ -312,6 +296,7 @@ function GuideEditDialog({
     () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
     [mediaEnvelope],
   );
+  const selectedCover = imageAssets.find((asset) => asset.publicId === coverMediaPublicId) ?? null;
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -440,8 +425,7 @@ function GuideEditDialog({
                 if (!file) return;
                 try {
                   const result = await uploadMedia.mutateAsync(file);
-                  const payload = result as { data?: { publicId?: string }; publicId?: string } | null;
-                  const publicId = payload?.data?.publicId ?? payload?.publicId;
+                  const publicId = extractUploadMediaPayload(result)?.publicId;
                   if (publicId) setCoverMediaPublicId(publicId);
                 } finally {
                   event.target.value = "";
@@ -462,25 +446,15 @@ function GuideEditDialog({
                 Bỏ chọn
               </Button>
             </div>
-            <Select
-              value={coverMediaPublicId || "__none__"}
-              onValueChange={(value) => setCoverMediaPublicId(value === "__none__" ? "" : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Chọn ảnh từ media..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">Không chọn</SelectItem>
-                {imageAssets.map((asset) => (
-                  <SelectItem key={asset.publicId} value={asset.publicId}>
-                    {asset.filename}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {currentRow.coverImageUrl ? (
+            <ImageAssetPicker
+              assets={imageAssets}
+              value={coverMediaPublicId}
+              onChange={setCoverMediaPublicId}
+              placeholder="Chọn ảnh cover từ thư viện..."
+            />
+            {!selectedCover && currentRow.coverImageUrl ? (
               <img
-                src={mediaPath(currentRow.coverImageUrl)}
+                src={resolveMediaSrc(currentRow.coverImageUrl) ?? undefined}
                 alt={currentRow.title}
                 className="h-20 w-auto rounded border object-cover"
                 loading="lazy"

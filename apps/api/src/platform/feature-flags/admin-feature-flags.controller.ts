@@ -17,8 +17,12 @@ import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js"
 import { FeatureFlagsService } from "./feature-flags.service.js";
 import { FeatureFlagsRepository } from "./feature-flags.repository.js";
 import { AuditService } from "../audit/audit.service.js";
-import { NotFoundError } from "../../common/errors/app-error.js";
-import { updateFeatureFlagSchema, type UpdateFeatureFlagInput } from "./feature-flags.schemas.js";
+import { NotFoundError, ValidationError } from "../../common/errors/app-error.js";
+import {
+  featureFlagKeySchema,
+  updateFeatureFlagSchema,
+  type UpdateFeatureFlagInput,
+} from "./feature-flags.schemas.js";
 
 @ApiTags("admin-feature-flags")
 @Controller("admin/feature-flags")
@@ -76,14 +80,24 @@ export class AdminFeatureFlagsController {
     @CurrentUser() actor: AuthenticatedUser,
     @Req() req: Request,
   ) {
-    const existing = await this.featureFlagsRepository.findByKey(key);
-    if (!existing) {
-      throw new NotFoundError("Feature flag", key);
+    const parsedKey = featureFlagKeySchema.safeParse(key);
+    if (!parsedKey.success) {
+      throw new ValidationError("Feature flag key không hợp lệ", { key });
     }
 
-    const previousEnabled = existing.enabled;
+    const featureKey = parsedKey.data;
+    const existing = await this.featureFlagsRepository.findByKey(key);
 
-    const updated = await this.featureFlagsRepository.update(key, input);
+    const previousEnabled = existing?.enabled ?? false;
+
+    const updated = existing
+      ? await this.featureFlagsRepository.update(featureKey, input)
+      : await this.featureFlagsRepository.upsert(featureKey, {
+          key: featureKey,
+          enabled: input.enabled ?? false,
+          description: input.description,
+          metadata: input.metadata,
+        });
 
     // Refresh in-memory cache
     await this.featureFlagsService.refreshCache();

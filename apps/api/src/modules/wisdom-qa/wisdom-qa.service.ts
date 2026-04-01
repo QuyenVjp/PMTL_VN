@@ -3,8 +3,11 @@ import { nanoid } from "nanoid";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
+import { ForbiddenError } from "../../common/errors/app-error.js";
+import { FeatureFlagsService } from "../../platform/feature-flags/feature-flags.service.js";
 import { Q161_RULE_PACK } from "./q161-rule-pack.data.js";
 import { parseQ161RulePackWithMini } from "./q161-rule-pack.mini-schema.js";
+import { WisdomGeminiService } from "./wisdom-gemini.service.js";
 import type {
   AskQuestionInput,
   Q161RulePackResponse,
@@ -18,6 +21,8 @@ import type {
   AuthorityProfileQuery,
   WisdomEntryPublicQuery,
   DuplicateCheckInput,
+  SuggestSlugInput,
+  TranslationDraftInput,
 } from "./wisdom-qa.schemas.js";
 import { type WisdomEntryType, type ContentStatus, type Prisma } from "../../generated/prisma/client.js";
 
@@ -27,6 +32,8 @@ export class WisdomQaService {
     private readonly prisma: PrismaService,
     private readonly cacheService: CacheService,
     private readonly audit: AuditService,
+    private readonly featureFlags: FeatureFlagsService,
+    private readonly wisdomGemini: WisdomGeminiService,
   ) {}
 
   listQuestions(query: WisdomQaQuery) {
@@ -295,5 +302,49 @@ export class WisdomQaService {
       matchCount: matches.length,
       matches,
     };
+  }
+
+  async suggestSlug(input: SuggestSlugInput, auditContext: AuditContext) {
+    await this.ensureFeatureEnabled("wisdom.ai.slug_suggest.enabled");
+    const result = await this.wisdomGemini.suggestSlug(input);
+    await this.audit.append(
+      auditContext,
+      "admin.wisdom.ai.slug_suggest",
+      "wisdom_entry",
+      undefined,
+      {
+        title: input.title,
+        sourceCode: input.sourceCode ?? null,
+        suggestedSlug: result.slug,
+        model: result.model,
+      },
+    );
+    return result;
+  }
+
+  async createTranslationDraft(input: TranslationDraftInput, auditContext: AuditContext) {
+    await this.ensureFeatureEnabled("wisdom.ai.translation_draft.enabled");
+    const result = await this.wisdomGemini.draftTranslation(input);
+    await this.audit.append(
+      auditContext,
+      "admin.wisdom.ai.translation_draft",
+      "wisdom_entry",
+      undefined,
+      {
+        title: input.title ?? null,
+        sourceCode: input.sourceCode ?? null,
+        originalLength: input.originalText.length,
+        translatedLength: result.translatedText.length,
+        model: result.model,
+      },
+    );
+    return result;
+  }
+
+  private async ensureFeatureEnabled(flag: "wisdom.ai.slug_suggest.enabled" | "wisdom.ai.translation_draft.enabled") {
+    const enabled = await this.featureFlags.isEnabled(flag);
+    if (!enabled) {
+      throw new ForbiddenError("Tính năng AI đang tắt bởi feature flag");
+    }
   }
 }

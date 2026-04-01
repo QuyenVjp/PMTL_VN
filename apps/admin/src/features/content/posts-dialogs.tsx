@@ -32,6 +32,8 @@ import type { PostListItem } from "@/features/content/queries";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
 import { useUploadMediaAsset } from "@/features/media/mutations.js";
+import { resolveMediaSrc } from "@/lib/media-src";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
 
 const POST_TYPE_OPTIONS = [
   { label: "Bài viết", value: "ARTICLE" },
@@ -40,30 +42,6 @@ const POST_TYPE_OPTIONS = [
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
 const EXCERPT_MAX_LENGTH = 500;
-
-function mediaPath(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
-
-function extractUploadPublicId(payload: unknown): string | undefined {
-  const asRecord = payload as Record<string, unknown> | null;
-  if (!asRecord) return undefined;
-  const direct = asRecord.publicId;
-  if (typeof direct === "string") return direct;
-
-  const data = asRecord.data as Record<string, unknown> | undefined;
-  if (!data) return undefined;
-  const nestedDirect = data.publicId;
-  if (typeof nestedDirect === "string") return nestedDirect;
-
-  const nestedData = data.data as Record<string, unknown> | undefined;
-  if (!nestedData) return undefined;
-  return typeof nestedData.publicId === "string" ? nestedData.publicId : undefined;
-}
 
 function FeaturedImageField({
   open,
@@ -94,7 +72,7 @@ function FeaturedImageField({
     if (!file) return;
     try {
       const result = await uploadMedia.mutateAsync(file);
-      const publicId = extractUploadPublicId(result);
+      const publicId = extractUploadMediaPayload(result)?.publicId;
       if (!publicId) {
         toast.error("Upload xong nhưng không đọc được media ID.");
         return;
@@ -119,7 +97,7 @@ function FeaturedImageField({
       </div>
       {selected ? (
         <div className="flex items-center gap-3 rounded-md border p-2">
-          <img src={mediaPath(selected.url)} alt={selected.filename} className="size-12 rounded object-cover" />
+          <img src={resolveMediaSrc(selected.url) ?? undefined} alt={selected.filename} className="size-12 rounded object-cover" />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium">{selected.filename}</p>
             <p className="text-xs text-muted-foreground">{selected.publicId}</p>
@@ -146,7 +124,7 @@ function FeaturedImageField({
                       active ? "border-primary" : "border-transparent hover:border-muted-foreground/50",
                     )}
                   >
-                    <img src={mediaPath(img.url)} alt={img.filename} className="aspect-square w-full object-cover" />
+                    <img src={resolveMediaSrc(img.url) ?? undefined} alt={img.filename} className="aspect-square w-full object-cover" />
                   </button>
                 );
               })}

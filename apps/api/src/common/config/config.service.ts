@@ -12,6 +12,7 @@ import {
   cacheConfig,
   searchConfig,
   antivirusConfig,
+  aiConfig,
 } from "./config.namespaces.js";
 
 @Injectable()
@@ -39,6 +40,8 @@ export class ConfigService {
     private readonly search: ConfigType<typeof searchConfig>,
     @Inject(antivirusConfig.KEY)
     private readonly antivirus: ConfigType<typeof antivirusConfig>,
+    @Inject(aiConfig.KEY)
+    private readonly ai: ConfigType<typeof aiConfig>,
   ) {}
 
   // Core
@@ -214,5 +217,16 @@ export class ConfigService {
   }
   get clamavTimeoutMs() {
     return this.antivirus.CLAMAV_TIMEOUT_MS;
+  }
+
+  // AI
+  get geminiApiKey() {
+    return this.ai.GEMINI_API_KEY;
+  }
+  get geminiModel() {
+    return this.ai.GEMINI_MODEL;
+  }
+  get geminiTimeoutMs() {
+    return this.ai.GEMINI_TIMEOUT_MS;
   }
 }

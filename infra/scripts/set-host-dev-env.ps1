@@ -56,6 +56,8 @@ $hostEnv = @{
   SEED_ADMIN_PASSWORD = "PmtlAdmin!123"
   SEED_ADMIN_DISPLAY_NAME = "PMTL Admin"
   SEED_ADMIN_ROLE = "SUPER_ADMIN"
+  # Encryption key for EncryptionService — min 32 chars, dev-only value
+  ENCRYPTION_MASTER_KEY = "dev-encryption-master-key-1234567890ab"
 }
 
 foreach ($entry in $hostEnv.GetEnumerator()) {

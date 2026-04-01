@@ -59,7 +59,7 @@ export function SignInPage() {
       if (err instanceof HttpError) {
         setError(err.message);
       } else {
-        setError("Lỗi kết nối, vui lòng thử lại");
+        setError("Không thể kết nối máy chủ. Vui lòng kiểm tra lại hoặc thử sau.");
       }
     } finally {
       setLoading(false);
