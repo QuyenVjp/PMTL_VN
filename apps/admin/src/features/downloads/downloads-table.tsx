@@ -13,14 +13,17 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DownloadsRowActions } from "@/features/downloads/data-table-row-actions";
 import { downloadListOptions, type DownloadItem } from "@/features/downloads/queries";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { usePublishDownload, useDeleteDownload } from "@/features/downloads/mutations";
+import { mediaListOptions } from "@/features/media/queries";
 import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Options ──────────────────────────────────────────────────────────
@@ -83,11 +86,14 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
   const downloads = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  
+  const publishDownload = usePublishDownload();
+  const deleteDownload = useDeleteDownload();
+
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
     for (const asset of mediaEnvelope?.data ?? []) {
-      const typedAsset = asset as MediaAssetListItem;
-      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+      if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;
   }, [mediaEnvelope]);
@@ -205,6 +211,23 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+
+  const handleBulkPublish = async () => {
+    if (!selectedRows.length) return;
+    const drafts = selectedRows.filter((d) => d.status === "DRAFT");
+    if (!drafts.length) return;
+    await Promise.all(drafts.map((d) => publishDownload.mutateAsync(d.publicId)));
+    table.resetRowSelection();
+  };
+
+  const handleBulkDelete = async () => {
+    if (!selectedRows.length) return;
+    if (!confirm(`Xác nhận xóa ${selectedRows.length} tài liệu?`)) return;
+    await Promise.all(selectedRows.map((d) => deleteDownload.mutateAsync(d.publicId)));
+    table.resetRowSelection();
+  };
+
   return (
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
       <DataTableToolbar
@@ -224,7 +247,26 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
         isLoading={isLoading}
         emptyMessage="Chưa có tài liệu nào."
       />
-      <DataTableBulkActions table={table} entityName="tài liệu" />
+      <DataTableBulkActions table={table} entityName="tài liệu">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={publishDownload.isPending}
+          onClick={() => void handleBulkPublish()}
+        >
+          <CheckCircleIcon className="mr-1.5 size-3.5" />
+          Xuất bản đã chọn
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={deleteDownload.isPending}
+          onClick={() => void handleBulkDelete()}
+        >
+          <Trash2Icon className="mr-1.5 size-3.5" />
+          Xóa đã chọn
+        </Button>
+      </DataTableBulkActions>
     </div>
   );
 }

@@ -13,14 +13,17 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { GuidesRowActions } from "@/features/guides/data-table-row-actions";
 import { guideListOptions, type GuideItem } from "@/features/guides/queries";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
+import { mediaListOptions } from "@/features/media/queries";
 import { resolveMediaSrc } from "@/lib/media-src";
 
 // ── Options for toolbar faceted filters ─────────────────────────────
@@ -91,11 +94,14 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
   const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
   const guides = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  
+  const publishGuide = usePublishGuide();
+  const deleteGuide = useDeleteGuide();
+
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
     for (const asset of mediaEnvelope?.data ?? []) {
-      const typedAsset = asset as MediaAssetListItem;
-      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+      if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;
   }, [mediaEnvelope]);
@@ -208,6 +214,23 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+
+  const handleBulkPublish = async () => {
+    if (!selectedRows.length) return;
+    const drafts = selectedRows.filter((g) => g.status === "DRAFT");
+    if (!drafts.length) return;
+    await Promise.all(drafts.map((g) => publishGuide.mutateAsync(g.publicId)));
+    table.resetRowSelection();
+  };
+
+  const handleBulkDelete = async () => {
+    if (!selectedRows.length) return;
+    if (!confirm(`Xác nhận xóa ${selectedRows.length} hướng dẫn?`)) return;
+    await Promise.all(selectedRows.map((g) => deleteGuide.mutateAsync(g.publicId)));
+    table.resetRowSelection();
+  };
+
   return (
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
       <DataTableToolbar
@@ -227,7 +250,26 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
         isLoading={isLoading}
         emptyMessage="Chưa có hướng dẫn nào."
       />
-      <DataTableBulkActions table={table} entityName="hướng dẫn" />
+      <DataTableBulkActions table={table} entityName="hướng dẫn">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={publishGuide.isPending}
+          onClick={() => void handleBulkPublish()}
+        >
+          <CheckCircleIcon className="mr-1.5 size-3.5" />
+          Xuất bản đã chọn
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={deleteGuide.isPending}
+          onClick={() => void handleBulkDelete()}
+        >
+          <Trash2Icon className="mr-1.5 size-3.5" />
+          Xóa đã chọn
+        </Button>
+      </DataTableBulkActions>
     </div>
   );
 }

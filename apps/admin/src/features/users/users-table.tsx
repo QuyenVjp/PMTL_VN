@@ -13,15 +13,17 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { ShieldCheckIcon } from "lucide-react";
+import { ShieldCheckIcon, UserXIcon, UserCheckIcon, LogOutIcon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
+import { useBlockUser, useUnblockUser, useRevokeAllSessions } from "@/features/users/mutations";
 import { resolveMediaSrc } from "@/lib/media-src";
 import {
   initials,
@@ -36,6 +38,10 @@ import {
 export function UsersTable() {
   const { data: envelope, isLoading } = useQuery(userListOptions({ limit: 100 }));
   const users = envelope?.data ?? [];
+
+  const blockUser = useBlockUser();
+  const unblockUser = useUnblockUser();
+  const revokeSessions = useRevokeAllSessions();
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -134,6 +140,30 @@ export function UsersTable() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+
+  const handleBulkBlock = async () => {
+    if (!selectedRows.length) return;
+    const activeUsers = selectedRows.filter((u) => u.status === "ACTIVE");
+    if (!activeUsers.length) return;
+    await Promise.all(activeUsers.map((u) => blockUser.mutateAsync({ publicId: u.publicId })));
+    table.resetRowSelection();
+  };
+
+  const handleBulkUnblock = async () => {
+    if (!selectedRows.length) return;
+    const suspendedUsers = selectedRows.filter((u) => u.status === "SUSPENDED");
+    if (!suspendedUsers.length) return;
+    await Promise.all(suspendedUsers.map((u) => unblockUser.mutateAsync({ publicId: u.publicId })));
+    table.resetRowSelection();
+  };
+
+  const handleBulkRevokeAllSessions = async () => {
+    if (!selectedRows.length) return;
+    await Promise.all(selectedRows.map((u) => revokeSessions.mutateAsync({ publicId: u.publicId })));
+    table.resetRowSelection();
+  };
+
   return (
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
       <DataTableToolbar
@@ -187,7 +217,35 @@ export function UsersTable() {
       </div>
 
       <DataTablePagination table={table} className="mt-auto" />
-      <DataTableBulkActions table={table} entityName="người dùng" />
+      <DataTableBulkActions table={table} entityName="người dùng">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={blockUser.isPending}
+          onClick={() => void handleBulkBlock()}
+        >
+          <UserXIcon className="mr-1.5 size-3.5" />
+          Khóa đã chọn
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={unblockUser.isPending}
+          onClick={() => void handleBulkUnblock()}
+        >
+          <UserCheckIcon className="mr-1.5 size-3.5" />
+          Mở khóa đã chọn
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={revokeSessions.isPending}
+          onClick={() => void handleBulkRevokeAllSessions()}
+        >
+          <LogOutIcon className="mr-1.5 size-3.5" />
+          Thu hồi phiên đã chọn
+        </Button>
+      </DataTableBulkActions>
     </div>
   );
 }
