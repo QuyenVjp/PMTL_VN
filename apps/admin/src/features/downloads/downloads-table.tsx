@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
@@ -80,9 +81,12 @@ function formatFileSize(bytes: number): string {
 type DownloadsTableProps = {
   /** Pre-set the category column filter (used by category-scoped pages) */
   defaultCategory?: string;
+  /** Base path for row detail navigation, e.g. "/noi-dung/tai-lieu" */
+  detailBasePath?: string;
 };
 
-export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
+export function DownloadsTable({ defaultCategory, detailBasePath = "/noi-dung/tai-lieu" }: DownloadsTableProps) {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
   const downloads = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
@@ -185,12 +189,14 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
       },
       {
         id: "actions",
-        cell: ({ row }) => <DownloadsRowActions row={row.original} />,
+        cell: ({ row }) => (
+          <DownloadsRowActions row={row.original} detailBasePath={detailBasePath} />
+        ),
         enableSorting: false,
         enableHiding: false,
       },
     ],
-    [mediaUrlByPublicId],
+    [mediaUrlByPublicId, detailBasePath],
   );
 
   const table = useSafeReactTable({
@@ -246,6 +252,9 @@ export function DownloadsTable({ defaultCategory }: DownloadsTableProps) {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có tài liệu nào."
+        onRowClick={(row) => {
+          void navigate({ to: "/noi-dung/tai-lieu/$publicId", params: { publicId: row.publicId } });
+        }}
       />
       <DataTableBulkActions table={table} entityName="tài liệu">
         <Button

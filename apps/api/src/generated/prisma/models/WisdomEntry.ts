@@ -39,6 +39,7 @@ export type WisdomEntryMinAggregateOutputType = {
   status: $Enums.ContentStatus | null
   authorId: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +59,7 @@ export type WisdomEntryMaxAggregateOutputType = {
   status: $Enums.ContentStatus | null
   authorId: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +80,7 @@ export type WisdomEntryCountAggregateOutputType = {
   status: number
   authorId: number
   publishedAt: number
+  firstPublishedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -99,6 +102,7 @@ export type WisdomEntryMinAggregateInputType = {
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -118,6 +122,7 @@ export type WisdomEntryMaxAggregateInputType = {
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -138,6 +143,7 @@ export type WisdomEntryCountAggregateInputType = {
   status?: true | runtime.Types.Skip
   authorId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -231,6 +237,7 @@ export type WisdomEntryGroupByOutputType = {
   status: $Enums.ContentStatus
   authorId: string
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: WisdomEntryCountAggregateOutputType | null
@@ -272,6 +279,7 @@ export type WisdomEntryWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"WisdomEntry"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"WisdomEntry"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -293,6 +301,7 @@ export type WisdomEntryOrderByWithRelationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -317,6 +326,7 @@ export type WisdomEntryWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumContentStatusFilter<"WisdomEntry"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"WisdomEntry"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -338,6 +348,7 @@ export type WisdomEntryOrderByWithAggregationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.WisdomEntryCountOrderByAggregateInput | runtime.Types.Skip
@@ -364,6 +375,7 @@ export type WisdomEntryScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"WisdomEntry"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringWithAggregatesFilter<"WisdomEntry"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
 }
@@ -383,6 +395,7 @@ export type WisdomEntryCreateInput = {
   tags?: Prisma.WisdomEntryCreatetagsInput | string[] | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutWisdomEntriesInput
@@ -404,6 +417,7 @@ export type WisdomEntryUncheckedCreateInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   authorId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -423,6 +437,7 @@ export type WisdomEntryUpdateInput = {
   tags?: Prisma.WisdomEntryUpdatetagsInput | string[] | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutWisdomEntriesNestedInput | runtime.Types.Skip
@@ -444,6 +459,7 @@ export type WisdomEntryUncheckedUpdateInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -464,6 +480,7 @@ export type WisdomEntryCreateManyInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   authorId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -483,6 +500,7 @@ export type WisdomEntryUpdateManyMutationInput = {
   tags?: Prisma.WisdomEntryUpdatetagsInput | string[] | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -503,6 +521,7 @@ export type WisdomEntryUncheckedUpdateManyInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -533,6 +552,7 @@ export type WisdomEntryCountOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -552,6 +572,7 @@ export type WisdomEntryMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -571,6 +592,7 @@ export type WisdomEntryMinOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   authorId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -645,6 +667,7 @@ export type WisdomEntryCreateWithoutAuthorInput = {
   tags?: Prisma.WisdomEntryCreatetagsInput | string[] | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -664,6 +687,7 @@ export type WisdomEntryUncheckedCreateWithoutAuthorInput = {
   tags?: Prisma.WisdomEntryCreatetagsInput | string[] | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -713,6 +737,7 @@ export type WisdomEntryScalarWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"WisdomEntry"> | $Enums.ContentStatus | runtime.Types.Skip
   authorId?: Prisma.StringFilter<"WisdomEntry"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"WisdomEntry"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"WisdomEntry"> | Date | string | runtime.Types.Skip
 }
@@ -732,6 +757,7 @@ export type WisdomEntryCreateManyAuthorInput = {
   tags?: Prisma.WisdomEntryCreatetagsInput | string[] | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -751,6 +777,7 @@ export type WisdomEntryUpdateWithoutAuthorInput = {
   tags?: Prisma.WisdomEntryUpdatetagsInput | string[] | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -770,6 +797,7 @@ export type WisdomEntryUncheckedUpdateWithoutAuthorInput = {
   tags?: Prisma.WisdomEntryUpdatetagsInput | string[] | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -789,6 +817,7 @@ export type WisdomEntryUncheckedUpdateManyWithoutAuthorInput = {
   tags?: Prisma.WisdomEntryUpdatetagsInput | string[] | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -811,6 +840,7 @@ export type WisdomEntrySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -832,6 +862,7 @@ export type WisdomEntrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -853,6 +884,7 @@ export type WisdomEntrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -874,11 +906,12 @@ export type WisdomEntrySelectScalar = {
   status?: boolean | runtime.Types.Skip
   authorId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type WisdomEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "entryType" | "sourceFamily" | "sourceUrl" | "sourceCode" | "originalText" | "translatedText" | "excerpt" | "tags" | "status" | "authorId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["wisdomEntry"], runtime.Types.Skip>
+export type WisdomEntryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "entryType" | "sourceFamily" | "sourceUrl" | "sourceCode" | "originalText" | "translatedText" | "excerpt" | "tags" | "status" | "authorId" | "publishedAt" | "firstPublishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["wisdomEntry"], runtime.Types.Skip>
 export type WisdomEntryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -910,6 +943,7 @@ export type $WisdomEntryPayload<ExtArgs extends runtime.Types.Extensions.Interna
     status: $Enums.ContentStatus
     authorId: string
     publishedAt: Date | null
+    firstPublishedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["wisdomEntry"]>
@@ -1351,6 +1385,7 @@ export interface WisdomEntryFieldRefs {
   readonly status: Prisma.FieldRef<"WisdomEntry", 'ContentStatus'>
   readonly authorId: Prisma.FieldRef<"WisdomEntry", 'String'>
   readonly publishedAt: Prisma.FieldRef<"WisdomEntry", 'DateTime'>
+  readonly firstPublishedAt: Prisma.FieldRef<"WisdomEntry", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"WisdomEntry", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"WisdomEntry", 'DateTime'>
 }

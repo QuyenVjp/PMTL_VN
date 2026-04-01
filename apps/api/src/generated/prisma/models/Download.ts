@@ -48,6 +48,7 @@ export type DownloadMinAggregateOutputType = {
   status: $Enums.ContentStatus | null
   uploaderId: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +67,7 @@ export type DownloadMaxAggregateOutputType = {
   status: $Enums.ContentStatus | null
   uploaderId: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,6 +86,7 @@ export type DownloadCountAggregateOutputType = {
   status: number
   uploaderId: number
   publishedAt: number
+  firstPublishedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -112,6 +115,7 @@ export type DownloadMinAggregateInputType = {
   status?: true | runtime.Types.Skip
   uploaderId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -130,6 +134,7 @@ export type DownloadMaxAggregateInputType = {
   status?: true | runtime.Types.Skip
   uploaderId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -148,6 +153,7 @@ export type DownloadCountAggregateInputType = {
   status?: true | runtime.Types.Skip
   uploaderId?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -253,6 +259,7 @@ export type DownloadGroupByOutputType = {
   status: $Enums.ContentStatus
   uploaderId: string
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: DownloadCountAggregateOutputType | null
@@ -294,6 +301,7 @@ export type DownloadWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"Download"> | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -315,6 +323,7 @@ export type DownloadOrderByWithRelationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   uploaderId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   uploader?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -339,6 +348,7 @@ export type DownloadWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumContentStatusFilter<"Download"> | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   uploader?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -360,6 +370,7 @@ export type DownloadOrderByWithAggregationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   uploaderId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.DownloadCountOrderByAggregateInput | runtime.Types.Skip
@@ -386,6 +397,7 @@ export type DownloadScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"Download"> | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringWithAggregatesFilter<"Download"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Download"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Download"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Download"> | Date | string | runtime.Types.Skip
 }
@@ -401,6 +413,7 @@ export type DownloadCreateInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
@@ -422,6 +435,7 @@ export type DownloadUncheckedCreateInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -437,6 +451,7 @@ export type DownloadUpdateInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
@@ -458,6 +473,7 @@ export type DownloadUncheckedUpdateInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -476,6 +492,7 @@ export type DownloadCreateManyInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -491,6 +508,7 @@ export type DownloadUpdateManyMutationInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -509,6 +527,7 @@ export type DownloadUncheckedUpdateManyInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -537,6 +556,7 @@ export type DownloadCountOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   uploaderId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -559,6 +579,7 @@ export type DownloadMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   uploaderId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -577,6 +598,7 @@ export type DownloadMinOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   uploaderId?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -726,6 +748,7 @@ export type DownloadCreateWithoutUploaderInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   fileMedia?: Prisma.MediaAssetCreateNestedOneWithoutDownloadFileMediaInput | runtime.Types.Skip
@@ -745,6 +768,7 @@ export type DownloadUncheckedCreateWithoutUploaderInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -792,6 +816,7 @@ export type DownloadScalarWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"Download"> | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFilter<"Download"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Download"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Download"> | Date | string | runtime.Types.Skip
 }
@@ -807,6 +832,7 @@ export type DownloadCreateWithoutFileMediaInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
@@ -826,6 +852,7 @@ export type DownloadUncheckedCreateWithoutFileMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -851,6 +878,7 @@ export type DownloadCreateWithoutThumbnailMediaInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   uploader: Prisma.UserCreateNestedOneWithoutDownloadsInput
@@ -870,6 +898,7 @@ export type DownloadUncheckedCreateWithoutThumbnailMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -929,6 +958,7 @@ export type DownloadCreateManyUploaderInput = {
   fileSize?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -944,6 +974,7 @@ export type DownloadUpdateWithoutUploaderInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   fileMedia?: Prisma.MediaAssetUpdateOneWithoutDownloadFileMediaNestedInput | runtime.Types.Skip
@@ -963,6 +994,7 @@ export type DownloadUncheckedUpdateWithoutUploaderInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -980,6 +1012,7 @@ export type DownloadUncheckedUpdateManyWithoutUploaderInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -997,6 +1030,7 @@ export type DownloadCreateManyFileMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1014,6 +1048,7 @@ export type DownloadCreateManyThumbnailMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   uploaderId: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1029,6 +1064,7 @@ export type DownloadUpdateWithoutFileMediaInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
@@ -1048,6 +1084,7 @@ export type DownloadUncheckedUpdateWithoutFileMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1065,6 +1102,7 @@ export type DownloadUncheckedUpdateManyWithoutFileMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1080,6 +1118,7 @@ export type DownloadUpdateWithoutThumbnailMediaInput = {
   fileSize?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   uploader?: Prisma.UserUpdateOneRequiredWithoutDownloadsNestedInput | runtime.Types.Skip
@@ -1099,6 +1138,7 @@ export type DownloadUncheckedUpdateWithoutThumbnailMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1116,6 +1156,7 @@ export type DownloadUncheckedUpdateManyWithoutThumbnailMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1136,6 +1177,7 @@ export type DownloadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   status?: boolean | runtime.Types.Skip
   uploaderId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1157,6 +1199,7 @@ export type DownloadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean | runtime.Types.Skip
   uploaderId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1178,6 +1221,7 @@ export type DownloadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   status?: boolean | runtime.Types.Skip
   uploaderId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1199,11 +1243,12 @@ export type DownloadSelectScalar = {
   status?: boolean | runtime.Types.Skip
   uploaderId?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type DownloadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "description" | "fileMediaId" | "thumbnailMediaId" | "category" | "fileUrl" | "fileType" | "fileSize" | "status" | "uploaderId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["download"], runtime.Types.Skip>
+export type DownloadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "description" | "fileMediaId" | "thumbnailMediaId" | "category" | "fileUrl" | "fileType" | "fileSize" | "status" | "uploaderId" | "publishedAt" | "firstPublishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["download"], runtime.Types.Skip>
 export type DownloadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   uploader?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   fileMedia?: boolean | Prisma.Download$fileMediaArgs<ExtArgs> | runtime.Types.Skip
@@ -1241,6 +1286,7 @@ export type $DownloadPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     status: $Enums.ContentStatus
     uploaderId: string
     publishedAt: Date | null
+    firstPublishedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["download"]>
@@ -1682,6 +1728,7 @@ export interface DownloadFieldRefs {
   readonly status: Prisma.FieldRef<"Download", 'ContentStatus'>
   readonly uploaderId: Prisma.FieldRef<"Download", 'String'>
   readonly publishedAt: Prisma.FieldRef<"Download", 'DateTime'>
+  readonly firstPublishedAt: Prisma.FieldRef<"Download", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Download", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Download", 'DateTime'>
 }

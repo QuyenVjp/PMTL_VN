@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { EyeOffIcon, ForwardIcon, MinusCircleIcon } from "lucide-react";
 
@@ -106,7 +107,7 @@ function targetTypeLabel(t: string): string {
 
 function CommentRowActions({ row }: { row: ModerationCommentItem }) {
   const { setOpen, setCurrentRow } = useComment();
-  if (row.status !== "PENDING") return null;
+  const navigate = useNavigate();
 
   const open = (dialog: "hide" | "ignore" | "escalate") => {
     setCurrentRow(row);
@@ -116,15 +117,23 @@ function CommentRowActions({ row }: { row: ModerationCommentItem }) {
   return (
     <WorkspaceRowActions
       actions={[
-        { label: "Ẩn nội dung", icon: EyeOffIcon, onClick: () => open("hide") },
-        { label: "Bỏ qua", icon: MinusCircleIcon, onClick: () => open("ignore") },
         {
-          label: "Leo thang",
-          icon: ForwardIcon,
-          onClick: () => open("escalate"),
-          variant: "destructive",
-          separator: true,
+          label: "Xem chi tiết",
+          onClick: () => { void navigate({ to: "/kiem-duyet/binh-luan/$publicId", params: { publicId: row.publicId } }); },
         },
+        ...(row.status === "PENDING"
+          ? [
+              { label: "Ẩn nội dung", icon: EyeOffIcon, onClick: () => open("hide") },
+              { label: "Bỏ qua", icon: MinusCircleIcon, onClick: () => open("ignore") },
+              {
+                label: "Leo thang",
+                icon: ForwardIcon,
+                onClick: () => open("escalate"),
+                variant: "destructive" as const,
+                separator: true,
+              },
+            ]
+          : []),
       ]}
     />
   );
@@ -137,6 +146,7 @@ function ModerationCommentsTable() {
     moderationCommentListOptions({ limit: 100 }),
   );
   const reports = envelope?.data ?? [];
+  const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
   const [rowSelection, setRowSelection] = useState({});
@@ -242,6 +252,7 @@ function ModerationCommentsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có báo cáo bình luận nào."
+        onRowClick={(row) => { void navigate({ to: "/kiem-duyet/binh-luan/$publicId", params: { publicId: row.publicId } }); }}
       />
       <DataTableBulkActions table={table} entityName="báo cáo bình luận" />
     </div>

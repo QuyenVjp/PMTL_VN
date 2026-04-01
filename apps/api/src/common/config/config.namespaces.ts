@@ -7,6 +7,7 @@ import {
   securityConfigSchema,
   storageConfigSchema,
   emailConfigSchema,
+  monitoringConfigSchema,
   revalidationConfigSchema,
   cacheConfigSchema,
   searchConfigSchema,
@@ -63,9 +64,20 @@ export const storageConfig = registerAs("storage", () => {
 });
 
 export const emailConfig = registerAs("email", () => {
-  const parsed = emailConfigSchema.safeParse(process.env);
+  const parsed = emailConfigSchema.safeParse({
+    ...process.env,
+    SMTP_PASS: process.env.SMTP_PASS ?? process.env.SMTP_PASSWORD,
+  });
   if (!parsed.success) {
     throw new Error(`Email config validation failed: ${JSON.stringify(parsed.error.format())}`);
+  }
+  return parsed.data;
+});
+
+export const monitoringConfig = registerAs("monitoring", () => {
+  const parsed = monitoringConfigSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(`Monitoring config validation failed: ${JSON.stringify(parsed.error.format())}`);
   }
   return parsed.data;
 });

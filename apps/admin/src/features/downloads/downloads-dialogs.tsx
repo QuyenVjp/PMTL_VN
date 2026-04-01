@@ -219,20 +219,22 @@ function DownloadCreateDialog({
               ref={uploadDocRef}
               type="file"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const payload = extractUploadMediaPayload(result);
-                  const publicId = payload?.publicId;
-                  if (publicId) setFileMediaPublicId(publicId);
-                  if (payload?.url) setFileUrl(payload.url);
-                  if (payload?.mimeType) setFileType(payload.mimeType);
-                  if (typeof payload?.size === "number") setFileSize(String(payload.size));
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const payload = extractUploadMediaPayload(result);
+                    const publicId = payload?.publicId;
+                    if (publicId) setFileMediaPublicId(publicId);
+                    if (payload?.url) setFileUrl(payload.url);
+                    if (payload?.mimeType) setFileType(payload.mimeType);
+                    if (typeof payload?.size === "number") setFileSize(String(payload.size));
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">
@@ -280,17 +282,19 @@ function DownloadCreateDialog({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const payload = extractUploadMediaPayload(result);
-                  const publicId = payload?.publicId;
-                  if (publicId) setThumbnailMediaPublicId(publicId);
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const payload = extractUploadMediaPayload(result);
+                    const publicId = payload?.publicId;
+                    if (publicId) setThumbnailMediaPublicId(publicId);
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">
@@ -484,20 +488,22 @@ function DownloadEditDialog({
               ref={uploadDocRef}
               type="file"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const payload = extractUploadMediaPayload(result);
-                  const publicId = payload?.publicId;
-                  if (publicId) setFileMediaPublicId(publicId);
-                  if (payload?.url) setFileUrl(payload.url);
-                  if (payload?.mimeType) setFileType(payload.mimeType);
-                  if (typeof payload?.size === "number") setFileSize(String(payload.size));
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const payload = extractUploadMediaPayload(result);
+                    const publicId = payload?.publicId;
+                    if (publicId) setFileMediaPublicId(publicId);
+                    if (payload?.url) setFileUrl(payload.url);
+                    if (payload?.mimeType) setFileType(payload.mimeType);
+                    if (typeof payload?.size === "number") setFileSize(String(payload.size));
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">
@@ -545,17 +551,19 @@ function DownloadEditDialog({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const payload = extractUploadMediaPayload(result);
-                  const publicId = payload?.publicId;
-                  if (publicId) setThumbnailMediaPublicId(publicId);
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const payload = extractUploadMediaPayload(result);
+                    const publicId = payload?.publicId;
+                    if (publicId) setThumbnailMediaPublicId(publicId);
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">

@@ -80,8 +80,14 @@ const ModerationCommentsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.ModerationCommentsPage })),
 );
 const UsersPage = lazy(() => import("@/features/users").then((mod) => ({ default: mod.UsersPage })));
+const UserDetailPage = lazy(() =>
+  import("@/features/users/user-detail-page").then((mod) => ({ default: mod.UserDetailPage })),
+);
 const SessionsPage = lazy(() =>
   import("@/features/sessions").then((mod) => ({ default: mod.SessionsPage })),
+);
+const SessionDetailPage = lazy(() =>
+  import("@/features/sessions/session-detail-page").then((mod) => ({ default: mod.SessionDetailPage })),
 );
 const CalendarEventsPage = lazy(() =>
   import("@/features/calendar").then((mod) => ({ default: mod.CalendarEventsPage })),
@@ -106,6 +112,97 @@ const PracticeHomePracticeGuidePage = lazy(() =>
 );
 const WisdomPage = lazy(() =>
   import("@/features/wisdom-baihoa").then((mod) => ({ default: mod.WisdomPage })),
+);
+
+// ── Detail / Create page imports ─────────────────────────────────────
+
+const PostCreatePage = lazy(() =>
+  import("@/features/content/post-create-page").then((mod) => ({ default: mod.PostCreatePage })),
+);
+const PostDetailPage = lazy(() =>
+  import("@/features/content/post-detail-page").then((mod) => ({ default: mod.PostDetailPage })),
+);
+const GuestbookDetailPage = lazy(() =>
+  import("@/features/guestbook/guestbook-detail-page").then((mod) => ({ default: mod.GuestbookDetailPage })),
+);
+const CommunityPostDetailPage = lazy(() =>
+  import("@/features/community-posts/community-post-detail-page").then((mod) => ({ default: mod.CommunityPostDetailPage })),
+);
+const ReportDetailPage = lazy(() =>
+  import("@/features/moderation-reports/report-detail-page").then((mod) => ({ default: mod.ReportDetailPage })),
+);
+const CommentDetailPage = lazy(() =>
+  import("@/features/moderation-comments/comment-detail-page").then((mod) => ({ default: mod.CommentDetailPage })),
+);
+const VolunteerCreatePage = lazy(() =>
+  import("@/features/volunteers/volunteer-create-page").then((mod) => ({ default: mod.VolunteerCreatePage })),
+);
+const VolunteerDetailPage = lazy(() =>
+  import("@/features/volunteers/volunteer-detail-page").then((mod) => ({ default: mod.VolunteerDetailPage })),
+);
+
+// Guide detail/create wrappers — same component, different back-nav per category
+const DailyPracticeGuideCreatePage = lazy(() =>
+  import("@/features/guides/guide-create-page").then((mod) => ({
+    default: () => <mod.GuideCreatePage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh Bài Tập" defaultCategory="DAILY_PRACTICE" />,
+  })),
+);
+const DailyPracticeGuideDetailPage = lazy(() =>
+  import("@/features/guides/guide-detail-page").then((mod) => ({
+    default: () => <mod.GuideDetailPage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh Bài Tập" />,
+  })),
+);
+const LittleHouseGuideCreatePage = lazy(() =>
+  import("@/features/guides/guide-create-page").then((mod) => ({
+    default: () => <mod.GuideCreatePage backHref="/noi-dung/ngoi-nha-nho" backLabel="Ngôi Nhà Nhỏ" defaultCategory="LITTLE_HOUSE" />,
+  })),
+);
+const LittleHouseGuideDetailPage = lazy(() =>
+  import("@/features/guides/guide-detail-page").then((mod) => ({
+    default: () => <mod.GuideDetailPage backHref="/noi-dung/ngoi-nha-nho" backLabel="Ngôi Nhà Nhỏ" />,
+  })),
+);
+const LifeReleaseGuideCreatePage = lazy(() =>
+  import("@/features/guides/guide-create-page").then((mod) => ({
+    default: () => <mod.GuideCreatePage backHref="/noi-dung/phong-sanh" backLabel="Phóng Sanh" defaultCategory="LIFE_RELEASE" />,
+  })),
+);
+const LifeReleaseGuideDetailPage = lazy(() =>
+  import("@/features/guides/guide-detail-page").then((mod) => ({
+    default: () => <mod.GuideDetailPage backHref="/noi-dung/phong-sanh" backLabel="Phóng Sanh" />,
+  })),
+);
+const SutraDownloadCreatePage = lazy(() =>
+  import("@/features/downloads/download-create-page").then((mod) => ({
+    default: () => <mod.DownloadCreatePage backHref="/noi-dung/kinh-sach" backLabel="Kinh Sách" defaultCategory="REFERENCE" />,
+  })),
+);
+const SutraDownloadDetailPage = lazy(() =>
+  import("@/features/downloads/download-detail-page").then((mod) => ({
+    default: () => <mod.DownloadDetailPage backHref="/noi-dung/kinh-sach" backLabel="Kinh Sách" />,
+  })),
+);
+
+// Base-route wrappers for Guides + Downloads (same component, different back-nav)
+const HuongDanGuideCreatePage = lazy(() =>
+  import("@/features/guides/guide-create-page").then((mod) => ({
+    default: () => <mod.GuideCreatePage backHref="/noi-dung/huong-dan" backLabel="Hướng dẫn" />,
+  })),
+);
+const HuongDanGuideDetailPage = lazy(() =>
+  import("@/features/guides/guide-detail-page").then((mod) => ({
+    default: () => <mod.GuideDetailPage backHref="/noi-dung/huong-dan" backLabel="Hướng dẫn" />,
+  })),
+);
+const TaiLieuDownloadCreatePage = lazy(() =>
+  import("@/features/downloads/download-create-page").then((mod) => ({
+    default: () => <mod.DownloadCreatePage backHref="/noi-dung/tai-lieu" backLabel="Tài liệu" />,
+  })),
+);
+const TaiLieuDownloadDetailPage = lazy(() =>
+  import("@/features/downloads/download-detail-page").then((mod) => ({
+    default: () => <mod.DownloadDetailPage backHref="/noi-dung/tai-lieu" backLabel="Tài liệu" />,
+  })),
 );
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -196,11 +293,31 @@ const postsRoute = createRoute({
   path: "/noi-dung/bai-viet",
   component: withSuspense(PostsPage),
 });
+const postsCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/bai-viet/tao-moi",
+  component: withSuspense(PostCreatePage),
+});
+const postsDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/bai-viet/$publicId",
+  component: withSuspense(PostDetailPage),
+});
 
 const guidesRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/huong-dan",
   component: withSuspense(GuidesPage),
+});
+const guidesCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/huong-dan/tao-moi",
+  component: withSuspense(HuongDanGuideCreatePage),
+});
+const guidesDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/huong-dan/$publicId",
+  component: withSuspense(HuongDanGuideDetailPage),
 });
 
 const dailyPracticeRoute = createRoute({
@@ -208,17 +325,47 @@ const dailyPracticeRoute = createRoute({
   path: "/noi-dung/kinh-bai-tap",
   component: withSuspense(DailyPracticePage),
 });
+const dailyPracticeCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/tao-moi",
+  component: withSuspense(DailyPracticeGuideCreatePage),
+});
+const dailyPracticeDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/$publicId",
+  component: withSuspense(DailyPracticeGuideDetailPage),
+});
 
 const littleHouseRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/ngoi-nha-nho",
   component: withSuspense(LittleHousePage),
 });
+const littleHouseCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/tao-moi",
+  component: withSuspense(LittleHouseGuideCreatePage),
+});
+const littleHouseDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/ngoi-nha-nho/$publicId",
+  component: withSuspense(LittleHouseGuideDetailPage),
+});
 
 const lifeReleaseRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/phong-sanh",
   component: withSuspense(LifeReleasePage),
+});
+const lifeReleaseCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/tao-moi",
+  component: withSuspense(LifeReleaseGuideCreatePage),
+});
+const lifeReleaseDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/phong-sanh/$publicId",
+  component: withSuspense(LifeReleaseGuideDetailPage),
 });
 
 const mediaLibraryRoute = createRoute({
@@ -232,11 +379,31 @@ const downloadsRoute = createRoute({
   path: "/noi-dung/tai-lieu",
   component: withSuspense(DownloadsPage),
 });
+const downloadsCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/tai-lieu/tao-moi",
+  component: withSuspense(TaiLieuDownloadCreatePage),
+});
+const downloadsDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/tai-lieu/$publicId",
+  component: withSuspense(TaiLieuDownloadDetailPage),
+});
 
 const sutrasRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-sach",
   component: withSuspense(SutrasPage),
+});
+const sutrasCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-sach/tao-moi",
+  component: withSuspense(SutraDownloadCreatePage),
+});
+const sutrasDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-sach/$publicId",
+  component: withSuspense(SutraDownloadDetailPage),
 });
 
 const mediaRoute = createRoute({
@@ -251,11 +418,21 @@ const communityPostsRoute = createRoute({
   path: "/cong-dong/bai-dang",
   component: withSuspense(CommunityPostsPage),
 });
+const communityPostDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/cong-dong/bai-dang/$publicId",
+  component: withSuspense(CommunityPostDetailPage),
+});
 
 const guestbookRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/cong-dong/so-luu-niem",
   component: withSuspense(GuestbookPage),
+});
+const guestbookDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/cong-dong/so-luu-niem/$publicId",
+  component: withSuspense(GuestbookDetailPage),
 });
 
 // Kiểm duyệt (Moderation)
@@ -264,11 +441,21 @@ const moderationReportsRoute = createRoute({
   path: "/kiem-duyet/bao-cao",
   component: withSuspense(ModerationReportsPage),
 });
+const moderationReportDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/kiem-duyet/bao-cao/$publicId",
+  component: withSuspense(ReportDetailPage),
+});
 
 const moderationCommentsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/kiem-duyet/binh-luan",
   component: withSuspense(ModerationCommentsPage),
+});
+const moderationCommentDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/kiem-duyet/binh-luan/$publicId",
+  component: withSuspense(CommentDetailPage),
 });
 
 // Người dùng (Users)
@@ -278,10 +465,22 @@ const usersRoute = createRoute({
   component: withSuspense(UsersPage),
 });
 
+const userDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/nguoi-dung/$publicId",
+  component: withSuspense(UserDetailPage),
+});
+
 const sessionsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/nguoi-dung/phien",
   component: withSuspense(SessionsPage),
+});
+
+const sessionDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/nguoi-dung/phien/$sessionId",
+  component: withSuspense(SessionDetailPage),
 });
 
 // Hệ thống (System)
@@ -325,6 +524,16 @@ const volunteersRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/he-thong/phung-su-vien",
   component: withSuspense(VolunteersPage),
+});
+const volunteersCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong/phung-su-vien/tao-moi",
+  component: withSuspense(VolunteerCreatePage),
+});
+const volunteersDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong/phung-su-vien/$publicId",
+  component: withSuspense(VolunteerDetailPage),
 });
 
 const contactInfoRoute = createRoute({
@@ -398,28 +607,48 @@ export const routeTree = rootRoute.addChildren([
   authenticatedRoute.addChildren([
     indexRoute,
     dashboardRoute,
-    // Nội dung
+    // Nội dung — static (tao-moi) before dynamic ($publicId)
     postsRoute,
+    postsCreateRoute,
+    postsDetailRoute,
     guidesRoute,
+    guidesCreateRoute,
+    guidesDetailRoute,
     dailyPracticeRoute,
+    dailyPracticeCreateRoute,
+    dailyPracticeDetailRoute,
     littleHouseRoute,
+    littleHouseCreateRoute,
+    littleHouseDetailRoute,
     lifeReleaseRoute,
+    lifeReleaseCreateRoute,
+    lifeReleaseDetailRoute,
     mediaLibraryRoute,
     downloadsRoute,
+    downloadsCreateRoute,
+    downloadsDetailRoute,
     sutrasRoute,
+    sutrasCreateRoute,
+    sutrasDetailRoute,
     mediaRoute,
     niemKinhRoutes,
     practiceHomeGuideRoute,
     practiceHomeGuideLegacyRoute,
     // Cộng đồng
     communityPostsRoute,
+    communityPostDetailRoute,
     guestbookRoute,
+    guestbookDetailRoute,
     // Kiểm duyệt
     moderationReportsRoute,
+    moderationReportDetailRoute,
     moderationCommentsRoute,
+    moderationCommentDetailRoute,
     // Người dùng
     usersRoute,
+    userDetailRoute,
     sessionsRoute,
+    sessionDetailRoute,
     // Hệ thống
     featureFlagsRoute,
     auditLogsRoute,
@@ -430,6 +659,8 @@ export const routeTree = rootRoute.addChildren([
     searchRoute,
     notificationsRoute,
     volunteersRoute,
+    volunteersCreateRoute,
+    volunteersDetailRoute,
     contactInfoRoute,
     healthRoute,
     // Hỗ trợ

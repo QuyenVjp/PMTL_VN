@@ -18,6 +18,10 @@ export function canDeletePost(role: UserRole): boolean {
   return role === "ADMIN" || role === "SUPER_ADMIN";
 }
 
+export function canUnpublishPost(role: UserRole): boolean {
+  return role === "ADMIN" || role === "SUPER_ADMIN";
+}
+
 export function getPublicStatuses(): ContentStatus[] {
   return ["PUBLISHED"];
 }

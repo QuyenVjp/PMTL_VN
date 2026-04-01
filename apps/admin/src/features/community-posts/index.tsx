@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, EyeOffIcon, EyeIcon, PinIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 
@@ -97,6 +98,7 @@ function statusLabel(s: string): string {
 
 function CommunityRowActions({ row }: { row: CommunityPostItem }) {
   const { setOpen, setCurrentRow } = useCommunity();
+  const navigate = useNavigate();
 
   const open = (dialog: CommunityDialogType) => {
     setCurrentRow(row);
@@ -106,6 +108,10 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
   return (
     <WorkspaceRowActions
       actions={[
+        {
+          label: "Xem chi tiết",
+          onClick: () => { void navigate({ to: "/cong-dong/bai-dang/$publicId", params: { publicId: row.publicId } }); },
+        },
         ...(row.status !== "APPROVED"
           ? [{ label: "Duyệt", icon: CheckCircleIcon, onClick: () => open("approve") }]
           : []),
@@ -146,6 +152,7 @@ function CommunityRowActions({ row }: { row: CommunityPostItem }) {
 function CommunityPostsTable() {
   const { data: envelope, isLoading } = useQuery(communityPostListOptions({ limit: 100 }));
   const posts = envelope?.data ?? [];
+  const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -274,6 +281,7 @@ function CommunityPostsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có bài đăng nào."
+        onRowClick={(row) => { void navigate({ to: "/cong-dong/bai-dang/$publicId", params: { publicId: row.publicId } }); }}
       />
       <DataTableBulkActions table={table} entityName="bài đăng" />
     </div>

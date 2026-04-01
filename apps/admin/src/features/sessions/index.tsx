@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { Trash2Icon } from "lucide-react";
 
@@ -94,6 +95,7 @@ function SessionRowActions({ row }: { row: AdminSessionListItem }) {
 // ── Table ─────────────────────────────────────────────────────────────
 
 function SessionsTable() {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(sessionListOptions({ limit: 100 }));
   const sessions = envelope?.data ?? [];
   const revokeBulk = useRevokeBulk();
@@ -202,6 +204,7 @@ function SessionsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Không có phiên nào."
+        onRowClick={(row) => { void navigate({ to: "/nguoi-dung/phien/$sessionId", params: { sessionId: row.sessionId } }); }}
       />
       <DataTableBulkActions table={table} entityName="phiên">
         <Button

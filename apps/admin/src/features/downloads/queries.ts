@@ -56,3 +56,12 @@ export function downloadListOptions(filters: DownloadListFilters = {}) {
       adminClient.get<ListEnvelope<DownloadItem>>("/admin/content/downloads", params),
   });
 }
+
+export function downloadDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: downloadKeys.detail(publicId),
+    queryFn: () =>
+      adminClient.get<DownloadItem>(`/admin/content/downloads/${publicId}`),
+    enabled: Boolean(publicId),
+  });
+}

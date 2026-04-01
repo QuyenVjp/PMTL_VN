@@ -6,7 +6,7 @@ import { CacheService } from "../../common/cache/cache.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
-import { canCreatePost, canDeletePost, canEditPost, canPublishPost, getPublicStatuses } from "./content.policy.js";
+import { canCreatePost, canDeletePost, canEditPost, canPublishPost, canUnpublishPost, getPublicStatuses } from "./content.policy.js";
 import type {
   CreatePostRequest, UpdatePostRequest, ListPostsQuery,
   GuideQuery, CreateGuideRequest, UpdateGuideRequest,
@@ -223,7 +223,11 @@ export class ContentService {
     const updated = await this.prisma.$transaction(async (tx) => {
       const result = await tx.post.update({
         where: { publicId },
-        data: { status: "PUBLISHED", publishedAt: new Date() },
+        data: {
+          status: "PUBLISHED",
+          publishedAt: new Date(),
+          ...(post.firstPublishedAt ? {} : { firstPublishedAt: new Date() }),
+        },
         include: {
           author: { select: { publicId: true, displayName: true, avatarUrl: true } },
           primaryCategory: { select: { publicId: true, name: true, slug: true } },
@@ -236,6 +240,40 @@ export class ContentService {
 
     const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
 
+    return mapPostToResponse(updated, featuredImageUrl);
+  }
+
+  async unpublishPost(
+    publicId: string,
+    mode: "keepDraft" | "replaceDraftWithPublished",
+    userRole: UserRole,
+    auditContext: AuditContext,
+  ) {
+    if (!canUnpublishPost(userRole)) {
+      throw new ForbiddenException("Không có quyền gỡ xuất bản");
+    }
+
+    const post = await this.repository.findByPublicId(publicId);
+    if (!post) throw new NotFoundException("Bài viết không tồn tại");
+    if (post.status !== "PUBLISHED") {
+      throw new ConflictException("Bài viết chưa ở trạng thái xuất bản");
+    }
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.post.update({
+        where: { publicId },
+        data: { status: "DRAFT", publishedAt: null },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          primaryCategory: { select: { publicId: true, name: true, slug: true } },
+          tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
+        },
+      });
+      await this.audit.appendInTransaction(tx, auditContext, "content.unpublish", "post", publicId);
+      return result;
+    });
+
+    const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
     return mapPostToResponse(updated, featuredImageUrl);
   }
 

@@ -346,7 +346,7 @@ function EventFormDialog({
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      const result = await uploadMedia.mutateAsync(file);
+      const result: Record<string, unknown> = await uploadMedia.mutateAsync(file);
       const publicId = extractUploadMediaPayload(result)?.publicId;
       if (publicId) {
         setForm((f) => ({ ...f, [key]: publicId }));
@@ -519,8 +519,7 @@ function CalendarTable() {
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
     for (const asset of mediaEnvelope?.data ?? []) {
-      const typedAsset = asset as MediaAssetListItem;
-      if (typedAsset.publicId) map.set(typedAsset.publicId, typedAsset.url);
+      if (asset.publicId) map.set(asset.publicId, asset.url);
     }
     return map;
   }, [mediaEnvelope]);

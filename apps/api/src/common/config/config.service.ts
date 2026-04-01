@@ -8,6 +8,7 @@ import {
   securityConfig,
   storageConfig,
   emailConfig,
+  monitoringConfig,
   revalidationConfig,
   cacheConfig,
   searchConfig,
@@ -32,6 +33,8 @@ export class ConfigService {
     private readonly storage: ConfigType<typeof storageConfig>,
     @Inject(emailConfig.KEY)
     private readonly email: ConfigType<typeof emailConfig>,
+    @Inject(monitoringConfig.KEY)
+    private readonly monitoring: ConfigType<typeof monitoringConfig>,
     @Inject(revalidationConfig.KEY)
     private readonly revalidation: ConfigType<typeof revalidationConfig>,
     @Inject(cacheConfig.KEY)
@@ -121,6 +124,24 @@ export class ConfigService {
   get localStorageRoot() {
     return this.storage.LOCAL_STORAGE_ROOT;
   }
+  get r2Bucket() {
+    return this.storage.R2_BUCKET;
+  }
+  get r2Endpoint() {
+    return this.storage.R2_ENDPOINT;
+  }
+  get r2Region() {
+    return this.storage.R2_REGION;
+  }
+  get r2AccessKeyId() {
+    return this.storage.R2_ACCESS_KEY_ID;
+  }
+  get r2SecretAccessKey() {
+    return this.storage.R2_SECRET_ACCESS_KEY;
+  }
+  get r2ForcePathStyle() {
+    return this.storage.R2_FORCE_PATH_STYLE;
+  }
   get publicMediaBaseUrl() {
     return this.storage.PUBLIC_MEDIA_BASE_URL;
   }
@@ -144,6 +165,9 @@ export class ConfigService {
   }
 
   // Email
+  get emailProvider() {
+    return this.email.EMAIL_PROVIDER;
+  }
   get smtpHost() {
     return this.email.SMTP_HOST;
   }
@@ -165,8 +189,31 @@ export class ConfigService {
   get smtpFromEmail() {
     return this.email.SMTP_FROM_EMAIL;
   }
+  get resendApiKey() {
+    return this.email.RESEND_API_KEY;
+  }
+  get resendFromEmail() {
+    return this.email.RESEND_FROM_EMAIL;
+  }
   get emailHashSalt() {
     return this.email.EMAIL_HASH_SALT;
+  }
+
+  // Monitoring
+  get sentryDsn() {
+    return this.monitoring.SENTRY_DSN;
+  }
+  get sentryEnvironment() {
+    return this.monitoring.SENTRY_ENVIRONMENT;
+  }
+  get sentryRelease() {
+    return this.monitoring.SENTRY_RELEASE;
+  }
+  get sentryTracesSampleRate() {
+    return this.monitoring.SENTRY_TRACES_SAMPLE_RATE;
+  }
+  get sentryProfilesSampleRate() {
+    return this.monitoring.SENTRY_PROFILES_SAMPLE_RATE;
   }
 
   // Revalidation

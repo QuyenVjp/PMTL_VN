@@ -11,16 +11,16 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, PencilIcon, StarIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { postListOptions, type PostListItem } from "@/features/content/queries";
-import { usePosts } from "@/features/content/posts-context";
 import { usePublishPost, useDeletePost } from "@/features/content/mutations";
 import { resolveMediaSrc } from "@/lib/media-src";
 
@@ -73,15 +73,19 @@ function postTypeBadgeClass(t: string): string {
 // ── Row actions ───────────────────────────────────────────────────────
 
 function PostsRowActions({ row }: { row: PostListItem }) {
-  const { setOpen, setCurrentRow } = usePosts();
+  const navigate = useNavigate();
+  const publishPost = usePublishPost();
+  const deletePost = useDeletePost();
+
+  const [confirmPublish, setConfirmPublish] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const actions = [
     {
       label: "Chỉnh sửa",
       icon: PencilIcon,
       onClick: () => {
-        setCurrentRow(row);
-        setOpen("edit");
+        void navigate({ to: "/noi-dung/bai-viet/$publicId", params: { publicId: row.id } });
       },
     },
     ...(row.status === "DRAFT"
@@ -89,31 +93,67 @@ function PostsRowActions({ row }: { row: PostListItem }) {
           {
             label: "Xuất bản",
             icon: CheckCircleIcon,
-            onClick: () => {
-              setCurrentRow(row);
-              setOpen("publish");
-            },
+            onClick: () => setConfirmPublish(true),
           },
         ]
       : []),
     {
       label: "Xoá",
       icon: Trash2Icon,
-      onClick: () => {
-        setCurrentRow(row);
-        setOpen("delete");
-      },
+      onClick: () => setConfirmDelete(true),
       variant: "destructive" as const,
       separator: true,
     },
   ];
 
-  return <WorkspaceRowActions actions={actions} />;
+  return (
+    <>
+      <WorkspaceRowActions actions={actions} />
+
+      <WorkspaceConfirmDialog
+        open={confirmPublish}
+        onOpenChange={setConfirmPublish}
+        title="Xuất bản bài viết"
+        description={
+          <>
+            Xuất bản{" "}
+            <span className="font-semibold text-foreground">{row.title}</span>?
+            Bài viết sẽ hiển thị công khai ngay lập tức.
+          </>
+        }
+        confirmLabel="Xuất bản"
+        isPending={publishPost.isPending}
+        onConfirm={() =>
+          publishPost.mutate(row.id, { onSuccess: () => setConfirmPublish(false) })
+        }
+      />
+
+      <WorkspaceConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Xoá bài viết"
+        description={
+          <>
+            Xoá{" "}
+            <span className="font-semibold text-foreground">{row.title}</span>?
+            Thao tác này không thể hoàn tác.
+          </>
+        }
+        confirmLabel="Xoá"
+        variant="destructive"
+        isPending={deletePost.isPending}
+        onConfirm={() =>
+          deletePost.mutate(row.id, { onSuccess: () => setConfirmDelete(false) })
+        }
+      />
+    </>
+  );
 }
 
 // ── Table component ───────────────────────────────────────────────────
 
 export function PostsTable() {
+  const navigate = useNavigate();
   const { data, isLoading } = useQuery(postListOptions({ limit: 100 }));
   const posts = data?.items ?? [];
 
@@ -252,18 +292,22 @@ export function PostsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có bài viết nào."
+        onRowClick={(row) =>
+          void navigate({ to: "/noi-dung/bai-viet/$publicId", params: { publicId: row.id } })
+        }
       />
       <DataTableBulkActions table={table} entityName="bài viết">
         <Button
           size="sm"
           variant="outline"
           disabled={publishPost.isPending}
-          onClick={async () => {
+          onClick={() => {
             const selected = table.getFilteredSelectedRowModel().rows.map((r) => r.original);
             const drafts = selected.filter((r) => r.status === "DRAFT");
             if (!drafts.length) return;
-            await Promise.all(drafts.map((r) => publishPost.mutateAsync(r.id)));
-            table.resetRowSelection();
+            void Promise.all(drafts.map((r) => publishPost.mutateAsync(r.id))).then(() => {
+              table.resetRowSelection();
+            });
           }}
         >
           <CheckCircleIcon className="mr-1.5 size-3.5" />
@@ -273,11 +317,12 @@ export function PostsTable() {
           size="sm"
           variant="destructive"
           disabled={deletePost.isPending}
-          onClick={async () => {
+          onClick={() => {
             const selected = table.getFilteredSelectedRowModel().rows.map((r) => r.original);
             if (!selected.length) return;
-            await Promise.all(selected.map((r) => deletePost.mutateAsync(r.id)));
-            table.resetRowSelection();
+            void Promise.all(selected.map((r) => deletePost.mutateAsync(r.id))).then(() => {
+              table.resetRowSelection();
+            });
           }}
         >
           <Trash2Icon className="mr-1.5 size-3.5" />

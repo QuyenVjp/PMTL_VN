@@ -23,7 +23,7 @@ export function useUploadMediaAsset() {
         const json = await res.json().catch(() => null) as { error?: { message?: string } } | null;
         throw new Error(json?.error?.message ?? "Upload thất bại");
       }
-      return res.json();
+      return res.json() as Promise<Record<string, unknown>>;
     },
     onSuccess: () => {
       toast.success("Upload thành công.");

@@ -64,6 +64,7 @@ export const postResponseSchema = z.object({
   tags: z.array(z.object({ id: z.string(), name: z.string(), slug: z.string() })),
   featuredImageUrl: z.string().nullable(),
   publishedAt: z.string().nullable(),
+  firstPublishedAt: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -193,3 +194,9 @@ export const downloadPublicQuerySchema = z.object({
   category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ"]).optional(),
 });
 export type DownloadPublicQuery = z.infer<typeof downloadPublicQuerySchema>;
+
+// Unpublish post
+export const unpublishPostSchema = z.object({
+  mode: z.enum(["keepDraft", "replaceDraftWithPublished"]).default("keepDraft"),
+});
+export type UnpublishPostRequest = z.infer<typeof unpublishPostSchema>;

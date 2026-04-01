@@ -1,33 +1,8 @@
 import { PlusIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { DownloadsProvider, useDownloads } from "@/features/downloads/context";
-import { DownloadsDialogs } from "@/features/downloads/downloads-dialogs";
-import { DownloadsDetailSheet } from "@/features/downloads/downloads-detail";
 import { DownloadsTable } from "@/features/downloads/downloads-table";
-
-function DownloadsPrimaryButtons() {
-  const { setOpen } = useDownloads();
-  return (
-    <Button onClick={() => setOpen("create")}>
-      <PlusIcon className="size-4" />
-      Thêm tài liệu
-    </Button>
-  );
-}
-
-function DownloadsDetailPortal() {
-  const { open, currentRow, setOpen, setCurrentRow } = useDownloads();
-  if (!currentRow) return null;
-  const handleClose = () => { setOpen(null); setCurrentRow(null); };
-  return (
-    <DownloadsDetailSheet
-      open={open === "detail"}
-      onClose={handleClose}
-      currentRow={currentRow}
-    />
-  );
-}
 
 type DownloadsPageProps = {
   title?: string;
@@ -40,22 +15,25 @@ export function DownloadsPage({
   description = "Quản trị tài liệu tải về cho thành viên.",
   defaultCategory,
 }: DownloadsPageProps) {
-  return (
-    <DownloadsProvider>
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-          </div>
-          <DownloadsPrimaryButtons />
-        </div>
+  const navigate = useNavigate();
 
-        <DownloadsTable defaultCategory={defaultCategory} />
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{description}</p>
+        </div>
+        <Button onClick={() => void navigate({ to: "/noi-dung/tai-lieu/tao-moi" })}>
+          <PlusIcon className="size-4" />
+          Thêm tài liệu
+        </Button>
       </div>
 
-      <DownloadsDialogs defaultCategory={defaultCategory} />
-      <DownloadsDetailPortal />
-    </DownloadsProvider>
+      <DownloadsTable
+        defaultCategory={defaultCategory}
+        detailBasePath="/noi-dung/tai-lieu"
+      />
+    </div>
   );
 }

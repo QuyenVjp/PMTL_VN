@@ -13,11 +13,11 @@ export default [...baseConfig, {
     },
   },
 }, {
-  files: [".storybook/*.ts"],
+  files: [".storybook/*.ts", "scripts/*.ts"],
   languageOptions: {
     parserOptions: {
       projectService: {
-        allowDefaultProject: [".storybook/*.ts"],
+        allowDefaultProject: [".storybook/*.ts", "scripts/*.ts"],
       },
       tsconfigRootDir: import.meta.dirname,
     },

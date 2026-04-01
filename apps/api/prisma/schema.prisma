@@ -252,6 +252,7 @@ model MediaCollection {
   status         ContentStatus       @default(DRAFT)
   createdById    String              @map("created_by_id")
   publishedAt    DateTime?           @map("published_at")
+  firstPublishedAt DateTime?         @map("first_published_at")
   createdAt      DateTime            @default(now()) @map("created_at")
   updatedAt      DateTime            @updatedAt @map("updated_at")
 
@@ -343,6 +344,7 @@ model Post {
   featured          Boolean       @default(false)
   allowComments     Boolean       @default(true) @map("allow_comments")
   publishedAt       DateTime?     @map("published_at")
+  firstPublishedAt  DateTime?     @map("first_published_at")
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
 
@@ -778,6 +780,7 @@ model WisdomEntry {
   status         ContentStatus   @default(DRAFT)
   authorId       String          @map("author_id")
   publishedAt    DateTime?       @map("published_at")
+  firstPublishedAt DateTime?     @map("first_published_at")
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
 
@@ -821,6 +824,7 @@ model BeginnerGuide {
   status      ContentStatus @default(DRAFT)
   authorId    String        @map("author_id")
   publishedAt DateTime?     @map("published_at")
+  firstPublishedAt DateTime? @map("first_published_at")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
@@ -848,6 +852,7 @@ model Download {
   status      ContentStatus    @default(DRAFT)
   uploaderId  String           @map("uploader_id")
   publishedAt DateTime?        @map("published_at")
+  firstPublishedAt DateTime?    @map("first_published_at")
   createdAt   DateTime         @default(now()) @map("created_at")
   updatedAt   DateTime         @updatedAt @map("updated_at")
 

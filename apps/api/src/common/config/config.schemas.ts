@@ -46,6 +46,16 @@ export const securityConfigSchema = z.object({
 export const storageConfigSchema = z.object({
   STORAGE_ADAPTER: z.enum(["local", "r2"]).default("local"),
   LOCAL_STORAGE_ROOT: z.string().optional(),
+  R2_BUCKET: z.string().optional(),
+  R2_ENDPOINT: z.string().url().optional(),
+  R2_REGION: z.string().default("auto"),
+  R2_ACCESS_KEY_ID: z.string().optional(),
+  R2_SECRET_ACCESS_KEY: z.string().optional(),
+  R2_FORCE_PATH_STYLE: z
+    .string()
+    .transform((v) => v === "true")
+    .pipe(z.boolean())
+    .default(false),
   PUBLIC_MEDIA_BASE_URL: z.string().url(),
   MAX_AVATAR_MB: z.coerce.number().positive().default(5),
   MAX_IMAGE_MB: z.coerce.number().positive().default(10),
@@ -62,18 +72,30 @@ export const storageConfigSchema = z.object({
 
 // Email config schema
 export const emailConfigSchema = z.object({
-  SMTP_HOST: z.string(),
-  SMTP_PORT: z.coerce.number().int().positive(),
+  EMAIL_PROVIDER: z.enum(["log", "smtp", "resend"]).default("log"),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().positive().optional(),
   SMTP_SECURE: z
     .string()
     .transform((v) => v === "true")
     .pipe(z.boolean())
     .default(false),
-  SMTP_USER: z.string(),
-  SMTP_PASS: z.string(),
-  SMTP_FROM_NAME: z.string(),
-  SMTP_FROM_EMAIL: z.string().email(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM_NAME: z.string().default("PMTL_VN"),
+  SMTP_FROM_EMAIL: z.string().email().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().email().optional(),
   EMAIL_HASH_SALT: z.string().min(16),
+});
+
+// Monitoring config schema
+export const monitoringConfigSchema = z.object({
+  SENTRY_DSN: z.string().optional(),
+  SENTRY_ENVIRONMENT: z.string().default("development"),
+  SENTRY_RELEASE: z.string().optional(),
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
+  SENTRY_PROFILES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0),
 });
 
 // Web revalidation config
@@ -130,6 +152,7 @@ export const envSchema = z.object({
   ...securityConfigSchema.shape,
   ...storageConfigSchema.shape,
   ...emailConfigSchema.shape,
+  ...monitoringConfigSchema.shape,
   ...revalidationConfigSchema.shape,
   ...cacheConfigSchema.shape,
   ...searchConfigSchema.shape,

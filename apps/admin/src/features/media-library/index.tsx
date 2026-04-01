@@ -517,7 +517,6 @@ function CreateCollectionDialog({
   useEffect(() => {
     if (!open) return;
     reset();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {
@@ -724,8 +723,8 @@ function CreateCollectionDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Hủy</Button>
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={() => { void handleSubmit(); }}
             disabled={isSubmitting || !title.trim() || !slug.trim() || selectedMediaIds.length === 0}
           >
             {isSubmitting ? "Đang tạo..." : "Tạo"}

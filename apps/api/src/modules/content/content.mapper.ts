@@ -30,6 +30,7 @@ export function mapPostToResponse(post: PostWithRelations, featuredImageUrl?: st
     tags: post.tags.map((t) => ({ id: t.tag.publicId, name: t.tag.name, slug: t.tag.slug })),
     featuredImageUrl: featuredImageUrl ?? null,
     publishedAt: post.publishedAt?.toISOString() ?? null,
+    firstPublishedAt: post.firstPublishedAt?.toISOString() ?? null,
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
   };

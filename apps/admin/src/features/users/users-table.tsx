@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { ShieldCheckIcon, UserXIcon, UserCheckIcon, LogOutIcon } from "lucide-react";
 
@@ -36,6 +37,7 @@ import {
 } from "@/features/users/types";
 
 export function UsersTable() {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(userListOptions({ limit: 100 }));
   const users = envelope?.data ?? [];
 
@@ -199,9 +201,23 @@ export function UsersTable() {
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="cursor-pointer"
+                  onClick={() => { void navigate({ to: "/nguoi-dung/$publicId", params: { publicId: row.original.publicId } }); }}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    <TableCell
+                      key={cell.id}
+                      onClick={
+                        cell.column.id === "select" || cell.column.id === "actions"
+                          ? (e) => e.stopPropagation()
+                          : undefined
+                      }
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
                   ))}
                 </TableRow>
               ))

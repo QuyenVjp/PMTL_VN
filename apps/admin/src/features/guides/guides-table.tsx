@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
@@ -88,9 +89,12 @@ function statusLabel(s: string): string {
 type GuidesTableProps = {
   /** Pre-set the category column filter (used by category-scoped pages) */
   defaultCategory?: string;
+  /** Base path for row detail navigation, e.g. "/noi-dung/huong-dan" */
+  detailBasePath?: string;
 };
 
-export function GuidesTable({ defaultCategory }: GuidesTableProps) {
+export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong-dan" }: GuidesTableProps) {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
   const guides = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
@@ -188,12 +192,14 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
       },
       {
         id: "actions",
-        cell: ({ row }) => <GuidesRowActions row={row.original} />,
+        cell: ({ row }) => (
+          <GuidesRowActions row={row.original} detailBasePath={detailBasePath} />
+        ),
         enableSorting: false,
         enableHiding: false,
       },
     ],
-    [mediaUrlByPublicId],
+    [mediaUrlByPublicId, detailBasePath],
   );
 
   const table = useSafeReactTable({
@@ -249,6 +255,9 @@ export function GuidesTable({ defaultCategory }: GuidesTableProps) {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có hướng dẫn nào."
+        onRowClick={(row) => {
+          void navigate({ to: "/noi-dung/huong-dan/$publicId", params: { publicId: row.publicId } });
+        }}
       />
       <DataTableBulkActions table={table} entityName="hướng dẫn">
         <Button

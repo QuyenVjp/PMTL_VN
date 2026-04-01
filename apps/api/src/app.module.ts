@@ -55,6 +55,7 @@ import { StorageModule } from "./platform/storage/storage.module.js";
 import { SessionsModule } from "./platform/sessions/sessions.module.js";
 import { WebhookModule } from "./platform/webhook/webhook.module.js";
 import { AdminSystemModule } from "./platform/admin-system/admin-system.module.js";
+import { EmailModule } from "./platform/email/email.module.js";
 
 // Domain modules (11 — maps 1:1 with design/03-domains/)
 import { IdentityModule } from "./modules/identity/identity.module.js";
@@ -94,6 +95,7 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     SessionsModule,
     WebhookModule,
     AdminSystemModule,
+    EmailModule,
 
     // ── Domain (11 modules — design/03-domains/) ────
     IdentityModule,

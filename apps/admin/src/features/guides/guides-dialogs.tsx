@@ -218,16 +218,18 @@ function GuideCreateDialog({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const publicId = extractUploadMediaPayload(result)?.publicId;
-                  if (publicId) setCoverMediaPublicId(publicId);
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const publicId = extractUploadMediaPayload(result)?.publicId;
+                    if (publicId) setCoverMediaPublicId(publicId);
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">
@@ -420,16 +422,18 @@ function GuideEditDialog({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={async (event) => {
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 if (!file) return;
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const publicId = extractUploadMediaPayload(result)?.publicId;
-                  if (publicId) setCoverMediaPublicId(publicId);
-                } finally {
-                  event.target.value = "";
-                }
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const publicId = extractUploadMediaPayload(result)?.publicId;
+                    if (publicId) setCoverMediaPublicId(publicId);
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
               }}
             />
             <div className="flex items-center gap-2">

@@ -39,6 +39,7 @@ export type PostMinAggregateOutputType = {
   featured: boolean | null
   allowComments: boolean | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +59,7 @@ export type PostMaxAggregateOutputType = {
   featured: boolean | null
   allowComments: boolean | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +80,7 @@ export type PostCountAggregateOutputType = {
   featured: number
   allowComments: number
   publishedAt: number
+  firstPublishedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -99,6 +102,7 @@ export type PostMinAggregateInputType = {
   featured?: true | runtime.Types.Skip
   allowComments?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -118,6 +122,7 @@ export type PostMaxAggregateInputType = {
   featured?: true | runtime.Types.Skip
   allowComments?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -138,6 +143,7 @@ export type PostCountAggregateInputType = {
   featured?: true | runtime.Types.Skip
   allowComments?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -231,6 +237,7 @@ export type PostGroupByOutputType = {
   featured: boolean
   allowComments: boolean
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: PostCountAggregateOutputType | null
@@ -272,6 +279,7 @@ export type PostWhereInput = {
   featured?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -296,6 +304,7 @@ export type PostOrderByWithRelationInput = {
   featured?: Prisma.SortOrder | runtime.Types.Skip
   allowComments?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   author?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -323,6 +332,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   featured?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -347,6 +357,7 @@ export type PostOrderByWithAggregationInput = {
   featured?: Prisma.SortOrder | runtime.Types.Skip
   allowComments?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.PostCountOrderByAggregateInput | runtime.Types.Skip
@@ -373,6 +384,7 @@ export type PostScalarWhereWithAggregatesInput = {
   featured?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Post"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string | runtime.Types.Skip
 }
@@ -390,6 +402,7 @@ export type PostCreateInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -414,6 +427,7 @@ export type PostUncheckedCreateInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
@@ -432,6 +446,7 @@ export type PostUpdateInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
@@ -456,6 +471,7 @@ export type PostUncheckedUpdateInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
@@ -477,6 +493,7 @@ export type PostCreateManyInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -494,6 +511,7 @@ export type PostUpdateManyMutationInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -514,6 +532,7 @@ export type PostUncheckedUpdateManyInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -549,6 +568,7 @@ export type PostCountOrderByAggregateInput = {
   featured?: Prisma.SortOrder | runtime.Types.Skip
   allowComments?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -568,6 +588,7 @@ export type PostMaxOrderByAggregateInput = {
   featured?: Prisma.SortOrder | runtime.Types.Skip
   allowComments?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -587,6 +608,7 @@ export type PostMinOrderByAggregateInput = {
   featured?: Prisma.SortOrder | runtime.Types.Skip
   allowComments?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -748,6 +770,7 @@ export type PostCreateWithoutAuthorInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryCreateNestedOneWithoutPostsInput | runtime.Types.Skip
@@ -770,6 +793,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
@@ -820,6 +844,7 @@ export type PostScalarWhereInput = {
   featured?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFilter<"Post"> | boolean | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"Post"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string | runtime.Types.Skip
 }
@@ -837,6 +862,7 @@ export type PostCreateWithoutFeaturedImageInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -859,6 +885,7 @@ export type PostUncheckedCreateWithoutFeaturedImageInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
@@ -903,6 +930,7 @@ export type PostCreateWithoutPrimaryCategoryInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -925,6 +953,7 @@ export type PostUncheckedCreateWithoutPrimaryCategoryInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedCreateNestedManyWithoutPostInput | runtime.Types.Skip
@@ -969,6 +998,7 @@ export type PostCreateWithoutTagsInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   author: Prisma.UserCreateNestedOneWithoutPostsInput
@@ -992,6 +1022,7 @@ export type PostUncheckedCreateWithoutTagsInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1025,6 +1056,7 @@ export type PostUpdateWithoutTagsInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
@@ -1048,6 +1080,7 @@ export type PostUncheckedUpdateWithoutTagsInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1067,6 +1100,7 @@ export type PostCreateManyAuthorInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1084,6 +1118,7 @@ export type PostUpdateWithoutAuthorInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   primaryCategory?: Prisma.PostCategoryUpdateOneWithoutPostsNestedInput | runtime.Types.Skip
@@ -1106,6 +1141,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
@@ -1126,6 +1162,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1145,6 +1182,7 @@ export type PostCreateManyFeaturedImageInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1162,6 +1200,7 @@ export type PostUpdateWithoutFeaturedImageInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
@@ -1184,6 +1223,7 @@ export type PostUncheckedUpdateWithoutFeaturedImageInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
@@ -1204,6 +1244,7 @@ export type PostUncheckedUpdateManyWithoutFeaturedImageInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1223,6 +1264,7 @@ export type PostCreateManyPrimaryCategoryInput = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1240,6 +1282,7 @@ export type PostUpdateWithoutPrimaryCategoryInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput | runtime.Types.Skip
@@ -1262,6 +1305,7 @@ export type PostUncheckedUpdateWithoutPrimaryCategoryInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   tags?: Prisma.PostTagMapUncheckedUpdateManyWithoutPostNestedInput | runtime.Types.Skip
@@ -1282,6 +1326,7 @@ export type PostUncheckedUpdateManyWithoutPrimaryCategoryInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   allowComments?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1333,6 +1378,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1358,6 +1404,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1381,6 +1428,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1404,11 +1452,12 @@ export type PostSelectScalar = {
   featured?: boolean | runtime.Types.Skip
   allowComments?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "slug" | "title" | "postType" | "sourceRef" | "excerpt" | "content" | "status" | "authorId" | "primaryCategoryId" | "featuredImageId" | "featured" | "allowComments" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["post"], runtime.Types.Skip>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "slug" | "title" | "postType" | "sourceRef" | "excerpt" | "content" | "status" | "authorId" | "primaryCategoryId" | "featuredImageId" | "featured" | "allowComments" | "publishedAt" | "firstPublishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["post"], runtime.Types.Skip>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   primaryCategory?: boolean | Prisma.Post$primaryCategoryArgs<ExtArgs> | runtime.Types.Skip
@@ -1451,6 +1500,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     featured: boolean
     allowComments: boolean
     publishedAt: Date | null
+    firstPublishedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["post"]>
@@ -1895,6 +1945,7 @@ export interface PostFieldRefs {
   readonly featured: Prisma.FieldRef<"Post", 'Boolean'>
   readonly allowComments: Prisma.FieldRef<"Post", 'Boolean'>
   readonly publishedAt: Prisma.FieldRef<"Post", 'DateTime'>
+  readonly firstPublishedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Post", 'DateTime'>
 }

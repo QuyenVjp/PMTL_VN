@@ -8,6 +8,7 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangleIcon, RefreshCwIcon } from "lucide-react";
+import { captureAdminException } from "@/lib/monitoring/sentry";
 
 interface Props {
   children: ReactNode;
@@ -30,6 +31,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    captureAdminException(error, { componentStack: info.componentStack });
     console.error("[ErrorBoundary]", error, info.componentStack);
   }
 

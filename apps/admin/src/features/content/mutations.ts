@@ -76,6 +76,21 @@ export function usePublishPost() {
   });
 }
 
+export function useUnpublishPost() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ publicId, mode }: { publicId: string; mode: "keepDraft" | "replaceDraftWithPublished" }) =>
+      adminClient.post(`/content/posts/${publicId}/unpublish`, { mode }),
+    onSuccess: (_data, { publicId }) => {
+      toast.success("Đã gỡ xuất bản bài viết.");
+      void qc.invalidateQueries({ queryKey: postKeys.lists() });
+      void qc.invalidateQueries({ queryKey: postKeys.detail(publicId) });
+      void qc.invalidateQueries({ queryKey: dashboardKeys.all });
+    },
+    onError: handleApiError,
+  });
+}
+
 export function useDeletePost() {
   const qc = useQueryClient();
   return useMutation({

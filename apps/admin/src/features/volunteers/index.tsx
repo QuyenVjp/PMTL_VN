@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   type ColumnDef,
   type SortingState,
@@ -11,25 +11,13 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { toast } from "sonner";
-import { FieldError } from "@/components/ui/field-error";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
@@ -37,43 +25,7 @@ import {
 } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { volunteerListOptions, type VolunteerItem } from "@/features/volunteers/queries";
-import {
-  useCreateVolunteer,
-  useUpdateVolunteer,
-  useDeleteVolunteer,
-  type CreateVolunteerInput,
-  type UpdateVolunteerInput,
-} from "@/features/volunteers/mutations";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
-
-// ── Context ──────────────────────────────────────────────────────────
-
-type VolunteerDialogType = "create" | "edit" | "delete" | null;
-
-type VolunteersContextValue = {
-  open: VolunteerDialogType;
-  currentRow: VolunteerItem | null;
-  setOpen: (value: VolunteerDialogType) => void;
-  setCurrentRow: React.Dispatch<React.SetStateAction<VolunteerItem | null>>;
-};
-
-const VolunteersContext = createContext<VolunteersContextValue | null>(null);
-
-function VolunteersProvider({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState<VolunteerDialogType>(null);
-  const [currentRow, setCurrentRow] = useState<VolunteerItem | null>(null);
-  return (
-    <VolunteersContext.Provider value={{ open, currentRow, setOpen, setCurrentRow }}>
-      {children}
-    </VolunteersContext.Provider>
-  );
-}
-
-function useVolunteers() {
-  const ctx = useContext(VolunteersContext);
-  if (!ctx) throw new Error("useVolunteers must be used within VolunteersProvider");
-  return ctx;
-}
+import { useDeleteVolunteer } from "@/features/volunteers/mutations";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -82,193 +34,59 @@ const activeOptions = [
   { label: "Không hoạt động", value: "false" },
 ];
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-// ── Create/Edit form dialog ───────────────────────────────────────────
-
-function VolunteerFormDialog({
-  open,
-  onOpenChange,
-  currentRow,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  currentRow: VolunteerItem | null;
-}) {
-  const isEdit = !!currentRow;
-  const createVolunteer = useCreateVolunteer();
-  const updateVolunteer = useUpdateVolunteer();
-
-  const [displayName, setDisplayName] = useState(currentRow?.displayName ?? "");
-  const [role, setRole] = useState(currentRow?.role ?? "");
-  const [avatarUrl, setAvatarUrl] = useState(currentRow?.avatarUrl ?? "");
-  const [phone, setPhone] = useState(currentRow?.phone ?? "");
-  const [zaloLink, setZaloLink] = useState(currentRow?.zaloLink ?? "");
-  const [bio, setBio] = useState(currentRow?.bio ?? "");
-  const [sortOrder, setSortOrder] = useState(String(currentRow?.sortOrder ?? "0"));
-  const [isActive, setIsActive] = useState(currentRow?.isActive ?? true);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  useEffect(() => {
-    setDisplayName(currentRow?.displayName ?? "");
-    setRole(currentRow?.role ?? "");
-    setAvatarUrl(currentRow?.avatarUrl ?? "");
-    setPhone(currentRow?.phone ?? "");
-    setZaloLink(currentRow?.zaloLink ?? "");
-    setBio(currentRow?.bio ?? "");
-    setSortOrder(String(currentRow?.sortOrder ?? "0"));
-    setIsActive(currentRow?.isActive ?? true);
-    setFieldErrors({});
-  }, [currentRow, open]);
-
-  const isPending = createVolunteer.isPending || updateVolunteer.isPending;
-
-  const handleSubmit = () => {
-    const nextErrors: FieldErrors = {};
-    if (!displayName.trim()) nextErrors.displayName = "Tên không được để trống.";
-    if (!role.trim()) nextErrors.role = "Vai trò không được để trống.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
-      return;
-    }
-    setFieldErrors({});
-
-    const shared = {
-      displayName: displayName.trim(),
-      role: role.trim(),
-      avatarUrl: avatarUrl.trim() || undefined,
-      phone: phone.trim() || undefined,
-      zaloLink: zaloLink.trim() || undefined,
-      bio: bio.trim() || undefined,
-      sortOrder: Number(sortOrder) || 0,
-      isActive,
-    };
-
-    if (isEdit && currentRow) {
-      updateVolunteer.mutate(
-        { publicId: currentRow.publicId, input: shared as UpdateVolunteerInput },
-        {
-          onSuccess: () => onOpenChange(false),
-          onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
-        },
-      );
-    } else {
-      createVolunteer.mutate(shared as CreateVolunteerInput, {
-        onSuccess: () => onOpenChange(false),
-        onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
-      });
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Chỉnh sửa phụng sự viên" : "Thêm phụng sự viên"}</DialogTitle>
-          <DialogDescription>
-            {isEdit ? "Cập nhật thông tin phụng sự viên." : "Thêm phụng sự viên mới vào danh sách."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          <Field label="Tên hiển thị">
-            <Input
-              value={displayName}
-              onChange={(e) => {
-                setDisplayName(e.target.value);
-                if (fieldErrors.displayName) setFieldErrors((prev) => ({ ...prev, displayName: "" }));
-              }}
-              placeholder="Tên phụng sự viên..."
-              className={invalidFieldClass(Boolean(fieldErrors.displayName))}
-            />
-            <FieldError message={fieldErrors.displayName} />
-          </Field>
-          <Field label="Vai trò">
-            <Input
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
-                if (fieldErrors.role) setFieldErrors((prev) => ({ ...prev, role: "" }));
-              }}
-              placeholder="Ví dụ: Điều phối viên"
-              className={invalidFieldClass(Boolean(fieldErrors.role))}
-            />
-            <FieldError message={fieldErrors.role} />
-          </Field>
-          <Field label="Ảnh đại diện (URL)">
-            <Input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." />
-          </Field>
-          <Field label="Số điện thoại">
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0912..." />
-          </Field>
-          <Field label="Zalo">
-            <Input value={zaloLink} onChange={(e) => setZaloLink(e.target.value)} placeholder="https://zalo.me/..." />
-          </Field>
-          <Field label="Giới thiệu">
-            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Mô tả ngắn..." rows={2} />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Thứ tự hiển thị">
-              <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
-            </Field>
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium">Trạng thái</span>
-              <div className="flex items-center gap-2 pt-1">
-                <Checkbox
-                  id="volunteer-active"
-                  checked={isActive}
-                  onCheckedChange={(v) => setIsActive(v === true)}
-                />
-                <label htmlFor="volunteer-active" className="text-sm cursor-pointer">
-                  Đang hoạt động
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={isPending || !displayName.trim() || !role.trim()}>
-            {isPending ? "Đang lưu..." : isEdit ? "Lưu thay đổi" : "Thêm"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
 // ── Row actions ───────────────────────────────────────────────────────
 
 function VolunteerRowActions({ row }: { row: VolunteerItem }) {
-  const { setOpen, setCurrentRow } = useVolunteers();
-
-  const open = (dialog: "edit" | "delete") => {
-    setCurrentRow(row);
-    setOpen(dialog);
-  };
+  const navigate = useNavigate();
+  const deleteVolunteer = useDeleteVolunteer();
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <WorkspaceRowActions
-      actions={[
-        { label: "Chỉnh sửa", icon: PencilIcon, onClick: () => open("edit") },
-        { label: "Xoá", icon: Trash2Icon, onClick: () => open("delete"), variant: "destructive", separator: true },
-      ]}
-    />
+    <>
+      <WorkspaceRowActions
+        actions={[
+          {
+            label: "Chỉnh sửa",
+            icon: PencilIcon,
+            onClick: () => { void navigate({ to: "/he-thong/phung-su-vien/$publicId", params: { publicId: row.publicId } }); },
+          },
+          {
+            label: "Xoá",
+            icon: Trash2Icon,
+            onClick: () => setConfirmDelete(true),
+            variant: "destructive" as const,
+            separator: true,
+          },
+        ]}
+      />
+
+      <WorkspaceConfirmDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        title="Xoá phụng sự viên"
+        description={
+          <>
+            Xoá <span className="font-semibold text-foreground">{row.displayName}</span>?
+            Thao tác này không thể hoàn tác.
+          </>
+        }
+        confirmLabel="Xoá"
+        variant="destructive"
+        isPending={deleteVolunteer.isPending}
+        onConfirm={() =>
+          deleteVolunteer.mutate(row.publicId, {
+            onSuccess: () => setConfirmDelete(false),
+          })
+        }
+      />
+    </>
   );
 }
 
 // ── Table ─────────────────────────────────────────────────────────────
 
 function VolunteersTable() {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(volunteerListOptions({ limit: 100 }));
   const volunteers = envelope?.data ?? [];
 
@@ -368,94 +186,34 @@ function VolunteersTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có phụng sự viên nào."
+        onRowClick={(row) => { void navigate({ to: "/he-thong/phung-su-vien/$publicId", params: { publicId: row.publicId } }); }}
       />
       <DataTableBulkActions table={table} entityName="phụng sự viên" />
     </div>
   );
 }
 
-// ── Dialogs ───────────────────────────────────────────────────────────
-
-function VolunteersDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useVolunteers();
-  const deleteVolunteer = useDeleteVolunteer();
-
-  const handleClose = () => {
-    setOpen(null);
-    setCurrentRow(null);
-  };
-
-  return (
-    <>
-      <VolunteerFormDialog
-        open={open === "create"}
-        onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
-        currentRow={null}
-      />
-      {currentRow && (
-        <>
-          <VolunteerFormDialog
-            open={open === "edit"}
-            onOpenChange={(v) => (!v ? handleClose() : setOpen("edit"))}
-            currentRow={currentRow}
-          />
-          <WorkspaceConfirmDialog
-            open={open === "delete"}
-            onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
-            title="Xoá phụng sự viên"
-            description={
-              <>
-                Xoá <span className="font-semibold text-foreground">{currentRow.displayName}</span>?
-                Thao tác này không thể hoàn tác.
-              </>
-            }
-            confirmLabel="Xoá"
-            variant="destructive"
-            isPending={deleteVolunteer.isPending}
-            onConfirm={() =>
-              deleteVolunteer.mutate(currentRow.publicId, { onSuccess: handleClose })
-            }
-          />
-        </>
-      )}
-    </>
-  );
-}
-
-// ── Primary button ────────────────────────────────────────────────────
-
-function VolunteersPrimaryButtons() {
-  const { setOpen } = useVolunteers();
-  return (
-    <Button onClick={() => setOpen("create")}>
-      <PlusIcon className="size-4" />
-      Thêm phụng sự viên
-    </Button>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function VolunteersPage() {
-  return (
-    <VolunteersProvider>
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Phụng sự viên</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Quản lý danh sách phụng sự viên và thông tin liên lạc.
-            </p>
-          </div>
-          <VolunteersPrimaryButtons />
-        </div>
+  const navigate = useNavigate();
 
-        <VolunteersTable />
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Phụng sự viên</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Quản lý danh sách phụng sự viên và thông tin liên lạc.
+          </p>
+        </div>
+        <Button onClick={() => { void navigate({ to: "/he-thong/phung-su-vien/tao-moi" }); }}>
+          <PlusIcon className="size-4" />
+          Thêm phụng sự viên
+        </Button>
       </div>
 
-      <VolunteersDialogs />
-    </VolunteersProvider>
+      <VolunteersTable />
+    </div>
   );
 }
-
-

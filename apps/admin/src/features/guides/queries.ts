@@ -54,3 +54,12 @@ export function guideListOptions(filters: GuideListFilters = {}) {
       adminClient.get<ListEnvelope<GuideItem>>("/admin/content/guides", params),
   });
 }
+
+export function guideDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: guideKeys.detail(publicId),
+    queryFn: () =>
+      adminClient.get<GuideItem>(`/admin/content/guides/${publicId}`),
+    enabled: Boolean(publicId),
+  });
+}

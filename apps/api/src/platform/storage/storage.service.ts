@@ -23,6 +23,7 @@ import { SignJWT } from "jose";
 import net from "node:net";
 import { ConfigService } from "../../common/config/config.service.js";
 import { LocalStorageAdapter } from "./local-storage.adapter.js";
+import { R2StorageAdapter } from "./r2-storage.adapter.js";
 import { MediaAssetsRepository } from "./media-assets.repository.js";
 import { ALL_ALLOWED_TYPES, MIME_TO_EXTENSIONS } from "./storage.schemas.js";
 import type { StorageInterface } from "./storage.interface.js";
@@ -40,10 +41,11 @@ export class StorageService {
   constructor(
     private readonly configService: ConfigService,
     private readonly localAdapter: LocalStorageAdapter,
+    private readonly r2Adapter: R2StorageAdapter,
     private readonly mediaRepo: MediaAssetsRepository,
   ) {
-    // Phase 1: local only. R2 adapter planned per IMPLEMENTATION_MAPPING.md trigger.
-    this.adapter = this.localAdapter;
+    this.adapter =
+      this.configService.storageAdapter === "r2" ? this.r2Adapter : this.localAdapter;
   }
 
   async uploadFile(

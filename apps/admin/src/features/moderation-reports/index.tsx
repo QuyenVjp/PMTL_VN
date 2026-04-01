@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
@@ -75,14 +76,17 @@ function useReport() {
 
 function ReportRowActions({ row }: { row: ModerationReportListItem }) {
   const { setOpen, setCurrentRow } = useReport();
-  if (row.status !== "PENDING") return null;
+  const navigate = useNavigate();
   return (
     <WorkspaceRowActions
       actions={[
         {
-          label: "Xử lý",
-          onClick: () => { setCurrentRow(row); setOpen("resolve"); },
+          label: "Xem",
+          onClick: () => { void navigate({ to: "/kiem-duyet/bao-cao/$publicId", params: { publicId: row.publicId } }); },
         },
+        ...(row.status === "PENDING"
+          ? [{ label: "Xử lý", onClick: () => { setCurrentRow(row); setOpen("resolve"); } }]
+          : []),
       ]}
     />
   );
@@ -93,6 +97,7 @@ function ReportRowActions({ row }: { row: ModerationReportListItem }) {
 function ModerationReportsTable() {
   const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 100 }));
   const reports = envelope?.data ?? [];
+  const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
   const [rowSelection, setRowSelection] = useState({});
@@ -199,6 +204,7 @@ function ModerationReportsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Không có báo cáo nào."
+        onRowClick={(row) => { void navigate({ to: "/kiem-duyet/bao-cao/$publicId", params: { publicId: row.publicId } }); }}
       />
       <DataTableBulkActions table={table} entityName="báo cáo" />
     </div>

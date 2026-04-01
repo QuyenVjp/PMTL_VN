@@ -8,9 +8,12 @@ import { CommandPaletteShortcut } from "@/stores/command-shortcut";
 import { queryClient } from "@/lib/query/query-client.js";
 import { routeTree } from "@/routes/__root.js";
 import { SpeculationRulesAdmin } from "@/components/performance/speculation-rules-admin";
+import { initAdminSentry } from "@/lib/monitoring/sentry";
+import { ErrorBoundary } from "@/components/error-boundary";
 import "@/index.css";
 
 const router = createRouter({ routeTree });
+initAdminSentry();
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -27,7 +30,9 @@ if (rootElement) {
         <ThemeSync />
         <CommandPaletteShortcut />
         <SpeculationRulesAdmin />
-        <RouterProvider router={router} />
+        <ErrorBoundary>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
       </QueryClientProvider>
     </StrictMode>,
   );

@@ -48,6 +48,7 @@ export type MediaCollectionMinAggregateOutputType = {
   status: $Enums.ContentStatus | null
   createdById: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +67,7 @@ export type MediaCollectionMaxAggregateOutputType = {
   status: $Enums.ContentStatus | null
   createdById: string | null
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,6 +86,7 @@ export type MediaCollectionCountAggregateOutputType = {
   status: number
   createdById: number
   publishedAt: number
+  firstPublishedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -112,6 +115,7 @@ export type MediaCollectionMinAggregateInputType = {
   status?: true | runtime.Types.Skip
   createdById?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -130,6 +134,7 @@ export type MediaCollectionMaxAggregateInputType = {
   status?: true | runtime.Types.Skip
   createdById?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -148,6 +153,7 @@ export type MediaCollectionCountAggregateInputType = {
   status?: true | runtime.Types.Skip
   createdById?: true | runtime.Types.Skip
   publishedAt?: true | runtime.Types.Skip
+  firstPublishedAt?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -253,6 +259,7 @@ export type MediaCollectionGroupByOutputType = {
   status: $Enums.ContentStatus
   createdById: string
   publishedAt: Date | null
+  firstPublishedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: MediaCollectionCountAggregateOutputType | null
@@ -294,6 +301,7 @@ export type MediaCollectionWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"MediaCollection"> | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFilter<"MediaCollection"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -315,6 +323,7 @@ export type MediaCollectionOrderByWithRelationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   createdById?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdBy?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -339,6 +348,7 @@ export type MediaCollectionWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumContentStatusFilter<"MediaCollection"> | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFilter<"MediaCollection"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -360,6 +370,7 @@ export type MediaCollectionOrderByWithAggregationInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   createdById?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.MediaCollectionCountOrderByAggregateInput | runtime.Types.Skip
@@ -386,6 +397,7 @@ export type MediaCollectionScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"MediaCollection"> | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringWithAggregatesFilter<"MediaCollection"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
 }
@@ -402,6 +414,7 @@ export type MediaCollectionCreateInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   createdBy: Prisma.UserCreateNestedOneWithoutMediaCollectionsInput
@@ -423,6 +436,7 @@ export type MediaCollectionUncheckedCreateInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   createdById: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedCreateNestedManyWithoutCollectionInput | runtime.Types.Skip
@@ -440,6 +454,7 @@ export type MediaCollectionUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   createdBy?: Prisma.UserUpdateOneRequiredWithoutMediaCollectionsNestedInput | runtime.Types.Skip
@@ -461,6 +476,7 @@ export type MediaCollectionUncheckedUpdateInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedUpdateManyWithoutCollectionNestedInput | runtime.Types.Skip
@@ -480,6 +496,7 @@ export type MediaCollectionCreateManyInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   createdById: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -496,6 +513,7 @@ export type MediaCollectionUpdateManyMutationInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -514,6 +532,7 @@ export type MediaCollectionUncheckedUpdateManyInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -542,6 +561,7 @@ export type MediaCollectionCountOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   createdById?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -564,6 +584,7 @@ export type MediaCollectionMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   createdById?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -582,6 +603,7 @@ export type MediaCollectionMinOrderByAggregateInput = {
   status?: Prisma.SortOrder | runtime.Types.Skip
   createdById?: Prisma.SortOrder | runtime.Types.Skip
   publishedAt?: Prisma.SortOrder | runtime.Types.Skip
+  firstPublishedAt?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -713,6 +735,7 @@ export type MediaCollectionCreateWithoutCreatedByInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   coverMedia?: Prisma.MediaAssetCreateNestedOneWithoutCoveredCollectionsInput | runtime.Types.Skip
@@ -732,6 +755,7 @@ export type MediaCollectionUncheckedCreateWithoutCreatedByInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedCreateNestedManyWithoutCollectionInput | runtime.Types.Skip
@@ -780,6 +804,7 @@ export type MediaCollectionScalarWhereInput = {
   status?: Prisma.EnumContentStatusFilter<"MediaCollection"> | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFilter<"MediaCollection"> | string | runtime.Types.Skip
   publishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.DateTimeNullableFilter<"MediaCollection"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"MediaCollection"> | Date | string | runtime.Types.Skip
 }
@@ -796,6 +821,7 @@ export type MediaCollectionCreateWithoutCoverMediaInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   createdBy: Prisma.UserCreateNestedOneWithoutMediaCollectionsInput
@@ -815,6 +841,7 @@ export type MediaCollectionUncheckedCreateWithoutCoverMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   createdById: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedCreateNestedManyWithoutCollectionInput | runtime.Types.Skip
@@ -858,6 +885,7 @@ export type MediaCollectionCreateWithoutItemsInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   createdBy: Prisma.UserCreateNestedOneWithoutMediaCollectionsInput
@@ -878,6 +906,7 @@ export type MediaCollectionUncheckedCreateWithoutItemsInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   createdById: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -910,6 +939,7 @@ export type MediaCollectionUpdateWithoutItemsInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   createdBy?: Prisma.UserUpdateOneRequiredWithoutMediaCollectionsNestedInput | runtime.Types.Skip
@@ -930,6 +960,7 @@ export type MediaCollectionUncheckedUpdateWithoutItemsInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -947,6 +978,7 @@ export type MediaCollectionCreateManyCreatedByInput = {
   sortOrder?: number | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -963,6 +995,7 @@ export type MediaCollectionUpdateWithoutCreatedByInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   coverMedia?: Prisma.MediaAssetUpdateOneWithoutCoveredCollectionsNestedInput | runtime.Types.Skip
@@ -982,6 +1015,7 @@ export type MediaCollectionUncheckedUpdateWithoutCreatedByInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedUpdateManyWithoutCollectionNestedInput | runtime.Types.Skip
@@ -1000,6 +1034,7 @@ export type MediaCollectionUncheckedUpdateManyWithoutCreatedByInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1017,6 +1052,7 @@ export type MediaCollectionCreateManyCoverMediaInput = {
   status?: $Enums.ContentStatus | runtime.Types.Skip
   createdById: string
   publishedAt?: Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -1033,6 +1069,7 @@ export type MediaCollectionUpdateWithoutCoverMediaInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   createdBy?: Prisma.UserUpdateOneRequiredWithoutMediaCollectionsNestedInput | runtime.Types.Skip
@@ -1052,6 +1089,7 @@ export type MediaCollectionUncheckedUpdateWithoutCoverMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   items?: Prisma.MediaCollectionItemUncheckedUpdateManyWithoutCollectionNestedInput | runtime.Types.Skip
@@ -1070,6 +1108,7 @@ export type MediaCollectionUncheckedUpdateManyWithoutCoverMediaInput = {
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
   createdById?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  firstPublishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -1119,6 +1158,7 @@ export type MediaCollectionSelect<ExtArgs extends runtime.Types.Extensions.Inter
   status?: boolean | runtime.Types.Skip
   createdById?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1141,6 +1181,7 @@ export type MediaCollectionSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   status?: boolean | runtime.Types.Skip
   createdById?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1161,6 +1202,7 @@ export type MediaCollectionSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   status?: boolean | runtime.Types.Skip
   createdById?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -1181,11 +1223,12 @@ export type MediaCollectionSelectScalar = {
   status?: boolean | runtime.Types.Skip
   createdById?: boolean | runtime.Types.Skip
   publishedAt?: boolean | runtime.Types.Skip
+  firstPublishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type MediaCollectionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "description" | "collectionType" | "coverMediaId" | "sourceNote" | "featured" | "sortOrder" | "status" | "createdById" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mediaCollection"], runtime.Types.Skip>
+export type MediaCollectionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "description" | "collectionType" | "coverMediaId" | "sourceNote" | "featured" | "sortOrder" | "status" | "createdById" | "publishedAt" | "firstPublishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["mediaCollection"], runtime.Types.Skip>
 export type MediaCollectionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   coverMedia?: boolean | Prisma.MediaCollection$coverMediaArgs<ExtArgs> | runtime.Types.Skip
@@ -1222,6 +1265,7 @@ export type $MediaCollectionPayload<ExtArgs extends runtime.Types.Extensions.Int
     status: $Enums.ContentStatus
     createdById: string
     publishedAt: Date | null
+    firstPublishedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["mediaCollection"]>
@@ -1663,6 +1707,7 @@ export interface MediaCollectionFieldRefs {
   readonly status: Prisma.FieldRef<"MediaCollection", 'ContentStatus'>
   readonly createdById: Prisma.FieldRef<"MediaCollection", 'String'>
   readonly publishedAt: Prisma.FieldRef<"MediaCollection", 'DateTime'>
+  readonly firstPublishedAt: Prisma.FieldRef<"MediaCollection", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"MediaCollection", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MediaCollection", 'DateTime'>
 }

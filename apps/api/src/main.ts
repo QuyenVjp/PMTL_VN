@@ -21,6 +21,7 @@ import type { Request, Response, NextFunction } from "express";
 import { resolve } from "node:path";
 import { AppModule } from "./app.module.js";
 import { ConfigService } from "./common/config/config.service.js";
+import { initApiSentry } from "./common/monitoring/sentry.js";
 
 /**
  * Graceful shutdown handler for SIGTERM/SIGINT signals.
@@ -81,6 +82,7 @@ async function bootstrap() {
   app.useLogger(logger);
 
   const configService = app.get(ConfigService);
+  initApiSentry(configService);
 
   // Graceful shutdown signal handlers (Enterprise 2026 requirement)
   setupGracefulShutdown(app, logger);
@@ -121,44 +123,46 @@ async function bootstrap() {
   });
   app.use(cookieParser());
 
-  // Serve uploaded files at /media (bypasses global /api prefix intentionally)
-  // PUBLIC_MEDIA_BASE_URL is expected to point here: http://host:port/media
-  const storageRoot = resolve(configService.localStorageRoot || "./uploads");
+  if (configService.storageAdapter === "local") {
+    // Serve uploaded files at /media (bypasses global /api prefix intentionally)
+    // PUBLIC_MEDIA_BASE_URL is expected to point here: http://host:port/media
+    const storageRoot = resolve(configService.localStorageRoot || "./uploads");
 
-  // Signed URL gate — opt-in via MEDIA_REQUIRE_SIGNED_URL=true.
-  // When enabled, every /media/* request must carry ?token=<signed-jwt> where
-  // the token's `key` claim matches the requested path exactly.
-  // Default OFF so existing web frontend URLs continue to work unchanged.
-  if (configService.mediaRequireSignedUrl) {
-    const rawSecret =
-      configService.mediaSignedUrlSecret ?? configService.jwtAccessSecret;
-    const secretBytes = new TextEncoder().encode(rawSecret);
-    app.use("/media", async (req: Request, res: Response, next: NextFunction) => {
-      const rawToken = req.query["token"];
-      const token = Array.isArray(rawToken)
-        ? (typeof rawToken[0] === "string" ? rawToken[0] : "")
-        : (typeof rawToken === "string" ? rawToken : "");
-      if (!token) {
-        res.status(401).json({ message: "Media token required" });
-        return;
-      }
-      try {
-        const { payload } = await jwtVerify(token, secretBytes);
-        // req.url under the /media mount is the sub-path, e.g. "/images/abc.jpg?token=..."
-        // storageKey format is "images/abc.jpg" (no leading slash, no query string)
-        const requestedKey = req.url.split("?")[0].replace(/^\//, "");
-        if (payload["key"] !== requestedKey || payload["purpose"] !== "media") {
-          res.status(403).json({ message: "Media token key mismatch" });
+    // Signed URL gate — opt-in via MEDIA_REQUIRE_SIGNED_URL=true.
+    // When enabled, every /media/* request must carry ?token=<signed-jwt> where
+    // the token's `key` claim matches the requested path exactly.
+    // Default OFF so existing web frontend URLs continue to work unchanged.
+    if (configService.mediaRequireSignedUrl) {
+      const rawSecret =
+        configService.mediaSignedUrlSecret ?? configService.jwtAccessSecret;
+      const secretBytes = new TextEncoder().encode(rawSecret);
+      app.use("/media", async (req: Request, res: Response, next: NextFunction) => {
+        const rawToken = req.query["token"];
+        const token = Array.isArray(rawToken)
+          ? (typeof rawToken[0] === "string" ? rawToken[0] : "")
+          : (typeof rawToken === "string" ? rawToken : "");
+        if (!token) {
+          res.status(401).json({ message: "Media token required" });
           return;
         }
-        next();
-      } catch {
-        res.status(401).json({ message: "Media token invalid or expired" });
-      }
-    });
-  }
+        try {
+          const { payload } = await jwtVerify(token, secretBytes);
+          // req.url under the /media mount is the sub-path, e.g. "/images/abc.jpg?token=..."
+          // storageKey format is "images/abc.jpg" (no leading slash, no query string)
+          const requestedKey = req.url.split("?")[0].replace(/^\//, "");
+          if (payload["key"] !== requestedKey || payload["purpose"] !== "media") {
+            res.status(403).json({ message: "Media token key mismatch" });
+            return;
+          }
+          next();
+        } catch {
+          res.status(401).json({ message: "Media token invalid or expired" });
+        }
+      });
+    }
 
-  app.useStaticAssets(storageRoot, { prefix: "/media" });
+    app.useStaticAssets(storageRoot, { prefix: "/media" });
+  }
 
   // CORS — only WEB_ORIGIN and ADMIN_ORIGIN allowed
   app.enableCors({
@@ -168,7 +172,7 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token", "X-Request-Id"],
   });
 
-  // Swagger — decorators already on all 27 controllers, just expose UI
+  // Swagger — decorators already on all 27 controllers, just expose UI + JSON spec
   if (!configService.isProduction) {
     const swaggerConfig = new DocumentBuilder()
       .setTitle("PMTL API")
@@ -179,6 +183,11 @@ async function bootstrap() {
       .build();
     const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup("api/docs", app, document);
+
+    // Serve OpenAPI JSON spec at /api/openapi.json for typed client generation
+    app.use("/api/openapi.json", (_req: Request, res: Response) => {
+      res.json(document);
+    });
   }
 
   // Graceful shutdown hooks for Prisma + sessions cleanup

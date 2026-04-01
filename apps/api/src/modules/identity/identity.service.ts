@@ -8,6 +8,7 @@ import { ConfigService } from "../../common/config/config.service.js";
 import { SessionsService } from "../../platform/sessions/sessions.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { TraceService } from "../../common/tracing/trace.service.js";
+import { EmailService } from "../../platform/email/email.service.js";
 import { canUserLogin } from "./identity.policy.js";
 import { mapUserToAuthResponse } from "./identity.mapper.js";
 import type { LoginInput, RegisterInput, UpdateProfileInput, ChangePasswordInput, ForgotPasswordInput, ResetPasswordInput } from "./identity.schemas.js";
@@ -29,6 +30,7 @@ export class IdentityService {
     private readonly sessions: SessionsService,
     private readonly audit: AuditService,
     private readonly tracing: TraceService,
+    private readonly emailService: EmailService,
   ) {}
 
   /**
@@ -284,12 +286,18 @@ export class IdentityService {
       );
     });
 
-    // DEV: log token so it can be used without email integration
-    this.logger.log({
-      msg: "Password reset token generated (dev only)",
-      userId: user.id,
+    this.emailService.dispatchPasswordReset({
+      email: user.email,
       token: plainToken,
     });
+
+    if (this.config.emailProvider === "log") {
+      this.logger.log({
+        msg: "Password reset token generated (log provider)",
+        userId: user.id,
+        token: plainToken,
+      });
+    }
 
     return { success: true };
   }

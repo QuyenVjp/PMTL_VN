@@ -233,6 +233,7 @@ export const MediaCollectionScalarFieldEnum = {
   status: 'status',
   createdById: 'createdById',
   publishedAt: 'publishedAt',
+  firstPublishedAt: 'firstPublishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -308,6 +309,7 @@ export const PostScalarFieldEnum = {
   featured: 'featured',
   allowComments: 'allowComments',
   publishedAt: 'publishedAt',
+  firstPublishedAt: 'firstPublishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -576,6 +578,7 @@ export const WisdomEntryScalarFieldEnum = {
   status: 'status',
   authorId: 'authorId',
   publishedAt: 'publishedAt',
+  firstPublishedAt: 'firstPublishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -612,6 +615,7 @@ export const BeginnerGuideScalarFieldEnum = {
   status: 'status',
   authorId: 'authorId',
   publishedAt: 'publishedAt',
+  firstPublishedAt: 'firstPublishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -633,6 +637,7 @@ export const DownloadScalarFieldEnum = {
   status: 'status',
   uploaderId: 'uploaderId',
   publishedAt: 'publishedAt',
+  firstPublishedAt: 'firstPublishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

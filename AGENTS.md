@@ -97,8 +97,38 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Codex combo defaults for fresh UI sessions:
   - `apps/web` feature/page: `pmtl-fe-implementation` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
   - `apps/admin` workspace/page: `pmtl-admin-ui` -> `pmtl-ui-behavior` -> `pmtl-ui-style-system`
-  - premium public-facing polish pass only after structure is stable: add `pmtl-creative-designer` or a named design-library variant
-  - `ui-ux-pro-max` is a secondary critique/reference lane, not the repo authority for PMTL web/admin surfaces
+- premium public-facing polish pass only after structure is stable: add `pmtl-creative-designer` or a named design-library variant
+- `ui-ux-pro-max` is a secondary critique/reference lane, not the repo authority for PMTL web/admin surfaces
+
+## ECC Augmentation
+- `everything-claude-code` is installed as a user-scoped Claude plugin and selectively mirrored into this repo under `.claude/`.
+- PMTL canon still wins: `design/`, this `AGENTS.md`, app constitutions, and repo-local PMTL skills outrank ECC defaults when they disagree.
+- Project-level ECC additions live in:
+  - `.claude/rules/common`
+  - `.claude/rules/typescript`
+  - `.claude/commands/` for selected operator commands
+  - `.claude/agents/` for selected generic reviewers/planners
+  - `.claude/skills/` for selected TS/Next.js/backend/database/verification/learning skills
+  - `.claude/ecc/` for ECC runtime helpers and reference config
+- Prefer ECC as augmentation, not replacement:
+  - planning: ECC `planner` or `/plan` may help, but final placement still follows PMTL architecture docs
+  - TS review: ECC `typescript-reviewer` is useful as a generic review lane after PMTL implementation
+  - DB review: ECC `database-reviewer` and `postgres-patterns` are allowed fallback lanes for Prisma/Postgres work
+  - verification/learning: ECC `verification-loop`, `strategic-compact`, and `continuous-learning-v2` are allowed when they do not conflict with PMTL quality gates
+- ECC command names expected in this repo after manual sync include:
+  - `/harness-audit`
+  - `/security-scan`
+  - `/quality-gate`
+  - `/plan`
+  - `/multi-plan`
+  - `/tdd`
+  - `/code-review`
+  - `/evolve`
+  - `/verify`
+- Hook policy for this repo:
+  - keep PMTL project hooks in `.claude/settings.json` as the repo-specific guardrail layer
+  - let ECC plugin hooks run as the user-scoped augmentation layer
+  - default ECC runtime flags for PMTL should be `ECC_HOOK_PROFILE=standard` and `ECC_DISABLED_HOOKS=pre:bash:tmux-reminder`
 
 ## Agent Operating Model
 - In this repo, Codex acts as the primary senior delivery engineer: design-first, full-stack, and responsible for turning `design/` into repo-aligned implementation or repo-aligned docs.

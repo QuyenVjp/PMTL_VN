@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 
@@ -86,6 +87,7 @@ function statusLabel(s: string): string {
 
 function GuestbookRowActions({ row }: { row: GuestbookItem }) {
   const { setOpen, setCurrentRow } = useGuestbook();
+  const navigate = useNavigate();
 
   const open = (dialog: GuestbookDialogType) => {
     setCurrentRow(row);
@@ -95,6 +97,10 @@ function GuestbookRowActions({ row }: { row: GuestbookItem }) {
   return (
     <WorkspaceRowActions
       actions={[
+        {
+          label: "Xem chi tiết",
+          onClick: () => { void navigate({ to: "/cong-dong/so-luu-niem/$publicId", params: { publicId: row.publicId } }); },
+        },
         ...(row.status !== "APPROVED"
           ? [{ label: "Duyệt", icon: CheckCircleIcon, onClick: () => open("approve") }]
           : []),
@@ -126,6 +132,7 @@ function GuestbookRowActions({ row }: { row: GuestbookItem }) {
 function GuestbookTable() {
   const { data: envelope, isLoading } = useQuery(guestbookListOptions({ limit: 100 }));
   const entries = envelope?.data ?? [];
+  const navigate = useNavigate();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -229,6 +236,7 @@ function GuestbookTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có lưu niệm nào."
+        onRowClick={(row) => { void navigate({ to: "/cong-dong/so-luu-niem/$publicId", params: { publicId: row.publicId } }); }}
       />
       <DataTableBulkActions table={table} entityName="lưu niệm" />
     </div>

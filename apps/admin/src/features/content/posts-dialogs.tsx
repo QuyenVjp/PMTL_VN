@@ -67,20 +67,22 @@ function FeaturedImageField({
 
   const selected = images.find((item) => item.publicId === value);
 
-  const onUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+  const onUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    try {
-      const result = await uploadMedia.mutateAsync(file);
-      const publicId = extractUploadMediaPayload(result)?.publicId;
-      if (!publicId) {
-        toast.error("Upload xong nhưng không đọc được media ID.");
-        return;
+    void (async () => {
+      try {
+        const result: Record<string, unknown> = await uploadMedia.mutateAsync(file);
+        const publicId = extractUploadMediaPayload(result)?.publicId;
+        if (!publicId) {
+          toast.error("Upload xong nhưng không đọc được media ID.");
+          return;
+        }
+        onChange(publicId);
+      } finally {
+        event.target.value = "";
       }
-      onChange(publicId);
-    } finally {
-      event.target.value = "";
-    }
+    })();
   };
 
   return (

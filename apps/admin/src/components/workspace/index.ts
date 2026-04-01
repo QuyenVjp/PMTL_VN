@@ -6,3 +6,4 @@ export * from "@/components/workspace/workspace-row-actions";
 export * from "@/components/workspace/workspace-confirm-dialog";
 export * from "@/components/workspace/workspace-data-table";
 export * from "@/components/workspace/workspace-detail-sheet";
+export * from "@/components/workspace/admin-detail-page";

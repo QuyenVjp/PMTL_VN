@@ -19,6 +19,7 @@ export interface PostListItem {
   tags: { id: string; name: string; slug: string }[];
   featuredImageUrl: string | null;
   publishedAt: string | null;
+  firstPublishedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

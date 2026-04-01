@@ -43,6 +43,8 @@ import {
   type BeginnerGuidePublicQuery,
   downloadPublicQuerySchema,
   type DownloadPublicQuery,
+  unpublishPostSchema,
+  type UnpublishPostRequest,
 } from "./content.schemas.js";
 
 @ApiTags("content")
@@ -153,6 +155,27 @@ export class ContentController {
     @Req() req: Request,
   ) {
     return this.contentService.publishPost(publicId, user.role, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Post("posts/:publicId/unpublish")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Gỡ xuất bản bài viết" })
+  @ApiParam({ name: "publicId", description: "Public ID của bài viết" })
+  @ApiResponse({ status: 200, description: "Bài viết đã được gỡ xuất bản" })
+  @ApiResponse({ status: 403, description: "Không có quyền" })
+  @ApiResponse({ status: 404, description: "Bài viết không tồn tại" })
+  async unpublishPost(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(unpublishPostSchema)) body: UnpublishPostRequest,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.contentService.unpublishPost(publicId, body.mode, user.role, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

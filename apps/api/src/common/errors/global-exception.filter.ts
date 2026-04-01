@@ -25,6 +25,7 @@ import { Logger } from "nestjs-pino";
 import { ZodError } from "zod";
 import { Prisma } from "../../generated/prisma/client.js";
 import { AppError } from "./app-error.js";
+import { captureApiException } from "../monitoring/sentry.js";
 
 interface CanonErrorEnvelope {
   error: {
@@ -138,6 +139,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     } else if (exception instanceof Error) {
       // No stack trace leak to production client
+      captureApiException(exception);
       this.logger.error(
         {
           err: { message: exception.message, stack: exception.stack, name: exception.name },
@@ -147,6 +149,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         `Unhandled error: ${exception.message}`,
       );
     } else {
+      captureApiException(exception);
       this.logger.error(
         { exception, path: request.url, requestId },
         "Unknown exception",

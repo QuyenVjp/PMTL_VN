@@ -26,6 +26,12 @@ type WorkspaceDataTableProps<TData> = {
   isLoading?: boolean;
   loadingMessage?: string;
   emptyMessage?: string;
+  /**
+   * When provided, the whole row becomes clickable (Strapi v5 style).
+   * Cells with id "select" or "actions" call stopPropagation internally
+   * so checkbox/action clicks don't trigger navigation.
+   */
+  onRowClick?: (row: TData) => void;
 };
 
 export function WorkspaceDataTable<TData>({
@@ -34,7 +40,10 @@ export function WorkspaceDataTable<TData>({
   isLoading = false,
   loadingMessage = "Đang tải dữ liệu...",
   emptyMessage = "Không có kết quả phù hợp.",
+  onRowClick,
 }: WorkspaceDataTableProps<TData>) {
+  const clickable = Boolean(onRowClick);
+
   return (
     <div className="flex flex-1 flex-col gap-4">
       <div className="overflow-hidden rounded-xl border">
@@ -64,9 +73,23 @@ export function WorkspaceDataTable<TData>({
               </TableRow>
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={clickable ? () => onRowClick!(row.original) : undefined}
+                  className={clickable ? "cursor-pointer" : undefined}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      // Stop propagation for select/actions columns so
+                      // checkbox and ⋮ clicks don't trigger row navigation
+                      onClick={
+                        clickable && (cell.column.id === "select" || cell.column.id === "actions")
+                          ? (e) => e.stopPropagation()
+                          : undefined
+                      }
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
