@@ -157,6 +157,37 @@ export function useUpdateFeature() {
 - Route path segments use **kebab-case Vietnamese**: `/noi-dung/thu-vien-phap-mon`.
 - Never put page layout logic inside route files — route files only `import` and `export` the page component.
 
+### Canon Route Rules (non-negotiable)
+
+- `Bạch thoại Phật pháp` admin surface là `/noi-dung/bach-thoai`.
+- `Hỏi đáp / Wenda` là family riêng. Trong admin phase hiện tại nó có thể nằm trong tab của workspace `Bạch thoại / Hỏi đáp`, nhưng không được đổi label surface chính thành `Tri Tuệ`, cũng không được nhập nhầm `Hỏi đáp` như một entry `Bạch thoại`.
+- `Bạch thoại Phật pháp` là surface video/source-first. Nếu entry có `sourceUrl` YouTube thì workspace phải ưu tiên player, thumbnail, provenance và filter type; không dùng placeholder tabs hoặc prose-only shells để che semantics.
+- `Kinh văn tự tu` admin surface là `/noi-dung/kinh-van-tu-tu` và phải đi với API owner `/api/admin/content/self-cultivation/*`.
+- Tuyệt đối không bind route `/noi-dung/kinh-van-tu-tu` vào `practice-support/vietnam-home-practice-guide`.
+- `Niệm kinh` là group điều hướng có submenu; không flatten 4 lane con thành 4 mục top-level nếu design chưa đổi canon.
+- `Kinh sách` và `Tài liệu` phải giữ base path riêng cho list/create/detail. Không được để row click hoặc action menu của `Kinh sách` rơi sang `/noi-dung/tai-lieu`.
+
+### Create Flow Rules
+
+- Các surface nội dung đã chuyển sang full-page create/detail kiểu `AdminDetailPage` thì không được quay lại modal create.
+- Ít nhất các lane này phải giữ pattern full-page:
+  - `/noi-dung/huong-dan/tao-moi`
+  - `/noi-dung/bai-viet/tao-moi`
+  - `/noi-dung/bach-thoai/tao-moi`
+- Modal chỉ dùng cho confirm hoặc inline add nhỏ trong workspace tab-based, không dùng để thay thế trang tạo mới owner.
+
+### Feature Flags Rules
+
+- `/he-thong/feature-flags` là list vận hành đơn giản, không phải DataTable.
+- Không dùng `Switch` inline cho bật/tắt nhanh ở surface này.
+- Hành động canonical là nút nguồn hoặc action button có confirm dialog trước khi ghi.
+
+### Form UX Rules
+
+- Khi form có lane chọn media/image, dùng picker có preview thumbnail; không bắt operator nhập `publicId`, file path, hay storage key.
+- Những trường `Tóm tắt / excerpt` được hiển thị đa breakpoint hoặc cần editor-friendly formatting nên dùng rich text editor có toolbar cơ bản thay vì textarea trần.
+- Copy vận hành cho người lớn tuổi phải thuần tiếng Việt; không dùng placeholder tiếng Anh hoặc mã kỹ thuật làm primary label.
+
 ---
 
 ## 9. TypeScript Rules

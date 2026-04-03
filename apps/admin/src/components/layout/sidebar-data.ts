@@ -27,7 +27,7 @@ import type { NavGroup } from "@/components/layout/types";
 
 export const sidebarNavGroups: NavGroup[] = [
   {
-    title: "General",
+    title: "Tổng quan",
     items: [{ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }],
   },
   {

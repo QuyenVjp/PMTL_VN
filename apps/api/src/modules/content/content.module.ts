@@ -15,9 +15,10 @@ import { AuditModule } from "../../platform/audit/audit.module.js";
 import { StorageModule } from "../../platform/storage/storage.module.js";
 import { ChantingModule } from "./chanting/chanting.module.js";
 import { PracticeSupportModule } from "./practice-support/practice-support.module.js";
+import { SelfCultivationModule } from "./self-cultivation/self-cultivation.module.js";
 
 @Module({
-  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule],
+  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule],
   controllers: [
     ContentController,
     GuideController,

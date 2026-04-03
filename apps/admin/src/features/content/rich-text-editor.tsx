@@ -1,3 +1,4 @@
+import * as React from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -10,28 +11,48 @@ import {
   PilcrowIcon,
   QuoteIcon,
 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const editorButtonClass =
-  "rounded-md border px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground";
+  "inline-flex size-9 items-center justify-center rounded-md border border-input bg-background text-sm transition-colors hover:bg-accent hover:text-accent-foreground";
 
 export function RichTextEditor({
-  initialContent,
+  value,
+  onChange,
+  placeholder = "Nhập nội dung biên tập...",
+  minHeight = 180,
 }: {
-  initialContent: string;
+  value: string;
+  onChange?: (nextValue: string) => void;
+  placeholder?: string;
+  minHeight?: number;
 }) {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: "Nhập nội dung biên tập...",
+        placeholder,
       }),
     ],
-    content: initialContent,
+    content: value || "<p></p>",
     immediatelyRender: false,
+    onUpdate: ({ editor: nextEditor }) => {
+      onChange?.(nextEditor.getHTML());
+    },
   });
+
+  React.useEffect(() => {
+    if (!editor) {
+      return;
+    }
+
+    const currentValue = editor.getHTML();
+    const normalizedIncoming = value || "<p></p>";
+
+    if (currentValue !== normalizedIncoming) {
+      editor.commands.setContent(normalizedIncoming, { emitUpdate: false });
+    }
+  }, [editor, value]);
 
   if (!editor) {
     return null;
@@ -44,6 +65,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={cn(editorButtonClass, editor.isActive("bold") && "bg-accent")}
+          aria-label="In đậm"
         >
           <BoldIcon className="size-4" />
         </button>
@@ -51,6 +73,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={cn(editorButtonClass, editor.isActive("italic") && "bg-accent")}
+          aria-label="In nghiêng"
         >
           <ItalicIcon className="size-4" />
         </button>
@@ -58,6 +81,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           className={cn(editorButtonClass, editor.isActive("heading", { level: 2 }) && "bg-accent")}
+          aria-label="Tiêu đề cấp 2"
         >
           <Heading2Icon className="size-4" />
         </button>
@@ -65,6 +89,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={cn(editorButtonClass, editor.isActive("bulletList") && "bg-accent")}
+          aria-label="Danh sách chấm"
         >
           <ListIcon className="size-4" />
         </button>
@@ -72,6 +97,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={cn(editorButtonClass, editor.isActive("orderedList") && "bg-accent")}
+          aria-label="Danh sách số"
         >
           <ListOrderedIcon className="size-4" />
         </button>
@@ -79,6 +105,7 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={cn(editorButtonClass, editor.isActive("blockquote") && "bg-accent")}
+          aria-label="Trích dẫn"
         >
           <QuoteIcon className="size-4" />
         </button>
@@ -86,18 +113,16 @@ export function RichTextEditor({
           type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={cn(editorButtonClass, editor.isActive("paragraph") && "bg-accent")}
+          aria-label="Đoạn văn"
         >
           <PilcrowIcon className="size-4" />
         </button>
-
-        <div className="ms-auto">
-          <Button size="sm">Lưu draft</Button>
-        </div>
       </div>
 
       <EditorContent
         editor={editor}
-        className="prose prose-sm max-w-none px-4 py-4 dark:prose-invert [&_.ProseMirror]:min-h-[340px] [&_.ProseMirror]:outline-none"
+        className="prose prose-sm max-w-none px-4 py-4 dark:prose-invert [&_.ProseMirror]:min-h-[var(--editor-min-height)] [&_.ProseMirror]:outline-none"
+        style={{ ["--editor-min-height" as string]: `${minHeight}px` }}
       />
     </div>
   );

@@ -291,10 +291,10 @@ export function AdminFormField({
   className?: string;
 }) {
   return (
-    <label className={cn("grid gap-1.5", className)}>
-      <span className="text-sm font-medium">{label}</span>
+    <div className={cn("grid items-start content-start self-start gap-1.5", className)}>
+      <span className="block self-start justify-self-start text-sm font-medium leading-none">{label}</span>
       {children}
-      {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
-    </label>
+      {hint && <span className="block self-start justify-self-start text-xs text-muted-foreground">{hint}</span>}
+    </div>
   );
 }

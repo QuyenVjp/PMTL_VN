@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -14,19 +15,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import {
   AdminDetailPage,
   AdminDetailSection,
   AdminFormField,
 } from "@/components/workspace";
+import { Button } from "@/components/ui/button";
+import { ImageAssetPicker } from "@/components/media/image-asset-picker";
 import { useCreatePost } from "@/features/content/mutations";
+import { useUploadMediaAsset } from "@/features/media/mutations";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { RichTextEditor } from "@/features/content/rich-text-editor";
 import {
   extractValidationFieldErrors,
   hasFieldErrors,
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
 
 // ── Constants ─────────────────────────────────────────────────────────
 
@@ -37,20 +43,45 @@ const POST_TYPE_OPTIONS = [
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
 
-const EXCERPT_MAX_LENGTH = 500;
+const EXCERPT_MAX_LENGTH = 4000;
+
+function excerptTextLength(value: string) {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim().length;
+}
+
+function normalizeEditorHtml(value: string): string {
+  return excerptTextLength(value) > 0 ? value.trim() : "";
+}
+
+function readPostBodyHtml(content: unknown): string {
+  if (!content || typeof content !== "object" || Array.isArray(content)) {
+    return "";
+  }
+
+  const candidate = content as Record<string, unknown>;
+  if (typeof candidate.bodyHtml === "string") return candidate.bodyHtml;
+  if (typeof candidate.html === "string") return candidate.html;
+  if (typeof candidate.body === "string") return candidate.body;
+  return "";
+}
+
+function buildPostContent(bodyHtml: string): Record<string, unknown> {
+  const normalizedBody = normalizeEditorHtml(bodyHtml);
+  return normalizedBody ? { bodyHtml: normalizedBody } : {};
+}
 
 // ── Sidebar ───────────────────────────────────────────────────────────
 
 function CreateSidebar({
-  featuredImageId,
-  setFeaturedImageId,
   featured,
   setFeatured,
   allowComments,
   setAllowComments,
 }: {
-  featuredImageId: string;
-  setFeaturedImageId: (v: string) => void;
   featured: boolean;
   setFeatured: (v: boolean) => void;
   allowComments: boolean;
@@ -58,16 +89,6 @@ function CreateSidebar({
 }) {
   return (
     <>
-      <AdminDetailSection title="Ảnh đại diện">
-        <AdminFormField label="ID ảnh đại diện" hint="Nhập publicId của media asset">
-          <Input
-            value={featuredImageId}
-            onChange={(e) => setFeaturedImageId(e.target.value)}
-            placeholder="VD: img_abc123..."
-          />
-        </AdminFormField>
-      </AdminDetailSection>
-
       <AdminDetailSection title="Cài đặt">
         <div className="space-y-4">
           <div className="flex items-start gap-3">
@@ -107,22 +128,31 @@ function CreateSidebar({
 export function PostCreatePage() {
   const navigate = useNavigate();
   const createPost = useCreatePost();
+  const uploadMedia = useUploadMediaAsset();
+  const uploadRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
+  const imageAssets = useMemo(
+    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [mediaEnvelope],
+  );
+
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH)
-      nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (excerptTextLength(excerpt) > EXCERPT_MAX_LENGTH)
+      nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -136,9 +166,9 @@ export function PostCreatePage() {
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
+        excerpt: normalizeEditorHtml(excerpt) || undefined,
+        content: buildPostContent(bodyHtml),
         featuredImageId: featuredImageId.trim() || undefined,
-        content: {},
         featured,
         allowComments,
       },
@@ -169,8 +199,6 @@ export function PostCreatePage() {
       saveDisabled={!title.trim()}
       sidebar={
         <CreateSidebar
-          featuredImageId={featuredImageId}
-          setFeaturedImageId={setFeaturedImageId}
           featured={featured}
           setFeatured={setFeatured}
           allowComments={allowComments}
@@ -178,7 +206,7 @@ export function PostCreatePage() {
         />
       }
     >
-      <AdminDetailSection title="Nội dung chính">
+      <AdminDetailSection title="Thông tin cơ bản">
         <div className="space-y-4">
           <AdminFormField label="Tiêu đề *">
             <Input
@@ -193,8 +221,8 @@ export function PostCreatePage() {
             <FieldError message={fieldErrors.title} />
           </AdminFormField>
 
-          <div className="grid grid-cols-2 gap-4">
-            <AdminFormField label="Slug" hint="Để trống — tự động tạo từ tiêu đề">
+          <div className="grid items-start gap-4 md:grid-cols-2">
+            <AdminFormField label="Slug">
               <Input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -217,6 +245,7 @@ export function PostCreatePage() {
               </Select>
             </AdminFormField>
           </div>
+          <p className="text-xs text-muted-foreground">Để trống — hệ thống sẽ tự động tạo slug từ tiêu đề.</p>
 
           <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input
@@ -227,24 +256,75 @@ export function PostCreatePage() {
           </AdminFormField>
 
           <AdminFormField label="Tóm tắt">
-            <Textarea
+            <RichTextEditor
               value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
+              onChange={(nextValue) => {
+                setExcerpt(nextValue);
                 if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
               }}
-              placeholder="Mô tả ngắn về bài viết..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={3}
+              placeholder="Tóm tắt ngắn, dễ đọc trên mobile và phù hợp người lớn tuổi..."
+              minHeight={160}
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <FieldError message={fieldErrors.excerpt} />
               <span className={cn(Boolean(fieldErrors.excerpt) && "text-destructive")}>
-                {excerpt.length}/{EXCERPT_MAX_LENGTH}
+                {excerptTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
               </span>
             </div>
           </AdminFormField>
+
+          <AdminFormField label="Nội dung bài viết" hint="Dùng editor đầy đủ để biên tập nội dung hiển thị công khai.">
+            <RichTextEditor
+              value={bodyHtml}
+              onChange={setBodyHtml}
+              placeholder="Soạn nội dung bài viết, chèn đoạn mở đầu, bullet và trích dẫn dễ đọc cho người lớn tuổi..."
+              minHeight={320}
+            />
+          </AdminFormField>
+        </div>
+      </AdminDetailSection>
+
+      <AdminDetailSection title="Ảnh đại diện" description="Chọn ảnh từ thư viện media hoặc upload ảnh mới, luôn có preview trước khi lưu.">
+        <div className="space-y-3">
+          <input
+            ref={uploadRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              void (async () => {
+                try {
+                  const result = await uploadMedia.mutateAsync(file);
+                  const publicId = extractUploadMediaPayload(result)?.publicId;
+                  if (publicId) setFeaturedImageId(publicId);
+                } finally {
+                  event.target.value = "";
+                }
+              })();
+            }}
+          />
+          <div className="flex items-center gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => uploadRef.current?.click()} disabled={uploadMedia.isPending}>
+              {uploadMedia.isPending ? "Đang upload..." : "Upload ảnh mới"}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setFeaturedImageId("")}
+              disabled={!featuredImageId}
+            >
+              Bỏ chọn
+            </Button>
+          </div>
+          <ImageAssetPicker
+            assets={imageAssets}
+            value={featuredImageId}
+            onChange={setFeaturedImageId}
+            placeholder="Chọn ảnh đại diện từ thư viện..."
+          />
         </div>
       </AdminDetailSection>
     </AdminDetailPage>

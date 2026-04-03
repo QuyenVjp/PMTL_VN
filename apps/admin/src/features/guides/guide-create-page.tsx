@@ -20,16 +20,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ImageAssetPicker } from "@/components/media/image-asset-picker";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { useUploadMediaAsset } from "@/features/media/mutations";
 import { extractUploadMediaPayload } from "@/lib/media-upload";
 import { useCreateGuide } from "@/features/guides/mutations";
+import { RichTextEditor } from "@/features/content/rich-text-editor";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
 
-const EXCERPT_MAX_LENGTH = 500;
+const EXCERPT_MAX_LENGTH = 4000;
+
+function editorTextLength(value: string) {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim().length;
+}
+
+function normalizeEditorHtml(value: string): string {
+  return editorTextLength(value) > 0 ? value.trim() : "";
+}
+
+function buildGuideContent(bodyHtml: string): Record<string, unknown> {
+  const normalizedBody = normalizeEditorHtml(bodyHtml);
+  return normalizedBody ? { bodyHtml: normalizedBody } : {};
+}
 
 type GuideCreatePageProps = {
   backHref: string;
@@ -49,6 +66,7 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState(resolvedDefaultCategory);
   const [excerpt, setExcerpt] = useState("");
+  const [bodyHtml, setBodyHtml] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
@@ -65,7 +83,7 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (editorTextLength(excerpt) > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -77,7 +95,8 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
         title: title.trim(),
         slug: slug.trim() || undefined,
         category,
-        excerpt: excerpt.trim() || undefined,
+        content: buildGuideContent(bodyHtml),
+        excerpt: normalizeEditorHtml(excerpt) || undefined,
         coverMediaPublicId: coverMediaPublicId || undefined,
         sortOrder: Number(sortOrder) || 0,
         versionNote: versionNote.trim() || undefined,
@@ -190,29 +209,29 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
           </div>
 
           <AdminFormField label="Tóm tắt">
-            <Textarea
+            <RichTextEditor
               value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
+              onChange={(nextValue) => {
+                setExcerpt(nextValue);
                 if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
               }}
-              placeholder="Mô tả ngắn cho bài hướng dẫn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={3}
+              placeholder="Mô tả ngắn, rõ ràng và dễ đọc cho người lớn tuổi..."
+              minHeight={160}
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <FieldError message={fieldErrors.excerpt} />
               <span className={cn(fieldErrors.excerpt && "text-destructive")}>
-                {excerpt.length}/{EXCERPT_MAX_LENGTH}
+                {editorTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
               </span>
             </div>
           </AdminFormField>
 
           <AdminFormField label="Nội dung" hint="Nội dung chi tiết của bài hướng dẫn">
-            <Textarea
-              placeholder="Nhập nội dung bài hướng dẫn..."
-              rows={6}
+            <RichTextEditor
+              value={bodyHtml}
+              onChange={setBodyHtml}
+              placeholder="Biên tập nội dung hướng dẫn theo bố cục rõ ràng, có thể dùng bullet và trích dẫn..."
+              minHeight={320}
             />
           </AdminFormField>
 

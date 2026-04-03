@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
+import { handleApiError } from "@/lib/handle-api-error.js";
 import { moderationCommentKeys } from "./queries.js";
 import { toast } from "sonner";
 
@@ -19,6 +20,6 @@ export function useDecideCommentReport() {
       void qc.invalidateQueries({ queryKey: moderationCommentKeys.lists() });
       toast.success("Đã xử lý báo cáo bình luận");
     },
-    onError: () => toast.error("Không thể xử lý báo cáo"),
+    onError: handleApiError,
   });
 }

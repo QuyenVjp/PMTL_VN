@@ -16,8 +16,8 @@ export function DataTablePagination<TData>({ table, className }: DataTablePagina
   const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
-    <div className={cn("flex flex-col gap-4 px-2 lg:flex-row lg:items-center lg:justify-between", className)}>
-      <div className="flex items-center gap-2">
+    <div className={cn("flex w-full flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between", className)}>
+      <div className="flex items-center gap-2 self-start">
         <p className="text-sm font-medium">Số dòng mỗi trang</p>
         <Select
           value={`${table.getState().pagination.pageSize}`}
@@ -36,8 +36,8 @@ export function DataTablePagination<TData>({ table, className }: DataTablePagina
         </Select>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 lg:gap-3">
-        <div className="min-w-[116px] text-sm font-medium">
+      <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 self-end sm:w-auto sm:gap-3">
+        <div className="min-w-[116px] text-right text-sm font-medium">
           Trang {currentPage} / {totalPages || 1}
         </div>
         <div className="flex items-center gap-2">

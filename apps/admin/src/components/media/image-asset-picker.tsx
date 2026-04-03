@@ -21,6 +21,17 @@ interface ImageAssetPickerProps {
   placeholder?: string;
 }
 
+function isOperatorFriendlyFilename(filename: string): boolean {
+  if (!filename.trim()) return false;
+  const basename = filename.replace(/\.[^.]+$/, "");
+  return !/^[a-f0-9-]{24,}$/i.test(basename) && !/^[\w-]{24,}$/i.test(basename);
+}
+
+function assetDisplayName(asset: ImageAssetOption | null): string {
+  if (!asset) return "";
+  return isOperatorFriendlyFilename(asset.filename) ? asset.filename : "Ảnh từ thư viện media";
+}
+
 export function ImageAssetPicker({
   assets,
   value,
@@ -34,7 +45,10 @@ export function ImageAssetPicker({
   const filtered = useMemo(() => {
     const keyword = query.trim().toLowerCase();
     if (!keyword) return assets;
-    return assets.filter((asset) => asset.filename.toLowerCase().includes(keyword));
+    return assets.filter((asset) => {
+      const haystack = `${asset.filename} ${assetDisplayName(asset)}`.toLowerCase();
+      return haystack.includes(keyword);
+    });
   }, [assets, query]);
 
   return (
@@ -42,8 +56,23 @@ export function ImageAssetPicker({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button type="button" variant="outline" className="w-full justify-between">
-            <span className="truncate text-start">
-              {selected ? selected.filename : placeholder}
+            <span className="flex min-w-0 items-center gap-2 text-start">
+              {selected ? (
+                <>
+                  <img
+                    src={resolveMediaSrc(selected.url) ?? undefined}
+                    alt={selected.filename}
+                    className="size-7 shrink-0 rounded border object-cover"
+                    loading="lazy"
+                  />
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium">Đã chọn ảnh đại diện</span>
+                    <span className="block truncate text-xs text-muted-foreground">{assetDisplayName(selected)}</span>
+                  </span>
+                </>
+              ) : (
+                <span className="truncate">{placeholder}</span>
+              )}
             </span>
             <ChevronsUpDownIcon className="size-4 opacity-70" />
           </Button>
@@ -96,7 +125,7 @@ export function ImageAssetPicker({
                         loading="lazy"
                       />
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5">
-                        <p className="truncate text-[11px] text-white">{asset.filename}</p>
+                        <p className="truncate text-[11px] text-white">{assetDisplayName(asset)}</p>
                       </div>
                       {active ? (
                         <span className="absolute right-1.5 top-1.5 rounded-full bg-primary/90 p-1 text-primary-foreground">
@@ -121,12 +150,11 @@ export function ImageAssetPicker({
             loading="lazy"
           />
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{selected.filename}</p>
-            <p className="text-xs text-muted-foreground">{selected.publicId}</p>
+            <p className="text-sm font-medium">Ảnh đang chọn</p>
+            <p className="truncate text-xs text-muted-foreground">{assetDisplayName(selected)}</p>
           </div>
         </div>
       ) : null}
     </div>
   );
 }
-

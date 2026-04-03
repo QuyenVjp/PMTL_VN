@@ -12,7 +12,6 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
@@ -26,6 +25,7 @@ import { downloadListOptions, type DownloadItem } from "@/features/downloads/que
 import { usePublishDownload, useDeleteDownload } from "@/features/downloads/mutations";
 import { mediaListOptions } from "@/features/media/queries";
 import { resolveMediaSrc } from "@/lib/media-src";
+import { useNavigateTo } from "@/lib/router-utils";
 
 // ── Options ──────────────────────────────────────────────────────────
 
@@ -83,10 +83,17 @@ type DownloadsTableProps = {
   defaultCategory?: string;
   /** Base path for row detail navigation, e.g. "/noi-dung/tai-lieu" */
   detailBasePath?: string;
+  entityLabel?: string;
+  emptyMessage?: string;
 };
 
-export function DownloadsTable({ defaultCategory, detailBasePath = "/noi-dung/tai-lieu" }: DownloadsTableProps) {
-  const navigate = useNavigate();
+export function DownloadsTable({
+  defaultCategory,
+  detailBasePath = "/noi-dung/tai-lieu",
+  entityLabel = "tài liệu",
+  emptyMessage = "Chưa có tài liệu nào.",
+}: DownloadsTableProps) {
+  const navigateTo = useNavigateTo();
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
   const downloads = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
@@ -190,7 +197,7 @@ export function DownloadsTable({ defaultCategory, detailBasePath = "/noi-dung/ta
       {
         id: "actions",
         cell: ({ row }) => (
-          <DownloadsRowActions row={row.original} detailBasePath={detailBasePath} />
+          <DownloadsRowActions row={row.original} detailBasePath={detailBasePath} entityLabel={entityLabel} />
         ),
         enableSorting: false,
         enableHiding: false,
@@ -251,12 +258,12 @@ export function DownloadsTable({ defaultCategory, detailBasePath = "/noi-dung/ta
         table={table}
         columns={columns}
         isLoading={isLoading}
-        emptyMessage="Chưa có tài liệu nào."
+        emptyMessage={emptyMessage}
         onRowClick={(row) => {
-          void navigate({ to: "/noi-dung/tai-lieu/$publicId", params: { publicId: row.publicId } });
+          navigateTo(`${detailBasePath}/${row.publicId}`);
         }}
       />
-      <DataTableBulkActions table={table} entityName="tài liệu">
+      <DataTableBulkActions table={table} entityName={entityLabel}>
         <Button
           size="sm"
           variant="outline"
@@ -279,5 +286,3 @@ export function DownloadsTable({ defaultCategory, detailBasePath = "/noi-dung/ta
     </div>
   );
 }
-
-

@@ -4,6 +4,7 @@ import type { INestApplication } from "@nestjs/common";
 import request from "supertest";
 import { AppModule } from "../../../app.module.js";
 import { PrismaService } from "../../../common/prisma/prisma.service.js";
+import { CacheService } from "../../../common/cache/cache.service.js";
 import {
   chantEnvironmentRuleGroupResponseSchema,
   chantEnvironmentRulesPageResponseSchema,
@@ -45,6 +46,7 @@ interface SeedGroup {
 describe("Chanting Environment Rules API", () => {
   let app: INestApplication;
   let prisma: PrismaService;
+  let cache: CacheService;
 
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -56,10 +58,12 @@ describe("Chanting Environment Rules API", () => {
     await app.init();
 
     prisma = app.get(PrismaService);
+    cache = app.get(CacheService);
   });
 
   beforeEach(async () => {
     await prisma.cleanDatabase();
+    await cache.delByPrefix("content:chanting:");
 
     const groups: SeedGroup[] = [
       {
@@ -243,7 +247,8 @@ describe("Chanting Environment Rules API", () => {
     const rawBody: unknown = response.body;
 
     expect(response.status).toBe(200);
-    const body = chantEnvironmentRulesPageResponseSchema.parse(rawBody);
+    const envelope = rawBody as { data: unknown };
+    const body = chantEnvironmentRulesPageResponseSchema.parse(envelope.data);
     expect(body.intro.title).toBe(
       "Lưu ý môi trường và thời gian niệm kinh",
     );
@@ -281,7 +286,8 @@ describe("Chanting Environment Rules API", () => {
     const rawBody: unknown = response.body;
 
     expect(response.status).toBe(200);
-    const body = chantEnvironmentRuleGroupResponseSchema.parse(rawBody);
+    const envelope = rawBody as { data: unknown };
+    const body = chantEnvironmentRuleGroupResponseSchema.parse(envelope.data);
     expect(body.groupKey).toBe("non-interpretive-cautions");
     expect(body.rules).toHaveLength(1);
     expect(body.rules[0]).toMatchObject({

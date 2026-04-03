@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, Logger } from "@nestjs/common";
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException, Logger } from "@nestjs/common";
 import { randomBytes, createHash } from "node:crypto";
 import { nanoid } from "nanoid";
 import * as argon2 from "argon2";
@@ -403,86 +403,128 @@ export class IdentityService {
    * Excludes: passwordHash, internal audit logs, system fields.
    */
   async exportPersonalData(userId: string) {
-    const [user, sessions, communityPosts, communityComments, vows, gongkeLogs, repentanceLogs, lifeReleaseJournals, notificationPrefs] =
-      await Promise.all([
-        this.prisma.user.findUnique({
-          where: { id: userId },
-          select: {
-            publicId: true,
-            email: true,
-            displayName: true,
-            avatarUrl: true,
-            role: true,
-            status: true,
-            emailVerifiedAt: true,
-            lastLoginAt: true,
-            createdAt: true,
-          },
-        }),
-        this.prisma.session.findMany({
-          where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
-          select: { id: true, userAgent: true, ipAddress: true, createdAt: true, expiresAt: true },
-          orderBy: { createdAt: "desc" },
-          take: 50,
-        }),
-        this.prisma.communityPost.findMany({
-          where: { authorId: userId },
-          select: { publicId: true, content: true, isPinned: true, isHidden: true, createdAt: true },
-          orderBy: { createdAt: "desc" },
-          take: 200,
-        }),
-        this.prisma.communityComment.findMany({
-          where: { authorId: userId },
-          select: { content: true, isHidden: true, createdAt: true },
-          orderBy: { createdAt: "desc" },
-          take: 500,
-        }),
-        this.prisma.vow.findMany({
-          where: { userId },
-          select: { publicId: true, description: true, vowType: true, status: true, startDate: true, endDate: true, createdAt: true },
-          orderBy: { createdAt: "desc" },
-          take: 200,
-        }),
-        this.prisma.dailyGongkeLog.findMany({
-          where: { userId },
-          select: { date: true, coreCountsJson: true, note: true, createdAt: true },
-          orderBy: { date: "desc" },
-          take: 365,
-        }),
-        this.prisma.repentanceLog.findMany({
-          where: { userId },
-          select: { date: true, count: true, privateNote: true, createdAt: true },
-          orderBy: { date: "desc" },
-          take: 200,
-        }),
-        this.prisma.lifeReleaseJournal.findMany({
-          where: { userId },
-          select: { publicId: true, journalDate: true, animalType: true, quantity: true, location: true, note: true, createdAt: true },
-          orderBy: { journalDate: "desc" },
-          take: 200,
-        }),
-        this.prisma.notificationPreference.findUnique({
-          where: { userId },
-          select: { practiceReminders: true, eventReminders: true, communityUpdates: true, quietHoursStart: true, quietHoursEnd: true },
-        }),
-      ]);
+    // Critical: user profile must exist before building any export.
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        publicId: true,
+        email: true,
+        displayName: true,
+        avatarUrl: true,
+        role: true,
+        status: true,
+        emailVerifiedAt: true,
+        lastLoginAt: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException("Người dùng không tồn tại");
+    }
+
+    // Section labels must align 1-to-1 with the Promise.allSettled array order below.
+    const SECTION_NAMES = [
+      "activeSessions",
+      "communityPosts",
+      "communityComments",
+      "vows",
+      "dailyGongke",
+      "repentanceLogs",
+      "lifeReleaseJournals",
+      "notificationPreferences",
+    ] as const;
+
+    type SectionName = (typeof SECTION_NAMES)[number];
+
+    const settled = await Promise.allSettled([
+      this.prisma.session.findMany({
+        where: { userId, revokedAt: null, expiresAt: { gt: new Date() } },
+        select: { id: true, userAgent: true, ipAddress: true, createdAt: true, expiresAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      }),
+      this.prisma.communityPost.findMany({
+        where: { authorId: userId },
+        select: { publicId: true, content: true, isPinned: true, isHidden: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
+      this.prisma.communityComment.findMany({
+        where: { authorId: userId },
+        select: { content: true, isHidden: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 500,
+      }),
+      this.prisma.vow.findMany({
+        where: { userId },
+        select: { publicId: true, description: true, vowType: true, status: true, startDate: true, endDate: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      }),
+      this.prisma.dailyGongkeLog.findMany({
+        where: { userId },
+        select: { date: true, coreCountsJson: true, note: true, createdAt: true },
+        orderBy: { date: "desc" },
+        take: 365,
+      }),
+      this.prisma.repentanceLog.findMany({
+        where: { userId },
+        select: { date: true, count: true, privateNote: true, createdAt: true },
+        orderBy: { date: "desc" },
+        take: 200,
+      }),
+      this.prisma.lifeReleaseJournal.findMany({
+        where: { userId },
+        select: { publicId: true, journalDate: true, animalType: true, quantity: true, location: true, note: true, createdAt: true },
+        orderBy: { journalDate: "desc" },
+        take: 200,
+      }),
+      this.prisma.notificationPreference.findUnique({
+        where: { userId },
+        select: { practiceReminders: true, eventReminders: true, communityUpdates: true, quietHoursStart: true, quietHoursEnd: true },
+      }),
+    ]);
+
+    // Collect failed sections and log each one explicitly.
+    const failedSections: SectionName[] = [];
+    for (let i = 0; i < settled.length; i++) {
+      const result = settled[i];
+      if (result.status === "rejected") {
+        const section = SECTION_NAMES[i];
+        failedSections.push(section);
+        this.logger.error({
+          msg: "export.section_failed",
+          section,
+          userId,
+          error: result.reason instanceof Error ? result.reason.message : String(result.reason),
+        });
+      }
+    }
+
+    const val = <T>(r: PromiseSettledResult<T>, fallback: T): T =>
+      r.status === "fulfilled" ? r.value : fallback;
+
+    const [sessions, communityPosts, communityComments, vows, gongkeLogs, repentanceLogs, lifeReleaseJournals, notificationPrefs] = settled;
 
     return {
       exportedAt: new Date().toISOString(),
       legalBasis: "Nghị định 13/2023/NĐ-CP — quyền truy cập và di chuyển dữ liệu cá nhân",
+      partialExport: failedSections.length > 0,
+      failedSections,
       profile: user,
-      activeSessions: sessions,
+      activeSessions: val(sessions, []),
       communityActivity: {
-        posts: communityPosts,
-        comments: communityComments,
+        posts: val(communityPosts, []),
+        comments: val(communityComments, []),
       },
       practiceData: {
-        vows,
-        dailyGongke: gongkeLogs,
-        repentanceLogs,
-        lifeReleaseJournals,
+        vows: val(vows, []),
+        dailyGongke: val(gongkeLogs, []),
+        repentanceLogs: val(repentanceLogs, []),
+        lifeReleaseJournals: val(lifeReleaseJournals, []),
       },
-      notificationPreferences: notificationPrefs,
+      notificationPreferences: val(notificationPrefs, null),
     };
   }
 

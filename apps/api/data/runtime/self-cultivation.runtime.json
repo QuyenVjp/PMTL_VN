@@ -1,0 +1,115 @@
+{
+  "publicId": "selfcult-0001",
+  "slug": "kinh-van-tu-tu",
+  "title": "Kinh văn tự tu",
+  "status": "DRAFT",
+  "updatedAt": "2026-03-29T19:00:00.000Z",
+  "updatedByLabel": "Biên tập Kinh Văn Tự Tu",
+  "boundarySummary": {
+    "differentFromDailyPractice": "Kinh văn tự tu là lane reference-first cho cách dùng, bảo quản và nguồn dẫn; không phải engine preset hằng ngày hay tracker user-state.",
+    "differentFromLittleHouse": "Lane này gần Ngôi Nhà Nhỏ ở chỗ có nghi thức nhạy cảm và step sequence rõ, nhưng không được trộn mù wording hay rule xử lý nếu thiếu boundary note.",
+    "nonNegotiables": [
+      "Mọi rule nhạy cảm như cách ghi tên, chấm đỏ, giờ giấc, bảo quản phải có sourceReference.",
+      "Printable và PDF đi qua downloads, không bury trong rich text tự phát.",
+      "Flow nhiều bước phải là step sequence, không rút gọn thành một paragraph mơ hồ."
+    ]
+  },
+  "sourceReferences": [
+    "design/03-domains/content/REFERENCES/KINH-VAN-TU-TU-CONTENT-INVENTORY.MD",
+    "design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md#4a",
+    "design/04-execution-overlay/api/API_ROUTE_INVENTORY.md"
+  ],
+  "versionNotes": [
+    "v1.0 — Khởi tạo từ image data pack 2026-03-29, chốt flow đốt có bàn thờ và boundary note với Ngôi Nhà Nhỏ."
+  ],
+  "guides": [
+    {
+      "publicId": "scg-bat-dau-0001",
+      "slug": "kinh-van-tu-tu-bat-dau",
+      "title": "Bắt đầu với Tam Đại Pháp Bảo",
+      "summary": "Giải thích 3 trụ cột Niệm Kinh, Phát Nguyện, Phóng Sanh trước khi user đi sâu vào Kinh Văn Tự Tu.",
+      "groupKey": "BAT_DAU",
+      "sourceReference": "KINH-VAN-TU-TU-CONTENT-INVENTORY §2.1",
+      "boundaryNote": "Khối mở đầu này là orientation block, không phải tracker công khóa.",
+      "warningNotes": [],
+      "displayOrder": 0,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    },
+    {
+      "publicId": "scg-cach-dung-0001",
+      "slug": "kinh-van-tu-tu-cach-dung-co-ban-tho",
+      "title": "Cách dùng khi có bàn thờ",
+      "summary": "Flow 4 bước: thắp hương, cầu nguyện, đốt đúng thứ tự, cảm tạ và xử lý tro sạch sẽ.",
+      "groupKey": "CACH_DUNG",
+      "sourceReference": "KINH-VAN-TU-TU-CONTENT-INVENTORY §2.2",
+      "boundaryNote": "Flow này giữ step sequence; không rewrite thành prose rời rạc.",
+      "warningNotes": [
+        "Không dùng đèn Phật để châm.",
+        "Không nói chuyện, không niệm kinh trong lúc đang đốt."
+      ],
+      "displayOrder": 0,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    },
+    {
+      "publicId": "scg-bao-quan-0001",
+      "slug": "kinh-van-tu-tu-bao-quan",
+      "title": "Bảo quản sau khi hoàn thành",
+      "summary": "Chốt warning list và note cất giữ sạch sẽ, tránh trộn với giấy tạp hoặc môi trường bất kính.",
+      "groupKey": "BAO_QUAN",
+      "sourceReference": "KINH-VAN-TU-TU-CONTENT-INVENTORY §5",
+      "boundaryNote": "Warning wording phải có version note trước khi publish.",
+      "warningNotes": [
+        "Không để lẫn với rác bẩn.",
+        "UI mobile phải đọc được từng bước không cần zoom ảnh."
+      ],
+      "displayOrder": 0,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    },
+    {
+      "publicId": "scg-truong-hop-0001",
+      "slug": "kinh-van-tu-tu-truong-hop-su-dung",
+      "title": "Trường hợp sử dụng theo loại tờ",
+      "summary": "Case matrix cho Đại Bi Chú, Tâm Kinh và Lễ Phật Đại Sám Hối Văn cùng mục đích cầu chính.",
+      "groupKey": "TRUONG_HOP_SU_DUNG",
+      "sourceReference": "KINH-VAN-TU-TU-CONTENT-INVENTORY bảng case matrix",
+      "boundaryNote": "Đây là scenario guide reference-first, không phải preset engine kiểu Kinh Bài Tập.",
+      "warningNotes": [],
+      "displayOrder": 0,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    }
+  ],
+  "faq": [
+    {
+      "publicId": "scfaq-0001",
+      "question": "Kinh văn tự tu khác gì với Kinh bài tập?",
+      "answer": "Kinh văn tự tu là lane reference-first cho cách dùng, bảo quản và nguồn dẫn. Kinh bài tập là workspace preset/guide cho hành trì hằng ngày, không phải owner của wording nghi thức Kinh Văn Tự Tu.",
+      "sourceReference": "ADMIN_MODULE_SPECS §4a",
+      "displayOrder": 0,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    },
+    {
+      "publicId": "scfaq-0002",
+      "question": "Khi nào cần boundary note với Ngôi Nhà Nhỏ?",
+      "answer": "Khi một rule hoặc quy trình có wording gần với Ngôi Nhà Nhỏ như flow hủy tờ sai/bẩn. Không được trộn wording giữa hai lane nếu chưa ghi rõ boundary note và sourceReference.",
+      "sourceReference": "KINH-VAN-TU-TU-CONTENT-INVENTORY §2.3, §5",
+      "displayOrder": 1,
+      "updatedAt": "2026-03-29T19:00:00.000Z"
+    }
+  ],
+  "downloads": [
+    {
+      "publicId": "scdl-0001",
+      "title": "Poster quy trình đốt có bàn thờ",
+      "assetType": "PRINTABLE",
+      "fileName": "kinh-van-tu-tu-dot-co-ban-tho-full.png",
+      "displayOrder": 0
+    },
+    {
+      "publicId": "scdl-0002",
+      "title": "PDF hướng dẫn Kinh Văn Tự Tu",
+      "assetType": "GUIDE_PDF",
+      "fileName": "kinh-van-tu-tu-huong-dan.pdf",
+      "displayOrder": 1
+    }
+  ]
+}

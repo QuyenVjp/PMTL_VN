@@ -45,12 +45,8 @@ export class ContactService {
 
     this.logger.log(`Contact submission created: ${submission.publicId}`);
 
-    // Invalidate contact list cache when new submission is added
-    await Promise.all([
-      this.cache.del('contacts:list:{"page":1,"pageSize":10}'),
-      this.cache.del('contacts:list:{"page":1,"pageSize":20}'),
-      this.cache.del('contacts:list:{"page":1,"pageSize":50}'),
-    ]);
+    // Invalidate all contact list cache entries regardless of page/pageSize
+    await this.cache.delByPrefix("contacts:list:");
 
     return { publicId: submission.publicId };
   }

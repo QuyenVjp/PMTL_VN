@@ -19,6 +19,7 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -42,8 +43,9 @@ import {
   WorkspaceDataTable,
   WorkspaceRowActions,
 } from "@/components/workspace";
+import { useNavigateTo } from "@/lib/router-utils";
 import { createSelectColumn } from "@/lib/table/select-column";
-import { wisdomEntryListOptions, type WisdomEntryItem } from "./queries";
+import { authorityProfileListOptions, wisdomEntryListOptions, type WisdomEntryItem } from "./queries";
 import {
   useCreateWisdomEntry,
   useUpdateWisdomEntry,
@@ -56,7 +58,7 @@ import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type F
 
 // ── Context ───────────────────────────────────────────────────────────
 
-type WisdomDialogType = "create" | "edit" | "publish" | "delete" | null;
+type WisdomDialogType = "edit" | "publish" | "delete" | null;
 
 type WisdomContextValue = {
   open: WisdomDialogType;
@@ -118,6 +120,32 @@ function statusLabel(s: string): string {
   return s;
 }
 
+function getYouTubeId(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  const patterns = [
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtu\.be\/([^?]+)/,
+    /youtube\.com\/embed\/([^?]+)/,
+    /youtube\.com\/shorts\/([^?]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+
+  return null;
+}
+
+function excerptPreview(value: string | null | undefined): string {
+  return (value ?? "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 // ── Field wrapper ────────────────────────────────────────────────────
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
@@ -127,6 +155,147 @@ function Field({ label, children, hint }: { label: string; children: React.React
       {children}
       {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
     </label>
+  );
+}
+
+function WisdomVideoDeck({ entries }: { entries: WisdomEntryItem[] }) {
+  const [activeType, setActiveType] = useState<"ALL" | WisdomEntryItem["entryType"]>("ALL");
+  const [selectedPublicId, setSelectedPublicId] = useState<string | null>(null);
+
+  const videoEntries = useMemo(
+    () =>
+      entries
+        .filter((entry) => getYouTubeId(entry.sourceUrl))
+        .sort((a, b) => new Date(b.publishedAt ?? b.createdAt).getTime() - new Date(a.publishedAt ?? a.createdAt).getTime()),
+    [entries],
+  );
+
+  const typeOptions = useMemo<Array<"ALL" | WisdomEntryItem["entryType"]>>(() => {
+    const seen = new Set(videoEntries.map((entry) => entry.entryType));
+    return [
+      "ALL",
+      ...entryTypeOptions
+        .filter((option) => seen.has(option.value as WisdomEntryItem["entryType"]))
+        .map((option) => option.value as WisdomEntryItem["entryType"]),
+    ];
+  }, [videoEntries]);
+
+  const filteredEntries = useMemo(() => {
+    if (activeType === "ALL") return videoEntries;
+    return videoEntries.filter((entry) => entry.entryType === activeType);
+  }, [activeType, videoEntries]);
+
+  const selectedEntry =
+    filteredEntries.find((entry) => entry.publicId === selectedPublicId) ??
+    filteredEntries[0] ??
+    null;
+
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-2">
+            <CardTitle className="text-base">Kho video Bạch thoại / Khai thị</CardTitle>
+            <CardDescription>
+              Surface này ưu tiên bài có `URL nguồn` YouTube để admin nhìn đúng logic player, thumbnail và loại nội dung thay vì màn hình mô tả trống.
+            </CardDescription>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {typeOptions.map((type) => (
+              <Button
+                key={type}
+                type="button"
+                variant={activeType === type ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveType(type)}
+              >
+                {type === "ALL" ? "Tất cả video" : entryTypeLabel(type)}
+              </Button>
+            ))}
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {selectedEntry ? (
+            <>
+              <div className="overflow-hidden rounded-xl border">
+                <div className="aspect-video bg-black">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYouTubeId(selectedEntry.sourceUrl) ?? ""}?rel=0`}
+                    title={selectedEntry.title}
+                    className="size-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="grid gap-3 border-t px-4 py-4 lg:grid-cols-[1fr_auto] lg:items-start">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline">{entryTypeLabel(selectedEntry.entryType)}</Badge>
+                      <Badge variant="outline" className={statusBadgeClass(selectedEntry.status)}>
+                        {statusLabel(selectedEntry.status)}
+                      </Badge>
+                      {selectedEntry.sourceCode ? (
+                        <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+                          {selectedEntry.sourceCode}
+                        </span>
+                      ) : null}
+                    </div>
+                    <h2 className="text-xl font-semibold">{selectedEntry.title}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {excerptPreview(selectedEntry.excerpt) || "Chưa có tóm tắt cho entry này."}
+                    </p>
+                  </div>
+                  <div className="space-y-1 text-xs text-muted-foreground lg:text-right">
+                    <div>Tạo bởi {selectedEntry.author.displayName}</div>
+                    <div>{new Date(selectedEntry.publishedAt ?? selectedEntry.createdAt).toLocaleString("vi-VN")}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {filteredEntries.slice(0, 8).map((entry) => {
+                  const youtubeId = getYouTubeId(entry.sourceUrl);
+                  if (!youtubeId) return null;
+
+                  const isActive = selectedEntry.publicId === entry.publicId;
+                  return (
+                    <button
+                      key={entry.publicId}
+                      type="button"
+                      onClick={() => setSelectedPublicId(entry.publicId)}
+                      className={cn(
+                        "overflow-hidden rounded-xl border text-left transition hover:border-primary/50",
+                        isActive && "border-primary ring-1 ring-primary/30",
+                      )}
+                    >
+                      <img
+                        src={`https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`}
+                        alt={entry.title}
+                        className="aspect-video w-full object-cover"
+                        loading="lazy"
+                      />
+                      <div className="space-y-2 px-3 py-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline">{entryTypeLabel(entry.entryType)}</Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(entry.publishedAt ?? entry.createdAt).toLocaleDateString("vi-VN")}
+                          </span>
+                        </div>
+                        <p className="line-clamp-2 text-sm font-medium">{entry.title}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="rounded-xl border border-dashed px-4 py-10 text-sm text-muted-foreground">
+              Chưa có bài nào có `URL nguồn` YouTube để dựng player. Hãy tạo bài mới bằng form full-page và dán link nguồn video.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -156,7 +325,7 @@ function WisdomRowActions({ row }: { row: WisdomEntryItem }) {
 
 // ── Create dialog ────────────────────────────────────────────────────
 
-function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const create = useCreateWisdomEntry();
   const suggestSlug = useSuggestWisdomSlug();
   const createDraft = useCreateWisdomTranslationDraft();
@@ -210,8 +379,8 @@ function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChang
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>Thêm bài tri tuệ</DialogTitle>
-          <DialogDescription>Tạo bài mới — nội dung chi tiết có thể chỉnh sửa sau khi tạo.</DialogDescription>
+          <DialogTitle>Thêm bài Bạch thoại</DialogTitle>
+          <DialogDescription>Tạo bài mới cho Bạch thoại, Khai thị hoặc Phật ngôn để biên tập tiếp sau đó.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <Field label="Tiêu đề">
@@ -398,8 +567,8 @@ function WisdomEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader className="text-start">
-          <DialogTitle>Chỉnh sửa bài tri tuệ</DialogTitle>
-          <DialogDescription>Cập nhật thông tin và nội dung bài.</DialogDescription>
+          <DialogTitle>Chỉnh sửa bài Bạch thoại</DialogTitle>
+          <DialogDescription>Cập nhật thông tin nguồn và nội dung dịch của bài.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
           <Field label="Tiêu đề">
@@ -527,7 +696,7 @@ function WisdomEditDialog({
 function WisdomTable() {
   const { data: envelope, isLoading } = useQuery(wisdomEntryListOptions({ limit: 100 }));
   const entries = envelope?.data ?? [];
-  const { setOpen } = useWisdom();
+  const navigateTo = useNavigateTo();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -618,14 +787,14 @@ function WisdomTable() {
       <div className="flex items-center justify-between gap-2">
         <DataTableToolbar
           table={table}
-          searchPlaceholder="Lọc bài tri tuệ..."
+          searchPlaceholder="Lọc bài Bạch thoại..."
           viewButtonLabel="Xem"
           filters={[
             { columnId: "entryType", title: "Loại bài", options: entryTypeOptions },
             { columnId: "status", title: "Trạng thái", options: statusOptions },
           ]}
         />
-        <Button size="sm" onClick={() => setOpen("create")}>
+        <Button size="sm" onClick={() => navigateTo("/noi-dung/bach-thoai/tao-moi")}>
           <BookOpenIcon className="mr-2 size-4" />
           Thêm bài
         </Button>
@@ -634,9 +803,9 @@ function WisdomTable() {
         table={table}
         columns={columns}
         isLoading={isLoading}
-        emptyMessage="Chưa có bài tri tuệ nào."
+        emptyMessage="Chưa có bài nào trong thư viện Bạch thoại."
       />
-      <DataTableBulkActions table={table} entityName="bài tri tuệ" />
+      <DataTableBulkActions table={table} entityName="bài Bạch thoại" />
     </div>
   );
 }
@@ -652,10 +821,6 @@ function WisdomDialogs() {
 
   return (
     <>
-      <WisdomCreateDialog
-        open={open === "create"}
-        onOpenChange={(v) => (!v ? handleClose() : setOpen("create"))}
-      />
       {currentRow && (
         <>
           <WisdomEditDialog
@@ -666,7 +831,7 @@ function WisdomDialogs() {
           <WorkspaceConfirmDialog
             open={open === "publish"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("publish"))}
-            title="Xuất bản bài tri tuệ"
+            title="Xuất bản bài Bạch thoại"
             description={
               <>
                 Xuất bản{" "}
@@ -681,7 +846,7 @@ function WisdomDialogs() {
           <WorkspaceConfirmDialog
             open={open === "delete"}
             onOpenChange={(v) => (!v ? handleClose() : setOpen("delete"))}
-            title="Xoá bài tri tuệ"
+            title="Xoá bài Bạch thoại"
             description={
               <>
                 Xoá{" "}
@@ -703,16 +868,90 @@ function WisdomDialogs() {
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function WisdomPage() {
+  const { data: entryEnvelope, isLoading: isEntryLoading } = useQuery(wisdomEntryListOptions({ limit: 100 }));
+  const { data: authorityEnvelope, isLoading: isAuthorityLoading } = useQuery(
+    authorityProfileListOptions({ limit: 20, isActive: true }),
+  );
+  const navigateTo = useNavigateTo();
+  const entries = entryEnvelope?.data ?? [];
+  const authorityProfiles = authorityEnvelope?.data ?? [];
+
   return (
     <WisdomProvider>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Tri Tuệ</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Quản lý bài Bạch thoại Phật pháp, Khai thị, Phật ngôn, và Bài pháp hội.
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Bạch thoại Phật pháp</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Quản trị kho video Bạch thoại, Khai thị, Phật ngôn và Bài pháp hội theo nguồn YouTube hoặc nguồn chính thức. Hỏi đáp là nhóm nội dung riêng, không nhập chung vào lane này.
+            </p>
+          </div>
+          <Button onClick={() => navigateTo("/noi-dung/bach-thoai/tao-moi")}>
+            <BookOpenIcon className="mr-2 size-4" />
+            Thêm bài
+          </Button>
         </div>
-        <WisdomTable />
+
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="space-y-4">
+            {isEntryLoading ? (
+              <Card>
+                <CardContent className="px-4 py-10 text-sm text-muted-foreground">Đang tải thư viện video Bạch thoại...</CardContent>
+              </Card>
+            ) : (
+              <WisdomVideoDeck entries={entries} />
+            )}
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base">Bảng quản trị bài Bạch thoại</CardTitle>
+                <CardDescription>
+                  Vẫn giữ bảng vận hành để lọc, xuất bản và chỉnh sửa; nhưng phần trên luôn phản ánh đúng logic video trước, văn bản sau của Bạch thoại.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <WisdomTable />
+          </div>
+
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Quy tắc phân luồng</CardTitle>
+                <CardDescription>
+                  Hỏi đáp không được nhập ở workspace này và không được dùng copy hoặc route thay cho Bạch thoại Phật pháp.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3 text-sm text-muted-foreground">
+                <div className="rounded-lg border px-3 py-2">Bạch thoại ưu tiên video, nguồn phát và dấu vết nguồn để người duyệt đối chiếu nhanh.</div>
+                <div className="rounded-lg border px-3 py-2">Hỏi đáp đi nhóm nội dung riêng, không dùng cùng UX với kho video Bạch thoại.</div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Hồ sơ nguồn đáng tin</CardTitle>
+                <CardDescription>Hồ sơ nguồn đang hoạt động để gắn provenance cho bài nhạy cảm hoặc cần đối chiếu kỹ.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-3">
+                {isAuthorityLoading ? (
+                  <div className="text-sm text-muted-foreground">Đang tải hồ sơ nguồn...</div>
+                ) : authorityProfiles.length ? (
+                  authorityProfiles.slice(0, 6).map((profile) => (
+                    <div key={profile.publicId} className="rounded-lg border px-3 py-3 text-sm text-muted-foreground">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-medium text-foreground">{profile.name}</span>
+                        {profile.title ? <Badge variant="outline">{profile.title}</Badge> : null}
+                      </div>
+                      {profile.description ? <p className="mt-2 line-clamp-3">{profile.description}</p> : null}
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-lg border border-dashed px-3 py-8 text-sm text-muted-foreground">Chưa có hồ sơ nguồn nào.</div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
       <WisdomDialogs />
     </WisdomProvider>

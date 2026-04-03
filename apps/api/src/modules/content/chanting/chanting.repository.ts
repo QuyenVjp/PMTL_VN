@@ -74,10 +74,38 @@ export class ChantingRepository {
     return this.prisma.chantingSession.count(args);
   }
 
-  async findChantingSessionById(sessionId: string, options?: Omit<Prisma.ChantingSessionFindUniqueArgs, 'where'>) {
+  async findChantingSessionById(sessionId: string) {
     return this.prisma.chantingSession.findUnique({
       where: { id: sessionId },
-      ...options,
+    });
+  }
+
+  // ── Admin typed variants — include encoded statically so Prisma infers payload ──
+
+  async findChantingSessionsAdminList(args: {
+    where?: Prisma.ChantingSessionWhereInput;
+    orderBy?: Prisma.ChantingSessionOrderByWithRelationInput | Prisma.ChantingSessionOrderByWithRelationInput[];
+    skip?: number;
+    take?: number;
+  }) {
+    return this.prisma.chantingSession.findMany({
+      ...args,
+      include: {
+        user: {
+          select: { id: true, email: true, displayName: true },
+        },
+      },
+    });
+  }
+
+  async findChantingSessionByIdAdmin(sessionId: string) {
+    return this.prisma.chantingSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        user: {
+          select: { id: true, email: true, displayName: true, role: true },
+        },
+      },
     });
   }
 

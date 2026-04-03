@@ -6,6 +6,7 @@ import type { ListResponse } from "@/lib/api/envelopes.js";
 
 export interface PostListItem {
   id: string;
+  publicId: string;
   slug: string;
   title: string;
   postType: string;
@@ -24,8 +25,15 @@ export interface PostListItem {
   updatedAt: string;
 }
 
+export interface PostContentPayload {
+  bodyHtml?: string;
+  html?: string;
+  body?: string;
+  [key: string]: unknown;
+}
+
 export interface PostDetail extends PostListItem {
-  content: unknown;
+  content: PostContentPayload | null;
 }
 
 export interface PostListFilters {

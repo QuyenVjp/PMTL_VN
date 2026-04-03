@@ -11,6 +11,7 @@ interface CreateGuideInput {
   title: string;
   slug?: string;
   category: string;
+  content?: unknown;
   excerpt?: string;
   coverMediaPublicId?: string;
   sortOrder?: number;
@@ -21,6 +22,7 @@ interface UpdateGuideInput {
   title?: string;
   slug?: string;
   category?: string;
+  content?: unknown;
   excerpt?: string;
   coverMediaPublicId?: string | null;
   sortOrder?: number;

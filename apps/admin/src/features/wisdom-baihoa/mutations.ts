@@ -53,7 +53,7 @@ export function useCreateWisdomEntry() {
     mutationFn: (input: CreateWisdomEntryInput) =>
       adminClient.post("/admin/wisdom/entries", input),
     onSuccess: () => {
-      toast.success("Đã tạo bài tri tuệ.");
+      toast.success("Đã tạo bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
       void qc.invalidateQueries({ queryKey: dashboardKeys.all });
     },
@@ -67,7 +67,7 @@ export function useUpdateWisdomEntry() {
     mutationFn: ({ publicId, ...input }: UpdateWisdomEntryInput) =>
       adminClient.patch(`/admin/wisdom/entries/${publicId}`, input),
     onSuccess: (_data, { publicId }) => {
-      toast.success("Đã cập nhật bài tri tuệ.");
+      toast.success("Đã cập nhật bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
       void qc.invalidateQueries({ queryKey: wisdomKeys.detail(publicId) });
     },
@@ -81,7 +81,7 @@ export function usePublishWisdomEntry() {
     mutationFn: (publicId: string) =>
       adminClient.post(`/admin/wisdom/entries/${publicId}/publish`),
     onSuccess: () => {
-      toast.success("Đã xuất bản bài tri tuệ.");
+      toast.success("Đã xuất bản bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
       void qc.invalidateQueries({ queryKey: dashboardKeys.all });
     },
@@ -95,7 +95,7 @@ export function useDeleteWisdomEntry() {
     mutationFn: (publicId: string) =>
       adminClient.delete(`/admin/wisdom/entries/${publicId}`),
     onSuccess: () => {
-      toast.success("Đã xoá bài tri tuệ.");
+      toast.success("Đã xoá bài Bạch thoại.");
       void qc.invalidateQueries({ queryKey: wisdomKeys.lists() });
       void qc.invalidateQueries({ queryKey: dashboardKeys.all });
     },

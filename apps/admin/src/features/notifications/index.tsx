@@ -29,6 +29,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -107,6 +114,17 @@ function statusLabel(s: string): string {
   return s;
 }
 
+const audienceOptions = [
+  { label: "Tất cả thành viên", value: "all_members" },
+  { label: "Chỉ quản trị viên", value: "admin_only" },
+  { label: "Điều phối viên và biên tập", value: "operators" },
+  { label: "Người đang bật nhắc nhở niệm kinh", value: "chanting_reminder_subscribers" },
+];
+
+function audienceLabel(value: string | null): string {
+  return audienceOptions.find((option) => option.value === value)?.label ?? "Tất cả thành viên";
+}
+
 // ── Stats cards ───────────────────────────────────────────────────────
 
 function StatsCards() {
@@ -114,12 +132,12 @@ function StatsCards() {
   const { data: subStats, isLoading: subLoading } = useQuery(subscriptionStatsOptions());
 
   const cards = [
-    { label: "Tổng jobs", value: pushStatus?.total, loading: statusLoading },
+    { label: "Tổng đợt gửi", value: pushStatus?.total, loading: statusLoading },
     { label: "Chờ xử lý", value: pushStatus?.pending, loading: statusLoading },
     { label: "Hoàn thành", value: pushStatus?.completed, loading: statusLoading },
     { label: "Thất bại", value: pushStatus?.failed, loading: statusLoading },
-    { label: "Subscriptions hoạt động", value: subStats?.active, loading: subLoading },
-    { label: "Subscriptions ngưng", value: subStats?.inactive, loading: subLoading },
+    { label: "Thiết bị đang nhận", value: subStats?.active, loading: subLoading },
+    { label: "Thiết bị đã tắt", value: subStats?.inactive, loading: subLoading },
   ];
 
   return (
@@ -152,10 +170,10 @@ function CreatePushJobDialog({
   const createPushJob = useCreatePushJob();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
+  const [targetAudience, setTargetAudience] = useState("all_members");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  const reset = () => { setTitle(""); setBody(""); setTargetAudience(""); setFieldErrors({}); };
+  const reset = () => { setTitle(""); setBody(""); setTargetAudience("all_members"); setFieldErrors({}); };
 
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
@@ -182,7 +200,7 @@ function CreatePushJobDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
           <DialogTitle>Tạo đợt gửi thông báo</DialogTitle>
-          <DialogDescription>Gửi push notification đến thiết bị của thành viên.</DialogDescription>
+          <DialogDescription>Gửi thông báo đẩy đến thiết bị của thành viên theo đúng nhóm nhận.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -200,14 +218,14 @@ function CreatePushJobDialog({
             <FieldError message={fieldErrors.title} />
           </label>
           <label className="grid gap-2">
-            <span className="text-sm font-medium">Nội dung</span>
+            <span className="text-sm font-medium">Nội dung thông báo</span>
             <Textarea
               value={body}
               onChange={(e) => {
                 setBody(e.target.value);
                 if (fieldErrors.body) setFieldErrors((prev) => ({ ...prev, body: "" }));
               }}
-              placeholder="Nội dung thông báo..."
+              placeholder="Soạn nội dung ngắn gọn, rõ ràng và dễ hiểu cho người lớn tuổi..."
               rows={3}
               className={invalidFieldClass(Boolean(fieldErrors.body))}
             />
@@ -215,7 +233,21 @@ function CreatePushJobDialog({
           </label>
           <label className="grid gap-2">
             <span className="text-sm font-medium">Đối tượng (tuỳ chọn)</span>
-            <Input value={targetAudience} onChange={(e) => setTargetAudience(e.target.value)} placeholder="ALL, MEMBER, ADMIN..." />
+            <Select value={targetAudience} onValueChange={setTargetAudience}>
+              <SelectTrigger>
+                <SelectValue placeholder="Chọn nhóm nhận thông báo" />
+              </SelectTrigger>
+              <SelectContent>
+                {audienceOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-xs text-muted-foreground">
+              Hệ thống sẽ gửi cho nhóm: {audienceLabel(targetAudience)}.
+            </span>
           </label>
         </div>
 
@@ -282,6 +314,15 @@ function NotificationsTable() {
         ),
         meta: { label: "Tiêu đề" },
         enableHiding: false,
+      },
+      {
+        accessorKey: "targetAudience",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Đối tượng" />,
+        cell: ({ row }) => (
+          <div className="text-sm text-muted-foreground">{audienceLabel(row.original.targetAudience)}</div>
+        ),
+        meta: { label: "Đối tượng" },
+        enableSorting: false,
       },
       {
         accessorKey: "status",
@@ -474,7 +515,7 @@ export function NotificationsPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Thông báo</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Theo dõi push jobs, subscription stats và gửi thông báo.
+              Theo dõi các đợt gửi, số thiết bị đang nhận và tạo thông báo với nhóm người nhận rõ ràng.
             </p>
           </div>
           <NotifPrimaryButtons />

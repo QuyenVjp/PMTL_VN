@@ -10,6 +10,16 @@ export interface WisdomEntryAuthor {
   avatarUrl: string | null;
 }
 
+export interface WisdomAuthorityProfileItem {
+  publicId: string;
+  name: string;
+  title: string | null;
+  description: string | null;
+  sourceFamily: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface WisdomEntryItem {
   id: string;
   publicId: string;
@@ -37,6 +47,7 @@ export const wisdomKeys = {
   lists: () => [...wisdomKeys.all, "list"] as const,
   list: (filters: Record<string, unknown>) => [...wisdomKeys.lists(), filters] as const,
   detail: (publicId: string) => [...wisdomKeys.all, "detail", publicId] as const,
+  authorityProfiles: () => [...wisdomKeys.all, "authority-profiles"] as const,
 };
 
 // ── Query options ────────────────────────────────────────────────────
@@ -58,5 +69,18 @@ export function wisdomEntryDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: wisdomKeys.detail(publicId),
     queryFn: () => adminClient.get<WisdomEntryItem>(`/admin/wisdom/entries/${publicId}`),
+  });
+}
+
+export function authorityProfileListOptions(filters: { limit?: number; offset?: number; isActive?: boolean } = {}) {
+  const params: Record<string, string | number | boolean | undefined> = {
+    limit: filters.limit ?? 20,
+    offset: filters.offset ?? 0,
+    ...(filters.isActive !== undefined && { isActive: String(filters.isActive) }),
+  };
+
+  return queryOptions({
+    queryKey: [...wisdomKeys.authorityProfiles(), filters] as const,
+    queryFn: () => adminClient.get<ListEnvelope<WisdomAuthorityProfileItem>>("/admin/wisdom/authority-profiles", params),
   });
 }

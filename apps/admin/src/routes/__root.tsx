@@ -107,11 +107,17 @@ const ContactInfoPage = lazy(() =>
 const AssistedEntryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.AssistedEntryPage })),
 );
+const SelfCultivationWorkspacePage = lazy(() =>
+  import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationWorkspacePage })),
+);
 const PracticeHomePracticeGuidePage = lazy(() =>
   import("@/features/practice-support-home-guide").then((mod) => ({ default: mod.PracticeHomePracticeGuidePage })),
 );
 const WisdomPage = lazy(() =>
   import("@/features/wisdom-baihoa").then((mod) => ({ default: mod.WisdomPage })),
+);
+const WisdomCreatePage = lazy(() =>
+  import("@/features/wisdom-baihoa/create-page").then((mod) => ({ default: mod.WisdomCreatePage })),
 );
 
 // ── Detail / Create page imports ─────────────────────────────────────
@@ -174,12 +180,12 @@ const LifeReleaseGuideDetailPage = lazy(() =>
 );
 const SutraDownloadCreatePage = lazy(() =>
   import("@/features/downloads/download-create-page").then((mod) => ({
-    default: () => <mod.DownloadCreatePage backHref="/noi-dung/kinh-sach" backLabel="Kinh Sách" defaultCategory="REFERENCE" />,
+    default: () => <mod.DownloadCreatePage backHref="/noi-dung/kinh-sach" backLabel="Kinh sách" defaultCategory="REFERENCE" />,
   })),
 );
 const SutraDownloadDetailPage = lazy(() =>
   import("@/features/downloads/download-detail-page").then((mod) => ({
-    default: () => <mod.DownloadDetailPage backHref="/noi-dung/kinh-sach" backLabel="Kinh Sách" />,
+    default: () => <mod.DownloadDetailPage backHref="/noi-dung/kinh-sach" backLabel="Kinh sách" />,
   })),
 );
 
@@ -572,21 +578,26 @@ const assistedEntryRoute = createRoute({
 const practiceHomeGuideRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-van-tu-tu",
-  component: withSuspense(PracticeHomePracticeGuidePage),
+  component: withSuspense(SelfCultivationWorkspacePage),
 });
 
-// Legacy alias for old self-cultivation URL
+// Legacy alias for old tu-tai-gia guide page kept only for bookmarked draft review
 const practiceHomeGuideLegacyRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/tu-tu-tai-gia",
   component: withSuspense(PracticeHomePracticeGuidePage),
 });
 
-// Tri Tuệ (Wisdom)
+// Bạch thoại Phật pháp
 const wisdomRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/bach-thoai",
   component: withSuspense(WisdomPage),
+});
+const wisdomCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/bach-thoai/tao-moi",
+  component: withSuspense(WisdomCreatePage),
 });
 
 // Legacy alias for old bookmarked route
@@ -665,8 +676,9 @@ export const routeTree = rootRoute.addChildren([
     healthRoute,
     // Hỗ trợ
     assistedEntryRoute,
-    // Tri Tuệ
+    // Bạch thoại Phật pháp
     wisdomRoute,
+    wisdomCreateRoute,
     wisdomLegacyRoute,
   ]),
 ]);

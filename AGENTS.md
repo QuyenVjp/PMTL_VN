@@ -65,6 +65,15 @@
 - All error handling must log with pino and structured context.
 - All Vietnamese text in UI/API messages must keep proper dấu; never output Vietnamese without marks.
 - If you change project rules, skill routing, or architecture conventions, update this file, the relevant skill docs, and the affected docs in the same task.
+- Admin canon anti-drift rules:
+  - `Bạch thoại Phật pháp` must never be relabeled as `Tri Tuệ` on canonical admin/public surfaces.
+  - `Hỏi đáp / Wenda` is a separate family from `Bạch thoại`; do not merge them blindly in data ownership, copy, or route naming.
+  - `Kinh văn tự tu` must use the `self-cultivation` owner lane and must not be rebound to `practice-support/vietnam-home-practice-guide`.
+  - When a content workspace has already moved to Strapi-like full-page create/detail flow, do not regress it back to modal-create UX.
+  - `Bạch thoại Phật pháp` admin workspace is video/source-first: if an entry carries a YouTube-capable `sourceUrl`, the management surface must prioritize player/thumbnail reality over placeholder tabs or generic prose dashboards.
+  - `Kinh sách` and `Tài liệu` are separate admin route families. Do not hardcode `/noi-dung/tai-lieu` inside `Kinh sách` row click, action menu, create, or detail flows.
+  - When a media picker exists, operators must choose by preview; do not ask them to type raw `publicId`, file path, or storage key on canonical admin forms.
+  - Operator-facing admin copy must stay in Vietnamese with dấu; do not expose raw audience codes like `ALL`, `MEMBER`, `ADMIN` as the primary UX.
 
 ## Skill Routing
 - Workflow routing and skill selection order: `.agents/skills/pmtl-workflow-router/SKILL.md`

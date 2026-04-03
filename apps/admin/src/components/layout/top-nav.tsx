@@ -20,12 +20,18 @@ type TopNavLink = {
 export function TopNav({
   links,
   className,
+  mode = "all",
 }: {
   links: TopNavLink[];
   className?: string;
+  mode?: "all" | "mobile" | "desktop";
 }) {
+  const showMobile = mode === "all" || mode === "mobile";
+  const showDesktop = mode === "all" || mode === "desktop";
+
   return (
     <>
+      {showMobile ? (
       <div className="lg:hidden">
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -55,7 +61,9 @@ export function TopNav({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      ) : null}
 
+      {showDesktop ? (
       <nav className={cn("hidden items-center gap-4 lg:flex xl:gap-6", className)}>
         {links.map((link) =>
           link.disabled ? (
@@ -79,6 +87,7 @@ export function TopNav({
           ),
         )}
       </nav>
+      ) : null}
     </>
   );
 }

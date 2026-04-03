@@ -13,24 +13,24 @@ type WorkspaceTab = {
 
 const TABS: WorkspaceTab[] = [
   {
-    path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
-    label: "Môi trường & thời gian",
-    description: "Quản lý rule thời điểm, không gian, thể trạng và bối cảnh hành trì.",
-  },
-  {
     path: "/noi-dung/niem-kinh/ban-kinh",
     label: "Bản kinh",
-    description: "Biên tập script niệm, bản tụng và trạng thái xuất bản.",
+    description: "Quản lý chant item, bản tụng, audio companion và trạng thái xuất bản.",
   },
   {
     path: "/noi-dung/niem-kinh/nghi-thuc",
     label: "Nghi thức",
-    description: "Điều phối ritual template theo mục đích sử dụng.",
+    description: "Owner cho ritual template như thắp tâm hương, khấn nguyện và flow nhiều bước.",
   },
   {
     path: "/noi-dung/niem-kinh/ke-hoach",
     label: "Kế hoạch",
-    description: "Theo dõi chant plan, milestone và nhắc lịch liên quan.",
+    description: "Quản lý chant plan, milestone và cấu trúc thực hành theo từng bối cảnh.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
+    label: "Môi trường & thời gian",
+    description: "Owner cho rule time/place/environment/body-state và các warning không được suy diễn.",
   },
 ];
 
@@ -123,18 +123,18 @@ function NiemKinhWorkspace() {
           <div className="max-w-3xl">
             <p className="text-sm font-medium text-primary">Nội dung / Niệm kinh</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
-              Workspace `Niệm kinh`
+              Niệm kinh
             </h1>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Workspace này gom đúng 4 lane nghiệp vụ của Niệm kinh: rule môi trường,
-              bản kinh, nghi thức và kế hoạch. Mỗi tab giữ đúng ngữ cảnh thao tác
-              thay vì tách thành route demo rời rạc.
+              Workspace này gom 4 lane owner đúng theo admin canon: Bản kinh,
+              Nghi thức, Kế hoạch và Môi trường & thời gian. Mỗi tab giữ đúng
+              ngữ cảnh biên tập thay vì nhét mọi thứ vào một route demo rời rạc.
             </p>
           </div>
 
           <div className="rounded-xl border bg-background px-4 py-3 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">Current slice</p>
-            <p className="mt-1">Đi vào đúng tab để tiếp tục thao tác biên tập.</p>
+            <p className="font-medium text-foreground">Lát cắt hiện tại</p>
+            <p className="mt-1">Chọn đúng tab để tiếp tục thao tác theo owner lane tương ứng.</p>
           </div>
         </div>
       </section>

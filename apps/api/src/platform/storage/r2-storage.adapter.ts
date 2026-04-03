@@ -11,8 +11,8 @@ import type { StorageInterface } from "./storage.interface.js";
 
 @Injectable()
 export class R2StorageAdapter implements StorageInterface {
-  private readonly client: S3Client;
-  private readonly bucket: string;
+  private readonly client?: S3Client;
+  private readonly bucket?: string;
   private readonly baseUrl: string;
 
   constructor(private readonly configService: ConfigService) {
@@ -20,30 +20,28 @@ export class R2StorageAdapter implements StorageInterface {
     const endpoint = this.configService.r2Endpoint;
     const accessKeyId = this.configService.r2AccessKeyId;
     const secretAccessKey = this.configService.r2SecretAccessKey;
-
-    if (!bucket || !endpoint || !accessKeyId || !secretAccessKey) {
-      throw new InternalServerErrorException(
-        "Thiếu cấu hình R2 (R2_BUCKET/R2_ENDPOINT/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY)",
-      );
-    }
-
-    this.bucket = bucket;
     this.baseUrl = this.normalizeBaseUrl(this.configService.publicMediaBaseUrl);
-    this.client = new S3Client({
-      region: this.configService.r2Region,
-      endpoint,
-      forcePathStyle: this.configService.r2ForcePathStyle,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
+
+    if (bucket && endpoint && accessKeyId && secretAccessKey) {
+      this.bucket = bucket;
+      this.client = new S3Client({
+        region: this.configService.r2Region,
+        endpoint,
+        forcePathStyle: this.configService.r2ForcePathStyle,
+        credentials: {
+          accessKeyId,
+          secretAccessKey,
+        },
+      });
+    }
   }
 
   async upload(key: string, buffer: Buffer, mimeType: string): Promise<string> {
-    await this.client.send(
+    const client = this.requireClient();
+    const bucket = this.requireBucket();
+    await client.send(
       new PutObjectCommand({
-        Bucket: this.bucket,
+        Bucket: bucket,
         Key: key,
         Body: buffer,
         ContentType: mimeType,
@@ -53,9 +51,11 @@ export class R2StorageAdapter implements StorageInterface {
   }
 
   async delete(key: string): Promise<void> {
-    await this.client.send(
+    const client = this.requireClient();
+    const bucket = this.requireBucket();
+    await client.send(
       new DeleteObjectCommand({
-        Bucket: this.bucket,
+        Bucket: bucket,
         Key: key,
       }),
     );
@@ -66,10 +66,12 @@ export class R2StorageAdapter implements StorageInterface {
   }
 
   async exists(key: string): Promise<boolean> {
+    const client = this.requireClient();
+    const bucket = this.requireBucket();
     try {
-      await this.client.send(
+      await client.send(
         new HeadObjectCommand({
-          Bucket: this.bucket,
+          Bucket: bucket,
           Key: key,
         }),
       );
@@ -84,5 +86,21 @@ export class R2StorageAdapter implements StorageInterface {
 
   private normalizeBaseUrl(baseUrl: string): string {
     return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  }
+
+  private requireClient(): S3Client {
+    if (!this.client) {
+      throw new InternalServerErrorException(
+        "Thiếu cấu hình R2 (R2_BUCKET/R2_ENDPOINT/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY)",
+      );
+    }
+    return this.client;
+  }
+
+  private requireBucket(): string {
+    if (!this.bucket) {
+      throw new InternalServerErrorException("Thiếu cấu hình R2 bucket");
+    }
+    return this.bucket;
   }
 }

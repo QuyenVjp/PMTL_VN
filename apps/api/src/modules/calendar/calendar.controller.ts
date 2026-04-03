@@ -97,8 +97,7 @@ export class AdminCalendarController {
 
   @Get("events")
   @ApiOperation({ summary: "Danh sách sự kiện (admin)" })
-  async listEvents(@Query() rawQuery: Record<string, unknown>) {
-    const query: AdminEventQuery = adminEventQuerySchema.parse(rawQuery);
+  async listEvents(@Query(ZodValidate(adminEventQuerySchema)) query: AdminEventQuery) {
     return this.calendarService.adminListEvents(query);
   }
 

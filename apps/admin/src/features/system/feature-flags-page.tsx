@@ -1,28 +1,20 @@
 import { useMemo, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryOptions } from "@tanstack/react-query";
-import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-} from "@tanstack/react-table";
-import { PowerIcon } from "lucide-react";
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { PowerIcon, RefreshCwIcon } from "lucide-react";
 
-import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { adminClient } from "@/lib/api/admin-client.js";
-import { createSelectColumn } from "@/lib/table/select-column";
 import { flagKeys, useUpdateFeatureFlag } from "./mutations.js";
 
 interface FeatureFlag {
@@ -34,10 +26,7 @@ interface FeatureFlag {
   updatedAt: string;
 }
 
-const statusOptions = [
-  { label: "Đang bật", value: "enabled" },
-  { label: "Đang tắt", value: "disabled" },
-];
+type StatusFilter = "all" | "enabled" | "disabled";
 
 function flagListOptions() {
   return queryOptions({
@@ -46,24 +35,10 @@ function flagListOptions() {
   });
 }
 
-function FeatureFlagRowActions({
-  row,
-  onToggle,
-}: {
-  row: FeatureFlag;
-  onToggle: (row: FeatureFlag) => void;
-}) {
-  return (
-    <WorkspaceRowActions
-      actions={[
-        {
-          label: row.enabled ? "Tắt cờ" : "Bật cờ",
-          icon: PowerIcon,
-          onClick: () => onToggle(row),
-        },
-      ]}
-    />
-  );
+function statusBadge(flag: FeatureFlag) {
+  return flag.enabled
+    ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"
+    : "border-slate-200 bg-slate-50 text-slate-600 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400";
 }
 
 export function FeatureFlagsPage() {
@@ -71,122 +46,41 @@ export function FeatureFlagsPage() {
   const { data: envelope, isLoading } = useQuery(flagListOptions());
   const updateFlag = useUpdateFeatureFlag();
 
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<StatusFilter>("all");
+  const [pendingFlag, setPendingFlag] = useState<FeatureFlag | null>(null);
+  const [pendingEnabled, setPendingEnabled] = useState<boolean | null>(null);
+
   const flags = envelope?.data ?? [];
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: "updatedAt", desc: true }]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [rowSelection, setRowSelection] = useState({});
+  const filteredFlags = useMemo(() => {
+    return flags.filter((flag) => {
+      const normalizedQuery = query.trim().toLowerCase();
+      const haystack = `${flag.key} ${flag.description ?? ""}`.toLowerCase();
+      const matchesQuery = normalizedQuery ? haystack.includes(normalizedQuery) : true;
+      const matchesStatus =
+        status === "all"
+          ? true
+          : status === "enabled"
+            ? flag.enabled
+            : !flag.enabled;
 
-  const columns = useMemo<ColumnDef<FeatureFlag>[]>(
-    () => [
-      createSelectColumn<FeatureFlag>(),
-      {
-        accessorKey: "key",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Flag key" />,
-        cell: ({ row }) => <div className="font-mono text-sm font-medium">{row.original.key}</div>,
-        meta: { label: "Flag key" },
-      },
-      {
-        accessorKey: "description",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Mô tả" />,
-        cell: ({ row }) => (
-          <div className="max-w-[480px] truncate text-sm text-muted-foreground">
-            {row.original.description ?? "Không có mô tả"}
-          </div>
-        ),
-        meta: { label: "Mô tả" },
-        enableSorting: false,
-      },
-      {
-        id: "status",
-        accessorFn: (row) => (row.enabled ? "enabled" : "disabled"),
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng thái" />,
-        cell: ({ row }) => (
-          <Badge
-            variant={row.original.enabled ? "secondary" : "outline"}
-            className={row.original.enabled ? "border-emerald-200 bg-emerald-50 text-emerald-700" : ""}
-          >
-            {row.original.enabled ? "Đang bật" : "Đang tắt"}
-          </Badge>
-        ),
-        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
-        meta: { label: "Trạng thái" },
-      },
-      {
-        accessorKey: "updatedAt",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Cập nhật" />,
-        cell: ({ row }) => (
-          <div className="text-nowrap text-sm text-muted-foreground">
-            {new Date(row.original.updatedAt).toLocaleString("vi-VN")}
-          </div>
-        ),
-        meta: { label: "Cập nhật" },
-      },
-      {
-        id: "quickToggle",
-        header: () => <div className="text-right text-xs text-muted-foreground">Bật/tắt nhanh</div>,
-        cell: ({ row }) => {
-          const flag = row.original;
-          return (
-            <div className="flex justify-end">
-              <Switch
-                checked={flag.enabled}
-                disabled={updateFlag.isPending}
-                aria-label={`Bật tắt cờ ${flag.key}`}
-                onCheckedChange={(checked) => {
-                  if (checked === flag.enabled) return;
-                  updateFlag.mutate({ key: flag.key, enabled: checked });
-                }}
-              />
-            </div>
-          );
-        },
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        id: "actions",
-        cell: ({ row }) => (
-          <FeatureFlagRowActions row={row.original} onToggle={(flag) => updateFlag.mutate({ key: flag.key, enabled: !flag.enabled })} />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-    ],
-    [updateFlag],
-  );
+      return matchesQuery && matchesStatus;
+    });
+  }, [flags, query, status]);
 
-  const table = useSafeReactTable({
-    data: flags,
-    columns,
-    state: { sorting, columnVisibility, columnFilters, rowSelection },
-    getRowId: (row) => row.key,
-    enableRowSelection: true,
-    onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
-    onColumnFiltersChange: setColumnFilters,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-  });
-
-  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
-
-  const bulkToggle = async (enabled: boolean) => {
-    if (!selectedRows.length) {
+  const openToggleConfirm = (flag: FeatureFlag, enabled: boolean) => {
+    if (enabled === flag.enabled) {
       return;
     }
-    await Promise.all(
-      selectedRows.map((flag) =>
-        updateFlag.mutateAsync({ key: flag.key, enabled }),
-      ),
-    );
-    table.resetRowSelection();
+
+    setPendingFlag(flag);
+    setPendingEnabled(enabled);
+  };
+
+  const closeConfirm = () => {
+    setPendingFlag(null);
+    setPendingEnabled(null);
   };
 
   return (
@@ -195,52 +89,136 @@ export function FeatureFlagsPage() {
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight">Feature flags</h1>
           <p className="text-sm text-muted-foreground">
-            Quản trị cờ hệ thống theo pattern DataTable để thao tác nhanh và đồng nhất.
+            Danh sách cờ hệ thống theo lane vận hành nhanh. Mỗi thao tác bật hoặc tắt đều phải xác nhận trước khi ghi.
           </p>
         </div>
         <Button
           variant="outline"
           onClick={() => void queryClient.invalidateQueries({ queryKey: flagKeys.list() })}
         >
+          <RefreshCwIcon className="mr-2 size-4" />
           Làm mới
         </Button>
       </div>
 
-      <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
-        <DataTableToolbar
-          table={table}
-          searchPlaceholder="Tìm theo key hoặc mô tả..."
-          searchKey="key"
-          viewButtonLabel="Xem"
-          filters={[{ columnId: "status", title: "Trạng thái", options: statusOptions }]}
-        />
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-base">Bộ lọc</CardTitle>
+          <CardDescription>
+            Tìm theo key hoặc mô tả, rồi bật hoặc tắt từng cờ bằng nút nguồn có xác nhận.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 md:grid-cols-[1fr_220px]">
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Tìm theo key hoặc mô tả..."
+            aria-label="Tìm feature flag"
+          />
+          <Select value={status} onValueChange={(value) => setStatus(value as StatusFilter)}>
+            <SelectTrigger aria-label="Lọc trạng thái">
+              <SelectValue placeholder="Chọn trạng thái" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tất cả</SelectItem>
+              <SelectItem value="enabled">Đang bật</SelectItem>
+              <SelectItem value="disabled">Đang tắt</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
 
-        <WorkspaceDataTable
-          table={table}
-          columns={columns}
-          isLoading={isLoading}
-          emptyMessage="Không tìm thấy feature flag nào."
-        />
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-base">Danh sách cờ</CardTitle>
+              <CardDescription>
+                {isLoading ? "Đang tải..." : `${filteredFlags.length} cờ hiển thị / ${flags.length} cờ tổng cộng`}
+              </CardDescription>
+            </div>
+            <Badge variant="outline">{updateFlag.isPending ? "Đang cập nhật" : "Sẵn sàng"}</Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="rounded-xl border px-4 py-4">
+                <div className="h-4 w-48 animate-pulse rounded bg-muted" />
+                <div className="mt-3 h-3 w-80 animate-pulse rounded bg-muted" />
+              </div>
+            ))
+          ) : filteredFlags.length ? (
+            filteredFlags.map((flag) => (
+              <div
+                key={flag.key}
+                className="flex flex-col gap-3 rounded-xl border px-4 py-4 lg:flex-row lg:items-center lg:justify-between"
+              >
+                <div className="min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <code className="rounded-md bg-muted px-2 py-1 text-sm font-medium">{flag.key}</code>
+                    <Badge variant="outline" className={statusBadge(flag)}>
+                      {flag.enabled ? "Đang bật" : "Đang tắt"}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {flag.description ?? "Chưa có mô tả cho cờ này."}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Cập nhật: {new Date(flag.updatedAt).toLocaleString("vi-VN")}
+                  </p>
+                </div>
 
-        <DataTableBulkActions table={table} entityName="feature flag">
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={updateFlag.isPending}
-            onClick={() => void bulkToggle(true)}
-          >
-            Bật đã chọn
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={updateFlag.isPending}
-            onClick={() => void bulkToggle(false)}
-          >
-            Tắt đã chọn
-          </Button>
-        </DataTableBulkActions>
-      </div>
+                <div className="flex items-center justify-between gap-3 lg:justify-end">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    disabled={updateFlag.isPending}
+                    onClick={() => openToggleConfirm(flag, !flag.enabled)}
+                    aria-label={flag.enabled ? `Tắt cờ ${flag.key}` : `Bật cờ ${flag.key}`}
+                  >
+                    <PowerIcon className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">
+              Không tìm thấy feature flag nào theo bộ lọc hiện tại.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {pendingFlag && pendingEnabled !== null ? (
+        <WorkspaceConfirmDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              closeConfirm();
+            }
+          }}
+          title={pendingEnabled ? "Bật feature flag" : "Tắt feature flag"}
+          description={
+            <>
+              Bạn có chắc muốn {pendingEnabled ? "bật" : "tắt"} cờ{" "}
+              <span className="font-semibold text-foreground">{pendingFlag.key}</span> không?
+            </>
+          }
+          confirmLabel={pendingEnabled ? "Bật cờ" : "Tắt cờ"}
+          isPending={updateFlag.isPending}
+          onConfirm={() => {
+            updateFlag.mutate(
+              { key: pendingFlag.key, enabled: pendingEnabled },
+              {
+                onSuccess: () => {
+                  closeConfirm();
+                },
+              },
+            );
+          }}
+        />
+      ) : null}
     </div>
   );
 }

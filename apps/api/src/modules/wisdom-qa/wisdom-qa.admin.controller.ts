@@ -15,6 +15,7 @@ import { ApiTags, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
+import type { Request as ExpressRequest } from "express";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { WisdomQaService } from "./wisdom-qa.service.js";
 import {
@@ -68,13 +69,13 @@ export class WisdomQaAdminController {
   createEntry(
     @Body(ZodValidate(createWisdomEntrySchema)) input: CreateWisdomEntryInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.createWisdomEntry(input, user.id, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -87,13 +88,13 @@ export class WisdomQaAdminController {
     @Param("id") id: string,
     @Body(ZodValidate(updateWisdomEntrySchema)) input: UpdateWisdomEntryInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.updateWisdomEntry(id, input, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -106,13 +107,13 @@ export class WisdomQaAdminController {
   publishEntry(
     @Param("id") id: string,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.publishWisdomEntry(id, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -125,13 +126,13 @@ export class WisdomQaAdminController {
   deleteEntry(
     @Param("id") id: string,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.deleteWisdomEntry(id, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -155,13 +156,13 @@ export class WisdomQaAdminController {
   suggestSlug(
     @Body(ZodValidate(suggestSlugSchema)) input: SuggestSlugInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.suggestSlug(input, {
       actorId: user.id,
       actorType: "admin",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -172,13 +173,13 @@ export class WisdomQaAdminController {
   createTranslationDraft(
     @Body(ZodValidate(translationDraftSchema)) input: TranslationDraftInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.createTranslationDraft(input, {
       actorId: user.id,
       actorType: "admin",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -202,13 +203,13 @@ export class WisdomQaAdminController {
   createAuthorityProfile(
     @Body(ZodValidate(createAuthorityProfileSchema)) input: CreateAuthorityProfileInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.createAuthorityProfile(input, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -221,13 +222,13 @@ export class WisdomQaAdminController {
     @Param("publicId") publicId: string,
     @Body(ZodValidate(updateAuthorityProfileSchema)) input: UpdateAuthorityProfileInput,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.updateAuthorityProfile(publicId, input, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 
@@ -240,13 +241,13 @@ export class WisdomQaAdminController {
   deleteAuthorityProfile(
     @Param("publicId") publicId: string,
     @CurrentUser() user: AuthenticatedUser,
-    @Req() req: Request,
+    @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.deleteAuthorityProfile(publicId, {
       actorId: user.id,
       actorType: "user",
-      ipAddress: (req as any).ip,
-      userAgent: (req as any).headers["user-agent"],
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
     });
   }
 }

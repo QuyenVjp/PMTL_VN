@@ -83,6 +83,10 @@ export default defineConfig({
   server: {
     port: 3002,
     host: "127.0.0.1",
+    allowedHosts: [
+      "discs-floppy-rolling-markers.trycloudflare.com",
+      ".trycloudflare.com",
+    ],
     proxy: {
       "/api": {
         target: resolveApiProxyTarget(),

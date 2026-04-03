@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { CacheService } from "../../../common/cache/cache.service.js";
 import { AuditService } from "../../../platform/audit/audit.service.js";
-import { Prisma, RuleProductizationMode, RuleSeverity } from "../../../generated/prisma/client.js";
+import { Prisma, RuleProductizationMode, RuleSeverity, type ChantingSession } from "../../../generated/prisma/client.js";
 import { ChantingRepository } from "./chanting.repository.js";
 import { mapGroupToResponse } from "./chanting.mapper.js";
 import { mapQ161ForContent } from "../../wisdom-qa/q161-rule-pack.data.js";
@@ -206,7 +206,7 @@ export class ChantingService {
   /**
    * Get user's chanting sessions with pagination
    */
-  async getUserChantingSessions(page: number, limit: number, userId: string): Promise<any> {
+  async getUserChantingSessions(page: number, limit: number, userId: string) {
     const offset = (page - 1) * limit;
     
     const [sessions, total] = await Promise.all([
@@ -233,7 +233,7 @@ export class ChantingService {
   /**
    * Create a new chanting session
    */
-  async createChantingSession(input: CreateChantingSessionInput, userId: string, auditCtx: AuditContext): Promise<any> {
+  async createChantingSession(input: CreateChantingSessionInput, userId: string, auditCtx: AuditContext) {
     const session = await this.repository.createChantingSession({
       ...input,
       userId,
@@ -258,7 +258,7 @@ export class ChantingService {
   /**
    * Get a specific chanting session
    */
-  async getChantingSession(sessionId: string, userId: string): Promise<any> {
+  async getChantingSession(sessionId: string, userId: string) {
     const session = await this.repository.findChantingSessionById(sessionId);
     
     if (!session) {
@@ -276,7 +276,7 @@ export class ChantingService {
   /**
    * Update a chanting session
    */
-  async updateChantingSession(sessionId: string, input: UpdateChantingSessionInput, userId: string, auditCtx: AuditContext): Promise<any> {
+  async updateChantingSession(sessionId: string, input: UpdateChantingSessionInput, userId: string, auditCtx: AuditContext) {
     const session = await this.repository.findChantingSessionById(sessionId);
     
     if (!session) {
@@ -343,25 +343,16 @@ export class ChantingService {
   /**
    * Get all chanting sessions for admin (with optional user filter)
    */
-  async getAllChantingSessions(page: number, limit: number, userId?: string, auditCtx?: AuditContext): Promise<any> {
+  async getAllChantingSessions(page: number, limit: number, userId?: string, _auditCtx?: AuditContext) {
     const offset = (page - 1) * limit;
     const where = userId ? { userId } : {};
-    
+
     const [sessions, total] = await Promise.all([
-      this.repository.findChantingSessions({
+      this.repository.findChantingSessionsAdminList({
         where,
         orderBy: [{ sessionDate: 'desc' }, { startTime: 'desc' }],
         skip: offset,
         take: limit,
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-              displayName: true,
-            },
-          },
-        },
       }),
       this.repository.countChantingSessions({ where }),
     ]);
@@ -369,7 +360,7 @@ export class ChantingService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      sessions: sessions.map((session: any) => ({
+      sessions: sessions.map((session) => ({
         ...this.mapChantingSessionToResponse(session),
         user: session.user,
       })),
@@ -383,27 +374,16 @@ export class ChantingService {
   /**
    * Get chanting session details for admin
    */
-  async getChantingSessionAdmin(sessionId: string, auditCtx?: AuditContext): Promise<any> {
-    const session = await this.repository.findChantingSessionById(sessionId, {
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            displayName: true,
-            role: true,
-          },
-        },
-      },
-    });
-    
+  async getChantingSessionAdmin(sessionId: string, _auditCtx?: AuditContext) {
+    const session = await this.repository.findChantingSessionByIdAdmin(sessionId);
+
     if (!session) {
       throw new NotFoundException(`Phiên niệm kinh với ID ${sessionId} không tồn tại`);
     }
 
     return {
       ...this.mapChantingSessionToResponse(session),
-      user: (session as any).user,
+      user: session.user,
     };
   }
 
@@ -441,7 +421,7 @@ export class ChantingService {
   // Private helpers
   // ============================================================================
 
-  private mapChantingSessionToResponse(session: any): any {
+  private mapChantingSessionToResponse(session: ChantingSession) {
     return {
       id: session.id,
       userId: session.userId,

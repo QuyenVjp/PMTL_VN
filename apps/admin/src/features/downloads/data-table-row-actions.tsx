@@ -13,9 +13,14 @@ import {
 type DownloadsRowActionsProps = {
   row: DownloadItem;
   detailBasePath?: string;
+  entityLabel?: string;
 };
 
-export function DownloadsRowActions({ row, detailBasePath = "/noi-dung/tai-lieu" }: DownloadsRowActionsProps) {
+export function DownloadsRowActions({
+  row,
+  detailBasePath = "/noi-dung/tai-lieu",
+  entityLabel = "tài liệu",
+}: DownloadsRowActionsProps) {
   const navigateTo = useNavigateTo();
   const publishDownload = usePublishDownload();
   const unpublishDownload = useUnpublishDownload();
@@ -64,11 +69,11 @@ export function DownloadsRowActions({ row, detailBasePath = "/noi-dung/tai-lieu"
       <WorkspaceConfirmDialog
         open={confirmPublish}
         onOpenChange={setConfirmPublish}
-        title="Xuất bản tài liệu"
+        title={`Xuất bản ${entityLabel}`}
         description={
           <>
-            Xuất bản <span className="font-semibold text-foreground">{row.title}</span>? Tài liệu
-            sẽ hiển thị công khai ngay lập tức.
+            Xuất bản <span className="font-semibold text-foreground">{row.title}</span>? {entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1)}
+            {" "}sẽ hiển thị công khai ngay lập tức.
           </>
         }
         confirmLabel="Xuất bản"
@@ -83,11 +88,11 @@ export function DownloadsRowActions({ row, detailBasePath = "/noi-dung/tai-lieu"
       <WorkspaceConfirmDialog
         open={confirmUnpublish}
         onOpenChange={setConfirmUnpublish}
-        title="Gỡ xuất bản tài liệu"
+        title={`Gỡ xuất bản ${entityLabel}`}
         description={
           <>
-            Gỡ xuất bản <span className="font-semibold text-foreground">{row.title}</span>? Tài
-            liệu sẽ chuyển về nháp.
+            Gỡ xuất bản <span className="font-semibold text-foreground">{row.title}</span>? {entityLabel.charAt(0).toUpperCase() + entityLabel.slice(1)}
+            {" "}sẽ chuyển về nháp.
           </>
         }
         confirmLabel="Gỡ xuất bản"
@@ -102,7 +107,7 @@ export function DownloadsRowActions({ row, detailBasePath = "/noi-dung/tai-lieu"
       <WorkspaceConfirmDialog
         open={confirmDelete}
         onOpenChange={setConfirmDelete}
-        title="Xoá tài liệu"
+        title={`Xoá ${entityLabel}`}
         description={
           <>
             Xoá <span className="font-semibold text-foreground">{row.title}</span>? Thao tác này

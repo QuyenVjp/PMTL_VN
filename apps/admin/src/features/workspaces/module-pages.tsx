@@ -28,8 +28,13 @@ export function SutrasPage() {
   return (
     <_DownloadsPage
       title="Kinh sách"
-      description="Quản trị kinh sách và tài liệu tham khảo."
+      description="Quản trị kinh sách để đọc trực tiếp hoặc tải về."
       defaultCategory="REFERENCE"
+      createBasePath="/noi-dung/kinh-sach"
+      detailBasePath="/noi-dung/kinh-sach"
+      createLabel="Thêm kinh sách"
+      entityLabel="kinh sách"
+      emptyMessage="Chưa có kinh sách nào."
     />
   );
 }

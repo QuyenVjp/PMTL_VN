@@ -8,12 +8,22 @@ type DownloadsPageProps = {
   title?: string;
   description?: string;
   defaultCategory?: string;
+  createBasePath?: string;
+  detailBasePath?: string;
+  createLabel?: string;
+  entityLabel?: string;
+  emptyMessage?: string;
 };
 
 export function DownloadsPage({
   title = "Tài liệu",
   description = "Quản trị tài liệu tải về cho thành viên.",
   defaultCategory,
+  createBasePath = "/noi-dung/tai-lieu",
+  detailBasePath = "/noi-dung/tai-lieu",
+  createLabel = "Thêm tài liệu",
+  entityLabel = "tài liệu",
+  emptyMessage = "Chưa có tài liệu nào.",
 }: DownloadsPageProps) {
   const navigate = useNavigate();
 
@@ -24,15 +34,17 @@ export function DownloadsPage({
           <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{description}</p>
         </div>
-        <Button onClick={() => void navigate({ to: "/noi-dung/tai-lieu/tao-moi" })}>
+        <Button onClick={() => void navigate({ to: `${createBasePath}/tao-moi` as never })}>
           <PlusIcon className="size-4" />
-          Thêm tài liệu
+          {createLabel}
         </Button>
       </div>
 
       <DownloadsTable
         defaultCategory={defaultCategory}
-        detailBasePath="/noi-dung/tai-lieu"
+        detailBasePath={detailBasePath}
+        entityLabel={entityLabel}
+        emptyMessage={emptyMessage}
       />
     </div>
   );

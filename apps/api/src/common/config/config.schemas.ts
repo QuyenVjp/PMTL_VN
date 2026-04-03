@@ -72,7 +72,11 @@ export const storageConfigSchema = z.object({
 
 // Email config schema
 export const emailConfigSchema = z.object({
-  EMAIL_PROVIDER: z.enum(["log", "smtp", "resend"]).default("log"),
+  // Backward compatibility: legacy local env used "mock", map it to "log".
+  EMAIL_PROVIDER: z
+    .enum(["log", "smtp", "resend", "mock"])
+    .default("log")
+    .transform((value) => (value === "mock" ? "log" : value)),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().positive().optional(),
   SMTP_SECURE: z

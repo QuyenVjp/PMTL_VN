@@ -42,6 +42,7 @@ $hostEnv = @{
   SMTP_PASS = "dev"
   SMTP_FROM_NAME = "PMTL_VN"
   SMTP_FROM_EMAIL = "noreply@example.com"
+  EMAIL_PROVIDER = "log"
   EMAIL_HASH_SALT = "1234567890abcdef"
   LOG_LEVEL = "info"
   REQUEST_ID_HEADER = "x-request-id"

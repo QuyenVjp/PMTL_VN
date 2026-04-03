@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { ImageAssetPicker } from "@/components/media/image-asset-picker";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { useUploadMediaAsset } from "@/features/media/mutations";
@@ -32,9 +31,39 @@ import { resolveMediaSrc } from "@/lib/media-src";
 import { extractUploadMediaPayload } from "@/lib/media-upload";
 import { guideDetailOptions } from "@/features/guides/queries";
 import { useUpdateGuide, usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
+import { RichTextEditor } from "@/features/content/rich-text-editor";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
 
-const EXCERPT_MAX_LENGTH = 500;
+const EXCERPT_MAX_LENGTH = 4000;
+
+function editorTextLength(value: string) {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim().length;
+}
+
+function normalizeEditorHtml(value: string): string {
+  return editorTextLength(value) > 0 ? value.trim() : "";
+}
+
+function readGuideBodyHtml(content: unknown): string {
+  if (!content || typeof content !== "object" || Array.isArray(content)) {
+    return "";
+  }
+
+  const candidate = content as Record<string, unknown>;
+  if (typeof candidate.bodyHtml === "string") return candidate.bodyHtml;
+  if (typeof candidate.html === "string") return candidate.html;
+  if (typeof candidate.body === "string") return candidate.body;
+  return "";
+}
+
+function buildGuideContent(bodyHtml: string): Record<string, unknown> {
+  const normalizedBody = normalizeEditorHtml(bodyHtml);
+  return normalizedBody ? { bodyHtml: normalizedBody } : {};
+}
 
 const CATEGORY_LABELS: Record<string, string> = {
   BEGINNER: "Nhập môn",
@@ -80,6 +109,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("BEGINNER");
   const [excerpt, setExcerpt] = useState("");
+  const [bodyHtml, setBodyHtml] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
@@ -95,6 +125,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
     setSlug(guide.slug);
     setCategory(guide.category);
     setExcerpt(guide.excerpt ?? "");
+    setBodyHtml(readGuideBodyHtml(guide.content));
     setSortOrder("0");
     setVersionNote("");
     setCoverMediaPublicId(guide.coverMediaPublicId ?? "");
@@ -111,7 +142,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (editorTextLength(excerpt) > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -125,7 +156,8 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
         title: title.trim(),
         slug: slug.trim() || undefined,
         category,
-        excerpt: excerpt.trim() || undefined,
+        content: buildGuideContent(bodyHtml),
+        excerpt: normalizeEditorHtml(excerpt) || undefined,
         coverMediaPublicId: coverMediaPublicId || null,
         sortOrder: Number(sortOrder) || undefined,
         versionNote: versionNote.trim() || undefined,
@@ -281,27 +313,30 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
             </div>
 
             <AdminFormField label="Tóm tắt">
-              <Textarea
+              <RichTextEditor
                 value={excerpt}
-                onChange={(e) => {
-                  setExcerpt(e.target.value);
+                onChange={(nextValue) => {
+                  setExcerpt(nextValue);
                   if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
                 }}
-                placeholder="Mô tả ngắn..."
-                maxLength={EXCERPT_MAX_LENGTH}
-                className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-                rows={3}
+                placeholder="Mô tả ngắn, rõ ràng và dễ đọc cho người lớn tuổi..."
+                minHeight={160}
               />
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <FieldError message={fieldErrors.excerpt} />
                 <span className={cn(fieldErrors.excerpt && "text-destructive")}>
-                  {excerpt.length}/{EXCERPT_MAX_LENGTH}
+                  {editorTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
                 </span>
               </div>
             </AdminFormField>
 
             <AdminFormField label="Nội dung" hint="Nội dung chi tiết của bài hướng dẫn">
-              <Textarea placeholder="Nhập nội dung bài hướng dẫn..." rows={6} />
+              <RichTextEditor
+                value={bodyHtml}
+                onChange={setBodyHtml}
+                placeholder="Biên tập nội dung hướng dẫn theo bố cục rõ ràng, có thể dùng bullet và trích dẫn..."
+                minHeight={320}
+              />
             </AdminFormField>
 
             <AdminFormField label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">

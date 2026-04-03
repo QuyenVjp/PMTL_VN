@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
+import { useState } from "react";
 
 export function EditorPage({
   title,
@@ -12,6 +13,8 @@ export function EditorPage({
   description: string;
   initialContent: string;
 }) {
+  const [content, setContent] = useState(initialContent);
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -49,7 +52,7 @@ export function EditorPage({
           <CardDescription>CKEditor-style lane đã được thay bằng Tiptap để dễ custom hơn.</CardDescription>
         </CardHeader>
         <CardContent>
-          <RichTextEditor initialContent={initialContent} />
+          <RichTextEditor value={content} onChange={setContent} minHeight={340} />
         </CardContent>
       </Card>
     </div>

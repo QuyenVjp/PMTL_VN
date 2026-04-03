@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -25,7 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import { ImageAssetPicker } from "@/components/media/image-asset-picker";
+import { RichTextEditor } from "@/features/content/rich-text-editor";
 import {
   AdminDetailPage,
   AdminDetailSection,
@@ -40,12 +41,15 @@ import {
   useDeletePost,
 } from "@/features/content/mutations";
 import { postDetailOptions } from "@/features/content/queries";
+import { useUploadMediaAsset } from "@/features/media/mutations";
+import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import {
   extractValidationFieldErrors,
   hasFieldErrors,
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
+import { extractUploadMediaPayload } from "@/lib/media-upload";
 
 // ── Constants ─────────────────────────────────────────────────────────
 
@@ -56,7 +60,36 @@ const POST_TYPE_OPTIONS = [
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
 
-const EXCERPT_MAX_LENGTH = 500;
+const EXCERPT_MAX_LENGTH = 4000;
+
+function excerptTextLength(value: string) {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim().length;
+}
+
+function normalizeEditorHtml(value: string): string {
+  return excerptTextLength(value) > 0 ? value.trim() : "";
+}
+
+function readPostBodyHtml(content: unknown): string {
+  if (!content || typeof content !== "object" || Array.isArray(content)) {
+    return "";
+  }
+
+  const candidate = content as Record<string, unknown>;
+  if (typeof candidate.bodyHtml === "string") return candidate.bodyHtml;
+  if (typeof candidate.html === "string") return candidate.html;
+  if (typeof candidate.body === "string") return candidate.body;
+  return "";
+}
+
+function buildPostContent(bodyHtml: string): Record<string, unknown> {
+  const normalizedBody = normalizeEditorHtml(bodyHtml);
+  return normalizedBody ? { bodyHtml: normalizedBody } : {};
+}
 
 // ── Badge helpers ─────────────────────────────────────────────────────
 
@@ -82,25 +115,19 @@ function DetailSidebar({
   publishedAt,
   createdAt,
   updatedAt,
-  featuredImageId,
-  setFeaturedImageId,
   featured,
   setFeatured,
   allowComments,
   setAllowComments,
-  currentFeaturedImageUrl,
 }: {
   status: string;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
-  featuredImageId: string;
-  setFeaturedImageId: (v: string) => void;
   featured: boolean;
   setFeatured: (v: boolean) => void;
   allowComments: boolean;
   setAllowComments: (v: boolean) => void;
-  currentFeaturedImageUrl: string | null;
 }) {
   const fmt = (iso: string | null) =>
     iso ? new Date(iso).toLocaleString("vi-VN") : null;
@@ -116,23 +143,6 @@ function DetailSidebar({
         <AdminDetailField label="Xuất bản lúc" value={fmt(publishedAt)} />
         <AdminDetailField label="Tạo lúc" value={fmt(createdAt)} />
         <AdminDetailField label="Cập nhật lúc" value={fmt(updatedAt)} />
-      </AdminDetailSection>
-
-      <AdminDetailSection title="Ảnh đại diện">
-        <AdminFormField
-          label="ID ảnh đại diện"
-          hint={
-            !featuredImageId && currentFeaturedImageUrl
-              ? "Để trống — giữ nguyên ảnh hiện tại"
-              : "Nhập publicId của media asset"
-          }
-        >
-          <Input
-            value={featuredImageId}
-            onChange={(e) => setFeaturedImageId(e.target.value)}
-            placeholder="VD: img_abc123..."
-          />
-        </AdminFormField>
       </AdminDetailSection>
 
       <AdminDetailSection title="Cài đặt">
@@ -169,6 +179,66 @@ function DetailSidebar({
   );
 }
 
+function FeaturedImageSection({
+  featuredImageId,
+  setFeaturedImageId,
+  currentFeaturedImageUrl,
+  imageAssets,
+  onUploadImage,
+  isUploadingImage,
+}: {
+  featuredImageId: string;
+  setFeaturedImageId: (value: string) => void;
+  currentFeaturedImageUrl: string | null;
+  imageAssets: Array<{ publicId: string; filename: string; url: string }>;
+  onUploadImage: () => void;
+  isUploadingImage: boolean;
+}) {
+  return (
+    <AdminDetailSection
+      title="Ảnh đại diện"
+      description="Hiển thị ảnh preview và chọn từ thư viện media giống các surface nội dung khác."
+    >
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={onUploadImage} disabled={isUploadingImage}>
+            {isUploadingImage ? "Đang upload..." : "Upload ảnh mới"}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setFeaturedImageId("")}
+            disabled={!featuredImageId && !currentFeaturedImageUrl}
+          >
+            Bỏ chọn
+          </Button>
+        </div>
+        <ImageAssetPicker
+          assets={imageAssets}
+          value={featuredImageId}
+          onChange={setFeaturedImageId}
+          placeholder="Chọn ảnh đại diện từ thư viện..."
+        />
+        {!featuredImageId && currentFeaturedImageUrl ? (
+          <div className="flex items-center gap-2 rounded border p-2">
+            <img
+              src={currentFeaturedImageUrl}
+              alt="Ảnh đại diện hiện tại"
+              className="size-12 rounded border object-cover"
+              loading="lazy"
+            />
+            <div className="min-w-0">
+              <p className="text-sm font-medium">Ảnh hiện tại</p>
+              <p className="truncate text-xs text-muted-foreground">Ảnh đang dùng từ dữ liệu cũ</p>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </AdminDetailSection>
+  );
+}
+
 // ── Editable form ─────────────────────────────────────────────────────
 
 function EditableForm({
@@ -182,6 +252,8 @@ function EditableForm({
   setSourceRef,
   excerpt,
   setExcerpt,
+  bodyHtml,
+  setBodyHtml,
   fieldErrors,
   setFieldErrors,
 }: {
@@ -195,11 +267,13 @@ function EditableForm({
   setSourceRef: (v: string) => void;
   excerpt: string;
   setExcerpt: (v: string) => void;
+  bodyHtml: string;
+  setBodyHtml: (v: string) => void;
   fieldErrors: FieldErrors;
   setFieldErrors: (updater: (prev: FieldErrors) => FieldErrors) => void;
 }) {
   return (
-    <AdminDetailSection title="Nội dung chính">
+    <AdminDetailSection title="Thông tin cơ bản">
       <div className="space-y-4">
         <AdminFormField label="Tiêu đề *">
           <Input
@@ -214,7 +288,7 @@ function EditableForm({
           <FieldError message={fieldErrors.title} />
         </AdminFormField>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid items-start gap-4 md:grid-cols-2">
           <AdminFormField label="Slug">
             <Input
               value={slug}
@@ -230,13 +304,14 @@ function EditableForm({
               <SelectContent>
                 {POST_TYPE_OPTIONS.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
-                    {o.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           </AdminFormField>
         </div>
+        <p className="text-xs text-muted-foreground">Để trống — hệ thống sẽ tự động tạo slug từ tiêu đề nếu cần.</p>
 
         <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
           <Input
@@ -247,23 +322,31 @@ function EditableForm({
         </AdminFormField>
 
         <AdminFormField label="Tóm tắt">
-          <Textarea
+          <RichTextEditor
             value={excerpt}
-            onChange={(e) => {
-              setExcerpt(e.target.value);
+            onChange={(nextValue) => {
+              setExcerpt(nextValue);
               if (fieldErrors.excerpt)
                 setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
             }}
-            maxLength={EXCERPT_MAX_LENGTH}
-            className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-            rows={3}
+            placeholder="Tóm tắt ngắn, dễ đọc trên mobile và phù hợp người lớn tuổi..."
+            minHeight={160}
           />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <FieldError message={fieldErrors.excerpt} />
             <span className={cn(Boolean(fieldErrors.excerpt) && "text-destructive")}>
-              {excerpt.length}/{EXCERPT_MAX_LENGTH}
+              {excerptTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
             </span>
           </div>
+        </AdminFormField>
+
+        <AdminFormField label="Nội dung bài viết" hint="Nội dung hiển thị ở web public và phần đọc bài viết.">
+          <RichTextEditor
+            value={bodyHtml}
+            onChange={setBodyHtml}
+            placeholder="Biên tập nội dung bài viết theo bố cục dễ đọc cho người lớn tuổi..."
+            minHeight={320}
+          />
         </AdminFormField>
       </div>
     </AdminDetailSection>
@@ -276,17 +359,40 @@ function PublishedView({
   title,
   slug,
   excerpt,
+  bodyHtml,
 }: {
   title: string;
   slug: string;
   excerpt: string | null;
+  bodyHtml: string;
 }) {
   return (
     <AdminDetailSection title="Bản đã xuất bản">
       <div className="space-y-4">
         <AdminDetailField label="Tiêu đề" value={title} />
         <AdminDetailField label="Slug" value={slug} />
-        <AdminDetailField label="Tóm tắt" value={excerpt ?? "—"} />
+        <div className="space-y-1 py-2 text-sm">
+          <span className="text-xs text-muted-foreground">Tóm tắt</span>
+          {excerpt ? (
+            <div
+              className="prose prose-sm max-w-none dark:prose-invert [&_p:last-child]:mb-0"
+              dangerouslySetInnerHTML={{ __html: excerpt }}
+            />
+          ) : (
+            <span className="text-xs italic text-muted-foreground/50">—</span>
+          )}
+        </div>
+        <div className="space-y-1 py-2 text-sm">
+          <span className="text-xs text-muted-foreground">Nội dung</span>
+          {bodyHtml ? (
+            <div
+              className="prose prose-sm max-w-none dark:prose-invert [&_p:last-child]:mb-0"
+              dangerouslySetInnerHTML={{ __html: bodyHtml }}
+            />
+          ) : (
+            <span className="text-xs italic text-muted-foreground/50">—</span>
+          )}
+        </div>
       </div>
     </AdminDetailSection>
   );
@@ -408,12 +514,15 @@ export function PostDetailPage() {
   const publishPost = usePublishPost();
   const unpublishPost = useUnpublishPost();
   const deletePost = useDeletePost();
+  const uploadMedia = useUploadMediaAsset();
+  const uploadRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
   const [excerpt, setExcerpt] = useState("");
+  const [bodyHtml, setBodyHtml] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
   const [featured, setFeatured] = useState(false);
@@ -424,6 +533,12 @@ export function PostDetailPage() {
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
+  const imageAssets = useMemo(
+    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
+    [mediaEnvelope],
+  );
+
   // Sync form state when post loads
   useEffect(() => {
     if (!post) return;
@@ -432,6 +547,7 @@ export function PostDetailPage() {
     setPostType(post.postType);
     setSourceRef(post.sourceRef ?? "");
     setExcerpt(post.excerpt ?? "");
+    setBodyHtml(readPostBodyHtml(post.content));
     setFeaturedImageId("");
     setFeaturedImageChanged(false);
     setFeatured(post.featured);
@@ -443,8 +559,8 @@ export function PostDetailPage() {
     if (!publicId) return;
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH)
-      nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
+    if (excerptTextLength(excerpt) > EXCERPT_MAX_LENGTH)
+      nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -459,7 +575,8 @@ export function PostDetailPage() {
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || null,
-        excerpt: excerpt.trim() || null,
+        excerpt: normalizeEditorHtml(excerpt) || null,
+        content: buildPostContent(bodyHtml),
         ...(featuredImageChanged
           ? { featuredImageId: featuredImageId.trim() || null }
           : {}),
@@ -523,6 +640,8 @@ export function PostDetailPage() {
       setSourceRef={setSourceRef}
       excerpt={excerpt}
       setExcerpt={setExcerpt}
+      bodyHtml={bodyHtml}
+      setBodyHtml={setBodyHtml}
       fieldErrors={fieldErrors}
       setFieldErrors={setFieldErrors}
     />
@@ -541,6 +660,7 @@ export function PostDetailPage() {
             title={post.title}
             slug={post.slug}
             excerpt={post.excerpt}
+            bodyHtml={readPostBodyHtml(post.content)}
           />
         </TabsContent>
       </Tabs>
@@ -565,25 +685,58 @@ export function PostDetailPage() {
         saveDisabled={!title.trim()}
         actions={actions}
         sidebar={
-          <DetailSidebar
-            status={post.status}
-            publishedAt={post.publishedAt}
-            createdAt={post.createdAt}
-            updatedAt={post.updatedAt}
-            featuredImageId={featuredImageId}
-            setFeaturedImageId={(v) => {
-              setFeaturedImageId(v);
-              setFeaturedImageChanged(true);
-            }}
-            featured={featured}
-            setFeatured={setFeatured}
-            allowComments={allowComments}
-            setAllowComments={setAllowComments}
-            currentFeaturedImageUrl={post.featuredImageUrl}
-          />
+          <>
+            <input
+              ref={uploadRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                void (async () => {
+                  try {
+                    const result = await uploadMedia.mutateAsync(file);
+                    const publicId = extractUploadMediaPayload(result)?.publicId;
+                    if (publicId) {
+                      setFeaturedImageId(publicId);
+                      setFeaturedImageChanged(true);
+                    }
+                  } finally {
+                    event.target.value = "";
+                  }
+                })();
+              }}
+            />
+            <DetailSidebar
+              status={post.status}
+              publishedAt={post.publishedAt}
+              createdAt={post.createdAt}
+              updatedAt={post.updatedAt}
+              featured={featured}
+              setFeatured={setFeatured}
+              allowComments={allowComments}
+              setAllowComments={setAllowComments}
+            />
+          </>
         }
       >
         {mainContent}
+        <FeaturedImageSection
+          featuredImageId={featuredImageId}
+          setFeaturedImageId={(value) => {
+            setFeaturedImageId(value);
+            setFeaturedImageChanged(true);
+          }}
+          currentFeaturedImageUrl={post.featuredImageUrl}
+          imageAssets={imageAssets.map((item) => ({
+            publicId: item.publicId,
+            filename: item.filename,
+            url: item.url,
+          }))}
+          onUploadImage={() => uploadRef.current?.click()}
+          isUploadingImage={uploadMedia.isPending}
+        />
       </AdminDetailPage>
 
       {/* ── Confirm dialogs ───────────────────────────────────────── */}
@@ -601,7 +754,7 @@ export function PostDetailPage() {
         confirmLabel="Xuất bản"
         isPending={publishPost.isPending}
         onConfirm={() =>
-          publishPost.mutate(post.id, {
+          publishPost.mutate(post.publicId, {
             onSuccess: () => setConfirmPublish(false),
           })
         }
@@ -613,7 +766,7 @@ export function PostDetailPage() {
         isPending={unpublishPost.isPending}
         onConfirm={(mode) =>
           unpublishPost.mutate(
-            { publicId: post.id, mode },
+            { publicId: post.publicId, mode },
             { onSuccess: () => setConfirmUnpublish(false) },
           )
         }
@@ -634,7 +787,7 @@ export function PostDetailPage() {
         variant="destructive"
         isPending={deletePost.isPending}
         onConfirm={() =>
-          deletePost.mutate(post.id, {
+          deletePost.mutate(post.publicId, {
             onSuccess: () => {
               setConfirmDelete(false);
               void navigate({ to: "/noi-dung/bai-viet" });

@@ -8,6 +8,7 @@ export interface GuideItem {
   publicId: string;
   title: string;
   slug: string;
+  content: Record<string, unknown> | null;
   excerpt: string | null;
   coverMediaPublicId: string | null;
   coverImageUrl: string | null;

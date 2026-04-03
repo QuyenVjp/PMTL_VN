@@ -382,7 +382,7 @@ export function PracticeHomePracticeGuidePage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Hướng dẫn tự tu tại gia</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Tự tu tại gia Việt Nam</h1>
           <p className="mt-2 text-sm text-muted-foreground">Đang tải dữ liệu...</p>
         </div>
         <div className="grid gap-4">
@@ -403,7 +403,7 @@ export function PracticeHomePracticeGuidePage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Hướng dẫn tự tu tại gia</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Tự tu tại gia Việt Nam</h1>
           <p className="mt-2 text-sm text-destructive">
             Không thể tải dữ liệu. Vui lòng thử lại sau.
           </p>
@@ -415,9 +415,9 @@ export function PracticeHomePracticeGuidePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Hướng dẫn tự tu tại gia</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Tự tu tại gia Việt Nam</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Chỉnh sửa quy tắc kỷ luật ăn chay, ghi chú dinh dưỡng văn phòng và ghi chú bổ sung.
+          Đây là lane practice-support riêng cho bối cảnh tu học tại gia ở Việt Nam; không còn bind nhầm vào route Kinh văn tự tu.
         </p>
       </div>
 

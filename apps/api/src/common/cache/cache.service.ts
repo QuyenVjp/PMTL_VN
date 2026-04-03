@@ -93,6 +93,29 @@ export class CacheService implements OnModuleInit, OnModuleDestroy {
     this.memoryCache.delete(key);
   }
 
+  /**
+   * Delete all keys matching a prefix (e.g. "contacts:list:").
+   * Uses SCAN for Redis (non-blocking) and Map iteration for in-memory.
+   */
+  async delByPrefix(prefix: string): Promise<void> {
+    if (this.redisClient && this.redisConnected) {
+      const keys: string[] = [];
+      for await (const batch of this.redisClient.scanIterator({ MATCH: `${prefix}*`, COUNT: 100 })) {
+        keys.push(...batch);
+      }
+      if (keys.length > 0) {
+        await Promise.all(keys.map((k) => this.redisClient!.del(k)));
+      }
+      return;
+    }
+
+    for (const key of this.memoryCache.keys()) {
+      if (key.startsWith(prefix)) {
+        this.memoryCache.delete(key);
+      }
+    }
+  }
+
   async getOrSet<T>(key: string, ttlSeconds: number, factory: () => Promise<T>): Promise<T> {
     const cached = await this.getJson<T>(key);
     if (cached !== null) {

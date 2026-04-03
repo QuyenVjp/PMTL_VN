@@ -93,6 +93,12 @@ export const auditActionSchema = z.enum([
 
   // Practice support actions
   "admin.practice_support.update",
+  "admin.self_cultivation.guide.create",
+  "admin.self_cultivation.guide.update",
+  "admin.self_cultivation.faq.create",
+  "admin.self_cultivation.faq.update",
+  "admin.self_cultivation.publish",
+  "admin.self_cultivation.unpublish",
 
   // Vow / merit actions
   "admin.vow.create",
