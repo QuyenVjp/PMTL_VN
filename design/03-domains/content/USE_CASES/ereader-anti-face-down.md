@@ -162,6 +162,61 @@ if (currentPage.isSutraReader && !hasBookmarkedCurrentSutra) {
 
 ---
 
+---
+
+## Part B — Print Guide Book Handling Warning (Logic 9)
+
+### Business Rule
+
+Khi người tu in kinh sách ra giấy và có việc đột xuất phải dừng, **tuyệt đối không được úp ngược mặt sách xuống bàn** tạo thành hình chữ **Nhân (人)** — coi như đang đạp lên Phật, Bồ Tát.
+
+### Scope
+
+Áp dụng tại bất kỳ vị trí nào trong hệ thống có tính năng **in ấn / xuất PDF**:
+- Hướng dẫn in Tiểu Phương Tử
+- PDF Kinh Văn Tự Tu
+- PDF Đơn Từ Tâm Linh
+- Bất kỳ Print Guide nào
+
+### FE Hard Warning (Persistent)
+
+Trong tất cả màn hình/component có nút **[In / Tải PDF / Print Guide]**, phải render một `PrintWarningBanner` cố định không thể tắt:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  📖  Lưu ý khi đọc bản in                              │
+│                                                          │
+│  • Dùng kẹp sách (bookmark) khi cần tạm dừng.         │
+│                                                          │
+│  • TUYỆT ĐỐI không úp ngược mặt sách kinh xuống       │
+│    bàn tạo thành hình chữ Nhân (人).                   │
+│    Đây được coi là đạp lên Phật, Bồ Tát.               │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Component Spec
+
+```tsx
+// PrintWarningBanner — render bên dưới nút Download/Print
+// Props: none (static content từ SystemConfig)
+// Không có nút dismiss/close
+// Style: border-amber-200 bg-amber-50, icon BookOpen
+
+<PrintWarningBanner />
+```
+
+### SystemConfig Entry
+
+```
+Key:     content.print_guide_book_handling_warning
+Type:    MARKDOWN_TEXT
+Default: "Dùng kẹp sách khi cần tạm dừng. TUYỆT ĐỐI không úp ngược mặt sách kinh xuống bàn tạo thành hình chữ Nhân (人). Đây được coi là đạp lên Phật, Bồ Tát."
+```
+
+Wording có thể cập nhật qua Admin CMS — component tự load từ config.
+
+---
+
 ## Related
 
 - [spiritual-applications.md](./spiritual-applications.md) — Đơn từ tâm linh (cũng có quy tắc không đốt/không hủy)

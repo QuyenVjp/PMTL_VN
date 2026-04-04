@@ -977,11 +977,30 @@ enum LittleHouseStatus {
   BURNED
 }
 
+enum LittleHousePurpose {
+  GENERAL_SUPPORT
+  RESOLVE_CONFLICT
+  DECEASED
+  FETAL_SPIRIT
+  SELF_ACCUMULATE
+  HEALTH_ISSUE
+  CUSTOM
+}
+
 enum AltarActionType {
   INCENSE
   MAINTENANCE
   MOVE
   HEART_INCENSE
+  RELOCATION
+}
+
+enum AltarRelocationStep {
+  PREPARING
+  INCENSE_BURNED_OLD_HOME
+  WRAPPED_IN_RED_CLOTH
+  ALTAR_INSTALLED_NEW_HOME
+  COMPLETED
 }
 
 enum SymptomTag {
@@ -989,6 +1008,28 @@ enum SymptomTag {
   BAD_DREAM
   FAMILY_CONFLICT
   OTHER
+}
+
+enum SutraType {
+  LONG
+  SHORT
+}
+
+enum MentalHealthCondition {
+  NONE
+  DEPRESSION
+  SCHIZOPHRENIA
+  ANXIETY
+  BIPOLAR
+  OTHER_MENTAL_ILLNESS
+}
+
+enum DreamAbortionChildState {
+  WELL_DRESSED_HAPPY
+  LEAVING_PEACEFULLY
+  CRYING_DISTRESSED
+  POORLY_DRESSED
+  UNKNOWN
 }
 
 // ============================================================================
@@ -999,24 +1040,31 @@ enum SymptomTag {
 
 // Module 1 — LittleHouseLifecycle
 // Owner: engagement (self-state/lifecycle) + content (ritual copy ref)
+// Phase 12: Added purpose, startedAt, recipientName, offerTo for Logic 1 & 2
 model LittleHouse {
-  id           String            @id @default(cuid())
-  publicId     String            @unique @map("public_id")
-  userId       String            @map("user_id")
+  id           String               @id @default(cuid())
+  publicId     String               @unique @map("public_id")
+  userId       String               @map("user_id")
   recipient    String
-  sheetsCount  Int               @default(1) @map("sheets_count")
-  status       LittleHouseStatus @default(DRAFT)
-  burnDate     DateTime?         @map("burn_date")
-  postBurnNote String?           @map("post_burn_note")
-  specialCase  Boolean           @default(false) @map("special_case")
-  confirmedAt  DateTime?         @map("confirmed_at")
-  createdAt    DateTime          @default(now()) @map("created_at")
-  updatedAt    DateTime          @updatedAt @map("updated_at")
+  recipientName String?             @map("recipient_name")
+  offerTo      String?              @map("offer_to") // Auto-formatted for RESOLVE_CONFLICT
+  purpose      LittleHousePurpose?  @default(GENERAL_SUPPORT)
+  sheetsCount  Int                  @default(1) @map("sheets_count")
+  status       LittleHouseStatus    @default(DRAFT)
+  startedAt    DateTime?            @map("started_at") // Phase 12: For 7-day tracking
+  burnDate     DateTime?            @map("burn_date")
+  postBurnNote String?              @map("post_burn_note")
+  specialCase  Boolean              @default(false) @map("special_case")
+  confirmedAt  DateTime?            @map("confirmed_at")
+  createdAt    DateTime             @default(now()) @map("created_at")
+  updatedAt    DateTime             @updatedAt @map("updated_at")
 
   user User @relation("littleHouses", fields: [userId], references: [id])
 
   @@index([userId])
   @@index([status])
+  @@index([startedAt])
+  @@index([purpose])
   @@map("little_houses")
 }
 
@@ -1082,34 +1130,43 @@ model RepentanceLog {
 
 // Module 5 — AltarMaintenanceGuard
 // Owner: vows-merit
+// Phase 12: Added altar relocation workflow (Logic 6)
 model AltarLog {
-  id                 String          @id @default(cuid())
-  publicId           String          @unique @map("public_id")
-  userId             String          @map("user_id")
-  date               DateTime        @db.Date
-  actionType         AltarActionType @map("action_type")
-  checklistStateJson Json            @map("checklist_state_json")
-  note               String?
-  createdAt          DateTime        @default(now()) @map("created_at")
-  updatedAt          DateTime        @updatedAt @map("updated_at")
+  id                    String             @id @default(cuid())
+  publicId              String             @unique @map("public_id")
+  userId                String             @map("user_id")
+  date                  DateTime           @db.Date
+  actionType            AltarActionType    @map("action_type")
+  relocationStep        AltarRelocationStep? @map("relocation_step") // Phase 12
+  incenseBurnedConfirmed Boolean?          @map("incense_burned_confirmed") // Phase 12
+  redClothConfirmed     Boolean?           @map("red_cloth_confirmed") // Phase 12
+  altarFirstConfirmed   Boolean?           @map("altar_first_confirmed") // Phase 12
+  checklistStateJson    Json               @map("checklist_state_json")
+  note                  String?
+  createdAt             DateTime           @default(now()) @map("created_at")
+  updatedAt             DateTime           @updatedAt @map("updated_at")
 
   user User @relation("altarLogs", fields: [userId], references: [id])
 
   @@index([userId])
   @@index([date])
+  @@index([actionType])
   @@map("altar_logs")
 }
 
 // Module 6 — ElderlyPracticeMode
 // Owner: engagement
+// Phase 12: Added mental health condition tracking (Logic 4)
 model PracticeProfile {
-  id               String   @id @default(cuid())
-  userId           String   @unique @map("user_id")
-  elderlyMode      Boolean  @default(false) @map("elderly_mode")
-  assistMode       Boolean  @default(false) @map("assist_mode")
-  assistContactRef String?  @map("assist_contact_ref")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id                    String                 @id @default(cuid())
+  userId                String                 @unique @map("user_id")
+  elderlyMode           Boolean                @default(false) @map("elderly_mode")
+  assistMode            Boolean                @default(false) @map("assist_mode")
+  assistContactRef      String?                @map("assist_contact_ref")
+  mentalHealthCondition MentalHealthCondition  @default(NONE) @map("mental_health_condition") // Phase 12
+  daBeiZhouDailyLimit   Int?                   @map("da_bei_zhou_daily_limit") // Phase 12: auto-set to 21 if mental illness
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
 
   user User @relation("practiceProfile", fields: [userId], references: [id])
 
@@ -1204,3 +1261,70 @@ model SelfCultivationTemplate {
   @@index([status])
   @@map("self_cultivation_templates")
 }
+
+// ============================================================================
+// PHASE 12 ADDITIONS
+// ============================================================================
+
+// Phase 12 Logic 3: Sutra Type Metadata for E-Reader
+// Classifies sutras/mantras as LONG (pausable) or SHORT (must restart)
+model SutraMetadata {
+  id              String    @id @default(cuid())
+  publicId        String    @unique @map("public_id")
+  sutraKey        String    @unique @map("sutra_key") // e.g., "da_bei_zhou", "wang_sheng_chu"
+  titleVi         String    @map("title_vi")
+  titleEn         String?   @map("title_en")
+  sutraType       SutraType // LONG or SHORT
+  pauseMantra     String?   @map("pause_mantra") // "Ong Lai Mu Suo He" for LONG types
+  pauseInstruction String?  @map("pause_instruction")
+  restartWarning  String?   @map("restart_warning") // Warning for SHORT types
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([sutraType])
+  @@map("sutra_metadata")
+}
+
+// Phase 12 Logic 5: Dream Journal for Abortion Spirit Tracking
+model DreamJournal {
+  id                     String                   @id @default(cuid())
+  publicId               String                   @unique @map("public_id")
+  userId                 String                   @map("user_id")
+  dreamDate              DateTime                 @db.Date @map("dream_date")
+  abortionChildRelated   Boolean                  @default(false) @map("abortion_child_related")
+  childState             DreamAbortionChildState? @map("child_state")
+  description            String?
+  littleHousePublicId    String?                  @map("little_house_public_id") // Link to related LH
+  resolutionStatus       String?                  @default("UNRESOLVED") @map("resolution_status") // UNRESOLVED, RESOLVED
+  autoActionTriggered    Boolean                  @default(false) @map("auto_action_triggered") // True if auto-created LH
+  autoActionNote         String?                  @map("auto_action_note")
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  updatedAt              DateTime                 @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([dreamDate])
+  @@index([abortionChildRelated])
+  @@index([resolutionStatus])
+  @@map("dream_journals")
+}
+
+// Phase 12 Logic 1: Little House Stale Warning Records
+// Tracks warnings sent for LH that exceed 7 days
+model LittleHouseWarning {
+  id                String   @id @default(cuid())
+  publicId          String   @unique @map("public_id")
+  littleHouseId     String   @map("little_house_id")
+  userId            String   @map("user_id")
+  warningType       String   @map("warning_type") // "SEVEN_DAY_STALE"
+  daysElapsed       Int      @map("days_elapsed")
+  sentAt            DateTime @default(now()) @map("sent_at")
+  acknowledged      Boolean  @default(false)
+  acknowledgedAt    DateTime? @map("acknowledged_at")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@index([littleHouseId])
+  @@index([userId])
+  @@index([sentAt])
+  @@map("little_house_warnings")
+}
+

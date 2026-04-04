@@ -20,17 +20,32 @@ export class LittleHouseService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(input: CreateLittleHouseInput, userId: string) {
+    // Phase 12 Logic 2: Auto-format offerTo for RESOLVE_CONFLICT
+    let offerTo = input.recipient;
+    if (input.purpose === "RESOLVE_CONFLICT") {
+      // Get user's display name
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { displayName: true },
+      });
+      offerTo = `${user?.displayName || "Người dùng"} hóa giải oán kết`;
+    }
+
     const record = await this.prisma.littleHouse.create({
       data: {
         publicId: nanoid(21),
         userId,
         recipient: input.recipient,
+        recipientName: input.recipientName,
+        offerTo,
+        purpose: input.purpose,
         sheetsCount: input.sheetsCount,
         specialCase: input.specialCase,
         status: "DRAFT",
+        startedAt: new Date(), // Phase 12 Logic 1: Track start time for 7-day warning
       },
     });
-    this.logger.log({ msg: "little_house.created", userId, publicId: record.publicId });
+    this.logger.log({ msg: "little_house.created", userId, publicId: record.publicId, purpose: input.purpose });
     return this.toDto(record);
   }
 
