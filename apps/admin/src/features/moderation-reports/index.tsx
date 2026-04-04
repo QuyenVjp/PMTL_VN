@@ -13,6 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
+import { KanbanIcon, ListIcon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   WorkspaceDataTable,
   WorkspaceRowActions,
@@ -211,6 +213,152 @@ function ModerationReportsTable() {
   );
 }
 
+// ── Kanban view ───────────────────────────────────────────────────────
+
+const KANBAN_COLUMNS: { key: ModerationReportListItem["status"]; label: string; headerCls: string; dotCls: string }[] = [
+  {
+    key: "PENDING",
+    label: "Chờ xử lý",
+    headerCls: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
+    dotCls: "bg-amber-400",
+  },
+  {
+    key: "RESOLVED_HIDE",
+    label: "Đã ẩn",
+    headerCls: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800",
+    dotCls: "bg-emerald-400",
+  },
+  {
+    key: "RESOLVED_IGNORE",
+    label: "Bỏ qua",
+    headerCls: "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700",
+    dotCls: "bg-slate-400",
+  },
+  {
+    key: "RESOLVED_ESCALATE",
+    label: "Leo thang",
+    headerCls: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800",
+    dotCls: "bg-red-400",
+  },
+];
+
+const TARGET_TYPE_LABELS: Record<string, string> = {
+  POST: "Bài viết",
+  COMMENT: "Bình luận",
+  USER: "Thành viên",
+  COMMUNITY_POST: "Bài cộng đồng",
+};
+
+const REASON_LABELS: Record<string, string> = {
+  SPAM: "Spam",
+  HATE_SPEECH: "Ngôn từ thù ghét",
+  MISINFORMATION: "Thông tin sai",
+  INAPPROPRIATE: "Không phù hợp",
+  COPYRIGHT: "Vi phạm bản quyền",
+  OTHER: "Lý do khác",
+};
+
+function KanbanReportCard({ report }: { report: ModerationReportListItem }) {
+  const { setOpen, setCurrentRow } = useReport();
+  const navigate = useNavigate();
+
+  return (
+    <div className="rounded-lg border bg-card p-3 shadow-sm space-y-2 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between gap-2">
+        <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
+          {TARGET_TYPE_LABELS[report.targetType] ?? report.targetType}
+        </Badge>
+        <span className="font-mono text-[10px] text-muted-foreground shrink-0">
+          #{report.publicId.slice(0, 8)}
+        </span>
+      </div>
+
+      <p className="text-xs font-medium leading-snug text-foreground">
+        {REASON_LABELS[report.reasonCode] ?? report.reasonCode}
+      </p>
+
+      {report.description && (
+        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+          {report.description}
+        </p>
+      )}
+
+      <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1 border-t">
+        <span>{report.reporterSummary?.displayName ?? "Ẩn danh"}</span>
+        <span>
+          {new Date(report.createdAt).toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+          })}
+        </span>
+      </div>
+
+      <div className="flex gap-1.5 pt-0.5">
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-6 flex-1 text-[10px] px-2"
+          onClick={() =>
+            void navigate({
+              to: "/kiem-duyet/bao-cao/$publicId",
+              params: { publicId: report.publicId },
+            })
+          }
+        >
+          Xem
+        </Button>
+        {report.status === "PENDING" && (
+          <Button
+            size="sm"
+            className="h-6 flex-1 text-[10px] px-2"
+            onClick={() => {
+              setCurrentRow(report);
+              setOpen("resolve");
+            }}
+          >
+            Xử lý
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function KanbanBoard({ reports }: { reports: ModerationReportListItem[] }) {
+  return (
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 overflow-x-auto pb-2">
+      {KANBAN_COLUMNS.map((col) => {
+        const colReports = reports.filter((r) => r.status === col.key);
+        return (
+          <div key={col.key} className="flex min-w-[220px] flex-col rounded-lg border">
+            {/* Column header */}
+            <div className={cn("flex items-center justify-between rounded-t-lg border-b px-3 py-2.5", col.headerCls)}>
+              <div className="flex items-center gap-2">
+                <span className={cn("size-2 rounded-full shrink-0", col.dotCls)} />
+                <span className="text-xs font-semibold">{col.label}</span>
+              </div>
+              <Badge variant="outline" className="text-[10px] px-1.5 h-4">
+                {colReports.length}
+              </Badge>
+            </div>
+
+            {/* Cards */}
+            <div className="flex-1 space-y-2 p-2 min-h-[200px]">
+              {colReports.length === 0 ? (
+                <div className="flex h-20 items-center justify-center text-xs text-muted-foreground">
+                  Không có báo cáo
+                </div>
+              ) : (
+                colReports.map((r) => <KanbanReportCard key={r.publicId} report={r} />)
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Resolve dialog ────────────────────────────────────────────────────
 
 function ResolveReportDialog({
@@ -311,17 +459,62 @@ function ReportDialogs() {
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function ModerationReportsPage() {
+  const [view, setView] = useState<"table" | "kanban">("kanban");
+  const { data: envelope, isLoading } = useQuery(reportListOptions({ limit: 200 }));
+  const allReports = envelope?.data ?? [];
+
+  const pendingCount = allReports.filter((r) => r.status === "PENDING").length;
+
   return (
     <ReportProvider>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Báo cáo kiểm duyệt</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Bàn điều phối cho các báo cáo từ thành viên, ưu tiên theo mức độ ảnh hưởng.
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Báo cáo kiểm duyệt</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Bàn điều phối cho các báo cáo từ thành viên, ưu tiên theo mức độ ảnh hưởng.
+              {pendingCount > 0 && (
+                <span className="ml-2 inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 text-xs font-medium text-amber-700 dark:text-amber-400">
+                  {pendingCount} chờ xử lý
+                </span>
+              )}
+            </p>
+          </div>
+
+          {/* View toggle */}
+          <div className="flex items-center rounded-md border bg-muted/30 p-0.5">
+            <Button
+              variant={view === "kanban" ? "default" : "ghost"}
+              size="sm"
+              className="h-7 gap-1.5 px-2 text-xs"
+              onClick={() => setView("kanban")}
+            >
+              <KanbanIcon className="size-3.5" />
+              Kanban
+            </Button>
+            <Button
+              variant={view === "table" ? "default" : "ghost"}
+              size="sm"
+              className="h-7 gap-1.5 px-2 text-xs"
+              onClick={() => setView("table")}
+            >
+              <ListIcon className="size-3.5" />
+              Bảng
+            </Button>
+          </div>
         </div>
 
-        <ModerationReportsTable />
+        {view === "kanban" ? (
+          isLoading ? (
+            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+              Đang tải…
+            </div>
+          ) : (
+            <KanbanBoard reports={allReports} />
+          )
+        ) : (
+          <ModerationReportsTable />
+        )}
       </div>
 
       <ReportDialogs />

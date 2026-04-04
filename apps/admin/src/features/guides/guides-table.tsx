@@ -97,7 +97,7 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
   const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
   const guides = envelope?.data ?? [];
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
   
   const publishGuide = usePublishGuide();
   const deleteGuide = useDeleteGuide();
@@ -282,5 +282,4 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
     </div>
   );
 }
-
 

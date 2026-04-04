@@ -108,7 +108,6 @@ export class ContentService {
           content: input.content as Prisma.InputJsonValue,
           authorId,
           status: "DRAFT",
-          ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
           ...(input.sourceRef !== undefined && { sourceRef: input.sourceRef }),
           ...(featuredImageId !== undefined && { featuredImageId }),
           ...(input.primaryCategoryId !== undefined && { primaryCategoryId: input.primaryCategoryId }),
@@ -165,7 +164,6 @@ export class ContentService {
       if (input.slug !== undefined) postUpdateData.slug = input.slug;
       if (input.postType !== undefined) postUpdateData.postType = input.postType as import("../../generated/prisma/client.js").PostType;
       if (input.sourceRef !== undefined) postUpdateData.sourceRef = input.sourceRef;
-      if (input.excerpt !== undefined) postUpdateData.excerpt = input.excerpt;
       if (input.content !== undefined) postUpdateData.content = input.content as Prisma.InputJsonValue;
       if (featuredImageId !== undefined) {
         postUpdateData.featuredImage = featuredImageId
@@ -335,7 +333,6 @@ export class ContentService {
     if (query.search) {
       where.OR = [
         { title: { contains: query.search, mode: "insensitive" } },
-        { excerpt: { contains: query.search, mode: "insensitive" } },
       ];
     }
 
@@ -407,7 +404,6 @@ export class ContentService {
         category: input.category as GuideCategory,
         status: "DRAFT",
         authorId: userId,
-        ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
         ...(coverMediaId !== undefined && { coverMediaId }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.versionNote !== undefined && { versionNote: input.versionNote }),
@@ -443,7 +439,6 @@ export class ContentService {
         ...(input.title !== undefined && { title: input.title }),
         ...(input.slug !== undefined && { slug: input.slug }),
         ...(input.content !== undefined && { content: input.content as Prisma.InputJsonValue }),
-        ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
         ...(coverMediaId !== undefined && { coverMediaId }),
         ...(input.category !== undefined && { category: input.category as GuideCategory }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
@@ -690,7 +685,6 @@ export class ContentService {
           publicId: guide.publicId,
           title: guide.title,
           slug: guide.slug,
-          excerpt: guide.excerpt,
           category: guide.category,
           sortOrder: guide.sortOrder,
           coverImageUrl:
@@ -737,7 +731,6 @@ export class ContentService {
         title: guide.title,
         slug: guide.slug,
         content: guide.content as Record<string, unknown>,
-        excerpt: guide.excerpt,
         category: guide.category,
         sortOrder: guide.sortOrder,
         versionNote: guide.versionNote,

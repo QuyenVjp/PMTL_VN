@@ -8,6 +8,7 @@
  * APP_INTERCEPTOR providers in AppModule — NOT via app.useGlobal*() here.
  * This ensures DI injection works correctly for all global concerns.
  */
+import "reflect-metadata";
 // OTel must initialize before NestFactory — side-effect import, no-op if OTEL_EXPORTER_OTLP_ENDPOINT unset
 import "./common/tracing/otel.bootstrap.js";
 import { NestFactory } from "@nestjs/core";

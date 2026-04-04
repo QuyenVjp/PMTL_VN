@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client";
+import type { SingleEnvelope } from "@/lib/api/envelopes.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +34,7 @@ function reportDetailOptions(publicId: string) {
   return queryOptions({
     queryKey: ["admin-moderation-reports", "detail", publicId],
     queryFn: () =>
-      adminClient.get<ModerationReportListItem>(`/moderation/reports/${publicId}`),
+      adminClient.get<SingleEnvelope<ModerationReportListItem>>(`/moderation/reports/${publicId}`),
     enabled: Boolean(publicId),
   });
 }
@@ -149,16 +150,24 @@ export function ReportDetailPage() {
 
   const [resolveOpen, setResolveOpen] = useState(false);
 
-  const { data: report, isLoading } = useQuery(
+  const { data: envelope, isLoading, isError } = useQuery(
     reportDetailOptions(publicId ?? ""),
   );
+  const report = envelope?.data;
 
   const goBack = () => { void navigate({ to: "/kiem-duyet/bao-cao" }); };
 
-  if (isLoading || !report) {
+  if (isLoading) {
     return (
       <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
         Đang tải...
+      </div>
+    );
+  }
+  if (isError || !report) {
+    return (
+      <div className="flex h-48 items-center justify-center text-sm text-destructive">
+        Không tải được báo cáo.
       </div>
     );
   }

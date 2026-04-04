@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useNavigateTo } from "@/lib/router-utils";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-
 import {
   AdminDetailPage,
   AdminDetailSection,
@@ -33,8 +31,6 @@ import { guideDetailOptions } from "@/features/guides/queries";
 import { useUpdateGuide, usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
-
-const EXCERPT_MAX_LENGTH = 4000;
 
 function editorTextLength(value: string) {
   return value
@@ -108,7 +104,6 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("BEGINNER");
-  const [excerpt, setExcerpt] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
@@ -124,7 +119,6 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
     setTitle(guide.title);
     setSlug(guide.slug);
     setCategory(guide.category);
-    setExcerpt(guide.excerpt ?? "");
     setBodyHtml(readGuideBodyHtml(guide.content));
     setSortOrder("0");
     setVersionNote("");
@@ -142,7 +136,6 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (editorTextLength(excerpt) > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -157,7 +150,6 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
         slug: slug.trim() || undefined,
         category,
         content: buildGuideContent(bodyHtml),
-        excerpt: normalizeEditorHtml(excerpt) || undefined,
         coverMediaPublicId: coverMediaPublicId || null,
         sortOrder: Number(sortOrder) || undefined,
         versionNote: versionNote.trim() || undefined,
@@ -311,24 +303,6 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
                 </Select>
               </AdminFormField>
             </div>
-
-            <AdminFormField label="Tóm tắt">
-              <RichTextEditor
-                value={excerpt}
-                onChange={(nextValue) => {
-                  setExcerpt(nextValue);
-                  if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-                }}
-                placeholder="Mô tả ngắn, rõ ràng và dễ đọc cho người lớn tuổi..."
-                minHeight={160}
-              />
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <FieldError message={fieldErrors.excerpt} />
-                <span className={cn(fieldErrors.excerpt && "text-destructive")}>
-                  {editorTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
-                </span>
-              </div>
-            </AdminFormField>
 
             <AdminFormField label="Nội dung" hint="Nội dung chi tiết của bài hướng dẫn">
               <RichTextEditor

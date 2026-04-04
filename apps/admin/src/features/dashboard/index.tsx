@@ -2,35 +2,46 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ActivityIcon,
+  ArchiveIcon,
+  BookOpenIcon,
   BookTextIcon,
+  CalendarIcon,
+  CheckIcon,
+  ImageIcon,
+  MessageSquareIcon,
   RefreshCcwIcon,
+  ScrollTextIcon,
   SearchIcon,
+  ServerIcon,
   ShieldAlertIcon,
   UsersIcon,
-  PlusIcon,
-  CheckCircleIcon,
-  TrendingUpIcon,
-  AlertTriangleIcon,
 } from "lucide-react";
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
   Line,
   LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
+  RadialBar,
+  RadialBarChart,
   XAxis,
   YAxis,
 } from "recharts";
 
+import type { LucideIcon } from "lucide-react";
+import type { ChartConfig } from "@/components/ui/chart";
+
 import { useNavigate } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import {
   Table,
   TableBody,
@@ -40,14 +51,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DashboardCard,
+  DashboardCardActionsDropdown,
+  DashboardOverviewCard,
+} from "@/components/dashboard";
 import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useSearch } from "@/stores/search";
 import { dashboardStatsOptions, dashboardKeys } from "./queries.js";
 import { healthExtendedOptions } from "@/features/system/health-queries.js";
-import { toast } from "sonner";
 
-// ── Badge helpers ─────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────
 
 function contentStatusClass(status: string): string {
   if (status === "PUBLISHED")
@@ -63,6 +78,13 @@ function statusLabel(status: string): string {
   if (status === "PUBLISHED") return "Đã xuất bản";
   if (status === "DRAFT") return "Nháp";
   if (status === "ARCHIVED") return "Đã ẩn";
+  return status;
+}
+
+function statusShortLabel(status: string): string {
+  if (status === "PUBLISHED") return "Xuất bản";
+  if (status === "DRAFT") return "Nháp";
+  if (status === "ARCHIVED") return "Ẩn";
   return status;
 }
 
@@ -87,21 +109,6 @@ function targetTypeLabel(type: string): string {
   return map[type] ?? type;
 }
 
-function statusShortLabel(status: string): string {
-  if (status === "PUBLISHED") return "Xuất bản";
-  if (status === "DRAFT") return "Nháp";
-  if (status === "ARCHIVED") return "Ẩn";
-  return status;
-}
-
-function targetTypeShortLabel(type: string): string {
-  if (type === "post") return "Bài viết";
-  if (type === "comment") return "Bình luận";
-  if (type === "community_post") return "CĐ";
-  if (type === "guestbook") return "Sổ lưu niệm";
-  return type;
-}
-
 function userInitials(displayName: string): string {
   return displayName
     .split(" ")
@@ -122,47 +129,35 @@ function timeAgo(isoDate: string): string {
   return `${days} ngày trước`;
 }
 
-function formatNumber(n: number): string {
-  return n.toLocaleString("vi-VN");
-}
+// ── Chart configs ─────────────────────────────────────────────────────
 
-// ── Skeleton cards ───────────────────────────────────────────────────
+const activityChartConfig: ChartConfig = {
+  posts: { label: "Bài viết", color: "var(--chart-1)" },
+  reports: { label: "Báo cáo", color: "var(--destructive)" },
+  audits: { label: "Audit", color: "var(--chart-3)" },
+};
 
-function StatCardSkeleton() {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <Skeleton className="h-4 w-24" />
-        <Skeleton className="size-4" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-8 w-16" />
-        <Skeleton className="mt-2 h-4 w-32" />
-      </CardContent>
-    </Card>
-  );
-}
+// Ordered: inner → outer (recharts radial renders first-item innermost)
+const RADIAL_COLORS = [
+  "var(--chart-5)",
+  "var(--chart-4)",
+  "var(--chart-3)",
+  "var(--chart-2)",
+  "var(--chart-1)",
+];
 
-function TableSkeleton({ rows = 5 }: { rows?: number }) {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-10 w-full" />
-      ))}
-    </div>
-  );
-}
+// ── Period selector ───────────────────────────────────────────────────
 
-// ── System Status Cards Component ─────────────────────────────────────
+type StatPeriod = "7d" | "total";
+
+const PERIOD_LABEL: Record<StatPeriod, string> = {
+  "7d": "7 ngày gần đây",
+  "total": "Tổng cộng",
+};
+
+// ── System health ─────────────────────────────────────────────────────
 
 type HealthStatus = "healthy" | "degraded" | "unhealthy";
-
-interface ComponentHealth {
-  name: string;
-  status: HealthStatus;
-  latencyMs: number;
-  detail: string;
-}
 
 const STATUS_CONFIG: Record<HealthStatus, { dot: string; badge: string; label: string }> = {
   healthy: {
@@ -181,25 +176,6 @@ const STATUS_CONFIG: Record<HealthStatus, { dot: string; badge: string; label: s
     label: "Gặp sự cố",
   },
 };
-
-function SystemStatusRow({ component }: { component: ComponentHealth }) {
-  const cfg = STATUS_CONFIG[component.status];
-  return (
-    <div className="flex items-center justify-between py-3 [&:not(:last-child)]:border-b">
-      <div className="flex items-center gap-3">
-        <div className={cn("size-2 shrink-0 rounded-full", cfg.dot)} />
-        <div>
-          <p className="text-sm font-medium leading-none">{component.name}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{component.detail}</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-3">
-        <span className="text-xs tabular-nums text-muted-foreground">{component.latencyMs}ms</span>
-        <Badge variant="outline" className={cfg.badge}>{cfg.label}</Badge>
-      </div>
-    </div>
-  );
-}
 
 function SystemStatusCards() {
   const { data: health, isLoading } = useQuery(healthExtendedOptions());
@@ -224,13 +200,138 @@ function SystemStatusCards() {
     );
   }
 
-  if (components.length === 0) return null;
+  if (components.length === 0)
+    return <p className="py-4 text-sm text-muted-foreground">Không có dữ liệu.</p>;
 
   return (
     <div>
-      {components.map((component) => (
-        <SystemStatusRow key={component.name} component={component} />
+      {components.map((c: { name: string; status: string; latencyMs: number; detail: string }) => {
+        const cfg = STATUS_CONFIG[c.status as HealthStatus] ?? STATUS_CONFIG.unhealthy;
+        return (
+          <div key={c.name} className="flex items-center justify-between py-3 [&:not(:last-child)]:border-b">
+            <div className="flex items-center gap-3">
+              <div className={cn("size-2 shrink-0 rounded-full", cfg.dot)} />
+              <div>
+                <p className="text-sm font-medium leading-none">{c.name}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{c.detail}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-xs tabular-nums text-muted-foreground">{c.latencyMs}ms</span>
+              <Badge variant="outline" className={cfg.badge}>{cfg.label}</Badge>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Skeletons ─────────────────────────────────────────────────────────
+
+function StatCardSkeleton() {
+  return (
+    <Card>
+      <div className="flex justify-between p-6">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+        <Skeleton className="size-4" />
+      </div>
+      <CardContent className="space-y-1">
+        <Skeleton className="h-8 w-16" />
+        <Skeleton className="h-4 w-24" />
+      </CardContent>
+    </Card>
+  );
+}
+
+function TableSkeleton({ rows = 5 }: { rows?: number }) {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: rows }).map((_, i) => (
+        <Skeleton key={i} className="h-10 w-full" />
       ))}
+    </div>
+  );
+}
+
+// ── Module card ───────────────────────────────────────────────────────
+
+interface ContentModule {
+  icon: LucideIcon;
+  label: string;
+  description: string;
+  href: string;
+  colorClass: string;
+  urgentCount?: number;
+}
+
+function ModuleCard({ module: mod }: { module: ContentModule }) {
+  const navigate = useNavigate();
+  const hasUrgent = (mod.urgentCount ?? 0) > 0;
+  return (
+    <Card
+      className={cn(
+        "group cursor-pointer transition-all hover:shadow-md",
+        hasUrgent && "border-destructive/40",
+      )}
+      onClick={() => void navigate({ to: mod.href })}
+    >
+      <CardContent className="flex items-center gap-3 p-4">
+        <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", mod.colorClass)}>
+          <mod.icon className="size-4" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium">{mod.label}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {hasUrgent ? (
+              <span className="font-medium text-destructive">{mod.urgentCount} chờ xử lý</span>
+            ) : (
+              mod.description
+            )}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Progress bar row (Traffic Sources pattern) ────────────────────────
+
+function ProgressRow({
+  color,
+  label,
+  count,
+  total,
+  note,
+}: {
+  color: string;
+  label: string;
+  count: number;
+  total: number;
+  note?: string;
+}) {
+  const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center gap-2">
+          <span className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />
+          <span className="font-medium">{label}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          {note && <span className="text-xs text-muted-foreground">{note}</span>}
+          <span className="w-10 text-right tabular-nums text-xs font-medium">{pct}%</span>
+        </div>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${pct}%`, backgroundColor: color }}
+        />
+      </div>
     </div>
   );
 }
@@ -242,6 +343,7 @@ export function DashboardOverview() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [chartReady, setChartReady] = useState(false);
+  const [statPeriod, setStatPeriod] = useState<StatPeriod>("total");
 
   useEffect(() => {
     setChartReady(true);
@@ -254,77 +356,56 @@ export function DashboardOverview() {
   });
   const isSuperAdmin = adminUser?.role === "SUPER_ADMIN";
 
-  const {
-    data: stats,
-    isLoading,
-    isError,
-    error,
-  } = useQuery(dashboardStatsOptions());
+  const { data: stats, isLoading, isError, error } = useQuery(dashboardStatsOptions());
 
   const handleRefresh = () => {
     void qc.invalidateQueries({ queryKey: dashboardKeys.all });
   };
 
-  const summaryCards = useMemo(() => {
+  // ── Period-sensitive KPI values ───────────────────────────────────
+  const kpi = useMemo(() => {
+    if (!stats) return null;
+    if (statPeriod === "7d") {
+      return {
+        users: { value: stats.periodSummary.newUsers7d, period: "Người dùng mới" },
+        posts: { value: stats.periodSummary.newPublishedPosts7d, period: "Bài xuất bản mới" },
+        reports: { value: stats.periodSummary.newPendingReports7d, period: "Báo cáo mới" },
+        sessions: { value: stats.periodSummary.activeSessions24h, period: "Phiên active 24h" },
+      };
+    }
+    return {
+      users: { value: stats.totalUsers, period: "Tổng tài khoản" },
+      posts: { value: stats.publishedPosts, period: "Nội dung public" },
+      reports: { value: stats.pendingReports, period: "Đang chờ xử lý" },
+      sessions: { value: stats.activeSessions, period: "Session active" },
+    };
+  }, [stats, statPeriod]);
+
+  // ── Radial chart data for content status ──────────────────────────
+  const statusRadialData = useMemo(() => {
     if (!stats) return [];
-    return [
-      {
-        title: "Thành viên",
-        value: formatNumber(stats.totalUsers),
-        detail: "Tổng tài khoản không bị xóa",
-        icon: UsersIcon,
-        urgent: false,
-      },
-      {
-        title: "Bài viết đã xuất bản",
-        value: formatNumber(stats.publishedPosts),
-        detail: "Nội dung đang hiển thị public",
-        icon: BookTextIcon,
-        urgent: false,
-      },
-      {
-        title: "Báo cáo chờ xử lý",
-        value: formatNumber(stats.pendingReports),
-        detail: stats.pendingReports > 0
-          ? "Cần quyết định kiểm duyệt"
-          : "Không có case mở",
-        icon: ShieldAlertIcon,
-        urgent: stats.pendingReports > 0,
-      },
-      {
-        title: "Phiên đang mở",
-        value: formatNumber(stats.activeSessions),
-        detail: "Session chưa hết hạn, chưa thu hồi",
-        icon: ActivityIcon,
-        urgent: false,
-      },
-    ];
+    // Reversed so innermost ring = smallest value visually
+    return [...stats.postStatusStats]
+      .sort((a, b) => a.count - b.count)
+      .map((item, i) => ({
+        name: statusShortLabel(item.status),
+        value: item.count,
+        fill: RADIAL_COLORS[i % RADIAL_COLORS.length],
+      }));
   }, [stats]);
 
-  const postStatusChartData = useMemo(() => {
-    if (!stats) return [];
-    return stats.postStatusStats.map((item) => ({
-      name: statusShortLabel(item.status),
-      value: item.count,
-    }));
-  }, [stats]);
+  const statusTotal = useMemo(
+    () => statusRadialData.reduce((s, d) => s + d.value, 0),
+    [statusRadialData],
+  );
 
-  const pendingTargetChartData = useMemo(() => {
-    if (!stats) return [];
-    return stats.pendingReportTargetStats.map((item) => ({
-      name: targetTypeShortLabel(item.targetType),
-      value: item.count,
-    }));
-  }, [stats]);
+  // ── Audit action breakdown (Traffic Sources style) ────────────────
+  const auditTotal = useMemo(
+    () => (stats?.auditActionStats ?? []).reduce((s, d) => s + d.count, 0),
+    [stats],
+  );
 
-  const auditActionChartData = useMemo(() => {
-    if (!stats) return [];
-    return stats.auditActionStats.map((item) => ({
-      name: item.action,
-      value: item.count,
-    }));
-  }, [stats]);
-
+  // ── Activity series ───────────────────────────────────────────────
   const activitySeriesChartData = useMemo(() => {
     if (!stats) return [];
     return stats.activitySeries7d.map((item) => ({
@@ -336,83 +417,145 @@ export function DashboardOverview() {
     }));
   }, [stats]);
 
-  const pieColors = ["#16a34a", "#f59e0b", "#0ea5e9", "#8b5cf6", "#ef4444", "#06b6d4"];
+  // ── Period dropdown action ────────────────────────────────────────
+  const periodAction = (
+    <DashboardCardActionsDropdown>
+      {(["7d", "total"] as StatPeriod[]).map((p) => (
+        <DropdownMenuItem key={p} onClick={() => setStatPeriod(p)}>
+          {statPeriod === p && <CheckIcon className="mr-2 size-4" />}
+          {statPeriod !== p && <span className="mr-2 size-4" />}
+          {PERIOD_LABEL[p]}
+        </DropdownMenuItem>
+      ))}
+    </DashboardCardActionsDropdown>
+  );
+
+  // ── Content modules ───────────────────────────────────────────────
+  const contentModules: ContentModule[] = [
+    {
+      icon: BookTextIcon,
+      label: "Bài viết",
+      description: `${stats?.publishedPosts ?? "—"} đã xuất bản`,
+      href: "/noi-dung/bai-viet",
+      colorClass: "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400",
+    },
+    {
+      icon: ScrollTextIcon,
+      label: "Bạch thoại",
+      description: "Phật pháp bạch thoại",
+      href: "/noi-dung/bach-thoai",
+      colorClass: "bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400",
+    },
+    {
+      icon: BookOpenIcon,
+      label: "Hướng dẫn",
+      description: "Tài liệu nhập môn",
+      href: "/noi-dung/huong-dan",
+      colorClass: "bg-green-50 dark:bg-green-950/50 text-green-600 dark:text-green-400",
+    },
+    {
+      icon: ArchiveIcon,
+      label: "Tài liệu",
+      description: "File tải xuống",
+      href: "/noi-dung/tai-lieu",
+      colorClass: "bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400",
+    },
+    {
+      icon: BookOpenIcon,
+      label: "Kinh sách",
+      description: "Kinh văn số hoá",
+      href: "/noi-dung/kinh-sach",
+      colorClass: "bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400",
+    },
+    {
+      icon: ActivityIcon,
+      label: "Niệm kinh",
+      description: "Audio hành trì",
+      href: "/noi-dung/niem-kinh",
+      colorClass: "bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400",
+    },
+    {
+      icon: ImageIcon,
+      label: "Media",
+      description: "Thư viện tài nguyên",
+      href: "/noi-dung/media",
+      colorClass: "bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400",
+    },
+    {
+      icon: MessageSquareIcon,
+      label: "Cộng đồng",
+      description: "Bài đăng & sổ lưu niệm",
+      href: "/cong-dong/bai-dang",
+      colorClass: "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      icon: ShieldAlertIcon,
+      label: "Kiểm duyệt",
+      description: "Báo cáo & bình luận",
+      href: "/kiem-duyet/bao-cao",
+      colorClass: "bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400",
+      urgentCount: stats?.pendingReports,
+    },
+    {
+      icon: UsersIcon,
+      label: "Người dùng",
+      description: `${stats?.totalUsers ?? "—"} tài khoản`,
+      href: "/nguoi-dung",
+      colorClass: "bg-slate-50 dark:bg-slate-950/50 text-slate-600 dark:text-slate-400",
+    },
+    {
+      icon: CalendarIcon,
+      label: "Lịch sự kiện",
+      description: "Quản lý sự kiện",
+      href: "/he-thong/lich",
+      colorClass: "bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400",
+    },
+    {
+      icon: ServerIcon,
+      label: "Hệ thống",
+      description: "Health & cài đặt",
+      href: "/he-thong/health",
+      colorClass: "bg-gray-50 dark:bg-gray-950/50 text-gray-600 dark:text-gray-400",
+    },
+  ];
 
   return (
     <div className="space-y-6">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Card className="overflow-hidden">
-        <CardContent className="flex flex-col gap-6 p-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="space-y-3">
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">Admin PMTL</Badge>
-              {isSuperAdmin && (
-                <Badge
-                  variant="outline"
-                  className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400"
-                >
-                  Super Admin
-                </Badge>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tight">
-                Tổng quan vận hành PMTL
-              </h1>
-              <p className="max-w-2xl text-sm text-muted-foreground">
-                Dữ liệu thực từ hệ thống. Nhấn "Làm mới" để cập nhật.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={() => setOpen(true)}>
-                <SearchIcon className="size-4" />
-                Tìm nhanh
-              </Button>
-              <Button variant="outline" onClick={handleRefresh}>
-                <RefreshCcwIcon className="size-4" />
-                Làm mới
-              </Button>
+      <Card>
+        <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+          <div className="flex items-center gap-4">
+            {adminUser && (
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
+                {adminUser.displayName ? userInitials(adminUser.displayName) : "AD"}
+              </div>
+            )}
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-lg font-semibold">Tổng quan vận hành PMTL</h1>
+                {isSuperAdmin && (
+                  <Badge variant="outline" className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400">
+                    Super Admin
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">{adminUser?.email ?? "—"}</p>
             </div>
           </div>
-
-          {adminUser && (
-            <div className="grid min-w-[280px] gap-3 rounded-2xl border bg-muted/30 p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
-                  {adminUser.displayName
-                    ? userInitials(adminUser.displayName)
-                    : "AD"}
-                </div>
-                <div>
-                  <p className="font-semibold">
-                    {adminUser.displayName ?? "—"}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {adminUser.email ?? "—"}
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-2 text-sm text-muted-foreground">
-                <div className="flex items-center justify-between">
-                  <span>Vai trò</span>
-                  <Badge
-                    variant="outline"
-                    className={
-                      isSuperAdmin
-                        ? "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400"
-                        : ""
-                    }
-                  >
-                    {isSuperAdmin ? "Super Admin" : "Admin"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+              <SearchIcon className="size-4" />
+              Tìm nhanh
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleRefresh}>
+              <RefreshCcwIcon className="size-4" />
+              Làm mới
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* ── Error state ──────────────────────────────────────────────── */}
+      {/* ── Error ────────────────────────────────────────────────────── */}
       {isError && (
         <Card className="border-red-200 dark:border-red-800">
           <CardContent className="flex items-center justify-between p-4">
@@ -420,280 +563,242 @@ export function DashboardOverview() {
               Không tải được dữ liệu dashboard.{" "}
               {error instanceof Error ? error.message : ""}
             </p>
-            <Button variant="outline" size="sm" onClick={handleRefresh}>
-              Thử lại
-            </Button>
+            <Button variant="outline" size="sm" onClick={handleRefresh}>Thử lại</Button>
           </CardContent>
         </Card>
       )}
 
-      {/* ── Quick Actions ────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        <Card
-          className="group cursor-pointer border-dashed transition-all hover:border-solid hover:shadow-md"
-          onClick={() => void navigate({ to: "/noi-dung/bai-viet" })}
-        >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-blue-50 group-hover:bg-blue-100 dark:bg-blue-950/50">
-              <PlusIcon className="size-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="font-medium">Tạo bài viết</p>
-              <p className="text-xs text-muted-foreground">Nội dung mới</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="group cursor-pointer border-dashed transition-all hover:border-solid hover:shadow-md"
-          onClick={() => void navigate({ to: "/kiem-duyet/bao-cao" })}
-        >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-green-50 group-hover:bg-green-100 dark:bg-green-950/50">
-              <CheckCircleIcon className="size-5 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="font-medium">Duyệt báo cáo</p>
-              <p className="text-xs text-muted-foreground">
-                {stats?.pendingReports ?? 0} chờ xử lý
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="group cursor-pointer border-dashed transition-all hover:border-solid hover:shadow-md"
-          onClick={() => {
-            toast.success("Đang chuyển đến trang tìm kiếm...");
-            void navigate({ to: "/he-thong/tim-kiem" });
-          }}
-        >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-purple-50 group-hover:bg-purple-100 dark:bg-purple-950/50">
-              <RefreshCcwIcon className="size-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="font-medium">Reindex All</p>
-              <p className="text-xs text-muted-foreground">Làm mới tìm kiếm</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="group cursor-pointer border-dashed transition-all hover:border-solid hover:shadow-md"
-          onClick={() => void navigate({ to: "/he-thong/audit-logs" })}
-        >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-orange-50 group-hover:bg-orange-100 dark:bg-orange-950/50">
-              <TrendingUpIcon className="size-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <div>
-              <p className="font-medium">Báo cáo</p>
-              <p className="text-xs text-muted-foreground">Thống kê chi tiết</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className="group cursor-pointer border-dashed transition-all hover:border-solid hover:shadow-md"
-          onClick={() => void navigate({ to: "/he-thong/health" })}
-        >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="flex size-10 items-center justify-center rounded-lg bg-red-50 group-hover:bg-red-100 dark:bg-red-950/50">
-              <AlertTriangleIcon className="size-5 text-red-600 dark:text-red-400" />
-            </div>
-            <div>
-              <p className="font-medium">Cảnh báo</p>
-              <p className="text-xs text-muted-foreground">Hệ thống</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ── Summary KPIs ─────────────────────────────────────────────── */}
+      {/* ── KPI Cards — with period selector ─────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <StatCardSkeleton key={i} />
-            ))
-          : summaryCards.map(({ title, value, detail, icon: Icon, urgent }) => (
-              <Card key={title}>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardDescription>{title}</CardDescription>
-                  <Icon
-                    className={cn(
-                      "size-4",
-                      urgent ? "text-red-500" : "text-muted-foreground",
-                    )}
-                  />
-                </CardHeader>
-                <CardContent>
-                  <div
-                    className={cn(
-                      "text-3xl font-bold",
-                      urgent && "text-red-600 dark:text-red-400",
-                    )}
-                  >
-                    {value}
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{detail}</p>
-                </CardContent>
-              </Card>
-            ))}
+        {isLoading ? (
+          Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
+        ) : kpi ? (
+          <>
+            <DashboardOverviewCard
+              title="Thành viên"
+              icon={UsersIcon}
+              data={{ value: kpi.users.value, percentageChange: 0 }}
+              period={kpi.users.period}
+              action={periodAction}
+            />
+            <DashboardOverviewCard
+              title="Bài viết xuất bản"
+              icon={BookTextIcon}
+              data={{ value: kpi.posts.value, percentageChange: 0 }}
+              period={kpi.posts.period}
+              action={periodAction}
+            />
+            <DashboardOverviewCard
+              title="Báo cáo chờ duyệt"
+              icon={ShieldAlertIcon}
+              data={{ value: kpi.reports.value, percentageChange: 0 }}
+              period={kpi.reports.period}
+              className={
+                statPeriod === "total" && (stats?.pendingReports ?? 0) > 0
+                  ? "border-destructive/30"
+                  : ""
+              }
+              action={periodAction}
+            />
+            <DashboardOverviewCard
+              title="Phiên đang mở"
+              icon={ActivityIcon}
+              data={{ value: kpi.sessions.value, percentageChange: 0 }}
+              period={kpi.sessions.period}
+              action={periodAction}
+            />
+          </>
+        ) : null}
       </div>
 
-      {/* ── Practical reporting section ───────────────────────────────── */ }
+      {/* ── Content Modules Grid ──────────────────────────────────────── */}
+      <div>
+        <p className="mb-3 text-sm font-medium text-muted-foreground">Truy cập nhanh</p>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-6">
+          {contentModules.map((mod) => (
+            <ModuleCard key={mod.href} module={mod} />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Charts: Activity line + Status breakdown (Shadboard pattern) ─ */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Card className="xl:col-span-2">
-          <CardHeader>
-            <CardTitle>Nhịp vận hành 7 ngày</CardTitle>
-            <CardDescription>
-              Theo dõi song song nội dung, kiểm duyệt và audit event để phát hiện lệch tải.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {isLoading || !chartReady ? (
-              <Skeleton className="h-64 w-full" />
-            ) : (
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={activitySeriesChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="label" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="posts" name="Bài viết" stroke="#f59e0b" strokeWidth={2} />
-                    <Line type="monotone" dataKey="reports" name="Báo cáo" stroke="#ef4444" strokeWidth={2} />
-                    <Line type="monotone" dataKey="audits" name="Audit" stroke="#3b82f6" strokeWidth={2} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-            {stats && (
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-lg border px-3 py-2">
-                  <p className="text-xs text-muted-foreground">User mới 7 ngày</p>
-                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newUsers7d)}</p>
-                </div>
-                <div className="rounded-lg border px-3 py-2">
-                  <p className="text-xs text-muted-foreground">Bài đã xuất bản 7 ngày</p>
-                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newPublishedPosts7d)}</p>
-                </div>
-                <div className="rounded-lg border px-3 py-2">
-                  <p className="text-xs text-muted-foreground">Báo cáo pending mới 7 ngày</p>
-                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.newPendingReports7d)}</p>
-                </div>
-                <div className="rounded-lg border px-3 py-2">
-                  <p className="text-xs text-muted-foreground">Phiên active mới 24h</p>
-                  <p className="text-lg font-semibold">{formatNumber(stats.periodSummary.activeSessions24h)}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* 7-day activity line chart */}
+        <DashboardCard
+          title="Nhịp vận hành 7 ngày"
+          period="Nội dung, kiểm duyệt và audit event"
+          className="xl:col-span-2"
+          size="sm"
+        >
+          {isLoading || !chartReady ? (
+            <Skeleton className="h-full w-full" />
+          ) : (
+            <ChartContainer config={activityChartConfig} className="h-full w-full">
+              <LineChart accessibilityLayer data={activitySeriesChartData}>
+                <CartesianGrid vertical={false} />
+                <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} />
+                <YAxis allowDecimals={false} tickLine={false} axisLine={false} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line type="monotone" dataKey="posts" stroke="var(--color-posts)" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="reports" stroke="var(--color-reports)" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="audits" stroke="var(--color-audits)" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ChartContainer>
+          )}
+        </DashboardCard>
 
+        {/* Post status — Radial chart + progress list (Traffic Sources pattern) */}
         <Card>
-          <CardHeader>
-            <CardTitle>Tỷ trọng trạng thái nội dung</CardTitle>
-            <CardDescription>Phân bố bài viết theo trạng thái hiện tại.</CardDescription>
-          </CardHeader>
-          <CardContent>
+          <div className="flex justify-between p-6 pb-0">
+            <div>
+              <CardTitle>Trạng thái nội dung</CardTitle>
+              <CardDescription>Phân bố bài viết theo trạng thái</CardDescription>
+            </div>
+          </div>
+          <CardContent className="pt-0">
             {isLoading || !chartReady ? (
-              <Skeleton className="h-64 w-full" />
-            ) : postStatusChartData.length > 0 ? (
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={postStatusChartData} dataKey="value" nameKey="name" outerRadius={84}>
-                      {postStatusChartData.map((entry, index) => (
-                        <Cell key={entry.name} fill={pieColors[index % pieColors.length]} />
+              <Skeleton className="h-48 w-full" />
+            ) : statusRadialData.length > 0 ? (
+              <>
+                {/* Radial rings — Shadboard concentric pattern */}
+                <div className="flex justify-center">
+                  <RadialBarChart
+                    width={200}
+                    height={180}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="25%"
+                    outerRadius="90%"
+                    barSize={14}
+                    data={statusRadialData}
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    <RadialBar
+                      dataKey="value"
+                      background={{ fill: "hsl(var(--muted))" }}
+                      cornerRadius={6}
+                    >
+                      {statusRadialData.map((entry, index) => (
+                        <Cell key={index} fill={entry.fill} />
                       ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+                    </RadialBar>
+                    <ChartTooltip
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.[0]) return null;
+                        const d = payload[0].payload as { name: string; value: number; fill: string };
+                        return (
+                          <div className="rounded-lg border bg-background px-3 py-2 text-sm shadow-md">
+                            <div className="flex items-center gap-2">
+                              <span className="size-2 rounded-full" style={{ backgroundColor: d.fill }} />
+                              <span className="font-medium">{d.name}</span>
+                              <span className="text-muted-foreground">{d.value}</span>
+                            </div>
+                          </div>
+                        );
+                      }}
+                    />
+                  </RadialBarChart>
+                </div>
+                {/* Progress list below chart */}
+                <div className="space-y-3">
+                  {[...statusRadialData].reverse().map((item) => (
+                    <ProgressRow
+                      key={item.name}
+                      color={item.fill}
+                      label={item.name}
+                      count={item.value}
+                      total={statusTotal}
+                      note={`${item.value} bài`}
+                    />
+                  ))}
+                </div>
+              </>
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Chưa đủ dữ liệu để hiển thị biểu đồ.
-              </p>
+              <p className="py-8 text-center text-sm text-muted-foreground">Chưa đủ dữ liệu.</p>
             )}
           </CardContent>
         </Card>
       </div>
 
+      {/* ── Audit actions breakdown — Traffic Sources style ───────────── */}
+      {stats && stats.auditActionStats.length > 0 && (
+        <div className="grid gap-4 xl:grid-cols-2">
+          <Card>
+            <div className="flex justify-between p-6 pb-2">
+              <div>
+                <CardTitle>Top hành động audit</CardTitle>
+                <CardDescription>Phân bố event vận hành 7 ngày gần đây</CardDescription>
+              </div>
+            </div>
+            <CardContent className="space-y-4">
+              {stats.auditActionStats.slice(0, 6).map((item, i) => (
+                <ProgressRow
+                  key={item.action}
+                  color={RADIAL_COLORS[RADIAL_COLORS.length - 1 - (i % RADIAL_COLORS.length)]}
+                  label={item.action}
+                  count={item.count}
+                  total={auditTotal}
+                  note={`${item.count} lần`}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Recent audit log on the right */}
+          <Card>
+            <div className="flex justify-between p-6 pb-4">
+              <div>
+                <CardTitle>Hoạt động gần đây</CardTitle>
+                <CardDescription>Event audit mới nhất trong hệ thống.</CardDescription>
+              </div>
+            </div>
+            <CardContent>
+              {isLoading ? (
+                <TableSkeleton rows={4} />
+              ) : stats.recentAuditLogs.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Thời gian</TableHead>
+                      <TableHead>Hành động</TableHead>
+                      <TableHead>Resource</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {stats.recentAuditLogs.slice(0, 6).map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="text-nowrap text-muted-foreground">{timeAgo(log.createdAt)}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{log.action}</Badge>
+                        </TableCell>
+                        <TableCell className="max-w-[140px] truncate text-muted-foreground">
+                          {log.resource
+                            ? `${log.resource}${log.resourceId ? `/${log.resourceId.slice(0, 8)}` : ""}`
+                            : "—"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <p className="py-8 text-center text-sm text-muted-foreground">Chưa có hoạt động nào.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ── Recent content + Pending reports ─────────────────────────── */}
       <div className="grid gap-4 xl:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Top hành động audit (7 ngày)</CardTitle>
-            <CardDescription>
-              Nhìn nhanh hành vi vận hành nào đang chiếm tải cao nhất.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading || !chartReady ? (
-              <Skeleton className="h-64 w-full" />
-            ) : auditActionChartData.length > 0 ? (
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={auditActionChartData} layout="vertical" margin={{ left: 30 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" allowDecimals={false} />
-                    <YAxis type="category" dataKey="name" width={160} tick={{ fontSize: 12 }} />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Chưa có event audit trong 7 ngày.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Cơ cấu báo cáo pending</CardTitle>
-            <CardDescription>
-              Cho biết lane kiểm duyệt nào đang dồn case chờ quyết định.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoading || !chartReady ? (
-              <Skeleton className="h-64 w-full" />
-            ) : pendingTargetChartData.length > 0 ? (
-              <div className="h-64 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={pendingTargetChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#ef4444" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Không có báo cáo pending.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ── Content table + Pending reports ───────────────────────────── */}
-      <div className="grid gap-4 xl:grid-cols-[1fr_1fr]">
-        {/* Recent posts */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Nội dung cập nhật gần đây</CardTitle>
-            <CardDescription>
-              5 bài viết mới nhất theo thời gian chỉnh sửa.
-            </CardDescription>
-          </CardHeader>
+          <div className="flex justify-between p-6 pb-4">
+            <div>
+              <CardTitle>Nội dung cập nhật gần đây</CardTitle>
+              <CardDescription>5 bài viết mới nhất theo thời gian chỉnh sửa.</CardDescription>
+            </div>
+          </div>
           <CardContent>
             {isLoading ? (
               <TableSkeleton />
@@ -709,42 +814,36 @@ export function DashboardOverview() {
                 </TableHeader>
                 <TableBody>
                   {stats.recentPosts.map((post) => (
-                    <TableRow key={post.publicId}>
-                      <TableCell className="max-w-[200px] truncate">
-                        {post.title}
-                      </TableCell>
+                    <TableRow
+                      key={post.publicId}
+                      className="cursor-pointer"
+                      onClick={() => void navigate({ to: `/noi-dung/bai-viet/${post.publicId}` })}
+                    >
+                      <TableCell className="max-w-[180px] truncate">{post.title}</TableCell>
                       <TableCell>
-                        <Badge
-                          variant="outline"
-                          className={contentStatusClass(post.status)}
-                        >
+                        <Badge variant="outline" className={contentStatusClass(post.status)}>
                           {statusLabel(post.status)}
                         </Badge>
                       </TableCell>
                       <TableCell>{post.authorName}</TableCell>
-                      <TableCell className="text-nowrap text-muted-foreground">
-                        {timeAgo(post.updatedAt)}
-                      </TableCell>
+                      <TableCell className="text-nowrap text-muted-foreground">{timeAgo(post.updatedAt)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Chưa có bài viết nào.
-              </p>
+              <p className="py-8 text-center text-sm text-muted-foreground">Chưa có bài viết nào.</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Pending reports */}
         <Card>
-          <CardHeader>
-            <CardTitle>Báo cáo chờ quyết định</CardTitle>
-            <CardDescription>
-              Ưu tiên lane kiểm duyệt theo mức độ ảnh hưởng.
-            </CardDescription>
-          </CardHeader>
+          <div className="flex justify-between p-6 pb-4">
+            <div>
+              <CardTitle>Báo cáo chờ quyết định</CardTitle>
+              <CardDescription>Ưu tiên lane kiểm duyệt theo mức độ ảnh hưởng.</CardDescription>
+            </div>
+          </div>
           <CardContent>
             {isLoading ? (
               <TableSkeleton />
@@ -759,91 +858,31 @@ export function DashboardOverview() {
                 </TableHeader>
                 <TableBody>
                   {stats.pendingReportsList.map((report) => (
-                    <TableRow key={report.publicId}>
+                    <TableRow
+                      key={report.publicId}
+                      className="cursor-pointer"
+                      onClick={() => void navigate({ to: `/kiem-duyet/bao-cao/${report.publicId}` })}
+                    >
+                      <TableCell>{targetTypeLabel(report.targetType)}</TableCell>
                       <TableCell>
-                        {targetTypeLabel(report.targetType)}
+                        <Badge variant="outline">{reasonLabel(report.reasonCode)}</Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {reasonLabel(report.reasonCode)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-nowrap text-muted-foreground">
-                        {timeAgo(report.createdAt)}
-                      </TableCell>
+                      <TableCell className="text-nowrap text-muted-foreground">{timeAgo(report.createdAt)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <p className="py-8 text-center text-sm text-muted-foreground">
-                Không có báo cáo chờ xử lý.
-              </p>
+              <p className="py-8 text-center text-sm text-muted-foreground">Không có báo cáo chờ xử lý.</p>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* ── System Health Dashboard ──────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Trạng thái hệ thống</CardTitle>
-          <CardDescription>
-            Theo dõi sức khoẻ các dịch vụ nền tảng theo thời gian thực.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SystemStatusCards />
-        </CardContent>
-      </Card>
-
-      {/* ── Audit log stream ─────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Hoạt động gần đây</CardTitle>
-          <CardDescription>
-            10 event audit mới nhất trong hệ thống.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <TableSkeleton rows={5} />
-          ) : stats && stats.recentAuditLogs.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Thời gian</TableHead>
-                  <TableHead>Actor</TableHead>
-                  <TableHead>Hành động</TableHead>
-                  <TableHead>Resource</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stats.recentAuditLogs.map((log) => (
-                  <TableRow key={log.id}>
-                    <TableCell className="text-nowrap">
-                      {timeAgo(log.createdAt)}
-                    </TableCell>
-                    <TableCell>{log.actorId ?? "—"}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{log.action}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {log.resource
-                        ? `${log.resource}${log.resourceId ? ` / ${log.resourceId}` : ""}`
-                        : "—"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              Chưa có hoạt động nào được ghi nhận.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {/* ── System Health ─────────────────────────────────────────────── */}
+      <DashboardCard title="Trạng thái hệ thống" period="Sức khoẻ dịch vụ nền tảng">
+        <SystemStatusCards />
+      </DashboardCard>
     </div>
   );
 }

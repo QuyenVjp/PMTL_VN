@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
 import { selfCultivationOverviewOptions, type SelfCultivationGuide, type SelfCultivationGuideGroup } from "./queries";
 import { useCreateSelfCultivationFaq, useCreateSelfCultivationGuide, usePublishSelfCultivation } from "./mutations";
+import { TemplatesTab } from "./templates-tab.js";
+import { BurnFlowTab } from "./burn-flow-tab.js";
 
 const GROUP_LABELS: Record<SelfCultivationGuideGroup, string> = {
   BAT_DAU: "Tổng quan",
@@ -315,13 +317,15 @@ export function SelfCultivationWorkspacePage() {
       </Card>
 
       <Tabs defaultValue="tong-quan" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 gap-2 lg:grid-cols-7">
+        <TabsList className="h-auto flex-wrap gap-1 p-1">
           <TabsTrigger value="tong-quan">Tổng quan</TabsTrigger>
           <TabsTrigger value="cach-dung">Cách dùng</TabsTrigger>
           <TabsTrigger value="bao-quan">Bảo quản</TabsTrigger>
           <TabsTrigger value="truong-hop">Trường hợp sử dụng</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
           <TabsTrigger value="tai-xuong">Tải xuống</TabsTrigger>
+          <TabsTrigger value="bieu-mau">Biểu mẫu tự tu</TabsTrigger>
+          <TabsTrigger value="luong-dot">Luồng đốt & rủi ro</TabsTrigger>
           <TabsTrigger value="version">Version / nguồn</TabsTrigger>
         </TabsList>
 
@@ -370,6 +374,9 @@ export function SelfCultivationWorkspacePage() {
             </Card>
           )) : <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">Chưa có nội dung. [Thêm mới]</div>}
         </TabsContent>
+
+        <TabsContent value="bieu-mau"><TemplatesTab /></TabsContent>
+        <TabsContent value="luong-dot"><BurnFlowTab /></TabsContent>
 
         <TabsContent value="version" className="grid gap-4 lg:grid-cols-2">
           <Card>

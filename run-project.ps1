@@ -97,24 +97,26 @@ try {
   . $hostEnvScript
   Write-Ok "Env vars đã load."
 
-  Write-Step "Giải phóng ports 3001 và 3002..."
-  Stop-DevPortProcesses -Ports @(3001, 3002)
+  Write-Step "Giải phóng ports 5173, 3001 và 3002..."
+  Stop-DevPortProcesses -Ports @(5173, 3001, 3002)
 
   Assert-DockerInfra
 
-  Write-Step "Chuẩn bị DB + seed (prisma db push + seed.ts)..."
+  Write-Step "Chuẩn bị DB và CornHub local (db push, mặc định bỏ qua seed)..."
   & pwsh -ExecutionPolicy Bypass -File $hostPrepareScript
   if ($LASTEXITCODE -ne 0) {
     throw "prepare-host-dev.ps1 thất bại. Xem lỗi phía trên."
   }
-  Write-Ok "DB đã sẵn sàng."
+  Write-Ok "DB và CornHub local đã được kiểm tra."
 
   Write-Host ""
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
   Write-Host "  PMTL Dev Stack đang khởi động..." -ForegroundColor White
+  Write-Host "  Corn API → http://127.0.0.1:4000/health       (nếu CornHub có trên máy)" -ForegroundColor DarkGray
+  Write-Host "  Corn MCP → http://127.0.0.1:8317/mcp          (nếu CornHub có trên máy)" -ForegroundColor DarkGray
   Write-Host "  API  →  http://127.0.0.1:3001/api/docs  (sẵn sàng sau ~20s)" -ForegroundColor DarkGray
   Write-Host "  Admin → http://127.0.0.1:3002            (sẵn sàng sau ~5s)" -ForegroundColor DarkGray
-  Write-Host "  Web  →  http://127.0.0.1:3000            (sẵn sàng sau ~15s)" -ForegroundColor DarkGray
+  Write-Host "  Web  →  http://127.0.0.1:5173            (sẵn sàng sau ~15s)" -ForegroundColor DarkGray
   Write-Host "  Ctrl+C để dừng tất cả." -ForegroundColor DarkGray
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
   Write-Host ""

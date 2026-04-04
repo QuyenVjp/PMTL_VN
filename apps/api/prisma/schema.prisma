@@ -161,6 +161,7 @@ model User {
   activationLogs      ActivationLog[]      @relation("activationLogs")
   practiceProfile     PracticeProfile?     @relation("practiceProfile")
   wisdomEntries       WisdomEntry[]        @relation("wisdomEntries")
+  selfCultivationSheets SelfCultivationSheet[] @relation("selfCultivationSheets")
 
   passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
   communityComments   CommunityComment[]   @relation("communityComments")
@@ -232,6 +233,7 @@ model MediaAsset {
   downloadThumbnailMedia Download[]        @relation("downloadThumbnailMedia")
   calendarCoverImages CalendarEvent[]      @relation("calendarCoverImage")
   calendarPosterImages CalendarEvent[]     @relation("calendarPosterImage")
+  selfCultivationTemplatePdfs SelfCultivationTemplate[] @relation("templatePdfMedia")
 
   @@index([uploaderId])
   @@index([status])
@@ -335,7 +337,6 @@ model Post {
   title             String
   postType          PostType      @default(ARTICLE) @map("post_type")
   sourceRef         String?       @map("source_ref")
-  excerpt           String?
   content           Json
   status            ContentStatus @default(DRAFT)
   authorId          String        @map("author_id")
@@ -494,6 +495,10 @@ enum GuideCategory {
   LITTLE_HOUSE
   LIFE_RELEASE
   GENERAL
+  ALTAR_SETUP
+  ALTAR_OFFERINGS
+  ALTAR_MAINTENANCE
+  HEART_INCENSE
 }
 
 enum DownloadCategory {
@@ -501,6 +506,7 @@ enum DownloadCategory {
   TEMPLATE
   REFERENCE
   FAQ
+  SPIRITUAL_APPLICATION
 }
 
 enum ReportStatus {
@@ -775,7 +781,6 @@ model WisdomEntry {
   sourceCode     String?         @map("source_code")
   originalText   String?         @map("original_text")
   translatedText String?         @map("translated_text")
-  excerpt        String?
   tags           String[]
   status         ContentStatus   @default(DRAFT)
   authorId       String          @map("author_id")
@@ -816,7 +821,6 @@ model BeginnerGuide {
   title       String
   slug        String        @unique
   content     Json
-  excerpt     String?
   coverMediaId String?       @map("cover_media_id")
   category    GuideCategory @default(BEGINNER)
   sortOrder   Int           @default(0) @map("sort_order")
@@ -1130,4 +1134,73 @@ model ActivationLog {
   @@index([userId])
   @@index([date])
   @@map("activation_logs")
+}
+
+// ============================================================================
+// SELF-CULTIVATION SUTRAS (Kinh Văn Tự Tu)
+// Owner: engagement
+// Design: design/03-domains/engagement/USE_CASES/self-cultivation-sutras-burn-flow.md
+// ============================================================================
+
+enum SelfCultivationSutraType {
+  LE_PHAT_DAI_SAM_HOI_VAN
+  CHU_DAI_BI
+  TAM_KINH
+  VANG_SINH_CHU
+}
+
+enum SelfCultivationSheetStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  BURNED
+}
+
+enum SpiritualAppBurnRule {
+  MUST_BURN
+  NEVER_BURN
+  OPTIONAL
+}
+
+// User-owned practice sheet — tracks dotting progress on a yellow paper
+model SelfCultivationSheet {
+  id                String                       @id @default(cuid())
+  publicId          String                       @unique @map("public_id")
+  userId            String                       @map("user_id")
+  sutraType         SelfCultivationSutraType     @map("sutra_type")
+  templatePublicId  String?                      @map("template_public_id")
+  totalSlots        Int                          @map("total_slots") // 27, 49, 87
+  completedSlots    Int                          @default(0) @map("completed_slots")
+  status            SelfCultivationSheetStatus   @default(DRAFT)
+  burnDate          DateTime?                    @map("burn_date")
+  burnConfirmedNnn  Boolean                      @default(false) @map("burn_confirmed_nnn")
+  note              String?
+  createdAt         DateTime                     @default(now()) @map("created_at")
+  updatedAt         DateTime                     @updatedAt @map("updated_at")
+
+  user User @relation("selfCultivationSheets", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([sutraType])
+  @@map("self_cultivation_sheets")
+}
+
+// Admin-managed template — PDF file for printing
+model SelfCultivationTemplate {
+  id          String        @id @default(cuid())
+  publicId    String        @unique @map("public_id")
+  sutraType   SelfCultivationSutraType @map("sutra_type")
+  slotsCount  Int           @map("slots_count") // 27, 49, 87
+  paperSize   String        @map("paper_size") // A4 | LETTER
+  pdfMediaId  String?       @map("pdf_media_id")
+  status      ContentStatus @default(DRAFT)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  pdfMedia MediaAsset? @relation("templatePdfMedia", fields: [pdfMediaId], references: [id])
+
+  @@index([sutraType])
+  @@index([status])
+  @@map("self_cultivation_templates")
 }

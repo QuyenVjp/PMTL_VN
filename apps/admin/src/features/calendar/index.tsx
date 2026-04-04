@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { PencilIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ListIcon, PencilIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { FieldError } from "@/components/ui/field-error";
 
@@ -515,7 +515,7 @@ function CalendarRowActions({ row }: { row: CalendarEventItem }) {
 function CalendarTable() {
   const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
   const events = envelope?.data ?? [];
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
   const mediaUrlByPublicId = useMemo(() => {
     const map = new Map<string, string>();
     for (const asset of mediaEnvelope?.data ?? []) {
@@ -738,21 +738,205 @@ function CalendarDialogs() {
   );
 }
 
+// ── Month view ────────────────────────────────────────────────────────
+
+const EVENT_TYPE_COLORS: Record<string, string> = {
+  CEREMONY: "bg-amber-400/90 text-amber-950",
+  RETREAT: "bg-emerald-400/90 text-emerald-950",
+  DHARMA_TALK: "bg-blue-400/90 text-blue-950",
+  COMMUNITY: "bg-purple-400/90 text-purple-950",
+  OTHER: "bg-slate-400/90 text-slate-950",
+};
+
+const VI_DAYS = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
+const VI_MONTHS = [
+  "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+  "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12",
+];
+
+function CalendarMonthView({ events }: { events: CalendarEventItem[] }) {
+  const today = new Date();
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
+
+  const { setOpen, setCurrentRow } = useCalendar();
+
+  // Build grid: cells are null (empty leading) or day number
+  const firstWeekday = new Date(viewYear, viewMonth, 1).getDay(); // Sun=0
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const cells: (number | null)[] = [
+    ...Array.from({ length: firstWeekday }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+  // Pad to complete last row
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  // Group events by day
+  const eventsByDay = useMemo(() => {
+    const map = new Map<number, CalendarEventItem[]>();
+    for (const event of events) {
+      const d = new Date(event.startAt);
+      if (d.getFullYear() === viewYear && d.getMonth() === viewMonth) {
+        const day = d.getDate();
+        if (!map.has(day)) map.set(day, []);
+        map.get(day)!.push(event);
+      }
+    }
+    return map;
+  }, [events, viewYear, viewMonth]);
+
+  const prevMonth = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear((y) => y - 1); }
+    else setViewMonth((m) => m - 1);
+  };
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear((y) => y + 1); }
+    else setViewMonth((m) => m + 1);
+  };
+
+  return (
+    <div className="rounded-lg border overflow-hidden">
+      {/* Month navigation */}
+      <div className="flex items-center justify-between border-b bg-card px-4 py-3">
+        <Button variant="outline" size="icon" onClick={prevMonth}>
+          <ChevronLeftIcon className="size-4" />
+        </Button>
+        <span className="text-sm font-semibold">
+          {VI_MONTHS[viewMonth]} {viewYear}
+        </span>
+        <Button variant="outline" size="icon" onClick={nextMonth}>
+          <ChevronRightIcon className="size-4" />
+        </Button>
+      </div>
+
+      {/* Day headers */}
+      <div className="grid grid-cols-7 border-b bg-muted/30">
+        {VI_DAYS.map((d) => (
+          <div key={d} className="py-2 text-center text-xs font-medium text-muted-foreground">
+            {d}
+          </div>
+        ))}
+      </div>
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7 bg-card">
+        {cells.map((day, idx) => {
+          const isToday =
+            day !== null &&
+            today.getDate() === day &&
+            today.getMonth() === viewMonth &&
+            today.getFullYear() === viewYear;
+          const dayEvents = day !== null ? (eventsByDay.get(day) ?? []) : [];
+
+          return (
+            <div
+              key={idx}
+              className={cn(
+                "min-h-[84px] border-b border-r p-1",
+                "last-of-type:border-r-0",
+                !day && "bg-muted/10",
+                // remove right border on every 7th cell
+                (idx + 1) % 7 === 0 && "border-r-0",
+              )}
+            >
+              {day !== null && (
+                <>
+                  <div
+                    className={cn(
+                      "mb-1 flex size-6 items-center justify-center rounded-full text-xs",
+                      isToday
+                        ? "bg-primary text-primary-foreground font-semibold"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {day}
+                  </div>
+                  <div className="space-y-0.5">
+                    {dayEvents.slice(0, 2).map((ev) => (
+                      <button
+                        key={ev.publicId}
+                        type="button"
+                        className={cn(
+                          "w-full truncate rounded px-1 py-0.5 text-left text-[11px] font-medium leading-tight",
+                          EVENT_TYPE_COLORS[ev.eventType] ?? "bg-muted text-foreground",
+                        )}
+                        title={ev.title}
+                        onClick={() => {
+                          setCurrentRow(ev);
+                          setOpen("edit");
+                        }}
+                      >
+                        {ev.title}
+                      </button>
+                    ))}
+                    {dayEvents.length > 2 && (
+                      <div className="px-1 text-[10px] text-muted-foreground">
+                        +{dayEvents.length - 2} khác
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-3 border-t bg-muted/20 px-4 py-2.5">
+        {Object.entries(EVENT_TYPE_COLORS).map(([key, cls]) => (
+          <div key={key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span className={cn("size-2.5 rounded-sm", cls.split(" ")[0])} />
+            {eventTypeLabel(key)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Primary buttons ───────────────────────────────────────────────────
 
-function CalendarPrimaryButtons() {
+function CalendarPrimaryButtons({ view, onViewChange }: { view: "calendar" | "table"; onViewChange: (v: "calendar" | "table") => void }) {
   const { setOpen } = useCalendar();
   return (
-    <Button onClick={() => setOpen("create")}>
-      <PlusIcon className="size-4" />
-      Tạo sự kiện
-    </Button>
+    <div className="flex items-center gap-2">
+      {/* View toggle */}
+      <div className="flex items-center rounded-md border bg-muted/30 p-0.5">
+        <Button
+          variant={view === "calendar" ? "default" : "ghost"}
+          size="sm"
+          className="h-7 gap-1.5 px-2 text-xs"
+          onClick={() => onViewChange("calendar")}
+        >
+          <CalendarDaysIcon className="size-3.5" />
+          Lịch
+        </Button>
+        <Button
+          variant={view === "table" ? "default" : "ghost"}
+          size="sm"
+          className="h-7 gap-1.5 px-2 text-xs"
+          onClick={() => onViewChange("table")}
+        >
+          <ListIcon className="size-3.5" />
+          Danh sách
+        </Button>
+      </div>
+      <Button onClick={() => setOpen("create")}>
+        <PlusIcon className="size-4" />
+        Tạo sự kiện
+      </Button>
+    </div>
   );
 }
 
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function CalendarEventsPage() {
+  const [view, setView] = useState<"calendar" | "table">("calendar");
+  const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 200 }));
+  const events = envelope?.data ?? [];
+
   return (
     <CalendarProvider>
       <div className="space-y-6">
@@ -763,16 +947,25 @@ export function CalendarEventsPage() {
               Quản trị sự kiện, lịch hoạt động và xuất bản.
             </p>
           </div>
-          <CalendarPrimaryButtons />
+          <CalendarPrimaryButtons view={view} onViewChange={setView} />
         </div>
 
-        <CalendarTable />
+        {view === "calendar" ? (
+          isLoading ? (
+            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+              Đang tải lịch…
+            </div>
+          ) : (
+            <CalendarMonthView events={events} />
+          )
+        ) : (
+          <CalendarTable />
+        )}
       </div>
 
       <CalendarDialogs />
     </CalendarProvider>
   );
 }
-
 
 

@@ -5,7 +5,6 @@ import { z } from "zod";
 export const createPostSchema = z.object({
   title: z.string().min(1).max(200),
   slug: z.string().min(1).max(200).optional(),
-  excerpt: z.string().max(500).optional(),
   content: z.record(z.string(), z.unknown()), // Lexical JSON
   featuredImageId: z.string().optional(),
 });
@@ -13,7 +12,6 @@ export const createPostSchema = z.object({
 export const updatePostSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   slug: z.string().min(1).max(200).optional(),
-  excerpt: z.string().max(500).optional().nullable(),
   content: z.record(z.string(), z.unknown()).optional(),
   featuredImageId: z.string().optional().nullable(),
 });
@@ -29,7 +27,6 @@ export const postResponseSchema = z.object({
   id: z.string(),
   slug: z.string(),
   title: z.string(),
-  excerpt: z.string().nullable(),
   content: z.record(z.string(), z.unknown()),
   status: z.string(),
   author: z.object({
@@ -64,7 +61,6 @@ export const guideQuerySchema = z.object({
 export const createGuideSchema = z.object({
   title: z.string().min(1).max(200),
   slug: z.string().min(1).max(200).optional(),
-  excerpt: z.string().max(500).optional(),
   content: z.record(z.string(), z.unknown()), // Lexical JSON
   category: z.enum(["BEGINNER", "DAILY_PRACTICE", "LITTLE_HOUSE", "LIFE_RELEASE", "GENERAL"]),
   level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),

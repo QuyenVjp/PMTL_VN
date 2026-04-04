@@ -438,95 +438,137 @@ function MediaDetailSheet() {
   }
 
   function copyUrl() {
-    void navigator.clipboard.writeText(currentRow?.url ?? "");
+    const resolved = resolveMediaSrc(currentRow?.url ?? "") ?? currentRow?.url ?? "";
+    void navigator.clipboard.writeText(resolved);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
   if (!currentRow) return null;
   const isImage = currentRow.mimeType.startsWith("image/");
+  const isVideo = currentRow.mimeType.startsWith("video/");
+  const resolvedUrl = resolveMediaSrc(currentRow.url) ?? currentRow.url;
+
+  // Derived mime label
+  const mimeLabel = currentRow.mimeType.split("/")[1]?.toUpperCase() ?? currentRow.mimeType;
 
   return (
     <Sheet open={open === "detail"} onOpenChange={(v) => !v && handleClose()}>
-      <SheetContent className="w-[420px] sm:max-w-[420px] overflow-y-auto">
-        <SheetHeader>
+      <SheetContent className="w-[520px] sm:max-w-[520px] flex flex-col p-0 gap-0 overflow-hidden">
+        <SheetHeader className="px-6 py-4 border-b shrink-0">
           <SheetTitle>Chi tiết media</SheetTitle>
         </SheetHeader>
 
-        <div className="mt-4 space-y-4">
-          <div className="overflow-hidden rounded-lg border bg-muted aspect-video flex items-center justify-center">
+        <div className="flex-1 overflow-y-auto">
+          {/* Preview */}
+          <div className="relative bg-muted/40 flex items-center justify-center min-h-[200px] max-h-[280px] border-b">
             {isImage ? (
               <img
-                src={resolveMediaSrc(currentRow.url) ?? undefined}
+                src={resolvedUrl}
                 alt={currentRow.filename}
-                className="max-h-full max-w-full object-contain"
+                className="max-h-[280px] max-w-full object-contain"
               />
+            ) : isVideo ? (
+              <video src={resolvedUrl} controls className="max-h-[280px] max-w-full" />
             ) : (
-              <FileImageIcon className="size-12 text-muted-foreground" />
-            )}
-          </div>
-
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Tên file</span>
-              <span className="font-medium truncate max-w-[220px]">{currentRow.filename}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Loại</span>
-              <span>{currentRow.mimeType}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Kích thước</span>
-              <span className="tabular-nums">{formatFileSize(currentRow.size)}</span>
-            </div>
-            {currentRow.width && currentRow.height && (
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Kích thước ảnh</span>
-                <span className="tabular-nums">{currentRow.width} × {currentRow.height} px</span>
+              <div className="flex flex-col items-center gap-2 py-12 text-muted-foreground">
+                <FileImageIcon className="size-14" />
+                <span className="text-sm">{mimeLabel}</span>
               </div>
             )}
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Người tải</span>
-              <span>{currentRow.uploaderName}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Ngày tải</span>
-              <span>{new Date(currentRow.createdAt).toLocaleDateString("vi-VN")}</span>
-            </div>
+            {/* Type badge overlay */}
+            <Badge className="absolute top-2 right-2 text-[10px] uppercase">{mimeLabel}</Badge>
           </div>
 
-          <div>
-            <label className="text-sm font-medium">Đường dẫn</label>
-            <div className="mt-1 flex gap-2">
-              <Input
-                readOnly
-                value={currentRow.url}
-                className="text-xs"
-              />
-              <Button variant="outline" size="sm" onClick={copyUrl}>
-                {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
-              </Button>
+          <div className="px-6 py-5 space-y-5">
+            {/* Filename + status */}
+            <div className="space-y-1">
+              <h3 className="font-semibold text-sm leading-snug break-all">{currentRow.filename}</h3>
+              <Badge variant="outline" className={statusBadgeClass(currentRow.status)}>
+                {statusLabel(currentRow.status)}
+              </Badge>
             </div>
-          </div>
 
-          <div className="space-y-3 border-t pt-4">
-            <p className="text-sm font-medium">Metadata</p>
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground">Alt text</label>
-              <Input value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Mô tả ảnh..." />
+            {/* Stats grid */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div className="text-muted-foreground">Kích thước file</div>
+              <div className="tabular-nums text-right font-medium">{formatFileSize(currentRow.size)}</div>
+
+              {currentRow.width && currentRow.height ? (
+                <>
+                  <div className="text-muted-foreground">Độ phân giải</div>
+                  <div className="tabular-nums text-right font-medium">{currentRow.width} × {currentRow.height} px</div>
+                </>
+              ) : null}
+
+              <div className="text-muted-foreground">Người tải</div>
+              <div className="text-right truncate font-medium">{currentRow.uploaderName}</div>
+
+              <div className="text-muted-foreground">Ngày tải lên</div>
+              <div className="text-right font-medium">
+                {new Date(currentRow.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+              </div>
+
+              <div className="text-muted-foreground">Giờ</div>
+              <div className="text-right font-medium tabular-nums">
+                {new Date(currentRow.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
+              </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground">Caption</label>
-              <Textarea value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Chú thích..." rows={2} />
+
+            {/* URL copy */}
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium">Đường dẫn công khai</p>
+              <div className="flex gap-2">
+                <Input
+                  readOnly
+                  value={resolvedUrl}
+                  className="text-xs font-mono bg-muted/30"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <Button variant="outline" size="sm" onClick={copyUrl} className="shrink-0">
+                  {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
+                </Button>
+              </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-sm text-muted-foreground">Ghi chú</label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Ghi chú nội bộ..." rows={2} />
+
+            {/* Metadata editor */}
+            <div className="space-y-3 border-t pt-4">
+              <p className="text-sm font-medium">Metadata SEO / CMS</p>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Alt text</label>
+                <Input
+                  value={altText}
+                  onChange={(e) => setAltText(e.target.value)}
+                  placeholder="Mô tả nội dung ảnh (dùng cho screen reader và SEO)..."
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Caption</label>
+                <Textarea
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  placeholder="Chú thích hiển thị dưới ảnh..."
+                  rows={2}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Ghi chú nội bộ</label>
+                <Textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Ghi chú chỉ dành cho admin, không hiển thị công khai..."
+                  rows={2}
+                />
+              </div>
             </div>
-            <Button onClick={handleSave} disabled={update.isPending} className="w-full">
-              {update.isPending ? "Đang lưu..." : "Lưu thay đổi"}
-            </Button>
           </div>
+        </div>
+
+        {/* Sticky footer */}
+        <div className="shrink-0 border-t px-6 py-4">
+          <Button onClick={handleSave} disabled={update.isPending} className="w-full">
+            {update.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+          </Button>
         </div>
       </SheetContent>
     </Sheet>

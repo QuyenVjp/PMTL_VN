@@ -4,7 +4,7 @@ const defaultEnv: Record<string, string> = {
   API_PORT: "3001",
   API_BASE_URL: "http://127.0.0.1:3001/api",
   API_INTERNAL_URL: "http://127.0.0.1:3001/api",
-  WEB_ORIGIN: "http://127.0.0.1:3000",
+  WEB_ORIGIN: "http://127.0.0.1:5173",
   ADMIN_ORIGIN: "http://127.0.0.1:4173",
   DATABASE_URL: "postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl_test",
   DATABASE_DIRECT_URL: "postgresql://pmtl:pmtl@127.0.0.1:55432/pmtl_test",
@@ -31,7 +31,7 @@ const defaultEnv: Record<string, string> = {
   SMTP_FROM_EMAIL: "test@pmtl.local",
   EMAIL_HASH_SALT: "test-email-hash-salt-12345",
   REVALIDATE_SECRET: "test-revalidate-secret-test-revalidate-secret-123",
-  NEXT_REVALIDATE_URL: "http://127.0.0.1:3000/api/revalidate",
+  NEXT_REVALIDATE_URL: "http://127.0.0.1:5173/api/revalidate",
 };
 
 for (const [key, value] of Object.entries(defaultEnv)) {

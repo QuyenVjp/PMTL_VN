@@ -40,12 +40,12 @@ services:
       NODE_ENV: production
       HOSTNAME: 0.0.0.0
     ports:
-      - "127.0.0.1:${MONITORING_WEB_PORT:-3000}:3000"
+      - "127.0.0.1:${MONITORING_WEB_PORT:-5173}:5173"
     networks:
       - frontend
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:5173/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -329,11 +329,11 @@ services:
     volumes:
       - ../monitoring/alert-sink.mjs:/app/infra/monitoring/alert-sink.mjs:ro
     ports:
-      - "127.0.0.1:${ALERT_SINK_PORT:-19094}:8080"
+      - "127.0.0.1:${ALERT_SINK_PORT:-19094}:18080"
     networks:
       - backend
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:8080/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1:18080/health"]
       interval: 30s
       timeout: 10s
       retries: 3

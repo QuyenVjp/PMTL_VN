@@ -96,7 +96,7 @@ export function DownloadsTable({
   const navigateTo = useNavigateTo();
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
   const downloads = envelope?.data ?? [];
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 200, mimeType: "image/" }));
+  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
   
   const publishDownload = usePublishDownload();
   const deleteDownload = useDeleteDownload();

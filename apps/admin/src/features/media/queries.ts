@@ -35,16 +35,25 @@ export const mediaKeys = {
 };
 
 export function mediaListOptions(filters: MediaListFilters = {}) {
+  const rawLimit = filters.limit ?? 20;
+  const rawOffset = filters.offset ?? 0;
+  const limit = Math.min(Math.max(rawLimit, 1), 100);
+  const offset = Math.max(rawOffset, 0);
+  const normalizedFilters: MediaListFilters = {
+    ...filters,
+    limit,
+    offset,
+  };
   const params: Record<string, string | number | boolean | undefined> = {
-    limit: filters.limit ?? 20,
-    offset: filters.offset ?? 0,
-    search: filters.search || undefined,
-    status: filters.status || undefined,
-    mimeType: filters.mimeType || undefined,
+    limit,
+    offset,
+    search: normalizedFilters.search || undefined,
+    status: normalizedFilters.status || undefined,
+    mimeType: normalizedFilters.mimeType || undefined,
   };
 
   return queryOptions({
-    queryKey: mediaKeys.list(filters),
+    queryKey: mediaKeys.list(normalizedFilters),
     queryFn: () => adminClient.get<ListEnvelope<MediaAssetListItem>>("/admin/media", params),
   });
 }

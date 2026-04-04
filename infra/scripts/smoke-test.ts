@@ -1,7 +1,7 @@
 type JsonRecord = Record<string, unknown>;
 
 const cmsBase = process.env.CMS_PUBLIC_URL ?? "http://localhost:3001";
-const webBase = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const webBase = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:5173";
 const apiToken = process.env.CMS_API_TOKEN ?? process.env.STRAPI_API_TOKEN ?? "";
 const smokeRequestTimeoutMs = Number(process.env.SMOKE_TEST_TIMEOUT_MS ?? "120000");
 const smokeRetryCount = Number(process.env.SMOKE_TEST_RETRY_COUNT ?? "4");

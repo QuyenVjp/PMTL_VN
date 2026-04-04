@@ -119,6 +119,9 @@ const WisdomPage = lazy(() =>
 const WisdomCreatePage = lazy(() =>
   import("@/features/wisdom-baihoa/create-page").then((mod) => ({ default: mod.WisdomCreatePage })),
 );
+const DesignSystemPage = lazy(() =>
+  import("@/features/design-system").then((mod) => ({ default: mod.DesignSystemPage })),
+);
 
 // ── Detail / Create page imports ─────────────────────────────────────
 
@@ -554,6 +557,12 @@ const healthRoute = createRoute({
   component: withSuspense(HealthPage),
 });
 
+const designSystemRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/he-thong/design-system",
+  component: withSuspense(DesignSystemPage),
+});
+
 // System landing (canon)
 const systemRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
@@ -674,6 +683,7 @@ export const routeTree = rootRoute.addChildren([
     volunteersDetailRoute,
     contactInfoRoute,
     healthRoute,
+    designSystemRoute,
     // Hỗ trợ
     assistedEntryRoute,
     // Bạch thoại Phật pháp

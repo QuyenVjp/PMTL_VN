@@ -23,7 +23,7 @@ SMOKE_DOCKER_ENV = {
     # Repo no longer ships a CMS service; point to a host-run backend if available.
     "CMS_PUBLIC_URL": "http://host.docker.internal:3001",
     "CMS_API_TOKEN": "",
-    "NEXT_PUBLIC_SITE_URL": "http://web:3000",
+    "NEXT_PUBLIC_SITE_URL": "http://web:5173",
 }
 
 

@@ -8,7 +8,6 @@ export interface CreatePostData {
   title: string;
   postType?: PostType;
   sourceRef?: string | null;
-  excerpt?: string | null;
   content: Record<string, unknown>;
   authorId: string;
   featuredImageId?: string | null;
@@ -23,7 +22,6 @@ export interface UpdatePostData {
   slug?: string;
   postType?: PostType;
   sourceRef?: string | null;
-  excerpt?: string | null;
   content?: Record<string, unknown>;
   featuredImageId?: string | null;
   primaryCategoryId?: string | null;
@@ -52,7 +50,6 @@ export class ContentRepository {
         title: data.title,
         postType: data.postType ?? "ARTICLE",
         sourceRef: data.sourceRef,
-        excerpt: data.excerpt,
         content: data.content as Prisma.InputJsonValue,
         authorId: data.authorId,
         featuredImageId: data.featuredImageId,
@@ -120,7 +117,6 @@ export class ContentRepository {
     if (rest.slug !== undefined) updateData.slug = rest.slug;
     if (rest.postType !== undefined) updateData.postType = rest.postType;
     if (rest.sourceRef !== undefined) updateData.sourceRef = rest.sourceRef;
-    if (rest.excerpt !== undefined) updateData.excerpt = rest.excerpt;
     if (rest.content !== undefined) updateData.content = rest.content as Prisma.InputJsonValue;
     if (rest.featuredImageId !== undefined) {
       updateData.featuredImage = rest.featuredImageId

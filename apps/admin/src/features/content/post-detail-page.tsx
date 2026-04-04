@@ -60,8 +60,6 @@ const POST_TYPE_OPTIONS = [
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
 
-const EXCERPT_MAX_LENGTH = 4000;
-
 function excerptTextLength(value: string) {
   return value
     .replace(/<[^>]+>/g, " ")
@@ -250,8 +248,6 @@ function EditableForm({
   setPostType,
   sourceRef,
   setSourceRef,
-  excerpt,
-  setExcerpt,
   bodyHtml,
   setBodyHtml,
   fieldErrors,
@@ -265,8 +261,6 @@ function EditableForm({
   setPostType: (v: string) => void;
   sourceRef: string;
   setSourceRef: (v: string) => void;
-  excerpt: string;
-  setExcerpt: (v: string) => void;
   bodyHtml: string;
   setBodyHtml: (v: string) => void;
   fieldErrors: FieldErrors;
@@ -321,25 +315,6 @@ function EditableForm({
           />
         </AdminFormField>
 
-        <AdminFormField label="Tóm tắt">
-          <RichTextEditor
-            value={excerpt}
-            onChange={(nextValue) => {
-              setExcerpt(nextValue);
-              if (fieldErrors.excerpt)
-                setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-            }}
-            placeholder="Tóm tắt ngắn, dễ đọc trên mobile và phù hợp người lớn tuổi..."
-            minHeight={160}
-          />
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <FieldError message={fieldErrors.excerpt} />
-            <span className={cn(Boolean(fieldErrors.excerpt) && "text-destructive")}>
-              {excerptTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
-            </span>
-          </div>
-        </AdminFormField>
-
         <AdminFormField label="Nội dung bài viết" hint="Nội dung hiển thị ở web public và phần đọc bài viết.">
           <RichTextEditor
             value={bodyHtml}
@@ -358,12 +333,10 @@ function EditableForm({
 function PublishedView({
   title,
   slug,
-  excerpt,
   bodyHtml,
 }: {
   title: string;
   slug: string;
-  excerpt: string | null;
   bodyHtml: string;
 }) {
   return (
@@ -371,17 +344,6 @@ function PublishedView({
       <div className="space-y-4">
         <AdminDetailField label="Tiêu đề" value={title} />
         <AdminDetailField label="Slug" value={slug} />
-        <div className="space-y-1 py-2 text-sm">
-          <span className="text-xs text-muted-foreground">Tóm tắt</span>
-          {excerpt ? (
-            <div
-              className="prose prose-sm max-w-none dark:prose-invert [&_p:last-child]:mb-0"
-              dangerouslySetInnerHTML={{ __html: excerpt }}
-            />
-          ) : (
-            <span className="text-xs italic text-muted-foreground/50">—</span>
-          )}
-        </div>
         <div className="space-y-1 py-2 text-sm">
           <span className="text-xs text-muted-foreground">Nội dung</span>
           {bodyHtml ? (
@@ -521,7 +483,6 @@ export function PostDetailPage() {
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
@@ -546,7 +507,6 @@ export function PostDetailPage() {
     setSlug(post.slug);
     setPostType(post.postType);
     setSourceRef(post.sourceRef ?? "");
-    setExcerpt(post.excerpt ?? "");
     setBodyHtml(readPostBodyHtml(post.content));
     setFeaturedImageId("");
     setFeaturedImageChanged(false);
@@ -556,11 +516,13 @@ export function PostDetailPage() {
   }, [post]);
 
   const handleSave = () => {
-    if (!publicId) return;
+    const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
+    if (!postKey) {
+      toast.error("Không xác định được mã bài viết.");
+      return;
+    }
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerptTextLength(excerpt) > EXCERPT_MAX_LENGTH)
-      nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -570,12 +532,11 @@ export function PostDetailPage() {
 
     updatePost.mutate(
       {
-        publicId,
+        publicId: postKey,
         title: title.trim(),
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || null,
-        excerpt: normalizeEditorHtml(excerpt) || null,
         content: buildPostContent(bodyHtml),
         ...(featuredImageChanged
           ? { featuredImageId: featuredImageId.trim() || null }
@@ -638,8 +599,6 @@ export function PostDetailPage() {
       setPostType={setPostType}
       sourceRef={sourceRef}
       setSourceRef={setSourceRef}
-      excerpt={excerpt}
-      setExcerpt={setExcerpt}
       bodyHtml={bodyHtml}
       setBodyHtml={setBodyHtml}
       fieldErrors={fieldErrors}
@@ -659,7 +618,6 @@ export function PostDetailPage() {
           <PublishedView
             title={post.title}
             slug={post.slug}
-            excerpt={post.excerpt}
             bodyHtml={readPostBodyHtml(post.content)}
           />
         </TabsContent>
@@ -753,23 +711,33 @@ export function PostDetailPage() {
         }
         confirmLabel="Xuất bản"
         isPending={publishPost.isPending}
-        onConfirm={() =>
-          publishPost.mutate(post.publicId, {
+        onConfirm={() => {
+          const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
+          if (!postKey) {
+            toast.error("Không xác định được mã bài viết.");
+            return;
+          }
+          publishPost.mutate(postKey, {
             onSuccess: () => setConfirmPublish(false),
-          })
-        }
+          });
+        }}
       />
 
       <UnpublishDialog
         open={confirmUnpublish}
         onOpenChange={setConfirmUnpublish}
         isPending={unpublishPost.isPending}
-        onConfirm={(mode) =>
+        onConfirm={(mode) => {
+          const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
+          if (!postKey) {
+            toast.error("Không xác định được mã bài viết.");
+            return;
+          }
           unpublishPost.mutate(
-            { publicId: post.publicId, mode },
+            { publicId: postKey, mode },
             { onSuccess: () => setConfirmUnpublish(false) },
-          )
-        }
+          );
+        }}
       />
 
       <WorkspaceConfirmDialog
@@ -786,14 +754,19 @@ export function PostDetailPage() {
         confirmLabel="Xoá"
         variant="destructive"
         isPending={deletePost.isPending}
-        onConfirm={() =>
-          deletePost.mutate(post.publicId, {
+        onConfirm={() => {
+          const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
+          if (!postKey) {
+            toast.error("Không xác định được mã bài viết.");
+            return;
+          }
+          deletePost.mutate(postKey, {
             onSuccess: () => {
               setConfirmDelete(false);
               void navigate({ to: "/noi-dung/bai-viet" });
             },
-          })
-        }
+          });
+        }}
       />
     </>
   );

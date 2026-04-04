@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -42,8 +41,6 @@ const POST_TYPE_OPTIONS = [
   { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
-
-const EXCERPT_MAX_LENGTH = 4000;
 
 function excerptTextLength(value: string) {
   return value
@@ -135,7 +132,6 @@ export function PostCreatePage() {
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featured, setFeatured] = useState(false);
@@ -151,8 +147,6 @@ export function PostCreatePage() {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerptTextLength(excerpt) > EXCERPT_MAX_LENGTH)
-      nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -166,7 +160,6 @@ export function PostCreatePage() {
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || undefined,
-        excerpt: normalizeEditorHtml(excerpt) || undefined,
         content: buildPostContent(bodyHtml),
         featuredImageId: featuredImageId.trim() || undefined,
         featured,
@@ -253,24 +246,6 @@ export function PostCreatePage() {
               onChange={(e) => setSourceRef(e.target.value)}
               placeholder="VD: Pháp thoại 2024-08-08..."
             />
-          </AdminFormField>
-
-          <AdminFormField label="Tóm tắt">
-            <RichTextEditor
-              value={excerpt}
-              onChange={(nextValue) => {
-                setExcerpt(nextValue);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              placeholder="Tóm tắt ngắn, dễ đọc trên mobile và phù hợp người lớn tuổi..."
-              minHeight={160}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(Boolean(fieldErrors.excerpt) && "text-destructive")}>
-                {excerptTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}
-              </span>
-            </div>
           </AdminFormField>
 
           <AdminFormField label="Nội dung bài viết" hint="Dùng editor đầy đủ để biên tập nội dung hiển thị công khai.">

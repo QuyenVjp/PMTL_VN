@@ -93,8 +93,6 @@ const entryTypeOptions = [
   { label: "Phật ngôn Phật ngữ", value: "PHAT_NGON" },
   { label: "Bài pháp hội", value: "PHAP_HOI" },
 ];
-const EXCERPT_MAX_LENGTH = 500;
-
 function entryTypeLabel(t: string): string {
   return entryTypeOptions.find((o) => o.value === t)?.label ?? t;
 }
@@ -136,14 +134,6 @@ function getYouTubeId(url: string | null | undefined): string | null {
   }
 
   return null;
-}
-
-function excerptPreview(value: string | null | undefined): string {
-  return (value ?? "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 }
 
 // ── Field wrapper ────────────────────────────────────────────────────
@@ -241,9 +231,6 @@ function WisdomVideoDeck({ entries }: { entries: WisdomEntryItem[] }) {
                       ) : null}
                     </div>
                     <h2 className="text-xl font-semibold">{selectedEntry.title}</h2>
-                    <p className="text-sm text-muted-foreground">
-                      {excerptPreview(selectedEntry.excerpt) || "Chưa có tóm tắt cho entry này."}
-                    </p>
                   </div>
                   <div className="space-y-1 text-xs text-muted-foreground lg:text-right">
                     <div>Tạo bởi {selectedEntry.author.displayName}</div>
@@ -336,7 +323,6 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
   const [sourceUrl, setSourceUrl] = useState("");
   const [originalText, setOriginalText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const reset = () => {
@@ -347,14 +333,12 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
     setSourceUrl("");
     setOriginalText("");
     setTranslatedText("");
-    setExcerpt("");
     setFieldErrors({});
   };
 
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     create.mutate(
@@ -366,7 +350,6 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
         sourceUrl: sourceUrl.trim() || undefined,
         originalText: originalText.trim() || undefined,
         translatedText: translatedText.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
       },
       {
         onSuccess: () => { reset(); onOpenChange(false); },
@@ -436,23 +419,6 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
               <Input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://..." />
             </Field>
           </div>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              placeholder="Mô tả ngắn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
-          </Field>
           <Field label="Nguyên văn gốc">
             <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc..." rows={4} />
           </Field>
@@ -519,7 +485,6 @@ function WisdomEditDialog({
   const [sourceCode, setSourceCode] = useState(currentRow.sourceCode ?? "");
   const [sourceUrl, setSourceUrl] = useState(currentRow.sourceUrl ?? "");
   const [sourceFamily, setSourceFamily] = useState(currentRow.sourceFamily ?? "");
-  const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
   const [originalText, setOriginalText] = useState(currentRow.originalText ?? "");
   const [translatedText, setTranslatedText] = useState(currentRow.translatedText ?? "");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -531,7 +496,6 @@ function WisdomEditDialog({
     setSourceCode(currentRow.sourceCode ?? "");
     setSourceUrl(currentRow.sourceUrl ?? "");
     setSourceFamily(currentRow.sourceFamily ?? "");
-    setExcerpt(currentRow.excerpt ?? "");
     setOriginalText(currentRow.originalText ?? "");
     setTranslatedText(currentRow.translatedText ?? "");
     setFieldErrors({});
@@ -540,7 +504,6 @@ function WisdomEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     update.mutate(
@@ -552,7 +515,6 @@ function WisdomEditDialog({
         sourceCode: sourceCode.trim() || undefined,
         sourceUrl: sourceUrl.trim() || undefined,
         sourceFamily: sourceFamily.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
         originalText: originalText.trim() || undefined,
         translatedText: translatedText.trim() || undefined,
       },
@@ -628,23 +590,6 @@ function WisdomEditDialog({
               <Input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://..." />
             </Field>
           </div>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              placeholder="Mô tả ngắn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
-          </Field>
           <Field label="Nguyên văn gốc">
             <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc (Hoa văn)..." rows={4} />
           </Field>

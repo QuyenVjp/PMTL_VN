@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { BellIcon, Settings2Icon, SparklesIcon, SearchIcon, HeartIcon, FlagIcon } from "lucide-react";
 
+import { NotificationDropdown } from "@/components/layout/notification-dropdown";
 import { UserMenu } from "@/components/layout/user-menu";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -71,6 +72,7 @@ export function Header({
         <div className="ml-auto flex items-center gap-1">
           <TopNav links={topNavLinks} mode="mobile" />
           <ThemeSwitch />
+          <NotificationDropdown />
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="size-9 rounded-full text-muted-foreground">

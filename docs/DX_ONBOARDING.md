@@ -23,7 +23,7 @@ just bootstrap
 just dev-core
 
 # 5. Open browser
-# Web:   http://localhost:3000
+# Web:   http://localhost:5173
 # API:   http://localhost:3001/api
 # Admin: http://localhost:3002
 ```
@@ -174,7 +174,7 @@ Features:
       ]
     }
   },
-  "forwardPorts": [3000, 3001, 3002, 5432],
+  "forwardPorts": [5173, 3001, 3002, 5432],
   "postCreateCommand": "pnpm install"
 }
 ```
@@ -187,9 +187,9 @@ Features:
 
 ```bash
 # Find process
-lsof -i :3000
+lsof -i :5173
 # Or on Windows
-netstat -ano | findstr :3000
+netstat -ano | findstr :5173
 
 # Kill it
 just dev-stop
@@ -282,7 +282,7 @@ Differences (dev-only):
 
 - [ ] Clone repo và chạy `just doctor`
 - [ ] Chạy `just bootstrap`
-- [ ] Start `just dev-core` và xem http://localhost:3000
+- [ ] Start `just dev-core` và xem http://localhost:5173
 - [ ] Tạo branch mới: `git checkout -b feat/my-feature`
 - [ ] Code + commit với conventional commits
 - [ ] Chạy `just verify-all` trước khi push

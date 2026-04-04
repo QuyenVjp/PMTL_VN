@@ -20,7 +20,7 @@ graph TB
   end
 
   subgraph L11["🔀 REVERSE PROXY (Caddy)"]
-    CADDY["Caddy 2\nAuto TLS · HTTP/3 · Routing\npmtl.vn → web:3000\napi.pmtl.vn → api:3002\nadmin.pmtl.vn → admin:3001"]
+    CADDY["Caddy 2\nAuto TLS · HTTP/3 · Routing\npmtl.vn → web:5173\napi.pmtl.vn → api:3002\nadmin.pmtl.vn → admin:3001"]
   end
 
   subgraph L10["🖥️ FRONTEND (apps/web + apps/admin)"]
@@ -91,7 +91,7 @@ sequenceDiagram
   participant U as User Browser
   participant CF as Cloudflare CDN
   participant C as Caddy (VPS :443)
-  participant W as apps/web (:3000)
+  participant W as apps/web (:5173)
   participant A as apps/api (:3002)
   participant P as Postgres
   participant M as Meilisearch

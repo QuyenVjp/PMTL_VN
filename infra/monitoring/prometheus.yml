@@ -28,7 +28,7 @@ scrape_configs:
     params:
       module: [http_2xx]
     static_configs:
-      - targets: ["http://web:3000/api/health"]
+      - targets: ["http://web:5173/api/health"]
         labels:
           service: web
       - targets: ["http://meilisearch:7700/health"]

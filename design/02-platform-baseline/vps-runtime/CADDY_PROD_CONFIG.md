@@ -20,7 +20,7 @@ Caddy tự động xử lý SSL via Let's Encrypt (hoặc Cloudflare DNS challen
 
 # Public frontend
 pmtl.vn, www.pmtl.vn {
-  reverse_proxy web:3000
+  reverse_proxy web:5173
 
   # Cache static assets
   @static {
@@ -94,7 +94,7 @@ admin.pmtl.vn {
 ```mermaid
 graph LR
   CF["Cloudflare\n(Free proxy + WAF)"]
-  CF -->|"pmtl.vn"| C_Web["Caddy → web:3000"]
+  CF -->|"pmtl.vn"| C_Web["Caddy → web:5173"]
   CF -->|"api.pmtl.vn"| C_API["Caddy → api:3002"]
   CF -->|"admin.pmtl.vn"| C_Admin["Caddy → admin:3001"]
 
@@ -130,7 +130,7 @@ graph LR
 # Option B: Cloudflare origin cert
 pmtl.vn {
   tls /etc/caddy/certs/cloudflare-origin.pem /etc/caddy/certs/cloudflare-origin-key.pem
-  reverse_proxy web:3000
+  reverse_proxy web:5173
 }
 ```
 

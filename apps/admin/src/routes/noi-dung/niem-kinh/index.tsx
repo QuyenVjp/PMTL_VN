@@ -2,6 +2,8 @@ import { createRoute, Link, Outlet } from "@tanstack/react-router";
 
 import { EnvironmentRulesTable } from "@/features/chant-admin/environment-rules-table";
 import { EditorPage } from "@/features/content/editor-page";
+import { DailyRecitationWorkspace } from "@/features/daily-recitation/index.js";
+import { SpiritualApplicationsTab } from "@/features/daily-recitation/spiritual-applications-tab.js";
 import { authenticatedRoute } from "@/routes/__root.js";
 
 type WorkspaceTab = {
@@ -31,6 +33,16 @@ const TABS: WorkspaceTab[] = [
     path: "/noi-dung/niem-kinh/moi-truong-thoi-gian",
     label: "Môi trường & thời gian",
     description: "Owner cho rule time/place/environment/body-state và các warning không được suy diễn.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/kinh-bai-tap-hang-ngay",
+    label: "Kinh bài tập hàng ngày",
+    description: "Catalog kinh văn tự tu, quy tắc thời gian/thời tiết, phác đồ tu học và luồng 7 bước.",
+  },
+  {
+    path: "/noi-dung/niem-kinh/don-tu-tam-linh",
+    label: "Đơn từ tâm linh",
+    description: "Catalog đơn từ giấy vàng, nghi thức sử dụng và burn rules cho từng loại đơn.",
   },
 ];
 
@@ -82,6 +94,18 @@ const keHoachRoute = createRoute({
   ),
 });
 
+const dailyRecitationRoute = createRoute({
+  getParentRoute: () => niemKinhWorkspaceRoute,
+  path: "/kinh-bai-tap-hang-ngay",
+  component: DailyRecitationWorkspace,
+});
+
+const spiritualApplicationsRoute = createRoute({
+  getParentRoute: () => niemKinhWorkspaceRoute,
+  path: "/don-tu-tam-linh",
+  component: SpiritualApplicationsTab,
+});
+
 export const niemKinhIndexRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/",
@@ -126,9 +150,9 @@ function NiemKinhWorkspace() {
               Niệm kinh
             </h1>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Workspace này gom 4 lane owner đúng theo admin canon: Bản kinh,
-              Nghi thức, Kế hoạch và Môi trường & thời gian. Mỗi tab giữ đúng
-              ngữ cảnh biên tập thay vì nhét mọi thứ vào một route demo rời rạc.
+              Workspace này gom các lane owner của module Niệm kinh: Bản kinh,
+              Nghi thức, Kế hoạch, Môi trường & thời gian, Kinh bài tập hàng ngày
+              và Đơn từ tâm linh. Mỗi tab giữ đúng ngữ cảnh biên tập riêng.
             </p>
           </div>
 
@@ -156,4 +180,6 @@ export const niemKinhRoutes = niemKinhWorkspaceRoute.addChildren([
   banKinhRoute,
   nghiThucRoute,
   keHoachRoute,
+  dailyRecitationRoute,
+  spiritualApplicationsRoute,
 ]);

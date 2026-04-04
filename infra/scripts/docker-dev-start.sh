@@ -72,7 +72,7 @@ case "$service" in
   web)
     cd "$workspace_dir"
     export PATH="/app/$workspace_dir/node_modules/.bin:/app/node_modules/.bin:$PATH"
-    exec next dev --hostname 0.0.0.0 --port 3000 --turbopack
+    exec next dev --hostname 0.0.0.0 --port 5173 --turbopack
     ;;
   *)
     echo "[docker-dev] Unknown service: $service" >&2

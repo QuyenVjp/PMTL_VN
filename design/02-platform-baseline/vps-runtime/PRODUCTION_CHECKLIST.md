@@ -38,7 +38,7 @@ Owner: `design/02-platform-baseline/vps-runtime/`
 - [ ] Cloudflare SSL mode: **Full (strict)** — không dùng Flexible
 - [ ] Caddy running và auto-TLS hoạt động (kiểm tra `/health/live`)
   - *Note: nếu chưa config Caddy, dùng Nginx tạm — xem `CADDY_PROD_CONFIG.md`*
-- [ ] `pmtl.vn` → `web:3000` routing OK
+- [ ] `pmtl.vn` → `web:5173` routing OK
 - [ ] `api.pmtl.vn` → `api:3001` routing OK
 - [ ] `admin.pmtl.vn` → `admin:3002` routing OK
 - [ ] CORS origins trong `.env.prod` khớp với domains thực

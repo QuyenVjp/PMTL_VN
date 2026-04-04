@@ -81,7 +81,6 @@ export const createWisdomEntrySchema = z.object({
   sourceCode: z.string().max(200).optional(),
   originalText: z.string().optional(),
   translatedText: z.string().optional(),
-  excerpt: z.string().max(4000).optional(),
   tags: z.array(z.string().max(50)).max(10).default([]),
 });
 export type CreateWisdomEntryInput = z.infer<typeof createWisdomEntrySchema>;
@@ -95,7 +94,6 @@ export const updateWisdomEntrySchema = z.object({
   sourceCode: z.string().max(200).optional(),
   originalText: z.string().optional(),
   translatedText: z.string().optional(),
-  excerpt: z.string().max(4000).optional(),
   tags: z.array(z.string().max(50)).max(10).optional(),
 });
 export type UpdateWisdomEntryInput = z.infer<typeof updateWisdomEntrySchema>;
@@ -111,7 +109,6 @@ export const wisdomEntryResponseSchema = z.object({
   sourceCode: z.string().nullable(),
   originalText: z.string().nullable(),
   translatedText: z.string().nullable(),
-  excerpt: z.string().nullable(),
   tags: z.array(z.string()),
   status: z.string(),
   author: z.object({

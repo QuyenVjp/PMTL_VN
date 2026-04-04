@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
 import type { GuideItem } from "@/features/guides/queries";
@@ -37,8 +35,6 @@ import {
   useUpdateGuide,
 } from "@/features/guides/mutations";
 import { useGuides } from "@/features/guides/context";
-
-const EXCERPT_MAX_LENGTH = 500;
 
 // ── Shared field wrapper ─────────────────────────────────────────────
 
@@ -68,7 +64,6 @@ function GuideCreateDialog({
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState(resolvedDefaultCategory);
-  const [excerpt, setExcerpt] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
@@ -94,7 +89,6 @@ function GuideCreateDialog({
     setTitle("");
     setSlug("");
     setCategory(resolvedDefaultCategory);
-    setExcerpt("");
     setSortOrder("0");
     setVersionNote("");
     setCoverMediaPublicId("");
@@ -104,7 +98,6 @@ function GuideCreateDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -116,7 +109,6 @@ function GuideCreateDialog({
         title: title.trim(),
         slug: slug.trim() || undefined,
         category,
-        excerpt: excerpt.trim() || undefined,
         coverMediaPublicId: coverMediaPublicId || undefined,
         sortOrder: Number(sortOrder) || 0,
         versionNote: versionNote.trim() || undefined,
@@ -185,25 +177,6 @@ function GuideCreateDialog({
                 <SelectItem value="GENERAL">Chung</SelectItem>
               </SelectContent>
             </Select>
-          </Field>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) {
-                  setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-                }
-              }}
-              placeholder="Mô tả ngắn cho bài hướng dẫn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
           </Field>
           <Field label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">
             <Input
@@ -283,7 +256,6 @@ function GuideEditDialog({
   const [title, setTitle] = useState(currentRow.title);
   const [slug, setSlug] = useState(currentRow.slug);
   const [category, setCategory] = useState(currentRow.category);
-  const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState(currentRow.coverMediaPublicId ?? "");
@@ -304,7 +276,6 @@ function GuideEditDialog({
     setTitle(currentRow.title);
     setSlug(currentRow.slug);
     setCategory(currentRow.category);
-    setExcerpt(currentRow.excerpt ?? "");
     setSortOrder("0");
     setVersionNote("");
     setCoverMediaPublicId(currentRow.coverMediaPublicId ?? "");
@@ -314,7 +285,6 @@ function GuideEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -327,7 +297,6 @@ function GuideEditDialog({
         title: title.trim(),
         slug: slug.trim() || undefined,
         category,
-        excerpt: excerpt.trim() || undefined,
         coverMediaPublicId: coverMediaPublicId || null,
         sortOrder: Number(sortOrder) || undefined,
         versionNote: versionNote.trim() || undefined,
@@ -389,25 +358,6 @@ function GuideEditDialog({
                 <SelectItem value="GENERAL">Chung</SelectItem>
               </SelectContent>
             </Select>
-          </Field>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) {
-                  setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-                }
-              }}
-              placeholder="Mô tả ngắn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
           </Field>
           <Field label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">
             <Input

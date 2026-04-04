@@ -23,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { useCreatePost, useDeletePost, usePublishPost, useUpdatePost } from "@/features/content/mutations";
@@ -41,8 +40,6 @@ const POST_TYPE_OPTIONS = [
   { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
-const EXCERPT_MAX_LENGTH = 500;
-
 function FeaturedImageField({
   open,
   value,
@@ -177,7 +174,6 @@ function PostCreateDialog({
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
   const [featuredImageId, setFeaturedImageId] = useState("");
@@ -185,14 +181,13 @@ function PostCreateDialog({
 
   const reset = () => {
     setTitle(""); setSlug(""); setPostType("ARTICLE");
-    setSourceRef(""); setExcerpt(""); setFeatured(false); setAllowComments(true); setFeaturedImageId("");
+    setSourceRef(""); setFeatured(false); setAllowComments(true); setFeaturedImageId("");
     setFieldErrors({});
   };
 
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     createPost.mutate(
@@ -201,7 +196,6 @@ function PostCreateDialog({
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
         featuredImageId: featuredImageId || undefined,
         content: {},
         featured,
@@ -253,23 +247,6 @@ function PostCreateDialog({
           <Field label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input value={sourceRef} onChange={(e) => setSourceRef(e.target.value)} placeholder="VD: Pháp thoại 2024-08-08..." />
           </Field>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              placeholder="Mô tả ngắn..."
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
-          </Field>
           <FeaturedImageField open={open} value={featuredImageId} onChange={setFeaturedImageId} />
           <div className="flex gap-6 pt-1">
             <CheckField label="Bài nổi bật" checked={featured} onCheckedChange={setFeatured} hint="Hiển thị ở vị trí ưu tiên" />
@@ -302,7 +279,6 @@ function PostEditDialog({
   const [slug, setSlug] = useState(currentRow.slug);
   const [postType, setPostType] = useState(currentRow.postType);
   const [sourceRef, setSourceRef] = useState(currentRow.sourceRef ?? "");
-  const [excerpt, setExcerpt] = useState(currentRow.excerpt ?? "");
   const [featured, setFeatured] = useState(currentRow.featured);
   const [allowComments, setAllowComments] = useState(currentRow.allowComments);
   const [featuredImageId, setFeaturedImageId] = useState("");
@@ -314,7 +290,6 @@ function PostEditDialog({
     setSlug(currentRow.slug);
     setPostType(currentRow.postType);
     setSourceRef(currentRow.sourceRef ?? "");
-    setExcerpt(currentRow.excerpt ?? "");
     setFeatured(currentRow.featured);
     setAllowComments(currentRow.allowComments);
     setFeaturedImageId("");
@@ -325,7 +300,6 @@ function PostEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerpt.trim().length > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 500 ký tự.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     updatePost.mutate(
@@ -335,7 +309,6 @@ function PostEditDialog({
         slug: slug.trim() || undefined,
         postType,
         sourceRef: sourceRef.trim() || null,
-        excerpt: excerpt.trim() || null,
         ...(featuredImageChanged
           ? { featuredImageId: featuredImageId || null }
           : {}),
@@ -386,22 +359,6 @@ function PostEditDialog({
           </div>
           <Field label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input value={sourceRef} onChange={(e) => setSourceRef(e.target.value)} placeholder="VD: Pháp thoại 2024-08-08..." />
-          </Field>
-          <Field label="Tóm tắt">
-            <Textarea
-              value={excerpt}
-              onChange={(e) => {
-                setExcerpt(e.target.value);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              maxLength={EXCERPT_MAX_LENGTH}
-              className={invalidFieldClass(Boolean(fieldErrors.excerpt))}
-              rows={2}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(fieldErrors.excerpt && "text-destructive")}>{excerpt.length}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
           </Field>
           <FeaturedImageField
             open={open}

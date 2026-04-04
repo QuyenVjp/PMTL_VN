@@ -99,7 +99,7 @@ export function collectionItemsOptions(collectionPublicId: string) {
     queryFn:  () =>
       adminClient.get<{ data: CollectionItem[] }>(
         `/admin/content/media-library/collections/${collectionPublicId}/items`,
-        { limit: 200, offset: 0 },
+        { limit: 100, offset: 0 },
       ),
     enabled: !!collectionPublicId,
   });

@@ -247,9 +247,9 @@ export class SearchService {
       const rows = await this.prisma.post.findMany({
         where: {
           status: "PUBLISHED",
-          OR: [{ title: { contains: q, mode: "insensitive" } }, { excerpt: { contains: q, mode: "insensitive" } }],
+          title: { contains: q, mode: "insensitive" },
         },
-        select: { publicId: true, title: true, excerpt: true, slug: true, publishedAt: true },
+        select: { publicId: true, title: true, slug: true, publishedAt: true },
         orderBy: { publishedAt: "desc" },
         take: query.limit,
         skip: query.offset,
@@ -259,7 +259,7 @@ export class SearchService {
           id: r.publicId,
           index: "posts" as const,
           title: r.title,
-          excerpt: r.excerpt ?? "",
+          excerpt: "",
           href: `/bai-viet/${r.slug}`,
           publishedAt: r.publishedAt?.toISOString() ?? null,
         })),
@@ -293,9 +293,9 @@ export class SearchService {
       const rows = await this.prisma.beginnerGuide.findMany({
         where: {
           status: "PUBLISHED",
-          OR: [{ title: { contains: q, mode: "insensitive" } }, { excerpt: { contains: q, mode: "insensitive" } }],
+          title: { contains: q, mode: "insensitive" },
         },
-        select: { publicId: true, title: true, excerpt: true, slug: true, publishedAt: true },
+        select: { publicId: true, title: true, slug: true, publishedAt: true },
         orderBy: { publishedAt: "desc" },
         take: query.limit,
         skip: query.offset,
@@ -305,7 +305,7 @@ export class SearchService {
           id: r.publicId,
           index: "guides" as const,
           title: r.title,
-          excerpt: r.excerpt ?? "",
+          excerpt: "",
           href: `/huong-dan/${r.slug}`,
           publishedAt: r.publishedAt?.toISOString() ?? null,
         })),
@@ -379,13 +379,13 @@ export class SearchService {
     if (index === "posts") {
       const rows = await this.prisma.post.findMany({
         where: { status: "PUBLISHED" },
-        select: { publicId: true, title: true, excerpt: true, slug: true, publishedAt: true },
+        select: { publicId: true, title: true, slug: true, publishedAt: true },
       });
       return rows.map((r) => ({
         id: r.publicId,
         index,
         title: r.title,
-        excerpt: r.excerpt ?? "",
+        excerpt: "",
         href: `/bai-viet/${r.slug}`,
         publishedAt: r.publishedAt?.toISOString() ?? null,
       }));
@@ -407,13 +407,13 @@ export class SearchService {
     if (index === "guides") {
       const rows = await this.prisma.beginnerGuide.findMany({
         where: { status: "PUBLISHED" },
-        select: { publicId: true, title: true, excerpt: true, slug: true, publishedAt: true },
+        select: { publicId: true, title: true, slug: true, publishedAt: true },
       });
       return rows.map((r) => ({
         id: r.publicId,
         index,
         title: r.title,
-        excerpt: r.excerpt ?? "",
+        excerpt: "",
         href: `/huong-dan/${r.slug}`,
         publishedAt: r.publishedAt?.toISOString() ?? null,
       }));

@@ -24,7 +24,7 @@ graph TB
   subgraph VPS["VPS (Ubuntu 22.04 LTS)"]
     subgraph Docker["Docker Compose Network"]
       Caddy["Caddy\n:80/:443\n(Auto SSL via CF or Let's Encrypt)"]
-      Web["apps/web\n(Next.js :3000)"]
+      Web["apps/web\n(Next.js :5173)"]
       Admin["apps/admin\n(Vite :3001)"]
       API["apps/api\n(NestJS :3002)"]
       PG[("Postgres 16\n:5432")]
@@ -37,7 +37,7 @@ graph TB
 
   User --> CF
   CF -->|"proxy"| Caddy
-  Caddy -->|"/ → :3000"| Web
+  Caddy -->|"/ → :5173"| Web
   Caddy -->|"/api → :3002"| API
   Caddy -->|"/admin → :3001"| Admin
   API --> PG

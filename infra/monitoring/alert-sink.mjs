@@ -63,6 +63,6 @@ const server = createServer((request, response) => {
   writeJson(response, 404, { ok: false, error: "Not found" });
 });
 
-server.listen(8080, "0.0.0.0", () => {
-  console.log(JSON.stringify({ ok: true, service: "alert-sink", port: 8080 }));
+server.listen(18080, "0.0.0.0", () => {
+  console.log(JSON.stringify({ ok: true, service: "alert-sink", port: 18080 }));
 });

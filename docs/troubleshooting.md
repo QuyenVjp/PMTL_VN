@@ -30,7 +30,7 @@ Checks:
 ```bash
 docker compose --env-file infra/docker/.env.dev -f infra/docker/compose.dev.yml ps
 curl http://localhost:3001/api/health
-curl http://localhost:3000/api/health
+curl http://localhost:5173/api/health
 ```
 
 ## `403 CORS origin not allowed`
@@ -138,7 +138,7 @@ Checks:
 Google Console values used by this repo:
 ```text
 Authorized JavaScript origins
-http://localhost:3000
+http://localhost:5173
 https://phapmontamlinh-quantheambotat.vn
 
 Authorized redirect URIs

@@ -10,8 +10,6 @@ import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { RichTextEditor } from "@/features/content/rich-text-editor";
-import { cn } from "@/lib/utils";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
 import { useCreateWisdomEntry, useCreateWisdomTranslationDraft, useSuggestWisdomSlug } from "./mutations";
 
@@ -21,16 +19,6 @@ const ENTRY_TYPE_OPTIONS = [
   { label: "Phật ngôn Phật ngữ", value: "PHAT_NGON" },
   { label: "Bài pháp hội", value: "PHAP_HOI" },
 ];
-
-const EXCERPT_MAX_LENGTH = 4000;
-
-function excerptTextLength(value: string) {
-  return value
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim().length;
-}
 
 function getYouTubeId(url: string): string | null {
   const patterns = [
@@ -59,7 +47,6 @@ export function WisdomCreatePage() {
   const [entryType, setEntryType] = useState<"BACH_THOAI" | "KHAI_THI" | "PHAT_NGON" | "PHAP_HOI">("BACH_THOAI");
   const [sourceCode, setSourceCode] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [originalText, setOriginalText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -68,7 +55,6 @@ export function WisdomCreatePage() {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (excerptTextLength(excerpt) > EXCERPT_MAX_LENGTH) nextErrors.excerpt = "Tóm tắt tối đa 4.000 ký tự hiển thị.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -82,7 +68,6 @@ export function WisdomCreatePage() {
         entryType,
         sourceCode: sourceCode.trim() || undefined,
         sourceUrl: sourceUrl.trim() || undefined,
-        excerpt: excerpt.trim() || undefined,
         originalText: originalText.trim() || undefined,
         translatedText: translatedText.trim() || undefined,
       },
@@ -149,21 +134,6 @@ export function WisdomCreatePage() {
           </AdminFormField>
           <AdminFormField label="Mã nguồn">
             <Input value={sourceCode} onChange={(event) => setSourceCode(event.target.value)} placeholder="VD: shuohua20140808" />
-          </AdminFormField>
-          <AdminFormField label="Tóm tắt">
-            <RichTextEditor
-              value={excerpt}
-              onChange={(nextValue) => {
-                setExcerpt(nextValue);
-                if (fieldErrors.excerpt) setFieldErrors((prev) => ({ ...prev, excerpt: "" }));
-              }}
-              placeholder="Tóm tắt ngắn, dễ đọc trên mobile và đủ rõ để người duyệt nắm nội dung..."
-              minHeight={160}
-            />
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <FieldError message={fieldErrors.excerpt} />
-              <span className={cn(Boolean(fieldErrors.excerpt) && "text-destructive")}>{excerptTextLength(excerpt)}/{EXCERPT_MAX_LENGTH}</span>
-            </div>
           </AdminFormField>
         </div>
       </AdminDetailSection>

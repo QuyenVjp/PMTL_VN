@@ -14,7 +14,6 @@ export function mapPostToResponse(post: PostWithRelations, featuredImageUrl?: st
     title: post.title,
     postType: post.postType,
     sourceRef: post.sourceRef ?? null,
-    excerpt: post.excerpt ?? null,
     content: post.content as Record<string, unknown>,
     status: post.status,
     featured: post.featured,

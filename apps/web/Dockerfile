@@ -32,16 +32,16 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
+ENV PORT=5173
 
 # Next.js standalone bundle (requires output: 'standalone' in next.config)
 COPY --from=builder /repo/apps/web/.next/standalone ./
 COPY --from=builder /repo/apps/web/.next/static ./.next/static
 COPY --from=builder /repo/apps/web/public ./public
 
-EXPOSE 3000
+EXPOSE 5173
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-  CMD ["node", "-e", "const http=require('http');const req=http.get('http://127.0.0.1:3000/',res=>process.exit(res.statusCode<500?0:1));req.on('error',()=>process.exit(1));req.setTimeout(5000,()=>{req.destroy();process.exit(1);});"]
+  CMD ["node", "-e", "const http=require('http');const req=http.get('http://127.0.0.1:5173/',res=>process.exit(res.statusCode<500?0:1));req.on('error',()=>process.exit(1));req.setTimeout(5000,()=>{req.destroy();process.exit(1);});"]
 
 CMD ["server.js"]

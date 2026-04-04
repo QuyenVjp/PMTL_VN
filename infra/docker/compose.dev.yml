@@ -23,7 +23,7 @@ services:
     working_dir: /app
     command: ["sh", "/app/infra/scripts/docker-dev-start.sh", "web"]
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
       - ../../package.json:/app/package.json:ro
       - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml:ro
@@ -56,7 +56,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "const socket=require('net').connect(3000,'127.0.0.1');socket.on('connect',()=>{socket.end();process.exit(0)});socket.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),2000)"
+          "const socket=require('net').connect(5173,'127.0.0.1');socket.on('connect',()=>{socket.end();process.exit(0)});socket.on('error',()=>process.exit(1));setTimeout(()=>process.exit(1),2000)"
         ]
       interval: 20s
       timeout: 10s

@@ -1083,7 +1083,6 @@ async function seedPosts(usersByEmail: Map<string, { id: string; publicId: strin
       where: { slug: spec.slug },
       update: {
         title: spec.title,
-        excerpt: spec.excerpt,
         status: spec.status,
         content: spec.content,
         authorId: author.id,
@@ -1093,7 +1092,6 @@ async function seedPosts(usersByEmail: Map<string, { id: string; publicId: strin
         publicId: spec.publicId,
         slug: spec.slug,
         title: spec.title,
-        excerpt: spec.excerpt,
         status: spec.status,
         content: spec.content,
         authorId: author.id,
@@ -1647,7 +1645,6 @@ async function seedBeginnerGuides(usersByEmail: Map<string, { id: string; public
       update: {
         title: spec.title,
         category: spec.category,
-        excerpt: spec.excerpt,
         status: spec.status,
       },
       create: {
@@ -1655,7 +1652,6 @@ async function seedBeginnerGuides(usersByEmail: Map<string, { id: string; public
         title: spec.title,
         slug: spec.slug,
         content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: spec.excerpt }] }] },
-        excerpt: spec.excerpt,
         category: spec.category,
         status: spec.status,
         authorId: author.id,

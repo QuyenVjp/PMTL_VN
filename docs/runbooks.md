@@ -70,7 +70,7 @@ Post-restore checks:
 ```bash
 pnpm test
 curl http://localhost:3001/api/health
-curl http://localhost:3000/api/health
+curl http://localhost:5173/api/health
 ```
 
 ## Production Backup
@@ -193,7 +193,7 @@ docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.ym
 
 Sentry drill:
 ```bash
-curl -X POST http://localhost:3000/api/internal/monitoring/sentry-test \
+curl -X POST http://localhost:5173/api/internal/monitoring/sentry-test \
   -H "Content-Type: application/json" \
   -H "x-monitoring-test-secret: $MONITORING_TEST_SECRET" \
   -d '{"message":"PMTL web monitoring drill"}'
@@ -220,7 +220,7 @@ docker compose --env-file infra/docker/.env.prod -f infra/docker/compose.prod.ym
 
 Verification:
 ```bash
-curl http://localhost:3000/api/health
+curl http://localhost:5173/api/health
 curl http://localhost:3001/api/health
 pnpm test
 ```

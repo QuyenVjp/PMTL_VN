@@ -36,7 +36,7 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     networks: [pmtl]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5173/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

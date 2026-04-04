@@ -6,7 +6,6 @@ export type PostSummary = {
   id: string | number;
   title: string;
   slug: string;
-  excerpt: string;
   publishedAt: string | null;
   categories: string[];
   status: ContentStatus;
@@ -55,6 +54,5 @@ export type SearchResultItem = {
   type: "post" | "event";
   title: string;
   slug: string;
-  excerpt: string;
   url: string;
 };

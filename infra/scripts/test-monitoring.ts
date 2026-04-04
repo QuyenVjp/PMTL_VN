@@ -12,7 +12,7 @@ const envFile = process.env.MONITORING_ENV_FILE ?? path.join(rootDir, "infra/doc
 const envFileValues = parseSimpleEnvFile(envFile);
 const webBaseUrl =
   process.env.MONITORING_WEB_BASE_URL
-  ?? `http://127.0.0.1:${getEnvValue("MONITORING_WEB_PORT", envFileValues, "3000")}`;
+  ?? `http://127.0.0.1:${getEnvValue("MONITORING_WEB_PORT", envFileValues, "5173")}`;
 const prometheusBaseUrl =
   process.env.MONITORING_PROMETHEUS_URL ??
   `http://127.0.0.1:${getEnvValue("PROMETHEUS_PORT", envFileValues, "9090")}`;

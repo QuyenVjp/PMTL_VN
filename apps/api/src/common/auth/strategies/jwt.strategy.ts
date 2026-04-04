@@ -21,6 +21,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
     config: ConfigService,
     private readonly prisma: PrismaService,
   ) {
+    const accessSecret =
+      process.env["JWT_ACCESS_SECRET"] ??
+      config?.jwtAccessSecret;
+
+    if (!accessSecret) {
+      throw new Error("JWT_ACCESS_SECRET is required for JwtStrategy");
+    }
+
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
@@ -34,7 +42,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
         },
       ]),
       ignoreExpiration: false,
-      secretOrKey: config.jwtAccessSecret,
+      secretOrKey: accessSecret,
       issuer: "pmtl-api",
       audience: "pmtl-web",
     });

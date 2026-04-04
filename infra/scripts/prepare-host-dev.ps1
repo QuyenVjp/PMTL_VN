@@ -1,3 +1,7 @@
+param(
+  [switch]$RunSeed
+)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -63,6 +67,10 @@ function Ensure-DevPostgresReady {
       throw "Không tìm thấy pwsh/powershell để chạy docker-recover."
     }
 
+    if ($LASTEXITCODE -eq 2) {
+      throw "Docker backend crash sau khi khởi động. Không tiếp tục prepare DB vì lỗi nằm ở Docker host, không phải PostgreSQL."
+    }
+
     if ($LASTEXITCODE -ne 0) {
       throw "docker-recover thất bại. Không thể chuẩn bị PostgreSQL local."
     }
@@ -105,41 +113,55 @@ function Test-HttpJson {
   }
 }
 
+function Start-CornBackgroundDev {
+  param(
+    [string]$WorkingDir,
+    [string]$LogFile
+  )
+
+  Push-Location $WorkingDir
+  try {
+    & cmd /c "start /b cmd /c pnpm dev > $LogFile 2>&1"
+  }
+  finally {
+    Pop-Location
+  }
+}
+
 function Ensure-CornHubReady {
   param(
     [string]$RepoRoot
   )
 
   $cornApiRoot = "C:\Users\ADMIN\CornMCP\apps\corn-api"
-  if (-not (Test-Path $cornApiRoot)) {
-    Write-Host "[host-prepare] CornHub: không tìm thấy '$cornApiRoot' (bỏ qua)." -ForegroundColor Yellow
+  $cornMcpRoot = "C:\Users\ADMIN\CornMCP\apps\corn-mcp"
+  $hasCornApiRoot = Test-Path $cornApiRoot
+  $hasCornMcpRoot = Test-Path $cornMcpRoot
+
+  if ((-not $hasCornApiRoot) -and (-not $hasCornMcpRoot)) {
+    Write-Host "[host-prepare] CornHub: không tìm thấy app roots tại '$cornApiRoot' / '$cornMcpRoot' (bỏ qua)." -ForegroundColor Yellow
     return
   }
 
-  $healthUrl = "http://localhost:4000/health"
+  $apiHealthUrl = "http://localhost:4000/health"
+  $mcpHealthUrl = "http://localhost:8317/health"
   $projectsUrl = "http://localhost:4000/api/projects"
   $projectName = Split-Path -Leaf $RepoRoot
 
-  $health = Test-HttpJson -Url $healthUrl
+  $health = Test-HttpJson -Url $apiHealthUrl
   $isCornApi = $false
   if ($health -and $health.service -eq "corn-api") {
     $isCornApi = $true
   }
 
-  if (-not $isCornApi) {
+  if ((-not $isCornApi) -and $hasCornApiRoot) {
     Write-Host "[host-prepare] CornHub API chưa chạy, đang khởi động..." -ForegroundColor Cyan
-    Push-Location $cornApiRoot
-    try {
-      & cmd /c "start /b cmd /c pnpm dev > corn-api-bg.log 2>&1"
-    }
-    finally {
-      Pop-Location
-    }
+    Start-CornBackgroundDev -WorkingDir $cornApiRoot -LogFile "corn-api-bg.log"
 
     $deadline = (Get-Date).AddSeconds(45)
     do {
       Start-Sleep -Seconds 2
-      $health = Test-HttpJson -Url $healthUrl -TimeoutSec 3
+      $health = Test-HttpJson -Url $apiHealthUrl -TimeoutSec 3
       if ($health -and $health.service -eq "corn-api") {
         $isCornApi = $true
         break
@@ -148,7 +170,47 @@ function Ensure-CornHubReady {
   }
 
   if (-not $isCornApi) {
-    Write-Host "[host-prepare] CornHub API chưa sẵn sàng trên :4000 (có thể bị xung đột cổng). Bỏ qua indexing tự động." -ForegroundColor Yellow
+    if ($hasCornApiRoot) {
+      Write-Host "[host-prepare] CornHub API chưa sẵn sàng trên :4000 (có thể bị xung đột cổng). Bỏ qua indexing tự động." -ForegroundColor Yellow
+    }
+    else {
+      Write-Host "[host-prepare] CornHub API root không tồn tại tại '$cornApiRoot' (bỏ qua API/indexing)." -ForegroundColor Yellow
+    }
+  }
+  else {
+    $mcpHealth = Test-HttpJson -Url $mcpHealthUrl
+    $isCornMcp = $false
+    if ($mcpHealth -and $mcpHealth.service -eq "corn-mcp") {
+      $isCornMcp = $true
+    }
+
+    if ((-not $isCornMcp) -and $hasCornMcpRoot) {
+      Write-Host "[host-prepare] CornHub MCP chưa chạy, đang khởi động tại :8317..." -ForegroundColor Cyan
+      Start-CornBackgroundDev -WorkingDir $cornMcpRoot -LogFile "corn-mcp-bg.log"
+
+      $deadline = (Get-Date).AddSeconds(45)
+      do {
+        Start-Sleep -Seconds 2
+        $mcpHealth = Test-HttpJson -Url $mcpHealthUrl -TimeoutSec 3
+        if ($mcpHealth -and $mcpHealth.service -eq "corn-mcp") {
+          $isCornMcp = $true
+          break
+        }
+      } while ((Get-Date) -lt $deadline)
+    }
+
+    if ($isCornMcp) {
+      Write-Host "[host-prepare] CornHub MCP đã sẵn sàng tại http://localhost:8317/mcp." -ForegroundColor Green
+    }
+    elseif ($hasCornMcpRoot) {
+      Write-Host "[host-prepare] CornHub MCP chưa sẵn sàng trên :8317. PMTL vẫn chạy nhưng MCP local sẽ chưa dùng được." -ForegroundColor Yellow
+    }
+    else {
+      Write-Host "[host-prepare] CornHub MCP root không tồn tại tại '$cornMcpRoot' (bỏ qua MCP)." -ForegroundColor Yellow
+    }
+  }
+
+  if (-not $isCornApi) {
     return
   }
 
@@ -245,10 +307,15 @@ try {
       throw "prisma db push không hoàn thành sau $maxRetries lần thử."
     }
 
-    Write-Host "[host-prepare] Seeding host dev data..." -ForegroundColor Cyan
-    & $tsxCli prisma/seed.ts
-    if ($LASTEXITCODE -ne 0) {
-      throw "Lệnh 'tsx prisma/seed.ts' thất bại."
+    if ($RunSeed) {
+      Write-Host "[host-prepare] Seeding host dev data..." -ForegroundColor Cyan
+      & $tsxCli prisma/seed.ts
+      if ($LASTEXITCODE -ne 0) {
+        throw "Lệnh 'tsx prisma/seed.ts' thất bại."
+      }
+    }
+    else {
+      Write-Host "[host-prepare] Bỏ qua seed mặc định. Dùng -RunSeed nếu cần nạp lại dữ liệu dev." -ForegroundColor DarkYellow
     }
   }
   finally {
