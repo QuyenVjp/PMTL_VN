@@ -1,6 +1,6 @@
-# Khoá Tác Quyền Người Trì Tụng — Little House Chanter Identity Lock
+# Ràng Buộc "Tác Quyền" Chữ Ký Người Đốt — Chanter Identity Lock
 
-> **Nguồn:** Khai thị chính thức Pháp Môn Tâm Linh (Nguồn 320)
+> **Nguồn:** Khai thị chính thức Pháp Môn Tâm Linh — Luật Quyền Sở Hữu Năng Lượng NNN
 > **Trạng thái:** Verified source — human review required before automating enforcement
 > **Cập nhật:** 2026-04-04
 
@@ -8,124 +8,208 @@
 
 ## Purpose
 
-Người nhà **có thể đốt thay** tờ NNN cho người đã niệm. Tuy nhiên, cột **"Người Tặng / Offered By" (bên trái) BẮT BUỘC phải là tên của người ĐÃ NIỆM**, không phải tên người cầm bật lửa đốt. Tác quyền năng lượng kinh văn thuộc về người đã trì tụng — người đốt chỉ là trung gian vật lý, không có quyền "đứng tên".
+Người nhà có thể cầm bật lửa ĐỐT THAY Tiểu Phương Tử (NNN) cho quý vị (người già, người bệnh, hoặc bất tiện). Tuy nhiên, cột "Người Tặng / Offered by" (bên trái NNN, thường là tên người đã niệm) **BẮT BUỘC phải là tên của người ĐÃ NIỆM**, không phải là tên của người cầm bật lửa đốt. Dù ai đốt, tác quyền năng lượng vẫn thuộc về người đã bấm nút đếm kinh (niệm). Nếu ghi nhầm, sẽ tạo nhầm năng lượng và mất công đức.
 
 ---
 
 ## Owner module
 
-`engagement` — LittleHouse / NNNSheet
+`engagement` — LittleHouseService / BurnLogService
 [xem CONTRACTS.md](../CONTRACTS.md)
 
 ---
 
 ## Actors
 
-- `member` — chủ account đã niệm kinh
-- `family_member` — người thân đốt thay (không có account)
-- `system` — lock trường Offered By về tên người niệm, không cho sửa
+- `member` — Chủ Account (người đã niệm NNN)
+- `helper` — Người nhà cầm bật lửa đốt thay
+- `system` — Khóa chết trường "Người Tặng", ghi tên người niệm
+
+---
+
+## Trigger
+
+User log burn session (ghi nhận việc đốt NNN). Nếu tick vào checkbox `[Người khác đốt thay]` (hoặc `[Burned by family member]`), hệ thống cần ngăn chặn user thay đổi tên người tặng.
 
 ---
 
 ## Business Rules
 
-| Trường hợp | offeredBy Name |
+| Điều kiện | Hành động |
 |---|---|
-| User tự đốt | `user.spiritualName ?? user.legalName` |
-| Người nhà đốt thay (`burnedByFamilyMember = true`) | **Vẫn là** `user.spiritualName ?? user.legalName` — KHÔNG đổi |
-| Admin nhập thay | `user.spiritualName ?? user.legalName` — không thể override |
-
-**Nguyên tắc bất biến:** `offeredByName` = tên người đã ngồi niệm. Không liên quan đến ai đốt.
+| Burn log: Người niệm = Current User | ✅ Allow edit "Người Tặng" field |
+| Burn log: Người niệm = Current User + tick [Người khác đốt thay] | ❌ LOCK "Người Tặng" field |
+| "Người Tặng" field locked | ✅ Display as Current User name (non-editable) |
+| User cố ghi tên khác (ngoài form) | ❌ Server validation reject |
+| Tooltip on locked field | ✅ Show: "Dù người nhà đốt thay, tác quyền năng lượng vẫn thuộc về bạn..." |
 
 ---
 
 ## Input Contract
 
-```
-BurnLittleHouseSheetDto {
-  sheetId:              string
-  burnedByFamilyMember: boolean   // true = người nhà đốt thay
-  burnedByName?:        string    // IGNORED — field này bị discard hoàn toàn
-                                  // system luôn dùng authenticated user's name
+```typescript
+// Burn Log Request
+interface BurnLogRequest {
+  userId: string;              // Current user (niệm kinh)
+  littleHouseId: string;
+  burnDate: DateTime;
+  isBurnedByProxy: boolean;    // [Người khác đốt thay?]
+  proxyHelper?: string;        // Name of person who burned (for reference only)
+  offeredByName?: string;      // User tries to edit "Người Tặng" (will be locked if proxy=true)
 }
-```
 
-`burnedByName` trong DTO bị discard ngay tại service — không bao giờ được ghi vào DB.
+// FE should pre-fill "Người Tặng" with current user.name
+```
 
 ---
 
 ## Write Path
 
 ```
-POST /api/engagement/little-house-sheets/:id/burn
-──────────────────────────────────────────────────
-Body: { burnedByFamilyMember: boolean }
+POST /api/engagement/little-houses/{nnnId}/log-burn
 
-1. Resolve offeredByName:
-   offeredByName = req.user.spiritualName ?? req.user.legalName
-   // KHÔNG đọc burnedByName từ body — discard
+1. Load NNN + current user
+2. Validate payload:
+   - If isBurnedByProxy === true:
+       → Force offeredByName = user.name
+       → Ignore any payload.offeredByName value
+   - If isBurnedByProxy === false:
+       → Allow offeredByName from payload
+         (but still default to user.name for safety)
 
-2. Validate sheet thuộc về req.user.id.
-3. Validate sheet.status = "COMPLETED" và completedDate != null.
-4. Update LittleHouseSheet:
+3. Create BurnLog:
    {
-     status:               "BURNED",
-     offeredByName:        offeredByName,   // locked to chanter
-     burnedByFamilyMember: burnedByFamilyMember,
-     burnedAt:             now()
+     id: uuid(),
+     nnnId: nnnId,
+     userId: userId,
+     offeredByName: user.name,              // LOCKED if isBurnedByProxy
+     burnDate: payload.burnDate,
+     isBurnedByProxy: payload.isBurnedByProxy,
+     proxyHelperName: payload.proxyHelper || null,  // For reference only
+     createdAt: now()
    }
-5. Audit: little-house.sheet.burned { burnedByFamilyMember }
+
+4. Emit audit event:
+   - If isBurnedByProxy:
+       "nnn.burn_logged_by_proxy"
+   - Else:
+       "nnn.burn_logged_directly"
+
+5. Return success with message:
+   - If isBurnedByProxy:
+       "✅ Ghi nhận thành công. Dù [name] đốt thay,
+           tác quyền năng lượng vẫn thuộc về bạn."
 ```
 
 ---
 
 ## FE Behavior
 
-### Màn hình Xác nhận Đốt
-
 ```
-┌──────────────────────────────────────────────────────────┐
-│  🔥  Xác Nhận Đốt Ngôi Nhà Nhỏ                         │
-│                                                          │
-│  Người Tặng (Offered By):                              │
-│  ┌──────────────────────────────┐                       │
-│  │  Nguyễn Tâm An               │  🔒 (locked)         │
-│  └──────────────────────────────┘                       │
-│  ℹ️  Tên người đã niệm kinh. Không thể thay đổi.       │
-│                                                          │
-│  Ai sẽ đốt tờ này?                                    │
-│  ○ Tôi tự đốt                                          │
-│  ○ Người nhà đốt thay                                  │
-│                                                          │
-│  💡  Dù ai đốt, tác quyền năng lượng vẫn thuộc về     │
-│      người đã niệm. Không ghi tên người đốt vào        │
-│      cột bên trái.                                     │
-│                                                          │
-│  [Xác Nhận Đốt]                                        │
-└──────────────────────────────────────────────────────────┘
+USER LOGS BURN (Not by proxy)
+
+┌────────────────────────────────────────────┐
+│  🔥 Ghi Nhận Việc Đốt NNN                 │
+├────────────────────────────────────────────┤
+│  Ngày đốt: [2026-04-03] ⬇️               │
+│                                            │
+│  Người Tặng (Người Niệm):                │
+│  [Tôi (Nguyễn Văn A)] (editable)         │
+│                                            │
+│  ☐ Người khác đốt thay                   │
+│    Tên người đốt: [_______]              │
+│                                            │
+│  [Huỷ] [Lưu]                            │
+└────────────────────────────────────────────┘
+
+⬇️ User checks [Người khác đốt thay] ⬇️
+
+┌────────────────────────────────────────────┐
+│  🔥 Ghi Nhận Việc Đốt NNN                 │
+├────────────────────────────────────────────┤
+│  Ngày đốt: [2026-04-03] ⬇️               │
+│                                            │
+│  Người Tặng (Người Niệm):                │
+│  [Tôi (Nguyễn Văn A)] 🔒 (LOCKED)       │
+│  ℹ️ Dù ai đốt, tác quyền vẫn thuộc về  │
+│     người đã niệm.                      │
+│                                            │
+│  ☑ Người khác đốt thay                   │
+│    Tên người đốt: [Mẹ tôi]              │
+│                                            │
+│  [Huỷ] [Lưu]                            │
+└────────────────────────────────────────────┘
+
+⬇️ After save ⬇️
+
+┌────────────────────────────────────────────┐
+│  ✅ Ghi Nhận Thành Công                   │
+├────────────────────────────────────────────┤
+│                                            │
+│  Tiểu Phương Tử đã được đốt vào:         │
+│  📅 2026-04-03                            │
+│                                            │
+│  Người Tặng: Tôi (Nguyễn Văn A)          │
+│  Đốt bởi: Mẹ tôi                         │
+│                                            │
+│  🌟 Dù người nhà đốt thay, tác quyền    │
+│     năng lượng vẫn thuộc về bạn. Công   │
+│     đức sẽ mang đến cho bạn và gia      │
+│     đình.                                │
+│                                            │
+│  [Quay lại]                              │
+└────────────────────────────────────────────┘
 ```
 
-### Tooltip khi user hover vào trường Offered By (locked)
+---
 
-```
-🔒 Tác quyền năng lượng thuộc về người đã ngồi niệm.
-   Dù người nhà đốt thay, tên trên cột này
-   không được phép thay đổi.
+## Server-Side Validation
+
+```typescript
+// In BurnLogService
+validateBurnLogRequest(payload, currentUser) {
+  if (payload.isBurnedByProxy === true) {
+    // FORCE offeredByName to currentUser
+    payload.offeredByName = currentUser.name;
+
+    // Reject any attempt to override via API call
+    if (payload.offeredByName !== currentUser.name) {
+      throw new BadRequestException({
+        code: "chanter_identity_locked",
+        message: "Người tặng phải là người đã niệm. Không được ghi tên người đốt thay vào cột 'Người Tặng'."
+      });
+    }
+  }
+  return payload;
+}
 ```
 
 ---
 
 ## Schema Notes
 
-Bổ sung vào `LittleHouseSheet`:
-
 ```prisma
-model LittleHouseSheet {
-  // ... existing fields ...
-  offeredByName        String?   // locked = chanter's name at burn time
-  burnedByFamilyMember Boolean   @default(false)
-  burnedAt             DateTime?
+model BurnLog {
+  id                String @id @default(cuid())
+  nnnId             String
+  userId            String              // Person who chanted (owner of merit)
+  offeredByName     String              // ALWAYS = user.name (locked if proxy)
+  burnDate          DateTime
+  isBurnedByProxy   Boolean @default(false)
+  proxyHelperName   String?             // Name of person who physically burned (for reference)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  nnn               LittleHouse @relation(fields: [nnnId], references: [id], onDelete: Cascade)
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([nnnId, burnDate])
+  @@index([userId, burnDate])
 }
+
+// Extend LittleHouse model
+// burnLogs: BurnLog[]
 ```
 
 ---
@@ -134,9 +218,9 @@ model LittleHouseSheet {
 
 | Action | Trigger |
 |---|---|
-| `little-house.sheet.burned` | Đốt thành công (self hoặc family) |
-
-Payload audit bao gồm `burnedByFamilyMember: boolean` để analytics.
+| `nnn.burn_logged_directly` | User đốt trực tiếp |
+| `nnn.burn_logged_by_proxy` | Người nhà đốt thay |
+| `nnn.chanter_identity_locked` | Attempt to override offeredByName (server reject) |
 
 ---
 
@@ -144,23 +228,22 @@ Payload audit bao gồm `burnedByFamilyMember: boolean` để analytics.
 
 | Condition | Code | HTTP |
 |---|---|---|
-| Sheet không thuộc về user | `forbidden` | 403 |
-| Sheet chưa COMPLETED | `sheet_not_completed` | 409 |
-| `completedDate` null | `date_required` | 409 |
-| Chưa đăng nhập | `unauthorized` | 401 |
+| Attempt to change offered by name when proxy | chanter_identity_locked | 400 |
+| NNN not found | nnn_not_found | 404 |
+| Invalid burn date | invalid_burn_date | 400 |
 
 ---
 
 ## Notes for AI/codegen
 
-- `burnedByName` trong request body phải bị discard hoàn toàn — không log, không store. Tránh confused data.
-- `offeredByName` được snapshot tại thời điểm burn — dùng `spiritualName ?? legalName` tại thời điểm đó, không lookup lại sau.
-- Phase 2+: nếu user đổi `spiritualName` sau khi đã burn, các sheet cũ giữ nguyên snapshot tên cũ — đúng behavior.
+- `offeredByName` là hard-locked khi `isBurnedByProxy = true` — không exception nào.
+- Server-side validation phải strict: reject bất kỳ attempt nào để thay đổi via API.
+- `proxyHelperName` là chỉ để reference/audit, không ảnh hưởng công đức.
+- Tooltip phải clear để user hiểu tác quyền năng lượng logic.
+- Tương lai: Có thể extend để track lịch sử "ai đốt" (for statistics), nhưng công đức vẫn thuộc người niệm.
 
 ---
 
 ## Related
 
-- [little-house-anti-theft-field-lock.md](./little-house-anti-theft-field-lock.md) — offeredBy phải điền TRƯỚC khi niệm
-- [little-house-gregorian-date-enforcer.md](./little-house-gregorian-date-enforcer.md) — Ngày dương lịch bắt buộc
-- [dual-name-spiritual-legal.md](../../identity/USE_CASES/dual-name-spiritual-legal.md) — spiritualName vs legalName
+- [little-house-no-inline-edit-correction-limit.md](./little-house-no-inline-edit-correction-limit.md) — No-edit lock for NNN corrections
