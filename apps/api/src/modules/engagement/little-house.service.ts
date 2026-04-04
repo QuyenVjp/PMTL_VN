@@ -49,6 +49,45 @@ export class LittleHouseService {
     return this.toDto(record);
   }
 
+  /**
+   * Phase 12 Logic 3: Start chanting with anti-theft lock
+   * Design: design/03-domains/engagement/USE_CASES/little-house-anti-theft-field-lock.md
+   */
+  async startChanting(publicId: string, userId: string, offeredByName: string) {
+    const record = await this.prisma.littleHouse.findFirst({
+      where: { publicId, userId },
+    });
+    if (!record) throw new NotFoundException("Ngôi nhà nhỏ không tồn tại");
+
+    // HARD LOCK: offeredByName PHẢI được điền TRƯỚC khi bắt đầu niệm
+    if (!offeredByName || offeredByName.trim() === "") {
+      throw new BadRequestException({
+        error: "offered_by_name_required_before_chanting",
+        message: "Phải điền Tên người Tặng trước khi bắt đầu niệm. Năng lượng chưa có chủ sở hữu sẽ bị vong linh cướp mất.",
+        field: "offeredByName",
+      });
+    }
+
+    const updated = await this.prisma.littleHouse.update({
+      where: { id: record.id },
+      data: {
+        offeredByName: offeredByName.trim(),
+        chantingStartedAt: new Date(),
+        offeredByLockedAt: new Date(), // Lock tên, không được sửa nữa
+        status: "CHANTED", // Auto-advance to CHANTED
+      },
+    });
+
+    this.logger.log({
+      msg: "little_house.chanting.started",
+      userId,
+      publicId,
+      offeredByName: offeredByName.trim(),
+    });
+
+    return this.toDto(updated);
+  }
+
   async advance(input: AdvanceLittleHouseInput, userId: string) {
     const record = await this.prisma.littleHouse.findFirst({
       where: { publicId: input.publicId, userId },

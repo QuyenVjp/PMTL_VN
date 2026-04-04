@@ -167,6 +167,17 @@ model User {
   communityComments   CommunityComment[]   @relation("communityComments")
   communityHearts     CommunityHeart[]     @relation("communityHearts")
 
+  // Phase 12 relations
+  convincingFamilyRituals ConvincingFamilyRitualSession[] @relation("convincingFamilyRituals")
+  nameChangeApplications  NameChangeApplication[]         @relation("nameChangeApplications")
+  sutraReadingSessions    SutraReadingSession[]           @relation("sutraReadingSessions")
+  sutraBookmarks          SutraBookmark[]                 @relation("sutraBookmarks")
+  littleHouseBurnSessions LittleHouseBurnSession[]        @relation("littleHouseBurnSessions")
+  childProfiles           ChildProfile[]                  @relation("childProfiles")
+  altarProfile            AltarProfile?                   @relation("altarProfile")
+  waterOfferingLogs       WaterOfferingLog[]              @relation("waterOfferingLogs")
+  deceasedRelatives       DeceasedRelative[]              @relation("deceasedRelatives")
+
   @@index([email])
   @@index([status])
   @@map("users")
@@ -1041,30 +1052,37 @@ enum DreamAbortionChildState {
 // Module 1 — LittleHouseLifecycle
 // Owner: engagement (self-state/lifecycle) + content (ritual copy ref)
 // Phase 12: Added purpose, startedAt, recipientName, offerTo for Logic 1 & 2
+// Phase 12 Logic 3: Anti-theft field lock - offeredBy must be filled before chanting
 model LittleHouse {
-  id           String               @id @default(cuid())
-  publicId     String               @unique @map("public_id")
-  userId       String               @map("user_id")
-  recipient    String
-  recipientName String?             @map("recipient_name")
-  offerTo      String?              @map("offer_to") // Auto-formatted for RESOLVE_CONFLICT
-  purpose      LittleHousePurpose?  @default(GENERAL_SUPPORT)
-  sheetsCount  Int                  @default(1) @map("sheets_count")
-  status       LittleHouseStatus    @default(DRAFT)
-  startedAt    DateTime?            @map("started_at") // Phase 12: For 7-day tracking
-  burnDate     DateTime?            @map("burn_date")
-  postBurnNote String?              @map("post_burn_note")
-  specialCase  Boolean              @default(false) @map("special_case")
-  confirmedAt  DateTime?            @map("confirmed_at")
-  createdAt    DateTime             @default(now()) @map("created_at")
-  updatedAt    DateTime             @updatedAt @map("updated_at")
+  id                   String               @id @default(cuid())
+  publicId             String               @unique @map("public_id")
+  userId               String               @map("user_id")
+  recipient            String
+  recipientName        String?              @map("recipient_name")
+  offerTo              String?              @map("offer_to") // Auto-formatted for RESOLVE_CONFLICT
+  purpose              LittleHousePurpose?  @default(GENERAL_SUPPORT)
+  sheetsCount          Int                  @default(1) @map("sheets_count")
+  status               LittleHouseStatus    @default(DRAFT)
+  startedAt            DateTime?            @map("started_at") // Phase 12: For 7-day tracking
+  burnDate             DateTime?            @map("burn_date")
+  postBurnNote         String?              @map("post_burn_note")
+  specialCase          Boolean              @default(false) @map("special_case")
+  confirmedAt          DateTime?            @map("confirmed_at")
+  offeredByName        String?              @map("offered_by_name") // Phase 12 Logic 3: Anti-theft
+  chantingStartedAt    DateTime?            @map("chanting_started_at") // Phase 12 Logic 3
+  offeredByLockedAt    DateTime?            @map("offered_by_locked_at") // Phase 12 Logic 3
+  deceasedRelativeId   String?              @map("deceased_relative_id") // Phase 12 Logic 8: Link to Bardo campaign
+  createdAt            DateTime             @default(now()) @map("created_at")
+  updatedAt            DateTime             @updatedAt @map("updated_at")
 
-  user User @relation("littleHouses", fields: [userId], references: [id])
+  user             User              @relation("littleHouses", fields: [userId], references: [id])
+  deceasedRelative DeceasedRelative? @relation("DeceasedLittleHouses", fields: [deceasedRelativeId], references: [id])
 
   @@index([userId])
   @@index([status])
   @@index([startedAt])
   @@index([purpose])
+  @@index([deceasedRelativeId])
   @@map("little_houses")
 }
 
@@ -1263,23 +1281,262 @@ model SelfCultivationTemplate {
 }
 
 // ============================================================================
-// PHASE 12 ADDITIONS
+// PHASE 12 ADDITIONS - TỪNG DESIGN DOC
 // ============================================================================
+
+// ========== CONTENT MODULE ==========
+
+// Design: content/USE_CASES/convincing-family-form-incense-timer.md
+// Logic 1: Đồng hồ đếm ngược Đơn Khuyến Đạo
+enum RitualSessionStatus {
+  ACTIVE
+  ALERT_FIRED
+  COMPLETED
+  ABANDONED
+}
+
+model ConvincingFamilyRitualSession {
+  id              String              @id @default(cuid())
+  userId          String              @map("user_id")
+  formId          String              @map("form_id")
+  startedAt       DateTime            @default(now()) @map("started_at")
+  durationMinutes Int                 @map("duration_minutes")
+  alertAt         DateTime            @map("alert_at")
+  alertFiredAt    DateTime?           @map("alert_fired_at")
+  completedAt     DateTime?           @map("completed_at")
+  status          RitualSessionStatus @default(ACTIVE)
+  createdAt       DateTime            @default(now()) @map("created_at")
+  updatedAt       DateTime            @updatedAt @map("updated_at")
+
+  user User @relation("convincingFamilyRituals", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([alertAt])
+  @@index([status])
+  @@map("convincing_family_ritual_sessions")
+}
+
+// Design: content/USE_CASES/name-change-deceased-exemption.md
+// Logic 2: Đơn Đổi Tên (chỉ cho người sống)
+enum PersonLifeStatus {
+  LIVING
+  DECEASED
+}
+
+enum ApplicationStatus {
+  PENDING_BURN
+  BURNED
+  ACTIVATED
+}
+
+model NameChangeApplication {
+  id                String            @id @default(cuid())
+  publicId          String            @unique @map("public_id")
+  userId            String            @map("user_id")
+  targetPersonType  PersonLifeStatus  @map("target_person_type")
+  targetOldName     String            @map("target_old_name")
+  targetNewName     String            @map("target_new_name")
+  yearsUsedNewName  Int               @map("years_used_new_name")
+  status            ApplicationStatus @default(PENDING_BURN)
+  burnedAt          DateTime?         @map("burned_at")
+  activationEndsAt  DateTime?         @map("activation_ends_at")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  user User @relation("nameChangeApplications", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("name_change_applications")
+}
+
+// Design: content/USE_CASES/ereader-hand-hygiene-gate.md
+// Logic 10: E-Reader Hygiene Gate
+model SutraReadingSession {
+  id                   String    @id @default(cuid())
+  userId               String    @map("user_id")
+  sutraId              String    @map("sutra_id")
+  hygieneConfirmedAt   DateTime  @map("hygiene_confirmed_at")
+  sessionStartedAt     DateTime  @default(now()) @map("session_started_at")
+  sessionEndedAt       DateTime? @map("session_ended_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
+
+  user User @relation("sutraReadingSessions", fields: [userId], references: [id])
+
+  @@index([userId, sutraId])
+  @@map("sutra_reading_sessions")
+}
+
+// Design: content/USE_CASES/ereader-anti-face-down.md
+// Logic 10: E-Reader Bookmark
+model SutraBookmark {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  sutraId   String   @map("sutra_id")
+  pageIndex Int      @map("page_index")
+  lineIndex Int?     @map("line_index")
+  note      String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation("sutraBookmarks", fields: [userId], references: [id])
+
+  @@unique([userId, sutraId])
+  @@index([userId])
+  @@map("sutra_bookmarks")
+}
+
+// ========== ENGAGEMENT MODULE ==========
+
+// Design: engagement/USE_CASES/little-house-burn-physical-checks.md
+// Logic 3: Kiểm tra vật lý khi đốt NNN
+enum BurnSessionStatus {
+  PENDING
+  PRE_CHECKED
+  BURNING
+  POST_CHECK_PENDING
+  COMPLETED
+  ABANDONED
+}
+
+model LittleHouseBurnSession {
+  id                 String            @id @default(cuid())
+  littleHouseId      String            @map("little_house_id")
+  userId             String            @map("user_id")
+  status             BurnSessionStatus @default(PENDING)
+  preBurnCheckedAt   DateTime?         @map("pre_burn_checked_at")
+  burnStartedAt      DateTime?         @map("burn_started_at")
+  postBurnCheckedAt  DateTime?         @map("post_burn_checked_at")
+  burnCompletedAt    DateTime?         @map("burn_completed_at")
+  hadScraps          Boolean           @default(false) @map("had_scraps")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  user User @relation("littleHouseBurnSessions", fields: [userId], references: [id])
+
+  @@index([littleHouseId])
+  @@index([userId])
+  @@index([status])
+  @@map("little_house_burn_sessions")
+}
+
+// Design: engagement/REFERENCES/VIRTUAL-VIOLENCE-GAMING.md
+// Logic 6: Nghiệp bạo lực ảo từ game
+model ChildProfile {
+  id                   String   @id @default(cuid())
+  publicId             String   @unique @map("public_id")
+  userId               String   @map("user_id")
+  childName            String   @map("child_name")
+  hasGamingAddiction   Boolean  @default(false) @map("has_gaming_addiction")
+  virtualViolenceKarma Boolean  @default(false) @map("virtual_violence_karma")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  user User @relation("childProfiles", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("child_profiles")
+}
+
+// ========== VOWS-MERIT MODULE ==========
+
+// Design: vows-merit/USE_CASES/altar-profile-spatial-validation.md
+// Logic 5: Kiểm tra không gian bàn thờ
+model AltarProfile {
+  id                       String    @id @default(cuid())
+  userId                   String    @unique @map("user_id")
+  name                     String?
+  hasAltar                 Boolean   @default(true) @map("has_altar")
+  notFacingKitchen         Boolean   @default(false) @map("not_facing_kitchen")
+  noMirrorsAround          Boolean   @default(false) @map("no_mirrors_around")
+  notOnOverhangingBalcony  Boolean   @default(false) @map("not_on_overhanging_balcony")
+  spatialConfirmedAt       DateTime? @map("spatial_confirmed_at")
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+
+  user User @relation("altarProfile", fields: [userId], references: [id])
+
+  @@map("altar_profiles")
+}
+
+// Design: vows-merit/REFERENCES/WATER-CONSUMPTION-MUDRA.md
+// Logic 4: Nước cúng theo Bồ Tát
+enum BodhisattvaType {
+  THICH_CA_MAU_NI
+  QUAN_THE_AM
+  NAM_KINH
+  THAI_TUOI
+  QUAN_DE
+  CHAU_XUONG
+  QUAN_BINH
+}
+
+enum WaterConsumptionMethod {
+  DRINK_DIRECTLY
+  MUST_DISCARD
+  MUST_RECITE_ONE_DBZ
+}
+
+model WaterOfferingLog {
+  id                    String                 @id @default(cuid())
+  publicId              String                 @unique @map("public_id")
+  userId                String                 @map("user_id")
+  bodhisattvaType       BodhisattvaType        @map("bodhisattva_type")
+  consumptionMethod     WaterConsumptionMethod @map("consumption_method")
+  daBeiZhouRecited      Boolean                @default(false) @map("da_bei_zhou_recited")
+  date                  DateTime               @db.Date
+  note                  String?
+  createdAt             DateTime               @default(now()) @map("created_at")
+
+  user User @relation("waterOfferingLogs", fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@map("water_offering_logs")
+}
+
+// ========== CALENDAR MODULE ==========
+
+// Design: calendar/REFERENCES/BARDO-49-DAY-TRACKER.md
+// Logic 8: Chiến dịch Siêu độ 49 ngày
+model DeceasedRelative {
+  id             String         @id @default(cuid())
+  publicId       String         @unique @map("public_id")
+  userId         String         @map("user_id")
+  name           String
+  relationship   String
+  dateOfDeath    DateTime       @db.Date @map("date_of_death")
+  bardoEndDate   DateTime       @db.Date @map("bardo_end_date")
+  targetLH       Int            @default(49) @map("target_lh")
+  completedLH    Int            @default(0) @map("completed_lh")
+  bardoCompleted Boolean        @default(false) @map("bardo_completed")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  user         User          @relation("deceasedRelatives", fields: [userId], references: [id])
+  littleHouses LittleHouse[] @relation("DeceasedLittleHouses")
+
+  @@index([userId])
+  @@index([bardoEndDate])
+  @@map("deceased_relatives")
+}
+
+// ========== LEGACY PHASE 12 (ĐƯỢC GIỮ LẠI) ==========
 
 // Phase 12 Logic 3: Sutra Type Metadata for E-Reader
 // Classifies sutras/mantras as LONG (pausable) or SHORT (must restart)
 model SutraMetadata {
-  id              String    @id @default(cuid())
-  publicId        String    @unique @map("public_id")
-  sutraKey        String    @unique @map("sutra_key") // e.g., "da_bei_zhou", "wang_sheng_chu"
-  titleVi         String    @map("title_vi")
-  titleEn         String?   @map("title_en")
-  sutraType       SutraType // LONG or SHORT
-  pauseMantra     String?   @map("pause_mantra") // "Ong Lai Mu Suo He" for LONG types
-  pauseInstruction String?  @map("pause_instruction")
-  restartWarning  String?   @map("restart_warning") // Warning for SHORT types
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  id               String    @id @default(cuid())
+  publicId         String    @unique @map("public_id")
+  sutraKey         String    @unique @map("sutra_key") // e.g., "da_bei_zhou", "wang_sheng_chu"
+  titleVi          String    @map("title_vi")
+  titleEn          String?   @map("title_en")
+  sutraType        SutraType // LONG or SHORT
+  pauseMantra      String?   @map("pause_mantra") // "Ong Lai Mu Suo He" for LONG types
+  pauseInstruction String?   @map("pause_instruction")
+  restartWarning   String?   @map("restart_warning") // Warning for SHORT types
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
   @@index([sutraType])
   @@map("sutra_metadata")
@@ -1287,19 +1544,19 @@ model SutraMetadata {
 
 // Phase 12 Logic 5: Dream Journal for Abortion Spirit Tracking
 model DreamJournal {
-  id                     String                   @id @default(cuid())
-  publicId               String                   @unique @map("public_id")
-  userId                 String                   @map("user_id")
-  dreamDate              DateTime                 @db.Date @map("dream_date")
-  abortionChildRelated   Boolean                  @default(false) @map("abortion_child_related")
-  childState             DreamAbortionChildState? @map("child_state")
-  description            String?
-  littleHousePublicId    String?                  @map("little_house_public_id") // Link to related LH
-  resolutionStatus       String?                  @default("UNRESOLVED") @map("resolution_status") // UNRESOLVED, RESOLVED
-  autoActionTriggered    Boolean                  @default(false) @map("auto_action_triggered") // True if auto-created LH
-  autoActionNote         String?                  @map("auto_action_note")
-  createdAt              DateTime                 @default(now()) @map("created_at")
-  updatedAt              DateTime                 @updatedAt @map("updated_at")
+  id                   String                   @id @default(cuid())
+  publicId             String                   @unique @map("public_id")
+  userId               String                   @map("user_id")
+  dreamDate            DateTime                 @db.Date @map("dream_date")
+  abortionChildRelated Boolean                  @default(false) @map("abortion_child_related")
+  childState           DreamAbortionChildState? @map("child_state")
+  description          String?
+  littleHousePublicId  String?                  @map("little_house_public_id") // Link to related LH
+  resolutionStatus     String?                  @default("UNRESOLVED") @map("resolution_status") // UNRESOLVED, RESOLVED
+  autoActionTriggered  Boolean                  @default(false) @map("auto_action_triggered") // True if auto-created LH
+  autoActionNote       String?                  @map("auto_action_note")
+  createdAt            DateTime                 @default(now()) @map("created_at")
+  updatedAt            DateTime                 @updatedAt @map("updated_at")
 
   @@index([userId])
   @@index([dreamDate])
@@ -1311,16 +1568,16 @@ model DreamJournal {
 // Phase 12 Logic 1: Little House Stale Warning Records
 // Tracks warnings sent for LH that exceed 7 days
 model LittleHouseWarning {
-  id                String   @id @default(cuid())
-  publicId          String   @unique @map("public_id")
-  littleHouseId     String   @map("little_house_id")
-  userId            String   @map("user_id")
-  warningType       String   @map("warning_type") // "SEVEN_DAY_STALE"
-  daysElapsed       Int      @map("days_elapsed")
-  sentAt            DateTime @default(now()) @map("sent_at")
-  acknowledged      Boolean  @default(false)
-  acknowledgedAt    DateTime? @map("acknowledged_at")
-  createdAt         DateTime @default(now()) @map("created_at")
+  id             String    @id @default(cuid())
+  publicId       String    @unique @map("public_id")
+  littleHouseId  String    @map("little_house_id")
+  userId         String    @map("user_id")
+  warningType    String    @map("warning_type") // "SEVEN_DAY_STALE"
+  daysElapsed    Int       @map("days_elapsed")
+  sentAt         DateTime  @default(now()) @map("sent_at")
+  acknowledged   Boolean   @default(false)
+  acknowledgedAt DateTime? @map("acknowledged_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
 
   @@index([littleHouseId])
   @@index([userId])
