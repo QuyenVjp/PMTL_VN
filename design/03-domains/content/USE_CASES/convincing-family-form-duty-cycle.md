@@ -135,18 +135,46 @@ POST /api/content/sacred-forms/burn
 
 ### Incense Timer khi đặt đơn lên bàn thờ:
 
+**Bước 1:** User ấn nút kích hoạt timer sau khi đã đặt đơn lên bàn thờ:
+
+```
+[📿 Đã dâng Thăng Văn Khuyến Đạo lên bàn thờ — Bắt đầu đếm giờ]
+```
+
+→ App tự động khởi động đồng hồ **30 phút**. Nút biến thành trạng thái "Đang đếm giờ" (disabled).
+
+**Bước 2:** Timer countdown hiển thị:
+
 ```
 ┌────────────────────────────────────────────────────────┐
 │ 🕯️  Đơn Đang Trên Bàn Thờ — Hẹn Giờ Cất Đơn           │
 │────────────────────────────────────────────────────────│
 │ Hãy đặt đơn gần lư hương và thắp nhang.                │
-│ Khi nhang tàn (≈15–30 phút), HÃY CẤT ĐƠN NGAY.        │
+│ Khi nhang tàn (30 phút), HÃY CẤT ĐƠN NGAY.            │
 │                                                        │
-│           ⏳  Còn lại: 17:43                           │
+│           ⏳  Còn lại: 28:14                           │
 │                                                        │
 │ TUYỆT ĐỐI KHÔNG ĐỂ ĐƠN Ở LẠI TRÊN BÀN THỜ            │
 │ sau khi nhang tàn — hồn phách người nhà sẽ bất an.    │
 └────────────────────────────────────────────────────────┘
+```
+
+**Bước 3:** Khi hết 30 phút — chuông báo reo + Push Notification đỏ:
+
+```
+🔴 [PMTL — Cảnh Báo Khẩn]
+Nhang đã tàn! Lập tức lấy Thăng Văn Khuyến Đạo bọc lại cất đi.
+CẤM ĐỂ LƯU LẠI trên bàn thờ để tránh hồn phách người nhà bị thất tán!
+```
+
+**Write Path bổ sung (timer-start endpoint):**
+```
+POST /api/content/sacred-forms/convincing/:sessionId/start-incense-timer
+1. Validate sessionId thuộc userId
+2. Set incenseTimerStartedAt = now()
+3. Schedule push notification sau 30 phút
+4. Audit: form.thang_van.incense_timer_started
+5. Return { expiresAt: now() + 30min }
 ```
 
 ### Khi user cố đốt đơn:

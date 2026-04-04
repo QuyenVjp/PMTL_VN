@@ -75,3 +75,72 @@ interface ValidationResult {
 ## Notes
 
 Two-level mathematical constraint. Both global and per-layer must satisfy odd-number rule.
+
+---
+
+## Part B: Quy Tắc Độc Canh — One Fruit Type Per Plate
+
+> **Nguồn bổ sung:** Khai thị chính thức Pháp Môn Tâm Linh (Phase 35 Logic 3, Nguồn 371, 372, 841)
+
+Ngoài quy tắc số lẻ ở Part A, mỗi đĩa trái cây cúng bàn thờ **CHỈ ĐƯỢC PHÉP CÚNG DUY NHẤT 1 LOẠI TRÁI CÂY**. Tuyệt đối không trộn lẫn (ví dụ: táo + cam chung 1 đĩa là vi phạm).
+
+### Business Rules bổ sung
+
+| Điều kiện | Hành động |
+|---|---|
+| Đĩa chỉ có 1 loại trái cây | ✅ ALLOWED |
+| Đĩa có 2+ loại trái cây khác nhau | ❌ REJECTED — `mixed_fruit_plate_forbidden` 400 |
+
+### Input Contract bổ sung
+
+```typescript
+// FruitPlateInput mở rộng (kết hợp Part A + Part B):
+interface FruitPlateInput {
+  plateId:   string
+  fruitType: FruitTypeEnum  // 1 loại duy nhất per plateId
+  layers:    { layerIndex: number; fruitCount: number }[]
+}
+// Rule: 1 plateId → 1 fruitType. Nếu submit 2 entries cùng plateId nhưng fruitType khác nhau → rejected.
+```
+
+### Write Path bổ sung
+
+```
+POST /api/altar-management/fruit-plate/validate
+
+1. Load existing FruitPlateOffering for plateId (nếu có)
+2. If existing.fruitType !== dto.fruitType:
+   → throw 400 { error: 'mixed_fruit_plate_forbidden',
+                 message: 'Mỗi đĩa chỉ được cúng duy nhất 1 loại trái cây. CẤM trộn lẫn.' }
+3. Continue Part A odd-layer validation (layers array)
+```
+
+### FE Behavior bổ sung
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  🍎  Đĩa Trái Cây #1                                    │
+│──────────────────────────────────────────────────────────│
+│  Loại trái cây:  [Táo đỏ                   ▾]            │
+│                  ← 1 loại duy nhất cho đĩa này           │
+│                                                          │
+│  Tầng 1 (đáy):  [  5  ] quả  ← phải là số lẻ           │
+│  Tầng 2:        [  3  ] quả  ← phải là số lẻ           │
+│  Tầng 3 (đỉnh): [  1  ] quả  ← phải là số lẻ           │
+│  [+ Thêm tầng]                                          │
+│                                                          │
+│  ⚠️  Luật PMTL: Mỗi đĩa CHỈ 1 LOẠI trái cây.           │
+│     Không được thêm cam, quýt, hay loại khác vào đây.  │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Errors bổ sung
+
+| Condition | Code | HTTP |
+|---|---|---|
+| Trộn 2+ loại trái cây trên 1 đĩa | `mixed_fruit_plate_forbidden` | 400 |
+
+### Notes for AI/codegen bổ sung
+
+- `fruitType` dropdown nên dùng `FruitTypeEnum` — loại trái cây được phép (đã filter qua `altar-botanical-biological-filter.md`).
+- Part A + Part B validation chạy tuần tự: check fruit type trước (Part B), rồi mới check odd layers (Part A). Fail fast tại violation đầu tiên.

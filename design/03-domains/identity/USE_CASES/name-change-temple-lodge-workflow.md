@@ -132,6 +132,29 @@ function generateNameChangePrayer(dto: SubmitNameChangeFormDto): string {
 
 ---
 
+### Lưu Ý Giải Tỏa Áp Lực — Civic ID Exemption Notice
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ 🟢  KHÔNG CẦN ĐỔI GIẤY TỜ NHÂN GIAN                        │
+│──────────────────────────────────────────────────────────────│
+│ Việc Thăng Văn chỉ là báo cáo sự thay đổi tên với          │
+│ hệ thống Tâm Linh (Thiên Giới và Địa Phủ).                 │
+│                                                              │
+│ Bạn HOÀN TOÀN KHÔNG CẦN đi đổi tên trên:                   │
+│  ✅ Căn cước công dân / CMND                                │
+│  ✅ Hộ chiếu                                                │
+│  ✅ Sổ hộ khẩu                                              │
+│  ✅ Bất kỳ giấy tờ thế tục nào khác                        │
+│                                                              │
+│ Tên pháp lý ở đời thực của bạn giữ nguyên.                 │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Hiển thị sticky note này ở **đầu mỗi bước** trong flow (không chỉ 1 lần) — nhiều người lo lắng vấn đề này và cần được nhắc nhở liên tục.
+
+---
+
 ### Step 1 — Chọn Nơi Thực Hiện
 
 ```
