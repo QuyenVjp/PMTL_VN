@@ -22,52 +22,61 @@
 
 ## 🎯 Acceptance Criteria
 
-### AC1: Grand Incense Date Detection
-**GIVEN** today is lunar 1st or 15th or festival  
+### AC1: Grand Incense Date Detection (LUNAR NEW YEAR ONLY)
+**GIVEN** today is lunar 1st only (Mùng 1 Tết)  
 **WHEN** check incense options  
 **THEN** 
 - Unlock grand incense ritual:
   ```
-  🔥 ĐẠI HƯƠNG NGỌ THỨC (Grand Incense)
+  🔥 ĐẠI HƯƠNG NGỌ THỨC (Grand Incense - Mùng 1 Tết ONLY)
   
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   
-  ✨ Hôm nay là ngày [Mùng 1 / 15 / Kỷ Niệm]
+  ✨ HÔM NAY LÀ MÙNG 1 TẾT ÂM LỊCH!
   
-  ⭐ Năng lượng từ bi đạt ĐỈNH CAO!
+  ⭐ NGÀY THIÊNG LIÊNG CẬP KỴ!
   
-  BẠN CÓ THỂ THỰC HIỆN:
+  Đây là một trong những ngày tháng 
+  quý giá nhất trong năm để thực hiện 
+  Đại Hương.
   
   🔥 ĐẠI HƯƠNG NGỌ THỨC
   (Gỗ Đàn Hương - Sandalwood Ritual)
   
-  Đây là hương thơm của Bồ Tát.
+  Đây là hương thơm tuyệt vời 
+  của Bồ Tát, chỉ đốt vào Mùng 1 Tết.
   Công đức gấp trăm lần!
   
   [Bắt Đầu Đại Hương Nghi Thức]
   [Tiếp Tục Thắp Hương Bình Thường]
   ```
 
-### AC2: Only on Auspicious Days Lock
-**GIVEN** not lunar 1/15 or festival  
+### AC2: Non-Lunar-New-Year Block
+**GIVEN** not lunar 1st (Mùng 1 Tết)  
 **WHEN** user try grand incense  
 **THEN** 
 - Block access:
   ```
-  ⛔ KHÔNG ĐƯỢC PHÉP
+  ⛔ TUYỆTÙ ĐỐI KHÔNG ĐƯỢC
   
   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   
-  Đại Hương chỉ được thực hiện vào:
-  - Mùng 1 Âm lịch
-  - Rằm (15) Âm lịch
-  - Ngày kỷ niệm vía Phật/Bồ Tát
+  ⚠️  CẬP KỴ:
+  
+  Đại Hương là nghi thức TUYỆTÙ ĐỐI
+  dành riêng cho MÙNG 1 TẾT ÂM LỊCH.
+  
+  ❌ KHÔNG được đốt vào:
+  - Mùng 15 Âm lịch
+  - Các ngày lễ khác
+  - Các ngày thường
   
   Hôm nay: [Ngày X Tháng Y (Ngày thường)]
   
-  ❌ Không phải ngày may mắn
+  ❌ Không phải Mùng 1 Tết
   
-  Lần tới có Đại Hương: [Ngày X + Y ngày]
+  Lần tới Đại Hương: 
+  [Mùng 1 Tết - X ngày nữa]
   
   [Về Lại]
   ```

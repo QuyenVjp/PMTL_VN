@@ -39,11 +39,41 @@
   }
   ```
 
-### AC2: Evening Golden Hour Windows
-**GIVEN** user schedule evening incense  
+### AC2: Absolute Evening Cutoff (22:00 / 10 PM)
+**GIVEN** time is 22:00 or later  
+**WHEN** check evening incense  
+**THEN** 
+- BLOCK ALL INCENSE after 10 PM:
+  ```
+  🚫 CẤM KỴ: SAU 10 GIỜ TỐI
+  
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  
+  Thời gian hiện tại: [22:15]
+  
+  ⚠️  TUYỆTÙ ĐỐI CẤMUÙ:
+  
+  Sau 22:00 (10 giờ tối), không được 
+  thắp hương, tuyệt đối.
+  
+  ✅ NGOẠI LỆ (nếu có NNN):
+  - Nếu tờ NNN đã điền tên người nhận
+  - Được niệm (không thắp hương) 
+    đến 23:59 (12h đêm)
+  - Chỉ niệm tâm, KHÔNG thắp hương
+  
+  ❌ ABSOLUTE DEADZONE 2-5 AM:
+  - TUYỆTÙ ĐỐI không tụng Kinh
+  - Sẽ thu hút vong linh
+  
+  [Về Lại - Đợi Sáng]
+  ```
+
+### AC3: Evening Golden Hour Windows (Before 10 PM Only)
+**GIVEN** user schedule evening incense between 18-22  
 **WHEN** check time  
 **THEN** 
-- Allow only 6pm (18h), 8pm (20h), 10pm (22h):
+- Allow only 6pm (18h), 8pm (20h), 10pm (22h) SHARP:
   ```typescript
   const EVENING_INCENSE_HOURS = [18, 20, 22];
   const currentHour = new Date().getHours();
