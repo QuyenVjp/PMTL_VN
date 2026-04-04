@@ -88,6 +88,110 @@ Logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/US
 
 ---
 
+## Distribution Map — Phase 29 (Ngũ Đại Pháp Bảo Depth)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Lifespan Mantra Age Gate | `vows-merit` | `lifespan-mantra-age-gate.md` |
+| Merit Foundation Dependency Guard | `vows-merit` | `merit-foundation-dependency-guard.md` |
+| Life Release Proxy Financial Transfer | `vows-merit` | `life-release-proxy-financial-transfer.md` |
+| Manage Little House Reserved Proxy (cron) | `engagement` | `manage-little-house-reserved-proxy.md` (EDIT) |
+| Name Change Temporal Burn Lock | `content` | `name-change-temporal-burn-lock.md` |
+| Convincing Form Duty Cycle (rewrite) | `content` | `convincing-family-form-duty-cycle.md` (EDIT) |
+| Synchronized Incense — Stick Count Rule | `altar-management` | `synchronized-incense-insertion.md` (EDIT) |
+| Lucky Bamboo Quota Limiter | `vows-merit` | `lucky-bamboo-quota-limiter.md` |
+| Relocation Altar Prerequisite | `calendar` | `relocation-altar-prerequisite.md` |
+
+## Distribution Map — Phase 30 (Physiology, Zero-Monetization, Spatial)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Pregnancy Proxy Advisory | `identity` | `menstrual-pregnancy-physical-guard.md` (EDIT Part B) |
+| Vocal Volume Bio-Energetics Guide | `content` | `vocal-volume-bio-energetics-guide.md` |
+| Propagation Vow Goal Tracker | `vows-merit` | `propagation-vow-goal-tracker.md` |
+| Dharma Item Zero Monetization Lock | `engagement` | `dharma-item-zero-monetization-lock.md` |
+| Travel Mode Altar Photo Rule (Step 0 + Red Cloth) | `vows-merit` | `travel-mode-altar-photo-rule.md` (EDIT) |
+| Prime Liberation Lunar Scheduler | `calendar` | `prime-liberation-lunar-scheduler.md` |
+| Totem Profile Zodiac Cross-Validation | `identity` | `totem-profile-requirements.md` (EDIT) |
+| Altar Botanical Biological Filter | `vows-merit` | `altar-botanical-biological-filter.md` |
+| Vow Rescheduling Emergency Escape | `vows-merit` | `manage-vow-flexibility-and-fulfillment-location.md` (EDIT Part 3) |
+
+## Distribution Map — Phase 31 (Micro-Physical & Digital Integrity)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Gaming Addiction Karmic Router | `wisdom-qa` | `gaming-addiction-karmic-router.md` |
+| Lower Tooth Prophecy Scanner | `engagement` | `dream-journal-interpreter.md` (EDIT CRITICAL urgency) |
+| Multi-Alias Name Change | `identity` | `name-change-temple-lodge-workflow.md` (EDIT originalNames[]) |
+| No-Burn Cooldown Convincing Form | `content` | `convincing-family-form-duty-cycle.md` (EDIT Part B timer) |
+| Face-Down Device Prohibition | `content` | `ereader-anti-face-down.md` — already covered Phase 24 |
+| Spatial Architecture Ban | `vows-merit` | `altar-profile-spatial-validation.md` — already covered |
+| Relocation No-Reblessing | `calendar` | `relocation-altar-prerequisite.md` (advisory note) |
+| Invalidation Physical Disposal Protocol | `engagement` | `invalidation-prayer-lock.md` (EDIT Step 2) |
+| Date Formatting Engine (Arabic/Chinese) | `engagement` | `little-house-gregorian-date-enforcer.md` (EDIT Part B) |
+
+## Distribution Map — Phase 35 (Kiến Trúc Nghi Thức Chuyên Sâu)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Great Compassion Power-Wrapper Mode | `engagement` | `great-compassion-power-wrapper-mode.md` |
+| Bardo 49-Day Priority Queue | `engagement` | `bardo-49day-priority-queue.md` |
+| Odd-Layer + Single-Type Fruit Plate | `vows-merit` | `fruit-plate-mathematical-integrity.md` (EDIT Part B) |
+| Hierarchical Prostration Sequence | `altar-management` | `hierarchical-prostration-sequence.md` |
+| Sandalwood Horizontal Preservation | `altar-management` | `sandalwood-horizontal-preservation.md` |
+| Transit & Wilderness Recitation Guard | `content` | `transit-wilderness-recitation-guard.md` |
+| Anti-Breath Blowing Sutra Guard | `content` | `anti-breath-blowing-sutra-guard.md` |
+| Civic ID Exemption Notice | `identity` | `name-change-temple-lodge-workflow.md` (EDIT notice) |
+| Convincing Form Retraction Timer | `content` | `convincing-family-form-duty-cycle.md` (EDIT timer detail) |
+| 7-Prostration Vow Sealer | `vows-merit` | `seven-prostration-vow-sealer.md` |
+| Year-End Karmic Transition Trigger | `calendar` | `year-end-karmic-transition-trigger.md` |
+| Doctrine Moderation AI Firewall | `engagement` | `doctrine-moderation-ai-firewall.md` |
+
+## Distribution Map — Phase 39 (Định Tuyến Thời Gian Nhân Quả & Bảo Mật Giao Thức)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Name Change Time-Gater | `calendar` | `name-change-time-gater.md` |
+| Statue Blessing Scheduler | `altar-management` | `statue-blessing-scheduler.md` |
+| Amitabha Sutra Age Lock | `vows-merit` | `amitabha-sutra-age-lock.md` |
+| Under-5 Merit Transfer Gate | `vows-merit` | `under-five-merit-transfer-gate.md` |
+| Black-Dressed Stranger Debt Calculator | `wisdom-qa` | `black-dressed-stranger-debt-calculator.md` |
+| Invalid LH Voiding Protocol | `engagement` | `invalid-lh-voiding-protocol.md` |
+| Blank LH Reservation Lock | `engagement` | `blank-lh-reservation-lock.md` |
+| Seafood Karma Radar & Totem 50-Stars | `identity` | `seafood-karma-radar.md` |
+| Travel Altar Photo Protocol | `vows-merit` | `travel-altar-photo-protocol.md` |
+| Sydney DST Radio Router | `contact` | `sydney-dst-radio-router.md` |
+
+## Distribution Map — Phase 40 (Bộ Định Tuyến Thời Gian Đặc Biệt & Tiết Khí Âm Dương)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Cemetery Geo-Fencing Guard | `content` | `cemetery-geofence-sutra-lock.md` |
+| Sunset Combustion Ban | `engagement` | `sunset-combustion-ban.md` |
+| Altar Hardware Upgrade Protocol | `altar-management` | `altar-hardware-upgrade-protocol.md` |
+| Grand Incense State Machine | `altar-management` | `grand-incense-state-machine.md` |
+| Name Change Burning Time-Gater | `engagement` | `name-change-burning-time-gater.md` |
+| Calamity Avoidance Life Release Engine | `calendar` | `calamity-avoidance-life-release-engine.md` |
+| Midnight & Pre-Dawn Deadzone Guard | `content` | `midnight-pre-dawn-deadzone-guard.md` |
+
+## Distribution Map — Phase 41 (Tầng Ràng Buộc Pháp Bảo & Kiểm Soát Vật Lý/Không Gian Sâu)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Oil & Water Integrity Guard | `altar-management` | `oil-water-integrity-guard.md` |
+| Odd-Layer Fruit Matrix | `altar-management` | `fruit-plate-mathematical-integrity.md` (EDIT Part C) |
+| Under-Altar & Heart Incense Guard | `altar-management` | `under-altar-heart-incense-guard.md` |
+| Spirit Money Collision Alert | `engagement` | `spirit-money-collision-alert.md` |
+| Pre-Recitation Signature Lock | `engagement` | `pre-recitation-signature-lock.md` |
+| Digital Invalidation Workflow | `engagement` | `digital-invalidation-workflow.md` |
+| Long Sutra Interruption Recovery | `content` | `long-sutra-interruption-recovery-gate.md` |
+| Vocal Resonance Health Guard | `content` | `vocal-resonance-health-guard.md` |
+| Proxy Liberation Silence Lock | `engagement` | `proxy-liberation-silence-lock.md` |
+| Avatar Sanctity Guard | `identity` | `avatar-sanctity-guard.md` |
+| 100-Day Name Change Probation Interpolator | `engagement` | `name-change-probation-interpolator.md` |
+
+---
+
 ## Rules for new BRD phases
 
 1. Tạo file mới tại `design/05-references/brd-research/BRD_PHASE_XX_*.md` — không phải `design/` root
