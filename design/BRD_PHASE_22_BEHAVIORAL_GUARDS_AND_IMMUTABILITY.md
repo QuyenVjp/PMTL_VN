@@ -79,7 +79,7 @@ async function validateOfflineSyncBatch(batch: SyncBatch): Promise<ValidationRes
       status: 'REJECTED',
       reason: 'YIN_TIME_VIOLATION',
       rejectedCount: yinViolations.length,
-      message: '系统检测到以下变经是在禁忌时间（凌晨2-5点）记录的。为了保护您的气场，系统拒绝接受这些记录。'
+      message: 'Hệ thống phát hiện các biến kinh sau được ghi trong khung giờ cấm (2-5 giờ sáng). Để bảo vệ từ trường của bạn, hệ thống từ chối chấp nhận các bản ghi này.'
     }
   }
 
@@ -92,7 +92,7 @@ async function validateOfflineSyncBatch(batch: SyncBatch): Promise<ValidationRes
       status: 'FLAGGED',
       reason: 'EXCESSIVE_TIME_DRIFT',
       timeDriftHours,
-      message: `您的设备时间与服务器相差 ${timeDriftHours.toFixed(1)} 小时。请确认您是否更改了设备时间。`
+      message: `Thời gian thiết bị của bạn lệch so với máy chủ ${timeDriftHours.toFixed(1)} giờ. Vui lòng xác nhận xem bạn có thay đổi thời gian thiết bị không.`
     }
   }
 
@@ -105,22 +105,22 @@ async function validateOfflineSyncBatch(batch: SyncBatch): Promise<ValidationRes
 ```
 🚫 SYNC FAILED: YIN-TIME VIOLATION
 
-离线期间，系统检测到以下变经
-被记录在禁忌时间（凌晨2-5点）：
+Trong lúc ngoại tuyến, hệ thống phát hiện
+các biến kinh được ghi trong giờ cấm (2-5 giờ sáng):
 
-变经 1: Đại Bi Chú (7 biến)
-时间: 02:47 AM
+Biến 1: Đại Bi Chú (7 biến)
+Thời gian: 02:47 SA
 
-为了保护您的气场，这些变经
-被拒绝入帐。
+Để bảo vệ từ trường của bạn, các biến kinh này
+bị từ chối ghi nhận.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ 解决方案：
-在正确的时间重新念诵这些变经
-然后再同步。
+✅ Giải pháp:
+Niệm lại các biến kinh này vào đúng giờ
+rồi đồng bộ lại.
 
-[重新念诵] [忽略此警告]
+[Niệm Lại] [Bỏ Qua Cảnh Báo]
 ```
 
 ### Audit

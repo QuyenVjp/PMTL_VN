@@ -64,3 +64,12 @@ Mỗi domain nên tiến tới:
 - không tạo root-level alias mới nếu đã có canonical path rõ
 - file moved/completed có thể còn sống ở `MIGRATION_MAP.md` như audit trail, nhưng không phải live owner
 - overview folder không được sống song song như authority layer mới
+
+## BRD Research Files
+
+Các file `BRD_PHASE_XX_*.md` hiện đang nằm ở `design/` root là **legacy inputs** từ quá trình phân tích requirements. Chúng KHÔNG thuộc bất kỳ layer canonical nào.
+
+- **Target path cho BRD mới:** `design/05-references/brd-research/`
+- **Files hiện tại tại root:** Giữ nguyên vị trí như source snapshot; xem index tại `design/05-references/brd-research/INDEX.md`
+- **Không promote BRD files lên canonical owner status** — logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/USE_CASES/` trước khi có giá trị implementation
+- **Ownership:** `design/05-references/brd-research/INDEX.md` — xem `ROOT_DOC_OWNERSHIP.md`

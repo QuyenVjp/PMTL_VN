@@ -65,6 +65,78 @@ INVALID: [🕯️][  ][  ] ❌
 
 ---
 
+## Part B: Quy Tắc Số Nén Nhang Theo Cấu Hình Bàn Thờ
+
+> **Nguồn bổ sung:** Khai thị chính thức Pháp Môn Tâm Linh (Nguồn 377, 378, 827, 828)
+
+Số nén nhang bắt buộc phụ thuộc vào cấu hình bàn thờ (số tượng × số lư hương):
+
+| Cấu hình bàn thờ | Số nén nhang bắt buộc |
+|---|---|
+| `statueCount = 1`, `burnerCount = 1` | `requiredSticks = 1` nén |
+| `statueCount > 1`, `burnerCount = statueCount` (mỗi vị 1 lư) | `requiredSticks = 1` nén/lư hương |
+| `statueCount > 1`, `burnerCount = 1` (dùng chung 1 lư) | `requiredSticks = 3` nén — bắt buộc |
+
+**Khi dùng 1 lư hương chung cho nhiều Bồ Tát**, bắt buộc dâng đúng 3 nén mỗi buổi và **cắm đồng thời cùng lúc** (theo Part A ở trên).
+
+### Input Contract bổ sung
+
+```typescript
+interface AltarProfile {
+  statueCount: number
+  burnerCount: number
+}
+
+interface LogIncenseSessionDto {
+  altarProfileId: string
+  stickCount:     number   // số nén user cắm
+}
+```
+
+### Write Path bổ sung
+
+```
+POST /api/altar-management/incense/log-session
+
+1. Load AltarProfile (statueCount, burnerCount)
+2. Compute requiredSticks:
+   if statueCount > 1 AND burnerCount == 1:
+     requiredSticks = 3
+   else:
+     requiredSticks = 1  // per burner
+3. Validate dto.stickCount == requiredSticks:
+   → If dto.stickCount != requiredSticks:
+     throw 400 { error: 'incense_stick_count_mismatch',
+                 required: requiredSticks,
+                 provided: dto.stickCount }
+4. Proceed with synchronized insertion validation (Part A)
+```
+
+### FE Behavior bổ sung
+
+Khi `statueCount > 1 AND burnerCount == 1`, UI tự động hiển thị label nhắc nhở:
+
+```
+┌───────────────────────────────────────────────────────┐
+│ 🏛️  Bàn thờ: 3 Bồ Tát — 1 Lư hương chung             │
+│───────────────────────────────────────────────────────│
+│ Luật PMTL: Dùng 1 lư hương chung bắt buộc dâng        │
+│ đúng 3 nén nhang mỗi buổi, cắm cùng lúc.              │
+│                                                        │
+│ Số nén nhang: [3] (cố định — không thể thay đổi)      │
+│                                                        │
+│ Tuyệt đối không cắm 1 hoặc 2 nén khi dùng lư chung.  │
+└───────────────────────────────────────────────────────┘
+```
+
+### Errors bổ sung
+
+| Condition | Code | HTTP |
+|---|---|---|
+| Nhập số nén khác `requiredSticks` | `incense_stick_count_mismatch` | 400 |
+
+---
+
 ## Notes
 
-Synchronized insertion maintains energetic coherence for the Triple Gem offering.
+Synchronized insertion maintains energetic coherence for the Triple Gem offering. Số nén nhang (`requiredSticks`) được tính động dựa trên `AltarProfile` — không hard-code trong UI.

@@ -184,6 +184,57 @@ Default: {
 
 ---
 
+## Schedule Guard — Phân Loại Ngày Gọi (Phase 20 Logic 9)
+
+Ngoài DST countdown, hệ thống phải phân biệt **ngày nào được xem Đồ Đằng** vs **ngày chỉ Q&A chung**.
+
+### Business Rules
+
+| Điều kiện (giờ Sydney) | Nút hiển thị | Màu |
+|---|---|---|
+| Hôm nay = Thứ 3, 4, 7 | `[Gọi Xin Xem Đồ Đằng]` | Vàng/Gold |
+| Hôm nay = Thứ 6, Chủ nhật | `[Gọi Vấn Đáp Phật Học - KHÔNG Xem]` | Xanh/Blue |
+| Các ngày còn lại | `[Gọi Vấn Đáp Phật Học - KHÔNG Xem]` | Xanh/Blue |
+
+### Schedule Guard UI
+
+```
+Đường Dây Nóng Đài Trưởng:
+
+Today (Sydney): Thứ 6 (Friday)
+
+🎯 Gọi Vấn Đáp Phật Học - KHÔNG Xem Đồ Đằng
+[Gọi ngay]
+
+ℹ️ Xem Đồ Đằng chỉ có Thứ 3, 4, 7 (giờ Sydney)
+   Hôm nay là Thứ 6, bạn sẽ được vấn đáp chung.
+
+[Xem Lịch Đầy Đủ]
+```
+
+### API Extension
+
+```
+GET /api/contact/totem-hotline/next-opening
+// Thêm field vào response:
+{
+  // ... existing DST fields ...
+  scheduleType: "TOTEM_READING" | "GENERAL_QA",
+  buttonLabel: string,   // Vietnamese button text
+  buttonColor: "gold" | "blue"
+}
+```
+
+### Audit bổ sung
+
+| Action | Trigger |
+|---|---|
+| `hotline.totem_day_button_shown` | Ngày Thứ 3/4/7 Sydney |
+| `hotline.general_qa_button_shown` | Ngày khác |
+| `hotline.call_initiated` | User bấm nút gọi |
+
+---
+
 ## Related
 
 - [manage-volunteer-directory.md](./manage-volunteer-directory.md) — Contact directory

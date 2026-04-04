@@ -194,3 +194,63 @@ const requiresSequence = MAJOR_VOW_TYPES.includes(input.vowType)
 - `closingBowCount` lưu vào `Vow` record để có thể hiển thị lại trong audit trail — không chỉ boolean.
 - Major vow type check nên dùng Set lookup thay vì array `.includes()` cho performance.
 - 7-bow counter KHÔNG có nút trừ/undo — chỉ cộng. Nếu user lạy nhầm, phải tạo vow mới.
+
+---
+
+## Phase 24 Logic 3: Pre-Recitation 4-Bodhisattva Invocation
+
+Khác với 6-Bodhisattva sequence dùng khi **tạo lời nguyện**, đây là nghi thức **trước khi bắt đầu niệm kinh** trong major recitation sessions. Yêu cầu gọi 4 vị Bồ Tát theo thứ tự để thành lập nhân chứng năng lượng.
+
+### The 4-Step Pre-Recitation Sequence
+
+```typescript
+const PRE_RECITATION_INVOCATION = [
+  { order: 1, name: 'Quán Thế Âm Bồ Tát',    mantra: 'Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát' },
+  { order: 2, name: 'Nam Kinh Bồ Tát (Địa Tạng)', mantra: 'Nam Kinh Bồ Tát' },
+  { order: 3, name: 'Thái Tuế Bồ Tát',         mantra: 'Nam Thái Tuế Bồ Tát' },
+  { order: 4, name: 'Hộ Pháp / Quan Đế',       mantra: 'Nam Mô Quan Đế' }
+] as const
+```
+
+### Business Rules
+
+| Điều kiện | Hành động |
+|---|---|
+| User bắt đầu major recitation session | ✅ Show 4-step invocation stepper |
+| Mỗi step: minimum 3-sec delay | ⏳ Anti-skip timer (setTimeout) |
+| Cả 4 steps hoàn thành đúng thứ tự | ✅ Unlock recitation counter |
+| Out-of-order progression attempt | ❌ Block, error shown |
+
+### Stepper UI
+
+```
+Chuẩn Bị Niệm Kinh — Triệu Thỉnh Chứng Giám
+
+Step 1/4: Quán Thế Âm Bồ Tát
+Hãy niệm: "Nam Mô Đại Từ Đại Bi..."
+[ ] Tôi đã niệm xong
+[Tiếp Tục] (disabled 3 seconds)
+
+Step 2/4: Nam Kinh Bồ Tát (Địa Tạng)
+Step 3/4: Thái Tuế Bồ Tát
+Step 4/4: Hộ Pháp / Quan Đế / Châu Xương
+
+(Sau khi hoàn thành cả 4:)
+✅ Tất cả Bồ Tát đã được triệu thỉnh
+[Bắt Đầu Niệm Kinh]
+```
+
+### Scope
+
+Áp dụng cho major recitation sessions: Lễ Phật, Đại Bi Chú, Địa Tạng Kinh. Không áp dụng cho daily quick counter.
+
+### Audit
+
+| Action | Trigger |
+|---|---|
+| `recitation.pre_invocation_started` | Session initiated |
+| `recitation.invocation_step_1_done` | Quán Thế Âm confirmed |
+| `recitation.invocation_step_2_done` | Nam Kinh confirmed |
+| `recitation.invocation_step_3_done` | Thái Tuế confirmed |
+| `recitation.invocation_step_4_done` | Quan Đế confirmed |
+| `recitation.invocation_complete` | All 4 done, counter unlocked |

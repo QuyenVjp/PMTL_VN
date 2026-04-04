@@ -20,8 +20,22 @@ Nó chỉ bao phủ `deferred/planned/excluded activations`; full Phase 1 baseli
 | OpenTelemetry | Deferred | cross-service latency diagnosis needed | stable service boundaries + metric discipline | medium | `design/02-platform-baseline/deploy-ops/OBSERVABILITY_ARCHITECTURE.md` |
 | `pgvector` | Explicit exclusion | only reconsider after Meilisearch stable 3+ months AND semantic use case measured | Meilisearch mature + use case proof | very high | `design/02-platform-baseline/optional-scale/PGVECTOR_DECISION.md` |
 
+## External service dependencies (Dịch vụ ngoài — BRD Phase 20–23)
+
+Các external dependencies sau được giới thiệu bởi BRD Phase 20–23. Chưa được bật cho đến khi trigger đáp ứng.
+
+| Service | Default phase | Trigger | Privacy/Fallback | Owner |
+|---|---|---|---|---|
+| GPS / Browser Geolocation API | **Deferred** (Phase 2+) | Location-bound vow feature được đưa vào sprint backlog có owner rõ | Privacy policy update bắt buộc; fallback khi GPS off hoặc browser chặn permission | `design/03-domains/vows-merit/DECISIONS.md` |
+| Weather API (external) | **Deferred** (Phase 2+) | Phóng sinh safety check được confirm là blocker cho user | Cost estimate + fallback khi API down | `design/03-domains/vows-merit/DECISIONS.md` |
+| Celestial Calculation API (external) | **Deferred** (Phase 2+) | CalamityYear / ThaiTue engine được confirm là launch requirement ngoài calendar module | Fallback sang hardcoded year data | `design/03-domains/calendar/DECISIONS.md` |
+| DeviceOrientation API (FE-only) | **Phase 1** — FE only, không cần backend | Posture enforcement và face-down detection cho E-Reader | Graceful degrade nếu browser chặn; không lưu orientation data vào DB | `design/03-domains/content/DECISIONS.md` |
+
+> Xem thêm: `design/01-repo-constitution/DECISIONS.md` section 11 — External Service Dependencies.
+
 ## Reading rule
 
 - Trigger không có measurement thật thì chưa được bật.
 - “Trông enterprise hơn” không phải trigger hợp lệ.
 - Nếu rollback cost cao mà owner chưa rõ, feature đó chưa được activate.
+- External service dependencies phải có privacy policy + fallback strategy trước khi bật — không chỉ cần trigger kỹ thuật.

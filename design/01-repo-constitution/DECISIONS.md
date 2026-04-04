@@ -153,6 +153,44 @@ canonical write -> outbox_events -> dispatcher -> execution queue -> worker
 - `/metrics`
 - restore drill pass
 
+## 10. Karma / Immutable Ledger Pattern (Mô hình bất biến cho nghiệp/công đức)
+
+BRD Phase 20 đề cập "Event Sourcing" cho karma tracking. Cần chốt rõ để tránh nhầm lẫn:
+
+- **Cái được phép:** `KarmaEvent` model là append-only — chỉ INSERT, không bao giờ UPDATE hoặc DELETE. Đây là business invariant đơn giản, thực hiện được trong Prisma CRUD bình thường.
+- **Cái không làm:** Full CQRS / Event Sourcing architecture (read models, event replay, projections, aggregates, event store infrastructure) **không được áp dụng ở Phase 1**. Kiến trúc CRUD + Prisma vẫn là baseline.
+- **Trigger để xem xét lại:** Khi karma ledger có > 10M events AND query cost vượt SLO — lúc đó mới xét đến projection layer.
+
+```
+// ĐÚNG — append-only trong Prisma CRUD bình thường:
+prisma.karmaEvent.create({ data: { ... } })       // ✅ INSERT only
+
+// SAI — vi phạm karma law:
+prisma.karmaEvent.update(...)                       // ❌ Không được
+prisma.karmaEvent.delete(...)                       // ❌ Không được
+```
+
+> Chú ý: Quy tắc này chỉ áp dụng cho các model thuộc family `KarmaEvent`, `MeritLedger`, `DebtRecord`. Các model nghiệp vụ thông thường vẫn dùng full CRUD.
+
+## 11. External Service Dependencies (Dịch vụ ngoài — GPS, Thời tiết, Thiên văn)
+
+BRD Phase 20 và Phase 23 giới thiệu các external dependencies nghiêm trọng:
+
+| Service | Mô tả | Trạng thái | Phase |
+|---|---|---|---|
+| GPS / Location Services | Browser Geolocation API cho location-bound vow và spatial environment checks | **Deferred** | Phase 2+ |
+| Weather API | Thời tiết cho phóng sinh safety check | **Deferred** | Phase 2+ |
+| Celestial Calculation API | Calamity year (Thái Tuế), lunar phase calculations ngoài calendar module | **Deferred** | Phase 2+ |
+| DeviceOrientation API | `beta`/`gamma` axes cho posture enforcement | **Phase 1 (no backend)** — FE-only, graceful degrade nếu browser chặn permission |
+
+**Bắt buộc trước khi bật GPS/Location:**
+- Privacy policy cập nhật (thu thập vị trí người dùng)
+- Fallback rõ ràng khi GPS off / API down / browser chặn permission
+- Cost estimate cho API calls
+- Không lưu raw GPS coordinates vào DB theo mặc định — chỉ dùng proximity detection ephemeral
+
+> Xem thêm: `design/01-repo-constitution/PHASE_ACTIVATION_MATRIX.md` — GPS/Weather/Celestial rows.
+
 ## 12. Audience & language (Đối tượng & ngôn ngữ)
 
 - Dự án **chỉ dành cho người Việt Nam** — không có kế hoạch quốc tế hóa

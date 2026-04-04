@@ -77,6 +77,42 @@ Khi `operation = "assign-recipient"`:
 
 Nếu user mất tờ giấy đã bọc: mark `sheet.status = "LOST"` (void equivalent). Không hard-delete.
 
+### Weekly Red Cloth Reminder (Cron Job)
+
+Chạy hàng tuần để nhắc nhở user có tờ RESERVED chưa sử dụng giữ đúng điều kiện bảo quản:
+
+```
+Cron: every Monday 08:00 local time
+
+1. Query: SELECT userId, COUNT(*) as reservedCount
+   FROM LittleHouseSheet
+   WHERE status = 'RESERVED' AND userId = ?
+   GROUP BY userId
+
+2. For each user with reservedCount > 0:
+   → Send push notification:
+     Title: "Nhắc Nhở — Ngôi Nhà Nhỏ Dự Phòng"
+     Body:  "Bạn đang có {reservedCount} Ngôi Nhà Nhỏ dự phòng.
+             Hãy đảm bảo chúng đang được bọc kín bằng vải đỏ
+             hoặc giấy đỏ để năng lượng không bị phân tán!"
+     Action: [Xem Ngay]
+```
+
+**Schema bổ sung:**
+
+```prisma
+model LittleHouseSheet {
+  // ... existing fields ...
+  redClothReminderSentAt  DateTime?  // timestamp lần cuối gửi reminder
+}
+```
+
+**Audit:**
+
+| Action | Trigger |
+|---|---|
+| `engagement.little-house.red_cloth_reminder_sent` | Cron job gửi notification |
+
 ---
 
 ## Part 2: Proxy Recitation Defense Disclaimer

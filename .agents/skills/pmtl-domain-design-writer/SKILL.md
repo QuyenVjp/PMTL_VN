@@ -178,11 +178,28 @@ When given a batch of BRD rules:
 
 1. **Read and categorize** each logic → identify owner domain.
 2. **Check for existing files** in that domain folder that might already cover the logic partially.
-3. **Plan files** — list filenames before writing (do not write blindly).
-4. **Write files in parallel batches** (3–4 at a time) using the Write tool.
+   - Use `Glob design/03-domains/[domain]/USE_CASES/*.md` or `find` to list all existing files.
+   - **If a matching file exists → EDIT it** (add new rules, update tables, extend FE behavior section). Do NOT create a duplicate.
+   - **If no matching file exists → CREATE** a new file with the canonical template.
+   - If in doubt: scan file name AND first 20 lines for matching purpose before deciding.
+3. **Plan files** — list filenames + "exists/new" decision before writing (do not write blindly).
+4. **Write/Edit files in parallel batches** (3–4 at a time): use `Edit` tool for existing files, `Write` tool for new files.
 5. **After each batch**, skip `pnpm typecheck` — only `.md` files were touched. State this explicitly to satisfy any stop hooks.
 6. **Do not** create new domain folders, new `CONTRACTS.md`, or new `REFERENCES/` files unless explicitly asked.
 7. **Do not** write TypeScript, Prisma migrations, or NestJS code — those go in separate sessions.
+
+### Anti-Lazy Rule (MANDATORY)
+
+> **NEVER create a new file when an existing file already covers the same domain + constraint area.**
+
+The test: ask yourself — "Does an existing file in this domain describe the same service/guard/entity?" If yes → EDIT, not CREATE.
+
+Red flags that mean you are being lazy:
+- Creating `face-down-device-v2.md` when `face-down-device.md` exists.
+- Creating `burn-container-rules.md` when `burn-container-altitude-constraint.md` and `burn-container-sanitization-protocol.md` already exist.
+- Creating a new Phase-level root BRD file (`design/BRD_PHASE_XX.md`) instead of breaking logics into per-domain USE_CASE files.
+
+**Root-level BRD files (`design/BRD_PHASE_XX.md`) are acceptable ONLY as a one-time source-of-truth snapshot. They MUST still be broken down into per-domain USE_CASE files — one per logic — in `design/03-domains/`.**
 
 ---
 

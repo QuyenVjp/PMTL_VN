@@ -116,11 +116,66 @@ Step 3: Preview ảnh và xác nhận lần cuối
 - Text "CẢNH BÁO TỐI CAO" in đậm, cỡ chữ lớn hơn bình thường.
 - Checkbox bắt buộc tích trước — button disabled hoàn toàn.
 
-### Khi dùng ảnh để thắp Tâm Hương (trong chuyến đi)
+### Step 0 (bổ sung): Xác Nhận Chuẩn Bị Trước Khi Rời Nhà
 
-- Màn hình Tâm Hương hiển thị ảnh bàn thờ thay cho hình placeholder.
+Trước khi cho phép chụp ảnh bàn thờ, hệ thống bắt buộc user xác nhận 2 điều kiện vật lý:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ 📋 Bước 0/3 — Kiểm Tra Trước Khi Đi Xa                   │
+│──────────────────────────────────────────────────────────│
+│ [ ] Tôi đã dọn sạch trái cây tươi trên bàn thờ          │
+│     (tránh thối rữa khi vắng nhà dài ngày)               │
+│                                                          │
+│ [ ] Tôi KHÔNG dùng vải che đậy tượng Bồ Tát             │
+│     (che tượng làm gián đoạn từ trường bảo vệ)          │
+│                                                          │
+│                    [Xác Nhận — Tiếp Theo]                │
+└──────────────────────────────────────────────────────────┘
+```
+
+Cả 2 checkbox bắt buộc tick trước khi tiếp tục sang Step 1 (chụp ảnh).
+
+**Input Contract bổ sung:**
+```typescript
+interface ActivateTravelModeDto {
+  freshFruitsRemovedConfirmed: boolean   // Step 0 — bắt buộc
+  noCoverOnStatuesConfirmed:   boolean   // Step 0 — bắt buộc
+  noIncenseBurningConfirmed:   boolean   // Step 1 — bắt buộc (hiện có)
+}
+```
+
+**Schema bổ sung:**
+```prisma
+model TravelModeProfile {
+  // ... existing fields ...
+  freshFruitsRemovedConfirmed  Boolean  @default(false)
+  noCoverOnStatuesConfirmed    Boolean  @default(false)
+}
+```
+
+### Khi dùng ảnh để thắp Tâm Hương (trong chuyến đi) — Digital Red Cloth Overlay
+
+Trong suốt chuyến đi, khi user mở màn hình Tâm Hương để bắt đầu buổi tu tập:
+
+```
+┌─────────────────────────────────────────────┐
+│         [ẢNH BÀN THỜ BỊ PHỦ VẢI ĐỎ ẢO]     │
+│  ████████████████████████████████████████   │
+│  █           VẢI ĐỎ BẢO VỆ              █   │
+│  █   Vuốt lên để mở và bắt đầu tu tập   █   │
+│  ████████████████████████████████████████   │
+│         👆 Vuốt để mở vải đỏ               │
+└─────────────────────────────────────────────┘
+```
+
+Sau khi user vuốt lên → vải đỏ biến mất → hiển thị ảnh bàn thờ thực → bắt đầu buổi Tâm Hương.
+
+**Lý do:** Vải đỏ ảo tượng trưng cho việc bọc giữ năng lượng bàn thờ trong khi vắng nhà. Hành động vuốt mở tượng trưng cho hành động mở vải khi cần thắp hương.
+
 - Góc trên phải: badge `"Đang đi xa"`.
-- Không cần re-confirm khi dùng — chỉ confirm 1 lần lúc upload.
+- Mỗi buổi Tâm Hương đều bắt đầu với red cloth overlay — user phải vuốt mở mỗi lần.
+- Sau buổi kết thúc: overlay tự động đóng lại.
 
 ---
 

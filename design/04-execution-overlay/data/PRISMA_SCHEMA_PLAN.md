@@ -476,10 +476,72 @@ Lý do:
 
 ---
 
+## BRD Phase 20–24 — Models cần thêm vào schema (planned/deferred)
+
+Các models sau được giới thiệu bởi BRD Phase 20–24 nhưng **chưa có trong module SCHEMA_PLAN.dbml nào**. Trước khi implement, phải thêm vào domain SCHEMA_PLAN.dbml tương ứng và cập nhật bảng Source files ở đầu file này.
+
+| Model | Domain owner | Status | Ghi chú |
+|---|---|---|---|
+| `karma_events` | `engagement` | **Planned Phase 1** | APPEND-ONLY — không UPDATE/DELETE; xem DECISIONS.md section 10. Fields: `userId`, `eventType`, `sourceModule`, `delta`, `metadata Json`, `occurredAt` |
+| `sacred_form_templates` | `engagement` | **Planned Phase 1** | `disposalMethod: FormDisposalMethod`, `storageDuration Int?`, `watermark String?` |
+| `sacred_form_records` | `engagement` | **Planned Phase 1** | FK → `sacred_form_templates`; `disposedAt DateTime?`, `disposalMethod`, `disposalConfirmedBy` |
+| `article_read_history` | `content` | **Planned Phase 1** | `userId`, `articleId`, `readCount Int @default(1)`, `lastReadAt`; `@@unique([userId, articleId])` |
+| `user_depth_badges` | `content` | **Planned Phase 1** | `userId`, `articleId`, `badge: DepthBadge`, `unlockedAt`; `@@unique([userId, articleId])` |
+| `casualty_debt_records` | `vows-merit` | **Planned Phase 1** | FK → `life_release_journal`; `totalDebt Int`, `breakdown Json`, `dailyTaskId String?` |
+| `offline_sync_batches` | `engagement` | **Planned Phase 1** | Extends offline sync — `events Json`, `clientTimeRange Json`, `estimatedTimeDrift Int`, `validationStatus` |
+| `post_burn_sessions` | `engagement` | **Planned Phase 1** | FK → `ngoi_nha_nho_sheets`; `status: PostBurnStatus`, `checklistCompletedAt DateTime?` |
+| `karma_pain_reports` | `wisdom-qa` | **Planned Phase 1** | `sessionId`, `sutraKey`, `bodyPart`, `description String?`, `injectedTaskId String?` |
+| `altar_damage_records` | `altar-management` | **Deferred Phase 2** | Không có schema Phase 1 — events đi vào `audit_logs`. Tạo table khi altar-management tách module riêng. |
+
+### Enums cần thêm vào Shared enums block
+
+```prisma
+enum FormDisposalMethod {
+  MUST_BURN
+  STRICTLY_NO_BURN
+}
+
+enum DepthBadge {
+  SEED_PLANTING      // 1 lần đọc
+  UNDERSTANDING      // 3 lần
+  EGO_DISSOLUTION    // 7 lần
+  ENLIGHTENMENT      // 21 lần
+  BUDDHA_MIND        // 108 lần
+}
+
+enum PostBurnStatus {
+  BURN_COMPLETED
+  CHECKLIST_PENDING
+  SANITIZATION_COMPLETE
+}
+
+enum KarmaEventType {
+  LITTLE_HOUSE_BURNED
+  REPENTANCE_COMPLETED
+  LIFE_RELEASED
+  SUTRA_RECITED
+  DAMAGE_REPORTED
+  DEBT_INCURRED
+}
+```
+
+### life_release_journal — fields cần thêm (extend existing table)
+
+```prisma
+// Thêm vào model LifeReleaseJournal hiện có:
+exemptionPrayerRecited  Boolean  @default(false)
+casualtyDeclared        Boolean  @default(false)
+creatureCount           Int?
+speciesType             String?  // key in SPECIES_DEBT_MULTIPLIER
+```
+
+---
+
 ## Notes for AI/codegen
 
 - Không expose `id` (autoincrement) ra API — luôn dùng `publicId`
 - Mọi table reference user phải có cascade rule rõ (ON DELETE SET NULL hoặc CASCADE)
 - Soft delete (`deletedAt`) cho content entities, hard delete chỉ cho platform tables
 - `audit_logs` là append-only — không có update/delete
+- `karma_events` là append-only — không có update/delete (xem DECISIONS.md section 10)
 - `rate_limit_records` có TTL — cần cleanup job hoặc partitioning

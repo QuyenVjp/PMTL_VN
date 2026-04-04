@@ -66,6 +66,20 @@ interface PrayerValidationResponse {
   };
   message: string;
 }
+
+// NestJS DTO — class-validator enforcement (API layer)
+class PrayerIntentionDto {
+  @IsString() @IsNotEmpty() beneficiary: string
+  @IsString() @IsNotEmpty() intention: string
+}
+
+class CreatePrayerRequestDto {
+  @IsArray()
+  @ArrayMaxSize(3)             // Hard limit enforced at API level
+  @ValidateNested({ each: true })
+  @Type(() => PrayerIntentionDto)
+  prayers: PrayerIntentionDto[]
+}
 ```
 
 ---

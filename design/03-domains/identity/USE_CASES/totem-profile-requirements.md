@@ -176,7 +176,45 @@ if (birthYear < 1900 || birthYear > new Date().getFullYear()) throw "invalid_bir
 
 // birthMonth optional but if provided must be valid
 if (birthMonth && (birthMonth < 1 || birthMonth > 12)) throw "invalid_birth_month"
+
+// Zodiac cross-validation (Phase 30 Logic 7)
+// When birthYear + birthMonth + birthDay + chineseZodiac ALL provided:
+// Cross-check that provided chineseZodiac matches calculated zodiac from birthYear
+if (birthYear && birthMonth && birthDay && chineseZodiac) {
+  const calculatedZodiac = calculateChineseZodiac(birthYear, birthMonth, birthDay)
+  if (calculatedZodiac !== chineseZodiac) {
+    // Không block cứng — return strong warning để user confirm
+    return {
+      warning: 'zodiac_birth_year_mismatch',
+      calculatedZodiac,
+      providedZodiac: chineseZodiac,
+      message: `Con giáp bạn nhập (${chineseZodiac}) không khớp với năm sinh ${birthYear} (hệ thống tính: ${calculatedZodiac}). Vui lòng xác nhận lại — nếu bạn sinh vào tháng 1/2 dương, con giáp có thể thuộc năm âm lịch trước.`
+    }
+  }
+}
 ```
+
+**Lý do cần cross-validate:** Theo Pháp Môn Tâm Linh, con giáp phải chính xác để hệ thống tìm đúng hồ sơ trên thiên giới khi xem Đồ Đằng. Con giáp sai sẽ tra cứu nhầm đối tượng.
+
+**FE Behavior khi mismatch:**
+
+```
+┌──────────────────────────────────────────────────────┐
+│ ⚠️  Kiểm Tra Lại Con Giáp                             │
+│──────────────────────────────────────────────────────│
+│ Hệ thống tính: Năm 1985 → Con Trâu (Sửu)            │
+│ Bạn nhập:      Con Chuột (Tý)                        │
+│                                                      │
+│ Hai kết quả không khớp. Nếu bạn sinh vào tháng 1    │
+│ hoặc đầu tháng 2, bạn có thể thuộc năm âm lịch      │
+│ trước (Năm Tý 1984 → Con Chuột).                    │
+│                                                      │
+│   [✅ Giữ Con Chuột (tôi biết chắc)]                 │
+│   [Đổi sang Con Trâu (theo tính toán)]               │
+└──────────────────────────────────────────────────────┘
+```
+
+Cả hai lựa chọn đều được chấp nhận — đây là **advisory warning**, không phải hard block.
 
 ### Write path
 

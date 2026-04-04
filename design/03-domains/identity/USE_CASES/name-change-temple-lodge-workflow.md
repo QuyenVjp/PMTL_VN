@@ -46,13 +46,14 @@ Trong flow **Đơn Thăng Văn Đổi Tên**, user chọn:
 
 ## Input Contract
 
-```
-SubmitNameChangeFormDto {
-  oldName:       string
+```typescript
+interface SubmitNameChangeFormDto {
+  originalNames: string[]  // Tên cũ (ít nhất 1). Có thể khai báo nhiều: tên thật, tên thường gọi, tên ngoại kiều, biệt danh...
   newName:       string
   locationType:  "HOME_ALTAR" | "BUDDHIST_TEMPLE"
-  templeName?:   string   // bắt buộc nếu locationType = BUDDHIST_TEMPLE
+  templeName?:   string    // bắt buộc nếu locationType = BUDDHIST_TEMPLE
 }
+// Validation: originalNames.length >= 1, mỗi phần tử non-empty string
 ```
 
 ---
@@ -72,9 +73,12 @@ Body: SubmitNameChangeFormDto
 2. Nếu locationType = HOME_ALTAR:
    a. Generate home prayer payload (standard).
 
+2a. Validate originalNames.length >= 1 và mọi phần tử non-empty.
+    → Nếu rỗng: HTTP 400 { error: "original_names_required" }
+
 3. Insert NameChangeFormSubmission:
    {
-     userId, oldName, newName,
+     userId, originalNames, newName,
      locationType, templeName,
      prayerPayload (JSON),
      submittedAt: now(),
@@ -88,19 +92,45 @@ Body: SubmitNameChangeFormDto
 
 ```typescript
 function generateNameChangePrayer(dto: SubmitNameChangeFormDto): string {
+  const primaryName = dto.originalNames[0]
+  const allNames = dto.originalNames.join(', ')  // "Nguyễn Văn A, A Tèo, John Nguyen"
+
   if (dto.locationType === "HOME_ALTAR") {
-    return `Nam Mô A Di Đà Phật. Con là ${dto.oldName}, hôm nay thành tâm trước bàn thờ Phật tại gia, kính xin chư Phật Bồ Tát chứng giám cho con đổi tên từ ${dto.oldName} sang ${dto.newName}. Xin cập nhật hồ sơ tâm linh tại Thiên giới và Địa phủ...`
+    return `Nam Mô A Di Đà Phật. Con là ${primaryName}, hôm nay thành tâm trước bàn thờ Phật tại gia, kính xin chư Phật Bồ Tát chứng giám cho con đổi tên từ ${allNames} sang ${dto.newName}. Xin cập nhật hồ sơ tâm linh tại Thiên giới và Địa phủ...`
   }
 
   if (dto.locationType === "BUDDHIST_TEMPLE") {
-    return `Nam Mô A Di Đà Phật. Con là ${dto.oldName}, hôm nay đến ${dto.templeName} để thỉnh an chư Phật Bồ Tát trong miếu. Xin các chư Phật Bồ Tát trong ${dto.templeName} làm chứng cho con đổi tên từ ${dto.oldName} sang ${dto.newName}. Xin cập nhật hồ sơ tâm linh tại Thiên giới và Địa phủ...`
+    return `Nam Mô A Di Đà Phật. Con là ${primaryName}, hôm nay đến ${dto.templeName} để thỉnh an chư Phật Bồ Tát trong miếu. Xin các chư Phật Bồ Tát trong ${dto.templeName} làm chứng cho con đổi tên từ ${allNames} sang ${dto.newName}. Xin cập nhật hồ sơ tâm linh tại Thiên giới và Địa phủ...`
   }
 }
+// Lý do dùng allNames: Nếu người tu có nhiều tên (tên thật + biệt danh + tên ngoại kiều),
+// tất cả phải được khai báo để hồ sơ thiên giới cập nhật đầy đủ.
 ```
 
 ---
 
 ## FE Behavior
+
+### Step 0 — Khai Báo Tên Cũ (Multi-Alias)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Tên cũ của bạn (tất cả tên đang dùng hoặc đã dùng):   │
+│                                                          │
+│  Tên 1:  [Nguyễn Văn A                               ]  │
+│  Tên 2:  [A Tèo                                      ]  ← tên thường gọi
+│  Tên 3:  [John Nguyen                                ]  ← tên ngoại kiều
+│                                                          │
+│  [+ Thêm tên cũ]                                        │
+│                                                          │
+│  ℹ️  Khai báo đầy đủ tất cả các tên để Bồ Tát          │
+│      cập nhật hồ sơ tâm linh chính xác.                │
+└──────────────────────────────────────────────────────────┘
+```
+
+**[+ Thêm tên cũ]** button: append thêm một input field mới vào danh sách. Không giới hạn số lượng. Mỗi tên có nút [x] để xóa. Tên đầu tiên là bắt buộc (primary name), các tên sau optional.
+
+---
 
 ### Step 1 — Chọn Nơi Thực Hiện
 
@@ -150,7 +180,7 @@ Nơi thực hiện nghi lễ đốt đơn:
 model NameChangeFormSubmission {
   id             String   @id @default(cuid())
   userId         String
-  oldName        String
+  originalNames  String[] // PostgreSQL text[] — tên cũ (1+), bao gồm biệt danh và tên ngoại kiều
   newName        String
   locationType   String   // "HOME_ALTAR" | "BUDDHIST_TEMPLE"
   templeName     String?  // null nếu HOME_ALTAR
@@ -161,6 +191,7 @@ model NameChangeFormSubmission {
 
   user           User     @relation(fields: [userId], references: [id])
 }
+// Migration: ALTER TABLE "NameChangeFormSubmission" ADD COLUMN "originalNames" TEXT[] NOT NULL DEFAULT '{}'
 ```
 
 ---
@@ -179,8 +210,9 @@ model NameChangeFormSubmission {
 
 | Condition | Code | HTTP |
 |---|---|---|
+| `originalNames` array rỗng hoặc thiếu | `original_names_required` | 400 |
 | `locationType = BUDDHIST_TEMPLE` + `templeName` empty | `temple_name_required` | 400 |
-| `oldName` hoặc `newName` empty | `invalid_body` | 400 |
+| `newName` empty | `invalid_body` | 400 |
 | Chưa đăng nhập | `unauthorized` | 401 |
 
 ---

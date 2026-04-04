@@ -58,6 +58,55 @@ POST /api/wisdom-qa/recitations/log
 
 ---
 
+## Override Logic
+
+```typescript
+function getAllowedRecitationTime(
+  lhId: string | null,
+  offeredTo: string | null,
+  currentHour: number
+): { allowed: boolean; cutoffDescription: string } {
+  if (currentHour < 22) return { allowed: true, cutoffDescription: '22:00' }
+  if (currentHour >= 22 && currentHour < 24) {
+    if (lhId && offeredTo) {
+      // Named LH: extend to midnight
+      return { allowed: true, cutoffDescription: '23:59:59' }
+    }
+    return { allowed: false, cutoffDescription: '22:00 (tờ chưa có tên)' }
+  }
+  // 00:00+: absolute block
+  return { allowed: false, cutoffDescription: 'Khóa tuyệt đối từ 00:00' }
+}
+```
+
+---
+
+## FE Behavior
+
+```
+22:30 PM — Tờ NNN ĐÃ có tên người nhận:
+
+  Tờ NNN: [Nguyễn Văn A]  ✅ Đã ghi tên
+  🟢 MỞ KHÓA ĐẾN 23:59:59
+
+  Counter enabled. Curfew mở rộng vì tờ có tên.
+  ⏰ Cutoff: 23:59:59
+
+─────────────────────────────────────────────
+
+22:30 PM — Tờ NNN CHƯA có tên:
+
+  Tờ NNN: [TRỐNG]  ❌ Chưa ghi tên
+  🔴 KHOÁ SAU 22:00
+
+  Counter disabled.
+  ⚠️ Tiêu chuẩn: 22:00
+  Điền tên người nhận để mở khóa đến 23:59:59.
+```
+
+---
+
 ## Notes
 
 Midnight override protects pre-committed energy alignment. LH dedication locks energy vector until midnight.
+User must fill `offeredTo` field BEFORE 22:00 to benefit from the extension.

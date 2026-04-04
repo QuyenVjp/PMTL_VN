@@ -130,6 +130,8 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/00-governance/WRITING_STANDARDS.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
 | `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |
 | `deep-research-report.md` | research appendix owner | research notes, source synthesis, rationale backlog | không là canonical policy owner nếu chưa được promote sang owner file |
+| `design/BRD_PHASE_XX_*.md` (root-level) | legacy BRD input snapshot | requirements analysis input, source BRD cho USE_CASE distribution | không là canonical owner; không override `design/03-domains/*/USE_CASES/` đã được distribute; không tạo BRD mới ở root — dùng `design/05-references/brd-research/` |
+| `design/05-references/brd-research/INDEX.md` | BRD research index owner | pointer đến tất cả BRD files, status distribution, mapping sang domain USE_CASES | không là policy owner; không lặp lại logic từ USE_CASE files |
 | `glossary.json` | glossary data asset owner | canonical key/value glossary dataset dùng cho tooling hoặc export | không là policy owner hay nơi viết luật bằng prose |
 | `SVG_PRECISION_WORKFLOW.md` | deterministic SVG workflow owner | SVG asset generation rules, output discipline | không là launch gate hay route owner |
 | `design/02-platform-baseline/web-runtime/LANDING_PAGE_DESIGN.md` | landing page visual spec owner | 7 sections layout, typography, interaction, animation, SEO, performance targets | không là route owner; route authority vẫn là PAGE_INVENTORY.md |

@@ -217,6 +217,76 @@ Wording có thể cập nhật qua Admin CMS — component tự load từ config
 
 ---
 
+## Part C — Face-Down Device Detection (Phase 24 Logic 1)
+
+### Business Rule
+
+Đặt thiết bị úp mặt xuống trong khi mở kinh văn = tương đương úp vật lý sách kinh xuống bàn — tội bất kính. Accelerometer phát hiện khi `|beta| > 150°` kéo dài > 2 giây → blur kinh văn + log vi phạm.
+
+### Face-Down Detection
+
+```typescript
+function isFaceDown(beta: number): boolean {
+  return Math.abs(beta) > 150  // device inverted
+}
+
+let faceDownTimer = 0
+
+window.addEventListener('deviceorientation', (event) => {
+  if (event.beta !== null && isFaceDown(event.beta)) {
+    faceDownTimer++
+    if (faceDownTimer > 20) {  // ~2 seconds at 10Hz
+      blurScripture()
+      logViolation('FACE_DOWN_DETECTED')
+    }
+  } else {
+    faceDownTimer = 0
+    restoreScripture()
+  }
+})
+```
+
+### Warning Modal (shown when device is flipped back up)
+
+```
+⚠️ CẢNH BÁO TÔN KÍNH
+
+Pháp bảo vô giá, tôn kính là gốc.
+
+Tuyệt đối không úp ngược màn hình
+chứa Kinh văn xuống mặt bàn —
+giống như úp Kinh sách vật lý xuống.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Hành động đúng:
+   • Dùng Bookmark/Dấu trang (xem trên)
+   • Tắt màn hình bình thường
+   • Đặt thiết bị đứng dựng vào kệ
+
+❌ Hành động sai:
+   • Úp ngược màn hình xuống bàn
+
+[Tôi đã hiểu, tiếp tục]
+```
+
+### Audit
+
+| Action | Trigger |
+|---|---|
+| `scripture.face_down_detected` | |beta| > 150° sustained 2s |
+| `scripture.violation_logged` | Duration confirmed |
+| `scripture.blur_applied` | Content hidden |
+| `scripture.warning_shown` | Modal displayed on flip-back |
+| `scripture.resume_acknowledged` | Normal reading resumed |
+
+### Notes
+
+- Phân biệt với `hardware-posture-enforcer.md`: Part C = thiết bị úp ngược (beta > 150°); posture enforcer = thiết bị nằm ngang (beta < 10°). Hai cảnh báo khác nhau, trigger khác nhau.
+- Modal chỉ hiển thị khi thiết bị được lật lại (flip-back event) — không hiển thị trong lúc đang úp vì user không nhìn màn hình.
+
+---
+
 ## Related
 
 - [spiritual-applications.md](./spiritual-applications.md) — Đơn từ tâm linh (cũng có quy tắc không đốt/không hủy)

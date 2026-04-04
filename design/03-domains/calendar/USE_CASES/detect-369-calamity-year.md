@@ -198,10 +198,65 @@ DailyRecitationPlanItem {
 
 ---
 
+## NNN Quota Assignment — Bổ Sung Phase 21 Logic 1
+
+Khi `isCalamity = true`, ngoài inject mantra, hệ thống còn tạo **mục tiêu NNN bắt buộc** dựa trên tuổi:
+
+### Business Rules
+
+| Điều kiện | Hành động |
+|---|---|
+| Calamity detected, alert 90 ngày trước sinh nhật | ✅ Create CalamityLHMilestone |
+| preNNNQuota = age (tấm NNN trước sinh nhật) | ⏳ Lock track cho đến khi hoàn thành |
+| postNNNQuota = age (tấm NNN sau sinh nhật) | ⏳ Mở sau khi sinh nhật qua |
+| Cả pre + post hoàn thành | ✅ Mark calamity year survived |
+
+### 90-Day Early Alert
+
+Cron phụ chạy daily: `today = birthday - 90 days`
+→ Trigger **sớm hơn** Jan 1 cron, đảm bảo user có đủ thời gian hoàn thành pre-quota.
+
+### NNN Quota Notification
+
+```
+🚨 CẢNH BÁO NẠN QUAN 3-6-9
+
+Bạn sắp bước vào Nạn Quan Tuổi [X].
+Nghiệp chướng sẽ bùng phát dữ dội.
+
+Hệ thống đã điều chỉnh phác đồ:
+✅ Thêm: Tiêu Tai Cát Tường Thần Chú (49 biến)/ngày
+✅ Mục tiêu bắt buộc NNN:
+   • [X] tấm trước sinh nhật
+   • [X] tấm sau sinh nhật
+
+[Xem Chi Tiết Phác Đồ]
+```
+
+### Schema Bổ Sung
+
+```prisma
+model CalamityLHMilestone {
+  id               String   @id @default(cuid())
+  userId           String
+  calamityAlertId  String
+  userAge          Int
+  preNNNQuota      Int      // = userAge
+  postNNNQuota     Int      // = userAge
+  preNNNCompleted  Int      @default(0)
+  postNNNCompleted Int      @default(0)
+  status           String   @default("PENDING") // PENDING | PRE_DONE | COMPLETED
+  // Migration: CREATE TABLE "CalamityLHMilestone" (...)
+}
+```
+
+---
+
 ## Async side-effects
 
 - Push notification dispatch qua `notification` module.
 - `DailyRecitationPlanItem` inject qua `engagement` module.
+- `CalamityLHMilestone` create qua `engagement` module.
 - **Phase 2+:** Outbox event `calendar.calamity.detected` → downstream modules.
 
 ---

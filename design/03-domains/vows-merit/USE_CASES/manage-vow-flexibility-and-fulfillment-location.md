@@ -75,14 +75,41 @@ Actions:
   [Tôi đã ăn chay rồi, ghi nhận muộn] → log VegetarianDayEntry với timestamp muộn
 ```
 
+### Lời Khấn Bắt Buộc Trước Khi Đổi Ngày (Phase 20 Logic 3)
+
+Trước khi user được phép đổi ngày ăn chay, **PHẢI đọc lời khấn** xin phép Bồ Tát:
+
+```
+"Namo Đại Từ Đại Bi Quán Thế Âm Bồ Tát,
+Con là [Tên], hôm nay vì hoàn cảnh [Lý do cụ thể],
+Con xin phép dời ngày ăn chay sang ngày [Ngày mới].
+Xin Bồ Tát từ bi tha thứ cho con."
+```
+
+Modal trước makeup form:
+```
+Modal: Khấn Xin Dời Ngày
+
+Hãy đọc to lời khấn này trước khi đổi:
+
+"Namo Đại Từ Đại Bi Quán Thế Âm Bồ Tát..."
+(hiển thị đầy đủ text)
+
+[ ] Tôi đã đọc lời khấn này
+[Xác Nhận]  ← disabled until checkbox
+```
+
+Server-side validate `prayerRecited = true` trước khi cho phép makeup.
+
 ### MakeupVow form
 
 ```typescript
 POST /api/vows/:vowId/makeup-day
 {
-  missedDate:  date,    // ngày đã bỏ
-  makeupDate:  date,    // ngày bù (trong vòng 7 ngày)
-  reportNote?: string   // lý do lỡ (optional, chỉ lưu nội bộ)
+  missedDate:   date,    // ngày đã bỏ
+  makeupDate:   date,    // ngày bù (trong vòng 7 ngày)
+  reportNote?:  string   // lý do lỡ (optional)
+  prayerRecited: boolean // Phải = true
 }
 ```
 
@@ -190,6 +217,110 @@ VowFulfillmentReminder {
   createdAt    DateTime
 }
 ```
+
+---
+
+## Part 3: Cửa Sổ Khẩn Cấp Khi Không Thể Giữ Giới — Emergency Vow Escape
+
+> **Nguồn bổ sung:** Khai thị chính thức Pháp Môn Tâm Linh (Nguồn Phase 30)
+
+Khi đến ngày mùng 1/15 hoặc ngày ăn chay đã cam kết mà user chưa check-in và không thể giữ giới (đi công tác, nhập viện, không có đồ chay), hệ thống cung cấp 2 lối thoát hợp lệ để tránh thất nguyện hoàn toàn.
+
+### Trigger
+
+Khi đến `preferredDay[n]` mà hệ thống chưa nhận `VegetarianDayEntry` cho ngày đó VÀ `currentTime > 18:00` (buổi tối — gần hết ngày).
+
+### Business Rules
+
+| Điều kiện | Hành động |
+|---|---|
+| Đến 18:00 ngày ăn chay, chưa check-in | ⚠️ Bật pop-up khẩn cấp `VEGAN_EMERGENCY_ESCAPE` |
+| User chọn "Dời sang ngày mai" | ✅ Tạo MakeupVow, yêu cầu đọc lời khấn xin lỗi |
+| User chọn "Đổi thành 2 ngày linh hoạt" | ✅ Update vow type → `VEGETARIAN_FLEXIBLE_2_DAYS` |
+| User dismiss pop-up không làm gì | ⚠️ Log `vow.missed_with_no_action` — cảnh báo nhẹ |
+
+### FE Behavior — Pop-up Khẩn Cấp
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ 🚨 CẤP CỨU LỜI NGUYỆN                                   │
+│─────────────────────────────────────────────────────────│
+│ Hôm nay là ngày ăn chay của bạn nhưng bạn chưa         │
+│ ghi nhận.                                               │
+│                                                         │
+│ Nếu không thể ăn chay hôm nay — đừng lo, bạn có        │
+│ 2 lựa chọn để bảo vệ lời nguyện:                       │
+│                                                         │
+│  1️⃣  [Xin Bồ Tát Dời Sang Ngày Mai]                    │
+│     → Đọc lời khấn xin lỗi + bù ngày mai               │
+│                                                         │
+│  2️⃣  [Đổi Nguyện Thành 2 Ngày Linh Hoạt/Tháng]        │
+│     → Hệ thống cập nhật loại nguyện linh hoạt hơn      │
+│                                                         │
+│  3️⃣  [Tôi Đã Ăn Chay — Ghi Nhận Ngay]                 │
+│                                                         │
+│                    [Nhắc Tôi Sau 1 Giờ]                │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Write Path
+
+```
+POST /api/vows-merit/vows/:vowId/emergency-escape
+
+Body: {
+  escapeType: 'DEFER_TO_TOMORROW' | 'CONVERT_TO_FLEXIBLE' | 'LOG_LATE'
+  prayerRecited?: boolean   // required khi DEFER_TO_TOMORROW
+  lateLogDate?:   string    // required khi LOG_LATE
+}
+
+1. If escapeType == 'DEFER_TO_TOMORROW':
+   a. Validate prayerRecited == true → 400 if false
+   b. Create VegetarianMakeupEntry for tomorrow
+   c. Log audit: vow.emergency_deferred
+
+2. If escapeType == 'CONVERT_TO_FLEXIBLE':
+   a. Update vow.vowType = 'VEGETARIAN_FLEXIBLE_2_DAYS'
+   b. Set preferredDays = [originalDay1, originalDay2] with fallbackPolicy = 'NEXT_DAY'
+   c. Log audit: vow.converted_to_flexible
+
+3. If escapeType == 'LOG_LATE':
+   a. Create VegetarianDayEntry with entryType = 'OBSERVED' and timestamp = now()
+   b. Log audit: vow.logged_late
+```
+
+### Lời Khấn Khi Chọn Dời Ngày
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Hãy đọc lời khấn này trước khi dời ngày:               │
+│                                                         │
+│ "Nam Mô Đại Từ Đại Bi Quán Thế Âm Bồ Tát,             │
+│  Con là [Tên], hôm nay con không thể giữ giới          │
+│  ăn chay vì [lý do]. Con thành tâm sám hối và          │
+│  xin Bồ Tát cho phép con bù ngày mai."                 │
+│                                                         │
+│ [ ] Tôi đã đọc lời khấn xin lỗi này                   │
+│                                                         │
+│              [Xác Nhận Dời Ngày]                        │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Audit bổ sung
+
+| Action | Trigger |
+|---|---|
+| `vow.emergency_escape_shown` | Pop-up khẩn cấp hiển thị |
+| `vow.emergency_deferred` | User dời sang ngày mai |
+| `vow.converted_to_flexible` | User đổi sang 2 ngày linh hoạt |
+| `vow.logged_late` | User ghi nhận muộn |
+| `vow.missed_with_no_action` | User dismiss không làm gì |
+
+### Errors bổ sung
+
+| Condition | Code | HTTP |
+|---|---|---|
+| `DEFER_TO_TOMORROW` mà `prayerRecited = false` | `prayer_recitation_required` | 400 |
 
 ---
 

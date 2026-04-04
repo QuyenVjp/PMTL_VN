@@ -170,7 +170,56 @@ model LittleHouse {
 
 ---
 
+## Part B: Lời Khấn Chuyển Hướng Đặc Biệt Cho Người Bệnh Nặng
+
+> **Nguồn bổ sung:** Khai thị chính thức Pháp Môn Tâm Linh (Nguồn 317, 318, 794)
+
+Khi niệm NNN **đặc biệt cho người đang bệnh nặng** (không chỉ hồi hướng thông thường), ngoài Lời Khấn Bảo Vệ ở trên, user cần đọc thêm câu chuyển hướng nợ để đảm bảo oan gia trái chủ đi đúng hướng:
+
+> *"Bây giờ con niệm cho [Tên người bệnh] X tấm Ngôi Nhà Nhỏ. Phần còn lại xin oan gia trái chủ hãy tìm [Tên người bệnh] để đòi, xin đừng tìm con."*
+
+### Trigger kích hoạt Part B
+
+Khi user tạo proxy session với `beneficiaryHealthStatus = SERIOUSLY_ILL` hoặc user toggle flag `[Người này đang bệnh nặng]`.
+
+### Input contract bổ sung
+
+```typescript
+interface LittleHouseCreateDto {
+  // ... existing fields ...
+  beneficiaryHealthStatus?: 'NORMAL' | 'SERIOUSLY_ILL'
+  proxySafetyPledgeAccepted?: boolean  // bắt buộc true khi SERIOUSLY_ILL
+}
+```
+
+### Business Rule bổ sung
+
+| Điều kiện | Hành động |
+|---|---|
+| `beneficiaryHealthStatus = SERIOUSLY_ILL` | Hiển thị thêm Lời Khấn Chuyển Hướng (Part B) |
+| `proxySafetyPledgeAccepted = false` khi SERIOUSLY_ILL | API trả về `400 BadRequest` |
+
+### FE Behavior bổ sung
+
+```
+┌──────────────────────────────────────────────────────┐
+│ ⚕️ Người Bệnh Nặng — Lời Khấn Chuyển Hướng Nợ       │
+│──────────────────────────────────────────────────────│
+│ "Bây giờ con niệm cho [TÊN NGƯỜI BỆNH] [X] tấm      │
+│  Ngôi Nhà Nhỏ. Phần còn lại xin oan gia trái chủ    │
+│  hãy tìm [TÊN NGƯỜI BỆNH] để đòi, xin đừng tìm     │
+│  con."                                               │
+│                                                      │
+│ [x] Tôi đã đọc lời khấn chuyển hướng này            │
+│                                                      │
+│            [Xác Nhận — Bắt Đầu Niệm]                │
+└──────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Related
 
 - [manage-ngoi-nha-nho-sheet.md](../../engagement/USE_CASES/manage-ngoi-nha-nho-sheet.md) — Core Little House flow
+- [manage-little-house-reserved-proxy.md](../../engagement/USE_CASES/manage-little-house-reserved-proxy.md) — RESERVED status và proxy defense
 - [ngu-dai-phap-bao-system.md](./ngu-dai-phap-bao-system.md) — Tiểu Phương Tử trong Ngũ Đại Pháp Bảo

@@ -156,6 +156,74 @@ model LittleHouseSheet {
 
 ---
 
+## Part B: Định Dạng Ngày Trên PDF NNN — Date Format Engine
+
+> **Nguồn bổ sung:** Khai thị chính thức Pháp Môn Tâm Linh (Phase 31 Logic 9)
+
+Khi in PDF Ngôi Nhà Nhỏ, ngày tháng có thể hiển thị theo 2 định dạng:
+
+| Format | Hiển thị | Hướng | Ví dụ |
+|---|---|---|---|
+| `ARABIC_HORIZONTAL` | Số Ả Rập, nằm ngang | ← mặc định | `04/04/2026` |
+| `CHINESE_VERTICAL` | Chữ số Hán, dọc từ trên xuống | Cho in truyền thống | `二零二六年四月四日` (dọc) |
+
+### Input Contract bổ sung
+
+```typescript
+interface GenerateLittleHousePdfDto {
+  sheetId:     string
+  dateFormat?: 'ARABIC_HORIZONTAL' | 'CHINESE_VERTICAL'  // default: ARABIC_HORIZONTAL
+}
+```
+
+### Write Path bổ sung
+
+```
+POST /api/engagement/little-house-sheets/:id/generate-pdf
+Body: { dateFormat?: 'ARABIC_HORIZONTAL' | 'CHINESE_VERTICAL' }
+
+1. Load sheet.completedDate (phải đã set, xem Part A)
+2. Format date theo dateFormat:
+   - ARABIC_HORIZONTAL: format("dd/MM/yyyy")
+   - CHINESE_VERTICAL:  convertToChineseNumerals(date) → rendered vertical in PDF template
+3. Inject date string vào PDF template tại vị trí [DATE_PLACEHOLDER]
+4. Return PDF buffer
+```
+
+### Chinese Numeral Converter (Phase 2+)
+
+```typescript
+const CHINESE_DIGITS = ['零','一','二','三','四','五','六','七','八','九','十']
+
+function convertToChineseDate(date: Date): string {
+  const year = date.getFullYear().toString()
+    .split('').map(d => CHINESE_DIGITS[parseInt(d)]).join('')
+  const month = CHINESE_DIGITS[date.getMonth() + 1]
+  const day = CHINESE_DIGITS[date.getDate()] ?? `${CHINESE_DIGITS[Math.floor(date.getDate()/10)]}十${CHINESE_DIGITS[date.getDate()%10]}`
+  return `${year}年${month}月${day}日`
+}
+// Ví dụ: 2026-04-04 → 二零二六年四月四日
+```
+
+### FE Behavior bổ sung
+
+Trên màn hình in PDF, thêm radio selector:
+
+```
+Định dạng ngày trên tờ NNN:
+○ Số Ả Rập nằm ngang: 04/04/2026       ← mặc định
+○ Chữ Hán dọc:        二零二六年四月四日 (truyền thống)
+```
+
+### Audit bổ sung
+
+| Action | Trigger |
+|---|---|
+| `little-house.pdf.generated-arabic` | PDF với định dạng ARABIC_HORIZONTAL |
+| `little-house.pdf.generated-chinese` | PDF với định dạng CHINESE_VERTICAL |
+
+---
+
 ## Related
 
 - [little-house-anti-theft-field-lock.md](./little-house-anti-theft-field-lock.md) — offeredBy lock trước khi tụng

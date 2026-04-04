@@ -119,6 +119,25 @@ interface AshDisposalInput {
 3. Transition `burnStatus → DISPOSED`.
 4. Audit: `little-house.ash.disposed`.
 
+### Ash Wrapping Protocol (Phase 24 Logic 8)
+
+Trước khi thực hiện bất kỳ phương pháp xử lý nào, user phải cam kết các quy tắc sau:
+
+```
+✅ Sau Khi Đốt NNN — Xử Lý Tro Cốt
+
+Tôi cam kết sẽ:
+
+☑️ Bọc tro cốt vào khăn giấy sạch hoặc phong bì
+☑️ TUYỆT ĐỐI KHÔNG xả tro xuống bồn cầu
+☑️ TUYỆT ĐỐI KHÔNG rải tro ra ngoài gió
+☑️ Xử lý theo phương pháp đã chọn ở trên
+
+[Xác Nhận Xử Lý Tro]
+```
+
+**Lý do:** Tro Ngôi Nhà Nhỏ chứa tên oan gia trái chủ — cần bọc kín trước khi xử lý để tránh phát tán năng lượng âm.
+
 ---
 
 ## Part 3: Interim Name Syntax (100-Day Grace Period)

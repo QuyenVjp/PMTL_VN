@@ -38,11 +38,13 @@ export type DreamSignalType =
   | "NEUTRAL"
 
 interface DreamPattern {
-  keywords:      string[]          // từ khóa nhận diện trong mô tả
-  signalType:    DreamSignalType
-  lhDebt?:       number            // số Ngôi Nhà Nhỏ cần làm thêm (chỉ khi KARMIC_DEBT)
-  message:       string            // thông điệp hiển thị cho user
-  actionHint?:   string            // gợi ý hành động cụ thể
+  keywords:             string[]                    // từ khóa nhận diện trong mô tả
+  signalType:           DreamSignalType
+  lhDebt?:              number                      // số Ngôi Nhà Nhỏ cần làm thêm (chỉ khi KARMIC_DEBT)
+  urgency?:             "HIGH" | "CRITICAL"         // CRITICAL = RED ALERT banner, ưu tiên lên đầu
+  message:              string                      // thông điệp hiển thị cho user
+  actionHint?:          string                      // gợi ý hành động cụ thể
+  childProtectionAlert?: string                     // cảnh báo bảo vệ con cháu (CRITICAL only)
 }
 
 export const DREAM_INTERPRETATION_RULES: DreamPattern[] = [
@@ -61,10 +63,12 @@ export const DREAM_INTERPRETATION_RULES: DreamPattern[] = [
     actionHint: "Nên làm thêm 7 tờ Ngôi Nhà Nhỏ và phóng sinh hồi hướng cho các Ngài.",
   },
   {
-    keywords:   ["rụng răng dưới", "mất răng dưới", "gãy răng dưới"],
-    signalType: "PRACTICE_WARNING",
-    message:    "Mơ rụng răng hàm dưới là cảnh báo — nên kiểm tra lại tu hành và giữ giới nghiêm hơn.",
-    actionHint: "Tăng cường niệm Chuẩn Đề Thần Chú và kiểm điểm lỗi lầm gần đây.",
+    keywords:             ["rụng răng dưới", "mất răng dưới", "gãy răng dưới"],
+    signalType:           "PRACTICE_WARNING",
+    urgency:              "CRITICAL",
+    message:              "Mơ rụng răng hàm DƯỚI là tín hiệu cực kỳ nguy hiểm — oan gia trái chủ đang ảnh hưởng trực tiếp đến con cháu trong gia đình.",
+    actionHint:           "Niệm Chú Giải Kết ít nhất 21 biến mỗi ngày trong 7 ngày liên tiếp. Kiểm điểm lỗi lầm gần đây.",
+    childProtectionAlert: "Khẩn cấp: Làm ngay ít nhất 7 tờ NNN hồi hướng cho con/cháu trong gia đình. Niệm Chú Giải Kết 21 biến/ngày trong 7 ngày liên tiếp để bảo vệ thế hệ sau.",
   },
   {
     keywords:   ["quả thối", "trái cây thối", "hoa quả hỏng", "cúng quả thối"],
@@ -144,10 +148,23 @@ POST /api/engagement/dream-journal
 
 Sau khi user lưu giấc mơ:
 
+**UI Rule:** Matches có `urgency = "CRITICAL"` được render với banner đỏ (`bg-red-700`) và đẩy lên **đầu danh sách** trước tất cả matches khác.
+
 ```
 📿 Phân Tích Giấc Mơ
 
 Chúng tôi phát hiện một số dấu hiệu trong giấc mơ của bạn:
+
+┌──────────────────────────────────────────────────────────────┐
+│ 🚨  CẢNH BÁO KHẨN CẤP — BẢO VỆ CON CHÁU                   │ ← bg-red-700 text-white
+│──────────────────────────────────────────────────────────────│
+│ Rụng Răng Hàm Dưới — Oan gia trái chủ ảnh hưởng con cháu   │
+│                                                              │
+│ Hành động khẩn ngay hôm nay:                               │
+│ • Làm ngay ≥7 tờ NNN hồi hướng cho con/cháu trong gia đình │
+│ • Niệm Chú Giải Kết 21 biến/ngày × 7 ngày liên tiếp        │
+└──────────────────────────────────────────────────────────────┘
+   [+ Tạo 7 NNN bảo vệ con cháu ngay]     [Đã hiểu]
 
 ⚠️ Người mặc áo đen — Dấu hiệu oan gia trái chủ
    "Nên làm thêm 4 tờ Ngôi Nhà Nhỏ để hóa giải."
@@ -215,3 +232,5 @@ DreamKarmicSuggestion {
 - **User phải confirm** trước khi LH được thêm vào KarmicDebtLedger — không auto-add.
 - `DreamJournalEntry` là private data — không chia sẻ với admin trừ khi user báo cáo lỗi.
 - Confidence field hiện tại hardcode là "HIGH" — có thể mở rộng sau với NLP scoring nếu cần.
+- Matches có `urgency = "CRITICAL"` phải được **sort lên đầu** response array trước khi trả về FE — server-side sort, không để FE tự sort.
+- `childProtectionAlert` chỉ render khi `urgency = "CRITICAL"` — dùng banner `bg-red-700`, không dùng yellow/orange.
