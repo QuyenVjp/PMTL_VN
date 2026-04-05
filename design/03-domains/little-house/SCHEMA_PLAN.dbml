@@ -1,0 +1,216 @@
+// Little House Module - logical schema (Lược đồ logic Mô-đun Ngôi Nhà Nhỏ) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project little_house_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Ngôi Nhà Nhỏ (Little House) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - little_houses: Bản ghi Ngôi Nhà Nhỏ (tiêu hủy quảng cáo các địa ngục).
+  - little_house_recitations: Danh sách các bài niệm cần đọc trước khi thiêu (metadata lock).
+  - little_house_completion_records: Ghi chép hoàn thành (ngày, giờ, số lượng).
+  - little_house_dotting_sessions: Phiên tô đỏ điểm (đánh dấu hoàn thành từng bộ).
+  - little_house_combustion_logs: Nhật ký tiêu hủy an toàn (kiểm tra tro, kim loại).
+  - little_house_frauds: Phát hiện gian lận, thu hồi Ngôi Nhà Nhỏ (hủy công đức).
+  '''
+}
+
+Enum little_house_status_enum {
+  in_progress [note: "Đang niệm / in progress"]
+  recited [note: "Đã niệm xong / recited"]
+  ready_to_burn [note: "Sẵn sàng thiêu / ready"]
+  burnt [note: "Đã thiêu / burnt"]
+  completed_audited [note: "Hoàn thành & kiểm toán / audited"]
+  flagged [note: "Bị lờ lửng / flagged for review"]
+  revoked [note: "Bị hủy (gian lận) / revoked"]
+}
+
+Enum little_house_recitation_type_enum {
+  main_sutra [note: "Kinh chính (Địa Tạng Kinh)"]
+  compassion_mantra [note: "Thần chú Đại Bi"]
+  repentance_text [note: "Lời sám hối"]
+  dedication_prayer [note: "Lời khấn dâng"]
+  closing_prayer [note: "Lời kết lạc"]
+}
+
+Enum little_house_recitation_status_enum {
+  pending [note: "Chưa niệm"]
+  in_progress [note: "Đang niệm"]
+  completed [note: "Đã niệm xong"]
+  verified [note: "Đã xác minh (nếu cần)"]
+}
+
+Enum dotting_session_status_enum {
+  created [note: "Tạo phiên tô đỏ"]
+  in_progress [note: "Đang tô đỏ"]
+  completed [note: "Hoàn thành tô đỏ"]
+  verified [note: "Đã xác minh tô đỏ"]
+}
+
+Enum combustion_status_enum {
+  scheduled [note: "Lên lịch thiêu"]
+  in_progress [note: "Đang thiêu"]
+  ash_inspected [note: "Đã kiểm tra tro"]
+  metal_segregated [note: "Đã tách kim loại"]
+  completed [note: "Hoàn thành thiêu"]
+}
+
+Enum fraud_type_enum {
+  incomplete_recitation [note: "Niệm chưa đủ (bộ tay, đố kỳ, v.v.)"]
+  false_completion_date [note: "Ghi ngày hoàn thành sai"]
+  skipped_recitations [note: "Bỏ qua bài niệm bắt buộc"]
+  premature_burning [note: "Thiêu trước khi niệm xong"]
+  forged_dotting [note: "Tô đỏ giả (không thực hiện)"]
+  other [note: "Khác"]
+}
+
+Enum fraud_severity_enum {
+  minor [note: "Nhỏ (thiếu 1-2 lần niệm)"]
+  moderate [note: "Trung bình (thiếu 3-5 lần)"]
+  major [note: "Lớn (bỏ qua bộ nguyên vẹn)"]
+  critical [note: "Rất lớn (gian lận toàn bộ)"]
+}
+
+Table little_houses {
+  id uuid [pk, note: "Khóa chính Ngôi Nhà Nhỏ"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  user_id uuid [not null, note: "Người dùng niệm"]
+  status little_house_status_enum [not null, default: 'in_progress', note: "Trạng thái hiện tại"]
+  start_date date [not null, note: "Ngày bắt đầu niệm"]
+  completion_date date [note: "Ngày hoàn thành niệm"]
+  completion_time time [note: "Giờ hoàn thành niệm (nếu ghi)"]
+  is_post_completion_locked bool [not null, default: false, note: "Đã khóa sau hoàn thành hay chưa (prevent edits)"]
+  locked_at timestamptz [note: "Thời điểm khóa"]
+  intended_recipient varchar(300) [note: "Ai nhận công đức (nếu không phải bản thân)"]
+  notes text [note: "Ghi chú bổ sung"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (user_id, status, completion_date) [name: 'idx_lh_user_status_date']
+    status [name: 'idx_lh_status']
+  }
+}
+
+Table little_house_recitations {
+  id uuid [pk, note: "Khóa chính bài niệm"]
+  public_id varchar [unique, note: "Mã công khai"]
+  little_house_id uuid [not null, ref: > little_houses.id, note: "Ngôi Nhà Nhỏ chứa bài niệm"]
+  recitation_type little_house_recitation_type_enum [not null, note: "Loại bài niệm"]
+  recitation_title varchar(300) [not null, note: "Tên bài niệm cụ thể"]
+  required_count int [not null, default: 1, note: "Số lần niệm yêu cầu"]
+  is_mandatory bool [not null, default: true, note: "Bài niệm bắt buộc hay tùy chọn"]
+  current_count int [not null, default: 0, note: "Số lần đã niệm"]
+  recitation_status little_house_recitation_status_enum [not null, default: 'pending', note: "Trạng thái bài niệm"]
+  started_at timestamptz [note: "Lúc bắt đầu niệm"]
+  completed_at timestamptz [note: "Lúc hoàn thành niệm"]
+  metadata_locked bool [not null, default: false, note: "Metadata bị khóa trước khi niệm hay chưa"]
+  metadata_lock_time timestamptz [note: "Lúc khóa metadata"]
+  created_at timestamptz [not null, note: "Thời điểm tạo bản ghi"]
+
+  Indexes {
+    (little_house_id, recitation_status) [name: 'idx_recitations_lh_status']
+    (little_house_id, is_mandatory) [name: 'idx_recitations_lh_mandatory']
+  }
+}
+
+Table little_house_completion_records {
+  id uuid [pk, note: "Khóa chính bản ghi hoàn thành"]
+  public_id varchar [unique, note: "Mã công khai"]
+  little_house_id uuid [not null, ref: > little_houses.id, note: "Ngôi Nhà Nhỏ"]
+  completion_date date [not null, note: "Ngày hoàn thành"]
+  completion_time time [not null, note: "Giờ hoàn thành"]
+  all_recitations_completed bool [not null, note: "Tất cả bài đã niệm hay chưa"]
+  notes text [note: "Ghi chú về quá trình hoàn thành"]
+  recorded_by_user_id uuid [note: "Người ghi nhận"]
+  created_at timestamptz [not null, note: "Thời điểm tạo bản ghi"]
+
+  Indexes {
+    (little_house_id, completion_date) [name: 'idx_completion_lh_date']
+  }
+}
+
+Table little_house_dotting_sessions {
+  id uuid [pk, note: "Khóa chính phiên tô đỏ"]
+  public_id varchar [unique, note: "Mã công khai"]
+  little_house_id uuid [not null, ref: > little_houses.id, note: "Ngôi Nhà Nhỏ được tô"]
+  session_date date [not null, note: "Ngày tô đỏ"]
+  session_start_time time [note: "Giờ bắt đầu tô"]
+  session_end_time time [note: "Giờ kết thúc tô"]
+  total_dots_expected int [not null, note: "Tổng điểm dự kiến tô"]
+  total_dots_completed int [not null, default: 0, note: "Tổng điểm đã tô"]
+  session_status dotting_session_status_enum [not null, default: 'created', note: "Trạng thái phiên"]
+  is_multithreaded bool [not null, default: false, note: "Có phải tô đa luồng (nhiều người) hay không"]
+  participants_count int [note: "Số người tham gia (nếu tô đa luồng)"]
+  supervision_notes text [note: "Ghi chú giám sát"]
+  supervised_by_user_id uuid [note: "Người giám sát"]
+  created_at timestamptz [not null, note: "Thời điểm tạo phiên"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (little_house_id, session_date) [name: 'idx_dotting_lh_date']
+    session_status [name: 'idx_dotting_status']
+  }
+}
+
+Table little_house_combustion_logs {
+  id uuid [pk, note: "Khóa chính nhật ký thiêu"]
+  public_id varchar [unique, note: "Mã công khai"]
+  little_house_id uuid [not null, ref: > little_houses.id, note: "Ngôi Nhà Nhỏ được thiêu"]
+  combustion_date date [not null, note: "Ngày thiêu"]
+  combustion_time time [not null, note: "Giờ thiêu"]
+  combustion_status combustion_status_enum [not null, default: 'scheduled', note: "Trạng thái thiêu"]
+  ash_color varchar(100) [note: "Màu tro sau thiêu (trắng, xám, đen)"]
+  ash_inspection_notes text [note: "Ghi chú kiểm tra tro (mùi, độ sạch)"]
+  metal_fragments_found bool [not null, default: false, note: "Có tìm thấy kim loại hay không"]
+  metal_segregation_notes text [note: "Ghi chú tách kim loại (loại, khối lượng)"]
+  hardware_errors_detected bool [not null, default: false, note: "Có lỗi phần cứng (lò bị hỏng) hay không"]
+  hardware_error_details text [note: "Chi tiết lỗi phần cứng"]
+  combustion_supervised_by_user_id uuid [note: "Người giám sát thiêu"]
+  created_at timestamptz [not null, note: "Thời điểm tạo log"]
+
+  Indexes {
+    (little_house_id, combustion_date) [name: 'idx_combustion_lh_date']
+    combustion_status [name: 'idx_combustion_status']
+  }
+}
+
+Table little_house_frauds {
+  id uuid [pk, note: "Khóa chính phát hiện gian lận"]
+  public_id varchar [unique, note: "Mã công khai"]
+  little_house_id uuid [not null, ref: > little_houses.id, note: "Ngôi Nhà Nhỏ bị nghi gian lận"]
+  user_id uuid [not null, note: "Người dùng liên quan"]
+  fraud_type fraud_type_enum [not null, note: "Loại gian lận"]
+  fraud_severity fraud_severity_enum [not null, default: 'moderate', note: "Mức độ nghiêm trọng"]
+  fraud_details text [not null, note: "Chi tiết gian lận"]
+  detection_date date [not null, note: "Ngày phát hiện"]
+  detection_method varchar(200) [note: "Cách phát hiện (audit, report, system check)"]
+  is_confirmed bool [not null, default: false, note: "Đã xác nhận gian lận hay chưa"]
+  confirmed_date date [note: "Ngày xác nhận"]
+  is_revoked bool [not null, default: false, note: "Đã hủy/thu hồi công đức hay chưa"]
+  revocation_date date [note: "Ngày hủy"]
+  revocation_notes text [note: "Ghi chú về hủy"]
+  reviewed_by_user_id uuid [note: "Admin xem xét"]
+  created_at timestamptz [not null, note: "Thời điểm phát hiện"]
+
+  Indexes {
+    (little_house_id, is_revoked) [name: 'idx_frauds_lh_revoked']
+    (user_id, fraud_severity) [name: 'idx_frauds_user_severity']
+    detection_date [name: 'idx_frauds_detection_date']
+  }
+}
+
+TableGroup "Little House Core" [note: "Nhóm Ngôi Nhà Nhỏ chính"] {
+  little_houses
+  little_house_recitations
+  little_house_completion_records
+}
+
+TableGroup "Execution & Quality" [note: "Nhóm thực hiện & chất lượng"] {
+  little_house_dotting_sessions
+  little_house_combustion_logs
+}
+
+TableGroup "Compliance & Fraud Detection" [note: "Nhóm tuân thủ & phát hiện gian lận"] {
+  little_house_frauds
+}

@@ -1,0 +1,162 @@
+// Dharma Compliance Module - logical schema (Lược đồ logic Mô-đun Tuân Thủ Pháp) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project dharma_compliance_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Tuân Thủ Pháp (Dharma Compliance) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - charity_whitelist: Danh sách tổ chức từ thiện được chứng thực (Phật giáo, công bằng, an toàn).
+  - charity_whitelisting_rules: Tiêu chí chứng thực (đăng ký pháp lý, minh bạch tài chính, v.v.).
+  - charity_audit_logs: Lịch sử kiểm toán, cảnh báo gian lận.
+  - fraud_detection_alerts: Báo động từ hệ thống (tài khoản nghi ngờ, yêu cầu lạ).
+  - user_charity_interactions: Lịch sử tương tác (quyên góp, phóng sinh với tổ chức).
+  '''
+}
+
+Enum charity_type_enum {
+  buddhist_temple [note: "Chùa Phật giáo"]
+  buddhist_organization [note: "Tổ chức Phật giáo (từ thiện, giáo dục)"]
+  animal_welfare [note: "Tổ chức bảo vệ động vật"]
+  environmental [note: "Tổ chức môi trường"]
+  disaster_relief [note: "Cứu trợ thảm họa"]
+  other_ngos [note: "NGO khác được kiểm chứng"]
+}
+
+Enum whitelisting_criteria_type_enum {
+  legal_registration [note: "Đăng ký pháp lý (giấy phép, công chứng)"]
+  financial_transparency [note: "Minh bạch tài chính (báo cáo công khai)"]
+  monk_verification [note: "Xác nhận bởi tu sĩ (Thích, Bhikkhu)"]
+  community_endorsement [note: "Xác nhận bởi cộng đồng (1000+ bình phục)"]
+  track_record [note: "Lịch sử hoạt động (3+ năm liên tục)"]
+  audit_report [note: "Báo cáo kiểm toán độc lập"]
+  no_fraud_history [note: "Không có tiền sử gian lận"]
+}
+
+Enum whitelist_status_enum {
+  pending_verification [note: "Chờ xác minh"]
+  verified [note: "Đã xác minh"]
+  suspended [note: "Tạm dừng (có vấn đề)"]
+  revoked [note: "Bị từ chối (gian lận hoặc sai phạm)"]
+}
+
+Enum fraud_alert_severity_enum {
+  low [note: "Thấp (gợi ý cảnh báo)"]
+  medium [note: "Trung bình (yêu cầu xác minh)"]
+  high [note: "Cao (cần xét duyệt)"]
+  critical [note: "Cực kỳ (chặn ngay)"]
+}
+
+Enum fraud_alert_type_enum {
+  fake_organization [note: "Tổ chức giả mạo"]
+  account_anomaly [note: "Hành vi tài khoản bất thường"]
+  pattern_mismatch [note: "Mô hình giao dịch không khớp"]
+  compromised_account [note: "Tài khoản bị xâm phạm"]
+  phishing_attempt [note: "Nỗ lực giả mạo/câu cá (phishing)"]
+  donation_abuse [note: "Lạm dụng quyên góp"]
+  other [note: "Khác"]
+}
+
+Enum interaction_type_enum {
+  donation [note: "Quyên góp"]
+  life_release [note: "Phóng sinh (tài trợ hoàn toàn hoặc một phần)"]
+  volunteering [note: "Tình nguyện (thời gian, kỹ năng)"]
+  other [note: "Khác"]
+}
+
+Table charity_whitelist {
+  id uuid [pk, note: "Khóa chính tổ chức từ thiện"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  organization_name varchar(300) [not null, note: "Tên chính thức tổ chức"]
+  charity_type charity_type_enum [not null, note: "Loại tổ chức"]
+  registration_number varchar(100) [note: "Số đăng ký pháp lý"]
+  registration_country varchar(100) [note: "Quốc gia đăng ký"]
+  website_url text [note: "Website chính thức"]
+  contact_email varchar(320) [note: "Email liên hệ"]
+  contact_phone varchar(20) [note: "SĐT liên hệ"]
+  description text [note: "Mô tả nhiệm vụ và hoạt động"]
+  whitelist_status whitelist_status_enum [not null, default: 'pending_verification', note: "Trạng thái whitelist"]
+  verified_date date [note: "Ngày xác minh thành công"]
+  verification_score int [note: "Điểm xác minh (0-100)"]
+  suspension_reason text [note: "Lý do tạm dừng (nếu có)"]
+  revocation_reason text [note: "Lý do từ chối (nếu có)"]
+  last_audit_date date [note: "Ngày kiểm toán cuối cùng"]
+  next_audit_date date [note: "Ngày kiểm toán tiếp theo dự kiến"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (charity_type, whitelist_status) [name: 'idx_charity_type_status']
+    organization_name [name: 'idx_charity_name']
+  }
+}
+
+Table charity_whitelisting_rules {
+  id uuid [pk, note: "Khóa chính tiêu chí xác minh"]
+  public_id varchar [unique, note: "Mã công khai"]
+  charity_id uuid [not null, ref: > charity_whitelist.id, note: "Tổ chức được xác minh"]
+  criteria_type whitelisting_criteria_type_enum [not null, note: "Loại tiêu chí"]
+  criteria_text text [not null, note: "Mô tả tiêu chí chi tiết"]
+  is_satisfied bool [not null, default: false, note: "Tiêu chí đã thỏa mãn hay chưa"]
+  evidence_url text [note: "Link chứng minh (báo cáo, giấy phép, v.v.)"]
+  verified_date date [note: "Ngày xác minh tiêu chí này"]
+  verified_by_user_id uuid [note: "Người xác minh"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+
+  Indexes {
+    (charity_id, criteria_type) [name: 'idx_criteria_charity_type']
+    is_satisfied [name: 'idx_criteria_satisfied']
+  }
+}
+
+Table fraud_detection_alerts {
+  id uuid [pk, note: "Khóa chính cảnh báo gian lận"]
+  public_id varchar [unique, note: "Mã công khai"]
+  alert_type fraud_alert_type_enum [not null, note: "Loại cảnh báo"]
+  severity fraud_alert_severity_enum [not null, default: 'medium', note: "Mức độ nghiêm trọng"]
+  user_id uuid [note: "Người dùng liên quan (nếu có)"]
+  charity_id uuid [ref: > charity_whitelist.id, note: "Tổ chức liên quan (nếu có)"]
+  alert_details text [not null, note: "Chi tiết cảnh báo"]
+  detection_timestamp timestamptz [not null, note: "Lúc phát hiện"]
+  detection_source varchar(100) [note: "Nguồn phát hiện (heuristic, báo cáo, kiểm toán)"]
+  is_resolved bool [not null, default: false, note: "Đã xử lý hay chưa"]
+  resolved_date date [note: "Ngày xử lý"]
+  resolution_notes text [note: "Ghi chú về xử lý"]
+  reviewed_by_user_id uuid [note: "Admin xem xét"]
+  created_at timestamptz [not null, note: "Thời điểm tạo cảnh báo"]
+
+  Indexes {
+    (severity, is_resolved) [name: 'idx_alerts_severity_resolved']
+    (alert_type, detection_timestamp) [name: 'idx_alerts_type_time']
+  }
+}
+
+Table user_charity_interactions {
+  id uuid [pk, note: "Khóa chính tương tác"]
+  public_id varchar [unique, note: "Mã công khai"]
+  user_id uuid [not null, note: "Người dùng thực hiện tương tác"]
+  charity_id uuid [not null, ref: > charity_whitelist.id, note: "Tổ chức từ thiện"]
+  interaction_type interaction_type_enum [not null, note: "Loại tương tác"]
+  amount_vnd decimal(14,2) [note: "Số tiền (nếu là quyên góp)"]
+  description text [note: "Mô tả chi tiết"]
+  interaction_date date [not null, note: "Ngày tương tác"]
+  is_verified bool [not null, default: false, note: "Tương tác đã được xác minh hay chưa"]
+  verified_date date [note: "Ngày xác minh"]
+  reference_id uuid [note: "Liên kết tới donation record, life release record, v.v."]
+  created_at timestamptz [not null, note: "Thời điểm ghi nhận"]
+
+  Indexes {
+    (user_id, charity_id, interaction_date) [name: 'idx_interactions_user_charity_date']
+    (charity_id, interaction_type) [name: 'idx_interactions_charity_type']
+  }
+}
+
+TableGroup "Charity Whitelist & Verification" [note: "Nhóm whitelist & xác minh từ thiện"] {
+  charity_whitelist
+  charity_whitelisting_rules
+}
+
+TableGroup "Fraud Detection & Monitoring" [note: "Nhóm phát hiện & theo dõi gian lận"] {
+  fraud_detection_alerts
+  user_charity_interactions
+}

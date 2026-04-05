@@ -117,6 +117,41 @@ Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 | `design/02-platform-baseline/web-runtime/seo-geo/STRUCTURED_DATA.md` | structured-data owner | Schema.org mapping per page family, JSON-LD obligations, schema selection rules | không tự đổi route canon hay content ownership |
 | `design/02-platform-baseline/web-runtime/seo-geo/GEO_CITATION_STRATEGY.md` | GEO citation owner | AI-citation posture, entity-definition rules, quotability guidance, citation-focused content formatting | không tự override doctrinal/source ownership |
 | `design/02-platform-baseline/web-runtime/seo-geo/CONTENT_CLUSTER_MAP.md` | SEO content-cluster owner | cluster hierarchy, pillar/cluster relationships, target keyword grouping | không tự tạo page routes ngoài `design/04-execution-overlay/web/PAGE_INVENTORY.md` |
+| `design/03-domains/altar-management/DECISIONS.md` | altar-management domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/altar-management/MODULE_MAP.md` | altar-management module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/altar-management/CONTRACTS.md` | altar-management contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/altar-management/SCHEMA_PLAN.dbml` | altar-management schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/altar-management/USE_CASES/*.md` | altar-management write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/dharma-compliance/DECISIONS.md` | dharma-compliance domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/dharma-compliance/MODULE_MAP.md` | dharma-compliance module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/dharma-compliance/CONTRACTS.md` | dharma-compliance contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/dharma-compliance/SCHEMA_PLAN.dbml` | dharma-compliance schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/dharma-compliance/USE_CASES/*.md` | dharma-compliance write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/events/DECISIONS.md` | events domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/events/MODULE_MAP.md` | events module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/events/CONTRACTS.md` | events contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/events/SCHEMA_PLAN.dbml` | events schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/events/USE_CASES/*.md` | events write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/life-liberation/DECISIONS.md` | life-liberation domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/life-liberation/MODULE_MAP.md` | life-liberation module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/life-liberation/CONTRACTS.md` | life-liberation contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/life-liberation/SCHEMA_PLAN.dbml` | life-liberation schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/life-liberation/USE_CASES/*.md` | life-liberation write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/little-house/DECISIONS.md` | little-house domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/little-house/MODULE_MAP.md` | little-house module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/little-house/CONTRACTS.md` | little-house contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/little-house/SCHEMA_PLAN.dbml` | little-house schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/little-house/USE_CASES/*.md` | little-house write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/sacred-forms/DECISIONS.md` | sacred-forms domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/sacred-forms/MODULE_MAP.md` | sacred-forms module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/sacred-forms/CONTRACTS.md` | sacred-forms contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/sacred-forms/SCHEMA_PLAN.dbml` | sacred-forms schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/sacred-forms/USE_CASES/*.md` | sacred-forms write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
+| `design/03-domains/vows-merit/DECISIONS.md` | vows-merit domain decisions | domain-specific decisions, constraints, phasing | không override root `DECISIONS.md` |
+| `design/03-domains/vows-merit/MODULE_MAP.md` | vows-merit module boundaries | module ownership, responsibilities, interactions | không lặp repo structure |
+| `design/03-domains/vows-merit/CONTRACTS.md` | vows-merit contracts | routes, DTOs, error mapping, invariants | không thay API route canon |
+| `design/03-domains/vows-merit/SCHEMA_PLAN.dbml` | vows-merit schema design | data shape at design phase | không thay runtime schema merge |
+| `design/03-domains/vows-merit/USE_CASES/*.md` | vows-merit write-path behavior | per-flow behavior, acceptance criteria | không override route canon |
 | `design/03-domains/content/REFERENCES/LITTLE_HOUSE_SEO.md` | feature-specific SEO owner for Little House | Little House keyword map, internal linking plan, metadata focus, structured-data specialization | không thay Little House content canon một mình |
 | `design/00-governance/WRITING_STANDARDS.md` | docs writing owner | contract/use-case standards | không lặp template ở nhiều file |
 | `CORE_PRACTICE_CONSTITUTION.md` | product intent + core loop owner | 8-step core practice loop, anti-gamification laws, module ownership map, launch screen table, acceptance criteria per step | không overwrite module contract detail; tóm tắt thì link về module doc |

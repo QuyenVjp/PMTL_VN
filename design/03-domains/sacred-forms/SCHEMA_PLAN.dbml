@@ -1,0 +1,186 @@
+// Sacred Forms Module - logical schema (Lược đồ logic Mô-đun Hình Thức Tôn Kính) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project sacred_forms_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Hình Thức Tôn Kính (Sacred Forms) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - sacred_forms: Hình thức tôn kính chính (thay đổi pháp danh, đại tràng đầu, v.v.).
+  - form_prerequisites: Điều kiện tiên quyết (gia đình, lúc tuổi, v.v.).
+  - form_applicants: Người xin thay hình thức.
+  - form_disposals: Xử lý hình thức cũ (lễ phong ấn, tiêu hủy an toàn).
+  - name_change_probations: Timer tạm dừng khi thay đổi pháp danh (30-90 ngày).
+  '''
+}
+
+Enum sacred_form_type_enum {
+  dharma_name_change [note: "Thay đổi/công bố pháp danh"]
+  initiation_form [note: "Hình thức xuất gia/Đại Tràng Đầu"]
+  ordination [note: "Giới tại (Năm Giới, Bồ Tát Giới, v.v.)"]
+  special_vow [note: "Phát nguyện đặc biệt"]
+  other [note: "Khác"]
+}
+
+Enum form_prerequisite_type_enum {
+  family_consent [note: "Sự đồng ý của gia đình"]
+  minimum_age [note: "Tuổi tối thiểu"]
+  practice_duration [note: "Thời gian tu tập tối thiểu"]
+  spiritual_readiness [note: "Sẵn sàng tâm linh"]
+  financial_clearance [note: "Không nợ tiền tu"]
+  other [note: "Khác"]
+}
+
+Enum prerequisite_status_enum {
+  not_met [note: "Chưa đáp ứng"]
+  pending [note: "Đang chờ xác nhận"]
+  met [note: "Đã đáp ứng"]
+  waived [note: "Được miễn (trường hợp đặc biệt)"]
+}
+
+Enum form_applicant_status_enum {
+  submitted [note: "Đã nộp đơn"]
+  under_review [note: "Đang xem xét"]
+  approved [note: "Được chấp thuận"]
+  rejected [note: "Bị từ chối"]
+  completed [note: "Hoàn tất hình thức"]
+  cancelled [note: "Hủy"]
+}
+
+Enum form_disposal_type_enum {
+  sealing_ceremony [note: "Lễ phong ấn (thanh tịnh đồ thờ cũ)"]
+  safe_incineration [note: "Tiêu hủy an toàn (theo quy tắc phật giáo)"]
+  donation [note: "Quyên góp/chuyển giao cho chùa/tổ chức"]
+  archival [note: "Lưu trữ hồ sơ (không tiêu hủy)"]
+}
+
+Enum disposal_status_enum {
+  pending [note: "Chờ thực hiện"]
+  in_progress [note: "Đang thực hiện"]
+  completed [note: "Hoàn tất"]
+  cancelled [note: "Hủy"]
+}
+
+Table sacred_forms {
+  id uuid [pk, note: "Khóa chính hình thức tôn kính"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  form_type sacred_form_type_enum [not null, note: "Loại hình thức"]
+  title varchar(200) [not null, note: "Tên hình thức (ví dụ: Pháp danh mới, Đại Tràng Đầu)"]
+  description text [note: "Mô tả chi tiết"]
+  requires_ceremony bool [not null, default: true, note: "Hình thức cần lễ chính thức hay không"]
+  ceremony_template_id uuid [note: "Mẫu lễ nếu áp dụng"]
+  is_active bool [not null, default: true, note: "Hình thức này còn mở hay không"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    form_type [name: 'idx_sacred_forms_type']
+    is_active [name: 'idx_sacred_forms_active']
+  }
+}
+
+Table form_prerequisites {
+  id uuid [pk, note: "Khóa chính điều kiện tiên quyết"]
+  public_id varchar [unique, note: "Mã công khai"]
+  sacred_form_id uuid [not null, ref: > sacred_forms.id, note: "Hình thức yêu cầu"]
+  prerequisite_type form_prerequisite_type_enum [not null, note: "Loại điều kiện"]
+  requirement_text text [not null, note: "Mô tả yêu cầu chi tiết"]
+  is_mandatory bool [not null, default: true, note: "Điều kiện bắt buộc hay tùy chọn"]
+  verification_method varchar(300) [note: "Cách xác minh (giấy xác nhận, khai báo, v.v.)"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+
+  Indexes {
+    (sacred_form_id, prerequisite_type) [name: 'idx_prerequisites_form_type']
+  }
+}
+
+Table form_applicants {
+  id uuid [pk, note: "Khóa chính người xin hình thức"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  user_id uuid [not null, note: "Người dùng xin hình thức"]
+  sacred_form_id uuid [not null, ref: > sacred_forms.id, note: "Hình thức xin"]
+  status form_applicant_status_enum [not null, default: 'submitted', note: "Trạng thái đơn xin"]
+  submitted_date date [not null, note: "Ngày nộp đơn"]
+  approved_date date [note: "Ngày được chấp thuận"]
+  completion_date date [note: "Ngày hoàn tất hình thức"]
+  rejection_reason text [note: "Lý do từ chối nếu có"]
+  reviewer_user_id uuid [note: "Admin/monk xem xét"]
+  notes text [note: "Ghi chú bổ sung"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (user_id, sacred_form_id) [name: 'idx_applicants_user_form']
+    (status, submitted_date) [name: 'idx_applicants_status_date']
+  }
+}
+
+Table form_prerequisite_validations {
+  id uuid [pk, note: "Khóa chính xác nhận điều kiện"]
+  public_id varchar [unique, note: "Mã công khai"]
+  form_applicant_id uuid [not null, ref: > form_applicants.id, note: "Đơn xin"]
+  prerequisite_id uuid [not null, ref: > form_prerequisites.id, note: "Điều kiện được xác nhận"]
+  validation_status prerequisite_status_enum [not null, default: 'not_met', note: "Trạng thái xác nhận"]
+  evidence_note text [note: "Ghi chú chứng minh"]
+  validated_at timestamptz [note: "Lúc xác nhận"]
+  validated_by_user_id uuid [note: "Người xác nhận"]
+  created_at timestamptz [not null, note: "Thời điểm ghi nhận"]
+
+  Indexes {
+    (form_applicant_id, prerequisite_id) [name: 'idx_validations_applicant_prerequisite']
+    validation_status [name: 'idx_validations_status']
+  }
+}
+
+Table form_disposals {
+  id uuid [pk, note: "Khóa chính xử lý hình thức cũ"]
+  public_id varchar [unique, note: "Mã công khai"]
+  form_applicant_id uuid [not null, ref: > form_applicants.id, note: "Đơn xin liên quan (hình thức mới)"]
+  old_form_description varchar(300) [note: "Mô tả hình thức cũ/pháp danh cũ"]
+  disposal_type form_disposal_type_enum [not null, note: "Loại xử lý"]
+  disposal_status disposal_status_enum [not null, default: 'pending', note: "Trạng thái xử lý"]
+  scheduled_date date [note: "Ngày dự kiến xử lý"]
+  completed_date date [note: "Ngày hoàn tất xử lý"]
+  ceremony_performed bool [not null, default: false, note: "Đã có lễ phong ấn hay không"]
+  disposal_notes text [note: "Ghi chú về xử lý"]
+  supervised_by_user_id uuid [note: "Người giám sát"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (form_applicant_id, disposal_status) [name: 'idx_disposals_applicant_status']
+  }
+}
+
+Table name_change_probations {
+  id uuid [pk, note: "Khóa chính probation (tạm dừng)"]
+  public_id varchar [unique, note: "Mã công khai"]
+  form_applicant_id uuid [not null, ref: > form_applicants.id, note: "Đơn xin thay pháp danh"]
+  user_id uuid [not null, note: "Người dùng bị tạm dừng"]
+  old_dharma_name varchar(200) [note: "Pháp danh cũ"]
+  new_dharma_name varchar(200) [note: "Pháp danh mới"]
+  probation_start_date date [not null, note: "Ngày bắt đầu tạm dừng"]
+  probation_duration_days int [not null, note: "Thời lượng tạm dừng (30-90 ngày)"]
+  probation_end_date date [not null, note: "Ngày kết thúc tạm dừng"]
+  is_active bool [not null, default: true, note: "Probation còn hiệu lực hay không"]
+  restriction_details text [note: "Các hạn chế trong giai đoạn probation"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (user_id, is_active) [name: 'idx_probations_user_active']
+    (probation_end_date, is_active) [name: 'idx_probations_end_date']
+  }
+}
+
+TableGroup "Sacred Forms Core" [note: "Nhóm hình thức tôn kính chính"] {
+  sacred_forms
+  form_prerequisites
+  form_applicants
+}
+
+TableGroup "Validation & Compliance" [note: "Nhóm xác nhận & tuân thủ"] {
+  form_prerequisite_validations
+  form_disposals
+  name_change_probations
+}

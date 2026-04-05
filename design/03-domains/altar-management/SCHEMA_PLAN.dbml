@@ -1,0 +1,119 @@
+// Altar Management Module - logical schema (Lược đồ logic Mô-đun Quản Trị Bàn Thờ) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project altar_management_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Quản Trị Bàn Thờ (Altar Management) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - altar_items: Danh sách đồ thờ/dụng cụ (hương, đèn, nước, dâu, bát).
+  - altar_item_conditions: Trạng thái kiểm tra sức khỏe các đồ thờ (hư hỏng, cần thay).
+  - altar_item_protocols: Quy trình bắt buộc (thay nguyên tử, cấm in UUID, filter ảnh AI).
+  - altar_validation_logs: Audit trail kiểm tra bàn thờ trước/sau nghi lễ.
+  '''
+}
+
+Enum altar_item_type_enum {
+  incense [note: "Hương"]
+  lamp [note: "Đèn (sen điện, nến)"]
+  water_vessel [note: "Bình nước Đại Bi"]
+  fruit_plate [note: "Đĩa trái cây"]
+  offering_bowl [note: "Bát cúng"]
+  statue [note: "Tượng, hiện vật tôn kính"]
+  other [note: "Khác"]
+}
+
+Enum altar_condition_status_enum {
+  good [note: "Tốt / functioning well"]
+  degraded [note: "Hư hỏng nhẹ / minor damage"]
+  critical [note: "Hư hỏng nặng / critical damage"]
+  needs_replacement [note: "Cần thay mới / must be replaced"]
+}
+
+Enum altar_protocol_type_enum {
+  atomic_replacement [note: "Thay nguyên tử (toàn bộ đơn vị)"]
+  no_uuid_hardcode [note: "Cấm in UUID/barcode lên đồ thờ"]
+  incense_sequence [note: "Trình tự cắm hương (số lẻ, hướng)"]
+  water_temperature [note: "Kiểm tra nhiệt độ nước Đại Bi (phải lạnh)"]
+  ai_filter [note: "Filter ảnh AI-generated tứ linh"]
+  no_blowing_sacred [note: "Cấm thổi hương thiêng (phấn chỉ nâng lên)"]
+}
+
+Table altar_items {
+  id uuid [pk, note: "Khóa chính đồ thờ"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  item_type altar_item_type_enum [not null, note: "Loại đồ thờ"]
+  name varchar(200) [not null, note: "Tên đồ thờ"]
+  description text [note: "Mô tả chi tiết"]
+  location_label varchar(200) [note: "Vị trí tại bàn thờ (trước, phải, trái, sau)"]
+  is_critical bool [not null, default: false, note: "Là thành phần nghi lễ bắt buộc hay tùy chọn"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (item_type, is_critical) [name: 'idx_altar_items_type_critical']
+  }
+}
+
+Table altar_item_conditions {
+  id uuid [pk, note: "Khóa chính kiểm tra"]
+  public_id varchar [unique, note: "Mã công khai"]
+  altar_item_id uuid [not null, ref: > altar_items.id, note: "Đồ thờ được kiểm tra"]
+  status altar_condition_status_enum [not null, note: "Trạng thái hiện tại"]
+  notes text [note: "Ghi chú về vấn đề"]
+  photo_evidence_media_id uuid [note: "Ảnh chứng minh hư hỏng (nếu có)"]
+  checked_at timestamptz [not null, note: "Thời điểm kiểm tra"]
+  checked_by_user_id uuid [note: "Admin/staff kiểm tra"]
+  created_at timestamptz [not null, note: "Thời điểm ghi nhận"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (altar_item_id, checked_at) [name: 'idx_conditions_item_time']
+    status [name: 'idx_conditions_status']
+  }
+}
+
+Table altar_item_protocols {
+  id uuid [pk, note: "Khóa chính protocol"]
+  public_id varchar [unique, note: "Mã công khai"]
+  altar_item_id uuid [not null, ref: > altar_items.id, note: "Đồ thờ áp dụng"]
+  protocol_type altar_protocol_type_enum [not null, note: "Loại quy tắc"]
+  rule_text text [not null, note: "Mô tả quy tắc chi tiết"]
+  is_enforced bool [not null, default: true, note: "Quy tắc bắt buộc hay khuyến nghị"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (altar_item_id, protocol_type) [name: 'idx_protocols_item_type']
+  }
+}
+
+Table altar_validation_logs {
+  id uuid [pk, note: "Khóa chính log"]
+  public_id varchar [unique, note: "Mã công khai"]
+  validation_timestamp timestamptz [not null, note: "Thời điểm kiểm tra"]
+  check_phase varchar(50) [not null, note: "pre-ceremony | post-ceremony | daily-practice"]
+  total_items_checked int [not null, default: 0, note: "Tổng số đồ kiểm tra"]
+  items_passed int [not null, default: 0, note: "Số đồ đạt yêu cầu"]
+  items_failed int [not null, default: 0, note: "Số đồ không đạt"]
+  critical_failures text [note: "Danh sách vấn đề nguy cấp"]
+  validation_passed bool [not null, note: "Bàn thờ sẵn sàng cho nghi lễ hay không"]
+  checked_by_user_id uuid [note: "Người thực hiện kiểm tra"]
+  notes text [note: "Ghi chú bổ sung"]
+  created_at timestamptz [not null, note: "Thời điểm tạo log"]
+
+  Indexes {
+    (validation_timestamp, check_phase) [name: 'idx_logs_time_phase']
+    validation_passed [name: 'idx_logs_validation_result']
+  }
+}
+
+TableGroup "Altar Core" [note: "Nhóm bàn thờ chính: đồ thờ và trạng thái"] {
+  altar_items
+  altar_item_conditions
+}
+
+TableGroup "Altar Rules & Audit" [note: "Nhóm quy tắc & kiểm toán"] {
+  altar_item_protocols
+  altar_validation_logs
+}

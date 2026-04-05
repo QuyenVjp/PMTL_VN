@@ -1,0 +1,202 @@
+// Events Module - logical schema (Lược đồ logic Mô-đun Sự Kiện) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project events_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Sự Kiện (Events) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - events: Sự kiện công khai (khóa học, lễ, talkback, livestream, retreat).
+  - event_monetization_rules: Quy tắc chống kiếm tiền (Zero Monetization Anti-Fundraising Firewall).
+  - event_fundraising_blocks: Chặn các hình thức quyên góp, sponsor, hay fundraising.
+  - event_access_logs: Lịch sử truy cập, theo dõi hành vi phá vỡ quy tắc.
+  - event_violations: Ghi chép vi phạm, cảnh báo hành vi kiếm tiền bị cấm.
+  '''
+}
+
+Enum event_type_enum {
+  teaching [note: "Giảng dạy / teaching"]
+  ceremony [note: "Lễ nghi / ceremony"]
+  retreat [note: "Tu tập yên tĩnh / retreat"]
+  talkback [note: "Buổi trao đổi / talkback/Q&A"]
+  livestream [note: "Phát trực tiếp / livestream"]
+  study_group [note: "Nhóm học tập / study group"]
+  other [note: "Khác / other"]
+}
+
+Enum event_delivery_mode_enum {
+  offline [note: "Trực tiếp / offline"]
+  online [note: "Trực tuyến / online"]
+  hybrid [note: "Kết hợp / hybrid"]
+}
+
+Enum monetization_rule_type_enum {
+  no_admission_fee [note: "Cấm thu phí vào cửa"]
+  no_merchandise_sales [note: "Cấm bán hàng hóa"]
+  no_donation_solicitation [note: "Cấm yêu cầu quyên góp"]
+  no_sponsorship_deals [note: "Cấm nhận tài trợ / tìm sponsor"]
+  no_paid_seating_tiers [note: "Cấm bán vé theo hạng (VIP, standard)"]
+  no_exclusive_access_fees [note: "Cấm bán quyền truy cập độc quyền"]
+  no_teacher_honorariums [note: "Cấm trả thù lao cho giảng viên"]
+  free_only [note: "Hoàn toàn miễn phí"]
+}
+
+Enum fundraising_block_type_enum {
+  direct_donation_request [note: "Yêu cầu quyên góp trực tiếp"]
+  sponsorship_proposal [note: "Đề xuất sponsor"]
+  merchandise_presale [note: "Bán trước hàng hóa"]
+  paid_recording_access [note: "Bán quyền truy cập video ghi"]
+  vip_seating [note: "Bán ghế VIP"]
+  ticket_surcharge [note: "Phí phụ phí vé"]
+  fundraiser_partnership [note: "Hợp tác với tổ chức quyên góp"]
+  other_monetary_benefit [note: "Lợi ích tiền tệ khác"]
+}
+
+Enum access_log_action_type_enum {
+  view_event_details [note: "Xem chi tiết sự kiện"]
+  attempt_purchase_ticket [note: "Cố gắng mua vé"]
+  attempt_donation [note: "Cố gắng quyên góp"]
+  attempt_merchandise_add [note: "Cố gắng thêm hàng hóa"]
+  fundraiser_link_click [note: "Click vào link quyên góp"]
+  other [note: "Khác"]
+}
+
+Enum violation_type_enum {
+  attempted_monetization [note: "Cố gắng kiếm tiền"]
+  unauthorized_fundraising [note: "Quyên góp không được phép"]
+  misleading_description [note: "Mô tả sai lệch (giấu chi phí)"]
+  hidden_fees [note: "Phí ẩn"]
+  policy_breach [note: "Vi phạm chính sách rõ ràng"]
+  other [note: "Khác"]
+}
+
+Enum violation_severity_enum {
+  warning [note: "Cảnh báo / warning"]
+  suspension [note: "Tạm dừng sự kiện / suspend event"]
+  removal [note: "Xóa sự kiện / remove event"]
+  account_ban [note: "Cấm tài khoản / account ban"]
+}
+
+Table events {
+  id uuid [pk, note: "Khóa chính sự kiện"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  title varchar(300) [not null, note: "Tên sự kiện"]
+  slug varchar(300) [unique, note: "Slug URL thân thiện"]
+  description text [not null, note: "Mô tả chi tiết"]
+  event_type event_type_enum [not null, note: "Loại sự kiện"]
+  delivery_mode event_delivery_mode_enum [not null, default: 'offline', note: "Hình thức tổ chức"]
+  start_date date [not null, note: "Ngày bắt đầu"]
+  start_time time [note: "Giờ bắt đầu"]
+  end_date date [note: "Ngày kết thúc"]
+  end_time time [note: "Giờ kết thúc"]
+  location varchar(300) [note: "Địa điểm (nếu offline/hybrid)"]
+  organizer_user_id uuid [not null, note: "Người tổ chức (user)"]
+  speaker_names text [note: "Tên giảng viên/người dẫn (nếu có)"]
+  expected_attendees int [note: "Số người dự kiến"]
+  cover_image_url text [note: "URL ảnh bìa"]
+  is_published bool [not null, default: false, note: "Đã công bố hay chưa"]
+  published_date date [note: "Ngày công bố"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (event_type, start_date) [name: 'idx_events_type_date']
+    (organizer_user_id, is_published) [name: 'idx_events_organizer_published']
+    is_published [name: 'idx_events_published']
+  }
+}
+
+Table event_monetization_rules {
+  id uuid [pk, note: "Khóa chính quy tắc kiếm tiền"]
+  public_id varchar [unique, note: "Mã công khai"]
+  event_id uuid [not null, ref: > events.id, note: "Sự kiện áp dụng quy tắc"]
+  rule_type monetization_rule_type_enum [not null, note: "Loại quy tắc"]
+  rule_text text [not null, note: "Mô tả quy tắc chi tiết"]
+  is_enforced bool [not null, default: true, note: "Quy tắc được áp dụng bắt buộc hay không"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+
+  Indexes {
+    (event_id, rule_type) [name: 'idx_monetization_event_type']
+    rule_type [name: 'idx_monetization_rule_type']
+  }
+}
+
+Table event_fundraising_blocks {
+  id uuid [pk, note: "Khóa chính chặn quyên góp"]
+  public_id varchar [unique, note: "Mã công khai"]
+  event_id uuid [not null, ref: > events.id, note: "Sự kiện có chặn"]
+  block_type fundraising_block_type_enum [not null, note: "Loại chặn"]
+  description text [not null, note: "Mô tả chi tiết chặn"]
+  blocked_ui_elements text [note: "Các phần tử giao diện bị chặn (nút, form, v.v.)"]
+  is_active bool [not null, default: true, note: "Chặn còn hiệu lực hay không"]
+  created_at timestamptz [not null, note: "Thời điểm tạo chặn"]
+
+  Indexes {
+    (event_id, block_type) [name: 'idx_blocks_event_type']
+    is_active [name: 'idx_blocks_active']
+  }
+}
+
+Table event_access_logs {
+  id uuid [pk, note: "Khóa chính nhật ký truy cập"]
+  public_id varchar [unique, note: "Mã công khai"]
+  event_id uuid [not null, ref: > events.id, note: "Sự kiện được truy cập"]
+  user_id uuid [note: "Người dùng (nullable nếu ẩn danh)"]
+  action_type access_log_action_type_enum [not null, note: "Loại hành động"]
+  action_timestamp timestamptz [not null, note: "Thời điểm hành động"]
+  ip_address varchar(45) [note: "Địa chỉ IP"]
+  user_agent text [note: "User agent (trình duyệt, thiết bị)"]
+  referrer_url text [note: "URL referrer"]
+  action_details jsonb [note: "Chi tiết bổ sung (ví dụ: giá tiền thử, loại quyên góp)"]
+  policy_violation_detected bool [not null, default: false, note: "Có phát hiện vi phạm hay không"]
+  created_at timestamptz [not null, note: "Thời điểm ghi nhận"]
+
+  Indexes {
+    (event_id, action_timestamp) [name: 'idx_access_event_time']
+    (user_id, event_id) [name: 'idx_access_user_event']
+    policy_violation_detected [name: 'idx_access_violation_detected']
+  }
+}
+
+Table event_violations {
+  id uuid [pk, note: "Khóa chính vi phạm"]
+  public_id varchar [unique, note: "Mã công khai"]
+  event_id uuid [not null, ref: > events.id, note: "Sự kiện vi phạm"]
+  organizer_user_id uuid [not null, note: "Người tổ chức vi phạm"]
+  violation_type violation_type_enum [not null, note: "Loại vi phạm"]
+  severity violation_severity_enum [not null, default: 'warning', note: "Mức độ nghiêm trọng"]
+  violation_description text [not null, note: "Mô tả chi tiết vi phạm"]
+  evidence_urls jsonb [note: "URL chứng minh (ảnh chụp, link, v.v.)"]
+  detection_date date [not null, note: "Ngày phát hiện"]
+  detection_source varchar(200) [note: "Nguồn phát hiện (user report, automatic scan, v.v.)"]
+  is_acknowledged bool [not null, default: false, note: "Người tổ chức đã biết hay chưa"]
+  acknowledgment_date date [note: "Ngày biết"]
+  resolution_status varchar(50) [note: "Trạng thái xử lý (pending, in_progress, resolved)"]
+  resolution_date date [note: "Ngày xử lý"]
+  resolution_notes text [note: "Ghi chú về xử lý"]
+  enforcement_action_taken bool [not null, default: false, note: "Có áp dụng hành động (suspend, ban) hay không"]
+  enforcement_details text [note: "Chi tiết hành động áp dụng"]
+  reviewed_by_user_id uuid [note: "Admin xem xét"]
+  created_at timestamptz [not null, note: "Thời điểm phát hiện vi phạm"]
+
+  Indexes {
+    (event_id, violation_type) [name: 'idx_violations_event_type']
+    (organizer_user_id, severity) [name: 'idx_violations_organizer_severity']
+    detection_date [name: 'idx_violations_detection_date']
+    resolution_status [name: 'idx_violations_resolution']
+  }
+}
+
+TableGroup "Events Core" [note: "Nhóm sự kiện chính"] {
+  events
+}
+
+TableGroup "Monetization Policy" [note: "Nhóm chính sách kiếm tiền"] {
+  event_monetization_rules
+  event_fundraising_blocks
+}
+
+TableGroup "Monitoring & Compliance" [note: "Nhóm theo dõi & tuân thủ"] {
+  event_access_logs
+  event_violations
+}

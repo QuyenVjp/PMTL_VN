@@ -1,0 +1,169 @@
+// Life Liberation Module - logical schema (Lược đồ logic Mô-đun Phóng Sinh) aligned with current repo truth
+// Canonical data schema owner. See related MODULE_MAP.md and USE_CASES/ for behavior.
+
+Project life_liberation_module {
+  database_type: "PostgreSQL"
+  Note: '''
+  Mô-đun Phóng Sinh (Life Liberation) cho PMTL_VN.
+  Hướng dẫn tra cứu nhanh (Quick lookup):
+  - life_releases: Bản ghi chính phóng sinh (cá, tôm, chim, côn trùng).
+  - life_release_candidates: Danh sách sinh vật cần phóng (loại, số lượng, loại ăn thịt cấm).
+  - proxy_life_releases: Phóng sinh thay cho người khác (với anonymity guard).
+  - life_release_dedications: Khấn dâng công đức cho ai, tiền chuyển giao (money transfer protocol).
+  - life_release_audits: Kiểm toán, ghi chép sức khỏe sinh vật, bù đắp tử vong.
+  '''
+}
+
+Enum life_release_type_enum {
+  fish [note: "Cá"]
+  shrimp [note: "Tôm"]
+  bird [note: "Chim"]
+  insect [note: "Côn trùng"]
+  other [note: "Khác"]
+}
+
+Enum predatory_species_enum {
+  catfish [note: "Cá trê (ăn thịt)"]
+  snakehead [note: "Cá lóc (ăn thịt)"]
+  perch [note: "Cá ba sa (ăn thịt)"]
+  pike [note: "Cá ngần (ăn thịt)"]
+  carnivore_bird [note: "Chim ăn thịt"]
+}
+
+Enum proxy_release_mode_enum {
+  full_anonymity [note: "Hoàn toàn ẩn danh (không ai biết)"]
+  sponsor_anonymous [note: "Người tài trợ ẩn, người nhận biết"]
+  mutual_known [note: "Cả hai đều biết"]
+}
+
+Enum life_release_status_enum {
+  planned [note: "Dự kiến / planned"]
+  in_progress [note: "Đang thực hiện / in progress"]
+  completed [note: "Hoàn thành / completed"]
+  failed [note: "Thất bại / failed (động vật quay về, chết)"]
+  audited [note: "Đã kiểm toán / audited"]
+}
+
+Enum mortality_compensation_status_enum {
+  none [note: "Không có tử vong / no mortality"]
+  minor_loss [note: "Tử vong nhẹ (< 5%) / minor loss"]
+  acceptable_loss [note: "Tử vong chấp nhận được (5-10%) / acceptable"]
+  excessive_loss [note: "Tử vong quá mức (> 10%, cần bù) / excessive"]
+  compensated [note: "Đã bù đắp / compensated"]
+}
+
+Table life_releases {
+  id uuid [pk, note: "Khóa chính phóng sinh"]
+  public_id varchar [unique, note: "Mã công khai an toàn"]
+  release_type life_release_type_enum [not null, note: "Loại sinh vật"]
+  species_name varchar(200) [not null, note: "Tên loài cụ thể"]
+  quantity_released int [not null, note: "Số lượng phóng"]
+  weight_kg decimal(10,2) [note: "Khối lượng tổng (nếu có)"]
+  location varchar(300) [note: "Nơi phóng sinh (sông, hồ, v.v.)"]
+  release_date date [not null, note: "Ngày phóng sinh"]
+  release_time time [note: "Giờ phóng sinh (nếu ghi)"]
+  status life_release_status_enum [not null, default: 'planned', note: "Trạng thái phóng sinh"]
+  initiated_by_user_id uuid [note: "Người khởi tạo/tài trợ"]
+  supervisor_user_id uuid [note: "Người giám sát thực hiện"]
+  notes text [note: "Ghi chú thêm"]
+  created_at timestamptz [not null, note: "Thời điểm tạo"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (release_type, release_date) [name: 'idx_releases_type_date']
+    (status, release_date) [name: 'idx_releases_status_date']
+  }
+}
+
+Table life_release_candidates {
+  id uuid [pk, note: "Khóa chính danh sách sinh vật"]
+  public_id varchar [unique, note: "Mã công khai"]
+  life_release_id uuid [not null, ref: > life_releases.id, note: "Phóng sinh chứa danh sách này"]
+  species_name varchar(200) [not null, note: "Tên loài"]
+  quantity int [not null, note: "Số lượng loài này"]
+  is_predatory_banned bool [not null, default: false, note: "Loài ăn thịt bị cấm (cá trê, cá lóc, v.v.)"]
+  predatory_species_type predatory_species_enum [note: "Nếu bị cấm, loại nào cụ thể"]
+  unit_price_vnd decimal(12,2) [note: "Giá/con hoặc giá/kg nếu cân"]
+  total_cost_vnd decimal(14,2) [note: "Chi phí cho loài này"]
+  created_at timestamptz [not null, note: "Thời điểm thêm vào danh sách"]
+
+  Indexes {
+    (life_release_id, species_name) [name: 'idx_candidates_release_species']
+  }
+}
+
+Table proxy_life_releases {
+  id uuid [pk, note: "Khóa chính phóng sinh thay"]
+  public_id varchar [unique, note: "Mã công khai"]
+  life_release_id uuid [not null, ref: > life_releases.id, note: "Phóng sinh chính"]
+  sponsor_user_id uuid [not null, note: "Người tài trợ (người dùng tiền, dâng công đức)"]
+  beneficiary_user_id uuid [note: "Người nhận hưởng công đức (nullable nếu ẩn danh)"]
+  anonymity_mode proxy_release_mode_enum [not null, default: 'full_anonymity', note: "Mức độ ẩn danh"]
+  sponsor_silence_lock bool [not null, default: false, note: "Cấm sponsor nhắc tên mình (cấm phát biểu)"]
+  beneficiary_contact_allowed bool [not null, default: false, note: "Có cho phép liên lạc hay không"]
+  proxy_started_at timestamptz [note: "Lúc bắt đầu phóng sinh thay"]
+  notes text [note: "Ghi chú về sự sắp xếp proxy"]
+  created_at timestamptz [not null, note: "Thời điểm tạo phóng sinh thay"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (sponsor_user_id, beneficiary_user_id) [name: 'idx_proxy_sponsor_beneficiary']
+    anonymity_mode [name: 'idx_proxy_anonymity']
+  }
+}
+
+Table life_release_dedications {
+  id uuid [pk, note: "Khóa chính khấn dâng"]
+  public_id varchar [unique, note: "Mã công khai"]
+  life_release_id uuid [not null, ref: > life_releases.id, note: "Phóng sinh có khấn dâng"]
+  dedicated_to_user_id uuid [note: "Người được dâng công đức cho (nếu có)"]
+  dedicated_to_text varchar(300) [note: "Tên người/ý định dâng (nếu không phải user)"]
+  money_transfer_required bool [not null, default: false, note: "Có yêu cầu chuyển giao tiền hay không"]
+  money_transfer_amount_vnd decimal(14,2) [note: "Số tiền cần chuyển giao"]
+  money_transfer_completed bool [not null, default: false, note: "Đã hoàn tất chuyển giao hay chưa"]
+  money_transfer_method varchar(100) [note: "Phương thức chuyển (Zalo Pay, bank, tiền mặt, v.v.)"]
+  money_transfer_date date [note: "Ngày chuyển giao tiền"]
+  altar_dedication_performed bool [not null, default: false, note: "Đã khấn tại bàn thờ hay chưa"]
+  created_at timestamptz [not null, note: "Thời điểm tạo khấn dâng"]
+  updated_at timestamptz [not null, note: "Thời điểm cập nhật"]
+
+  Indexes {
+    (life_release_id, dedicated_to_user_id) [name: 'idx_dedications_release_beneficiary']
+  }
+}
+
+Table life_release_audits {
+  id uuid [pk, note: "Khóa chính kiểm toán"]
+  public_id varchar [unique, note: "Mã công khai"]
+  life_release_id uuid [not null, ref: > life_releases.id, note: "Phóng sinh được kiểm toán"]
+  audit_date date [not null, note: "Ngày kiểm toán"]
+  total_expected int [not null, note: "Số lượng sinh vật dự kiến"]
+  total_actual_released int [not null, note: "Số lượng thực tế phóng được"]
+  mortalities_observed int [not null, default: 0, note: "Số tử vong quan sát được"]
+  mortality_rate_percent decimal(5,2) [note: "Tỷ lệ tử vong (%)"]
+  mortality_compensation_status mortality_compensation_status_enum [not null, default: 'none', note: "Trạng thái bù đắp"]
+  compensation_quantity int [note: "Số lượng sinh vật bù (nếu áp dụng)"]
+  compensation_cost_vnd decimal(14,2) [note: "Chi phí bù đắp (nếu có)"]
+  auditor_notes text [note: "Ghi chú chi tiết từ kiểm toán viên"]
+  audited_by_user_id uuid [note: "Người kiểm toán"]
+  created_at timestamptz [not null, note: "Thời điểm tạo kiểm toán"]
+
+  Indexes {
+    (life_release_id, audit_date) [name: 'idx_audits_release_date']
+    mortality_compensation_status [name: 'idx_audits_compensation_status']
+  }
+}
+
+TableGroup "Life Release Core" [note: "Nhóm phóng sinh chính"] {
+  life_releases
+  life_release_candidates
+}
+
+TableGroup "Proxy & Dedication" [note: "Nhóm phóng sinh thay & khấn dâng"] {
+  proxy_life_releases
+  life_release_dedications
+}
+
+TableGroup "Audit & Compliance" [note: "Nhóm kiểm toán & tuân thủ"] {
+  life_release_audits
+}

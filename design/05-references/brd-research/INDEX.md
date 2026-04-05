@@ -10,15 +10,15 @@ Logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/US
 
 ---
 
-## BRD Files (hiện tại ở design/ root — legacy location)
+## BRD Files (now in design/05-references/brd-research/ — proper location)
 
 | File | Phase | Nội dung chính | Distribution status |
 |---|---|---|---|
-| [BRD_PHASE_20_GOLDEN_PRACTICES.md](../../BRD_PHASE_20_GOLDEN_PRACTICES.md) | Phase 20 | Golden practices: yin-time guard, location-bound vow, recitation economy, merit transfer engine, karma debt tracking | ✅ Distributed — xem `design/03-domains/*/USE_CASES/` |
-| [BRD_PHASE_21_DHARMA_PROTECTOR_ENGINE.md](../../BRD_PHASE_21_DHARMA_PROTECTOR_ENGINE.md) | Phase 21 | Dharma protector engine: Thái Tuế, Calamity year, print calibration, merit fraction engine | ✅ Distributed |
-| [BRD_PHASE_22_BEHAVIORAL_GUARDS_AND_IMMUTABILITY.md](../../BRD_PHASE_22_BEHAVIORAL_GUARDS_AND_IMMUTABILITY.md) | Phase 22 | Behavioral guards: offline sync spoofing, commitment gates, karma balance cascade, anti-skimming, depth tracker | ✅ Distributed |
-| [BRD_PHASE_23_SPATIAL_GUARDS_AND_ENVIRONMENTAL_SENSING.md](../../BRD_PHASE_23_SPATIAL_GUARDS_AND_ENVIRONMENTAL_SENSING.md) | Phase 23 | Spatial environment guards: posture enforcement, no-water-staring, no-altar prerequisite, burn sanitization | ✅ Distributed |
-| [BRD_PHASE_24_PHYSICAL_DIGITAL_INTEGRITY_AND_KARMA_PRECISION.md](../../BRD_PHASE_24_PHYSICAL_DIGITAL_INTEGRITY_AND_KARMA_PRECISION.md) | Phase 24 | Physical-digital integrity: face-down detection, pause mantra seal, bodhisattva invocation, casualty debt, form disposal polarity | ✅ Distributed |
+| [BRD_PHASE_20_GOLDEN_PRACTICES.md](./BRD_PHASE_20_GOLDEN_PRACTICES.md) | Phase 20 | Golden practices: yin-time guard, location-bound vow, recitation economy, merit transfer engine, karma debt tracking | ✅ Distributed — xem `design/03-domains/*/USE_CASES/` |
+| [BRD_PHASE_21_DHARMA_PROTECTOR_ENGINE.md](./BRD_PHASE_21_DHARMA_PROTECTOR_ENGINE.md) | Phase 21 | Dharma protector engine: Thái Tuế, Calamity year, print calibration, merit fraction engine | ✅ Distributed |
+| [BRD_PHASE_22_BEHAVIORAL_GUARDS_AND_IMMUTABILITY.md](./BRD_PHASE_22_BEHAVIORAL_GUARDS_AND_IMMUTABILITY.md) | Phase 22 | Behavioral guards: offline sync spoofing, commitment gates, karma balance cascade, anti-skimming, depth tracker | ✅ Distributed |
+| [BRD_PHASE_23_SPATIAL_GUARDS_AND_ENVIRONMENTAL_SENSING.md](./BRD_PHASE_23_SPATIAL_GUARDS_AND_ENVIRONMENTAL_SENSING.md) | Phase 23 | Spatial environment guards: posture enforcement, no-water-staring, no-altar prerequisite, burn sanitization | ✅ Distributed |
+| [BRD_PHASE_24_PHYSICAL_DIGITAL_INTEGRITY_AND_KARMA_PRECISION.md](./BRD_PHASE_24_PHYSICAL_DIGITAL_INTEGRITY_AND_KARMA_PRECISION.md) | Phase 24 | Physical-digital integrity: face-down detection, pause mantra seal, bodhisattva invocation, casualty debt, form disposal polarity | ✅ Distributed |
 
 ---
 
@@ -283,7 +283,12 @@ Logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/US
 
 ## Rules for new BRD phases
 
-1. Tạo file mới tại `design/05-references/brd-research/BRD_PHASE_XX_*.md` — không phải `design/` root
+1. ✅ Tạo file mới tại `design/05-references/brd-research/BRD_PHASE_XX_*.md` — không phải `design/` root
+   - **Migration complete (2026-04-05):** Phase 20-24 files moved from root to proper location
+   - Root location now contains MIGRATION NOTICE shims pointing to new location
 2. Phân phối logic vào đúng domain USE_CASES trước khi bắt đầu implement
 3. Cập nhật bảng Distribution Map ở file này
 4. File BRD chỉ là source snapshot — không reference trực tiếp từ code
+5. After creating new BRD file, check for internal references using:
+   - `rg "BRD_PHASE_XX" --type md`
+   - Update any links found to point to new location
