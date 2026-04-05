@@ -172,7 +172,11 @@ export const GuideCategory = {
   DAILY_PRACTICE: 'DAILY_PRACTICE',
   LITTLE_HOUSE: 'LITTLE_HOUSE',
   LIFE_RELEASE: 'LIFE_RELEASE',
-  GENERAL: 'GENERAL'
+  GENERAL: 'GENERAL',
+  ALTAR_SETUP: 'ALTAR_SETUP',
+  ALTAR_OFFERINGS: 'ALTAR_OFFERINGS',
+  ALTAR_MAINTENANCE: 'ALTAR_MAINTENANCE',
+  HEART_INCENSE: 'HEART_INCENSE'
 } as const
 
 export type GuideCategory = (typeof GuideCategory)[keyof typeof GuideCategory]
@@ -182,7 +186,8 @@ export const DownloadCategory = {
   GUIDE: 'GUIDE',
   TEMPLATE: 'TEMPLATE',
   REFERENCE: 'REFERENCE',
-  FAQ: 'FAQ'
+  FAQ: 'FAQ',
+  SPIRITUAL_APPLICATION: 'SPIRITUAL_APPLICATION'
 } as const
 
 export type DownloadCategory = (typeof DownloadCategory)[keyof typeof DownloadCategory]
@@ -218,14 +223,39 @@ export const LittleHouseStatus = {
 export type LittleHouseStatus = (typeof LittleHouseStatus)[keyof typeof LittleHouseStatus]
 
 
+export const LittleHousePurpose = {
+  GENERAL_SUPPORT: 'GENERAL_SUPPORT',
+  RESOLVE_CONFLICT: 'RESOLVE_CONFLICT',
+  DECEASED: 'DECEASED',
+  FETAL_SPIRIT: 'FETAL_SPIRIT',
+  SELF_ACCUMULATE: 'SELF_ACCUMULATE',
+  HEALTH_ISSUE: 'HEALTH_ISSUE',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type LittleHousePurpose = (typeof LittleHousePurpose)[keyof typeof LittleHousePurpose]
+
+
 export const AltarActionType = {
   INCENSE: 'INCENSE',
   MAINTENANCE: 'MAINTENANCE',
   MOVE: 'MOVE',
-  HEART_INCENSE: 'HEART_INCENSE'
+  HEART_INCENSE: 'HEART_INCENSE',
+  RELOCATION: 'RELOCATION'
 } as const
 
 export type AltarActionType = (typeof AltarActionType)[keyof typeof AltarActionType]
+
+
+export const AltarRelocationStep = {
+  PREPARING: 'PREPARING',
+  INCENSE_BURNED_OLD_HOME: 'INCENSE_BURNED_OLD_HOME',
+  WRAPPED_IN_RED_CLOTH: 'WRAPPED_IN_RED_CLOTH',
+  ALTAR_INSTALLED_NEW_HOME: 'ALTAR_INSTALLED_NEW_HOME',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type AltarRelocationStep = (typeof AltarRelocationStep)[keyof typeof AltarRelocationStep]
 
 
 export const SymptomTag = {
@@ -236,3 +266,379 @@ export const SymptomTag = {
 } as const
 
 export type SymptomTag = (typeof SymptomTag)[keyof typeof SymptomTag]
+
+
+export const SutraType = {
+  LONG: 'LONG',
+  SHORT: 'SHORT'
+} as const
+
+export type SutraType = (typeof SutraType)[keyof typeof SutraType]
+
+
+export const MentalHealthCondition = {
+  NONE: 'NONE',
+  DEPRESSION: 'DEPRESSION',
+  SCHIZOPHRENIA: 'SCHIZOPHRENIA',
+  ANXIETY: 'ANXIETY',
+  BIPOLAR: 'BIPOLAR',
+  OTHER_MENTAL_ILLNESS: 'OTHER_MENTAL_ILLNESS'
+} as const
+
+export type MentalHealthCondition = (typeof MentalHealthCondition)[keyof typeof MentalHealthCondition]
+
+
+export const DreamAbortionChildState = {
+  WELL_DRESSED_HAPPY: 'WELL_DRESSED_HAPPY',
+  LEAVING_PEACEFULLY: 'LEAVING_PEACEFULLY',
+  CRYING_DISTRESSED: 'CRYING_DISTRESSED',
+  POORLY_DRESSED: 'POORLY_DRESSED',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type DreamAbortionChildState = (typeof DreamAbortionChildState)[keyof typeof DreamAbortionChildState]
+
+
+export const SelfCultivationSutraType = {
+  LE_PHAT_DAI_SAM_HOI_VAN: 'LE_PHAT_DAI_SAM_HOI_VAN',
+  CHU_DAI_BI: 'CHU_DAI_BI',
+  TAM_KINH: 'TAM_KINH',
+  VANG_SINH_CHU: 'VANG_SINH_CHU'
+} as const
+
+export type SelfCultivationSutraType = (typeof SelfCultivationSutraType)[keyof typeof SelfCultivationSutraType]
+
+
+export const SelfCultivationSheetStatus = {
+  DRAFT: 'DRAFT',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  BURNED: 'BURNED'
+} as const
+
+export type SelfCultivationSheetStatus = (typeof SelfCultivationSheetStatus)[keyof typeof SelfCultivationSheetStatus]
+
+
+export const SpiritualAppBurnRule = {
+  MUST_BURN: 'MUST_BURN',
+  NEVER_BURN: 'NEVER_BURN',
+  OPTIONAL: 'OPTIONAL'
+} as const
+
+export type SpiritualAppBurnRule = (typeof SpiritualAppBurnRule)[keyof typeof SpiritualAppBurnRule]
+
+
+export const RitualSessionStatus = {
+  ACTIVE: 'ACTIVE',
+  ALERT_FIRED: 'ALERT_FIRED',
+  COMPLETED: 'COMPLETED',
+  ABANDONED: 'ABANDONED'
+} as const
+
+export type RitualSessionStatus = (typeof RitualSessionStatus)[keyof typeof RitualSessionStatus]
+
+
+export const PersonLifeStatus = {
+  LIVING: 'LIVING',
+  DECEASED: 'DECEASED'
+} as const
+
+export type PersonLifeStatus = (typeof PersonLifeStatus)[keyof typeof PersonLifeStatus]
+
+
+export const ApplicationStatus = {
+  PENDING_BURN: 'PENDING_BURN',
+  BURNED: 'BURNED',
+  ACTIVATED: 'ACTIVATED'
+} as const
+
+export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof ApplicationStatus]
+
+
+export const BurnSessionStatus = {
+  PENDING: 'PENDING',
+  PRE_CHECKED: 'PRE_CHECKED',
+  BURNING: 'BURNING',
+  POST_CHECK_PENDING: 'POST_CHECK_PENDING',
+  COMPLETED: 'COMPLETED',
+  ABANDONED: 'ABANDONED'
+} as const
+
+export type BurnSessionStatus = (typeof BurnSessionStatus)[keyof typeof BurnSessionStatus]
+
+
+export const BodhisattvaType = {
+  THICH_CA_MAU_NI: 'THICH_CA_MAU_NI',
+  QUAN_THE_AM: 'QUAN_THE_AM',
+  NAM_KINH: 'NAM_KINH',
+  THAI_TUOI: 'THAI_TUOI',
+  QUAN_DE: 'QUAN_DE',
+  CHAU_XUONG: 'CHAU_XUONG',
+  QUAN_BINH: 'QUAN_BINH'
+} as const
+
+export type BodhisattvaType = (typeof BodhisattvaType)[keyof typeof BodhisattvaType]
+
+
+export const WaterConsumptionMethod = {
+  DRINK_DIRECTLY: 'DRINK_DIRECTLY',
+  MUST_DISCARD: 'MUST_DISCARD',
+  MUST_RECITE_ONE_DBZ: 'MUST_RECITE_ONE_DBZ'
+} as const
+
+export type WaterConsumptionMethod = (typeof WaterConsumptionMethod)[keyof typeof WaterConsumptionMethod]
+
+
+export const CharityType = {
+  BUDDHIST_TEMPLE: 'BUDDHIST_TEMPLE',
+  BUDDHIST_ORGANIZATION: 'BUDDHIST_ORGANIZATION',
+  ANIMAL_WELFARE: 'ANIMAL_WELFARE',
+  ENVIRONMENTAL: 'ENVIRONMENTAL',
+  DISASTER_RELIEF: 'DISASTER_RELIEF',
+  OTHER_NGOS: 'OTHER_NGOS'
+} as const
+
+export type CharityType = (typeof CharityType)[keyof typeof CharityType]
+
+
+export const WhitelistingCriteriaType = {
+  LEGAL_REGISTRATION: 'LEGAL_REGISTRATION',
+  FINANCIAL_TRANSPARENCY: 'FINANCIAL_TRANSPARENCY',
+  MONK_VERIFICATION: 'MONK_VERIFICATION',
+  COMMUNITY_ENDORSEMENT: 'COMMUNITY_ENDORSEMENT',
+  TRACK_RECORD: 'TRACK_RECORD',
+  AUDIT_REPORT: 'AUDIT_REPORT',
+  NO_FRAUD_HISTORY: 'NO_FRAUD_HISTORY'
+} as const
+
+export type WhitelistingCriteriaType = (typeof WhitelistingCriteriaType)[keyof typeof WhitelistingCriteriaType]
+
+
+export const WhitelistStatus = {
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
+  VERIFIED: 'VERIFIED',
+  SUSPENDED: 'SUSPENDED',
+  REVOKED: 'REVOKED'
+} as const
+
+export type WhitelistStatus = (typeof WhitelistStatus)[keyof typeof WhitelistStatus]
+
+
+export const FraudAlertSeverity = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type FraudAlertSeverity = (typeof FraudAlertSeverity)[keyof typeof FraudAlertSeverity]
+
+
+export const FraudAlertType = {
+  FAKE_ORGANIZATION: 'FAKE_ORGANIZATION',
+  ACCOUNT_ANOMALY: 'ACCOUNT_ANOMALY',
+  PATTERN_MISMATCH: 'PATTERN_MISMATCH',
+  COMPROMISED_ACCOUNT: 'COMPROMISED_ACCOUNT',
+  PHISHING_ATTEMPT: 'PHISHING_ATTEMPT',
+  DONATION_ABUSE: 'DONATION_ABUSE',
+  OTHER_FRAUD: 'OTHER_FRAUD'
+} as const
+
+export type FraudAlertType = (typeof FraudAlertType)[keyof typeof FraudAlertType]
+
+
+export const CharityInteractionType = {
+  DONATION: 'DONATION',
+  LIFE_RELEASE: 'LIFE_RELEASE',
+  VOLUNTEERING: 'VOLUNTEERING',
+  OTHER_INTERACTION: 'OTHER_INTERACTION'
+} as const
+
+export type CharityInteractionType = (typeof CharityInteractionType)[keyof typeof CharityInteractionType]
+
+
+export const PurityLevel = {
+  FULL: 'FULL',
+  EMOTIONAL: 'EMOTIONAL',
+  PHYSICAL: 'PHYSICAL'
+} as const
+
+export type PurityLevel = (typeof PurityLevel)[keyof typeof PurityLevel]
+
+
+export const ThoughtType = {
+  SEXUAL: 'SEXUAL',
+  ATTACHMENT: 'ATTACHMENT',
+  JEALOUSY: 'JEALOUSY',
+  PHYSICAL_URGE: 'PHYSICAL_URGE'
+} as const
+
+export type ThoughtType = (typeof ThoughtType)[keyof typeof ThoughtType]
+
+
+export const BuddhistEventType = {
+  DHARMA_TALK: 'DHARMA_TALK',
+  RECITATION_SESSION: 'RECITATION_SESSION',
+  LIFE_LIBERATION: 'LIFE_LIBERATION',
+  MEDITATION_RETREAT: 'MEDITATION_RETREAT',
+  COMMUNITY_SERVICE: 'COMMUNITY_SERVICE',
+  SUTRA_STUDY: 'SUTRA_STUDY'
+} as const
+
+export type BuddhistEventType = (typeof BuddhistEventType)[keyof typeof BuddhistEventType]
+
+
+export const BuddhistEventStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  REGISTRATION_OPEN: 'REGISTRATION_OPEN',
+  REGISTRATION_CLOSED: 'REGISTRATION_CLOSED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type BuddhistEventStatus = (typeof BuddhistEventStatus)[keyof typeof BuddhistEventStatus]
+
+
+export const EventDeliveryMode = {
+  ONLINE: 'ONLINE',
+  OFFLINE: 'OFFLINE',
+  HYBRID: 'HYBRID'
+} as const
+
+export type EventDeliveryMode = (typeof EventDeliveryMode)[keyof typeof EventDeliveryMode]
+
+
+export const LifeReleaseRecordType = {
+  INDIVIDUAL: 'INDIVIDUAL',
+  GROUP: 'GROUP',
+  PROXY: 'PROXY'
+} as const
+
+export type LifeReleaseRecordType = (typeof LifeReleaseRecordType)[keyof typeof LifeReleaseRecordType]
+
+
+export const LifeReleaseRecordStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type LifeReleaseRecordStatus = (typeof LifeReleaseRecordStatus)[keyof typeof LifeReleaseRecordStatus]
+
+
+export const PredatorySpecies = {
+  TURTLE: 'TURTLE',
+  FISH: 'FISH',
+  BIRD: 'BIRD',
+  INSECT: 'INSECT',
+  FROG: 'FROG',
+  CRAB: 'CRAB',
+  OTHER: 'OTHER'
+} as const
+
+export type PredatorySpecies = (typeof PredatorySpecies)[keyof typeof PredatorySpecies]
+
+
+export const LhStatus = {
+  DRAFT: 'DRAFT',
+  SIGNED: 'SIGNED',
+  CHANTED: 'CHANTED',
+  BURNED: 'BURNED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type LhStatus = (typeof LhStatus)[keyof typeof LhStatus]
+
+
+export const LhRecitationType = {
+  DA_BEI_ZHOU: 'DA_BEI_ZHOU',
+  HEART_SUTRA: 'HEART_SUTRA',
+  REPENTANCE: 'REPENTANCE',
+  NAMO_AMITABHA: 'NAMO_AMITABHA',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type LhRecitationType = (typeof LhRecitationType)[keyof typeof LhRecitationType]
+
+
+export const LhDottingStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type LhDottingStatus = (typeof LhDottingStatus)[keyof typeof LhDottingStatus]
+
+
+export const SacredFormType = {
+  REFUGE_FORM: 'REFUGE_FORM',
+  VOW_FORM: 'VOW_FORM',
+  MERIT_TRANSFER_FORM: 'MERIT_TRANSFER_FORM',
+  RECITATION_CERTIFICATE: 'RECITATION_CERTIFICATE',
+  DHARMA_STUDY_FORM: 'DHARMA_STUDY_FORM'
+} as const
+
+export type SacredFormType = (typeof SacredFormType)[keyof typeof SacredFormType]
+
+
+export const SacredFormPrerequisiteStatus = {
+  NOT_STARTED: 'NOT_STARTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  WAIVED: 'WAIVED'
+} as const
+
+export type SacredFormPrerequisiteStatus = (typeof SacredFormPrerequisiteStatus)[keyof typeof SacredFormPrerequisiteStatus]
+
+
+export const SacredFormApplicantStatus = {
+  PENDING: 'PENDING',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  PROBATION: 'PROBATION',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  REVOKED: 'REVOKED'
+} as const
+
+export type SacredFormApplicantStatus = (typeof SacredFormApplicantStatus)[keyof typeof SacredFormApplicantStatus]
+
+
+export const AltarItemType = {
+  INCENSE_BURNER: 'INCENSE_BURNER',
+  CANDLE_HOLDER: 'CANDLE_HOLDER',
+  FLOWER_VASE: 'FLOWER_VASE',
+  WATER_CUP: 'WATER_CUP',
+  FRUIT_PLATE: 'FRUIT_PLATE',
+  STATUE: 'STATUE',
+  LAMP: 'LAMP',
+  BELL: 'BELL',
+  OTHER: 'OTHER'
+} as const
+
+export type AltarItemType = (typeof AltarItemType)[keyof typeof AltarItemType]
+
+
+export const AltarConditionStatus = {
+  GOOD: 'GOOD',
+  NEEDS_ATTENTION: 'NEEDS_ATTENTION',
+  REQUIRES_REPLACEMENT: 'REQUIRES_REPLACEMENT',
+  RETIRED: 'RETIRED'
+} as const
+
+export type AltarConditionStatus = (typeof AltarConditionStatus)[keyof typeof AltarConditionStatus]
+
+
+export const AltarProtocolType = {
+  DAILY_CLEANING: 'DAILY_CLEANING',
+  INCENSE_INSERTION: 'INCENSE_INSERTION',
+  WATER_REFRESH: 'WATER_REFRESH',
+  FLOWER_REPLACEMENT: 'FLOWER_REPLACEMENT',
+  LAMP_CHECK: 'LAMP_CHECK',
+  MONTHLY_DEEP_CLEAN: 'MONTHLY_DEEP_CLEAN'
+} as const
+
+export type AltarProtocolType = (typeof AltarProtocolType)[keyof typeof AltarProtocolType]

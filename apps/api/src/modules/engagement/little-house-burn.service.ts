@@ -3,8 +3,8 @@
 // Owner: engagement module
 
 import { Injectable, BadRequestException, UnprocessableEntityException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
-import { BurnSessionStatus } from '@prisma/client';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
+import { BurnSessionStatus } from '../../generated/prisma/enums.js';
 
 interface PreBurnCheckDto {
   littleHouseId: string;

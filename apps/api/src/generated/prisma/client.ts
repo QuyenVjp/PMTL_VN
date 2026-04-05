@@ -256,3 +256,213 @@ export type PracticeProfile = Prisma.PracticeProfileModel
  * 
  */
 export type ActivationLog = Prisma.ActivationLogModel
+/**
+ * Model SelfCultivationSheet
+ * 
+ */
+export type SelfCultivationSheet = Prisma.SelfCultivationSheetModel
+/**
+ * Model SelfCultivationTemplate
+ * 
+ */
+export type SelfCultivationTemplate = Prisma.SelfCultivationTemplateModel
+/**
+ * Model ConvincingFamilyRitualSession
+ * 
+ */
+export type ConvincingFamilyRitualSession = Prisma.ConvincingFamilyRitualSessionModel
+/**
+ * Model NameChangeApplication
+ * 
+ */
+export type NameChangeApplication = Prisma.NameChangeApplicationModel
+/**
+ * Model SutraReadingSession
+ * 
+ */
+export type SutraReadingSession = Prisma.SutraReadingSessionModel
+/**
+ * Model SutraBookmark
+ * 
+ */
+export type SutraBookmark = Prisma.SutraBookmarkModel
+/**
+ * Model LittleHouseBurnSession
+ * 
+ */
+export type LittleHouseBurnSession = Prisma.LittleHouseBurnSessionModel
+/**
+ * Model ChildProfile
+ * 
+ */
+export type ChildProfile = Prisma.ChildProfileModel
+/**
+ * Model AltarProfile
+ * 
+ */
+export type AltarProfile = Prisma.AltarProfileModel
+/**
+ * Model WaterOfferingLog
+ * 
+ */
+export type WaterOfferingLog = Prisma.WaterOfferingLogModel
+/**
+ * Model DeceasedRelative
+ * 
+ */
+export type DeceasedRelative = Prisma.DeceasedRelativeModel
+/**
+ * Model SutraMetadata
+ * 
+ */
+export type SutraMetadata = Prisma.SutraMetadataModel
+/**
+ * Model DreamJournal
+ * 
+ */
+export type DreamJournal = Prisma.DreamJournalModel
+/**
+ * Model LittleHouseWarning
+ * 
+ */
+export type LittleHouseWarning = Prisma.LittleHouseWarningModel
+/**
+ * Model CharityWhitelist
+ * 
+ */
+export type CharityWhitelist = Prisma.CharityWhitelistModel
+/**
+ * Model CharityWhitelistingRule
+ * 
+ */
+export type CharityWhitelistingRule = Prisma.CharityWhitelistingRuleModel
+/**
+ * Model FraudDetectionAlert
+ * 
+ */
+export type FraudDetectionAlert = Prisma.FraudDetectionAlertModel
+/**
+ * Model UserCharityInteraction
+ * 
+ */
+export type UserCharityInteraction = Prisma.UserCharityInteractionModel
+/**
+ * Model MaritalPurityVow
+ * 
+ */
+export type MaritalPurityVow = Prisma.MaritalPurityVowModel
+/**
+ * Model ThoughtStateLog
+ * 
+ */
+export type ThoughtStateLog = Prisma.ThoughtStateLogModel
+/**
+ * Model MaritalGuidanceRequest
+ * 
+ */
+export type MaritalGuidanceRequest = Prisma.MaritalGuidanceRequestModel
+/**
+ * Model VowAuditEvent
+ * 
+ */
+export type VowAuditEvent = Prisma.VowAuditEventModel
+/**
+ * Model BuddhistEvent
+ * 
+ */
+export type BuddhistEvent = Prisma.BuddhistEventModel
+/**
+ * Model EventRegistration
+ * 
+ */
+export type EventRegistration = Prisma.EventRegistrationModel
+/**
+ * Model EventAuditLog
+ * 
+ */
+export type EventAuditLog = Prisma.EventAuditLogModel
+/**
+ * Model LifeReleaseRecord
+ * 
+ */
+export type LifeReleaseRecord = Prisma.LifeReleaseRecordModel
+/**
+ * Model ReleaseAnimalEntry
+ * 
+ */
+export type ReleaseAnimalEntry = Prisma.ReleaseAnimalEntryModel
+/**
+ * Model ProxyLifeRelease
+ * 
+ */
+export type ProxyLifeRelease = Prisma.ProxyLifeReleaseModel
+/**
+ * Model LhRecord
+ * 
+ */
+export type LhRecord = Prisma.LhRecordModel
+/**
+ * Model LhRecitation
+ * 
+ */
+export type LhRecitation = Prisma.LhRecitationModel
+/**
+ * Model LhCompletionRecord
+ * 
+ */
+export type LhCompletionRecord = Prisma.LhCompletionRecordModel
+/**
+ * Model LhDottingSession
+ * 
+ */
+export type LhDottingSession = Prisma.LhDottingSessionModel
+/**
+ * Model LhCombustionLog
+ * 
+ */
+export type LhCombustionLog = Prisma.LhCombustionLogModel
+/**
+ * Model LhFraud
+ * 
+ */
+export type LhFraud = Prisma.LhFraudModel
+/**
+ * Model SacredFormTemplate
+ * 
+ */
+export type SacredFormTemplate = Prisma.SacredFormTemplateModel
+/**
+ * Model FormApplicant
+ * 
+ */
+export type FormApplicant = Prisma.FormApplicantModel
+/**
+ * Model FormPrerequisiteEntry
+ * 
+ */
+export type FormPrerequisiteEntry = Prisma.FormPrerequisiteEntryModel
+/**
+ * Model SacredFormAuditLog
+ * 
+ */
+export type SacredFormAuditLog = Prisma.SacredFormAuditLogModel
+/**
+ * Model DisposalPolarityRecord
+ * 
+ */
+export type DisposalPolarityRecord = Prisma.DisposalPolarityRecordModel
+/**
+ * Model AltarItem
+ * 
+ */
+export type AltarItem = Prisma.AltarItemModel
+/**
+ * Model AltarValidationLog
+ * 
+ */
+export type AltarValidationLog = Prisma.AltarValidationLogModel
+/**
+ * Model AltarProtocolTemplate
+ * 
+ */
+export type AltarProtocolTemplate = Prisma.AltarProtocolTemplateModel

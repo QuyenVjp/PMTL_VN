@@ -30,6 +30,10 @@ export type AltarLogMinAggregateOutputType = {
   userId: string | null
   date: Date | null
   actionType: $Enums.AltarActionType | null
+  relocationStep: $Enums.AltarRelocationStep | null
+  incenseBurnedConfirmed: boolean | null
+  redClothConfirmed: boolean | null
+  altarFirstConfirmed: boolean | null
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -41,6 +45,10 @@ export type AltarLogMaxAggregateOutputType = {
   userId: string | null
   date: Date | null
   actionType: $Enums.AltarActionType | null
+  relocationStep: $Enums.AltarRelocationStep | null
+  incenseBurnedConfirmed: boolean | null
+  redClothConfirmed: boolean | null
+  altarFirstConfirmed: boolean | null
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -52,6 +60,10 @@ export type AltarLogCountAggregateOutputType = {
   userId: number
   date: number
   actionType: number
+  relocationStep: number
+  incenseBurnedConfirmed: number
+  redClothConfirmed: number
+  altarFirstConfirmed: number
   checklistStateJson: number
   note: number
   createdAt: number
@@ -66,6 +78,10 @@ export type AltarLogMinAggregateInputType = {
   userId?: true | runtime.Types.Skip
   date?: true | runtime.Types.Skip
   actionType?: true | runtime.Types.Skip
+  relocationStep?: true | runtime.Types.Skip
+  incenseBurnedConfirmed?: true | runtime.Types.Skip
+  redClothConfirmed?: true | runtime.Types.Skip
+  altarFirstConfirmed?: true | runtime.Types.Skip
   note?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
@@ -77,6 +93,10 @@ export type AltarLogMaxAggregateInputType = {
   userId?: true | runtime.Types.Skip
   date?: true | runtime.Types.Skip
   actionType?: true | runtime.Types.Skip
+  relocationStep?: true | runtime.Types.Skip
+  incenseBurnedConfirmed?: true | runtime.Types.Skip
+  redClothConfirmed?: true | runtime.Types.Skip
+  altarFirstConfirmed?: true | runtime.Types.Skip
   note?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
@@ -88,6 +108,10 @@ export type AltarLogCountAggregateInputType = {
   userId?: true | runtime.Types.Skip
   date?: true | runtime.Types.Skip
   actionType?: true | runtime.Types.Skip
+  relocationStep?: true | runtime.Types.Skip
+  incenseBurnedConfirmed?: true | runtime.Types.Skip
+  redClothConfirmed?: true | runtime.Types.Skip
+  altarFirstConfirmed?: true | runtime.Types.Skip
   checklistStateJson?: true | runtime.Types.Skip
   note?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
@@ -173,6 +197,10 @@ export type AltarLogGroupByOutputType = {
   userId: string
   date: Date
   actionType: $Enums.AltarActionType
+  relocationStep: $Enums.AltarRelocationStep | null
+  incenseBurnedConfirmed: boolean | null
+  redClothConfirmed: boolean | null
+  altarFirstConfirmed: boolean | null
   checklistStateJson: runtime.JsonValue
   note: string | null
   createdAt: Date
@@ -206,6 +234,10 @@ export type AltarLogWhereInput = {
   userId?: Prisma.StringFilter<"AltarLog"> | string | runtime.Types.Skip
   date?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFilter<"AltarLog"> | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.EnumAltarRelocationStepNullableFilter<"AltarLog"> | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonFilter<"AltarLog"> | runtime.Types.Skip
   note?: Prisma.StringNullableFilter<"AltarLog"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
@@ -219,6 +251,10 @@ export type AltarLogOrderByWithRelationInput = {
   userId?: Prisma.SortOrder | runtime.Types.Skip
   date?: Prisma.SortOrder | runtime.Types.Skip
   actionType?: Prisma.SortOrder | runtime.Types.Skip
+  relocationStep?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  redClothConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   checklistStateJson?: Prisma.SortOrder | runtime.Types.Skip
   note?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -235,6 +271,10 @@ export type AltarLogWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"AltarLog"> | string | runtime.Types.Skip
   date?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFilter<"AltarLog"> | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.EnumAltarRelocationStepNullableFilter<"AltarLog"> | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonFilter<"AltarLog"> | runtime.Types.Skip
   note?: Prisma.StringNullableFilter<"AltarLog"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
@@ -248,6 +288,10 @@ export type AltarLogOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder | runtime.Types.Skip
   date?: Prisma.SortOrder | runtime.Types.Skip
   actionType?: Prisma.SortOrder | runtime.Types.Skip
+  relocationStep?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  redClothConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   checklistStateJson?: Prisma.SortOrder | runtime.Types.Skip
   note?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -266,6 +310,10 @@ export type AltarLogScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"AltarLog"> | string | runtime.Types.Skip
   date?: Prisma.DateTimeWithAggregatesFilter<"AltarLog"> | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeWithAggregatesFilter<"AltarLog"> | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.EnumAltarRelocationStepNullableWithAggregatesFilter<"AltarLog"> | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.BoolNullableWithAggregatesFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.BoolNullableWithAggregatesFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.BoolNullableWithAggregatesFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonWithAggregatesFilter<"AltarLog"> | runtime.Types.Skip
   note?: Prisma.StringNullableWithAggregatesFilter<"AltarLog"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AltarLog"> | Date | string | runtime.Types.Skip
@@ -277,6 +325,10 @@ export type AltarLogCreateInput = {
   publicId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -290,6 +342,10 @@ export type AltarLogUncheckedCreateInput = {
   userId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -301,6 +357,10 @@ export type AltarLogUpdateInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -314,6 +374,10 @@ export type AltarLogUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -326,6 +390,10 @@ export type AltarLogCreateManyInput = {
   userId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -337,6 +405,10 @@ export type AltarLogUpdateManyMutationInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -349,6 +421,10 @@ export type AltarLogUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -371,6 +447,10 @@ export type AltarLogCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder | runtime.Types.Skip
   date?: Prisma.SortOrder | runtime.Types.Skip
   actionType?: Prisma.SortOrder | runtime.Types.Skip
+  relocationStep?: Prisma.SortOrder | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  redClothConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.SortOrder | runtime.Types.Skip
   checklistStateJson?: Prisma.SortOrder | runtime.Types.Skip
   note?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -383,6 +463,10 @@ export type AltarLogMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder | runtime.Types.Skip
   date?: Prisma.SortOrder | runtime.Types.Skip
   actionType?: Prisma.SortOrder | runtime.Types.Skip
+  relocationStep?: Prisma.SortOrder | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  redClothConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.SortOrder | runtime.Types.Skip
   note?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -394,6 +478,10 @@ export type AltarLogMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder | runtime.Types.Skip
   date?: Prisma.SortOrder | runtime.Types.Skip
   actionType?: Prisma.SortOrder | runtime.Types.Skip
+  relocationStep?: Prisma.SortOrder | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  redClothConfirmed?: Prisma.SortOrder | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.SortOrder | runtime.Types.Skip
   note?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
@@ -445,11 +533,23 @@ export type EnumAltarActionTypeFieldUpdateOperationsInput = {
   set?: $Enums.AltarActionType | runtime.Types.Skip
 }
 
+export type NullableEnumAltarRelocationStepFieldUpdateOperationsInput = {
+  set?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+}
+
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null | runtime.Types.Skip
+}
+
 export type AltarLogCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -461,6 +561,10 @@ export type AltarLogUncheckedCreateWithoutUserInput = {
   publicId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -502,6 +606,10 @@ export type AltarLogScalarWhereInput = {
   userId?: Prisma.StringFilter<"AltarLog"> | string | runtime.Types.Skip
   date?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFilter<"AltarLog"> | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.EnumAltarRelocationStepNullableFilter<"AltarLog"> | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.BoolNullableFilter<"AltarLog"> | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonFilter<"AltarLog"> | runtime.Types.Skip
   note?: Prisma.StringNullableFilter<"AltarLog"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"AltarLog"> | Date | string | runtime.Types.Skip
@@ -513,6 +621,10 @@ export type AltarLogCreateManyUserInput = {
   publicId: string
   date: Date | string
   actionType: $Enums.AltarActionType
+  relocationStep?: $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | null | runtime.Types.Skip
+  redClothConfirmed?: boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | null | runtime.Types.Skip
   checklistStateJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
   note?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
@@ -524,6 +636,10 @@ export type AltarLogUpdateWithoutUserInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -535,6 +651,10 @@ export type AltarLogUncheckedUpdateWithoutUserInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -546,6 +666,10 @@ export type AltarLogUncheckedUpdateManyWithoutUserInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   actionType?: Prisma.EnumAltarActionTypeFieldUpdateOperationsInput | $Enums.AltarActionType | runtime.Types.Skip
+  relocationStep?: Prisma.NullableEnumAltarRelocationStepFieldUpdateOperationsInput | $Enums.AltarRelocationStep | null | runtime.Types.Skip
+  incenseBurnedConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  redClothConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
+  altarFirstConfirmed?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null | runtime.Types.Skip
   checklistStateJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
@@ -560,6 +684,10 @@ export type AltarLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   userId?: boolean | runtime.Types.Skip
   date?: boolean | runtime.Types.Skip
   actionType?: boolean | runtime.Types.Skip
+  relocationStep?: boolean | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | runtime.Types.Skip
+  redClothConfirmed?: boolean | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | runtime.Types.Skip
   checklistStateJson?: boolean | runtime.Types.Skip
   note?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
@@ -573,6 +701,10 @@ export type AltarLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean | runtime.Types.Skip
   date?: boolean | runtime.Types.Skip
   actionType?: boolean | runtime.Types.Skip
+  relocationStep?: boolean | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | runtime.Types.Skip
+  redClothConfirmed?: boolean | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | runtime.Types.Skip
   checklistStateJson?: boolean | runtime.Types.Skip
   note?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
@@ -586,6 +718,10 @@ export type AltarLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   userId?: boolean | runtime.Types.Skip
   date?: boolean | runtime.Types.Skip
   actionType?: boolean | runtime.Types.Skip
+  relocationStep?: boolean | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | runtime.Types.Skip
+  redClothConfirmed?: boolean | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | runtime.Types.Skip
   checklistStateJson?: boolean | runtime.Types.Skip
   note?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
@@ -599,13 +735,17 @@ export type AltarLogSelectScalar = {
   userId?: boolean | runtime.Types.Skip
   date?: boolean | runtime.Types.Skip
   actionType?: boolean | runtime.Types.Skip
+  relocationStep?: boolean | runtime.Types.Skip
+  incenseBurnedConfirmed?: boolean | runtime.Types.Skip
+  redClothConfirmed?: boolean | runtime.Types.Skip
+  altarFirstConfirmed?: boolean | runtime.Types.Skip
   checklistStateJson?: boolean | runtime.Types.Skip
   note?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type AltarLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "userId" | "date" | "actionType" | "checklistStateJson" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["altarLog"], runtime.Types.Skip>
+export type AltarLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "userId" | "date" | "actionType" | "relocationStep" | "incenseBurnedConfirmed" | "redClothConfirmed" | "altarFirstConfirmed" | "checklistStateJson" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["altarLog"], runtime.Types.Skip>
 export type AltarLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -627,6 +767,10 @@ export type $AltarLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     userId: string
     date: Date
     actionType: $Enums.AltarActionType
+    relocationStep: $Enums.AltarRelocationStep | null
+    incenseBurnedConfirmed: boolean | null
+    redClothConfirmed: boolean | null
+    altarFirstConfirmed: boolean | null
     checklistStateJson: runtime.JsonValue
     note: string | null
     createdAt: Date
@@ -1060,6 +1204,10 @@ export interface AltarLogFieldRefs {
   readonly userId: Prisma.FieldRef<"AltarLog", 'String'>
   readonly date: Prisma.FieldRef<"AltarLog", 'DateTime'>
   readonly actionType: Prisma.FieldRef<"AltarLog", 'AltarActionType'>
+  readonly relocationStep: Prisma.FieldRef<"AltarLog", 'AltarRelocationStep'>
+  readonly incenseBurnedConfirmed: Prisma.FieldRef<"AltarLog", 'Boolean'>
+  readonly redClothConfirmed: Prisma.FieldRef<"AltarLog", 'Boolean'>
+  readonly altarFirstConfirmed: Prisma.FieldRef<"AltarLog", 'Boolean'>
   readonly checklistStateJson: Prisma.FieldRef<"AltarLog", 'Json'>
   readonly note: Prisma.FieldRef<"AltarLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"AltarLog", 'DateTime'>

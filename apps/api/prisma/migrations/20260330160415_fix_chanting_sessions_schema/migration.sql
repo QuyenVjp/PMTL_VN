@@ -1,59 +1,43 @@
-/*
-  Warnings:
+-- Make migration replay-safe for shadow DB / mixed historical baselines.
+ALTER TABLE "chanting_sessions"
+  DROP CONSTRAINT IF EXISTS "chanting_sessions_author_id_fkey";
 
-  - You are about to drop the column `author_id` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `content` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `description` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `duration` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `public_id` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `published_at` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `session_type` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `status` on the `chanting_sessions` table. All the data in the column will be lost.
-  - You are about to drop the column `title` on the `chanting_sessions` table. All the data in the column will be lost.
-  - A unique constraint covering the columns `[public_id]` on the table `chanting_sessions` will be removed. If there were duplicate values, this will fail.
-  - Added the required column `duration_minutes` to the `chanting_sessions` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `session_date` to the `chanting_sessions` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `start_time` to the `chanting_sessions` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `user_id` to the `chanting_sessions` table without a default value. This is not possible if the table is not empty.
+DROP INDEX IF EXISTS "chanting_sessions_author_id_idx";
+DROP INDEX IF EXISTS "chanting_sessions_public_id_key";
+DROP INDEX IF EXISTS "chanting_sessions_session_type_idx";
+DROP INDEX IF EXISTS "chanting_sessions_status_idx";
 
-*/
--- DropForeignKey
-ALTER TABLE "chanting_sessions" DROP CONSTRAINT "chanting_sessions_author_id_fkey";
+ALTER TABLE "chanting_sessions"
+  DROP COLUMN IF EXISTS "author_id",
+  DROP COLUMN IF EXISTS "content",
+  DROP COLUMN IF EXISTS "description",
+  DROP COLUMN IF EXISTS "duration",
+  DROP COLUMN IF EXISTS "public_id",
+  DROP COLUMN IF EXISTS "published_at",
+  DROP COLUMN IF EXISTS "session_type",
+  DROP COLUMN IF EXISTS "status",
+  DROP COLUMN IF EXISTS "title",
+  ADD COLUMN IF NOT EXISTS "duration_minutes" INTEGER,
+  ADD COLUMN IF NOT EXISTS "location" TEXT,
+  ADD COLUMN IF NOT EXISTS "notes" TEXT,
+  ADD COLUMN IF NOT EXISTS "session_date" DATE,
+  ADD COLUMN IF NOT EXISTS "start_time" TEXT,
+  ADD COLUMN IF NOT EXISTS "user_id" TEXT;
 
--- DropIndex
-DROP INDEX "chanting_sessions_author_id_idx";
+CREATE INDEX IF NOT EXISTS "chanting_sessions_user_id_idx" ON "chanting_sessions"("user_id");
+CREATE INDEX IF NOT EXISTS "chanting_sessions_session_date_idx" ON "chanting_sessions"("session_date");
 
--- DropIndex
-DROP INDEX "chanting_sessions_public_id_key";
-
--- DropIndex
-DROP INDEX "chanting_sessions_session_type_idx";
-
--- DropIndex
-DROP INDEX "chanting_sessions_status_idx";
-
--- AlterTable
-ALTER TABLE "chanting_sessions" DROP COLUMN "author_id",
-DROP COLUMN "content",
-DROP COLUMN "description",
-DROP COLUMN "duration",
-DROP COLUMN "public_id",
-DROP COLUMN "published_at",
-DROP COLUMN "session_type",
-DROP COLUMN "status",
-DROP COLUMN "title",
-ADD COLUMN     "duration_minutes" INTEGER NOT NULL,
-ADD COLUMN     "location" TEXT,
-ADD COLUMN     "notes" TEXT,
-ADD COLUMN     "session_date" DATE NOT NULL,
-ADD COLUMN     "start_time" TEXT NOT NULL,
-ADD COLUMN     "user_id" TEXT NOT NULL;
-
--- CreateIndex
-CREATE INDEX "chanting_sessions_user_id_idx" ON "chanting_sessions"("user_id");
-
--- CreateIndex
-CREATE INDEX "chanting_sessions_session_date_idx" ON "chanting_sessions"("session_date");
-
--- AddForeignKey
-ALTER TABLE "chanting_sessions" ADD CONSTRAINT "chanting_sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'chanting_sessions_user_id_fkey'
+  ) THEN
+    ALTER TABLE "chanting_sessions"
+      ADD CONSTRAINT "chanting_sessions_user_id_fkey"
+      FOREIGN KEY ("user_id") REFERENCES "users"("id")
+      ON DELETE CASCADE
+      ON UPDATE CASCADE;
+  END IF;
+END $$;

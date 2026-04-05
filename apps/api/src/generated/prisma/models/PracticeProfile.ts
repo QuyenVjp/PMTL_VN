@@ -20,8 +20,18 @@ export type PracticeProfileModel = runtime.Types.Result.DefaultSelection<Prisma.
 
 export type AggregatePracticeProfile = {
   _count: PracticeProfileCountAggregateOutputType | null
+  _avg: PracticeProfileAvgAggregateOutputType | null
+  _sum: PracticeProfileSumAggregateOutputType | null
   _min: PracticeProfileMinAggregateOutputType | null
   _max: PracticeProfileMaxAggregateOutputType | null
+}
+
+export type PracticeProfileAvgAggregateOutputType = {
+  daBeiZhouDailyLimit: number | null
+}
+
+export type PracticeProfileSumAggregateOutputType = {
+  daBeiZhouDailyLimit: number | null
 }
 
 export type PracticeProfileMinAggregateOutputType = {
@@ -30,6 +40,8 @@ export type PracticeProfileMinAggregateOutputType = {
   elderlyMode: boolean | null
   assistMode: boolean | null
   assistContactRef: string | null
+  mentalHealthCondition: $Enums.MentalHealthCondition | null
+  daBeiZhouDailyLimit: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +52,8 @@ export type PracticeProfileMaxAggregateOutputType = {
   elderlyMode: boolean | null
   assistMode: boolean | null
   assistContactRef: string | null
+  mentalHealthCondition: $Enums.MentalHealthCondition | null
+  daBeiZhouDailyLimit: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,11 +64,21 @@ export type PracticeProfileCountAggregateOutputType = {
   elderlyMode: number
   assistMode: number
   assistContactRef: number
+  mentalHealthCondition: number
+  daBeiZhouDailyLimit: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type PracticeProfileAvgAggregateInputType = {
+  daBeiZhouDailyLimit?: true | runtime.Types.Skip
+}
+
+export type PracticeProfileSumAggregateInputType = {
+  daBeiZhouDailyLimit?: true | runtime.Types.Skip
+}
 
 export type PracticeProfileMinAggregateInputType = {
   id?: true | runtime.Types.Skip
@@ -62,6 +86,8 @@ export type PracticeProfileMinAggregateInputType = {
   elderlyMode?: true | runtime.Types.Skip
   assistMode?: true | runtime.Types.Skip
   assistContactRef?: true | runtime.Types.Skip
+  mentalHealthCondition?: true | runtime.Types.Skip
+  daBeiZhouDailyLimit?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -72,6 +98,8 @@ export type PracticeProfileMaxAggregateInputType = {
   elderlyMode?: true | runtime.Types.Skip
   assistMode?: true | runtime.Types.Skip
   assistContactRef?: true | runtime.Types.Skip
+  mentalHealthCondition?: true | runtime.Types.Skip
+  daBeiZhouDailyLimit?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -82,6 +110,8 @@ export type PracticeProfileCountAggregateInputType = {
   elderlyMode?: true | runtime.Types.Skip
   assistMode?: true | runtime.Types.Skip
   assistContactRef?: true | runtime.Types.Skip
+  mentalHealthCondition?: true | runtime.Types.Skip
+  daBeiZhouDailyLimit?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -125,6 +155,18 @@ export type PracticeProfileAggregateArgs<ExtArgs extends runtime.Types.Extension
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PracticeProfileAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PracticeProfileSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PracticeProfileMinAggregateInputType
@@ -155,6 +197,8 @@ export type PracticeProfileGroupByArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   _count?: PracticeProfileCountAggregateInputType | true
+  _avg?: PracticeProfileAvgAggregateInputType
+  _sum?: PracticeProfileSumAggregateInputType
   _min?: PracticeProfileMinAggregateInputType
   _max?: PracticeProfileMaxAggregateInputType
 }
@@ -165,9 +209,13 @@ export type PracticeProfileGroupByOutputType = {
   elderlyMode: boolean
   assistMode: boolean
   assistContactRef: string | null
+  mentalHealthCondition: $Enums.MentalHealthCondition
+  daBeiZhouDailyLimit: number | null
   createdAt: Date
   updatedAt: Date
   _count: PracticeProfileCountAggregateOutputType | null
+  _avg: PracticeProfileAvgAggregateOutputType | null
+  _sum: PracticeProfileSumAggregateOutputType | null
   _min: PracticeProfileMinAggregateOutputType | null
   _max: PracticeProfileMaxAggregateOutputType | null
 }
@@ -196,6 +244,8 @@ export type PracticeProfileWhereInput = {
   elderlyMode?: Prisma.BoolFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.StringNullableFilter<"PracticeProfile"> | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFilter<"PracticeProfile"> | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.IntNullableFilter<"PracticeProfile"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -207,6 +257,8 @@ export type PracticeProfileOrderByWithRelationInput = {
   elderlyMode?: Prisma.SortOrder | runtime.Types.Skip
   assistMode?: Prisma.SortOrder | runtime.Types.Skip
   assistContactRef?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.SortOrder | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -221,6 +273,8 @@ export type PracticeProfileWhereUniqueInput = Prisma.AtLeast<{
   elderlyMode?: Prisma.BoolFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.StringNullableFilter<"PracticeProfile"> | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFilter<"PracticeProfile"> | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.IntNullableFilter<"PracticeProfile"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -232,11 +286,15 @@ export type PracticeProfileOrderByWithAggregationInput = {
   elderlyMode?: Prisma.SortOrder | runtime.Types.Skip
   assistMode?: Prisma.SortOrder | runtime.Types.Skip
   assistContactRef?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.SortOrder | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.PracticeProfileCountOrderByAggregateInput | runtime.Types.Skip
+  _avg?: Prisma.PracticeProfileAvgOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.PracticeProfileMaxOrderByAggregateInput | runtime.Types.Skip
   _min?: Prisma.PracticeProfileMinOrderByAggregateInput | runtime.Types.Skip
+  _sum?: Prisma.PracticeProfileSumOrderByAggregateInput | runtime.Types.Skip
 }
 
 export type PracticeProfileScalarWhereWithAggregatesInput = {
@@ -248,6 +306,8 @@ export type PracticeProfileScalarWhereWithAggregatesInput = {
   elderlyMode?: Prisma.BoolWithAggregatesFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolWithAggregatesFilter<"PracticeProfile"> | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.StringNullableWithAggregatesFilter<"PracticeProfile"> | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionWithAggregatesFilter<"PracticeProfile"> | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.IntNullableWithAggregatesFilter<"PracticeProfile"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PracticeProfile"> | Date | string | runtime.Types.Skip
 }
@@ -257,6 +317,8 @@ export type PracticeProfileCreateInput = {
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: string | null | runtime.Types.Skip
+  mentalHealthCondition?: $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutPracticeProfileInput
@@ -268,6 +330,8 @@ export type PracticeProfileUncheckedCreateInput = {
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: string | null | runtime.Types.Skip
+  mentalHealthCondition?: $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -277,6 +341,8 @@ export type PracticeProfileUpdateInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutPracticeProfileNestedInput | runtime.Types.Skip
@@ -288,6 +354,8 @@ export type PracticeProfileUncheckedUpdateInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -298,6 +366,8 @@ export type PracticeProfileCreateManyInput = {
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: string | null | runtime.Types.Skip
+  mentalHealthCondition?: $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -307,6 +377,8 @@ export type PracticeProfileUpdateManyMutationInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -317,6 +389,8 @@ export type PracticeProfileUncheckedUpdateManyInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -332,8 +406,14 @@ export type PracticeProfileCountOrderByAggregateInput = {
   elderlyMode?: Prisma.SortOrder | runtime.Types.Skip
   assistMode?: Prisma.SortOrder | runtime.Types.Skip
   assistContactRef?: Prisma.SortOrder | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.SortOrder | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type PracticeProfileAvgOrderByAggregateInput = {
+  daBeiZhouDailyLimit?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type PracticeProfileMaxOrderByAggregateInput = {
@@ -342,6 +422,8 @@ export type PracticeProfileMaxOrderByAggregateInput = {
   elderlyMode?: Prisma.SortOrder | runtime.Types.Skip
   assistMode?: Prisma.SortOrder | runtime.Types.Skip
   assistContactRef?: Prisma.SortOrder | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.SortOrder | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -352,8 +434,14 @@ export type PracticeProfileMinOrderByAggregateInput = {
   elderlyMode?: Prisma.SortOrder | runtime.Types.Skip
   assistMode?: Prisma.SortOrder | runtime.Types.Skip
   assistContactRef?: Prisma.SortOrder | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.SortOrder | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type PracticeProfileSumOrderByAggregateInput = {
+  daBeiZhouDailyLimit?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type PracticeProfileCreateNestedOneWithoutUserInput = {
@@ -388,11 +476,17 @@ export type PracticeProfileUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PracticeProfileUpdateToOneWithWhereWithoutUserInput, Prisma.PracticeProfileUpdateWithoutUserInput>, Prisma.PracticeProfileUncheckedUpdateWithoutUserInput> | runtime.Types.Skip
 }
 
+export type EnumMentalHealthConditionFieldUpdateOperationsInput = {
+  set?: $Enums.MentalHealthCondition | runtime.Types.Skip
+}
+
 export type PracticeProfileCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: string | null | runtime.Types.Skip
+  mentalHealthCondition?: $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -402,6 +496,8 @@ export type PracticeProfileUncheckedCreateWithoutUserInput = {
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: string | null | runtime.Types.Skip
+  mentalHealthCondition?: $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -427,6 +523,8 @@ export type PracticeProfileUpdateWithoutUserInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -436,6 +534,8 @@ export type PracticeProfileUncheckedUpdateWithoutUserInput = {
   elderlyMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistMode?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   assistContactRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  mentalHealthCondition?: Prisma.EnumMentalHealthConditionFieldUpdateOperationsInput | $Enums.MentalHealthCondition | runtime.Types.Skip
+  daBeiZhouDailyLimit?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -448,6 +548,8 @@ export type PracticeProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: boolean | runtime.Types.Skip
+  mentalHealthCondition?: boolean | runtime.Types.Skip
+  daBeiZhouDailyLimit?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -459,6 +561,8 @@ export type PracticeProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: boolean | runtime.Types.Skip
+  mentalHealthCondition?: boolean | runtime.Types.Skip
+  daBeiZhouDailyLimit?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -470,6 +574,8 @@ export type PracticeProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: boolean | runtime.Types.Skip
+  mentalHealthCondition?: boolean | runtime.Types.Skip
+  daBeiZhouDailyLimit?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -481,11 +587,13 @@ export type PracticeProfileSelectScalar = {
   elderlyMode?: boolean | runtime.Types.Skip
   assistMode?: boolean | runtime.Types.Skip
   assistContactRef?: boolean | runtime.Types.Skip
+  mentalHealthCondition?: boolean | runtime.Types.Skip
+  daBeiZhouDailyLimit?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type PracticeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "elderlyMode" | "assistMode" | "assistContactRef" | "createdAt" | "updatedAt", ExtArgs["result"]["practiceProfile"], runtime.Types.Skip>
+export type PracticeProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "elderlyMode" | "assistMode" | "assistContactRef" | "mentalHealthCondition" | "daBeiZhouDailyLimit" | "createdAt" | "updatedAt", ExtArgs["result"]["practiceProfile"], runtime.Types.Skip>
 export type PracticeProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -507,6 +615,8 @@ export type $PracticeProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     elderlyMode: boolean
     assistMode: boolean
     assistContactRef: string | null
+    mentalHealthCondition: $Enums.MentalHealthCondition
+    daBeiZhouDailyLimit: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["practiceProfile"]>
@@ -938,6 +1048,8 @@ export interface PracticeProfileFieldRefs {
   readonly elderlyMode: Prisma.FieldRef<"PracticeProfile", 'Boolean'>
   readonly assistMode: Prisma.FieldRef<"PracticeProfile", 'Boolean'>
   readonly assistContactRef: Prisma.FieldRef<"PracticeProfile", 'String'>
+  readonly mentalHealthCondition: Prisma.FieldRef<"PracticeProfile", 'MentalHealthCondition'>
+  readonly daBeiZhouDailyLimit: Prisma.FieldRef<"PracticeProfile", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PracticeProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PracticeProfile", 'DateTime'>
 }

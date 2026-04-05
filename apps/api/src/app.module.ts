@@ -69,6 +69,11 @@ import { NotificationModule } from "./modules/notification/notification.module.j
 import { ContactModule } from "./modules/contact/contact.module.js";
 import { VowsMeritModule } from "./modules/vows-merit/vows-merit.module.js";
 import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
+import { DharmaComplianceModule } from "./modules/dharma-compliance/dharma-compliance.module.js";
+import { EventsModule } from "./modules/events/events.module.js";
+import { LifeLiberationModule } from "./modules/life-liberation/life-liberation.module.js";
+import { SacredFormsModule } from "./modules/sacred-forms/sacred-forms.module.js";
+import { LittleHouseModule } from "./modules/little-house/little-house.module.js";
 
 @Module({
   imports: [
@@ -97,7 +102,7 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     AdminSystemModule,
     EmailModule,
 
-    // ── Domain (11 modules — design/03-domains/) ────
+    // ── Domain (16 modules — design/03-domains/) ────
     IdentityModule,
     ContentModule,
     ModerationModule,
@@ -109,6 +114,11 @@ import { WisdomQaModule } from "./modules/wisdom-qa/wisdom-qa.module.js";
     ContactModule,
     VowsMeritModule,
     WisdomQaModule,
+    DharmaComplianceModule,
+    EventsModule,
+    LifeLiberationModule,
+    SacredFormsModule,
+    LittleHouseModule,
   ],
   providers: [
     // Passport JWT strategy — validates tokens for AuthGuard

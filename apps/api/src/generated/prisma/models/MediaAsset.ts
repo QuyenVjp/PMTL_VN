@@ -301,6 +301,7 @@ export type MediaAssetWhereInput = {
   downloadThumbnailMedia?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateListRelationFilter | runtime.Types.Skip
 }
 
 export type MediaAssetOrderByWithRelationInput = {
@@ -327,6 +328,7 @@ export type MediaAssetOrderByWithRelationInput = {
   downloadThumbnailMedia?: Prisma.DownloadOrderByRelationAggregateInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventOrderByRelationAggregateInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventOrderByRelationAggregateInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type MediaAssetWhereUniqueInput = Prisma.AtLeast<{
@@ -356,6 +358,7 @@ export type MediaAssetWhereUniqueInput = Prisma.AtLeast<{
   downloadThumbnailMedia?: Prisma.DownloadListRelationFilter | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type MediaAssetOrderByWithAggregationInput = {
@@ -423,6 +426,7 @@ export type MediaAssetCreateInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateInput = {
@@ -448,6 +452,7 @@ export type MediaAssetUncheckedCreateInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUpdateInput = {
@@ -473,6 +478,7 @@ export type MediaAssetUpdateInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateInput = {
@@ -498,6 +504,7 @@ export type MediaAssetUncheckedUpdateInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateManyInput = {
@@ -808,6 +815,22 @@ export type MediaAssetUpdateOneWithoutDownloadThumbnailMediaNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutDownloadThumbnailMediaInput, Prisma.MediaAssetUpdateWithoutDownloadThumbnailMediaInput>, Prisma.MediaAssetUncheckedUpdateWithoutDownloadThumbnailMediaInput> | runtime.Types.Skip
 }
 
+export type MediaAssetCreateNestedOneWithoutSelfCultivationTemplatePdfsInput = {
+  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedCreateWithoutSelfCultivationTemplatePdfsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutSelfCultivationTemplatePdfsInput | runtime.Types.Skip
+  connect?: Prisma.MediaAssetWhereUniqueInput | runtime.Types.Skip
+}
+
+export type MediaAssetUpdateOneWithoutSelfCultivationTemplatePdfsNestedInput = {
+  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedCreateWithoutSelfCultivationTemplatePdfsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutSelfCultivationTemplatePdfsInput | runtime.Types.Skip
+  upsert?: Prisma.MediaAssetUpsertWithoutSelfCultivationTemplatePdfsInput | runtime.Types.Skip
+  disconnect?: Prisma.MediaAssetWhereInput | boolean | runtime.Types.Skip
+  delete?: Prisma.MediaAssetWhereInput | boolean | runtime.Types.Skip
+  connect?: Prisma.MediaAssetWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUpdateWithoutSelfCultivationTemplatePdfsInput>, Prisma.MediaAssetUncheckedUpdateWithoutSelfCultivationTemplatePdfsInput> | runtime.Types.Skip
+}
+
 export type MediaAssetCreateWithoutUploaderInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -830,6 +853,7 @@ export type MediaAssetCreateWithoutUploaderInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutUploaderInput = {
@@ -854,6 +878,7 @@ export type MediaAssetUncheckedCreateWithoutUploaderInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutUploaderInput = {
@@ -924,6 +949,7 @@ export type MediaAssetCreateWithoutCoveredCollectionsInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutCoveredCollectionsInput = {
@@ -948,6 +974,7 @@ export type MediaAssetUncheckedCreateWithoutCoveredCollectionsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutCoveredCollectionsInput = {
@@ -988,6 +1015,7 @@ export type MediaAssetUpdateWithoutCoveredCollectionsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutCoveredCollectionsInput = {
@@ -1012,6 +1040,7 @@ export type MediaAssetUncheckedUpdateWithoutCoveredCollectionsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateWithoutCollectionItemsInput = {
@@ -1036,6 +1065,7 @@ export type MediaAssetCreateWithoutCollectionItemsInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutCollectionItemsInput = {
@@ -1060,6 +1090,7 @@ export type MediaAssetUncheckedCreateWithoutCollectionItemsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutCollectionItemsInput = {
@@ -1100,6 +1131,7 @@ export type MediaAssetUpdateWithoutCollectionItemsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutCollectionItemsInput = {
@@ -1124,6 +1156,7 @@ export type MediaAssetUncheckedUpdateWithoutCollectionItemsInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateWithoutPostFeaturedImagesInput = {
@@ -1148,6 +1181,7 @@ export type MediaAssetCreateWithoutPostFeaturedImagesInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutPostFeaturedImagesInput = {
@@ -1172,6 +1206,7 @@ export type MediaAssetUncheckedCreateWithoutPostFeaturedImagesInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutPostFeaturedImagesInput = {
@@ -1212,6 +1247,7 @@ export type MediaAssetUpdateWithoutPostFeaturedImagesInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutPostFeaturedImagesInput = {
@@ -1236,6 +1272,7 @@ export type MediaAssetUncheckedUpdateWithoutPostFeaturedImagesInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateWithoutCalendarCoverImagesInput = {
@@ -1260,6 +1297,7 @@ export type MediaAssetCreateWithoutCalendarCoverImagesInput = {
   downloadFileMedia?: Prisma.DownloadCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutCalendarCoverImagesInput = {
@@ -1284,6 +1322,7 @@ export type MediaAssetUncheckedCreateWithoutCalendarCoverImagesInput = {
   downloadFileMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutCalendarCoverImagesInput = {
@@ -1313,6 +1352,7 @@ export type MediaAssetCreateWithoutCalendarPosterImagesInput = {
   downloadFileMedia?: Prisma.DownloadCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutCalendarPosterImagesInput = {
@@ -1337,6 +1377,7 @@ export type MediaAssetUncheckedCreateWithoutCalendarPosterImagesInput = {
   downloadFileMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutCalendarPosterImagesInput = {
@@ -1377,6 +1418,7 @@ export type MediaAssetUpdateWithoutCalendarCoverImagesInput = {
   downloadFileMedia?: Prisma.DownloadUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutCalendarCoverImagesInput = {
@@ -1401,6 +1443,7 @@ export type MediaAssetUncheckedUpdateWithoutCalendarCoverImagesInput = {
   downloadFileMedia?: Prisma.DownloadUncheckedUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUpsertWithoutCalendarPosterImagesInput = {
@@ -1436,6 +1479,7 @@ export type MediaAssetUpdateWithoutCalendarPosterImagesInput = {
   downloadFileMedia?: Prisma.DownloadUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutCalendarPosterImagesInput = {
@@ -1460,6 +1504,7 @@ export type MediaAssetUncheckedUpdateWithoutCalendarPosterImagesInput = {
   downloadFileMedia?: Prisma.DownloadUncheckedUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateWithoutGuideCoverMediaInput = {
@@ -1484,6 +1529,7 @@ export type MediaAssetCreateWithoutGuideCoverMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutGuideCoverMediaInput = {
@@ -1508,6 +1554,7 @@ export type MediaAssetUncheckedCreateWithoutGuideCoverMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutGuideCoverMediaInput = {
@@ -1548,6 +1595,7 @@ export type MediaAssetUpdateWithoutGuideCoverMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutGuideCoverMediaInput = {
@@ -1572,6 +1620,7 @@ export type MediaAssetUncheckedUpdateWithoutGuideCoverMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateWithoutDownloadFileMediaInput = {
@@ -1596,6 +1645,7 @@ export type MediaAssetCreateWithoutDownloadFileMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutDownloadFileMediaInput = {
@@ -1620,6 +1670,7 @@ export type MediaAssetUncheckedCreateWithoutDownloadFileMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutDownloadFileMediaInput = {
@@ -1649,6 +1700,7 @@ export type MediaAssetCreateWithoutDownloadThumbnailMediaInput = {
   downloadFileMedia?: Prisma.DownloadCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedCreateWithoutDownloadThumbnailMediaInput = {
@@ -1673,6 +1725,7 @@ export type MediaAssetUncheckedCreateWithoutDownloadThumbnailMediaInput = {
   downloadFileMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedCreateNestedManyWithoutPdfMediaInput | runtime.Types.Skip
 }
 
 export type MediaAssetCreateOrConnectWithoutDownloadThumbnailMediaInput = {
@@ -1713,6 +1766,7 @@ export type MediaAssetUpdateWithoutDownloadFileMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutDownloadFileMediaInput = {
@@ -1737,6 +1791,7 @@ export type MediaAssetUncheckedUpdateWithoutDownloadFileMediaInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUpsertWithoutDownloadThumbnailMediaInput = {
@@ -1772,6 +1827,7 @@ export type MediaAssetUpdateWithoutDownloadThumbnailMediaInput = {
   downloadFileMedia?: Prisma.DownloadUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutDownloadThumbnailMediaInput = {
@@ -1794,6 +1850,123 @@ export type MediaAssetUncheckedUpdateWithoutDownloadThumbnailMediaInput = {
   postFeaturedImages?: Prisma.PostUncheckedUpdateManyWithoutFeaturedImageNestedInput | runtime.Types.Skip
   guideCoverMedia?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutCoverMediaNestedInput | runtime.Types.Skip
   downloadFileMedia?: Prisma.DownloadUncheckedUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
+  calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
+  calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
+}
+
+export type MediaAssetCreateWithoutSelfCultivationTemplatePdfsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  filename: string
+  mimeType: string
+  size: number
+  storageKey: string
+  url: string
+  width?: number | null | runtime.Types.Skip
+  height?: number | null | runtime.Types.Skip
+  status?: $Enums.AssetStatus | runtime.Types.Skip
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  uploader: Prisma.UserCreateNestedOneWithoutMediaAssetsInput
+  collectionItems?: Prisma.MediaCollectionItemCreateNestedManyWithoutMediaAssetInput | runtime.Types.Skip
+  coveredCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCoverMediaInput | runtime.Types.Skip
+  postFeaturedImages?: Prisma.PostCreateNestedManyWithoutFeaturedImageInput | runtime.Types.Skip
+  guideCoverMedia?: Prisma.BeginnerGuideCreateNestedManyWithoutCoverMediaInput | runtime.Types.Skip
+  downloadFileMedia?: Prisma.DownloadCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
+  downloadThumbnailMedia?: Prisma.DownloadCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
+  calendarCoverImages?: Prisma.CalendarEventCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
+  calendarPosterImages?: Prisma.CalendarEventCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+}
+
+export type MediaAssetUncheckedCreateWithoutSelfCultivationTemplatePdfsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  filename: string
+  mimeType: string
+  size: number
+  storageKey: string
+  url: string
+  width?: number | null | runtime.Types.Skip
+  height?: number | null | runtime.Types.Skip
+  status?: $Enums.AssetStatus | runtime.Types.Skip
+  uploaderId: string
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  collectionItems?: Prisma.MediaCollectionItemUncheckedCreateNestedManyWithoutMediaAssetInput | runtime.Types.Skip
+  coveredCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCoverMediaInput | runtime.Types.Skip
+  postFeaturedImages?: Prisma.PostUncheckedCreateNestedManyWithoutFeaturedImageInput | runtime.Types.Skip
+  guideCoverMedia?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutCoverMediaInput | runtime.Types.Skip
+  downloadFileMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutFileMediaInput | runtime.Types.Skip
+  downloadThumbnailMedia?: Prisma.DownloadUncheckedCreateNestedManyWithoutThumbnailMediaInput | runtime.Types.Skip
+  calendarCoverImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCoverImageInput | runtime.Types.Skip
+  calendarPosterImages?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutPosterImageInput | runtime.Types.Skip
+}
+
+export type MediaAssetCreateOrConnectWithoutSelfCultivationTemplatePdfsInput = {
+  where: Prisma.MediaAssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedCreateWithoutSelfCultivationTemplatePdfsInput>
+}
+
+export type MediaAssetUpsertWithoutSelfCultivationTemplatePdfsInput = {
+  update: Prisma.XOR<Prisma.MediaAssetUpdateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedUpdateWithoutSelfCultivationTemplatePdfsInput>
+  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedCreateWithoutSelfCultivationTemplatePdfsInput>
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+}
+
+export type MediaAssetUpdateToOneWithWhereWithoutSelfCultivationTemplatePdfsInput = {
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.MediaAssetUpdateWithoutSelfCultivationTemplatePdfsInput, Prisma.MediaAssetUncheckedUpdateWithoutSelfCultivationTemplatePdfsInput>
+}
+
+export type MediaAssetUpdateWithoutSelfCultivationTemplatePdfsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  filename?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  size?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  url?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus | runtime.Types.Skip
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  uploader?: Prisma.UserUpdateOneRequiredWithoutMediaAssetsNestedInput | runtime.Types.Skip
+  collectionItems?: Prisma.MediaCollectionItemUpdateManyWithoutMediaAssetNestedInput | runtime.Types.Skip
+  coveredCollections?: Prisma.MediaCollectionUpdateManyWithoutCoverMediaNestedInput | runtime.Types.Skip
+  postFeaturedImages?: Prisma.PostUpdateManyWithoutFeaturedImageNestedInput | runtime.Types.Skip
+  guideCoverMedia?: Prisma.BeginnerGuideUpdateManyWithoutCoverMediaNestedInput | runtime.Types.Skip
+  downloadFileMedia?: Prisma.DownloadUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
+  downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
+  calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
+  calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+}
+
+export type MediaAssetUncheckedUpdateWithoutSelfCultivationTemplatePdfsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  filename?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  size?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  url?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  status?: Prisma.EnumAssetStatusFieldUpdateOperationsInput | $Enums.AssetStatus | runtime.Types.Skip
+  uploaderId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  collectionItems?: Prisma.MediaCollectionItemUncheckedUpdateManyWithoutMediaAssetNestedInput | runtime.Types.Skip
+  coveredCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCoverMediaNestedInput | runtime.Types.Skip
+  postFeaturedImages?: Prisma.PostUncheckedUpdateManyWithoutFeaturedImageNestedInput | runtime.Types.Skip
+  guideCoverMedia?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutCoverMediaNestedInput | runtime.Types.Skip
+  downloadFileMedia?: Prisma.DownloadUncheckedUpdateManyWithoutFileMediaNestedInput | runtime.Types.Skip
+  downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
 }
@@ -1836,6 +2009,7 @@ export type MediaAssetUpdateWithoutUploaderInput = {
   downloadThumbnailMedia?: Prisma.DownloadUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateWithoutUploaderInput = {
@@ -1860,6 +2034,7 @@ export type MediaAssetUncheckedUpdateWithoutUploaderInput = {
   downloadThumbnailMedia?: Prisma.DownloadUncheckedUpdateManyWithoutThumbnailMediaNestedInput | runtime.Types.Skip
   calendarCoverImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutCoverImageNestedInput | runtime.Types.Skip
   calendarPosterImages?: Prisma.CalendarEventUncheckedUpdateManyWithoutPosterImageNestedInput | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: Prisma.SelfCultivationTemplateUncheckedUpdateManyWithoutPdfMediaNestedInput | runtime.Types.Skip
 }
 
 export type MediaAssetUncheckedUpdateManyWithoutUploaderInput = {
@@ -1892,6 +2067,7 @@ export type MediaAssetCountOutputType = {
   downloadThumbnailMedia: number
   calendarCoverImages: number
   calendarPosterImages: number
+  selfCultivationTemplatePdfs: number
 }
 
 export type MediaAssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1903,6 +2079,7 @@ export type MediaAssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extens
   downloadThumbnailMedia?: boolean | MediaAssetCountOutputTypeCountDownloadThumbnailMediaArgs
   calendarCoverImages?: boolean | MediaAssetCountOutputTypeCountCalendarCoverImagesArgs
   calendarPosterImages?: boolean | MediaAssetCountOutputTypeCountCalendarPosterImagesArgs
+  selfCultivationTemplatePdfs?: boolean | MediaAssetCountOutputTypeCountSelfCultivationTemplatePdfsArgs
 }
 
 /**
@@ -1971,6 +2148,13 @@ export type MediaAssetCountOutputTypeCountCalendarPosterImagesArgs<ExtArgs exten
   where?: Prisma.CalendarEventWhereInput | runtime.Types.Skip
 }
 
+/**
+ * MediaAssetCountOutputType without action
+ */
+export type MediaAssetCountOutputTypeCountSelfCultivationTemplatePdfsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SelfCultivationTemplateWhereInput | runtime.Types.Skip
+}
+
 
 export type MediaAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
@@ -1996,6 +2180,7 @@ export type MediaAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   downloadThumbnailMedia?: boolean | Prisma.MediaAsset$downloadThumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
   calendarCoverImages?: boolean | Prisma.MediaAsset$calendarCoverImagesArgs<ExtArgs> | runtime.Types.Skip
   calendarPosterImages?: boolean | Prisma.MediaAsset$calendarPosterImagesArgs<ExtArgs> | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: boolean | Prisma.MediaAsset$selfCultivationTemplatePdfsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["mediaAsset"]>
 
@@ -2063,6 +2248,7 @@ export type MediaAssetInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   downloadThumbnailMedia?: boolean | Prisma.MediaAsset$downloadThumbnailMediaArgs<ExtArgs> | runtime.Types.Skip
   calendarCoverImages?: boolean | Prisma.MediaAsset$calendarCoverImagesArgs<ExtArgs> | runtime.Types.Skip
   calendarPosterImages?: boolean | Prisma.MediaAsset$calendarPosterImagesArgs<ExtArgs> | runtime.Types.Skip
+  selfCultivationTemplatePdfs?: boolean | Prisma.MediaAsset$selfCultivationTemplatePdfsArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type MediaAssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2084,6 +2270,7 @@ export type $MediaAssetPayload<ExtArgs extends runtime.Types.Extensions.Internal
     downloadThumbnailMedia: Prisma.$DownloadPayload<ExtArgs>[]
     calendarCoverImages: Prisma.$CalendarEventPayload<ExtArgs>[]
     calendarPosterImages: Prisma.$CalendarEventPayload<ExtArgs>[]
+    selfCultivationTemplatePdfs: Prisma.$SelfCultivationTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2503,6 +2690,7 @@ export interface Prisma__MediaAssetClient<T, Null = never, ExtArgs extends runti
   downloadThumbnailMedia<T extends Prisma.MediaAsset$downloadThumbnailMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$downloadThumbnailMediaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   calendarCoverImages<T extends Prisma.MediaAsset$calendarCoverImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$calendarCoverImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   calendarPosterImages<T extends Prisma.MediaAsset$calendarPosterImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$calendarPosterImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  selfCultivationTemplatePdfs<T extends Prisma.MediaAsset$selfCultivationTemplatePdfsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$selfCultivationTemplatePdfsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SelfCultivationTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3136,6 +3324,30 @@ export type MediaAsset$calendarPosterImagesArgs<ExtArgs extends runtime.Types.Ex
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.CalendarEventScalarFieldEnum | Prisma.CalendarEventScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * MediaAsset.selfCultivationTemplatePdfs
+ */
+export type MediaAsset$selfCultivationTemplatePdfsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SelfCultivationTemplate
+   */
+  select?: Prisma.SelfCultivationTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SelfCultivationTemplate
+   */
+  omit?: Prisma.SelfCultivationTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SelfCultivationTemplateInclude<ExtArgs> | null
+  where?: Prisma.SelfCultivationTemplateWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.SelfCultivationTemplateOrderByWithRelationInput | Prisma.SelfCultivationTemplateOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.SelfCultivationTemplateWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.SelfCultivationTemplateScalarFieldEnum | Prisma.SelfCultivationTemplateScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

@@ -11,11 +11,27 @@ import { VowMemberService } from "./vow-member.service.js";
 import { LifeReleaseMemberService } from "./life-release-member.service.js";
 import { AltarService } from "./altar.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
+import { AdminAltarManagementController, MemberAltarManagementController } from "./altar-management.controller.js";
+import { AltarManagementService } from "./altar-management.service.js";
 
 @Module({
   imports: [AuditModule],
-  controllers: [AdminVowsController, MemberVowsController, MemberLifeReleaseController, AltarController],
-  providers: [VowsMeritService, VowsMeritRepository, VowMemberService, LifeReleaseMemberService, AltarService],
-  exports: [VowsMeritService],
+  controllers: [
+    AdminVowsController,
+    MemberVowsController,
+    MemberLifeReleaseController,
+    AltarController,
+    AdminAltarManagementController,
+    MemberAltarManagementController,
+  ],
+  providers: [
+    VowsMeritService,
+    VowsMeritRepository,
+    VowMemberService,
+    LifeReleaseMemberService,
+    AltarService,
+    AltarManagementService,
+  ],
+  exports: [VowsMeritService, AltarManagementService],
 })
 export class VowsMeritModule {}

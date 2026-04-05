@@ -13,6 +13,13 @@ export const registerSchema = z.object({
   displayName: z.string().min(2, "Tên hiển thị phải có ít nhất 2 ký tự").max(50),
 });
 
+// First-admin bootstrap (when database has no users yet)
+export const bootstrapAdminSchema = z.object({
+  email: z.string().email("Email không hợp lệ"),
+  password: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
+  displayName: z.string().min(2, "Tên hiển thị phải có ít nhất 2 ký tự").max(50),
+});
+
 // Forgot password
 export const forgotPasswordSchema = z.object({
   email: z.string().email("Email không hợp lệ"),
@@ -54,6 +61,7 @@ export const authResponseSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
+export type BootstrapAdminInput = z.infer<typeof bootstrapAdminSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

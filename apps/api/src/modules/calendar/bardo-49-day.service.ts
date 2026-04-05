@@ -2,8 +2,8 @@
 // Logic 8: Chiến dịch Siêu độ 49 Ngày
 // Owner: calendar module
 
-import { Injectable, BadRequestException } from '@nestjs/client';
-import { PrismaService } from '../../platform/prisma.service';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { addDays, differenceInDays } from 'date-fns';
 
 interface CreateDeceasedDto {

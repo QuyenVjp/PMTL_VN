@@ -104,6 +104,43 @@ export const auditActionSchema = z.enum([
   "admin.vow.create",
   "admin.vow.update",
   "admin.life_release.create",
+  "member.altar_item.create",
+  "admin.altar_item.condition",
+  "member.altar_validation.fail",
+
+  // Dharma compliance actions
+  "admin.charity.create",
+  "admin.charity.status_update",
+  "admin.fraud_alert.resolve",
+  "admin.guidance.respond",
+  "member.vow.register",
+  "member.vow.violation",
+
+  // Buddhist events actions
+  "admin.event.create",
+  "admin.event.update",
+  "member.event.register",
+  "member.event.cancel",
+
+  // Life liberation actions
+  "admin.life_release.status",
+  "member.life_release.create",
+  "member.life_release.proxy_add",
+
+  // Little house (sớ) actions
+  "admin.lh.advance",
+  "admin.lh.combust",
+  "admin.lh.dotting_start",
+  "admin.lh.fraud_flag",
+  "admin.lh.fraud_resolve",
+  "member.lh.create",
+
+  // Sacred forms actions
+  "admin.sacred_form_template.create",
+  "admin.sacred_form_template.toggle",
+  "admin.sacred_form.review",
+  "admin.disposal_polarity.create",
+  "member.sacred_form.submit",
 ]);
 
 export const auditActorTypeSchema = z.enum([

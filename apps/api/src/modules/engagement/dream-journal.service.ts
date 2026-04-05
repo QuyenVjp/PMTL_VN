@@ -22,6 +22,7 @@ export interface DreamAnalysisResult {
   message: string;
   requiredLittleHouses?: number;
   autoActionTriggered: boolean;
+  autoActionNote?: string;
 }
 
 @Injectable()

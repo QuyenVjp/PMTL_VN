@@ -123,6 +123,47 @@ const DesignSystemPage = lazy(() =>
   import("@/features/design-system").then((mod) => ({ default: mod.DesignSystemPage })),
 );
 
+// ── Thanh Tịnh Pháp — new domain pages ──────────────────────────────
+const CharitiesPage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.CharitiesPage })),
+);
+const FraudAlertsPage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.FraudAlertsPage })),
+);
+const PurityVowsPage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.PurityVowsPage })),
+);
+const GuidanceQueuePage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.GuidanceQueuePage })),
+);
+const EventsListPage = lazy(() =>
+  import("@/features/events").then((mod) => ({ default: mod.EventsListPage })),
+);
+const LifeReleaseListPage = lazy(() =>
+  import("@/features/life-liberation").then((mod) => ({ default: mod.LifeReleaseListPage })),
+);
+const SpeciesSummaryPage = lazy(() =>
+  import("@/features/life-liberation").then((mod) => ({ default: mod.SpeciesSummaryPage })),
+);
+const SacredFormTemplatesPage = lazy(() =>
+  import("@/features/sacred-forms").then((mod) => ({ default: mod.SacredFormTemplatesPage })),
+);
+const SacredFormApplicantsPage = lazy(() =>
+  import("@/features/sacred-forms").then((mod) => ({ default: mod.SacredFormApplicantsPage })),
+);
+const LhRecordsPage = lazy(() =>
+  import("@/features/little-house").then((mod) => ({ default: mod.LhRecordsPage })),
+);
+const LhFraudQueuePage = lazy(() =>
+  import("@/features/little-house").then((mod) => ({ default: mod.LhFraudQueuePage })),
+);
+const AltarItemsPage = lazy(() =>
+  import("@/features/altar-management").then((mod) => ({ default: mod.AltarItemsPage })),
+);
+const ValidationLogsPage = lazy(() =>
+  import("@/features/altar-management").then((mod) => ({ default: mod.ValidationLogsPage })),
+);
+
 // ── Detail / Create page imports ─────────────────────────────────────
 
 const PostCreatePage = lazy(() =>
@@ -616,6 +657,83 @@ const wisdomLegacyRoute = createRoute({
   component: withSuspense(WisdomPage),
 });
 
+// ── Thanh Tịnh Pháp — Tuân thủ Pháp luật ───────────────────────────
+const charitiesRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/to-chuc-tu-thien",
+  component: withSuspense(CharitiesPage),
+});
+const fraudAlertsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/canh-bao-gian-lan",
+  component: withSuspense(FraudAlertsPage),
+});
+const purityVowsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/loi-nguyen-thanh-tu",
+  component: withSuspense(PurityVowsPage),
+});
+const guidanceQueueRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/hang-doi-huong-dan",
+  component: withSuspense(GuidanceQueuePage),
+});
+
+// ── Thanh Tịnh Pháp — Sự kiện Phật pháp ────────────────────────────
+const eventsListRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/su-kien/danh-sach",
+  component: withSuspense(EventsListPage),
+});
+
+// ── Thanh Tịnh Pháp — Phóng sinh ────────────────────────────────────
+const lifeReleaseListRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phong-sinh/ho-so",
+  component: withSuspense(LifeReleaseListPage),
+});
+const speciesSummaryRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phong-sinh/thong-ke",
+  component: withSuspense(SpeciesSummaryPage),
+});
+
+// ── Thanh Tịnh Pháp — Đơn Pháp Bảo ─────────────────────────────────
+const sacredFormTemplatesRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/don-phap-bao/mau-don",
+  component: withSuspense(SacredFormTemplatesPage),
+});
+const sacredFormApplicantsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/don-phap-bao/don-dang-ky",
+  component: withSuspense(SacredFormApplicantsPage),
+});
+
+// ── Thanh Tịnh Pháp — Sớ (Ngôi Nhà Nhỏ) ────────────────────────────
+const lhRecordsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/so/danh-sach",
+  component: withSuspense(LhRecordsPage),
+});
+const lhFraudQueueRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/so/gian-lan",
+  component: withSuspense(LhFraudQueuePage),
+});
+
+// ── Thanh Tịnh Pháp — Bàn thờ ───────────────────────────────────────
+const altarItemsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/ban-tho/vat-pham",
+  component: withSuspense(AltarItemsPage),
+});
+const validationLogsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/ban-tho/nhat-ky",
+  component: withSuspense(ValidationLogsPage),
+});
+
 // ── Route Tree Assembly ──────────────────────────────────────────────
 
 export const routeTree = rootRoute.addChildren([
@@ -690,5 +808,24 @@ export const routeTree = rootRoute.addChildren([
     wisdomRoute,
     wisdomCreateRoute,
     wisdomLegacyRoute,
+    // Thanh Tịnh Pháp — Tuân thủ Pháp luật
+    charitiesRoute,
+    fraudAlertsRoute,
+    purityVowsRoute,
+    guidanceQueueRoute,
+    // Thanh Tịnh Pháp — Sự kiện Phật pháp
+    eventsListRoute,
+    // Thanh Tịnh Pháp — Phóng sinh
+    lifeReleaseListRoute,
+    speciesSummaryRoute,
+    // Thanh Tịnh Pháp — Đơn Pháp Bảo
+    sacredFormTemplatesRoute,
+    sacredFormApplicantsRoute,
+    // Thanh Tịnh Pháp — Sớ (Ngôi Nhà Nhỏ)
+    lhRecordsRoute,
+    lhFraudQueueRoute,
+    // Thanh Tịnh Pháp — Bàn thờ
+    altarItemsRoute,
+    validationLogsRoute,
   ]),
 ]);

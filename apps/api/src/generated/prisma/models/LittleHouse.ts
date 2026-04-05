@@ -39,12 +39,20 @@ export type LittleHouseMinAggregateOutputType = {
   publicId: string | null
   userId: string | null
   recipient: string | null
+  recipientName: string | null
+  offerTo: string | null
+  purpose: $Enums.LittleHousePurpose | null
   sheetsCount: number | null
   status: $Enums.LittleHouseStatus | null
+  startedAt: Date | null
   burnDate: Date | null
   postBurnNote: string | null
   specialCase: boolean | null
   confirmedAt: Date | null
+  offeredByName: string | null
+  chantingStartedAt: Date | null
+  offeredByLockedAt: Date | null
+  deceasedRelativeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,12 +62,20 @@ export type LittleHouseMaxAggregateOutputType = {
   publicId: string | null
   userId: string | null
   recipient: string | null
+  recipientName: string | null
+  offerTo: string | null
+  purpose: $Enums.LittleHousePurpose | null
   sheetsCount: number | null
   status: $Enums.LittleHouseStatus | null
+  startedAt: Date | null
   burnDate: Date | null
   postBurnNote: string | null
   specialCase: boolean | null
   confirmedAt: Date | null
+  offeredByName: string | null
+  chantingStartedAt: Date | null
+  offeredByLockedAt: Date | null
+  deceasedRelativeId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,12 +85,20 @@ export type LittleHouseCountAggregateOutputType = {
   publicId: number
   userId: number
   recipient: number
+  recipientName: number
+  offerTo: number
+  purpose: number
   sheetsCount: number
   status: number
+  startedAt: number
   burnDate: number
   postBurnNote: number
   specialCase: number
   confirmedAt: number
+  offeredByName: number
+  chantingStartedAt: number
+  offeredByLockedAt: number
+  deceasedRelativeId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -94,12 +118,20 @@ export type LittleHouseMinAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
   recipient?: true | runtime.Types.Skip
+  recipientName?: true | runtime.Types.Skip
+  offerTo?: true | runtime.Types.Skip
+  purpose?: true | runtime.Types.Skip
   sheetsCount?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
+  startedAt?: true | runtime.Types.Skip
   burnDate?: true | runtime.Types.Skip
   postBurnNote?: true | runtime.Types.Skip
   specialCase?: true | runtime.Types.Skip
   confirmedAt?: true | runtime.Types.Skip
+  offeredByName?: true | runtime.Types.Skip
+  chantingStartedAt?: true | runtime.Types.Skip
+  offeredByLockedAt?: true | runtime.Types.Skip
+  deceasedRelativeId?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -109,12 +141,20 @@ export type LittleHouseMaxAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
   recipient?: true | runtime.Types.Skip
+  recipientName?: true | runtime.Types.Skip
+  offerTo?: true | runtime.Types.Skip
+  purpose?: true | runtime.Types.Skip
   sheetsCount?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
+  startedAt?: true | runtime.Types.Skip
   burnDate?: true | runtime.Types.Skip
   postBurnNote?: true | runtime.Types.Skip
   specialCase?: true | runtime.Types.Skip
   confirmedAt?: true | runtime.Types.Skip
+  offeredByName?: true | runtime.Types.Skip
+  chantingStartedAt?: true | runtime.Types.Skip
+  offeredByLockedAt?: true | runtime.Types.Skip
+  deceasedRelativeId?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -124,12 +164,20 @@ export type LittleHouseCountAggregateInputType = {
   publicId?: true | runtime.Types.Skip
   userId?: true | runtime.Types.Skip
   recipient?: true | runtime.Types.Skip
+  recipientName?: true | runtime.Types.Skip
+  offerTo?: true | runtime.Types.Skip
+  purpose?: true | runtime.Types.Skip
   sheetsCount?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
+  startedAt?: true | runtime.Types.Skip
   burnDate?: true | runtime.Types.Skip
   postBurnNote?: true | runtime.Types.Skip
   specialCase?: true | runtime.Types.Skip
   confirmedAt?: true | runtime.Types.Skip
+  offeredByName?: true | runtime.Types.Skip
+  chantingStartedAt?: true | runtime.Types.Skip
+  offeredByLockedAt?: true | runtime.Types.Skip
+  deceasedRelativeId?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -226,12 +274,20 @@ export type LittleHouseGroupByOutputType = {
   publicId: string
   userId: string
   recipient: string
+  recipientName: string | null
+  offerTo: string | null
+  purpose: $Enums.LittleHousePurpose | null
   sheetsCount: number
   status: $Enums.LittleHouseStatus
+  startedAt: Date | null
   burnDate: Date | null
   postBurnNote: string | null
   specialCase: boolean
   confirmedAt: Date | null
+  offeredByName: string | null
+  chantingStartedAt: Date | null
+  offeredByLockedAt: Date | null
+  deceasedRelativeId: string | null
   createdAt: Date
   updatedAt: Date
   _count: LittleHouseCountAggregateOutputType | null
@@ -264,15 +320,24 @@ export type LittleHouseWhereInput = {
   publicId?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
   userId?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
   recipient?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
+  recipientName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  offerTo?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  purpose?: Prisma.EnumLittleHousePurposeNullableFilter<"LittleHouse"> | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFilter<"LittleHouse"> | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFilter<"LittleHouse"> | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFilter<"LittleHouse"> | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  deceasedRelative?: Prisma.XOR<Prisma.DeceasedRelativeNullableScalarRelationFilter, Prisma.DeceasedRelativeWhereInput> | null | runtime.Types.Skip
 }
 
 export type LittleHouseOrderByWithRelationInput = {
@@ -280,15 +345,24 @@ export type LittleHouseOrderByWithRelationInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   recipient?: Prisma.SortOrder | runtime.Types.Skip
+  recipientName?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offerTo?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  purpose?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   sheetsCount?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
+  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   burnDate?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   postBurnNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   specialCase?: Prisma.SortOrder | runtime.Types.Skip
   confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offeredByName?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  chantingStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
+  deceasedRelative?: Prisma.DeceasedRelativeOrderByWithRelationInput | runtime.Types.Skip
 }
 
 export type LittleHouseWhereUniqueInput = Prisma.AtLeast<{
@@ -299,15 +373,24 @@ export type LittleHouseWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.LittleHouseWhereInput | Prisma.LittleHouseWhereInput[] | runtime.Types.Skip
   userId?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
   recipient?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
+  recipientName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  offerTo?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  purpose?: Prisma.EnumLittleHousePurposeNullableFilter<"LittleHouse"> | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFilter<"LittleHouse"> | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFilter<"LittleHouse"> | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFilter<"LittleHouse"> | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
+  deceasedRelative?: Prisma.XOR<Prisma.DeceasedRelativeNullableScalarRelationFilter, Prisma.DeceasedRelativeWhereInput> | null | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type LittleHouseOrderByWithAggregationInput = {
@@ -315,12 +398,20 @@ export type LittleHouseOrderByWithAggregationInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   recipient?: Prisma.SortOrder | runtime.Types.Skip
+  recipientName?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offerTo?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  purpose?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   sheetsCount?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
+  startedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   burnDate?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   postBurnNote?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   specialCase?: Prisma.SortOrder | runtime.Types.Skip
   confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offeredByName?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  chantingStartedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.LittleHouseCountOrderByAggregateInput | runtime.Types.Skip
@@ -338,12 +429,20 @@ export type LittleHouseScalarWhereWithAggregatesInput = {
   publicId?: Prisma.StringWithAggregatesFilter<"LittleHouse"> | string | runtime.Types.Skip
   userId?: Prisma.StringWithAggregatesFilter<"LittleHouse"> | string | runtime.Types.Skip
   recipient?: Prisma.StringWithAggregatesFilter<"LittleHouse"> | string | runtime.Types.Skip
+  recipientName?: Prisma.StringNullableWithAggregatesFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  offerTo?: Prisma.StringNullableWithAggregatesFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  purpose?: Prisma.EnumLittleHousePurposeNullableWithAggregatesFilter<"LittleHouse"> | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntWithAggregatesFilter<"LittleHouse"> | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusWithAggregatesFilter<"LittleHouse"> | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.DateTimeNullableWithAggregatesFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.StringNullableWithAggregatesFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolWithAggregatesFilter<"LittleHouse"> | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.StringNullableWithAggregatesFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.StringNullableWithAggregatesFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
 }
@@ -352,15 +451,23 @@ export type LittleHouseCreateInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutLittleHousesInput
+  deceasedRelative?: Prisma.DeceasedRelativeCreateNestedOneWithoutLittleHousesInput | runtime.Types.Skip
 }
 
 export type LittleHouseUncheckedCreateInput = {
@@ -368,12 +475,20 @@ export type LittleHouseUncheckedCreateInput = {
   publicId: string
   userId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -382,15 +497,23 @@ export type LittleHouseUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutLittleHousesNestedInput | runtime.Types.Skip
+  deceasedRelative?: Prisma.DeceasedRelativeUpdateOneWithoutLittleHousesNestedInput | runtime.Types.Skip
 }
 
 export type LittleHouseUncheckedUpdateInput = {
@@ -398,12 +521,20 @@ export type LittleHouseUncheckedUpdateInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -413,12 +544,20 @@ export type LittleHouseCreateManyInput = {
   publicId: string
   userId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -427,12 +566,19 @@ export type LittleHouseUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -442,12 +588,20 @@ export type LittleHouseUncheckedUpdateManyInput = {
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -467,12 +621,20 @@ export type LittleHouseCountOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   recipient?: Prisma.SortOrder | runtime.Types.Skip
+  recipientName?: Prisma.SortOrder | runtime.Types.Skip
+  offerTo?: Prisma.SortOrder | runtime.Types.Skip
+  purpose?: Prisma.SortOrder | runtime.Types.Skip
   sheetsCount?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
+  startedAt?: Prisma.SortOrder | runtime.Types.Skip
   burnDate?: Prisma.SortOrder | runtime.Types.Skip
   postBurnNote?: Prisma.SortOrder | runtime.Types.Skip
   specialCase?: Prisma.SortOrder | runtime.Types.Skip
   confirmedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByName?: Prisma.SortOrder | runtime.Types.Skip
+  chantingStartedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.SortOrder | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -486,12 +648,20 @@ export type LittleHouseMaxOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   recipient?: Prisma.SortOrder | runtime.Types.Skip
+  recipientName?: Prisma.SortOrder | runtime.Types.Skip
+  offerTo?: Prisma.SortOrder | runtime.Types.Skip
+  purpose?: Prisma.SortOrder | runtime.Types.Skip
   sheetsCount?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
+  startedAt?: Prisma.SortOrder | runtime.Types.Skip
   burnDate?: Prisma.SortOrder | runtime.Types.Skip
   postBurnNote?: Prisma.SortOrder | runtime.Types.Skip
   specialCase?: Prisma.SortOrder | runtime.Types.Skip
   confirmedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByName?: Prisma.SortOrder | runtime.Types.Skip
+  chantingStartedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.SortOrder | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -501,12 +671,20 @@ export type LittleHouseMinOrderByAggregateInput = {
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   userId?: Prisma.SortOrder | runtime.Types.Skip
   recipient?: Prisma.SortOrder | runtime.Types.Skip
+  recipientName?: Prisma.SortOrder | runtime.Types.Skip
+  offerTo?: Prisma.SortOrder | runtime.Types.Skip
+  purpose?: Prisma.SortOrder | runtime.Types.Skip
   sheetsCount?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
+  startedAt?: Prisma.SortOrder | runtime.Types.Skip
   burnDate?: Prisma.SortOrder | runtime.Types.Skip
   postBurnNote?: Prisma.SortOrder | runtime.Types.Skip
   specialCase?: Prisma.SortOrder | runtime.Types.Skip
   confirmedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByName?: Prisma.SortOrder | runtime.Types.Skip
+  chantingStartedAt?: Prisma.SortOrder | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.SortOrder | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -557,34 +735,96 @@ export type LittleHouseUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.LittleHouseScalarWhereInput | Prisma.LittleHouseScalarWhereInput[] | runtime.Types.Skip
 }
 
+export type NullableEnumLittleHousePurposeFieldUpdateOperationsInput = {
+  set?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
+}
+
 export type EnumLittleHouseStatusFieldUpdateOperationsInput = {
   set?: $Enums.LittleHouseStatus | runtime.Types.Skip
+}
+
+export type LittleHouseCreateNestedManyWithoutDeceasedRelativeInput = {
+  create?: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput> | Prisma.LittleHouseCreateWithoutDeceasedRelativeInput[] | Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput | Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  createMany?: Prisma.LittleHouseCreateManyDeceasedRelativeInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type LittleHouseUncheckedCreateNestedManyWithoutDeceasedRelativeInput = {
+  create?: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput> | Prisma.LittleHouseCreateWithoutDeceasedRelativeInput[] | Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput | Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  createMany?: Prisma.LittleHouseCreateManyDeceasedRelativeInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type LittleHouseUpdateManyWithoutDeceasedRelativeNestedInput = {
+  create?: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput> | Prisma.LittleHouseCreateWithoutDeceasedRelativeInput[] | Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput | Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  upsert?: Prisma.LittleHouseUpsertWithWhereUniqueWithoutDeceasedRelativeInput | Prisma.LittleHouseUpsertWithWhereUniqueWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  createMany?: Prisma.LittleHouseCreateManyDeceasedRelativeInputEnvelope | runtime.Types.Skip
+  set?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.LittleHouseUpdateWithWhereUniqueWithoutDeceasedRelativeInput | Prisma.LittleHouseUpdateWithWhereUniqueWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  updateMany?: Prisma.LittleHouseUpdateManyWithWhereWithoutDeceasedRelativeInput | Prisma.LittleHouseUpdateManyWithWhereWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.LittleHouseScalarWhereInput | Prisma.LittleHouseScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type LittleHouseUncheckedUpdateManyWithoutDeceasedRelativeNestedInput = {
+  create?: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput> | Prisma.LittleHouseCreateWithoutDeceasedRelativeInput[] | Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput | Prisma.LittleHouseCreateOrConnectWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  upsert?: Prisma.LittleHouseUpsertWithWhereUniqueWithoutDeceasedRelativeInput | Prisma.LittleHouseUpsertWithWhereUniqueWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  createMany?: Prisma.LittleHouseCreateManyDeceasedRelativeInputEnvelope | runtime.Types.Skip
+  set?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.LittleHouseWhereUniqueInput | Prisma.LittleHouseWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.LittleHouseUpdateWithWhereUniqueWithoutDeceasedRelativeInput | Prisma.LittleHouseUpdateWithWhereUniqueWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  updateMany?: Prisma.LittleHouseUpdateManyWithWhereWithoutDeceasedRelativeInput | Prisma.LittleHouseUpdateManyWithWhereWithoutDeceasedRelativeInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.LittleHouseScalarWhereInput | Prisma.LittleHouseScalarWhereInput[] | runtime.Types.Skip
 }
 
 export type LittleHouseCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  deceasedRelative?: Prisma.DeceasedRelativeCreateNestedOneWithoutLittleHousesInput | runtime.Types.Skip
 }
 
 export type LittleHouseUncheckedCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -623,26 +863,112 @@ export type LittleHouseScalarWhereInput = {
   publicId?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
   userId?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
   recipient?: Prisma.StringFilter<"LittleHouse"> | string | runtime.Types.Skip
+  recipientName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  offerTo?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  purpose?: Prisma.EnumLittleHousePurposeNullableFilter<"LittleHouse"> | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFilter<"LittleHouse"> | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFilter<"LittleHouse"> | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFilter<"LittleHouse"> | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.DateTimeNullableFilter<"LittleHouse"> | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.StringNullableFilter<"LittleHouse"> | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"LittleHouse"> | Date | string | runtime.Types.Skip
+}
+
+export type LittleHouseCreateWithoutDeceasedRelativeInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: number | runtime.Types.Skip
+  status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
+  burnDate?: Date | string | null | runtime.Types.Skip
+  postBurnNote?: string | null | runtime.Types.Skip
+  specialCase?: boolean | runtime.Types.Skip
+  confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  user: Prisma.UserCreateNestedOneWithoutLittleHousesInput
+}
+
+export type LittleHouseUncheckedCreateWithoutDeceasedRelativeInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  userId: string
+  recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: number | runtime.Types.Skip
+  status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
+  burnDate?: Date | string | null | runtime.Types.Skip
+  postBurnNote?: string | null | runtime.Types.Skip
+  specialCase?: boolean | runtime.Types.Skip
+  confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type LittleHouseCreateOrConnectWithoutDeceasedRelativeInput = {
+  where: Prisma.LittleHouseWhereUniqueInput
+  create: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput>
+}
+
+export type LittleHouseCreateManyDeceasedRelativeInputEnvelope = {
+  data: Prisma.LittleHouseCreateManyDeceasedRelativeInput | Prisma.LittleHouseCreateManyDeceasedRelativeInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type LittleHouseUpsertWithWhereUniqueWithoutDeceasedRelativeInput = {
+  where: Prisma.LittleHouseWhereUniqueInput
+  update: Prisma.XOR<Prisma.LittleHouseUpdateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedUpdateWithoutDeceasedRelativeInput>
+  create: Prisma.XOR<Prisma.LittleHouseCreateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedCreateWithoutDeceasedRelativeInput>
+}
+
+export type LittleHouseUpdateWithWhereUniqueWithoutDeceasedRelativeInput = {
+  where: Prisma.LittleHouseWhereUniqueInput
+  data: Prisma.XOR<Prisma.LittleHouseUpdateWithoutDeceasedRelativeInput, Prisma.LittleHouseUncheckedUpdateWithoutDeceasedRelativeInput>
+}
+
+export type LittleHouseUpdateManyWithWhereWithoutDeceasedRelativeInput = {
+  where: Prisma.LittleHouseScalarWhereInput
+  data: Prisma.XOR<Prisma.LittleHouseUpdateManyMutationInput, Prisma.LittleHouseUncheckedUpdateManyWithoutDeceasedRelativeInput>
 }
 
 export type LittleHouseCreateManyUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: number | runtime.Types.Skip
   status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
   burnDate?: Date | string | null | runtime.Types.Skip
   postBurnNote?: string | null | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -651,26 +977,42 @@ export type LittleHouseUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  deceasedRelative?: Prisma.DeceasedRelativeUpdateOneWithoutLittleHousesNestedInput | runtime.Types.Skip
 }
 
 export type LittleHouseUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -679,12 +1021,108 @@ export type LittleHouseUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
   sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  deceasedRelativeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type LittleHouseCreateManyDeceasedRelativeInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  userId: string
+  recipient: string
+  recipientName?: string | null | runtime.Types.Skip
+  offerTo?: string | null | runtime.Types.Skip
+  purpose?: $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: number | runtime.Types.Skip
+  status?: $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Date | string | null | runtime.Types.Skip
+  burnDate?: Date | string | null | runtime.Types.Skip
+  postBurnNote?: string | null | runtime.Types.Skip
+  specialCase?: boolean | runtime.Types.Skip
+  confirmedAt?: Date | string | null | runtime.Types.Skip
+  offeredByName?: string | null | runtime.Types.Skip
+  chantingStartedAt?: Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type LittleHouseUpdateWithoutDeceasedRelativeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  user?: Prisma.UserUpdateOneRequiredWithoutLittleHousesNestedInput | runtime.Types.Skip
+}
+
+export type LittleHouseUncheckedUpdateWithoutDeceasedRelativeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type LittleHouseUncheckedUpdateManyWithoutDeceasedRelativeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipient?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  recipientName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  offerTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  purpose?: Prisma.NullableEnumLittleHousePurposeFieldUpdateOperationsInput | $Enums.LittleHousePurpose | null | runtime.Types.Skip
+  sheetsCount?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  status?: Prisma.EnumLittleHouseStatusFieldUpdateOperationsInput | $Enums.LittleHouseStatus | runtime.Types.Skip
+  startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  burnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  postBurnNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  specialCase?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  chantingStartedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  offeredByLockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -696,15 +1134,24 @@ export type LittleHouseSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   publicId?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   recipient?: boolean | runtime.Types.Skip
+  recipientName?: boolean | runtime.Types.Skip
+  offerTo?: boolean | runtime.Types.Skip
+  purpose?: boolean | runtime.Types.Skip
   sheetsCount?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
+  startedAt?: boolean | runtime.Types.Skip
   burnDate?: boolean | runtime.Types.Skip
   postBurnNote?: boolean | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: boolean | runtime.Types.Skip
+  offeredByName?: boolean | runtime.Types.Skip
+  chantingStartedAt?: boolean | runtime.Types.Skip
+  offeredByLockedAt?: boolean | runtime.Types.Skip
+  deceasedRelativeId?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["littleHouse"]>
 
 export type LittleHouseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -712,15 +1159,24 @@ export type LittleHouseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   publicId?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   recipient?: boolean | runtime.Types.Skip
+  recipientName?: boolean | runtime.Types.Skip
+  offerTo?: boolean | runtime.Types.Skip
+  purpose?: boolean | runtime.Types.Skip
   sheetsCount?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
+  startedAt?: boolean | runtime.Types.Skip
   burnDate?: boolean | runtime.Types.Skip
   postBurnNote?: boolean | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: boolean | runtime.Types.Skip
+  offeredByName?: boolean | runtime.Types.Skip
+  chantingStartedAt?: boolean | runtime.Types.Skip
+  offeredByLockedAt?: boolean | runtime.Types.Skip
+  deceasedRelativeId?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["littleHouse"]>
 
 export type LittleHouseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -728,15 +1184,24 @@ export type LittleHouseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   publicId?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   recipient?: boolean | runtime.Types.Skip
+  recipientName?: boolean | runtime.Types.Skip
+  offerTo?: boolean | runtime.Types.Skip
+  purpose?: boolean | runtime.Types.Skip
   sheetsCount?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
+  startedAt?: boolean | runtime.Types.Skip
   burnDate?: boolean | runtime.Types.Skip
   postBurnNote?: boolean | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: boolean | runtime.Types.Skip
+  offeredByName?: boolean | runtime.Types.Skip
+  chantingStartedAt?: boolean | runtime.Types.Skip
+  offeredByLockedAt?: boolean | runtime.Types.Skip
+  deceasedRelativeId?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["littleHouse"]>
 
 export type LittleHouseSelectScalar = {
@@ -744,43 +1209,63 @@ export type LittleHouseSelectScalar = {
   publicId?: boolean | runtime.Types.Skip
   userId?: boolean | runtime.Types.Skip
   recipient?: boolean | runtime.Types.Skip
+  recipientName?: boolean | runtime.Types.Skip
+  offerTo?: boolean | runtime.Types.Skip
+  purpose?: boolean | runtime.Types.Skip
   sheetsCount?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
+  startedAt?: boolean | runtime.Types.Skip
   burnDate?: boolean | runtime.Types.Skip
   postBurnNote?: boolean | runtime.Types.Skip
   specialCase?: boolean | runtime.Types.Skip
   confirmedAt?: boolean | runtime.Types.Skip
+  offeredByName?: boolean | runtime.Types.Skip
+  chantingStartedAt?: boolean | runtime.Types.Skip
+  offeredByLockedAt?: boolean | runtime.Types.Skip
+  deceasedRelativeId?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type LittleHouseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "userId" | "recipient" | "sheetsCount" | "status" | "burnDate" | "postBurnNote" | "specialCase" | "confirmedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["littleHouse"], runtime.Types.Skip>
+export type LittleHouseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "userId" | "recipient" | "recipientName" | "offerTo" | "purpose" | "sheetsCount" | "status" | "startedAt" | "burnDate" | "postBurnNote" | "specialCase" | "confirmedAt" | "offeredByName" | "chantingStartedAt" | "offeredByLockedAt" | "deceasedRelativeId" | "createdAt" | "updatedAt", ExtArgs["result"]["littleHouse"], runtime.Types.Skip>
 export type LittleHouseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }
 export type LittleHouseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }
 export type LittleHouseIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
+  deceasedRelative?: boolean | Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> | runtime.Types.Skip
 }
 
 export type $LittleHousePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "LittleHouse"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    deceasedRelative: Prisma.$DeceasedRelativePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     publicId: string
     userId: string
     recipient: string
+    recipientName: string | null
+    offerTo: string | null
+    purpose: $Enums.LittleHousePurpose | null
     sheetsCount: number
     status: $Enums.LittleHouseStatus
+    startedAt: Date | null
     burnDate: Date | null
     postBurnNote: string | null
     specialCase: boolean
     confirmedAt: Date | null
+    offeredByName: string | null
+    chantingStartedAt: Date | null
+    offeredByLockedAt: Date | null
+    deceasedRelativeId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["littleHouse"]>
@@ -1178,6 +1663,7 @@ readonly fields: LittleHouseFieldRefs;
 export interface Prisma__LittleHouseClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  deceasedRelative<T extends Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LittleHouse$deceasedRelativeArgs<ExtArgs>>): Prisma.Prisma__DeceasedRelativeClient<runtime.Types.Result.GetResult<Prisma.$DeceasedRelativePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1211,12 +1697,20 @@ export interface LittleHouseFieldRefs {
   readonly publicId: Prisma.FieldRef<"LittleHouse", 'String'>
   readonly userId: Prisma.FieldRef<"LittleHouse", 'String'>
   readonly recipient: Prisma.FieldRef<"LittleHouse", 'String'>
+  readonly recipientName: Prisma.FieldRef<"LittleHouse", 'String'>
+  readonly offerTo: Prisma.FieldRef<"LittleHouse", 'String'>
+  readonly purpose: Prisma.FieldRef<"LittleHouse", 'LittleHousePurpose'>
   readonly sheetsCount: Prisma.FieldRef<"LittleHouse", 'Int'>
   readonly status: Prisma.FieldRef<"LittleHouse", 'LittleHouseStatus'>
+  readonly startedAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
   readonly burnDate: Prisma.FieldRef<"LittleHouse", 'DateTime'>
   readonly postBurnNote: Prisma.FieldRef<"LittleHouse", 'String'>
   readonly specialCase: Prisma.FieldRef<"LittleHouse", 'Boolean'>
   readonly confirmedAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
+  readonly offeredByName: Prisma.FieldRef<"LittleHouse", 'String'>
+  readonly chantingStartedAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
+  readonly offeredByLockedAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
+  readonly deceasedRelativeId: Prisma.FieldRef<"LittleHouse", 'String'>
   readonly createdAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LittleHouse", 'DateTime'>
 }
@@ -1617,6 +2111,25 @@ export type LittleHouseDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many LittleHouses to delete.
    */
   limit?: number | runtime.Types.Skip
+}
+
+/**
+ * LittleHouse.deceasedRelative
+ */
+export type LittleHouse$deceasedRelativeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeceasedRelative
+   */
+  select?: Prisma.DeceasedRelativeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeceasedRelative
+   */
+  omit?: Prisma.DeceasedRelativeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeceasedRelativeInclude<ExtArgs> | null
+  where?: Prisma.DeceasedRelativeWhereInput | runtime.Types.Skip
 }
 
 /**

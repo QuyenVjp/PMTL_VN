@@ -4,8 +4,8 @@
 // Owner: vows-merit module
 
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
-import { BodhisattvaType, WaterConsumptionMethod } from '@prisma/client';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
+import { BodhisattvaType, WaterConsumptionMethod } from '../../generated/prisma/enums.js';
 
 interface WaterOfferingDto {
   bodhisattvaType: BodhisattvaType;

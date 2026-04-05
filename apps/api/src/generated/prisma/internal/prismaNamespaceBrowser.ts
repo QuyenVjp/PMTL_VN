@@ -93,7 +93,49 @@ export const ModelName = {
   RepentanceLog: 'RepentanceLog',
   AltarLog: 'AltarLog',
   PracticeProfile: 'PracticeProfile',
-  ActivationLog: 'ActivationLog'
+  ActivationLog: 'ActivationLog',
+  SelfCultivationSheet: 'SelfCultivationSheet',
+  SelfCultivationTemplate: 'SelfCultivationTemplate',
+  ConvincingFamilyRitualSession: 'ConvincingFamilyRitualSession',
+  NameChangeApplication: 'NameChangeApplication',
+  SutraReadingSession: 'SutraReadingSession',
+  SutraBookmark: 'SutraBookmark',
+  LittleHouseBurnSession: 'LittleHouseBurnSession',
+  ChildProfile: 'ChildProfile',
+  AltarProfile: 'AltarProfile',
+  WaterOfferingLog: 'WaterOfferingLog',
+  DeceasedRelative: 'DeceasedRelative',
+  SutraMetadata: 'SutraMetadata',
+  DreamJournal: 'DreamJournal',
+  LittleHouseWarning: 'LittleHouseWarning',
+  CharityWhitelist: 'CharityWhitelist',
+  CharityWhitelistingRule: 'CharityWhitelistingRule',
+  FraudDetectionAlert: 'FraudDetectionAlert',
+  UserCharityInteraction: 'UserCharityInteraction',
+  MaritalPurityVow: 'MaritalPurityVow',
+  ThoughtStateLog: 'ThoughtStateLog',
+  MaritalGuidanceRequest: 'MaritalGuidanceRequest',
+  VowAuditEvent: 'VowAuditEvent',
+  BuddhistEvent: 'BuddhistEvent',
+  EventRegistration: 'EventRegistration',
+  EventAuditLog: 'EventAuditLog',
+  LifeReleaseRecord: 'LifeReleaseRecord',
+  ReleaseAnimalEntry: 'ReleaseAnimalEntry',
+  ProxyLifeRelease: 'ProxyLifeRelease',
+  LhRecord: 'LhRecord',
+  LhRecitation: 'LhRecitation',
+  LhCompletionRecord: 'LhCompletionRecord',
+  LhDottingSession: 'LhDottingSession',
+  LhCombustionLog: 'LhCombustionLog',
+  LhFraud: 'LhFraud',
+  SacredFormTemplate: 'SacredFormTemplate',
+  FormApplicant: 'FormApplicant',
+  FormPrerequisiteEntry: 'FormPrerequisiteEntry',
+  SacredFormAuditLog: 'SacredFormAuditLog',
+  DisposalPolarityRecord: 'DisposalPolarityRecord',
+  AltarItem: 'AltarItem',
+  AltarValidationLog: 'AltarValidationLog',
+  AltarProtocolTemplate: 'AltarProtocolTemplate'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -717,12 +759,20 @@ export const LittleHouseScalarFieldEnum = {
   publicId: 'publicId',
   userId: 'userId',
   recipient: 'recipient',
+  recipientName: 'recipientName',
+  offerTo: 'offerTo',
+  purpose: 'purpose',
   sheetsCount: 'sheetsCount',
   status: 'status',
+  startedAt: 'startedAt',
   burnDate: 'burnDate',
   postBurnNote: 'postBurnNote',
   specialCase: 'specialCase',
   confirmedAt: 'confirmedAt',
+  offeredByName: 'offeredByName',
+  chantingStartedAt: 'chantingStartedAt',
+  offeredByLockedAt: 'offeredByLockedAt',
+  deceasedRelativeId: 'deceasedRelativeId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -780,6 +830,10 @@ export const AltarLogScalarFieldEnum = {
   userId: 'userId',
   date: 'date',
   actionType: 'actionType',
+  relocationStep: 'relocationStep',
+  incenseBurnedConfirmed: 'incenseBurnedConfirmed',
+  redClothConfirmed: 'redClothConfirmed',
+  altarFirstConfirmed: 'altarFirstConfirmed',
   checklistStateJson: 'checklistStateJson',
   note: 'note',
   createdAt: 'createdAt',
@@ -795,6 +849,8 @@ export const PracticeProfileScalarFieldEnum = {
   elderlyMode: 'elderlyMode',
   assistMode: 'assistMode',
   assistContactRef: 'assistContactRef',
+  mentalHealthCondition: 'mentalHealthCondition',
+  daBeiZhouDailyLimit: 'daBeiZhouDailyLimit',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -815,6 +871,681 @@ export const ActivationLogScalarFieldEnum = {
 } as const
 
 export type ActivationLogScalarFieldEnum = (typeof ActivationLogScalarFieldEnum)[keyof typeof ActivationLogScalarFieldEnum]
+
+
+export const SelfCultivationSheetScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  sutraType: 'sutraType',
+  templatePublicId: 'templatePublicId',
+  totalSlots: 'totalSlots',
+  completedSlots: 'completedSlots',
+  status: 'status',
+  burnDate: 'burnDate',
+  burnConfirmedNnn: 'burnConfirmedNnn',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SelfCultivationSheetScalarFieldEnum = (typeof SelfCultivationSheetScalarFieldEnum)[keyof typeof SelfCultivationSheetScalarFieldEnum]
+
+
+export const SelfCultivationTemplateScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  sutraType: 'sutraType',
+  slotsCount: 'slotsCount',
+  paperSize: 'paperSize',
+  pdfMediaId: 'pdfMediaId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SelfCultivationTemplateScalarFieldEnum = (typeof SelfCultivationTemplateScalarFieldEnum)[keyof typeof SelfCultivationTemplateScalarFieldEnum]
+
+
+export const ConvincingFamilyRitualSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  formId: 'formId',
+  startedAt: 'startedAt',
+  durationMinutes: 'durationMinutes',
+  alertAt: 'alertAt',
+  alertFiredAt: 'alertFiredAt',
+  completedAt: 'completedAt',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ConvincingFamilyRitualSessionScalarFieldEnum = (typeof ConvincingFamilyRitualSessionScalarFieldEnum)[keyof typeof ConvincingFamilyRitualSessionScalarFieldEnum]
+
+
+export const NameChangeApplicationScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  targetPersonType: 'targetPersonType',
+  targetOldName: 'targetOldName',
+  targetNewName: 'targetNewName',
+  yearsUsedNewName: 'yearsUsedNewName',
+  status: 'status',
+  burnedAt: 'burnedAt',
+  activationEndsAt: 'activationEndsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NameChangeApplicationScalarFieldEnum = (typeof NameChangeApplicationScalarFieldEnum)[keyof typeof NameChangeApplicationScalarFieldEnum]
+
+
+export const SutraReadingSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sutraId: 'sutraId',
+  hygieneConfirmedAt: 'hygieneConfirmedAt',
+  sessionStartedAt: 'sessionStartedAt',
+  sessionEndedAt: 'sessionEndedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SutraReadingSessionScalarFieldEnum = (typeof SutraReadingSessionScalarFieldEnum)[keyof typeof SutraReadingSessionScalarFieldEnum]
+
+
+export const SutraBookmarkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sutraId: 'sutraId',
+  pageIndex: 'pageIndex',
+  lineIndex: 'lineIndex',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SutraBookmarkScalarFieldEnum = (typeof SutraBookmarkScalarFieldEnum)[keyof typeof SutraBookmarkScalarFieldEnum]
+
+
+export const LittleHouseBurnSessionScalarFieldEnum = {
+  id: 'id',
+  littleHouseId: 'littleHouseId',
+  userId: 'userId',
+  status: 'status',
+  preBurnCheckedAt: 'preBurnCheckedAt',
+  burnStartedAt: 'burnStartedAt',
+  postBurnCheckedAt: 'postBurnCheckedAt',
+  burnCompletedAt: 'burnCompletedAt',
+  hadScraps: 'hadScraps',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LittleHouseBurnSessionScalarFieldEnum = (typeof LittleHouseBurnSessionScalarFieldEnum)[keyof typeof LittleHouseBurnSessionScalarFieldEnum]
+
+
+export const ChildProfileScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  childName: 'childName',
+  hasGamingAddiction: 'hasGamingAddiction',
+  virtualViolenceKarma: 'virtualViolenceKarma',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChildProfileScalarFieldEnum = (typeof ChildProfileScalarFieldEnum)[keyof typeof ChildProfileScalarFieldEnum]
+
+
+export const AltarProfileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  hasAltar: 'hasAltar',
+  notFacingKitchen: 'notFacingKitchen',
+  noMirrorsAround: 'noMirrorsAround',
+  notOnOverhangingBalcony: 'notOnOverhangingBalcony',
+  spatialConfirmedAt: 'spatialConfirmedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AltarProfileScalarFieldEnum = (typeof AltarProfileScalarFieldEnum)[keyof typeof AltarProfileScalarFieldEnum]
+
+
+export const WaterOfferingLogScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  bodhisattvaType: 'bodhisattvaType',
+  consumptionMethod: 'consumptionMethod',
+  daBeiZhouRecited: 'daBeiZhouRecited',
+  date: 'date',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type WaterOfferingLogScalarFieldEnum = (typeof WaterOfferingLogScalarFieldEnum)[keyof typeof WaterOfferingLogScalarFieldEnum]
+
+
+export const DeceasedRelativeScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  name: 'name',
+  relationship: 'relationship',
+  dateOfDeath: 'dateOfDeath',
+  bardoEndDate: 'bardoEndDate',
+  targetLH: 'targetLH',
+  completedLH: 'completedLH',
+  bardoCompleted: 'bardoCompleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DeceasedRelativeScalarFieldEnum = (typeof DeceasedRelativeScalarFieldEnum)[keyof typeof DeceasedRelativeScalarFieldEnum]
+
+
+export const SutraMetadataScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  sutraKey: 'sutraKey',
+  titleVi: 'titleVi',
+  titleEn: 'titleEn',
+  sutraType: 'sutraType',
+  pauseMantra: 'pauseMantra',
+  pauseInstruction: 'pauseInstruction',
+  restartWarning: 'restartWarning',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SutraMetadataScalarFieldEnum = (typeof SutraMetadataScalarFieldEnum)[keyof typeof SutraMetadataScalarFieldEnum]
+
+
+export const DreamJournalScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  dreamDate: 'dreamDate',
+  abortionChildRelated: 'abortionChildRelated',
+  childState: 'childState',
+  description: 'description',
+  littleHousePublicId: 'littleHousePublicId',
+  resolutionStatus: 'resolutionStatus',
+  autoActionTriggered: 'autoActionTriggered',
+  autoActionNote: 'autoActionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DreamJournalScalarFieldEnum = (typeof DreamJournalScalarFieldEnum)[keyof typeof DreamJournalScalarFieldEnum]
+
+
+export const LittleHouseWarningScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  littleHouseId: 'littleHouseId',
+  userId: 'userId',
+  warningType: 'warningType',
+  daysElapsed: 'daysElapsed',
+  sentAt: 'sentAt',
+  acknowledged: 'acknowledged',
+  acknowledgedAt: 'acknowledgedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type LittleHouseWarningScalarFieldEnum = (typeof LittleHouseWarningScalarFieldEnum)[keyof typeof LittleHouseWarningScalarFieldEnum]
+
+
+export const CharityWhitelistScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  charityType: 'charityType',
+  registrationNumber: 'registrationNumber',
+  country: 'country',
+  bankAccounts: 'bankAccounts',
+  website: 'website',
+  contactEmail: 'contactEmail',
+  verificationScore: 'verificationScore',
+  status: 'status',
+  verifiedAt: 'verifiedAt',
+  verifiedById: 'verifiedById',
+  suspendedAt: 'suspendedAt',
+  suspendedReason: 'suspendedReason',
+  revokedAt: 'revokedAt',
+  revokedReason: 'revokedReason',
+  lastAuditAt: 'lastAuditAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CharityWhitelistScalarFieldEnum = (typeof CharityWhitelistScalarFieldEnum)[keyof typeof CharityWhitelistScalarFieldEnum]
+
+
+export const CharityWhitelistingRuleScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  charityId: 'charityId',
+  criteriaType: 'criteriaType',
+  satisfied: 'satisfied',
+  evidenceUrl: 'evidenceUrl',
+  verifiedAt: 'verifiedAt',
+  verifiedById: 'verifiedById',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CharityWhitelistingRuleScalarFieldEnum = (typeof CharityWhitelistingRuleScalarFieldEnum)[keyof typeof CharityWhitelistingRuleScalarFieldEnum]
+
+
+export const FraudDetectionAlertScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  charityId: 'charityId',
+  reportedById: 'reportedById',
+  alertType: 'alertType',
+  severity: 'severity',
+  detectedContent: 'detectedContent',
+  matchedAccount: 'matchedAccount',
+  isWhitelisted: 'isWhitelisted',
+  isAppealable: 'isAppealable',
+  resolvedAt: 'resolvedAt',
+  resolvedById: 'resolvedById',
+  resolutionNote: 'resolutionNote',
+  autoDeleted: 'autoDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FraudDetectionAlertScalarFieldEnum = (typeof FraudDetectionAlertScalarFieldEnum)[keyof typeof FraudDetectionAlertScalarFieldEnum]
+
+
+export const UserCharityInteractionScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  charityId: 'charityId',
+  interactionType: 'interactionType',
+  referenceId: 'referenceId',
+  amount: 'amount',
+  currency: 'currency',
+  verified: 'verified',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserCharityInteractionScalarFieldEnum = (typeof UserCharityInteractionScalarFieldEnum)[keyof typeof UserCharityInteractionScalarFieldEnum]
+
+
+export const MaritalPurityVowScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  practitionerId: 'practitionerId',
+  spouseId: 'spouseId',
+  vowDate: 'vowDate',
+  purityLevel: 'purityLevel',
+  kissAllowed: 'kissAllowed',
+  hugAllowed: 'hugAllowed',
+  sleepArrangement: 'sleepArrangement',
+  dailyRecitations: 'dailyRecitations',
+  status: 'status',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaritalPurityVowScalarFieldEnum = (typeof MaritalPurityVowScalarFieldEnum)[keyof typeof MaritalPurityVowScalarFieldEnum]
+
+
+export const ThoughtStateLogScalarFieldEnum = {
+  id: 'id',
+  vowId: 'vowId',
+  timestamp: 'timestamp',
+  thoughtType: 'thoughtType',
+  intensity: 'intensity',
+  durationMinutes: 'durationMinutes',
+  trigger: 'trigger',
+  responseAction: 'responseAction',
+  recitationsUsed: 'recitationsUsed',
+  resolved: 'resolved',
+  reflection: 'reflection',
+  createdAt: 'createdAt'
+} as const
+
+export type ThoughtStateLogScalarFieldEnum = (typeof ThoughtStateLogScalarFieldEnum)[keyof typeof ThoughtStateLogScalarFieldEnum]
+
+
+export const MaritalGuidanceRequestScalarFieldEnum = {
+  id: 'id',
+  vowId: 'vowId',
+  category: 'category',
+  question: 'question',
+  context: 'context',
+  urgency: 'urgency',
+  response: 'response',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaritalGuidanceRequestScalarFieldEnum = (typeof MaritalGuidanceRequestScalarFieldEnum)[keyof typeof MaritalGuidanceRequestScalarFieldEnum]
+
+
+export const VowAuditEventScalarFieldEnum = {
+  id: 'id',
+  vowId: 'vowId',
+  eventType: 'eventType',
+  actor: 'actor',
+  details: 'details',
+  previousState: 'previousState',
+  newState: 'newState',
+  createdAt: 'createdAt'
+} as const
+
+export type VowAuditEventScalarFieldEnum = (typeof VowAuditEventScalarFieldEnum)[keyof typeof VowAuditEventScalarFieldEnum]
+
+
+export const BuddhistEventScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  organizerId: 'organizerId',
+  title: 'title',
+  titleVi: 'titleVi',
+  description: 'description',
+  eventType: 'eventType',
+  deliveryMode: 'deliveryMode',
+  status: 'status',
+  startAt: 'startAt',
+  endAt: 'endAt',
+  locationName: 'locationName',
+  locationAddress: 'locationAddress',
+  onlineUrl: 'onlineUrl',
+  maxAttendees: 'maxAttendees',
+  isFree: 'isFree',
+  coverImageUrl: 'coverImageUrl',
+  recitationTarget: 'recitationTarget',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BuddhistEventScalarFieldEnum = (typeof BuddhistEventScalarFieldEnum)[keyof typeof BuddhistEventScalarFieldEnum]
+
+
+export const EventRegistrationScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  userId: 'userId',
+  status: 'status',
+  checkedInAt: 'checkedInAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EventRegistrationScalarFieldEnum = (typeof EventRegistrationScalarFieldEnum)[keyof typeof EventRegistrationScalarFieldEnum]
+
+
+export const EventAuditLogScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  actor: 'actor',
+  action: 'action',
+  details: 'details',
+  createdAt: 'createdAt'
+} as const
+
+export type EventAuditLogScalarFieldEnum = (typeof EventAuditLogScalarFieldEnum)[keyof typeof EventAuditLogScalarFieldEnum]
+
+
+export const LifeReleaseRecordScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  recordType: 'recordType',
+  status: 'status',
+  releaseDate: 'releaseDate',
+  locationName: 'locationName',
+  locationCoords: 'locationCoords',
+  merit: 'merit',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LifeReleaseRecordScalarFieldEnum = (typeof LifeReleaseRecordScalarFieldEnum)[keyof typeof LifeReleaseRecordScalarFieldEnum]
+
+
+export const ReleaseAnimalEntryScalarFieldEnum = {
+  id: 'id',
+  recordId: 'recordId',
+  species: 'species',
+  quantity: 'quantity',
+  sourceLocation: 'sourceLocation',
+  isPredatory: 'isPredatory',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type ReleaseAnimalEntryScalarFieldEnum = (typeof ReleaseAnimalEntryScalarFieldEnum)[keyof typeof ReleaseAnimalEntryScalarFieldEnum]
+
+
+export const ProxyLifeReleaseScalarFieldEnum = {
+  id: 'id',
+  recordId: 'recordId',
+  sponsorId: 'sponsorId',
+  beneficiary: 'beneficiary',
+  merit: 'merit',
+  createdAt: 'createdAt'
+} as const
+
+export type ProxyLifeReleaseScalarFieldEnum = (typeof ProxyLifeReleaseScalarFieldEnum)[keyof typeof ProxyLifeReleaseScalarFieldEnum]
+
+
+export const LhRecordScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  beneficiaryName: 'beneficiaryName',
+  status: 'status',
+  vowText: 'vowText',
+  draftedAt: 'draftedAt',
+  signedAt: 'signedAt',
+  chantedAt: 'chantedAt',
+  burnedAt: 'burnedAt',
+  cancelledAt: 'cancelledAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LhRecordScalarFieldEnum = (typeof LhRecordScalarFieldEnum)[keyof typeof LhRecordScalarFieldEnum]
+
+
+export const LhRecitationScalarFieldEnum = {
+  id: 'id',
+  lhRecordId: 'lhRecordId',
+  recitationType: 'recitationType',
+  count: 'count',
+  sessionDate: 'sessionDate',
+  chanterName: 'chanterName',
+  createdAt: 'createdAt'
+} as const
+
+export type LhRecitationScalarFieldEnum = (typeof LhRecitationScalarFieldEnum)[keyof typeof LhRecitationScalarFieldEnum]
+
+
+export const LhCompletionRecordScalarFieldEnum = {
+  id: 'id',
+  lhRecordId: 'lhRecordId',
+  completedAt: 'completedAt',
+  witness: 'witness',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type LhCompletionRecordScalarFieldEnum = (typeof LhCompletionRecordScalarFieldEnum)[keyof typeof LhCompletionRecordScalarFieldEnum]
+
+
+export const LhDottingSessionScalarFieldEnum = {
+  id: 'id',
+  lhRecordId: 'lhRecordId',
+  status: 'status',
+  dottedAt: 'dottedAt',
+  operatorName: 'operatorName',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type LhDottingSessionScalarFieldEnum = (typeof LhDottingSessionScalarFieldEnum)[keyof typeof LhDottingSessionScalarFieldEnum]
+
+
+export const LhCombustionLogScalarFieldEnum = {
+  id: 'id',
+  lhRecordId: 'lhRecordId',
+  burnedAt: 'burnedAt',
+  altitude: 'altitude',
+  containerType: 'containerType',
+  operatorName: 'operatorName',
+  notes: 'notes',
+  createdAt: 'createdAt'
+} as const
+
+export type LhCombustionLogScalarFieldEnum = (typeof LhCombustionLogScalarFieldEnum)[keyof typeof LhCombustionLogScalarFieldEnum]
+
+
+export const LhFraudScalarFieldEnum = {
+  id: 'id',
+  lhRecordId: 'lhRecordId',
+  flaggedAt: 'flaggedAt',
+  reason: 'reason',
+  severity: 'severity',
+  resolvedAt: 'resolvedAt',
+  resolution: 'resolution',
+  createdAt: 'createdAt'
+} as const
+
+export type LhFraudScalarFieldEnum = (typeof LhFraudScalarFieldEnum)[keyof typeof LhFraudScalarFieldEnum]
+
+
+export const SacredFormTemplateScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  formType: 'formType',
+  titleVi: 'titleVi',
+  titleZh: 'titleZh',
+  description: 'description',
+  prerequisitesDef: 'prerequisitesDef',
+  formSchema: 'formSchema',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SacredFormTemplateScalarFieldEnum = (typeof SacredFormTemplateScalarFieldEnum)[keyof typeof SacredFormTemplateScalarFieldEnum]
+
+
+export const FormApplicantScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  templateId: 'templateId',
+  userId: 'userId',
+  status: 'status',
+  formData: 'formData',
+  probationEndsAt: 'probationEndsAt',
+  approvedAt: 'approvedAt',
+  rejectedAt: 'rejectedAt',
+  revokedAt: 'revokedAt',
+  reviewNotes: 'reviewNotes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FormApplicantScalarFieldEnum = (typeof FormApplicantScalarFieldEnum)[keyof typeof FormApplicantScalarFieldEnum]
+
+
+export const FormPrerequisiteEntryScalarFieldEnum = {
+  id: 'id',
+  applicantId: 'applicantId',
+  name: 'name',
+  status: 'status',
+  completedAt: 'completedAt',
+  evidence: 'evidence',
+  createdAt: 'createdAt'
+} as const
+
+export type FormPrerequisiteEntryScalarFieldEnum = (typeof FormPrerequisiteEntryScalarFieldEnum)[keyof typeof FormPrerequisiteEntryScalarFieldEnum]
+
+
+export const SacredFormAuditLogScalarFieldEnum = {
+  id: 'id',
+  applicantId: 'applicantId',
+  actor: 'actor',
+  action: 'action',
+  details: 'details',
+  createdAt: 'createdAt'
+} as const
+
+export type SacredFormAuditLogScalarFieldEnum = (typeof SacredFormAuditLogScalarFieldEnum)[keyof typeof SacredFormAuditLogScalarFieldEnum]
+
+
+export const DisposalPolarityRecordScalarFieldEnum = {
+  id: 'id',
+  formType: 'formType',
+  polarity: 'polarity',
+  rationale: 'rationale',
+  effectiveAt: 'effectiveAt',
+  createdAt: 'createdAt'
+} as const
+
+export type DisposalPolarityRecordScalarFieldEnum = (typeof DisposalPolarityRecordScalarFieldEnum)[keyof typeof DisposalPolarityRecordScalarFieldEnum]
+
+
+export const AltarItemScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  userId: 'userId',
+  itemType: 'itemType',
+  name: 'name',
+  condition: 'condition',
+  acquisitionAt: 'acquisitionAt',
+  notes: 'notes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AltarItemScalarFieldEnum = (typeof AltarItemScalarFieldEnum)[keyof typeof AltarItemScalarFieldEnum]
+
+
+export const AltarValidationLogScalarFieldEnum = {
+  id: 'id',
+  altarItemId: 'altarItemId',
+  userId: 'userId',
+  protocolType: 'protocolType',
+  passed: 'passed',
+  notes: 'notes',
+  performedAt: 'performedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AltarValidationLogScalarFieldEnum = (typeof AltarValidationLogScalarFieldEnum)[keyof typeof AltarValidationLogScalarFieldEnum]
+
+
+export const AltarProtocolTemplateScalarFieldEnum = {
+  id: 'id',
+  protocolType: 'protocolType',
+  titleVi: 'titleVi',
+  steps: 'steps',
+  frequency: 'frequency',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+} as const
+
+export type AltarProtocolTemplateScalarFieldEnum = (typeof AltarProtocolTemplateScalarFieldEnum)[keyof typeof AltarProtocolTemplateScalarFieldEnum]
 
 
 export const SortOrder = {

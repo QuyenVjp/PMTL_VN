@@ -3,7 +3,7 @@
 // Owner: engagement module
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 interface CreateChildProfileDto {
   childName: string;

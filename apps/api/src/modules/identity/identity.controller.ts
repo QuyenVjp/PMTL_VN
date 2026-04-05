@@ -27,8 +27,10 @@ import {
   changePasswordSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  bootstrapAdminSchema,
   type LoginInput,
   type RegisterInput,
+  type BootstrapAdminInput,
   type UpdateProfileInput,
   type ChangePasswordInput,
   type ForgotPasswordInput,
@@ -80,6 +82,36 @@ export class IdentityController {
   @ApiResponse({ status: 409, description: "Email đã được sử dụng" })
   async register(@Body() input: RegisterInput) {
     return this.identityService.register(input);
+  }
+
+  @Get("bootstrap-status")
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Kiểm tra trạng thái khởi tạo admin đầu tiên" })
+  @ApiResponse({ status: 200, description: "Trạng thái bootstrap" })
+  async bootstrapStatus() {
+    return this.identityService.getBootstrapStatus();
+  }
+
+  @Post("bootstrap-admin")
+  @Public()
+  @RateLimit("auth.login")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Tạo tài khoản quản trị đầu tiên khi hệ thống chưa có dữ liệu" })
+  @ApiResponse({ status: 201, description: "Tạo tài khoản quản trị đầu tiên thành công" })
+  @ApiResponse({ status: 409, description: "Hệ thống đã có tài khoản quản trị" })
+  async bootstrapAdmin(
+    @Body(ZodValidate(bootstrapAdminSchema)) input: BootstrapAdminInput,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.identityService.bootstrapFirstAdmin(input, {
+      userAgent: req.headers["user-agent"],
+      ipAddress: req.ip,
+    });
+
+    this.setAuthCookies(res, result.accessToken, result.refreshToken);
+    return { user: result.user };
   }
 
   @Post("refresh")

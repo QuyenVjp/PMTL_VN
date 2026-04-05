@@ -3,8 +3,9 @@
 // Owner: content module
 
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
-import { PersonLifeStatus, ApplicationStatus } from '@prisma/client';
+import { nanoid } from 'nanoid';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
+import { PersonLifeStatus, ApplicationStatus } from '../../generated/prisma/enums.js';
 import { addDays } from 'date-fns';
 
 interface NameChangeApplicationDto {
@@ -55,6 +56,7 @@ export class NameChangeService {
     // 4. Create application
     const application = await this.prisma.nameChangeApplication.create({
       data: {
+        publicId: nanoid(21),
         userId,
         targetPersonType: dto.targetPersonType,
         targetOldName: dto.targetOldName,

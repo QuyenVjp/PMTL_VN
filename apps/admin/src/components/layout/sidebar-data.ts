@@ -4,6 +4,7 @@ import {
   BookOpen,
   CalendarDays,
   Contact,
+  Flame,
   HeartHandshake,
   HeartPulse,
   Images,
@@ -21,6 +22,10 @@ import {
   Settings2,
   Users,
   UserSquare2,
+  Bird,
+  CalendarCheck,
+  FileText,
+  Landmark,
 } from "lucide-react";
 
 import type { NavGroup } from "@/components/layout/types";
@@ -96,6 +101,63 @@ export const sidebarNavGroups: NavGroup[] = [
     title: "Hỗ trợ",
     items: [
       { title: "Nhập hộ phát nguyện", url: "/ho-tro/phat-nguyen/nhap-ho", icon: Sparkles },
+    ],
+  },
+  {
+    title: "Thanh Tịnh Pháp",
+    items: [
+      {
+        title: "Tuân thủ Pháp luật",
+        icon: ShieldCheck,
+        items: [
+          { title: "Tổ chức từ thiện", url: "/phap-luat/to-chuc-tu-thien" },
+          { title: "Cảnh báo gian lận", url: "/phap-luat/canh-bao-gian-lan" },
+          { title: "Lời nguyện thanh tu", url: "/phap-luat/loi-nguyen-thanh-tu" },
+          { title: "Hàng đợi hướng dẫn", url: "/phap-luat/hang-doi-huong-dan" },
+        ],
+      },
+      {
+        title: "Sự kiện Phật pháp",
+        icon: CalendarCheck,
+        items: [
+          { title: "Danh sách sự kiện", url: "/su-kien/danh-sach" },
+          { title: "Tạo sự kiện", url: "/su-kien/tao-moi" },
+        ],
+      },
+      {
+        title: "Phóng sinh",
+        icon: Bird,
+        items: [
+          { title: "Hồ sơ phóng sinh", url: "/phong-sinh/ho-so" },
+          { title: "Thống kê theo loài", url: "/phong-sinh/thong-ke" },
+        ],
+      },
+      {
+        title: "Đơn Pháp Bảo",
+        icon: FileText,
+        items: [
+          { title: "Mẫu đơn", url: "/don-phap-bao/mau-don" },
+          { title: "Đơn đăng ký", url: "/don-phap-bao/don-dang-ky" },
+          { title: "Quy tắc xử lý", url: "/don-phap-bao/quy-tac-xu-ly" },
+        ],
+      },
+      {
+        title: "Sớ (Ngôi Nhà Nhỏ)",
+        icon: Flame,
+        items: [
+          { title: "Danh sách sớ", url: "/so/danh-sach" },
+          { title: "Hàng đợi gian lận", url: "/so/gian-lan" },
+        ],
+      },
+      {
+        title: "Bàn thờ",
+        icon: Landmark,
+        items: [
+          { title: "Vật phẩm thờ cúng", url: "/ban-tho/vat-pham" },
+          { title: "Nhật ký kiểm tra", url: "/ban-tho/nhat-ky" },
+          { title: "Quy trình", url: "/ban-tho/quy-trinh" },
+        ],
+      },
     ],
   },
 ];

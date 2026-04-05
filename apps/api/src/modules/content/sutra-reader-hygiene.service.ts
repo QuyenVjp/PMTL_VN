@@ -3,7 +3,7 @@
 // Owner: content module
 
 import { Injectable, BadRequestException, UnprocessableEntityException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 interface SutraHygieneConfirmDto {
   sutraId: string;

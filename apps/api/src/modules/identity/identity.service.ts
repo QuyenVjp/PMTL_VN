@@ -11,7 +11,15 @@ import { TraceService } from "../../common/tracing/trace.service.js";
 import { EmailService } from "../../platform/email/email.service.js";
 import { canUserLogin } from "./identity.policy.js";
 import { mapUserToAuthResponse } from "./identity.mapper.js";
-import type { LoginInput, RegisterInput, UpdateProfileInput, ChangePasswordInput, ForgotPasswordInput, ResetPasswordInput } from "./identity.schemas.js";
+import type {
+  LoginInput,
+  RegisterInput,
+  BootstrapAdminInput,
+  UpdateProfileInput,
+  ChangePasswordInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+} from "./identity.schemas.js";
 import type { JwtAccessPayload } from "../../common/auth/auth-request.types.js";
 import type { UserRole } from "../../generated/prisma/client.js";
 
@@ -130,6 +138,83 @@ export class IdentityService {
     });
 
     return mapUserToAuthResponse(user);
+  }
+
+  async getBootstrapStatus() {
+    const [userCount, adminCount] = await Promise.all([
+      this.prisma.user.count(),
+      this.prisma.user.count({
+        where: { role: { in: ["ADMIN", "SUPER_ADMIN"] } },
+      }),
+    ]);
+
+    return {
+      needsBootstrap: userCount === 0 || adminCount === 0,
+      userCount,
+      adminCount,
+    };
+  }
+
+  async bootstrapFirstAdmin(input: BootstrapAdminInput, metadata: { userAgent?: string; ipAddress?: string }) {
+    const status = await this.getBootstrapStatus();
+    if (!status.needsBootstrap) {
+      throw new ConflictException("Hệ thống đã có tài khoản quản trị");
+    }
+
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: input.email.toLowerCase() },
+    });
+    if (existingUser) {
+      throw new ConflictException("Email đã được sử dụng");
+    }
+
+    const passwordHash = await argon2.hash(input.password);
+    const publicId = nanoid(21);
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          publicId,
+          email: input.email.toLowerCase(),
+          passwordHash,
+          displayName: input.displayName,
+          role: "SUPER_ADMIN",
+          status: "ACTIVE",
+        },
+      });
+
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: created.id, actorType: "system", ...metadata },
+        "user.create",
+        "user",
+        created.publicId,
+        { bootstrap: true, role: "SUPER_ADMIN" },
+      );
+
+      return created;
+    });
+
+    const { session, refreshToken } = await this.sessions.createSession(
+      user.id,
+      this.config.refreshTokenTtlDays,
+      metadata,
+    );
+    const accessToken = await this.generateAccessToken(user, session.id);
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user", ...metadata },
+      "auth.login",
+      "session",
+      session.id,
+      { bootstrap: true },
+    );
+
+    return {
+      ...mapUserToAuthResponse(user),
+      accessToken,
+      refreshToken,
+    };
   }
 
   async refresh(refreshToken: string, metadata: { userAgent?: string; ipAddress?: string }) {

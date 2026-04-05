@@ -1,3 +1,7 @@
+param(
+  [switch]$FullPrepare
+)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
@@ -24,11 +28,28 @@ function Write-Warn {
 
 function Stop-DevPortProcesses {
   param([int[]] $Ports)
+  $composeFile = Join-Path $repoRoot "infra/docker/compose.dev.yml"
   foreach ($port in $Ports) {
     $conns = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
     foreach ($conn in $conns) {
       $pid_ = $conn.OwningProcess
       if ($pid_ -and $pid_ -ne $PID) {
+        $procName = ""
+        try {
+          $procName = (Get-Process -Id $pid_ -ErrorAction Stop).ProcessName
+        } catch {}
+
+        # Never kill Docker engine/backend from port cleanup.
+        if ($procName -in @("com.docker.backend", "Docker Desktop", "dockerd")) {
+          if ($port -eq 5173 -and (Test-Path $composeFile)) {
+            Write-Warn "Port 5173 đang do Docker giữ; thử stop service web trong compose thay vì kill Docker backend..."
+            & docker compose -f $composeFile stop web | Out-Null
+          } else {
+            Write-Warn "Bỏ qua kill PID $pid_ ($procName) trên port $port để tránh sập Docker."
+          }
+          continue
+        }
+
         Write-Warn "Giải phóng port $port từ PID $pid_..."
         Stop-Process -Id $pid_ -Force -ErrorAction SilentlyContinue
       }
@@ -122,7 +143,8 @@ function Start-ApiWithFallback {
     -StderrPath $devErr `
     -Label "Khởi động API (dev mode)"
 
-  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 25) {
+  # Dev cold-start can be slow on Windows after dependency/cache changes.
+  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 70) {
     Write-Ok "API chạy ở dev mode (port 3001)."
     return $apiDevProcess
   }
@@ -132,6 +154,13 @@ function Start-ApiWithFallback {
   }
 
   Write-Warn "API dev mode không lên được (thường do compile errors). Chuyển sang fallback từ dist..."
+
+  Write-Step "Build API dist trước khi fallback start..."
+  & pnpm --filter @pmtl/api build
+  if ($LASTEXITCODE -ne 0) {
+    $devTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+    throw "Build API thất bại, không thể fallback.`n[api-dev.err tail]`n$devTail"
+  }
 
   $apiStartProcess = Start-PnpmProcess `
     -ArgumentList @("--filter", "@pmtl/api", "start") `
@@ -177,30 +206,27 @@ function Assert-NodeVersion {
 }
 
 function Assert-DockerInfra {
-  # Kiểm tra postgres/redis/meilisearch đang chạy
+  # Fast path: luôn yêu cầu compose up core infra, tránh check trạng thái vòng vo
   $composeFile = Join-Path $repoRoot "infra/docker/compose.dev.yml"
   if (-not (Test-Path $composeFile)) {
     Write-Warn "Không tìm thấy $composeFile — bỏ qua kiểm tra Docker infra."
     return
   }
-  Write-Step "Kiểm tra Docker infra (postgres + redis + meilisearch)..."
-  $psOutput = docker compose -f $composeFile ps --format json 2>$null
+  Write-Step "Khởi động Docker infra core (postgres + redis + meilisearch)..."
+  & docker compose -f $composeFile up -d postgres redis meilisearch
   if ($LASTEXITCODE -ne 0) {
-    Write-Warn "Không lấy được trạng thái compose — tiếp tục, prepare script sẽ tự khôi phục nếu cần."
-    return
-  }
-  # Nếu postgres chưa healthy thì khởi động core infra
-  $postgresUp = $psOutput -match '"Service":"postgres"' -and $psOutput -match '"Health":"healthy"'
-  if (-not $postgresUp) {
-    Write-Step "Khởi động Docker infra core (postgres + redis + meilisearch)..."
-    & docker compose -f $composeFile up -d postgres redis meilisearch
-    if ($LASTEXITCODE -ne 0) {
-      throw "Không thể khởi động Docker infra. Kiểm tra Docker Desktop có đang chạy không."
+    Write-Warn "Docker engine chưa sẵn sàng. Thử mở Docker Desktop và chạy lại một lần..."
+    $dockerDesktopExe = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+    if (Test-Path $dockerDesktopExe) {
+      Start-Process $dockerDesktopExe | Out-Null
+      Start-Sleep -Seconds 12
+      & docker compose -f $composeFile up -d postgres redis meilisearch
     }
-    Write-Ok "Docker infra đã khởi động — chờ postgres sẵn sàng..."
-  } else {
-    Write-Ok "Docker infra đang chạy."
   }
+  if ($LASTEXITCODE -ne 0) {
+    throw "Không thể khởi động Docker infra. Kiểm tra Docker Desktop có đang chạy không."
+  }
+  Write-Ok "Docker infra core đã chạy."
 }
 
 # ── main ───────────────────────────────────────────────────────────────────────
@@ -221,12 +247,17 @@ try {
 
   Assert-DockerInfra
 
-  Write-Step "Chuẩn bị DB và CornHub local (db push, mặc định bỏ qua seed)..."
-  & pwsh -ExecutionPolicy Bypass -File $hostPrepareScript
-  if ($LASTEXITCODE -ne 0) {
-    throw "prepare-host-dev.ps1 thất bại. Xem lỗi phía trên."
+  if ($FullPrepare) {
+    Write-Step "Chuẩn bị DB và CornHub local (full prepare mode)..."
+    & pwsh -ExecutionPolicy Bypass -File $hostPrepareScript
+    if ($LASTEXITCODE -ne 0) {
+      throw "prepare-host-dev.ps1 thất bại. Xem lỗi phía trên."
+    }
+    Write-Ok "DB và CornHub local đã được kiểm tra."
+  } else {
+    Write-Warn "Fast mode: bỏ qua prepare-host-dev.ps1 để tránh check/recover Docker tự động."
+    Write-Warn "Nếu cần đồng bộ DB/CornHub đầy đủ, chạy lại với -FullPrepare."
   }
-  Write-Ok "DB và CornHub local đã được kiểm tra."
 
   $runtimeLogDir = Join-Path $repoRoot "tmp/runtime/logs"
   $apiProcess = Start-ApiWithFallback -LogDir $runtimeLogDir

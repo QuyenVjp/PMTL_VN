@@ -3,7 +3,7 @@
 // Owner: vows-merit module
 
 import { Injectable, UnprocessableEntityException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 interface CreateAltarProfileDto {
   name?: string;

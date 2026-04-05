@@ -3,9 +3,9 @@
 // Owner: content module
 
 import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../platform/prisma.service';
+import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { addMinutes, differenceInSeconds } from 'date-fns';
-import { RitualSessionStatus } from '@prisma/client';
+import { RitualSessionStatus } from '../../generated/prisma/enums.js';
 
 interface ConvincingFamilyRitualStartDto {
   spiritualFormId: string;

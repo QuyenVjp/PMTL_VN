@@ -178,6 +178,18 @@ model User {
   waterOfferingLogs       WaterOfferingLog[]              @relation("waterOfferingLogs")
   deceasedRelatives       DeceasedRelative[]              @relation("deceasedRelatives")
 
+  // Phase 6-domains relations
+  userCharityInteractions UserCharityInteraction[]        @relation("userCharityInteractions")
+  practitionerVows        MaritalPurityVow[]              @relation("practitionerVows")
+  organizedEvents         BuddhistEvent[]                 @relation("organizedEvents")
+  lifeReleaseRecords      LifeReleaseRecord[]             @relation("lifeReleaseRecords")
+  proxySponsorReleases    ProxyLifeRelease[]              @relation("proxySponsorReleases")
+  sacredFormApplicants    FormApplicant[]                 @relation("sacredFormApplicants")
+  altarItems              AltarItem[]                     @relation("altarItems")
+  altarValidationLogs     AltarValidationLog[]            @relation("altarValidationLogs")
+  lhRecords               LhRecord[]                      @relation("lhRecords")
+  eventRegistrations      EventRegistration[]             @relation("eventRegistrations")
+
   @@index([email])
   @@index([status])
   @@map("users")
@@ -1585,3 +1597,775 @@ model LittleHouseWarning {
   @@map("little_house_warnings")
 }
 
+
+// ============================================================================
+// PHASE 6-DOMAINS — DHARMA-COMPLIANCE, EVENTS, LIFE-LIBERATION,
+//                   LITTLE-HOUSE (LH), SACRED-FORMS, ALTAR-MANAGEMENT
+// ============================================================================
+
+// ============================================================================
+// DHARMA-COMPLIANCE ENUMS
+// ============================================================================
+
+enum CharityType {
+  BUDDHIST_TEMPLE
+  BUDDHIST_ORGANIZATION
+  ANIMAL_WELFARE
+  ENVIRONMENTAL
+  DISASTER_RELIEF
+  OTHER_NGOS
+
+  @@map("charity_type")
+}
+
+enum WhitelistingCriteriaType {
+  LEGAL_REGISTRATION
+  FINANCIAL_TRANSPARENCY
+  MONK_VERIFICATION
+  COMMUNITY_ENDORSEMENT
+  TRACK_RECORD
+  AUDIT_REPORT
+  NO_FRAUD_HISTORY
+
+  @@map("whitelisting_criteria_type")
+}
+
+enum WhitelistStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  SUSPENDED
+  REVOKED
+
+  @@map("whitelist_status")
+}
+
+enum FraudAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("fraud_alert_severity")
+}
+
+enum FraudAlertType {
+  FAKE_ORGANIZATION
+  ACCOUNT_ANOMALY
+  PATTERN_MISMATCH
+  COMPROMISED_ACCOUNT
+  PHISHING_ATTEMPT
+  DONATION_ABUSE
+  OTHER_FRAUD
+
+  @@map("fraud_alert_type")
+}
+
+enum CharityInteractionType {
+  DONATION
+  LIFE_RELEASE
+  VOLUNTEERING
+  OTHER_INTERACTION
+
+  @@map("charity_interaction_type")
+}
+
+enum PurityLevel {
+  FULL
+  EMOTIONAL
+  PHYSICAL
+
+  @@map("purity_level")
+}
+
+enum ThoughtType {
+  SEXUAL
+  ATTACHMENT
+  JEALOUSY
+  PHYSICAL_URGE
+
+  @@map("thought_type")
+}
+
+// ============================================================================
+// DHARMA-COMPLIANCE MODELS
+// ============================================================================
+
+model CharityWhitelist {
+  id                 String          @id @default(cuid())
+  publicId           String          @unique @map("public_id")
+  name               String
+  charityType        CharityType     @map("charity_type")
+  registrationNumber String?         @map("registration_number")
+  country            String          @default("VN")
+  bankAccounts       String[]        @default([]) @map("bank_accounts")
+  website            String?
+  contactEmail       String?         @map("contact_email")
+  verificationScore  Int             @default(0) @map("verification_score")
+  status             WhitelistStatus @default(PENDING_VERIFICATION)
+  verifiedAt         DateTime?       @map("verified_at")
+  verifiedById       String?         @map("verified_by_id")
+  suspendedAt        DateTime?       @map("suspended_at")
+  suspendedReason    String?         @map("suspended_reason")
+  revokedAt          DateTime?       @map("revoked_at")
+  revokedReason      String?         @map("revoked_reason")
+  lastAuditAt        DateTime?       @map("last_audit_at")
+  notes              String?
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+
+  rules        CharityWhitelistingRule[]
+  alerts       FraudDetectionAlert[]
+  interactions UserCharityInteraction[]
+
+  @@index([status])
+  @@index([charityType])
+  @@map("charity_whitelist")
+}
+
+model CharityWhitelistingRule {
+  id           String                   @id @default(cuid())
+  publicId     String                   @unique @map("public_id")
+  charityId    String                   @map("charity_id")
+  criteriaType WhitelistingCriteriaType @map("criteria_type")
+  satisfied    Boolean                  @default(false)
+  evidenceUrl  String?                  @map("evidence_url")
+  verifiedAt   DateTime?                @map("verified_at")
+  verifiedById String?                  @map("verified_by_id")
+  notes        String?
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  updatedAt    DateTime                 @updatedAt @map("updated_at")
+
+  charity CharityWhitelist @relation(fields: [charityId], references: [id], onDelete: Cascade)
+
+  @@index([charityId])
+  @@map("charity_whitelisting_rules")
+}
+
+model FraudDetectionAlert {
+  id              String             @id @default(cuid())
+  publicId        String             @unique @map("public_id")
+  charityId       String?            @map("charity_id")
+  reportedById    String?            @map("reported_by_id")
+  alertType       FraudAlertType     @map("alert_type")
+  severity        FraudAlertSeverity
+  detectedContent String?            @map("detected_content")
+  matchedAccount  String?            @map("matched_account")
+  isWhitelisted   Boolean            @default(false) @map("is_whitelisted")
+  isAppealable    Boolean            @default(true) @map("is_appealable")
+  resolvedAt      DateTime?          @map("resolved_at")
+  resolvedById    String?            @map("resolved_by_id")
+  resolutionNote  String?            @map("resolution_note")
+  autoDeleted     Boolean            @default(false) @map("auto_deleted")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+
+  charity CharityWhitelist? @relation(fields: [charityId], references: [id])
+
+  @@index([charityId])
+  @@index([severity])
+  @@index([alertType])
+  @@map("fraud_detection_alerts")
+}
+
+model UserCharityInteraction {
+  id              String                 @id @default(cuid())
+  publicId        String                 @unique @map("public_id")
+  userId          String                 @map("user_id")
+  charityId       String                 @map("charity_id")
+  interactionType CharityInteractionType @map("interaction_type")
+  referenceId     String?                @map("reference_id")
+  amount          Float?
+  currency        String?                @default("VND")
+  verified        Boolean                @default(false)
+  verifiedAt      DateTime?              @map("verified_at")
+  createdAt       DateTime               @default(now()) @map("created_at")
+
+  user    User             @relation("userCharityInteractions", fields: [userId], references: [id])
+  charity CharityWhitelist @relation(fields: [charityId], references: [id])
+
+  @@index([userId])
+  @@index([charityId])
+  @@map("user_charity_interactions")
+}
+
+model MaritalPurityVow {
+  id               String      @id @default(cuid())
+  publicId         String      @unique @map("public_id")
+  practitionerId   String      @map("practitioner_id")
+  spouseId         String?     @map("spouse_id")
+  vowDate          DateTime    @map("vow_date")
+  purityLevel      PurityLevel @map("purity_level")
+  kissAllowed      Boolean     @default(false) @map("kiss_allowed")
+  hugAllowed       Boolean     @default(true) @map("hug_allowed")
+  sleepArrangement String      @default("SEPARATE_BEDS") @map("sleep_arrangement")
+  dailyRecitations String[]    @default([]) @map("daily_recitations")
+  status           String      @default("ACTIVE")
+  notes            String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  practitioner User @relation("practitionerVows", fields: [practitionerId], references: [id])
+  thoughtLogs  ThoughtStateLog[]
+  guidanceReqs MaritalGuidanceRequest[]
+  auditEvents  VowAuditEvent[]
+
+  @@index([practitionerId])
+  @@index([status])
+  @@map("marital_purity_vows")
+}
+
+// ─── DHARMA-COMPLIANCE: Thought & Guidance Models ───────────────────────────
+
+model ThoughtStateLog {
+  id               String      @id @default(cuid())
+  vowId            String      @map("vow_id")
+  timestamp        DateTime    @default(now())
+  thoughtType      ThoughtType @map("thought_type")
+  intensity        Int
+  durationMinutes  Int?        @map("duration_minutes")
+  trigger          String?
+  responseAction   String?     @map("response_action")
+  recitationsUsed  String[]    @default([]) @map("recitations_used")
+  resolved         Boolean     @default(false)
+  reflection       String?
+  createdAt        DateTime    @default(now()) @map("created_at")
+
+  vow MaritalPurityVow @relation(fields: [vowId], references: [id])
+
+  @@index([vowId, timestamp(sort: Desc)])
+  @@map("thought_state_logs")
+}
+
+model MaritalGuidanceRequest {
+  id        String   @id @default(cuid())
+  vowId     String   @map("vow_id")
+  category  String
+  question  String
+  context   String?
+  urgency   String   @default("ROUTINE")
+  response  String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  vow MaritalPurityVow @relation(fields: [vowId], references: [id])
+
+  @@index([urgency, status])
+  @@map("marital_guidance_requests")
+}
+
+model VowAuditEvent {
+  id            String   @id @default(cuid())
+  vowId         String   @map("vow_id")
+  eventType     String   @map("event_type")
+  actor         String
+  details       String?
+  previousState Json?    @map("previous_state")
+  newState      Json?    @map("new_state")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  vow MaritalPurityVow @relation(fields: [vowId], references: [id])
+
+  @@index([vowId, createdAt(sort: Desc)])
+  @@map("vow_audit_events")
+}
+
+// ─── EVENTS: Enums ───────────────────────────────────────────────────────────
+
+enum BuddhistEventType {
+  DHARMA_TALK
+  RECITATION_SESSION
+  LIFE_LIBERATION
+  MEDITATION_RETREAT
+  COMMUNITY_SERVICE
+  SUTRA_STUDY
+}
+
+enum BuddhistEventStatus {
+  DRAFT
+  PUBLISHED
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EventDeliveryMode {
+  ONLINE
+  OFFLINE
+  HYBRID
+}
+
+// ─── EVENTS: Models ──────────────────────────────────────────────────────────
+
+model BuddhistEvent {
+  id               String              @id @default(cuid())
+  publicId         String              @unique @map("public_id")
+  organizerId      String              @map("organizer_id")
+  title            String
+  titleVi          String              @map("title_vi")
+  description      String?
+  eventType        BuddhistEventType   @map("event_type")
+  deliveryMode     EventDeliveryMode   @map("delivery_mode")
+  status           BuddhistEventStatus @default(DRAFT)
+  startAt          DateTime            @map("start_at")
+  endAt            DateTime            @map("end_at")
+  locationName     String?             @map("location_name")
+  locationAddress  String?             @map("location_address")
+  onlineUrl        String?             @map("online_url")
+  maxAttendees     Int?                @map("max_attendees")
+  isFree           Boolean             @default(true) @map("is_free")
+  coverImageUrl    String?             @map("cover_image_url")
+  recitationTarget String?             @map("recitation_target")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  organizer     User                @relation("organizedEvents", fields: [organizerId], references: [id])
+  registrations EventRegistration[]
+  auditLogs     EventAuditLog[]
+
+  @@index([status, startAt])
+  @@index([organizerId])
+  @@map("buddhist_events")
+}
+
+model EventRegistration {
+  id          String    @id @default(cuid())
+  eventId     String    @map("event_id")
+  userId      String    @map("user_id")
+  status      String    @default("REGISTERED")
+  checkedInAt DateTime? @map("checked_in_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  event BuddhistEvent @relation(fields: [eventId], references: [id])
+  user  User          @relation("eventRegistrations", fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+  @@index([eventId])
+  @@index([userId])
+  @@map("event_registrations")
+}
+
+model EventAuditLog {
+  id        String   @id @default(cuid())
+  eventId   String   @map("event_id")
+  actor     String
+  action    String
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  event BuddhistEvent @relation(fields: [eventId], references: [id])
+
+  @@index([eventId, createdAt(sort: Desc)])
+  @@map("event_audit_logs")
+}
+
+// ─── LIFE-LIBERATION: Enums ──────────────────────────────────────────────────
+
+enum LifeReleaseRecordType {
+  INDIVIDUAL
+  GROUP
+  PROXY
+}
+
+enum LifeReleaseRecordStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PredatorySpecies {
+  TURTLE
+  FISH
+  BIRD
+  INSECT
+  FROG
+  CRAB
+  OTHER
+}
+
+// ─── LIFE-LIBERATION: Models ─────────────────────────────────────────────────
+
+model LifeReleaseRecord {
+  id             String                  @id @default(cuid())
+  publicId       String                  @unique @map("public_id")
+  userId         String                  @map("user_id")
+  recordType     LifeReleaseRecordType   @map("record_type")
+  status         LifeReleaseRecordStatus @default(PENDING)
+  releaseDate    DateTime                @map("release_date")
+  locationName   String?                 @map("location_name")
+  locationCoords String?                 @map("location_coords")
+  merit          String?
+  notes          String?
+  createdAt      DateTime                @default(now()) @map("created_at")
+  updatedAt      DateTime                @updatedAt @map("updated_at")
+
+  user       User                 @relation("lifeReleaseRecords", fields: [userId], references: [id])
+  animals    ReleaseAnimalEntry[]
+  proxyItems ProxyLifeRelease[]
+
+  @@index([userId, status])
+  @@index([releaseDate])
+  @@map("life_release_records")
+}
+
+model ReleaseAnimalEntry {
+  id             String           @id @default(cuid())
+  recordId       String           @map("record_id")
+  species        PredatorySpecies
+  quantity       Int
+  sourceLocation String?          @map("source_location")
+  isPredatory    Boolean          @default(false) @map("is_predatory")
+  notes          String?
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  record LifeReleaseRecord @relation(fields: [recordId], references: [id])
+
+  @@index([recordId])
+  @@map("release_animal_entries")
+}
+
+model ProxyLifeRelease {
+  id          String   @id @default(cuid())
+  recordId    String   @map("record_id")
+  sponsorId   String   @map("sponsor_id")
+  beneficiary String
+  merit       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  record  LifeReleaseRecord @relation(fields: [recordId], references: [id])
+  sponsor User              @relation("proxySponsorReleases", fields: [sponsorId], references: [id])
+
+  @@index([recordId])
+  @@index([sponsorId])
+  @@map("proxy_life_releases")
+}
+
+// ─── LITTLE-HOUSE: Enums ─────────────────────────────────────────────────────
+
+enum LhStatus {
+  DRAFT
+  SIGNED
+  CHANTED
+  BURNED
+  CANCELLED
+}
+
+enum LhRecitationType {
+  DA_BEI_ZHOU
+  HEART_SUTRA
+  REPENTANCE
+  NAMO_AMITABHA
+  CUSTOM
+}
+
+enum LhDottingStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+// ─── LITTLE-HOUSE: Models ────────────────────────────────────────────────────
+
+model LhRecord {
+  id              String    @id @default(cuid())
+  publicId        String    @unique @map("public_id")
+  userId          String    @map("user_id")
+  beneficiaryName String    @map("beneficiary_name")
+  status          LhStatus  @default(DRAFT)
+  vowText         String?   @map("vow_text")
+  draftedAt       DateTime? @map("drafted_at")
+  signedAt        DateTime? @map("signed_at")
+  chantedAt       DateTime? @map("chanted_at")
+  burnedAt        DateTime? @map("burned_at")
+  cancelledAt     DateTime? @map("cancelled_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User                 @relation("lhRecords", fields: [userId], references: [id])
+  recitations     LhRecitation[]
+  completions     LhCompletionRecord[]
+  dottingSessions LhDottingSession[]
+  combustionLogs  LhCombustionLog[]
+  fraudLogs       LhFraud[]
+
+  @@index([userId, status])
+  @@map("lh_records")
+}
+
+model LhRecitation {
+  id             String           @id @default(cuid())
+  lhRecordId     String           @map("lh_record_id")
+  recitationType LhRecitationType @map("recitation_type")
+  count          Int              @default(0)
+  sessionDate    DateTime         @map("session_date")
+  chanterName    String?          @map("chanter_name")
+  createdAt      DateTime         @default(now()) @map("created_at")
+
+  lhRecord LhRecord @relation(fields: [lhRecordId], references: [id])
+
+  @@index([lhRecordId, sessionDate(sort: Desc)])
+  @@map("lh_recitations")
+}
+
+model LhCompletionRecord {
+  id          String   @id @default(cuid())
+  lhRecordId  String   @map("lh_record_id")
+  completedAt DateTime @map("completed_at")
+  witness     String?
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  lhRecord LhRecord @relation(fields: [lhRecordId], references: [id])
+
+  @@index([lhRecordId])
+  @@map("lh_completion_records")
+}
+
+model LhDottingSession {
+  id           String          @id @default(cuid())
+  lhRecordId   String          @map("lh_record_id")
+  status       LhDottingStatus @default(PENDING)
+  dottedAt     DateTime?       @map("dotted_at")
+  operatorName String?         @map("operator_name")
+  notes        String?
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  lhRecord LhRecord @relation(fields: [lhRecordId], references: [id])
+
+  @@index([lhRecordId])
+  @@map("lh_dotting_sessions")
+}
+
+model LhCombustionLog {
+  id            String   @id @default(cuid())
+  lhRecordId    String   @map("lh_record_id")
+  burnedAt      DateTime @map("burned_at")
+  altitude      String?
+  containerType String?  @map("container_type")
+  operatorName  String?  @map("operator_name")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  lhRecord LhRecord @relation(fields: [lhRecordId], references: [id])
+
+  @@index([lhRecordId])
+  @@map("lh_combustion_logs")
+}
+
+model LhFraud {
+  id         String    @id @default(cuid())
+  lhRecordId String    @map("lh_record_id")
+  flaggedAt  DateTime  @default(now()) @map("flagged_at")
+  reason     String
+  severity   String    @default("MEDIUM")
+  resolvedAt DateTime? @map("resolved_at")
+  resolution String?
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  lhRecord LhRecord @relation(fields: [lhRecordId], references: [id])
+
+  @@index([lhRecordId])
+  @@index([severity, resolvedAt])
+  @@map("lh_fraud_logs")
+}
+
+// ─── SACRED-FORMS: Enums ─────────────────────────────────────────────────────
+
+enum SacredFormType {
+  REFUGE_FORM
+  VOW_FORM
+  MERIT_TRANSFER_FORM
+  RECITATION_CERTIFICATE
+  DHARMA_STUDY_FORM
+}
+
+enum SacredFormPrerequisiteStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  WAIVED
+}
+
+enum SacredFormApplicantStatus {
+  PENDING
+  UNDER_REVIEW
+  PROBATION
+  APPROVED
+  REJECTED
+  REVOKED
+}
+
+// ─── SACRED-FORMS: Models ────────────────────────────────────────────────────
+
+model SacredFormTemplate {
+  id               String         @id @default(cuid())
+  publicId         String         @unique @map("public_id")
+  formType         SacredFormType @map("form_type")
+  titleVi          String         @map("title_vi")
+  titleZh          String?        @map("title_zh")
+  description      String?
+  prerequisitesDef Json?          @map("prerequisites_def")
+  formSchema       Json?          @map("form_schema")
+  isActive         Boolean        @default(true) @map("is_active")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  applicants FormApplicant[]
+
+  @@index([formType, isActive])
+  @@map("sacred_form_templates")
+}
+
+model FormApplicant {
+  id              String                    @id @default(cuid())
+  publicId        String                    @unique @map("public_id")
+  templateId      String                    @map("template_id")
+  userId          String                    @map("user_id")
+  status          SacredFormApplicantStatus @default(PENDING)
+  formData        Json?                     @map("form_data")
+  probationEndsAt DateTime?                 @map("probation_ends_at")
+  approvedAt      DateTime?                 @map("approved_at")
+  rejectedAt      DateTime?                 @map("rejected_at")
+  revokedAt       DateTime?                 @map("revoked_at")
+  reviewNotes     String?                   @map("review_notes")
+  createdAt       DateTime                  @default(now()) @map("created_at")
+  updatedAt       DateTime                  @updatedAt @map("updated_at")
+
+  template      SacredFormTemplate      @relation(fields: [templateId], references: [id])
+  user          User                    @relation("sacredFormApplicants", fields: [userId], references: [id])
+  prerequisites FormPrerequisiteEntry[]
+  auditLogs     SacredFormAuditLog[]
+
+  @@index([userId, status])
+  @@index([templateId])
+  @@map("form_applicants")
+}
+
+model FormPrerequisiteEntry {
+  id          String                       @id @default(cuid())
+  applicantId String                       @map("applicant_id")
+  name        String
+  status      SacredFormPrerequisiteStatus @default(NOT_STARTED)
+  completedAt DateTime?                    @map("completed_at")
+  evidence    String?
+  createdAt   DateTime                     @default(now()) @map("created_at")
+
+  applicant FormApplicant @relation(fields: [applicantId], references: [id])
+
+  @@index([applicantId])
+  @@map("form_prerequisite_entries")
+}
+
+model SacredFormAuditLog {
+  id          String   @id @default(cuid())
+  applicantId String   @map("applicant_id")
+  actor       String
+  action      String
+  details     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  applicant FormApplicant @relation(fields: [applicantId], references: [id])
+
+  @@index([applicantId, createdAt(sort: Desc)])
+  @@map("sacred_form_audit_logs")
+}
+
+model DisposalPolarityRecord {
+  id          String   @id @default(cuid())
+  formType    String   @map("form_type")
+  polarity    String
+  rationale   String?
+  effectiveAt DateTime @map("effective_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([formType])
+  @@map("disposal_polarity_records")
+}
+
+// ─── ALTAR-MANAGEMENT: Enums ─────────────────────────────────────────────────
+
+enum AltarItemType {
+  INCENSE_BURNER
+  CANDLE_HOLDER
+  FLOWER_VASE
+  WATER_CUP
+  FRUIT_PLATE
+  STATUE
+  LAMP
+  BELL
+  OTHER
+}
+
+enum AltarConditionStatus {
+  GOOD
+  NEEDS_ATTENTION
+  REQUIRES_REPLACEMENT
+  RETIRED
+}
+
+enum AltarProtocolType {
+  DAILY_CLEANING
+  INCENSE_INSERTION
+  WATER_REFRESH
+  FLOWER_REPLACEMENT
+  LAMP_CHECK
+  MONTHLY_DEEP_CLEAN
+}
+
+// ─── ALTAR-MANAGEMENT: Models ────────────────────────────────────────────────
+
+model AltarItem {
+  id            String               @id @default(cuid())
+  publicId      String               @unique @map("public_id")
+  userId        String               @map("user_id")
+  itemType      AltarItemType        @map("item_type")
+  name          String
+  condition     AltarConditionStatus @default(GOOD)
+  acquisitionAt DateTime?            @map("acquisition_at")
+  notes         String?
+  isActive      Boolean              @default(true) @map("is_active")
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+
+  user           User                 @relation("altarItems", fields: [userId], references: [id])
+  validationLogs AltarValidationLog[]
+
+  @@index([userId, isActive])
+  @@index([itemType])
+  @@map("altar_items")
+}
+
+model AltarValidationLog {
+  id           String            @id @default(cuid())
+  altarItemId  String?           @map("altar_item_id")
+  userId       String            @map("user_id")
+  protocolType AltarProtocolType @map("protocol_type")
+  passed       Boolean
+  notes        String?
+  performedAt  DateTime          @map("performed_at")
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  altarItem AltarItem? @relation(fields: [altarItemId], references: [id])
+  user      User       @relation("altarValidationLogs", fields: [userId], references: [id])
+
+  @@index([userId, performedAt(sort: Desc)])
+  @@index([altarItemId])
+  @@map("altar_validation_logs")
+}
+
+model AltarProtocolTemplate {
+  id           String            @id @default(cuid())
+  protocolType AltarProtocolType @map("protocol_type")
+  titleVi      String            @map("title_vi")
+  steps        Json
+  frequency    String
+  isActive     Boolean           @default(true) @map("is_active")
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  @@index([protocolType, isActive])
+  @@map("altar_protocol_templates")
+}
