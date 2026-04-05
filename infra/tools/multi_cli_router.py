@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 EXTERNAL_AGENT = ROOT / "infra" / "tools" / "external_agent.py"
-PROVIDERS = ("copilot", "gemini")
+PROVIDERS = ("copilot", "gemini", "grok")
 
 
 def parse_args() -> argparse.Namespace:
@@ -79,6 +79,7 @@ def score_task(task: str) -> tuple[dict[str, int], list[str]]:
     )
     if any(keyword in text for keyword in research_keywords):
         scores["gemini"] += 5
+        scores["grok"] += 4
         reasons.append("Current-doc or research task pushes priority to Gemini.")
 
     github_keywords = (
@@ -116,11 +117,13 @@ def score_task(task: str) -> tuple[dict[str, int], list[str]]:
     )
     if any(keyword in text for keyword in repo_policy_keywords):
         scores["copilot"] += 2
+        scores["grok"] += 2
         reasons.append("Repo-policy or wrapper wording makes Copilot the stronger implementation sanity lane.")
 
     path_hits = re.findall(r"(?:^|\s)(?:[A-Za-z]:)?[\\/.\w-]+(?:/[.\w-]+)+(?:\.[A-Za-z0-9]+)?", task)
     if len(path_hits) >= 3:
         scores["gemini"] += 2
+        scores["grok"] += 2
         reasons.append("Multiple path references suggest a broader synthesis pass.")
     elif len(path_hits) == 1:
         scores["copilot"] += 1
@@ -129,17 +132,23 @@ def score_task(task: str) -> tuple[dict[str, int], list[str]]:
     if "compare" in text or "second opinion" in text:
         scores["gemini"] += 1
         scores["copilot"] += 1
+        scores["grok"] += 1
         reasons.append("Comparison wording makes a two-worker lane more likely.")
 
     if all(value == 0 for value in scores.values()):
         scores["gemini"] = 2
+        scores["grok"] = 2
         reasons.append("Default fallback is Gemini for general external synthesis tasks.")
 
     return scores, reasons
 
 
 def pick_secondary(primary: str, scores: dict[str, int]) -> str:
-    return "copilot" if primary == "gemini" else "gemini"
+    ordered = sorted(
+        ((provider, score) for provider, score in scores.items() if provider != primary),
+        key=lambda item: (-item[1], item[0]),
+    )
+    return ordered[0][0]
 
 
 def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: list[str]) -> None:
@@ -150,11 +159,16 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
     if speed == "fast":
         explicit_gemini = any(token in text for token in ("latest", "official docs", "version drift", "research", "what changed"))
         explicit_copilot = any(token in text for token in ("github", "pull request", "actions", "workflow", "copilot"))
+        explicit_grok = any(token in text for token in ("grok", "xai", "x.ai"))
 
         if not explicit_gemini:
             scores["gemini"] -= 2
         else:
             scores["gemini"] += 2
+        if not explicit_grok:
+            scores["grok"] -= 1
+        else:
+            scores["grok"] += 2
         if not explicit_copilot:
             scores["copilot"] -= 1
         reasons.append("Fast mode biases toward Gemini research and Copilot implementation instead of broader worker fan-out.")
@@ -163,16 +177,17 @@ def apply_speed_bias(scores: dict[str, int], task: str, speed: str, reasons: lis
     if speed == "deep":
         scores["gemini"] += 1
         scores["copilot"] += 1
+        scores["grok"] += 1
         reasons.append("Deep mode keeps both Gemini and Copilot eligible for a comparison lane.")
 
 
 def provider_rank(provider: str, speed: str) -> int:
     if speed == "fast":
-        order = ("copilot", "gemini")
+        order = ("copilot", "grok", "gemini")
     elif speed == "deep":
-        order = ("gemini", "copilot")
+        order = ("gemini", "grok", "copilot")
     else:
-        order = ("gemini", "copilot")
+        order = ("gemini", "grok", "copilot")
     return order.index(provider)
 
 
@@ -253,6 +268,14 @@ def emit_text(result: dict[str, object], debug: bool) -> None:
 
 
 def main() -> int:
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
     args = parse_args()
     cwd = Path(args.cwd).resolve() if args.cwd else Path.cwd()
     route = route_task(args.task, args.provider, args.compare, args.speed, cwd)

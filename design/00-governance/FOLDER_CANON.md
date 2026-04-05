@@ -26,23 +26,24 @@ design/
   visuals/               ← C4 diagrams, domain maps, VPS cylinder (2026-03-27)
 ```
 
-## Folder Roles
+## Folder Roles (Tóm Tắt)
 
-- `00-governance`: precedence, taxonomy, status/phase, layout, import/format rules
-- `01-repo-constitution`: repo direction, ownership baseline, anti-goals, product laws
-- `02-platform-baseline`: runtime defaults, version/runtime/security/data/edge/deploy rules
-  - `vps-runtime/`: VPS self-host deploy canon — Docker Compose, Caddy, monitoring, backup, cost guide
-- `03-domains`: domain decisions, contracts, module maps, use-cases, state diagrams
-- `04-execution-overlay`: implementation truth, scaffold order, route/schema/query mappings, readiness
-- `05-references`: examples, research, starter notes, external alignment
-- `06-prompts`: AI reading/builder/reviewer prompts
-- `visuals/`: C4 diagrams (L1–L3), domain interaction map, VPS full-stack cylinder — orientation only, owner docs win on conflict
+- `00-governance`: canonical layout pointer chỉ
+- `01-repo-constitution`: repo direction, ownership baseline
+- `02-platform-baseline`: runtime defaults
+- `03-domains`: domain decisions, use-cases
+- `04-execution-overlay`: implementation truth
+- `05-references`: examples, research
+- `06-prompts`: AI prompts
+- `visuals/`: diagrams
 
-## Live Layout Rule
+**Full roles table + precedence rules → [ROOT_DOC_OWNERSHIP.md](../01-repo-constitution/ROOT_DOC_OWNERSHIP.md)**
 
-- file này chốt target layout
-- [MIGRATION_MAP.md](../00-governance/MIGRATION_MAP.md) chỉ là audit ledger cho move/rename history
-- [ROOT_DOC_OWNERSHIP.md](../01-repo-constitution/ROOT_DOC_OWNERSHIP.md) vẫn là owner registry chi tiết
+## Authority Chain
+
+1. [ROOT_DOC_OWNERSHIP.md](../01-repo-constitution/ROOT_DOC_OWNERSHIP.md) — chốt quyền sở hữu từng file + conflict rule
+2. File này — chỉ layout canonical
+3. [MIGRATION_MAP.md](../05-references/audit-trail/MIGRATION_MAP.md) — audit trail (không phải owner)
 
 ## Domain Standard
 
@@ -62,7 +63,7 @@ Mỗi domain nên tiến tới:
 ## Practical Rule
 
 - không tạo root-level alias mới nếu đã có canonical path rõ
-- file moved/completed có thể còn sống ở `MIGRATION_MAP.md` như audit trail, nhưng không phải live owner
+- file moved/completed có thể còn sống ở `design/05-references/audit-trail/MIGRATION_MAP.md` như audit trail, nhưng không phải live owner
 - overview folder không được sống song song như authority layer mới
 
 ## BRD Research Files

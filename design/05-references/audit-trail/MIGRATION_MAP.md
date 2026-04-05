@@ -1,8 +1,33 @@
-# MIGRATION_MAP (Shim - Redirecting)
+# Migration Map
 
-⚠️ **File này đã được archive tới [design/05-references/audit-trail/MIGRATION_MAP.md](../05-references/audit-trail/MIGRATION_MAP.md)**
+File này là bản đồ tái cấu trúc cụ thể cho `design/`.
 
-Giữ shim này để tránh link gãy. Đọc migration ledger ở link trên.
+Nó chốt:
+
+- folder nào giữ lại tạm thời
+- file nào nên đổi tên
+- file nào nên chuyển layer nào
+- file nào chỉ nên là reference
+- file nào phải là canonical owner
+
+## Action Legend
+
+- `keep` = giữ nguyên path hiện tại trong ngắn hạn
+- `rename` = nên đổi tên để khớp taxonomy mới
+- `move` = nên chuyển sang layer/path mới
+- `completed` = target move đã hạ cánh; row được giữ để làm audit trail
+- `reference-only` = chỉ dùng làm ngữ cảnh, không làm source of truth
+
+## ⚠️ AUDIT TRAIL ONLY — NOT OWNER
+
+**Thực tế của layout → [FOLDER_CANON.md](../../00-governance/FOLDER_CANON.md)**
+**Thực tế của quyền sở hữu → [ROOT_DOC_OWNERSHIP.md](../../01-repo-constitution/ROOT_DOC_OWNERSHIP.md)**
+
+File này chỉ là `migration ledger` cho lịch sử di chuyển.
+Không phải nơi chốt rule mới hay conflict resolution.
+Các move lớn đã hoàn thành; canonical layout luôn ở 2 file trên.
+
+## Top-Level Folder Direction
 
 | Current | Action | Target | Notes |
 |---|---|---|---|

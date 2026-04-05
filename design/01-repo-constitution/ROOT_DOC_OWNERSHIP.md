@@ -1,30 +1,21 @@
 # ROOT_DOC_OWNERSHIP (Quyền sở hữu file gốc trong design)
 
-Trước khi dùng file này, đọc governance docs ở:
+**Canonical ownership registry cho `design/`.**
 
-- [design/00-governance/GOVERNANCE_SYSTEM.md](../00-governance/GOVERNANCE_SYSTEM.md)
-- [design/00-governance/STATUS_AND_PHASE.md](../00-governance/STATUS_AND_PHASE.md)
-- [design/00-governance/FOLDER_CANON.md](../00-governance/FOLDER_CANON.md)
-- [design/00-governance/MIGRATION_MAP.md](../00-governance/MIGRATION_MAP.md)
-
-File này tồn tại để xử lý đúng vấn đề audit đã chỉ ra:
-
-- root docs bị trùng ý
-- sửa một policy phải nhớ nhiều file
-- AI dễ đọc nhầm file giải thích thành file chốt luật
-
-Mục tiêu của file này là chốt:
-
+File này chốt:
 - file nào là `canonical owner (file chủ sở hữu chuẩn)`
 - file nào chỉ được `tóm tắt / dẫn link / giải thích`
 - file nào là `ops/log/template`, không phải nơi phát minh rule mới
+
+### Backward Compatibility
+Các file shim cũ (SOURCE_PRIORITY.md, GOVERNANCE_SYSTEM.md, v.v.) giữ nguyên để tránh link gãy. → Xem [SHIMS.md](../00-governance/SHIMS.md) để map tới canonical owners.
 
 ## Precedence rule (Quy tắc ưu tiên)
 
 Nếu 2 file mâu thuẫn nhau, dùng thứ tự ưu tiên này:
 
-1. `DECISIONS.md`
-2. file owner chuyên biệt bên dưới
+1. **[DECISIONS.md](./DECISIONS.md)** — canonical decision baseline (THẮNG tất cả)
+2. **file owner chuyên biệt bên dưới**
 3. `README.md` và các file overview/tóm tắt
 
 ## Ownership rules by pattern

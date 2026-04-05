@@ -259,6 +259,26 @@ Logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/US
 
 **Note:** Phase 46 = 10 logics. 2 logics (Greed-Limiter, Interruption Anchor) found to already exist in prior phases — reused instead of duplicating. 8 new files created.
 
+## Distribution Map — Phase 47 (Bộ Quy Tắc Vi Mô & Bảo Mật Chuyên Sâu Chưa Từng Được Nhắc Đến)
+
+| BRD Logic | Domain | USE_CASE file | Status |
+|---|---|---|---|
+| Convincing Form 7-Day Cooldown Lock | `engagement` | `convincing-form-7day-cooldown-lock.md` | ✅ |
+| True Name Identity Router | `identity` | `true-name-identity-router.md` | ✅ |
+| Little House Print Dimension Guard | `engagement` | `little-house-print-dimension-guard.md` | ✅ |
+| Three-Tier Heavenly Ascension Tracker | `engagement` | `three-tier-heavenly-ascension-tracker.md` | ✅ |
+| Skyward Gaze Protocol | `altar-management` | `life-liberation-skyward-gaze-protocol.md` | ✅ |
+| End-Only Perfection Mantra | `wisdom-qa` | `perfection-mantra-end-session-only.md` | ✅ |
+| Physical Sutra Handling Rules | `content` | `physical-sutra-handling-rules.md` | ✅ |
+| Soil Ban & Bamboo Stem Rules | `altar-management` | `altar-soil-ban-bamboo-constraint.md` | ✅ |
+| Anti-Mirror & Eye-Level Guard | `altar-management` | `altar-anti-mirror-eye-level-guard.md` | ✅ |
+| Auspicious Creature Statue Ban | `altar-management` | `altar-auspicious-creature-statue-ban.md` | ✅ |
+| Qingming Fruit-Only Offering Protocol | `altar-management` | `qingming-fruit-only-offering-protocol.md` | ✅ |
+| Graveyard Visit Elderly & Sick Prohibition | `wisdom-qa` | `graveyard-visit-elderly-sick-prohibition.md` | ✅ |
+| Beginner Repentance Mantra 7-Repetition Limit | `wisdom-qa` | `beginner-repentance-mantra-7-repetitions.md` | ✅ |
+
+**Note:** Phase 47 = 13 logics, 100% NEW (zero existing file overlap). All files created in parallel across 5 domains: `engagement` (3), `altar-management` (5), `identity` (1), `wisdom-qa` (3), `content` (1). Additional 3 logics from Huyền Nghệ Vấn Đáp 03022012, 12052012, & Wenda 20160110A.
+
 ---
 
 ## Rules for new BRD phases

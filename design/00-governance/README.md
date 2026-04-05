@@ -3,14 +3,20 @@
 Thư mục này là lớp điều phối cho toàn bộ `design/`.
 Read chain canonical giờ được gộp xuống vài file thật sự phải đọc, thay vì nhảy qua nhiều protocol nhỏ.
 
-## Read Order
+## Ownership Authority
 
-1. [GOVERNANCE_SYSTEM.md](../00-governance/GOVERNANCE_SYSTEM.md)
-2. [STATUS_AND_PHASE.md](../00-governance/STATUS_AND_PHASE.md)
-3. [FOLDER_CANON.md](../00-governance/FOLDER_CANON.md)
-4. [IMPORT_AND_FORMAT.md](../00-governance/IMPORT_AND_FORMAT.md)
-5. [WRITING_STANDARDS.md](../00-governance/WRITING_STANDARDS.md)
-6. [MIGRATION_MAP.md](../00-governance/MIGRATION_MAP.md) khi cần audit trail di chuyển file
+**📋 Full ownership matrix → [ROOT_DOC_OWNERSHIP.md](../01-repo-constitution/ROOT_DOC_OWNERSHIP.md)**
+
+Tất cả quy tắc design-level governance được chốt trong file đó. README này chỉ là read pointer.
+
+**⚖️ Conflict resolution → [DECISIONS.md](../01-repo-constitution/DECISIONS.md)** (THẮNG tất cả khi mâu thuẫn)
+
+**🗂️ Legacy shim files → [SHIMS.md](./SHIMS.md)** (backward link compatibility only)
+
+## Read Order (Nếu cần orientation)
+
+1. [FOLDER_CANON.md](../00-governance/FOLDER_CANON.md) — canonical layout
+2. [MIGRATION_MAP.md](../05-references/audit-trail/MIGRATION_MAP.md) — audit trail di chuyển file (nếu cần)
 
 ## Purpose
 

@@ -27,7 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         required=True,
-        choices=("copilot", "gemini"),
+        choices=("copilot", "gemini", "grok"),
         help="External CLI to run.",
     )
     parser.add_argument(
@@ -803,6 +803,75 @@ def run_gemini(
     return response, resolved_model, stored_session_id
 
 
+ANSI_ESCAPE_RE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
+
+
+def strip_ansi(text: str) -> str:
+    return ANSI_ESCAPE_RE.sub("", text)
+
+
+def run_grok(
+    prompt: str,
+    model: str | None,
+    cwd: Path,
+    *,
+    timeout_seconds: int,
+    retries: int,
+    session_mode: str,
+    interaction_mode: str,
+) -> tuple[str, str | None, str | None]:
+    grok_script = find_grok_executable()
+
+    resolved_model = model
+    execution_cwd = command_cwd(cwd, "grok", interaction_mode)
+    command = [
+        grok_script,
+        "-p",
+        prompt,
+        "--format",
+        "text",
+        "--no-sandbox",
+    ]
+    if resolved_model:
+        command.extend(["--model", resolved_model])
+
+    state = load_provider_session(cwd, "grok") if session_mode in {"auto", "sticky"} else None
+    if session_mode == "resume-latest":
+        command.extend(["-s", "latest"])
+    elif state and isinstance(state.get("session_id"), str) and state.get("session_id"):
+        command.extend(["-s", state["session_id"]])
+
+    result = run_command_with_retries(
+        command,
+        cwd=execution_cwd,
+        timeout_seconds=timeout_seconds,
+        retries=retries,
+    )
+
+    clean = strip_ansi(result.stdout)
+    session_id = None
+    session_match = re.search(r"Session:\s*([A-Za-z0-9_-]+)", clean)
+    if session_match:
+        session_id = session_match.group(1)
+
+    lines = [line.strip() for line in clean.splitlines() if line.strip()]
+    filtered_lines: list[str] = []
+    for line in lines:
+        low = line.lower()
+        if low.startswith("session:") or low.startswith("processing...") or low.startswith("⏳"):
+            continue
+        filtered_lines.append(line)
+
+    response = "\n".join(filtered_lines).strip()
+    if not response:
+        raise RuntimeError("Grok CLI returned no assistant message.")
+
+    if session_mode in {"auto", "sticky", "resume-latest"} and session_id:
+        store_provider_session(cwd, "grok", {"session_id": session_id, "model": resolved_model})
+
+    return response, resolved_model, session_id
+
+
 def load_codex_default_model() -> str | None:
     config_path = Path.home() / ".codex" / "config.toml"
     if not config_path.exists():
@@ -839,6 +908,25 @@ def find_aider_executable() -> str:
         return str(fallback)
 
     raise RuntimeError("Aider executable was not found on PATH or in ~/.local/bin.")
+
+
+def find_grok_executable() -> str:
+    for candidate in ("grok.exe", "grok.cmd", "grok"):
+        resolved = shutil.which(candidate)
+        if resolved:
+            return resolved
+
+    home = Path.home()
+    fallbacks = (
+        home / ".grok" / "bin" / ("grok.exe" if os.name == "nt" else "grok"),
+        home / ".grok" / "bin" / "grok.exe",
+        Path("/root/.grok/bin/grok"),
+    )
+    for fallback in fallbacks:
+        if fallback.exists():
+            return str(fallback)
+
+    raise RuntimeError("Grok CLI executable was not found on PATH or in ~/.grok/bin.")
 
 
 def run_aider(
@@ -1027,15 +1115,26 @@ def main() -> int:
                     retries=args.retries,
                 )
             else:
-                response, resolved_model, gemini_session_id = run_gemini(
-                    prompt,
-                    args.model,
-                    cwd,
-                    timeout_seconds=args.timeout_seconds,
-                    retries=args.retries,
-                    session_mode=args.session_mode,
-                    interaction_mode=interaction_mode,
-                )
+                if args.provider == "grok":
+                    response, resolved_model, _ = run_grok(
+                        prompt,
+                        args.model,
+                        cwd,
+                        timeout_seconds=args.timeout_seconds,
+                        retries=args.retries,
+                        session_mode=args.session_mode,
+                        interaction_mode=interaction_mode,
+                    )
+                else:
+                    response, resolved_model, gemini_session_id = run_gemini(
+                        prompt,
+                        args.model,
+                        cwd,
+                        timeout_seconds=args.timeout_seconds,
+                        retries=args.retries,
+                        session_mode=args.session_mode,
+                        interaction_mode=interaction_mode,
+                    )
         except Exception as exc:  # pragma: no cover - wrapper should fail loudly
             print(f"[external-agent:{args.provider}] {exc}", file=sys.stderr)
             return 1

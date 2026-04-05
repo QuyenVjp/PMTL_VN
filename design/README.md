@@ -14,7 +14,7 @@ Từ bây giờ `design/` phải được đọc theo governance layer trước,
 3. [design/00-governance/STATUS_AND_PHASE.md](./00-governance/STATUS_AND_PHASE.md)
 4. [design/00-governance/FOLDER_CANON.md](./00-governance/FOLDER_CANON.md)
 5. [design/00-governance/IMPORT_AND_FORMAT.md](./00-governance/IMPORT_AND_FORMAT.md)
-6. [design/00-governance/MIGRATION_MAP.md](./00-governance/MIGRATION_MAP.md)
+6. [design/05-references/audit-trail/MIGRATION_MAP.md](./05-references/audit-trail/MIGRATION_MAP.md)
 
 ## Canonical Layers
 
@@ -52,7 +52,7 @@ graph LR
 **Source priority** (higher = wins on conflict): `00` > `01` > `02` > `03` > `04` > `05` > `06`.
 Exception: `04-execution-overlay` wins cho **implementation/runtime truth** bất kể layer nào nói gì.
 
-Folder legacy đã được thay bằng layout canonical; nếu cần lần lại tên cũ thì đọc `MIGRATION_MAP.md`.
+Folder legacy đã được thay bằng layout canonical; nếu cần lần lại tên cũ thì đọc `design/05-references/audit-trail/MIGRATION_MAP.md`.
 
 ## Current truth (Thực trạng hiện tại)
 

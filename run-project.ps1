@@ -36,6 +36,123 @@ function Stop-DevPortProcesses {
   }
 }
 
+function Test-TcpPort {
+  param(
+    [string]$TargetHost,
+    [int]$Port,
+    [int]$TimeoutMs = 1500
+  )
+
+  $client = New-Object System.Net.Sockets.TcpClient
+  try {
+    $asyncResult = $client.BeginConnect($TargetHost, $Port, $null, $null)
+    if (-not $asyncResult.AsyncWaitHandle.WaitOne($TimeoutMs, $false)) {
+      return $false
+    }
+    $client.EndConnect($asyncResult)
+    return $true
+  }
+  catch {
+    return $false
+  }
+  finally {
+    $client.Dispose()
+  }
+}
+
+function Wait-ForPort {
+  param(
+    [string]$TargetHost,
+    [int]$Port,
+    [int]$TimeoutSec = 25
+  )
+
+  $deadline = (Get-Date).AddSeconds($TimeoutSec)
+  do {
+    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+      return $true
+    }
+    Start-Sleep -Milliseconds 500
+  } while ((Get-Date) -lt $deadline)
+
+  return $false
+}
+
+function Start-PnpmProcess {
+  param(
+    [string[]]$ArgumentList,
+    [string]$StdoutPath,
+    [string]$StderrPath,
+    [string]$Label
+  )
+
+  $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
+  if (-not $pnpmCmd) {
+    $pnpmCmd = Get-Command pnpm -ErrorAction SilentlyContinue
+  }
+  if (-not $pnpmCmd) {
+    throw "Không tìm thấy pnpm trong PATH."
+  }
+
+  Write-Step "${Label}: pnpm $($ArgumentList -join ' ')"
+  return Start-Process -FilePath $pnpmCmd.Source `
+    -ArgumentList $ArgumentList `
+    -WorkingDirectory $repoRoot `
+    -PassThru `
+    -RedirectStandardOutput $StdoutPath `
+    -RedirectStandardError $StderrPath
+}
+
+function Start-ApiWithFallback {
+  param([string]$LogDir)
+
+  New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+  Stop-DevPortProcesses -Ports @(3001)
+
+  $devOut = Join-Path $LogDir "api-dev.out.log"
+  $devErr = Join-Path $LogDir "api-dev.err.log"
+  $startOut = Join-Path $LogDir "api-start.out.log"
+  $startErr = Join-Path $LogDir "api-start.err.log"
+
+  Remove-Item $devOut, $devErr, $startOut, $startErr -ErrorAction SilentlyContinue
+
+  $apiDevProcess = Start-PnpmProcess `
+    -ArgumentList @("--filter", "@pmtl/api", "dev") `
+    -StdoutPath $devOut `
+    -StderrPath $devErr `
+    -Label "Khởi động API (dev mode)"
+
+  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 25) {
+    Write-Ok "API chạy ở dev mode (port 3001)."
+    return $apiDevProcess
+  }
+
+  if (-not $apiDevProcess.HasExited) {
+    Stop-Process -Id $apiDevProcess.Id -Force -ErrorAction SilentlyContinue
+  }
+
+  Write-Warn "API dev mode không lên được (thường do compile errors). Chuyển sang fallback từ dist..."
+
+  $apiStartProcess = Start-PnpmProcess `
+    -ArgumentList @("--filter", "@pmtl/api", "start") `
+    -StdoutPath $startOut `
+    -StderrPath $startErr `
+    -Label "Khởi động API (fallback dist)"
+
+  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 20) {
+    Write-Ok "API fallback đã chạy (port 3001)."
+    return $apiStartProcess
+  }
+
+  if (-not $apiStartProcess.HasExited) {
+    Stop-Process -Id $apiStartProcess.Id -Force -ErrorAction SilentlyContinue
+  }
+
+  $devTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  $startTail = if (Test-Path $startErr) { (Get-Content $startErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  throw "Không thể khởi động API trên port 3001.`n[api-dev.err tail]`n$devTail`n`n[api-start.err tail]`n$startTail"
+}
+
 function Assert-NodeVersion {
   # Yêu cầu Node 20.x — chỉ switch nếu cần và nvm có trong PATH
   $rawVersion = (node --version 2>$null) -replace "^v", ""
@@ -90,6 +207,8 @@ function Assert-DockerInfra {
 
 Push-Location $repoRoot
 
+$apiProcess = $null
+
 try {
   Assert-NodeVersion
 
@@ -109,6 +228,9 @@ try {
   }
   Write-Ok "DB và CornHub local đã được kiểm tra."
 
+  $runtimeLogDir = Join-Path $repoRoot "tmp/runtime/logs"
+  $apiProcess = Start-ApiWithFallback -LogDir $runtimeLogDir
+
   Write-Host ""
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
   Write-Host "  PMTL Dev Stack đang khởi động..." -ForegroundColor White
@@ -121,10 +243,8 @@ try {
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
   Write-Host ""
 
-  # Chạy turbo parallel: api + admin + web
-  # Lưu ý: NestJS cần ~20s để compile — đừng vào admin ngay.
+  # API đã chạy nền (dev hoặc fallback dist), turbo giữ admin + web ở foreground.
   & pnpm exec turbo run dev --parallel `
-      --filter=@pmtl/api `
       --filter=@pmtl/admin `
       --filter=@pmtl/web
 
@@ -137,5 +257,9 @@ try {
   Write-Host "[pmtl] Stack trace: $($_.ScriptStackTrace)" -ForegroundColor DarkRed
   exit 1
 } finally {
+  if ($apiProcess -and -not $apiProcess.HasExited) {
+    Write-Warn "Dừng API process nền (PID $($apiProcess.Id))..."
+    Stop-Process -Id $apiProcess.Id -Force -ErrorAction SilentlyContinue
+  }
   Pop-Location
 }
