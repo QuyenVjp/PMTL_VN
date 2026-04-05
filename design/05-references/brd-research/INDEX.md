@@ -190,6 +190,75 @@ Logic từ BRDs phải được phân phối vào `design/03-domains/<domain>/US
 | Avatar Sanctity Guard | `identity` | `avatar-sanctity-guard.md` |
 | 100-Day Name Change Probation Interpolator | `engagement` | `name-change-probation-interpolator.md` |
 
+## Distribution Map — Phase 42 (Quản Trị Cộng Tu, Sự Kiện Pháp Hội & Định Tuyến Đám Đông)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Zero-Monetization Event Gate | `events` | `zero-monetization-event-gate.md` |
+| Strict Group Fundraising Firewall | `community` | `group-fundraising-firewall.md` |
+| Crowd/Transit Silence Guard | `content` | `crowd-transit-silence-guard.md` |
+| Karma of Speech Isolation Protocol | `community` | `speech-isolation-protocol.md` |
+| Mass Life Liberation State Machine | `events` | `mass-life-liberation-state-machine.md` |
+| Casualty Recovery Override | `life-liberation` | `casualty-recovery-override.md` |
+| Testimonial Sharing Shield | `engagement` | `testimonial-sharing-shield.md` |
+| Event Merit Transfer Protocol | `vows-merit` | `event-merit-transfer-protocol.md` |
+| Public Altar Oil Donation | `altar-management` | `public-altar-oil-donation.md` |
+| Hierarchical Prostration Sequence | `altar-management` | `hierarchical-prostration-sequence.md` |
+
+## Distribution Map — Phase 44 (Tầng Bảo Mật Vật Lý Lượng Tử của Nước Đại Bi & Giao Thức Cúng Dường)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Water Source Validation | `altar-management` | `water-source-validation.md` |
+| Sacred Cup Hardware Constraints | `altar-management` | `sacred-cup-hardware-constraints.md` |
+| No-Direct-Contact Protocol | `altar-management` | `no-direct-contact-protocol.md` |
+| Multi-Dimensional Visualization Engine | `altar-management` | `visualization-engine-water-flow.md` |
+| Thermal Water-Bath Constraint | `altar-management` | `thermal-water-bath-constraint.md` |
+| Buddha Water Segregation Law | `altar-management` | `buddha-water-segregation-law.md` |
+| Anti-Botanical Watering Ban | `altar-management` | `anti-botanical-watering-ban.md` |
+| Hemispheric Altar Orientation Engine | `altar-management` | `hemispheric-altar-orientation-engine.md` |
+
+## Distribution Map — Phase 45 (Nền Tảng Đại Hương & Quy Trình Thắp)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Grand Incense State Machine (EDIT Part A/B) | `altar-management` | `grand-incense-state-machine.md` |
+| Pressed Sandalwood Incense Alternative Procedure | `altar-management` | `pressed-sandalwood-incense-alternative-procedure.md` |
+| Sandalwood Residue Storage Tracker | `altar-management` | `sandalwood-residue-storage-tracker.md` |
+| Anti-Mouth-Blowing Detection Guard | `altar-management` | `anti-mouth-blowing-detection-guard.md` |
+
+## Distribution Map — Phase 45 Part 2 (Quy Tắc Vi Mô & Bảo Mật Từ Trường Bàn Thờ)
+
+| BRD Logic | Domain | USE_CASE file |
+|---|---|---|
+| Electric Lotus Lamp Sequence | `altar-management` | `electric-lotus-lamp-sequence.md` |
+| Candle Restraint Guard | `altar-management` | `candle-restraint-guard.md` |
+| Multi-Deity Oil Lamp Allocation | `altar-management` | `multi-deity-oil-lamp-allocation.md` |
+| Statue Hygiene & Mantra Protocol | `altar-management` | `statue-hygiene-mantra-protocol.md` |
+| Internal Relocation Lock | `altar-management` | `internal-relocation-lock.md` |
+| Confined Cabinet Setup | `altar-management` | `confined-cabinet-setup.md` |
+| Self-Blessing Activation Sequence | `altar-management` | `self-blessing-activation-sequence.md` |
+| Blank LH Reservation Lock | `engagement` | `blank-lh-reservation-lock.md` ✅ |
+| Karmic Transference Shield | `engagement` | `karmic-transference-shield.md` ✅ |
+| Aborted Child Extra-Debt Indicator | `engagement` | `aborted-child-extra-debt-indicator.md` ✅ |
+
+## Distribution Map — Phase 46 (Tầng Kiểm Soát Hành Vi Tế Nhị & Phân Tích Nhân Quả Cụ Thể)
+
+| BRD Logic | Domain | USE_CASE file | Status |
+|---|---|---|---|
+| Physical Ink Color Segregation | `engagement` | `lh-physical-ink-color-segregation.md` | ✅ |
+| Combustion Direction Urgency Router | `engagement` | `lh-combustion-direction-urgency-router.md` | ✅ |
+| Greed-Limiter Vow Gate | `vows-merit` | `prayer-request-specificity-anti-greed-validator.md` | ✅ (existing) |
+| Accidental Kill Bardo Calculator | `engagement` | `accidental-kill-bardo-calculator.md` | ✅ |
+| Eco-Compatibility (phóng sinh) | `altar-management` | `life-liberation-eco-compatibility-check.md` | ✅ |
+| Sutra Interruption Anchor Protocol | `content` | `long-sutra-interruption-recovery-gate.md` | ✅ (existing) |
+| Single-Bed Storage Alignment | `content` | `sutra-single-bed-storage-alignment.md` | ✅ |
+| Anti-Pocket Underarm Guard | `content` | `sutra-anti-pocket-underarm-guard.md` | ✅ |
+| Chronic ENT Karma Mapper | `wisdom-qa` | `chronic-ent-karma-mapper.md` | ✅ |
+| Lower-Tooth Nightmare Alert | `wisdom-qa` | `lower-tooth-nightmare-alert.md` | ✅ |
+
+**Note:** Phase 46 = 10 logics. 2 logics (Greed-Limiter, Interruption Anchor) found to already exist in prior phases — reused instead of duplicating. 8 new files created.
+
 ---
 
 ## Rules for new BRD phases

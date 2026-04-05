@@ -8,17 +8,25 @@
 
 ## Purpose
 
-Gỗ đàn hương (Grand Incense / Đại Hương) là vật thiêng liêm, chỉ được đốt trên **Mùng 1 / Rằm / Ngày Vía** lịch âm,
-và phải tuân theo **nghi thức cứng** gồm:
+Gỗ đàn hương (Grand Incense / Đại Hương) là vật thiêng liêm, chỉ được đốt trên **Mùng 1 / Rằm / Ngày Vía lịch âm, Lễ Phật Đản, và các ngày kỷ niệm vía của chư Phật Bồ Tát**, và phải tuân theo **nghi thức cứng 6 bước**:
 
-1. **Thắp đèn dầu + nhang thường trước**
-2. **Châm gỗ đàn hương vào đèn dầu, sau đó PHẨY TAY cho tắt lửa (TUYỆT ĐỐI CẤM thổi bằng miệng)**
-3. **Lặp lại chính xác 3 lần**
+**Phần A: Gỗ Đàn Hương Nguyên Miếng (Raw Sandalwood Stick)**
+
+1. **Kích hoạt nền tảng:** Thắp sáng đèn dầu Phật và thắp các nén nhang bình thường trên bàn thờ trước
+2. **Châm lửa:** Cầm thanh gỗ đàn hương, châm trực tiếp vào ngọn lửa đèn dầu cho đến khi cháy
+3. **Dập lửa tạo khói (CẤMI thổi miệng):** Rút thanh gỗ ra, dùng **tay phẩy** cho ngọn lửa tắt (tuyệt đối cấm miệng thổi) → khói bay ra = Đại Hương
+4. **Lặp lại 3 lần:** Châm → phẩy tắt → khói, lặp đúng **3 lần trước Thích Ca**, rồi **3 lần trước Quán Thế Âm**
+5. **Hành lễ:** Chỉ sau khi đã đốt xong, mới bái lạy, cầu nguyện, tụng Kinh
+6. **Bảo quản phần dư:** Phần gỗ còn lại cắm dọc (cắm dựng thẳng) hoặc nằm ngang vào lư hương để tái sử dụng
+
+**Phần B: Nhang Đàn Hương Bột Ép (Pressed Sandalwood Incense)**
+- Thắp một nén và cắm vào lư Thích Ca, thắp nên thứ hai và cắm vào lư Quán Âm
+- Không cần phẩy tay, để cháy tự nhiên
 
 Hệ thống sử dụng **state machine** để:
-- **Ẩn button [Đốt Đại Hương]** trên các ngày bình thường.
-- **Mở button + hiển thị ritual checklist** trên Auspicious Days.
-- **Block submit** nếu user chưa confirm tất cả ritual steps.
+- **Ẩn button [Đốt Đại Hương]** trên các ngày bình thường
+- **Mở button + hiển thị ritual checklist** trên Auspicious Days
+- **Block submit** nếu user chưa confirm tất cả 6 ritual steps + anti-mouth-blowing guard
 
 ---
 

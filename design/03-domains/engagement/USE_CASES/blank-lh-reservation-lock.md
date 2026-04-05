@@ -2,7 +2,7 @@
 
 > **Nguồn:** Khai thị chính thức Pháp Môn Tâm Linh
 > **Trạng thái:** Verified source — human review required before automating enforcement
-> **Cập nhật:** 2026-04-04
+> **Cập nhật:** 2026-04-05
 
 ---
 
@@ -47,15 +47,29 @@ Khi user POST `/api/engagement/lh-inventory/reserve-blank` hoặc GET `/api/enga
 | Có active NNN session (viết/edit) | ✅ Allow unwrap: wrappedInRedCloth = false |
 | KHÔNG có active NNN session | ❌ 400 blank_lh_not_wrapped_in_red_cloth |
 | User trở lại vải đỏ sau dùng xong | ✅ wrappedInRedCloth = true, lastRestockedAt = now() |
+| mode = ACCUMULATION AND beneficiaryName được cung cấp | ❌ 400 accumulation_no_beneficiary_allowed |
+| mode = ACCUMULATION AND recitationDate được cung cấp | ❌ 400 accumulation_no_date_allowed |
+| mode = DESIGNATED AND beneficiaryName = null | ❌ 400 designated_requires_beneficiary |
+| User cố chuyển kho ACCUMULATION hiện có sang DESIGNATED | ❌ 400 accumulation_to_designated_conversion_forbidden |
+| mode = ACCUMULATION (mặc định) | ✅ beneficiaryName = NULL, recitationDate = NULL, bọc vải đỏ |
+| mode = DESIGNATED | ✅ Gắn beneficiaryName + recitationDate vào tờ mới |
 
 ---
 
 ## Input Contract
 
 ```typescript
+enum LHReservationMode {
+  ACCUMULATION = "ACCUMULATION",   // blank, no beneficiary, no date
+  DESIGNATED = "DESIGNATED"        // assigned to specific person
+}
+
 interface BlankLHReservationDto {
   quantity: number                  // >= 1
   wrappedInRedCloth: boolean        // default true on reserve
+  mode: LHReservationMode          // required
+  beneficiaryName?: string         // MUST be null/omitted when mode = ACCUMULATION
+  recitationDate?: string          // MUST be null/omitted when mode = ACCUMULATION
 }
 
 interface BlankLHInventoryStatus {
@@ -88,18 +102,25 @@ interface BlankLHInventory {
 ### Reserve Blank NNN
 ```
 POST /api/engagement/lh-inventory/reserve-blank
-Body: { quantity: N }
+Body: { quantity: N, mode: LHReservationMode, beneficiaryName?, recitationDate? }
 
 1. Validate quantity >= 1
-2. Create/update BlankLHInventory:
+2. Validate mode is present (required field)
+3. If mode = ACCUMULATION AND beneficiaryName is provided → throw 400 accumulation_no_beneficiary_allowed
+4. If mode = ACCUMULATION AND recitationDate is provided → throw 400 accumulation_no_date_allowed
+5. If mode = DESIGNATED AND beneficiaryName is null → throw 400 designated_requires_beneficiary
+6. Create/update BlankLHInventory:
    → quantity += N
    → wrappedInRedCloth = true (always on reserve)
    → lastRestockedAt = now()
-3. Compute needsRestocking = (quantity < 5)
-4. If needsRestocking:
+   → mode = request.mode
+   → beneficiaryName = request.beneficiaryName ?? NULL
+   → recitationDate = request.recitationDate ?? NULL
+7. Compute needsRestocking = (quantity < 5)
+8. If needsRestocking:
    → Audit: lh.blank-inventory.low-stock-warning
    → Include warningMessage in response
-5. Response includes current inventory status
+9. Response includes current inventory status
    → Audit: lh.blank-inventory.reserved
 ```
 
@@ -241,6 +262,10 @@ model BlankLHInventory {
 | `blank_lh_minimum_warning` | 200 (advisory) | Hãy chuẩn bị thêm tờ NNN trống | Reserve more blank forms |
 | `invalid_session_for_unwrap` | 400 | LittleHouse session không hợp lệ | Use active session only |
 | `inventory_not_found` | 404 | Kho NNN trống không tìm thấy | Initialize inventory |
+| `accumulation_no_beneficiary_allowed` | 400 | Tờ NNN tích lũy không được gắn tên người nhận | Bỏ beneficiaryName hoặc đổi mode = DESIGNATED |
+| `accumulation_no_date_allowed` | 400 | Tờ NNN tích lũy không được đặt ngày niệm | Bỏ recitationDate hoặc đổi mode = DESIGNATED |
+| `designated_requires_beneficiary` | 400 | Tờ NNN chỉ định phải có tên người nhận | Cung cấp beneficiaryName khi mode = DESIGNATED |
+| `accumulation_to_designated_conversion_forbidden` | 400 | Không thể chuyển kho tích lũy thành tờ có tên — dùng tờ mới | Tạo batch DESIGNATED mới riêng biệt |
 
 ---
 
@@ -253,6 +278,10 @@ model BlankLHInventory {
 - **Minimum stock check (< 5) is a reminder system, not enforcement** — user can continue even with low stock.
 - `lastRestockedAt` is updated on every reserve/restock action for tracking restocking patterns.
 - Reserved blank NNN is always created with `wrappedInRedCloth = true` by default.
+- **ACCUMULATION batch and DESIGNATED batch are separate inventory pools — never merge them.** The DB must track `mode` per batch to enforce this separation.
+- The physical forms are identical but the DB tracks `mode` separately — `ACCUMULATION` rows always have `beneficiaryName = NULL` and `recitationDate = NULL`.
+- Converting an existing ACCUMULATION batch to DESIGNATED is strictly forbidden. To designate forms to a person, always create a NEW batch with `mode = DESIGNATED`.
+- UX must make `mode` selection mandatory at reservation time — do not default silently.
 
 ---
 
