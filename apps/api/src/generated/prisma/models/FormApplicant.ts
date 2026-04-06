@@ -246,6 +246,7 @@ export type FormApplicantWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryListRelationFilter | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogListRelationFilter | runtime.Types.Skip
+  nameChangeProbation?: Prisma.XOR<Prisma.NameChangeProbationNullableScalarRelationFilter, Prisma.NameChangeProbationWhereInput> | null | runtime.Types.Skip
 }
 
 export type FormApplicantOrderByWithRelationInput = {
@@ -266,6 +267,7 @@ export type FormApplicantOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryOrderByRelationAggregateInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogOrderByRelationAggregateInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationOrderByWithRelationInput | runtime.Types.Skip
 }
 
 export type FormApplicantWhereUniqueInput = Prisma.AtLeast<{
@@ -289,6 +291,7 @@ export type FormApplicantWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryListRelationFilter | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogListRelationFilter | runtime.Types.Skip
+  nameChangeProbation?: Prisma.XOR<Prisma.NameChangeProbationNullableScalarRelationFilter, Prisma.NameChangeProbationWhereInput> | null | runtime.Types.Skip
 }, "id" | "publicId">
 
 export type FormApplicantOrderByWithAggregationInput = {
@@ -345,6 +348,7 @@ export type FormApplicantCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutSacredFormApplicantsInput
   prerequisites?: Prisma.FormPrerequisiteEntryCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedCreateInput = {
@@ -363,6 +367,7 @@ export type FormApplicantUncheckedCreateInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUpdateInput = {
@@ -381,6 +386,7 @@ export type FormApplicantUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateInput = {
@@ -399,6 +405,7 @@ export type FormApplicantUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateManyInput = {
@@ -624,6 +631,20 @@ export type FormApplicantUpdateOneRequiredWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FormApplicantUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.FormApplicantUpdateWithoutAuditLogsInput>, Prisma.FormApplicantUncheckedUpdateWithoutAuditLogsInput> | runtime.Types.Skip
 }
 
+export type FormApplicantCreateNestedOneWithoutNameChangeProbationInput = {
+  create?: Prisma.XOR<Prisma.FormApplicantCreateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedCreateWithoutNameChangeProbationInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.FormApplicantCreateOrConnectWithoutNameChangeProbationInput | runtime.Types.Skip
+  connect?: Prisma.FormApplicantWhereUniqueInput | runtime.Types.Skip
+}
+
+export type FormApplicantUpdateOneRequiredWithoutNameChangeProbationNestedInput = {
+  create?: Prisma.XOR<Prisma.FormApplicantCreateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedCreateWithoutNameChangeProbationInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.FormApplicantCreateOrConnectWithoutNameChangeProbationInput | runtime.Types.Skip
+  upsert?: Prisma.FormApplicantUpsertWithoutNameChangeProbationInput | runtime.Types.Skip
+  connect?: Prisma.FormApplicantWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FormApplicantUpdateToOneWithWhereWithoutNameChangeProbationInput, Prisma.FormApplicantUpdateWithoutNameChangeProbationInput>, Prisma.FormApplicantUncheckedUpdateWithoutNameChangeProbationInput> | runtime.Types.Skip
+}
+
 export type FormApplicantCreateWithoutUserInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -639,6 +660,7 @@ export type FormApplicantCreateWithoutUserInput = {
   template: Prisma.SacredFormTemplateCreateNestedOneWithoutApplicantsInput
   prerequisites?: Prisma.FormPrerequisiteEntryCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedCreateWithoutUserInput = {
@@ -656,6 +678,7 @@ export type FormApplicantUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateOrConnectWithoutUserInput = {
@@ -718,6 +741,7 @@ export type FormApplicantCreateWithoutTemplateInput = {
   user: Prisma.UserCreateNestedOneWithoutSacredFormApplicantsInput
   prerequisites?: Prisma.FormPrerequisiteEntryCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedCreateWithoutTemplateInput = {
@@ -735,6 +759,7 @@ export type FormApplicantUncheckedCreateWithoutTemplateInput = {
   updatedAt?: Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateOrConnectWithoutTemplateInput = {
@@ -778,6 +803,7 @@ export type FormApplicantCreateWithoutPrerequisitesInput = {
   template: Prisma.SacredFormTemplateCreateNestedOneWithoutApplicantsInput
   user: Prisma.UserCreateNestedOneWithoutSacredFormApplicantsInput
   auditLogs?: Prisma.SacredFormAuditLogCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedCreateWithoutPrerequisitesInput = {
@@ -795,6 +821,7 @@ export type FormApplicantUncheckedCreateWithoutPrerequisitesInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateOrConnectWithoutPrerequisitesInput = {
@@ -828,6 +855,7 @@ export type FormApplicantUpdateWithoutPrerequisitesInput = {
   template?: Prisma.SacredFormTemplateUpdateOneRequiredWithoutApplicantsNestedInput | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateWithoutPrerequisitesInput = {
@@ -845,6 +873,7 @@ export type FormApplicantUncheckedUpdateWithoutPrerequisitesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateWithoutAuditLogsInput = {
@@ -862,6 +891,7 @@ export type FormApplicantCreateWithoutAuditLogsInput = {
   template: Prisma.SacredFormTemplateCreateNestedOneWithoutApplicantsInput
   user: Prisma.UserCreateNestedOneWithoutSacredFormApplicantsInput
   prerequisites?: Prisma.FormPrerequisiteEntryCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedCreateWithoutAuditLogsInput = {
@@ -879,6 +909,7 @@ export type FormApplicantUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedCreateNestedOneWithoutFormApplicantInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateOrConnectWithoutAuditLogsInput = {
@@ -912,6 +943,7 @@ export type FormApplicantUpdateWithoutAuditLogsInput = {
   template?: Prisma.SacredFormTemplateUpdateOneRequiredWithoutApplicantsNestedInput | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateWithoutAuditLogsInput = {
@@ -929,6 +961,95 @@ export type FormApplicantUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
+}
+
+export type FormApplicantCreateWithoutNameChangeProbationInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  status?: $Enums.SacredFormApplicantStatus | runtime.Types.Skip
+  formData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  probationEndsAt?: Date | string | null | runtime.Types.Skip
+  approvedAt?: Date | string | null | runtime.Types.Skip
+  rejectedAt?: Date | string | null | runtime.Types.Skip
+  revokedAt?: Date | string | null | runtime.Types.Skip
+  reviewNotes?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  template: Prisma.SacredFormTemplateCreateNestedOneWithoutApplicantsInput
+  user: Prisma.UserCreateNestedOneWithoutSacredFormApplicantsInput
+  prerequisites?: Prisma.FormPrerequisiteEntryCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  auditLogs?: Prisma.SacredFormAuditLogCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+}
+
+export type FormApplicantUncheckedCreateWithoutNameChangeProbationInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  templateId: string
+  userId: string
+  status?: $Enums.SacredFormApplicantStatus | runtime.Types.Skip
+  formData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  probationEndsAt?: Date | string | null | runtime.Types.Skip
+  approvedAt?: Date | string | null | runtime.Types.Skip
+  rejectedAt?: Date | string | null | runtime.Types.Skip
+  revokedAt?: Date | string | null | runtime.Types.Skip
+  reviewNotes?: string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  prerequisites?: Prisma.FormPrerequisiteEntryUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+  auditLogs?: Prisma.SacredFormAuditLogUncheckedCreateNestedManyWithoutApplicantInput | runtime.Types.Skip
+}
+
+export type FormApplicantCreateOrConnectWithoutNameChangeProbationInput = {
+  where: Prisma.FormApplicantWhereUniqueInput
+  create: Prisma.XOR<Prisma.FormApplicantCreateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedCreateWithoutNameChangeProbationInput>
+}
+
+export type FormApplicantUpsertWithoutNameChangeProbationInput = {
+  update: Prisma.XOR<Prisma.FormApplicantUpdateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedUpdateWithoutNameChangeProbationInput>
+  create: Prisma.XOR<Prisma.FormApplicantCreateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedCreateWithoutNameChangeProbationInput>
+  where?: Prisma.FormApplicantWhereInput | runtime.Types.Skip
+}
+
+export type FormApplicantUpdateToOneWithWhereWithoutNameChangeProbationInput = {
+  where?: Prisma.FormApplicantWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.FormApplicantUpdateWithoutNameChangeProbationInput, Prisma.FormApplicantUncheckedUpdateWithoutNameChangeProbationInput>
+}
+
+export type FormApplicantUpdateWithoutNameChangeProbationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumSacredFormApplicantStatusFieldUpdateOperationsInput | $Enums.SacredFormApplicantStatus | runtime.Types.Skip
+  formData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  probationEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  template?: Prisma.SacredFormTemplateUpdateOneRequiredWithoutApplicantsNestedInput | runtime.Types.Skip
+  user?: Prisma.UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput | runtime.Types.Skip
+  prerequisites?: Prisma.FormPrerequisiteEntryUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  auditLogs?: Prisma.SacredFormAuditLogUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+}
+
+export type FormApplicantUncheckedUpdateWithoutNameChangeProbationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  templateId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  userId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  status?: Prisma.EnumSacredFormApplicantStatusFieldUpdateOperationsInput | $Enums.SacredFormApplicantStatus | runtime.Types.Skip
+  formData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue | runtime.Types.Skip
+  probationEndsAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  rejectedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  revokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  reviewNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  prerequisites?: Prisma.FormPrerequisiteEntryUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  auditLogs?: Prisma.SacredFormAuditLogUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantCreateManyUserInput = {
@@ -961,6 +1082,7 @@ export type FormApplicantUpdateWithoutUserInput = {
   template?: Prisma.SacredFormTemplateUpdateOneRequiredWithoutApplicantsNestedInput | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateWithoutUserInput = {
@@ -978,6 +1100,7 @@ export type FormApplicantUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateManyWithoutUserInput = {
@@ -1025,6 +1148,7 @@ export type FormApplicantUpdateWithoutTemplateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateWithoutTemplateInput = {
@@ -1042,6 +1166,7 @@ export type FormApplicantUncheckedUpdateWithoutTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   prerequisites?: Prisma.FormPrerequisiteEntryUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
   auditLogs?: Prisma.SacredFormAuditLogUncheckedUpdateManyWithoutApplicantNestedInput | runtime.Types.Skip
+  nameChangeProbation?: Prisma.NameChangeProbationUncheckedUpdateOneWithoutFormApplicantNestedInput | runtime.Types.Skip
 }
 
 export type FormApplicantUncheckedUpdateManyWithoutTemplateInput = {
@@ -1117,6 +1242,7 @@ export type FormApplicantSelect<ExtArgs extends runtime.Types.Extensions.Interna
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   prerequisites?: boolean | Prisma.FormApplicant$prerequisitesArgs<ExtArgs> | runtime.Types.Skip
   auditLogs?: boolean | Prisma.FormApplicant$auditLogsArgs<ExtArgs> | runtime.Types.Skip
+  nameChangeProbation?: boolean | Prisma.FormApplicant$nameChangeProbationArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.FormApplicantCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["formApplicant"]>
 
@@ -1178,6 +1304,7 @@ export type FormApplicantInclude<ExtArgs extends runtime.Types.Extensions.Intern
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
   prerequisites?: boolean | Prisma.FormApplicant$prerequisitesArgs<ExtArgs> | runtime.Types.Skip
   auditLogs?: boolean | Prisma.FormApplicant$auditLogsArgs<ExtArgs> | runtime.Types.Skip
+  nameChangeProbation?: boolean | Prisma.FormApplicant$nameChangeProbationArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.FormApplicantCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type FormApplicantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1196,6 +1323,7 @@ export type $FormApplicantPayload<ExtArgs extends runtime.Types.Extensions.Inter
     user: Prisma.$UserPayload<ExtArgs>
     prerequisites: Prisma.$FormPrerequisiteEntryPayload<ExtArgs>[]
     auditLogs: Prisma.$SacredFormAuditLogPayload<ExtArgs>[]
+    nameChangeProbation: Prisma.$NameChangeProbationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1609,6 +1737,7 @@ export interface Prisma__FormApplicantClient<T, Null = never, ExtArgs extends ru
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   prerequisites<T extends Prisma.FormApplicant$prerequisitesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormApplicant$prerequisitesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormPrerequisiteEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.FormApplicant$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormApplicant$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SacredFormAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nameChangeProbation<T extends Prisma.FormApplicant$nameChangeProbationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FormApplicant$nameChangeProbationArgs<ExtArgs>>): Prisma.Prisma__NameChangeProbationClient<runtime.Types.Result.GetResult<Prisma.$NameChangeProbationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2097,6 +2226,25 @@ export type FormApplicant$auditLogsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.SacredFormAuditLogScalarFieldEnum | Prisma.SacredFormAuditLogScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * FormApplicant.nameChangeProbation
+ */
+export type FormApplicant$nameChangeProbationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NameChangeProbation
+   */
+  select?: Prisma.NameChangeProbationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NameChangeProbation
+   */
+  omit?: Prisma.NameChangeProbationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NameChangeProbationInclude<ExtArgs> | null
+  where?: Prisma.NameChangeProbationWhereInput | runtime.Types.Skip
 }
 
 /**

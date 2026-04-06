@@ -23,7 +23,7 @@ export class PdpaRetentionWorker {
    * - Soft-deleted users > 30 days: HARD DELETE
    * - Audit logs > 7 years: ARCHIVE (pending implementation)
    */
-  async processRetention() {
+  processRetention(): Promise<void> {
     const startTime = Date.now();
 
     this.logger.log({
@@ -49,33 +49,35 @@ export class PdpaRetentionWorker {
       });
       throw error;
     }
+    return Promise.resolve();
   }
 
   /**
    * Soft delete user data with 30-day grace period.
    * NOTE: Requires User.deletedAt field
    */
-  async deleteUserData(userId: string): Promise<void> {
+  deleteUserData(userId: string): Promise<void> {
     this.logger.log({
       msg: "pdpa.user_delete_requested",
       userId,
       status: "schema_migration_pending",
     });
+    return Promise.resolve();
   }
 
   /**
    * Export all user data for GDPR/PDPA right-to-portability.
    * NOTE: Requires schema relations
    */
-  async exportUserData(userId: string): Promise<Record<string, unknown>> {
+  exportUserData(userId: string): Promise<Record<string, unknown>> {
     this.logger.log({
       msg: "pdpa.export_requested",
       userId,
     });
 
-    return {
+    return Promise.resolve({
       status: "schema_migration_pending",
       userId,
-    };
+    });
   }
 }

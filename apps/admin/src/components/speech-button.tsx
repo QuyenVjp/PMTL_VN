@@ -7,7 +7,6 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { Volume2, VolumeX, Loader2 } from "lucide-react";
-import { announce } from "@react-aria/live-announcer";
 
 interface SpeechButtonProps {
   text: string;
@@ -49,8 +48,6 @@ export function SpeechButton({
 
     utterance.onstart = () => {
       setSpeaking(true);
-      // Announce to screen readers that playback started
-      announce(`Đang đọc: ${label}`, "polite");
     };
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);

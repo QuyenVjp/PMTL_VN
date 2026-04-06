@@ -83,7 +83,7 @@ export class PracticeSupportService {
     try {
       // Read seed file
       const seedContent = await readFile(SEED_FILE_PATH, "utf-8");
-      const seedData = JSON.parse(seedContent);
+      const seedData: unknown = JSON.parse(seedContent) as unknown;
 
       // Write to runtime location
       const content = JSON.stringify(seedData, null, 2);

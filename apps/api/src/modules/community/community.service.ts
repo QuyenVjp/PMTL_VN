@@ -1,6 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import pino from "pino";
+import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService } from "../../platform/audit/audit.service.js";
+import { CharityFirewallService } from "../dharma-compliance/services/charity-firewall.service.js";
 import { mapGuestbookEntryToAdminItem, mapPostToAdminItem } from "./community.mapper.js";
 import { CommunityRepository } from "./community.repository.js";
 import type {
@@ -16,13 +19,23 @@ import type {
   CommentQuery,
   CreateCommentInput,
   CreateReportInput,
+  CreateTestimonialInput,
+  TestimonialQuery,
+} from "./community.schemas.js";
+import {
+  TESTIMONIAL_DISCLAIMER_TEXT,
+  TESTIMONIAL_PROHIBITED_TERMS_PATTERN,
 } from "./community.schemas.js";
 
 @Injectable()
 export class CommunityService {
+  private readonly logger = pino({ name: CommunityService.name });
+
   constructor(
     private readonly repo: CommunityRepository,
+    private readonly prisma: PrismaService,
     private readonly audit: AuditService,
+    private readonly charityFirewall: CharityFirewallService,
   ) {}
 
   // ── Public post endpoints ──────────────────────────────────────────
@@ -49,14 +62,35 @@ export class CommunityService {
   }
 
   async createPost(input: CreateCommunityPostInput, userId: string) {
+    // Anti-scam donation filter — design/03-domains/community/USE_CASES/anti-scam-donation-filter.md
+    // Save first as PENDING, then run scan. Auto-hide silently if bank account detected (anti-evasion).
     const post = await this.repo.createPost(input, userId, nanoid());
 
-    await this.audit.append(
-      { actorId: userId, actorType: "user" },
-      "content.create",
-      "CommunityPost",
-      post.publicId,
-    );
+    const auditCtx = { actorId: userId, actorType: "user" as const };
+    try {
+      const scanResult = await this.charityFirewall.scanContent(
+        userId,
+        "POST",
+        post.publicId,
+        input.content,
+        auditCtx,
+      );
+      if (scanResult.hasViolation && !scanResult.whitelistedMatch) {
+        await this.repo.updatePost(post.publicId, { isHidden: true });
+        this.logger.warn(
+          { userId, postPublicId: post.publicId, detectedPatterns: scanResult.detectedPatterns },
+          "community.post.scam-scan.auto-hidden",
+        );
+        // Return silently — do NOT tell the user their post was hidden (anti-evasion design)
+      } else {
+        this.logger.info({ userId, postPublicId: post.publicId }, "community.post.scam-scan.passed");
+      }
+    } catch (err) {
+      // Scan failure must not block the write path — log and continue
+      this.logger.error({ err, userId, postPublicId: post.publicId }, "community.post.scam-scan.error — scan skipped");
+    }
+
+    await this.audit.append(auditCtx, "content.create", "CommunityPost", post.publicId);
 
     return post;
   }
@@ -103,12 +137,29 @@ export class CommunityService {
 
     const comment = await this.repo.createComment(post.id, input, userId, nanoid());
 
-    await this.audit.append(
-      { actorId: userId, actorType: "user" },
-      "community.comment.create",
-      "CommunityComment",
-      comment.publicId,
-    );
+    const auditCtx = { actorId: userId, actorType: "user" as const };
+
+    // Anti-scam donation filter on comments — auto-hide silently if bank account detected
+    try {
+      const scanResult = await this.charityFirewall.scanContent(
+        userId,
+        "COMMENT",
+        comment.publicId,
+        input.content,
+        auditCtx,
+      );
+      if (scanResult.hasViolation && !scanResult.whitelistedMatch) {
+        await this.repo.hideComment(comment.publicId);
+        this.logger.warn(
+          { userId, commentPublicId: comment.publicId, detectedPatterns: scanResult.detectedPatterns },
+          "community.comment.scam-scan.auto-hidden",
+        );
+      }
+    } catch (err) {
+      this.logger.error({ err, userId, commentPublicId: comment.publicId }, "community.comment.scam-scan.error — scan skipped");
+    }
+
+    await this.audit.append(auditCtx, "community.comment.create", "CommunityComment", comment.publicId);
 
     return comment;
   }
@@ -455,5 +506,125 @@ export class CommunityService {
     );
 
     return { data: { publicId, isActive: false } };
+  }
+
+  // ── Testimonial disclaimer auto-inject ─────────────────────────────────
+  // Design: design/03-domains/community/USE_CASES/USE_CASE_TESTIMONIAL_DISCLAIMER_AUTO_INJECT.md
+
+  async createTestimonial(input: CreateTestimonialInput, userId: string) {
+    const requiresDisclaimer = input.authorRole === "VOLUNTEER" || input.authorRole === "ORGANIZER";
+
+    if (requiresDisclaimer && !input.disclaimerAcknowledge) {
+      throw new BadRequestException({
+        code: "disclaimer_not_acknowledged",
+        message: "Phụng sự viên phải xác nhận đã đọc và chấp nhận lời miễn trừ trách nhiệm trước khi đăng bài.",
+      });
+    }
+
+    // Scan body for prohibited fundraising/scam terms
+    if (TESTIMONIAL_PROHIBITED_TERMS_PATTERN.test(input.body)) {
+      this.logger.warn({ userId, contentType: input.contentType }, "community.testimonial.flagged — prohibited terms detected");
+      throw new BadRequestException({
+        code: "prohibited_terms_detected",
+        message: "Nội dung chứa từ ngữ bị cấm (quyên góp, chuyển khoản, tài khoản riêng). Vui lòng chỉnh sửa lại.",
+      });
+    }
+
+    const originalBodyLength = input.body.length;
+    let finalBody = input.body;
+    let disclaimerInjected = false;
+
+    if (requiresDisclaimer) {
+      // Idempotency: do not double-inject if disclaimer already present at end
+      if (!input.body.trimEnd().endsWith(TESTIMONIAL_DISCLAIMER_TEXT.trim())) {
+        finalBody = `${input.body}\n\n---\n\n${TESTIMONIAL_DISCLAIMER_TEXT}`;
+        disclaimerInjected = true;
+      } else {
+        disclaimerInjected = true; // already has it
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const prismaAny = this.prisma as any;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const testimonial = await prismaAny.communityTestimonial.create({
+      data: {
+        publicId: nanoid(),
+        authorId: userId,
+        title: input.title,
+        body: finalBody,
+        originalBodyLength,
+        contentType: input.contentType,
+        authorRole: input.authorRole,
+        disclaimerInjected,
+        disclaimerText: requiresDisclaimer ? TESTIMONIAL_DISCLAIMER_TEXT : "",
+        coverImage: input.coverImage ?? null,
+        tags: input.tags,
+        status: "PUBLISHED",
+        visibility: "PUBLIC",
+      },
+    }) as { publicId: string; contentType: string };
+
+    await this.audit.append(
+      { actorId: userId, actorType: "user" },
+      "community.testimonial.published",
+      "CommunityTestimonial",
+      testimonial.publicId,
+      { contentType: input.contentType, disclaimerInjected, originalBodyLength },
+    );
+
+    this.logger.info(
+      { userId, testimonialPublicId: testimonial.publicId, contentType: input.contentType, disclaimerInjected },
+      "community.testimonial.created",
+    );
+
+    return {
+      publicId: testimonial.publicId,
+      disclaimer: requiresDisclaimer ? TESTIMONIAL_DISCLAIMER_TEXT : null,
+    };
+  }
+
+  async listTestimonials(query: TestimonialQuery) {
+    const where: Record<string, unknown> = { status: "PUBLISHED", visibility: "PUBLIC" };
+    if (query.contentType) where.contentType = query.contentType;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    const prismaAny = this.prisma as any;
+    const [data, total] = await Promise.all([
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/await-thenable
+      prismaAny.communityTestimonial.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: query.limit,
+        skip: query.offset,
+        select: {
+          publicId: true,
+          title: true,
+          body: true,
+          contentType: true,
+          authorRole: true,
+          disclaimerInjected: true,
+          tags: true,
+          viewCount: true,
+          likeCount: true,
+          createdAt: true,
+          author: { select: { publicId: true, displayName: true } },
+        },
+      }) as unknown[],
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      prismaAny.communityTestimonial.count({ where }) as Promise<number>,
+    ]);
+
+    return {
+      data,
+      meta: {
+        pagination: {
+          total,
+          limit: query.limit,
+          offset: query.offset,
+          hasMore: query.offset + query.limit < total,
+        },
+      },
+    };
   }
 }

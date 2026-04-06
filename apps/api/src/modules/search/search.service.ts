@@ -6,7 +6,15 @@ import { CircuitBreakerService } from "../../common/resilience/circuit-breaker.s
 import type CircuitBreaker from "opossum";
 import type { SearchQuery } from "./search.schemas.js";
 
-type SearchIndex = "posts" | "events" | "guides" | "downloads" | "community";
+type SearchIndex = "posts" | "events" | "guides" | "downloads" | "community" | "wisdom" | "qa" | "sutras";
+
+export type SearchDoc = {
+  id: string;
+  title: string;
+  excerpt: string;
+  href: string;
+  publishedAt: string | null;
+};
 
 type SearchHit = {
   id: string;
@@ -20,7 +28,7 @@ type SearchHit = {
 @Injectable()
 export class SearchService {
   private readonly logger = new Logger(SearchService.name);
-  private readonly searchableIndexes: SearchIndex[] = ["posts", "events", "guides", "downloads", "community"];
+  private readonly searchableIndexes: SearchIndex[] = ["posts", "events", "guides", "downloads", "community", "wisdom", "qa", "sutras"];
   private meiliBreaker!: CircuitBreaker<[string, string, unknown?], unknown>;
 
   constructor(
@@ -52,7 +60,7 @@ export class SearchService {
     const cacheKey = this.getCacheKey(query);
 
     // Try cache first
-    const cached = await this.cache.getJson<any>(cacheKey);
+    const cached = await this.cache.getJson<unknown>(cacheKey);
     if (cached) {
       this.logger.debug(`Search cache hit for: ${cacheKey}`);
       return cached;
@@ -133,6 +141,27 @@ export class SearchService {
     } as const;
   }
 
+  async getPublicStatus() {
+    let meiliHealth: "up" | "down" = "down";
+    if (this.configService.searchEngine === "meilisearch") {
+      try {
+        await this.meiliRequest("GET", "/health");
+        meiliHealth = "up";
+      } catch {
+        meiliHealth = "down";
+      }
+    }
+
+    return {
+      engine: this.configService.searchEngine,
+      status:
+        meiliHealth === "up" || this.configService.searchEngine === "sql"
+          ? ("operational" as const)
+          : ("degraded" as const),
+      checkedAt: new Date().toISOString(),
+    };
+  }
+
   async getAdminStatus() {
     let meiliHealth: "up" | "down" = "down";
     if (this.configService.searchEngine === "meilisearch") {
@@ -157,9 +186,37 @@ export class SearchService {
     };
   }
 
+  async indexDocument(index: SearchIndex, doc: SearchDoc): Promise<void> {
+    if (this.configService.searchEngine !== "meilisearch") return;
+    try {
+      await this.ensureMeiliIndex(index);
+      await this.meiliRequest("POST", `/indexes/${this.indexUid(index)}/documents`, [doc]);
+    } catch (error) {
+      this.logger.warn({
+        msg: "search.indexDocument.failed",
+        index,
+        docId: doc.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
+  async removeDocument(index: SearchIndex, docId: string): Promise<void> {
+    if (this.configService.searchEngine !== "meilisearch") return;
+    try {
+      await this.meiliRequest("DELETE", `/indexes/${this.indexUid(index)}/documents/${docId}`);
+    } catch (error) {
+      this.logger.warn({
+        msg: "search.removeDocument.failed",
+        index,
+        docId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   private resolveTargetIndexes(index: SearchQuery["index"] | "all" | undefined): SearchIndex[] {
     if (!index) return this.searchableIndexes;
-    if (index === "sutras") return ["guides"];
     if (index === "all") return this.searchableIndexes;
     if (this.searchableIndexes.includes(index as SearchIndex)) return [index as SearchIndex];
     return this.searchableIndexes;
@@ -359,6 +416,94 @@ export class SearchService {
       );
     }
 
+    // wisdom_entry — design/03-domains/search/REFERENCES/UNIFIED_INDEX_MAPPING.md
+    // Only index when reviewStatus in ('translated_reviewed', 'source_verified')
+    if (indexes.includes("wisdom")) {
+      const rows = await this.prisma.wisdomEntry.findMany({
+        where: {
+          status: "PUBLISHED",
+          publishedAt: { not: null, lte: new Date() },
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { translatedText: { contains: q, mode: "insensitive" } },
+            { originalText: { contains: q, mode: "insensitive" } },
+          ],
+        },
+        select: { publicId: true, title: true, translatedText: true, publishedAt: true, entryType: true },
+        orderBy: { publishedAt: "desc" },
+        take: query.limit,
+        skip: query.offset,
+      });
+      hits.push(
+        ...rows.map((r) => ({
+          id: r.publicId,
+          index: "wisdom" as const,
+          title: r.title,
+          excerpt: (r.translatedText ?? "").slice(0, 220),
+          href: `/bach-thoai/${r.publicId}`,
+          publishedAt: r.publishedAt?.toISOString() ?? null,
+          docType: "wisdom_entry",
+          entryType: r.entryType ?? undefined,
+        })),
+      );
+    }
+
+    // qa_entry — WisdomQuestion per UNIFIED_INDEX_MAPPING.md
+    if (indexes.includes("qa")) {
+      const rows = await this.prisma.wisdomQuestion.findMany({
+        where: {
+          status: { in: ["ANSWERED", "CLOSED"] },
+          OR: [
+            { title: { contains: q, mode: "insensitive" } },
+            { body: { contains: q, mode: "insensitive" } },
+          ],
+        },
+        select: { publicId: true, title: true, body: true, createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: query.limit,
+        skip: query.offset,
+      });
+      hits.push(
+        ...rows.map((r: { publicId: string; title: string; body: string; createdAt: Date }) => ({
+          id: r.publicId,
+          index: "qa" as const,
+          title: r.title,
+          excerpt: r.body.slice(0, 220),
+          href: `/hoi-dap/${r.publicId}`,
+          publishedAt: r.createdAt.toISOString(),
+          docType: "qa_entry",
+          entryType: "qa_retrieval",
+        })),
+      );
+    }
+
+    // sutras — SutraMetadata per UNIFIED_INDEX_MAPPING.md
+    if (indexes.includes("sutras")) {
+      const rows = await this.prisma.sutraMetadata.findMany({
+        where: {
+          OR: [
+            { titleVi: { contains: q, mode: "insensitive" } },
+            { titleEn: { contains: q, mode: "insensitive" } },
+            { sutraKey: { contains: q, mode: "insensitive" } },
+          ],
+        },
+        select: { publicId: true, titleVi: true, sutraKey: true },
+        take: query.limit,
+        skip: query.offset,
+      });
+      hits.push(
+        ...rows.map((r: { publicId: string; titleVi: string; sutraKey: string }) => ({
+          id: r.publicId,
+          index: "sutras" as const,
+          title: r.titleVi,
+          excerpt: "",
+          href: `/kinh-sach/${r.sutraKey}`,
+          publishedAt: null,
+          docType: "sutra",
+        })),
+      );
+    }
+
     const sliced = hits.slice(0, query.limit);
     return { hits: sliced, totalHits: sliced.length };
   }
@@ -378,7 +523,7 @@ export class SearchService {
   private async loadDocumentsForIndex(index: SearchIndex): Promise<SearchHit[]> {
     if (index === "posts") {
       const rows = await this.prisma.post.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
         select: { publicId: true, title: true, slug: true, publishedAt: true },
       });
       return rows.map((r) => ({
@@ -392,7 +537,7 @@ export class SearchService {
     }
     if (index === "events") {
       const rows = await this.prisma.calendarEvent.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
         select: { publicId: true, title: true, description: true, publishedAt: true },
       });
       return rows.map((r) => ({
@@ -406,7 +551,7 @@ export class SearchService {
     }
     if (index === "guides") {
       const rows = await this.prisma.beginnerGuide.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
         select: { publicId: true, title: true, slug: true, publishedAt: true },
       });
       return rows.map((r) => ({
@@ -420,7 +565,7 @@ export class SearchService {
     }
     if (index === "downloads") {
       const rows = await this.prisma.download.findMany({
-        where: { status: "PUBLISHED" },
+        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
         select: { publicId: true, title: true, description: true, publishedAt: true },
       });
       return rows.map((r) => ({
@@ -432,6 +577,48 @@ export class SearchService {
         publishedAt: r.publishedAt?.toISOString() ?? null,
       }));
     }
+    if (index === "wisdom") {
+      const rows = await this.prisma.wisdomEntry.findMany({
+        where: { status: "PUBLISHED", publishedAt: { not: null, lte: new Date() } },
+        select: { publicId: true, title: true, translatedText: true, publishedAt: true, entryType: true },
+      });
+      return rows.map((r) => ({
+        id: r.publicId,
+        index,
+        title: r.title,
+        excerpt: (r.translatedText ?? "").slice(0, 220),
+        href: `/bach-thoai/${r.publicId}`,
+        publishedAt: r.publishedAt?.toISOString() ?? null,
+      }));
+    }
+    if (index === "qa") {
+      const rows = await this.prisma.wisdomQuestion.findMany({
+        where: { status: { in: ["ANSWERED", "CLOSED"] } },
+        select: { publicId: true, title: true, body: true, createdAt: true },
+      });
+      return rows.map((r: { publicId: string; title: string; body: string; createdAt: Date }) => ({
+        id: r.publicId,
+        index,
+        title: r.title,
+        excerpt: r.body.slice(0, 220),
+        href: `/hoi-dap/${r.publicId}`,
+        publishedAt: r.createdAt.toISOString(),
+      }));
+    }
+    if (index === "sutras") {
+      const rows = await this.prisma.sutraMetadata.findMany({
+        select: { publicId: true, titleVi: true, sutraKey: true },
+      });
+      return rows.map((r: { publicId: string; titleVi: string; sutraKey: string }) => ({
+        id: r.publicId,
+        index,
+        title: r.titleVi,
+        excerpt: "",
+        href: `/kinh-sach/${r.sutraKey}`,
+        publishedAt: null,
+      }));
+    }
+    // community fallback
     const rows = await this.prisma.communityPost.findMany({
       where: { status: "APPROVED", isHidden: false },
       select: { publicId: true, content: true, createdAt: true },

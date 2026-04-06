@@ -6,6 +6,7 @@ import type {
   ApplicantQuery,
   UpdatePrerequisiteInput,
   DisposalPolarityInput,
+  ProbationQuery,
 } from "./sacred-forms.schemas.js";
 
 @Injectable()
@@ -165,5 +166,136 @@ export class SacredFormsRepository {
     return this.prisma.disposalPolarityRecord.findMany({
       orderBy: { effectiveAt: "desc" },
     });
+  }
+
+  // ─── Approve / Reject ─────────────────────────────────────────────────────
+
+  async approveApplicant(id: string, reviewNotes?: string) {
+    return this.prisma.formApplicant.update({
+      where: { id },
+      data: {
+        status: "APPROVED" as never,
+        approvedAt: new Date(),
+        reviewNotes: reviewNotes ?? null,
+      },
+    });
+  }
+
+  async rejectApplicant(id: string, rejectionReason: string) {
+    return this.prisma.formApplicant.update({
+      where: { id },
+      data: {
+        status: "REJECTED" as never,
+        rejectedAt: new Date(),
+        reviewNotes: rejectionReason,
+      },
+    });
+  }
+
+  // ─── Burn + Probation ─────────────────────────────────────────────────────
+
+  async completeApplicant(id: string) {
+    return this.prisma.formApplicant.update({
+      where: { id },
+      data: { status: "COMPLETED" as never },
+    });
+  }
+
+  async createNameChangeProbation(data: {
+    publicId: string;
+    formApplicantId: string;
+    userId: string;
+    oldDharmaName?: string;
+    newDharmaName?: string;
+    probationDurationDays: number;
+  }) {
+    const start = new Date();
+    const end = new Date(start);
+    end.setDate(end.getDate() + data.probationDurationDays);
+
+    return this.prisma.nameChangeProbation.create({
+      data: {
+        publicId: data.publicId,
+        formApplicantId: data.formApplicantId,
+        userId: data.userId,
+        oldDharmaName: data.oldDharmaName ?? null,
+        newDharmaName: data.newDharmaName ?? null,
+        probationStartDate: start,
+        probationDurationDays: data.probationDurationDays,
+        probationEndDate: end,
+        isActive: true,
+      },
+    });
+  }
+
+  async findProbationByApplicantId(formApplicantId: string) {
+    return this.prisma.nameChangeProbation.findUnique({
+      where: { formApplicantId },
+    });
+  }
+
+  // ─── My Probations ────────────────────────────────────────────────────────
+
+  async findProbationsByUserId(userId: string, query: ProbationQuery) {
+    const where: Record<string, unknown> = { userId };
+    if (query.isActive !== undefined) where.isActive = query.isActive;
+
+    const [data, total] = await Promise.all([
+      this.prisma.nameChangeProbation.findMany({
+        where,
+        orderBy: { probationStartDate: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.nameChangeProbation.count({ where }),
+    ]);
+    return { data, total };
+  }
+
+  async findAllProbations(query: ProbationQuery) {
+    const where: Record<string, unknown> = {};
+    if (query.isActive !== undefined) where.isActive = query.isActive;
+
+    const [data, total] = await Promise.all([
+      this.prisma.nameChangeProbation.findMany({
+        where,
+        orderBy: { probationStartDate: "desc" },
+        skip: query.offset,
+        take: query.limit,
+      }),
+      this.prisma.nameChangeProbation.count({ where }),
+    ]);
+    return { data, total };
+  }
+
+  // ─── Status Aggregate ─────────────────────────────────────────────────────
+
+  async getStatusAggregate() {
+    const [
+      totalPending,
+      totalUnderReview,
+      totalApproved,
+      totalRejected,
+      totalCompleted,
+      totalActiveProbations,
+    ] = await Promise.all([
+      this.prisma.formApplicant.count({ where: { status: "PENDING" as never } }),
+      this.prisma.formApplicant.count({ where: { status: "UNDER_REVIEW" as never } }),
+      this.prisma.formApplicant.count({ where: { status: "APPROVED" as never } }),
+      this.prisma.formApplicant.count({ where: { status: "REJECTED" as never } }),
+      this.prisma.formApplicant.count({ where: { status: "COMPLETED" as never } }),
+      this.prisma.nameChangeProbation.count({ where: { isActive: true } }),
+    ]);
+
+    return {
+      applicants: {
+        pending: totalPending,
+        underReview: totalUnderReview,
+        approved: totalApproved,
+        rejected: totalRejected,
+        completed: totalCompleted,
+      },
+      activeProbations: totalActiveProbations,
+    };
   }
 }

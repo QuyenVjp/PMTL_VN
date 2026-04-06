@@ -13,8 +13,10 @@ import { MeritDashboardService } from "./merit-dashboard.service.js";
 import {
   toggleReactionSchema,
   toggleBookmarkSchema,
+  getBookmarksQuerySchema,
   type ToggleReactionInput,
   type ToggleBookmarkInput,
+  type GetBookmarksQuery,
 } from "./engagement.schemas.js";
 import {
   upsertDailyGongkeSchema,
@@ -73,8 +75,11 @@ export class EngagementController {
   @Get("bookmarks")
   @ApiOperation({ summary: "Lấy danh sách bookmark của user" })
   @ApiResponse({ status: 200, description: "Danh sách bookmark" })
-  getBookmarks(@CurrentUser() user: AuthenticatedUser) {
-    return this.engagementService.getBookmarks(user.id);
+  getBookmarks(
+    @Query(ZodValidate(getBookmarksQuerySchema)) query: GetBookmarksQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.engagementService.getBookmarks(user.id, query);
   }
 }
 

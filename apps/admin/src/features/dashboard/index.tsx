@@ -476,10 +476,24 @@ export function DashboardOverview() {
     },
     {
       icon: ImageIcon,
-      label: "Media",
-      description: "Thư viện tài nguyên",
-      href: "/noi-dung/media",
+      label: "Ảnh assets",
+      description: "Kho ảnh vận hành",
+      href: "/noi-dung/anh",
       colorClass: "bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400",
+    },
+    {
+      icon: ImageIcon,
+      label: "Video assets",
+      description: "Kho video vận hành",
+      href: "/noi-dung/video",
+      colorClass: "bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400",
+    },
+    {
+      icon: ArchiveIcon,
+      label: "Tệp tài liệu assets",
+      description: "Kho file kỹ thuật",
+      href: "/noi-dung/tep-tai-lieu",
+      colorClass: "bg-zinc-50 dark:bg-zinc-950/50 text-zinc-600 dark:text-zinc-400",
     },
     {
       icon: MessageSquareIcon,

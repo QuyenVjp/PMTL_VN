@@ -236,6 +236,13 @@ export class CommunityRepository {
     });
   }
 
+  async hideComment(publicId: string) {
+    return this.prisma.communityComment.update({
+      where: { publicId },
+      data: { isHidden: true },
+    });
+  }
+
   // ── Reports ───────────────────────────────────────────────────────────
 
   async createReport(

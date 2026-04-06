@@ -105,7 +105,7 @@ export class ModerationService {
 
     await this.audit.append(
       auditCtx,
-      "admin.user.status_change",
+      "moderation.report.resolved",
       "moderation_report",
       report.id,
       auditMeta,
@@ -144,7 +144,7 @@ export class ModerationService {
       description: input.description,
     });
 
-    await this.audit.append(auditCtx, "admin.user.status_change", "moderation_report", report.publicId, {
+    await this.audit.append(auditCtx, "moderation.report.submitted", "moderation_report", report.publicId, {
       targetType: input.targetType,
       targetId: input.targetId,
       reasonCode: input.reasonCode,
@@ -239,7 +239,7 @@ export class ModerationService {
       data: { isHidden: true },
     });
 
-    await this.audit.append(auditCtx, "admin.user.status_change", "community_comment", publicId, {
+    await this.audit.append(auditCtx, "moderation.comment.hidden", "community_comment", publicId, {
       action: "hide",
       commentAuthor: comment.author.publicId,
     });
@@ -273,7 +273,7 @@ export class ModerationService {
       data: { isHidden: false },
     });
 
-    await this.audit.append(auditCtx, "admin.user.status_change", "community_comment", publicId, {
+    await this.audit.append(auditCtx, "moderation.comment.restored", "community_comment", publicId, {
       action: "restore",
       commentAuthor: comment.author.publicId,
     });
@@ -287,6 +287,79 @@ export class ModerationService {
         updatedAt: updated.updatedAt,
       },
     };
+  }
+
+  // ─── Admin: comment detail ────────────────────────────────────────────────
+
+  async getCommentDetail(publicId: string) {
+    const comment = await this.prisma.communityComment.findUnique({
+      where: { publicId },
+      include: {
+        author: { select: { publicId: true, displayName: true, role: true } },
+        post: { select: { publicId: true, content: true } },
+      },
+    });
+    if (!comment) {
+      throw new NotFoundError("Bình luận", publicId);
+    }
+
+    const pendingReports = await this.prisma.moderationReport.findMany({
+      where: { targetType: "comment", targetId: publicId, status: "PENDING" },
+      select: { publicId: true, reasonCode: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+
+    return {
+      data: {
+        publicId: comment.publicId,
+        content: comment.content,
+        isHidden: comment.isHidden,
+        author: comment.author,
+        post: { publicId: comment.post.publicId },
+        createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
+        pendingReports,
+      },
+    };
+  }
+
+  // ─── Admin: recompute summary ─────────────────────────────────────────────
+
+  async recomputeSummary(auditCtx: AuditContext) {
+    const [pending, resolvedHide, resolvedIgnore, resolvedEscalate, total] = await Promise.all([
+      this.prisma.moderationReport.count({ where: { status: "PENDING" } }),
+      this.prisma.moderationReport.count({ where: { status: "RESOLVED_HIDE" } }),
+      this.prisma.moderationReport.count({ where: { status: "RESOLVED_IGNORE" } }),
+      this.prisma.moderationReport.count({ where: { status: "RESOLVED_ESCALATE" } }),
+      this.prisma.moderationReport.count(),
+    ]);
+
+    const hiddenComments = await this.prisma.communityComment.count({ where: { isHidden: true } });
+
+    const summary = {
+      total,
+      pending,
+      resolved: resolvedHide + resolvedIgnore + resolvedEscalate,
+      byStatus: {
+        PENDING: pending,
+        RESOLVED_HIDE: resolvedHide,
+        RESOLVED_IGNORE: resolvedIgnore,
+        RESOLVED_ESCALATE: resolvedEscalate,
+      },
+      hiddenComments,
+      recomputedAt: new Date().toISOString(),
+    };
+
+    await this.audit.append(auditCtx, "moderation.summary.recomputed", "moderation_summary", "global", {
+      pending,
+      total,
+      hiddenComments,
+    });
+
+    this.logger.log({ msg: "moderation.summary.recomputed", pending, total });
+
+    return { data: summary };
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────

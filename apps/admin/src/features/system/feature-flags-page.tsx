@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PowerIcon, RefreshCwIcon } from "lucide-react";
 
 import { WorkspaceConfirmDialog } from "@/components/workspace";
@@ -14,26 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { adminClient } from "@/lib/api/admin-client.js";
-import { flagKeys, useUpdateFeatureFlag } from "./mutations.js";
-
-interface FeatureFlag {
-  key: string;
-  enabled: boolean;
-  description: string | null;
-  metadata: Record<string, unknown> | null;
-  createdAt: string;
-  updatedAt: string;
-}
+import { flagListOptions, flagKeys, type FeatureFlag } from "./queries.js";
+import { useUpdateFeatureFlag } from "./mutations.js";
 
 type StatusFilter = "all" | "enabled" | "disabled";
-
-function flagListOptions() {
-  return queryOptions({
-    queryKey: flagKeys.list(),
-    queryFn: () => adminClient.get<{ data: FeatureFlag[] }>("/admin/feature-flags"),
-  });
-}
 
 function statusBadge(flag: FeatureFlag) {
   return flag.enabled

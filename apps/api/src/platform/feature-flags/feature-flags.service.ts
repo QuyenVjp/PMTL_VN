@@ -13,6 +13,7 @@ const FEATURE_FLAG_DESCRIPTIONS: Record<FeatureFlagKey, string> = {
   "maintenance.mode.enabled": "Bật/tắt chế độ bảo trì",
   "wisdom.ai.slug_suggest.enabled": "Bật/tắt gợi ý slug bằng Gemini cho Tri Tuệ",
   "wisdom.ai.translation_draft.enabled": "Bật/tắt tạo bản dịch nháp bằng Gemini cho Tri Tuệ",
+  "wisdom_qa.enabled": "Bật/tắt tính năng hỏi đáp công khai (Wisdom Q&A)",
 };
 
 @Injectable()

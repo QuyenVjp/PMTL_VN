@@ -10,6 +10,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
@@ -45,6 +46,37 @@ import {
   type ThoughtLogQuery,
   type GuidanceQueueQuery,
 } from "./dharma-compliance.schemas.js";
+
+// ─── Public: Charity ─────────────────────────────────────────────────────────
+
+@ApiTags("dharma-compliance-public")
+@Controller("dharma-compliance")
+export class PublicDharmaComplianceController {
+  constructor(private readonly svc: DharmaComplianceService) {}
+
+  @Get("approved-accounts")
+  @Public()
+  @ApiOperation({ summary: "Danh sách tài khoản từ thiện chính thức (public)" })
+  async approvedAccounts() {
+    return this.svc.listApprovedAccounts();
+  }
+
+  @Get("charities")
+  @Public()
+  @ApiOperation({ summary: "Danh sách tổ chức từ thiện đã xác minh (public)" })
+  async listPublicCharities(@Query() query: CharityQuery) {
+    const q = charityQuerySchema.parse(query);
+    // Public endpoint only returns verified charities
+    return this.svc.listCharities({ ...q, status: "VERIFIED" });
+  }
+
+  @Get("charities/:publicId")
+  @Public()
+  @ApiOperation({ summary: "Chi tiết tổ chức từ thiện (public)" })
+  async getPublicCharity(@Param("publicId") publicId: string) {
+    return this.svc.getPublicCharity(publicId);
+  }
+}
 
 // ─── Admin: Charity ──────────────────────────────────────────────────────────
 
@@ -92,6 +124,92 @@ export class AdminCharityController {
   ) {
     const input = updateCharityStatusSchema.parse(body);
     return this.svc.updateCharityStatus(publicId, input, user.id, auditCtx);
+  }
+
+  @Post(":publicId/verify")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Xác minh tổ chức từ thiện" })
+  async verify(
+    @Param("publicId") publicId: string,
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.verifyCharity(publicId, auditCtx);
+  }
+
+  @Post(":publicId/suspend")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Tạm ngừng tổ chức từ thiện" })
+  async suspend(
+    @Param("publicId") publicId: string,
+    @Body() body: { reason: string },
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.suspendCharity(publicId, body.reason ?? "", auditCtx);
+  }
+
+  @Post(":publicId/revoke")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Thu hồi tổ chức từ thiện (vĩnh viễn)" })
+  async revoke(
+    @Param("publicId") publicId: string,
+    @Body() body: { reason: string },
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.revokeCharity(publicId, body.reason ?? "", auditCtx);
+  }
+
+  @Get(":publicId/rules")
+  @ApiOperation({ summary: "Danh sách tiêu chí xác minh tổ chức" })
+  async listRules(@Param("publicId") publicId: string) {
+    return this.svc.listCharityRules(publicId);
+  }
+
+  @Post(":publicId/rules")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Thêm tiêu chí xác minh" })
+  async createRule(
+    @Param("publicId") publicId: string,
+    @Body() body: { ruleType: string; description: string; evidenceUrl?: string },
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.createCharityRule(publicId, body, auditCtx);
+  }
+
+  @Patch(":publicId/rules/:rulePublicId")
+  @ApiOperation({ summary: "Cập nhật tiêu chí xác minh" })
+  async updateRule(
+    @Param("publicId") publicId: string,
+    @Param("rulePublicId") rulePublicId: string,
+    @Body() body: { verified?: boolean; evidenceUrl?: string; description?: string },
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.updateCharityRule(publicId, rulePublicId, body, auditCtx);
+  }
+}
+
+// ─── Admin: Status & Interactions ────────────────────────────────────────────
+
+@ApiTags("admin-dharma-compliance")
+@Controller("admin/dharma-compliance")
+@Roles("ADMIN", "SUPER_ADMIN")
+export class AdminDharmaComplianceStatusController {
+  constructor(private readonly svc: DharmaComplianceService) {}
+
+  @Get("status")
+  @ApiOperation({ summary: "Tổng quan tuân thủ pháp (admin dashboard)" })
+  async getStatus() {
+    return this.svc.getAdminStatus();
+  }
+
+  @Get("interactions")
+  @ApiOperation({ summary: "Lịch sử tương tác từ thiện của người dùng" })
+  async listInteractions(@Query() query: Record<string, unknown>) {
+    return this.svc.listInteractions({
+      limit: query.limit ? Number(query.limit) : 20,
+      offset: query.offset ? Number(query.offset) : 0,
+      userId: typeof query.userId === "string" ? query.userId : undefined,
+      interactionType: typeof query.interactionType === "string" ? query.interactionType : undefined,
+    });
   }
 }
 

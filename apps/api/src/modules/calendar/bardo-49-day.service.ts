@@ -3,28 +3,22 @@
 // Owner: calendar module
 
 import { Injectable, BadRequestException } from '@nestjs/common';
+import pino from 'pino';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { addDays, differenceInDays } from 'date-fns';
-
-interface CreateDeceasedDto {
-  name: string;
-  relationship: string;
-  dateOfDeath: string; // ISO date
-}
-
-interface UpdateBardoProgressDto {
-  deceasedPublicId: string;
-}
+import type { CreateDeceasedProfileInput } from './calendar.schemas.js';
 
 @Injectable()
 export class Bardo49DayService {
+  private readonly logger = pino({ name: Bardo49DayService.name });
+
   constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Tạo hồ sơ người quá cố và bắt đầu chiến dịch 49 ngày
    * POST /api/calendar/deceased-relatives
    */
-  async createDeceasedProfile(userId: string, dto: CreateDeceasedDto) {
+  async createDeceasedProfile(userId: string, dto: CreateDeceasedProfileInput) {
     const dateOfDeath = new Date(dto.dateOfDeath);
     const bardoEndDate = addDays(dateOfDeath, 49);
 

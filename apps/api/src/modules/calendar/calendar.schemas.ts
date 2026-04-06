@@ -154,3 +154,13 @@ export const rescheduleEventSchema = z.object({
 });
 
 export type RescheduleEventInput = z.infer<typeof rescheduleEventSchema>;
+
+// ── Bardo 49-day tracker schemas ───────────────────────────────────────
+
+export const createDeceasedProfileSchema = z.object({
+  name: z.string().check(z.minLength(1), z.maxLength(200)),
+  relationship: z.string().check(z.minLength(1), z.maxLength(100)),
+  dateOfDeath: z.string().date(),
+});
+
+export type CreateDeceasedProfileInput = z.infer<typeof createDeceasedProfileSchema>;

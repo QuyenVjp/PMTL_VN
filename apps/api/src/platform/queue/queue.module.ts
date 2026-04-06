@@ -47,6 +47,7 @@ import { ModerationPipelineWorker } from "./workers/moderation-pipeline.worker.j
     // Queue registrations
     BullModule.registerQueue({ name: QUEUES.PDPA_RETENTION }),
     BullModule.registerQueue({ name: QUEUES.MODERATION_PIPELINE }),
+    BullModule.registerQueue({ name: QUEUES.OUTBOX_DISPATCH }),
 
     // BullBoard UI — mount at /admin/queues
     BullBoardModule.forRoot({
@@ -59,6 +60,10 @@ import { ModerationPipelineWorker } from "./workers/moderation-pipeline.worker.j
     }),
     BullBoardModule.forFeature({
       name: QUEUES.MODERATION_PIPELINE,
+      adapter: BullMQAdapter,
+    }),
+    BullBoardModule.forFeature({
+      name: QUEUES.OUTBOX_DISPATCH,
       adapter: BullMQAdapter,
     }),
   ],

@@ -9,6 +9,8 @@ export const auditActionSchema = z.enum([
   "auth.password_reset_request",
   "auth.password_reset_complete",
   "auth.email_verify",
+  "auth.email_verification.sent",
+  "auth.email_verification.completed",
   
   // User actions
   "user.create",
@@ -59,6 +61,7 @@ export const auditActionSchema = z.enum([
   "community.comment.create",
   "community.report.create",
   "community.guestbook.create",
+  "community.testimonial.published",
 
   // Notification actions
   "admin.push_job.create",
@@ -69,6 +72,8 @@ export const auditActionSchema = z.enum([
   "member.preferences.update",
   "member.push.subscribe",
   "member.push.unsubscribe",
+  "member.practice_reminder.update",
+  "member.event_reminder.update",
 
   // Volunteer/contact actions
   "admin.volunteer.create",
@@ -111,8 +116,11 @@ export const auditActionSchema = z.enum([
   // Dharma compliance actions
   "admin.charity.create",
   "admin.charity.status_update",
+  "admin.charity.rule.update",
   "admin.fraud_alert.resolve",
   "admin.guidance.respond",
+  "charity.content_violation_detected",
+  "charity.fraud_escalation_alert",
   "member.vow.register",
   "member.vow.violation",
 
@@ -139,8 +147,24 @@ export const auditActionSchema = z.enum([
   "admin.sacred_form_template.create",
   "admin.sacred_form_template.toggle",
   "admin.sacred_form.review",
+  "admin.sacred_form.approve",
+  "admin.sacred_form.reject",
+  "admin.sacred_form.burn",
   "admin.disposal_polarity.create",
   "member.sacred_form.submit",
+
+  // Moderation actions
+  "moderation.report.submitted",
+  "moderation.report.resolved",
+  "moderation.comment.hidden",
+  "moderation.comment.restored",
+  "moderation.summary.recomputed",
+
+  // Charity lifecycle actions
+  "admin.charity.verify",
+  "admin.charity.suspend",
+  "admin.charity.revoke",
+  "admin.charity.rule.create",
 ]);
 
 export const auditActorTypeSchema = z.enum([

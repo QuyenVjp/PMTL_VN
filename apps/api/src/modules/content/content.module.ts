@@ -11,14 +11,21 @@ import { ContentService } from "./content.service.js";
 import { ContentRepository } from "./content.repository.js";
 import { AdminMediaLibraryController } from "./admin-media-library.controller.js";
 import { AdminMediaLibraryService } from "./admin-media-library.service.js";
+import { AdminDailyPracticeController } from "./daily-practice.controller.js";
+import { AdminDailyRecitationController } from "./daily-recitation.controller.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
 import { StorageModule } from "../../platform/storage/storage.module.js";
 import { ChantingModule } from "./chanting/chanting.module.js";
 import { PracticeSupportModule } from "./practice-support/practice-support.module.js";
 import { SelfCultivationModule } from "./self-cultivation/self-cultivation.module.js";
+import { SearchModule } from "../search/search.module.js";
+import { ConvincingFamilyRitualService } from "./convincing-family-ritual.service.js";
+import { NameChangeService } from "./name-change.service.js";
+import { SutraInterruptionService } from "./sutra-interruption.service.js";
+import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
 
 @Module({
-  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule],
+  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule, SearchModule],
   controllers: [
     ContentController,
     GuideController,
@@ -27,8 +34,18 @@ import { SelfCultivationModule } from "./self-cultivation/self-cultivation.modul
     PublicDownloadController,
     PublicChantItemsController,
     AdminMediaLibraryController,
+    AdminDailyPracticeController,
+    AdminDailyRecitationController,
   ],
-  providers: [ContentService, ContentRepository, AdminMediaLibraryService],
-  exports: [ContentService],
+  providers: [
+    ContentService,
+    ContentRepository,
+    AdminMediaLibraryService,
+    ConvincingFamilyRitualService,
+    NameChangeService,
+    SutraInterruptionService,
+    SutraReaderHygieneService,
+  ],
+  exports: [ContentService, ConvincingFamilyRitualService, NameChangeService, SutraInterruptionService, SutraReaderHygieneService],
 })
 export class ContentModule {}

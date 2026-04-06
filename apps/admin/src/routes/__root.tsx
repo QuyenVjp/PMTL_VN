@@ -64,8 +64,14 @@ const DownloadsPage = lazy(() =>
 const SutrasPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.SutrasPage })),
 );
-const MediaAssetsPage = lazy(() =>
-  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.MediaAssetsPage })),
+const ImageAssetsPage = lazy(() =>
+  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.ImageAssetsPage })),
+);
+const VideoAssetsPage = lazy(() =>
+  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.VideoAssetsPage })),
+);
+const DocumentAssetsPage = lazy(() =>
+  import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.DocumentAssetsPage })),
 );
 const CommunityPostsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.CommunityPostsPage })),
@@ -151,6 +157,9 @@ const SacredFormTemplatesPage = lazy(() =>
 const SacredFormApplicantsPage = lazy(() =>
   import("@/features/sacred-forms").then((mod) => ({ default: mod.SacredFormApplicantsPage })),
 );
+const DisposalPolarityPage = lazy(() =>
+  import("@/features/sacred-forms/disposal-polarity-page").then((mod) => ({ default: mod.DisposalPolarityPage })),
+);
 const LhRecordsPage = lazy(() =>
   import("@/features/little-house").then((mod) => ({ default: mod.LhRecordsPage })),
 );
@@ -162,6 +171,9 @@ const AltarItemsPage = lazy(() =>
 );
 const ValidationLogsPage = lazy(() =>
   import("@/features/altar-management").then((mod) => ({ default: mod.ValidationLogsPage })),
+);
+const AltarProceduresPage = lazy(() =>
+  import("@/features/altar-management/altar-procedures-page").then((mod) => ({ default: mod.AltarProceduresPage })),
 );
 
 // ── Detail / Create page imports ─────────────────────────────────────
@@ -459,7 +471,22 @@ const sutrasDetailRoute = createRoute({
 const mediaRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/media",
-  component: withSuspense(MediaAssetsPage),
+  component: withSuspense(ImageAssetsPage),
+});
+const imageAssetsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/anh",
+  component: withSuspense(ImageAssetsPage),
+});
+const videoAssetsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/video",
+  component: withSuspense(VideoAssetsPage),
+});
+const documentAssetsRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/tep-tai-lieu",
+  component: withSuspense(DocumentAssetsPage),
 });
 
 // Cộng đồng (Community)
@@ -709,6 +736,11 @@ const sacredFormApplicantsRoute = createRoute({
   path: "/don-phap-bao/don-dang-ky",
   component: withSuspense(SacredFormApplicantsPage),
 });
+const disposalPolarityRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/don-phap-bao/quy-tac-xu-ly",
+  component: withSuspense(DisposalPolarityPage),
+});
 
 // ── Thanh Tịnh Pháp — Sớ (Ngôi Nhà Nhỏ) ────────────────────────────
 const lhRecordsRoute = createRoute({
@@ -732,6 +764,11 @@ const validationLogsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/nhat-ky",
   component: withSuspense(ValidationLogsPage),
+});
+const altarProceduresRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/ban-tho/quy-trinh",
+  component: withSuspense(AltarProceduresPage),
 });
 
 // ── Route Tree Assembly ──────────────────────────────────────────────
@@ -769,6 +806,9 @@ export const routeTree = rootRoute.addChildren([
     sutrasCreateRoute,
     sutrasDetailRoute,
     mediaRoute,
+    imageAssetsRoute,
+    videoAssetsRoute,
+    documentAssetsRoute,
     niemKinhRoutes,
     practiceHomeGuideRoute,
     practiceHomeGuideLegacyRoute,
@@ -821,11 +861,13 @@ export const routeTree = rootRoute.addChildren([
     // Thanh Tịnh Pháp — Đơn Pháp Bảo
     sacredFormTemplatesRoute,
     sacredFormApplicantsRoute,
+    disposalPolarityRoute,
     // Thanh Tịnh Pháp — Sớ (Ngôi Nhà Nhỏ)
     lhRecordsRoute,
     lhFraudQueueRoute,
     // Thanh Tịnh Pháp — Bàn thờ
     altarItemsRoute,
     validationLogsRoute,
+    altarProceduresRoute,
   ]),
 ]);

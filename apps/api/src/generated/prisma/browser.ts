@@ -43,6 +43,11 @@ export type User = Prisma.UserModel
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel
 /**
+ * Model EmailVerificationToken
+ * 
+ */
+export type EmailVerificationToken = Prisma.EmailVerificationTokenModel
+/**
  * Model Session
  * 
  */
@@ -117,6 +122,11 @@ export type CommunityComment = Prisma.CommunityCommentModel
  * 
  */
 export type CommunityHeart = Prisma.CommunityHeartModel
+/**
+ * Model CommunityTestimonial
+ * 
+ */
+export type CommunityTestimonial = Prisma.CommunityTestimonialModel
 /**
  * Model CalendarEvent
  * 
@@ -428,6 +438,11 @@ export type SacredFormAuditLog = Prisma.SacredFormAuditLogModel
  */
 export type DisposalPolarityRecord = Prisma.DisposalPolarityRecordModel
 /**
+ * Model NameChangeProbation
+ * 
+ */
+export type NameChangeProbation = Prisma.NameChangeProbationModel
+/**
  * Model AltarItem
  * 
  */
@@ -442,3 +457,58 @@ export type AltarValidationLog = Prisma.AltarValidationLogModel
  * 
  */
 export type AltarProtocolTemplate = Prisma.AltarProtocolTemplateModel
+/**
+ * Model ContentReaction
+ * 
+ */
+export type ContentReaction = Prisma.ContentReactionModel
+/**
+ * Model ContentBookmark
+ * 
+ */
+export type ContentBookmark = Prisma.ContentBookmarkModel
+/**
+ * Model WisdomQuestion
+ * 
+ */
+export type WisdomQuestion = Prisma.WisdomQuestionModel
+/**
+ * Model WisdomAnswer
+ * 
+ */
+export type WisdomAnswer = Prisma.WisdomAnswerModel
+/**
+ * Model PracticeGuide
+ * 
+ */
+export type PracticeGuide = Prisma.PracticeGuideModel
+/**
+ * Model ScenarioPreset
+ * 
+ */
+export type ScenarioPreset = Prisma.ScenarioPresetModel
+/**
+ * Model PracticeFaq
+ * 
+ */
+export type PracticeFaq = Prisma.PracticeFaqModel
+/**
+ * Model PracticeSchedule
+ * 
+ */
+export type PracticeSchedule = Prisma.PracticeScheduleModel
+/**
+ * Model RecitationGuideline
+ * 
+ */
+export type RecitationGuideline = Prisma.RecitationGuidelineModel
+/**
+ * Model DailyRoutine
+ * 
+ */
+export type DailyRoutine = Prisma.DailyRoutineModel
+/**
+ * Model OutboxEvent
+ * 
+ */
+export type OutboxEvent = Prisma.OutboxEventModel

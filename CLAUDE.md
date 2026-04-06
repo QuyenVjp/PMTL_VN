@@ -106,3 +106,176 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 - Do not read or print secrets from `.env*`, `infra/docker/.env*`, key files, or secret directories unless the user explicitly asks.
 - Avoid destructive git commands unless the user explicitly requests them.
 - Treat production compose files and production env references as confirmation-worthy actions.
+
+<!-- gitnexus:start -->
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **PMTL_VN** (18009 symbols, 27684 relationships, 288 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+
+## Always Do
+
+- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
+- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
+- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
+- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
+- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
+
+## When Debugging
+
+1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
+2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
+3. `READ gitnexus://repo/PMTL_VN/process/{processName}` — trace the full execution flow step by step
+4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
+
+## When Refactoring
+
+- **Renaming**: MUST use `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` first. Review the preview — graph edits are safe, text_search edits need manual review. Then run with `dry_run: false`.
+- **Extracting/Splitting**: MUST run `gitnexus_context({name: "target"})` to see all incoming/outgoing refs, then `gitnexus_impact({target: "target", direction: "upstream"})` to find all external callers before moving code.
+- After any refactor: run `gitnexus_detect_changes({scope: "all"})` to verify only expected files changed.
+
+## Never Do
+
+- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
+- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
+- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
+- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
+
+## Tools Quick Reference
+
+| Tool | When to use | Command |
+|------|-------------|---------|
+| `query` | Find code by concept | `gitnexus_query({query: "auth validation"})` |
+| `context` | 360-degree view of one symbol | `gitnexus_context({name: "validateUser"})` |
+| `impact` | Blast radius before editing | `gitnexus_impact({target: "X", direction: "upstream"})` |
+| `detect_changes` | Pre-commit scope check | `gitnexus_detect_changes({scope: "staged"})` |
+| `rename` | Safe multi-file rename | `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` |
+| `cypher` | Custom graph queries | `gitnexus_cypher({query: "MATCH ..."})` |
+
+## Impact Risk Levels
+
+| Depth | Meaning | Action |
+|-------|---------|--------|
+| d=1 | WILL BREAK — direct callers/importers | MUST update these |
+| d=2 | LIKELY AFFECTED — indirect deps | Should test |
+| d=3 | MAY NEED TESTING — transitive | Test if critical path |
+
+## Resources
+
+| Resource | Use for |
+|----------|---------|
+| `gitnexus://repo/PMTL_VN/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/PMTL_VN/clusters` | All functional areas |
+| `gitnexus://repo/PMTL_VN/processes` | All execution flows |
+| `gitnexus://repo/PMTL_VN/process/{name}` | Step-by-step execution trace |
+
+## Self-Check Before Finishing
+
+Before completing any code modification task, verify:
+1. `gitnexus_impact` was run for all modified symbols
+2. No HIGH/CRITICAL risk warnings were ignored
+3. `gitnexus_detect_changes()` confirms changes match expected scope
+4. All d=1 (WILL BREAK) dependents were updated
+
+## Keeping the Index Fresh
+
+After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
+
+```bash
+npx gitnexus analyze
+```
+
+If the index previously included embeddings, preserve them by adding `--embeddings`:
+
+```bash
+npx gitnexus analyze --embeddings
+```
+
+To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
+
+> Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
+
+## CLI
+
+| Task | Read this skill file |
+|------|---------------------|
+| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
+| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
+| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
+| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
+| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
+| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
+| Work in the Ui area (193 symbols) | `.claude/skills/generated/ui/SKILL.md` |
+| Work in the Identity area (114 symbols) | `.claude/skills/generated/identity/SKILL.md` |
+| Work in the Content area (114 symbols) | `.claude/skills/generated/content/SKILL.md` |
+| Work in the Wisdom-qa area (95 symbols) | `.claude/skills/generated/wisdom-qa/SKILL.md` |
+| Work in the Tools area (87 symbols) | `.claude/skills/generated/tools/SKILL.md` |
+| Work in the Dharma-compliance area (77 symbols) | `.claude/skills/generated/dharma-compliance/SKILL.md` |
+| Work in the Scripts area (71 symbols) | `.claude/skills/generated/scripts/SKILL.md` |
+| Work in the Guides area (63 symbols) | `.claude/skills/generated/guides/SKILL.md` |
+| Work in the Calendar area (59 symbols) | `.claude/skills/generated/calendar/SKILL.md` |
+| Work in the Downloads area (57 symbols) | `.claude/skills/generated/downloads/SKILL.md` |
+| Work in the Community area (56 symbols) | `.claude/skills/generated/community/SKILL.md` |
+| Work in the Users-admin area (53 symbols) | `.claude/skills/generated/users-admin/SKILL.md` |
+| Work in the Vows-merit area (50 symbols) | `.claude/skills/generated/vows-merit/SKILL.md` |
+| Work in the Engagement area (46 symbols) | `.claude/skills/generated/engagement/SKILL.md` |
+| Work in the Prisma area (41 symbols) | `.claude/skills/generated/prisma/SKILL.md` |
+| Work in the Sacred-forms area (33 symbols) | `.claude/skills/generated/sacred-forms/SKILL.md` |
+| Work in the System area (30 symbols) | `.claude/skills/generated/system/SKILL.md` |
+| Work in the Storage area (30 symbols) | `.claude/skills/generated/storage/SKILL.md` |
+| Work in the Chanting area (29 symbols) | `.claude/skills/generated/chanting/SKILL.md` |
+| Work in the Notification area (28 symbols) | `.claude/skills/generated/notification/SKILL.md` |
+
+<!-- gitnexus:end -->
+
+### GitNexus Knowledge Graph – PMTL_VN Edition
+
+Graph hiện tại: 1.736 files · 17.991 symbols · 27.724 edges · 286 clusters (Leiden) + full embeddings.
+
+GitNexus giúp tôi hiểu sâu toàn bộ monorepo Next.js 16 + NestJS, đặc biệt traceability giữa code ↔ folder `design/` (governance, architecture intent).
+
+**Các MCP tools chính thức (dùng đúng tên có prefix gitnexus_):**
+
+- `gitnexus_impact({target: "...", direction?: "upstream"|"downstream", minConfidence?: 0.8})`
+  → Blast radius + risk level
+
+- `gitnexus_context({name: "..."})`
+  → 360° call chain, callers/callees, execution flow
+
+- `gitnexus_query({query: "..."})`
+  → Semantic + graph search (rất mạnh sau khi có embeddings)
+
+- `gitnexus_detect_changes({scope: "staged"|"all"})`
+  → Kiểm tra thay đổi trước commit
+
+- `gitnexus_cypher({query: "..."})`
+  → Query graph raw nếu cần
+
+**Quy tắc vàng cho PMTL_VN:**
+- Khi tìm code liên quan đến bất kỳ domain nào → luôn dùng `gitnexus_query` trước, sau đó đọc thẳng file trong `design/03-domains/...` để so sánh **intent (design) vs implementation (code)**.
+- Trước mọi refactor lớn → bắt buộc chạy `gitnexus_impact` + `gitnexus_detect_changes`.
+- Folder `design/` là source of truth → Claude phải luôn cross-check.
+
+### TOOL POLICY - HIGHEST PRIORITY (PMTL_VN)
+
+Chỉ được sử dụng GitNexus tools với prefix `gitnexus_`.
+
+TUYỆT ĐỐI CẤM mọi tool có chữ "corn" hoặc CornMCP (corn_knowledge_search, corn_code_search, corn_code_impact, corn_code_context...).
+
+Khi cần search code, blast radius, call chain hoặc traceability design/ → bắt buộc gọi `gitnexus_query` hoặc `gitnexus_impact` trước.
+
+### NestJS Hybrid Protocol (BẮT BUỘC - PMTL_VN)
+
+GitNexus limitation: Không track NestJS constructor injection (@Injectable, Module providers) → thường báo ZERO upstream callers cho Services.
+
+Quy tắc khắc phục:
+1. Luôn bắt đầu bằng gitnexus_query / gitnexus_impact / gitnexus_context trước.
+2. Nếu upstream callers = 0 hoặc quá thấp → tự động chạy manual grep:
+   - grep -r "new .*Service" hoặc "constructor.*Service"
+   - Tìm controller import module
+   - Tìm @Module({ providers: [...] })
+3. Luôn cross-check với folder design/ để xác nhận gap.
+4. Báo cáo rõ: "GitNexus graph + manual verification (NestJS DI)".
+
+Áp dụng cho mọi phân tích Auth, Identity, Domain Services.

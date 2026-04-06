@@ -34,9 +34,11 @@ import { resolveMediaSrc } from "@/lib/media-src";
 // ── Context ──────────────────────────────────────────────────────────
 
 type MediaDialogType = "delete" | "upload" | "detail" | "lightbox" | null;
+type MediaAssetMode = "all" | "image" | "video" | "document";
 
 type MediaContextValue = {
   open: MediaDialogType;
+  mode: MediaAssetMode;
   currentRow: MediaAssetListItem | null;
   setOpen: (value: MediaDialogType) => void;
   setCurrentRow: React.Dispatch<React.SetStateAction<MediaAssetListItem | null>>;
@@ -46,13 +48,13 @@ type MediaContextValue = {
 
 const MediaContext = createContext<MediaContextValue | null>(null);
 
-function MediaProvider({ children }: { children: React.ReactNode }) {
+function MediaProvider({ children, mode }: { children: React.ReactNode; mode: MediaAssetMode }) {
   const [open, setOpen] = useState<MediaDialogType>(null);
   const [currentRow, setCurrentRow] = useState<MediaAssetListItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
-    <MediaContext.Provider value={{ open, currentRow, setOpen, setCurrentRow, lightboxIndex, setLightboxIndex }}>
+    <MediaContext.Provider value={{ open, mode, currentRow, setOpen, setCurrentRow, lightboxIndex, setLightboxIndex }}>
       {children}
     </MediaContext.Provider>
   );
@@ -132,8 +134,26 @@ function MediaRowActions({ row }: { row: MediaAssetListItem }) {
 // ── Table ─────────────────────────────────────────────────────────────
 
 function MediaAssetsTable() {
+  const { mode } = useMedia();
   const { data: envelope, isLoading } = useQuery(mediaListOptions({ limit: 100 }));
-  const assets = envelope?.data ?? [];
+  const allAssets = envelope?.data ?? [];
+  const assets = useMemo(
+    () => {
+      if (mode === "video") return allAssets.filter((asset) => asset.mimeType.startsWith("video/"));
+      if (mode === "image") return allAssets.filter((asset) => asset.mimeType.startsWith("image/"));
+      if (mode === "document")
+        return allAssets.filter((asset) => !asset.mimeType.startsWith("image/") && !asset.mimeType.startsWith("video/"));
+      return allAssets;
+    },
+    [allAssets, mode],
+  );
+  const emptyMessage = mode === "video"
+    ? "Chưa có video asset nào."
+    : mode === "image"
+      ? "Chưa có ảnh asset nào."
+      : mode === "document"
+        ? "Chưa có tệp tài liệu nào."
+        : "Chưa có media asset nào.";
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -267,7 +287,7 @@ function MediaAssetsTable() {
         table={table}
         columns={columns}
         isLoading={isLoading}
-        emptyMessage="Chưa có media asset nào."
+        emptyMessage={emptyMessage}
       />
       <DataTableBulkActions table={table} entityName="media asset" />
     </div>
@@ -277,7 +297,7 @@ function MediaAssetsTable() {
 // ── Upload dialog ─────────────────────────────────────────────────────
 
 function MediaUploadDialog() {
-  const { open, setOpen } = useMedia();
+  const { open, setOpen, mode } = useMedia();
   const upload = useUploadMediaAsset();
   const inputRef = useRef<HTMLInputElement>(null);
   const [staged, setStaged] = useState<File | null>(null);
@@ -303,11 +323,33 @@ function MediaUploadDialog() {
     upload.mutate(staged, { onSuccess: handleClose });
   }
 
+  const uploadDialogTitle = mode === "video"
+    ? "Tải video lên"
+    : mode === "image"
+      ? "Tải ảnh lên"
+      : mode === "document"
+        ? "Tải tệp tài liệu lên"
+        : "Tải media lên";
+  const uploadAccept = mode === "video"
+    ? "video/*"
+    : mode === "image"
+      ? "image/*"
+      : mode === "document"
+        ? ".pdf,.csv,.zip,.json,.xls,.xlsx"
+        : "image/*,video/*,application/pdf";
+  const uploadHint = mode === "video"
+    ? "MP4, WEBM… tối đa 100 MB"
+    : mode === "image"
+      ? "JPG, PNG, GIF, WebP… tối đa 10 MB"
+      : mode === "document"
+        ? "PDF, CSV, ZIP, JSON, XLS/XLSX."
+        : "JPG, PNG, MP4, PDF…";
+
   return (
     <Dialog open={open === "upload"} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tải ảnh lên</DialogTitle>
+          <DialogTitle>{uploadDialogTitle}</DialogTitle>
         </DialogHeader>
 
         {!staged ? (
@@ -323,12 +365,12 @@ function MediaUploadDialog() {
               hoặc kéo thả vào đây
             </div>
             <div className="text-xs text-muted-foreground">
-              JPG, PNG, GIF, WebP, PDF… tối đa 10 MB
+              {uploadHint}
             </div>
             <input
               ref={inputRef}
               type="file"
-              accept="image/*,video/*,application/pdf"
+              accept={uploadAccept}
               className="hidden"
               onChange={(e) => handleFiles(e.target.files)}
             />
@@ -612,26 +654,48 @@ function MediaDialogs() {
 // ── Page ──────────────────────────────────────────────────────────────
 
 function MediaPageHeader() {
-  const { setOpen } = useMedia();
+  const { setOpen, mode } = useMedia();
+  const title = mode === "video"
+    ? "Video Assets"
+    : mode === "image"
+      ? "Ảnh Assets"
+      : mode === "document"
+        ? "Tệp Tài Liệu Assets"
+        : "Media Assets";
+  const description = mode === "video"
+    ? "Lane chuyên quản lý video, tách khỏi ảnh và tài liệu."
+    : mode === "image"
+      ? "Lane chuyên quản lý ảnh, không lẫn video hoặc tài liệu."
+      : mode === "document"
+        ? "Lane chuyên quản lý file tài liệu vận hành."
+        : "Theo dõi asset upload, owner và tình trạng xử lý media.";
+  const cta = mode === "video"
+    ? "Tải video lên"
+    : mode === "image"
+      ? "Tải ảnh lên"
+      : mode === "document"
+        ? "Tải tệp tài liệu"
+        : "Tải media";
+
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Media Assets</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Theo dõi asset upload, owner và tình trạng xử lý media.
+          {description}
         </p>
       </div>
       <Button onClick={() => setOpen("upload")} className="shrink-0">
         <UploadIcon className="mr-2 size-4" />
-        Tải ảnh lên
+        {cta}
       </Button>
     </div>
   );
 }
 
-export function MediaAssetsPage() {
+function MediaAssetsPageBase({ mode }: { mode: MediaAssetMode }) {
   return (
-    <MediaProvider>
+    <MediaProvider mode={mode}>
       <div className="space-y-6">
         <MediaPageHeader />
         <MediaAssetsTable />
@@ -643,4 +707,20 @@ export function MediaAssetsPage() {
       <MediaDialogs />
     </MediaProvider>
   );
+}
+
+export function MediaAssetsPage() {
+  return <MediaAssetsPageBase mode="all" />;
+}
+
+export function ImageAssetsPage() {
+  return <MediaAssetsPageBase mode="image" />;
+}
+
+export function VideoAssetsPage() {
+  return <MediaAssetsPageBase mode="video" />;
+}
+
+export function DocumentAssetsPage() {
+  return <MediaAssetsPageBase mode="document" />;
 }

@@ -12,7 +12,8 @@
  *   6. RateLimitGuard (APP_GUARD #3 — per-route metadata)
  *   6b. CsrfGuard (APP_GUARD #4 — double-submit cookie CSRF)
  *   7. ZodValidationPipe (APP_PIPE — boundary validation)
- *   8. Controller → Service (thin controller calls service)
+ *   8. CharityFirewallInterceptor (APP_INTERCEPTOR — bank pattern scanning)
+ *   8b. Controller → Service (thin controller calls service)
  *   9. ResponseInterceptor (APP_INTERCEPTOR — success envelope)
  *  10. GlobalExceptionFilter (APP_FILTER — error envelope canon)
  *
@@ -34,6 +35,7 @@ import { NestCacheModule } from "./common/nestcache/nest-cache.module.js";
 import { PassportModule } from "@nestjs/passport";
 import { JwtStrategy } from "./common/auth/strategies/jwt.strategy.js";
 import { QueueModule } from "./platform/queue/queue.module.js";
+import { OutboxModule } from "./platform/outbox/outbox.module.js";
 
 // Common global concerns — registered via providers for DI
 import { RequestIdMiddleware } from "./common/middleware/request-id.middleware.js";
@@ -44,6 +46,7 @@ import { CsrfGuard } from "./platform/csrf/csrf.guard.js";
 import { ZodValidationPipe } from "./common/validation/zod-validation.pipe.js";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor.js";
 import { GlobalExceptionFilter } from "./common/errors/global-exception.filter.js";
+import { CharityFirewallInterceptor } from "./modules/dharma-compliance/interceptors/charity-firewall.interceptor.js";
 
 // Platform modules
 import { HealthModule } from "./platform/health/health.module.js";
@@ -91,6 +94,7 @@ import { LittleHouseModule } from "./modules/little-house/little-house.module.js
 
     // ── Platform ────────────────────────────────────
     QueueModule,
+    OutboxModule,
     HealthModule,
     MetricsModule,
     AuditModule,
@@ -132,6 +136,9 @@ import { LittleHouseModule } from "./modules/little-house/little-house.module.js
 
     // Boundary validation authority — Zod, NOT class-validator
     { provide: APP_PIPE, useClass: ZodValidationPipe },
+
+    // Content scanning — charity firewall checks for bank account patterns
+    { provide: APP_INTERCEPTOR, useClass: CharityFirewallInterceptor },
 
     // Success envelope — wraps all responses in { data, meta }
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },

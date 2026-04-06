@@ -23,6 +23,28 @@ import type {
 import type { JwtAccessPayload } from "../../common/auth/auth-request.types.js";
 import type { UserRole } from "../../generated/prisma/client.js";
 
+export interface AuthSessionStateDto {
+  user: {
+    publicId: string;
+    emailMasked: string;
+    displayName: string;
+    role: UserRole;
+  };
+  session: {
+    sessionPublicId: string;
+    expiresAt: string;
+    lastRotatedAt: string | null;
+  };
+  permissions: {
+    canAccessMemberRoutes: boolean;
+    canAccessAdminRoutes: boolean;
+    canUploadMedia: boolean;
+  };
+  mustRefreshBefore: string;
+  requiresEmailVerification: boolean;
+  securityFlags: string[];
+}
+
 /** Number of bytes for password-reset token (48 bytes = 96 hex chars). */
 const RESET_TOKEN_BYTES = 48;
 /** Password-reset token validity window. */
@@ -275,6 +297,159 @@ export class IdentityService {
     }
 
     return mapUserToAuthResponse(user);
+  }
+
+  /**
+   * Auth bootstrap aggregate — GET /api/auth/me canonical contract.
+   * Returns AuthSessionStateDto so client can make auth-gating decisions
+   * without needing to inspect cookies or local state.
+   */
+  async getAuthSessionState(userId: string, sessionId: string): Promise<AuthSessionStateDto> {
+    const [user, session] = await Promise.all([
+      this.prisma.user.findUnique({ where: { id: userId } }),
+      this.prisma.session.findUnique({ where: { id: sessionId } }),
+    ]);
+
+    if (!user || !session) {
+      throw new UnauthorizedException("Phiên đăng nhập không hợp lệ");
+    }
+
+    const emailMasked = user.email.replace(/(.{2}).+(@.+)/, "$1***$2");
+    const securityFlags: string[] = [];
+
+    if (!user.emailVerifiedAt) {
+      securityFlags.push("email_unverified");
+    }
+
+    // session_refresh_due: refresh within 5 minutes of expiry window
+    const msUntilExpiry = session.expiresAt.getTime() - Date.now();
+    const REFRESH_DUE_THRESHOLD_MS = 5 * 60 * 1000;
+    if (msUntilExpiry < REFRESH_DUE_THRESHOLD_MS) {
+      securityFlags.push("session_refresh_due");
+    }
+
+    const mustRefreshBefore = new Date(
+      session.expiresAt.getTime() - REFRESH_DUE_THRESHOLD_MS,
+    ).toISOString();
+
+    return {
+      user: {
+        publicId: user.publicId,
+        emailMasked,
+        displayName: user.displayName,
+        role: user.role,
+      },
+      session: {
+        sessionPublicId: session.id,
+        expiresAt: session.expiresAt.toISOString(),
+        lastRotatedAt: null,
+      },
+      permissions: {
+        canAccessMemberRoutes: user.status === "ACTIVE" && !!user.emailVerifiedAt,
+        canAccessAdminRoutes: (user.role === "ADMIN" || user.role === "SUPER_ADMIN") && user.status === "ACTIVE",
+        canUploadMedia: user.status === "ACTIVE",
+      },
+      mustRefreshBefore,
+      requiresEmailVerification: !user.emailVerifiedAt,
+      securityFlags,
+    };
+  }
+
+  /**
+   * Verify email using a one-time token.
+   * Marks users.email_verified_at and invalidates the token.
+   */
+  async verifyEmail(token: string) {
+    const tokenHash = this.hashToken(token);
+
+    const record = await this.prisma.emailVerificationToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (!record || record.usedAt || record.expiresAt < new Date()) {
+      throw new BadRequestException("Token xác minh không hợp lệ hoặc đã hết hạn");
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: { id: record.userId },
+        data: { emailVerifiedAt: new Date() },
+      });
+
+      await tx.emailVerificationToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      });
+
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: record.userId, actorType: "user" },
+        "auth.email_verification.completed",
+        "user",
+        record.userId,
+      );
+    });
+
+    return { success: true, message: "Email đã được xác minh thành công" };
+  }
+
+  /**
+   * Send/resend email verification token with resend cooldown enforcement.
+   */
+  async sendEmailVerification(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new BadRequestException("Người dùng không tồn tại");
+    if (user.emailVerifiedAt) throw new BadRequestException("Email đã được xác minh");
+
+    // Check resend cooldown (60 seconds)
+    const recent = await this.prisma.emailVerificationToken.findFirst({
+      where: {
+        userId,
+        usedAt: null,
+        createdAt: { gt: new Date(Date.now() - 60_000) },
+      },
+    });
+    if (recent) {
+      throw new BadRequestException("Vui lòng đợi 60 giây trước khi gửi lại");
+    }
+
+    const plainToken = randomBytes(32).toString("hex");
+    const tokenHash = createHash("sha256").update(plainToken).digest("hex");
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await this.prisma.$transaction(async (tx) => {
+      // Invalidate any previous unused tokens
+      await tx.emailVerificationToken.updateMany({
+        where: { userId, usedAt: null },
+        data: { usedAt: new Date() },
+      });
+
+      await tx.emailVerificationToken.create({
+        data: { userId, tokenHash, expiresAt },
+      });
+
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "auth.email_verification.sent",
+        "user",
+        userId,
+      );
+    });
+
+    if (this.config.emailProvider === "log") {
+      this.logger.log({
+        msg: "Email verification token generated (log provider)",
+        userId,
+        token: plainToken,
+      });
+    }
+
+    return { success: true, message: "Email xác minh đã được gửi" };
+  }
+
+  private hashToken(token: string): string {
+    return createHash("sha256").update(token).digest("hex");
   }
 
   /** Bug 2 fix: profile update + audit in same transaction */

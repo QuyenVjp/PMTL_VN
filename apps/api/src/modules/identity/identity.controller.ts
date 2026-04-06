@@ -185,10 +185,33 @@ export class IdentityController {
   }
 
   @Get("me")
-  @ApiOperation({ summary: "Lấy thông tin người dùng hiện tại" })
-  @ApiResponse({ status: 200, description: "Thông tin người dùng" })
+  @ApiOperation({ summary: "Lấy trạng thái phiên xác thực (AuthSessionStateDto)" })
+  @ApiResponse({ status: 200, description: "Auth bootstrap aggregate cho client gating" })
   async me(@CurrentUser() user: AuthenticatedUser) {
-    return this.identityService.getProfile(user.id);
+    return this.identityService.getAuthSessionState(user.id, user.sessionId);
+  }
+
+  @Post("verify-email")
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Xác minh email bằng token" })
+  @ApiResponse({ status: 200, description: "Email đã được xác minh" })
+  @ApiResponse({ status: 400, description: "Token không hợp lệ hoặc đã hết hạn" })
+  async verifyEmail(@Body() body: { token: string }) {
+    const token = typeof body.token === "string" ? body.token.trim() : "";
+    if (!token) {
+      throw new UnauthorizedError("Token xác minh không được để trống");
+    }
+    return this.identityService.verifyEmail(token);
+  }
+
+  @Post("send-verification")
+  @RateLimit("auth.login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Gửi lại email xác minh" })
+  @ApiResponse({ status: 200, description: "Email xác minh đã được gửi" })
+  async sendVerification(@CurrentUser() user: AuthenticatedUser) {
+    return this.identityService.sendEmailVerification(user.id);
   }
 
   @Delete("me/account")

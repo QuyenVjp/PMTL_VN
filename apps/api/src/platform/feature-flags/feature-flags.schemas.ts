@@ -11,6 +11,7 @@ export const featureFlagKeys = [
   "maintenance.mode.enabled",
   "wisdom.ai.slug_suggest.enabled",
   "wisdom.ai.translation_draft.enabled",
+  "wisdom_qa.enabled",
 ] as const;
 
 export const featureFlagKeySchema = z.enum(featureFlagKeys);

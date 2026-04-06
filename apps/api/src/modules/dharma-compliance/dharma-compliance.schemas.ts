@@ -116,3 +116,32 @@ export const guidanceQueueQuerySchema = z.object({
   status: z.string().optional(),
 });
 export type GuidanceQueueQuery = z.infer<typeof guidanceQueueQuerySchema>;
+
+// ─── Charity Firewall (Content Scanning) ──────────────────────────────────────
+
+export const contentScanInputSchema = z.object({
+  text: z.string().min(1).max(10000),
+  contentType: z.enum(["POST", "COMMENT", "DONATION_FORM", "MESSAGE", "OTHER"]),
+});
+export type ContentScanInput = z.infer<typeof contentScanInputSchema>;
+
+export interface ScanResult {
+  userId: string;
+  contentType: string;
+  contentId: string;
+  text: string;
+  detectedPatterns: {
+    type: string;
+    confidence: "HIGH" | "MEDIUM" | "LOW";
+    matchedText: string;
+  }[];
+  hasViolation: boolean;
+  whitelistedMatch?: {
+    charityName: string;
+    bankAccount: string;
+  };
+  violationId?: string;
+  userViolationCount: number;
+  escalatedToAlert: boolean;
+  alertId?: string;
+}

@@ -56,6 +56,7 @@ export const ModelName = {
   RateLimitRecord: 'RateLimitRecord',
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
+  EmailVerificationToken: 'EmailVerificationToken',
   Session: 'Session',
   MediaAsset: 'MediaAsset',
   MediaCollection: 'MediaCollection',
@@ -71,6 +72,7 @@ export const ModelName = {
   GuestbookEntry: 'GuestbookEntry',
   CommunityComment: 'CommunityComment',
   CommunityHeart: 'CommunityHeart',
+  CommunityTestimonial: 'CommunityTestimonial',
   CalendarEvent: 'CalendarEvent',
   EventAgendaItem: 'EventAgendaItem',
   Volunteer: 'Volunteer',
@@ -133,9 +135,21 @@ export const ModelName = {
   FormPrerequisiteEntry: 'FormPrerequisiteEntry',
   SacredFormAuditLog: 'SacredFormAuditLog',
   DisposalPolarityRecord: 'DisposalPolarityRecord',
+  NameChangeProbation: 'NameChangeProbation',
   AltarItem: 'AltarItem',
   AltarValidationLog: 'AltarValidationLog',
-  AltarProtocolTemplate: 'AltarProtocolTemplate'
+  AltarProtocolTemplate: 'AltarProtocolTemplate',
+  ContentReaction: 'ContentReaction',
+  ContentBookmark: 'ContentBookmark',
+  WisdomQuestion: 'WisdomQuestion',
+  WisdomAnswer: 'WisdomAnswer',
+  PracticeGuide: 'PracticeGuide',
+  ScenarioPreset: 'ScenarioPreset',
+  PracticeFaq: 'PracticeFaq',
+  PracticeSchedule: 'PracticeSchedule',
+  RecitationGuideline: 'RecitationGuideline',
+  DailyRoutine: 'DailyRoutine',
+  OutboxEvent: 'OutboxEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -225,6 +239,18 @@ export const PasswordResetTokenScalarFieldEnum = {
 } as const
 
 export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+export const EmailVerificationTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailVerificationTokenScalarFieldEnum = (typeof EmailVerificationTokenScalarFieldEnum)[keyof typeof EmailVerificationTokenScalarFieldEnum]
 
 
 export const SessionScalarFieldEnum = {
@@ -468,6 +494,30 @@ export const CommunityHeartScalarFieldEnum = {
 export type CommunityHeartScalarFieldEnum = (typeof CommunityHeartScalarFieldEnum)[keyof typeof CommunityHeartScalarFieldEnum]
 
 
+export const CommunityTestimonialScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  authorId: 'authorId',
+  title: 'title',
+  body: 'body',
+  originalBodyLength: 'originalBodyLength',
+  contentType: 'contentType',
+  authorRole: 'authorRole',
+  disclaimerInjected: 'disclaimerInjected',
+  disclaimerText: 'disclaimerText',
+  coverImage: 'coverImage',
+  tags: 'tags',
+  status: 'status',
+  visibility: 'visibility',
+  viewCount: 'viewCount',
+  likeCount: 'likeCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CommunityTestimonialScalarFieldEnum = (typeof CommunityTestimonialScalarFieldEnum)[keyof typeof CommunityTestimonialScalarFieldEnum]
+
+
 export const CalendarEventScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -577,6 +627,10 @@ export const NotificationPreferenceScalarFieldEnum = {
   communityUpdates: 'communityUpdates',
   quietHoursStart: 'quietHoursStart',
   quietHoursEnd: 'quietHoursEnd',
+  timezone: 'timezone',
+  practiceReminderHour: 'practiceReminderHour',
+  practiceReminderMinute: 'practiceReminderMinute',
+  eventReminderLeadTimeHours: 'eventReminderLeadTimeHours',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1504,6 +1558,25 @@ export const DisposalPolarityRecordScalarFieldEnum = {
 export type DisposalPolarityRecordScalarFieldEnum = (typeof DisposalPolarityRecordScalarFieldEnum)[keyof typeof DisposalPolarityRecordScalarFieldEnum]
 
 
+export const NameChangeProbationScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  formApplicantId: 'formApplicantId',
+  userId: 'userId',
+  oldDharmaName: 'oldDharmaName',
+  newDharmaName: 'newDharmaName',
+  probationStartDate: 'probationStartDate',
+  probationDurationDays: 'probationDurationDays',
+  probationEndDate: 'probationEndDate',
+  isActive: 'isActive',
+  restrictionDetails: 'restrictionDetails',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NameChangeProbationScalarFieldEnum = (typeof NameChangeProbationScalarFieldEnum)[keyof typeof NameChangeProbationScalarFieldEnum]
+
+
 export const AltarItemScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
@@ -1546,6 +1619,169 @@ export const AltarProtocolTemplateScalarFieldEnum = {
 } as const
 
 export type AltarProtocolTemplateScalarFieldEnum = (typeof AltarProtocolTemplateScalarFieldEnum)[keyof typeof AltarProtocolTemplateScalarFieldEnum]
+
+
+export const ContentReactionScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  reaction: 'reaction',
+  createdAt: 'createdAt'
+} as const
+
+export type ContentReactionScalarFieldEnum = (typeof ContentReactionScalarFieldEnum)[keyof typeof ContentReactionScalarFieldEnum]
+
+
+export const ContentBookmarkScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  createdAt: 'createdAt'
+} as const
+
+export type ContentBookmarkScalarFieldEnum = (typeof ContentBookmarkScalarFieldEnum)[keyof typeof ContentBookmarkScalarFieldEnum]
+
+
+export const WisdomQuestionScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  authorId: 'authorId',
+  title: 'title',
+  body: 'body',
+  categoryId: 'categoryId',
+  tags: 'tags',
+  isAnonymous: 'isAnonymous',
+  status: 'status',
+  answerCount: 'answerCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomQuestionScalarFieldEnum = (typeof WisdomQuestionScalarFieldEnum)[keyof typeof WisdomQuestionScalarFieldEnum]
+
+
+export const WisdomAnswerScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  questionId: 'questionId',
+  authorId: 'authorId',
+  body: 'body',
+  isAccepted: 'isAccepted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WisdomAnswerScalarFieldEnum = (typeof WisdomAnswerScalarFieldEnum)[keyof typeof WisdomAnswerScalarFieldEnum]
+
+
+export const PracticeGuideScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  title: 'title',
+  slug: 'slug',
+  body: 'body',
+  duration: 'duration',
+  difficulty: 'difficulty',
+  status: 'status',
+  sortOrder: 'sortOrder',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PracticeGuideScalarFieldEnum = (typeof PracticeGuideScalarFieldEnum)[keyof typeof PracticeGuideScalarFieldEnum]
+
+
+export const ScenarioPresetScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  scenarioType: 'scenarioType',
+  practiceCount: 'practiceCount',
+  guideIds: 'guideIds',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ScenarioPresetScalarFieldEnum = (typeof ScenarioPresetScalarFieldEnum)[keyof typeof ScenarioPresetScalarFieldEnum]
+
+
+export const PracticeFaqScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  question: 'question',
+  answer: 'answer',
+  category: 'category',
+  featured: 'featured',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PracticeFaqScalarFieldEnum = (typeof PracticeFaqScalarFieldEnum)[keyof typeof PracticeFaqScalarFieldEnum]
+
+
+export const PracticeScheduleScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  name: 'name',
+  description: 'description',
+  difficulty: 'difficulty',
+  dailyMinutes: 'dailyMinutes',
+  scriptureList: 'scriptureList',
+  minRecitations: 'minRecitations',
+  maxRecitations: 'maxRecitations',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PracticeScheduleScalarFieldEnum = (typeof PracticeScheduleScalarFieldEnum)[keyof typeof PracticeScheduleScalarFieldEnum]
+
+
+export const RecitationGuidelineScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  scheduleId: 'scheduleId',
+  topic: 'topic',
+  guidance: 'guidance',
+  importance: 'importance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecitationGuidelineScalarFieldEnum = (typeof RecitationGuidelineScalarFieldEnum)[keyof typeof RecitationGuidelineScalarFieldEnum]
+
+
+export const DailyRoutineScalarFieldEnum = {
+  id: 'id',
+  publicId: 'publicId',
+  scheduleId: 'scheduleId',
+  dayNumber: 'dayNumber',
+  scriptureSequence: 'scriptureSequence',
+  timing: 'timing',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DailyRoutineScalarFieldEnum = (typeof DailyRoutineScalarFieldEnum)[keyof typeof DailyRoutineScalarFieldEnum]
+
+
+export const OutboxEventScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  processedAt: 'processedAt',
+  eventType: 'eventType',
+  aggregateId: 'aggregateId',
+  payload: 'payload',
+  error: 'error',
+  retryCount: 'retryCount'
+} as const
+
+export type OutboxEventScalarFieldEnum = (typeof OutboxEventScalarFieldEnum)[keyof typeof OutboxEventScalarFieldEnum]
 
 
 export const SortOrder = {

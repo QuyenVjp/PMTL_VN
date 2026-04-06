@@ -4,7 +4,7 @@
 
 import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
-import { addMinutes, differenceInSeconds } from 'date-fns';
+import { addMinutes } from 'date-fns';
 import { RitualSessionStatus } from '../../generated/prisma/enums.js';
 
 interface ConvincingFamilyRitualStartDto {

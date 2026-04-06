@@ -11,11 +11,15 @@ import {
   updatePreferencesSchema,
   pushSubscribeSchema,
   pushUnsubscribeSchema,
+  updatePracticeReminderSchema,
+  updateEventReminderSchema,
   type AdminPushJobQuery,
   type AdminCreatePushJobInput,
   type UpdatePreferencesInput,
   type PushSubscribeInput,
   type PushUnsubscribeInput,
+  type UpdatePracticeReminderInput,
+  type UpdateEventReminderInput,
 } from "./notification.schemas.js";
 
 // ─── Member-facing Notification Controller ──────────────────────────────────
@@ -66,6 +70,53 @@ export class MemberNotificationController {
     @Body(ZodValidate(pushUnsubscribeSchema)) input: PushUnsubscribeInput,
   ) {
     return this.notificationService.unsubscribe(user.id, input, {
+      actorId: user.id,
+      actorType: "user",
+    });
+  }
+
+  @Get("push/stats")
+  @ApiOperation({ summary: "Thống kê push subscription của tôi" })
+  @ApiResponse({ status: 200, description: "Thống kê push" })
+  getPushStats(@CurrentUser() user: AuthenticatedUser) {
+    return this.notificationService.getPushStats(user.id);
+  }
+
+  @Get("reminders/practice")
+  @ApiOperation({ summary: "Lấy cài đặt nhắc nhở tu tập" })
+  @ApiResponse({ status: 200, description: "Cài đặt nhắc nhở tu tập" })
+  getPracticeReminder(@CurrentUser() user: AuthenticatedUser) {
+    return this.notificationService.getPracticeReminder(user.id);
+  }
+
+  @Patch("reminders/practice")
+  @ApiOperation({ summary: "Cập nhật cài đặt nhắc nhở tu tập" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật nhắc nhở tu tập" })
+  updatePracticeReminder(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body(ZodValidate(updatePracticeReminderSchema)) input: UpdatePracticeReminderInput,
+  ) {
+    return this.notificationService.updatePracticeReminder(user.id, input, {
+      actorId: user.id,
+      actorType: "user",
+    });
+  }
+
+  @Get("reminders/events")
+  @ApiOperation({ summary: "Lấy cài đặt nhắc nhở sự kiện" })
+  @ApiResponse({ status: 200, description: "Cài đặt nhắc nhở sự kiện" })
+  getEventReminder(@CurrentUser() user: AuthenticatedUser) {
+    return this.notificationService.getEventReminder(user.id);
+  }
+
+  @Patch("reminders/events")
+  @ApiOperation({ summary: "Cập nhật cài đặt nhắc nhở sự kiện" })
+  @ApiResponse({ status: 200, description: "Đã cập nhật nhắc nhở sự kiện" })
+  updateEventReminder(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body(ZodValidate(updateEventReminderSchema)) input: UpdateEventReminderInput,
+  ) {
+    return this.notificationService.updateEventReminder(user.id, input, {
       actorId: user.id,
       actorType: "user",
     });

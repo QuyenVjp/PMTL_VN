@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImageAssetPicker } from "@/components/media/image-asset-picker";
+import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
 import {
   AdminDetailPage,
@@ -41,15 +41,12 @@ import {
   useDeletePost,
 } from "@/features/content/mutations";
 import { postDetailOptions } from "@/features/content/queries";
-import { useUploadMediaAsset } from "@/features/media/mutations";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import {
   extractValidationFieldErrors,
   hasFieldErrors,
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
-import { extractUploadMediaPayload } from "@/lib/media-upload";
 
 // ── Constants ─────────────────────────────────────────────────────────
 
@@ -181,58 +178,24 @@ function FeaturedImageSection({
   featuredImageId,
   setFeaturedImageId,
   currentFeaturedImageUrl,
-  imageAssets,
-  onUploadImage,
-  isUploadingImage,
 }: {
   featuredImageId: string;
   setFeaturedImageId: (value: string) => void;
   currentFeaturedImageUrl: string | null;
-  imageAssets: Array<{ publicId: string; filename: string; url: string }>;
-  onUploadImage: () => void;
-  isUploadingImage: boolean;
 }) {
   return (
     <AdminDetailSection
       title="Ảnh đại diện"
-      description="Hiển thị ảnh preview và chọn từ thư viện media giống các surface nội dung khác."
+      description="Chọn ảnh từ thư viện media hoặc upload ảnh mới ngay trong cửa sổ chọn ảnh."
     >
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={onUploadImage} disabled={isUploadingImage}>
-            {isUploadingImage ? "Đang upload..." : "Upload ảnh mới"}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setFeaturedImageId("")}
-            disabled={!featuredImageId && !currentFeaturedImageUrl}
-          >
-            Bỏ chọn
-          </Button>
-        </div>
-        <ImageAssetPicker
-          assets={imageAssets}
-          value={featuredImageId}
-          onChange={setFeaturedImageId}
-          placeholder="Chọn ảnh đại diện từ thư viện..."
-        />
-        {!featuredImageId && currentFeaturedImageUrl ? (
-          <div className="flex items-center gap-2 rounded border p-2">
-            <img
-              src={currentFeaturedImageUrl}
-              alt="Ảnh đại diện hiện tại"
-              className="size-12 rounded border object-cover"
-              loading="lazy"
-            />
-            <div className="min-w-0">
-              <p className="text-sm font-medium">Ảnh hiện tại</p>
-              <p className="truncate text-xs text-muted-foreground">Ảnh đang dùng từ dữ liệu cũ</p>
-            </div>
-          </div>
-        ) : null}
-      </div>
+      <MediaPickerField
+        value={featuredImageId}
+        onChange={(publicId) => {
+          setFeaturedImageId(publicId);
+        }}
+        currentImageUrl={currentFeaturedImageUrl}
+        placeholder="Chọn ảnh đại diện từ thư viện..."
+      />
     </AdminDetailSection>
   );
 }
@@ -476,9 +439,6 @@ export function PostDetailPage() {
   const publishPost = usePublishPost();
   const unpublishPost = useUnpublishPost();
   const deletePost = useDeletePost();
-  const uploadMedia = useUploadMediaAsset();
-  const uploadRef = useRef<HTMLInputElement>(null);
-
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
@@ -493,12 +453,6 @@ export function PostDetailPage() {
   const [confirmPublish, setConfirmPublish] = useState(false);
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
-  const imageAssets = useMemo(
-    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
-    [mediaEnvelope],
-  );
 
   // Sync form state when post loads
   useEffect(() => {
@@ -644,28 +598,6 @@ export function PostDetailPage() {
         actions={actions}
         sidebar={
           <>
-            <input
-              ref={uploadRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                void (async () => {
-                  try {
-                    const result = await uploadMedia.mutateAsync(file);
-                    const publicId = extractUploadMediaPayload(result)?.publicId;
-                    if (publicId) {
-                      setFeaturedImageId(publicId);
-                      setFeaturedImageChanged(true);
-                    }
-                  } finally {
-                    event.target.value = "";
-                  }
-                })();
-              }}
-            />
             <DetailSidebar
               status={post.status}
               publishedAt={post.publishedAt}
@@ -687,13 +619,6 @@ export function PostDetailPage() {
             setFeaturedImageChanged(true);
           }}
           currentFeaturedImageUrl={post.featuredImageUrl}
-          imageAssets={imageAssets.map((item) => ({
-            publicId: item.publicId,
-            filename: item.filename,
-            url: item.url,
-          }))}
-          onUploadImage={() => uploadRef.current?.click()}
-          isUploadingImage={uploadMedia.isPending}
         />
       </AdminDetailPage>
 

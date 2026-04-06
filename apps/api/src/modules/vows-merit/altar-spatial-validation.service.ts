@@ -2,7 +2,7 @@
 // Logic 5: Xác thực không gian bàn thờ - 3 ĐIỀU KIỆN BẮT BUỘC
 // Owner: vows-merit module
 
-import { Injectable, UnprocessableEntityException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 
 interface CreateAltarProfileDto {

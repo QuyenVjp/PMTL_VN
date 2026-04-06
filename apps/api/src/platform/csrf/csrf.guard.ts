@@ -40,7 +40,8 @@ export class CsrfGuard implements CanActivate {
     ]);
     if (skipCsrf) return true;
 
-    const cookieToken = request.cookies?.["csrf_token"];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const cookieToken: string | undefined = request.cookies?.["csrf_token"];
 
     // No cookie → session doesn't exist → AuthGuard will reject anyway
     if (!cookieToken) return true;

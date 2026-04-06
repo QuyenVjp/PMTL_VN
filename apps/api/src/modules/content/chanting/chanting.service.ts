@@ -222,6 +222,7 @@ export class ChantingService {
     const totalPages = Math.ceil(total / limit);
 
     return {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       sessions: sessions.map(this.mapChantingSessionToResponse),
       total,
       page,

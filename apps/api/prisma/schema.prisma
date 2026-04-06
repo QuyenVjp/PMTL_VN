@@ -142,6 +142,7 @@ model User {
   mediaAssets         MediaAsset[]
   mediaCollections    MediaCollection[]    @relation("collectionCreator")
   communityPosts      CommunityPost[]      @relation("communityPosts")
+  communityTestimonials CommunityTestimonial[] @relation("communityTestimonials")
   guestbookEntries    GuestbookEntry[]     @relation("guestbookEntries")
   guestbookApprovals  GuestbookEntry[]     @relation("guestbookApprovals")
   calendarEvents      CalendarEvent[]      @relation("calendarEvents")
@@ -163,7 +164,8 @@ model User {
   wisdomEntries       WisdomEntry[]        @relation("wisdomEntries")
   selfCultivationSheets SelfCultivationSheet[] @relation("selfCultivationSheets")
 
-  passwordResetTokens PasswordResetToken[] @relation("passwordResetTokens")
+  passwordResetTokens      PasswordResetToken[]      @relation("passwordResetTokens")
+  emailVerificationTokens  EmailVerificationToken[]  @relation("emailVerificationTokens")
   communityComments   CommunityComment[]   @relation("communityComments")
   communityHearts     CommunityHeart[]     @relation("communityHearts")
 
@@ -185,10 +187,19 @@ model User {
   lifeReleaseRecords      LifeReleaseRecord[]             @relation("lifeReleaseRecords")
   proxySponsorReleases    ProxyLifeRelease[]              @relation("proxySponsorReleases")
   sacredFormApplicants    FormApplicant[]                 @relation("sacredFormApplicants")
+  nameChangeProbations    NameChangeProbation[]           @relation("nameChangeProbations")
   altarItems              AltarItem[]                     @relation("altarItems")
   altarValidationLogs     AltarValidationLog[]            @relation("altarValidationLogs")
   lhRecords               LhRecord[]                      @relation("lhRecords")
   eventRegistrations      EventRegistration[]             @relation("eventRegistrations")
+
+  // Engagement relations
+  contentReactions        ContentReaction[]               @relation("contentReactions")
+  contentBookmarks        ContentBookmark[]               @relation("contentBookmarks")
+
+  // Wisdom QA relations
+  wisdomQuestions         WisdomQuestion[]                @relation("wisdomQuestions")
+  wisdomAnswers           WisdomAnswer[]                  @relation("wisdomAnswers")
 
   @@index([email])
   @@index([status])
@@ -208,6 +219,21 @@ model PasswordResetToken {
   @@index([userId])
   @@index([expiresAt])
   @@map("password_reset_tokens")
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation("emailVerificationTokens", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("email_verification_tokens")
 }
 
 model Session {
@@ -618,6 +644,36 @@ model CommunityHeart {
   @@map("community_hearts")
 }
 
+// CommunityTestimonial — Bài chia sẻ phụng sự viên với disclaimer tự động chèn
+// Design: design/03-domains/community/USE_CASES/USE_CASE_TESTIMONIAL_DISCLAIMER_AUTO_INJECT.md
+model CommunityTestimonial {
+  id                 String   @id @default(cuid())
+  publicId           String   @unique @map("public_id")
+  authorId           String   @map("author_id")
+  title              String   @db.VarChar(200)
+  body               String   // includes auto-injected disclaimer at end
+  originalBodyLength Int      @map("original_body_length")
+  contentType        String   @map("content_type") // TESTIMONY | HEALING_STORY | LIFE_CHANGE | GENERAL_POST
+  authorRole         String   @map("author_role")  // VOLUNTEER | ORGANIZER | MEMBER
+  disclaimerInjected Boolean  @default(true) @map("disclaimer_injected")
+  disclaimerText     String   @map("disclaimer_text")
+  coverImage         String?  @map("cover_image")
+  tags               String[] @default([])
+  status             String   @default("PUBLISHED")
+  visibility         String   @default("PUBLIC")
+  viewCount          Int      @default(0) @map("view_count")
+  likeCount          Int      @default(0) @map("like_count")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  author User @relation("communityTestimonials", fields: [authorId], references: [id])
+
+  @@index([authorId])
+  @@index([contentType])
+  @@index([status])
+  @@map("community_testimonials")
+}
+
 // ============================================================================
 // CALENDAR TABLES
 // ============================================================================
@@ -752,15 +808,19 @@ model PushSubscription {
 }
 
 model NotificationPreference {
-  id                String   @id @default(cuid())
-  userId            String   @unique @map("user_id")
-  practiceReminders Boolean  @default(true) @map("practice_reminders")
-  eventReminders    Boolean  @default(true) @map("event_reminders")
-  communityUpdates  Boolean  @default(true) @map("community_updates")
-  quietHoursStart   String?  @map("quiet_hours_start")
-  quietHoursEnd     String?  @map("quiet_hours_end")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  id                          String   @id @default(cuid())
+  userId                      String   @unique @map("user_id")
+  practiceReminders           Boolean  @default(true) @map("practice_reminders")
+  eventReminders              Boolean  @default(true) @map("event_reminders")
+  communityUpdates            Boolean  @default(true) @map("community_updates")
+  quietHoursStart             String?  @map("quiet_hours_start")
+  quietHoursEnd               String?  @map("quiet_hours_end")
+  timezone                    String?  @map("timezone")
+  practiceReminderHour        Int?     @map("practice_reminder_hour")
+  practiceReminderMinute      Int?     @map("practice_reminder_minute")
+  eventReminderLeadTimeHours  Int?     @map("event_reminder_lead_time_hours")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
 
   user User @relation("notificationPreferences", fields: [userId], references: [id], onDelete: Cascade)
 
@@ -2235,10 +2295,11 @@ model FormApplicant {
   createdAt       DateTime                  @default(now()) @map("created_at")
   updatedAt       DateTime                  @updatedAt @map("updated_at")
 
-  template      SacredFormTemplate      @relation(fields: [templateId], references: [id])
-  user          User                    @relation("sacredFormApplicants", fields: [userId], references: [id])
-  prerequisites FormPrerequisiteEntry[]
-  auditLogs     SacredFormAuditLog[]
+  template             SacredFormTemplate      @relation(fields: [templateId], references: [id])
+  user                 User                    @relation("sacredFormApplicants", fields: [userId], references: [id])
+  prerequisites        FormPrerequisiteEntry[]
+  auditLogs            SacredFormAuditLog[]
+  nameChangeProbation  NameChangeProbation?
 
   @@index([userId, status])
   @@index([templateId])
@@ -2284,6 +2345,29 @@ model DisposalPolarityRecord {
 
   @@index([formType])
   @@map("disposal_polarity_records")
+}
+
+model NameChangeProbation {
+  id                    String   @id @default(cuid())
+  publicId              String   @unique @map("public_id")
+  formApplicantId       String   @unique @map("form_applicant_id")
+  userId                String   @map("user_id")
+  oldDharmaName         String?  @map("old_dharma_name")
+  newDharmaName         String?  @map("new_dharma_name")
+  probationStartDate    DateTime @map("probation_start_date")
+  probationDurationDays Int      @default(100) @map("probation_duration_days")
+  probationEndDate      DateTime @map("probation_end_date")
+  isActive              Boolean  @default(true) @map("is_active")
+  restrictionDetails    String?  @map("restriction_details")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  formApplicant FormApplicant @relation(fields: [formApplicantId], references: [id])
+  user          User          @relation("nameChangeProbations", fields: [userId], references: [id])
+
+  @@index([userId, isActive], name: "idx_probations_user_active")
+  @@index([probationEndDate, isActive], name: "idx_probations_end_date")
+  @@map("name_change_probations")
 }
 
 // ─── ALTAR-MANAGEMENT: Enums ─────────────────────────────────────────────────
@@ -2368,4 +2452,260 @@ model AltarProtocolTemplate {
 
   @@index([protocolType, isActive])
   @@map("altar_protocol_templates")
+}
+
+// ============================================================================
+// ENGAGEMENT: Reactions & Bookmarks
+// ============================================================================
+
+enum ReactionType {
+  LIKE
+  PRAY
+  INSPIRE
+  GRATITUDE
+}
+
+enum EngagementTargetType {
+  POST
+  COMMENT
+  COMMUNITY_POST
+}
+
+enum BookmarkTargetType {
+  POST
+  EVENT
+  SUTRA
+  GUIDE
+}
+
+model ContentReaction {
+  id         String              @id @default(cuid())
+  actorId    String              @map("actor_id")
+  targetType EngagementTargetType @map("target_type")
+  targetId   String              @map("target_id")
+  reaction   ReactionType
+  createdAt  DateTime            @default(now()) @map("created_at")
+
+  actor User @relation("contentReactions", fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@unique([actorId, targetType, targetId])
+  @@index([targetType, targetId])
+  @@index([actorId])
+  @@map("content_reactions")
+}
+
+model ContentBookmark {
+  id         String             @id @default(cuid())
+  userId     String             @map("user_id")
+  targetType BookmarkTargetType @map("target_type")
+  targetId   String             @map("target_id")
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  user User @relation("contentBookmarks", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, targetType, targetId])
+  @@index([userId, targetType])
+  @@map("content_bookmarks")
+}
+
+// ============================================================================
+// WISDOM QA: Public Questions & Answers
+// ============================================================================
+
+enum WisdomQuestionStatus {
+  OPEN
+  ANSWERED
+  CLOSED
+}
+
+model WisdomQuestion {
+  id          String               @id @default(cuid())
+  publicId    String               @unique @map("public_id")
+  authorId    String               @map("author_id")
+  title       String
+  body        String               @db.Text
+  categoryId  String?              @map("category_id")
+  tags        String[]             @default([])
+  isAnonymous Boolean              @default(false) @map("is_anonymous")
+  status      WisdomQuestionStatus @default(OPEN)
+  answerCount Int                  @default(0) @map("answer_count")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+
+  author  User            @relation("wisdomQuestions", fields: [authorId], references: [id])
+  answers WisdomAnswer[]
+
+  @@index([authorId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("wisdom_questions")
+}
+
+model WisdomAnswer {
+  id         String   @id @default(cuid())
+  publicId   String   @unique @map("public_id")
+  questionId String   @map("question_id")
+  authorId   String   @map("author_id")
+  body       String   @db.Text
+  isAccepted Boolean  @default(false) @map("is_accepted")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  question WisdomQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  author   User           @relation("wisdomAnswers", fields: [authorId], references: [id])
+
+  @@index([questionId])
+  @@index([authorId])
+  @@map("wisdom_answers")
+}
+
+// ============================================================================
+// DAILY PRACTICE: Guides, Presets, FAQ
+// ============================================================================
+
+enum PracticeGuideLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model PracticeGuide {
+  id          String             @id @default(cuid())
+  publicId    String             @unique @map("public_id")
+  title       String
+  slug        String             @unique
+  body        String             @db.Text
+  duration    Int                @default(0)   // minutes
+  difficulty  PracticeGuideLevel @default(BEGINNER)
+  status      ContentStatus      @default(DRAFT)
+  sortOrder   Int                @default(0) @map("sort_order")
+  publishedAt DateTime?          @map("published_at")
+  createdAt   DateTime           @default(now()) @map("created_at")
+  updatedAt   DateTime           @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([difficulty])
+  @@map("practice_guides")
+}
+
+model ScenarioPreset {
+  id            String   @id @default(cuid())
+  publicId      String   @unique @map("public_id")
+  name          String
+  scenarioType  String   @map("scenario_type")
+  practiceCount Int      @default(0) @map("practice_count")
+  guideIds      String[] @default([]) @map("guide_ids")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([scenarioType])
+  @@map("scenario_presets")
+}
+
+model PracticeFaq {
+  id        String   @id @default(cuid())
+  publicId  String   @unique @map("public_id")
+  question  String
+  answer    String   @db.Text
+  category  String   @default("general")
+  featured  Boolean  @default(false)
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([category, featured])
+  @@map("practice_faqs")
+}
+
+// ============================================================================
+// DAILY RECITATION: Schedules, Guidelines, Routines
+// ============================================================================
+
+enum RecitationDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum RecitationStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum GuidelineImportance {
+  CRITICAL
+  IMPORTANT
+  REFERENCE
+}
+
+model PracticeSchedule {
+  id              String               @id @default(cuid())
+  publicId        String               @unique @map("public_id")
+  name            String
+  description     String               @db.Text
+  difficulty      RecitationDifficulty @default(BEGINNER)
+  dailyMinutes    Int                  @default(30) @map("daily_minutes")
+  scriptureList   Json                 @default("[]") @map("scripture_list")
+  minRecitations  Int                  @default(1) @map("min_recitations")
+  maxRecitations  Int?                 @map("max_recitations")
+  status          RecitationStatus     @default(DRAFT)
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  guidelines RecitationGuideline[]
+  routines   DailyRoutine[]
+
+  @@index([status, difficulty])
+  @@map("practice_schedules")
+}
+
+model RecitationGuideline {
+  id         String              @id @default(cuid())
+  publicId   String              @unique @map("public_id")
+  scheduleId String              @map("schedule_id")
+  topic      String
+  guidance   String              @db.Text
+  importance GuidelineImportance @default(IMPORTANT)
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+
+  schedule PracticeSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([scheduleId, importance])
+  @@map("recitation_guidelines")
+}
+
+model DailyRoutine {
+  id                String   @id @default(cuid())
+  publicId          String   @unique @map("public_id")
+  scheduleId        String   @map("schedule_id")
+  dayNumber         Int      @map("day_number")
+  scriptureSequence String[] @default([]) @map("scripture_sequence")
+  timing            String   @default("")
+  notes             String   @default("")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  schedule PracticeSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@unique([scheduleId, dayNumber])
+  @@index([scheduleId])
+  @@map("daily_routines")
+}
+
+// ─── PLATFORM: Outbox Event Pattern ──────────────────────────────────────────
+
+model OutboxEvent {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now()) @map("created_at")
+  processedAt DateTime? @map("processed_at")
+  eventType   String    @db.VarChar(255) @map("event_type")
+  aggregateId String    @db.VarChar(255) @map("aggregate_id")
+  payload     Json
+  error       String?   @db.Text
+  retryCount  Int       @default(0) @map("retry_count")
+
+  @@index([processedAt, createdAt(sort: Desc)])
+  @@index([eventType])
+  @@map("outbox_events")
 }

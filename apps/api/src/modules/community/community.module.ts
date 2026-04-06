@@ -3,9 +3,10 @@ import { CommunityController, AdminCommunityController, GuestbookController } fr
 import { CommunityRepository } from "./community.repository.js";
 import { CommunityService } from "./community.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
+import { DharmaComplianceModule } from "../dharma-compliance/dharma-compliance.module.js";
 
 @Module({
-  imports: [AuditModule],
+  imports: [AuditModule, DharmaComplianceModule],
   controllers: [CommunityController, AdminCommunityController, GuestbookController],
   providers: [CommunityService, CommunityRepository],
   exports: [CommunityService],

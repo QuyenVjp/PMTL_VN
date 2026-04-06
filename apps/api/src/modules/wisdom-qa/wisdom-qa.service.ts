@@ -24,7 +24,7 @@ import type {
   SuggestSlugInput,
   TranslationDraftInput,
 } from "./wisdom-qa.schemas.js";
-import { type WisdomEntryType, type ContentStatus, type Prisma } from "../../generated/prisma/client.js";
+import { type WisdomEntryType, type ContentStatus, type Prisma, WisdomQuestionStatus } from "../../generated/prisma/client.js";
 
 @Injectable()
 export class WisdomQaService {
@@ -36,20 +36,123 @@ export class WisdomQaService {
     private readonly wisdomGemini: WisdomGeminiService,
   ) {}
 
-  listQuestions(query: WisdomQaQuery) {
-    return { data: [], total: 0, page: query.page, pageSize: query.pageSize };
+  async listQuestions(query: WisdomQaQuery) {
+    const statusMap: Record<string, WisdomQuestionStatus> = {
+      open: WisdomQuestionStatus.OPEN,
+      answered: WisdomQuestionStatus.ANSWERED,
+      closed: WisdomQuestionStatus.CLOSED,
+    };
+
+    const where: Prisma.WisdomQuestionWhereInput = {};
+    if (query.status) where.status = statusMap[query.status];
+    if (query.categoryId) where.categoryId = query.categoryId;
+
+    const skip = (query.page - 1) * query.pageSize;
+
+    const [rawData, total] = await Promise.all([
+      this.prisma.wisdomQuestion.findMany({
+        where,
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: query.pageSize,
+      }),
+      this.prisma.wisdomQuestion.count({ where }),
+    ]);
+
+    const data = rawData.map((q) => ({
+      ...q,
+      author: q.isAnonymous ? null : q.author,
+    }));
+
+    return { data, meta: { total, page: query.page, pageSize: query.pageSize } };
   }
 
-  getQuestionById(id: string) {
-    return { id, message: "Chức năng đang phát triển" };
+  async getQuestionById(publicId: string) {
+    const question = await this.prisma.wisdomQuestion.findUnique({
+      where: { publicId },
+      include: {
+        author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        answers: {
+          include: {
+            author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+          },
+          orderBy: { createdAt: "asc" },
+        },
+      },
+    });
+
+    if (!question) throw new NotFoundException("Câu hỏi không tồn tại");
+
+    return {
+      ...question,
+      author: question.isAnonymous ? null : question.author,
+    };
   }
 
-  askQuestion(input: AskQuestionInput, actorId: string) {
-    return { id: actorId, title: input.title, message: "Chức năng đang phát triển" };
+  async askQuestion(input: AskQuestionInput, actorId: string) {
+    const enabled = await this.featureFlags.isEnabled("wisdom_qa.enabled");
+    if (!enabled) throw new ForbiddenError("Tính năng Q&A đang tắt bởi feature flag");
+
+    const publicId = nanoid(12);
+
+    const question = await this.prisma.wisdomQuestion.create({
+      data: {
+        publicId,
+        authorId: actorId,
+        title: input.title,
+        body: input.body,
+        categoryId: input.categoryId,
+        tags: input.tags ?? [],
+        isAnonymous: input.isAnonymous,
+        status: WisdomQuestionStatus.OPEN,
+      },
+      include: {
+        author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+      },
+    });
+
+    return {
+      ...question,
+      author: question.isAnonymous ? null : question.author,
+    };
   }
 
-  submitAnswer(input: SubmitAnswerInput, actorId: string) {
-    return { id: actorId, questionId: input.questionId, message: "Chức năng đang phát triển" };
+  async submitAnswer(input: SubmitAnswerInput, actorId: string) {
+    const question = await this.prisma.wisdomQuestion.findUnique({
+      where: { publicId: input.questionId },
+    });
+
+    if (!question) throw new NotFoundException("Câu hỏi không tồn tại");
+
+    const publicId = nanoid(12);
+
+    const [answer] = await this.prisma.$transaction([
+      this.prisma.wisdomAnswer.create({
+        data: {
+          publicId,
+          questionId: question.id,
+          authorId: actorId,
+          body: input.body,
+        },
+        include: {
+          author: { select: { publicId: true, displayName: true, avatarUrl: true } },
+        },
+      }),
+      this.prisma.wisdomQuestion.update({
+        where: { id: question.id },
+        data: {
+          answerCount: { increment: 1 },
+          ...(question.status === WisdomQuestionStatus.OPEN && {
+            status: WisdomQuestionStatus.ANSWERED,
+          }),
+        },
+      }),
+    ]);
+
+    return answer;
   }
 
   async getQ161RulePack(): Promise<Q161RulePackResponse> {

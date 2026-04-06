@@ -6,6 +6,7 @@
 export const QUEUES = {
   PDPA_RETENTION: "pdpa-retention",
   MODERATION_PIPELINE: "moderation-pipeline",
+  OUTBOX_DISPATCH: "outbox-dispatch",
 } as const;
 
 export type QueueName = (typeof QUEUES)[keyof typeof QUEUES];

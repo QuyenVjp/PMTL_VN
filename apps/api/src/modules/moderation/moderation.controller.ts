@@ -15,9 +15,11 @@ import type { Request } from "express";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
+import type { AuditContext as AuditCtxType } from "../../platform/audit/audit.service.js";
 import { ModerationService } from "./moderation.service.js";
 import {
   moderationReportListQuerySchema,
@@ -67,6 +69,14 @@ export class ModerationController {
       userAgent: req.headers["user-agent"],
     });
   }
+
+  @Post("recompute-summary")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Tính lại tổng hợp thống kê kiểm duyệt (recovery path)" })
+  @ApiResponse({ status: 200, description: "Thống kê đã được tính lại" })
+  async recomputeSummary(@AuditContext() auditCtx: AuditCtxType) {
+    return this.moderationService.recomputeSummary(auditCtx);
+  }
 }
 
 // ─── Public: Report Submission ──────────────────────────────────────────────
@@ -111,6 +121,15 @@ export class AdminCommentModerationController {
   async listComments(@Query() rawQuery: Record<string, unknown>) {
     const query: AdminCommentQuery = adminCommentQuerySchema.parse(rawQuery);
     return this.moderationService.listCommentsForModeration(query);
+  }
+
+  @Get(":publicId")
+  @ApiOperation({ summary: "Chi tiết bình luận cần kiểm duyệt" })
+  @ApiParam({ name: "publicId", description: "Public ID của bình luận" })
+  @ApiResponse({ status: 200, description: "Chi tiết bình luận kèm báo cáo đang chờ" })
+  @ApiResponse({ status: 404, description: "Không tìm thấy bình luận" })
+  async getComment(@Param("publicId") publicId: string) {
+    return this.moderationService.getCommentDetail(publicId);
   }
 
   @Post(":publicId/hide")

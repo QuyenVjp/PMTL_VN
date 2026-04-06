@@ -10,7 +10,8 @@ export const lifeReleaseQuerySchema = z.object({
 export type LifeReleaseQuery = z.infer<typeof lifeReleaseQuerySchema>;
 
 const animalEntrySchema = z.object({
-  species: z.enum(["TURTLE", "FISH", "BIRD", "INSECT", "FROG", "CRAB", "OTHER"]),
+  // Added SNAKEHEAD (cá lóc) and CATFISH (cá trê) as explicit predatory species per design
+  species: z.enum(["TURTLE", "FISH", "BIRD", "INSECT", "FROG", "CRAB", "SNAKEHEAD", "CATFISH", "OTHER"]),
   quantity: z.number().int().min(1),
   sourceLocation: z.string().max(300).optional(),
   isPredatory: z.boolean().default(false),
@@ -25,6 +26,12 @@ export const createLifeReleaseSchema = z.object({
   merit: z.string().max(500).optional(),
   notes: z.string().max(2000).optional(),
   animals: z.array(animalEntrySchema).min(1),
+  // Predatory species habitat verification fields (required when any animal isPredatory)
+  habitatVerified: z.boolean().default(false),
+  habitatSafe: z.boolean().optional(),
+  // Proxy release money transfer confirmation
+  moneyTransferRequired: z.boolean().default(false),
+  altarDedicationConfirmed: z.boolean().default(false),
 });
 export type CreateLifeReleaseInput = z.infer<typeof createLifeReleaseSchema>;
 
@@ -37,5 +44,7 @@ export type UpdateLifeReleaseStatusInput = z.infer<typeof updateLifeReleaseStatu
 export const proxyReleaseSchema = z.object({
   beneficiary: z.string().min(2).max(200),
   merit: z.string().max(500).optional(),
+  // Proxy anonymity mode — defaults to full_anonymity per CONTRACTS.md
+  anonymityMode: z.enum(["full_anonymity", "sponsor_anonymous", "mutual_known"]).default("full_anonymity"),
 });
 export type ProxyReleaseInput = z.infer<typeof proxyReleaseSchema>;

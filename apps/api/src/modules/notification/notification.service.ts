@@ -9,6 +9,8 @@ import type {
   UpdatePreferencesInput,
   PushSubscribeInput,
   PushUnsubscribeInput,
+  UpdatePracticeReminderInput,
+  UpdateEventReminderInput,
 } from "./notification.schemas.js";
 
 @Injectable()
@@ -190,5 +192,72 @@ export class NotificationService {
     });
 
     return { success: true };
+  }
+
+  // ─── Member: Practice Reminder ───────────────────────────────────────────────
+
+  async getPracticeReminder(userId: string) {
+    const row = await this.repository.findPracticeReminderByUserId(userId);
+    return {
+      enabled: row?.practiceReminders ?? true,
+      quietHoursStart: row?.quietHoursStart ?? null,
+      quietHoursEnd: row?.quietHoursEnd ?? null,
+    };
+  }
+
+  async updatePracticeReminder(
+    userId: string,
+    input: UpdatePracticeReminderInput,
+    auditCtx: AuditContext,
+  ) {
+    const result = await this.repository.upsertPracticeReminder(userId, input);
+
+    await this.audit.append(auditCtx, "member.practice_reminder.update", "notification_preference", userId, {
+      enabled: input.enabled,
+      scheduledHour: input.scheduledHour,
+      scheduledMinute: input.scheduledMinute,
+      timezone: input.timezone,
+    });
+
+    return {
+      userId: result.userId,
+      practiceReminders: result.practiceReminders,
+    };
+  }
+
+  // ─── Member: Event Reminder ──────────────────────────────────────────────────
+
+  async getEventReminder(userId: string) {
+    const row = await this.repository.findEventReminderByUserId(userId);
+    return {
+      enabled: row?.eventReminders ?? true,
+      quietHoursStart: row?.quietHoursStart ?? null,
+      quietHoursEnd: row?.quietHoursEnd ?? null,
+    };
+  }
+
+  async updateEventReminder(
+    userId: string,
+    input: UpdateEventReminderInput,
+    auditCtx: AuditContext,
+  ) {
+    const result = await this.repository.upsertEventReminder(userId, input);
+
+    await this.audit.append(auditCtx, "member.event_reminder.update", "notification_preference", userId, {
+      enabled: input.enabled,
+      leadTimeHours: input.leadTimeHours,
+      timezone: input.timezone,
+    });
+
+    return {
+      userId: result.userId,
+      eventReminders: result.eventReminders,
+    };
+  }
+
+  // ─── Member: Push Stats ──────────────────────────────────────────────────────
+
+  async getPushStats(userId: string) {
+    return this.repository.getPushStats(userId);
   }
 }

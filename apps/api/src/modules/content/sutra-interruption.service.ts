@@ -7,6 +7,7 @@
  */
 
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
+import { nanoid } from "nanoid";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 
 export type SutraTypeEnum = "LONG" | "SHORT";
@@ -167,14 +168,4 @@ export class SutraInterruptionService {
   private generatePublicId(): string {
     return nanoid(21);
   }
-}
-
-// Helper to avoid import issues
-function nanoid(length: number): string {
-  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
 }

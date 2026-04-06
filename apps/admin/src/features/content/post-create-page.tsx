@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -19,11 +18,8 @@ import {
   AdminDetailSection,
   AdminFormField,
 } from "@/components/workspace";
-import { Button } from "@/components/ui/button";
-import { ImageAssetPicker } from "@/components/media/image-asset-picker";
+import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { useCreatePost } from "@/features/content/mutations";
-import { useUploadMediaAsset } from "@/features/media/mutations";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
 import {
   extractValidationFieldErrors,
@@ -31,7 +27,6 @@ import {
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
-import { extractUploadMediaPayload } from "@/lib/media-upload";
 
 // ── Constants ─────────────────────────────────────────────────────────
 
@@ -125,9 +120,6 @@ function CreateSidebar({
 export function PostCreatePage() {
   const navigate = useNavigate();
   const createPost = useCreatePost();
-  const uploadMedia = useUploadMediaAsset();
-  const uploadRef = useRef<HTMLInputElement>(null);
-
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
@@ -137,12 +129,6 @@ export function PostCreatePage() {
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
-  const imageAssets = useMemo(
-    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
-    [mediaEnvelope],
-  );
 
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
@@ -259,48 +245,12 @@ export function PostCreatePage() {
         </div>
       </AdminDetailSection>
 
-      <AdminDetailSection title="Ảnh đại diện" description="Chọn ảnh từ thư viện media hoặc upload ảnh mới, luôn có preview trước khi lưu.">
-        <div className="space-y-3">
-          <input
-            ref={uploadRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (!file) return;
-              void (async () => {
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const publicId = extractUploadMediaPayload(result)?.publicId;
-                  if (publicId) setFeaturedImageId(publicId);
-                } finally {
-                  event.target.value = "";
-                }
-              })();
-            }}
-          />
-          <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => uploadRef.current?.click()} disabled={uploadMedia.isPending}>
-              {uploadMedia.isPending ? "Đang upload..." : "Upload ảnh mới"}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setFeaturedImageId("")}
-              disabled={!featuredImageId}
-            >
-              Bỏ chọn
-            </Button>
-          </div>
-          <ImageAssetPicker
-            assets={imageAssets}
-            value={featuredImageId}
-            onChange={setFeaturedImageId}
-            placeholder="Chọn ảnh đại diện từ thư viện..."
-          />
-        </div>
+      <AdminDetailSection title="Ảnh đại diện" description="Chọn ảnh từ thư viện media hoặc upload ảnh mới ngay trong cửa sổ chọn ảnh.">
+        <MediaPickerField
+          value={featuredImageId}
+          onChange={setFeaturedImageId}
+          placeholder="Chọn ảnh đại diện từ thư viện..."
+        />
       </AdminDetailSection>
     </AdminDetailPage>
   );

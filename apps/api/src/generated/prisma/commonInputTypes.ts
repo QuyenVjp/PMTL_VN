@@ -1347,6 +1347,142 @@ export type EnumAltarProtocolTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAltarProtocolTypeFilter<$PrismaModel> | runtime.Types.Skip
 }
 
+export type EnumEngagementTargetTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.EngagementTargetType | Prisma.EnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | $Enums.EngagementTargetType | runtime.Types.Skip
+}
+
+export type EnumReactionTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReactionType | Prisma.EnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | $Enums.ReactionType | runtime.Types.Skip
+}
+
+export type EnumEngagementTargetTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EngagementTargetType | Prisma.EnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumEngagementTargetTypeWithAggregatesFilter<$PrismaModel> | $Enums.EngagementTargetType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumReactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReactionType | Prisma.EnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumReactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.ReactionType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumBookmarkTargetTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkTargetType | Prisma.EnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | $Enums.BookmarkTargetType | runtime.Types.Skip
+}
+
+export type EnumBookmarkTargetTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkTargetType | Prisma.EnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumBookmarkTargetTypeWithAggregatesFilter<$PrismaModel> | $Enums.BookmarkTargetType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumWisdomQuestionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomQuestionStatus | Prisma.EnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | $Enums.WisdomQuestionStatus | runtime.Types.Skip
+}
+
+export type EnumWisdomQuestionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomQuestionStatus | Prisma.EnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomQuestionStatusWithAggregatesFilter<$PrismaModel> | $Enums.WisdomQuestionStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumPracticeGuideLevelFilter<$PrismaModel = never> = {
+  equals?: $Enums.PracticeGuideLevel | Prisma.EnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | $Enums.PracticeGuideLevel | runtime.Types.Skip
+}
+
+export type EnumPracticeGuideLevelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PracticeGuideLevel | Prisma.EnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPracticeGuideLevelWithAggregatesFilter<$PrismaModel> | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumRecitationDifficultyFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationDifficulty | Prisma.EnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | $Enums.RecitationDifficulty | runtime.Types.Skip
+}
+
+export type EnumRecitationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationStatus | Prisma.EnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | $Enums.RecitationStatus | runtime.Types.Skip
+}
+
+export type EnumRecitationDifficultyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationDifficulty | Prisma.EnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationDifficultyWithAggregatesFilter<$PrismaModel> | $Enums.RecitationDifficulty | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumRecitationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationStatus | Prisma.EnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationStatusWithAggregatesFilter<$PrismaModel> | $Enums.RecitationStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type EnumGuidelineImportanceFilter<$PrismaModel = never> = {
+  equals?: $Enums.GuidelineImportance | Prisma.EnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | $Enums.GuidelineImportance | runtime.Types.Skip
+}
+
+export type EnumGuidelineImportanceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GuidelineImportance | Prisma.EnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumGuidelineImportanceWithAggregatesFilter<$PrismaModel> | $Enums.GuidelineImportance | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | runtime.Types.Skip
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | runtime.Types.Skip
@@ -2626,6 +2762,142 @@ export type NestedEnumAltarProtocolTypeWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
   _min?: Prisma.NestedEnumAltarProtocolTypeFilter<$PrismaModel> | runtime.Types.Skip
   _max?: Prisma.NestedEnumAltarProtocolTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumEngagementTargetTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.EngagementTargetType | Prisma.EnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | $Enums.EngagementTargetType | runtime.Types.Skip
+}
+
+export type NestedEnumReactionTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReactionType | Prisma.EnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | $Enums.ReactionType | runtime.Types.Skip
+}
+
+export type NestedEnumEngagementTargetTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.EngagementTargetType | Prisma.EnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.EngagementTargetType[] | Prisma.ListEnumEngagementTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumEngagementTargetTypeWithAggregatesFilter<$PrismaModel> | $Enums.EngagementTargetType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumEngagementTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumReactionTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ReactionType | Prisma.EnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.ReactionType[] | Prisma.ListEnumReactionTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumReactionTypeWithAggregatesFilter<$PrismaModel> | $Enums.ReactionType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumReactionTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumBookmarkTargetTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkTargetType | Prisma.EnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | $Enums.BookmarkTargetType | runtime.Types.Skip
+}
+
+export type NestedEnumBookmarkTargetTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.BookmarkTargetType | Prisma.EnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.BookmarkTargetType[] | Prisma.ListEnumBookmarkTargetTypeFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumBookmarkTargetTypeWithAggregatesFilter<$PrismaModel> | $Enums.BookmarkTargetType | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumBookmarkTargetTypeFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumWisdomQuestionStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomQuestionStatus | Prisma.EnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | $Enums.WisdomQuestionStatus | runtime.Types.Skip
+}
+
+export type NestedEnumWisdomQuestionStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.WisdomQuestionStatus | Prisma.EnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.WisdomQuestionStatus[] | Prisma.ListEnumWisdomQuestionStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumWisdomQuestionStatusWithAggregatesFilter<$PrismaModel> | $Enums.WisdomQuestionStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumWisdomQuestionStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumPracticeGuideLevelFilter<$PrismaModel = never> = {
+  equals?: $Enums.PracticeGuideLevel | Prisma.EnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | $Enums.PracticeGuideLevel | runtime.Types.Skip
+}
+
+export type NestedEnumPracticeGuideLevelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PracticeGuideLevel | Prisma.EnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.PracticeGuideLevel[] | Prisma.ListEnumPracticeGuideLevelFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumPracticeGuideLevelWithAggregatesFilter<$PrismaModel> | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumPracticeGuideLevelFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumRecitationDifficultyFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationDifficulty | Prisma.EnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | $Enums.RecitationDifficulty | runtime.Types.Skip
+}
+
+export type NestedEnumRecitationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationStatus | Prisma.EnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | $Enums.RecitationStatus | runtime.Types.Skip
+}
+
+export type NestedEnumRecitationDifficultyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationDifficulty | Prisma.EnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationDifficulty[] | Prisma.ListEnumRecitationDifficultyFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationDifficultyWithAggregatesFilter<$PrismaModel> | $Enums.RecitationDifficulty | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRecitationDifficultyFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumRecitationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RecitationStatus | Prisma.EnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.RecitationStatus[] | Prisma.ListEnumRecitationStatusFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumRecitationStatusWithAggregatesFilter<$PrismaModel> | $Enums.RecitationStatus | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumRecitationStatusFilter<$PrismaModel> | runtime.Types.Skip
+}
+
+export type NestedEnumGuidelineImportanceFilter<$PrismaModel = never> = {
+  equals?: $Enums.GuidelineImportance | Prisma.EnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | $Enums.GuidelineImportance | runtime.Types.Skip
+}
+
+export type NestedEnumGuidelineImportanceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GuidelineImportance | Prisma.EnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  in?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  notIn?: $Enums.GuidelineImportance[] | Prisma.ListEnumGuidelineImportanceFieldRefInput<$PrismaModel> | runtime.Types.Skip
+  not?: Prisma.NestedEnumGuidelineImportanceWithAggregatesFilter<$PrismaModel> | $Enums.GuidelineImportance | runtime.Types.Skip
+  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  _min?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | runtime.Types.Skip
+  _max?: Prisma.NestedEnumGuidelineImportanceFilter<$PrismaModel> | runtime.Types.Skip
 }
 
 

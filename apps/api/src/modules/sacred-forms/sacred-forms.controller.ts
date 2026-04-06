@@ -24,6 +24,10 @@ import {
   reviewApplicationSchema,
   updatePrerequisiteSchema,
   disposalPolaritySchema,
+  approveApplicationSchema,
+  rejectApplicationSchema,
+  burnApplicationSchema,
+  probationQuerySchema,
   type TemplateQuery,
   type CreateTemplateInput,
   type ApplicantQuery,
@@ -31,6 +35,10 @@ import {
   type ReviewApplicationInput,
   type UpdatePrerequisiteInput,
   type DisposalPolarityInput,
+  type ApproveApplicationInput,
+  type RejectApplicationInput,
+  type BurnApplicationInput,
+  type ProbationQuery,
 } from "./sacred-forms.schemas.js";
 
 @ApiTags("admin-sacred-forms")
@@ -123,6 +131,54 @@ export class AdminSacredFormsController {
   ) {
     return this.svc.createDisposalPolarity(disposalPolaritySchema.parse(body), user.id, auditCtx);
   }
+
+  @Post("applicants/:publicId/approve")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Duyệt đơn đăng ký" })
+  async approveApplication(
+    @Param("publicId") publicId: string,
+    @Body() body: ApproveApplicationInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.approveApplication(publicId, approveApplicationSchema.parse(body), user.id, auditCtx);
+  }
+
+  @Post("applicants/:publicId/reject")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Từ chối đơn đăng ký" })
+  async rejectApplication(
+    @Param("publicId") publicId: string,
+    @Body() body: RejectApplicationInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.rejectApplication(publicId, rejectApplicationSchema.parse(body), user.id, auditCtx);
+  }
+
+  @Post("applicants/:publicId/burn")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Đốt đơn và kích hoạt probation 100 ngày" })
+  async burnApplication(
+    @Param("publicId") publicId: string,
+    @Body() body: BurnApplicationInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @AuditContext() auditCtx: AuditCtxType,
+  ) {
+    return this.svc.burnApplication(publicId, burnApplicationSchema.parse(body), user.id, auditCtx);
+  }
+
+  @Get("status")
+  @ApiOperation({ summary: "Tổng quan trạng thái sacred-forms" })
+  async getStatus() {
+    return this.svc.getStatusAggregate();
+  }
+
+  @Get("probations")
+  @ApiOperation({ summary: "Danh sách probation (admin)" })
+  async listProbations(@Query() query: ProbationQuery) {
+    return this.svc.listAllProbations(probationQuerySchema.parse(query));
+  }
 }
 
 @ApiTags("member-sacred-forms")
@@ -158,5 +214,11 @@ export class MemberSacredFormsController {
   @ApiOperation({ summary: "Chi tiết đơn của tôi" })
   async getMyApplication(@Param("publicId") publicId: string) {
     return this.svc.getApplicant(publicId);
+  }
+
+  @Get("my-probations")
+  @ApiOperation({ summary: "Danh sách probation của tôi" })
+  async myProbations(@Query() query: ProbationQuery, @CurrentUser() user: AuthenticatedUser) {
+    return this.svc.getMyProbations(user.id, probationQuerySchema.parse(query));
   }
 }

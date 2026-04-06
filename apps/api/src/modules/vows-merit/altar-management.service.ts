@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";

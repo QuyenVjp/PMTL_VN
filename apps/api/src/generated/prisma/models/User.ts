@@ -243,6 +243,7 @@ export type UserWhereInput = {
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionListRelationFilter | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialListRelationFilter | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
@@ -264,6 +265,7 @@ export type UserWhereInput = {
   wisdomEntries?: Prisma.WisdomEntryListRelationFilter | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetListRelationFilter | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenListRelationFilter | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentListRelationFilter | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartListRelationFilter | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionListRelationFilter | runtime.Types.Skip
@@ -281,10 +283,15 @@ export type UserWhereInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordListRelationFilter | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseListRelationFilter | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantListRelationFilter | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationListRelationFilter | runtime.Types.Skip
   altarItems?: Prisma.AltarItemListRelationFilter | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogListRelationFilter | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordListRelationFilter | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationListRelationFilter | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionListRelationFilter | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkListRelationFilter | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionListRelationFilter | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerListRelationFilter | runtime.Types.Skip
 }
 
 export type UserOrderByWithRelationInput = {
@@ -305,6 +312,7 @@ export type UserOrderByWithRelationInput = {
   mediaAssets?: Prisma.MediaAssetOrderByRelationAggregateInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionOrderByRelationAggregateInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostOrderByRelationAggregateInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialOrderByRelationAggregateInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryOrderByRelationAggregateInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventOrderByRelationAggregateInput | runtime.Types.Skip
@@ -326,6 +334,7 @@ export type UserOrderByWithRelationInput = {
   wisdomEntries?: Prisma.WisdomEntryOrderByRelationAggregateInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetOrderByRelationAggregateInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenOrderByRelationAggregateInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentOrderByRelationAggregateInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartOrderByRelationAggregateInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionOrderByRelationAggregateInput | runtime.Types.Skip
@@ -343,10 +352,15 @@ export type UserOrderByWithRelationInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordOrderByRelationAggregateInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseOrderByRelationAggregateInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantOrderByRelationAggregateInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationOrderByRelationAggregateInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemOrderByRelationAggregateInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogOrderByRelationAggregateInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordOrderByRelationAggregateInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationOrderByRelationAggregateInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionOrderByRelationAggregateInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkOrderByRelationAggregateInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionOrderByRelationAggregateInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerOrderByRelationAggregateInput | runtime.Types.Skip
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -370,6 +384,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   mediaAssets?: Prisma.MediaAssetListRelationFilter | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionListRelationFilter | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostListRelationFilter | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialListRelationFilter | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryListRelationFilter | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventListRelationFilter | runtime.Types.Skip
@@ -391,6 +406,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   wisdomEntries?: Prisma.WisdomEntryListRelationFilter | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetListRelationFilter | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenListRelationFilter | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentListRelationFilter | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartListRelationFilter | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionListRelationFilter | runtime.Types.Skip
@@ -408,10 +424,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   lifeReleaseRecords?: Prisma.LifeReleaseRecordListRelationFilter | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseListRelationFilter | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantListRelationFilter | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationListRelationFilter | runtime.Types.Skip
   altarItems?: Prisma.AltarItemListRelationFilter | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogListRelationFilter | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordListRelationFilter | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationListRelationFilter | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionListRelationFilter | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkListRelationFilter | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionListRelationFilter | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerListRelationFilter | runtime.Types.Skip
 }, "id" | "publicId" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -468,6 +489,7 @@ export type UserCreateInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -489,6 +511,7 @@ export type UserCreateInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -506,10 +529,15 @@ export type UserCreateInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateInput = {
@@ -530,6 +558,7 @@ export type UserUncheckedCreateInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -551,6 +580,7 @@ export type UserUncheckedCreateInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -568,10 +598,15 @@ export type UserUncheckedCreateInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUpdateInput = {
@@ -592,6 +627,7 @@ export type UserUpdateInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -613,6 +649,7 @@ export type UserUpdateInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -630,10 +667,15 @@ export type UserUpdateInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateInput = {
@@ -654,6 +696,7 @@ export type UserUncheckedUpdateInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -675,6 +718,7 @@ export type UserUncheckedUpdateInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -692,10 +736,15 @@ export type UserUncheckedUpdateInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateManyInput = {
@@ -824,6 +873,20 @@ export type UserUpdateOneRequiredWithoutPasswordResetTokensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, Prisma.UserUpdateWithoutPasswordResetTokensInput>, Prisma.UserUncheckedUpdateWithoutPasswordResetTokensInput> | runtime.Types.Skip
 }
 
+export type UserCreateNestedOneWithoutEmailVerificationTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationTokensInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutEmailVerificationTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationTokensInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutEmailVerificationTokensInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmailVerificationTokensInput, Prisma.UserUpdateWithoutEmailVerificationTokensInput>, Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput> | runtime.Types.Skip
+}
+
 export type UserCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutSessionsInput, Prisma.UserUncheckedCreateWithoutSessionsInput> | runtime.Types.Skip
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutSessionsInput | runtime.Types.Skip
@@ -950,6 +1013,20 @@ export type UserUpdateOneRequiredWithoutCommunityHeartsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutCommunityHeartsInput | runtime.Types.Skip
   connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityHeartsInput, Prisma.UserUpdateWithoutCommunityHeartsInput>, Prisma.UserUncheckedUpdateWithoutCommunityHeartsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutCommunityTestimonialsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedCreateWithoutCommunityTestimonialsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityTestimonialsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutCommunityTestimonialsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedCreateWithoutCommunityTestimonialsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCommunityTestimonialsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutCommunityTestimonialsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCommunityTestimonialsInput, Prisma.UserUpdateWithoutCommunityTestimonialsInput>, Prisma.UserUncheckedUpdateWithoutCommunityTestimonialsInput> | runtime.Types.Skip
 }
 
 export type UserCreateNestedOneWithoutCalendarEventsInput = {
@@ -1444,6 +1521,20 @@ export type UserUpdateOneRequiredWithoutSacredFormApplicantsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSacredFormApplicantsInput, Prisma.UserUpdateWithoutSacredFormApplicantsInput>, Prisma.UserUncheckedUpdateWithoutSacredFormApplicantsInput> | runtime.Types.Skip
 }
 
+export type UserCreateNestedOneWithoutNameChangeProbationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNameChangeProbationsInput, Prisma.UserUncheckedCreateWithoutNameChangeProbationsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNameChangeProbationsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutNameChangeProbationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutNameChangeProbationsInput, Prisma.UserUncheckedCreateWithoutNameChangeProbationsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutNameChangeProbationsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutNameChangeProbationsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNameChangeProbationsInput, Prisma.UserUpdateWithoutNameChangeProbationsInput>, Prisma.UserUncheckedUpdateWithoutNameChangeProbationsInput> | runtime.Types.Skip
+}
+
 export type UserCreateNestedOneWithoutAltarItemsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAltarItemsInput, Prisma.UserUncheckedCreateWithoutAltarItemsInput> | runtime.Types.Skip
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAltarItemsInput | runtime.Types.Skip
@@ -1472,6 +1563,62 @@ export type UserUpdateOneRequiredWithoutAltarValidationLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAltarValidationLogsInput, Prisma.UserUpdateWithoutAltarValidationLogsInput>, Prisma.UserUncheckedUpdateWithoutAltarValidationLogsInput> | runtime.Types.Skip
 }
 
+export type UserCreateNestedOneWithoutContentReactionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentReactionsInput, Prisma.UserUncheckedCreateWithoutContentReactionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentReactionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutContentReactionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentReactionsInput, Prisma.UserUncheckedCreateWithoutContentReactionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentReactionsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutContentReactionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContentReactionsInput, Prisma.UserUpdateWithoutContentReactionsInput>, Prisma.UserUncheckedUpdateWithoutContentReactionsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutContentBookmarksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentBookmarksInput, Prisma.UserUncheckedCreateWithoutContentBookmarksInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentBookmarksInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutContentBookmarksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentBookmarksInput, Prisma.UserUncheckedCreateWithoutContentBookmarksInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentBookmarksInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutContentBookmarksInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContentBookmarksInput, Prisma.UserUpdateWithoutContentBookmarksInput>, Prisma.UserUncheckedUpdateWithoutContentBookmarksInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutWisdomQuestionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWisdomQuestionsInput, Prisma.UserUncheckedCreateWithoutWisdomQuestionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWisdomQuestionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutWisdomQuestionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWisdomQuestionsInput, Prisma.UserUncheckedCreateWithoutWisdomQuestionsInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWisdomQuestionsInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutWisdomQuestionsInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWisdomQuestionsInput, Prisma.UserUpdateWithoutWisdomQuestionsInput>, Prisma.UserUncheckedUpdateWithoutWisdomQuestionsInput> | runtime.Types.Skip
+}
+
+export type UserCreateNestedOneWithoutWisdomAnswersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWisdomAnswersInput, Prisma.UserUncheckedCreateWithoutWisdomAnswersInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWisdomAnswersInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+}
+
+export type UserUpdateOneRequiredWithoutWisdomAnswersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWisdomAnswersInput, Prisma.UserUncheckedCreateWithoutWisdomAnswersInput> | runtime.Types.Skip
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWisdomAnswersInput | runtime.Types.Skip
+  upsert?: Prisma.UserUpsertWithoutWisdomAnswersInput | runtime.Types.Skip
+  connect?: Prisma.UserWhereUniqueInput | runtime.Types.Skip
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWisdomAnswersInput, Prisma.UserUpdateWithoutWisdomAnswersInput>, Prisma.UserUncheckedUpdateWithoutWisdomAnswersInput> | runtime.Types.Skip
+}
+
 export type UserCreateWithoutPasswordResetTokensInput = {
   id?: string | runtime.Types.Skip
   publicId: string
@@ -1490,6 +1637,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1510,6 +1658,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -1527,10 +1676,15 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1551,6 +1705,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1571,6 +1726,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -1588,10 +1744,15 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1628,6 +1789,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1648,6 +1810,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -1665,10 +1828,15 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1689,6 +1857,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1709,6 +1878,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -1726,13 +1896,18 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
-export type UserCreateWithoutSessionsInput = {
+export type UserCreateWithoutEmailVerificationTokensInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   email: string
@@ -1745,10 +1920,12 @@ export type UserCreateWithoutSessionsInput = {
   lastLoginAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1787,13 +1964,18 @@ export type UserCreateWithoutSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
-export type UserUncheckedCreateWithoutSessionsInput = {
+export type UserUncheckedCreateWithoutEmailVerificationTokensInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   email: string
@@ -1806,10 +1988,12 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   lastLoginAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -1848,10 +2032,303 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutEmailVerificationTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput>
+}
+
+export type UserUpsertWithoutEmailVerificationTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutEmailVerificationTokensInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmailVerificationTokensInput, Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput>
+}
+
+export type UserUpdateWithoutEmailVerificationTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutEmailVerificationTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutSessionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutSessionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1887,6 +2364,7 @@ export type UserUpdateWithoutSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1908,6 +2386,7 @@ export type UserUpdateWithoutSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -1925,10 +2404,15 @@ export type UserUpdateWithoutSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1948,6 +2432,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -1969,6 +2454,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -1986,10 +2472,15 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutMediaAssetsInput = {
@@ -2009,6 +2500,7 @@ export type UserCreateWithoutMediaAssetsInput = {
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2030,6 +2522,7 @@ export type UserCreateWithoutMediaAssetsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2047,10 +2540,15 @@ export type UserCreateWithoutMediaAssetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutMediaAssetsInput = {
@@ -2070,6 +2568,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2091,6 +2590,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2108,10 +2608,15 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutMediaAssetsInput = {
@@ -2147,6 +2652,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2168,6 +2674,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2185,10 +2692,15 @@ export type UserUpdateWithoutMediaAssetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutMediaAssetsInput = {
@@ -2208,6 +2720,7 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2229,6 +2742,7 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2246,10 +2760,15 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutMediaCollectionsInput = {
@@ -2269,6 +2788,7 @@ export type UserCreateWithoutMediaCollectionsInput = {
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2290,6 +2810,7 @@ export type UserCreateWithoutMediaCollectionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2307,10 +2828,15 @@ export type UserCreateWithoutMediaCollectionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutMediaCollectionsInput = {
@@ -2330,6 +2856,7 @@ export type UserUncheckedCreateWithoutMediaCollectionsInput = {
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2351,6 +2878,7 @@ export type UserUncheckedCreateWithoutMediaCollectionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2368,10 +2896,15 @@ export type UserUncheckedCreateWithoutMediaCollectionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutMediaCollectionsInput = {
@@ -2407,6 +2940,7 @@ export type UserUpdateWithoutMediaCollectionsInput = {
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2428,6 +2962,7 @@ export type UserUpdateWithoutMediaCollectionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2445,10 +2980,15 @@ export type UserUpdateWithoutMediaCollectionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
@@ -2468,6 +3008,7 @@ export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2489,6 +3030,7 @@ export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2506,10 +3048,15 @@ export type UserUncheckedUpdateWithoutMediaCollectionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPostsInput = {
@@ -2529,6 +3076,7 @@ export type UserCreateWithoutPostsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2550,6 +3098,7 @@ export type UserCreateWithoutPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2567,10 +3116,15 @@ export type UserCreateWithoutPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPostsInput = {
@@ -2590,6 +3144,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2611,6 +3166,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2628,10 +3184,15 @@ export type UserUncheckedCreateWithoutPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPostsInput = {
@@ -2667,6 +3228,7 @@ export type UserUpdateWithoutPostsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2688,6 +3250,7 @@ export type UserUpdateWithoutPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2705,10 +3268,15 @@ export type UserUpdateWithoutPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPostsInput = {
@@ -2728,6 +3296,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2749,6 +3318,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2766,10 +3336,15 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutCommunityPostsInput = {
@@ -2789,6 +3364,7 @@ export type UserCreateWithoutCommunityPostsInput = {
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2810,6 +3386,7 @@ export type UserCreateWithoutCommunityPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2827,10 +3404,15 @@ export type UserCreateWithoutCommunityPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutCommunityPostsInput = {
@@ -2850,6 +3432,7 @@ export type UserUncheckedCreateWithoutCommunityPostsInput = {
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -2871,6 +3454,7 @@ export type UserUncheckedCreateWithoutCommunityPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -2888,10 +3472,15 @@ export type UserUncheckedCreateWithoutCommunityPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutCommunityPostsInput = {
@@ -2927,6 +3516,7 @@ export type UserUpdateWithoutCommunityPostsInput = {
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -2948,6 +3538,7 @@ export type UserUpdateWithoutCommunityPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -2965,10 +3556,15 @@ export type UserUpdateWithoutCommunityPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutCommunityPostsInput = {
@@ -2988,6 +3584,7 @@ export type UserUncheckedUpdateWithoutCommunityPostsInput = {
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -3009,6 +3606,7 @@ export type UserUncheckedUpdateWithoutCommunityPostsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3026,10 +3624,15 @@ export type UserUncheckedUpdateWithoutCommunityPostsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutGuestbookEntriesInput = {
@@ -3050,6 +3653,7 @@ export type UserCreateWithoutGuestbookEntriesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3070,6 +3674,7 @@ export type UserCreateWithoutGuestbookEntriesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3087,10 +3692,15 @@ export type UserCreateWithoutGuestbookEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
@@ -3111,6 +3721,7 @@ export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3131,6 +3742,7 @@ export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3148,10 +3760,15 @@ export type UserUncheckedCreateWithoutGuestbookEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutGuestbookEntriesInput = {
@@ -3177,6 +3794,7 @@ export type UserCreateWithoutGuestbookApprovalsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3197,6 +3815,7 @@ export type UserCreateWithoutGuestbookApprovalsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3214,10 +3833,15 @@ export type UserCreateWithoutGuestbookApprovalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
@@ -3238,6 +3862,7 @@ export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3258,6 +3883,7 @@ export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3275,10 +3901,15 @@ export type UserUncheckedCreateWithoutGuestbookApprovalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutGuestbookApprovalsInput = {
@@ -3315,6 +3946,7 @@ export type UserUpdateWithoutGuestbookEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3335,6 +3967,7 @@ export type UserUpdateWithoutGuestbookEntriesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3352,10 +3985,15 @@ export type UserUpdateWithoutGuestbookEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
@@ -3376,6 +4014,7 @@ export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3396,6 +4035,7 @@ export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3413,10 +4053,15 @@ export type UserUncheckedUpdateWithoutGuestbookEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUpsertWithoutGuestbookApprovalsInput = {
@@ -3448,6 +4093,7 @@ export type UserUpdateWithoutGuestbookApprovalsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3468,6 +4114,7 @@ export type UserUpdateWithoutGuestbookApprovalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3485,10 +4132,15 @@ export type UserUpdateWithoutGuestbookApprovalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
@@ -3509,6 +4161,7 @@ export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3529,6 +4182,7 @@ export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3546,10 +4200,15 @@ export type UserUncheckedUpdateWithoutGuestbookApprovalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutCommunityCommentsInput = {
@@ -3570,6 +4229,7 @@ export type UserCreateWithoutCommunityCommentsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -3591,6 +4251,7 @@ export type UserCreateWithoutCommunityCommentsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3607,10 +4268,15 @@ export type UserCreateWithoutCommunityCommentsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutCommunityCommentsInput = {
@@ -3631,6 +4297,7 @@ export type UserUncheckedCreateWithoutCommunityCommentsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -3652,6 +4319,7 @@ export type UserUncheckedCreateWithoutCommunityCommentsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3668,10 +4336,15 @@ export type UserUncheckedCreateWithoutCommunityCommentsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutCommunityCommentsInput = {
@@ -3708,6 +4381,7 @@ export type UserUpdateWithoutCommunityCommentsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -3729,6 +4403,7 @@ export type UserUpdateWithoutCommunityCommentsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3745,10 +4420,15 @@ export type UserUpdateWithoutCommunityCommentsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutCommunityCommentsInput = {
@@ -3769,6 +4449,7 @@ export type UserUncheckedUpdateWithoutCommunityCommentsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -3790,6 +4471,7 @@ export type UserUncheckedUpdateWithoutCommunityCommentsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -3806,10 +4488,15 @@ export type UserUncheckedUpdateWithoutCommunityCommentsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutCommunityHeartsInput = {
@@ -3830,6 +4517,7 @@ export type UserCreateWithoutCommunityHeartsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -3851,6 +4539,7 @@ export type UserCreateWithoutCommunityHeartsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3867,10 +4556,15 @@ export type UserCreateWithoutCommunityHeartsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutCommunityHeartsInput = {
@@ -3891,6 +4585,7 @@ export type UserUncheckedCreateWithoutCommunityHeartsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -3912,6 +4607,7 @@ export type UserUncheckedCreateWithoutCommunityHeartsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -3928,10 +4624,15 @@ export type UserUncheckedCreateWithoutCommunityHeartsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutCommunityHeartsInput = {
@@ -3968,6 +4669,7 @@ export type UserUpdateWithoutCommunityHeartsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -3989,6 +4691,7 @@ export type UserUpdateWithoutCommunityHeartsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4005,13 +4708,306 @@ export type UserUpdateWithoutCommunityHeartsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutCommunityHeartsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutCommunityTestimonialsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutCommunityTestimonialsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutCommunityTestimonialsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedCreateWithoutCommunityTestimonialsInput>
+}
+
+export type UserUpsertWithoutCommunityTestimonialsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedUpdateWithoutCommunityTestimonialsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedCreateWithoutCommunityTestimonialsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutCommunityTestimonialsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCommunityTestimonialsInput, Prisma.UserUncheckedUpdateWithoutCommunityTestimonialsInput>
+}
+
+export type UserUpdateWithoutCommunityTestimonialsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutCommunityTestimonialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
@@ -4050,7 +5046,9 @@ export type UserUncheckedUpdateWithoutCommunityHeartsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4066,10 +5064,15 @@ export type UserUncheckedUpdateWithoutCommunityHeartsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutCalendarEventsInput = {
@@ -4090,6 +5093,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4110,6 +5114,7 @@ export type UserCreateWithoutCalendarEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4127,10 +5132,15 @@ export type UserCreateWithoutCalendarEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutCalendarEventsInput = {
@@ -4151,6 +5161,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4171,6 +5182,7 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4188,10 +5200,15 @@ export type UserUncheckedCreateWithoutCalendarEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutCalendarEventsInput = {
@@ -4228,6 +5245,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4248,6 +5266,7 @@ export type UserUpdateWithoutCalendarEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4265,10 +5284,15 @@ export type UserUpdateWithoutCalendarEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutCalendarEventsInput = {
@@ -4289,6 +5313,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4309,6 +5334,7 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4326,10 +5352,15 @@ export type UserUncheckedUpdateWithoutCalendarEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -4350,6 +5381,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4370,6 +5402,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4387,10 +5420,15 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -4411,6 +5449,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4431,6 +5470,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4448,10 +5488,15 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -4488,6 +5533,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -4508,6 +5554,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4525,10 +5572,15 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -4549,6 +5601,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -4569,6 +5622,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4586,10 +5640,15 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutNotificationPreferencesInput = {
@@ -4610,6 +5669,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4630,6 +5690,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4647,10 +5708,15 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -4671,6 +5737,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4691,6 +5758,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4708,10 +5776,15 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -4748,6 +5821,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -4768,6 +5842,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4785,10 +5860,15 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -4809,6 +5889,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -4829,6 +5910,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -4846,10 +5928,15 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPushJobsInput = {
@@ -4870,6 +5957,7 @@ export type UserCreateWithoutPushJobsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4890,6 +5978,7 @@ export type UserCreateWithoutPushJobsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4907,10 +5996,15 @@ export type UserCreateWithoutPushJobsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPushJobsInput = {
@@ -4931,6 +6025,7 @@ export type UserUncheckedCreateWithoutPushJobsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -4951,6 +6046,7 @@ export type UserUncheckedCreateWithoutPushJobsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -4968,10 +6064,15 @@ export type UserUncheckedCreateWithoutPushJobsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPushJobsInput = {
@@ -5008,6 +6109,7 @@ export type UserUpdateWithoutPushJobsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5028,6 +6130,7 @@ export type UserUpdateWithoutPushJobsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5045,10 +6148,15 @@ export type UserUpdateWithoutPushJobsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPushJobsInput = {
@@ -5069,6 +6177,7 @@ export type UserUncheckedUpdateWithoutPushJobsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5089,6 +6198,7 @@ export type UserUncheckedUpdateWithoutPushJobsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5106,10 +6216,15 @@ export type UserUncheckedUpdateWithoutPushJobsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutWisdomEntriesInput = {
@@ -5130,6 +6245,7 @@ export type UserCreateWithoutWisdomEntriesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5150,6 +6266,7 @@ export type UserCreateWithoutWisdomEntriesInput = {
   practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5167,10 +6284,15 @@ export type UserCreateWithoutWisdomEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutWisdomEntriesInput = {
@@ -5191,6 +6313,7 @@ export type UserUncheckedCreateWithoutWisdomEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5211,6 +6334,7 @@ export type UserUncheckedCreateWithoutWisdomEntriesInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5228,10 +6352,15 @@ export type UserUncheckedCreateWithoutWisdomEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutWisdomEntriesInput = {
@@ -5268,6 +6397,7 @@ export type UserUpdateWithoutWisdomEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5288,6 +6418,7 @@ export type UserUpdateWithoutWisdomEntriesInput = {
   practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5305,10 +6436,15 @@ export type UserUpdateWithoutWisdomEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutWisdomEntriesInput = {
@@ -5329,6 +6465,7 @@ export type UserUncheckedUpdateWithoutWisdomEntriesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5349,6 +6486,7 @@ export type UserUncheckedUpdateWithoutWisdomEntriesInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5366,10 +6504,15 @@ export type UserUncheckedUpdateWithoutWisdomEntriesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutBeginnerGuidesInput = {
@@ -5390,6 +6533,7 @@ export type UserCreateWithoutBeginnerGuidesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5410,6 +6554,7 @@ export type UserCreateWithoutBeginnerGuidesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5427,10 +6572,15 @@ export type UserCreateWithoutBeginnerGuidesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
@@ -5451,6 +6601,7 @@ export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5471,6 +6622,7 @@ export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5488,10 +6640,15 @@ export type UserUncheckedCreateWithoutBeginnerGuidesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutBeginnerGuidesInput = {
@@ -5528,6 +6685,7 @@ export type UserUpdateWithoutBeginnerGuidesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5548,6 +6706,7 @@ export type UserUpdateWithoutBeginnerGuidesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5565,10 +6724,15 @@ export type UserUpdateWithoutBeginnerGuidesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
@@ -5589,6 +6753,7 @@ export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5609,6 +6774,7 @@ export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5626,10 +6792,15 @@ export type UserUncheckedUpdateWithoutBeginnerGuidesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutDownloadsInput = {
@@ -5650,6 +6821,7 @@ export type UserCreateWithoutDownloadsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5670,6 +6842,7 @@ export type UserCreateWithoutDownloadsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5687,10 +6860,15 @@ export type UserCreateWithoutDownloadsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutDownloadsInput = {
@@ -5711,6 +6889,7 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5731,6 +6910,7 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5748,10 +6928,15 @@ export type UserUncheckedCreateWithoutDownloadsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutDownloadsInput = {
@@ -5788,6 +6973,7 @@ export type UserUpdateWithoutDownloadsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5808,6 +6994,7 @@ export type UserUpdateWithoutDownloadsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5825,10 +7012,15 @@ export type UserUpdateWithoutDownloadsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutDownloadsInput = {
@@ -5849,6 +7041,7 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -5869,6 +7062,7 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -5886,10 +7080,15 @@ export type UserUncheckedUpdateWithoutDownloadsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutChantingSessionsInput = {
@@ -5910,6 +7109,7 @@ export type UserCreateWithoutChantingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5930,6 +7130,7 @@ export type UserCreateWithoutChantingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -5947,10 +7148,15 @@ export type UserCreateWithoutChantingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutChantingSessionsInput = {
@@ -5971,6 +7177,7 @@ export type UserUncheckedCreateWithoutChantingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -5991,6 +7198,7 @@ export type UserUncheckedCreateWithoutChantingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6008,10 +7216,15 @@ export type UserUncheckedCreateWithoutChantingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutChantingSessionsInput = {
@@ -6048,6 +7261,7 @@ export type UserUpdateWithoutChantingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6068,6 +7282,7 @@ export type UserUpdateWithoutChantingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6085,10 +7300,15 @@ export type UserUpdateWithoutChantingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutChantingSessionsInput = {
@@ -6109,6 +7329,7 @@ export type UserUncheckedUpdateWithoutChantingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6129,6 +7350,7 @@ export type UserUncheckedUpdateWithoutChantingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6146,10 +7368,15 @@ export type UserUncheckedUpdateWithoutChantingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutVowsInput = {
@@ -6170,6 +7397,7 @@ export type UserCreateWithoutVowsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6190,6 +7418,7 @@ export type UserCreateWithoutVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6207,10 +7436,15 @@ export type UserCreateWithoutVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutVowsInput = {
@@ -6231,6 +7465,7 @@ export type UserUncheckedCreateWithoutVowsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6251,6 +7486,7 @@ export type UserUncheckedCreateWithoutVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6268,10 +7504,15 @@ export type UserUncheckedCreateWithoutVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutVowsInput = {
@@ -6308,6 +7549,7 @@ export type UserUpdateWithoutVowsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6328,6 +7570,7 @@ export type UserUpdateWithoutVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6345,10 +7588,15 @@ export type UserUpdateWithoutVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutVowsInput = {
@@ -6369,6 +7617,7 @@ export type UserUncheckedUpdateWithoutVowsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6389,6 +7638,7 @@ export type UserUncheckedUpdateWithoutVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6406,10 +7656,15 @@ export type UserUncheckedUpdateWithoutVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutLifeReleaseJournalsInput = {
@@ -6430,6 +7685,7 @@ export type UserCreateWithoutLifeReleaseJournalsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6450,6 +7706,7 @@ export type UserCreateWithoutLifeReleaseJournalsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6467,10 +7724,15 @@ export type UserCreateWithoutLifeReleaseJournalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
@@ -6491,6 +7753,7 @@ export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6511,6 +7774,7 @@ export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6528,10 +7792,15 @@ export type UserUncheckedCreateWithoutLifeReleaseJournalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLifeReleaseJournalsInput = {
@@ -6557,6 +7826,7 @@ export type UserCreateWithoutLifeReleaseActorsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6577,6 +7847,7 @@ export type UserCreateWithoutLifeReleaseActorsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6594,10 +7865,15 @@ export type UserCreateWithoutLifeReleaseActorsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
@@ -6618,6 +7894,7 @@ export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6638,6 +7915,7 @@ export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6655,10 +7933,15 @@ export type UserUncheckedCreateWithoutLifeReleaseActorsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLifeReleaseActorsInput = {
@@ -6695,6 +7978,7 @@ export type UserUpdateWithoutLifeReleaseJournalsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6715,6 +7999,7 @@ export type UserUpdateWithoutLifeReleaseJournalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6732,10 +8017,15 @@ export type UserUpdateWithoutLifeReleaseJournalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
@@ -6756,6 +8046,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6776,6 +8067,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6793,10 +8085,15 @@ export type UserUncheckedUpdateWithoutLifeReleaseJournalsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUpsertWithoutLifeReleaseActorsInput = {
@@ -6828,6 +8125,7 @@ export type UserUpdateWithoutLifeReleaseActorsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6848,6 +8146,7 @@ export type UserUpdateWithoutLifeReleaseActorsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6865,10 +8164,15 @@ export type UserUpdateWithoutLifeReleaseActorsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
@@ -6889,6 +8193,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -6909,6 +8214,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -6926,10 +8232,15 @@ export type UserUncheckedUpdateWithoutLifeReleaseActorsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutLittleHousesInput = {
@@ -6950,6 +8261,7 @@ export type UserCreateWithoutLittleHousesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -6970,6 +8282,7 @@ export type UserCreateWithoutLittleHousesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -6987,10 +8300,15 @@ export type UserCreateWithoutLittleHousesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLittleHousesInput = {
@@ -7011,6 +8329,7 @@ export type UserUncheckedCreateWithoutLittleHousesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7031,6 +8350,7 @@ export type UserUncheckedCreateWithoutLittleHousesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7048,10 +8368,15 @@ export type UserUncheckedCreateWithoutLittleHousesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLittleHousesInput = {
@@ -7088,6 +8413,7 @@ export type UserUpdateWithoutLittleHousesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7108,6 +8434,7 @@ export type UserUpdateWithoutLittleHousesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7125,10 +8452,15 @@ export type UserUpdateWithoutLittleHousesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLittleHousesInput = {
@@ -7149,6 +8481,7 @@ export type UserUncheckedUpdateWithoutLittleHousesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7169,6 +8502,7 @@ export type UserUncheckedUpdateWithoutLittleHousesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7186,10 +8520,15 @@ export type UserUncheckedUpdateWithoutLittleHousesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutDailyGongkeLogsInput = {
@@ -7210,6 +8549,7 @@ export type UserCreateWithoutDailyGongkeLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7230,6 +8570,7 @@ export type UserCreateWithoutDailyGongkeLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7247,10 +8588,15 @@ export type UserCreateWithoutDailyGongkeLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
@@ -7271,6 +8617,7 @@ export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7291,6 +8638,7 @@ export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7308,10 +8656,15 @@ export type UserUncheckedCreateWithoutDailyGongkeLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutDailyGongkeLogsInput = {
@@ -7348,6 +8701,7 @@ export type UserUpdateWithoutDailyGongkeLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7368,6 +8722,7 @@ export type UserUpdateWithoutDailyGongkeLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7385,10 +8740,15 @@ export type UserUpdateWithoutDailyGongkeLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
@@ -7409,6 +8769,7 @@ export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7429,6 +8790,7 @@ export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7446,10 +8808,15 @@ export type UserUncheckedUpdateWithoutDailyGongkeLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutRepentanceLogsInput = {
@@ -7470,6 +8837,7 @@ export type UserCreateWithoutRepentanceLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7490,6 +8858,7 @@ export type UserCreateWithoutRepentanceLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7507,10 +8876,15 @@ export type UserCreateWithoutRepentanceLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutRepentanceLogsInput = {
@@ -7531,6 +8905,7 @@ export type UserUncheckedCreateWithoutRepentanceLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7551,6 +8926,7 @@ export type UserUncheckedCreateWithoutRepentanceLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7568,10 +8944,15 @@ export type UserUncheckedCreateWithoutRepentanceLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutRepentanceLogsInput = {
@@ -7608,6 +8989,7 @@ export type UserUpdateWithoutRepentanceLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7628,6 +9010,7 @@ export type UserUpdateWithoutRepentanceLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7645,10 +9028,15 @@ export type UserUpdateWithoutRepentanceLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
@@ -7669,6 +9057,7 @@ export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7689,6 +9078,7 @@ export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7706,10 +9096,15 @@ export type UserUncheckedUpdateWithoutRepentanceLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutAltarLogsInput = {
@@ -7730,6 +9125,7 @@ export type UserCreateWithoutAltarLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7750,6 +9146,7 @@ export type UserCreateWithoutAltarLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7767,10 +9164,15 @@ export type UserCreateWithoutAltarLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutAltarLogsInput = {
@@ -7791,6 +9193,7 @@ export type UserUncheckedCreateWithoutAltarLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -7811,6 +9214,7 @@ export type UserUncheckedCreateWithoutAltarLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -7828,10 +9232,15 @@ export type UserUncheckedCreateWithoutAltarLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutAltarLogsInput = {
@@ -7868,6 +9277,7 @@ export type UserUpdateWithoutAltarLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7888,6 +9298,7 @@ export type UserUpdateWithoutAltarLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7905,10 +9316,15 @@ export type UserUpdateWithoutAltarLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutAltarLogsInput = {
@@ -7929,6 +9345,7 @@ export type UserUncheckedUpdateWithoutAltarLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -7949,6 +9366,7 @@ export type UserUncheckedUpdateWithoutAltarLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -7966,10 +9384,15 @@ export type UserUncheckedUpdateWithoutAltarLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPracticeProfileInput = {
@@ -7990,6 +9413,7 @@ export type UserCreateWithoutPracticeProfileInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8010,6 +9434,7 @@ export type UserCreateWithoutPracticeProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8027,10 +9452,15 @@ export type UserCreateWithoutPracticeProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPracticeProfileInput = {
@@ -8051,6 +9481,7 @@ export type UserUncheckedCreateWithoutPracticeProfileInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8071,6 +9502,7 @@ export type UserUncheckedCreateWithoutPracticeProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8088,10 +9520,15 @@ export type UserUncheckedCreateWithoutPracticeProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPracticeProfileInput = {
@@ -8128,6 +9565,7 @@ export type UserUpdateWithoutPracticeProfileInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8148,6 +9586,7 @@ export type UserUpdateWithoutPracticeProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8165,10 +9604,15 @@ export type UserUpdateWithoutPracticeProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPracticeProfileInput = {
@@ -8189,6 +9633,7 @@ export type UserUncheckedUpdateWithoutPracticeProfileInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8209,6 +9654,7 @@ export type UserUncheckedUpdateWithoutPracticeProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8226,10 +9672,15 @@ export type UserUncheckedUpdateWithoutPracticeProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutActivationLogsInput = {
@@ -8250,6 +9701,7 @@ export type UserCreateWithoutActivationLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8270,6 +9722,7 @@ export type UserCreateWithoutActivationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8287,10 +9740,15 @@ export type UserCreateWithoutActivationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutActivationLogsInput = {
@@ -8311,6 +9769,7 @@ export type UserUncheckedCreateWithoutActivationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8331,6 +9790,7 @@ export type UserUncheckedCreateWithoutActivationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8348,10 +9808,15 @@ export type UserUncheckedCreateWithoutActivationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutActivationLogsInput = {
@@ -8388,6 +9853,7 @@ export type UserUpdateWithoutActivationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8408,6 +9874,7 @@ export type UserUpdateWithoutActivationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8425,10 +9892,15 @@ export type UserUpdateWithoutActivationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutActivationLogsInput = {
@@ -8449,6 +9921,7 @@ export type UserUncheckedUpdateWithoutActivationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8469,6 +9942,7 @@ export type UserUncheckedUpdateWithoutActivationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8486,10 +9960,15 @@ export type UserUncheckedUpdateWithoutActivationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutSelfCultivationSheetsInput = {
@@ -8510,6 +9989,7 @@ export type UserCreateWithoutSelfCultivationSheetsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8530,6 +10010,7 @@ export type UserCreateWithoutSelfCultivationSheetsInput = {
   practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8547,10 +10028,15 @@ export type UserCreateWithoutSelfCultivationSheetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutSelfCultivationSheetsInput = {
@@ -8571,6 +10057,7 @@ export type UserUncheckedCreateWithoutSelfCultivationSheetsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8591,6 +10078,7 @@ export type UserUncheckedCreateWithoutSelfCultivationSheetsInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8608,10 +10096,15 @@ export type UserUncheckedCreateWithoutSelfCultivationSheetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSelfCultivationSheetsInput = {
@@ -8648,6 +10141,7 @@ export type UserUpdateWithoutSelfCultivationSheetsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8668,6 +10162,7 @@ export type UserUpdateWithoutSelfCultivationSheetsInput = {
   practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8685,10 +10180,15 @@ export type UserUpdateWithoutSelfCultivationSheetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSelfCultivationSheetsInput = {
@@ -8709,6 +10209,7 @@ export type UserUncheckedUpdateWithoutSelfCultivationSheetsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8729,6 +10230,7 @@ export type UserUncheckedUpdateWithoutSelfCultivationSheetsInput = {
   practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8746,10 +10248,15 @@ export type UserUncheckedUpdateWithoutSelfCultivationSheetsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutConvincingFamilyRitualsInput = {
@@ -8770,6 +10277,7 @@ export type UserCreateWithoutConvincingFamilyRitualsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8791,6 +10299,7 @@ export type UserCreateWithoutConvincingFamilyRitualsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8807,10 +10316,15 @@ export type UserCreateWithoutConvincingFamilyRitualsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutConvincingFamilyRitualsInput = {
@@ -8831,6 +10345,7 @@ export type UserUncheckedCreateWithoutConvincingFamilyRitualsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -8852,6 +10367,7 @@ export type UserUncheckedCreateWithoutConvincingFamilyRitualsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -8868,10 +10384,15 @@ export type UserUncheckedCreateWithoutConvincingFamilyRitualsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutConvincingFamilyRitualsInput = {
@@ -8908,6 +10429,7 @@ export type UserUpdateWithoutConvincingFamilyRitualsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8929,6 +10451,7 @@ export type UserUpdateWithoutConvincingFamilyRitualsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -8945,10 +10468,15 @@ export type UserUpdateWithoutConvincingFamilyRitualsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutConvincingFamilyRitualsInput = {
@@ -8969,6 +10497,7 @@ export type UserUncheckedUpdateWithoutConvincingFamilyRitualsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -8990,6 +10519,7 @@ export type UserUncheckedUpdateWithoutConvincingFamilyRitualsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9006,10 +10536,15 @@ export type UserUncheckedUpdateWithoutConvincingFamilyRitualsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutNameChangeApplicationsInput = {
@@ -9030,6 +10565,7 @@ export type UserCreateWithoutNameChangeApplicationsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9051,6 +10587,7 @@ export type UserCreateWithoutNameChangeApplicationsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9067,10 +10604,15 @@ export type UserCreateWithoutNameChangeApplicationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutNameChangeApplicationsInput = {
@@ -9091,6 +10633,7 @@ export type UserUncheckedCreateWithoutNameChangeApplicationsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9112,6 +10655,7 @@ export type UserUncheckedCreateWithoutNameChangeApplicationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9128,10 +10672,15 @@ export type UserUncheckedCreateWithoutNameChangeApplicationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutNameChangeApplicationsInput = {
@@ -9168,6 +10717,7 @@ export type UserUpdateWithoutNameChangeApplicationsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9189,6 +10739,7 @@ export type UserUpdateWithoutNameChangeApplicationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9205,10 +10756,15 @@ export type UserUpdateWithoutNameChangeApplicationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutNameChangeApplicationsInput = {
@@ -9229,6 +10785,7 @@ export type UserUncheckedUpdateWithoutNameChangeApplicationsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9250,6 +10807,7 @@ export type UserUncheckedUpdateWithoutNameChangeApplicationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9266,10 +10824,15 @@ export type UserUncheckedUpdateWithoutNameChangeApplicationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutSutraReadingSessionsInput = {
@@ -9290,6 +10853,7 @@ export type UserCreateWithoutSutraReadingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9311,6 +10875,7 @@ export type UserCreateWithoutSutraReadingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9327,10 +10892,15 @@ export type UserCreateWithoutSutraReadingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutSutraReadingSessionsInput = {
@@ -9351,6 +10921,7 @@ export type UserUncheckedCreateWithoutSutraReadingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9372,6 +10943,7 @@ export type UserUncheckedCreateWithoutSutraReadingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9388,10 +10960,15 @@ export type UserUncheckedCreateWithoutSutraReadingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSutraReadingSessionsInput = {
@@ -9428,6 +11005,7 @@ export type UserUpdateWithoutSutraReadingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9449,6 +11027,7 @@ export type UserUpdateWithoutSutraReadingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9465,10 +11044,15 @@ export type UserUpdateWithoutSutraReadingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSutraReadingSessionsInput = {
@@ -9489,6 +11073,7 @@ export type UserUncheckedUpdateWithoutSutraReadingSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9510,6 +11095,7 @@ export type UserUncheckedUpdateWithoutSutraReadingSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9526,10 +11112,15 @@ export type UserUncheckedUpdateWithoutSutraReadingSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutSutraBookmarksInput = {
@@ -9550,6 +11141,7 @@ export type UserCreateWithoutSutraBookmarksInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9571,6 +11163,7 @@ export type UserCreateWithoutSutraBookmarksInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9587,10 +11180,15 @@ export type UserCreateWithoutSutraBookmarksInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutSutraBookmarksInput = {
@@ -9611,6 +11209,7 @@ export type UserUncheckedCreateWithoutSutraBookmarksInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9632,6 +11231,7 @@ export type UserUncheckedCreateWithoutSutraBookmarksInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9648,10 +11248,15 @@ export type UserUncheckedCreateWithoutSutraBookmarksInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSutraBookmarksInput = {
@@ -9688,6 +11293,7 @@ export type UserUpdateWithoutSutraBookmarksInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9709,6 +11315,7 @@ export type UserUpdateWithoutSutraBookmarksInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9725,10 +11332,15 @@ export type UserUpdateWithoutSutraBookmarksInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSutraBookmarksInput = {
@@ -9749,6 +11361,7 @@ export type UserUncheckedUpdateWithoutSutraBookmarksInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9770,6 +11383,7 @@ export type UserUncheckedUpdateWithoutSutraBookmarksInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9786,10 +11400,15 @@ export type UserUncheckedUpdateWithoutSutraBookmarksInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutLittleHouseBurnSessionsInput = {
@@ -9810,6 +11429,7 @@ export type UserCreateWithoutLittleHouseBurnSessionsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9831,6 +11451,7 @@ export type UserCreateWithoutLittleHouseBurnSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9847,10 +11468,15 @@ export type UserCreateWithoutLittleHouseBurnSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLittleHouseBurnSessionsInput = {
@@ -9871,6 +11497,7 @@ export type UserUncheckedCreateWithoutLittleHouseBurnSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -9892,6 +11519,7 @@ export type UserUncheckedCreateWithoutLittleHouseBurnSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -9908,10 +11536,15 @@ export type UserUncheckedCreateWithoutLittleHouseBurnSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLittleHouseBurnSessionsInput = {
@@ -9948,6 +11581,7 @@ export type UserUpdateWithoutLittleHouseBurnSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -9969,6 +11603,7 @@ export type UserUpdateWithoutLittleHouseBurnSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -9985,10 +11620,15 @@ export type UserUpdateWithoutLittleHouseBurnSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLittleHouseBurnSessionsInput = {
@@ -10009,6 +11649,7 @@ export type UserUncheckedUpdateWithoutLittleHouseBurnSessionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10030,6 +11671,7 @@ export type UserUncheckedUpdateWithoutLittleHouseBurnSessionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10046,10 +11688,15 @@ export type UserUncheckedUpdateWithoutLittleHouseBurnSessionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutChildProfilesInput = {
@@ -10070,6 +11717,7 @@ export type UserCreateWithoutChildProfilesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10091,6 +11739,7 @@ export type UserCreateWithoutChildProfilesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10107,10 +11756,15 @@ export type UserCreateWithoutChildProfilesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutChildProfilesInput = {
@@ -10131,6 +11785,7 @@ export type UserUncheckedCreateWithoutChildProfilesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10152,6 +11807,7 @@ export type UserUncheckedCreateWithoutChildProfilesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10168,10 +11824,15 @@ export type UserUncheckedCreateWithoutChildProfilesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutChildProfilesInput = {
@@ -10208,6 +11869,7 @@ export type UserUpdateWithoutChildProfilesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10229,6 +11891,7 @@ export type UserUpdateWithoutChildProfilesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10245,10 +11908,15 @@ export type UserUpdateWithoutChildProfilesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutChildProfilesInput = {
@@ -10269,6 +11937,7 @@ export type UserUncheckedUpdateWithoutChildProfilesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10290,6 +11959,7 @@ export type UserUncheckedUpdateWithoutChildProfilesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10306,10 +11976,15 @@ export type UserUncheckedUpdateWithoutChildProfilesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutAltarProfileInput = {
@@ -10330,6 +12005,7 @@ export type UserCreateWithoutAltarProfileInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10351,6 +12027,7 @@ export type UserCreateWithoutAltarProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10367,10 +12044,15 @@ export type UserCreateWithoutAltarProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutAltarProfileInput = {
@@ -10391,6 +12073,7 @@ export type UserUncheckedCreateWithoutAltarProfileInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10412,6 +12095,7 @@ export type UserUncheckedCreateWithoutAltarProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10428,10 +12112,15 @@ export type UserUncheckedCreateWithoutAltarProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutAltarProfileInput = {
@@ -10468,6 +12157,7 @@ export type UserUpdateWithoutAltarProfileInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10489,6 +12179,7 @@ export type UserUpdateWithoutAltarProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10505,10 +12196,15 @@ export type UserUpdateWithoutAltarProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutAltarProfileInput = {
@@ -10529,6 +12225,7 @@ export type UserUncheckedUpdateWithoutAltarProfileInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10550,6 +12247,7 @@ export type UserUncheckedUpdateWithoutAltarProfileInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10566,10 +12264,15 @@ export type UserUncheckedUpdateWithoutAltarProfileInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutWaterOfferingLogsInput = {
@@ -10590,6 +12293,7 @@ export type UserCreateWithoutWaterOfferingLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10611,6 +12315,7 @@ export type UserCreateWithoutWaterOfferingLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10627,10 +12332,15 @@ export type UserCreateWithoutWaterOfferingLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutWaterOfferingLogsInput = {
@@ -10651,6 +12361,7 @@ export type UserUncheckedCreateWithoutWaterOfferingLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10672,6 +12383,7 @@ export type UserUncheckedCreateWithoutWaterOfferingLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10688,10 +12400,15 @@ export type UserUncheckedCreateWithoutWaterOfferingLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutWaterOfferingLogsInput = {
@@ -10728,6 +12445,7 @@ export type UserUpdateWithoutWaterOfferingLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10749,6 +12467,7 @@ export type UserUpdateWithoutWaterOfferingLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10765,10 +12484,15 @@ export type UserUpdateWithoutWaterOfferingLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutWaterOfferingLogsInput = {
@@ -10789,6 +12513,7 @@ export type UserUncheckedUpdateWithoutWaterOfferingLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -10810,6 +12535,7 @@ export type UserUncheckedUpdateWithoutWaterOfferingLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -10826,10 +12552,15 @@ export type UserUncheckedUpdateWithoutWaterOfferingLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutDeceasedRelativesInput = {
@@ -10850,6 +12581,7 @@ export type UserCreateWithoutDeceasedRelativesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10871,6 +12603,7 @@ export type UserCreateWithoutDeceasedRelativesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10887,10 +12620,15 @@ export type UserCreateWithoutDeceasedRelativesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutDeceasedRelativesInput = {
@@ -10911,6 +12649,7 @@ export type UserUncheckedCreateWithoutDeceasedRelativesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -10932,6 +12671,7 @@ export type UserUncheckedCreateWithoutDeceasedRelativesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -10948,10 +12688,15 @@ export type UserUncheckedCreateWithoutDeceasedRelativesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutDeceasedRelativesInput = {
@@ -10988,6 +12733,7 @@ export type UserUpdateWithoutDeceasedRelativesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11009,6 +12755,7 @@ export type UserUpdateWithoutDeceasedRelativesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11025,10 +12772,15 @@ export type UserUpdateWithoutDeceasedRelativesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutDeceasedRelativesInput = {
@@ -11049,6 +12801,7 @@ export type UserUncheckedUpdateWithoutDeceasedRelativesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11070,6 +12823,7 @@ export type UserUncheckedUpdateWithoutDeceasedRelativesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11086,10 +12840,15 @@ export type UserUncheckedUpdateWithoutDeceasedRelativesInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutUserCharityInteractionsInput = {
@@ -11110,6 +12869,7 @@ export type UserCreateWithoutUserCharityInteractionsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11131,6 +12891,7 @@ export type UserCreateWithoutUserCharityInteractionsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11147,10 +12908,15 @@ export type UserCreateWithoutUserCharityInteractionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutUserCharityInteractionsInput = {
@@ -11171,6 +12937,7 @@ export type UserUncheckedCreateWithoutUserCharityInteractionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11192,6 +12959,7 @@ export type UserUncheckedCreateWithoutUserCharityInteractionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11208,10 +12976,15 @@ export type UserUncheckedCreateWithoutUserCharityInteractionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutUserCharityInteractionsInput = {
@@ -11248,6 +13021,7 @@ export type UserUpdateWithoutUserCharityInteractionsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11269,6 +13043,7 @@ export type UserUpdateWithoutUserCharityInteractionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11285,10 +13060,15 @@ export type UserUpdateWithoutUserCharityInteractionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutUserCharityInteractionsInput = {
@@ -11309,6 +13089,7 @@ export type UserUncheckedUpdateWithoutUserCharityInteractionsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11330,6 +13111,7 @@ export type UserUncheckedUpdateWithoutUserCharityInteractionsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11346,10 +13128,15 @@ export type UserUncheckedUpdateWithoutUserCharityInteractionsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutPractitionerVowsInput = {
@@ -11370,6 +13157,7 @@ export type UserCreateWithoutPractitionerVowsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11391,6 +13179,7 @@ export type UserCreateWithoutPractitionerVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11407,10 +13196,15 @@ export type UserCreateWithoutPractitionerVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutPractitionerVowsInput = {
@@ -11431,6 +13225,7 @@ export type UserUncheckedCreateWithoutPractitionerVowsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11452,6 +13247,7 @@ export type UserUncheckedCreateWithoutPractitionerVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11468,10 +13264,15 @@ export type UserUncheckedCreateWithoutPractitionerVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutPractitionerVowsInput = {
@@ -11508,6 +13309,7 @@ export type UserUpdateWithoutPractitionerVowsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11529,6 +13331,7 @@ export type UserUpdateWithoutPractitionerVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11545,10 +13348,15 @@ export type UserUpdateWithoutPractitionerVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutPractitionerVowsInput = {
@@ -11569,6 +13377,7 @@ export type UserUncheckedUpdateWithoutPractitionerVowsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11590,6 +13399,7 @@ export type UserUncheckedUpdateWithoutPractitionerVowsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11606,10 +13416,15 @@ export type UserUncheckedUpdateWithoutPractitionerVowsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutOrganizedEventsInput = {
@@ -11630,6 +13445,7 @@ export type UserCreateWithoutOrganizedEventsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11651,6 +13467,7 @@ export type UserCreateWithoutOrganizedEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11667,10 +13484,15 @@ export type UserCreateWithoutOrganizedEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutOrganizedEventsInput = {
@@ -11691,6 +13513,7 @@ export type UserUncheckedCreateWithoutOrganizedEventsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11712,6 +13535,7 @@ export type UserUncheckedCreateWithoutOrganizedEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11728,10 +13552,15 @@ export type UserUncheckedCreateWithoutOrganizedEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutOrganizedEventsInput = {
@@ -11768,6 +13597,7 @@ export type UserUpdateWithoutOrganizedEventsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11789,6 +13619,7 @@ export type UserUpdateWithoutOrganizedEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11805,10 +13636,15 @@ export type UserUpdateWithoutOrganizedEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutOrganizedEventsInput = {
@@ -11829,6 +13665,7 @@ export type UserUncheckedUpdateWithoutOrganizedEventsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -11850,6 +13687,7 @@ export type UserUncheckedUpdateWithoutOrganizedEventsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -11866,10 +13704,15 @@ export type UserUncheckedUpdateWithoutOrganizedEventsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutEventRegistrationsInput = {
@@ -11890,6 +13733,7 @@ export type UserCreateWithoutEventRegistrationsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11911,6 +13755,7 @@ export type UserCreateWithoutEventRegistrationsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11928,9 +13773,14 @@ export type UserCreateWithoutEventRegistrationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutEventRegistrationsInput = {
@@ -11951,6 +13801,7 @@ export type UserUncheckedCreateWithoutEventRegistrationsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -11972,6 +13823,7 @@ export type UserUncheckedCreateWithoutEventRegistrationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -11989,9 +13841,14 @@ export type UserUncheckedCreateWithoutEventRegistrationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutEventRegistrationsInput = {
@@ -12028,6 +13885,7 @@ export type UserUpdateWithoutEventRegistrationsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12049,6 +13907,7 @@ export type UserUpdateWithoutEventRegistrationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12066,9 +13925,14 @@ export type UserUpdateWithoutEventRegistrationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutEventRegistrationsInput = {
@@ -12089,6 +13953,7 @@ export type UserUncheckedUpdateWithoutEventRegistrationsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12110,6 +13975,7 @@ export type UserUncheckedUpdateWithoutEventRegistrationsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12127,9 +13993,14 @@ export type UserUncheckedUpdateWithoutEventRegistrationsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutLifeReleaseRecordsInput = {
@@ -12150,6 +14021,7 @@ export type UserCreateWithoutLifeReleaseRecordsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12171,6 +14043,7 @@ export type UserCreateWithoutLifeReleaseRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12187,10 +14060,15 @@ export type UserCreateWithoutLifeReleaseRecordsInput = {
   organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLifeReleaseRecordsInput = {
@@ -12211,6 +14089,7 @@ export type UserUncheckedCreateWithoutLifeReleaseRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12232,6 +14111,7 @@ export type UserUncheckedCreateWithoutLifeReleaseRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12248,10 +14128,15 @@ export type UserUncheckedCreateWithoutLifeReleaseRecordsInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLifeReleaseRecordsInput = {
@@ -12288,6 +14173,7 @@ export type UserUpdateWithoutLifeReleaseRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12309,6 +14195,7 @@ export type UserUpdateWithoutLifeReleaseRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12325,10 +14212,15 @@ export type UserUpdateWithoutLifeReleaseRecordsInput = {
   organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLifeReleaseRecordsInput = {
@@ -12349,6 +14241,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12370,6 +14263,7 @@ export type UserUncheckedUpdateWithoutLifeReleaseRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12386,10 +14280,15 @@ export type UserUncheckedUpdateWithoutLifeReleaseRecordsInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutProxySponsorReleasesInput = {
@@ -12410,6 +14309,7 @@ export type UserCreateWithoutProxySponsorReleasesInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12431,6 +14331,7 @@ export type UserCreateWithoutProxySponsorReleasesInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12447,10 +14348,15 @@ export type UserCreateWithoutProxySponsorReleasesInput = {
   organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutProxySponsorReleasesInput = {
@@ -12471,6 +14377,7 @@ export type UserUncheckedCreateWithoutProxySponsorReleasesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12492,6 +14399,7 @@ export type UserUncheckedCreateWithoutProxySponsorReleasesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12508,10 +14416,15 @@ export type UserUncheckedCreateWithoutProxySponsorReleasesInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutProxySponsorReleasesInput = {
@@ -12548,6 +14461,7 @@ export type UserUpdateWithoutProxySponsorReleasesInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12569,6 +14483,7 @@ export type UserUpdateWithoutProxySponsorReleasesInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12585,10 +14500,15 @@ export type UserUpdateWithoutProxySponsorReleasesInput = {
   organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutProxySponsorReleasesInput = {
@@ -12609,6 +14529,7 @@ export type UserUncheckedUpdateWithoutProxySponsorReleasesInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12630,6 +14551,7 @@ export type UserUncheckedUpdateWithoutProxySponsorReleasesInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12646,10 +14568,15 @@ export type UserUncheckedUpdateWithoutProxySponsorReleasesInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutLhRecordsInput = {
@@ -12670,6 +14597,7 @@ export type UserCreateWithoutLhRecordsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12691,6 +14619,7 @@ export type UserCreateWithoutLhRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12708,9 +14637,14 @@ export type UserCreateWithoutLhRecordsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutLhRecordsInput = {
@@ -12731,6 +14665,7 @@ export type UserUncheckedCreateWithoutLhRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12752,6 +14687,7 @@ export type UserUncheckedCreateWithoutLhRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12769,9 +14705,14 @@ export type UserUncheckedCreateWithoutLhRecordsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutLhRecordsInput = {
@@ -12808,6 +14749,7 @@ export type UserUpdateWithoutLhRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12829,6 +14771,7 @@ export type UserUpdateWithoutLhRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12846,9 +14789,14 @@ export type UserUpdateWithoutLhRecordsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutLhRecordsInput = {
@@ -12869,6 +14817,7 @@ export type UserUncheckedUpdateWithoutLhRecordsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -12890,6 +14839,7 @@ export type UserUncheckedUpdateWithoutLhRecordsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -12907,9 +14857,14 @@ export type UserUncheckedUpdateWithoutLhRecordsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutSacredFormApplicantsInput = {
@@ -12930,6 +14885,7 @@ export type UserCreateWithoutSacredFormApplicantsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -12951,6 +14907,7 @@ export type UserCreateWithoutSacredFormApplicantsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -12967,10 +14924,15 @@ export type UserCreateWithoutSacredFormApplicantsInput = {
   organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutSacredFormApplicantsInput = {
@@ -12991,6 +14953,7 @@ export type UserUncheckedCreateWithoutSacredFormApplicantsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -13012,6 +14975,7 @@ export type UserUncheckedCreateWithoutSacredFormApplicantsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -13028,10 +14992,15 @@ export type UserUncheckedCreateWithoutSacredFormApplicantsInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutSacredFormApplicantsInput = {
@@ -13068,6 +15037,7 @@ export type UserUpdateWithoutSacredFormApplicantsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13089,6 +15059,7 @@ export type UserUpdateWithoutSacredFormApplicantsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13105,10 +15076,15 @@ export type UserUpdateWithoutSacredFormApplicantsInput = {
   organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutSacredFormApplicantsInput = {
@@ -13129,6 +15105,7 @@ export type UserUncheckedUpdateWithoutSacredFormApplicantsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13150,6 +15127,7 @@ export type UserUncheckedUpdateWithoutSacredFormApplicantsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13166,13 +15144,18 @@ export type UserUncheckedUpdateWithoutSacredFormApplicantsInput = {
   organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
-export type UserCreateWithoutAltarItemsInput = {
+export type UserCreateWithoutNameChangeProbationsInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   email: string
@@ -13190,6 +15173,7 @@ export type UserCreateWithoutAltarItemsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -13211,6 +15195,7 @@ export type UserCreateWithoutAltarItemsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -13228,12 +15213,17 @@ export type UserCreateWithoutAltarItemsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
-export type UserUncheckedCreateWithoutAltarItemsInput = {
+export type UserUncheckedCreateWithoutNameChangeProbationsInput = {
   id?: string | runtime.Types.Skip
   publicId: string
   email: string
@@ -13251,6 +15241,7 @@ export type UserUncheckedCreateWithoutAltarItemsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -13272,6 +15263,7 @@ export type UserUncheckedCreateWithoutAltarItemsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -13289,9 +15281,302 @@ export type UserUncheckedCreateWithoutAltarItemsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutNameChangeProbationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutNameChangeProbationsInput, Prisma.UserUncheckedCreateWithoutNameChangeProbationsInput>
+}
+
+export type UserUpsertWithoutNameChangeProbationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutNameChangeProbationsInput, Prisma.UserUncheckedUpdateWithoutNameChangeProbationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutNameChangeProbationsInput, Prisma.UserUncheckedCreateWithoutNameChangeProbationsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutNameChangeProbationsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutNameChangeProbationsInput, Prisma.UserUncheckedUpdateWithoutNameChangeProbationsInput>
+}
+
+export type UserUpdateWithoutNameChangeProbationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutNameChangeProbationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutAltarItemsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutAltarItemsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutAltarItemsInput = {
@@ -13328,6 +15613,7 @@ export type UserUpdateWithoutAltarItemsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13349,6 +15635,7 @@ export type UserUpdateWithoutAltarItemsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13366,9 +15653,14 @@ export type UserUpdateWithoutAltarItemsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutAltarItemsInput = {
@@ -13389,6 +15681,7 @@ export type UserUncheckedUpdateWithoutAltarItemsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13410,6 +15703,7 @@ export type UserUncheckedUpdateWithoutAltarItemsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13427,9 +15721,14 @@ export type UserUncheckedUpdateWithoutAltarItemsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserCreateWithoutAltarValidationLogsInput = {
@@ -13450,6 +15749,7 @@ export type UserCreateWithoutAltarValidationLogsInput = {
   mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -13471,6 +15771,7 @@ export type UserCreateWithoutAltarValidationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -13488,9 +15789,14 @@ export type UserCreateWithoutAltarValidationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserUncheckedCreateWithoutAltarValidationLogsInput = {
@@ -13511,6 +15817,7 @@ export type UserUncheckedCreateWithoutAltarValidationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
@@ -13532,6 +15839,7 @@ export type UserUncheckedCreateWithoutAltarValidationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
@@ -13549,9 +15857,14 @@ export type UserUncheckedCreateWithoutAltarValidationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
 }
 
 export type UserCreateOrConnectWithoutAltarValidationLogsInput = {
@@ -13588,6 +15901,7 @@ export type UserUpdateWithoutAltarValidationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13609,6 +15923,7 @@ export type UserUpdateWithoutAltarValidationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13626,9 +15941,14 @@ export type UserUpdateWithoutAltarValidationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 export type UserUncheckedUpdateWithoutAltarValidationLogsInput = {
@@ -13649,6 +15969,7 @@ export type UserUncheckedUpdateWithoutAltarValidationLogsInput = {
   mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
   mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
   communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
   calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
@@ -13670,6 +15991,7 @@ export type UserUncheckedUpdateWithoutAltarValidationLogsInput = {
   wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
   communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
@@ -13687,9 +16009,1166 @@ export type UserUncheckedUpdateWithoutAltarValidationLogsInput = {
   lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
   sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
   eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutContentReactionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutContentReactionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutContentReactionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentReactionsInput, Prisma.UserUncheckedCreateWithoutContentReactionsInput>
+}
+
+export type UserUpsertWithoutContentReactionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutContentReactionsInput, Prisma.UserUncheckedUpdateWithoutContentReactionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentReactionsInput, Prisma.UserUncheckedCreateWithoutContentReactionsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutContentReactionsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutContentReactionsInput, Prisma.UserUncheckedUpdateWithoutContentReactionsInput>
+}
+
+export type UserUpdateWithoutContentReactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutContentReactionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutContentBookmarksInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutContentBookmarksInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutContentBookmarksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentBookmarksInput, Prisma.UserUncheckedCreateWithoutContentBookmarksInput>
+}
+
+export type UserUpsertWithoutContentBookmarksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutContentBookmarksInput, Prisma.UserUncheckedUpdateWithoutContentBookmarksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentBookmarksInput, Prisma.UserUncheckedCreateWithoutContentBookmarksInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutContentBookmarksInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutContentBookmarksInput, Prisma.UserUncheckedUpdateWithoutContentBookmarksInput>
+}
+
+export type UserUpdateWithoutContentBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutContentBookmarksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutWisdomQuestionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutWisdomQuestionsInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutWisdomQuestionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutWisdomQuestionsInput, Prisma.UserUncheckedCreateWithoutWisdomQuestionsInput>
+}
+
+export type UserUpsertWithoutWisdomQuestionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutWisdomQuestionsInput, Prisma.UserUncheckedUpdateWithoutWisdomQuestionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutWisdomQuestionsInput, Prisma.UserUncheckedCreateWithoutWisdomQuestionsInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutWisdomQuestionsInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutWisdomQuestionsInput, Prisma.UserUncheckedUpdateWithoutWisdomQuestionsInput>
+}
+
+export type UserUpdateWithoutWisdomQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutWisdomQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomAnswers?: Prisma.WisdomAnswerUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserCreateWithoutWisdomAnswersInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserUncheckedCreateWithoutWisdomAnswersInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  email: string
+  passwordHash: string
+  displayName: string
+  avatarUrl?: string | null | runtime.Types.Skip
+  role?: $Enums.UserRole | runtime.Types.Skip
+  status?: $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedCreateNestedManyWithoutApprovedByInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedCreateNestedManyWithoutCreatedByInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedCreateNestedManyWithoutUploaderInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedCreateNestedOneWithoutUserInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedCreateNestedManyWithoutPractitionerInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedCreateNestedManyWithoutOrganizerInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedCreateNestedManyWithoutSponsorInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedCreateNestedManyWithoutActorInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedCreateNestedManyWithoutUserInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedCreateNestedManyWithoutAuthorInput | runtime.Types.Skip
+}
+
+export type UserCreateOrConnectWithoutWisdomAnswersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutWisdomAnswersInput, Prisma.UserUncheckedCreateWithoutWisdomAnswersInput>
+}
+
+export type UserUpsertWithoutWisdomAnswersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutWisdomAnswersInput, Prisma.UserUncheckedUpdateWithoutWisdomAnswersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutWisdomAnswersInput, Prisma.UserUncheckedCreateWithoutWisdomAnswersInput>
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+}
+
+export type UserUpdateToOneWithWhereWithoutWisdomAnswersInput = {
+  where?: Prisma.UserWhereInput | runtime.Types.Skip
+  data: Prisma.XOR<Prisma.UserUpdateWithoutWisdomAnswersInput, Prisma.UserUncheckedUpdateWithoutWisdomAnswersInput>
+}
+
+export type UserUpdateWithoutWisdomAnswersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+}
+
+export type UserUncheckedUpdateWithoutWisdomAnswersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  email?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole | runtime.Types.Skip
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus | runtime.Types.Skip
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  mediaCollections?: Prisma.MediaCollectionUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  communityPosts?: Prisma.CommunityPostUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityTestimonials?: Prisma.CommunityTestimonialUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookEntries?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  guestbookApprovals?: Prisma.GuestbookEntryUncheckedUpdateManyWithoutApprovedByNestedInput | runtime.Types.Skip
+  calendarEvents?: Prisma.CalendarEventUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  pushJobs?: Prisma.PushJobUncheckedUpdateManyWithoutCreatedByNestedInput | runtime.Types.Skip
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  beginnerGuides?: Prisma.BeginnerGuideUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  downloads?: Prisma.DownloadUncheckedUpdateManyWithoutUploaderNestedInput | runtime.Types.Skip
+  chantingSessions?: Prisma.ChantingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  vows?: Prisma.VowUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseJournals?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lifeReleaseActors?: Prisma.LifeReleaseJournalUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  littleHouses?: Prisma.LittleHouseUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  dailyGongkeLogs?: Prisma.DailyGongkeLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  repentanceLogs?: Prisma.RepentanceLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarLogs?: Prisma.AltarLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  activationLogs?: Prisma.ActivationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practiceProfile?: Prisma.PracticeProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  wisdomEntries?: Prisma.WisdomEntryUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  selfCultivationSheets?: Prisma.SelfCultivationSheetUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  communityComments?: Prisma.CommunityCommentUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
+  communityHearts?: Prisma.CommunityHeartUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  convincingFamilyRituals?: Prisma.ConvincingFamilyRitualSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeApplications?: Prisma.NameChangeApplicationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraReadingSessions?: Prisma.SutraReadingSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  sutraBookmarks?: Prisma.SutraBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  littleHouseBurnSessions?: Prisma.LittleHouseBurnSessionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  childProfiles?: Prisma.ChildProfileUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarProfile?: Prisma.AltarProfileUncheckedUpdateOneWithoutUserNestedInput | runtime.Types.Skip
+  waterOfferingLogs?: Prisma.WaterOfferingLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  deceasedRelatives?: Prisma.DeceasedRelativeUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  userCharityInteractions?: Prisma.UserCharityInteractionUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  practitionerVows?: Prisma.MaritalPurityVowUncheckedUpdateManyWithoutPractitionerNestedInput | runtime.Types.Skip
+  organizedEvents?: Prisma.BuddhistEventUncheckedUpdateManyWithoutOrganizerNestedInput | runtime.Types.Skip
+  lifeReleaseRecords?: Prisma.LifeReleaseRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  proxySponsorReleases?: Prisma.ProxyLifeReleaseUncheckedUpdateManyWithoutSponsorNestedInput | runtime.Types.Skip
+  sacredFormApplicants?: Prisma.FormApplicantUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  nameChangeProbations?: Prisma.NameChangeProbationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarItems?: Prisma.AltarItemUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  altarValidationLogs?: Prisma.AltarValidationLogUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  lhRecords?: Prisma.LhRecordUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  eventRegistrations?: Prisma.EventRegistrationUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  contentReactions?: Prisma.ContentReactionUncheckedUpdateManyWithoutActorNestedInput | runtime.Types.Skip
+  contentBookmarks?: Prisma.ContentBookmarkUncheckedUpdateManyWithoutUserNestedInput | runtime.Types.Skip
+  wisdomQuestions?: Prisma.WisdomQuestionUncheckedUpdateManyWithoutAuthorNestedInput | runtime.Types.Skip
 }
 
 
@@ -13703,6 +17182,7 @@ export type UserCountOutputType = {
   mediaAssets: number
   mediaCollections: number
   communityPosts: number
+  communityTestimonials: number
   guestbookEntries: number
   guestbookApprovals: number
   calendarEvents: number
@@ -13722,6 +17202,7 @@ export type UserCountOutputType = {
   wisdomEntries: number
   selfCultivationSheets: number
   passwordResetTokens: number
+  emailVerificationTokens: number
   communityComments: number
   communityHearts: number
   convincingFamilyRituals: number
@@ -13738,10 +17219,15 @@ export type UserCountOutputType = {
   lifeReleaseRecords: number
   proxySponsorReleases: number
   sacredFormApplicants: number
+  nameChangeProbations: number
   altarItems: number
   altarValidationLogs: number
   lhRecords: number
   eventRegistrations: number
+  contentReactions: number
+  contentBookmarks: number
+  wisdomQuestions: number
+  wisdomAnswers: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -13750,6 +17236,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   mediaAssets?: boolean | UserCountOutputTypeCountMediaAssetsArgs
   mediaCollections?: boolean | UserCountOutputTypeCountMediaCollectionsArgs
   communityPosts?: boolean | UserCountOutputTypeCountCommunityPostsArgs
+  communityTestimonials?: boolean | UserCountOutputTypeCountCommunityTestimonialsArgs
   guestbookEntries?: boolean | UserCountOutputTypeCountGuestbookEntriesArgs
   guestbookApprovals?: boolean | UserCountOutputTypeCountGuestbookApprovalsArgs
   calendarEvents?: boolean | UserCountOutputTypeCountCalendarEventsArgs
@@ -13769,6 +17256,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   wisdomEntries?: boolean | UserCountOutputTypeCountWisdomEntriesArgs
   selfCultivationSheets?: boolean | UserCountOutputTypeCountSelfCultivationSheetsArgs
   passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
+  emailVerificationTokens?: boolean | UserCountOutputTypeCountEmailVerificationTokensArgs
   communityComments?: boolean | UserCountOutputTypeCountCommunityCommentsArgs
   communityHearts?: boolean | UserCountOutputTypeCountCommunityHeartsArgs
   convincingFamilyRituals?: boolean | UserCountOutputTypeCountConvincingFamilyRitualsArgs
@@ -13785,10 +17273,15 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   lifeReleaseRecords?: boolean | UserCountOutputTypeCountLifeReleaseRecordsArgs
   proxySponsorReleases?: boolean | UserCountOutputTypeCountProxySponsorReleasesArgs
   sacredFormApplicants?: boolean | UserCountOutputTypeCountSacredFormApplicantsArgs
+  nameChangeProbations?: boolean | UserCountOutputTypeCountNameChangeProbationsArgs
   altarItems?: boolean | UserCountOutputTypeCountAltarItemsArgs
   altarValidationLogs?: boolean | UserCountOutputTypeCountAltarValidationLogsArgs
   lhRecords?: boolean | UserCountOutputTypeCountLhRecordsArgs
   eventRegistrations?: boolean | UserCountOutputTypeCountEventRegistrationsArgs
+  contentReactions?: boolean | UserCountOutputTypeCountContentReactionsArgs
+  contentBookmarks?: boolean | UserCountOutputTypeCountContentBookmarksArgs
+  wisdomQuestions?: boolean | UserCountOutputTypeCountWisdomQuestionsArgs
+  wisdomAnswers?: boolean | UserCountOutputTypeCountWisdomAnswersArgs
 }
 
 /**
@@ -13834,6 +17327,13 @@ export type UserCountOutputTypeCountMediaCollectionsArgs<ExtArgs extends runtime
  */
 export type UserCountOutputTypeCountCommunityPostsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CommunityPostWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCommunityTestimonialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CommunityTestimonialWhereInput | runtime.Types.Skip
 }
 
 /**
@@ -13972,6 +17472,13 @@ export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runt
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountEmailVerificationTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailVerificationTokenWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountCommunityCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CommunityCommentWhereInput | runtime.Types.Skip
 }
@@ -14084,6 +17591,13 @@ export type UserCountOutputTypeCountSacredFormApplicantsArgs<ExtArgs extends run
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountNameChangeProbationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NameChangeProbationWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountAltarItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AltarItemWhereInput | runtime.Types.Skip
 }
@@ -14109,6 +17623,34 @@ export type UserCountOutputTypeCountEventRegistrationsArgs<ExtArgs extends runti
   where?: Prisma.EventRegistrationWhereInput | runtime.Types.Skip
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountContentReactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ContentReactionWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountContentBookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ContentBookmarkWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWisdomQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WisdomQuestionWhereInput | runtime.Types.Skip
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWisdomAnswersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WisdomAnswerWhereInput | runtime.Types.Skip
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean | runtime.Types.Skip
@@ -14128,6 +17670,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
   mediaCollections?: boolean | Prisma.User$mediaCollectionsArgs<ExtArgs> | runtime.Types.Skip
   communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
+  communityTestimonials?: boolean | Prisma.User$communityTestimonialsArgs<ExtArgs> | runtime.Types.Skip
   guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
   guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
   calendarEvents?: boolean | Prisma.User$calendarEventsArgs<ExtArgs> | runtime.Types.Skip
@@ -14149,6 +17692,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   wisdomEntries?: boolean | Prisma.User$wisdomEntriesArgs<ExtArgs> | runtime.Types.Skip
   selfCultivationSheets?: boolean | Prisma.User$selfCultivationSheetsArgs<ExtArgs> | runtime.Types.Skip
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs> | runtime.Types.Skip
+  emailVerificationTokens?: boolean | Prisma.User$emailVerificationTokensArgs<ExtArgs> | runtime.Types.Skip
   communityComments?: boolean | Prisma.User$communityCommentsArgs<ExtArgs> | runtime.Types.Skip
   communityHearts?: boolean | Prisma.User$communityHeartsArgs<ExtArgs> | runtime.Types.Skip
   convincingFamilyRituals?: boolean | Prisma.User$convincingFamilyRitualsArgs<ExtArgs> | runtime.Types.Skip
@@ -14166,10 +17710,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   lifeReleaseRecords?: boolean | Prisma.User$lifeReleaseRecordsArgs<ExtArgs> | runtime.Types.Skip
   proxySponsorReleases?: boolean | Prisma.User$proxySponsorReleasesArgs<ExtArgs> | runtime.Types.Skip
   sacredFormApplicants?: boolean | Prisma.User$sacredFormApplicantsArgs<ExtArgs> | runtime.Types.Skip
+  nameChangeProbations?: boolean | Prisma.User$nameChangeProbationsArgs<ExtArgs> | runtime.Types.Skip
   altarItems?: boolean | Prisma.User$altarItemsArgs<ExtArgs> | runtime.Types.Skip
   altarValidationLogs?: boolean | Prisma.User$altarValidationLogsArgs<ExtArgs> | runtime.Types.Skip
   lhRecords?: boolean | Prisma.User$lhRecordsArgs<ExtArgs> | runtime.Types.Skip
   eventRegistrations?: boolean | Prisma.User$eventRegistrationsArgs<ExtArgs> | runtime.Types.Skip
+  contentReactions?: boolean | Prisma.User$contentReactionsArgs<ExtArgs> | runtime.Types.Skip
+  contentBookmarks?: boolean | Prisma.User$contentBookmarksArgs<ExtArgs> | runtime.Types.Skip
+  wisdomQuestions?: boolean | Prisma.User$wisdomQuestionsArgs<ExtArgs> | runtime.Types.Skip
+  wisdomAnswers?: boolean | Prisma.User$wisdomAnswersArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["user"]>
 
@@ -14225,6 +17774,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   mediaAssets?: boolean | Prisma.User$mediaAssetsArgs<ExtArgs> | runtime.Types.Skip
   mediaCollections?: boolean | Prisma.User$mediaCollectionsArgs<ExtArgs> | runtime.Types.Skip
   communityPosts?: boolean | Prisma.User$communityPostsArgs<ExtArgs> | runtime.Types.Skip
+  communityTestimonials?: boolean | Prisma.User$communityTestimonialsArgs<ExtArgs> | runtime.Types.Skip
   guestbookEntries?: boolean | Prisma.User$guestbookEntriesArgs<ExtArgs> | runtime.Types.Skip
   guestbookApprovals?: boolean | Prisma.User$guestbookApprovalsArgs<ExtArgs> | runtime.Types.Skip
   calendarEvents?: boolean | Prisma.User$calendarEventsArgs<ExtArgs> | runtime.Types.Skip
@@ -14246,6 +17796,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   wisdomEntries?: boolean | Prisma.User$wisdomEntriesArgs<ExtArgs> | runtime.Types.Skip
   selfCultivationSheets?: boolean | Prisma.User$selfCultivationSheetsArgs<ExtArgs> | runtime.Types.Skip
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs> | runtime.Types.Skip
+  emailVerificationTokens?: boolean | Prisma.User$emailVerificationTokensArgs<ExtArgs> | runtime.Types.Skip
   communityComments?: boolean | Prisma.User$communityCommentsArgs<ExtArgs> | runtime.Types.Skip
   communityHearts?: boolean | Prisma.User$communityHeartsArgs<ExtArgs> | runtime.Types.Skip
   convincingFamilyRituals?: boolean | Prisma.User$convincingFamilyRitualsArgs<ExtArgs> | runtime.Types.Skip
@@ -14263,10 +17814,15 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   lifeReleaseRecords?: boolean | Prisma.User$lifeReleaseRecordsArgs<ExtArgs> | runtime.Types.Skip
   proxySponsorReleases?: boolean | Prisma.User$proxySponsorReleasesArgs<ExtArgs> | runtime.Types.Skip
   sacredFormApplicants?: boolean | Prisma.User$sacredFormApplicantsArgs<ExtArgs> | runtime.Types.Skip
+  nameChangeProbations?: boolean | Prisma.User$nameChangeProbationsArgs<ExtArgs> | runtime.Types.Skip
   altarItems?: boolean | Prisma.User$altarItemsArgs<ExtArgs> | runtime.Types.Skip
   altarValidationLogs?: boolean | Prisma.User$altarValidationLogsArgs<ExtArgs> | runtime.Types.Skip
   lhRecords?: boolean | Prisma.User$lhRecordsArgs<ExtArgs> | runtime.Types.Skip
   eventRegistrations?: boolean | Prisma.User$eventRegistrationsArgs<ExtArgs> | runtime.Types.Skip
+  contentReactions?: boolean | Prisma.User$contentReactionsArgs<ExtArgs> | runtime.Types.Skip
+  contentBookmarks?: boolean | Prisma.User$contentBookmarksArgs<ExtArgs> | runtime.Types.Skip
+  wisdomQuestions?: boolean | Prisma.User$wisdomQuestionsArgs<ExtArgs> | runtime.Types.Skip
+  wisdomAnswers?: boolean | Prisma.User$wisdomAnswersArgs<ExtArgs> | runtime.Types.Skip
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -14280,6 +17836,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     mediaAssets: Prisma.$MediaAssetPayload<ExtArgs>[]
     mediaCollections: Prisma.$MediaCollectionPayload<ExtArgs>[]
     communityPosts: Prisma.$CommunityPostPayload<ExtArgs>[]
+    communityTestimonials: Prisma.$CommunityTestimonialPayload<ExtArgs>[]
     guestbookEntries: Prisma.$GuestbookEntryPayload<ExtArgs>[]
     guestbookApprovals: Prisma.$GuestbookEntryPayload<ExtArgs>[]
     calendarEvents: Prisma.$CalendarEventPayload<ExtArgs>[]
@@ -14301,6 +17858,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     wisdomEntries: Prisma.$WisdomEntryPayload<ExtArgs>[]
     selfCultivationSheets: Prisma.$SelfCultivationSheetPayload<ExtArgs>[]
     passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
+    emailVerificationTokens: Prisma.$EmailVerificationTokenPayload<ExtArgs>[]
     communityComments: Prisma.$CommunityCommentPayload<ExtArgs>[]
     communityHearts: Prisma.$CommunityHeartPayload<ExtArgs>[]
     convincingFamilyRituals: Prisma.$ConvincingFamilyRitualSessionPayload<ExtArgs>[]
@@ -14318,10 +17876,15 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     lifeReleaseRecords: Prisma.$LifeReleaseRecordPayload<ExtArgs>[]
     proxySponsorReleases: Prisma.$ProxyLifeReleasePayload<ExtArgs>[]
     sacredFormApplicants: Prisma.$FormApplicantPayload<ExtArgs>[]
+    nameChangeProbations: Prisma.$NameChangeProbationPayload<ExtArgs>[]
     altarItems: Prisma.$AltarItemPayload<ExtArgs>[]
     altarValidationLogs: Prisma.$AltarValidationLogPayload<ExtArgs>[]
     lhRecords: Prisma.$LhRecordPayload<ExtArgs>[]
     eventRegistrations: Prisma.$EventRegistrationPayload<ExtArgs>[]
+    contentReactions: Prisma.$ContentReactionPayload<ExtArgs>[]
+    contentBookmarks: Prisma.$ContentBookmarkPayload<ExtArgs>[]
+    wisdomQuestions: Prisma.$WisdomQuestionPayload<ExtArgs>[]
+    wisdomAnswers: Prisma.$WisdomAnswerPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -14735,6 +18298,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   mediaAssets<T extends Prisma.User$mediaAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mediaCollections<T extends Prisma.User$mediaCollectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaCollectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaCollectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   communityPosts<T extends Prisma.User$communityPostsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityPostsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPostPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  communityTestimonials<T extends Prisma.User$communityTestimonialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityTestimonialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityTestimonialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   guestbookEntries<T extends Prisma.User$guestbookEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   guestbookApprovals<T extends Prisma.User$guestbookApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$guestbookApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestbookEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   calendarEvents<T extends Prisma.User$calendarEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$calendarEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14756,6 +18320,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   wisdomEntries<T extends Prisma.User$wisdomEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wisdomEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WisdomEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   selfCultivationSheets<T extends Prisma.User$selfCultivationSheetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$selfCultivationSheetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SelfCultivationSheetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passwordResetTokens<T extends Prisma.User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailVerificationTokens<T extends Prisma.User$emailVerificationTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailVerificationTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailVerificationTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   communityComments<T extends Prisma.User$communityCommentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   communityHearts<T extends Prisma.User$communityHeartsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityHeartsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityHeartPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   convincingFamilyRituals<T extends Prisma.User$convincingFamilyRitualsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$convincingFamilyRitualsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConvincingFamilyRitualSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14773,10 +18338,15 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   lifeReleaseRecords<T extends Prisma.User$lifeReleaseRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lifeReleaseRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LifeReleaseRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   proxySponsorReleases<T extends Prisma.User$proxySponsorReleasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$proxySponsorReleasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProxyLifeReleasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sacredFormApplicants<T extends Prisma.User$sacredFormApplicantsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sacredFormApplicantsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FormApplicantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  nameChangeProbations<T extends Prisma.User$nameChangeProbationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$nameChangeProbationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NameChangeProbationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   altarItems<T extends Prisma.User$altarItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$altarItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AltarItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   altarValidationLogs<T extends Prisma.User$altarValidationLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$altarValidationLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AltarValidationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lhRecords<T extends Prisma.User$lhRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$lhRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LhRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   eventRegistrations<T extends Prisma.User$eventRegistrationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$eventRegistrationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EventRegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contentReactions<T extends Prisma.User$contentReactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contentReactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contentBookmarks<T extends Prisma.User$contentBookmarksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contentBookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentBookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  wisdomQuestions<T extends Prisma.User$wisdomQuestionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wisdomQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WisdomQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  wisdomAnswers<T extends Prisma.User$wisdomAnswersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wisdomAnswersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WisdomAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15331,6 +18901,30 @@ export type User$communityPostsArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
+ * User.communityTestimonials
+ */
+export type User$communityTestimonialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CommunityTestimonial
+   */
+  select?: Prisma.CommunityTestimonialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CommunityTestimonial
+   */
+  omit?: Prisma.CommunityTestimonialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CommunityTestimonialInclude<ExtArgs> | null
+  where?: Prisma.CommunityTestimonialWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.CommunityTestimonialOrderByWithRelationInput | Prisma.CommunityTestimonialOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.CommunityTestimonialWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.CommunityTestimonialScalarFieldEnum | Prisma.CommunityTestimonialScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
  * User.guestbookEntries
  */
 export type User$guestbookEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -15825,6 +19419,30 @@ export type User$passwordResetTokensArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * User.emailVerificationTokens
+ */
+export type User$emailVerificationTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailVerificationToken
+   */
+  select?: Prisma.EmailVerificationTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailVerificationToken
+   */
+  omit?: Prisma.EmailVerificationTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailVerificationTokenInclude<ExtArgs> | null
+  where?: Prisma.EmailVerificationTokenWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.EmailVerificationTokenOrderByWithRelationInput | Prisma.EmailVerificationTokenOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.EmailVerificationTokenWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.EmailVerificationTokenScalarFieldEnum | Prisma.EmailVerificationTokenScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
  * User.communityComments
  */
 export type User$communityCommentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -16228,6 +19846,30 @@ export type User$sacredFormApplicantsArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
+ * User.nameChangeProbations
+ */
+export type User$nameChangeProbationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NameChangeProbation
+   */
+  select?: Prisma.NameChangeProbationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NameChangeProbation
+   */
+  omit?: Prisma.NameChangeProbationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NameChangeProbationInclude<ExtArgs> | null
+  where?: Prisma.NameChangeProbationWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.NameChangeProbationOrderByWithRelationInput | Prisma.NameChangeProbationOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.NameChangeProbationWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.NameChangeProbationScalarFieldEnum | Prisma.NameChangeProbationScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
  * User.altarItems
  */
 export type User$altarItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -16321,6 +19963,102 @@ export type User$eventRegistrationsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   distinct?: Prisma.EventRegistrationScalarFieldEnum | Prisma.EventRegistrationScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.contentReactions
+ */
+export type User$contentReactionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ContentReaction
+   */
+  select?: Prisma.ContentReactionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ContentReaction
+   */
+  omit?: Prisma.ContentReactionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContentReactionInclude<ExtArgs> | null
+  where?: Prisma.ContentReactionWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.ContentReactionOrderByWithRelationInput | Prisma.ContentReactionOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.ContentReactionWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.ContentReactionScalarFieldEnum | Prisma.ContentReactionScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.contentBookmarks
+ */
+export type User$contentBookmarksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ContentBookmark
+   */
+  select?: Prisma.ContentBookmarkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ContentBookmark
+   */
+  omit?: Prisma.ContentBookmarkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContentBookmarkInclude<ExtArgs> | null
+  where?: Prisma.ContentBookmarkWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.ContentBookmarkOrderByWithRelationInput | Prisma.ContentBookmarkOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.ContentBookmarkWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.ContentBookmarkScalarFieldEnum | Prisma.ContentBookmarkScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.wisdomQuestions
+ */
+export type User$wisdomQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WisdomQuestion
+   */
+  select?: Prisma.WisdomQuestionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WisdomQuestion
+   */
+  omit?: Prisma.WisdomQuestionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WisdomQuestionInclude<ExtArgs> | null
+  where?: Prisma.WisdomQuestionWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.WisdomQuestionOrderByWithRelationInput | Prisma.WisdomQuestionOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.WisdomQuestionWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.WisdomQuestionScalarFieldEnum | Prisma.WisdomQuestionScalarFieldEnum[] | runtime.Types.Skip
+}
+
+/**
+ * User.wisdomAnswers
+ */
+export type User$wisdomAnswersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WisdomAnswer
+   */
+  select?: Prisma.WisdomAnswerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WisdomAnswer
+   */
+  omit?: Prisma.WisdomAnswerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WisdomAnswerInclude<ExtArgs> | null
+  where?: Prisma.WisdomAnswerWhereInput | runtime.Types.Skip
+  orderBy?: Prisma.WisdomAnswerOrderByWithRelationInput | Prisma.WisdomAnswerOrderByWithRelationInput[] | runtime.Types.Skip
+  cursor?: Prisma.WisdomAnswerWhereUniqueInput | runtime.Types.Skip
+  take?: number | runtime.Types.Skip
+  skip?: number | runtime.Types.Skip
+  distinct?: Prisma.WisdomAnswerScalarFieldEnum | Prisma.WisdomAnswerScalarFieldEnum[] | runtime.Types.Skip
 }
 
 /**

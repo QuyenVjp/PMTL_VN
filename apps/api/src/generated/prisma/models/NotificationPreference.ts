@@ -20,8 +20,22 @@ export type NotificationPreferenceModel = runtime.Types.Result.DefaultSelection<
 
 export type AggregateNotificationPreference = {
   _count: NotificationPreferenceCountAggregateOutputType | null
+  _avg: NotificationPreferenceAvgAggregateOutputType | null
+  _sum: NotificationPreferenceSumAggregateOutputType | null
   _min: NotificationPreferenceMinAggregateOutputType | null
   _max: NotificationPreferenceMaxAggregateOutputType | null
+}
+
+export type NotificationPreferenceAvgAggregateOutputType = {
+  practiceReminderHour: number | null
+  practiceReminderMinute: number | null
+  eventReminderLeadTimeHours: number | null
+}
+
+export type NotificationPreferenceSumAggregateOutputType = {
+  practiceReminderHour: number | null
+  practiceReminderMinute: number | null
+  eventReminderLeadTimeHours: number | null
 }
 
 export type NotificationPreferenceMinAggregateOutputType = {
@@ -32,6 +46,10 @@ export type NotificationPreferenceMinAggregateOutputType = {
   communityUpdates: boolean | null
   quietHoursStart: string | null
   quietHoursEnd: string | null
+  timezone: string | null
+  practiceReminderHour: number | null
+  practiceReminderMinute: number | null
+  eventReminderLeadTimeHours: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +62,10 @@ export type NotificationPreferenceMaxAggregateOutputType = {
   communityUpdates: boolean | null
   quietHoursStart: string | null
   quietHoursEnd: string | null
+  timezone: string | null
+  practiceReminderHour: number | null
+  practiceReminderMinute: number | null
+  eventReminderLeadTimeHours: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,11 +78,27 @@ export type NotificationPreferenceCountAggregateOutputType = {
   communityUpdates: number
   quietHoursStart: number
   quietHoursEnd: number
+  timezone: number
+  practiceReminderHour: number
+  practiceReminderMinute: number
+  eventReminderLeadTimeHours: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type NotificationPreferenceAvgAggregateInputType = {
+  practiceReminderHour?: true | runtime.Types.Skip
+  practiceReminderMinute?: true | runtime.Types.Skip
+  eventReminderLeadTimeHours?: true | runtime.Types.Skip
+}
+
+export type NotificationPreferenceSumAggregateInputType = {
+  practiceReminderHour?: true | runtime.Types.Skip
+  practiceReminderMinute?: true | runtime.Types.Skip
+  eventReminderLeadTimeHours?: true | runtime.Types.Skip
+}
 
 export type NotificationPreferenceMinAggregateInputType = {
   id?: true | runtime.Types.Skip
@@ -70,6 +108,10 @@ export type NotificationPreferenceMinAggregateInputType = {
   communityUpdates?: true | runtime.Types.Skip
   quietHoursStart?: true | runtime.Types.Skip
   quietHoursEnd?: true | runtime.Types.Skip
+  timezone?: true | runtime.Types.Skip
+  practiceReminderHour?: true | runtime.Types.Skip
+  practiceReminderMinute?: true | runtime.Types.Skip
+  eventReminderLeadTimeHours?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -82,6 +124,10 @@ export type NotificationPreferenceMaxAggregateInputType = {
   communityUpdates?: true | runtime.Types.Skip
   quietHoursStart?: true | runtime.Types.Skip
   quietHoursEnd?: true | runtime.Types.Skip
+  timezone?: true | runtime.Types.Skip
+  practiceReminderHour?: true | runtime.Types.Skip
+  practiceReminderMinute?: true | runtime.Types.Skip
+  eventReminderLeadTimeHours?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
 }
@@ -94,6 +140,10 @@ export type NotificationPreferenceCountAggregateInputType = {
   communityUpdates?: true | runtime.Types.Skip
   quietHoursStart?: true | runtime.Types.Skip
   quietHoursEnd?: true | runtime.Types.Skip
+  timezone?: true | runtime.Types.Skip
+  practiceReminderHour?: true | runtime.Types.Skip
+  practiceReminderMinute?: true | runtime.Types.Skip
+  eventReminderLeadTimeHours?: true | runtime.Types.Skip
   createdAt?: true | runtime.Types.Skip
   updatedAt?: true | runtime.Types.Skip
   _all?: true | runtime.Types.Skip
@@ -137,6 +187,18 @@ export type NotificationPreferenceAggregateArgs<ExtArgs extends runtime.Types.Ex
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: NotificationPreferenceAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: NotificationPreferenceSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: NotificationPreferenceMinAggregateInputType
@@ -167,6 +229,8 @@ export type NotificationPreferenceGroupByArgs<ExtArgs extends runtime.Types.Exte
   take?: number | runtime.Types.Skip
   skip?: number | runtime.Types.Skip
   _count?: NotificationPreferenceCountAggregateInputType | true
+  _avg?: NotificationPreferenceAvgAggregateInputType
+  _sum?: NotificationPreferenceSumAggregateInputType
   _min?: NotificationPreferenceMinAggregateInputType
   _max?: NotificationPreferenceMaxAggregateInputType
 }
@@ -179,9 +243,15 @@ export type NotificationPreferenceGroupByOutputType = {
   communityUpdates: boolean
   quietHoursStart: string | null
   quietHoursEnd: string | null
+  timezone: string | null
+  practiceReminderHour: number | null
+  practiceReminderMinute: number | null
+  eventReminderLeadTimeHours: number | null
   createdAt: Date
   updatedAt: Date
   _count: NotificationPreferenceCountAggregateOutputType | null
+  _avg: NotificationPreferenceAvgAggregateOutputType | null
+  _sum: NotificationPreferenceSumAggregateOutputType | null
   _min: NotificationPreferenceMinAggregateOutputType | null
   _max: NotificationPreferenceMaxAggregateOutputType | null
 }
@@ -212,6 +282,10 @@ export type NotificationPreferenceWhereInput = {
   communityUpdates?: Prisma.BoolFilter<"NotificationPreference"> | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  timezone?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -225,6 +299,10 @@ export type NotificationPreferenceOrderByWithRelationInput = {
   communityUpdates?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursStart?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   quietHoursEnd?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  timezone?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderHour?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   user?: Prisma.UserOrderByWithRelationInput | runtime.Types.Skip
@@ -241,6 +319,10 @@ export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
   communityUpdates?: Prisma.BoolFilter<"NotificationPreference"> | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  timezone?: Prisma.StringNullableFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.IntNullableFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput> | runtime.Types.Skip
@@ -254,11 +336,17 @@ export type NotificationPreferenceOrderByWithAggregationInput = {
   communityUpdates?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursStart?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   quietHoursEnd?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  timezone?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderHour?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
   _count?: Prisma.NotificationPreferenceCountOrderByAggregateInput | runtime.Types.Skip
+  _avg?: Prisma.NotificationPreferenceAvgOrderByAggregateInput | runtime.Types.Skip
   _max?: Prisma.NotificationPreferenceMaxOrderByAggregateInput | runtime.Types.Skip
   _min?: Prisma.NotificationPreferenceMinOrderByAggregateInput | runtime.Types.Skip
+  _sum?: Prisma.NotificationPreferenceSumOrderByAggregateInput | runtime.Types.Skip
 }
 
 export type NotificationPreferenceScalarWhereWithAggregatesInput = {
@@ -272,6 +360,10 @@ export type NotificationPreferenceScalarWhereWithAggregatesInput = {
   communityUpdates?: Prisma.BoolWithAggregatesFilter<"NotificationPreference"> | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.StringNullableWithAggregatesFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.StringNullableWithAggregatesFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  timezone?: Prisma.StringNullableWithAggregatesFilter<"NotificationPreference"> | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.IntNullableWithAggregatesFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.IntNullableWithAggregatesFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.IntNullableWithAggregatesFilter<"NotificationPreference"> | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"NotificationPreference"> | Date | string | runtime.Types.Skip
 }
@@ -283,6 +375,10 @@ export type NotificationPreferenceCreateInput = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: string | null | runtime.Types.Skip
   quietHoursEnd?: string | null | runtime.Types.Skip
+  timezone?: string | null | runtime.Types.Skip
+  practiceReminderHour?: number | null | runtime.Types.Skip
+  practiceReminderMinute?: number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
   user: Prisma.UserCreateNestedOneWithoutNotificationPreferencesInput
@@ -296,6 +392,10 @@ export type NotificationPreferenceUncheckedCreateInput = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: string | null | runtime.Types.Skip
   quietHoursEnd?: string | null | runtime.Types.Skip
+  timezone?: string | null | runtime.Types.Skip
+  practiceReminderHour?: number | null | runtime.Types.Skip
+  practiceReminderMinute?: number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -307,6 +407,10 @@ export type NotificationPreferenceUpdateInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationPreferencesNestedInput | runtime.Types.Skip
@@ -320,6 +424,10 @@ export type NotificationPreferenceUncheckedUpdateInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -332,6 +440,10 @@ export type NotificationPreferenceCreateManyInput = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: string | null | runtime.Types.Skip
   quietHoursEnd?: string | null | runtime.Types.Skip
+  timezone?: string | null | runtime.Types.Skip
+  practiceReminderHour?: number | null | runtime.Types.Skip
+  practiceReminderMinute?: number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -343,6 +455,10 @@ export type NotificationPreferenceUpdateManyMutationInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -355,6 +471,10 @@ export type NotificationPreferenceUncheckedUpdateManyInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -372,8 +492,18 @@ export type NotificationPreferenceCountOrderByAggregateInput = {
   communityUpdates?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursStart?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursEnd?: Prisma.SortOrder | runtime.Types.Skip
+  timezone?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderHour?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type NotificationPreferenceAvgOrderByAggregateInput = {
+  practiceReminderHour?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type NotificationPreferenceMaxOrderByAggregateInput = {
@@ -384,6 +514,10 @@ export type NotificationPreferenceMaxOrderByAggregateInput = {
   communityUpdates?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursStart?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursEnd?: Prisma.SortOrder | runtime.Types.Skip
+  timezone?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderHour?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
 }
@@ -396,8 +530,18 @@ export type NotificationPreferenceMinOrderByAggregateInput = {
   communityUpdates?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursStart?: Prisma.SortOrder | runtime.Types.Skip
   quietHoursEnd?: Prisma.SortOrder | runtime.Types.Skip
+  timezone?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderHour?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+}
+
+export type NotificationPreferenceSumOrderByAggregateInput = {
+  practiceReminderHour?: Prisma.SortOrder | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.SortOrder | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.SortOrder | runtime.Types.Skip
 }
 
 export type NotificationPreferenceCreateNestedOneWithoutUserInput = {
@@ -439,6 +583,10 @@ export type NotificationPreferenceCreateWithoutUserInput = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: string | null | runtime.Types.Skip
   quietHoursEnd?: string | null | runtime.Types.Skip
+  timezone?: string | null | runtime.Types.Skip
+  practiceReminderHour?: number | null | runtime.Types.Skip
+  practiceReminderMinute?: number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -450,6 +598,10 @@ export type NotificationPreferenceUncheckedCreateWithoutUserInput = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: string | null | runtime.Types.Skip
   quietHoursEnd?: string | null | runtime.Types.Skip
+  timezone?: string | null | runtime.Types.Skip
+  practiceReminderHour?: number | null | runtime.Types.Skip
+  practiceReminderMinute?: number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: number | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
 }
@@ -477,6 +629,10 @@ export type NotificationPreferenceUpdateWithoutUserInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -488,6 +644,10 @@ export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
   communityUpdates?: Prisma.BoolFieldUpdateOperationsInput | boolean | runtime.Types.Skip
   quietHoursStart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   quietHoursEnd?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
+  practiceReminderHour?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  practiceReminderMinute?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
+  eventReminderLeadTimeHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
@@ -502,6 +662,10 @@ export type NotificationPreferenceSelect<ExtArgs extends runtime.Types.Extension
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: boolean | runtime.Types.Skip
   quietHoursEnd?: boolean | runtime.Types.Skip
+  timezone?: boolean | runtime.Types.Skip
+  practiceReminderHour?: boolean | runtime.Types.Skip
+  practiceReminderMinute?: boolean | runtime.Types.Skip
+  eventReminderLeadTimeHours?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -515,6 +679,10 @@ export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runt
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: boolean | runtime.Types.Skip
   quietHoursEnd?: boolean | runtime.Types.Skip
+  timezone?: boolean | runtime.Types.Skip
+  practiceReminderHour?: boolean | runtime.Types.Skip
+  practiceReminderMinute?: boolean | runtime.Types.Skip
+  eventReminderLeadTimeHours?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -528,6 +696,10 @@ export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runt
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: boolean | runtime.Types.Skip
   quietHoursEnd?: boolean | runtime.Types.Skip
+  timezone?: boolean | runtime.Types.Skip
+  practiceReminderHour?: boolean | runtime.Types.Skip
+  practiceReminderMinute?: boolean | runtime.Types.Skip
+  eventReminderLeadTimeHours?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
@@ -541,11 +713,15 @@ export type NotificationPreferenceSelectScalar = {
   communityUpdates?: boolean | runtime.Types.Skip
   quietHoursStart?: boolean | runtime.Types.Skip
   quietHoursEnd?: boolean | runtime.Types.Skip
+  timezone?: boolean | runtime.Types.Skip
+  practiceReminderHour?: boolean | runtime.Types.Skip
+  practiceReminderMinute?: boolean | runtime.Types.Skip
+  eventReminderLeadTimeHours?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "practiceReminders" | "eventReminders" | "communityUpdates" | "quietHoursStart" | "quietHoursEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["notificationPreference"], runtime.Types.Skip>
+export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "practiceReminders" | "eventReminders" | "communityUpdates" | "quietHoursStart" | "quietHoursEnd" | "timezone" | "practiceReminderHour" | "practiceReminderMinute" | "eventReminderLeadTimeHours" | "createdAt" | "updatedAt", ExtArgs["result"]["notificationPreference"], runtime.Types.Skip>
 export type NotificationPreferenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs> | runtime.Types.Skip
 }
@@ -569,6 +745,10 @@ export type $NotificationPreferencePayload<ExtArgs extends runtime.Types.Extensi
     communityUpdates: boolean
     quietHoursStart: string | null
     quietHoursEnd: string | null
+    timezone: string | null
+    practiceReminderHour: number | null
+    practiceReminderMinute: number | null
+    eventReminderLeadTimeHours: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["notificationPreference"]>
@@ -1002,6 +1182,10 @@ export interface NotificationPreferenceFieldRefs {
   readonly communityUpdates: Prisma.FieldRef<"NotificationPreference", 'Boolean'>
   readonly quietHoursStart: Prisma.FieldRef<"NotificationPreference", 'String'>
   readonly quietHoursEnd: Prisma.FieldRef<"NotificationPreference", 'String'>
+  readonly timezone: Prisma.FieldRef<"NotificationPreference", 'String'>
+  readonly practiceReminderHour: Prisma.FieldRef<"NotificationPreference", 'Int'>
+  readonly practiceReminderMinute: Prisma.FieldRef<"NotificationPreference", 'Int'>
+  readonly eventReminderLeadTimeHours: Prisma.FieldRef<"NotificationPreference", 'Int'>
   readonly createdAt: Prisma.FieldRef<"NotificationPreference", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"NotificationPreference", 'DateTime'>
 }

@@ -6,6 +6,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectQueue } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { QUEUES } from "./queue.constants.js";
+import type { OutboxEventRow } from "../outbox/outbox.service.js";
 
 export interface PdpaRetentionJobData {
   trigger: "scheduled" | "manual";
@@ -29,6 +30,8 @@ export class QueueService {
     private readonly pdpaQueue: Queue,
     @InjectQueue(QUEUES.MODERATION_PIPELINE)
     private readonly moderationQueue: Queue,
+    @InjectQueue(QUEUES.OUTBOX_DISPATCH)
+    private readonly outboxQueue: Queue,
   ) {}
 
   async enqueuePdpaRetention(data: PdpaRetentionJobData) {
@@ -58,6 +61,26 @@ export class QueueService {
     return job.id;
   }
 
+  /**
+   * Enqueue outbox event for dispatch to domain handlers.
+   * Called by OutboxProcessor after fetching unprocessed events.
+   */
+  async enqueueOutboxEvent(event: OutboxEventRow) {
+    const job = await this.outboxQueue.add(event.eventType, {
+      eventId: event.id,
+      eventType: event.eventType,
+      aggregateId: event.aggregateId,
+      payload: event.payload,
+    });
+    this.logger.log({
+      msg: "queue.outbox_event.enqueued",
+      jobId: job.id,
+      eventId: event.id,
+      eventType: event.eventType,
+    });
+    return job.id;
+  }
+
   async getQueueStats() {
     const [pdpaWaiting, pdpaActive, pdpaFailed] = await Promise.all([
       this.pdpaQueue.getWaitingCount(),
@@ -69,10 +92,16 @@ export class QueueService {
       this.moderationQueue.getActiveCount(),
       this.moderationQueue.getFailedCount(),
     ]);
+    const [outboxWaiting, outboxActive, outboxFailed] = await Promise.all([
+      this.outboxQueue.getWaitingCount(),
+      this.outboxQueue.getActiveCount(),
+      this.outboxQueue.getFailedCount(),
+    ]);
 
     return {
       pdpaRetention: { waiting: pdpaWaiting, active: pdpaActive, failed: pdpaFailed },
       moderationPipeline: { waiting: modWaiting, active: modActive, failed: modFailed },
+      outboxDispatch: { waiting: outboxWaiting, active: outboxActive, failed: outboxFailed },
     };
   }
 }

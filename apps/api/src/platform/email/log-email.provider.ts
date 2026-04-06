@@ -5,11 +5,12 @@ import type { EmailProvider, MailPayload } from "./email.provider.js";
 export class LogEmailProvider implements EmailProvider {
   private readonly logger = new Logger(LogEmailProvider.name);
 
-  async send(payload: MailPayload): Promise<void> {
+  send(payload: MailPayload): Promise<void> {
     this.logger.log({
       msg: "email.log_provider.sent",
       to: payload.to,
       subject: payload.subject,
     });
+    return Promise.resolve();
   }
 }

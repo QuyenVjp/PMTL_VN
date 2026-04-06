@@ -10,9 +10,6 @@ interface CreateChildProfileDto {
   hasGamingAddiction?: boolean;
 }
 
-interface DiagnoseGamingAddictionDto {
-  childProfileId: string;
-}
 
 @Injectable()
 export class GamingAddictionDiagnosisService {

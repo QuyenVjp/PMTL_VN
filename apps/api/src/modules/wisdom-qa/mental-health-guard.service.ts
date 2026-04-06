@@ -108,10 +108,12 @@ export class MentalHealthGuardService {
       where: { userId },
       create: {
         userId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
         mentalHealthCondition: condition as any,
         daBeiZhouDailyLimit,
       },
       update: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
         mentalHealthCondition: condition as any,
         daBeiZhouDailyLimit,
       },

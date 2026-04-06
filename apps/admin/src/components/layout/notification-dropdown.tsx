@@ -23,14 +23,13 @@ import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 // ── Notification types ───────────────────────────────────────────────
 
@@ -134,68 +133,75 @@ export function NotificationDropdown() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[380px] p-0" align="end">
-        <Card className="border-0 shadow-none">
-          <div className="flex items-center justify-between border-b border-border p-3">
-            <h3 className="text-sm font-semibold">Thông báo</h3>
-            {unreadCount > 0 && (
-              <Button
-                variant="link"
-                className="h-auto p-0 text-sm"
-                onClick={handleDismissAll}
-              >
-                Đánh dấu đã đọc
-              </Button>
-            )}
-          </div>
-          <ScrollArea className="max-h-[320px]">
-            {notifications.length > 0 ? (
-              <ul>
-                {notifications.map((notification) => {
-                  const Icon = notification.icon;
-                  return (
-                    <li key={notification.id}>
-                      <Link
-                        to={notification.url}
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
-                      >
-                        <Badge className="size-9 shrink-0">
-                          <Icon className="size-4" />
-                        </Badge>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm truncate">
-                            {notification.content}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatDistance(notification.date)}
-                          </p>
-                        </div>
-                        {!notification.isRead && (
-                          <div className="size-2 shrink-0 rounded-full bg-primary" />
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <div className="py-8 text-center text-sm text-muted-foreground">
-                Không có thông báo nào.
-              </div>
-            )}
-          </ScrollArea>
-          <CardFooter className="justify-center border-t border-border p-0">
-            <Link
-              to="/he-thong/thong-bao"
-              className={cn(
-                buttonVariants({ variant: "link" }),
-                "text-center",
-              )}
+      <PopoverContent className="w-[480px] p-0 flex flex-col bg-popover overflow-hidden shadow-lg border-muted" align="end" sideOffset={8}>
+        <div className="flex-none flex items-center justify-between border-b border-border bg-popover px-4 py-3 z-10 relative">
+          <h3 className="text-sm font-semibold">Thông báo</h3>
+          {unreadCount > 0 && (
+            <Button
+              variant="link"
+              className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
+              onClick={handleDismissAll}
             >
-              Xem tất cả thông báo
-            </Link>
-          </CardFooter>
-        </Card>
+              Đánh dấu đã đọc
+            </Button>
+          )}
+        </div>
+        
+        {/* Using native overflow div to prevent ScrollArea flex overlaps */}
+        <div className="flex-1 overflow-y-auto max-h-[360px]">
+          {notifications.length > 0 ? (
+            <div className="flex flex-col">
+              {notifications.map((notification) => {
+                const Icon = notification.icon;
+                return (
+                  <Link
+                    key={notification.id}
+                    to={notification.url}
+                    className={cn(
+                      "flex items-start gap-4 border-b border-muted last:border-b-0 px-4 py-3 transition-colors hover:bg-muted/50 focus-visible:outline-hidden focus-visible:bg-muted/50",
+                      !notification.isRead && "bg-muted/20"
+                    )}
+                  >
+                    <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-muted border border-border/50">
+                      <Icon className="size-4 text-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <p className={cn(
+                        "text-sm line-clamp-2 leading-relaxed tracking-tight", 
+                        notification.isRead ? "text-muted-foreground" : "text-foreground font-medium"
+                      )}>
+                        {notification.content}
+                      </p>
+                      <p className="text-xs text-muted-foreground/80 flex items-center">
+                        {formatDistance(notification.date)}
+                      </p>
+                    </div>
+                    {!notification.isRead && (
+                      <div className="mt-2.5 size-2 shrink-0 rounded-full bg-primary shadow-sm" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+                <Bell className="size-5 text-muted-foreground" />
+              </div>
+              <p className="mt-4 text-sm font-medium text-foreground">Không có thông báo mới</p>
+              <p className="mt-1 text-xs text-muted-foreground">Bạn đã xem hết tất cả thông báo.</p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex-none border-t border-border bg-popover p-2 z-10 relative">
+          <Link
+            to="/he-thong/thong-bao"
+            className="flex w-full items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            Xem tất cả thông báo
+          </Link>
+        </div>
       </PopoverContent>
     </Popover>
   );

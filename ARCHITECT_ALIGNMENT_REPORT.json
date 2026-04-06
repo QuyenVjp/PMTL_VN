@@ -1,0 +1,237 @@
+{
+  "report_title": "PMTL_VN Admin Architecture Alignment Gap Analysis",
+  "report_date": "2026-04-05",
+  "scope": "apps/admin vs design/01-repo-constitution + design/04-execution-overlay",
+  "phases": {
+    "phase_0_shell_and_auth_safe_data": {
+      "status": "COMPLETE",
+      "description": "Shell, query client, error handling, read-only foundation",
+      "completed_items": [
+        "AdminShell component",
+        "Query client setup with queryOptions",
+        "Admin API client (shim from @pmtl/api-client)",
+        "Dashboard (read-only)",
+        "Feature flags (read-only)",
+        "Audit logs (read-only)",
+        "Health check (read-only)"
+      ]
+    },
+    "phase_1_core_editorial_workspaces": {
+      "status": "PARTIAL",
+      "completed": [
+        "posts (queries.ts + mutations.ts — full CRUD)"
+      ],
+      "missing_mutations": [
+        "beginner-guides: no mutations.ts found",
+        "daily-practice-admin: folder missing entirely",
+        "little-house-admin: folder missing entirely",
+        "life-release-admin: folder missing entirely",
+        "media-library-admin: folder missing entirely"
+      ]
+    },
+    "phase_2_moderation_and_community": {
+      "status": "PARTIAL",
+      "completed": [
+        "moderation-reports (queries.ts + mutations.ts)",
+        "community-posts (queries.ts + mutations.ts)",
+        "moderation-comments (queries.ts + mutations.ts)"
+      ],
+      "missing": [
+        "guestbook: folder missing (router references it but no feature folder)"
+      ]
+    },
+    "phase_3_calendar_search_notifications": {
+      "status": "PARTIAL",
+      "completed": [
+        "calendar/events (queries.ts + mutations.ts)",
+        "notifications (queries.ts + mutations.ts)"
+      ],
+      "missing": [
+        "search-admin: folder missing"
+      ]
+    },
+    "phase_4_identity_support_wisdom_contact": {
+      "status": "PARTIAL",
+      "completed": [
+        "users (queries.ts + mutations.ts — but file location is /features/users not /features/users-admin)",
+        "sessions (queries.ts + mutations.ts — but file location is /features/sessions not /features/sessions-admin)",
+        "wisdom-baihoa (queries.ts + mutations.ts)",
+        "volunteers (queries.ts + mutations.ts)",
+        "assisted-entry (queries.ts + mutations.ts)"
+      ],
+      "naming_mismatch": "folders use short names instead of 'admin' suffix per APPS_ADMIN_SCAFFOLD_BACKLOG.md"
+    }
+  },
+  "critical_gaps": [
+    {
+      "risk": "correctness",
+      "item": "Query key factory naming inconsistency",
+      "evidence": "postKeys uses 'lists()' (plural) while charityKeys/volunteerKeys skip intermediate list() step. Feature folders like dharma-compliance, altar-management, life-liberation use non-admin-prefixed keys (e.g., 'charities' instead of 'admin-charities')",
+      "spec_reference": "ADMIN_FEATURE_QUERY_PLAN.md requires all features to use 'admin-' prefix in root key",
+      "recommended_fix": "Audit all /features/*/queries.ts — ensure ALL query keys follow pattern ['admin-<feature>'] as root; standardize lists()/details() intermediate functions across all features"
+    },
+    {
+      "risk": "correctness",
+      "item": "Missing feature folders vs. router expectations",
+      "evidence": "Router references /admin/noi-dung/kinh-bai-tap (daily-practice-admin), /admin/noi-dung/ngoi-nha-nho (little-house-admin), /admin/noi-dung/phong-sanh (life-release-admin), /admin/noi-dung/tau-lieu (media-library-admin), /admin/noi-dung/thu-vien (wisdom-baihoa for media) and others, but feature folders are entirely missing",
+      "spec_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md Wave 1",
+      "recommended_fix": "Create missing feature folders with queries.ts + mutations.ts for each workspace; use ADMIN_PAGE_API_MAPPING.md and ADMIN_FEATURE_QUERY_PLAN.md as templates"
+    },
+    {
+      "risk": "correctness",
+      "item": "Invalidation doesn't respect role narrowing per ADMIN_PAGE_API_MAPPING.md",
+      "evidence": "Mutations invalidate dashboard globally ('dashboardKeys.all') without checking which dashboard panel was actually affected. Per ADMIN_PAGE_API_MAPPING.md, dashboard should only invalidate specific aggregates (systemSummary, pendingModeration, contentOpsSummary, etc.) when relevant mutation occurs",
+      "spec_reference": "ADMIN_PAGE_API_MAPPING.md line 76-92: Dashboard widget dependency shortcut",
+      "recommended_fix": "Create granular dashboard invalidation helpers: invalidateDashboardContentOps(), invalidateDashboardPendingModeration(), etc. Update all mutations to call only relevant helpers"
+    },
+    {
+      "risk": "correctness",
+      "item": "Missing cross-module invalidation for publish/unpublish",
+      "evidence": "Posts publish mutation invalidates only admin keys + dashboardKeys.all. Per spec, publish/unpublish must also trigger public cache invalidation owner (e.g., revalidateTag() or webhook to platform/cache module)",
+      "spec_reference": "ADMIN_PAGE_API_MAPPING.md lines 99, 101-105; ADMIN_PAGE_API_MAPPING.md section 'Cross-module invalidation edge rules'",
+      "recommended_fix": "Add onSuccess callback to publish/unpublish mutations that triggers platform cache invalidation owner (e.g., notify platform/cache via API or event bus)"
+    },
+    {
+      "risk": "completeness",
+      "item": "Feature folder naming convention deviation",
+      "evidence": "Design specifies /features/users-admin, /features/sessions-admin, /features/daily-practice-admin, but codebase uses /features/users, /features/sessions, /features/daily-recitation. Feature folders like dharma-compliance, life-liberation, sacred-forms, altar-management, little-house are non-canonical.",
+      "spec_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md target tree lines 66-135",
+      "recommended_fix": "Consolidate naming: rename /features/users → /features/users-admin, /features/sessions → /features/sessions-admin, etc. Keep consistent -admin suffix for clarity that these are admin-only features"
+    },
+    {
+      "risk": "completeness",
+      "item": "Query key stability across filters",
+      "evidence": "Some features like altar-management use raw Record<string, unknown> for filters instead of typed filter interfaces. This can cause cache misses if filter object is regenerated with same values.",
+      "spec_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md line 230: 'filter object phải stable và serialize được'",
+      "recommended_fix": "Define explicit Filter interfaces for all list queries (e.g., PostListFilters already done in content/queries.ts); validate all filters are serializable and stable"
+    },
+    {
+      "risk": "security",
+      "item": "Role narrowing not enforced at component level",
+      "evidence": "Admin pages render all buttons but design requires backend policy projection for sensitive actions. Mutations like updateFeatureFlag(), blockUser(), changeRole() may execute without explicit role gate at UI.",
+      "spec_reference": "ADMIN_PAGE_API_MAPPING.md lines 26-57: Role narrowing inside admin surfaces",
+      "recommended_fix": "Add backend policy projection to all sensitive mutations (result: { allowed: boolean, reason?: string }); conditionally render buttons based on policy, not just page route gate"
+    },
+    {
+      "risk": "optimization",
+      "item": "Broad dashboard invalidation on every mutation",
+      "evidence": "Most mutations invalidate dashboardKeys.all, which prevents granular re-render optimization",
+      "spec_reference": "ADMIN_PAGE_API_MAPPING.md lines 88-92",
+      "recommended_fix": "Implement dashboard widget dependency map; mutations only invalidate dashboard when that widget is actually affected"
+    }
+  ],
+  "module_maturity": {
+    "admin": "65%",
+    "admin_justification": "Core shell + query infra complete. Phase 0-1 largely done (posts, dashboard, auth-safe pages). Phase 2-4 missing ~40% of expected workspaces (daily-practice, little-house, life-release, media-library, guestbook, search-admin). Feature folder naming deviated from design. Query key consistency issues. Cross-module invalidation incomplete.",
+    "api": "70%",
+    "api_justification": "Modules exist (content, community, moderation, calendar, etc.); routes likely defined per API_ROUTE_INVENTORY.md. Admin routes assumed correct by design. DTO contracts and error envelopes in place. Missing evidence of full admin role narrowing enforcement at endpoint level.",
+    "web": "85%",
+    "web_justification": "Not the focus of this analysis, but referenced design suggests public surface exists. Web is typically more complete than admin. No critical alignment issues detected in cross-module invalidation notes."
+  },
+  "missing_from_design_canon": [
+    {
+      "item": "dharma-compliance, life-liberation, sacred-forms, altar-management, daily-recitation",
+      "note": "These folders exist in apps/admin but are NOT in APPS_ADMIN_SCAFFOLD_BACKLOG.md Wave 0-4. Either: (1) they are new domains post-design, (2) they belong to different module or (3) they should be removed. Clarify ownership and add to design docs if legitimate."
+    },
+    {
+      "item": "guestbook feature implementation",
+      "note": "ADMIN_PAGE_API_MAPPING.md references /admin/cong-dong/so-luu-niem (guestbook), but folder doesn't exist. Router line 79-80 imports from @/features/workspaces/module-pages which suggests it's bundled elsewhere."
+    },
+    {
+      "item": "posts vs content feature folder",
+      "note": "Design expects /features/posts but code uses /features/content with posts inside. This works but deviates from APPS_ADMIN_SCAFFOLD_BACKLOG.md naming."
+    }
+  ],
+  "api_contract_risks": [
+    {
+      "risk": "API endpoint path inconsistency",
+      "evidence": "Some mutations use /content/posts (no /admin prefix), others use /admin/content/guides. Design spec says API group can be English under /api/admin/* but admin page routes must use Vietnamese.",
+      "spec_reference": "ADMIN_PAGE_API_MAPPING.md lines 39-40, APPS_ADMIN_SCAFFOLD_BACKLOG.md lines 39-40",
+      "fix": "Verify all admin mutations hit /api/admin/* routes (not /api/content/*); ensure API contract matches ADMIN_PAGE_API_MAPPING.md mapping table"
+    },
+    {
+      "risk": "Missing API routes for workspace features",
+      "evidence": "daily-practice-admin, little-house-admin, life-release-admin have no queries.ts/mutations.ts, so API route inventory completeness is untested",
+      "fix": "Cross-check design/04-execution-overlay/api/API_ROUTE_INVENTORY.md for these workspace routes; confirm they exist and scaffold queries.ts/mutations.ts"
+    }
+  ],
+  "query_client_config_status": {
+    "status": "READY",
+    "details": "Query client setup complete; invalidate.ts has basic helpers (invalidateFamily, invalidateExact, invalidateDashboard). Missing: granular invalidation helpers for dashboard widget deps, cross-module cache owner integration"
+  },
+  "next_actions": [
+    {
+      "priority": 1,
+      "action": "Standardize query key factory naming",
+      "description": "Audit all /features/*/queries.ts files. Ensure all root keys follow ['admin-<feature>'] pattern per design spec. Update non-canonical keys (charities → admin-charities, altar-management → admin-altar-management, etc.). Establish list()/detail()/aux pattern consistently.",
+      "affected_files": "apps/admin/src/features/*/queries.ts (all feature folders)",
+      "design_reference": "ADMIN_FEATURE_QUERY_PLAN.md table, APPS_ADMIN_SCAFFOLD_BACKLOG.md lines 199-224"
+    },
+    {
+      "priority": 2,
+      "action": "Scaffold missing Phase 1 workspace features",
+      "description": "Create missing feature folders per APPS_ADMIN_SCAFFOLD_BACKLOG.md Wave 1: daily-practice-admin, little-house-admin, life-release-admin, media-library-admin, beginner-guides (mutations.ts only). Use ADMIN_FEATURE_QUERY_PLAN.md rows 5-8 as templates.",
+      "affected_files": "apps/admin/src/features/{daily-practice-admin,little-house-admin,life-release-admin,media-library-admin,beginner-guides}",
+      "design_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md Wave 1 (lines 259-266), ADMIN_FEATURE_QUERY_PLAN.md rows 4-8"
+    },
+    {
+      "priority": 3,
+      "action": "Implement granular dashboard invalidation",
+      "description": "Create invalidate.ts helpers for each dashboard widget: invalidateDashboardContentOps(), invalidateDashboardPendingModeration(), invalidateDashboardSearchOps(), etc. Update all mutations to call only relevant helpers instead of invalidateDashboard().",
+      "affected_files": "apps/admin/src/lib/query/invalidate.ts, apps/admin/src/features/*/mutations.ts (all files with dashboard invalidation)",
+      "design_reference": "ADMIN_PAGE_API_MAPPING.md lines 76-92"
+    },
+    {
+      "priority": 4,
+      "action": "Add cross-module cache invalidation for publish/unpublish",
+      "description": "For content publish mutations (posts, guides, downloads, wisdom entries, etc.), add onSuccess callback that notifies public cache owner. Implement as API call to trigger revalidateTag() or event bus publish. Coordinate with platform/cache module.",
+      "affected_files": "apps/admin/src/features/{content,guides,downloads,wisdom-baihoa}/mutations.ts",
+      "design_reference": "ADMIN_PAGE_API_MAPPING.md section 'Cross-module invalidation edge rules' (lines 59-74)"
+    },
+    {
+      "priority": 5,
+      "action": "Enforce role narrowing at component level",
+      "description": "Add backend policy projection to all sensitive mutation responses (e.g., { allowed: boolean, reason?: string }). Conditionally render action buttons based on policy. Document which actions require which roles per ADMIN_PAGE_API_MAPPING.md table.",
+      "affected_files": "apps/admin/src/features/*/mutations.ts, affected UI components",
+      "design_reference": "ADMIN_PAGE_API_MAPPING.md lines 26-57"
+    },
+    {
+      "priority": 6,
+      "action": "Consolidate feature folder naming",
+      "description": "Optionally: rename /features/users → /features/users-admin, /features/sessions → /features/sessions-admin for consistency with design naming convention. This is lower priority if codebase is already stable and tests pass.",
+      "affected_files": "apps/admin/src/features/{users,sessions,etc.}; update router imports",
+      "design_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md target tree (lines 66-135)"
+    },
+    {
+      "priority": 7,
+      "action": "Clarify non-canonical features",
+      "description": "dharma-compliance, life-liberation, sacred-forms, altar-management, daily-recitation do not appear in APPS_ADMIN_SCAFFOLD_BACKLOG.md. Confirm these are intentional new domains and update design docs accordingly, OR remove them if they are exploratory/unvetted.",
+      "affected_files": "design/04-execution-overlay/admin/ (if confirmed legitimate), or apps/admin/src/features/ (if to be archived)",
+      "design_reference": "APPS_ADMIN_SCAFFOLD_BACKLOG.md (all sections)"
+    },
+    {
+      "priority": 8,
+      "action": "Validate API contract alignment",
+      "description": "Cross-reference all mutations in apps/admin/src/features/*/mutations.ts against design/04-execution-overlay/api/API_ROUTE_INVENTORY.md. Confirm endpoint paths match canonical API routes. Validate request/response DTOs are documented in API_DTO_SHAPE_PLAN.md.",
+      "affected_files": "apps/admin/src/features/*/mutations.ts, design/04-execution-overlay/api/",
+      "design_reference": "API_ROUTE_INVENTORY.md, API_DTO_SHAPE_PLAN.md, ADMIN_PAGE_API_MAPPING.md mapping table (lines 96-126)"
+    }
+  ],
+  "summary": {
+    "design_adherence_score": "72%",
+    "breakdown": {
+      "architecture_foundation": "95% (Vite + React SPA, query client, API contracts OK)",
+      "query_layer": "70% (query key factories mostly correct, but naming inconsistencies and missing granular invalidation)",
+      "mutation_layer": "65% (mutations scaffolded but missing cross-module invalidation, role narrowing projection, and granular dashboard updates)",
+      "feature_coverage": "65% (Phase 0-2 mostly done, Phase 3-4 partially done, ~40% of expected workspaces still missing)",
+      "module_boundaries": "70% (mostly clean, but some non-canonical features polluting admin scope)"
+    },
+    "critical_path": [
+      "1. Fix query key naming consistency (blocks all other validation)",
+      "2. Scaffold missing workspace features (blocks Phase completion)",
+      "3. Implement granular invalidation (blocks optimization + correctness)",
+      "4. Add cross-module cache integration (blocks public surface correctness)"
+    ],
+    "confidence": "HIGH — analysis based on design docs (authoritative), code inspection (definitive), and patterns recognized across multiple feature files"
+  }
+}

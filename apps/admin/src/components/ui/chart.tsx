@@ -166,11 +166,11 @@ export function ChartTooltipContent({
     }
 
     const [item] = payload;
-    const key = `${labelKey || item.dataKey || item.name || "value"}`;
+    const key = labelKey ?? (item.dataKey as string | undefined) ?? (item.name as string | undefined) ?? "value";
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
       !labelKey && typeof label === "string"
-        ? config[label as keyof typeof config]?.label || label
+        ? config[label]?.label || label
         : itemConfig?.label;
 
     if (labelFormatter) {
@@ -204,7 +204,7 @@ export function ChartTooltipContent({
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
-          const key = `${nameKey || item.name || item.dataKey || "value"}`;
+          const key = nameKey ?? (item.name as string | undefined) ?? (item.dataKey as string | undefined) ?? "value";
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
           const itemPayload = (item.payload ?? {}) as Record<string, unknown>;
           const indicatorColor =
@@ -312,7 +312,7 @@ export function ChartLegendContent({
       )}
     >
       {payload.map((item: Record<string, unknown>) => {
-        const key = `${nameKey || item.dataKey || "value"}`;
+        const key = nameKey ?? (item.dataKey as string | undefined) ?? "value";
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
         return (
@@ -371,5 +371,5 @@ function getPayloadConfigFromPayload(
 
   return configLabelKey in config
     ? config[configLabelKey]
-    : config[key as keyof typeof config];
+    : config[key];
 }

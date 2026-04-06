@@ -4,6 +4,24 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
 import { charityKeys, fraudAlertKeys, guidanceKeys } from "./queries.js";
 
+export function useCreateCharity() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: {
+      name: string;
+      charityType: string;
+      registrationNumber?: string;
+      contactEmail?: string;
+      websiteUrl?: string;
+    }) => adminClient.post("/dharma-compliance/charities", input),
+    onSuccess: () => {
+      toast.success("Đã thêm tổ chức từ thiện.");
+      void qc.invalidateQueries({ queryKey: charityKeys.lists() });
+    },
+    onError: handleApiError,
+  });
+}
+
 export function useUpdateCharityStatus() {
   const qc = useQueryClient();
   return useMutation({

@@ -5,14 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { searchStatusOptions, useReindexMutation } from "@/features/system/search-queries.js";
+import { searchStatusOptions } from "@/features/system/search-queries.js";
+import { useReindexMutation } from "@/features/system/mutations.js";
 
 // ── Re-exports from feature modules ─────────────────────────────────
 
 export { GuidesPage, DailyPracticePage, LittleHousePage, LifeReleasePage } from "@/features/guides/index.js";
 export { DownloadsPage } from "@/features/downloads/index.js";
 export { PostsPage } from "@/features/content/posts-page.js";
-export { MediaAssetsPage } from "@/features/media/index.js";
+export { MediaAssetsPage, ImageAssetsPage, VideoAssetsPage, DocumentAssetsPage } from "@/features/media/index.js";
 export { AssistedEntryPage } from "@/features/assisted-entry/index.js";
 export { CommunityPostsPage } from "@/features/community-posts/index.js";
 export { GuestbookPage } from "@/features/guestbook/index.js";

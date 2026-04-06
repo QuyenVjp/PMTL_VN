@@ -18,6 +18,7 @@ import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { CalendarService } from "./calendar.service.js";
+import { Bardo49DayService } from "./bardo-49-day.service.js";
 import {
   eventQuerySchema,
   adminEventQuerySchema,
@@ -27,6 +28,7 @@ import {
   updateAgendaItemSchema,
   reorderAgendaItemsSchema,
   rescheduleEventSchema,
+  createDeceasedProfileSchema,
   type EventQuery,
   type AdminEventQuery,
   type AdminCreateEventInput,
@@ -35,6 +37,7 @@ import {
   type UpdateAgendaItemInput,
   type ReorderAgendaItemsInput,
   type RescheduleEventInput,
+  type CreateDeceasedProfileInput,
 } from "./calendar.schemas.js";
 
 // ── Public controller ─────────────────────────────────────────────────────
@@ -42,7 +45,10 @@ import {
 @ApiTags("calendar")
 @Controller("calendar")
 export class CalendarController {
-  constructor(private readonly calendarService: CalendarService) {}
+  constructor(
+    private readonly calendarService: CalendarService,
+    private readonly bardo49DayService: Bardo49DayService,
+  ) {}
 
   @Get("events")
   @Public()
@@ -83,6 +89,56 @@ export class CalendarController {
   @ApiResponse({ status: 200, description: "Runtime advisory status" })
   getAdvisoryRuntimeStatus() {
     return this.calendarService.getAdvisoryRuntimeStatus();
+  }
+
+  @Get("advisory/yin-deadzone-check")
+  @ApiOperation({ summary: "Kiểm tra khung giờ âm khí cấm kỵ 2–5 AM theo múi giờ người dùng" })
+  @ApiResponse({ status: 200, description: "Không trong khung giờ cấm kỵ" })
+  @ApiResponse({ status: 403, description: "Đang trong khung giờ cấm kỵ 2–5 AM" })
+  checkYinDeadzone(@Query("timezone") timezone: string) {
+    const tz = timezone && timezone.length > 0 ? timezone : "Asia/Ho_Chi_Minh";
+    this.calendarService.checkYinDeadzone(tz);
+    return { isInDeadzone: false, userTimezone: tz };
+  }
+
+  // ── Bardo 49-day tracker (authenticated) ─────────────────────────────
+
+  @Post("deceased-relatives")
+  @ApiOperation({ summary: "Tạo hồ sơ người quá cố — bắt đầu chiến dịch siêu độ 49 ngày" })
+  @ApiResponse({ status: 201, description: "Chiến dịch siêu độ 49 ngày đã được tạo" })
+  createDeceasedProfile(
+    @Body(ZodValidate(createDeceasedProfileSchema)) input: CreateDeceasedProfileInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.bardo49DayService.createDeceasedProfile(user.id, input);
+  }
+
+  @Get("deceased-relatives")
+  @ApiOperation({ summary: "Danh sách chiến dịch siêu độ đang hoạt động" })
+  @ApiResponse({ status: 200, description: "Danh sách hồ sơ người quá cố" })
+  listActiveDeceasedProfiles(@CurrentUser() user: AuthenticatedUser) {
+    return this.bardo49DayService.getActiveDeceasedProfiles(user.id);
+  }
+
+  @Get("deceased-relatives/:publicId")
+  @ApiOperation({ summary: "Chi tiết chiến dịch siêu độ 49 ngày" })
+  @ApiResponse({ status: 200, description: "Chi tiết hồ sơ người quá cố" })
+  @ApiResponse({ status: 400, description: "Không tìm thấy hồ sơ" })
+  getDeceasedProfile(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.bardo49DayService.getDeceasedProfile(user.id, publicId);
+  }
+
+  @Post("deceased-relatives/:publicId/update-progress")
+  @ApiOperation({ summary: "Cập nhật tiến độ chiến dịch siêu độ (sau khi đốt TPT)" })
+  @ApiResponse({ status: 200, description: "Tiến độ đã cập nhật" })
+  updateBardoProgress(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.bardo49DayService.updateProgress(user.id, publicId);
   }
 }
 

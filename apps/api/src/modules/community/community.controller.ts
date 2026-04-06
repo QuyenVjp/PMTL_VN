@@ -20,6 +20,8 @@ import {
   createCommentSchema,
   commentQuerySchema,
   createReportSchema,
+  createTestimonialSchema,
+  testimonialQuerySchema,
   type CreateCommunityPostInput,
   type CommunityPostQuery,
   type AdminUpdateCommunityPostInput,
@@ -32,6 +34,8 @@ import {
   type CreateCommentInput,
   type CommentQuery,
   type CreateReportInput,
+  type CreateTestimonialInput,
+  type TestimonialQuery,
 } from "./community.schemas.js";
 
 @ApiTags("community")
@@ -116,6 +120,28 @@ export class CommunityController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.communityService.reportPost(publicId, input, user.id);
+  }
+
+  // ── Testimonials ──────────────────────────────────────────────────────────
+
+  @Get("testimonials")
+  @Public()
+  @ApiOperation({ summary: "Danh sách bài chia sẻ phụng sự viên" })
+  @ApiResponse({ status: 200, description: "Danh sách testimonials" })
+  listTestimonials(@Query(ZodValidate(testimonialQuerySchema)) query: TestimonialQuery) {
+    return this.communityService.listTestimonials(query);
+  }
+
+  @Post("testimonials")
+  @RateLimit("community.post")
+  @ApiOperation({ summary: "Đăng bài chia sẻ — tự động chèn miễn trừ trách nhiệm cho phụng sự viên" })
+  @ApiResponse({ status: 201, description: "Bài chia sẻ đã được đăng" })
+  @ApiResponse({ status: 400, description: "Nội dung không hợp lệ hoặc chưa xác nhận disclaimer" })
+  createTestimonial(
+    @Body(ZodValidate(createTestimonialSchema)) input: CreateTestimonialInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.communityService.createTestimonial(input, user.id);
   }
 }
 

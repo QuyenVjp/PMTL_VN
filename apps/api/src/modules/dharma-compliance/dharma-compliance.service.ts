@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, ConflictException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { DharmaComplianceRepository } from "./dharma-compliance.repository.js";
 import {
@@ -30,6 +31,7 @@ import type {
 export class DharmaComplianceService {
   constructor(
     private readonly repo: DharmaComplianceRepository,
+    private readonly prisma: PrismaService,
     private readonly audit: AuditService,
   ) {}
 
@@ -141,7 +143,7 @@ export class DharmaComplianceService {
     return mapVowToAdminItem(vow);
   }
 
-  async logThought(input: LogThoughtInput, userId: string, auditCtx: AuditContext) {
+  async logThought(input: LogThoughtInput, userId: string, _auditCtx: AuditContext) {
     const vow = await this.repo.findVowByUserId(userId);
     if (!vow) throw new NotFoundException("Không tìm thấy lời nguyện đang hoạt động");
     const log = await this.repo.createThoughtLog(input, vow.id);
@@ -159,7 +161,7 @@ export class DharmaComplianceService {
     return { data: data.map(mapThoughtLogToItem), meta: { total } };
   }
 
-  async submitGuidanceRequest(input: GuidanceRequestInput, userId: string, auditCtx: AuditContext) {
+  async submitGuidanceRequest(input: GuidanceRequestInput, userId: string, _auditCtx: AuditContext) {
     const vow = await this.repo.findVowByUserId(userId);
     if (!vow) throw new NotFoundException("Không tìm thấy lời nguyện đang hoạt động");
     const req = await this.repo.createGuidanceRequest(input, vow.id, nanoid(21));
@@ -197,5 +199,244 @@ export class DharmaComplianceService {
     const updated = await this.repo.respondToGuidance(id, input.response);
     await this.audit.append(auditCtx, "admin.guidance.respond", "marital_guidance_request", id, {});
     return mapGuidanceToItem(updated);
+  }
+
+  // ─── Public: Approved Accounts ───────────────────────────────────────────
+
+  /** GET /api/dharma-compliance/approved-accounts — public display of verified charity accounts */
+  async listApprovedAccounts() {
+    const data = await this.prisma.charityWhitelist.findMany({
+      where: { status: "VERIFIED" as never },
+      select: {
+        publicId: true,
+        name: true,
+        charityType: true,
+        website: true,
+        contactEmail: true,
+        registrationNumber: true,
+      },
+      orderBy: { name: "asc" },
+    });
+    return { data };
+  }
+
+  /** GET /api/dharma-compliance/charities/:publicId — public charity detail */
+  async getPublicCharity(publicId: string) {
+    const charity = await this.prisma.charityWhitelist.findUnique({
+      where: { publicId },
+      select: {
+        publicId: true,
+        name: true,
+        charityType: true,
+        status: true,
+        website: true,
+        contactEmail: true,
+        notes: true,
+        createdAt: true,
+      },
+    });
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    if (charity.status !== "VERIFIED") throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    return { data: charity };
+  }
+
+  // ─── Admin: Charity lifecycle actions ────────────────────────────────────
+
+  /** POST /api/admin/dharma-compliance/charities/:publicId/verify */
+  async verifyCharity(publicId: string, auditCtx: AuditContext) {
+    const charity = await this.repo.findCharityByPublicId(publicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    if (charity.status === "VERIFIED" as unknown) throw new ConflictException("Tổ chức đã được xác minh");
+    if (charity.status === "REVOKED" as unknown) throw new BadRequestException("Tổ chức đã bị thu hồi, không thể xác minh lại");
+    const updated = await this.repo.updateCharityStatus(charity.id, "VERIFIED");
+    await this.audit.append(auditCtx, "admin.charity.verify", "charity", publicId, { previousStatus: charity.status });
+    return mapCharityToDetail(updated);
+  }
+
+  /** POST /api/admin/dharma-compliance/charities/:publicId/suspend */
+  async suspendCharity(publicId: string, reason: string, auditCtx: AuditContext) {
+    const charity = await this.repo.findCharityByPublicId(publicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    if (charity.status === "REVOKED" as unknown) throw new BadRequestException("Tổ chức đã bị thu hồi");
+    const updated = await this.repo.updateCharityStatus(charity.id, "SUSPENDED");
+    await this.audit.append(auditCtx, "admin.charity.suspend", "charity", publicId, { reason, previousStatus: charity.status });
+    return mapCharityToDetail(updated);
+  }
+
+  /** POST /api/admin/dharma-compliance/charities/:publicId/revoke */
+  async revokeCharity(publicId: string, reason: string, auditCtx: AuditContext) {
+    const charity = await this.repo.findCharityByPublicId(publicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    const updated = await this.repo.updateCharityStatus(charity.id, "REVOKED");
+    await this.audit.append(auditCtx, "admin.charity.revoke", "charity", publicId, { reason, previousStatus: charity.status });
+    return mapCharityToDetail(updated);
+  }
+
+  // ─── Admin: Whitelisting Rules ────────────────────────────────────────────
+
+  /** GET /api/admin/dharma-compliance/charities/:publicId/rules */
+  async listCharityRules(charityPublicId: string) {
+    const charity = await this.repo.findCharityByPublicId(charityPublicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+    const rules = await this.prisma.charityWhitelistingRule.findMany({
+      where: { charityId: charity.id },
+      orderBy: { createdAt: "asc" },
+    });
+    return {
+      data: rules.map((r) => ({
+        publicId: r.publicId,
+        criteriaType: r.criteriaType,
+        notes: r.notes,
+        satisfied: r.satisfied,
+        evidenceUrl: r.evidenceUrl,
+        verifiedAt: r.verifiedAt,
+        createdAt: r.createdAt,
+      })),
+    };
+  }
+
+  /** POST /api/admin/dharma-compliance/charities/:publicId/rules */
+  async createCharityRule(
+    charityPublicId: string,
+    input: { ruleType: string; description: string; evidenceUrl?: string },
+    auditCtx: AuditContext,
+  ) {
+    const charity = await this.repo.findCharityByPublicId(charityPublicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+
+    // Prevent duplicate criteria type for same charity
+    const existing = await this.prisma.charityWhitelistingRule.findFirst({
+      where: { charityId: charity.id, criteriaType: input.ruleType as never },
+    });
+    if (existing) throw new ConflictException("Tiêu chí xác minh loại này đã tồn tại cho tổ chức này");
+
+    const rule = await this.prisma.charityWhitelistingRule.create({
+      data: {
+        publicId: nanoid(21),
+        charityId: charity.id,
+        criteriaType: input.ruleType as never,
+        notes: input.description,
+        evidenceUrl: input.evidenceUrl,
+        satisfied: false,
+      },
+    });
+    await this.audit.append(auditCtx, "admin.charity.rule.create", "charity_rule", rule.publicId, {
+      charityId: charityPublicId,
+      criteriaType: input.ruleType,
+    });
+    return {
+      data: {
+        publicId: rule.publicId,
+        criteriaType: rule.criteriaType,
+        notes: rule.notes,
+        satisfied: rule.satisfied,
+        evidenceUrl: rule.evidenceUrl,
+        createdAt: rule.createdAt,
+      },
+    };
+  }
+
+  /** PATCH /api/admin/dharma-compliance/charities/:publicId/rules/:rulePublicId */
+  async updateCharityRule(
+    charityPublicId: string,
+    rulePublicId: string,
+    input: { verified?: boolean; evidenceUrl?: string; description?: string },
+    auditCtx: AuditContext,
+  ) {
+    const charity = await this.repo.findCharityByPublicId(charityPublicId);
+    if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
+
+    const rule = await this.prisma.charityWhitelistingRule.findUnique({
+      where: { publicId: rulePublicId },
+    });
+    if (!rule || rule.charityId !== charity.id) throw new NotFoundException("Tiêu chí xác minh không tồn tại");
+
+    const updated = await this.prisma.charityWhitelistingRule.update({
+      where: { id: rule.id },
+      data: {
+        ...(input.verified !== undefined && {
+          satisfied: input.verified,
+          verifiedAt: input.verified ? new Date() : null,
+        }),
+        ...(input.evidenceUrl !== undefined && { evidenceUrl: input.evidenceUrl }),
+        ...(input.description !== undefined && { notes: input.description }),
+      },
+    });
+    await this.audit.append(auditCtx, "admin.charity.rule.update", "charity_rule", rulePublicId, {
+      changes: input,
+    });
+    return {
+      data: {
+        publicId: updated.publicId,
+        criteriaType: updated.criteriaType,
+        notes: updated.notes,
+        satisfied: updated.satisfied,
+        evidenceUrl: updated.evidenceUrl,
+        verifiedAt: updated.verifiedAt,
+        createdAt: updated.createdAt,
+      },
+    };
+  }
+
+  // ─── Admin: User Charity Interactions ────────────────────────────────────
+
+  /** GET /api/admin/dharma-compliance/interactions */
+  async listInteractions(query: { limit?: number; offset?: number; userId?: string; interactionType?: string }) {
+    const limit = query.limit ?? 20;
+    const offset = query.offset ?? 0;
+    const where: Record<string, unknown> = {};
+    if (query.userId) where.userId = query.userId;
+    if (query.interactionType) where.interactionType = query.interactionType;
+
+    const [data, total] = await Promise.all([
+      this.prisma.userCharityInteraction.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        skip: offset,
+        include: {
+          charity: { select: { publicId: true, name: true } },
+          user: { select: { publicId: true, displayName: true } },
+        },
+      }),
+      this.prisma.userCharityInteraction.count({ where }),
+    ]);
+
+    return {
+      data: data.map((i) => ({
+        id: i.id,
+        interactionType: i.interactionType,
+        referenceId: i.referenceId,
+        verified: i.verified,
+        charity: i.charity ? { publicId: i.charity.publicId, name: i.charity.name } : null,
+        user: i.user ? { publicId: i.user.publicId, displayName: i.user.displayName } : null,
+        createdAt: i.createdAt,
+      })),
+      meta: { total, limit, offset, hasMore: offset + limit < total },
+    };
+  }
+
+  // ─── Admin: Status Overview ───────────────────────────────────────────────
+
+  /** GET /api/admin/dharma-compliance/status */
+  async getAdminStatus() {
+    const [verifiedCount, pendingCount, suspendedCount, unresolvedAlertCount] = await Promise.all([
+      this.prisma.charityWhitelist.count({ where: { status: "VERIFIED" as never } }),
+      this.prisma.charityWhitelist.count({ where: { status: "PENDING_VERIFICATION" as never } }),
+      this.prisma.charityWhitelist.count({ where: { status: "SUSPENDED" as never } }),
+      this.prisma.fraudDetectionAlert.count({ where: { resolvedAt: null } }),
+    ]);
+
+    return {
+      charities: {
+        verified: verifiedCount,
+        pending: pendingCount,
+        suspended: suspendedCount,
+      },
+      fraudAlerts: {
+        unresolved: unresolvedAlertCount,
+      },
+      checkedAt: new Date().toISOString(),
+    };
   }
 }

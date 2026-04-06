@@ -3,6 +3,8 @@ import { PrismaService } from "../../common/prisma/prisma.service.js";
 import type {
   AdminPushJobQuery,
   UpdatePreferencesInput,
+  UpdatePracticeReminderInput,
+  UpdateEventReminderInput,
 } from "./notification.schemas.js";
 
 const CREATOR_SELECT = {
@@ -184,5 +186,78 @@ export class NotificationRepository {
       where: { id: sub.id },
       data: { isActive: false },
     });
+  }
+
+  // ─── Practice Reminder ───────────────────────────────────────────────────────
+
+  async findPracticeReminderByUserId(userId: string) {
+    return this.prisma.notificationPreference.findUnique({
+      where: { userId },
+      select: {
+        practiceReminders: true,
+        quietHoursStart: true,
+        quietHoursEnd: true,
+      },
+    });
+  }
+
+  async upsertPracticeReminder(userId: string, input: UpdatePracticeReminderInput) {
+    const data: Record<string, unknown> = {};
+    if (input.enabled !== undefined) data.practiceReminders = input.enabled;
+    if (input.timezone !== undefined) data.timezone = input.timezone;
+    if (input.scheduledHour !== undefined) data.practiceReminderHour = input.scheduledHour;
+    if (input.scheduledMinute !== undefined) data.practiceReminderMinute = input.scheduledMinute;
+
+    return this.prisma.notificationPreference.upsert({
+      where: { userId },
+      create: {
+        userId,
+        practiceReminders: input.enabled ?? true,
+        eventReminders: true,
+        communityUpdates: true,
+      },
+      update: data,
+    });
+  }
+
+  // ─── Event Reminder ──────────────────────────────────────────────────────────
+
+  async findEventReminderByUserId(userId: string) {
+    return this.prisma.notificationPreference.findUnique({
+      where: { userId },
+      select: {
+        eventReminders: true,
+        quietHoursStart: true,
+        quietHoursEnd: true,
+      },
+    });
+  }
+
+  async upsertEventReminder(userId: string, input: UpdateEventReminderInput) {
+    const data: Record<string, unknown> = {};
+    if (input.enabled !== undefined) data.eventReminders = input.enabled;
+    if (input.timezone !== undefined) data.timezone = input.timezone;
+    if (input.leadTimeHours !== undefined) data.eventReminderLeadTimeHours = input.leadTimeHours;
+
+    return this.prisma.notificationPreference.upsert({
+      where: { userId },
+      create: {
+        userId,
+        practiceReminders: true,
+        eventReminders: input.enabled ?? true,
+        communityUpdates: true,
+      },
+      update: data,
+    });
+  }
+
+  // ─── Push Stats ──────────────────────────────────────────────────────────────
+
+  async getPushStats(userId: string) {
+    const [activeSubscriptions, recentJobs] = await Promise.all([
+      this.prisma.pushSubscription.count({ where: { userId, isActive: true } }),
+      this.prisma.pushJob.count({ where: { status: { in: ["PENDING", "COMPLETED"] } } }),
+    ]);
+    return { activeSubscriptions, recentJobs };
   }
 }

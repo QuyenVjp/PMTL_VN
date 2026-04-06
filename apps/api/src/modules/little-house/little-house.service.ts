@@ -76,7 +76,7 @@ export class LittleHouseService {
     return mapLhToItem(updated);
   }
 
-  async logRecitation(publicId: string, input: LogRecitationInput, userId: string, auditCtx: AuditContext) {
+  async logRecitation(publicId: string, input: LogRecitationInput, _userId: string, _auditCtx: AuditContext) {
     const r = await this.repo.findByPublicId(publicId);
     if (!r) throw new NotFoundException("Hồ sơ sớ không tồn tại");
     if (["BURNED", "CANCELLED"].includes(r.status)) {
@@ -96,7 +96,7 @@ export class LittleHouseService {
     return session;
   }
 
-  async completeDotting(sessionId: string, auditCtx: AuditContext) {
+  async completeDotting(sessionId: string, _auditCtx: AuditContext) {
     return this.repo.completeDottingSession(sessionId);
   }
 

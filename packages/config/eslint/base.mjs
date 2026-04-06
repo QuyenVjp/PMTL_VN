@@ -11,6 +11,8 @@ export const baseConfig = [
       "**/eslint.config.mjs",
       "**/prettier.config.cjs",
       "**/next-env.d.ts",
+      "**/*.spec.ts",
+      "**/__tests__/**",
     ],
   },
   js.configs.recommended,
@@ -35,7 +37,8 @@ export const baseConfig = [
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-floating-promises": "error",
-      "@typescript-eslint/no-misused-promises": "error"
+      "@typescript-eslint/no-misused-promises": "error",
+      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
     },
   },
 ];

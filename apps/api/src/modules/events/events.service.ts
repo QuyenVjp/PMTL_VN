@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import pino from "pino";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
 import { EventsRepository } from "./events.repository.js";
 import { mapEventToItem, mapEventToDetail, mapRegistrationToItem } from "./events.mapper.js";
@@ -11,8 +12,13 @@ import type {
   CheckInInput,
 } from "./events.schemas.js";
 
+const ZERO_MONETIZATION_MESSAGE =
+  "CẤM KỴ: Mọi sự kiện Pháp hội và tài liệu của Pháp môn Tâm Linh phải được phát miễn phí để gieo duyên chúng sinh. Lấy Phật pháp kinh doanh là tội đọa địa ngục!";
+
 @Injectable()
 export class EventsService {
+  private readonly logger = pino({ name: EventsService.name });
+
   constructor(
     private readonly repo: EventsRepository,
     private readonly audit: AuditService,
@@ -33,9 +39,13 @@ export class EventsService {
   }
 
   async createEvent(input: CreateEventInput, organizerId: string, auditCtx: AuditContext) {
-    // Zero-monetization guard: events must always be free
+    // Zero-monetization guard — design/03-domains/events/USE_CASES/zero-monetization-event-gate.md
     if (!input.isFree) {
-      throw new ForbiddenException("Sự kiện Phật pháp không được thu phí");
+      this.logger.warn({ organizerId, eventType: input.eventType }, "events.monetization.forbidden_mutation_attempt");
+      throw new ForbiddenException({
+        code: "monetization_forbidden_for_dharma_events",
+        message: ZERO_MONETIZATION_MESSAGE,
+      });
     }
     const event = await this.repo.create(input, organizerId, nanoid(21));
     await this.repo.appendAudit(event.id, organizerId, "EVENT_CREATED");
@@ -53,7 +63,11 @@ export class EventsService {
       throw new BadRequestException("Không thể chỉnh sửa sự kiện đã kết thúc hoặc đã hủy");
     }
     if (input.isFree === false) {
-      throw new ForbiddenException("Sự kiện Phật pháp không được thu phí");
+      this.logger.warn({ adminId, eventPublicId: publicId }, "events.monetization.forbidden_mutation_attempt");
+      throw new ForbiddenException({
+        code: "monetization_forbidden_for_dharma_events",
+        message: ZERO_MONETIZATION_MESSAGE,
+      });
     }
     const updated = await this.repo.update(event.id, input);
     await this.repo.appendAudit(event.id, adminId, "EVENT_UPDATED", `Status: ${updated.status}`);
@@ -107,7 +121,7 @@ export class EventsService {
     return { message: "Đã hủy đăng ký" };
   }
 
-  async checkIn(eventPublicId: string, input: CheckInInput, adminId: string, auditCtx: AuditContext) {
+  async checkIn(eventPublicId: string, input: CheckInInput, adminId: string, _auditCtx: AuditContext) {
     const event = await this.repo.findByPublicId(eventPublicId);
     if (!event) throw new NotFoundException("Sự kiện không tồn tại");
     const reg = await this.repo.findRegistration(event.id, input.userId);

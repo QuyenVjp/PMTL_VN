@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import pino from "pino";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
@@ -22,6 +23,8 @@ import type {
 
 @Injectable()
 export class CalendarService {
+  private readonly logger = pino({ name: CalendarService.name });
+
   constructor(
     private readonly repo: CalendarRepository,
     private readonly prisma: PrismaService,
@@ -29,6 +32,46 @@ export class CalendarService {
     private readonly audit: AuditService,
     private readonly storage: StorageService,
   ) {}
+
+  // ── Yin-time deadzone guard ──────────────────────────────────────────────
+  // Design: design/03-domains/calendar/USE_CASES/yin-time-deadzone-2-5am.md
+  // Stateless utility — call from any recitation write endpoint before persisting.
+
+  checkYinDeadzone(userTimezone: string): void {
+    const now = new Date();
+    const localHour = Number(
+      new Intl.DateTimeFormat("en-US", {
+        timeZone: userTimezone,
+        hour: "numeric",
+        hour12: false,
+      }).format(now),
+    );
+
+    if (localHour >= 2 && localHour < 5) {
+      // Compute the next 05:00 local time for the blockUntil field
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: userTimezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      const localDateParts = formatter.formatToParts(now);
+      const year = localDateParts.find((p) => p.type === "year")?.value ?? "";
+      const month = localDateParts.find((p) => p.type === "month")?.value ?? "";
+      const day = localDateParts.find((p) => p.type === "day")?.value ?? "";
+      const blockUntil = `${year}-${month}-${day}T05:00:00`;
+
+      this.logger.warn({ userTimezone, localHour, blockUntil }, "Yin-time deadzone active — recitation blocked");
+
+      throw new ForbiddenException({
+        code: "yin_time_deadzone_active",
+        message:
+          "KHUNG GIỜ CẤM KỴ: Tuyệt đối KHÔNG tụng niệm bất kỳ Kinh văn nào từ 2:00 – 5:00 sáng. Âm khí cực thịnh, niệm Kinh sẽ rước Ngạ quỷ và biến công đức thành ác nghiệp.",
+        blockUntil,
+        userTimezone,
+      });
+    }
+  }
 
   // ── Public ──────────────────────────────────────────────────────────────
 

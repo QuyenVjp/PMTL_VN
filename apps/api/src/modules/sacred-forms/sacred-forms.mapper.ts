@@ -44,13 +44,13 @@ export function mapApplicantToDetail(a: ApplicantWithRelations) {
     ...mapApplicantToItem(a),
     reviewNotes: a.reviewNotes,
     formData: a.formData,
-    prerequisites: (a.prerequisites ?? []).map((p) => ({
+    prerequisites: (a.prerequisites ?? []).map((p: FormPrerequisiteEntry) => ({
       name: p.name,
       status: p.status,
       completedAt: p.completedAt,
       evidence: p.evidence,
     })),
-    auditLogs: (a.auditLogs ?? []).map((l) => ({
+    auditLogs: (a.auditLogs ?? []).map((l: SacredFormAuditLog) => ({
       actor: l.actor,
       action: l.action,
       details: l.details,

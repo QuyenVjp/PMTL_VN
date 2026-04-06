@@ -77,7 +77,7 @@
 
 ## Skill Routing
 - Workflow routing and skill selection order: `.agents/skills/pmtl-workflow-router/SKILL.md`
-- CornHub-first bugfix / refactor / feature workflow: `.agents/skills/pmtl-cornhub-workflow/SKILL.md`
+- GitNexus-first bugfix / refactor / feature workflow: `gitnexus_query` + `gitnexus_impact` + `gitnexus_detect_changes` (see GitNexus section below)
 - Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
 - External AI CLI routing and worker selection: `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`
 - Architecture and domain placement: `.agents/skills/pmtl-vn-architecture/SKILL.md`
@@ -165,19 +165,15 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 
 ## MCP Routing
 - Workspace MCP stack lives in `.mcp.json`. Prefer MCPs when they provide fresher docs, runtime internals, browser evidence, or infra state that repo files cannot provide.
-- CornHub priority rule for this repo:
-  - If the current client exposes the `corn-hub` MCP server, use CornHub first for codebase exploration, symbol lookup, impact analysis, change detection, session memory, and quality-gate workflows before falling back to raw file search.
-  - Prefer `corn_code_search` for discovery, `corn_code_context` for symbol understanding, `corn_code_impact` before risky edits, and `corn_detect_changes` before working on shared or dirty branches.
-  - If CornHub is unavailable or returns insufficient results, say so briefly, then continue with direct repo inspection.
-- CornHub Bugfix Workflow for this repo:
-  - For any non-trivial bugfix, refactor, or feature in this repo, start with CornMCP.
-  - Use `corn_code_search` to find the exact symbol or feature entry point.
-  - Use `corn_code_context` before editing.
-  - Use `corn_code_impact` before modifying shared logic, DTOs, hooks, services, or reused components.
-  - Use `corn_detect_changes` if the worktree is dirty or multiple agents may be touching the same area.
-  - After implementation and verification, store the key fix pattern with `corn_knowledge_store`.
-  - End with `corn_quality_report` or state explicitly why Corn quality tools were skipped.
-  - For larger tasks, also prefer `corn_session_start` at the beginning and `corn_session_end` at the end.
+- **GitNexus priority rule for this repo (PMTL_VN):**
+  - **ONLY use GitNexus tools** with prefix `gitnexus_`: `gitnexus_query`, `gitnexus_impact`, `gitnexus_context`, `gitnexus_detect_changes`, `gitnexus_cypher`.
+  - **NEVER use CornMCP tools** (`corn_code_search`, `corn_code_context`, `corn_code_impact`, `corn_detect_changes`, etc.) — they are deprecated.
+  - For any non-trivial bugfix, refactor, or feature: start with `gitnexus_query` to find symbols.
+  - Before editing: run `gitnexus_context` to see callers/callees.
+  - Before modifying shared logic: run `gitnexus_impact` to check blast radius.
+  - Before committing: run `gitnexus_detect_changes` to verify scope.
+  - **NestJS DI Limitation:** If `gitnexus_impact` reports ZERO upstream callers for a Service, manually grep to find controller imports + @Module providers (see CLAUDE.md NestJS Hybrid Protocol).
+- **Codex CLI specific:** When using Codex in this repo, pass `--use-gitnexus` or explicitly call gitnexus tools; never fall back to corn_* tools.
 - OpenSpace is the default execution lane for Claude Code task runs in this repo. Prefer the `openspace` MCP server first for implementation/debug tasks unless a task explicitly requires another MCP.
 - Do not hardcode provider API keys for OpenSpace in repo config. Prefer host-agent integration and environment-driven model/key resolution.
 - Use `context7` first for current library/framework docs across the wider stack: Next.js, React, TanStack, RHF, Zod, Motion, Docker, cloud SDKs, etc.
@@ -240,3 +236,148 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Current target architecture is `apps/web + apps/api + apps/admin` with NestJS as backend authority.
 - Treat `design/` as the architecture source of truth for the rebuild direction.
 - If old docs or runtime folders still reference legacy CMS-first ownership, do not copy that direction forward without explicit confirmation.
+
+<!-- gitnexus:start -->
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **PMTL_VN** (18009 symbols, 27684 relationships, 288 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+
+## Always Do
+
+- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
+- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
+- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
+- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
+- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
+
+## When Debugging
+
+1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
+2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
+3. `READ gitnexus://repo/PMTL_VN/process/{processName}` — trace the full execution flow step by step
+4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
+
+## When Refactoring
+
+- **Renaming**: MUST use `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` first. Review the preview — graph edits are safe, text_search edits need manual review. Then run with `dry_run: false`.
+- **Extracting/Splitting**: MUST run `gitnexus_context({name: "target"})` to see all incoming/outgoing refs, then `gitnexus_impact({target: "target", direction: "upstream"})` to find all external callers before moving code.
+- After any refactor: run `gitnexus_detect_changes({scope: "all"})` to verify only expected files changed.
+
+## Never Do
+
+- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
+- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
+- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
+- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
+
+## Tools Quick Reference
+
+| Tool | When to use | Command |
+|------|-------------|---------|
+| `query` | Find code by concept | `gitnexus_query({query: "auth validation"})` |
+| `context` | 360-degree view of one symbol | `gitnexus_context({name: "validateUser"})` |
+| `impact` | Blast radius before editing | `gitnexus_impact({target: "X", direction: "upstream"})` |
+| `detect_changes` | Pre-commit scope check | `gitnexus_detect_changes({scope: "staged"})` |
+| `rename` | Safe multi-file rename | `gitnexus_rename({symbol_name: "old", new_name: "new", dry_run: true})` |
+| `cypher` | Custom graph queries | `gitnexus_cypher({query: "MATCH ..."})` |
+
+## Impact Risk Levels
+
+| Depth | Meaning | Action |
+|-------|---------|--------|
+| d=1 | WILL BREAK — direct callers/importers | MUST update these |
+| d=2 | LIKELY AFFECTED — indirect deps | Should test |
+| d=3 | MAY NEED TESTING — transitive | Test if critical path |
+
+## Resources
+
+| Resource | Use for |
+|----------|---------|
+| `gitnexus://repo/PMTL_VN/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/PMTL_VN/clusters` | All functional areas |
+| `gitnexus://repo/PMTL_VN/processes` | All execution flows |
+| `gitnexus://repo/PMTL_VN/process/{name}` | Step-by-step execution trace |
+
+## Self-Check Before Finishing
+
+Before completing any code modification task, verify:
+1. `gitnexus_impact` was run for all modified symbols
+2. No HIGH/CRITICAL risk warnings were ignored
+3. `gitnexus_detect_changes()` confirms changes match expected scope
+4. All d=1 (WILL BREAK) dependents were updated
+
+## Keeping the Index Fresh
+
+After committing code changes, the GitNexus index becomes stale. Re-run analyze to update it:
+
+```bash
+npx gitnexus analyze
+```
+
+If the index previously included embeddings, preserve them by adding `--embeddings`:
+
+```bash
+npx gitnexus analyze --embeddings
+```
+
+To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.embeddings` field shows the count (0 means no embeddings). **Running analyze without `--embeddings` will delete any previously generated embeddings.**
+
+> Claude Code users: A PostToolUse hook handles this automatically after `git commit` and `git merge`.
+
+## CLI
+
+| Task | Read this skill file |
+|------|---------------------|
+| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
+| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
+| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
+| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
+| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
+| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
+| Work in the Ui area (193 symbols) | `.claude/skills/generated/ui/SKILL.md` |
+| Work in the Identity area (114 symbols) | `.claude/skills/generated/identity/SKILL.md` |
+| Work in the Content area (114 symbols) | `.claude/skills/generated/content/SKILL.md` |
+| Work in the Wisdom-qa area (95 symbols) | `.claude/skills/generated/wisdom-qa/SKILL.md` |
+| Work in the Tools area (87 symbols) | `.claude/skills/generated/tools/SKILL.md` |
+| Work in the Dharma-compliance area (77 symbols) | `.claude/skills/generated/dharma-compliance/SKILL.md` |
+| Work in the Scripts area (71 symbols) | `.claude/skills/generated/scripts/SKILL.md` |
+| Work in the Guides area (63 symbols) | `.claude/skills/generated/guides/SKILL.md` |
+| Work in the Calendar area (59 symbols) | `.claude/skills/generated/calendar/SKILL.md` |
+| Work in the Downloads area (57 symbols) | `.claude/skills/generated/downloads/SKILL.md` |
+| Work in the Community area (56 symbols) | `.claude/skills/generated/community/SKILL.md` |
+| Work in the Users-admin area (53 symbols) | `.claude/skills/generated/users-admin/SKILL.md` |
+| Work in the Vows-merit area (50 symbols) | `.claude/skills/generated/vows-merit/SKILL.md` |
+| Work in the Engagement area (46 symbols) | `.claude/skills/generated/engagement/SKILL.md` |
+| Work in the Prisma area (41 symbols) | `.claude/skills/generated/prisma/SKILL.md` |
+| Work in the Sacred-forms area (33 symbols) | `.claude/skills/generated/sacred-forms/SKILL.md` |
+| Work in the System area (30 symbols) | `.claude/skills/generated/system/SKILL.md` |
+| Work in the Storage area (30 symbols) | `.claude/skills/generated/storage/SKILL.md` |
+| Work in the Chanting area (29 symbols) | `.claude/skills/generated/chanting/SKILL.md` |
+| Work in the Notification area (28 symbols) | `.claude/skills/generated/notification/SKILL.md` |
+
+<!-- gitnexus:end -->
+
+## Design Gap Analysis & Refactor Roadmap
+
+**File**: `DESIGN_GAP_ANALYSIS.md` — comprehensive audit of all 17 domains vs. design intent.
+
+**Top 5 Critical/High Gaps** (from 2026-04-06 analysis):
+1. **Dharma Compliance** — CharityFirewallInterceptor missing; bank account detection + auto-delete not implemented (CRITICAL)
+2. **Vows & Merit** — Assisted-entry audit trail (`ownerUserId` + `actorUserId`) not enforced (CRITICAL)
+3. **Content** — Typed content blocks (scripts, warnings, steps) validation missing before publish (HIGH)
+4. **Life Liberation** — Predatory species guard + habitat verification not implemented (HIGH)
+5. **Wisdom-QA** — Offline bundle recovery path + incremental delta missing (HIGH)
+
+**3 Domains Well-Aligned**:
+- ✅ Identity/Auth — Bootstrap route, session authority, reset tokens all match design
+- ✅ Community — Clean separation: posts own records, moderation owns reports
+- ✅ Calendar & Events — Proper event modeling, admin workspace
+
+**Refactor Roadmap**:
+- **Phase 1** (Weeks 1–2): CharityFirewallInterceptor + PredatorySpeciesGuard + Vows audit trail
+- **Phase 2** (Weeks 3–4): Content block validation + environment rules grouping + offline recovery
+- **Phase 3** (Weeks 5–6): Audit integration across all domains
+
+**When working on ANY domain**: Always cross-check with `design/03-domains/{domain}/CONTRACTS.md` first, then use `gitnexus_query` to find code, then compare intent vs reality.

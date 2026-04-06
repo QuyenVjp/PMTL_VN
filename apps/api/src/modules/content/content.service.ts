@@ -7,13 +7,14 @@ import { AuditService, type AuditContext } from "../../platform/audit/audit.serv
 import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapPostToResponse } from "./content.mapper.js";
 import { canCreatePost, canDeletePost, canEditPost, canPublishPost, canUnpublishPost, getPublicStatuses } from "./content.policy.js";
+import { SearchService } from "../search/search.service.js";
 import type {
   CreatePostRequest, UpdatePostRequest, ListPostsQuery,
   GuideQuery, CreateGuideRequest, UpdateGuideRequest,
   DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
   BeginnerGuidePublicQuery, DownloadPublicQuery,
 } from "./content.schemas.js";
-import { type UserRole, type ContentStatus, type Prisma, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
+import { type UserRole, type ContentStatus, type Prisma, type PostType, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
 @Injectable()
 export class ContentService {
@@ -23,6 +24,7 @@ export class ContentService {
     private readonly cacheService: CacheService,
     private readonly audit: AuditService,
     private readonly storage: StorageService,
+    private readonly searchService: SearchService,
   ) {}
 
   async listPosts(query: ListPostsQuery, userRole?: UserRole) {
@@ -31,7 +33,7 @@ export class ContentService {
 
     const { posts, total } = await this.repository.findMany({
       status: status as ContentStatus | undefined,
-      postType: query.postType as import("../../generated/prisma/client.js").PostType | undefined,
+      postType: query.postType as PostType | undefined,
       authorId: query.authorId,
       categoryId: query.categoryId,
       featured: query.featured,
@@ -104,7 +106,7 @@ export class ContentService {
           publicId,
           slug,
           title: input.title,
-          postType: (input.postType ?? "ARTICLE") as import("../../generated/prisma/client.js").PostType,
+          postType: (input.postType ?? "ARTICLE") as PostType,
           content: input.content as Prisma.InputJsonValue,
           authorId,
           status: "DRAFT",
@@ -162,7 +164,7 @@ export class ContentService {
       const postUpdateData: Prisma.PostUpdateInput = {};
       if (input.title !== undefined) postUpdateData.title = input.title;
       if (input.slug !== undefined) postUpdateData.slug = input.slug;
-      if (input.postType !== undefined) postUpdateData.postType = input.postType as import("../../generated/prisma/client.js").PostType;
+      if (input.postType !== undefined) postUpdateData.postType = input.postType as PostType;
       if (input.sourceRef !== undefined) postUpdateData.sourceRef = input.sourceRef;
       if (input.content !== undefined) postUpdateData.content = input.content as Prisma.InputJsonValue;
       if (featuredImageId !== undefined) {
@@ -238,6 +240,14 @@ export class ContentService {
 
     const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
 
+    void this.searchService.indexDocument("posts", {
+      id: updated.publicId,
+      title: updated.title,
+      excerpt: "",
+      href: `/bai-viet/${updated.slug}`,
+      publishedAt: updated.publishedAt?.toISOString() ?? null,
+    });
+
     return mapPostToResponse(updated, featuredImageUrl);
   }
 
@@ -272,6 +282,9 @@ export class ContentService {
     });
 
     const featuredImageUrl = await this.storage.resolveAssetUrlById(updated.featuredImageId);
+
+    void this.searchService.removeDocument("posts", updated.publicId);
+
     return mapPostToResponse(updated, featuredImageUrl);
   }
 
@@ -293,6 +306,8 @@ export class ContentService {
       await tx.post.delete({ where: { publicId } });
       await this.audit.appendInTransaction(tx, auditContext, "content.delete", "post", publicId);
     });
+
+    void this.searchService.removeDocument("posts", publicId);
 
     return { success: true };
   }

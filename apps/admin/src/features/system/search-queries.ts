@@ -1,6 +1,11 @@
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { queryOptions } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client.js";
+
+/**
+ * Search operations query keys per design.
+ * Per ADMIN_PAGE_API_MAPPING line 122: queries are read-mostly
+ * Mutations (reindex) moved to mutations.ts per file organization convention
+ */
 
 export interface SearchIndexInfo {
   name: string;
@@ -18,49 +23,95 @@ export interface SearchAdminStatus {
 export const searchKeys = {
   all: ["admin-search"] as const,
   status: () => [...searchKeys.all, "status"] as const,
+  operationalStatus: () => [...searchKeys.all, "operational-status"] as const,
+  performance: () => [...searchKeys.all, "performance"] as const,
+  indexingJobs: () => [...searchKeys.all, "indexing-jobs"] as const,
+  fallbackEvents: () => [...searchKeys.all, "fallback-events"] as const,
+  indexSettings: () => [...searchKeys.all, "index-settings"] as const,
 };
 
+/**
+ * Fetch overall search engine status
+ */
 export function searchStatusOptions() {
   return queryOptions({
     queryKey: searchKeys.status(),
-    queryFn: () => adminClient.get<SearchAdminStatus>("/admin/search/status"),
+    queryFn: () =>
+      adminClient.get<SearchAdminStatus>("/admin/search/status"),
     refetchInterval: 60_000,
   });
 }
 
-export function useReindexMutation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (indexName: string) =>
-      adminClient.post<{ status: string; indexName: string; message: string }>(
-        `/admin/search/reindex/${indexName}`,
+/**
+ * Fetch operational status (reachability, connection info)
+ */
+export function searchOperationalStatusOptions() {
+  return queryOptions({
+    queryKey: searchKeys.operationalStatus(),
+    queryFn: () =>
+      adminClient.get<{ status: string; lastChecked: string }>(
+        "/admin/search/operational-status"
       ),
-    onSuccess: (data, indexName) => {
-      toast.success(`✅ Reindex thành công cho ${indexName}`, {
-        description: data.message || "Index đã được cập nhật",
-      });
-      void queryClient.invalidateQueries({ queryKey: searchKeys.all });
-    },
-    onError: (error, indexName) => {
-      console.error("Reindex failed:", error);
-      
-      // Handle authentication errors specifically
-      if (error instanceof Error && error.message.includes('401')) {
-        toast.error("🔒 Cần đăng nhập", {
-          description: "Bạn cần đăng nhập với quyền Admin để thực hiện reindex",
-        });
-        return;
-      }
-      
-      // Handle other errors  
-      toast.error(`❌ Reindex thất bại cho ${indexName}`, {
-        description: error instanceof Error ? error.message : "Vui lòng thử lại",
-      });
-    },
-    onMutate: (indexName) => {
-      toast.loading(`🔄 Đang reindex ${indexName}...`, {
-        description: "Quá trình này có thể mất vài giây",
-      });
-    },
+    refetchInterval: 30_000,
+  });
+}
+
+/**
+ * Fetch search performance metrics
+ */
+export function searchPerformanceOptions() {
+  return queryOptions({
+    queryKey: searchKeys.performance(),
+    queryFn: () =>
+      adminClient.get<{
+        avgQueryTime: number;
+        queryCount: number;
+        failureRate: number;
+      }>("/admin/search/performance"),
+    refetchInterval: 120_000,
+  });
+}
+
+/**
+ * Fetch indexing jobs history
+ */
+export function searchIndexingJobsOptions() {
+  return queryOptions({
+    queryKey: searchKeys.indexingJobs(),
+    queryFn: () =>
+      adminClient.get<Array<{ id: string; status: string; indexName: string; createdAt: string }>>(
+        "/admin/search/indexing-jobs"
+      ),
+    refetchInterval: 30_000,
+  });
+}
+
+/**
+ * Fetch fallback query events (when search engine is unavailable)
+ */
+export function searchFallbackEventsOptions() {
+  return queryOptions({
+    queryKey: searchKeys.fallbackEvents(),
+    queryFn: () =>
+      adminClient.get<Array<{ id: string; timestamp: string; query: string }>>(
+        "/admin/search/fallback-events"
+      ),
+    refetchInterval: 60_000,
+  });
+}
+
+/**
+ * Fetch search index settings and configuration
+ */
+export function searchIndexSettingsOptions() {
+  return queryOptions({
+    queryKey: searchKeys.indexSettings(),
+    queryFn: () =>
+      adminClient.get<{
+        indexes: Array<{
+          name: string;
+          settings: Record<string, unknown>;
+        }>;
+      }>("/admin/search/index-settings"),
   });
 }

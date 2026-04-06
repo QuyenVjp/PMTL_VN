@@ -8,6 +8,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
@@ -15,6 +16,7 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { AuditContext } from "../../common/decorators/audit-context.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import type { AuditContext as AuditCtxType } from "../../platform/audit/audit.service.js";
+import { PredatorySpeciesGuard } from "./guards/predatory-species.guard.js";
 import { LifeLiberationService } from "./life-liberation.service.js";
 import {
   lifeReleaseQuerySchema,
@@ -32,6 +34,12 @@ import {
 @Roles("ADMIN", "SUPER_ADMIN")
 export class AdminLifeLiberationController {
   constructor(private readonly svc: LifeLiberationService) {}
+
+  @Get("status")
+  @ApiOperation({ summary: "Tổng quan phóng sinh (admin dashboard)" })
+  async adminStatus() {
+    return this.svc.getAdminStatus();
+  }
 
   @Get()
   @ApiOperation({ summary: "Danh sách hồ sơ phóng sinh" })
@@ -82,6 +90,7 @@ export class MemberLifeLiberationController {
   }
 
   @Post()
+  @UseGuards(PredatorySpeciesGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Tạo hồ sơ phóng sinh" })
   async create(
@@ -93,6 +102,7 @@ export class MemberLifeLiberationController {
   }
 
   @Post(":publicId/proxy")
+  @UseGuards(PredatorySpeciesGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: "Thêm người thụ hưởng phóng sinh hộ" })
   async addProxy(

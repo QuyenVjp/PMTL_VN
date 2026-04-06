@@ -72,7 +72,11 @@ export class LifeLiberationRepository {
     });
   }
 
-  async addProxyRelease(recordId: string, sponsorId: string, input: ProxyReleaseInput) {
+  async addProxyRelease(
+    recordId: string,
+    sponsorId: string,
+    input: ProxyReleaseInput,
+  ) {
     return this.prisma.proxyLifeRelease.create({
       data: {
         recordId,

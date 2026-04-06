@@ -58,7 +58,9 @@ export const sidebarNavGroups: NavGroup[] = [
           { title: "Kế hoạch", url: "/noi-dung/niem-kinh/ke-hoach" }
         ]
       },
-      { title: "Media", url: "/noi-dung/media", icon: Images },
+      { title: "Ảnh", url: "/noi-dung/anh", icon: Images },
+      { title: "Video", url: "/noi-dung/video", icon: Images },
+      { title: "Tệp tài liệu", url: "/noi-dung/tep-tai-lieu", icon: Images },
     ],
   },
   {

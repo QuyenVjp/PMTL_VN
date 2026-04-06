@@ -642,3 +642,76 @@ export const AltarProtocolType = {
 } as const
 
 export type AltarProtocolType = (typeof AltarProtocolType)[keyof typeof AltarProtocolType]
+
+
+export const ReactionType = {
+  LIKE: 'LIKE',
+  PRAY: 'PRAY',
+  INSPIRE: 'INSPIRE',
+  GRATITUDE: 'GRATITUDE'
+} as const
+
+export type ReactionType = (typeof ReactionType)[keyof typeof ReactionType]
+
+
+export const EngagementTargetType = {
+  POST: 'POST',
+  COMMENT: 'COMMENT',
+  COMMUNITY_POST: 'COMMUNITY_POST'
+} as const
+
+export type EngagementTargetType = (typeof EngagementTargetType)[keyof typeof EngagementTargetType]
+
+
+export const BookmarkTargetType = {
+  POST: 'POST',
+  EVENT: 'EVENT',
+  SUTRA: 'SUTRA',
+  GUIDE: 'GUIDE'
+} as const
+
+export type BookmarkTargetType = (typeof BookmarkTargetType)[keyof typeof BookmarkTargetType]
+
+
+export const WisdomQuestionStatus = {
+  OPEN: 'OPEN',
+  ANSWERED: 'ANSWERED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type WisdomQuestionStatus = (typeof WisdomQuestionStatus)[keyof typeof WisdomQuestionStatus]
+
+
+export const PracticeGuideLevel = {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  ADVANCED: 'ADVANCED'
+} as const
+
+export type PracticeGuideLevel = (typeof PracticeGuideLevel)[keyof typeof PracticeGuideLevel]
+
+
+export const RecitationDifficulty = {
+  BEGINNER: 'BEGINNER',
+  INTERMEDIATE: 'INTERMEDIATE',
+  ADVANCED: 'ADVANCED'
+} as const
+
+export type RecitationDifficulty = (typeof RecitationDifficulty)[keyof typeof RecitationDifficulty]
+
+
+export const RecitationStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type RecitationStatus = (typeof RecitationStatus)[keyof typeof RecitationStatus]
+
+
+export const GuidelineImportance = {
+  CRITICAL: 'CRITICAL',
+  IMPORTANT: 'IMPORTANT',
+  REFERENCE: 'REFERENCE'
+} as const
+
+export type GuidelineImportance = (typeof GuidelineImportance)[keyof typeof GuidelineImportance]

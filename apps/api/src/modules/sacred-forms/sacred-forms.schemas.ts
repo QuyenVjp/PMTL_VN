@@ -59,3 +59,28 @@ export const disposalPolaritySchema = z.object({
   effectiveAt: z.string().datetime(),
 });
 export type DisposalPolarityInput = z.infer<typeof disposalPolaritySchema>;
+
+export const approveApplicationSchema = z.object({
+  reviewNotes: z.string().max(2000).optional(),
+});
+export type ApproveApplicationInput = z.infer<typeof approveApplicationSchema>;
+
+export const rejectApplicationSchema = z.object({
+  rejectionReason: z.string().min(5).max(2000),
+});
+export type RejectApplicationInput = z.infer<typeof rejectApplicationSchema>;
+
+export const burnApplicationSchema = z.object({
+  burnTime: z.string().datetime(),
+  weatherConfirmed: z.boolean().default(false),
+  oldDharmaName: z.string().max(200).optional(),
+  newDharmaName: z.string().max(200).optional(),
+});
+export type BurnApplicationInput = z.infer<typeof burnApplicationSchema>;
+
+export const probationQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  isActive: z.coerce.boolean().optional(),
+});
+export type ProbationQuery = z.infer<typeof probationQuerySchema>;

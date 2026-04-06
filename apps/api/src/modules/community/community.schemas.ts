@@ -57,6 +57,34 @@ export const createReportSchema = z.object({
 });
 export type CreateReportInput = z.infer<typeof createReportSchema>;
 
+// Testimonial schemas
+// Design: design/03-domains/community/USE_CASES/USE_CASE_TESTIMONIAL_DISCLAIMER_AUTO_INJECT.md
+
+export const TESTIMONIAL_DISCLAIMER_TEXT =
+  "Nếu có bất kỳ lời nào không đúng lý không đúng pháp trong lúc chia sẻ, con xin Đại Từ Đại Bi Quán Thế Âm Bồ Tát, các vị Hộ Pháp và Sư Phụ Lư Quân Hoành tha lỗi. Nghiệp chướng của con con tự gánh.";
+
+export const TESTIMONIAL_PROHIBITED_TERMS_PATTERN =
+  /quyên góp|chuyển khoản|tài khoản riêng|lừa|fundraising|donation/i;
+
+export const createTestimonialSchema = z.object({
+  title: z.string().min(5).max(200),
+  body: z.string().min(50).max(5000),
+  contentType: z.enum(["TESTIMONY", "HEALING_STORY", "LIFE_CHANGE", "GENERAL_POST"]),
+  authorRole: z.enum(["VOLUNTEER", "ORGANIZER", "MEMBER"]),
+  disclaimerAcknowledge: z.boolean(),
+  coverImage: z.string().url().optional(),
+  tags: z.array(z.string().max(50)).max(10).default([]),
+});
+export type CreateTestimonialInput = z.infer<typeof createTestimonialSchema>;
+
+export const testimonialQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  contentType: z.enum(["TESTIMONY", "HEALING_STORY", "LIFE_CHANGE", "GENERAL_POST"]).optional(),
+  status: z.enum(["PUBLISHED", "DRAFT", "ARCHIVED"]).optional(),
+});
+export type TestimonialQuery = z.infer<typeof testimonialQuerySchema>;
+
 // Volunteer schemas
 export const createVolunteerSchema = z.object({
   displayName: z.string().min(1).max(100),

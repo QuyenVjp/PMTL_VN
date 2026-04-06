@@ -45,3 +45,22 @@ export const pushUnsubscribeSchema = z.object({
   endpoint: z.string().url(),
 });
 export type PushUnsubscribeInput = z.infer<typeof pushUnsubscribeSchema>;
+
+// ─── Practice Reminder Schemas ───────────────────────────────────────────────
+
+export const updatePracticeReminderSchema = z.object({
+  enabled: z.boolean().optional(),
+  scheduledHour: z.number().int().min(0).max(23).optional(),
+  scheduledMinute: z.number().int().min(0).max(59).optional(),
+  timezone: z.string().max(64).optional(),
+});
+export type UpdatePracticeReminderInput = z.infer<typeof updatePracticeReminderSchema>;
+
+// ─── Event Reminder Schemas ──────────────────────────────────────────────────
+
+export const updateEventReminderSchema = z.object({
+  enabled: z.boolean().optional(),
+  leadTimeHours: z.number().int().min(1).max(72).optional(),
+  timezone: z.string().max(64).optional(),
+});
+export type UpdateEventReminderInput = z.infer<typeof updateEventReminderSchema>;
