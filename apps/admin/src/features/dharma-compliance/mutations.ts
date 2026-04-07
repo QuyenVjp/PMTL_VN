@@ -13,7 +13,7 @@ export function useCreateCharity() {
       registrationNumber?: string;
       contactEmail?: string;
       websiteUrl?: string;
-    }) => adminClient.post("/dharma-compliance/charities", input),
+    }) => adminClient.post("/admin/dharma-compliance/charities", input),
     onSuccess: () => {
       toast.success("Đã thêm tổ chức từ thiện.");
       void qc.invalidateQueries({ queryKey: charityKeys.lists() });
@@ -26,7 +26,7 @@ export function useUpdateCharityStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, status, reason }: { publicId: string; status: string; reason: string }) =>
-      adminClient.patch(`/dharma-compliance/charities/${publicId}/status`, { status, reason }),
+      adminClient.patch(`/admin/dharma-compliance/charities/${publicId}/status`, { status, reason }),
     onSuccess: () => {
       toast.success("Đã cập nhật trạng thái tổ chức từ thiện.");
       void qc.invalidateQueries({ queryKey: charityKeys.lists() });
@@ -39,7 +39,7 @@ export function useResolveFraudAlert() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, resolution }: { publicId: string; resolution: string }) =>
-      adminClient.patch(`/dharma-compliance/fraud-alerts/${publicId}/resolve`, { resolution }),
+      adminClient.patch(`/admin/dharma-compliance/fraud-alerts/${publicId}/resolve`, { resolution }),
     onSuccess: () => {
       toast.success("Đã xử lý cảnh báo gian lận.");
       void qc.invalidateQueries({ queryKey: fraudAlertKeys.lists() });
@@ -52,7 +52,7 @@ export function useRespondGuidance() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, response }: { id: string; response: string }) =>
-      adminClient.patch(`/dharma-compliance/vows/guidance/${id}/respond`, { response }),
+      adminClient.patch(`/admin/dharma-compliance/vows/guidance/${id}/respond`, { response }),
     onSuccess: () => {
       toast.success("Đã phản hồi yêu cầu hướng dẫn.");
       void qc.invalidateQueries({ queryKey: guidanceKeys.lists() });

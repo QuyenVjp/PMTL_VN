@@ -37,7 +37,7 @@ export function charityListOptions(filters: { limit?: number; offset?: number; s
 
   return queryOptions({
     queryKey: charityKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<CharityListItem>>("/dharma-compliance/charities", params),
+    queryFn: () => adminClient.get<ListEnvelope<CharityListItem>>("/admin/dharma-compliance/charities", params),
   });
 }
 
@@ -51,7 +51,7 @@ export function fraudAlertListOptions(filters: { limit?: number; offset?: number
 
   return queryOptions({
     queryKey: fraudAlertKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<FraudAlertItem>>("/dharma-compliance/fraud-alerts", params),
+    queryFn: () => adminClient.get<ListEnvelope<FraudAlertItem>>("/admin/dharma-compliance/fraud-alerts", params),
   });
 }
 
@@ -65,7 +65,7 @@ export function vowListOptions(filters: { limit?: number; offset?: number; statu
 
   return queryOptions({
     queryKey: vowKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<VowListItem>>("/dharma-compliance/vows", params),
+    queryFn: () => adminClient.get<ListEnvelope<VowListItem>>("/admin/dharma-compliance/vows", params),
   });
 }
 
@@ -79,6 +79,6 @@ export function guidanceQueueOptions(filters: { limit?: number; offset?: number;
 
   return queryOptions({
     queryKey: guidanceKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<GuidanceQueueItem>>("/dharma-compliance/vows/guidance-queue", params),
+    queryFn: () => adminClient.get<ListEnvelope<GuidanceQueueItem>>("/admin/dharma-compliance/vows/guidance-queue", params),
   });
 }
