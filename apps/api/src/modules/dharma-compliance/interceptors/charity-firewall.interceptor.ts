@@ -140,9 +140,21 @@ export class CharityFirewallInterceptor implements NestInterceptor {
           "Charity firewall violation detected",
         );
 
-        throw new ForbiddenException(
-          "Nội dung chứa thông tin tài khoản ngân hàng không được phép",
-        );
+        // Fetch allowed accounts for the error response per AC3
+        const whitelisted = await this.charityFirewall.getWhitelistedAccounts();
+        const allowedAccounts = whitelisted.map((w) => ({
+          charityName: w.charityName,
+          bankAccount: w.bankAccount,
+        }));
+
+        throw new ForbiddenException({
+          message:
+            "Hành vi kêu gọi tịnh tài vào tài khoản cá nhân bị nghiêm cấm. " +
+            "Trợ ấn Kinh sách chỉ được thực hiện qua tài khoản từ thiện chính thức " +
+            "của đài Đông Phương (BSB 112 879 - Account 432 033 033 hoặc 432 919 934).",
+          code: "UNAUTHORIZED_CHARITY_ACCOUNT",
+          allowedAccounts,
+        });
       }
     } catch (error) {
       // If error is ForbiddenException from firewall, re-throw
