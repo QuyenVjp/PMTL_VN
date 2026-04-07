@@ -3,6 +3,8 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import type { AltarItemListItem, ValidationLogItem } from "./types.js";
 
+export type { AltarItemListItem, ValidationLogItem } from "./types.js";
+
 export const altarMgmtKeys = {
   all: ["altar-management"] as const,
   items: (f: Record<string, unknown>) => [...altarMgmtKeys.all, "items", f] as const,

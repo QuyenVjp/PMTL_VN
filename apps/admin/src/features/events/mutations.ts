@@ -3,11 +3,21 @@ import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
 import { eventKeys } from "./queries.js";
+import type { DeliveryMode, EventType } from "./types.js";
+
+export interface CreateEventInput {
+  titleVi: string;
+  eventType: EventType;
+  deliveryMode: DeliveryMode;
+  startAt: string;
+  locationName?: string;
+  description?: string;
+}
 
 export function useCreateEvent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) => adminClient.post("/events", data),
+    mutationFn: (data: CreateEventInput) => adminClient.post("/events", data),
     onSuccess: () => {
       toast.success("Đã tạo sự kiện.");
       void qc.invalidateQueries({ queryKey: eventKeys.lists() });

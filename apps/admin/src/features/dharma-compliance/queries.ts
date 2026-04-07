@@ -3,6 +3,8 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import type { CharityListItem, FraudAlertItem, VowListItem, GuidanceQueueItem } from "./types.js";
 
+export type { CharityListItem };
+
 export const charityKeys = {
   all: ["charities"] as const,
   lists: () => [...charityKeys.all, "list"] as const,

@@ -3,6 +3,8 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import type { TemplateListItem, ApplicantListItem } from "./types.js";
 
+export type { TemplateListItem, ApplicantListItem } from "./types.js";
+
 export const sacredFormKeys = {
   all: ["sacred-forms"] as const,
   templates: () => [...sacredFormKeys.all, "templates"] as const,

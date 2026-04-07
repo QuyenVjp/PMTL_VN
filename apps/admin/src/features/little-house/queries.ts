@@ -3,6 +3,8 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import type { LhListItem, LhFraudItem } from "./types.js";
 
+export type { LhListItem, LhFraudItem } from "./types.js";
+
 export const lhKeys = {
   all: ["little-house"] as const,
   lists: () => [...lhKeys.all, "list"] as const,

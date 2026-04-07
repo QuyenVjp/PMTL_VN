@@ -3,6 +3,8 @@ import { adminClient } from "@/lib/api/admin-client.js";
 import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import type { EventListItem } from "./types.js";
 
+export type { EventListItem } from "./types.js";
+
 export const eventKeys = {
   all: ["buddhist-events"] as const,
   lists: () => [...eventKeys.all, "list"] as const,
