@@ -8,6 +8,7 @@ import { StorageService } from "../../platform/storage/storage.service.js";
 import { mapQ161ForCalendar } from "../wisdom-qa/q161-rule-pack.data.js";
 import { mapEventToAdminItem } from "./calendar.mapper.js";
 import { CalendarRepository } from "./calendar.repository.js";
+import { LunarCalendarService } from "./lunar-calendar.service.js";
 import type {
   AdminCreateEventInput,
   AdminEventQuery,
@@ -39,6 +40,7 @@ export class CalendarService {
     private readonly cacheService: CacheService,
     private readonly audit: AuditService,
     private readonly storage: StorageService,
+    private readonly lunar: LunarCalendarService,
   ) {}
 
   // ── Yin-time deadzone guard ──────────────────────────────────────────────
@@ -356,7 +358,7 @@ export class CalendarService {
     const dayRole = this.resolveDayRole(dayTags);
     const isSpecial = dayRole !== "regular_day";
     const advisoryCards: AdvisoryCard[] = isSpecial
-      ? this.composeSpecialDayCards(dayTags, dayRole, weekdayVi)
+      ? this.composeSpecialDayCards(date, dayTags, dayRole, weekdayVi)
       : this.composeRegularDayCards(weekdayVi);
     const recommendedActions: RecommendedAction[] = isSpecial
       ? this.composeSpecialDayActions(dayTags)
@@ -426,15 +428,82 @@ export class CalendarService {
   }
 
   private computeDayTags(date: Date, tz: string): string[] {
+    const tags: string[] = [];
+
+    // ── Gregorian special days ───────────────────────────────────────────
     const dateStr = this.formatDateInTimezone(date, tz);
     const [, monthStr, dayStr] = dateStr.split("-");
     const month = Number(monthStr);
     const day = Number(dayStr);
-    const tags: string[] = [];
-    if (month === 1 && day === 1) tags.push("tet_duong_lich", "major_holiday", "special_practice_day");
-    if (month === 4 && day === 5) tags.push("thanh_minh", "special_practice_day");
-    if (month === 12 && day === 22) tags.push("dong_chi", "special_practice_day");
-    return tags;
+    if (month === 1 && day === 1)
+      tags.push("tet_duong_lich", "major_holiday", "special_practice_day");
+    if (month === 4 && day === 5)
+      tags.push("thanh_minh", "special_practice_day");
+    if (month === 12 && day === 22)
+      tags.push("dong_chi", "special_practice_day");
+
+    // ── Lunar special days (Phase 2: Lunar auspicious day detection) ──────
+    try {
+      const lunarDayTypes = this.lunar.detectDayTypes(date);
+
+      if (lunarDayTypes.length > 0) {
+        // Convert AuspiciousDayType to DayRole-compatible tags
+        if (
+          lunarDayTypes.includes("MONTHLY_FIRST") ||
+          lunarDayTypes.includes("MONTHLY_FIFTEENTH")
+        ) {
+          tags.push("mung_ram_auspicious", "special_practice_day");
+        }
+
+        if (
+          lunarDayTypes.includes("GUANYIN_BIRTHDAY") ||
+          lunarDayTypes.includes("GUANYIN_ENLIGHTENMENT") ||
+          lunarDayTypes.includes("GUANYIN_MONASTIC") ||
+          lunarDayTypes.includes("SHAKYAMUNI_BIRTHDAY") ||
+          lunarDayTypes.includes("SHAKYAMUNI_ENLIGHTENMENT") ||
+          lunarDayTypes.includes("AMITABHA_BIRTHDAY") ||
+          lunarDayTypes.includes("KSITIGARBHA_BIRTHDAY") ||
+          lunarDayTypes.includes("MEDICINE_BUDDHA")
+        ) {
+          tags.push("buddha_bodhisattva_day");
+        }
+
+        if (
+          lunarDayTypes.includes("TET_NGUYEN_DAN") ||
+          lunarDayTypes.includes("VESAK")
+        ) {
+          tags.push("major_holiday");
+        }
+
+        if (lunarDayTypes.includes("VU_LAN") || lunarDayTypes.includes("TRUNG_NGUYEN")) {
+          tags.push("spirit_day");
+        }
+
+        if (lunarDayTypes.includes("LUC_TRAI_DAY")) {
+          tags.push("luc_trai_day", "special_practice_day");
+        }
+
+        // Other lunar festivals default to special_practice_day if not already added
+        if (
+          !tags.includes("special_practice_day") &&
+          (lunarDayTypes.includes("NGUYEN_TIEU") ||
+            lunarDayTypes.includes("TRUNG_THU") ||
+            lunarDayTypes.includes("TRUNG_CUU") ||
+            lunarDayTypes.includes("DOAN_NGO"))
+        ) {
+          tags.push("special_practice_day");
+        }
+      }
+    } catch (error) {
+      // Lunar conversion should not fail, but log if it does
+      this.logger.warn(
+        { date, error },
+        "Failed to compute lunar day tags",
+      );
+    }
+
+    // Remove duplicates
+    return Array.from(new Set(tags));
   }
 
   private resolveDayRole(dayTags: readonly string[]): DayRole {
@@ -462,15 +531,15 @@ export class CalendarService {
     ];
   }
 
-  private composeSpecialDayCards(dayTags: readonly string[], dayRole: DayRole, _weekdayVi: string): AdvisoryCard[] {
+  private composeSpecialDayCards(date: Date, dayTags: readonly string[], dayRole: DayRole, _weekdayVi: string): AdvisoryCard[] {
     const cards: AdvisoryCard[] = [];
-    const dayLabel = this.resolveDayLabelVi(dayTags);
+    const dayLabel = this.resolveDayLabelVi(date, dayTags);
     cards.push({
       title: dayLabel,
       body: "Kính mong mọi người làm nhiều công đức, ăn chay niệm Kinh, tránh sát sinh, siêng làm các điều thiện.",
       cardKind: "info",
     });
-    const recitationCap = this.resolveRecitationCap(dayRole, dayTags);
+    const recitationCap = this.resolveRecitationCap(date, dayRole, dayTags);
     if (recitationCap !== null) {
       cards.push({
         title: "Lễ Phật Đại Sám Hối Văn",
@@ -491,33 +560,110 @@ export class CalendarService {
     return cards;
   }
 
-  private resolveDayLabelVi(dayTags: readonly string[]): string {
-    if (dayTags.includes("tet_duong_lich")) return "Tết Dương Lịch — Ngày đặc biệt";
-    if (dayTags.includes("thanh_minh")) return "Tiết Thanh Minh — Ngày đặc biệt";
+  private resolveDayLabelVi(date: Date | undefined, dayTags: readonly string[]): string {
+    // Buddhist festival dates (lunar)
+    if (dayTags.includes("buddha_bodhisattva_day")) {
+      // Try to get the specific lunar festival name if available
+      if (date) {
+        try {
+          const lunarInfo = this.lunar.getAuspiciousDayInfo(date);
+          if (lunarInfo.labelVi && lunarInfo.labelVi !== `${lunarInfo.lunarDay}`) {
+            return lunarInfo.labelVi;
+          }
+        } catch {
+          // Fall through to default
+        }
+      }
+      return "Ngày Vía Phật Bồ Tát — Ngày đặc biệt";
+    }
+
+    // Gregorian special days
+    if (dayTags.includes("tet_duong_lich"))
+      return "Tết Dương Lịch — Ngày đặc biệt";
+    if (dayTags.includes("thanh_minh"))
+      return "Tiết Thanh Minh — Ngày đặc biệt";
     if (dayTags.includes("dong_chi")) return "Tiết Đông Chí — Ngày đặc biệt";
-    if (dayTags.includes("mung_1")) return "Mùng 1 — Ngày niệm Kinh đặc biệt";
+
+    // Lunar monthly auspicious days
+    if (dayTags.includes("mung_ram_auspicious")) {
+      if (date) {
+        try {
+          const lunarDate = this.lunar.getLunarDate(date);
+          if (lunarDate.lunarDay === 1) {
+            return "Mùng 1 Âm Lịch — Ngày niệm Kinh đặc biệt";
+          } else if (lunarDate.lunarDay === 15) {
+            return "Rằm Âm Lịch — Ngày niệm Kinh đặc biệt";
+          }
+        } catch {
+          // Fall through
+        }
+      }
+      return "Ngày Auspicious — Ngày niệm Kinh đặc biệt";
+    }
+
+    if (dayTags.includes("mung_1"))
+      return "Mùng 1 — Ngày niệm Kinh đặc biệt";
     if (dayTags.includes("ram_15")) return "Rằm — Ngày niệm Kinh đặc biệt";
-    if (dayTags.includes("luc_trai_day")) return "Ngày Lục Trai — Nên tăng cường tu tập";
+
+    // Luc Trai days
+    if (dayTags.includes("luc_trai_day"))
+      return "Ngày Lục Trai — Nên tăng cường tu tập";
+
+    // Spirit days
+    if (dayTags.includes("spirit_day"))
+      return "Ngày Tâm Linh — Nên tăng cường tu tập";
+
     return "Ngày đặc biệt — Nên tăng cường tu tập";
   }
 
-  private resolveRecitationCap(dayRole: DayRole, dayTags: readonly string[]): number | null {
+  private resolveRecitationCap(date: Date, dayRole: DayRole, dayTags: readonly string[]): number | null {
     const rulePack = mapQ161ForCalendar();
+
+    // Try lunar-based caps first (for Buddhist festivals)
+    if (dayRole === "buddha_bodhisattva_day") {
+      try {
+        const lunarDayTypes = this.lunar.detectDayTypes(date);
+        for (const dayType of lunarDayTypes) {
+          const cap = this.lunar.getRecitationCap(dayType);
+          if (cap && cap > 0) {
+            return cap;
+          }
+        }
+      } catch {
+        // Fall through to Q161 defaults
+      }
+    }
+
+    // Luc Trai days - get from lunar service
+    if (dayRole === "luc_trai_day") {
+      try {
+        const cap = this.lunar.getHighestRecitationCap(date);
+        if (cap && cap > 0) {
+          return cap;
+        }
+      } catch {
+        // Fall through
+      }
+    }
+
+    // Lunar monthly auspicious days (mùng 1, rằm)
+    if (dayTags.includes("mung_ram_auspicious")) {
+      return rulePack.recitationCaps.find((c) => c.key === "lphv_regular_mung_1_ram")?.maxCount ?? 49;
+    }
+
+    // Gregorian special days
     if (dayRole === "major_holiday" || dayTags.includes("tet_duong_lich")) {
       return rulePack.recitationCaps.find((c) => c.key === "lphv_major_holiday_standard")?.maxCount ?? 27;
     }
-    if (dayRole === "buddha_bodhisattva_day") {
-      return rulePack.recitationCaps.find((c) => c.key === "lphv_buddha_bodhisattva_standard")?.maxCount ?? 49;
-    }
+
     if (dayTags.includes("thanh_minh") || dayTags.includes("dong_chi")) {
       return rulePack.recitationCaps.find((c) => c.key === "lphv_regular_mung_1_ram")?.maxCount ?? 21;
     }
+
     if (dayTags.includes("mung_1") || dayTags.includes("ram_15")) {
       return rulePack.recitationCaps.find((c) => c.key === "lphv_regular_mung_1_ram")?.maxCount ?? 21;
     }
-    if (dayRole === "luc_trai_day") {
-      return rulePack.recitationCaps.find((c) => c.key === "lphv_regular_mung_1_ram")?.maxCount ?? 21;
-    }
+
     return dayRole !== "regular_day" ? 21 : null;
   }
 
