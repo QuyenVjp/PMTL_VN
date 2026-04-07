@@ -164,3 +164,140 @@ export const createDeceasedProfileSchema = z.object({
 });
 
 export type CreateDeceasedProfileInput = z.infer<typeof createDeceasedProfileSchema>;
+
+// ── Daily practice advisory schemas ──────────────────────────────────
+// Design: design/03-domains/calendar/USE_CASES/compose-daily-practice-advisory.md
+
+export const DAY_ROLES = [
+  "regular_day",
+  "special_practice_day",
+  "spirit_day",
+  "major_holiday",
+  "buddha_bodhisattva_day",
+  "tet_window_day",
+  "luc_trai_day",
+] as const;
+
+export type DayRole = (typeof DAY_ROLES)[number];
+
+export const SURFACE_TARGETS = [
+  "calendar",
+  "member_dashboard",
+  "homepage_banner",
+  "notification_only",
+] as const;
+
+export type SurfaceTarget = (typeof SURFACE_TARGETS)[number];
+
+// ── Advisory card (short, elderly-friendly) ───────────────────────────
+
+export interface AdvisoryCard {
+  /** Short heading, e.g. "Mùng 1 tháng 2 âm lịch" */
+  readonly title: string;
+  /** 1-3 line body text — elderly-friendly, no jargon */
+  readonly body: string;
+  /** Card intent for FE styling */
+  readonly cardKind: "info" | "recommendation" | "caution" | "household";
+}
+
+// ── Warning profile ───────────────────────────────────────────────────
+
+export interface WarningProfile {
+  /** Machine-readable warning key */
+  readonly key: string;
+  /** Human-readable Vietnamese summary */
+  readonly summaryVi: string;
+  /** Severity for UI treatment */
+  readonly severity: "info" | "caution" | "hard_block";
+}
+
+// ── Source reference ──────────────────────────────────────────────────
+
+export interface AdvisorySourceRef {
+  /** Machine key, e.g. "q161" */
+  readonly sourceKey: string;
+  /** Display label, e.g. "Q&A 161" */
+  readonly sourceLabel: string;
+  /** Optional URL to canonical source */
+  readonly sourceUrl?: string;
+  /** Review status of the source material */
+  readonly reviewStatus: "verified" | "human_review_required" | "draft";
+}
+
+// ── Surface plan ──────────────────────────────────────────────────────
+
+export interface SurfacePlan {
+  /** Where this advisory should be displayed */
+  readonly targets: readonly SurfaceTarget[];
+  /** Priority hint for FE (higher = more prominent placement) */
+  readonly priority: "low" | "normal" | "high";
+}
+
+// ── Notification plan ─────────────────────────────────────────────────
+
+export interface NotificationPlan {
+  /** Whether pre-notification is enabled for this advisory */
+  readonly preNotifyEnabled: boolean;
+  /** Lead times, e.g. ["T-1", "same_day"] */
+  readonly leadTimes: readonly string[];
+  /** Channels eligible for delivery */
+  readonly eligibleChannels: readonly string[];
+}
+
+// ── Recommended action ────────────────────────────────────────────────
+
+export interface RecommendedAction {
+  /** Machine key, e.g. "vegetarian", "life_release" */
+  readonly key: string;
+  /** Vietnamese label */
+  readonly labelVi: string;
+  /** Action kind for FE rendering */
+  readonly actionKind: "encourage" | "avoid" | "required";
+}
+
+// ── Compose result (full advisory output) ─────────────────────────────
+
+export interface AdvisoryComposeResult {
+  /** ISO date string the advisory was computed for */
+  readonly date: string;
+  /** Timezone used for date boundary resolution */
+  readonly userTimezone: string;
+  /** Vietnamese weekday label */
+  readonly weekdayVi: string;
+  /** Computed day tags */
+  readonly dayTags: readonly string[];
+  /** Resolved day role */
+  readonly dayRole: DayRole;
+  /** Short, elderly-friendly cards for UI */
+  readonly advisoryCards: readonly AdvisoryCard[];
+  /** Structured recommended actions */
+  readonly recommendedActions: readonly RecommendedAction[];
+  /** Optional warning profile */
+  readonly warningProfile: readonly WarningProfile[];
+  /** Links to source-backed content */
+  readonly sourceRefs: readonly AdvisorySourceRef[];
+  /** Where to surface this advisory */
+  readonly surfacePlan: SurfacePlan;
+  /** Pre-notification intent */
+  readonly notificationPlan: NotificationPlan;
+  /** ISO timestamp when this advisory was generated */
+  readonly generatedAt: string;
+}
+
+// ── Input validation for compose endpoint ─────────────────────────────
+
+export const composeAdvisoryQuerySchema = z.object({
+  date: z
+    .string()
+    .date()
+    .optional()
+    .default(() => new Date().toISOString().slice(0, 10)),
+  tz: z
+    .string()
+    .min(1)
+    .max(100)
+    .optional()
+    .default("Asia/Ho_Chi_Minh"),
+});
+
+export type ComposeAdvisoryQuery = z.infer<typeof composeAdvisoryQuerySchema>;

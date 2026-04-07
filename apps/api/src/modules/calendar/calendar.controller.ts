@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   UsePipes,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
@@ -29,6 +30,7 @@ import {
   reorderAgendaItemsSchema,
   rescheduleEventSchema,
   createDeceasedProfileSchema,
+  composeAdvisoryQuerySchema,
   type EventQuery,
   type AdminEventQuery,
   type AdminCreateEventInput,
@@ -38,6 +40,7 @@ import {
   type ReorderAgendaItemsInput,
   type RescheduleEventInput,
   type CreateDeceasedProfileInput,
+  type ComposeAdvisoryQuery,
 } from "./calendar.schemas.js";
 
 // ── Public controller ─────────────────────────────────────────────────────
@@ -99,6 +102,38 @@ export class CalendarController {
     const tz = timezone && timezone.length > 0 ? timezone : "Asia/Ho_Chi_Minh";
     this.calendarService.checkYinDeadzone(tz);
     return { isInDeadzone: false, userTimezone: tz };
+  }
+
+  // ── Daily Practice Advisory Compose (Phase 1) ──────────────────────
+  // Design: design/03-domains/calendar/USE_CASES/compose-daily-practice-advisory.md
+
+  @Get("me/advisory/compose")
+  @ApiOperation({
+    summary: "Compose daily practice advisory cho ngày chỉ định",
+    description:
+      "Trả về gói hướng dẫn tu học trong ngày gồm advisory cards, day tags, " +
+      "recommended actions, warning profile, source refs, surface plan, và notification plan. " +
+      "Phase 1: sync compute, Gregorian-only, Q161 rule pack.",
+  })
+  @ApiResponse({ status: 200, description: "Advisory compose thành công" })
+  @ApiResponse({ status: 400, description: "Ngày hoặc timezone không hợp lệ" })
+  composeAdvisory(
+    @Query(ZodValidate(composeAdvisoryQuerySchema)) query: ComposeAdvisoryQuery,
+    @CurrentUser() _user: AuthenticatedUser,
+  ) {
+    const date = new Date(query.date);
+
+    // Validate the timezone is real by attempting to format with it
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone: query.tz }).format(date);
+    } catch {
+      throw new BadRequestException({
+        code: "INVALID_TIMEZONE",
+        message: `Timezone không hợp lệ: ${query.tz}`,
+      });
+    }
+
+    return this.calendarService.composeAdvisory(date, query.tz);
   }
 
   // ── Bardo 49-day tracker (authenticated) ─────────────────────────────
