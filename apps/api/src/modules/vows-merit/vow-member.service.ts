@@ -1,5 +1,6 @@
-import { Injectable, Logger, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
 import { nanoid } from "nanoid";
+import pino from "pino";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import type {
   CreateVowInput,
@@ -12,7 +13,7 @@ import type {
 
 @Injectable()
 export class VowMemberService {
-  private readonly logger = new Logger(VowMemberService.name);
+  private readonly logger = pino({ name: VowMemberService.name });
 
   constructor(private readonly prisma: PrismaService) {}
 
@@ -30,7 +31,7 @@ export class VowMemberService {
         endDate: input.endDate ? new Date(input.endDate) : null,
       },
     });
-    this.logger.log({ msg: "vow.created", userId, publicId: vow.publicId, vowType: input.vowType });
+    this.logger.info({ msg: "vow.created", userId, publicId: vow.publicId, vowType: input.vowType });
     return this.toDto(vow, []);
   }
 
@@ -50,7 +51,7 @@ export class VowMemberService {
       data: { currentCount: { increment: input.addCount } },
     });
 
-    this.logger.log({
+    this.logger.info({
       msg: "vow.progress_updated",
       userId,
       publicId: input.publicId,
@@ -74,7 +75,7 @@ export class VowMemberService {
       data: { status: "COMPLETED" },
     });
 
-    this.logger.log({ msg: "vow.fulfilled", userId, publicId: input.publicId });
+    this.logger.info({ msg: "vow.fulfilled", userId, publicId: input.publicId });
     return this.toDto(updated, []);
   }
 
@@ -105,7 +106,7 @@ export class VowMemberService {
       },
     });
 
-    this.logger.log({
+    this.logger.info({
       msg: "merit_transfer.created",
       userId,
       vowPublicId: input.vowPublicId,
@@ -192,7 +193,7 @@ export class VowMemberService {
 
     const isCompleted = vow.targetCount !== null && updated.currentCount >= vow.targetCount;
 
-    this.logger.log({
+    this.logger.info({
       msg: "vow.milestone_recorded",
       userId,
       vowPublicId,

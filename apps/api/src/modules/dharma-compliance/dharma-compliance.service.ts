@@ -15,6 +15,8 @@ import type {
   CharityQuery,
   CreateCharityInput,
   UpdateCharityStatusInput,
+  CreateCharityRuleInput,
+  UpdateCharityRuleInput,
   FraudAlertQuery,
   ResolveFraudAlertInput,
   VowQuery,
@@ -63,11 +65,22 @@ export class DharmaComplianceService {
   async updateCharityStatus(publicId: string, input: UpdateCharityStatusInput, adminId: string, auditCtx: AuditContext) {
     const charity = await this.repo.findCharityByPublicId(publicId);
     if (!charity) throw new NotFoundException("Tổ chức từ thiện không tồn tại");
-    const updated = await this.repo.updateCharityStatus(charity.id, input.status);
-    await this.audit.append(auditCtx, "admin.charity.status_update", "charity", publicId, {
-      from: charity.status,
-      to: input.status,
-      reason: input.reason,
+    // Atomic: status change + audit log in a single transaction. If audit fails, the
+    // status change rolls back so the charity record never drifts from the audit trail.
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const next = await tx.charityWhitelist.update({
+        where: { id: charity.id },
+        data: { status: input.status as never },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        auditCtx,
+        "admin.charity.status_update",
+        "charity",
+        publicId,
+        { from: charity.status, to: input.status, reason: input.reason, adminId },
+      );
+      return next;
     });
     return mapCharityToDetail(updated);
   }
@@ -298,7 +311,7 @@ export class DharmaComplianceService {
   /** POST /api/admin/dharma-compliance/charities/:publicId/rules */
   async createCharityRule(
     charityPublicId: string,
-    input: { ruleType: string; description: string; evidenceUrl?: string },
+    input: CreateCharityRuleInput,
     auditCtx: AuditContext,
   ) {
     const charity = await this.repo.findCharityByPublicId(charityPublicId);
@@ -340,7 +353,7 @@ export class DharmaComplianceService {
   async updateCharityRule(
     charityPublicId: string,
     rulePublicId: string,
-    input: { verified?: boolean; evidenceUrl?: string; description?: string },
+    input: UpdateCharityRuleInput,
     auditCtx: AuditContext,
   ) {
     const charity = await this.repo.findCharityByPublicId(charityPublicId);

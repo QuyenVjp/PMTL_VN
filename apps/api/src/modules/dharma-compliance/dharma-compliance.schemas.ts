@@ -22,9 +22,53 @@ export type CreateCharityInput = z.infer<typeof createCharitySchema>;
 
 export const updateCharityStatusSchema = z.object({
   status: z.enum(["ACTIVE", "SUSPENDED", "FLAGGED", "PENDING_REVIEW"]),
-  reason: z.string().min(5).max(500),
+  reason: z.string().trim().min(5).max(500),
 });
 export type UpdateCharityStatusInput = z.infer<typeof updateCharityStatusSchema>;
+
+// ─── Charity Lifecycle (suspend / revoke) ────────────────────────────────────
+
+export const suspendCharitySchema = z.object({
+  reason: z.string().trim().min(5).max(500),
+});
+export type SuspendCharityInput = z.infer<typeof suspendCharitySchema>;
+
+export const revokeCharitySchema = z.object({
+  reason: z.string().trim().min(5).max(500),
+});
+export type RevokeCharityInput = z.infer<typeof revokeCharitySchema>;
+
+// ─── Charity Whitelisting Rules ───────────────────────────────────────────────
+// Mirrors Prisma enum WhitelistingCriteriaType (prisma/schema.prisma:1681)
+export const whitelistingCriteriaTypeSchema = z.enum([
+  "LEGAL_REGISTRATION",
+  "FINANCIAL_TRANSPARENCY",
+  "MONK_VERIFICATION",
+  "COMMUNITY_ENDORSEMENT",
+  "TRACK_RECORD",
+  "AUDIT_REPORT",
+  "NO_FRAUD_HISTORY",
+]);
+export type WhitelistingCriteriaType = z.infer<typeof whitelistingCriteriaTypeSchema>;
+
+export const createCharityRuleSchema = z.object({
+  ruleType: whitelistingCriteriaTypeSchema,
+  description: z.string().trim().min(5).max(1000),
+  evidenceUrl: z.string().trim().url().max(500).optional(),
+});
+export type CreateCharityRuleInput = z.infer<typeof createCharityRuleSchema>;
+
+export const updateCharityRuleSchema = z
+  .object({
+    verified: z.boolean().optional(),
+    evidenceUrl: z.string().trim().url().max(500).optional(),
+    description: z.string().trim().min(5).max(1000).optional(),
+  })
+  .refine(
+    (v) => v.verified !== undefined || v.evidenceUrl !== undefined || v.description !== undefined,
+    { message: "Phải cung cấp ít nhất một trường cập nhật" },
+  );
+export type UpdateCharityRuleInput = z.infer<typeof updateCharityRuleSchema>;
 
 // ─── Fraud Alerts ─────────────────────────────────────────────────────────────
 

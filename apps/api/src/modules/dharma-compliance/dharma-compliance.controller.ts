@@ -22,6 +22,10 @@ import {
   charityQuerySchema,
   createCharitySchema,
   updateCharityStatusSchema,
+  suspendCharitySchema,
+  revokeCharitySchema,
+  createCharityRuleSchema,
+  updateCharityRuleSchema,
   fraudAlertQuerySchema,
   resolveFraudAlertSchema,
   vowQuerySchema,
@@ -141,10 +145,11 @@ export class AdminCharityController {
   @ApiOperation({ summary: "Tạm ngừng tổ chức từ thiện" })
   async suspend(
     @Param("publicId") publicId: string,
-    @Body() body: { reason: string },
+    @Body() body: Record<string, unknown>,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.suspendCharity(publicId, body.reason ?? "", auditCtx);
+    const input = suspendCharitySchema.parse(body);
+    return this.svc.suspendCharity(publicId, input.reason, auditCtx);
   }
 
   @Post(":publicId/revoke")
@@ -152,10 +157,11 @@ export class AdminCharityController {
   @ApiOperation({ summary: "Thu hồi tổ chức từ thiện (vĩnh viễn)" })
   async revoke(
     @Param("publicId") publicId: string,
-    @Body() body: { reason: string },
+    @Body() body: Record<string, unknown>,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.revokeCharity(publicId, body.reason ?? "", auditCtx);
+    const input = revokeCharitySchema.parse(body);
+    return this.svc.revokeCharity(publicId, input.reason, auditCtx);
   }
 
   @Get(":publicId/rules")
@@ -169,10 +175,11 @@ export class AdminCharityController {
   @ApiOperation({ summary: "Thêm tiêu chí xác minh" })
   async createRule(
     @Param("publicId") publicId: string,
-    @Body() body: { ruleType: string; description: string; evidenceUrl?: string },
+    @Body() body: Record<string, unknown>,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.createCharityRule(publicId, body, auditCtx);
+    const input = createCharityRuleSchema.parse(body);
+    return this.svc.createCharityRule(publicId, input, auditCtx);
   }
 
   @Patch(":publicId/rules/:rulePublicId")
@@ -180,10 +187,11 @@ export class AdminCharityController {
   async updateRule(
     @Param("publicId") publicId: string,
     @Param("rulePublicId") rulePublicId: string,
-    @Body() body: { verified?: boolean; evidenceUrl?: string; description?: string },
+    @Body() body: Record<string, unknown>,
     @AuditContext() auditCtx: AuditCtxType,
   ) {
-    return this.svc.updateCharityRule(publicId, rulePublicId, body, auditCtx);
+    const input = updateCharityRuleSchema.parse(body);
+    return this.svc.updateCharityRule(publicId, rulePublicId, input, auditCtx);
   }
 }
 

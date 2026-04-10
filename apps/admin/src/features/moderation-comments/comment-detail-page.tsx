@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/lib/api/admin-client";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
   AdminDetailPage,
@@ -9,22 +8,11 @@ import {
   AdminDetailField,
   WorkspaceConfirmDialog,
 } from "@/components/workspace";
-import type { ModerationCommentItem } from "@/features/moderation-comments/queries";
+import { moderationCommentDetailOptions } from "@/features/moderation-comments/queries";
 import {
   useDecideCommentReport,
   type CommentDecision,
 } from "@/features/moderation-comments/mutations";
-
-// ── Query ─────────────────────────────────────────────────────────────
-
-function commentDetailOptions(publicId: string) {
-  return queryOptions({
-    queryKey: ["admin-moderation-comments", "detail", publicId],
-    queryFn: () =>
-      adminClient.get<ModerationCommentItem>(`/moderation/reports/${publicId}`),
-    enabled: Boolean(publicId),
-  });
-}
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -104,7 +92,7 @@ export function CommentDetailPage() {
   const [confirm, setConfirm] = useState<ConfirmKey>(null);
 
   const { data: comment, isLoading } = useQuery(
-    commentDetailOptions(publicId ?? ""),
+    moderationCommentDetailOptions(publicId ?? ""),
   );
 
   const decideReport = useDecideCommentReport();

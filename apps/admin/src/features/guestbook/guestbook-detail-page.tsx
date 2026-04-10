@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/lib/api/admin-client";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
   AdminDetailPage,
@@ -9,21 +8,11 @@ import {
   AdminDetailField,
   WorkspaceConfirmDialog,
 } from "@/components/workspace";
-import type { GuestbookItem } from "@/features/guestbook/queries";
+import { guestbookDetailOptions } from "@/features/guestbook/queries";
 import {
   useDeleteGuestbook,
   useUpdateGuestbookStatus,
 } from "@/features/guestbook/mutations";
-
-// ── Query ─────────────────────────────────────────────────────────────
-
-function guestbookDetailOptions(publicId: string) {
-  return queryOptions({
-    queryKey: ["admin-guestbook", "detail", publicId],
-    queryFn: () => adminClient.get<GuestbookItem>(`/admin/community/guestbook/${publicId}`),
-    enabled: Boolean(publicId),
-  });
-}
 
 // ── Helpers ───────────────────────────────────────────────────────────
 

@@ -31,6 +31,8 @@ export const volunteerKeys = {
   all: ["admin-volunteers"] as const,
   lists: () => [...volunteerKeys.all, "list"] as const,
   list: (filters: VolunteerFilters) => [...volunteerKeys.lists(), filters] as const,
+  details: () => [...volunteerKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...volunteerKeys.details(), publicId] as const,
 };
 
 // ── Query options ───────────────────────────────────────────────────
@@ -52,5 +54,13 @@ export function volunteerListOptions(filters: VolunteerFilters = {}) {
     queryKey: volunteerKeys.list(filters),
     queryFn: () =>
       adminClient.get<ListEnvelope<VolunteerItem>>("/admin/volunteers", params),
+  });
+}
+
+export function volunteerDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: volunteerKeys.detail(publicId),
+    queryFn: () => adminClient.get<VolunteerItem>(`/admin/volunteers/${publicId}`),
+    enabled: Boolean(publicId),
   });
 }

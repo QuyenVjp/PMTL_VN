@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/lib/api/admin-client";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
   AdminDetailPage,
@@ -9,23 +8,13 @@ import {
   AdminDetailField,
   WorkspaceConfirmDialog,
 } from "@/components/workspace";
-import type { CommunityPostItem } from "@/features/community-posts/queries";
+import { communityPostDetailOptions } from "@/features/community-posts/queries";
 import {
   useDeleteCommunityPost,
   useUpdateCommunityPostStatus,
   useHidePost,
   useRestorePost,
 } from "@/features/community-posts/mutations";
-
-// ── Query ─────────────────────────────────────────────────────────────
-
-function communityPostDetailOptions(publicId: string) {
-  return queryOptions({
-    queryKey: ["admin-community-posts", "detail", publicId],
-    queryFn: () => adminClient.get<CommunityPostItem>(`/admin/community/posts/${publicId}`),
-    enabled: Boolean(publicId),
-  });
-}
 
 // ── Helpers ───────────────────────────────────────────────────────────
 

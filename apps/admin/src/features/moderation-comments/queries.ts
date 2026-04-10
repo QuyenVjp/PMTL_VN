@@ -30,6 +30,8 @@ export const moderationCommentKeys = {
   lists: () => [...moderationCommentKeys.all, "list"] as const,
   list: (filters: ModerationCommentFilters) =>
     [...moderationCommentKeys.lists(), filters] as const,
+  details: () => [...moderationCommentKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...moderationCommentKeys.details(), publicId] as const,
 };
 
 export function moderationCommentListOptions(filters: ModerationCommentFilters = {}) {
@@ -42,5 +44,14 @@ export function moderationCommentListOptions(filters: ModerationCommentFilters =
         status: filters.status || undefined,
         targetType: filters.targetType || "COMMENT",
       }),
+  });
+}
+
+export function moderationCommentDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: moderationCommentKeys.detail(publicId),
+    queryFn: () =>
+      adminClient.get<ModerationCommentItem>(`/moderation/reports/${publicId}`),
+    enabled: Boolean(publicId),
   });
 }

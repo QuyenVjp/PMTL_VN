@@ -43,3 +43,11 @@ export function communityPostListOptions(filters: CommunityPostFilters = {}) {
       }),
   });
 }
+
+export function communityPostDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: communityPostKeys.detail(publicId),
+    queryFn: () => adminClient.get<CommunityPostItem>(`/admin/community/posts/${publicId}`),
+    enabled: Boolean(publicId),
+  });
+}

@@ -43,7 +43,14 @@ export class VowsMeritService {
 
     const vow = await this.repo.createVow(input, member.id, nanoid(21));
 
+    // Canonical assisted-entry audit: MUST capture both the owner (member being assisted)
+    // AND the actor (admin performing the action) as explicit fields. See
+    // design/03-domains/vows-merit/CONTRACTS.md §assisted-entry-audit and DESIGN_GAP_ANALYSIS.md §2.
     await this.audit.append(auditContext, "admin.vow.create", "vow", vow.publicId, {
+      assistedEntry: true,
+      ownerUserId: member.id,
+      ownerPublicId: member.publicId,
+      actorUserId: adminId,
       memberPublicId: input.memberPublicId,
       vowType: input.vowType,
       assistReason: input.assistReason,
@@ -58,7 +65,13 @@ export class VowsMeritService {
 
     const journal = await this.repo.createLifeReleaseJournal(input, member.id, adminId, nanoid(21));
 
+    // Canonical assisted-entry audit: MUST capture both ownerUserId (member being assisted)
+    // and actorUserId (admin) per design/03-domains/vows-merit/CONTRACTS.md §assisted-entry-audit.
     await this.audit.append(auditContext, "admin.life_release.create", "life_release_journal", journal.publicId, {
+      assistedEntry: true,
+      ownerUserId: member.id,
+      ownerPublicId: member.publicId,
+      actorUserId: adminId,
       memberPublicId: input.memberPublicId,
       animalType: input.animalType,
       quantity: input.quantity,

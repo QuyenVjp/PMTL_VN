@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 
@@ -15,8 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { adminClient } from "@/lib/api/admin-client";
-import type { VolunteerItem } from "@/features/volunteers/queries";
+import { volunteerDetailOptions } from "@/features/volunteers/queries";
 import { useUpdateVolunteer, useDeleteVolunteer } from "@/features/volunteers/mutations";
 import {
   extractValidationFieldErrors,
@@ -24,14 +23,6 @@ import {
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
-
-function volunteerDetailOptions(publicId: string) {
-  return queryOptions({
-    queryKey: ["admin-volunteers", "detail", publicId],
-    queryFn: () => adminClient.get<VolunteerItem>(`/admin/volunteers/${publicId}`),
-    enabled: Boolean(publicId),
-  });
-}
 
 export function VolunteerDetailPage() {
   const navigate = useNavigate();

@@ -23,6 +23,8 @@ export const guestbookKeys = {
   all: ["admin-guestbook"] as const,
   lists: () => [...guestbookKeys.all, "list"] as const,
   list: (filters: GuestbookFilters) => [...guestbookKeys.lists(), filters] as const,
+  details: () => [...guestbookKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...guestbookKeys.details(), publicId] as const,
 };
 
 export function guestbookListOptions(filters: GuestbookFilters = {}) {
@@ -34,5 +36,13 @@ export function guestbookListOptions(filters: GuestbookFilters = {}) {
         offset: filters.offset ?? 0,
         status: filters.status || undefined,
       }),
+  });
+}
+
+export function guestbookDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: guestbookKeys.detail(publicId),
+    queryFn: () => adminClient.get<GuestbookItem>(`/admin/community/guestbook/${publicId}`),
+    enabled: Boolean(publicId),
   });
 }
