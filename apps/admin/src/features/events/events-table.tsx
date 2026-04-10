@@ -8,7 +8,7 @@ import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace"
 import { Badge } from "@/components/ui/badge";
 import { eventListOptions, type EventListItem } from "./queries.js";
 import { useCheckIn } from "./mutations.js";
-import { EVENT_STATUS_LABELS, EVENT_STATUS_VARIANT, EVENT_TYPE_LABELS, type EventStatus, type EventType } from "./types.js";
+import { EVENT_STATUS_LABELS, EVENT_STATUS_VARIANT, EVENT_TYPE_LABELS } from "./types.js";
 
 function EventRowActions({ row }: { row: EventListItem }) {
   const checkIn = useCheckIn();
@@ -48,14 +48,14 @@ export function EventsTable() {
       {
         accessorKey: "eventType",
         header: "Loại",
-        cell: ({ row }) => EVENT_TYPE_LABELS[row.original.eventType as EventType],
+        cell: ({ row }) => EVENT_TYPE_LABELS[row.original.eventType],
       },
       {
         accessorKey: "status",
         header: "Trạng thái",
         cell: ({ row }) => (
-          <Badge variant={EVENT_STATUS_VARIANT[row.original.status as EventStatus]}>
-            {EVENT_STATUS_LABELS[row.original.status as EventStatus]}
+          <Badge variant={EVENT_STATUS_VARIANT[row.original.status]}>
+            {EVENT_STATUS_LABELS[row.original.status]}
           </Badge>
         ),
       },

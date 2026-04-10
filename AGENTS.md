@@ -167,7 +167,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 - Workspace MCP stack lives in `.mcp.json`. Prefer MCPs when they provide fresher docs, runtime internals, browser evidence, or infra state that repo files cannot provide.
 - **GitNexus priority rule for this repo (PMTL_VN):**
   - **ONLY use GitNexus tools** with prefix `gitnexus_`: `gitnexus_query`, `gitnexus_impact`, `gitnexus_context`, `gitnexus_detect_changes`, `gitnexus_cypher`.
-  - **NEVER use CornMCP tools** (`corn_code_search`, `corn_code_context`, `corn_code_impact`, `corn_detect_changes`, etc.) — they are deprecated.
+  - **NEVER use deprecated `corn_*` tools** (`corn_code_search`, `corn_code_context`, `corn_code_impact`, `corn_detect_changes`, etc.).
   - For any non-trivial bugfix, refactor, or feature: start with `gitnexus_query` to find symbols.
   - Before editing: run `gitnexus_context` to see callers/callees.
   - Before modifying shared logic: run `gitnexus_impact` to check blast radius.
@@ -240,7 +240,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **PMTL_VN** (18009 symbols, 27684 relationships, 288 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **PMTL_VN** (18560 symbols, 28871 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -336,26 +336,6 @@ To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.
 | Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
 | Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
-| Work in the Ui area (193 symbols) | `.claude/skills/generated/ui/SKILL.md` |
-| Work in the Identity area (114 symbols) | `.claude/skills/generated/identity/SKILL.md` |
-| Work in the Content area (114 symbols) | `.claude/skills/generated/content/SKILL.md` |
-| Work in the Wisdom-qa area (95 symbols) | `.claude/skills/generated/wisdom-qa/SKILL.md` |
-| Work in the Tools area (87 symbols) | `.claude/skills/generated/tools/SKILL.md` |
-| Work in the Dharma-compliance area (77 symbols) | `.claude/skills/generated/dharma-compliance/SKILL.md` |
-| Work in the Scripts area (71 symbols) | `.claude/skills/generated/scripts/SKILL.md` |
-| Work in the Guides area (63 symbols) | `.claude/skills/generated/guides/SKILL.md` |
-| Work in the Calendar area (59 symbols) | `.claude/skills/generated/calendar/SKILL.md` |
-| Work in the Downloads area (57 symbols) | `.claude/skills/generated/downloads/SKILL.md` |
-| Work in the Community area (56 symbols) | `.claude/skills/generated/community/SKILL.md` |
-| Work in the Users-admin area (53 symbols) | `.claude/skills/generated/users-admin/SKILL.md` |
-| Work in the Vows-merit area (50 symbols) | `.claude/skills/generated/vows-merit/SKILL.md` |
-| Work in the Engagement area (46 symbols) | `.claude/skills/generated/engagement/SKILL.md` |
-| Work in the Prisma area (41 symbols) | `.claude/skills/generated/prisma/SKILL.md` |
-| Work in the Sacred-forms area (33 symbols) | `.claude/skills/generated/sacred-forms/SKILL.md` |
-| Work in the System area (30 symbols) | `.claude/skills/generated/system/SKILL.md` |
-| Work in the Storage area (30 symbols) | `.claude/skills/generated/storage/SKILL.md` |
-| Work in the Chanting area (29 symbols) | `.claude/skills/generated/chanting/SKILL.md` |
-| Work in the Notification area (28 symbols) | `.claude/skills/generated/notification/SKILL.md` |
 
 <!-- gitnexus:end -->
 

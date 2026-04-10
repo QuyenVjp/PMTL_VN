@@ -20,13 +20,13 @@ export function lifeReleaseListOptions(filters: { limit?: number; offset?: numbe
 
   return queryOptions({
     queryKey: lifeReleaseKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<LifeReleaseListItem>>("/life-liberation", params),
+    queryFn: () => adminClient.get<ListEnvelope<LifeReleaseListItem>>("/admin/life-liberation", params),
   });
 }
 
 export function speciesSummaryOptions() {
   return queryOptions({
     queryKey: lifeReleaseKeys.summary(),
-    queryFn: () => adminClient.get<ListEnvelope<SpeciesSummaryItem>>("/life-liberation/species-summary"),
+    queryFn: () => adminClient.get<ListEnvelope<SpeciesSummaryItem>>("/admin/life-liberation/species-summary"),
   });
 }

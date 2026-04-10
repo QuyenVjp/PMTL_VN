@@ -6,7 +6,7 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { applicantListOptions, type ApplicantListItem } from "./queries.js";
-import { APPLICANT_STATUS_LABELS, APPLICANT_STATUS_VARIANT, type ApplicantStatus } from "./types.js";
+import { APPLICANT_STATUS_LABELS, APPLICANT_STATUS_VARIANT } from "./types.js";
 
 type ReviewDialogType = "APPROVE" | "REJECT" | "PROBATION" | null;
 
@@ -57,8 +57,8 @@ export function SacredFormApplicantsTable({
         accessorKey: "status",
         header: "Trạng thái",
         cell: ({ row }) => (
-          <Badge variant={APPLICANT_STATUS_VARIANT[row.original.status as ApplicantStatus]}>
-            {APPLICANT_STATUS_LABELS[row.original.status as ApplicantStatus]}
+          <Badge variant={APPLICANT_STATUS_VARIANT[row.original.status]}>
+            {APPLICANT_STATUS_LABELS[row.original.status]}
           </Badge>
         ),
       },

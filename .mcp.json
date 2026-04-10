@@ -1,11 +1,5 @@
 {
   "mcpServers": {
-    "corn-hub": {
-      "url": "http://localhost:8317/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CORN_HUB_API_KEY}"
-      }
-    },
     "stitch": {
       "type": "stdio",
       "command": "cmd",
@@ -54,12 +48,13 @@
     },
     "playwright": {
       "type": "stdio",
-      "command": "cmd",
+      "command": "npx",
       "args": [
-        "/c",
-        "npx",
-        "-y",
-        "@playwright/mcp@latest"
+        "@playwright/mcp@latest",
+        "--output-dir",
+        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp",
+        "--user-data-dir",
+        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp\\profile"
       ]
     },
     "next-devtools": {

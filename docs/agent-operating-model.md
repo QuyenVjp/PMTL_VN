@@ -65,19 +65,18 @@ Before doing substantial work, Codex should be able to answer these 5 questions:
 
 If these are not clear, Codex should gather context first instead of coding by instinct.
 
-## CornHub-First Default
+## GitNexus-First Default
 
-For any non-trivial bugfix, refactor, or feature in PMTL_VN, Codex should default to a CornHub-first workflow before broad file reading:
+For any non-trivial bugfix, refactor, or feature in PMTL_VN, Codex should default to a GitNexus-first workflow before broad file reading:
 
-1. `corn_code_search`
-2. `corn_code_context`
-3. `corn_code_impact` before shared or risky edits
-4. `corn_detect_changes` when the worktree is dirty
+1. `gitnexus_query`
+2. `gitnexus_context`
+3. `gitnexus_impact` before shared or risky edits
+4. `gitnexus_detect_changes` when the worktree is dirty or before closing the task
 5. implementation + targeted verification
-6. `corn_knowledge_store` for reusable fix patterns
-7. `corn_quality_report` or an explicit skip reason
+6. read `gitnexus://repo/PMTL_VN/process/{name}` when execution flow detail matters
 
-For substantial tasks, add `corn_session_start` and `corn_session_end`.
+If GitNexus shows zero upstream callers for a NestJS service, manually verify controller imports and module providers because the graph does not fully model NestJS DI.
 
 ## Lane Ownership Gaps
 

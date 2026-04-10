@@ -6,7 +6,7 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { altarItemListOptions, type AltarItemListItem } from "./queries.js";
-import { ALTAR_ITEM_TYPE_LABELS, CONDITION_LABELS, CONDITION_VARIANT, type AltarItemType, type AltarCondition } from "./types.js";
+import { ALTAR_ITEM_TYPE_LABELS, CONDITION_LABELS, CONDITION_VARIANT } from "./types.js";
 import { ConditionUpdateDialog } from "./altar-management-condition-dialog.js";
 
 function AltarItemRowActions({ item }: { item: AltarItemListItem }) {
@@ -41,14 +41,14 @@ export function AltarManagementItemsTable() {
       {
         accessorKey: "itemType",
         header: "Loại",
-        cell: ({ row }) => ALTAR_ITEM_TYPE_LABELS[row.original.itemType as AltarItemType],
+        cell: ({ row }) => ALTAR_ITEM_TYPE_LABELS[row.original.itemType],
       },
       {
         accessorKey: "condition",
         header: "Tình trạng",
         cell: ({ row }) => (
-          <Badge variant={CONDITION_VARIANT[row.original.condition as AltarCondition]}>
-            {CONDITION_LABELS[row.original.condition as AltarCondition]}
+          <Badge variant={CONDITION_VARIANT[row.original.condition]}>
+            {CONDITION_LABELS[row.original.condition]}
           </Badge>
         ),
       },

@@ -7,7 +7,7 @@ import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace"
 import { Badge } from "@/components/ui/badge";
 import { templateListOptions, type TemplateListItem } from "./queries.js";
 import { useToggleTemplate } from "./mutations.js";
-import { FORM_TYPE_LABELS, type SacredFormType } from "./types.js";
+import { FORM_TYPE_LABELS } from "./types.js";
 
 function TemplateRowActions({ item }: { item: TemplateListItem }) {
   const toggle = useToggleTemplate();
@@ -34,7 +34,7 @@ export function SacredFormTemplatesTable() {
       {
         accessorKey: "formType",
         header: "Loại đơn",
-        cell: ({ row }) => FORM_TYPE_LABELS[row.original.formType as SacredFormType],
+        cell: ({ row }) => FORM_TYPE_LABELS[row.original.formType],
       },
       {
         accessorKey: "isActive",

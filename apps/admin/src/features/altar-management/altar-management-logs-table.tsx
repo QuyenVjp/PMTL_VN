@@ -6,7 +6,7 @@ import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { WorkspaceDataTable } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { validationLogListOptions, type ValidationLogItem } from "./queries.js";
-import { PROTOCOL_LABELS, type AltarProtocolType } from "./types.js";
+import { PROTOCOL_LABELS } from "./types.js";
 
 export function AltarManagementLogsTable() {
   const { data: envelope, isLoading } = useQuery(validationLogListOptions());
@@ -18,7 +18,7 @@ export function AltarManagementLogsTable() {
       {
         accessorKey: "protocolType",
         header: "Quy trình",
-        cell: ({ row }) => PROTOCOL_LABELS[row.original.protocolType as AltarProtocolType],
+        cell: ({ row }) => PROTOCOL_LABELS[row.original.protocolType],
       },
       {
         accessorKey: "passed",

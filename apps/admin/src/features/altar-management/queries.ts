@@ -21,7 +21,7 @@ export function altarItemListOptions(filters: { limit?: number; offset?: number;
 
   return queryOptions({
     queryKey: altarMgmtKeys.items(filters),
-    queryFn: () => adminClient.get<ListEnvelope<AltarItemListItem>>("/altar-management/items", params),
+    queryFn: () => adminClient.get<ListEnvelope<AltarItemListItem>>("/admin/altar-management/items", params),
   });
 }
 
@@ -34,6 +34,6 @@ export function validationLogListOptions(filters: { limit?: number; offset?: num
 
   return queryOptions({
     queryKey: altarMgmtKeys.logs(filters),
-    queryFn: () => adminClient.get<ListEnvelope<ValidationLogItem>>("/altar-management/validation-logs", params),
+    queryFn: () => adminClient.get<ListEnvelope<ValidationLogItem>>("/admin/altar-management/validation-logs", params),
   });
 }

@@ -60,6 +60,67 @@ function Wait-ForPort {
   return $false
 }
 
+function Get-LatestLogLine {
+  param([string]$Path)
+
+  if (-not (Test-Path $Path)) {
+    return $null
+  }
+
+  $lines = @(Get-Content $Path -Tail 20 | Where-Object { $_ -and $_.Trim() })
+  if ($lines.Count -eq 0) {
+    return $null
+  }
+
+  return $lines[-1]
+}
+
+function Wait-ForPortWithProgress {
+  param(
+    [string]$TargetHost,
+    [int]$Port,
+    [int]$TimeoutSec,
+    [System.Diagnostics.Process]$Process,
+    [string]$StdoutPath,
+    [string]$StderrPath,
+    [string]$Label
+  )
+
+  $startedAt = Get-Date
+  $lastProgressAt = $startedAt.AddSeconds(-15)
+
+  do {
+    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+      return $true
+    }
+
+    if ($Process -and $Process.HasExited) {
+      return $false
+    }
+
+    $now = Get-Date
+    if (($now - $lastProgressAt).TotalSeconds -ge 15) {
+      $elapsed = [Math]::Floor(($now - $startedAt).TotalSeconds)
+      $stderrLine = Get-LatestLogLine -Path $StderrPath
+      $stdoutLine = Get-LatestLogLine -Path $StdoutPath
+
+      if ($stderrLine) {
+        Write-Host "[host-admin] $Label vẫn đang chạy sau ${elapsed}s. stderr mới nhất: $stderrLine" -ForegroundColor Yellow
+      } elseif ($stdoutLine) {
+        Write-Host "[host-admin] $Label vẫn đang chạy sau ${elapsed}s. stdout mới nhất: $stdoutLine" -ForegroundColor Cyan
+      } else {
+        Write-Host "[host-admin] $Label vẫn đang khởi động... (${elapsed}s/${TimeoutSec}s)" -ForegroundColor Cyan
+      }
+
+      $lastProgressAt = $now
+    }
+
+    Start-Sleep -Milliseconds 500
+  } while (((Get-Date) - $startedAt).TotalSeconds -lt $TimeoutSec)
+
+  return $false
+}
+
 function Start-PnpmProcess {
   param(
     [string[]]$ArgumentList,
@@ -68,19 +129,41 @@ function Start-PnpmProcess {
     [string]$Label
   )
 
-  $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
-  if (-not $pnpmCmd) {
-    $pnpmCmd = Get-Command pnpm -ErrorAction SilentlyContinue
-  }
-  if (-not $pnpmCmd) {
-    throw "Khong tim thay pnpm trong PATH."
+  $pnpmPs1 = Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue
+  if ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1") {
+    $shellCmd = Get-Command pwsh -ErrorAction SilentlyContinue
+    if (-not $shellCmd) {
+      $shellCmd = Get-Command powershell -ErrorAction SilentlyContinue
+    }
+    if (-not $shellCmd) {
+      throw "Khong tim thay pwsh/powershell de chay pnpm.ps1."
+    }
+
+    $resolvedFilePath = $shellCmd.Source
+    $resolvedArguments = @(
+      "-NoLogo",
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      $pnpmPs1.Source
+    ) + $ArgumentList
+  } else {
+    $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
+    if (-not $pnpmCmd) {
+      throw "Khong tim thay pnpm trong PATH."
+    }
+
+    $resolvedFilePath = $pnpmCmd.Source
+    $resolvedArguments = $ArgumentList
   }
 
   Write-Host "[host-admin] ${Label}: pnpm $($ArgumentList -join ' ')" -ForegroundColor Cyan
-  return Start-Process -FilePath $pnpmCmd.Source `
-    -ArgumentList $ArgumentList `
+  return Start-Process -FilePath $resolvedFilePath `
+    -ArgumentList $resolvedArguments `
     -WorkingDirectory $repoRoot `
     -PassThru `
+    -WindowStyle Hidden `
     -RedirectStandardOutput $StdoutPath `
     -RedirectStandardError $StderrPath
 }
@@ -101,7 +184,14 @@ function Start-ApiWithFallback {
     -StderrPath $devErr `
     -Label "Starting API (dev mode)"
 
-  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 25) {
+  if (Wait-ForPortWithProgress `
+      -TargetHost "127.0.0.1" `
+      -Port 3001 `
+      -TimeoutSec 150 `
+      -Process $apiDev `
+      -StdoutPath $devOut `
+      -StderrPath $devErr `
+      -Label "API dev mode") {
     Write-Host "[host-admin] API dev mode da san sang tren :3001." -ForegroundColor Green
     return $apiDev
   }
@@ -118,7 +208,14 @@ function Start-ApiWithFallback {
     -StderrPath $startErr `
     -Label "Starting API (fallback dist)"
 
-  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 20) {
+  if (Wait-ForPortWithProgress `
+      -TargetHost "127.0.0.1" `
+      -Port 3001 `
+      -TimeoutSec 60 `
+      -Process $apiStart `
+      -StdoutPath $startOut `
+      -StderrPath $startErr `
+      -Label "API fallback dist") {
     Write-Host "[host-admin] API fallback da san sang tren :3001." -ForegroundColor Green
     return $apiStart
   }
@@ -127,9 +224,11 @@ function Start-ApiWithFallback {
     Stop-Process -Id $apiStart.Id -Force -ErrorAction SilentlyContinue
   }
 
-  $devTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
-  $startTail = if (Test-Path $startErr) { (Get-Content $startErr -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
-  throw "Khong the khoi dong API tren :3001.`n[api-dev.err]`n$devTail`n`n[api-start.err]`n$startTail"
+  $devOutTail = if (Test-Path $devOut) { (Get-Content $devOut -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
+  $devErrTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
+  $startOutTail = if (Test-Path $startOut) { (Get-Content $startOut -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
+  $startErrTail = if (Test-Path $startErr) { (Get-Content $startErr -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
+  throw "Khong the khoi dong API tren :3001.`n[api-dev.out]`n$devOutTail`n`n[api-dev.err]`n$devErrTail`n`n[api-start.out]`n$startOutTail`n`n[api-start.err]`n$startErrTail"
 }
 
 Push-Location $repoRoot

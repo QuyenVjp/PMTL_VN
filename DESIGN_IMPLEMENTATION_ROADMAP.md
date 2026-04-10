@@ -318,7 +318,7 @@
 
 - Full phase analysis: `DESIGN_GAP_ANALYSIS.md`
 - CLAUDE.md: GitNexus tools + NestJS Hybrid Protocol
-- AGENTS.md: CornMCP deprecated, GitNexus-first enforcement
+- AGENTS.md: deprecated `corn_*` tools removed from active workflow, GitNexus-first enforcement
 
 ---
 

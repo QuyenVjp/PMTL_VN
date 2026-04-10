@@ -1,2 +1,0 @@
-# Grok write test
-ok

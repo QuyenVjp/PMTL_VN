@@ -53,7 +53,7 @@ export function DharmaComplianceCharityCreatePage() {
       {
         onSuccess: () => {
           toast.success("Đã thêm tổ chức từ thiện.");
-          navigate({ to: "/phap-luat/to-chuc-tu-thien" });
+          void navigate({ to: "/phap-luat/to-chuc-tu-thien" });
         },
       },
     );
@@ -148,7 +148,7 @@ export function DharmaComplianceCharityCreatePage() {
           <div className="flex justify-end gap-3 pt-4">
             <Button
               variant="outline"
-              onClick={() => navigate({ to: "/phap-luat/to-chuc-tu-thien" })}
+              onClick={() => { void navigate({ to: "/phap-luat/to-chuc-tu-thien" }); }}
               disabled={createCharity.isPending}
             >
               Huỷ

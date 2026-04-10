@@ -24,6 +24,6 @@ export function eventListOptions(filters: { limit?: number; offset?: number; sta
 
   return queryOptions({
     queryKey: eventKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<EventListItem>>("/events", params),
+    queryFn: () => adminClient.get<ListEnvelope<EventListItem>>("/admin/events", params),
   });
 }

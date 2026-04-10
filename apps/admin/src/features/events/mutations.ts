@@ -17,7 +17,7 @@ export interface CreateEventInput {
 export function useCreateEvent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateEventInput) => adminClient.post("/events", data),
+    mutationFn: (data: CreateEventInput) => adminClient.post("/admin/events", data),
     onSuccess: () => {
       toast.success("Đã tạo sự kiện.");
       void qc.invalidateQueries({ queryKey: eventKeys.lists() });
@@ -30,7 +30,7 @@ export function useUpdateEvent() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, data }: { publicId: string; data: Record<string, unknown> }) =>
-      adminClient.patch(`/events/${publicId}`, data),
+      adminClient.patch(`/admin/events/${publicId}`, data),
     onSuccess: (_, { publicId }) => {
       toast.success("Đã cập nhật sự kiện.");
       void qc.invalidateQueries({ queryKey: eventKeys.lists() });
@@ -44,7 +44,7 @@ export function useCheckIn() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ eventPublicId, userId }: { eventPublicId: string; userId: string }) =>
-      adminClient.post(`/events/${eventPublicId}/check-in`, { userId }),
+      adminClient.post(`/admin/events/${eventPublicId}/check-in`, { userId }),
     onSuccess: (_, { eventPublicId }) => {
       toast.success("Đã check-in thành viên.");
       void qc.invalidateQueries({ queryKey: eventKeys.registrations(eventPublicId) });

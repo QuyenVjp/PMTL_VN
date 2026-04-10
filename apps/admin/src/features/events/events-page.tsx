@@ -59,8 +59,8 @@ export function EventsPage() {
     }
     const payload: CreateEventInput = {
       titleVi: form.titleVi,
-      eventType: form.eventType as EventType,
-      deliveryMode: form.deliveryMode as DeliveryMode,
+      eventType: form.eventType,
+      deliveryMode: form.deliveryMode,
       startAt: new Date(form.startAt).toISOString(),
     };
     if (form.locationName) payload.locationName = form.locationName;

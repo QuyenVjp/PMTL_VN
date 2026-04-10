@@ -166,7 +166,7 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 ### 2. PMTL core
 
 - `pmtl-vn-architecture`: kiến trúc tổng thể Next.js + NestJS + Postgres + Docker/Caddy.
-- `pmtl-cornhub-workflow`: workflow CornHub-first cho bugfix/refactor/feature không trivial; ép `corn_code_search` -> `corn_code_context` -> `corn_code_impact` -> knowledge capture -> quality report.
+- `gitnexus-*` skills + MCP tools: workflow GitNexus-first cho bugfix/refactor/feature không trivial; ưu tiên `gitnexus_query` -> `gitnexus_context` -> `gitnexus_impact` -> `gitnexus_detect_changes`.
 - `pmtl-multi-cli-orchestrator`: routing chuẩn cho external AI CLI workers, hiện baseline là Gemini và Copilot cho docs research, second opinion, và task split theo thế mạnh từng CLI.
 - `pmtl-production-baseline`, `pmtl-production-ready`: baseline production, runtime safety, hardening, docs sync.
 - `pmtl-fe-implementation`, `pmtl-fe-craft`: frontend implementation của PMTL cho `apps/web`.
@@ -184,13 +184,13 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 | public premium polish | thêm `pmtl-creative-designer` sau khi structure đúng canon | đánh bóng trước khi route/data/state đúng |
 | dense admin audit/review | `pmtl-admin-ui` -> `ui-ux-pro-max` advisory pass | trộn generic SaaS/dashboard patterns vào PMTL canon |
 
-## CornHub fast path
+## GitNexus fast path
 
-- Với mọi bugfix/refactor/feature không trivial trong PMTL, bắt đầu bằng `pmtl-cornhub-workflow`.
-- Thứ tự tối thiểu: `corn_code_search` -> `corn_code_context` -> nếu đụng shared logic thì `corn_code_impact`.
-- Nếu worktree dirty hoặc nhiều agent có thể đang sửa cùng vùng: thêm `corn_detect_changes`.
-- Sau khi verify xong, lưu pattern tái sử dụng bằng `corn_knowledge_store`.
-- Kết task bằng `corn_quality_report` hoặc nói rõ vì sao skip.
+- Với mọi bugfix/refactor/feature không trivial trong PMTL, bắt đầu bằng GitNexus.
+- Thứ tự tối thiểu: `gitnexus_query` -> `gitnexus_context` -> nếu đụng shared logic thì `gitnexus_impact`.
+- Nếu worktree dirty hoặc trước khi chốt patch: dùng `gitnexus_detect_changes`.
+- Nếu cần trace execution flow thật sự: đọc `gitnexus://repo/PMTL_VN/processes` hoặc `gitnexus://repo/PMTL_VN/process/{name}`.
+- Nếu `impact` báo zero callers cho Nest service, bù thủ công bằng grep import/module/provider do giới hạn NestJS DI.
 
 ### 3. Frontend, UI, design
 

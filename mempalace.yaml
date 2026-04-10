@@ -1,0 +1,18 @@
+wing: pmtl_vn
+rooms:
+- name: apps
+  description: Files from apps/
+- name: data
+  description: Files from data/
+- name: design
+  description: Files from design/
+- name: documentation
+  description: Files from docs/
+- name: configuration
+  description: Files from infra/
+- name: backend
+  description: Files from api/
+- name: scripts
+  description: Files from scripts/
+- name: frontend
+  description: Files from ui/

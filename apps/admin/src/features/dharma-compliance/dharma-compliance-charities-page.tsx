@@ -16,7 +16,7 @@ export function DharmaComplianceCharitiesPage() {
             Danh sách, quản lý và xác minh các tổ chức từ thiện đã đăng ký.
           </p>
         </div>
-        <Button onClick={() => navigate({ to: "/phap-luat/to-chuc-tu-thien/tao-moi" })}>
+        <Button onClick={() => { void navigate({ to: "/phap-luat/to-chuc-tu-thien/tao-moi" }); }}>
           <PlusIcon className="size-4" />
           Thêm tổ chức
         </Button>

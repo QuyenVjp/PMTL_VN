@@ -110,7 +110,7 @@ Use this file as the high-signal operating contract for Claude Code in this repo
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **PMTL_VN** (18009 symbols, 27684 relationships, 288 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **PMTL_VN** (18560 symbols, 28871 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -206,26 +206,6 @@ To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.
 | Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
 | Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
-| Work in the Ui area (193 symbols) | `.claude/skills/generated/ui/SKILL.md` |
-| Work in the Identity area (114 symbols) | `.claude/skills/generated/identity/SKILL.md` |
-| Work in the Content area (114 symbols) | `.claude/skills/generated/content/SKILL.md` |
-| Work in the Wisdom-qa area (95 symbols) | `.claude/skills/generated/wisdom-qa/SKILL.md` |
-| Work in the Tools area (87 symbols) | `.claude/skills/generated/tools/SKILL.md` |
-| Work in the Dharma-compliance area (77 symbols) | `.claude/skills/generated/dharma-compliance/SKILL.md` |
-| Work in the Scripts area (71 symbols) | `.claude/skills/generated/scripts/SKILL.md` |
-| Work in the Guides area (63 symbols) | `.claude/skills/generated/guides/SKILL.md` |
-| Work in the Calendar area (59 symbols) | `.claude/skills/generated/calendar/SKILL.md` |
-| Work in the Downloads area (57 symbols) | `.claude/skills/generated/downloads/SKILL.md` |
-| Work in the Community area (56 symbols) | `.claude/skills/generated/community/SKILL.md` |
-| Work in the Users-admin area (53 symbols) | `.claude/skills/generated/users-admin/SKILL.md` |
-| Work in the Vows-merit area (50 symbols) | `.claude/skills/generated/vows-merit/SKILL.md` |
-| Work in the Engagement area (46 symbols) | `.claude/skills/generated/engagement/SKILL.md` |
-| Work in the Prisma area (41 symbols) | `.claude/skills/generated/prisma/SKILL.md` |
-| Work in the Sacred-forms area (33 symbols) | `.claude/skills/generated/sacred-forms/SKILL.md` |
-| Work in the System area (30 symbols) | `.claude/skills/generated/system/SKILL.md` |
-| Work in the Storage area (30 symbols) | `.claude/skills/generated/storage/SKILL.md` |
-| Work in the Chanting area (29 symbols) | `.claude/skills/generated/chanting/SKILL.md` |
-| Work in the Notification area (28 symbols) | `.claude/skills/generated/notification/SKILL.md` |
 
 <!-- gitnexus:end -->
 
@@ -261,7 +241,7 @@ GitNexus giúp tôi hiểu sâu toàn bộ monorepo Next.js 16 + NestJS, đặc 
 
 Chỉ được sử dụng GitNexus tools với prefix `gitnexus_`.
 
-TUYỆT ĐỐI CẤM mọi tool có chữ "corn" hoặc CornMCP (corn_knowledge_search, corn_code_search, corn_code_impact, corn_code_context...).
+TUYỆT ĐỐI CẤM mọi deprecated `corn_*` tool (`corn_knowledge_search`, `corn_code_search`, `corn_code_impact`, `corn_code_context`...).
 
 Khi cần search code, blast radius, call chain hoặc traceability design/ → bắt buộc gọi `gitnexus_query` hoặc `gitnexus_impact` trước.
 

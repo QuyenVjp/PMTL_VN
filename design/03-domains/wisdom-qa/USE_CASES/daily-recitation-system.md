@@ -536,3 +536,4 @@ Xin Quán Thế Âm Bồ Tát từ bi, nếu trong quá trình con dịch, chia 
 - Self-cultivation workspace: `apps/admin/src/features/self-cultivation/`
 - Niem Kinh admin workspace: `apps/admin/src/routes/noi-dung/niem-kinh/`
 - Incense offering ritual: [incense-offering-ritual-procedure.md](../altar-management/USE_CASES/incense-offering-ritual-procedure.md) — Sequence before daily recitation
+- Daily continuity, pre-recitation, makeup policy: [daily-recitation-continuity-makeup-discipline.md](./daily-recitation-continuity-makeup-discipline.md)

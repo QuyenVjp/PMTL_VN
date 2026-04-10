@@ -142,6 +142,12 @@ const PurityVowsPage = lazy(() =>
 const GuidanceQueuePage = lazy(() =>
   import("@/features/dharma-compliance").then((mod) => ({ default: mod.GuidanceQueuePage })),
 );
+const CharityCreatePage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.CharityCreatePage })),
+);
+const CharityDetailPage = lazy(() =>
+  import("@/features/dharma-compliance").then((mod) => ({ default: mod.CharityDetailPage })),
+);
 const EventsListPage = lazy(() =>
   import("@/features/events").then((mod) => ({ default: mod.EventsListPage })),
 );
@@ -690,6 +696,16 @@ const charitiesRoute = createRoute({
   path: "/phap-luat/to-chuc-tu-thien",
   component: withSuspense(CharitiesPage),
 });
+const charityCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/to-chuc-tu-thien/tao-moi",
+  component: withSuspense(CharityCreatePage),
+});
+const charityDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/phap-luat/to-chuc-tu-thien/$charityId",
+  component: withSuspense(CharityDetailPage),
+});
 const fraudAlertsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/canh-bao-gian-lan",
@@ -850,6 +866,8 @@ export const routeTree = rootRoute.addChildren([
     wisdomLegacyRoute,
     // Thanh Tịnh Pháp — Tuân thủ Pháp luật
     charitiesRoute,
+    charityCreateRoute,
+    charityDetailRoute,
     fraudAlertsRoute,
     purityVowsRoute,
     guidanceQueueRoute,

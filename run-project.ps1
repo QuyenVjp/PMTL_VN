@@ -99,6 +99,67 @@ function Wait-ForPort {
   return $false
 }
 
+function Get-LatestLogLine {
+  param([string]$Path)
+
+  if (-not (Test-Path $Path)) {
+    return $null
+  }
+
+  $lines = @(Get-Content $Path -Tail 20 | Where-Object { $_ -and $_.Trim() })
+  if ($lines.Count -eq 0) {
+    return $null
+  }
+
+  return $lines[-1]
+}
+
+function Wait-ForPortWithProgress {
+  param(
+    [string]$TargetHost,
+    [int]$Port,
+    [int]$TimeoutSec,
+    [System.Diagnostics.Process]$Process,
+    [string]$StdoutPath,
+    [string]$StderrPath,
+    [string]$Label
+  )
+
+  $startedAt = Get-Date
+  $lastProgressAt = $startedAt.AddSeconds(-15)
+
+  do {
+    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+      return $true
+    }
+
+    if ($Process -and $Process.HasExited) {
+      return $false
+    }
+
+    $now = Get-Date
+    if (($now - $lastProgressAt).TotalSeconds -ge 15) {
+      $elapsed = [Math]::Floor(($now - $startedAt).TotalSeconds)
+      $stderrLine = Get-LatestLogLine -Path $StderrPath
+      $stdoutLine = Get-LatestLogLine -Path $StdoutPath
+
+      if ($stderrLine) {
+        Write-Warn "$Label vẫn đang chạy sau ${elapsed}s. stderr mới nhất: $stderrLine"
+      } elseif ($stdoutLine) {
+        Write-Step "$Label vẫn đang chạy sau ${elapsed}s. stdout mới nhất: $stdoutLine"
+      } else {
+        Write-Step "$Label vẫn đang khởi động... (${elapsed}s/${TimeoutSec}s)"
+      }
+
+      $lastProgressAt = $now
+    }
+
+    Start-Sleep -Milliseconds 500
+  } while (((Get-Date) - $startedAt).TotalSeconds -lt $TimeoutSec)
+
+  return $false
+}
+
 function Start-PnpmProcess {
   param(
     [string[]]$ArgumentList,
@@ -107,19 +168,41 @@ function Start-PnpmProcess {
     [string]$Label
   )
 
-  $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
-  if (-not $pnpmCmd) {
-    $pnpmCmd = Get-Command pnpm -ErrorAction SilentlyContinue
-  }
-  if (-not $pnpmCmd) {
-    throw "Không tìm thấy pnpm trong PATH."
+  $pnpmPs1 = Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue
+  if ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1") {
+    $shellCmd = Get-Command pwsh -ErrorAction SilentlyContinue
+    if (-not $shellCmd) {
+      $shellCmd = Get-Command powershell -ErrorAction SilentlyContinue
+    }
+    if (-not $shellCmd) {
+      throw "Không tìm thấy pwsh/powershell để chạy pnpm.ps1."
+    }
+
+    $resolvedFilePath = $shellCmd.Source
+    $resolvedArguments = @(
+      "-NoLogo",
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      $pnpmPs1.Source
+    ) + $ArgumentList
+  } else {
+    $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
+    if (-not $pnpmCmd) {
+      throw "Không tìm thấy pnpm trong PATH."
+    }
+
+    $resolvedFilePath = $pnpmCmd.Source
+    $resolvedArguments = $ArgumentList
   }
 
   Write-Step "${Label}: pnpm $($ArgumentList -join ' ')"
-  return Start-Process -FilePath $pnpmCmd.Source `
-    -ArgumentList $ArgumentList `
+  return Start-Process -FilePath $resolvedFilePath `
+    -ArgumentList $resolvedArguments `
     -WorkingDirectory $repoRoot `
     -PassThru `
+    -WindowStyle Hidden `
     -RedirectStandardOutput $StdoutPath `
     -RedirectStandardError $StderrPath
 }
@@ -144,7 +227,14 @@ function Start-ApiWithFallback {
     -Label "Khởi động API (dev mode)"
 
   # Dev cold-start can be slow on Windows after dependency/cache changes.
-  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 70) {
+  if (Wait-ForPortWithProgress `
+      -TargetHost "127.0.0.1" `
+      -Port 3001 `
+      -TimeoutSec 150 `
+      -Process $apiDevProcess `
+      -StdoutPath $devOut `
+      -StderrPath $devErr `
+      -Label "API dev mode") {
     Write-Ok "API chạy ở dev mode (port 3001)."
     return $apiDevProcess
   }
@@ -168,7 +258,14 @@ function Start-ApiWithFallback {
     -StderrPath $startErr `
     -Label "Khởi động API (fallback dist)"
 
-  if (Wait-ForPort -TargetHost "127.0.0.1" -Port 3001 -TimeoutSec 20) {
+  if (Wait-ForPortWithProgress `
+      -TargetHost "127.0.0.1" `
+      -Port 3001 `
+      -TimeoutSec 60 `
+      -Process $apiStartProcess `
+      -StdoutPath $startOut `
+      -StderrPath $startErr `
+      -Label "API fallback dist") {
     Write-Ok "API fallback đã chạy (port 3001)."
     return $apiStartProcess
   }
@@ -177,9 +274,11 @@ function Start-ApiWithFallback {
     Stop-Process -Id $apiStartProcess.Id -Force -ErrorAction SilentlyContinue
   }
 
-  $devTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
-  $startTail = if (Test-Path $startErr) { (Get-Content $startErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
-  throw "Không thể khởi động API trên port 3001.`n[api-dev.err tail]`n$devTail`n`n[api-start.err tail]`n$startTail"
+  $devOutTail = if (Test-Path $devOut) { (Get-Content $devOut -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  $devErrTail = if (Test-Path $devErr) { (Get-Content $devErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  $startOutTail = if (Test-Path $startOut) { (Get-Content $startOut -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  $startErrTail = if (Test-Path $startErr) { (Get-Content $startErr -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
+  throw "Không thể khởi động API trên port 3001.`n[api-dev.out tail]`n$devOutTail`n`n[api-dev.err tail]`n$devErrTail`n`n[api-start.out tail]`n$startOutTail`n`n[api-start.err tail]`n$startErrTail"
 }
 
 function Assert-NodeVersion {
@@ -248,15 +347,15 @@ try {
   Assert-DockerInfra
 
   if ($FullPrepare) {
-    Write-Step "Chuẩn bị DB và CornHub local (full prepare mode)..."
+    Write-Step "Chuẩn bị DB local đầy đủ (full prepare mode)..."
     & pwsh -ExecutionPolicy Bypass -File $hostPrepareScript
     if ($LASTEXITCODE -ne 0) {
       throw "prepare-host-dev.ps1 thất bại. Xem lỗi phía trên."
     }
-    Write-Ok "DB và CornHub local đã được kiểm tra."
+    Write-Ok "DB local đã được kiểm tra."
   } else {
     Write-Warn "Fast mode: bỏ qua prepare-host-dev.ps1 để tránh check/recover Docker tự động."
-    Write-Warn "Nếu cần đồng bộ DB/CornHub đầy đủ, chạy lại với -FullPrepare."
+    Write-Warn "Nếu cần đồng bộ DB đầy đủ, chạy lại với -FullPrepare."
   }
 
   $runtimeLogDir = Join-Path $repoRoot "tmp/runtime/logs"
@@ -265,8 +364,6 @@ try {
   Write-Host ""
   Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
   Write-Host "  PMTL Dev Stack đang khởi động..." -ForegroundColor White
-  Write-Host "  Corn API → http://127.0.0.1:4000/health       (nếu CornHub có trên máy)" -ForegroundColor DarkGray
-  Write-Host "  Corn MCP → http://127.0.0.1:8317/mcp          (nếu CornHub có trên máy)" -ForegroundColor DarkGray
   Write-Host "  API  →  http://127.0.0.1:3001/api/docs  (sẵn sàng sau ~20s)" -ForegroundColor DarkGray
   Write-Host "  Admin → http://127.0.0.1:3002            (sẵn sàng sau ~5s)" -ForegroundColor DarkGray
   Write-Host "  Web  →  http://127.0.0.1:5173            (sẵn sàng sau ~15s)" -ForegroundColor DarkGray

@@ -24,7 +24,7 @@ export function templateListOptions(filters: { limit?: number; offset?: number; 
 
   return queryOptions({
     queryKey: sacredFormKeys.templateList(filters),
-    queryFn: () => adminClient.get<ListEnvelope<TemplateListItem>>("/sacred-forms/templates", params),
+    queryFn: () => adminClient.get<ListEnvelope<TemplateListItem>>("/admin/sacred-forms/templates", params),
   });
 }
 
@@ -37,6 +37,6 @@ export function applicantListOptions(filters: { limit?: number; offset?: number;
 
   return queryOptions({
     queryKey: sacredFormKeys.applicantList(filters),
-    queryFn: () => adminClient.get<ListEnvelope<ApplicantListItem>>("/sacred-forms/applicants", params),
+    queryFn: () => adminClient.get<ListEnvelope<ApplicantListItem>>("/admin/sacred-forms/applicants", params),
   });
 }

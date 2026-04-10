@@ -35,7 +35,8 @@ function statusBadgeClass(s: string): string {
 
 export function DharmaComplianceCharityDetailPage() {
   const navigate = useNavigate();
-  const { charityId } = useParams({ from: "/phap-luat/to-chuc-tu-thien/$charityId" } as any);
+  const params = useParams({ strict: false });
+  const charityId = params.charityId;
   const { data: envelope, isLoading } = useQuery(charityListOptions());
   const updateStatus = useUpdateCharityStatus();
 
@@ -88,7 +89,7 @@ export function DharmaComplianceCharityDetailPage() {
             </div>
           )}
         </div>
-        <Button variant="outline" onClick={() => navigate({ to: "/phap-luat/to-chuc-tu-thien" } as any)}>
+        <Button variant="outline" onClick={() => { void navigate({ to: "/phap-luat/to-chuc-tu-thien" }); }}>
           Quay lại
         </Button>
       </div>

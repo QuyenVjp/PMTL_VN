@@ -23,7 +23,7 @@ export function lhListOptions(filters: { limit?: number; offset?: number; status
 
   return queryOptions({
     queryKey: lhKeys.list(filters),
-    queryFn: () => adminClient.get<ListEnvelope<LhListItem>>("/little-house", params),
+    queryFn: () => adminClient.get<ListEnvelope<LhListItem>>("/admin/little-house", params),
   });
 }
 
@@ -37,6 +37,6 @@ export function lhFraudListOptions(filters: { limit?: number; offset?: number; s
 
   return queryOptions({
     queryKey: lhKeys.fraud(filters),
-    queryFn: () => adminClient.get<ListEnvelope<LhFraudItem>>("/little-house/fraud", params),
+    queryFn: () => adminClient.get<ListEnvelope<LhFraudItem>>("/admin/little-house/fraud", params),
   });
 }

@@ -10,13 +10,12 @@ Goal:
 
 Rules:
 - For any non-trivial bugfix, refactor, or feature in this repo:
-  1. Start with CornMCP.
-  2. Use `corn_code_search` to find the exact symbol or feature entry point.
-  3. Use `corn_code_context` before editing.
-  4. Use `corn_code_impact` before modifying shared logic, DTOs, hooks, services, or reused components.
-  5. Use `corn_detect_changes` if the worktree is dirty.
-  6. After implementation and verification, store the key fix pattern with `corn_knowledge_store`.
-  7. End with `corn_quality_report` or state explicitly why Corn quality tools were skipped.
+  1. Start with GitNexus.
+  2. Use `gitnexus_query` to find the exact symbol or feature entry point.
+  3. Use `gitnexus_context` before editing.
+  4. Use `gitnexus_impact` before modifying shared logic, DTOs, hooks, services, or reused components.
+  5. Use `gitnexus_detect_changes` if the worktree is dirty.
+  6. Read `gitnexus://repo/PMTL_VN/process/{name}` when the failing flow is unclear.
 - Follow `C:\Users\ADMIN\DEV2\PMTL_VN\AGENTS.md`.
 - For admin code, read `C:\Users\ADMIN\DEV2\PMTL_VN\apps\admin\AGENTS.override.md` before editing.
 - Do not claim success without rerunning the smoke suite.
@@ -36,7 +35,7 @@ What the smoke runner does:
 - records request failures, console errors, page heading, and create-dialog behavior
 
 Expected workflow:
-1. Run `corn_detect_changes`.
+1. Run `gitnexus_detect_changes`.
 2. Run `pnpm smoke:admin`.
 3. Read `tmp/runtime/admin-smoke-report.json`.
 4. Fix the highest-signal failures first:
@@ -50,7 +49,7 @@ Expected workflow:
    - files changed
    - failing routes fixed
    - final smoke result
-   - CornHub tools used
+   - GitNexus tools used
 
 Current baseline:
 - `pnpm smoke:admin` should finish with `ok: true` after the latest fixes.
