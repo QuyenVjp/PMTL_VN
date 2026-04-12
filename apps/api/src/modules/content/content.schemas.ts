@@ -1,6 +1,60 @@
 import { z } from "zod";
 
 const POST_TYPES = ["ARTICLE", "TRANSCRIPT", "SOURCE_NOTE", "EVENT_RECAP"] as const;
+const contentBlockBaseSchema = z.object({
+  id: z.string().min(1).max(100),
+  title: z.string().max(300).optional(),
+});
+
+const richTextBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("RICH_TEXT"),
+  text: z.string().min(1),
+});
+
+const scriptBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("SCRIPT_BLOCK"),
+  script: z.string().min(1),
+});
+
+const warningListBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("WARNING_LIST"),
+  warnings: z.array(z.string().min(1)).min(1),
+});
+
+const stepSequenceBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("STEP_SEQUENCE"),
+  steps: z.array(z.string().min(1)).min(1),
+});
+
+const imageCompareBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("IMAGE_COMPARE"),
+  beforeImageUrl: z.string().min(1),
+  afterImageUrl: z.string().min(1),
+  caption: z.string().max(500).optional(),
+});
+
+const faqBlockSchema = contentBlockBaseSchema.extend({
+  type: z.literal("FAQ_BLOCK"),
+  faqs: z.array(
+    z.object({
+      question: z.string().min(1),
+      answer: z.string().min(1),
+    }),
+  ).min(1),
+});
+
+export const contentBlockSchema = z.discriminatedUnion("type", [
+  richTextBlockSchema,
+  scriptBlockSchema,
+  warningListBlockSchema,
+  stepSequenceBlockSchema,
+  imageCompareBlockSchema,
+  faqBlockSchema,
+]);
+
+export const typedContentPayloadSchema = z.object({
+  blocks: z.array(contentBlockSchema).min(1),
+});
 
 // Create post
 export const createPostSchema = z.object({
@@ -194,3 +248,7 @@ export const unpublishPostSchema = z.object({
   mode: z.enum(["keepDraft", "replaceDraftWithPublished"]).default("keepDraft"),
 });
 export type UnpublishPostRequest = z.infer<typeof unpublishPostSchema>;
+
+export type ContentBlock = z.infer<typeof contentBlockSchema>;
+export type ContentBlockType = "RICH_TEXT" | "SCRIPT_BLOCK" | "WARNING_LIST" | "STEP_SEQUENCE" | "IMAGE_COMPARE" | "FAQ_BLOCK";
+export type TypedContentPayload = z.infer<typeof typedContentPayloadSchema>;

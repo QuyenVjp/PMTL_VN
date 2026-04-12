@@ -54,7 +54,7 @@ export class LifeLiberationService {
           "Vùng nước phải cực lớn, sâu, không có cá nhỏ. Mã lỗi: PREDATORY_HABITAT_VERIFICATION_REQUIRED",
         );
       }
-      if (input.habitatSafe === false) {
+      if (input.habitatSafe !== true) {
         throw new BadRequestException(
           "Môi trường sống không phù hợp cho loài ăn thịt. " +
           "Không thể phóng sinh tại hồ nhỏ hoặc ao có cá khác. Mã lỗi: UNSAFE_HABITAT_FOR_PREDATORY_SPECIES",
@@ -67,6 +67,8 @@ export class LifeLiberationService {
         riskLevel: "HIGH",
         userId,
         species: predatoryAnimals.map((a) => a.species),
+        habitatVerified: input.habitatVerified,
+        habitatSafe: input.habitatSafe,
       });
     }
 
@@ -86,6 +88,9 @@ export class LifeLiberationService {
       totalAnimals: input.animals.reduce((s, a) => s + a.quantity, 0),
       hasPredatory,
       riskLevel: hasPredatory ? "HIGH" : "NORMAL",
+      habitatVerified: input.habitatVerified,
+      habitatSafe: input.habitatSafe ?? null,
+      species: predatoryAnimals.map((a) => a.species),
     });
 
     return mapRecordToDetail(record);

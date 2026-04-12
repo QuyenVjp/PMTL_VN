@@ -14,6 +14,7 @@ import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from "@
 import type { Request } from "express";
 import pino from "pino";
 import { SpeciesBlacklistService } from "../services/species-blacklist.service.js";
+import { AuditService } from "../../../platform/audit/audit.service.js";
 
 interface AuthenticatedRequest extends Request {
   user?: {
@@ -49,7 +50,10 @@ function extractSpeciesFromBody(body: unknown): string[] {
 export class PredatorySpeciesGuard implements CanActivate {
   private readonly logger = pino({ name: PredatorySpeciesGuard.name });
 
-  constructor(private readonly speciesBlacklist: SpeciesBlacklistService) {}
+  constructor(
+    private readonly speciesBlacklist: SpeciesBlacklistService,
+    private readonly audit: AuditService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
@@ -86,6 +90,24 @@ export class PredatorySpeciesGuard implements CanActivate {
           reasons,
         },
         "Request blocked: blacklisted species detected",
+      );
+
+      await this.audit.append(
+        {
+          actorId: request.user?.id,
+          actorType: request.user?.id ? "user" : "anonymous",
+          ipAddress: request.ip,
+          userAgent: request.headers["user-agent"],
+        },
+        "member.life_release.predatory_blocked",
+        "life_release_record",
+        undefined,
+        {
+          blockedSpecies: validation.violations.map((v) => v.species),
+          reasons: validation.violations.map((v) => v.reason),
+          path: request.path,
+          method: request.method,
+        },
       );
 
       throw new ForbiddenException(

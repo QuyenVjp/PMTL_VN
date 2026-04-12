@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Query, UsePipes } from "@nestjs/com
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
+import { Roles } from "../../common/decorators/roles.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { WisdomQaService } from "./wisdom-qa.service.js";
@@ -9,9 +10,15 @@ import {
   askQuestionSchema,
   submitAnswerSchema,
   wisdomQaQuerySchema,
+  offlineBundleListQuerySchema,
+  offlineBundleStatusQuerySchema,
+  offlineBundleDeltaQuerySchema,
   type AskQuestionInput,
   type SubmitAnswerInput,
   type WisdomQaQuery,
+  type OfflineBundleListQuery,
+  type OfflineBundleStatusQuery,
+  type OfflineBundleDeltaQuery,
 } from "./wisdom-qa.schemas.js";
 
 @ApiTags("wisdom-qa")
@@ -62,5 +69,41 @@ export class WisdomQaController {
   @ApiResponse({ status: 200, description: "Q161 canonical rule-pack" })
   getQ161RulePack() {
     return this.wisdomQaService.getQ161RulePack();
+  }
+}
+
+@ApiTags("offline-bundles")
+@Controller("offline-bundles")
+@Roles("MEMBER", "ADMIN", "SUPER_ADMIN")
+export class WisdomOfflineBundleController {
+  constructor(private readonly wisdomQaService: WisdomQaService) {}
+
+  @Get()
+  @ApiOperation({ summary: "Danh sách offline bundle cho member" })
+  @ApiResponse({ status: 200, description: "Danh sách offline bundle" })
+  listBundles(@Query(ZodValidate(offlineBundleListQuerySchema)) query: OfflineBundleListQuery) {
+    return this.wisdomQaService.listOfflineBundles(query);
+  }
+
+  @Get(":publicId/status")
+  @ApiOperation({ summary: "Trạng thái đồng bộ của một offline bundle" })
+  @ApiResponse({ status: 200, description: "Trạng thái đồng bộ bundle" })
+  getBundleStatus(
+    @Param("publicId") publicId: string,
+    @Query(ZodValidate(offlineBundleStatusQuerySchema)) query: OfflineBundleStatusQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.wisdomQaService.getOfflineBundleStatus(publicId, query, user.id);
+  }
+
+  @Get(":publicId/delta")
+  @ApiOperation({ summary: "Delta bundle để đồng bộ tăng dần cho offline reader" })
+  @ApiResponse({ status: 200, description: "Delta manifest hoặc full sync manifest" })
+  getBundleDelta(
+    @Param("publicId") publicId: string,
+    @Query(ZodValidate(offlineBundleDeltaQuerySchema)) query: OfflineBundleDeltaQuery,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.wisdomQaService.getOfflineBundleDelta(publicId, query, user.id);
   }
 }

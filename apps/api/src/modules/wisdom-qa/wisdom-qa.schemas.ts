@@ -163,7 +163,11 @@ export type WisdomEntryPublicQuery = z.infer<typeof wisdomEntryPublicQuerySchema
 // ── Duplicate check schema ──────────────────────────────────────────
 
 export const duplicateCheckSchema = z.object({
-  title: z.string().min(1).max(300),
+  entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]).optional(),
+  sourceFamily: z.string().min(1).max(100).optional(),
+  sourceCode: z.string().min(1).max(200).optional(),
+  sourceUrl: z.string().url().max(500).optional(),
+  title: z.string().min(1).max(300).optional(),
 });
 export type DuplicateCheckInput = z.infer<typeof duplicateCheckSchema>;
 
@@ -174,6 +178,14 @@ export const suggestSlugSchema = z.object({
   sourceCode: z.string().max(200).optional(),
 });
 export type SuggestSlugInput = z.infer<typeof suggestSlugSchema>;
+
+export const slugPreviewSchema = z.object({
+  entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]),
+  titleVietnamese: z.string().min(3).max(300).optional(),
+  titleOriginal: z.string().min(3).max(300).optional(),
+  sourceCode: z.string().max(200).optional(),
+});
+export type SlugPreviewInput = z.infer<typeof slugPreviewSchema>;
 
 export const suggestSlugResponseSchema = z.object({
   slug: z.string().min(3).max(200),
@@ -193,3 +205,35 @@ export const translationDraftResponseSchema = z.object({
   model: z.string(),
 });
 export type TranslationDraftResponse = z.infer<typeof translationDraftResponseSchema>;
+
+// ── Offline bundle schemas ──────────────────────────────────────────
+
+const offlineBundleFamilySchema = z.enum(["baihua", "wisdom", "practices"]);
+
+export const offlineBundleListQuerySchema = z.object({
+  cursor: z.string().min(1).max(32).optional(),
+  limit: z.coerce.number().int().min(1).max(50).default(20),
+  offset: z.coerce.number().int().min(0).default(0),
+  bundleFamily: offlineBundleFamilySchema.optional(),
+});
+export type OfflineBundleListQuery = z.infer<typeof offlineBundleListQuerySchema>;
+
+export const offlineBundleStatusQuerySchema = z.object({
+  deviceFingerprint: z.string().min(8).max(200).optional(),
+  lastSyncedVersion: z.string().min(3).max(120).optional(),
+});
+export type OfflineBundleStatusQuery = z.infer<typeof offlineBundleStatusQuerySchema>;
+
+export const offlineBundleDeltaQuerySchema = z.object({
+  deviceFingerprint: z.string().min(8).max(200).optional(),
+  fromVersion: z.string().min(3).max(120).optional(),
+});
+export type OfflineBundleDeltaQuery = z.infer<typeof offlineBundleDeltaQuerySchema>;
+
+export const rebuildOfflineBundlesSchema = z.object({
+  scope: z.enum(["all", "family", "entry"]).default("all"),
+  bundleFamily: offlineBundleFamilySchema.optional(),
+  entryPublicIds: z.array(z.string().min(6).max(64)).max(200).optional(),
+  reason: z.string().min(3).max(500).optional(),
+});
+export type RebuildOfflineBundlesInput = z.infer<typeof rebuildOfflineBundlesSchema>;

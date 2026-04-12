@@ -27,7 +27,10 @@ import {
   updateAuthorityProfileSchema,
   duplicateCheckSchema,
   suggestSlugSchema,
+  slugPreviewSchema,
   translationDraftSchema,
+  offlineBundleListQuerySchema,
+  rebuildOfflineBundlesSchema,
   type WisdomEntryQuery,
   type CreateWisdomEntryInput,
   type UpdateWisdomEntryInput,
@@ -36,7 +39,10 @@ import {
   type UpdateAuthorityProfileInput,
   type DuplicateCheckInput,
   type SuggestSlugInput,
+  type SlugPreviewInput,
   type TranslationDraftInput,
+  type OfflineBundleListQuery,
+  type RebuildOfflineBundlesInput,
 } from "./wisdom-qa.schemas.js";
 
 @ApiTags("admin-wisdom")
@@ -145,8 +151,15 @@ export class WisdomQaAdminController {
   @ApiResponse({ status: 200, description: "Kết quả kiểm tra trùng lặp" })
   duplicateCheck(
     @Body(ZodValidate(duplicateCheckSchema)) input: DuplicateCheckInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: ExpressRequest,
   ) {
-    return this.wisdomQaService.checkDuplicateEntry(input);
+    return this.wisdomQaService.checkDuplicateEntry(input, {
+      actorId: user.id,
+      actorType: "admin",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
   }
 
   @Post("entries/slug-suggest")
@@ -159,6 +172,23 @@ export class WisdomQaAdminController {
     @Req() req: ExpressRequest,
   ) {
     return this.wisdomQaService.suggestSlug(input, {
+      actorId: user.id,
+      actorType: "admin",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Post("entries/slug-preview")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: "Preview slug chuẩn canonical trước khi lưu draft" })
+  slugPreview(
+    @Body(ZodValidate(slugPreviewSchema)) input: SlugPreviewInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: ExpressRequest,
+  ) {
+    return this.wisdomQaService.previewSlug(input, {
       actorId: user.id,
       actorType: "admin",
       ipAddress: req.ip,
@@ -246,6 +276,34 @@ export class WisdomQaAdminController {
     return this.wisdomQaService.deleteAuthorityProfile(publicId, {
       actorId: user.id,
       actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Get("offline-bundles")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Danh sách offline bundles (admin)" })
+  @ApiResponse({ status: 200, description: "Danh sách offline bundles kèm freshness" })
+  listOfflineBundles(
+    @Query(ZodValidate(offlineBundleListQuerySchema)) query: OfflineBundleListQuery,
+  ) {
+    return this.wisdomQaService.listOfflineBundles(query);
+  }
+
+  @Post("offline-bundles/rebuild")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ summary: "Rebuild/recovery offline bundles theo scope" })
+  @ApiResponse({ status: 202, description: "Recovery đã được khởi chạy" })
+  rebuildOfflineBundles(
+    @Body(ZodValidate(rebuildOfflineBundlesSchema)) input: RebuildOfflineBundlesInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: ExpressRequest,
+  ) {
+    return this.wisdomQaService.rebuildOfflineBundles(input, {
+      actorId: user.id,
+      actorType: "admin",
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
     });

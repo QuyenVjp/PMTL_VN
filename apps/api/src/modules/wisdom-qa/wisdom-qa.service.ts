@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from "@nestjs/common";
 import { nanoid } from "nanoid";
 import { CacheService } from "../../common/cache/cache.service.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
@@ -22,12 +22,42 @@ import type {
   WisdomEntryPublicQuery,
   DuplicateCheckInput,
   SuggestSlugInput,
+  SlugPreviewInput,
   TranslationDraftInput,
+  OfflineBundleListQuery,
+  OfflineBundleStatusQuery,
+  OfflineBundleDeltaQuery,
+  RebuildOfflineBundlesInput,
 } from "./wisdom-qa.schemas.js";
 import { type WisdomEntryType, type ContentStatus, type Prisma, WisdomQuestionStatus } from "../../generated/prisma/client.js";
 
+type OfflineBundleFamily = "baihua" | "wisdom" | "practices";
+
+type OfflineBundleManifestItem = {
+  publicId: string;
+  slug: string;
+  title: string;
+  entryType: WisdomEntryType;
+  sourceFamily: string | null;
+  updatedAt: string;
+};
+
+type OfflineBundleManifest = {
+  publicId: string;
+  bundleFamily: OfflineBundleFamily;
+  bundleType: "BACH_THOAI" | "WISDOM" | "PRACTICE_SUPPORT";
+  version: string;
+  itemCount: number;
+  lastSyncedAt: string | null;
+  freshnessStatus: "empty" | "healthy";
+  truncated: boolean;
+  manifestItems: OfflineBundleManifestItem[];
+};
+
 @Injectable()
 export class WisdomQaService {
+  private static readonly OFFLINE_FAMILIES: OfflineBundleFamily[] = ["baihua", "wisdom", "practices"];
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly cacheService: CacheService,
@@ -382,25 +412,81 @@ export class WisdomQaService {
 
   // ── Admin: Duplicate Check ──────────────────────────────────────────
 
-  async checkDuplicateEntry(input: DuplicateCheckInput) {
+  async checkDuplicateEntry(input: DuplicateCheckInput, auditContext?: AuditContext) {
+    if (!input.sourceCode && !input.sourceUrl && !input.title) {
+      throw new BadRequestException(
+        "Yêu cầu ít nhất một trường để so khớp: sourceCode, sourceUrl hoặc title.",
+      );
+    }
+
+    const where: Prisma.WisdomEntryWhereInput = {
+      OR: [
+        ...(input.sourceCode ? [{ sourceCode: { equals: input.sourceCode, mode: "insensitive" as const } }] : []),
+        ...(input.sourceUrl ? [{ sourceUrl: { equals: input.sourceUrl, mode: "insensitive" as const } }] : []),
+        ...(input.title ? [{ title: { contains: input.title, mode: "insensitive" as const } }] : []),
+      ],
+      ...(input.entryType ? { entryType: input.entryType as WisdomEntryType } : {}),
+      ...(input.sourceFamily ? { sourceFamily: { equals: input.sourceFamily, mode: "insensitive" as const } } : {}),
+    };
+
     const matches = await this.prisma.wisdomEntry.findMany({
-      where: {
-        title: { contains: input.title, mode: "insensitive" },
-      },
+      where,
       select: {
         publicId: true,
         title: true,
         slug: true,
         entryType: true,
         status: true,
+        sourceFamily: true,
+        sourceCode: true,
+        sourceUrl: true,
       },
       take: 10,
     });
 
-    return {
+    const bestMatch = matches[0] ?? null;
+
+    const response = {
       duplicateFound: matches.length > 0,
       matchCount: matches.length,
       matches,
+      matchedPublicId: bestMatch?.publicId ?? null,
+      matchedReason: this.buildDuplicateMatchedReason(input, bestMatch),
+    };
+
+    if (auditContext) {
+      await this.audit.append(auditContext, "admin.wisdom.duplicate_check", "wisdom_entry", undefined, {
+        entryType: input.entryType ?? null,
+        sourceFamily: input.sourceFamily ?? null,
+        sourceCode: input.sourceCode ?? null,
+        sourceUrl: input.sourceUrl ?? null,
+        title: input.title ?? null,
+        duplicateFound: response.duplicateFound,
+        matchedPublicId: response.matchedPublicId,
+      });
+    }
+
+    return response;
+  }
+
+  async previewSlug(input: SlugPreviewInput, auditContext: AuditContext) {
+    const title = input.titleVietnamese ?? input.titleOriginal;
+    if (!title) {
+      throw new BadRequestException("Cần nhập titleVietnamese hoặc titleOriginal để gợi ý slug.");
+    }
+
+    const suggested = await this.suggestSlug({ title, sourceCode: input.sourceCode }, auditContext);
+    const existing = await this.prisma.wisdomEntry.findUnique({
+      where: { slug: suggested.slug },
+      select: { publicId: true },
+    });
+
+    return {
+      slug: suggested.slug,
+      exists: Boolean(existing),
+      conflictWithPublicId: existing?.publicId ?? null,
+      dedupeStatus: existing ? "CONFLICT" : "AVAILABLE",
+      model: suggested.model,
     };
   }
 
@@ -420,6 +506,170 @@ export class WisdomQaService {
       },
     );
     return result;
+  }
+
+  async listOfflineBundles(query: OfflineBundleListQuery) {
+    const manifests = await this.resolveOfflineManifests(query.bundleFamily);
+    const startIndex = query.cursor ? Number.parseInt(query.cursor, 10) || 0 : query.offset;
+    const items = manifests.slice(startIndex, startIndex + query.limit);
+    const nextIndex = startIndex + query.limit;
+    const hasMore = nextIndex < manifests.length;
+
+    return {
+      items: items.map((manifest) => ({
+        publicId: manifest.publicId,
+        bundleFamily: manifest.bundleFamily,
+        bundleType: manifest.bundleType,
+        version: manifest.version,
+        lastSyncedAt: manifest.lastSyncedAt,
+        freshnessStatus: manifest.freshnessStatus,
+        itemCount: manifest.itemCount,
+      })),
+      meta: {
+        pagination: {
+          limit: query.limit,
+          nextCursor: hasMore ? String(nextIndex) : null,
+          hasMore,
+        },
+      },
+    };
+  }
+
+  async getOfflineBundleStatus(publicId: string, query: OfflineBundleStatusQuery, userId: string) {
+    const manifest = await this.getOfflineManifestByPublicId(publicId);
+    if (!manifest) {
+      throw new NotFoundException({
+        code: "wisdom.offline.bundle_not_found",
+        message: "Không tìm thấy offline bundle tương ứng",
+      });
+    }
+
+    const deviceState = query.deviceFingerprint
+      ? await this.cacheService.getJson<{ lastSyncedVersion: string | null }>(
+          this.buildBundleDeviceStateKey(userId, publicId, query.deviceFingerprint),
+        )
+      : null;
+
+    const lastSyncedVersion = query.lastSyncedVersion ?? deviceState?.lastSyncedVersion ?? null;
+    const pendingUpdateCount = !lastSyncedVersion
+      ? manifest.itemCount
+      : lastSyncedVersion === manifest.version
+        ? 0
+        : manifest.itemCount;
+
+    return {
+      publicId: manifest.publicId,
+      bundleType: manifest.bundleType,
+      version: manifest.version,
+      syncStatus: pendingUpdateCount === 0 ? "up_to_date" : lastSyncedVersion ? "outdated" : "not_synced",
+      lastSyncedVersion,
+      pendingUpdateCount,
+      lastCheckedAt: new Date().toISOString(),
+    };
+  }
+
+  async getOfflineBundleDelta(publicId: string, query: OfflineBundleDeltaQuery, userId: string) {
+    if (!query.deviceFingerprint) {
+      throw new BadRequestException({
+        code: "wisdom.offline.device_fingerprint_required",
+        message: "Thiếu deviceFingerprint để kiểm tra chênh lệch bundle.",
+      });
+    }
+
+    const manifest = await this.getOfflineManifestByPublicId(publicId);
+    if (!manifest) {
+      throw new NotFoundException({
+        code: "wisdom.offline.bundle_not_found",
+        message: "Không tìm thấy offline bundle tương ứng",
+      });
+    }
+
+    let isFullSync = true;
+    let deltaReason: string | null = null;
+    let changes = manifest.manifestItems;
+
+    if (query.fromVersion === manifest.version) {
+      isFullSync = false;
+      changes = [];
+    } else if (query.fromVersion) {
+      const fromTimestamp = this.parseVersionTimestamp(query.fromVersion);
+      const currentTimestamp = this.parseVersionTimestamp(manifest.version);
+      const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+      if (fromTimestamp === null || currentTimestamp === null || currentTimestamp - fromTimestamp > THIRTY_DAYS_MS) {
+        isFullSync = true;
+        deltaReason = "wisdom.offline.version_stale";
+      } else {
+        isFullSync = false;
+        changes = await this.listUpdatedOfflineItemsSince(manifest.bundleFamily, new Date(fromTimestamp));
+      }
+    }
+
+    const deviceStateKey = this.buildBundleDeviceStateKey(userId, publicId, query.deviceFingerprint);
+    await this.cacheService.setJson(
+      deviceStateKey,
+      {
+        lastSyncedVersion: query.fromVersion ?? null,
+        lastCheckedAt: new Date().toISOString(),
+        currentVersion: manifest.version,
+      },
+      60 * 60 * 24 * 30,
+    );
+
+    return {
+      publicId: manifest.publicId,
+      bundleType: manifest.bundleType,
+      bundleFamily: manifest.bundleFamily,
+      version: manifest.version,
+      isFullSync,
+      pendingCount: changes.length,
+      deltaReason,
+      manifest: {
+        itemCount: manifest.itemCount,
+        lastSyncedAt: manifest.lastSyncedAt,
+        freshnessStatus: manifest.freshnessStatus,
+      },
+      changes,
+    };
+  }
+
+  async rebuildOfflineBundles(input: RebuildOfflineBundlesInput, auditContext: AuditContext) {
+    if (input.scope === "family" && !input.bundleFamily) {
+      throw new BadRequestException("Scope=family yêu cầu truyền bundleFamily.");
+    }
+    if (input.scope === "entry" && (!input.entryPublicIds || input.entryPublicIds.length === 0)) {
+      throw new BadRequestException("Scope=entry yêu cầu danh sách entryPublicIds.");
+    }
+
+    const targetFamilies = await this.resolveRebuildFamilies(input);
+
+    for (const family of targetFamilies) {
+      await this.cacheService.del(this.buildManifestCacheKey(family));
+    }
+    await this.cacheService.delByPrefix("wisdom:offline-bundle:device:");
+
+    const recoveryStartedAt = new Date();
+    const estimatedCompletionTime = new Date(recoveryStartedAt.getTime() + 2 * 60 * 1000);
+    const affectedBundles = targetFamilies.map((family) => `offline-${family}`);
+
+    await this.audit.append(
+      auditContext,
+      "admin.wisdom.offline_bundle.rebuild",
+      "offline_bundle",
+      undefined,
+      {
+        scope: input.scope,
+        bundleFamily: input.bundleFamily ?? null,
+        affectedBundles,
+        reason: input.reason ?? null,
+      },
+    );
+
+    return {
+      recoveryStartedAt: recoveryStartedAt.toISOString(),
+      estimatedCompletionTime: estimatedCompletionTime.toISOString(),
+      affectedBundles,
+    };
   }
 
   async createTranslationDraft(input: TranslationDraftInput, auditContext: AuditContext) {
@@ -446,5 +696,171 @@ export class WisdomQaService {
     if (!enabled) {
       throw new ForbiddenError("Tính năng AI đang tắt bởi feature flag");
     }
+  }
+
+  private buildDuplicateMatchedReason(input: DuplicateCheckInput, match: { sourceCode: string | null; sourceUrl: string | null } | null): string {
+    if (!match) return "NO_MATCH";
+    if (input.sourceCode && match.sourceCode && input.sourceCode.toLowerCase() === match.sourceCode.toLowerCase()) {
+      return "SOURCE_CODE_MATCH";
+    }
+    if (input.sourceUrl && match.sourceUrl && input.sourceUrl.toLowerCase() === match.sourceUrl.toLowerCase()) {
+      return "SOURCE_URL_MATCH";
+    }
+    return "TITLE_SIMILARITY_MATCH";
+  }
+
+  private async resolveOfflineManifests(bundleFamily?: OfflineBundleFamily) {
+    const families = bundleFamily ? [bundleFamily] : WisdomQaService.OFFLINE_FAMILIES;
+    return Promise.all(families.map((family) => this.buildOfflineManifest(family)));
+  }
+
+  private async getOfflineManifestByPublicId(publicId: string): Promise<OfflineBundleManifest | null> {
+    const family = WisdomQaService.OFFLINE_FAMILIES.find((item) => `offline-${item}` === publicId);
+    if (!family) return null;
+    return this.buildOfflineManifest(family);
+  }
+
+  private async buildOfflineManifest(family: OfflineBundleFamily): Promise<OfflineBundleManifest> {
+    const cacheKey = this.buildManifestCacheKey(family);
+    return this.cacheService.getOrSet(cacheKey, 300, async () => {
+      const where = this.buildOfflineBundleWhere(family);
+
+      const [latest, total, entries] = await Promise.all([
+        this.prisma.wisdomEntry.findFirst({
+          where,
+          select: { updatedAt: true },
+          orderBy: { updatedAt: "desc" },
+        }),
+        this.prisma.wisdomEntry.count({ where }),
+        this.prisma.wisdomEntry.findMany({
+          where,
+          select: {
+            publicId: true,
+            slug: true,
+            title: true,
+            entryType: true,
+            sourceFamily: true,
+            updatedAt: true,
+          },
+          orderBy: { updatedAt: "desc" },
+          take: 1000,
+        }),
+      ]);
+
+      const version = `${latest?.updatedAt.getTime() ?? 0}-${total}`;
+      const bundleType: OfflineBundleManifest["bundleType"] =
+        family === "baihua" ? "BACH_THOAI" : family === "practices" ? "PRACTICE_SUPPORT" : "WISDOM";
+
+      return {
+        publicId: `offline-${family}`,
+        bundleFamily: family,
+        bundleType,
+        version,
+        itemCount: total,
+        lastSyncedAt: latest?.updatedAt.toISOString() ?? null,
+        freshnessStatus: total === 0 ? "empty" : "healthy",
+        truncated: total > entries.length,
+        manifestItems: entries.map((entry) => ({
+          publicId: entry.publicId,
+          slug: entry.slug,
+          title: entry.title,
+          entryType: entry.entryType,
+          sourceFamily: entry.sourceFamily,
+          updatedAt: entry.updatedAt.toISOString(),
+        })),
+      };
+    });
+  }
+
+  private buildOfflineBundleWhere(family: OfflineBundleFamily): Prisma.WisdomEntryWhereInput {
+    if (family === "baihua") {
+      return { status: "PUBLISHED", entryType: "BACH_THOAI" };
+    }
+    if (family === "wisdom") {
+      return {
+        status: "PUBLISHED",
+        entryType: { in: ["KHAI_THI", "PHAT_NGON", "PHAP_HOI"] },
+      };
+    }
+    return {
+      status: "PUBLISHED",
+      OR: [
+        { sourceFamily: { contains: "practice", mode: "insensitive" } },
+        { tags: { has: "practice" } },
+      ],
+    };
+  }
+
+  private async listUpdatedOfflineItemsSince(family: OfflineBundleFamily, fromDate: Date): Promise<OfflineBundleManifestItem[]> {
+    const where: Prisma.WisdomEntryWhereInput = {
+      ...this.buildOfflineBundleWhere(family),
+      updatedAt: { gt: fromDate },
+    };
+
+    const entries = await this.prisma.wisdomEntry.findMany({
+      where,
+      select: {
+        publicId: true,
+        slug: true,
+        title: true,
+        entryType: true,
+        sourceFamily: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "asc" },
+      take: 1000,
+    });
+
+    return entries.map((entry) => ({
+      publicId: entry.publicId,
+      slug: entry.slug,
+      title: entry.title,
+      entryType: entry.entryType,
+      sourceFamily: entry.sourceFamily,
+      updatedAt: entry.updatedAt.toISOString(),
+    }));
+  }
+
+  private async resolveRebuildFamilies(input: RebuildOfflineBundlesInput): Promise<OfflineBundleFamily[]> {
+    if (input.scope === "all") {
+      return [...WisdomQaService.OFFLINE_FAMILIES];
+    }
+
+    if (input.scope === "family") {
+      return [input.bundleFamily as OfflineBundleFamily];
+    }
+
+    const entries = await this.prisma.wisdomEntry.findMany({
+      where: { publicId: { in: input.entryPublicIds ?? [] } },
+      select: { entryType: true, sourceFamily: true, tags: true },
+    });
+
+    const families = new Set<OfflineBundleFamily>();
+    for (const entry of entries) {
+      if (entry.entryType === "BACH_THOAI") {
+        families.add("baihua");
+      } else {
+        families.add("wisdom");
+      }
+      if (entry.sourceFamily?.toLowerCase().includes("practice") || entry.tags.includes("practice")) {
+        families.add("practices");
+      }
+    }
+
+    return families.size > 0 ? [...families] : [...WisdomQaService.OFFLINE_FAMILIES];
+  }
+
+  private parseVersionTimestamp(version: string): number | null {
+    const [timestampRaw] = version.split("-", 1);
+    const parsed = Number.parseInt(timestampRaw ?? "", 10);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private buildManifestCacheKey(family: OfflineBundleFamily): string {
+    return `wisdom:offline-bundle:manifest:${family}`;
+  }
+
+  private buildBundleDeviceStateKey(userId: string, publicId: string, deviceFingerprint: string): string {
+    return `wisdom:offline-bundle:device:${userId}:${publicId}:${deviceFingerprint}`;
   }
 }

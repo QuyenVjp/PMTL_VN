@@ -20,6 +20,9 @@ import { CacheService } from "../../../common/cache/cache.service.js";
 const _BLACKLISTED_SPECIES = [
   "TURTLE", // Protected in most SE Asian countries
   "BIRD", // Many species are endangered (eagles, cranes, etc.)
+  "SNAKEHEAD", // Predatory invasive species (cá lóc)
+  "CATFISH", // Predatory invasive species (cá trê)
+  "CRAB", // Predatory/eco-risk species in ritual context
 ] as const;
 
 /**
@@ -41,6 +44,21 @@ const BLACKLIST_ENTRIES: BlacklistEntry[] = [
     species: "BIRD",
     reason: "Many bird species are endangered (eagles, cranes, owls, etc.)",
     regionRestrictions: ["VN", "TH", "KH", "LA", "MY", "SG"],
+  },
+  {
+    species: "SNAKEHEAD",
+    reason: "Predatory invasive species; release requires strict ecological controls",
+    regionRestrictions: ["VN", "TH", "KH", "LA"],
+  },
+  {
+    species: "CATFISH",
+    reason: "Predatory invasive species; release requires strict ecological controls",
+    regionRestrictions: ["VN", "TH", "KH", "LA"],
+  },
+  {
+    species: "CRAB",
+    reason: "Predatory/high-risk species in life-liberation safety policy",
+    regionRestrictions: ["VN", "TH", "KH", "LA"],
   },
 ];
 

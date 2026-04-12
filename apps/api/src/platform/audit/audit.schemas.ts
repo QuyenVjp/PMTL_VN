@@ -95,6 +95,8 @@ export const auditActionSchema = z.enum([
   // Wisdom AI assist actions
   "admin.wisdom.ai.slug_suggest",
   "admin.wisdom.ai.translation_draft",
+  "admin.wisdom.duplicate_check",
+  "admin.wisdom.offline_bundle.rebuild",
 
   // Practice support actions
   "admin.practice_support.update",
@@ -133,6 +135,7 @@ export const auditActionSchema = z.enum([
   // Life liberation actions
   "admin.life_release.status",
   "member.life_release.create",
+  "member.life_release.predatory_blocked",
   "member.life_release.proxy_add",
 
   // Little house (sớ) actions

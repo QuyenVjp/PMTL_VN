@@ -13,7 +13,9 @@ import type {
   GuideQuery, CreateGuideRequest, UpdateGuideRequest,
   DownloadQuery, CreateDownloadRequest, UpdateDownloadRequest,
   BeginnerGuidePublicQuery, DownloadPublicQuery,
+  TypedContentPayload, ContentBlockType,
 } from "./content.schemas.js";
+import { typedContentPayloadSchema } from "./content.schemas.js";
 import { type UserRole, type ContentStatus, type Prisma, type PostType, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
 
 @Injectable()
@@ -218,6 +220,7 @@ export class ContentService {
     if (post.status === "PUBLISHED") {
       throw new ConflictException("Bài viết đã được xuất bản");
     }
+    this.parseTypedContentForPublish(post.content, "Bài viết");
 
     // Bug 2 fix: publish + audit in same transaction
     const updated = await this.prisma.$transaction(async (tx) => {
@@ -477,6 +480,8 @@ export class ContentService {
     const guide = await this.prisma.beginnerGuide.findUnique({ where: { publicId } });
     if (!guide) throw new NotFoundException("Bài hướng dẫn không tồn tại");
     if (guide.status === "PUBLISHED") throw new ConflictException("Bài hướng dẫn đã được xuất bản");
+    const parsedContent = this.parseTypedContentForPublish(guide.content, "Bài hướng dẫn");
+    this.assertGuideRequiredBlocks(guide.category, parsedContent);
 
     const updated = await this.prisma.beginnerGuide.update({
       where: { publicId },
@@ -662,6 +667,9 @@ export class ContentService {
     const download = await this.prisma.download.findUnique({ where: { publicId } });
     if (!download) throw new NotFoundException("Tài liệu không tồn tại");
     if (download.status === "PUBLISHED") throw new ConflictException("Tài liệu đã được xuất bản");
+    if (!download.fileUrl || !download.fileType || download.fileSize < 0) {
+      throw new ConflictException("Tài liệu chưa đủ dữ liệu file để xuất bản");
+    }
 
     const updated = await this.prisma.download.update({
       where: { publicId },
@@ -887,5 +895,39 @@ export class ContentService {
       throw new NotFoundException("Media không tồn tại");
     }
     return asset.id;
+  }
+
+  private parseTypedContentForPublish(content: unknown, resourceLabel: string): TypedContentPayload {
+    const parsed = typedContentPayloadSchema.safeParse(content);
+    if (!parsed.success) {
+      throw new ConflictException(
+        `${resourceLabel} chưa đạt cấu trúc block chuẩn để xuất bản (blocks[] + type hợp lệ).`,
+      );
+    }
+    return parsed.data;
+  }
+
+  private assertGuideRequiredBlocks(category: GuideCategory, content: TypedContentPayload): void {
+    const requiredByCategory: Record<GuideCategory, ContentBlockType[]> = {
+      BEGINNER: ["RICH_TEXT", "FAQ_BLOCK"],
+      DAILY_PRACTICE: ["SCRIPT_BLOCK", "WARNING_LIST", "FAQ_BLOCK"],
+      LITTLE_HOUSE: ["SCRIPT_BLOCK", "WARNING_LIST", "STEP_SEQUENCE", "IMAGE_COMPARE", "FAQ_BLOCK"],
+      LIFE_RELEASE: ["WARNING_LIST", "STEP_SEQUENCE", "FAQ_BLOCK"],
+      GENERAL: ["RICH_TEXT"],
+      ALTAR_SETUP: ["RICH_TEXT", "STEP_SEQUENCE", "FAQ_BLOCK"],
+      ALTAR_OFFERINGS: ["RICH_TEXT", "WARNING_LIST", "FAQ_BLOCK"],
+      ALTAR_MAINTENANCE: ["RICH_TEXT", "STEP_SEQUENCE", "WARNING_LIST", "FAQ_BLOCK"],
+      HEART_INCENSE: ["RICH_TEXT", "WARNING_LIST", "FAQ_BLOCK"],
+    };
+
+    const required = requiredByCategory[category] ?? [];
+    const blockTypes = new Set(content.blocks.map((block) => block.type));
+    const missing = required.filter((type) => !blockTypes.has(type));
+
+    if (missing.length > 0) {
+      throw new ConflictException(
+        `Bài hướng dẫn thiếu block bắt buộc cho category ${category}: ${missing.join(", ")}`,
+      );
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { WisdomQaController } from "./wisdom-qa.controller.js";
+import { WisdomQaController, WisdomOfflineBundleController } from "./wisdom-qa.controller.js";
 import { WisdomQaAdminController } from "./wisdom-qa.admin.controller.js";
 import { WisdomHubController } from "./wisdom-hub.controller.js";
 import { WisdomQaService } from "./wisdom-qa.service.js";
@@ -9,7 +9,7 @@ import { WisdomGeminiService } from "./wisdom-gemini.service.js";
 
 @Module({
   imports: [AuditModule, FeatureFlagsModule],
-  controllers: [WisdomQaController, WisdomQaAdminController, WisdomHubController],
+  controllers: [WisdomQaController, WisdomOfflineBundleController, WisdomQaAdminController, WisdomHubController],
   providers: [WisdomQaService, WisdomGeminiService],
   exports: [WisdomQaService],
 })
