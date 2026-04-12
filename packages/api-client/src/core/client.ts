@@ -24,6 +24,26 @@ interface RequestOptions {
 const REQUEST_TIMEOUT_MS = 15_000;
 
 export function createAdminClient(baseUrl: string) {
+  // Singleton promise for in-flight token refresh — deduplicates simultaneous 401s.
+  // If three requests fail with 401 at the same time, only one /auth/refresh call is made.
+  let refreshInFlight: Promise<boolean> | null = null;
+
+  async function tryRefreshTokens(): Promise<boolean> {
+    if (!refreshInFlight) {
+      refreshInFlight = fetch(new URL(`${baseUrl}/auth/refresh`, window.location.origin).toString(), {
+        method: "POST",
+        credentials: "include",
+        signal: AbortSignal.timeout(10_000),
+      })
+        .then((r) => r.ok)
+        .catch(() => false)
+        .finally(() => {
+          refreshInFlight = null;
+        });
+    }
+    return refreshInFlight;
+  }
+
   function buildUrl(path: string, params?: QueryParams): string {
     const url = new URL(`${baseUrl}${path}`, window.location.origin);
     if (params) {
@@ -47,7 +67,7 @@ export function createAdminClient(baseUrl: string) {
     }
   }
 
-  async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  async function request<T>(path: string, options: RequestOptions = {}, retrying = false): Promise<T> {
     const { method = "GET", body, params } = options;
 
     const headers: Record<string, string> = { Accept: "application/json" };
@@ -85,6 +105,14 @@ export function createAdminClient(baseUrl: string) {
     }
 
     if (!response.ok) {
+      // On first 401, attempt token refresh once and retry the original request.
+      if (response.status === 401 && !retrying) {
+        const refreshed = await tryRefreshTokens();
+        if (refreshed) {
+          return request<T>(path, options, true);
+        }
+      }
+
       const envelope = json as ApiErrorEnvelope;
       const err = envelope?.error;
       if (err?.code && err?.message) {

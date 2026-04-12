@@ -1,6 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 import { Button } from "@/components/ui/button";
 import {
@@ -62,8 +71,8 @@ function GuideCreateDialog({
   const createGuide = useCreateGuide();
   const resolvedDefaultCategory = defaultCategory ?? "BEGINNER";
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [category, setCategory] = useState(resolvedDefaultCategory);
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "GUIDE" });
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
@@ -87,7 +96,7 @@ function GuideCreateDialog({
 
   const reset = () => {
     setTitle("");
-    setSlug("");
+    resetSlug();
     setCategory(resolvedDefaultCategory);
     setSortOrder("0");
     setVersionNote("");
@@ -98,6 +107,7 @@ function GuideCreateDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -150,11 +160,21 @@ function GuideCreateDialog({
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
-              <Input
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="tự-động-tạo"
-              />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="tu-dong-tao-tu-tieu-de"
+                  className={invalidFieldClass(slugStatus === "taken")}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </Field>
             <Field label="Thứ tự">
               <Input
@@ -254,8 +274,8 @@ function GuideEditDialog({
 }) {
   const updateGuide = useUpdateGuide();
   const [title, setTitle] = useState(currentRow.title);
-  const [slug, setSlug] = useState(currentRow.slug);
   const [category, setCategory] = useState(currentRow.category);
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "GUIDE", excludePublicId: currentRow.publicId, initialSlug: currentRow.slug });
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState(currentRow.coverMediaPublicId ?? "");
@@ -285,6 +305,7 @@ function GuideEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -334,7 +355,20 @@ function GuideEditDialog({
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
-              <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  className={invalidFieldClass(slugStatus === "taken")}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </Field>
             <Field label="Thứ tự">
               <Input

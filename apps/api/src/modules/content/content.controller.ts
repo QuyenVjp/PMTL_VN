@@ -45,6 +45,8 @@ import {
   type DownloadPublicQuery,
   unpublishPostSchema,
   type UnpublishPostRequest,
+  slugCheckQuerySchema,
+  type SlugCheckQuery,
 } from "./content.schemas.js";
 
 @ApiTags("content")
@@ -62,6 +64,15 @@ export class ContentController {
   ) {
     const validated = listPostsQuerySchema.parse(query);
     return this.contentService.listPosts(validated, user.role);
+  }
+
+  @Get("admin/slug-check")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Kiểm tra slug có bị trùng không (POST / GUIDE)" })
+  @ApiResponse({ status: 200, description: "{ available: boolean }" })
+  async checkSlug(@Query() query: SlugCheckQuery) {
+    const validated = slugCheckQuerySchema.parse(query);
+    return this.contentService.checkSlugAvailability(validated.slug, validated.type, validated.excludePublicId);
   }
 
   @Get("admin/posts/:publicIdOrSlug")

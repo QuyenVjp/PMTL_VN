@@ -261,6 +261,14 @@ export class SelfCultivationService {
     return updated;
   }
 
+  async checkGuideSlugAvailability(slug: string, excludeSlug?: string): Promise<{ available: boolean }> {
+    const overview = this.normalizeOverview(await this.loadOverview());
+    const taken = overview.guides.some(
+      (guide: SelfCultivationGuideDto) => guide.slug === slug && guide.slug !== excludeSlug,
+    );
+    return { available: !taken };
+  }
+
   private assertGuideSlugAvailable(guides: SelfCultivationGuideDto[], slug: string) {
     if (guides.some((guide) => guide.slug === slug)) {
       throw new ConflictException("Slug guide đã được sử dụng");

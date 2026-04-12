@@ -95,6 +95,10 @@ export function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewObjectUrlRef = useRef<string | null>(null);
+  // Ref so the server-sync effect can read the latest avatarFile value without
+  // adding it to the dependency array — prevents clearing the staged file from
+  // overwriting the preview with stale server data before the refetch resolves.
+  const avatarFileRef = useRef(avatarFile);
   const [preferences, setPreferences] = useState({
     theme,
     compactTables: true,
@@ -106,11 +110,17 @@ export function SettingsPage() {
 
   const activeItem = settingsNav.find((item) => item.key === section) ?? settingsNav[0];
 
-  // Sync avatarPreview when the query resolves (or after profile save invalidates it).
-  // Gated on !avatarFile so a staged-but-unsaved selection isn't overwritten.
+  // Keep ref in sync so the effect below can read it without a dep on avatarFile.
+  avatarFileRef.current = avatarFile;
+
+  // Sync avatarPreview when server data changes (query resolves / invalidated after save).
+  // Intentionally excludes avatarFile from deps — we only want to react to server data
+  // changes, not to the staged file being cleared. avatarFileRef guards against
+  // overwriting an in-progress staged selection during a background refetch.
   useEffect(() => {
-    if (!avatarFile) setAvatarPreview(resolveMediaSrc(adminUser.avatar) ?? undefined);
-  }, [adminUser.avatar, avatarFile]);
+    if (!avatarFileRef.current) setAvatarPreview(resolveMediaSrc(adminUser.avatar) ?? undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminUser.avatar]);
 
   useEffect(() => {
     return () => {

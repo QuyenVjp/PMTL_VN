@@ -29,6 +29,7 @@ export interface AuthSessionStateDto {
     emailMasked: string;
     displayName: string;
     role: UserRole;
+    avatarUrl: string | null;
   };
   session: {
     sessionPublicId: string;
@@ -338,6 +339,7 @@ export class IdentityService {
         emailMasked,
         displayName: user.displayName,
         role: user.role,
+        avatarUrl: user.avatarUrl ?? null,
       },
       session: {
         sessionPublicId: session.id,

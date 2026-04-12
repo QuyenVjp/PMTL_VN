@@ -315,6 +315,18 @@ export class ContentService {
     return { success: true };
   }
 
+  async checkSlugAvailability(slug: string, type: "POST" | "GUIDE", excludePublicId?: string): Promise<{ available: boolean }> {
+    if (type === "POST") {
+      const exists = await this.repository.slugExists(slug, excludePublicId);
+      return { available: !exists };
+    }
+    // GUIDE
+    const existing = await this.prisma.beginnerGuide.findFirst({
+      where: { slug, ...(excludePublicId && { publicId: { not: excludePublicId } }) },
+    });
+    return { available: !existing };
+  }
+
   private generateSlug(title: string, publicId: string): string {
     const base = title
       .toLowerCase()

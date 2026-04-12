@@ -13,8 +13,8 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { adminClient } from "@/lib/api/admin-client";
 
 interface MeUser {
-  id: string;
-  email: string;
+  publicId: string;
+  emailMasked: string;
   displayName: string;
   role: string;
   avatarUrl?: string | null;
@@ -93,9 +93,9 @@ export function useCurrentUser(): CurrentUserDisplay {
   return {
     name: data.displayName,
     initials: makeInitials(data.displayName),
-    email: data.email,
+    email: data.emailMasked,
     role: roleLabel(data.role),
     avatar: normalizeAvatarUrl(data.avatarUrl),
-    publicId: data.id,
+    publicId: data.publicId,
   };
 }

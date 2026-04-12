@@ -173,6 +173,12 @@ export type DuplicateCheckInput = z.infer<typeof duplicateCheckSchema>;
 
 // ── Gemini assist schemas ───────────────────────────────────────────
 
+export const wisdomSlugCheckQuerySchema = z.object({
+  slug: z.string().min(1).max(200),
+  excludePublicId: z.string().optional(),
+});
+export type WisdomSlugCheckQuery = z.infer<typeof wisdomSlugCheckQuerySchema>;
+
 export const suggestSlugSchema = z.object({
   title: z.string().min(3).max(300),
   sourceCode: z.string().max(200).optional(),

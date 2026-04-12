@@ -26,6 +26,8 @@ import {
   createAuthorityProfileSchema,
   updateAuthorityProfileSchema,
   duplicateCheckSchema,
+  wisdomSlugCheckQuerySchema,
+  type WisdomSlugCheckQuery,
   suggestSlugSchema,
   slugPreviewSchema,
   translationDraftSchema,
@@ -160,6 +162,15 @@ export class WisdomQaAdminController {
       ipAddress: req.ip,
       userAgent: req.headers["user-agent"],
     });
+  }
+
+  @Get("entries/slug-check")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Kiểm tra slug wisdom có bị trùng không" })
+  @ApiResponse({ status: 200, description: "{ available: boolean }" })
+  checkSlug(@Query() query: WisdomSlugCheckQuery) {
+    const validated = wisdomSlugCheckQuerySchema.parse(query);
+    return this.wisdomQaService.checkSlugAvailability(validated.slug, validated.excludePublicId);
   }
 
   @Post("entries/slug-suggest")

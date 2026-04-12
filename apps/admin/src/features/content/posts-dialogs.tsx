@@ -2,7 +2,15 @@ import { type ChangeEvent, type ReactNode, useEffect, useMemo, useRef, useState 
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { ImagePlusIcon } from "lucide-react";
+import { ImagePlusIcon, LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -171,16 +179,16 @@ function PostCreateDialog({
 }) {
   const createPost = useCreatePost();
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
   const [sourceRef, setSourceRef] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "POST" });
 
   const reset = () => {
-    setTitle(""); setSlug(""); setPostType("ARTICLE");
+    setTitle(""); resetSlug(); setPostType("ARTICLE");
     setSourceRef(""); setFeatured(false); setAllowComments(true); setFeaturedImageId("");
     setFieldErrors({});
   };
@@ -188,6 +196,7 @@ function PostCreateDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     createPost.mutate(
@@ -231,7 +240,21 @@ function PostCreateDialog({
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
-              <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="tự-động-tạo" />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="tu-dong-tao-tu-tieu-de"
+                  className={invalidFieldClass(slugStatus === "taken")}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </Field>
             <Field label="Loại bài viết">
               <Select value={postType} onValueChange={setPostType}>
@@ -256,7 +279,7 @@ function PostCreateDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={createPost.isPending || !title.trim()}>
+          <Button onClick={handleSubmit} disabled={createPost.isPending || !title.trim() || slugStatus === "taken"}>
             {createPost.isPending ? "Đang tạo..." : "Tạo"}
           </Button>
         </DialogFooter>
@@ -276,7 +299,6 @@ function PostEditDialog({
 }) {
   const updatePost = useUpdatePost();
   const [title, setTitle] = useState(currentRow.title);
-  const [slug, setSlug] = useState(currentRow.slug);
   const [postType, setPostType] = useState(currentRow.postType);
   const [sourceRef, setSourceRef] = useState(currentRow.sourceRef ?? "");
   const [featured, setFeatured] = useState(currentRow.featured);
@@ -284,6 +306,7 @@ function PostEditDialog({
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "POST", excludePublicId: currentRow.publicId, initialSlug: currentRow.slug });
 
   useEffect(() => {
     setTitle(currentRow.title);
@@ -300,6 +323,7 @@ function PostEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     updatePost.mutate(
@@ -344,7 +368,20 @@ function PostEditDialog({
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Slug">
-              <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  className={invalidFieldClass(slugStatus === "taken")}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </Field>
             <Field label="Loại bài viết">
               <Select value={postType} onValueChange={setPostType}>
@@ -379,7 +416,7 @@ function PostEditDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={updatePost.isPending || !title.trim()}>
+          <Button onClick={handleSubmit} disabled={updatePost.isPending || !title.trim() || slugStatus === "taken"}>
             {updatePost.isPending ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </DialogFooter>

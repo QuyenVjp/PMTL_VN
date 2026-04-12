@@ -27,6 +27,15 @@ import {
   invalidFieldClass,
   type FieldErrors,
 } from "@/lib/form-validation";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 // ── Constants ─────────────────────────────────────────────────────────
 
@@ -121,8 +130,8 @@ export function PostCreatePage() {
   const navigate = useNavigate();
   const createPost = useCreatePost();
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [postType, setPostType] = useState("ARTICLE");
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "POST" });
   const [sourceRef, setSourceRef] = useState("");
   const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
@@ -133,6 +142,7 @@ export function PostCreatePage() {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -175,7 +185,7 @@ export function PostCreatePage() {
       onSave={handleSave}
       isSaving={createPost.isPending}
       saveLabel="Tạo"
-      saveDisabled={!title.trim()}
+      saveDisabled={!title.trim() || slugStatus === "taken"}
       sidebar={
         <CreateSidebar
           featured={featured}
@@ -202,11 +212,21 @@ export function PostCreatePage() {
 
           <div className="grid items-start gap-4 md:grid-cols-2">
             <AdminFormField label="Slug">
-              <Input
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="tự-động-tạo"
-              />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  placeholder="tu-dong-tao-tu-tieu-de"
+                  className={invalidFieldClass(slugStatus === "taken")}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </AdminFormField>
 
             <AdminFormField label="Loại bài viết">
@@ -224,9 +244,7 @@ export function PostCreatePage() {
               </Select>
             </AdminFormField>
           </div>
-          <p className="text-xs text-muted-foreground">Để trống — hệ thống sẽ tự động tạo slug từ tiêu đề.</p>
-
-          <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
+<AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input
               value={sourceRef}
               onChange={(e) => setSourceRef(e.target.value)}

@@ -249,6 +249,15 @@ export const unpublishPostSchema = z.object({
 });
 export type UnpublishPostRequest = z.infer<typeof unpublishPostSchema>;
 
+// --------------- Slug availability check ---------------
+
+export const slugCheckQuerySchema = z.object({
+  slug: z.string().min(1).max(200),
+  type: z.enum(["POST", "GUIDE"]),
+  excludePublicId: z.string().optional(),
+});
+export type SlugCheckQuery = z.infer<typeof slugCheckQuerySchema>;
+
 export type ContentBlock = z.infer<typeof contentBlockSchema>;
 export type ContentBlockType = "RICH_TEXT" | "SCRIPT_BLOCK" | "WARNING_LIST" | "STEP_SEQUENCE" | "IMAGE_COMPARE" | "FAQ_BLOCK";
 export type TypedContentPayload = z.infer<typeof typedContentPayloadSchema>;

@@ -1,6 +1,14 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { PlusIcon, RefreshCwIcon } from "lucide-react";
+import { CheckCircle2Icon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 import { WorkspaceConfirmDialog } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -77,7 +85,7 @@ function GuideList({ items }: { items: SelfCultivationGuide[] }) {
 function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const createGuide = useCreateSelfCultivationGuide();
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "SELF_CULTIVATION_GUIDE" });
   const [summary, setSummary] = useState("");
   const [groupKey, setGroupKey] = useState<SelfCultivationGuideGroup>("CACH_DUNG");
   const [sourceReference, setSourceReference] = useState("");
@@ -87,7 +95,7 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
 
   const reset = () => {
     setTitle("");
-    setSlug("");
+    resetSlug();
     setSummary("");
     setGroupKey("CACH_DUNG");
     setSourceReference("");
@@ -101,6 +109,7 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
     if (!summary.trim()) nextErrors.summary = "Tóm tắt không được để trống.";
     if (!sourceReference.trim()) nextErrors.sourceReference = "Phải có sourceReference.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       return;
@@ -142,7 +151,21 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
           <div className="grid gap-4 md:grid-cols-2">
             <label className="grid gap-1.5">
               <span className="text-sm font-medium">Slug</span>
-              <Input value={slug} onChange={(event) => setSlug(event.target.value)} placeholder="tu-dong-tao-neu-de-trong" />
+              <div className="relative">
+                <Input
+                  value={slug}
+                  onChange={(event) => setSlug(event.target.value)}
+                  placeholder="tu-dong-tao-neu-de-trong"
+                  className={slugStatus === "taken" ? "border-destructive" : undefined}
+                  style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                />
+                {slugStatus !== "idle" && (
+                  <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <SlugStatusIcon status={slugStatus} />
+                  </span>
+                )}
+              </div>
+              <FieldError message={fieldErrors.slug} />
             </label>
             <label className="grid gap-1.5">
               <span className="text-sm font-medium">Nhóm</span>

@@ -86,6 +86,7 @@ export default defineConfig({
     allowedHosts: [
       "discs-floppy-rolling-markers.trycloudflare.com",
       ".trycloudflare.com",
+      "host.docker.internal",
     ],
     proxy: {
       "/api": {

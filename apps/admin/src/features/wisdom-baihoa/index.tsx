@@ -12,14 +12,20 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpenIcon, CheckCircleIcon, PencilIcon, SparklesIcon, Trash2Icon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { BookOpenIcon, CheckCircle2Icon, CheckCircleIcon, LoaderCircleIcon, PencilIcon, SparklesIcon, Trash2Icon, XCircleIcon } from "lucide-react";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -45,13 +51,12 @@ import {
 } from "@/components/workspace";
 import { useNavigateTo } from "@/lib/router-utils";
 import { createSelectColumn } from "@/lib/table/select-column";
-import { authorityProfileListOptions, wisdomEntryListOptions, type WisdomEntryItem } from "./queries";
+import { wisdomEntryListOptions, type WisdomEntryItem } from "./queries";
 import {
   useCreateWisdomEntry,
   useUpdateWisdomEntry,
   usePublishWisdomEntry,
   useDeleteWisdomEntry,
-  useSuggestWisdomSlug,
   useCreateWisdomTranslationDraft,
 } from "./mutations";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
@@ -103,6 +108,14 @@ const statusOptions = [
   { label: "Lưu trữ", value: "ARCHIVED" },
 ];
 
+function entryTypeBadgeClass(t: string): string {
+  if (t === "BACH_THOAI") return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400";
+  if (t === "KHAI_THI") return "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400";
+  if (t === "PHAT_NGON") return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
+  if (t === "PHAP_HOI") return "border-teal-200 bg-teal-50 text-teal-700 dark:border-teal-800 dark:bg-teal-950/40 dark:text-teal-400";
+  return "";
+}
+
 function statusBadgeClass(s: string): string {
   if (s === "PUBLISHED")
     return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400";
@@ -118,24 +131,6 @@ function statusLabel(s: string): string {
   return s;
 }
 
-function getYouTubeId(url: string | null | undefined): string | null {
-  if (!url) return null;
-
-  const patterns = [
-    /youtube\.com\/watch\?v=([^&]+)/,
-    /youtu\.be\/([^?]+)/,
-    /youtube\.com\/embed\/([^?]+)/,
-    /youtube\.com\/shorts\/([^?]+)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-
-  return null;
-}
-
 // ── Field wrapper ────────────────────────────────────────────────────
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
@@ -145,144 +140,6 @@ function Field({ label, children, hint }: { label: string; children: React.React
       {children}
       {hint && <span className="text-xs text-muted-foreground">{hint}</span>}
     </label>
-  );
-}
-
-function WisdomVideoDeck({ entries }: { entries: WisdomEntryItem[] }) {
-  const [activeType, setActiveType] = useState<"ALL" | WisdomEntryItem["entryType"]>("ALL");
-  const [selectedPublicId, setSelectedPublicId] = useState<string | null>(null);
-
-  const videoEntries = useMemo(
-    () =>
-      entries
-        .filter((entry) => getYouTubeId(entry.sourceUrl))
-        .sort((a, b) => new Date(b.publishedAt ?? b.createdAt).getTime() - new Date(a.publishedAt ?? a.createdAt).getTime()),
-    [entries],
-  );
-
-  const typeOptions = useMemo<Array<"ALL" | WisdomEntryItem["entryType"]>>(() => {
-    const seen = new Set(videoEntries.map((entry) => entry.entryType));
-    return [
-      "ALL",
-      ...entryTypeOptions
-        .filter((option) => seen.has(option.value as WisdomEntryItem["entryType"]))
-        .map((option) => option.value as WisdomEntryItem["entryType"]),
-    ];
-  }, [videoEntries]);
-
-  const filteredEntries = useMemo(() => {
-    if (activeType === "ALL") return videoEntries;
-    return videoEntries.filter((entry) => entry.entryType === activeType);
-  }, [activeType, videoEntries]);
-
-  const selectedEntry =
-    filteredEntries.find((entry) => entry.publicId === selectedPublicId) ??
-    filteredEntries[0] ??
-    null;
-
-  return (
-    <div className="space-y-4">
-      <Card>
-        <CardHeader className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-2">
-            <CardTitle className="text-base">Kho video Bạch thoại / Khai thị</CardTitle>
-            <CardDescription>
-              Surface này ưu tiên bài có `URL nguồn` YouTube để admin nhìn đúng logic player, thumbnail và loại nội dung thay vì màn hình mô tả trống.
-            </CardDescription>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {typeOptions.map((type) => (
-              <Button
-                key={type}
-                type="button"
-                variant={activeType === type ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveType(type)}
-              >
-                {type === "ALL" ? "Tất cả video" : entryTypeLabel(type)}
-              </Button>
-            ))}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {selectedEntry ? (
-            <>
-              <div className="overflow-hidden rounded-xl border">
-                <div className="aspect-video bg-black">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${getYouTubeId(selectedEntry.sourceUrl) ?? ""}?rel=0`}
-                    title={selectedEntry.title}
-                    className="size-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-                <div className="grid gap-3 border-t px-4 py-4 lg:grid-cols-[1fr_auto] lg:items-start">
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline">{entryTypeLabel(selectedEntry.entryType)}</Badge>
-                      <Badge variant="outline" className={statusBadgeClass(selectedEntry.status)}>
-                        {statusLabel(selectedEntry.status)}
-                      </Badge>
-                      {selectedEntry.sourceCode ? (
-                        <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
-                          {selectedEntry.sourceCode}
-                        </span>
-                      ) : null}
-                    </div>
-                    <h2 className="text-xl font-semibold">{selectedEntry.title}</h2>
-                  </div>
-                  <div className="space-y-1 text-xs text-muted-foreground lg:text-right">
-                    <div>Tạo bởi {selectedEntry.author.displayName}</div>
-                    <div>{new Date(selectedEntry.publishedAt ?? selectedEntry.createdAt).toLocaleString("vi-VN")}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {filteredEntries.slice(0, 8).map((entry) => {
-                  const youtubeId = getYouTubeId(entry.sourceUrl);
-                  if (!youtubeId) return null;
-
-                  const isActive = selectedEntry.publicId === entry.publicId;
-                  return (
-                    <button
-                      key={entry.publicId}
-                      type="button"
-                      onClick={() => setSelectedPublicId(entry.publicId)}
-                      className={cn(
-                        "overflow-hidden rounded-xl border text-left transition hover:border-primary/50",
-                        isActive && "border-primary ring-1 ring-primary/30",
-                      )}
-                    >
-                      <img
-                        src={`https://i.ytimg.com/vi/${youtubeId}/mqdefault.jpg`}
-                        alt={entry.title}
-                        className="aspect-video w-full object-cover"
-                        loading="lazy"
-                      />
-                      <div className="space-y-2 px-3 py-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline">{entryTypeLabel(entry.entryType)}</Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(entry.publishedAt ?? entry.createdAt).toLocaleDateString("vi-VN")}
-                          </span>
-                        </div>
-                        <p className="line-clamp-2 text-sm font-medium">{entry.title}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          ) : (
-            <div className="rounded-xl border border-dashed px-4 py-10 text-sm text-muted-foreground">
-              Chưa có bài nào có `URL nguồn` YouTube để dựng player. Hãy tạo bài mới bằng form full-page và dán link nguồn video.
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
   );
 }
 
@@ -314,10 +171,9 @@ function WisdomRowActions({ row }: { row: WisdomEntryItem }) {
 
 export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const create = useCreateWisdomEntry();
-  const suggestSlug = useSuggestWisdomSlug();
   const createDraft = useCreateWisdomTranslationDraft();
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "WISDOM" });
   const [entryType, setEntryType] = useState<"BACH_THOAI" | "KHAI_THI" | "PHAT_NGON" | "PHAP_HOI">("BACH_THOAI");
   const [sourceCode, setSourceCode] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
@@ -327,7 +183,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
 
   const reset = () => {
     setTitle("");
-    setSlug("");
+    resetSlug();
     setEntryType("BACH_THOAI");
     setSourceCode("");
     setSourceUrl("");
@@ -339,6 +195,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     create.mutate(
@@ -379,29 +236,21 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
             <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug">
-            <div className="flex gap-2">
-              <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="tu-dong-tao-neu-de-trong" />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={suggestSlug.isPending || !title.trim()}
-                onClick={() =>
-                  suggestSlug.mutate(
-                    { title: title.trim(), sourceCode: sourceCode.trim() || undefined },
-                    {
-                      onSuccess: (res) => {
-                        setSlug(res.slug);
-                        toast.success("Đã gợi ý slug.");
-                      },
-                    },
-                  )
-                }
-              >
-                <SparklesIcon className="mr-1 size-4" />
-                {suggestSlug.isPending ? "Đang gợi ý..." : "Gợi ý slug"}
-              </Button>
+            <div className="relative">
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="tu-dong-tao-neu-de-trong"
+                className={invalidFieldClass(slugStatus === "taken")}
+                style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+              />
+              {slugStatus !== "idle" && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <SlugStatusIcon status={slugStatus} />
+                </span>
+              )}
             </div>
+            <FieldError message={fieldErrors.slug} />
           </Field>
           <Field label="Loại bài">
             <Select value={entryType} onValueChange={(v) => setEntryType(v as typeof entryType)}>
@@ -477,10 +326,9 @@ function WisdomEditDialog({
   currentRow: WisdomEntryItem;
 }) {
   const update = useUpdateWisdomEntry();
-  const suggestSlug = useSuggestWisdomSlug();
   const createDraft = useCreateWisdomTranslationDraft();
   const [title, setTitle] = useState(currentRow.title);
-  const [slug, setSlug] = useState(currentRow.slug);
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "WISDOM", excludePublicId: currentRow.publicId });
   const [entryType, setEntryType] = useState(currentRow.entryType);
   const [sourceCode, setSourceCode] = useState(currentRow.sourceCode ?? "");
   const [sourceUrl, setSourceUrl] = useState(currentRow.sourceUrl ?? "");
@@ -504,6 +352,7 @@ function WisdomEditDialog({
   const handleSubmit = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     update.mutate(
@@ -545,28 +394,19 @@ function WisdomEditDialog({
             <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug">
-            <div className="flex gap-2">
-              <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="duong-dan-bai-viet" />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={suggestSlug.isPending || !title.trim()}
-                onClick={() =>
-                  suggestSlug.mutate(
-                    { title: title.trim(), sourceCode: sourceCode.trim() || undefined },
-                    {
-                      onSuccess: (res) => {
-                        setSlug(res.slug);
-                        toast.success("Đã gợi ý slug.");
-                      },
-                    },
-                  )
-                }
-              >
-                <SparklesIcon className="mr-1 size-4" />
-                {suggestSlug.isPending ? "Đang gợi ý..." : "Gợi ý slug"}
-              </Button>
+            <div className="relative">
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="duong-dan-bai-viet"
+                className={invalidFieldClass(slugStatus === "taken")}
+                style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+              />
+              {slugStatus !== "idle" && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <SlugStatusIcon status={slugStatus} />
+                </span>
+              )}
             </div>
           </Field>
           <div className="grid grid-cols-2 gap-3">
@@ -641,7 +481,6 @@ function WisdomEditDialog({
 function WisdomTable() {
   const { data: envelope, isLoading } = useQuery(wisdomEntryListOptions({ limit: 100 }));
   const entries = envelope?.data ?? [];
-  const navigateTo = useNavigateTo();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
@@ -663,7 +502,9 @@ function WisdomTable() {
         accessorKey: "entryType",
         header: ({ column }) => <DataTableColumnHeader column={column} title="Loại" />,
         cell: ({ row }) => (
-          <span className="text-sm text-muted-foreground">{entryTypeLabel(row.original.entryType)}</span>
+          <Badge variant="outline" className={entryTypeBadgeClass(row.original.entryType)}>
+            {entryTypeLabel(row.original.entryType)}
+          </Badge>
         ),
         filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
         meta: { label: "Loại" },
@@ -729,21 +570,16 @@ function WisdomTable() {
 
   return (
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <DataTableToolbar
-          table={table}
-          searchPlaceholder="Lọc bài Bạch thoại..."
-          viewButtonLabel="Xem"
-          filters={[
-            { columnId: "entryType", title: "Loại bài", options: entryTypeOptions },
-            { columnId: "status", title: "Trạng thái", options: statusOptions },
-          ]}
-        />
-        <Button size="sm" onClick={() => navigateTo("/noi-dung/bach-thoai/tao-moi")}>
-          <BookOpenIcon className="mr-2 size-4" />
-          Thêm bài
-        </Button>
-      </div>
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Lọc bài Bạch thoại..."
+        searchKey="title"
+        viewButtonLabel="Xem"
+        filters={[
+          { columnId: "entryType", title: "Loại bài", options: entryTypeOptions },
+          { columnId: "status", title: "Trạng thái", options: statusOptions },
+        ]}
+      />
       <WorkspaceDataTable
         table={table}
         columns={columns}
@@ -813,13 +649,7 @@ function WisdomDialogs() {
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function WisdomPage() {
-  const { data: entryEnvelope, isLoading: isEntryLoading } = useQuery(wisdomEntryListOptions({ limit: 100 }));
-  const { data: authorityEnvelope, isLoading: isAuthorityLoading } = useQuery(
-    authorityProfileListOptions({ limit: 20, isActive: true }),
-  );
   const navigateTo = useNavigateTo();
-  const entries = entryEnvelope?.data ?? [];
-  const authorityProfiles = authorityEnvelope?.data ?? [];
 
   return (
     <WisdomProvider>
@@ -828,7 +658,7 @@ export function WisdomPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Bạch thoại Phật pháp</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              Quản trị kho video Bạch thoại, Khai thị, Phật ngôn và Bài pháp hội theo nguồn YouTube hoặc nguồn chính thức. Hỏi đáp là nhóm nội dung riêng, không nhập chung vào lane này.
+              Quản trị kho Bạch thoại, Khai thị, Phật ngôn và Bài pháp hội của PMTL.
             </p>
           </div>
           <Button onClick={() => navigateTo("/noi-dung/bach-thoai/tao-moi")}>
@@ -837,66 +667,7 @@ export function WisdomPage() {
           </Button>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="space-y-4">
-            {isEntryLoading ? (
-              <Card>
-                <CardContent className="px-4 py-10 text-sm text-muted-foreground">Đang tải thư viện video Bạch thoại...</CardContent>
-              </Card>
-            ) : (
-              <WisdomVideoDeck entries={entries} />
-            )}
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Bảng quản trị bài Bạch thoại</CardTitle>
-                <CardDescription>
-                  Vẫn giữ bảng vận hành để lọc, xuất bản và chỉnh sửa; nhưng phần trên luôn phản ánh đúng logic video trước, văn bản sau của Bạch thoại.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            <WisdomTable />
-          </div>
-
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Quy tắc phân luồng</CardTitle>
-                <CardDescription>
-                  Hỏi đáp không được nhập ở workspace này và không được dùng copy hoặc route thay cho Bạch thoại Phật pháp.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3 text-sm text-muted-foreground">
-                <div className="rounded-lg border px-3 py-2">Bạch thoại ưu tiên video, nguồn phát và dấu vết nguồn để người duyệt đối chiếu nhanh.</div>
-                <div className="rounded-lg border px-3 py-2">Hỏi đáp đi nhóm nội dung riêng, không dùng cùng UX với kho video Bạch thoại.</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Hồ sơ nguồn đáng tin</CardTitle>
-                <CardDescription>Hồ sơ nguồn đang hoạt động để gắn provenance cho bài nhạy cảm hoặc cần đối chiếu kỹ.</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-3">
-                {isAuthorityLoading ? (
-                  <div className="text-sm text-muted-foreground">Đang tải hồ sơ nguồn...</div>
-                ) : authorityProfiles.length ? (
-                  authorityProfiles.slice(0, 6).map((profile) => (
-                    <div key={profile.publicId} className="rounded-lg border px-3 py-3 text-sm text-muted-foreground">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium text-foreground">{profile.name}</span>
-                        {profile.title ? <Badge variant="outline">{profile.title}</Badge> : null}
-                      </div>
-                      {profile.description ? <p className="mt-2 line-clamp-3">{profile.description}</p> : null}
-                    </div>
-                  ))
-                ) : (
-                  <div className="rounded-lg border border-dashed px-3 py-8 text-sm text-muted-foreground">Chưa có hồ sơ nguồn nào.</div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        <WisdomTable />
       </div>
       <WisdomDialogs />
     </WisdomProvider>

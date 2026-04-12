@@ -46,11 +46,11 @@ export function WorkspaceDataTable<TData>({
 
   return (
     <div className="flex flex-1 flex-col gap-4">
-      <div className="overflow-hidden rounded-xl border">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
         <UiTable>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="border-b bg-muted/40 hover:bg-muted/40">
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
@@ -77,7 +77,7 @@ export function WorkspaceDataTable<TData>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={clickable ? () => onRowClick!(row.original) : undefined}
-                  className={clickable ? "cursor-pointer" : undefined}
+                  className={clickable ? "cursor-pointer transition-colors hover:bg-muted/40" : "transition-colors hover:bg-muted/30"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

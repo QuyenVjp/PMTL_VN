@@ -3,7 +3,6 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import {
@@ -20,15 +19,26 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
+  CheckCircle2Icon,
   FileImageIcon,
   FolderOpenIcon,
   ImageIcon,
   ListIcon,
+  LoaderCircleIcon,
   PlusIcon,
   Trash2Icon,
   UploadIcon,
   VideoIcon,
+  XCircleIcon,
 } from "lucide-react";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { adminClient } from "@/lib/api/admin-client.js";
@@ -152,15 +162,6 @@ function statusLabel(s: string) {
   return s;
 }
 
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-}
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -483,7 +484,7 @@ function CreateCollectionDialog({
   const videoAssets = assets.filter((a: MediaAssetListItem) => a.mimeType.startsWith("video/"));
 
   const [title,                setTitle]                = useState("");
-  const [slug,                 setSlug]                 = useState("");
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "MEDIA_COLLECTION" });
   const [collectionType,       setCollectionType]       = useState<CollectionType>("PHOTO_ALBUM");
   const [description,          setDescription]          = useState("");
   const [coverMediaPublicId,   setCoverMediaPublicId]   = useState("");
@@ -491,8 +492,6 @@ function CreateCollectionDialog({
   const [selectedMediaIds,     setSelectedMediaIds]     = useState<string[]>([]);
   const [isSubmitting,         setIsSubmitting]         = useState(false);
   const [fieldErrors,          setFieldErrors]          = useState<FieldErrors>({});
-
-  const slugEdited = useRef(false);
 
   // Filter available media based on collection type
   const availableMedia = useMemo(() => {
@@ -503,7 +502,7 @@ function CreateCollectionDialog({
 
   function reset() {
     setTitle("");
-    setSlug("");
+    resetSlug();
     setCollectionType("PHOTO_ALBUM");
     setDescription("");
     setCoverMediaPublicId("");
@@ -511,7 +510,6 @@ function CreateCollectionDialog({
     setSelectedMediaIds([]);
     setIsSubmitting(false);
     setFieldErrors({});
-    slugEdited.current = false;
   }
 
   useEffect(() => {
@@ -524,11 +522,6 @@ function CreateCollectionDialog({
     setSelectedMediaIds([]);
   }, [collectionType]);
 
-  function handleTitleChange(v: string) {
-    setTitle(v);
-    if (!slugEdited.current) setSlug(slugify(v));
-  }
-
   function toggleMediaSelection(publicId: string) {
     setSelectedMediaIds((prev) =>
       prev.includes(publicId)
@@ -540,7 +533,7 @@ function CreateCollectionDialog({
   async function handleSubmit() {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (!slug.trim()) nextErrors.slug = "Slug không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (selectedMediaIds.length === 0) nextErrors.selectedMediaIds = "Vui lòng chọn ít nhất một media item.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
@@ -604,7 +597,7 @@ function CreateCollectionDialog({
             <Input
               value={title}
               onChange={(e) => {
-                handleTitleChange(e.target.value);
+                setTitle(e.target.value);
                 if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
               }}
               placeholder="Ảnh pháp hội 2026..."
@@ -613,16 +606,20 @@ function CreateCollectionDialog({
             <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug (URL)">
-            <Input
-              value={slug}
-              onChange={(e) => {
-                slugEdited.current = true;
-                setSlug(e.target.value);
-                if (fieldErrors.slug) setFieldErrors((prev) => ({ ...prev, slug: "" }));
-              }}
-              placeholder="anh-phap-hoi-2026"
-              className={cn("font-mono text-sm", invalidFieldClass(Boolean(fieldErrors.slug)))}
-            />
+            <div className="relative">
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="anh-phap-hoi-2026"
+                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken"))}
+                style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+              />
+              {slugStatus !== "idle" && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <SlugStatusIcon status={slugStatus} />
+                </span>
+              )}
+            </div>
             <FieldError message={fieldErrors.slug} />
           </Field>
           <Field label="Loại bộ sưu tập">
@@ -748,7 +745,7 @@ function EditCollectionDialog({
 }) {
   const update = useUpdateCollection();
   const [title,       setTitle]       = useState(currentRow.title);
-  const [slug,        setSlug]        = useState(currentRow.slug);
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "MEDIA_COLLECTION", excludePublicId: currentRow.publicId });
   const [description, setDescription] = useState(currentRow.description ?? "");
   const [sourceNote,  setSourceNote]  = useState(currentRow.sourceNote ?? "");
   const [featured,    setFeatured]    = useState(currentRow.featured);
@@ -767,6 +764,7 @@ function EditCollectionDialog({
   function handleSubmit() {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
     setFieldErrors({});
     update.mutate(
@@ -803,7 +801,20 @@ function EditCollectionDialog({
             <FieldError message={fieldErrors.title} />
           </Field>
           <Field label="Slug">
-            <Input value={slug} onChange={(e) => setSlug(e.target.value)} className="font-mono text-sm" />
+            <div className="relative">
+              <Input
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken"))}
+                style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+              />
+              {slugStatus !== "idle" && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <SlugStatusIcon status={slugStatus} />
+                </span>
+              )}
+            </div>
+            <FieldError message={fieldErrors.slug} />
           </Field>
           <Field label="Mô tả">
             <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Mô tả ngắn..." />

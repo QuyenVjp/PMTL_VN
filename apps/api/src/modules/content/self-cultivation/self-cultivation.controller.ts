@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import type { Request } from "express";
 
@@ -40,6 +40,16 @@ export class SelfCultivationController {
   @ApiOperation({ summary: "Guide map public cho Kinh văn tự tu" })
   getGuideMap() {
     return this.selfCultivationService.getGuideMap();
+  }
+
+  @Get("content/self-cultivation/slug-check")
+  @Roles("ADMIN", "SUPER_ADMIN")
+  @ApiOperation({ summary: "Kiểm tra slug self-cultivation guide có bị trùng không" })
+  checkGuideSlug(
+    @Query("slug") slug: string,
+    @Query("excludeSlug") excludeSlug?: string,
+  ) {
+    return this.selfCultivationService.checkGuideSlugAvailability(slug, excludeSlug);
   }
 
   @Get("content/self-cultivation/guides")

@@ -142,6 +142,13 @@ export class AdminMediaLibraryService {
     };
   }
 
+  async checkCollectionSlugAvailability(slug: string, excludePublicId?: string): Promise<{ available: boolean }> {
+    const existing = await this.prisma.mediaCollection.findFirst({
+      where: { slug, ...(excludePublicId && { publicId: { not: excludePublicId } }) },
+    });
+    return { available: !existing };
+  }
+
   async createCollection(dto: CreateCollectionDto, creatorId: string) {
     const existing = await this.prisma.mediaCollection.findUnique({ where: { slug: dto.slug } });
     if (existing) throw new ConflictError("Slug đã tồn tại");

@@ -54,7 +54,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   DashboardCard,
   DashboardCardActionsDropdown,
-  DashboardOverviewCard,
+  DashboardOverviewCardV2,
+  DashboardOverviewCardV3,
+  SparklineAreaChart,
 } from "@/components/dashboard";
 import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
@@ -274,20 +276,20 @@ function ModuleCard({ module: mod }: { module: ContentModule }) {
   return (
     <Card
       className={cn(
-        "group cursor-pointer transition-all hover:shadow-md",
-        hasUrgent && "border-destructive/40",
+        "group cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md",
+        hasUrgent ? "border-destructive/40 ring-1 ring-destructive/20" : "hover:border-border/80",
       )}
       onClick={() => void navigate({ to: mod.href })}
     >
-      <CardContent className="flex items-center gap-3 p-4">
-        <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg", mod.colorClass)}>
-          <mod.icon className="size-4" />
+      <CardContent className="flex flex-col gap-3 p-4">
+        <div className={cn("flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110", mod.colorClass)}>
+          <mod.icon className="size-5" />
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{mod.label}</p>
-          <p className="truncate text-xs text-muted-foreground">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold leading-snug">{mod.label}</p>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">
             {hasUrgent ? (
-              <span className="font-medium text-destructive">{mod.urgentCount} chờ xử lý</span>
+              <span className="font-semibold text-destructive">{mod.urgentCount} chờ xử lý</span>
             ) : (
               mod.description
             )}
@@ -536,19 +538,19 @@ export function DashboardOverview() {
   return (
     <div className="space-y-6">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Card>
+      <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-sm ring-1 ring-border/60">
         <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-4">
             {adminUser && (
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-md">
                 {adminUser.displayName ? userInitials(adminUser.displayName) : "AD"}
               </div>
             )}
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-lg font-semibold">Tổng quan vận hành PMTL</h1>
+                <h1 className="text-xl font-bold tracking-tight">Tổng quan vận hành PMTL</h1>
                 {isSuperAdmin && (
-                  <Badge variant="outline" className="border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400">
+                  <Badge className="border-violet-300 bg-violet-100 text-violet-700 dark:border-violet-700 dark:bg-violet-900/50 dark:text-violet-300" variant="outline">
                     Super Admin
                   </Badge>
                 )}
@@ -561,7 +563,7 @@ export function DashboardOverview() {
               <SearchIcon className="size-4" />
               Tìm nhanh
             </Button>
-            <Button variant="outline" size="sm" onClick={handleRefresh}>
+            <Button size="sm" variant="outline" onClick={handleRefresh}>
               <RefreshCcwIcon className="size-4" />
               Làm mới
             </Button>
@@ -588,38 +590,59 @@ export function DashboardOverview() {
           Array.from({ length: 4 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : kpi ? (
           <>
-            <DashboardOverviewCard
+            {/* Users — V2: colored icon badge */}
+            <DashboardOverviewCardV2
               title="Thành viên"
-              icon={UsersIcon}
-              data={{ value: kpi.users.value, percentageChange: 0 }}
               period={kpi.users.period}
+              icon={UsersIcon}
+              iconColor="#3B82F6"
+              data={{ value: kpi.users.value, percentageChange: 0 }}
               action={periodAction}
             />
-            <DashboardOverviewCard
+            {/* Posts — V3: stat + sparkline (posts series) */}
+            <DashboardOverviewCardV3
               title="Bài viết xuất bản"
-              icon={BookTextIcon}
               data={{ value: kpi.posts.value, percentageChange: 0 }}
-              period={kpi.posts.period}
               action={periodAction}
-            />
-            <DashboardOverviewCard
-              title="Báo cáo chờ duyệt"
-              icon={ShieldAlertIcon}
-              data={{ value: kpi.reports.value, percentageChange: 0 }}
-              period={kpi.reports.period}
-              className={
-                statPeriod === "total" && (stats?.pendingReports ?? 0) > 0
-                  ? "border-destructive/30"
-                  : ""
+              chart={
+                chartReady && activitySeriesChartData.length > 0 ? (
+                  <SparklineAreaChart
+                    data={activitySeriesChartData}
+                    dataKey="posts"
+                    color="#10B981"
+                    className="h-24 w-full"
+                  />
+                ) : (
+                  <Skeleton className="h-24 w-full" />
+                )
               }
+            />
+            {/* Reports — V2: amber/red icon based on urgency */}
+            <DashboardOverviewCardV2
+              title="Báo cáo chờ duyệt"
+              period={kpi.reports.period}
+              icon={ShieldAlertIcon}
+              iconColor={statPeriod === "total" && (stats?.pendingReports ?? 0) > 0 ? "#EF4444" : "#F59E0B"}
+              data={{ value: kpi.reports.value, percentageChange: 0 }}
               action={periodAction}
             />
-            <DashboardOverviewCard
+            {/* Sessions — V3: stat + sparkline (audits as proxy) */}
+            <DashboardOverviewCardV3
               title="Phiên đang mở"
-              icon={ActivityIcon}
               data={{ value: kpi.sessions.value, percentageChange: 0 }}
-              period={kpi.sessions.period}
               action={periodAction}
+              chart={
+                chartReady && activitySeriesChartData.length > 0 ? (
+                  <SparklineAreaChart
+                    data={activitySeriesChartData}
+                    dataKey="audits"
+                    color="#8B5CF6"
+                    className="h-24 w-full"
+                  />
+                ) : (
+                  <Skeleton className="h-24 w-full" />
+                )
+              }
             />
           </>
         ) : null}
@@ -627,15 +650,22 @@ export function DashboardOverview() {
 
       {/* ── Content Modules Grid ──────────────────────────────────────── */}
       <div>
-        <p className="mb-3 text-sm font-medium text-muted-foreground">Truy cập nhanh</p>
-        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-6">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Truy cập nhanh
+        </p>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-7">
           {contentModules.map((mod) => (
             <ModuleCard key={mod.href} module={mod} />
           ))}
         </div>
       </div>
 
-      {/* ── Charts: Activity line + Status breakdown (Shadboard pattern) ─ */}
+      {/* ── Charts: Activity line + Status breakdown ─────────────────── */}
+      <div>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Hoạt động & Nội dung
+        </p>
+      </div>
       <div className="grid gap-4 xl:grid-cols-3">
         {/* 7-day activity line chart */}
         <DashboardCard
@@ -738,6 +768,13 @@ export function DashboardOverview() {
 
       {/* ── Audit actions breakdown — Traffic Sources style ───────────── */}
       {stats && stats.auditActionStats.length > 0 && (
+        <div>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Audit & Hoạt động
+          </p>
+        </div>
+      )}
+      {stats && stats.auditActionStats.length > 0 && (
         <div className="grid gap-4 xl:grid-cols-2">
           <Card>
             <div className="flex justify-between p-6 pb-2">
@@ -805,6 +842,11 @@ export function DashboardOverview() {
       )}
 
       {/* ── Recent content + Pending reports ─────────────────────────── */}
+      <div>
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Nội dung & Kiểm duyệt
+        </p>
+      </div>
       <div className="grid gap-4 xl:grid-cols-2">
         <Card>
           <div className="flex justify-between p-6 pb-4">

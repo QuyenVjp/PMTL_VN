@@ -31,6 +31,15 @@ import { guideDetailOptions } from "@/features/guides/queries";
 import { useUpdateGuide, usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
+
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  if (status === "available") return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  if (status === "taken") return <XCircleIcon className="size-4 text-destructive" />;
+  return null;
+}
 
 function editorTextLength(value: string) {
   return value
@@ -102,8 +111,8 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const uploadRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [category, setCategory] = useState("BEGINNER");
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "GUIDE", excludePublicId: guide?.publicId });
   const [bodyHtml, setBodyHtml] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [versionNote, setVersionNote] = useState("");
@@ -136,6 +145,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -286,7 +296,20 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <AdminFormField label="Slug">
-                <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
+                <div className="relative">
+                  <Input
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    className={invalidFieldClass(slugStatus === "taken")}
+                    style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+                  />
+                  {slugStatus !== "idle" && (
+                    <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                      <SlugStatusIcon status={slugStatus} />
+                    </span>
+                  )}
+                </div>
+                <FieldError message={fieldErrors.slug} />
               </AdminFormField>
               <AdminFormField label="Danh mục">
                 <Select value={category} onValueChange={setCategory}>

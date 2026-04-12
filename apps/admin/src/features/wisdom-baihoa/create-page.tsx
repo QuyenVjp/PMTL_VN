@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { SparklesIcon } from "lucide-react";
+import { SparklesIcon, LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
 
 import { AdminDetailPage, AdminDetailSection, AdminFormField } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
-import { useCreateWisdomEntry, useCreateWisdomTranslationDraft, useSuggestWisdomSlug } from "./mutations";
+import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+import { useCreateWisdomEntry, useCreateWisdomTranslationDraft } from "./mutations";
 
 const ENTRY_TYPE_OPTIONS = [
   { label: "Bạch thoại Phật pháp", value: "BACH_THOAI" },
@@ -36,25 +37,40 @@ function getYouTubeId(url: string): string | null {
   return null;
 }
 
+function SlugStatusIcon({ status }: { status: SlugStatus }) {
+  if (status === "checking") {
+    return <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />;
+  }
+  if (status === "available") {
+    return <CheckCircle2Icon className="size-4 text-emerald-500" />;
+  }
+  if (status === "taken") {
+    return <XCircleIcon className="size-4 text-destructive" />;
+  }
+  return null;
+}
+
 export function WisdomCreatePage() {
   const navigate = useNavigate();
   const createEntry = useCreateWisdomEntry();
-  const suggestSlug = useSuggestWisdomSlug();
   const createDraft = useCreateWisdomTranslationDraft();
 
   const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
   const [entryType, setEntryType] = useState<"BACH_THOAI" | "KHAI_THI" | "PHAT_NGON" | "PHAP_HOI">("BACH_THOAI");
   const [sourceCode, setSourceCode] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
   const [originalText, setOriginalText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "WISDOM" });
+
   const youtubeId = getYouTubeId(sourceUrl.trim());
 
   const handleSave = () => {
     const nextErrors: FieldErrors = {};
     if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
+    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
     if (hasFieldErrors(nextErrors)) {
       setFieldErrors(nextErrors);
       toast.error(Object.values(nextErrors)[0]);
@@ -99,7 +115,7 @@ export function WisdomCreatePage() {
       onSave={handleSave}
       isSaving={createEntry.isPending}
       saveLabel="Tạo"
-      saveDisabled={!title.trim()}
+      saveDisabled={!title.trim() || slugStatus === "taken"}
       sidebar={sidebar}
     >
       <AdminDetailSection title="Thông tin cơ bản">
@@ -108,22 +124,23 @@ export function WisdomCreatePage() {
             <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Nhập tiêu đề..." className={invalidFieldClass(Boolean(fieldErrors.title))} />
             <FieldError message={fieldErrors.title} />
           </AdminFormField>
-          <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-            <AdminFormField label="Slug">
-              <Input value={slug} onChange={(event) => setSlug(event.target.value)} placeholder="tu-dong-tao-neu-de-trong" />
-            </AdminFormField>
-            <div className="flex items-end">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={suggestSlug.isPending || !title.trim()}
-                onClick={() => suggestSlug.mutate({ title: title.trim(), sourceCode: sourceCode.trim() || undefined }, { onSuccess: (result) => setSlug(result.slug) })}
-              >
-                <SparklesIcon className="mr-2 size-4" />
-                {suggestSlug.isPending ? "Đang gợi ý..." : "Gợi ý slug"}
-              </Button>
+          <AdminFormField label="Slug" hint={slugStatus === "taken" ? "Slug này đã được dùng" : slugStatus === "available" ? "Slug hợp lệ" : undefined}>
+            <div className="relative">
+              <Input
+                value={slug}
+                onChange={(event) => setSlug(event.target.value)}
+                placeholder="tu-dong-tao-tu-tieu-de"
+                className={invalidFieldClass(Boolean(fieldErrors.slug) || slugStatus === "taken")}
+                style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
+              />
+              {slugStatus !== "idle" && (
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                  <SlugStatusIcon status={slugStatus} />
+                </span>
+              )}
             </div>
-          </div>
+            <FieldError message={fieldErrors.slug} />
+          </AdminFormField>
           <AdminFormField label="Loại bài">
             <Select value={entryType} onValueChange={(value) => setEntryType(value as typeof entryType)}>
               <SelectTrigger><SelectValue /></SelectTrigger>

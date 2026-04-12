@@ -33,6 +33,15 @@ export class AdminMediaLibraryController {
 
   // ── Collections ───────────────────────────────────────────────────
 
+  @Get("collections/slug-check")
+  @ApiOperation({ summary: "Kiểm tra slug collection có bị trùng không" })
+  checkSlug(
+    @Query("slug") slug: string,
+    @Query("excludePublicId") excludePublicId?: string,
+  ) {
+    return this.service.checkCollectionSlugAvailability(slug, excludePublicId);
+  }
+
   @Get("collections")
   @ApiOperation({ summary: "Danh sách collections thư viện pháp môn" })
   list(@Query() raw: Record<string, unknown>) {

@@ -508,6 +508,13 @@ export class WisdomQaService {
     return result;
   }
 
+  async checkSlugAvailability(slug: string, excludePublicId?: string): Promise<{ available: boolean }> {
+    const existing = await this.prisma.wisdomEntry.findFirst({
+      where: { slug, ...(excludePublicId && { publicId: { not: excludePublicId } }) },
+    });
+    return { available: !existing };
+  }
+
   async listOfflineBundles(query: OfflineBundleListQuery) {
     const manifests = await this.resolveOfflineManifests(query.bundleFamily);
     const startIndex = query.cursor ? Number.parseInt(query.cursor, 10) || 0 : query.offset;
