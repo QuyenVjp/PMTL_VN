@@ -9,6 +9,8 @@ export const charityKeys = {
   all: ["charities"] as const,
   lists: () => [...charityKeys.all, "list"] as const,
   list: (f: Record<string, unknown>) => [...charityKeys.lists(), f] as const,
+  details: () => [...charityKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...charityKeys.details(), publicId] as const,
 };
 
 export const fraudAlertKeys = {
@@ -40,6 +42,15 @@ export function charityListOptions(filters: { limit?: number; offset?: number; s
   return queryOptions({
     queryKey: charityKeys.list(filters),
     queryFn: () => adminClient.get<ListEnvelope<CharityListItem>>("/admin/dharma-compliance/charities", params),
+  });
+}
+
+export function charityDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: charityKeys.detail(publicId),
+    queryFn: () =>
+      adminClient.get<CharityListItem>(`/admin/dharma-compliance/charities/${publicId}`),
+    enabled: Boolean(publicId),
   });
 }
 

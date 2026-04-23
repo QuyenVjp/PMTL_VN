@@ -30,8 +30,8 @@ Use this matrix to choose the smallest correct external worker set for PMTL work
 ## Wrapper entrypoint
 
 ```bash
-py infra/tools/external_agent.py --provider copilot --prompt "<prompt>"
-py infra/tools/external_agent.py --provider gemini --prompt "<prompt>" --debug
+python infra/tools/external_agent.py --provider copilot --prompt "<prompt>"
+python infra/tools/external_agent.py --provider gemini --prompt "<prompt>" --debug
 ```
 
 Gemini wrapper note:

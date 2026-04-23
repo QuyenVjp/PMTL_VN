@@ -148,7 +148,7 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 - `requesting-code-review`, `receiving-code-review`, `using-git-worktrees`, `finishing-a-development-branch`: review, worktree, kết thúc branch.
 - `output-skill`: dùng khi cần output dài và không muốn bị cắt cụt.
 - `pmtl-multi-cli-orchestrator`: điều phối Gemini CLI và Copilot CLI theo đúng lane thay vì gọi bừa.
-- External CLI workers: lane advisory/compare only, dùng `py infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Gemini CLI hoặc Copilot CLI.
+- External CLI workers: lane advisory/compare only, dùng `python infra/tools/external_agent.py --provider copilot|gemini --prompt "..."` khi cần second opinion từ Gemini CLI hoặc Copilot CLI.
 - Wrapper hiện giữ `sticky workspace session` cho Copilot và Gemini tại `~/.codex/subagent-runtime/<provider>/<workspace-key>/session.json`.
 - Nếu Copilot dính session stale, wrapper tự bỏ resume token hỏng và rerun fresh một lần thay vì fail cứng ngay.
 - Wrapper còn lưu `conversation.jsonl` cùng thư mục runtime để tự bơm lại vài lượt chat gần nhất khi provider resume không ổn định.
@@ -156,12 +156,12 @@ Thiếu bất kỳ mục nào ở trên thì task là `blocked at evidence`, ch�
 - Ép mode bằng `--interaction-mode chat` hoặc `--interaction-mode repo` khi cần kiểm soát rõ hơn.
 - `repo` mode nên ghi rõ file/path cần đọc; wrapper hiện nhắc worker chỉ đọc đúng những path được nêu thay vì quét repo lan man.
 - Dùng `--session-mode fresh` nếu muốn cắt ngữ cảnh cũ, hoặc `--session-mode resume-latest` nếu muốn bám phiên CLI gần nhất của provider khi được hỗ trợ.
-- Repo wrapper nhanh trên Windows: `py infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
+- Repo wrapper nhanh trên Windows: `python infra/tools/codex_actions.py multi-cli-router --task "<task>" --speed fast`.
 - `--speed fast`: ưu tiên lane nhanh, thường nghiêng về Copilot cho implementation sanity và Gemini cho docs research.
 - `--speed balanced`: giữ routing trung tính hơn.
 - `--speed deep`: ưu tiên review/context sâu hơn tốc độ.
 - `aider`: lane opt-in cho git-aware patch proposals; wrapper hiện chạy dry-run, không auto-commit, hợp cho đề xuất diff hơn là thay repo trực tiếp.
-- Direct script fallback: `py infra/tools/multi_cli_router.py --task "<task>" --speed fast`.
+- Direct script fallback: `python infra/tools/multi_cli_router.py --task "<task>" --speed fast`.
 
 ### 2. PMTL core
 

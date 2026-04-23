@@ -57,7 +57,7 @@ Local runtime snapshot verified on 2026-03-22:
 
 ## PMTL wrapper
 
-- Wrapper entrypoint: `py infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
+- Wrapper entrypoint: `python infra/tools/external_agent.py --provider <claude|codex|copilot|gemini|aider> --prompt "<prompt>"`
 - Wrapper behavior must stay aligned with repo docs in `AGENTS.md`, `CLAUDE.md`, and `docs/agent-cheatsheet.md`
 - Gemini wrapper keeps a sticky per-workspace session in `tmp/gemini-runtime/session.json` by default and supports `--session-mode auto|fresh|sticky|resume-latest`
-- `py infra/tools/codex_actions.py skill-audit` was verified locally on 2026-03-21 and should be treated as an audit report, not a repo-wide pass gate for older skills
+- `python infra/tools/codex_actions.py skill-audit` was verified locally on 2026-03-21 and should be treated as an audit report, not a repo-wide pass gate for older skills

@@ -5,6 +5,10 @@ import type { EventListItem } from "./types.js";
 
 export type { EventListItem } from "./types.js";
 
+export interface EventDetail extends EventListItem {
+  description: string | null;
+}
+
 export const eventKeys = {
   all: ["buddhist-events"] as const,
   lists: () => [...eventKeys.all, "list"] as const,
@@ -12,6 +16,14 @@ export const eventKeys = {
   detail: (id: string) => [...eventKeys.all, "detail", id] as const,
   registrations: (id: string) => [...eventKeys.all, "registrations", id] as const,
 };
+
+export function eventDetailOptions(publicId: string) {
+  return queryOptions({
+    queryKey: eventKeys.detail(publicId),
+    queryFn: () => adminClient.get<EventDetail>(`/admin/events/${publicId}`),
+    enabled: Boolean(publicId),
+  });
+}
 
 export function eventListOptions(filters: { limit?: number; offset?: number; status?: string; eventType?: string; search?: string } = {}) {
   const params: Record<string, string | number | boolean | undefined> = {

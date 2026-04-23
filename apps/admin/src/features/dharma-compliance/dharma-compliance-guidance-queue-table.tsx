@@ -1,40 +1,21 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { Badge } from "@/components/ui/badge";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import {
+  WorkspaceDataTable,
+  WorkspaceRowActions,
+  WorkspaceDetailSheet,
+  WorkspaceDetailSection,
+  WorkspaceDetailField,
+} from "@/components/workspace";
 import { guidanceQueueOptions } from "./queries.js";
 import { GUIDANCE_URGENCY_VARIANT, type GuidanceQueueItem } from "./types.js";
 
-function GuidanceQueueRowActions({
-  item,
-  onRespond,
-}: {
-  item: GuidanceQueueItem;
-  onRespond: (item: GuidanceQueueItem) => void;
-}) {
-  if (item.status !== "PENDING") return null;
-  return (
-    <WorkspaceRowActions
-      actions={[
-        {
-          label: "Phản hồi",
-          onClick: () => onRespond(item),
-        },
-      ]}
-    />
-  );
-}
-
-export function DharmaComplianceGuidanceQueueTable({
-  isLoading,
-  onRespond,
-}: {
-  isLoading: boolean;
-  onRespond: (item: GuidanceQueueItem) => void;
-}) {
+export function DharmaComplianceGuidanceQueueTable({ isLoading }: { isLoading: boolean }) {
+  const [selectedItem, setSelectedItem] = useState<GuidanceQueueItem | null>(null);
   const { data: envelope } = useQuery(guidanceQueueOptions());
   const items = useMemo(() => envelope?.data ?? [], [envelope]);
 
@@ -77,15 +58,85 @@ export function DharmaComplianceGuidanceQueueTable({
       {
         id: "actions",
         header: "",
-        cell: ({ row }) => <GuidanceQueueRowActions item={row.original} onRespond={onRespond} />,
+        cell: ({ row }) => (
+          <WorkspaceRowActions
+            actions={[
+              {
+                label: "Xem chi tiết",
+                onClick: () => setSelectedItem(row.original),
+              },
+            ]}
+          />
+        ),
       },
     ],
-    [onRespond],
+    [],
   );
 
-  const table = useSafeReactTable({ data: items, columns: guidanceColumns, getCoreRowModel: getCoreRowModel() });
+  const table = useSafeReactTable({
+    data: items,
+    columns: guidanceColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
-    <WorkspaceDataTable table={table} columns={guidanceColumns} isLoading={isLoading} emptyMessage="Không có yêu cầu nào." />
+    <>
+      <WorkspaceDataTable
+        table={table}
+        columns={guidanceColumns}
+        isLoading={isLoading}
+        emptyMessage="Không có yêu cầu nào."
+      />
+
+      <WorkspaceDetailSheet
+        open={selectedItem !== null}
+        onOpenChange={(v) => {
+          if (!v) setSelectedItem(null);
+        }}
+        title={selectedItem?.practitioner ?? "Đồng tu ẩn danh"}
+        subtitle={selectedItem?.category ?? undefined}
+        status={
+          selectedItem && (
+            <Badge variant={selectedItem.status === "ANSWERED" ? "secondary" : "outline"}>
+              {selectedItem.status}
+            </Badge>
+          )
+        }
+      >
+        {selectedItem && (
+          <WorkspaceDetailSection title="Nội dung câu hỏi">
+            <WorkspaceDetailField
+              label="Đồng tu"
+              value={selectedItem.practitioner ?? "—"}
+            />
+            <WorkspaceDetailField label="Danh mục" value={selectedItem.category} />
+            <WorkspaceDetailField
+              label="Mức độ khẩn"
+              value={
+                <Badge variant={GUIDANCE_URGENCY_VARIANT[selectedItem.urgency]}>
+                  {selectedItem.urgency}
+                </Badge>
+              }
+            />
+            <WorkspaceDetailField
+              label="Câu hỏi"
+              value={selectedItem.question}
+              stacked
+            />
+            <WorkspaceDetailField
+              label="Ngày gửi"
+              value={new Date(selectedItem.createdAt).toLocaleDateString("vi-VN")}
+            />
+            {selectedItem.response && (
+              <WorkspaceDetailField
+                label="Phản hồi"
+                value={selectedItem.response}
+                stacked
+              />
+            )}
+          </WorkspaceDetailSection>
+        )}
+      </WorkspaceDetailSheet>
+    </>
   );
 }

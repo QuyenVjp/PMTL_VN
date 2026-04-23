@@ -9,4 +9,4 @@
 - If workers conflict with repo docs, the conflict is resolved by checking official product docs and updating repo docs before changing routing.
 - `AGENTS.md`, `docs/architecture/skills-taxonomy.md`, and `docs/agent-cheatsheet.md` are updated when canonical routing changes.
 - Wrapper changes get a smoke run for the affected provider.
-- `py infra/tools/codex_actions.py skill-audit` has been run and reviewed as an audit report, with no missing-section gap ignored for the touched canonical skill.
+- `python infra/tools/codex_actions.py skill-audit` has been run and reviewed as an audit report, with no missing-section gap ignored for the touched canonical skill.

@@ -23,7 +23,7 @@ just autoresearch
 Hoặc:
 
 ```powershell
-py infra/tools/autoresearch/runner.py --max-iters 120 --patience 20 --min-delta 0.0001
+python infra/tools/autoresearch/runner.py --max-iters 120 --patience 20 --min-delta 0.0001
 ```
 
 ## Khi nào nên dùng

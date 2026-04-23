@@ -37,7 +37,7 @@ Sau đợt nâng cấp này, nhóm canonical giảm từ `16` skill thiếu sect
 ## Bổ sung trong đợt này
 
 - Thêm governance skill: `.agents/skills/pmtl-skill-governance/`
-- Thêm lệnh audit: `py infra/tools/codex_actions.py skill-audit`
+- Thêm lệnh audit: `python infra/tools/codex_actions.py skill-audit`
 - Thêm shortcut: `just skill-audit`
 - Sửa `justfile` sang `pwsh.exe` để recipe `just` chạy được trên môi trường hiện tại
 - Thêm playbook kiến trúc cho vòng đời skill: `docs/architecture/skill-system-playbook.md`

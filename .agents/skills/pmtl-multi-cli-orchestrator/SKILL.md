@@ -54,7 +54,7 @@ Own routing for external AI CLI workers so PMTL tasks use the smallest correct w
 - Recheck the chosen worker path against `references/routing-matrix.md`.
 - Confirm the task is not trivial enough to stay local.
 - If worker config changed, run a minimal wrapper smoke command for the affected provider.
-- Run `py infra/tools/codex_actions.py skill-audit` after changing this skill or other canonical PMTL skills. Treat it as an audit report, not a repo-wide pass gate for older skills.
+- Run `python infra/tools/codex_actions.py skill-audit` after changing this skill or other canonical PMTL skills. Treat it as an audit report, not a repo-wide pass gate for older skills.
 - Update `references/official-sources.md` when a routing rule depends on a new doc capability.
 
 ## Edge Cases

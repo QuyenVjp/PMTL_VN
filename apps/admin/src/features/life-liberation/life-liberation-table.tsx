@@ -3,7 +3,13 @@ import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import {
+  WorkspaceDataTable,
+  WorkspaceRowActions,
+  WorkspaceDetailSheet,
+  WorkspaceDetailSection,
+  WorkspaceDetailField,
+} from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,7 +78,7 @@ function UpdateStatusDialog({
           setNotes("");
           onClose();
         },
-      }
+      },
     );
   }
 
@@ -135,7 +141,9 @@ function UpdateStatusDialog({
               </Button>
               <Button
                 type="submit"
-                disabled={!newStatus || availableTransitions.length === 0 || updateStatus.isPending}
+                disabled={
+                  !newStatus || availableTransitions.length === 0 || updateStatus.isPending
+                }
               >
                 {updateStatus.isPending ? "Đang lưu..." : "Cập nhật"}
               </Button>
@@ -147,31 +155,28 @@ function UpdateStatusDialog({
   );
 }
 
-function LifeReleaseRowActions({
-  row,
-  onUpdateStatus,
-}: {
-  row: LifeReleaseListItem;
-  onUpdateStatus: (record: LifeReleaseListItem) => void;
-}) {
-  const actions = [
-    {
-      label: "Cập nhật trạng thái",
-      onClick: () => onUpdateStatus(row),
-    },
-  ];
-
-  return <WorkspaceRowActions actions={actions} />;
-}
-
 export function LifeReleaseTable() {
   const [selectedRecord, setSelectedRecord] = useState<LifeReleaseListItem | null>(null);
+  const [detailItem, setDetailItem] = useState<LifeReleaseListItem | null>(null);
   const { data: envelope, isLoading } = useQuery(lifeReleaseListOptions());
   const records = useMemo(() => envelope?.data ?? [], [envelope]);
 
+  const canTransition = detailItem ? STATUS_TRANSITIONS[detailItem.status].length > 0 : false;
+
+  function handleUpdateFromSheet() {
+    if (!detailItem) return;
+    const item = detailItem;
+    setDetailItem(null);
+    setSelectedRecord(item);
+  }
+
   const columns: ColumnDef<LifeReleaseListItem>[] = useMemo(
     () => [
-      { accessorKey: "user", header: "Người phóng sinh", cell: ({ row }) => row.original.user?.name ?? "—" },
+      {
+        accessorKey: "user",
+        header: "Người phóng sinh",
+        cell: ({ row }) => row.original.user?.name ?? "—",
+      },
       {
         accessorKey: "recordType",
         header: "Loại",
@@ -187,7 +192,11 @@ export function LifeReleaseTable() {
         ),
       },
       { accessorKey: "totalAnimals", header: "Tổng số lượng" },
-      { accessorKey: "locationName", header: "Địa điểm", cell: ({ row }) => row.original.locationName ?? "—" },
+      {
+        accessorKey: "locationName",
+        header: "Địa điểm",
+        cell: ({ row }) => row.original.locationName ?? "—",
+      },
       {
         accessorKey: "releaseDate",
         header: "Ngày phóng sinh",
@@ -197,11 +206,18 @@ export function LifeReleaseTable() {
         id: "actions",
         header: "",
         cell: ({ row }) => (
-          <LifeReleaseRowActions row={row.original} onUpdateStatus={setSelectedRecord} />
+          <WorkspaceRowActions
+            actions={[
+              {
+                label: "Xem chi tiết",
+                onClick: () => setDetailItem(row.original),
+              },
+            ]}
+          />
         ),
       },
     ],
-    []
+    [],
   );
 
   const table = useSafeReactTable({
@@ -212,8 +228,65 @@ export function LifeReleaseTable() {
 
   return (
     <>
-      <WorkspaceDataTable table={table} columns={columns} isLoading={isLoading} emptyMessage="Chưa có hồ sơ phóng sinh nào." />
-      <UpdateStatusDialog record={selectedRecord} onClose={() => setSelectedRecord(null)} />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Chưa có hồ sơ phóng sinh nào."
+      />
+
+      <WorkspaceDetailSheet
+        open={detailItem !== null}
+        onOpenChange={(v) => {
+          if (!v) setDetailItem(null);
+        }}
+        title={detailItem?.user?.name ?? "Chưa xác định"}
+        subtitle={detailItem ? RECORD_TYPE_LABELS[detailItem.recordType] : undefined}
+        status={
+          detailItem && (
+            <Badge variant={STATUS_VARIANT[detailItem.status]}>
+              {LIFE_RELEASE_STATUS_LABELS[detailItem.status]}
+            </Badge>
+          )
+        }
+        primaryActions={
+          canTransition ? (
+            <Button size="sm" onClick={handleUpdateFromSheet}>
+              Cập nhật trạng thái
+            </Button>
+          ) : undefined
+        }
+      >
+        {detailItem && (
+          <WorkspaceDetailSection title="Thông tin hồ sơ">
+            <WorkspaceDetailField
+              label="Người phóng sinh"
+              value={detailItem.user?.name ?? "—"}
+            />
+            <WorkspaceDetailField
+              label="Loại hồ sơ"
+              value={RECORD_TYPE_LABELS[detailItem.recordType]}
+            />
+            <WorkspaceDetailField
+              label="Tổng số lượng"
+              value={detailItem.totalAnimals}
+            />
+            <WorkspaceDetailField
+              label="Địa điểm"
+              value={detailItem.locationName ?? "—"}
+            />
+            <WorkspaceDetailField
+              label="Ngày phóng sinh"
+              value={new Date(detailItem.releaseDate).toLocaleDateString("vi-VN")}
+            />
+          </WorkspaceDetailSection>
+        )}
+      </WorkspaceDetailSheet>
+
+      <UpdateStatusDialog
+        record={selectedRecord}
+        onClose={() => setSelectedRecord(null)}
+      />
     </>
   );
 }

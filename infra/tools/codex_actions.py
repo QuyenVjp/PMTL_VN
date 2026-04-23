@@ -389,6 +389,7 @@ def mcp_smoke() -> int:
     repo_paths = {
         "apps/web": (ROOT / "apps" / "web").exists(),
         "infra/tools/start_mcp_server.ps1": (ROOT / "infra" / "tools" / "start_mcp_server.ps1").exists(),
+        ".gitnexus/meta.json": (ROOT / ".gitnexus" / "meta.json").exists(),
     }
 
     server_reports: list[dict[str, object]] = []
@@ -417,6 +418,11 @@ def mcp_smoke() -> int:
             required_paths.append("infra/tools/start_mcp_server.ps1")
             if not repo_paths["infra/tools/start_mcp_server.ps1"]:
                 notes.append("start_mcp_server.ps1 is missing")
+        if name == "gitnexus":
+            required_paths.append(".gitnexus/meta.json")
+            if not repo_paths[".gitnexus/meta.json"]:
+                notes.append("GitNexus index metadata is missing in this worktree; run `npx gitnexus analyze` when npm access is available")
+            notes.append("GitNexus MCP is started through `npx gitnexus@latest mcp`, so first-time startup still depends on npm registry access")
         if name == "next-devtools" and not repo_paths["apps/web"]:
             notes.append("next-devtools MCP server can start, but Next.js runtime evidence will stay limited until apps/web exists")
         if name == "smartbear" and not os.environ.get("SWAGGER_API_KEY"):
@@ -424,6 +430,8 @@ def mcp_smoke() -> int:
 
         ok = command_ok and not missing_env
         if "apps/web" in required_paths and not repo_paths["apps/web"]:
+            ok = False
+        if ".gitnexus/meta.json" in required_paths and not repo_paths[".gitnexus/meta.json"]:
             ok = False
 
         overall_ok = overall_ok and ok

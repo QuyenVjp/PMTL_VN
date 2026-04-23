@@ -47,12 +47,12 @@ Verify PMTL auth behavior through the current `apps/web + apps/api + apps/admin`
 
 ## Script
 
-Primary entrypoint: `py infra/tools/codex_actions.py auth-flow`
+Primary entrypoint: `python infra/tools/codex_actions.py auth-flow`
 
 Compatibility wrapper: `scripts/run_auth_flow_check.py`
 
 ```bash
-py infra/tools/codex_actions.py auth-flow
+python infra/tools/codex_actions.py auth-flow
 ```
 
 ## Verification

@@ -61,7 +61,7 @@ Guide day-to-day React and Next.js implementation in PMTL so frontend work stays
 
 ## Verification
 
-- Run `py infra/tools/codex_actions.py quality-gate --scope web` after meaningful changes.
+- Run `python infra/tools/codex_actions.py quality-gate --scope web` after meaningful changes.
 - Recheck that the final file placement still respects feature-first boundaries.
 - If the change touched route behavior, compare the implemented surface against:
   - `design/04-execution-overlay/web/PAGE_INVENTORY.md`

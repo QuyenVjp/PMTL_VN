@@ -111,7 +111,7 @@ Backlog owner for the missing PMTL-native lanes:
 
 - Do not mix implementation guidance and verification checklists in the same PMTL skill unless the workflow is trivial.
 - Prefer executable scripts inside `scripts/` when the same verification or scaffolding logic would otherwise be rewritten.
-- Prefer repo-level deterministic entrypoints such as `py infra/tools/codex_actions.py ...` or `just <recipe>` when a skill needs runtime-aware execution.
+- Prefer repo-level deterministic entrypoints such as `python infra/tools/codex_actions.py ...` or `just <recipe>` when a skill needs runtime-aware execution.
 - Keep `SKILL.md` short and route variant-specific detail into `references/`.
 - Canonical PMTL skills should aim to include purpose, trigger, execution, verification, and evolution notes, even if compatibility skills stay lighter.
 - When changing skill routing, update `AGENTS.md`, this file, and the affected local skill folders in the same task.

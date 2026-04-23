@@ -50,13 +50,13 @@ Provide stable wrapper-based smoke and monitoring commands so PMTL checks run th
 
 ## Script
 
-Primary entrypoint: `py infra/tools/codex_actions.py smoke-suite ...`
+Primary entrypoint: `python infra/tools/codex_actions.py smoke-suite ...`
 
 Compatibility wrapper: `scripts/run_smoke_suite.py`
 
 ```bash
-py infra/tools/codex_actions.py smoke-suite --suite smoke
-py infra/tools/codex_actions.py smoke-suite --suite monitoring
+python infra/tools/codex_actions.py smoke-suite --suite smoke
+python infra/tools/codex_actions.py smoke-suite --suite monitoring
 ```
 
 ## Verification

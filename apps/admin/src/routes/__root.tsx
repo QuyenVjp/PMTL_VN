@@ -136,12 +136,6 @@ const CharitiesPage = lazy(() =>
 const FraudAlertsPage = lazy(() =>
   import("@/features/dharma-compliance").then((mod) => ({ default: mod.FraudAlertsPage })),
 );
-const PurityVowsPage = lazy(() =>
-  import("@/features/dharma-compliance").then((mod) => ({ default: mod.PurityVowsPage })),
-);
-const GuidanceQueuePage = lazy(() =>
-  import("@/features/dharma-compliance").then((mod) => ({ default: mod.GuidanceQueuePage })),
-);
 const CharityCreatePage = lazy(() =>
   import("@/features/dharma-compliance").then((mod) => ({ default: mod.CharityCreatePage })),
 );
@@ -150,6 +144,12 @@ const CharityDetailPage = lazy(() =>
 );
 const EventsListPage = lazy(() =>
   import("@/features/events").then((mod) => ({ default: mod.EventsListPage })),
+);
+const EventCreatePage = lazy(() =>
+  import("@/features/events").then((mod) => ({ default: mod.EventCreatePage })),
+);
+const EventDetailPage = lazy(() =>
+  import("@/features/events").then((mod) => ({ default: mod.EventDetailPage })),
 );
 const LifeReleaseListPage = lazy(() =>
   import("@/features/life-liberation").then((mod) => ({ default: mod.LifeReleaseListPage })),
@@ -171,15 +171,6 @@ const LhRecordsPage = lazy(() =>
 );
 const LhFraudQueuePage = lazy(() =>
   import("@/features/little-house").then((mod) => ({ default: mod.LhFraudQueuePage })),
-);
-const AltarItemsPage = lazy(() =>
-  import("@/features/altar-management").then((mod) => ({ default: mod.AltarItemsPage })),
-);
-const ValidationLogsPage = lazy(() =>
-  import("@/features/altar-management").then((mod) => ({ default: mod.ValidationLogsPage })),
-);
-const AltarProceduresPage = lazy(() =>
-  import("@/features/altar-management/altar-procedures-page").then((mod) => ({ default: mod.AltarProceduresPage })),
 );
 
 // ── Detail / Create page imports ─────────────────────────────────────
@@ -714,12 +705,18 @@ const fraudAlertsRoute = createRoute({
 const purityVowsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/loi-nguyen-thanh-tu",
-  component: withSuspense(PurityVowsPage),
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
+  },
 });
 const guidanceQueueRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/hang-doi-huong-dan",
-  component: withSuspense(GuidanceQueuePage),
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
+  },
 });
 
 // ── Thanh Tịnh Pháp — Sự kiện Phật pháp ────────────────────────────
@@ -727,6 +724,24 @@ const eventsListRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/su-kien/danh-sach",
   component: withSuspense(EventsListPage),
+});
+const eventsCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/su-kien/danh-sach/tao-moi",
+  component: withSuspense(EventCreatePage),
+});
+const eventsCreateLegacyRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/su-kien/tao-moi",
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/su-kien/danh-sach/tao-moi" });
+  },
+});
+const eventsDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/su-kien/danh-sach/$publicId",
+  component: withSuspense(EventDetailPage),
 });
 
 // ── Thanh Tịnh Pháp — Phóng sinh ────────────────────────────────────
@@ -774,17 +789,26 @@ const lhFraudQueueRoute = createRoute({
 const altarItemsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/vat-pham",
-  component: withSuspense(AltarItemsPage),
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/dashboard" });
+  },
 });
 const validationLogsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/nhat-ky",
-  component: withSuspense(ValidationLogsPage),
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/dashboard" });
+  },
 });
 const altarProceduresRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/quy-trinh",
-  component: withSuspense(AltarProceduresPage),
+  beforeLoad: async () => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
+    throw redirect({ to: "/dashboard" });
+  },
 });
 
 // ── Route Tree Assembly ──────────────────────────────────────────────
@@ -871,8 +895,11 @@ export const routeTree = rootRoute.addChildren([
     fraudAlertsRoute,
     purityVowsRoute,
     guidanceQueueRoute,
-    // Thanh Tịnh Pháp — Sự kiện Phật pháp
+    // Thanh Tịnh Pháp — Sự kiện Phật pháp (static before dynamic)
     eventsListRoute,
+    eventsCreateRoute,
+    eventsCreateLegacyRoute,
+    eventsDetailRoute,
     // Thanh Tịnh Pháp — Phóng sinh
     lifeReleaseListRoute,
     speciesSummaryRoute,

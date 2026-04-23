@@ -8,7 +8,7 @@ export function useUpdateLifeReleaseStatus() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, status, notes }: { publicId: string; status: string; notes?: string }) =>
-      adminClient.patch(`/life-liberation/${publicId}/status`, { status, notes }),
+      adminClient.patch(`/admin/life-liberation/${publicId}/status`, { status, notes }),
     onSuccess: () => {
       toast.success("Đã cập nhật trạng thái hồ sơ phóng sinh.");
       void qc.invalidateQueries({ queryKey: lifeReleaseKeys.lists() });

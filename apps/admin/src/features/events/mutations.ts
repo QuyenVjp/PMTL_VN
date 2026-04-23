@@ -14,6 +14,16 @@ export interface CreateEventInput {
   description?: string;
 }
 
+export interface UpdateEventInput {
+  titleVi?: string;
+  eventType?: EventType;
+  deliveryMode?: DeliveryMode;
+  startAt?: string;
+  endAt?: string;
+  locationName?: string;
+  description?: string;
+}
+
 export function useCreateEvent() {
   const qc = useQueryClient();
   return useMutation({
@@ -29,7 +39,7 @@ export function useCreateEvent() {
 export function useUpdateEvent() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ publicId, data }: { publicId: string; data: Record<string, unknown> }) =>
+    mutationFn: ({ publicId, data }: { publicId: string; data: UpdateEventInput }) =>
       adminClient.patch(`/admin/events/${publicId}`, data),
     onSuccess: (_, { publicId }) => {
       toast.success("Đã cập nhật sự kiện.");

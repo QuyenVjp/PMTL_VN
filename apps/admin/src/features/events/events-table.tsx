@@ -1,41 +1,43 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { eventListOptions, type EventListItem } from "./queries.js";
-import { useCheckIn } from "./mutations.js";
 import { EVENT_STATUS_LABELS, EVENT_STATUS_VARIANT, EVENT_TYPE_LABELS } from "./types.js";
+import { EventsCheckInDialog } from "./events-check-in-dialog";
 
 function EventRowActions({ row }: { row: EventListItem }) {
-  const checkIn = useCheckIn();
+  const navigate = useNavigate();
+  const [checkInOpen, setCheckInOpen] = useState(false);
+  const canCheckIn = row.status === "IN_PROGRESS" || row.status === "REGISTRATION_CLOSED";
 
   const actions = [
     {
-      label: "Xem / Sửa",
-      onClick: () => {
-        toast.info("Tính năng đang phát triển.");
-      },
+      label: "Xem chi tiết",
+      onClick: () => void navigate({ to: "/su-kien/danh-sach/$publicId", params: { publicId: row.id } }),
     },
-    ...(row.status === "IN_PROGRESS" || row.status === "REGISTRATION_CLOSED"
-      ? [
-          {
-            label: "Điểm danh",
-            separator: true,
-            onClick: () => {
-              const memberId = window.prompt("Nhập mã thành viên để điểm danh:");
-              if (!memberId?.trim()) return;
-              checkIn.mutate({ eventPublicId: row.id, userId: memberId.trim() });
-            },
-          },
-        ]
+    ...(canCheckIn
+      ? [{ label: "Điểm danh", onClick: () => setCheckInOpen(true) }]
       : []),
   ];
 
-  return <WorkspaceRowActions actions={actions} />;
+  return (
+    <>
+      <WorkspaceRowActions actions={actions} />
+      {canCheckIn && (
+        <EventsCheckInDialog
+          eventPublicId={row.id}
+          eventTitle={row.titleVi}
+          open={checkInOpen}
+          onOpenChange={setCheckInOpen}
+        />
+      )}
+    </>
+  );
 }
 
 export function EventsTable() {

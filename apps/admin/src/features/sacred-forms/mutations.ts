@@ -3,6 +3,28 @@ import { toast } from "sonner";
 import { adminClient } from "@/lib/api/admin-client.js";
 import { handleApiError } from "@/lib/handle-api-error.js";
 import { sacredFormKeys } from "./queries.js";
+import type { SacredFormType } from "./types.js";
+
+export interface CreateTemplateInput {
+  formType: SacredFormType;
+  titleVi: string;
+  titleZh?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export function useCreateTemplate() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateTemplateInput) =>
+      adminClient.post("/admin/sacred-forms/templates", data),
+    onSuccess: () => {
+      toast.success("Đã tạo mẫu đơn.");
+      void qc.invalidateQueries({ queryKey: sacredFormKeys.templates() });
+    },
+    onError: handleApiError,
+  });
+}
 
 export function useReviewApplication() {
   const qc = useQueryClient();
@@ -18,7 +40,7 @@ export function useReviewApplication() {
       reviewNotes?: string;
       probationDays?: number;
     }) =>
-      adminClient.patch(`/sacred-forms/applicants/${publicId}/review`, {
+      adminClient.patch(`/admin/sacred-forms/applicants/${publicId}/review`, {
         decision,
         reviewNotes,
         probationDays,
@@ -36,7 +58,7 @@ export function useToggleTemplate() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ publicId, isActive }: { publicId: string; isActive: boolean }) =>
-      adminClient.patch(`/sacred-forms/templates/${publicId}/toggle`, { isActive }),
+      adminClient.patch(`/admin/sacred-forms/templates/${publicId}/toggle`, { isActive }),
     onSuccess: () => {
       toast.success("Đã cập nhật trạng thái mẫu đơn.");
       void qc.invalidateQueries({ queryKey: sacredFormKeys.templates() });
@@ -59,7 +81,7 @@ export function useUpdatePrerequisite() {
       status: string;
       evidence?: string;
     }) =>
-      adminClient.patch(`/sacred-forms/applicants/${applicantPublicId}/prerequisites`, {
+      adminClient.patch(`/admin/sacred-forms/applicants/${applicantPublicId}/prerequisites`, {
         name,
         status,
         evidence,

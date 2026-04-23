@@ -74,6 +74,6 @@ Không phải skill nào cũng cần mọi folder, nhưng canonical skill nên c
 
 ## Entry point
 
-- Audit skill: `py infra/tools/codex_actions.py skill-audit`
+- Audit skill: `python infra/tools/codex_actions.py skill-audit`
 - Shortcut: `just skill-audit`
 - Governance skill: `.agents/skills/pmtl-skill-governance/SKILL.md`

@@ -35,7 +35,7 @@ Keep the PMTL skill system aligned with the repo taxonomy and the operating mode
 2. Start from `templates/SKILL.template.md` instead of free-writing a long prompt.
 3. Add executable or reusable assets before adding more prose.
 4. Attach a verification checklist and at least one evolution artifact.
-5. Run `py infra/tools/codex_actions.py skill-audit` and record the gaps.
+5. Run `python infra/tools/codex_actions.py skill-audit` and record the gaps.
 
 ## Quality Criteria
 
@@ -47,7 +47,7 @@ Keep the PMTL skill system aligned with the repo taxonomy and the operating mode
 
 ## Verification
 
-- Run `py infra/tools/codex_actions.py skill-audit`.
+- Run `python infra/tools/codex_actions.py skill-audit`.
 - Check `verification/checklist.md` before treating the skill as complete.
 - If the skill runs commands, prefer a wrapper in `scripts/` or `infra/tools/codex_actions.py`.
 

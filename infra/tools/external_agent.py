@@ -13,6 +13,7 @@ from pathlib import Path
 
 DEFAULT_TIMEOUT_SECONDS = 240
 DEFAULT_RETRIES = 2
+SUPPORTED_PROVIDERS = ("claude", "codex", "copilot", "gemini", "grok", "aider")
 SESSION_MODES = ("auto", "fresh", "sticky", "resume-latest")
 INTERACTION_MODES = ("auto", "chat", "repo")
 MAX_MEMORY_TURNS = 6
@@ -27,7 +28,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         required=True,
-        choices=("copilot", "gemini", "grok"),
+        choices=SUPPORTED_PROVIDERS,
         help="External CLI to run.",
     )
     parser.add_argument(
@@ -298,6 +299,24 @@ def is_stale_session_error(message: str) -> bool:
         "unknown session",
     )
     return any(marker in text for marker in stale_markers)
+
+
+def is_gemini_auth_prompt(stdout: str, stderr: str) -> bool:
+    text = "\n".join(part for part in (stdout, stderr) if part).lower()
+    markers = (
+        "opening authentication page in your browser",
+        "do you want to continue? [y/n]",
+        "do you want to continue? [y/n]:",
+    )
+    return any(marker in text for marker in markers)
+
+
+def format_gemini_auth_error() -> str:
+    return (
+        "Gemini CLI is not authenticated for headless use. "
+        "The CLI is prompting to open a browser for login. "
+        "Run `gemini` once interactively, complete the browser sign-in flow, then rerun the wrapper command."
+    )
 
 
 def load_recent_turns(cwd: Path, provider: str) -> list[dict]:
@@ -739,6 +758,12 @@ def run_gemini(
     if not gemini_script:
         raise RuntimeError("Gemini CLI executable was not found on PATH.")
 
+    cached_health = load_provider_health(cwd, "gemini") if session_mode != "fresh" else None
+    if cached_health and cached_health.get("status") == "auth_unavailable":
+        message = cached_health.get("message")
+        if isinstance(message, str) and message.strip():
+            raise RuntimeError(message.strip())
+
     resolved_resume = resolve_gemini_resume_arg(cwd, session_mode)
     resolved_model = model or "gemini-2.5-flash-lite"
     execution_cwd = command_cwd(cwd, "gemini", interaction_mode)
@@ -783,7 +808,19 @@ def run_gemini(
         retries=retries,
     )
 
-    payload = extract_first_json_blob(result.stdout, result.stderr)
+    if is_gemini_auth_prompt(result.stdout, result.stderr):
+        message = format_gemini_auth_error()
+        store_provider_health(cwd, "gemini", status="auth_unavailable", message=message)
+        raise RuntimeError(message)
+
+    try:
+        payload = extract_first_json_blob(result.stdout, result.stderr)
+    except ValueError as exc:
+        raw_message = extract_cli_error_message(result.stdout, result.stderr)
+        raise RuntimeError(
+            f"Gemini CLI did not return JSON output. Raw message: {raw_message}"
+        ) from exc
+
     response = payload.get("response", "").strip()
     if not response:
         raise RuntimeError("Gemini CLI returned no response field.")
@@ -800,6 +837,7 @@ def run_gemini(
     if session_mode in {"auto", "sticky", "resume-latest"}:
         stored_session_id = store_gemini_session(cwd, payload, resolved_model)
 
+    clear_provider_health(cwd, "gemini")
     return response, resolved_model, stored_session_id
 
 

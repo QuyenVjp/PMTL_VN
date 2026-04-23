@@ -64,7 +64,7 @@ Keep `apps/admin` implementation disciplined, query-aware, and operationally cle
 
 ## Verification
 
-- Run `py infra/tools/codex_actions.py quality-gate --scope admin` after meaningful changes when that scope exists; otherwise run the strongest admin-targeted checks available.
+- Run `python infra/tools/codex_actions.py quality-gate --scope admin` after meaningful changes when that scope exists; otherwise run the strongest admin-targeted checks available.
 - Recheck against:
   - `design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md`
   - `design/04-execution-overlay/admin/ADMIN_PAGE_API_MAPPING.md`

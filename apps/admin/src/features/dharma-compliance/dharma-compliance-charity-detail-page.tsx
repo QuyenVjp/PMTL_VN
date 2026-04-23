@@ -17,7 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useUpdateCharityStatus } from "@/features/dharma-compliance/mutations";
-import { charityListOptions } from "@/features/dharma-compliance/queries";
+import { charityDetailOptions } from "@/features/dharma-compliance/queries";
 import { CHARITY_STATUS_LABELS, type CharityStatus } from "@/features/dharma-compliance/types";
 
 type StatusDialogState = {
@@ -36,11 +36,10 @@ function statusBadgeClass(s: string): string {
 export function DharmaComplianceCharityDetailPage() {
   const navigate = useNavigate();
   const params = useParams({ strict: false });
-  const charityId = params.charityId;
-  const { data: envelope, isLoading } = useQuery(charityListOptions());
+  const charityId = params.charityId ?? "";
+  const { data: charity, isLoading } = useQuery(charityDetailOptions(charityId));
   const updateStatus = useUpdateCharityStatus();
 
-  const charity = (envelope?.data ?? []).find((c) => c.id === charityId);
   const [statusDialog, setStatusDialog] = useState<StatusDialogState>(null);
 
   if (isLoading) {

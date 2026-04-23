@@ -36,6 +36,17 @@
         "@upstash/context7-mcp@latest"
       ]
     },
+    "gitnexus": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "gitnexus@latest",
+        "mcp"
+      ]
+    },
     "openspace": {
       "type": "stdio",
       "command": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace\\.venv\\Scripts\\openspace-mcp.exe",
@@ -43,19 +54,9 @@
         "PYTHONUTF8": "1",
         "OPENSPACE_HOST_SKILL_DIRS": "C:\\Users\\ADMIN\\.codex\\skills,C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.agents\\skills",
         "OPENSPACE_WORKSPACE": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace",
+        "OPENSPACE_MODEL": "gemini/gemini-3-flash-preview",
         "OPENSPACE_API_KEY": ""
       }
-    },
-    "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "@playwright/mcp@latest",
-        "--output-dir",
-        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp",
-        "--user-data-dir",
-        "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.playwright-mcp\\profile"
-      ]
     },
     "next-devtools": {
       "type": "stdio",
@@ -135,17 +136,6 @@
         "npx",
         "-y",
         "@smartbear/mcp@latest"
-      ]
-    },
-    "docker-mcp": {
-      "type": "stdio",
-      "command": "docker",
-      "args": [
-        "mcp",
-        "gateway",
-        "run",
-        "--transport",
-        "stdio"
       ]
     },
     "postgres-pmtl": {

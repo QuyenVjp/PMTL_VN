@@ -41,13 +41,13 @@ Verify PMTL search behavior, index freshness, and fallback integrity so search-r
 
 ## Script
 
-Primary entrypoint: `py infra/tools/codex_actions.py search-sync ...`
+Primary entrypoint: `python infra/tools/codex_actions.py search-sync ...`
 
 Compatibility wrapper: `scripts/run_search_sync_check.py`
 
 ```bash
-py infra/tools/codex_actions.py search-sync --all-pages
-py infra/tools/codex_actions.py search-sync --page 1 --limit 100
+python infra/tools/codex_actions.py search-sync --all-pages
+python infra/tools/codex_actions.py search-sync --page 1 --limit 100
 ```
 
 ## Verification

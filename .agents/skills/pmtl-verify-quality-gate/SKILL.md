@@ -39,15 +39,15 @@ Run the strongest relevant checks after implementation so delivery is backed by 
 
 ## Script
 
-Primary entrypoint: `py infra/tools/codex_actions.py quality-gate ...`
+Primary entrypoint: `python infra/tools/codex_actions.py quality-gate ...`
 
 Compatibility wrapper: `scripts/run_quality_gate.py`
 
 Example:
 
 ```bash
-py infra/tools/codex_actions.py quality-gate --scope all
-py infra/tools/codex_actions.py quality-gate --scope web --skip-tests
+python infra/tools/codex_actions.py quality-gate --scope all
+python infra/tools/codex_actions.py quality-gate --scope web --skip-tests
 ```
 
 ## Verification
