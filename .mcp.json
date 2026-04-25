@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "openaiDeveloperDocs": {
+      "type": "http",
+      "url": "https://developers.openai.com/mcp"
+    },
     "stitch": {
       "type": "stdio",
       "command": "cmd",
@@ -36,14 +40,23 @@
         "@upstash/context7-mcp@latest"
       ]
     },
-    "gitnexus": {
+    "prisma-local": {
       "type": "stdio",
       "command": "cmd",
       "args": [
         "/c",
         "npx",
         "-y",
-        "gitnexus@latest",
+        "prisma",
+        "mcp"
+      ]
+    },
+    "gitnexus": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "C:\\Users\\ADMIN\\.codex\\tools\\gitnexus\\node_modules\\.bin\\gitnexus.cmd",
         "mcp"
       ]
     },

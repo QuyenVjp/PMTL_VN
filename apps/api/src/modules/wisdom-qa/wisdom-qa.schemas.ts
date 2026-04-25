@@ -230,6 +230,9 @@ export const offlineBundleStatusQuerySchema = z.object({
 });
 export type OfflineBundleStatusQuery = z.infer<typeof offlineBundleStatusQuerySchema>;
 
+export const offlineBundleCheckUpdatesSchema = offlineBundleStatusQuerySchema;
+export type OfflineBundleCheckUpdatesInput = z.infer<typeof offlineBundleCheckUpdatesSchema>;
+
 export const offlineBundleDeltaQuerySchema = z.object({
   deviceFingerprint: z.string().min(8).max(200).optional(),
   fromVersion: z.string().min(3).max(120).optional(),

@@ -1,17 +1,18 @@
+import { useMemo, useState } from "react";
 import { useQuery, queryOptions } from "@tanstack/react-query";
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { WorkspaceDataTable } from "@/components/workspace";
 import { adminClient } from "@/lib/api/admin-client.js";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
 import { sacredFormKeys } from "./queries.js";
 
@@ -46,7 +47,60 @@ const disposalPolaritiesOptions = queryOptions({
 
 export function DisposalPolarityPage() {
   const { data, isLoading, isError } = useQuery(disposalPolaritiesOptions);
-  const rules = data?.data ?? [];
+  const rules = useMemo(() => data?.data ?? [], [data]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const columns = useMemo<ColumnDef<DisposalPolarityItem>[]>(
+    () => [
+      {
+        accessorKey: "formType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại đơn" />,
+        cell: ({ row }) => <span className="font-medium">{row.original.formType}</span>,
+        meta: { label: "Loại đơn" },
+      },
+      {
+        accessorKey: "rule",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Quy tắc xử lý" />,
+        cell: ({ row }) => row.original.rule ?? "—",
+        meta: { label: "Quy tắc xử lý" },
+      },
+      {
+        accessorKey: "polarity",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Phân cực" />,
+        cell: ({ row }) => {
+          const badge = POLARITY_BADGE[row.original.polarity] ?? POLARITY_BADGE.OTHER;
+          return <Badge variant={badge.variant}>{badge.label}</Badge>;
+        },
+        filterFn: (row, id, value) => (value as string[]).includes(String(row.getValue(id))),
+        meta: { label: "Phân cực" },
+      },
+      {
+        accessorKey: "note",
+        header: "Ghi chú",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{row.original.note ?? "—"}</span>
+        ),
+      },
+      {
+        accessorKey: "effectiveAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Hiệu lực" />,
+        cell: ({ row }) =>
+          row.original.effectiveAt
+            ? new Date(row.original.effectiveAt).toLocaleDateString("vi-VN")
+            : "—",
+      },
+    ],
+    [],
+  );
+
+  const table = useSafeReactTable({
+    data: rules,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
     <div className="space-y-6">
@@ -75,58 +129,37 @@ export function DisposalPolarityPage() {
         </Alert>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Bảng phân cực xử lý đơn</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Loại đơn</TableHead>
-                <TableHead>Quy tắc xử lý</TableHead>
-                <TableHead>Phân cực</TableHead>
-                <TableHead>Ghi chú</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
-                    Đang tải…
-                  </TableCell>
-                </TableRow>
-              ) : isError ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-destructive">
-                    Không tải được quy tắc xử lý đơn.
-                  </TableCell>
-                </TableRow>
-              ) : rules.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
-                    Chưa có quy tắc nào được ghi nhận.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rules.map((rule, idx) => {
-                  const badge = POLARITY_BADGE[rule.polarity] ?? POLARITY_BADGE.OTHER;
-                  return (
-                    <TableRow key={rule.publicId ?? rule.id ?? `${rule.formType}-${idx}`}>
-                      <TableCell className="font-medium">{rule.formType}</TableCell>
-                      <TableCell>{rule.rule ?? "—"}</TableCell>
-                      <TableCell>
-                        <Badge variant={badge.variant}>{badge.label}</Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{rule.note ?? "—"}</TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {isError ? (
+        <Alert variant="destructive">
+          <AlertTitle>Không tải được quy tắc xử lý đơn</AlertTitle>
+          <AlertDescription>Vui lòng kiểm tra API quản trị Đơn Pháp Bảo trước khi thao tác.</AlertDescription>
+        </Alert>
+      ) : null}
+
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Lọc loại đơn..."
+        searchKey="formType"
+        viewButtonLabel="Xem"
+        filters={[
+          {
+            columnId: "polarity",
+            title: "Phân cực",
+            options: [
+              { label: "Đốt an toàn", value: "BURN" },
+              { label: "Lưu trữ / Niêm phong", value: "KEEP" },
+              { label: "Theo hướng dẫn", value: "OTHER" },
+            ],
+          },
+        ]}
+      />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        loadingMessage="Đang tải quy tắc xử lý đơn..."
+        emptyMessage="Chưa có quy tắc xử lý đơn nào được ghi nhận."
+      />
     </div>
   );
 }

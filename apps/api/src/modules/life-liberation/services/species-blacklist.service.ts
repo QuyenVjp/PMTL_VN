@@ -31,33 +31,39 @@ const _BLACKLISTED_SPECIES = [
 interface BlacklistEntry {
   species: string;
   reason: string; // e.g., "CITES Appendix I", "Endangered species", "Invasive"
+  enforcement: "ALWAYS_BLOCK" | "HABITAT_REQUIRED";
   regionRestrictions?: string[]; // Regions where this species is banned
 }
 
 const BLACKLIST_ENTRIES: BlacklistEntry[] = [
   {
     species: "TURTLE",
-    reason: "Protected under CITES and SE Asian conservation laws",
+    reason: "Predatory/high-risk turtle release requires strict habitat verification",
+    enforcement: "HABITAT_REQUIRED",
     regionRestrictions: ["VN", "TH", "KH", "LA"],
   },
   {
     species: "BIRD",
     reason: "Many bird species are endangered (eagles, cranes, owls, etc.)",
+    enforcement: "ALWAYS_BLOCK",
     regionRestrictions: ["VN", "TH", "KH", "LA", "MY", "SG"],
   },
   {
     species: "SNAKEHEAD",
     reason: "Predatory invasive species; release requires strict ecological controls",
+    enforcement: "HABITAT_REQUIRED",
     regionRestrictions: ["VN", "TH", "KH", "LA"],
   },
   {
     species: "CATFISH",
     reason: "Predatory invasive species; release requires strict ecological controls",
+    enforcement: "HABITAT_REQUIRED",
     regionRestrictions: ["VN", "TH", "KH", "LA"],
   },
   {
     species: "CRAB",
     reason: "Predatory/high-risk species in life-liberation safety policy",
+    enforcement: "HABITAT_REQUIRED",
     regionRestrictions: ["VN", "TH", "KH", "LA"],
   },
 ];
@@ -130,6 +136,7 @@ export class SpeciesBlacklistService {
         violations: Array<{
           species: string;
           reason: string;
+          enforcement: BlacklistEntry["enforcement"];
         }>;
       }
   > {
@@ -141,6 +148,7 @@ export class SpeciesBlacklistService {
         violations.push({
           species: sp,
           reason: entry.reason,
+          enforcement: entry.enforcement,
         });
       }
     }

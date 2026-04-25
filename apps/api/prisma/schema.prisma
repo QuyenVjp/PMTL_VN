@@ -2043,6 +2043,8 @@ enum PredatorySpecies {
   INSECT
   FROG
   CRAB
+  SNAKEHEAD
+  CATFISH
   OTHER
 }
 

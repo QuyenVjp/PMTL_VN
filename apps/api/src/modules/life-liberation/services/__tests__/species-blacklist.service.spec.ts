@@ -13,8 +13,8 @@ describe("SpeciesBlacklistService", () => {
 
   beforeEach(async () => {
     cacheServiceMock = {
-      getJson: jest.fn(),
-      setJson: jest.fn(),
+      getJson: vi.fn(),
+      setJson: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -38,12 +38,12 @@ describe("SpeciesBlacklistService", () => {
       const result = await service.isBlacklisted("TURTLE");
 
       expect(result).toBe(true);
-      expect(cacheServiceMock.set).toHaveBeenCalled();
+      expect(cacheServiceMock.setJson).toHaveBeenCalled();
     });
 
     it("should return true for BIRD (blacklisted species)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("BIRD");
 
@@ -51,8 +51,8 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should return false for FISH (not blacklisted)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("FISH");
 
@@ -60,8 +60,8 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should return false for INSECT (not blacklisted)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("INSECT");
 
@@ -69,26 +69,26 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should return false for FROG (not blacklisted)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("FROG");
 
       expect(result).toBe(false);
     });
 
-    it("should return false for CRAB (not blacklisted)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+    it("should return true for CRAB (habitat-controlled species)", async () => {
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("CRAB");
 
-      expect(result).toBe(false);
+      expect(result).toBe(true);
     });
 
     it("should return false for OTHER (not blacklisted)", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.isBlacklisted("OTHER");
 
@@ -98,31 +98,33 @@ describe("SpeciesBlacklistService", () => {
 
   describe("getBlacklistEntry", () => {
     it("should return entry for TURTLE with reason", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const entry = await service.getBlacklistEntry("TURTLE");
 
       expect(entry).toBeDefined();
       expect(entry?.species).toBe("TURTLE");
-      expect(entry?.reason).toBe("Protected under CITES and SE Asian conservation laws");
+      expect(entry?.reason).toBe("Predatory/high-risk turtle release requires strict habitat verification");
+      expect(entry?.enforcement).toBe("HABITAT_REQUIRED");
       expect(entry?.regionRestrictions).toContain("VN");
     });
 
     it("should return entry for BIRD with reason", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const entry = await service.getBlacklistEntry("BIRD");
 
       expect(entry).toBeDefined();
       expect(entry?.species).toBe("BIRD");
       expect(entry?.reason).toContain("endangered");
+      expect(entry?.enforcement).toBe("ALWAYS_BLOCK");
     });
 
     it("should return undefined for non-blacklisted species", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const entry = await service.getBlacklistEntry("FISH");
 
@@ -136,6 +138,7 @@ describe("SpeciesBlacklistService", () => {
         {
           species: "TURTLE",
           reason: "Protected",
+          enforcement: "HABITAT_REQUIRED",
           regionRestrictions: ["VN"],
         },
       ];
@@ -166,8 +169,8 @@ describe("SpeciesBlacklistService", () => {
 
   describe("validateSpecies", () => {
     it("should return valid=true for all permitted species", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.validateSpecies(["FISH", "INSECT", "FROG"]);
 
@@ -175,8 +178,8 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should return violations for blacklisted species", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.validateSpecies(["TURTLE", "FISH", "BIRD"]);
 
@@ -190,8 +193,8 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should handle empty species array", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.validateSpecies([]);
 
@@ -199,8 +202,8 @@ describe("SpeciesBlacklistService", () => {
     });
 
     it("should handle single blacklisted species", async () => {
-      cacheServiceMock.get.mockResolvedValue(null);
-      cacheServiceMock.set.mockResolvedValue(undefined);
+      cacheServiceMock.getJson.mockResolvedValue(null);
+      cacheServiceMock.setJson.mockResolvedValue(undefined);
 
       const result = await service.validateSpecies(["TURTLE"]);
 
@@ -214,9 +217,10 @@ describe("SpeciesBlacklistService", () => {
 
   describe("logViolation", () => {
     it("should log violation with pino", async () => {
-      const logSpy = jest.spyOn(service as any, "logger").mockImplementation({
-        warn: jest.fn(),
-      });
+      const originalLogger = (service as any).logger;
+      (service as any).logger = {
+        warn: vi.fn(),
+      };
 
       service.logViolation("user-123", "TURTLE", "Protected species");
 
@@ -230,7 +234,7 @@ describe("SpeciesBlacklistService", () => {
         expect.any(String),
       );
 
-      logSpy.mockRestore();
+      (service as any).logger = originalLogger;
     });
   });
 });

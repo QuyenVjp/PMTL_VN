@@ -210,6 +210,27 @@ export class DharmaComplianceRepository {
     });
   }
 
+  async countRecentVowAuditEvents(vowId: string, eventType: string, since: Date) {
+    return this.prisma.vowAuditEvent.count({
+      where: {
+        vowId,
+        eventType,
+        createdAt: { gte: since },
+      },
+    });
+  }
+
+  async findOpenGuidanceRequest(vowId: string, category: string) {
+    return this.prisma.maritalGuidanceRequest.findFirst({
+      where: {
+        vowId,
+        category,
+        status: "PENDING",
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async findGuidanceQueue(query: GuidanceQueueQuery) {
     const where = {
       ...(query.urgency && { urgency: query.urgency }),

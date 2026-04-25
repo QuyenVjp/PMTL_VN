@@ -29,6 +29,9 @@ import type {
   GuidanceQueueQuery,
 } from "./dharma-compliance.schemas.js";
 
+const REPEAT_VIOLATION_WINDOW_DAYS = 30;
+const REPEAT_VIOLATION_ESCALATION_THRESHOLD = 3;
+
 @Injectable()
 export class DharmaComplianceService {
   constructor(
@@ -195,7 +198,87 @@ export class DharmaComplianceService {
       violationType: input.violationType,
       occurredAt: input.occurredAt,
     });
-    return { message: "Đã ghi nhận vi phạm. Hãy thực hành sám hối và liên hệ Dharma Support." };
+
+    const repeatEscalation = await this.escalateRepeatViolationIfNeeded(vow.id, vow.publicId, userId, input, auditCtx);
+
+    return {
+      message: repeatEscalation.escalated
+        ? "Đã ghi nhận vi phạm lặp lại và chuyển vào hàng đợi hỗ trợ Dharma."
+        : "Đã ghi nhận vi phạm. Hãy thực hành sám hối và liên hệ Dharma Support.",
+      escalation: repeatEscalation,
+    };
+  }
+
+  private async escalateRepeatViolationIfNeeded(
+    vowId: string,
+    vowPublicId: string,
+    userId: string,
+    input: ReportViolationInput,
+    auditCtx: AuditContext,
+  ) {
+    const since = new Date();
+    since.setDate(since.getDate() - REPEAT_VIOLATION_WINDOW_DAYS);
+
+    const recentViolationCount = await this.repo.countRecentVowAuditEvents(vowId, "VIOLATION_REPORTED", since);
+    if (recentViolationCount < REPEAT_VIOLATION_ESCALATION_THRESHOLD) {
+      return {
+        escalated: false,
+        recentViolationCount,
+        threshold: REPEAT_VIOLATION_ESCALATION_THRESHOLD,
+      };
+    }
+
+    const existing = await this.repo.findOpenGuidanceRequest(vowId, "VIOLATION_RECOVERY");
+    if (existing) {
+      await this.repo.appendVowAudit(
+        vowId,
+        "REPEAT_VIOLATION_ESCALATION_SKIPPED",
+        userId,
+        `Đã có yêu cầu hướng dẫn đang mở sau ${recentViolationCount} vi phạm trong ${REPEAT_VIOLATION_WINDOW_DAYS} ngày`,
+        undefined,
+        { guidanceRequestId: existing.id, recentViolationCount },
+      );
+      return {
+        escalated: true,
+        alreadyQueued: true,
+        guidanceRequestId: existing.id,
+        recentViolationCount,
+        threshold: REPEAT_VIOLATION_ESCALATION_THRESHOLD,
+      };
+    }
+
+    const guidance = await this.repo.createGuidanceRequest(
+      {
+        category: "VIOLATION_RECOVERY",
+        question: "Tự động chuyển hỗ trợ vì thành viên báo cáo vi phạm lời nguyện lặp lại.",
+        context: `Số lần vi phạm trong ${REPEAT_VIOLATION_WINDOW_DAYS} ngày: ${recentViolationCount}. Lần mới nhất: ${input.violationType} lúc ${input.occurredAt}. Mô tả: ${input.description}`,
+        urgency: "CRISIS",
+      },
+      vowId,
+      nanoid(21),
+    );
+
+    await this.repo.appendVowAudit(
+      vowId,
+      "REPEAT_VIOLATION_ESCALATED",
+      userId,
+      `Tự động chuyển hàng đợi hỗ trợ sau ${recentViolationCount} vi phạm trong ${REPEAT_VIOLATION_WINDOW_DAYS} ngày`,
+      undefined,
+      { guidanceRequestId: guidance.id, recentViolationCount },
+    );
+    await this.audit.append(auditCtx, "member.vow.repeat_violation_escalate", "marital_purity_vow", vowPublicId, {
+      guidanceRequestId: guidance.id,
+      recentViolationCount,
+      threshold: REPEAT_VIOLATION_ESCALATION_THRESHOLD,
+    });
+
+    return {
+      escalated: true,
+      alreadyQueued: false,
+      guidanceRequestId: guidance.id,
+      recentViolationCount,
+      threshold: REPEAT_VIOLATION_ESCALATION_THRESHOLD,
+    };
   }
 
   // ─── Guidance Queue (Admin/Support) ──────────────────────────────────────

@@ -12,12 +12,14 @@ import {
   wisdomQaQuerySchema,
   offlineBundleListQuerySchema,
   offlineBundleStatusQuerySchema,
+  offlineBundleCheckUpdatesSchema,
   offlineBundleDeltaQuerySchema,
   type AskQuestionInput,
   type SubmitAnswerInput,
   type WisdomQaQuery,
   type OfflineBundleListQuery,
   type OfflineBundleStatusQuery,
+  type OfflineBundleCheckUpdatesInput,
   type OfflineBundleDeltaQuery,
 } from "./wisdom-qa.schemas.js";
 
@@ -94,6 +96,17 @@ export class WisdomOfflineBundleController {
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.wisdomQaService.getOfflineBundleStatus(publicId, query, user.id);
+  }
+
+  @Post(":publicId/check-updates")
+  @ApiOperation({ summary: "Kiểm tra cập nhật offline bundle cho thiết bị hiện tại" })
+  @ApiResponse({ status: 200, description: "Trạng thái cập nhật bundle" })
+  checkBundleUpdates(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(offlineBundleCheckUpdatesSchema)) input: OfflineBundleCheckUpdatesInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    return this.wisdomQaService.getOfflineBundleStatus(publicId, input, user.id);
   }
 
   @Get(":publicId/delta")

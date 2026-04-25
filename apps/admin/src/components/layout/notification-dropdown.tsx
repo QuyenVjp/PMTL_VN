@@ -6,22 +6,22 @@
  * - Removed "use client", next/link → TanStack Router Link
  * - Replaced DynamicIcon with direct Lucide imports
  * - Vietnamese text, PMTL design tokens
- * - Mock data for now — replace with real API when notification system is built
  */
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import {
   Bell,
   FileText,
   MessageSquare,
   ShieldAlert,
-  UserPlus,
 } from "lucide-react";
 
 import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { adminClient } from "@/lib/api/admin-client.js";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,42 +42,22 @@ interface Notification {
   isRead: boolean;
 }
 
-// ── Mock data (replace with real API) ────────────────────────────────
-
-const MOCK_NOTIFICATIONS: Notification[] = [
-  {
-    id: "1",
-    icon: ShieldAlert,
-    content: "Có 3 báo cáo kiểm duyệt mới cần xử lý",
-    url: "/kiem-duyet/bao-cao",
-    date: new Date(Date.now() - 10 * 60_000).toISOString(),
-    isRead: false,
-  },
-  {
-    id: "2",
-    icon: FileText,
-    content: "Bài viết 'Lịch sử chùa Vĩnh Nghiêm' đã được xuất bản",
-    url: "/noi-dung/bai-viet",
-    date: new Date(Date.now() - 2 * 3600_000).toISOString(),
-    isRead: false,
-  },
-  {
-    id: "3",
-    icon: UserPlus,
-    content: "5 thành viên mới đăng ký trong 24 giờ qua",
-    url: "/nguoi-dung",
-    date: new Date(Date.now() - 12 * 3600_000).toISOString(),
-    isRead: true,
-  },
-  {
-    id: "4",
-    icon: MessageSquare,
-    content: "Bình luận mới trên bài 'Ý nghĩa lễ Phật đản'",
-    url: "/kiem-duyet/binh-luan",
-    date: new Date(Date.now() - 24 * 3600_000).toISOString(),
-    isRead: true,
-  },
-];
+interface DashboardStats {
+  pendingReports: number;
+  pendingReportsList: Array<{
+    publicId: string;
+    targetType: string;
+    reasonCode: string;
+    createdAt: string;
+  }>;
+  recentAuditLogs: Array<{
+    id: string;
+    action: string;
+    resource: string | null;
+    resourceId: string | null;
+    createdAt: string;
+  }>;
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -98,16 +78,64 @@ function formatUnreadCount(count: number): string {
   return String(count);
 }
 
+function iconForAuditAction(action: string): LucideIcon {
+  if (action.includes("moderation")) return ShieldAlert;
+  if (action.includes("comment")) return MessageSquare;
+  return FileText;
+}
+
+function targetTypeLabel(targetType: string): string {
+  const labels: Record<string, string> = {
+    POST: "bài đăng",
+    COMMENT: "bình luận",
+    USER: "người dùng",
+  };
+  return labels[targetType] ?? targetType.toLowerCase();
+}
+
+function buildNotifications(stats?: DashboardStats, readIds: Set<string> = new Set()): Notification[] {
+  if (!stats) return [];
+
+  const reportNotifications = stats.pendingReportsList.map((report) => ({
+    id: `report:${report.publicId}`,
+    icon: ShieldAlert,
+    content: `Báo cáo ${targetTypeLabel(report.targetType)} cần xử lý: ${report.reasonCode}`,
+    url: `/kiem-duyet/bao-cao/${report.publicId}`,
+    date: report.createdAt,
+    isRead: readIds.has(`report:${report.publicId}`),
+  }));
+
+  const auditNotifications = stats.recentAuditLogs.slice(0, 5).map((log) => ({
+    id: `audit:${log.id}`,
+    icon: iconForAuditAction(log.action),
+    content: `Audit: ${log.action}${log.resource ? ` (${log.resource})` : ""}`,
+    url: "/he-thong/audit-logs",
+    date: log.createdAt,
+    isRead: true,
+  }));
+
+  return [...reportNotifications, ...auditNotifications].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+}
+
 // ── Component ────────────────────────────────────────────────────────
 
 export function NotificationDropdown() {
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [readIds, setReadIds] = useState<Set<string>>(() => new Set());
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ["admin-header-notifications"],
+    queryFn: () => adminClient.get<DashboardStats>("/admin/system/dashboard-stats"),
+    refetchInterval: 30_000,
+  });
+
+  const notifications = buildNotifications(stats, readIds);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
   const formattedCount = formatUnreadCount(unreadCount);
 
   const handleDismissAll = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    setReadIds(new Set(notifications.map((notification) => notification.id)));
   };
 
   return (
@@ -149,7 +177,11 @@ export function NotificationDropdown() {
         
         {/* Using native overflow div to prevent ScrollArea flex overlaps */}
         <div className="flex-1 overflow-y-auto max-h-[360px]">
-          {notifications.length > 0 ? (
+          {isLoading ? (
+            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+              Đang tải thông báo...
+            </div>
+          ) : notifications.length > 0 ? (
             <div className="flex flex-col">
               {notifications.map((notification) => {
                 const Icon = notification.icon;

@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type ColumnDef,
+  type SortingState,
+  getCoreRowModel,
+  getSortedRowModel,
+} from "@tanstack/react-table";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 
+import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
+import { WorkspaceDataTable } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,23 +21,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
 import {
   vowHistoryOptions,
   memberSearchOptions,
   assistedEntryKeys,
   type VowHistoryFilters,
+  type VowHistoryItem,
   type MemberSearchResult,
 } from "./queries.js";
 import { useCreateVow, useCreateLifeReleaseJournal } from "./mutations.js";
@@ -76,16 +77,6 @@ function timeAgo(iso: string): string {
 
 function memberLabel(item: { member?: { displayName?: string }; user?: { displayName?: string } }) {
   return item.member?.displayName ?? item.user?.displayName ?? "Thành viên không xác định";
-}
-
-function TableSkeleton({ rows = 5 }: { rows?: number }) {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <Skeleton key={i} className="h-10 w-full" />
-      ))}
-    </div>
-  );
 }
 
 // ── Member Search Input ─────────────────────────────────────────────
@@ -156,6 +147,7 @@ function MemberSearchInput({
 function HistoryTab() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [sorting, setSorting] = useState<SortingState>([]);
   const qc = useQueryClient();
 
   const filters: VowHistoryFilters = {
@@ -166,8 +158,77 @@ function HistoryTab() {
   };
 
   const { data, isLoading, isError } = useQuery(vowHistoryOptions(filters));
-  const items = data?.data ?? [];
+  const items = useMemo(() => data?.data ?? [], [data]);
   const total = data?.meta?.pagination?.total ?? 0;
+
+  const columns = useMemo<ColumnDef<VowHistoryItem>[]>(
+    () => [
+      {
+        accessorKey: "member",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Thành viên" />,
+        cell: ({ row }) => <span className="font-medium">{memberLabel(row.original)}</span>,
+        meta: { label: "Thành viên" },
+      },
+      {
+        accessorKey: "vowType",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Loại nguyện" />,
+        cell: ({ row }) => <Badge variant="outline">{vowTypeLabel(row.original.vowType)}</Badge>,
+        meta: { label: "Loại nguyện" },
+      },
+      {
+        accessorKey: "description",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Mô tả" />,
+        cell: ({ row }) => (
+          <span className="block max-w-[260px] truncate">{row.original.description}</span>
+        ),
+        meta: { label: "Mô tả" },
+      },
+      {
+        accessorKey: "targetCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Mục tiêu" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums">{row.original.targetCount ?? "—"}</span>
+        ),
+      },
+      {
+        accessorKey: "currentCount",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Tiến độ" />,
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {row.original.currentCount}
+            {row.original.targetCount ? ` / ${row.original.targetCount}` : ""}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Trạng thái" />,
+        cell: ({ row }) => (
+          <Badge variant="outline" className={statusBadgeClass(row.original.status)}>
+            {statusLabel(row.original.status)}
+          </Badge>
+        ),
+        meta: { label: "Trạng thái" },
+      },
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Ngày tạo" />,
+        cell: ({ row }) => (
+          <span className="text-nowrap text-muted-foreground">{timeAgo(row.original.createdAt)}</span>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const table = useSafeReactTable({
+    data: items,
+    columns,
+    state: { sorting },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
 
   return (
     <div className="space-y-4">
@@ -211,61 +272,18 @@ function HistoryTab() {
         </Card>
       )}
 
-      <Card>
-        <CardContent className="pt-6">
-          {isLoading ? (
-            <TableSkeleton />
-          ) : items.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Thành viên</TableHead>
-                  <TableHead>Loại nguyện</TableHead>
-                  <TableHead>Mô tả</TableHead>
-                  <TableHead>Mục tiêu</TableHead>
-                  <TableHead>Tiến độ</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Ngày tạo</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((item) => (
-                  <TableRow key={item.publicId}>
-                    <TableCell className="font-medium">
-                      {memberLabel(item)}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{vowTypeLabel(item.vowType)}</Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[200px] truncate">
-                      {item.description}
-                    </TableCell>
-                    <TableCell className="tabular-nums">
-                      {item.targetCount ?? "—"}
-                    </TableCell>
-                    <TableCell className="tabular-nums">
-                      {item.currentCount}
-                      {item.targetCount ? ` / ${item.targetCount}` : ""}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={statusBadgeClass(item.status)}>
-                        {statusLabel(item.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-nowrap text-muted-foreground">
-                      {timeAgo(item.createdAt)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              Chưa có phiếu nhập hộ nào.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder="Lọc mô tả..."
+        searchKey="description"
+        viewButtonLabel="Xem"
+      />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Chưa có phiếu nhập hộ nào."
+      />
     </div>
   );
 }

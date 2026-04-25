@@ -46,6 +46,15 @@ function extractSpeciesFromBody(body: unknown): string[] {
   return [];
 }
 
+function hasVerifiedSafeHabitat(body: unknown): boolean {
+  if (!body || typeof body !== "object") {
+    return false;
+  }
+
+  const obj = body as Record<string, unknown>;
+  return obj.habitatVerified === true && obj.habitatSafe === true;
+}
+
 @Injectable()
 export class PredatorySpeciesGuard implements CanActivate {
   private readonly logger = pino({ name: PredatorySpeciesGuard.name });
@@ -71,14 +80,33 @@ export class PredatorySpeciesGuard implements CanActivate {
     const validation = await this.speciesBlacklist.validateSpecies(species);
 
     if (!validation.valid) {
+      const habitatVerified = hasVerifiedSafeHabitat(request.body);
+      const hardViolations = validation.violations.filter(
+        (violation) => violation.enforcement === "ALWAYS_BLOCK" || !habitatVerified,
+      );
+
+      if (hardViolations.length === 0) {
+        this.logger.warn(
+          {
+            msg: "predatory_species.guard_habitat_verified",
+            userId,
+            path: request.path,
+            method: request.method,
+            species: validation.violations.map((v) => v.species),
+          },
+          "Request contains habitat-controlled species with explicit safe habitat verification",
+        );
+        return true;
+      }
+
       // Log violations
-      for (const violation of validation.violations) {
+      for (const violation of hardViolations) {
         this.speciesBlacklist.logViolation(userId, violation.species, violation.reason);
       }
 
       // Build error message
-      const blockedSpecies = validation.violations.map((v) => v.species).join(", ");
-      const reasons = validation.violations.map((v) => v.reason).join("; ");
+      const blockedSpecies = hardViolations.map((v) => v.species).join(", ");
+      const reasons = hardViolations.map((v) => v.reason).join("; ");
 
       this.logger.warn(
         {
@@ -88,6 +116,7 @@ export class PredatorySpeciesGuard implements CanActivate {
           method: request.method,
           blockedSpecies,
           reasons,
+          habitatVerified,
         },
         "Request blocked: blacklisted species detected",
       );
@@ -103,8 +132,9 @@ export class PredatorySpeciesGuard implements CanActivate {
         "life_release_record",
         undefined,
         {
-          blockedSpecies: validation.violations.map((v) => v.species),
-          reasons: validation.violations.map((v) => v.reason),
+          blockedSpecies: hardViolations.map((v) => v.species),
+          reasons: hardViolations.map((v) => v.reason),
+          habitatVerified,
           path: request.path,
           method: request.method,
         },

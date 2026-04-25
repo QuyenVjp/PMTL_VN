@@ -54,7 +54,9 @@ export const sidebarNavGroups: NavGroup[] = [
           { title: "Môi trường & thời gian", url: "/noi-dung/niem-kinh/moi-truong-thoi-gian" },
           { title: "Bản kinh", url: "/noi-dung/niem-kinh/ban-kinh" },
           { title: "Nghi thức", url: "/noi-dung/niem-kinh/nghi-thuc" },
-          { title: "Kế hoạch", url: "/noi-dung/niem-kinh/ke-hoach" }
+          { title: "Kế hoạch", url: "/noi-dung/niem-kinh/ke-hoach" },
+          { title: "Kinh bài tập hàng ngày", url: "/noi-dung/niem-kinh/kinh-bai-tap-hang-ngay" },
+          { title: "Đơn từ tâm linh", url: "/noi-dung/niem-kinh/don-tu-tam-linh" },
         ]
       },
       { title: "Ảnh", url: "/noi-dung/anh", icon: Images },

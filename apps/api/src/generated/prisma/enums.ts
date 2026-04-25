@@ -536,6 +536,8 @@ export const PredatorySpecies = {
   INSECT: 'INSECT',
   FROG: 'FROG',
   CRAB: 'CRAB',
+  SNAKEHEAD: 'SNAKEHEAD',
+  CATFISH: 'CATFISH',
   OTHER: 'OTHER'
 } as const
 

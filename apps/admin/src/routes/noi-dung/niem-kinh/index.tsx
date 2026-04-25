@@ -1,7 +1,11 @@
 import { createRoute, Link, Outlet } from "@tanstack/react-router";
 
 import { EnvironmentRulesTable } from "@/features/chant-admin/environment-rules-table";
-import { EditorPage } from "@/features/content/editor-page";
+import {
+  RecitationGuidelinesTablePage,
+  RecitationRoutinesTablePage,
+  RecitationSchedulesTablePage,
+} from "@/features/daily-recitation/admin-tables";
 import { DailyRecitationWorkspace } from "@/features/daily-recitation/index.js";
 import { SpiritualApplicationsTab } from "@/features/daily-recitation/spiritual-applications-tab.js";
 import { authenticatedRoute } from "@/routes/__root.js";
@@ -61,37 +65,19 @@ export const environmentRulesTabRoute = createRoute({
 const banKinhRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/ban-kinh",
-  component: () => (
-    <EditorPage
-      title="Bản kinh"
-      description="Biên tập bản kinh và script niệm dài trong cùng workspace quản trị."
-      initialContent="<h2>Bản kinh mẫu</h2><p>Nội dung bản kinh được biên tập tại đây.</p>"
-    />
-  ),
+  component: RecitationGuidelinesTablePage,
 });
 
 const nghiThucRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/nghi-thuc",
-  component: () => (
-    <EditorPage
-      title="Nghi thức"
-      description="Biên tập template nghi thức, giữ đúng lane nội dung của module Niệm kinh."
-      initialContent="<h2>Nghi thức cơ bản</h2><ul><li>Chuẩn bị</li><li>Thực hành</li><li>Hồi hướng</li></ul>"
-    />
-  ),
+  component: RecitationRoutinesTablePage,
 });
 
 const keHoachRoute = createRoute({
   getParentRoute: () => niemKinhWorkspaceRoute,
   path: "/ke-hoach",
-  component: () => (
-    <EditorPage
-      title="Kế hoạch"
-      description="Soạn kế hoạch hành trì dài và ghi chú điều phối trong cùng một màn hình."
-      initialContent="<h2>Kế hoạch 49 ngày</h2><p>Thiết lập mục tiêu, nhắc nhở và milestone tại đây.</p>"
-    />
-  ),
+  component: RecitationSchedulesTablePage,
 });
 
 const dailyRecitationRoute = createRoute({

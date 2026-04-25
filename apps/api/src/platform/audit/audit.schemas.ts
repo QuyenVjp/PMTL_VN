@@ -125,6 +125,7 @@ export const auditActionSchema = z.enum([
   "charity.fraud_escalation_alert",
   "member.vow.register",
   "member.vow.violation",
+  "member.vow.repeat_violation_escalate",
 
   // Buddhist events actions
   "admin.event.create",

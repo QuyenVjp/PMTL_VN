@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Query,
   UseGuards,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
@@ -17,8 +18,8 @@ export class AdminSystemController {
 
   @Get("dashboard-stats")
   @ApiOperation({ summary: "Admin dashboard aggregate stats" })
-  async dashboardStats() {
-    return this.adminSystem.getDashboardStats();
+  async dashboardStats(@Query("widget") widget?: string, @Query("limit") limit?: string) {
+    return this.adminSystem.getDashboardStats(widget, limit);
   }
 
   @Get("health-extended")

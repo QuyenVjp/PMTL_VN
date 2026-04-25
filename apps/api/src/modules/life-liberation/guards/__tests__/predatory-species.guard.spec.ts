@@ -7,16 +7,20 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ExecutionContext, ForbiddenException } from "@nestjs/common";
 import { PredatorySpeciesGuard } from "../predatory-species.guard.js";
 import { SpeciesBlacklistService } from "../../services/species-blacklist.service.js";
-import type { CallHandler } from "@nestjs/common";
+import { AuditService } from "../../../../platform/audit/audit.service.js";
 
 describe("PredatorySpeciesGuard", () => {
   let guard: PredatorySpeciesGuard;
   let speciesBlacklistMock: any;
+  let auditMock: any;
 
   beforeEach(async () => {
     speciesBlacklistMock = {
-      validateSpecies: jest.fn(),
-      logViolation: jest.fn(),
+      validateSpecies: vi.fn(),
+      logViolation: vi.fn(),
+    };
+    auditMock = {
+      append: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -25,6 +29,10 @@ describe("PredatorySpeciesGuard", () => {
         {
           provide: SpeciesBlacklistService,
           useValue: speciesBlacklistMock,
+        },
+        {
+          provide: AuditService,
+          useValue: auditMock,
         },
       ],
     }).compile();
@@ -63,6 +71,7 @@ describe("PredatorySpeciesGuard", () => {
           {
             species: "TURTLE",
             reason: "Protected under CITES",
+            enforcement: "HABITAT_REQUIRED",
           },
         ],
       });
@@ -83,15 +92,15 @@ describe("PredatorySpeciesGuard", () => {
       speciesBlacklistMock.validateSpecies.mockResolvedValue({
         valid: false,
         violations: [
-          { species: "TURTLE", reason: "Protected under CITES" },
-          { species: "BIRD", reason: "Endangered species" },
+          { species: "TURTLE", reason: "Protected under CITES", enforcement: "HABITAT_REQUIRED" },
+          { species: "BIRD", reason: "Endangered species", enforcement: "ALWAYS_BLOCK" },
         ],
       });
 
       await expect(guard.canActivate(context)).rejects.toThrow(ForbiddenException);
-      const mockLogger = jest.spyOn(guard as any, "logger", "get");
+      const mockLogger = vi.spyOn(guard as any, "logger", "get");
       mockLogger.mockReturnValue({
-        warn: jest.fn(),
+        warn: vi.fn(),
       });
 
       expect(speciesBlacklistMock.logViolation).toHaveBeenCalledTimes(2);
@@ -179,13 +188,13 @@ describe("PredatorySpeciesGuard", () => {
         { id: "user-456", email: "user@example.com" },
       );
 
-      jest.spyOn(context, "switchToHttp").mockReturnValue({
-        getRequest: jest.fn().mockReturnValue(mockRequest),
+      vi.spyOn(context, "switchToHttp").mockReturnValue({
+        getRequest: vi.fn().mockReturnValue(mockRequest),
       } as any);
 
       speciesBlacklistMock.validateSpecies.mockResolvedValue({
         valid: false,
-        violations: [{ species: "TURTLE", reason: "Protected" }],
+        violations: [{ species: "TURTLE", reason: "Protected", enforcement: "HABITAT_REQUIRED" }],
       });
 
       try {
@@ -208,7 +217,7 @@ describe("PredatorySpeciesGuard", () => {
 
       speciesBlacklistMock.validateSpecies.mockResolvedValue({
         valid: false,
-        violations: [{ species: "TURTLE", reason: "Protected" }],
+        violations: [{ species: "TURTLE", reason: "Protected", enforcement: "HABITAT_REQUIRED" }],
       });
 
       try {
@@ -235,8 +244,8 @@ describe("PredatorySpeciesGuard", () => {
       speciesBlacklistMock.validateSpecies.mockResolvedValue({
         valid: false,
         violations: [
-          { species: "TURTLE", reason: "Protected under CITES" },
-          { species: "BIRD", reason: "Endangered" },
+          { species: "TURTLE", reason: "Protected under CITES", enforcement: "HABITAT_REQUIRED" },
+          { species: "BIRD", reason: "Endangered", enforcement: "ALWAYS_BLOCK" },
         ],
       });
 
@@ -245,9 +254,34 @@ describe("PredatorySpeciesGuard", () => {
         fail("Should have thrown ForbiddenException");
       } catch (error) {
         expect(error).toBeInstanceOf(ForbiddenException);
-        expect((error as ForbiddenException).getResponse()).toContain("TURTLE");
-        expect((error as ForbiddenException).getResponse()).toContain("BIRD");
+        const responseText = JSON.stringify((error as ForbiddenException).getResponse());
+        expect(responseText).toContain("TURTLE");
+        expect(responseText).toContain("BIRD");
       }
+    });
+
+    it("should allow habitat-controlled species when safe habitat is explicitly verified", async () => {
+      const context = createMockContext("POST", "/member/life-liberation", {
+        habitatVerified: true,
+        habitatSafe: true,
+        animals: [{ species: "SNAKEHEAD", quantity: 1 }],
+      });
+
+      speciesBlacklistMock.validateSpecies.mockResolvedValue({
+        valid: false,
+        violations: [
+          {
+            species: "SNAKEHEAD",
+            reason: "Predatory invasive species; release requires strict ecological controls",
+            enforcement: "HABITAT_REQUIRED",
+          },
+        ],
+      });
+
+      const result = await guard.canActivate(context);
+
+      expect(result).toBe(true);
+      expect(speciesBlacklistMock.logViolation).not.toHaveBeenCalled();
     });
   });
 });
@@ -264,10 +298,10 @@ function createMockContext(
   const request = createMockRequest(method, path, body, user);
 
   return {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn().mockReturnValue(request),
+    switchToHttp: vi.fn().mockReturnValue({
+      getRequest: vi.fn().mockReturnValue(request),
     }),
-    getHandler: jest.fn(),
+    getHandler: vi.fn(),
   } as unknown as ExecutionContext;
 }
 

@@ -65,6 +65,13 @@ export interface DashboardStats {
   };
 }
 
+type DashboardWidgetKey =
+  | "systemSummary"
+  | "pendingModeration"
+  | "contentOpsSummary"
+  | "searchOpsSummary"
+  | "recentAuditEvents";
+
 export interface HealthExtended {
   overall: HealthStatus;
   components: ComponentHealth[];
@@ -86,7 +93,11 @@ export class AdminSystemService {
     private readonly healthService: HealthService,
   ) {}
 
-  async getDashboardStats(): Promise<DashboardStats> {
+  async getDashboardStats(widget?: string, limit?: string): Promise<DashboardStats | unknown> {
+    if (this.isDashboardWidgetKey(widget)) {
+      return this.getDashboardWidget(widget, limit);
+    }
+
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -280,6 +291,86 @@ export class AdminSystemService {
         activeSessions24h,
       },
     };
+  }
+
+  private isDashboardWidgetKey(widget: string | undefined): widget is DashboardWidgetKey {
+    return (
+      widget === "systemSummary" ||
+      widget === "pendingModeration" ||
+      widget === "contentOpsSummary" ||
+      widget === "searchOpsSummary" ||
+      widget === "recentAuditEvents"
+    );
+  }
+
+  private async getDashboardWidget(widget: DashboardWidgetKey, limit?: string) {
+    const parsedLimit = Math.min(Math.max(Number(limit) || 10, 1), 50);
+
+    if (widget === "systemSummary") {
+      const [activeFeatureFlags, lastFlag] = await Promise.all([
+        this.prisma.featureFlag.count({ where: { enabled: true } }),
+        this.prisma.featureFlag.findFirst({
+          orderBy: { updatedAt: "desc" },
+          select: { updatedAt: true },
+        }),
+      ]);
+      return {
+        activeFeatureFlags,
+        lastUpdated: lastFlag?.updatedAt.toISOString() ?? new Date(0).toISOString(),
+      };
+    }
+
+    if (widget === "pendingModeration") {
+      const [reportCount, commentCount] = await Promise.all([
+        this.prisma.moderationReport.count({ where: { status: "PENDING" } }),
+        this.prisma.moderationReport.count({ where: { status: "PENDING", targetType: "comment" } }),
+      ]);
+      return { reportCount, commentCount };
+    }
+
+    if (widget === "contentOpsSummary") {
+      const [draftCount, publishedCount, lastPublished] = await Promise.all([
+        this.prisma.post.count({ where: { status: "DRAFT" } }),
+        this.prisma.post.count({ where: { status: "PUBLISHED" } }),
+        this.prisma.post.findFirst({
+          where: { status: "PUBLISHED", publishedAt: { not: null } },
+          orderBy: { publishedAt: "desc" },
+          select: { publishedAt: true },
+        }),
+      ]);
+      return {
+        draftCount,
+        publishedCount,
+        lastPublished: lastPublished?.publishedAt?.toISOString() ?? new Date(0).toISOString(),
+      };
+    }
+
+    if (widget === "searchOpsSummary") {
+      const indexedContentCount = await this.prisma.post.count({ where: { status: "PUBLISHED" } });
+      return {
+        status: "available",
+        lastIndexed: new Date().toISOString(),
+        indexCount: indexedContentCount,
+      };
+    }
+
+    const logs = await this.prisma.auditLog.findMany({
+      take: parsedLimit,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        action: true,
+        actorId: true,
+        createdAt: true,
+      },
+    });
+
+    return logs.map((log) => ({
+      id: log.id,
+      action: log.action,
+      actor: log.actorId ?? "system",
+      timestamp: log.createdAt.toISOString(),
+    }));
   }
 
   async getHealthExtended(): Promise<HealthExtended> {

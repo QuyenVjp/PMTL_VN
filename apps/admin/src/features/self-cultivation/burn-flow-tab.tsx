@@ -1,6 +1,6 @@
 /**
  * Self-Cultivation Burn Flow & Risk Monitoring Tab
- * Displays business rules for the burn ceremony + admin risk dashboard.
+ * Displays business rules for the burn ceremony + admin risk control surface.
  *
  * Design: design/03-domains/engagement/USE_CASES/self-cultivation-sutras-burn-flow.md §2–4
  */
@@ -106,36 +106,6 @@ const BURN_RULES: BurnRule[] = [
   },
 ];
 
-// ── Risk Monitoring Mock Data ─────────────────────────────────────────
-
-interface RiskAlert {
-  userId: string;
-  displayName: string;
-  event: string;
-  nnnInventory: number;
-  timestamp: string;
-  resolved: boolean;
-}
-
-const MOCK_RISK_ALERTS: RiskAlert[] = [
-  {
-    userId: "u-1",
-    displayName: "Nguyễn Văn A",
-    event: "Đốt SCS Lễ Phật (27 biến)",
-    nnnInventory: 0,
-    timestamp: "2026-04-03T14:30:00Z",
-    resolved: false,
-  },
-  {
-    userId: "u-2",
-    displayName: "Trần Thị B",
-    event: "Đốt SCS Lễ Phật (49 biến)",
-    nnnInventory: 2,
-    timestamp: "2026-04-02T09:15:00Z",
-    resolved: true,
-  },
-];
-
 // ── Sub-components ────────────────────────────────────────────────────
 
 function BurnStepCard({ step }: { step: BurnStep }) {
@@ -193,39 +163,6 @@ function RuleRow({ rule }: { rule: BurnRule }) {
   );
 }
 
-function RiskAlertRow({ alert }: { alert: RiskAlert }) {
-  const isZero = alert.nnnInventory === 0;
-  return (
-    <div className={cn(
-      "flex items-center justify-between gap-4 rounded-xl border p-4",
-      !alert.resolved && isZero
-        ? "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/30"
-        : "bg-card",
-    )}>
-      <div className="flex items-center gap-3">
-        {!alert.resolved && isZero ? (
-          <AlertTriangleIcon className="h-5 w-5 shrink-0 text-destructive" />
-        ) : (
-          <CheckCircle2Icon className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-        )}
-        <div>
-          <p className="text-sm font-medium">{alert.displayName}</p>
-          <p className="text-xs text-muted-foreground">{alert.event}</p>
-        </div>
-      </div>
-      <div className="text-right">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">NNN:</span>
-          <Badge variant={isZero ? "destructive" : "outline"}>{alert.nnnInventory} tờ</Badge>
-        </div>
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          {new Date(alert.timestamp).toLocaleString("vi-VN")}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 // ── Main Export ────────────────────────────────────────────────────────
 
 export function BurnFlowTab() {
@@ -274,29 +211,18 @@ export function BurnFlowTab() {
             <AlertTriangleIcon className="h-5 w-5 text-destructive" /> Giám Sát Rủi Ro
           </CardTitle>
           <CardDescription>
-            Theo dõi đồng tu đốt SCS Lễ Phật nhưng không có Tiểu Phương Tử đi kèm.
-            Admin cần liên hệ nhắc nhở kịp thời.
+            Theo dõi trường hợp đốt SCS Lễ Phật khi chưa có Tiểu Phương Tử đi kèm.
+            Màn hình chỉ hiển thị dữ liệu thật từ backend, không dùng dữ liệu mẫu.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-            <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-destructive" /> NNN = 0: Cần nhắc nhở ngay
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" /> Đã xử lý
-            </span>
-          </div>
-
-          {MOCK_RISK_ALERTS.map((alert) => (
-            <RiskAlertRow key={`${alert.userId}-${alert.timestamp}`} alert={alert} />
-          ))}
-
-          <div className="rounded-xl border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-xl border border-dashed bg-muted/20 px-4 py-8 text-center text-sm text-muted-foreground">
             <ClockIcon className="mx-auto mb-2 h-5 w-5" />
-            Dữ liệu giám sát sẽ cập nhật realtime khi backend API hoàn thiện.
-            <br />
-            <span className="text-xs">Mock data hiển thị để preview giao diện.</span>
+            Chưa có cảnh báo rủi ro nào được ghi nhận từ hệ thống.
+            <p className="mx-auto mt-2 max-w-xl text-xs leading-5">
+              Khi backend phát sinh sự kiện SCS thiếu Tiểu Phương Tử, danh sách này sẽ trở thành hàng đợi
+              operator cần xử lý. Trạng thái trống hiện tại không còn là dữ liệu giả lập.
+            </p>
           </div>
         </CardContent>
       </Card>

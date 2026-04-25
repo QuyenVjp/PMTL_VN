@@ -13,6 +13,7 @@ import { AdminMediaLibraryController } from "./admin-media-library.controller.js
 import { AdminMediaLibraryService } from "./admin-media-library.service.js";
 import { AdminDailyPracticeController } from "./daily-practice.controller.js";
 import { AdminDailyRecitationController } from "./daily-recitation.controller.js";
+import { DailyRecitationService } from "./daily-recitation.service.js";
 import { AuditModule } from "../../platform/audit/audit.module.js";
 import { StorageModule } from "../../platform/storage/storage.module.js";
 import { ChantingModule } from "./chanting/chanting.module.js";
@@ -41,6 +42,7 @@ import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
     ContentService,
     ContentRepository,
     AdminMediaLibraryService,
+    DailyRecitationService,
     ConvincingFamilyRitualService,
     NameChangeService,
     SutraInterruptionService,
