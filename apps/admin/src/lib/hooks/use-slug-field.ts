@@ -3,6 +3,7 @@
  *
  * - Auto-generates a slug from `title` as the user types (debounced 600 ms).
  * - Stops auto-generating once the user manually edits the slug directly.
+ * - Edit pages can sync the current record slug without locking auto-generation.
  * - Calls the API to check uniqueness whenever the slug changes (debounced 400 ms).
  * - Returns status: "idle" | "checking" | "available" | "taken".
  *
@@ -25,7 +26,7 @@ interface UseSlugFieldOptions {
   title: string;
   entityType: SlugEntityType;
   excludePublicId?: string;
-  /** Initial slug value (edit pages). Passing this also sets manual mode. */
+  /** Initial slug value (edit pages). This loads the current record slug without locking auto-generation. */
   initialSlug?: string;
 }
 
@@ -69,27 +70,31 @@ function slugCheckUrl(slug: string, entityType: SlugEntityType, excludePublicId?
 export function useSlugField({ title, entityType, excludePublicId, initialSlug }: UseSlugFieldOptions) {
   const [slug, setSlugRaw] = useState(initialSlug ?? "");
   // Track whether user manually edited the slug (stops auto-generation)
-  const [isManual, setIsManual] = useState(Boolean(initialSlug));
+  const [isManual, setIsManual] = useState(false);
   // Debounced slug sent to the check query
   const [debouncedSlug, setDebouncedSlug] = useState(initialSlug ?? "");
   const lastInitialSlugRef = useRef(initialSlug ?? "");
+  const lastTitleRef = useRef(title);
 
   useEffect(() => {
     const nextInitialSlug = initialSlug ?? "";
     if (!nextInitialSlug || nextInitialSlug === lastInitialSlugRef.current) return;
     lastInitialSlugRef.current = nextInitialSlug;
-    setIsManual(true);
+    lastTitleRef.current = title;
+    setIsManual(false);
     setSlugRaw(nextInitialSlug);
     setDebouncedSlug(nextInitialSlug);
-  }, [initialSlug]);
+  }, [initialSlug, title]);
 
   // Debounce title → auto-slug (600 ms)
   const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (isManual) return;
+    if (title === lastTitleRef.current) return;
     if (titleDebounceRef.current) clearTimeout(titleDebounceRef.current);
     titleDebounceRef.current = setTimeout(() => {
       const generated = toSlug(title);
+      lastTitleRef.current = title;
       setSlugRaw(generated);
     }, 600);
     return () => {
@@ -135,11 +140,21 @@ export function useSlugField({ title, entityType, excludePublicId, initialSlug }
     setSlugRaw(value);
   }, []);
 
+  /** Sync an existing record slug from the API without marking it as manually edited. */
+  const setSlugFromServer = useCallback((value: string, sourceTitle?: string) => {
+    if (sourceTitle !== undefined) {
+      lastTitleRef.current = sourceTitle;
+    }
+    setIsManual(false);
+    setSlugRaw(value);
+    setDebouncedSlug(value);
+  }, []);
+
   /** Call when the form resets (e.g. after save) to restore auto-generate mode. */
   const resetSlug = useCallback(() => {
     setIsManual(false);
     setSlugRaw("");
   }, []);
 
-  return { slug, setSlug, resetSlug, slugStatus };
+  return { slug, setSlug, setSlugFromServer, resetSlug, slugStatus };
 }

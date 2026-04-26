@@ -13,16 +13,7 @@ import {
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { lhListOptions, type LhListItem } from "./queries.js";
-import { LH_STATUS_LABELS, LH_STATUS_VARIANT, NEXT_STATES, type LhStatus } from "./types.js";
-import { AdvanceDialog } from "./little-house-advance-dialog.js";
-import { FraudFlagDialog } from "./little-house-fraud-flag-dialog.js";
-
-const ADVANCE_ACTION_LABELS: Partial<Record<LhStatus, string>> = {
-  SIGNED: "Ký nhận",
-  CHANTED: "Hoàn thành tụng",
-  BURNED: "Ghi nhận đốt",
-  CANCELLED: "Huỷ",
-};
+import { LH_STATUS_LABELS, LH_STATUS_VARIANT } from "./types.js";
 
 function LhRecordRowActions({
   item,
@@ -31,51 +22,14 @@ function LhRecordRowActions({
   item: LhListItem;
   onViewDetail: (item: LhListItem) => void;
 }) {
-  const [advanceTarget, setAdvanceTarget] = useState<LhStatus | null>(null);
-  const [showFraudDialog, setShowFraudDialog] = useState(false);
-
-  const nextStates = NEXT_STATES[item.status];
-  const isTerminal = nextStates.length === 0;
-
-  const advanceActions = nextStates.map((s) => ({
-    label: ADVANCE_ACTION_LABELS[s] ?? s,
-    onClick: () => setAdvanceTarget(s),
-    variant: s === "CANCELLED" ? ("destructive" as const) : ("default" as const),
-    separator: s === "CANCELLED" && nextStates.length > 1,
-  }));
-
   const actions = [
     {
       label: "Xem chi tiết",
       onClick: () => onViewDetail(item),
     },
-    ...advanceActions,
-    {
-      label: "Đánh dấu gian lận",
-      onClick: () => setShowFraudDialog(true),
-      separator: !isTerminal,
-      variant: "destructive" as const,
-    },
   ];
 
-  return (
-    <>
-      <WorkspaceRowActions actions={actions} />
-      {!isTerminal && (
-        <AdvanceDialog
-          open={advanceTarget !== null}
-          onClose={() => setAdvanceTarget(null)}
-          item={item}
-          targetStatus={advanceTarget}
-        />
-      )}
-      <FraudFlagDialog
-        open={showFraudDialog}
-        onClose={() => setShowFraudDialog(false)}
-        item={item}
-      />
-    </>
-  );
+  return <WorkspaceRowActions actions={actions} />;
 }
 
 export function LhRecordsTable() {
@@ -210,7 +164,11 @@ export function LhRecordsTable() {
             )}
           </WorkspaceDetailSection>
         )}
-      <WorkspaceDetailStandardSections />
+        <WorkspaceDetailStandardSections
+          editNote="Sớ (Ngôi Nhà Nhỏ) operational hiện ở phạm vi hygiene-only theo design; admin chỉ xem trạng thái, chưa mở ký nhận/tụng/hoá hoặc đánh dấu gian lận."
+          auditNote="Audit sớ sẽ hiển thị khi operational little-house có admin triple và vocabulary audit đầy đủ."
+          dangerNote="Không thực hiện chuyển trạng thái hoặc đánh dấu gian lận khi contract vận hành chưa được chốt."
+        />
       </WorkspaceDetailSheet>
     </>
   );

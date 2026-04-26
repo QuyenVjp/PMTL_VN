@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { EyeIcon, PowerIcon } from "lucide-react";
+import { EyeIcon } from "lucide-react";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
@@ -13,9 +13,7 @@ import {
   WorkspaceRowActions,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { templateListOptions, type TemplateListItem } from "./queries.js";
-import { useToggleTemplate } from "./mutations.js";
 import { FORM_TYPE_LABELS } from "./types.js";
 
 function TemplateStatusBadge({ isActive }: { isActive: boolean }) {
@@ -33,20 +31,11 @@ function TemplateRowActions({
   item: TemplateListItem;
   onDetail: (item: TemplateListItem) => void;
 }) {
-  const toggle = useToggleTemplate();
-
   const actions = [
     {
       label: "Xem chi tiết",
       icon: EyeIcon,
       onClick: () => onDetail(item),
-    },
-    {
-      label: item.isActive ? "Tắt hoạt động" : "Kích hoạt",
-      icon: PowerIcon,
-      onClick: () => {
-        toggle.mutate({ publicId: item.id, isActive: !item.isActive });
-      },
     },
   ];
 
@@ -57,7 +46,6 @@ export function SacredFormTemplatesTable() {
   const { data: envelope, isLoading } = useQuery(templateListOptions());
   const templates = useMemo(() => envelope?.data ?? [], [envelope]);
   const [detailItem, setDetailItem] = useState<TemplateListItem | null>(null);
-  const toggle = useToggleTemplate();
 
   const templateColumns: ColumnDef<TemplateListItem>[] = useMemo(
     () => [
@@ -109,28 +97,6 @@ export function SacredFormTemplatesTable() {
         title={detailItem?.titleVi ?? "Chi tiết mẫu đơn"}
         subtitle={detailItem ? FORM_TYPE_LABELS[detailItem.formType] : undefined}
         status={detailItem ? <TemplateStatusBadge isActive={detailItem.isActive} /> : undefined}
-        primaryActions={
-          detailItem ? (
-            <Button
-              size="sm"
-              variant={detailItem.isActive ? "outline" : "default"}
-              disabled={toggle.isPending}
-              onClick={() => {
-                toggle.mutate(
-                  { publicId: detailItem.id, isActive: !detailItem.isActive },
-                  {
-                    onSuccess: () => {
-                      setDetailItem({ ...detailItem, isActive: !detailItem.isActive });
-                    },
-                  },
-                );
-              }}
-            >
-              <PowerIcon data-icon="inline-start" />
-              {detailItem.isActive ? "Tắt hoạt động" : "Kích hoạt"}
-            </Button>
-          ) : null
-        }
       >
         {detailItem ? (
           <>
@@ -145,7 +111,10 @@ export function SacredFormTemplatesTable() {
             </WorkspaceDetailSection>
           </>
         ) : null}
-      <WorkspaceDetailStandardSections />
+            <WorkspaceDetailStandardSections
+              editNote="Mẫu đơn Pháp Bảo hiện ở phạm vi hygiene-only theo design; admin chỉ xem mẫu và trạng thái hiện có."
+              auditNote="Audit bật/tắt hoặc tạo mẫu sẽ hiển thị khi sacred-forms có admin triple và role narrowing đầy đủ."
+            />
       </WorkspaceDetailSheet>
     </>
   );

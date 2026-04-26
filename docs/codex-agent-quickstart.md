@@ -35,6 +35,41 @@ Use design/ as source of truth.
 If the task crosses role boundaries, say which PMTL role should own the next handoff.
 ```
 
+## Reusable thinking prompts
+
+Nếu chưa biết nên đốt session vào lane nào, bắt đầu từ đây thay vì cố nhớ tên skill.
+
+### Project critique / reality-check
+
+```text
+Repo: C:\Users\ADMIN\DEV2\PMTL_VN
+Read AGENTS.md first, then use design/ and owner docs as source of truth.
+Do not give generic praise.
+
+Now tell me what you actually THINK of the project:
+- is it even a good idea?
+- is it useful?
+- is it well designed and architected?
+- is it pragmatic?
+- what could we do to make it more useful, compelling, intuitive, and user-friendly to both humans and AI coding agents?
+
+Return:
+1. strengths worth preserving
+2. weak points or self-deception
+3. biggest architectural or product risks
+4. concrete improvements with highest leverage
+5. which PMTL role should own each next step
+```
+
+### Skill-routing fallback
+
+```text
+Repo: C:\Users\ADMIN\DEV2\PMTL_VN
+Read AGENTS.md first.
+Use pmtl-workflow-router behavior even if I did not name the skill explicitly.
+Route this task to the smallest correct PMTL lane, explain the chosen role briefly, then continue.
+```
+
 ## Good defaults
 
 - Nếu task lớn: `pmtl-architect` -> implementer -> `pmtl-quality-gate`

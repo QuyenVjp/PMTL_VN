@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -8,36 +8,18 @@ import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace"
 import { Badge } from "@/components/ui/badge";
 import { eventListOptions, type EventListItem } from "./queries.js";
 import { EVENT_STATUS_LABELS, EVENT_STATUS_VARIANT, EVENT_TYPE_LABELS } from "./types.js";
-import { EventsCheckInDialog } from "./events-check-in-dialog";
 
 function EventRowActions({ row }: { row: EventListItem }) {
   const navigate = useNavigate();
-  const [checkInOpen, setCheckInOpen] = useState(false);
-  const canCheckIn = row.status === "IN_PROGRESS" || row.status === "REGISTRATION_CLOSED";
 
   const actions = [
     {
       label: "Xem chi tiết",
       onClick: () => void navigate({ to: "/su-kien/danh-sach/$publicId", params: { publicId: row.id } }),
     },
-    ...(canCheckIn
-      ? [{ label: "Điểm danh", onClick: () => setCheckInOpen(true) }]
-      : []),
   ];
 
-  return (
-    <>
-      <WorkspaceRowActions actions={actions} />
-      {canCheckIn && (
-        <EventsCheckInDialog
-          eventPublicId={row.id}
-          eventTitle={row.titleVi}
-          open={checkInOpen}
-          onOpenChange={setCheckInOpen}
-        />
-      )}
-    </>
-  );
+  return <WorkspaceRowActions actions={actions} />;
 }
 
 export function EventsTable() {

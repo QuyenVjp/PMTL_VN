@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { BookOpenCheckIcon, EyeIcon, LockIcon } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorkspaceScopeCards } from "@/components/workspace";
 import { protocolTemplatesOptions } from "./queries.js";
 
 export function AltarProceduresPage() {
@@ -15,6 +17,29 @@ export function AltarProceduresPage() {
           Hướng dẫn và quy trình chuẩn cho việc chăm sóc bàn thờ. Dữ liệu lấy từ máy chủ.
         </p>
       </div>
+
+      <WorkspaceScopeCards
+        items={[
+          {
+            title: "Static procedures",
+            description: "Hiển thị quy trình đang được máy chủ công bố; không phải editor tạo mới quy trình.",
+            badge: "Read-only",
+            icon: BookOpenCheckIcon,
+          },
+          {
+            title: "Admin scaffold chưa mở",
+            description: "Bàn thờ thiếu contract/admin triple nên không thêm CRUD, publish hay reorder ở đây.",
+            badge: "Blocked / stop",
+            icon: LockIcon,
+          },
+          {
+            title: "Không sửa member flow",
+            description: "Admin chỉ xem hướng dẫn, còn trạng thái bàn thờ của thành viên vẫn thuộc engagement runtime.",
+            badge: "Boundary",
+            icon: EyeIcon,
+          },
+        ]}
+      />
 
       {isLoading ? (
         <div className="flex flex-col gap-4">

@@ -20,6 +20,14 @@ type AddItemDto           = z.infer<typeof addCollectionItemSchema>;
 type UpdateItemDto        = z.infer<typeof updateCollectionItemSchema>;
 type ListItemsDto         = z.infer<typeof listItemsSchema>;
 
+function slugConflictError() {
+  return new ConflictError("Slug này đã được dùng.", {
+    properties: { slug: { errors: ["Slug này đã được dùng."] } },
+    fieldErrors: { slug: "Slug này đã được dùng." },
+    fields: ["slug"],
+  });
+}
+
 @Injectable()
 export class AdminMediaLibraryService {
   constructor(
@@ -151,7 +159,7 @@ export class AdminMediaLibraryService {
 
   async createCollection(dto: CreateCollectionDto, creatorId: string) {
     const existing = await this.prisma.mediaCollection.findUnique({ where: { slug: dto.slug } });
-    if (existing) throw new ConflictError("Slug đã tồn tại");
+    if (existing) throw slugConflictError();
 
     let coverMediaId: string | null = null;
     if (dto.coverMediaPublicId) {
@@ -184,7 +192,7 @@ export class AdminMediaLibraryService {
 
     if (dto.slug && dto.slug !== existing.slug) {
       const slugConflict = await this.prisma.mediaCollection.findUnique({ where: { slug: dto.slug } });
-      if (slugConflict) throw new ConflictError("Slug đã tồn tại");
+      if (slugConflict) throw slugConflictError();
     }
 
     let coverMediaId: string | null | undefined;

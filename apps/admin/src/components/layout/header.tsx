@@ -101,13 +101,13 @@ export function Header({
               <DropdownMenuItem asChild>
                 <Link to="/he-thong/health">
                   <HeartIcon className="size-4" />
-                  Health
+                  Sức khỏe hệ thống
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/he-thong/feature-flags">
                   <FlagIcon className="size-4" />
-                  Feature flags
+                  Cờ tính năng
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>

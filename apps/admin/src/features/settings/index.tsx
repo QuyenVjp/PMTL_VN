@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { BellIcon, ImagePlusIcon, Loader2Icon, MonitorIcon, PaletteIcon, Trash2Icon, UserCogIcon, WrenchIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,12 +10,10 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { adminClient } from "@/lib/api/admin-client";
-import { buildCsrfHeader } from "@/lib/csrf.js";
-import { clearAuthCache } from "@/lib/auth";
-import { currentUserQueryKey, useCurrentUser } from "@/lib/query/use-current-user";
+import { useCurrentUser } from "@/lib/query/use-current-user";
 import { useTheme } from "@/stores/theme";
 import { resolveMediaSrc } from "@/lib/media-src";
+import { useRevokeOtherSessions, useSaveAdminProfile } from "@/features/settings/mutations";
 
 const settingsNav = [
   { key: "profile", title: "Hồ sơ", icon: UserCogIcon },
@@ -26,63 +23,11 @@ const settingsNav = [
   { key: "display", title: "Hiển thị", icon: MonitorIcon },
 ];
 
-interface UploadResponse {
-  publicId: string;
-  url: string;
-  filename: string;
-  mimeType: string;
-  size: number;
-}
-
-interface ProfileResponse {
-  id: string;
-  email: string;
-  displayName: string;
-  role: string;
-  avatarUrl: string | null;
-}
-
-async function uploadAvatar(file: File): Promise<UploadResponse> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch("/api/admin/media/upload", {
-    method: "POST",
-    headers: buildCsrfHeader("POST"),
-    credentials: "include",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    const errJson: unknown = await response.json().catch(() => null);
-    const errObj = errJson as Record<string, unknown> | null;
-    const errInner = (errObj?.error ?? null) as Record<string, unknown> | null;
-    const msg = typeof errInner?.message === "string" ? errInner.message : "Upload thất bại";
-    throw new Error(msg);
-  }
-
-  const json = (await response.json()) as {
-    data?: UploadResponse | { data?: UploadResponse };
-  };
-  const outer = json.data;
-  const payload: UploadResponse | null =
-    outer && "url" in outer
-      ? outer
-      : outer && "data" in outer && outer.data
-        ? outer.data
-        : null;
-
-  if (!payload?.url) {
-    throw new Error("Upload thất bại: phản hồi không hợp lệ");
-  }
-
-  return payload;
-}
-
 export function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const adminUser = useCurrentUser();
-  const qc = useQueryClient();
+  const saveProfile = useSaveAdminProfile();
+  const revokeOtherSessions = useRevokeOtherSessions();
   const [section, setSection] = useState("profile");
   const [profile, setProfile] = useState({
     displayName: adminUser.name,
@@ -92,7 +37,6 @@ export function SettingsPage() {
   });
   const [avatarPreview, setAvatarPreview] = useState(adminUser.avatar);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewObjectUrlRef = useRef<string | null>(null);
   // Ref so the server-sync effect can read the latest avatarFile value without
@@ -169,56 +113,26 @@ export function SettingsPage() {
     setAvatarFile(file);
   };
 
-  async function handleSaveProfile() {
-    setSaving(true);
-    try {
-      let avatarUrl: string | undefined;
-
-      // Step 1: Upload avatar if a new file was selected
-      if (avatarFile) {
-        const uploaded = await uploadAvatar(avatarFile);
-        avatarUrl = uploaded.url;
-      }
-
-      // Step 2: Update profile via PATCH /auth/profile
-      await adminClient.patch<ProfileResponse>("/auth/profile", {
-        displayName: profile.displayName,
-        ...(avatarUrl !== undefined ? { avatarUrl } : {}),
-      });
-
-      // Step 3: Clear the module-level auth cache, then invalidate the
-      // TanStack Query cache so NavUser and any other reactive consumers
-      // re-fetch /auth/me and display the updated avatar immediately.
-      clearAuthCache();
-      await qc.invalidateQueries({ queryKey: currentUserQueryKey });
-
-      setAvatarFile(null);
-      // Replace blob preview URL with the persisted CDN URL so the form
-      // reflects the real stored avatar (blob URLs are ephemeral).
-      if (avatarUrl !== undefined) {
-        if (previewObjectUrlRef.current?.startsWith("blob:")) {
-          URL.revokeObjectURL(previewObjectUrlRef.current);
-        }
-        previewObjectUrlRef.current = null;
-        setAvatarPreview(resolveMediaSrc(avatarUrl) ?? undefined);
-      }
-      toast.success("Đã cập nhật hồ sơ thành công");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Lỗi không xác định";
-      toast.error(`Cập nhật hồ sơ thất bại: ${message}`);
-    } finally {
-      setSaving(false);
-    }
+  function handleSaveProfile() {
+    saveProfile.mutate(
+      { displayName: profile.displayName, avatarFile },
+      {
+        onSuccess: ({ avatarUrl }) => {
+          setAvatarFile(null);
+          if (avatarUrl !== undefined) {
+            if (previewObjectUrlRef.current?.startsWith("blob:")) {
+              URL.revokeObjectURL(previewObjectUrlRef.current);
+            }
+            previewObjectUrlRef.current = null;
+            setAvatarPreview(resolveMediaSrc(avatarUrl) ?? undefined);
+          }
+        },
+      },
+    );
   }
 
-  async function handleRevokeOtherSessions() {
-    try {
-      await adminClient.post("/auth/logout-all");
-      clearAuthCache();
-      toast.success("Đã thu hồi toàn bộ phiên đăng nhập khác.");
-    } catch {
-      toast.error("Không thể thu hồi phiên. Vui lòng thử lại.");
-    }
+  function handleRevokeOtherSessions() {
+    revokeOtherSessions.mutate();
   }
 
   return (
@@ -390,8 +304,8 @@ export function SettingsPage() {
                     />
                   </div>
                   <div className="flex justify-end">
-                    <Button onClick={() => void handleSaveProfile()} disabled={saving}>
-                      {saving && <Loader2Icon className="size-4 animate-spin" />}
+                    <Button onClick={handleSaveProfile} disabled={saveProfile.isPending}>
+                      {saveProfile.isPending && <Loader2Icon className="size-4 animate-spin" />}
                       Cập nhật hồ sơ
                     </Button>
                   </div>
@@ -411,7 +325,11 @@ export function SettingsPage() {
                     </div>
                   ))}
                   <div className="flex flex-wrap justify-end gap-2">
-                    <Button variant="destructive" onClick={() => void handleRevokeOtherSessions()}>
+                    <Button
+                      variant="destructive"
+                      onClick={handleRevokeOtherSessions}
+                      disabled={revokeOtherSessions.isPending}
+                    >
                       Thu hồi phiên khác
                     </Button>
                   </div>

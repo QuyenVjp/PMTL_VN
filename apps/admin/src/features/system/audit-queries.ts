@@ -20,10 +20,28 @@ export const auditKeys = {
   detail: (publicId: string) => [...auditKeys.details(), publicId] as const,
 };
 
-export function auditListOptions() {
+export interface AuditListFilters {
+  action?: string;
+  actorId?: string;
+  resource?: string;
+  resourceId?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export function auditListOptions(filters: AuditListFilters = {}) {
+  const params = {
+    limit: filters.limit ?? 100,
+    offset: filters.offset ?? 0,
+    action: filters.action,
+    actorId: filters.actorId,
+    resource: filters.resource,
+    resourceId: filters.resourceId,
+  };
+
   return queryOptions({
-    queryKey: auditKeys.list({ limit: 100 }),
+    queryKey: auditKeys.list(params),
     queryFn: () =>
-      adminClient.get<ListEnvelope<AuditLogItem>>("/admin/audit-logs", { limit: 100, offset: 0 }),
+      adminClient.get<ListEnvelope<AuditLogItem>>("/admin/audit-logs", params),
   });
 }

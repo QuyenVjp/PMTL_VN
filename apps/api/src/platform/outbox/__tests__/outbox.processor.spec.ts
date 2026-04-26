@@ -15,15 +15,15 @@ describe("OutboxProcessor", () => {
 
   beforeEach(async () => {
     outboxServiceMock = {
-      findUnprocessed: jest.fn(),
-      markProcessed: jest.fn(),
-      markFailed: jest.fn(),
-      cleanupOld: jest.fn(),
-      getStats: jest.fn(),
+      findUnprocessed: vi.fn(),
+      markProcessed: vi.fn(),
+      markFailed: vi.fn(),
+      cleanupOld: vi.fn(),
+      getStats: vi.fn(),
     };
 
     queueServiceMock = {
-      enqueueOutboxEvent: jest.fn(),
+      enqueueOutboxEvent: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

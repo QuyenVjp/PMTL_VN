@@ -78,6 +78,7 @@ const WisdomContext = createContext<WisdomContextValue | null>(null);
 
 const wisdomDialogSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]),
   sourceCode: z.string().trim().optional(),
   sourceUrl: z.string().trim().optional(),
@@ -188,6 +189,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
   const form = useAdminZodForm(wisdomDialogSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       entryType: "BACH_THOAI",
       sourceCode: "",
       sourceUrl: "",
@@ -199,10 +201,20 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title: values.title, entityType: "WISDOM" });
+  const lastSlugRef = React.useRef(slug);
+
+  React.useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
 
   const reset = () => {
     form.reset({
       title: "",
+      slug: "",
       entryType: "BACH_THOAI",
       sourceCode: "",
       sourceUrl: "",
@@ -215,7 +227,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
 
   const handleSubmit = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     create.mutate(
@@ -257,19 +269,25 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
           <Field label="Slug">
             <div className="relative">
               <Input
+                name="slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  form.clearErrors("slug");
+                  form.setValue("slug", e.target.value, { shouldDirty: true });
+                  setSlug(e.target.value);
+                }}
                 placeholder="tu-dong-tao-neu-de-trong"
-                className={invalidFieldClass(slugStatus === "taken")}
+                className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                 style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
               />
-              {slugStatus !== "idle" && (
+              {(slugStatus !== "idle" || errors.slug) && (
                 <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <SlugStatusIcon status={slugStatus} />
+                  <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                 </span>
               )}
             </div>
-            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+            <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </Field>
           <Field label="Loại bài">
             <Select value={values.entryType} onValueChange={(value) => form.setValue("entryType", value as typeof values.entryType, { shouldDirty: true, shouldValidate: true })}>
@@ -324,7 +342,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={() => void handleSubmit()} disabled={create.isPending || !values.title.trim()}>
+          <Button onClick={() => void handleSubmit()} disabled={create.isPending || !values.title.trim() || slugStatus === "taken"}>
             {create.isPending ? "Đang tạo..." : "Tạo"}
           </Button>
         </DialogFooter>
@@ -349,6 +367,7 @@ function WisdomEditDialog({
   const form = useAdminZodForm(wisdomDialogSchema, {
     defaultValues: {
       title: currentRow.title,
+      slug: currentRow.slug,
       entryType: currentRow.entryType,
       sourceCode: currentRow.sourceCode ?? "",
       sourceUrl: currentRow.sourceUrl ?? "",
@@ -359,16 +378,26 @@ function WisdomEditDialog({
   });
   const { errors } = form.formState;
   const values = form.watch();
-  const { slug, setSlug, slugStatus } = useSlugField({
+  const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
     title: values.title,
     entityType: "WISDOM",
     excludePublicId: currentRow.publicId,
     initialSlug: currentRow.slug,
   });
+  const lastSlugRef = React.useRef(slug);
+
+  React.useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
 
   React.useEffect(() => {
     form.reset({
       title: currentRow.title,
+      slug: currentRow.slug,
       entryType: currentRow.entryType,
       sourceCode: currentRow.sourceCode ?? "",
       sourceUrl: currentRow.sourceUrl ?? "",
@@ -376,12 +405,12 @@ function WisdomEditDialog({
       originalText: currentRow.originalText ?? "",
       translatedText: currentRow.translatedText ?? "",
     });
-    setSlug(currentRow.slug);
-  }, [currentRow, form, open, setSlug]);
+    setSlugFromServer(currentRow.slug, currentRow.title);
+  }, [currentRow, form, open, setSlugFromServer]);
 
   const handleSubmit = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     update.mutate(
@@ -424,19 +453,25 @@ function WisdomEditDialog({
           <Field label="Slug">
             <div className="relative">
               <Input
+                name="slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  form.clearErrors("slug");
+                  form.setValue("slug", e.target.value, { shouldDirty: true });
+                  setSlug(e.target.value);
+                }}
                 placeholder="duong-dan-bai-viet"
-                className={invalidFieldClass(slugStatus === "taken")}
+                className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                 style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
               />
-              {slugStatus !== "idle" && (
+              {(slugStatus !== "idle" || errors.slug) && (
                 <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <SlugStatusIcon status={slugStatus} />
+                  <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                 </span>
               )}
             </div>
-            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+            <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Loại bài">
@@ -496,7 +531,7 @@ function WisdomEditDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={() => void handleSubmit()} disabled={update.isPending || !values.title.trim()}>
+          <Button onClick={() => void handleSubmit()} disabled={update.isPending || !values.title.trim() || slugStatus === "taken"}>
             {update.isPending ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </DialogFooter>

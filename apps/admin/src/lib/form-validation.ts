@@ -109,9 +109,6 @@ export function formErrorMessage(error: unknown, labels: FieldLabels = {}): stri
   if (error instanceof HttpError) {
     const firstFieldError = firstFieldErrorMessage(extractValidationFieldErrors(error), labels);
     if (firstFieldError) return firstFieldError;
-    if (error.requestId || error.traceId) {
-      return `${error.message} Mã tra cứu: ${error.traceId ?? error.requestId}.`;
-    }
     return error.message;
   }
   if (error instanceof Error) return error.message;

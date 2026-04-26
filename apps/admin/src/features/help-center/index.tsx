@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 
 const resources = [
-  ["Runbook dev", "Khởi động host mode, prepare DB, dọn port, smoke basics."],
-  ["Moderation lane", "Quy trình review báo cáo và action narrowing."],
-  ["Content editor", "Tiptap editor cho bản kinh, nghi thức, kế hoạch."],
-  ["Search ops", "Sync index, fallback search, health routing."],
+  ["Runbook phát triển", "Khởi động host mode, chuẩn bị DB, dọn port và smoke test cơ bản."],
+  ["Luồng kiểm duyệt", "Quy trình xem báo cáo, ra quyết định và giới hạn quyền thao tác."],
+  ["Biên tập nội dung", "Editor Tiptap cho bài viết, bản kinh, nghi thức và kế hoạch."],
+  ["Vận hành tìm kiếm", "Đồng bộ chỉ mục, fallback search và điều hướng health check."],
 ];
 
 export function HelpCenterPage() {
@@ -22,14 +22,16 @@ export function HelpCenterPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Help Center</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Quick operator guides and admin references.</p>
+        <h1 className="text-3xl font-bold tracking-tight">Hỗ trợ vận hành</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Tài liệu ngắn cho operator: runbook, kiểm duyệt, biên tập và vận hành hệ thống.
+        </p>
       </div>
 
       <Input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search help topics..."
+        placeholder="Tìm chủ đề hỗ trợ..."
         className="max-w-xs"
       />
 
@@ -42,7 +44,7 @@ export function HelpCenterPage() {
                   <CardTitle>{title}</CardTitle>
                   <CardDescription className="mt-2">{description}</CardDescription>
                 </div>
-                <Badge variant="outline">Guide</Badge>
+                <Badge variant="outline">Hướng dẫn</Badge>
               </div>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">

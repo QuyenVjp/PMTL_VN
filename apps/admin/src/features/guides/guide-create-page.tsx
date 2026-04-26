@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigateTo } from "@/lib/router-utils";
 import { z } from "zod";
 import {
@@ -57,6 +57,7 @@ type GuideCreatePageProps = {
 
 const guideCreateSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   category: z.string().trim().min(1),
   sortOrder: z.coerce.number().catch(0),
   versionNote: z.string().trim().optional(),
@@ -71,6 +72,7 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
   const form = useAdminZodForm(guideCreateSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       category: resolvedDefaultCategory,
       sortOrder: 0,
       versionNote: "",
@@ -79,14 +81,23 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, slugStatus } = useSlugField({ title: values.title, entityType: "GUIDE" });
+  const lastSlugRef = useRef(slug);
   const [bodyHtml, setBodyHtml] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [isDownloadable, setIsDownloadable] = useState(false);
 
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
   const handleSave = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     createGuide.mutate(
@@ -174,19 +185,25 @@ export function GuideCreatePage({ backHref, backLabel, defaultCategory }: GuideC
             <AdminFormField label="Slug">
               <div className="relative">
                 <Input
+                  name="slug"
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={(e) => {
+                    form.clearErrors("slug");
+                    form.setValue("slug", e.target.value, { shouldDirty: true });
+                    setSlug(e.target.value);
+                  }}
                   placeholder="tu-dong-tao-tu-tieu-de"
-                  className={invalidFieldClass(slugStatus === "taken")}
+                  className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                  aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                   style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                 />
-                {slugStatus !== "idle" && (
+                {(slugStatus !== "idle" || errors.slug) && (
                   <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <SlugStatusIcon status={slugStatus} />
+                    <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                   </span>
                 )}
               </div>
-              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+              <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
             </AdminFormField>
             {!defaultCategory && (
               <AdminFormField label="Danh mục">

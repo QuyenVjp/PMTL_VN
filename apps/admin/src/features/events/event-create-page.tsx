@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
 import { Badge } from "@/components/ui/badge";
+import { AdminDateTimePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -130,10 +131,10 @@ export function EventCreatePage() {
           </div>
 
           <AdminFormField label="Ngày bắt đầu *">
-            <Input
-              type="datetime-local"
+            <AdminDateTimePicker
               value={startAt}
-              onChange={(e) => setStartAt(e.target.value)}
+              onChange={setStartAt}
+              placeholder="Chọn ngày giờ bắt đầu"
             />
           </AdminFormField>
 

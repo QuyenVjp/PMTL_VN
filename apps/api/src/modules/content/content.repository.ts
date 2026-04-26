@@ -79,6 +79,15 @@ export class ContentRepository {
     });
   }
 
+  async findByPublicIdOrSlug(publicIdOrSlug: string) {
+    return this.prisma.post.findFirst({
+      where: {
+        OR: [{ publicId: publicIdOrSlug }, { slug: publicIdOrSlug }],
+      },
+      include: this.postInclude,
+    });
+  }
+
   async findMany(options: {
     status?: ContentStatus;
     postType?: PostType;

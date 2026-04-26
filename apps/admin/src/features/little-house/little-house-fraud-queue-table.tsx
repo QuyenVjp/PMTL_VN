@@ -12,23 +12,13 @@ import {
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { lhFraudListOptions, type LhFraudItem } from "./queries.js";
 import { FRAUD_SEVERITY_LABELS, FRAUD_SEVERITY_VARIANT } from "./types.js";
-import { ResolveDialog } from "./little-house-resolve-dialog.js";
 
 export function LhFraudQueueTable() {
   const [detailItem, setDetailItem] = useState<LhFraudItem | null>(null);
-  const [resolveItem, setResolveItem] = useState<LhFraudItem | null>(null);
   const { data: envelope, isLoading } = useQuery(lhFraudListOptions({ resolved: false }));
   const items = useMemo(() => envelope?.data ?? [], [envelope]);
-
-  function handleResolveFromSheet() {
-    if (!detailItem) return;
-    const item = detailItem;
-    setDetailItem(null);
-    setResolveItem(item);
-  }
 
   const fraudColumns: ColumnDef<LhFraudItem>[] = useMemo(
     () => [
@@ -117,13 +107,6 @@ export function LhFraudQueueTable() {
             </Badge>
           )
         }
-        primaryActions={
-          detailItem && !detailItem.resolvedAt ? (
-            <Button size="sm" variant="destructive" onClick={handleResolveFromSheet}>
-              Giải quyết
-            </Button>
-          ) : undefined
-        }
       >
         {detailItem && (
           <WorkspaceDetailSection title="Thông tin gian lận">
@@ -159,14 +142,12 @@ export function LhFraudQueueTable() {
             )}
           </WorkspaceDetailSection>
         )}
-      <WorkspaceDetailStandardSections />
+        <WorkspaceDetailStandardSections
+          editNote="Hàng đợi gian lận sớ hiện ở phạm vi hygiene-only theo design; admin chỉ xem dấu hiệu và kết quả xử lý nếu đã có."
+          auditNote="Audit xử lý gian lận sẽ hiển thị khi operational little-house có admin triple."
+          dangerNote="Không xác nhận/thu hồi/giải quyết gian lận trong UI khi contract vận hành chưa được chốt."
+        />
       </WorkspaceDetailSheet>
-
-      <ResolveDialog
-        open={resolveItem !== null}
-        onClose={() => setResolveItem(null)}
-        item={resolveItem}
-      />
     </>
   );
 }

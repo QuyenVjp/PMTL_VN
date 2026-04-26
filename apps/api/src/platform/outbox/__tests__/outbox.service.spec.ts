@@ -14,7 +14,7 @@ describe("OutboxService", () => {
   beforeEach(async () => {
     // Mock PrismaService
     prismaMock = {
-      $transaction: jest.fn(),
+      $transaction: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -46,7 +46,7 @@ describe("OutboxService", () => {
       // Mock transaction client
       const mockTx = {
         outboxEvent: {
-          create: jest.fn().mockResolvedValue(mockEvent),
+          create: vi.fn().mockResolvedValue(mockEvent),
         },
       };
 
@@ -95,11 +95,11 @@ describe("OutboxService", () => {
       ];
 
       const mockOutboxEvent = {
-        findMany: jest.fn().mockResolvedValue(mockEvents),
+        findMany: vi.fn().mockResolvedValue(mockEvents),
       };
 
       // Patch the service to use our mock
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -122,10 +122,10 @@ describe("OutboxService", () => {
 
     it("should exclude events at max retries", async () => {
       const mockOutboxEvent = {
-        findMany: jest.fn().mockResolvedValue([]),
+        findMany: vi.fn().mockResolvedValue([]),
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -150,10 +150,10 @@ describe("OutboxService", () => {
       };
 
       const mockOutboxEvent = {
-        update: jest.fn().mockResolvedValue(mockUpdatedEvent),
+        update: vi.fn().mockResolvedValue(mockUpdatedEvent),
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -184,10 +184,10 @@ describe("OutboxService", () => {
       };
 
       const mockOutboxEvent = {
-        update: jest.fn().mockResolvedValue(mockUpdatedEvent),
+        update: vi.fn().mockResolvedValue(mockUpdatedEvent),
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -206,10 +206,10 @@ describe("OutboxService", () => {
     it("should truncate error message to 500 chars", async () => {
       const longError = "x".repeat(600);
       const mockOutboxEvent = {
-        update: jest.fn().mockResolvedValue({}),
+        update: vi.fn().mockResolvedValue({}),
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -223,10 +223,10 @@ describe("OutboxService", () => {
   describe("cleanupOld", () => {
     it("should delete processed events older than retention days", async () => {
       const mockOutboxEvent = {
-        deleteMany: jest.fn().mockResolvedValue({ count: 42 }),
+        deleteMany: vi.fn().mockResolvedValue({ count: 42 }),
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 
@@ -257,7 +257,7 @@ describe("OutboxService", () => {
   describe("getStats", () => {
     it("should return queue statistics", async () => {
       const mockOutboxEvent = {
-        count: jest
+        count: vi
           .fn()
           .mockResolvedValueOnce(10) // unprocessed
           .mockResolvedValueOnce(2) // processing (at max retries)
@@ -265,7 +265,7 @@ describe("OutboxService", () => {
           .mockResolvedValueOnce(17), // total
       };
 
-      jest.spyOn(service as any, "prisma", "get").mockReturnValue({
+      vi.spyOn(service as any, "prisma", "get").mockReturnValue({
         outboxEvent: mockOutboxEvent,
       });
 

@@ -176,6 +176,15 @@ const LhRecordsPage = lazy(() =>
 const LhFraudQueuePage = lazy(() =>
   import("@/features/little-house").then((mod) => ({ default: mod.LhFraudQueuePage })),
 );
+const AltarItemsPage = lazy(() =>
+  import("@/features/altar-management").then((mod) => ({ default: mod.AltarItemsPage })),
+);
+const ValidationLogsPage = lazy(() =>
+  import("@/features/altar-management").then((mod) => ({ default: mod.ValidationLogsPage })),
+);
+const AltarProceduresPage = lazy(() =>
+  import("@/features/altar-management").then((mod) => ({ default: mod.AltarProceduresPage })),
+);
 
 // ── Detail / Create page imports ─────────────────────────────────────
 
@@ -792,26 +801,17 @@ const lhFraudQueueRoute = createRoute({
 const altarItemsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/vat-pham",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/dashboard" });
-  },
+  component: withSuspense(AltarItemsPage),
 });
 const validationLogsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/nhat-ky",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/dashboard" });
-  },
+  component: withSuspense(ValidationLogsPage),
 });
 const altarProceduresRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/quy-trinh",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/dashboard" });
-  },
+  component: withSuspense(AltarProceduresPage),
 });
 
 // ── Route Tree Assembly ──────────────────────────────────────────────

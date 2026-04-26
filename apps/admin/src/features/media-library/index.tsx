@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -137,6 +138,7 @@ const COLLECTION_TYPE_LABELS: Record<CollectionType, string> = {
 
 const collectionFormSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   collectionType: z.enum(["PHOTO_ALBUM", "VIDEO_PLAYLIST", "MIXED_GALLERY", "FEATURED_STORY_GALLERY"]),
   description: z.string().trim().optional(),
   sourceNote: z.string().trim().optional(),
@@ -489,6 +491,7 @@ function CreateCollectionDialog({
   const form = useAdminZodForm(collectionFormSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       collectionType: "PHOTO_ALBUM",
       description: "",
       sourceNote: "",
@@ -497,6 +500,7 @@ function CreateCollectionDialog({
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title: values.title, entityType: "MEDIA_COLLECTION" });
+  const lastSlugRef = useRef(slug);
   const [coverMediaPublicId,   setCoverMediaPublicId]   = useState("");
   const [featured,             setFeatured]             = useState(false);
   const [selectedMediaIds,     setSelectedMediaIds]     = useState<string[]>([]);
@@ -512,6 +516,7 @@ function CreateCollectionDialog({
   function reset() {
     form.reset({
       title: "",
+      slug: "",
       collectionType: "PHOTO_ALBUM",
       description: "",
       sourceNote: "",
@@ -529,6 +534,14 @@ function CreateCollectionDialog({
   }, [open]);
 
   useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
+  useEffect(() => {
     // Clear selection when collection type changes
     setSelectedMediaIds([]);
   }, [values.collectionType]);
@@ -543,7 +556,7 @@ function CreateCollectionDialog({
 
   const handleSubmit = form.handleSubmit(async (formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     if (selectedMediaIds.length === 0) {
@@ -612,19 +625,25 @@ function CreateCollectionDialog({
           <Field label="Slug (URL)">
             <div className="relative">
               <Input
+                name="slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  form.clearErrors("slug");
+                  form.setValue("slug", e.target.value, { shouldDirty: true });
+                  setSlug(e.target.value);
+                }}
                 placeholder="anh-phap-hoi-2026"
-                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken"))}
+                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug)))}
+                aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                 style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
               />
-              {slugStatus !== "idle" && (
+              {(slugStatus !== "idle" || errors.slug) && (
                 <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <SlugStatusIcon status={slugStatus} />
+                  <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                 </span>
               )}
             </div>
-            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+            <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </Field>
           <Field label="Loại bộ sưu tập">
             <Select value={values.collectionType} onValueChange={(value) => form.setValue("collectionType", value as CollectionType, { shouldDirty: true, shouldValidate: true })}>
@@ -727,7 +746,7 @@ function CreateCollectionDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Hủy</Button>
           <Button
             onClick={() => { void handleSubmit(); }}
-            disabled={isSubmitting || !values.title.trim() || !slug.trim() || selectedMediaIds.length === 0}
+            disabled={isSubmitting || !values.title.trim() || !slug.trim() || slugStatus === "taken" || selectedMediaIds.length === 0}
           >
             {isSubmitting ? "Đang tạo..." : "Tạo"}
           </Button>
@@ -752,6 +771,7 @@ function EditCollectionDialog({
   const form = useAdminZodForm(collectionFormSchema, {
     defaultValues: {
       title: currentRow.title,
+      slug: currentRow.slug,
       collectionType: currentRow.collectionType,
       description: currentRow.description ?? "",
       sourceNote: currentRow.sourceNote ?? "",
@@ -759,29 +779,39 @@ function EditCollectionDialog({
   });
   const { errors } = form.formState;
   const values = form.watch();
-  const { slug, setSlug, slugStatus } = useSlugField({
+  const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
     title: values.title,
     entityType: "MEDIA_COLLECTION",
     excludePublicId: currentRow.publicId,
     initialSlug: currentRow.slug,
   });
+  const lastSlugRef = useRef(slug);
   const [featured,    setFeatured]    = useState(currentRow.featured);
 
   useEffect(() => {
     if (!open) return;
     form.reset({
       title: currentRow.title,
+      slug: currentRow.slug,
       collectionType: currentRow.collectionType,
       description: currentRow.description ?? "",
       sourceNote: currentRow.sourceNote ?? "",
     });
-    setSlug(currentRow.slug);
+    setSlugFromServer(currentRow.slug, currentRow.title);
     setFeatured(currentRow.featured);
-  }, [currentRow, form, open, setSlug]);
+  }, [currentRow, form, open, setSlugFromServer]);
+
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
 
   const handleSubmit = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     update.mutate(
@@ -822,18 +852,24 @@ function EditCollectionDialog({
           <Field label="Slug">
             <div className="relative">
               <Input
+                name="slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken"))}
+                onChange={(e) => {
+                  form.clearErrors("slug");
+                  form.setValue("slug", e.target.value, { shouldDirty: true });
+                  setSlug(e.target.value);
+                }}
+                className={cn("font-mono text-sm", invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug)))}
+                aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                 style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
               />
-              {slugStatus !== "idle" && (
+              {(slugStatus !== "idle" || errors.slug) && (
                 <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <SlugStatusIcon status={slugStatus} />
+                  <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                 </span>
               )}
             </div>
-            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+            <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </Field>
           <Field label="Mô tả">
             <Textarea {...form.register("description")} rows={2} placeholder="Mô tả ngắn..." />
@@ -855,7 +891,7 @@ function EditCollectionDialog({
 
         <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={() => void handleSubmit()} disabled={update.isPending || !values.title.trim()}>
+          <Button onClick={() => void handleSubmit()} disabled={update.isPending || !values.title.trim() || slugStatus === "taken"}>
             {update.isPending ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </div>

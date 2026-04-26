@@ -23,6 +23,9 @@ describe("SearchService", () => {
     beginnerGuide: { findMany: ReturnType<typeof vi.fn> };
     download: { findMany: ReturnType<typeof vi.fn> };
     communityPost: { findMany: ReturnType<typeof vi.fn> };
+    wisdomEntry: { findMany: ReturnType<typeof vi.fn> };
+    wisdomQuestion: { findMany: ReturnType<typeof vi.fn> };
+    sutraMetadata: { findMany: ReturnType<typeof vi.fn> };
   };
   let configMock: {
     searchEngine: string;
@@ -50,6 +53,9 @@ describe("SearchService", () => {
       beginnerGuide: { findMany: vi.fn().mockResolvedValue([]) },
       download: { findMany: vi.fn().mockResolvedValue([]) },
       communityPost: { findMany: vi.fn().mockResolvedValue([]) },
+      wisdomEntry: { findMany: vi.fn().mockResolvedValue([]) },
+      wisdomQuestion: { findMany: vi.fn().mockResolvedValue([]) },
+      sutraMetadata: { findMany: vi.fn().mockResolvedValue([]) },
     };
 
     configMock = {
@@ -220,6 +226,9 @@ describe("SearchService", () => {
       prismaMock.beginnerGuide.findMany.mockResolvedValue([]);
       prismaMock.download.findMany.mockResolvedValue([]);
       prismaMock.communityPost.findMany.mockResolvedValue([]);
+      prismaMock.wisdomEntry.findMany.mockResolvedValue([]);
+      prismaMock.wisdomQuestion.findMany.mockResolvedValue([]);
+      prismaMock.sutraMetadata.findMany.mockResolvedValue([]);
 
       const result = await service.reindex("all");
 
@@ -227,7 +236,7 @@ describe("SearchService", () => {
         status: "queued",
         indexName: "all",
       });
-      expect((result as { indexes: string[] }).indexes).toHaveLength(5);
+      expect((result as { indexes: string[] }).indexes).toHaveLength(8);
       // ít nhất: POST /indexes (ensure) + DELETE /documents per index = 10 calls tối thiểu
       expect(breakerFireMock.mock.calls.length).toBeGreaterThanOrEqual(10);
     });

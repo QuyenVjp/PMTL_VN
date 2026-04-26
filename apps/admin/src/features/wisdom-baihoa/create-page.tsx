@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 import { AlertCircleIcon, SparklesIcon, LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
@@ -24,6 +25,7 @@ const ENTRY_TYPE_OPTIONS = [
 
 const wisdomCreateSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]),
   sourceCode: z.string().trim().optional(),
   sourceUrl: z.string().trim().optional(),
@@ -68,6 +70,7 @@ export function WisdomCreatePage() {
   const form = useAdminZodForm(wisdomCreateSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       entryType: "BACH_THOAI",
       sourceCode: "",
       sourceUrl: "",
@@ -78,15 +81,24 @@ export function WisdomCreatePage() {
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, slugStatus } = useSlugField({ title: values.title, entityType: "WISDOM" });
+  const lastSlugRef = useRef(slug);
 
   const sourceUrlValue = values.sourceUrl ?? "";
   const originalTextValue = values.originalText ?? "";
   const sourceCodeValue = values.sourceCode ?? "";
   const youtubeId = getYouTubeId(sourceUrlValue.trim());
 
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
   const handleSave = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
 
@@ -157,24 +169,29 @@ export function WisdomCreatePage() {
             <AdminFormField
               label="Slug"
               hint={slugStatus === "taken" ? "Slug này đã được dùng" : slugStatus === "available" ? "Slug hợp lệ" : undefined}
-              invalid={slugStatus === "taken"}
+              invalid={slugStatus === "taken" || Boolean(errors.slug)}
             >
               <div className="relative">
                 <Input
+                  name="slug"
                   value={slug}
-                  onChange={(event) => setSlug(event.target.value)}
+                  onChange={(event) => {
+                    form.clearErrors("slug");
+                    form.setValue("slug", event.target.value, { shouldDirty: true });
+                    setSlug(event.target.value);
+                  }}
                   placeholder="tu-dong-tao-tu-tieu-de"
-                  aria-invalid={slugStatus === "taken"}
-                  className={invalidFieldClass(slugStatus === "taken")}
+                  aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
+                  className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
                   style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                 />
-                {slugStatus !== "idle" && (
+                {(slugStatus !== "idle" || errors.slug) && (
                   <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <SlugStatusIcon status={slugStatus} />
+                    <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                   </span>
                 )}
               </div>
-              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+              <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
             </AdminFormField>
             <AdminFormField label="Loại bài" invalid={Boolean(errors.entryType)}>
               <Select value={values.entryType} onValueChange={(value) => form.setValue("entryType", value as typeof values.entryType, { shouldDirty: true, shouldValidate: true })}>

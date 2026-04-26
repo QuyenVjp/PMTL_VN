@@ -16,6 +16,7 @@ const auditLogListQuerySchema = z.object({
   action: z.string().optional(),
   actorId: z.string().optional(),
   resource: z.string().optional(),
+  resourceId: z.string().optional(),
   dateFrom: z.coerce.date().optional(),
   dateTo: z.coerce.date().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -46,6 +47,9 @@ export class AdminAuditLogsController {
     }
     if (query.resource) {
       where.resource = query.resource;
+    }
+    if (query.resourceId) {
+      where.resourceId = query.resourceId;
     }
     if (query.dateFrom || query.dateTo) {
       where.createdAt = {

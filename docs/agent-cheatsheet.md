@@ -49,6 +49,8 @@ Nếu task là tối ưu metric bằng loop thử nghiệm tự động, đọc 
 
 4. `docs/autoresearch.md`
 
+Nếu chỉ cần một prompt dùng chung để mở session mới, copy từ mục `Reusable thinking prompts` trong `docs/codex-agent-quickstart.md`.
+
 Map nhanh:
 
 | Task shape | Role brief |

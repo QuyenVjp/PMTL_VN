@@ -10,6 +10,7 @@ type PostWithRelations = Post & {
 export function mapPostToResponse(post: PostWithRelations, featuredImageUrl?: string | null): PostResponse {
   return {
     id: post.publicId,
+    publicId: post.publicId,
     slug: post.slug,
     title: post.title,
     postType: post.postType,

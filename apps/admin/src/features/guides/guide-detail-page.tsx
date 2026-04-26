@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useNavigateTo } from "@/lib/router-utils";
@@ -97,6 +97,7 @@ type GuideDetailPageProps = {
 
 const guideDetailSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   category: z.string().trim().min(1),
   sortOrder: z.coerce.number().catch(0),
   versionNote: z.string().trim().optional(),
@@ -121,6 +122,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const form = useAdminZodForm(guideDetailSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       category: "BEGINNER",
       sortOrder: 0,
       versionNote: "",
@@ -128,12 +130,13 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   });
   const { errors } = form.formState;
   const values = form.watch();
-  const { slug, setSlug, slugStatus } = useSlugField({
+  const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
     title: values.title,
     entityType: "GUIDE",
     excludePublicId: guide?.publicId,
     initialSlug: guide?.slug,
   });
+  const lastSlugRef = useRef(slug);
   const [bodyHtml, setBodyHtml] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
@@ -142,21 +145,30 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const [confirmPublish, setConfirmPublish] = useState(false);
 
   useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
+  useEffect(() => {
     if (!guide) return;
     form.reset({
       title: guide.title,
+      slug: guide.slug,
       category: guide.category,
       sortOrder: 0,
       versionNote: "",
     });
-    setSlug(guide.slug);
+    setSlugFromServer(guide.slug, guide.title);
     setBodyHtml(readGuideBodyHtml(guide.content));
     setCoverMediaPublicId(guide.coverMediaPublicId ?? "");
-  }, [guide]);
+  }, [guide, form, setSlugFromServer]);
 
   const handleSave = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
     if (!guide) return;
@@ -298,18 +310,24 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
               <AdminFormField label="Slug">
                 <div className="relative">
                   <Input
+                    name="slug"
                     value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className={invalidFieldClass(slugStatus === "taken")}
+                    onChange={(e) => {
+                      form.clearErrors("slug");
+                      form.setValue("slug", e.target.value, { shouldDirty: true });
+                      setSlug(e.target.value);
+                    }}
+                    className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                    aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                     style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                   />
-                  {slugStatus !== "idle" && (
+                  {(slugStatus !== "idle" || errors.slug) && (
                     <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                      <SlugStatusIcon status={slugStatus} />
+                      <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                     </span>
                   )}
                 </div>
-                <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+                <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
               </AdminFormField>
               <AdminFormField label="Danh mục">
                 <Select

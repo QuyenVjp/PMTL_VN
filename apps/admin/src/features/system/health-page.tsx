@@ -70,7 +70,7 @@ export function HealthPage() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">Health</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Sức khỏe hệ thống</h1>
             {health && (
               <Badge variant="outline" className={statusBadgeClass(health.overall)}>
                 {statusLabel(health.overall)}

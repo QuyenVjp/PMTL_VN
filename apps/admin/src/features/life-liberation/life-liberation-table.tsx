@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
@@ -13,185 +12,18 @@ import {
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { FieldError } from "@/components/ui/field-error";
-import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
-import { invalidFieldClass } from "@/lib/form-validation";
 import { lifeReleaseListOptions } from "./queries.js";
 import {
   LIFE_RELEASE_STATUS_LABELS,
   RECORD_TYPE_LABELS,
   STATUS_VARIANT,
   type LifeReleaseListItem,
-  type LifeReleaseStatus,
 } from "./types.js";
-import { useUpdateLifeReleaseStatus } from "./mutations.js";
-
-const STATUS_TRANSITIONS: Record<LifeReleaseStatus, LifeReleaseStatus[]> = {
-  PENDING: ["IN_PROGRESS", "CANCELLED"],
-  IN_PROGRESS: ["COMPLETED", "CANCELLED"],
-  COMPLETED: [],
-  CANCELLED: [],
-};
-
-const updateStatusSchema = z.object({
-  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"]).or(z.literal("")),
-  notes: z.string().trim().optional(),
-});
-
-type UpdateStatusFormValues = z.infer<typeof updateStatusSchema>;
-
-function UpdateStatusDialog({
-  record,
-  onClose,
-}: {
-  record: LifeReleaseListItem | null;
-  onClose: () => void;
-}) {
-  const updateStatus = useUpdateLifeReleaseStatus();
-  const form = useAdminZodForm(updateStatusSchema, {
-    defaultValues: {
-      status: "",
-      notes: "",
-    },
-  });
-  const { errors } = form.formState;
-  const values = form.watch();
-
-  const availableTransitions = record ? STATUS_TRANSITIONS[record.status] : [];
-
-  function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      form.reset({ status: "", notes: "" });
-      onClose();
-    }
-  }
-
-  const handleSubmit = form.handleSubmit((formValues) => {
-    if (!record || !formValues.status) return;
-
-    updateStatus.mutate(
-      { publicId: record.id, status: formValues.status, notes: formValues.notes || undefined },
-      {
-        onSuccess: () => {
-          form.reset({ status: "", notes: "" });
-          onClose();
-        },
-        onError: (error) => {
-          applyApiFieldErrors(form, error);
-        },
-      },
-    );
-  });
-
-  const newStatus = values.status;
-
-  return (
-    <Dialog open={record !== null} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Cập nhật trạng thái hồ sơ phóng sinh</DialogTitle>
-        </DialogHeader>
-        {record && (
-          <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Trạng thái hiện tại</p>
-              <Badge variant={STATUS_VARIANT[record.status]}>
-                {LIFE_RELEASE_STATUS_LABELS[record.status]}
-              </Badge>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="newStatus">
-                Trạng thái mới <span className="text-destructive">*</span>
-              </Label>
-              {availableTransitions.length > 0 ? (
-                <Select
-                  value={newStatus}
-                  onValueChange={(v) => form.setValue("status", v as UpdateStatusFormValues["status"], { shouldDirty: true, shouldValidate: true })}
-                >
-                  <SelectTrigger id="newStatus">
-                    <SelectValue placeholder="Chọn trạng thái mới" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableTransitions.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {LIFE_RELEASE_STATUS_LABELS[s]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Hồ sơ này không thể chuyển sang trạng thái khác.
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="notes">Lý do (tùy chọn)</Label>
-              <Textarea
-                id="notes"
-                {...form.register("notes")}
-                aria-invalid={Boolean(errors.notes)}
-                className={invalidFieldClass(errors.notes)}
-                placeholder="Nhập lý do thay đổi trạng thái (tùy chọn)"
-                rows={3}
-              />
-              <FieldError message={errors.notes?.message} />
-            </div>
-            <FieldError message={errors.status?.message ?? errors.root?.server?.message} />
-
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={onClose}>
-                Hủy
-              </Button>
-              <Button
-                type="submit"
-                disabled={
-                  !newStatus || availableTransitions.length === 0 || updateStatus.isPending
-                }
-              >
-                {updateStatus.isPending ? "Đang lưu..." : "Cập nhật"}
-              </Button>
-            </DialogFooter>
-          </form>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 export function LifeReleaseTable() {
-  const [selectedRecord, setSelectedRecord] = useState<LifeReleaseListItem | null>(null);
   const [detailItem, setDetailItem] = useState<LifeReleaseListItem | null>(null);
   const { data: envelope, isLoading } = useQuery(lifeReleaseListOptions());
   const records = useMemo(() => envelope?.data ?? [], [envelope]);
-
-  const canTransition = detailItem ? STATUS_TRANSITIONS[detailItem.status].length > 0 : false;
-
-  function handleUpdateFromSheet() {
-    if (!detailItem) return;
-    const item = detailItem;
-    setDetailItem(null);
-    setSelectedRecord(item);
-  }
 
   const columns: ColumnDef<LifeReleaseListItem>[] = useMemo(
     () => [
@@ -273,13 +105,6 @@ export function LifeReleaseTable() {
             </Badge>
           )
         }
-        primaryActions={
-          canTransition ? (
-            <Button size="sm" onClick={handleUpdateFromSheet}>
-              Cập nhật trạng thái
-            </Button>
-          ) : undefined
-        }
       >
         {detailItem && (
           <WorkspaceDetailSection title="Thông tin hồ sơ">
@@ -305,13 +130,11 @@ export function LifeReleaseTable() {
             />
           </WorkspaceDetailSection>
         )}
-      <WorkspaceDetailStandardSections />
+        <WorkspaceDetailStandardSections
+          editNote="Màn Phóng sinh hiện ở phạm vi hygiene-only theo design; admin chỉ xem hồ sơ và chưa mở chuyển trạng thái vận hành."
+          auditNote="Audit phóng sinh sẽ hiển thị khi API operational surface được đưa vào admin triple."
+        />
       </WorkspaceDetailSheet>
-
-      <UpdateStatusDialog
-        record={selectedRecord}
-        onClose={() => setSelectedRecord(null)}
-      />
     </>
   );
 }

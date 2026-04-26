@@ -16,7 +16,58 @@ import type {
   TypedContentPayload, ContentBlockType,
 } from "./content.schemas.js";
 import { typedContentPayloadSchema } from "./content.schemas.js";
-import { type UserRole, type ContentStatus, type Prisma, type PostType, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
+import { type UserRole, type ContentStatus, type Prisma, type Post, type PostType, GuideCategory, DownloadCategory } from "../../generated/prisma/client.js";
+
+type PostAuditSnapshot = Pick<
+  Post,
+  "title" | "slug" | "postType" | "sourceRef" | "content" | "featuredImageId" | "primaryCategoryId" | "featured" | "allowComments" | "status"
+>;
+
+function slugConflictException() {
+  return new ConflictException({
+    code: "CONFLICT",
+    message: "Slug này đã được dùng.",
+    detail: {
+      properties: { slug: { errors: ["Slug này đã được dùng."] } },
+      fieldErrors: { slug: "Slug này đã được dùng." },
+      fields: ["slug"],
+    },
+  });
+}
+
+function hasJsonChanged(before: unknown, after: unknown): boolean {
+  return JSON.stringify(before ?? null) !== JSON.stringify(after ?? null);
+}
+
+function buildPostUpdateAuditMetadata(previous: PostAuditSnapshot, input: UpdatePostRequest) {
+  const changedFields: string[] = [];
+  const before: Record<string, unknown> = {};
+  const after: Record<string, unknown> = {};
+
+  const track = (field: keyof PostAuditSnapshot, nextValue: unknown) => {
+    const previousValue = previous[field];
+    if (previousValue === nextValue) return;
+    changedFields.push(field);
+    before[field] = previousValue;
+    after[field] = nextValue;
+  };
+
+  if (input.title !== undefined) track("title", input.title);
+  if (input.slug !== undefined) track("slug", input.slug);
+  if (input.postType !== undefined) track("postType", input.postType);
+  if (input.sourceRef !== undefined) track("sourceRef", input.sourceRef);
+  if (input.featuredImageId !== undefined) track("featuredImageId", input.featuredImageId);
+  if (input.primaryCategoryId !== undefined) track("primaryCategoryId", input.primaryCategoryId);
+  if (input.featured !== undefined) track("featured", input.featured);
+  if (input.allowComments !== undefined) track("allowComments", input.allowComments);
+  if (input.content !== undefined && hasJsonChanged(previous.content, input.content)) {
+    changedFields.push("content");
+    before.content = "[content snapshot omitted]";
+    after.content = "[content snapshot omitted]";
+  }
+
+  return { changedFields, before, after };
+}
 
 @Injectable()
 export class ContentService {
@@ -62,9 +113,7 @@ export class ContentService {
   }
 
   async getPost(publicIdOrSlug: string, userRole?: UserRole) {
-    const post = publicIdOrSlug.length === 21
-      ? await this.repository.findByPublicId(publicIdOrSlug)
-      : await this.repository.findBySlug(publicIdOrSlug);
+    const post = await this.repository.findByPublicIdOrSlug(publicIdOrSlug);
 
     if (!post) {
       throw new NotFoundException("Bài viết không tồn tại");
@@ -96,7 +145,7 @@ export class ContentService {
 
     // Check slug uniqueness
     if (await this.repository.slugExists(slug)) {
-      throw new ConflictException("Slug đã tồn tại");
+      throw slugConflictException();
     }
     const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
 
@@ -156,10 +205,14 @@ export class ContentService {
     // Check slug uniqueness if changing
     if (input.slug && input.slug !== post.slug) {
       if (await this.repository.slugExists(input.slug, publicId)) {
-        throw new ConflictException("Slug đã tồn tại");
+        throw slugConflictException();
       }
     }
     const featuredImageId = await this.normalizeFeaturedImageId(input.featuredImageId);
+    const auditMetadata = buildPostUpdateAuditMetadata(post, {
+      ...input,
+      ...(featuredImageId !== undefined ? { featuredImageId } : {}),
+    });
 
     // Bug 2 fix: post update + audit in same transaction
     const updated = await this.prisma.$transaction(async (tx) => {
@@ -197,7 +250,7 @@ export class ContentService {
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
-      await this.audit.appendInTransaction(tx, auditContext, "content.update", "post", publicId);
+      await this.audit.appendInTransaction(tx, auditContext, "content.update", "post", publicId, auditMetadata);
       return result;
     });
 
@@ -237,7 +290,10 @@ export class ContentService {
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
-      await this.audit.appendInTransaction(tx, auditContext, "content.publish", "post", publicId);
+      await this.audit.appendInTransaction(tx, auditContext, "content.publish", "post", publicId, {
+        before: { status: post.status, publishedAt: post.publishedAt?.toISOString() ?? null },
+        after: { status: "PUBLISHED" },
+      });
       return result;
     });
 
@@ -280,7 +336,11 @@ export class ContentService {
           tags: { include: { tag: { select: { publicId: true, name: true, slug: true } } } },
         },
       });
-      await this.audit.appendInTransaction(tx, auditContext, "content.unpublish", "post", publicId);
+      await this.audit.appendInTransaction(tx, auditContext, "content.unpublish", "post", publicId, {
+        mode,
+        before: { status: post.status, publishedAt: post.publishedAt?.toISOString() ?? null },
+        after: { status: "DRAFT", publishedAt: null },
+      });
       return result;
     });
 
@@ -307,7 +367,11 @@ export class ContentService {
 
     await this.prisma.$transaction(async (tx) => {
       await tx.post.delete({ where: { publicId } });
-      await this.audit.appendInTransaction(tx, auditContext, "content.delete", "post", publicId);
+      await this.audit.appendInTransaction(tx, auditContext, "content.delete", "post", publicId, {
+        title: post.title,
+        slug: post.slug,
+        status: post.status,
+      });
     });
 
     void this.searchService.removeDocument("posts", publicId);
@@ -420,7 +484,7 @@ export class ContentService {
 
     // Check slug uniqueness
     const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug } });
-    if (existing) throw new ConflictException("Slug đã tồn tại");
+    if (existing) throw slugConflictException();
 
     const coverMediaId = await this.resolveMediaIdByPublicId(input.coverMediaPublicId);
 
@@ -458,7 +522,7 @@ export class ContentService {
 
     if (input.slug && input.slug !== guide.slug) {
       const existing = await this.prisma.beginnerGuide.findUnique({ where: { slug: input.slug } });
-      if (existing) throw new ConflictException("Slug đã tồn tại");
+      if (existing) throw slugConflictException();
     }
 
     const coverMediaId = await this.resolveMediaIdByPublicId(input.coverMediaPublicId);

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigateTo } from "@/lib/router-utils";
 import { z } from "zod";
@@ -8,7 +8,6 @@ import {
   AdminDetailSection,
   AdminFormField,
 } from "@/components/workspace";
-import { Button } from "@/components/ui/button";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,8 +20,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { mediaListOptions } from "@/features/media/queries";
-import { useUploadMediaAsset } from "@/features/media/mutations";
-import { extractUploadMediaPayload } from "@/lib/media-upload";
 import { useCreateDownload } from "@/features/downloads/mutations";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
@@ -45,8 +42,6 @@ type DownloadCreatePageProps = {
 export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: DownloadCreatePageProps) {
   const navigateTo = useNavigateTo();
   const createDownload = useCreateDownload();
-  const uploadMedia = useUploadMediaAsset();
-  const uploadDocRef = useRef<HTMLInputElement>(null);
 
   const resolvedDefaultCategory = defaultCategory ?? "GUIDE";
 
@@ -68,6 +63,13 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100 }));
   const assets = mediaEnvelope?.data ?? [];
   const selectedFileAsset = assets.find((a) => a.publicId === fileMediaPublicId) ?? null;
+
+  useEffect(() => {
+    if (!selectedFileAsset) return;
+    form.setValue("fileUrl", selectedFileAsset.url, { shouldDirty: true, shouldValidate: true });
+    form.setValue("fileType", selectedFileAsset.mimeType, { shouldDirty: true, shouldValidate: true });
+    form.setValue("fileSize", selectedFileAsset.size, { shouldDirty: true });
+  }, [form, selectedFileAsset]);
 
   const handleSave = form.handleSubmit((formValues) => {
     createDownload.mutate(
@@ -170,71 +172,16 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
       </AdminDetailSection>
 
       <AdminDetailSection title="File media nội bộ (tuỳ chọn)">
-        <div className="space-y-3">
-          <input
-            ref={uploadDocRef}
-            type="file"
-            className="hidden"
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              if (!file) return;
-              void (async () => {
-                try {
-                  const result = await uploadMedia.mutateAsync(file);
-                  const payload = extractUploadMediaPayload(result);
-                  const publicId = payload?.publicId;
-                  if (publicId) setFileMediaPublicId(publicId);
-                  if (payload?.url) form.setValue("fileUrl", payload.url, { shouldDirty: true, shouldValidate: true });
-                  if (payload?.mimeType) form.setValue("fileType", payload.mimeType, { shouldDirty: true, shouldValidate: true });
-                  if (typeof payload?.size === "number") form.setValue("fileSize", payload.size, { shouldDirty: true });
-                } finally {
-                  event.target.value = "";
-                }
-              })();
-            }}
+        <div className="space-y-2">
+          <MediaPickerField
+            value={fileMediaPublicId}
+            onChange={setFileMediaPublicId}
+            defaultTab="document"
+            placeholder="Chọn hoặc upload tệp từ thư viện media..."
           />
-          <div className="flex items-center gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => uploadDocRef.current?.click()}>
-              Upload file
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setFileMediaPublicId("")}
-              disabled={!fileMediaPublicId}
-            >
-              Bỏ chọn
-            </Button>
-          </div>
-          <Select
-            value={fileMediaPublicId || "__none__"}
-            onValueChange={(value) => {
-              const nextId = value === "__none__" ? "" : value;
-              setFileMediaPublicId(nextId);
-              const selected = assets.find((a) => a.publicId === nextId);
-              if (selected) {
-                form.setValue("fileUrl", selected.url, { shouldDirty: true, shouldValidate: true });
-                form.setValue("fileType", selected.mimeType, { shouldDirty: true, shouldValidate: true });
-                form.setValue("fileSize", selected.size, { shouldDirty: true });
-              }
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Chọn file từ media..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__none__">Không chọn</SelectItem>
-              {assets.map((asset) => (
-                <SelectItem key={asset.publicId} value={asset.publicId}>
-                  {asset.filename}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           {selectedFileAsset && (
             <p className="text-xs text-muted-foreground">
-              Đã chọn file: {selectedFileAsset.filename}
+              Đã chọn tệp: {selectedFileAsset.filename}
             </p>
           )}
         </div>

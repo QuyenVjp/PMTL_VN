@@ -25,6 +25,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const RUNTIME_FILE_PATH = join(__dirname, "..", "..", "..", "..", "data", "runtime", "self-cultivation.runtime.json");
 
+function slugConflictException() {
+  return new ConflictException({
+    code: "CONFLICT",
+    message: "Slug này đã được dùng.",
+    detail: {
+      properties: { slug: { errors: ["Slug này đã được dùng."] } },
+      fieldErrors: { slug: "Slug này đã được dùng." },
+      fields: ["slug"],
+    },
+  });
+}
+
 @Injectable()
 export class SelfCultivationService {
   private readonly logger = new Logger(SelfCultivationService.name);
@@ -271,7 +283,7 @@ export class SelfCultivationService {
 
   private assertGuideSlugAvailable(guides: SelfCultivationGuideDto[], slug: string) {
     if (guides.some((guide) => guide.slug === slug)) {
-      throw new ConflictException("Slug guide đã được sử dụng");
+      throw slugConflictException();
     }
   }
 

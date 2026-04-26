@@ -7,13 +7,14 @@ import {
   getCoreRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table";
-import { RefreshCcwIcon, SearchIcon } from "lucide-react";
+import { ClipboardListIcon, HistoryIcon, RefreshCcwIcon, SearchIcon, UserCheckIcon } from "lucide-react";
 
 import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
-import { WorkspaceDataTable } from "@/components/workspace";
+import { WorkspaceDataTable, WorkspaceScopeCards } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { AdminDatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -92,7 +93,7 @@ const createVowSchema = z.object({
   vowType: z.enum(["LIFE_RELEASE", "CHANTING", "SUTRA_READING", "CUSTOM"]),
   description: z.string().trim().min(1, "Mô tả không được để trống."),
   assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
-  targetCount: z.coerce.number().int().positive("Mục tiêu phải lớn hơn 0.").optional().or(z.literal("")),
+  targetCount: z.string().trim().optional(),
   startDate: z.string().trim().min(1, "Ngày bắt đầu không được để trống."),
 });
 
@@ -100,23 +101,19 @@ type CreateVowFormValues = z.infer<typeof createVowSchema>;
 
 const createLifeReleaseSchema = z.object({
   animalType: z.string().trim().min(1, "Loại vật không được để trống."),
-  quantity: z.coerce.number().int().positive("Số lượng phải lớn hơn 0."),
+  quantity: z.string().trim().min(1, "Số lượng không được để trống."),
   location: z.string().trim().min(1, "Địa điểm không được để trống."),
   note: z.string().trim().optional(),
   assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
   journalDate: z.string().trim().min(1, "Ngày phóng sanh không được để trống."),
 });
 
-type CreateLifeReleaseFormValues = z.infer<typeof createLifeReleaseSchema>;
-
 const createProgressSchema = z.object({
   vowPublicId: z.string().trim().min(1, "Vui lòng chọn nguyện lực."),
-  addCount: z.coerce.number().int().positive("Số lượng tăng thêm phải lớn hơn 0."),
+  addCount: z.string().trim().min(1, "Số lượng tăng thêm không được để trống."),
   note: z.string().trim().optional(),
   assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
 });
-
-type CreateProgressFormValues = z.infer<typeof createProgressSchema>;
 
 // ── Member Search Input ─────────────────────────────────────────────
 
@@ -354,7 +351,7 @@ function CreateVowForm() {
         memberPublicId: member.publicId,
         vowType: formValues.vowType,
         description: formValues.description,
-        targetCount: formValues.targetCount === "" ? undefined : formValues.targetCount,
+        targetCount: formValues.targetCount ? Number(formValues.targetCount) : undefined,
         startDate: formValues.startDate,
         assistReason: formValues.assistReason,
       },
@@ -409,8 +406,8 @@ function CreateVowForm() {
             <label className="text-sm font-medium">Mô tả</label>
             <Textarea
               {...form.register("description")}
-              aria-invalid={Boolean(errors.description)}
-              className={invalidFieldClass(errors.description)}
+                aria-invalid={Boolean(errors.description)}
+                className={invalidFieldClass(Boolean(errors.description))}
               placeholder="Nội dung lời nguyện..."
               rows={3}
             />
@@ -423,7 +420,7 @@ function CreateVowForm() {
             <Textarea
               {...form.register("assistReason")}
               aria-invalid={Boolean(errors.assistReason)}
-              className={invalidFieldClass(errors.assistReason)}
+              className={invalidFieldClass(Boolean(errors.assistReason))}
               placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
               rows={2}
             />
@@ -436,18 +433,19 @@ function CreateVowForm() {
                 type="number"
                 {...form.register("targetCount")}
                 aria-invalid={Boolean(errors.targetCount)}
-                className={invalidFieldClass(errors.targetCount)}
+                className={invalidFieldClass(Boolean(errors.targetCount))}
                 placeholder="Không bắt buộc"
               />
               <FieldError message={errors.targetCount?.message} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Ngày bắt đầu</label>
-              <Input
-                type="date"
-                {...form.register("startDate")}
+              <AdminDatePicker
+                value={values.startDate}
+                onChange={(next) => form.setValue("startDate", next, { shouldDirty: true, shouldValidate: true })}
+                placeholder="Chọn ngày bắt đầu"
                 aria-invalid={Boolean(errors.startDate)}
-                className={invalidFieldClass(errors.startDate)}
+                className={invalidFieldClass(Boolean(errors.startDate))}
               />
               <FieldError message={errors.startDate?.message} />
             </div>
@@ -470,7 +468,7 @@ function CreateLifeReleaseForm() {
   const form = useAdminZodForm(createLifeReleaseSchema, {
     defaultValues: {
       animalType: "",
-      quantity: 1,
+      quantity: "1",
       location: "",
       note: "",
       assistReason: "",
@@ -488,7 +486,7 @@ function CreateLifeReleaseForm() {
       {
         memberPublicId: member.publicId,
         animalType: formValues.animalType,
-        quantity: formValues.quantity,
+        quantity: Number(formValues.quantity),
         location: formValues.location,
         note: formValues.note || undefined,
         journalDate: formValues.journalDate,
@@ -499,7 +497,7 @@ function CreateLifeReleaseForm() {
           setMember(null);
           form.reset({
             animalType: "",
-            quantity: 1,
+            quantity: "1",
             location: "",
             note: "",
             assistReason: "",
@@ -531,7 +529,7 @@ function CreateLifeReleaseForm() {
               <Input
                 {...form.register("animalType")}
                 aria-invalid={Boolean(errors.animalType)}
-                className={invalidFieldClass(errors.animalType)}
+                className={invalidFieldClass(Boolean(errors.animalType))}
                 placeholder="Cá, chim, rùa..."
               />
               <FieldError message={errors.animalType?.message} />
@@ -542,7 +540,7 @@ function CreateLifeReleaseForm() {
                 type="number"
                 {...form.register("quantity")}
                 aria-invalid={Boolean(errors.quantity)}
-                className={invalidFieldClass(errors.quantity)}
+                className={invalidFieldClass(Boolean(errors.quantity))}
                 placeholder="0"
               />
               <FieldError message={errors.quantity?.message} />
@@ -553,7 +551,7 @@ function CreateLifeReleaseForm() {
             <Input
               {...form.register("location")}
               aria-invalid={Boolean(errors.location)}
-              className={invalidFieldClass(errors.location)}
+              className={invalidFieldClass(Boolean(errors.location))}
               placeholder="Sông, hồ, biển..."
             />
             <FieldError message={errors.location?.message} />
@@ -563,7 +561,7 @@ function CreateLifeReleaseForm() {
             <Textarea
               {...form.register("note")}
               aria-invalid={Boolean(errors.note)}
-              className={invalidFieldClass(errors.note)}
+              className={invalidFieldClass(Boolean(errors.note))}
               placeholder="Ghi chú thêm..."
               rows={2}
             />
@@ -576,7 +574,7 @@ function CreateLifeReleaseForm() {
             <Textarea
               {...form.register("assistReason")}
               aria-invalid={Boolean(errors.assistReason)}
-              className={invalidFieldClass(errors.assistReason)}
+              className={invalidFieldClass(Boolean(errors.assistReason))}
               placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
               rows={2}
             />
@@ -584,11 +582,12 @@ function CreateLifeReleaseForm() {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Ngày phóng sanh</label>
-            <Input
-              type="date"
-              {...form.register("journalDate")}
+            <AdminDatePicker
+              value={form.watch("journalDate")}
+              onChange={(next) => form.setValue("journalDate", next, { shouldDirty: true, shouldValidate: true })}
+              placeholder="Chọn ngày phóng sanh"
               aria-invalid={Boolean(errors.journalDate)}
-              className={invalidFieldClass(errors.journalDate)}
+              className={invalidFieldClass(Boolean(errors.journalDate))}
             />
             <FieldError message={errors.journalDate?.message} />
           </div>
@@ -615,7 +614,7 @@ function CreateProgressForm() {
   const form = useAdminZodForm(createProgressSchema, {
     defaultValues: {
       vowPublicId: "",
-      addCount: 1,
+      addCount: "1",
       note: "",
       assistReason: "",
     },
@@ -632,7 +631,7 @@ function CreateProgressForm() {
       {
         memberPublicId: member.publicId,
         vowPublicId: formValues.vowPublicId,
-        addCount: formValues.addCount,
+        addCount: Number(formValues.addCount),
         note: formValues.note || undefined,
         assistReason: formValues.assistReason,
       },
@@ -640,7 +639,7 @@ function CreateProgressForm() {
         onSuccess: () => {
           form.reset({
             vowPublicId: "",
-            addCount: 1,
+            addCount: "1",
             note: "",
             assistReason: "",
           });
@@ -706,7 +705,7 @@ function CreateProgressForm() {
                 min={1}
                 {...form.register("addCount")}
                 aria-invalid={Boolean(errors.addCount)}
-                className={invalidFieldClass(errors.addCount)}
+                className={invalidFieldClass(Boolean(errors.addCount))}
                 placeholder="1"
               />
               <FieldError message={errors.addCount?.message} />
@@ -716,7 +715,7 @@ function CreateProgressForm() {
               <Input
                 {...form.register("note")}
                 aria-invalid={Boolean(errors.note)}
-                className={invalidFieldClass(errors.note)}
+                className={invalidFieldClass(Boolean(errors.note))}
                 placeholder="Không bắt buộc"
               />
               <FieldError message={errors.note?.message} />
@@ -729,7 +728,7 @@ function CreateProgressForm() {
             <Textarea
               {...form.register("assistReason")}
               aria-invalid={Boolean(errors.assistReason)}
-              className={invalidFieldClass(errors.assistReason)}
+              className={invalidFieldClass(Boolean(errors.assistReason))}
               placeholder="VD: Thành viên báo tiến độ qua điện thoại, ban quản trị nhập hộ..."
               rows={2}
             />
@@ -759,6 +758,29 @@ export function AssistedEntryPage() {
           Hỗ trợ nhập hộ lời nguyện, tra cứu thành viên và kiểm tra lịch sử.
         </p>
       </div>
+
+      <WorkspaceScopeCards
+        items={[
+          {
+            title: "Actor / owner rõ ràng",
+            description: "Admin là người nhập hộ, thành viên là chủ lời nguyện hoặc nhật ký. API phải giữ đủ actorUserId và ownerUserId.",
+            badge: "Assisted entry",
+            icon: UserCheckIcon,
+          },
+          {
+            title: "Không thay content",
+            description: "Trang này chỉ ghi state phát nguyện/phóng sanh, không sửa hướng dẫn Kinh bài tập hay Phóng Sanh.",
+            badge: "Vows-merit",
+            icon: ClipboardListIcon,
+          },
+          {
+            title: "Lịch sử là audit surface",
+            description: "Mọi phiếu nhập hộ phải quay lại được lịch sử để kiểm tra người nhập, thành viên và lý do.",
+            badge: "Audit required",
+            icon: HistoryIcon,
+          },
+        ]}
+      />
 
       <Tabs defaultValue="history">
         <TabsList>

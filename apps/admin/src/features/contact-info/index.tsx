@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { SaveIcon } from "lucide-react";
+import { GlobeIcon, LockIcon, SaveIcon, UsersIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorkspaceScopeCards } from "@/components/workspace";
 import { contactInfoOptions } from "./queries.js";
 import { useUpdateContactInfo, type UpdateContactInfoInput } from "./mutations.js";
 
@@ -66,6 +67,29 @@ export function ContactInfoPage() {
           Quản lý thông tin liên hệ hiển thị trên trang web công khai.
         </p>
       </div>
+
+      <WorkspaceScopeCards
+        items={[
+          {
+            title: "Public contact owner",
+            description: "Các trường ở đây được public website dùng trực tiếp, nên chỉ nhập thông tin đã được xác nhận.",
+            badge: "Contact",
+            icon: GlobeIcon,
+          },
+          {
+            title: "Tách khỏi phụng sự viên",
+            description: "Danh sách phụng sự viên dùng route riêng; trang này chỉ là thông tin liên hệ chung của tổ chức.",
+            badge: "Không phải staff CRUD",
+            icon: UsersIcon,
+          },
+          {
+            title: "Quyền ghi hẹp",
+            description: "Design backlog ghi contact-info update là super-admin only, không trộn với quyền CRUD phụng sự viên.",
+            badge: "Super-admin write",
+            icon: LockIcon,
+          },
+        ]}
+      />
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>

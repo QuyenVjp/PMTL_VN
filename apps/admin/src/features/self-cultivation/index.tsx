@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2Icon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRightIcon, CheckCircle2Icon, FileTextIcon, FlameIcon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
 import { z } from "zod";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
 
@@ -37,6 +38,33 @@ const GROUP_LABELS: Record<SelfCultivationGuideGroup, string> = {
   TAI_XUONG: "Tải xuống",
 };
 
+const DOMAIN_BOUNDARIES = [
+  {
+    title: "Kinh văn tự tu",
+    description: "Content-first reference surface cho cách dùng, bảo quản, source và printable. Không giữ tiến độ cá nhân.",
+    owner: "Content / Self-cultivation",
+  },
+  {
+    title: "Ngôi Nhà Nhỏ",
+    description: "Knowledge hub riêng cho nghi thức, cách chấm đỏ, quy trình đốt, hủy tờ sai và case variants.",
+    owner: "Content / Little House",
+    href: "/noi-dung/ngoi-nha-nho",
+  },
+  {
+    title: "Sớ / hồ sơ Ngôi Nhà Nhỏ",
+    description: "Operational records, dotting, combustion và fraud queue. Đây là engagement/admin ops, không phải nội dung hướng dẫn.",
+    owner: "Engagement / Little House",
+    href: "/so/danh-sach",
+  },
+];
+
+const SELF_CULTIVATION_WORKFLOW = [
+  "Giữ grouped IA: bắt đầu, cách dùng, bảo quản, trường hợp sử dụng, FAQ, tải xuống.",
+  "Những flow giống Ngôi Nhà Nhỏ chỉ được link chéo với boundary note, không copy wording mù.",
+  "Biểu mẫu/PDF phải đi qua media/download chính thức để giữ provenance và audit.",
+  "Luồng đốt/rủi ro là tham chiếu vận hành; user-state thật thuộc engagement module.",
+];
+
 function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
   return status === "PUBLISHED"
     ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400"
@@ -45,6 +73,7 @@ function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
 
 const createGuideSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   summary: z.string().trim().min(1, "Tóm tắt không được để trống."),
   groupKey: z.enum(["BAT_DAU", "CACH_DUNG", "BAO_QUAN", "TRUONG_HOP_SU_DUNG", "TAI_XUONG"]),
   sourceReference: z.string().trim().min(1, "Phải có sourceReference."),
@@ -110,6 +139,7 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
   const form = useAdminZodForm(createGuideSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       summary: "",
       groupKey: "CACH_DUNG",
       sourceReference: "",
@@ -120,10 +150,12 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title: values.title, entityType: "SELF_CULTIVATION_GUIDE" });
+  const lastSlugRef = useRef(slug);
 
   const reset = () => {
     form.reset({
       title: "",
+      slug: "",
       summary: "",
       groupKey: "CACH_DUNG",
       sourceReference: "",
@@ -133,9 +165,17 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
     resetSlug();
   };
 
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
   const handleSave = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
 
@@ -180,19 +220,25 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
               <span className="text-sm font-medium">Slug</span>
               <div className="relative">
                 <Input
+                  name="slug"
                   value={slug}
-                  onChange={(event) => setSlug(event.target.value)}
+                  onChange={(event) => {
+                    form.clearErrors("slug");
+                    form.setValue("slug", event.target.value, { shouldDirty: true });
+                    setSlug(event.target.value);
+                  }}
                   placeholder="tu-dong-tao-neu-de-trong"
-                  className={slugStatus === "taken" ? "border-destructive" : undefined}
+                  className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                  aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                   style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                 />
-                {slugStatus !== "idle" && (
+                {(slugStatus !== "idle" || errors.slug) && (
                   <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <SlugStatusIcon status={slugStatus} />
+                    <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                   </span>
                 )}
               </div>
-              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+              <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
             </label>
             <label className="grid gap-1.5">
               <span className="text-sm font-medium">Nhóm</span>
@@ -225,7 +271,7 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
         </div>
         <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={() => void handleSave()} disabled={createGuide.isPending}>{createGuide.isPending ? "Đang tạo..." : "Thêm guide"}</Button>
+          <Button onClick={() => void handleSave()} disabled={createGuide.isPending || !values.title.trim() || slugStatus === "taken"}>{createGuide.isPending ? "Đang tạo..." : "Thêm guide"}</Button>
         </div>
     <WorkspaceDetailStandardSections />
     </WorkspaceDetailSheet>
@@ -361,6 +407,51 @@ export function SelfCultivationWorkspacePage() {
         </CardContent>
       </Card>
 
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.6fr)]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Ranh giới quản trị</CardTitle>
+            <CardDescription>
+              Kinh văn tự tu có liên hệ với Ngôi Nhà Nhỏ, nhưng không cùng owner. Admin chỉ link chéo và giữ source rõ.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-3">
+            {DOMAIN_BOUNDARIES.map((item) => (
+              <div key={item.title} className="flex min-h-36 flex-col justify-between rounded-lg border bg-muted/20 p-4">
+                <div className="space-y-2">
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm leading-5 text-muted-foreground">{item.description}</p>
+                  <Badge variant="outline">{item.owner}</Badge>
+                </div>
+                {item.href ? (
+                  <Button asChild variant="outline" size="sm" className="mt-4 justify-between">
+                    <Link to={item.href}>
+                      Mở workspace
+                      <ArrowRightIcon className="size-4" />
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Checklist đúng design</CardTitle>
+            <CardDescription>Operator nhìn vào đây để biết màn này được phép quản lý gì.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {SELF_CULTIVATION_WORKFLOW.map((item) => (
+              <div key={item} className="flex gap-2 text-sm leading-5">
+                <CheckCircle2Icon className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+                <span>{item}</span>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
       <Tabs defaultValue="tong-quan" className="space-y-4">
         <TabsList className="h-auto flex-wrap gap-1 p-1">
           <TabsTrigger value="tong-quan">Tổng quan</TabsTrigger>
@@ -369,8 +460,14 @@ export function SelfCultivationWorkspacePage() {
           <TabsTrigger value="truong-hop">Trường hợp sử dụng</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
           <TabsTrigger value="tai-xuong">Tải xuống</TabsTrigger>
-          <TabsTrigger value="bieu-mau">Biểu mẫu tự tu</TabsTrigger>
-          <TabsTrigger value="luong-dot">Luồng đốt & rủi ro</TabsTrigger>
+          <TabsTrigger value="bieu-mau">
+            <FileTextIcon className="mr-1.5 size-3.5" />
+            Biểu mẫu
+          </TabsTrigger>
+          <TabsTrigger value="luong-dot">
+            <FlameIcon className="mr-1.5 size-3.5" />
+            Rủi ro
+          </TabsTrigger>
           <TabsTrigger value="version">Version / nguồn</TabsTrigger>
         </TabsList>
 

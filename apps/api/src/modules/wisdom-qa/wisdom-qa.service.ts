@@ -54,6 +54,18 @@ type OfflineBundleManifest = {
   manifestItems: OfflineBundleManifestItem[];
 };
 
+function slugConflictException() {
+  return new ConflictException({
+    code: "CONFLICT",
+    message: "Slug này đã được dùng.",
+    detail: {
+      properties: { slug: { errors: ["Slug này đã được dùng."] } },
+      fieldErrors: { slug: "Slug này đã được dùng." },
+      fields: ["slug"],
+    },
+  });
+}
+
 @Injectable()
 export class WisdomQaService {
   private static readonly OFFLINE_FAMILIES: OfflineBundleFamily[] = ["baihua", "wisdom", "practices"];
@@ -226,7 +238,7 @@ export class WisdomQaService {
   async createWisdomEntry(input: CreateWisdomEntryInput, userId: string, auditContext: AuditContext) {
     const slug = input.slug ?? `wisdom-${nanoid(8)}`;
     const existing = await this.prisma.wisdomEntry.findUnique({ where: { slug } });
-    if (existing) throw new ConflictException("Slug đã được sử dụng");
+    if (existing) throw slugConflictException();
 
     const entry = await this.prisma.wisdomEntry.create({
       data: {
@@ -255,7 +267,7 @@ export class WisdomQaService {
 
     if (input.slug && input.slug !== entry.slug) {
       const existing = await this.prisma.wisdomEntry.findUnique({ where: { slug: input.slug } });
-      if (existing) throw new ConflictException("Slug đã được sử dụng");
+      if (existing) throw slugConflictException();
     }
 
     const updated = await this.prisma.wisdomEntry.update({

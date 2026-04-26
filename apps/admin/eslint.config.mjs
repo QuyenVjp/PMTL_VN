@@ -16,14 +16,4 @@ export default [...baseConfig, {
       tsconfigRootDir: import.meta.dirname,
     },
   },
-}, {
-  files: [".storybook/*.ts"],
-  languageOptions: {
-    parserOptions: {
-      projectService: {
-        allowDefaultProject: [".storybook/*.ts"],
-      },
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
 }, ...storybook.configs["flat/recommended"]];

@@ -12,7 +12,6 @@ import {
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { applicantListOptions, type ApplicantListItem } from "./queries.js";
 import {
   APPLICANT_STATUS_LABELS,
@@ -21,26 +20,10 @@ import {
   type SacredFormType,
 } from "./types.js";
 
-type ReviewDialogType = "APPROVE" | "REJECT" | "PROBATION" | null;
-
-export function SacredFormApplicantsTable({
-  onAction,
-}: {
-  onAction: (type: ReviewDialogType, applicant: ApplicantListItem) => void;
-}) {
+export function SacredFormApplicantsTable() {
   const [selectedApplicant, setSelectedApplicant] = useState<ApplicantListItem | null>(null);
   const { data: envelope, isLoading } = useQuery(applicantListOptions());
   const applicants = useMemo(() => envelope?.data ?? [], [envelope]);
-
-  const canReview =
-    selectedApplicant?.status === "PENDING" || selectedApplicant?.status === "UNDER_REVIEW";
-
-  function handleReviewAction(type: ReviewDialogType) {
-    if (!selectedApplicant) return;
-    const applicant = selectedApplicant;
-    setSelectedApplicant(null);
-    onAction(type, applicant);
-  }
 
   const applicantColumns: ColumnDef<ApplicantListItem>[] = useMemo(
     () => [
@@ -124,25 +107,6 @@ export function SacredFormApplicantsTable({
             </Badge>
           )
         }
-        primaryActions={
-          canReview ? (
-            <>
-              <Button size="sm" variant="outline" onClick={() => handleReviewAction("PROBATION")}>
-                Thử thách
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                onClick={() => handleReviewAction("REJECT")}
-              >
-                Từ chối
-              </Button>
-              <Button size="sm" onClick={() => handleReviewAction("APPROVE")}>
-                Duyệt
-              </Button>
-            </>
-          ) : undefined
-        }
       >
         {selectedApplicant && (
           <WorkspaceDetailSection title="Thông tin đơn">
@@ -187,7 +151,11 @@ export function SacredFormApplicantsTable({
             )}
           </WorkspaceDetailSection>
         )}
-      <WorkspaceDetailStandardSections />
+        <WorkspaceDetailStandardSections
+          editNote="Đơn Pháp Bảo hiện ở phạm vi hygiene-only theo design; admin chỉ xem đơn, chưa mở duyệt/từ chối/thử thách trong UI."
+          auditNote="Audit xét duyệt sẽ hiển thị khi sacred-forms có admin triple và role narrowing đầy đủ."
+          dangerNote="Không thực hiện thao tác duyệt hoặc miễn điều kiện khi contract vận hành chưa được chốt."
+        />
       </WorkspaceDetailSheet>
     </>
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -44,6 +44,7 @@ import {
   useDeletePost,
 } from "@/features/content/mutations";
 import { postDetailOptions } from "@/features/content/queries";
+import { auditListOptions, type AuditLogItem } from "@/features/system/audit-queries";
 import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { invalidFieldClass } from "@/lib/form-validation";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
@@ -68,6 +69,7 @@ const POST_TYPE_OPTIONS = [
 
 const postDetailSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   postType: z.string().trim().min(1),
   sourceRef: z.string().trim().optional(),
 });
@@ -191,6 +193,44 @@ function DetailSidebar({
   );
 }
 
+function auditActionLabel(action: string): string {
+  if (action === "content.create") return "Tạo bài";
+  if (action === "content.update") return "Cập nhật";
+  if (action === "content.publish") return "Xuất bản";
+  if (action === "content.unpublish") return "Gỡ xuất bản";
+  if (action === "content.delete") return "Xoá";
+  return action;
+}
+
+function AuditTrailSection({ logs }: { logs: AuditLogItem[] }) {
+  return (
+    <AdminDetailSection
+      title="Audit"
+      description="Lịch sử thao tác gần nhất trên bản ghi này."
+    >
+      {logs.length > 0 ? (
+        <div className="space-y-3">
+          {logs.map((log) => (
+            <div key={log.publicId} className="rounded-md border border-border/70 px-3 py-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium">{auditActionLabel(log.action)}</span>
+                <span className="text-[11px] text-muted-foreground">
+                  {new Date(log.occurredAt).toLocaleString("vi-VN")}
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-muted-foreground">
+                Người thao tác: {log.actorId ?? "Hệ thống"}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-muted-foreground">Chưa có audit log cho bài viết này.</p>
+      )}
+    </AdminDetailSection>
+  );
+}
+
 function FeaturedImageSection({
   featuredImageId,
   setFeaturedImageId,
@@ -253,18 +293,24 @@ function EditableForm({
           <AdminFormField label="Slug">
             <div className="relative">
               <Input
+                name="slug"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                className={invalidFieldClass(slugStatus === "taken")}
+                onChange={(e) => {
+                  form.clearErrors("slug");
+                  form.setValue("slug", e.target.value, { shouldDirty: true });
+                  setSlug(e.target.value);
+                }}
+                className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                 style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
               />
-              {slugStatus !== "idle" && (
+              {(slugStatus !== "idle" || errors.slug) && (
                 <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                  <SlugStatusIcon status={slugStatus} />
+                  <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                 </span>
               )}
             </div>
-            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+            <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
           </AdminFormField>
 
           <AdminFormField label="Loại bài viết">
@@ -447,6 +493,14 @@ export function PostDetailPage() {
   const { data: post, isLoading, isError } = useQuery(
     postDetailOptions(publicId ?? ""),
   );
+  const { data: auditEnvelope } = useQuery(
+    auditListOptions({
+      resource: "post",
+      resourceId: publicId ?? "",
+      limit: 5,
+      offset: 0,
+    }),
+  );
 
   const updatePost = useUpdatePost();
   const publishPost = usePublishPost();
@@ -455,17 +509,20 @@ export function PostDetailPage() {
   const form = useAdminZodForm(postDetailSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       postType: "ARTICLE",
       sourceRef: "",
     },
   });
   const values = form.watch();
-  const { slug, setSlug, slugStatus } = useSlugField({
+  const postPublicId = post?.publicId ?? post?.id;
+  const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
     title: values.title,
     entityType: "POST",
-    excludePublicId: post?.publicId,
+    excludePublicId: postPublicId,
     initialSlug: post?.slug,
   });
+  const lastSlugRef = useRef(slug);
   const [bodyHtml, setBodyHtml] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
@@ -476,21 +533,30 @@ export function PostDetailPage() {
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
   // Sync form state when post loads
   useEffect(() => {
     if (!post) return;
     form.reset({
       title: post.title,
+      slug: post.slug,
       postType: post.postType,
       sourceRef: post.sourceRef ?? "",
     });
-    setSlug(post.slug);
+    setSlugFromServer(post.slug, post.title);
     setBodyHtml(readPostBodyHtml(post.content));
     setFeaturedImageId("");
     setFeaturedImageChanged(false);
     setFeatured(post.featured);
     setAllowComments(post.allowComments);
-  }, [form, post, setSlug]);
+  }, [form, post, setSlugFromServer]);
 
   const handleSave = form.handleSubmit((formValues) => {
     const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
@@ -499,7 +565,7 @@ export function PostDetailPage() {
       return;
     }
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
 
@@ -619,6 +685,7 @@ export function PostDetailPage() {
               allowComments={allowComments}
               setAllowComments={setAllowComments}
             />
+            <AuditTrailSection logs={auditEnvelope?.data ?? []} />
           </>
         }
       >

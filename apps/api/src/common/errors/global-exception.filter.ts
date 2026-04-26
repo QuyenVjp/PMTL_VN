@@ -105,8 +105,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         const resp = exceptionResponse as Record<string, unknown>;
         code = (resp.code as string) ?? (resp.error as string) ?? "HTTP_ERROR";
         message = (resp.message as string) ?? exception.message;
-        if (resp.detail && typeof resp.detail === "object") {
-          details = resp.detail as Record<string, unknown>;
+        const rawDetails = resp.detail ?? resp.details;
+        if (rawDetails && typeof rawDetails === "object") {
+          details = rawDetails as Record<string, unknown>;
         }
       } else {
         message = exception.message;

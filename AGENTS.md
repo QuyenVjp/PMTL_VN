@@ -77,6 +77,7 @@
 
 ## Skill Routing
 - Workflow routing and skill selection order: `.agents/skills/pmtl-workflow-router/SKILL.md`
+- Pre-code discipline for non-trivial implementation, refactor, bugfix, review, seed/data reset, or broad "fix all / 100%" requests: `.agents/skills/pmtl-karpathy-coding-discipline/SKILL.md`
 - GitNexus-first bugfix / refactor / feature workflow: `gitnexus_query` + `gitnexus_impact` + `gitnexus_detect_changes` (see GitNexus section below)
 - Skill design, audit, and evolution of repo-local skills: `.agents/skills/pmtl-skill-governance/SKILL.md`
 - External AI CLI routing and worker selection: `.agents/skills/pmtl-multi-cli-orchestrator/SKILL.md`
@@ -99,6 +100,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 
 ## Skill Routing Order
 - Treat `.agents/skills/*` PMTL skills as the canonical routing layer for this repo.
+- For any non-trivial code edit, run `pmtl-karpathy-coding-discipline` before narrower implementation skills. It is the repo-local default even if the global `karpathy-guidelines` skill is unavailable or does not auto-trigger.
 - Use `pmtl-workflow-router` first when the task spans multiple phases such as planning, implementation, review, or verification.
 - Use Superpowers as the generic workflow engine for brainstorming, plans, subagent execution, code review, debugging, and TDD.
 - Use global platform skills only for tool-oriented integrations such as Playwright, Next.js helpers, shadcn, Auth.js, or browser automation.
@@ -142,6 +144,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 ## Agent Operating Model
 - In this repo, Codex acts as the primary senior delivery engineer: design-first, full-stack, and responsible for turning `design/` into repo-aligned implementation or repo-aligned docs.
 - Codex owns final synthesis, final patch direction, and final verification. Subagents and external workers provide bounded analysis or second opinions only.
+- Before editing code, Codex must apply `pmtl-karpathy-coding-discipline`: state the concrete outcome, keep the patch surgical, avoid speculative abstractions, and define targeted verification.
 - Route work in this order: repo-local PMTL skills -> local subagents -> external workers when they add clear leverage.
 - Use local subagents first for repo exploration, drift detection, parallel reading, and option generation. Do not escalate externally just to answer "what does this repo say?"
 - Repo-local reusable agent specs live in `.claude/agents/README.md`; keep those role files aligned with `design/` and this `AGENTS.md` instead of treating them as freeform personas.

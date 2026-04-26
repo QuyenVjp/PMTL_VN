@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -34,6 +34,7 @@ const ENTRY_TYPE_OPTIONS = [
 
 const wisdomDetailSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]),
   sourceCode: z.string().trim().optional(),
   sourceUrl: z.string().trim().optional(),
@@ -77,6 +78,7 @@ export function WisdomDetailPage() {
   const form = useAdminZodForm(wisdomDetailSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       entryType: "BACH_THOAI",
       sourceCode: "",
       sourceUrl: "",
@@ -87,19 +89,29 @@ export function WisdomDetailPage() {
   });
   const { errors } = form.formState;
   const values = form.watch();
-  const { slug, setSlug, slugStatus } = useSlugField({
+  const { slug, setSlug, setSlugFromServer, slugStatus } = useSlugField({
     title: values.title,
     entityType: "WISDOM",
     excludePublicId: entry?.publicId,
     initialSlug: entry?.slug,
   });
+  const lastSlugRef = useRef(slug);
   const [confirmPublish, setConfirmPublish] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
 
   useEffect(() => {
     if (!entry) return;
     form.reset({
       title: entry.title,
+      slug: entry.slug,
       entryType: entry.entryType,
       sourceCode: entry.sourceCode ?? "",
       sourceUrl: entry.sourceUrl ?? "",
@@ -107,8 +119,8 @@ export function WisdomDetailPage() {
       originalText: entry.originalText ?? "",
       translatedText: entry.translatedText ?? "",
     });
-    setSlug(entry.slug);
-  }, [entry, form, setSlug]);
+    setSlugFromServer(entry.slug, entry.title);
+  }, [entry, form, setSlugFromServer]);
 
   const handleSave = form.handleSubmit((formValues) => {
     const entryKey = entry?.publicId ?? publicId ?? "";
@@ -118,7 +130,7 @@ export function WisdomDetailPage() {
     }
 
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
 
@@ -202,22 +214,27 @@ export function WisdomDetailPage() {
             </AdminFormField>
 
             <div className="grid items-start gap-4 md:grid-cols-2">
-              <AdminFormField label="Slug" invalid={slugStatus === "taken"}>
+              <AdminFormField label="Slug" invalid={slugStatus === "taken" || Boolean(errors.slug)}>
                 <div className="relative">
                   <Input
+                    name="slug"
                     value={slug}
-                    onChange={(event) => setSlug(event.target.value)}
-                    aria-invalid={slugStatus === "taken"}
-                    className={invalidFieldClass(slugStatus === "taken")}
+                    onChange={(event) => {
+                      form.clearErrors("slug");
+                      form.setValue("slug", event.target.value, { shouldDirty: true });
+                      setSlug(event.target.value);
+                    }}
+                    aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
+                    className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
                     style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                   />
-                  {slugStatus !== "idle" && (
+                  {(slugStatus !== "idle" || errors.slug) && (
                     <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                      <SlugStatusIcon status={slugStatus} />
+                      <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                     </span>
                   )}
                 </div>
-                <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+                <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
               </AdminFormField>
 
               <AdminFormField label="Loại bài">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { z } from "zod";
 
@@ -44,6 +44,7 @@ const POST_TYPE_OPTIONS = [
 
 const postCreateSchema = z.object({
   title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  slug: z.string().trim().optional(),
   postType: z.string().trim().min(1),
   sourceRef: z.string().trim().optional(),
 });
@@ -134,6 +135,7 @@ export function PostCreatePage() {
   const form = useAdminZodForm(postCreateSchema, {
     defaultValues: {
       title: "",
+      slug: "",
       postType: "ARTICLE",
       sourceRef: "",
     },
@@ -141,14 +143,23 @@ export function PostCreatePage() {
   const { errors } = form.formState;
   const values = form.watch();
   const { slug, setSlug, slugStatus } = useSlugField({ title: values.title, entityType: "POST" });
+  const lastSlugRef = useRef(slug);
   const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
 
+  useEffect(() => {
+    if (lastSlugRef.current !== slug) {
+      lastSlugRef.current = slug;
+      form.setValue("slug", slug, { shouldValidate: false });
+      form.clearErrors("slug");
+    }
+  }, [form, slug]);
+
   const handleSave = form.handleSubmit((formValues) => {
     if (slugStatus === "taken") {
-      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      form.setError("slug", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." }, { shouldFocus: true });
       return;
     }
 
@@ -215,19 +226,25 @@ export function PostCreatePage() {
             <AdminFormField label="Slug">
               <div className="relative">
                 <Input
+                  name="slug"
                   value={slug}
-                  onChange={(e) => setSlug(e.target.value)}
+                  onChange={(e) => {
+                    form.clearErrors("slug");
+                    form.setValue("slug", e.target.value, { shouldDirty: true });
+                    setSlug(e.target.value);
+                  }}
                   placeholder="tu-dong-tao-tu-tieu-de"
-                  className={invalidFieldClass(slugStatus === "taken")}
+                  className={invalidFieldClass(slugStatus === "taken" || Boolean(errors.slug))}
+                  aria-invalid={slugStatus === "taken" || Boolean(errors.slug)}
                   style={{ paddingRight: slugStatus !== "idle" ? "2.25rem" : undefined }}
                 />
-                {slugStatus !== "idle" && (
+                {(slugStatus !== "idle" || errors.slug) && (
                   <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                    <SlugStatusIcon status={slugStatus} />
+                    <SlugStatusIcon status={errors.slug ? "taken" : slugStatus} />
                   </span>
                 )}
               </div>
-              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
+              <FieldError message={errors.slug?.message ?? (slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined)} />
             </AdminFormField>
 
             <AdminFormField label="Loại bài viết">

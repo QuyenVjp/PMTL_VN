@@ -76,7 +76,7 @@ export function EventsCheckInDialog({
               id="memberId"
               {...form.register("memberId")}
               aria-invalid={Boolean(errors.memberId)}
-              className={invalidFieldClass(errors.memberId)}
+              className={invalidFieldClass(Boolean(errors.memberId))}
               placeholder="Nhập mã thành viên cần điểm danh"
               autoFocus
             />

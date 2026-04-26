@@ -98,6 +98,7 @@ export const listPostsQuerySchema = z.object({
 // Post response
 export const postResponseSchema = z.object({
   id: z.string(),
+  publicId: z.string(),
   slug: z.string(),
   title: z.string(),
   postType: z.string(),

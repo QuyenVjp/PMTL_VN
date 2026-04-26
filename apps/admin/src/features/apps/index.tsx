@@ -26,8 +26,8 @@ const appModules = [
     icon: ShieldAlertIcon,
   },
   {
-    name: "Feature flags",
-    description: "Projection policy, rollout scope và audit write-path.",
+    name: "Cờ tính năng",
+    description: "Chính sách projection, phạm vi rollout và audit write-path.",
     connected: false,
     icon: FlagIcon,
   },
@@ -62,35 +62,35 @@ export function AppsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">App Integrations</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Tích hợp module</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Here&apos;s the PMTL module catalog grafted into the original starter slot.
+          Danh mục module PMTL trong slot integrations của starter, dùng để điều hướng nhanh theo nhóm vận hành.
         </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Input
           className="max-w-xs"
-          placeholder="Filter apps..."
-          aria-label="Filter apps"
+          placeholder="Lọc module..."
+          aria-label="Lọc module"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
         <div className="flex items-center gap-2">
           <Button variant={filter === "all" ? "secondary" : "outline"} onClick={() => setFilter("all")}>
-            All Apps
+            Tất cả
           </Button>
           <Button
             variant={filter === "connected" ? "secondary" : "outline"}
             onClick={() => setFilter("connected")}
           >
-            Connected
+            Đã nối
           </Button>
           <Button
             variant={filter === "not-connected" ? "secondary" : "outline"}
             onClick={() => setFilter("not-connected")}
           >
-            Not Connected
+            Chưa nối
           </Button>
         </div>
       </div>
@@ -111,7 +111,7 @@ export function AppsPage() {
                     size="sm"
                     className={module.connected ? "border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-200 dark:hover:bg-blue-900" : ""}
                   >
-                    {module.connected ? "Connected" : "Connect"}
+                    {module.connected ? "Đã nối" : "Kết nối"}
                   </Button>
                 </div>
               </CardHeader>

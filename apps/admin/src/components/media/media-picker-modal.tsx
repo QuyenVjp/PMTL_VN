@@ -611,6 +611,35 @@ interface MediaPickerFieldProps {
   defaultTab?: MediaTab;
 }
 
+const MEDIA_FIELD_COPY: Record<
+  MediaTab,
+  {
+    selectedTitle: string;
+    currentTitle: string;
+    currentHint: string;
+    emptyIcon: React.ReactNode;
+  }
+> = {
+  image: {
+    selectedTitle: "Đã chọn ảnh",
+    currentTitle: "Ảnh hiện tại",
+    currentHint: "Nhấn để đổi ảnh khác",
+    emptyIcon: <ImageIcon className="size-5 text-muted-foreground" />,
+  },
+  video: {
+    selectedTitle: "Đã chọn video",
+    currentTitle: "Video hiện tại",
+    currentHint: "Nhấn để đổi video khác",
+    emptyIcon: <VideoIcon className="size-5 text-muted-foreground" />,
+  },
+  document: {
+    selectedTitle: "Đã chọn tệp",
+    currentTitle: "Tệp hiện tại",
+    currentHint: "Nhấn để đổi tệp khác",
+    emptyIcon: <FileTextIcon className="size-5 text-muted-foreground" />,
+  },
+};
+
 export function MediaPickerField({
   value,
   onChange,
@@ -619,8 +648,10 @@ export function MediaPickerField({
   defaultTab = "image",
 }: MediaPickerFieldProps) {
   const [open, setOpen] = useState(false);
+  const fieldTab = TABS.find((tab) => tab.key === defaultTab) ?? TABS[0];
+  const fieldCopy = MEDIA_FIELD_COPY[fieldTab.key];
 
-  const { data } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
+  const { data } = useQuery(mediaListOptions({ limit: 100, mimeType: fieldTab.mimePrefix }));
   const assets: MediaAssetListItem[] = data?.data ?? [];
   const selectedAsset = assets.find((a) => a.publicId === value) ?? null;
 
@@ -647,27 +678,33 @@ export function MediaPickerField({
         )}
       >
         {displayUrl ? (
-          <img
-            src={displayUrl}
-            alt="Preview"
-            className="size-12 shrink-0 rounded-md border object-cover"
-            loading="lazy"
-          />
+          fieldTab.key === "image" ? (
+            <img
+              src={displayUrl}
+              alt="Preview"
+              className="size-12 shrink-0 rounded-md border object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-md border bg-muted">
+              {fieldCopy.emptyIcon}
+            </div>
+          )
         ) : (
           <div className="flex size-12 shrink-0 items-center justify-center rounded-md border border-dashed bg-muted">
-            <ImageIcon className="size-5 text-muted-foreground" />
+            {fieldCopy.emptyIcon}
           </div>
         )}
         <div className="min-w-0 flex-1">
           {selectedAsset ? (
             <>
-              <p className="text-sm font-medium text-foreground">Đã chọn ảnh</p>
+              <p className="text-sm font-medium text-foreground">{fieldCopy.selectedTitle}</p>
               <p className="truncate text-xs text-muted-foreground">{selectedAsset.filename}</p>
             </>
           ) : currentImageUrl ? (
             <>
-              <p className="text-sm font-medium text-foreground">Ảnh hiện tại</p>
-              <p className="truncate text-xs text-muted-foreground">Nhấn để đổi ảnh khác</p>
+              <p className="text-sm font-medium text-foreground">{fieldCopy.currentTitle}</p>
+              <p className="truncate text-xs text-muted-foreground">{fieldCopy.currentHint}</p>
             </>
           ) : (
             <p className="text-muted-foreground">{placeholder}</p>
