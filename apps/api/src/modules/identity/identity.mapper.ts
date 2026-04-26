@@ -1,7 +1,9 @@
 import type { User } from "../../generated/prisma/client.js";
 import type { AuthResponse } from "./identity.schemas.js";
 
-export function mapUserToAuthResponse(user: Omit<User, "passwordHash">): AuthResponse {
+type AuthResponseUser = Pick<User, "publicId" | "email" | "displayName" | "role" | "avatarUrl">;
+
+export function mapUserToAuthResponse(user: AuthResponseUser): AuthResponse {
   return {
     user: {
       id: user.publicId,

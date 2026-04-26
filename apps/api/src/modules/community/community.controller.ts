@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UsePipes } from "@nestjs/common";
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UsePipes } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { RateLimit } from "../../common/decorators/rate-limit.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
+import { RolesGuard } from "../../common/auth/roles.guard.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { CommunityService } from "./community.service.js";
 import {
@@ -147,6 +148,7 @@ export class CommunityController {
 
 @ApiTags("admin-community")
 @Controller("admin/community")
+@UseGuards(RolesGuard)
 @Roles("ADMIN", "SUPER_ADMIN")
 export class AdminCommunityController {
   constructor(private readonly communityService: CommunityService) {}

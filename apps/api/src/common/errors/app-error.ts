@@ -34,7 +34,7 @@ export class AppError extends Error {
 export class NotFoundError extends AppError {
   constructor(resource: string, id?: string) {
     super({
-      code: "NOT_FOUND",
+      code: "platform.not_found",
       message: id ? `${resource} với ID '${id}' không tồn tại` : `${resource} không tồn tại`,
       statusCode: 404,
       details: { resource, id },
@@ -45,7 +45,7 @@ export class NotFoundError extends AppError {
 export class UnauthorizedError extends AppError {
   constructor(message = "Chưa xác thực") {
     super({
-      code: "UNAUTHORIZED",
+      code: "auth.session_missing",
       message,
       statusCode: 401,
     });
@@ -55,7 +55,7 @@ export class UnauthorizedError extends AppError {
 export class ForbiddenError extends AppError {
   constructor(message = "Không có quyền truy cập") {
     super({
-      code: "FORBIDDEN",
+      code: "auth.forbidden",
       message,
       statusCode: 403,
     });
@@ -65,7 +65,7 @@ export class ForbiddenError extends AppError {
 export class ValidationError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({
-      code: "VALIDATION_ERROR",
+      code: "validation.constraint_failed",
       message,
       statusCode: 400,
       details,
@@ -76,7 +76,7 @@ export class ValidationError extends AppError {
 export class ConflictError extends AppError {
   constructor(message: string, details?: Record<string, unknown>) {
     super({
-      code: "CONFLICT",
+      code: "platform.conflict",
       message,
       statusCode: 409,
       details,
@@ -87,7 +87,7 @@ export class ConflictError extends AppError {
 export class RateLimitError extends AppError {
   constructor(retryAfterSeconds?: number) {
     super({
-      code: "RATE_LIMIT_EXCEEDED",
+      code: "rate_limit.exceeded",
       message: "Quá nhiều yêu cầu, vui lòng thử lại sau",
       statusCode: 429,
       details: retryAfterSeconds ? { retryAfter: retryAfterSeconds } : undefined,
@@ -98,7 +98,7 @@ export class RateLimitError extends AppError {
 export class InternalError extends AppError {
   constructor(message = "Lỗi hệ thống", cause?: Error) {
     super({
-      code: "INTERNAL_ERROR",
+      code: "platform.unexpected_error",
       message,
       statusCode: 500,
       cause,

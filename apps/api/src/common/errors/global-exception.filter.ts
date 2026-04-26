@@ -70,6 +70,41 @@ function extractPrismaValidationFields(message: string): string[] {
   return [...fields];
 }
 
+function canonicalErrorCode(code: string, statusCode: number): string {
+  const normalized = code.trim();
+  const status = Number(statusCode);
+  const legacyMap: Record<string, string> = {
+    NOT_FOUND: "platform.not_found",
+    UNAUTHORIZED: "auth.session_missing",
+    Unauthorized: "auth.session_missing",
+    FORBIDDEN: "auth.forbidden",
+    Forbidden: "auth.forbidden",
+    VALIDATION_ERROR: "validation.invalid_body",
+    BadRequest: "validation.invalid_body",
+    CONFLICT: "platform.conflict",
+    Conflict: "platform.conflict",
+    RATE_LIMIT_EXCEEDED: "rate_limit.exceeded",
+    INTERNAL_ERROR: "platform.unexpected_error",
+    HTTP_ERROR: "platform.unexpected_error",
+  };
+
+  if (legacyMap[normalized]) {
+    return legacyMap[normalized];
+  }
+
+  if (normalized.includes(".")) {
+    return normalized;
+  }
+
+  if (status === 401) return "auth.session_missing";
+  if (status === 403) return "auth.forbidden";
+  if (status === 404) return "platform.not_found";
+  if (status === 409) return "platform.conflict";
+  if (status === 429) return "rate_limit.exceeded";
+  if (status >= 400 && status < 500) return "validation.constraint_failed";
+  return "platform.unexpected_error";
+}
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   constructor(@Inject(Logger) private readonly logger: Logger) {}
@@ -145,7 +180,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       // P2002 unique constraint, P2025 not found, etc.
       if (exception.code === "P2002") {
         statusCode = HttpStatus.CONFLICT;
-        code = "CONFLICT";
+        code = "prisma.unique_conflict";
         message = "Dữ liệu đã tồn tại (unique constraint).";
         const target = exception.meta?.target;
         details = fieldDetails(
@@ -154,17 +189,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         );
       } else if (exception.code === "P2003") {
         statusCode = HttpStatus.BAD_REQUEST;
-        code = "INVALID_REFERENCE";
+        code = "prisma.foreign_key_conflict";
         message = "Dữ liệu tham chiếu không hợp lệ (khóa ngoại).";
         const fieldName = exception.meta?.field_name;
         details = fieldDetails(typeof fieldName === "string" ? [fieldName] : [], "Dữ liệu tham chiếu không hợp lệ.");
       } else if (exception.code === "P2025") {
         statusCode = HttpStatus.NOT_FOUND;
-        code = "NOT_FOUND";
+        code = "prisma.record_not_found";
         message = "Không tìm thấy bản ghi liên quan.";
       } else if (exception.code === "P2021" || exception.code === "P2022") {
         statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-        code = "DB_SCHEMA_MISMATCH";
+        code = "prisma.migration_failed";
         message = "Schema cơ sở dữ liệu chưa đồng bộ với API.";
         details = {
           prismaCode: exception.code,
@@ -172,7 +207,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         };
       } else {
         statusCode = HttpStatus.BAD_REQUEST;
-        code = "DB_ERROR";
+        code = "prisma.query_invalid";
         message = "Lỗi truy vấn dữ liệu.";
       }
       this.logger.error(
@@ -181,7 +216,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     } else if (exception instanceof Prisma.PrismaClientValidationError) {
       statusCode = HttpStatus.BAD_REQUEST;
-      code = "VALIDATION_ERROR";
+      code = "validation.constraint_failed";
       message = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các trường trong form.";
       details = fieldDetails(
         extractPrismaValidationFields(exception.message),
@@ -212,7 +247,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const envelope: CanonErrorEnvelope = {
       error: {
-        code,
+        code: canonicalErrorCode(code, statusCode),
         message,
         status: statusCode,
         requestId,

@@ -48,7 +48,7 @@ export class ZodValidationPipe implements PipeTransform {
         : { formErrors: ["Validation failed"], details: result.error };
 
     throw new BadRequestException({
-      code: "VALIDATION_ERROR",
+      code: "validation.invalid_body",
       message: "Dữ liệu không hợp lệ",
       detail,
     });

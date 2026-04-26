@@ -50,6 +50,20 @@ export interface AuthSessionStateDto {
 const RESET_TOKEN_BYTES = 48;
 /** Password-reset token validity window. */
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
+const AUTH_USER_SELECT = {
+  id: true,
+  publicId: true,
+  email: true,
+  displayName: true,
+  role: true,
+  avatarUrl: true,
+  status: true,
+  emailVerifiedAt: true,
+} as const;
+const LOGIN_USER_SELECT = {
+  ...AUTH_USER_SELECT,
+  passwordHash: true,
+} as const;
 
 @Injectable()
 export class IdentityService {
@@ -71,6 +85,7 @@ export class IdentityService {
   async login(input: LoginInput, metadata: { userAgent?: string; ipAddress?: string }) {
     const user = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
+      select: LOGIN_USER_SELECT,
     });
 
     // Anti-enumeration: same response for invalid email and password
@@ -130,6 +145,7 @@ export class IdentityService {
   async register(input: RegisterInput) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
+      select: { id: true },
     });
 
     if (existingUser) {
@@ -149,6 +165,7 @@ export class IdentityService {
           role: "MEMBER",
           status: "ACTIVE",
         },
+        select: AUTH_USER_SELECT,
       });
       await this.audit.appendInTransaction(
         tx,
@@ -172,7 +189,7 @@ export class IdentityService {
     ]);
 
     return {
-      needsBootstrap: userCount === 0 || adminCount === 0,
+      needsBootstrap: userCount === 0 && adminCount === 0,
       userCount,
       adminCount,
     };
@@ -186,6 +203,7 @@ export class IdentityService {
 
     const existingUser = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
+      select: { id: true },
     });
     if (existingUser) {
       throw new ConflictException("Email đã được sử dụng");
@@ -204,6 +222,7 @@ export class IdentityService {
           role: "SUPER_ADMIN",
           status: "ACTIVE",
         },
+        select: AUTH_USER_SELECT,
       });
 
       await this.audit.appendInTransaction(
@@ -291,6 +310,7 @@ export class IdentityService {
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      select: AUTH_USER_SELECT,
     });
 
     if (!user) {
@@ -307,7 +327,7 @@ export class IdentityService {
    */
   async getAuthSessionState(userId: string, sessionId: string): Promise<AuthSessionStateDto> {
     const [user, session] = await Promise.all([
-      this.prisma.user.findUnique({ where: { id: userId } }),
+      this.prisma.user.findUnique({ where: { id: userId }, select: AUTH_USER_SELECT }),
       this.prisma.session.findUnique({ where: { id: sessionId } }),
     ]);
 
@@ -399,7 +419,10 @@ export class IdentityService {
    * Send/resend email verification token with resend cooldown enforcement.
    */
   async sendEmailVerification(userId: string) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, emailVerifiedAt: true },
+    });
     if (!user) throw new BadRequestException("Người dùng không tồn tại");
     if (user.emailVerifiedAt) throw new BadRequestException("Email đã được xác minh");
 
@@ -478,6 +501,7 @@ export class IdentityService {
   async changePassword(userId: string, input: ChangePasswordInput, auditContext: AuditContext) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      select: { id: true, publicId: true, passwordHash: true },
     });
 
     if (!user) {
@@ -513,6 +537,7 @@ export class IdentityService {
   async requestPasswordReset(input: ForgotPasswordInput) {
     const user = await this.prisma.user.findUnique({
       where: { email: input.email.toLowerCase() },
+      select: { id: true, publicId: true, email: true },
     });
 
     // Anti-enumeration: return silently if user not found
@@ -624,7 +649,10 @@ export class IdentityService {
     userId: string,
     metadata: { actorId: string; actorType: "user"; ipAddress?: string; userAgent?: string },
   ) {
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, publicId: true },
+    });
     if (!user) {
       throw new BadRequestException("Tài khoản không tồn tại");
     }

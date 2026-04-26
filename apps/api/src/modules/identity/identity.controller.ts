@@ -86,6 +86,7 @@ export class IdentityController {
 
   @Get("bootstrap-status")
   @Public()
+  @RateLimit("auth.login")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Kiểm tra trạng thái khởi tạo admin đầu tiên" })
   @ApiResponse({ status: 200, description: "Trạng thái bootstrap" })

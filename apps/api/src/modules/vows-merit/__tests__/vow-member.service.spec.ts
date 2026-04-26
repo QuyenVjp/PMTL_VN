@@ -14,6 +14,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { NotFoundException, BadRequestException } from "@nestjs/common";
 import { VowMemberService } from "../vow-member.service.js";
 import { PrismaService } from "../../../common/prisma/prisma.service.js";
+import { AuditService } from "../../../platform/audit/audit.service.js";
 import type { CreateVowInput, MemberVowQuery, FulfillVowInput, UpdateVowProgressInput, AddMeritTransferInput } from "../vow-member.schemas.js";
 
 // ─── Fixture helpers ──────────────────────────────────────────────────────────
@@ -56,6 +57,9 @@ describe("VowMemberService", () => {
     };
     $transaction: ReturnType<typeof vi.fn>;
   };
+  let auditMock: {
+    appendInTransaction: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     prismaMock = {
@@ -71,7 +75,10 @@ describe("VowMemberService", () => {
         create: vi.fn(),
         findMany: vi.fn(),
       },
-      $transaction: vi.fn(),
+      $transaction: vi.fn(async (callback: (tx: typeof prismaMock) => unknown) => callback(prismaMock)),
+    };
+    auditMock = {
+      appendInTransaction: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -80,6 +87,10 @@ describe("VowMemberService", () => {
         {
           provide: PrismaService,
           useValue: prismaMock,
+        },
+        {
+          provide: AuditService,
+          useValue: auditMock,
         },
       ],
     }).compile();

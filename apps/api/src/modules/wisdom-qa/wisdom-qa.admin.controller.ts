@@ -10,11 +10,13 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiParam, ApiResponse } from "@nestjs/swagger";
 import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
+import { RolesGuard } from "../../common/auth/roles.guard.js";
 import type { Request as ExpressRequest } from "express";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { WisdomQaService } from "./wisdom-qa.service.js";
@@ -49,6 +51,7 @@ import {
 
 @ApiTags("admin-wisdom")
 @Controller("admin/wisdom")
+@UseGuards(RolesGuard)
 export class WisdomQaAdminController {
   constructor(private readonly wisdomQaService: WisdomQaService) {}
 

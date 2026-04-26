@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException, BadRequestException, Logger } from "@nestjs/common";
 import { nanoid } from "nanoid";
-import pino from "pino";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { AuditService } from "../../platform/audit/audit.service.js";
 import type {
   CreateVowInput,
   UpdateVowProgressInput,
@@ -13,25 +13,39 @@ import type {
 
 @Injectable()
 export class VowMemberService {
-  private readonly logger = pino({ name: VowMemberService.name });
+  private readonly logger = new Logger(VowMemberService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   async createVow(input: CreateVowInput, userId: string) {
-    const vow = await this.prisma.vow.create({
-      data: {
-        publicId: nanoid(21),
-        userId,
-        vowType: input.vowType,
-        description: input.description,
-        targetCount: input.targetCount ?? null,
-        currentCount: 0,
-        status: "ACTIVE",
-        startDate: new Date(input.startDate),
-        endDate: input.endDate ? new Date(input.endDate) : null,
-      },
+    const vow = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.vow.create({
+        data: {
+          publicId: nanoid(21),
+          userId,
+          vowType: input.vowType,
+          description: input.description,
+          targetCount: input.targetCount ?? null,
+          currentCount: 0,
+          status: "ACTIVE",
+          startDate: new Date(input.startDate),
+          endDate: input.endDate ? new Date(input.endDate) : null,
+        },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "vow.create",
+        "vow",
+        created.publicId,
+        { vowType: input.vowType, targetCount: input.targetCount ?? null },
+      );
+      return created;
     });
-    this.logger.info({ msg: "vow.created", userId, publicId: vow.publicId, vowType: input.vowType });
+    this.logger.log({ msg: "vow.created", userId, publicId: vow.publicId, vowType: input.vowType });
     return this.toDto(vow, []);
   }
 
@@ -46,12 +60,23 @@ export class VowMemberService {
 
     // Atomic increment — avoids read-modify-write race condition when concurrent
     // requests update the same vow simultaneously.
-    const updated = await this.prisma.vow.update({
-      where: { id: vow.id },
-      data: { currentCount: { increment: input.addCount } },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.vow.update({
+        where: { id: vow.id },
+        data: { currentCount: { increment: input.addCount } },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "vow.progress",
+        "vow",
+        input.publicId,
+        { addCount: input.addCount, newTotal: result.currentCount },
+      );
+      return result;
     });
 
-    this.logger.info({
+    this.logger.log({
       msg: "vow.progress_updated",
       userId,
       publicId: input.publicId,
@@ -70,12 +95,23 @@ export class VowMemberService {
       throw new BadRequestException("Nguyện lực không ở trạng thái active");
     }
 
-    const updated = await this.prisma.vow.update({
-      where: { id: vow.id },
-      data: { status: "COMPLETED" },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.vow.update({
+        where: { id: vow.id },
+        data: { status: "COMPLETED" },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "vow.fulfill",
+        "vow",
+        input.publicId,
+        { previousStatus: vow.status, nextStatus: "COMPLETED" },
+      );
+      return result;
     });
 
-    this.logger.info({ msg: "vow.fulfilled", userId, publicId: input.publicId });
+    this.logger.log({ msg: "vow.fulfilled", userId, publicId: input.publicId });
     return this.toDto(updated, []);
   }
 
@@ -96,17 +132,32 @@ export class VowMemberService {
       );
     }
 
-    const transfer = await this.prisma.meritTransfer.create({
-      data: {
-        publicId: nanoid(21),
-        vowId: vow.id,
-        transferPercent: input.transferPercent,
-        targetLabel: input.targetLabel,
-        note: input.note ?? null,
-      },
+    const transfer = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.meritTransfer.create({
+        data: {
+          publicId: nanoid(21),
+          vowId: vow.id,
+          transferPercent: input.transferPercent,
+          targetLabel: input.targetLabel,
+          note: input.note ?? null,
+        },
+      });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "merit_transfer.create",
+        "vow",
+        input.vowPublicId,
+        {
+          transferPublicId: created.publicId,
+          transferPercent: input.transferPercent,
+          targetLabel: input.targetLabel,
+        },
+      );
+      return created;
     });
 
-    this.logger.info({
+    this.logger.log({
       msg: "merit_transfer.created",
       userId,
       vowPublicId: input.vowPublicId,
@@ -179,21 +230,39 @@ export class VowMemberService {
       const isCompleted = afterIncrement.targetCount !== null
         && afterIncrement.currentCount >= afterIncrement.targetCount;
       if (isCompleted) {
-        return tx.vow.update({
+        const completed = await tx.vow.update({
           where: { id: vow.id },
           data: { status: "COMPLETED" },
           include: { meritTransfers: true },
         });
+        await this.audit.appendInTransaction(
+          tx,
+          { actorId: userId, actorType: "user" },
+          "vow.fulfill",
+          "vow",
+          vowPublicId,
+          { reason: "milestone_auto_completed", addCount: input.addCount },
+        );
+        return completed;
       }
-      return tx.vow.findUniqueOrThrow({
+      const current = await tx.vow.findUniqueOrThrow({
         where: { id: vow.id },
         include: { meritTransfers: true },
       });
+      await this.audit.appendInTransaction(
+        tx,
+        { actorId: userId, actorType: "user" },
+        "vow.milestone",
+        "vow",
+        vowPublicId,
+        { addCount: input.addCount, newTotal: current.currentCount, note: input.note ?? null },
+      );
+      return current;
     });
 
     const isCompleted = vow.targetCount !== null && updated.currentCount >= vow.targetCount;
 
-    this.logger.info({
+    this.logger.log({
       msg: "vow.milestone_recorded",
       userId,
       vowPublicId,
