@@ -40,7 +40,7 @@ if (endpoint) {
   // Flush remaining spans on graceful shutdown
   process.once("SIGTERM", () => {
     sdk.shutdown().catch((err: unknown) => {
-      console.error("[otel] shutdown error", err);
+      process.stderr.write(`[otel] shutdown error ${err instanceof Error ? err.message : String(err)}\n`);
     });
   });
 }

@@ -5,13 +5,30 @@ import type { TemplateListItem, ApplicantListItem } from "./types.js";
 
 export type { TemplateListItem, ApplicantListItem } from "./types.js";
 
+export type DisposalPolarity = "BURN" | "KEEP" | "OTHER";
+
+export interface DisposalPolarityItem {
+  publicId?: string;
+  id?: string;
+  formType: string;
+  polarity: DisposalPolarity;
+  rule?: string | null;
+  note?: string | null;
+  effectiveAt?: string | null;
+}
+
 export const sacredFormKeys = {
   all: ["sacred-forms"] as const,
-  templates: () => [...sacredFormKeys.all, "templates"] as const,
-  templateList: (f: Record<string, unknown>) => [...sacredFormKeys.templates(), f] as const,
-  applicants: () => [...sacredFormKeys.all, "applicants"] as const,
-  applicantList: (f: Record<string, unknown>) => [...sacredFormKeys.applicants(), f] as const,
-  applicantDetail: (id: string) => [...sacredFormKeys.applicants(), "detail", id] as const,
+  lists: () => [...sacredFormKeys.all, "list"] as const,
+  list: (owner: "templates" | "applicants" | "disposal-polarities", f: Record<string, unknown>) => [...sacredFormKeys.lists(), owner, f] as const,
+  details: () => [...sacredFormKeys.all, "detail"] as const,
+  detail: (owner: "templates" | "applicants", id: string) => [...sacredFormKeys.details(), owner, id] as const,
+  templates: () => [...sacredFormKeys.lists(), "templates"] as const,
+  templateList: (f: Record<string, unknown>) => sacredFormKeys.list("templates", f),
+  applicants: () => [...sacredFormKeys.lists(), "applicants"] as const,
+  applicantList: (f: Record<string, unknown>) => sacredFormKeys.list("applicants", f),
+  applicantDetail: (id: string) => sacredFormKeys.detail("applicants", id),
+  disposalPolarities: () => sacredFormKeys.list("disposal-polarities", {}),
 };
 
 export function templateListOptions(filters: { limit?: number; offset?: number; formType?: string; isActive?: boolean } = {}) {
@@ -38,5 +55,15 @@ export function applicantListOptions(filters: { limit?: number; offset?: number;
   return queryOptions({
     queryKey: sacredFormKeys.applicantList(filters),
     queryFn: () => adminClient.get<ListEnvelope<ApplicantListItem>>("/admin/sacred-forms/applicants", params),
+  });
+}
+
+export function disposalPolaritiesOptions() {
+  return queryOptions({
+    queryKey: sacredFormKeys.disposalPolarities(),
+    queryFn: () =>
+      adminClient.get<{ data: DisposalPolarityItem[] }>(
+        "/admin/sacred-forms/disposal-polarities",
+      ),
   });
 }

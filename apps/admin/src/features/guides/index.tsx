@@ -45,7 +45,7 @@ export function GuidesPage({
 export function DailyPracticePage() {
   return (
     <GuidesPage
-      title="Kinh Bài Tập"
+      title="Kinh bài tập"
       description="Quản lý hướng dẫn hành trì hằng ngày cho thành viên."
       defaultCategory="DAILY_PRACTICE"
       createHref="/noi-dung/kinh-bai-tap/tao-moi"

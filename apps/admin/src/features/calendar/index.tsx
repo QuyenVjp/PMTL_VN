@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -13,23 +13,16 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ListIcon, PencilIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, EyeIcon, ListIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
+import { z } from "zod";
 import { FieldError } from "@/components/ui/field-error";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -42,6 +35,8 @@ import { Calendar as DateCalendar } from "@/components/ui/calendar";
 import {
   WorkspaceConfirmDialog,
   WorkspaceDataTable,
+  WorkspaceDetailSection,
+  WorkspaceDetailSheet,
   WorkspaceRowActions,
 } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
@@ -54,12 +49,11 @@ import {
   type CreateEventInput,
   type UpdateEventInput,
 } from "./mutations.js";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries.js";
-import { useUploadMediaAsset } from "@/features/media/mutations.js";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation.js";
+import { mediaListOptions } from "@/features/media/queries.js";
 import { resolveMediaSrc } from "@/lib/media-src";
-import { ImageAssetPicker } from "@/components/media/image-asset-picker";
-import { extractUploadMediaPayload } from "@/lib/media-upload";
+import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { cn } from "@/lib/utils";
 
 // ── Context ──────────────────────────────────────────────────────────
@@ -255,6 +249,17 @@ const EMPTY_FORM: EventFormState = {
   posterImagePublicId: "",
 };
 
+const eventFormSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  description: z.string().trim().optional(),
+  startAt: z.string().trim().min(1, "Thời gian bắt đầu không được để trống."),
+  endAt: z.string().trim().optional(),
+  location: z.string().trim().optional(),
+  eventType: z.string().trim().min(1),
+  coverImagePublicId: z.string().trim().optional(),
+  posterImagePublicId: z.string().trim().optional(),
+});
+
 function EventFormDialog({
   open,
   onOpenChange,
@@ -269,24 +274,12 @@ function EventFormDialog({
   const updateEvent = useUpdateEvent();
   const isPending = createEvent.isPending || updateEvent.isPending;
 
-  const [form, setForm] = useState<EventFormState>(EMPTY_FORM);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  const uploadMedia = useUploadMediaAsset();
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const posterInputRef = useRef<HTMLInputElement>(null);
-
-  const { data: mediaEnvelope } = useQuery({
-    ...mediaListOptions({ limit: 100, mimeType: "image/" }),
-    enabled: open,
-  });
-  const imageAssets = useMemo(
-    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
-    [mediaEnvelope],
-  );
-
+  const form = useAdminZodForm(eventFormSchema, { defaultValues: EMPTY_FORM });
+  const { errors } = form.formState;
+  const values = form.watch();
   useEffect(() => {
     if (currentRow) {
-      setForm({
+      form.reset({
         title: currentRow.title,
         description: currentRow.description ?? "",
         startAt: toLocalDatetimeValue(currentRow.startAt),
@@ -297,27 +290,20 @@ function EventFormDialog({
         posterImagePublicId: currentRow.posterImagePublicId ?? "",
       });
     } else {
-      setForm(EMPTY_FORM);
+      form.reset(EMPTY_FORM);
     }
-    setFieldErrors({});
-  }, [currentRow, open]);
+  }, [currentRow, form, open]);
 
-  const handleSubmit = () => {
-    const nextErrors: FieldErrors = {};
-    if (!form.title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (!form.startAt) nextErrors.startAt = "Thời gian bắt đầu không được để trống.";
-    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
-    setFieldErrors({});
-
+  const handleSubmit = form.handleSubmit((formValues) => {
     const shared = {
-      title: form.title.trim(),
-      description: form.description.trim() || undefined,
-      startAt: new Date(form.startAt).toISOString(),
-      endAt: form.endAt ? new Date(form.endAt).toISOString() : undefined,
-      location: form.location.trim() || undefined,
-      eventType: form.eventType,
-      coverImagePublicId: form.coverImagePublicId || undefined,
-      posterImagePublicId: form.posterImagePublicId || undefined,
+      title: formValues.title,
+      description: formValues.description || undefined,
+      startAt: new Date(formValues.startAt).toISOString(),
+      endAt: formValues.endAt ? new Date(formValues.endAt).toISOString() : undefined,
+      location: formValues.location || undefined,
+      eventType: formValues.eventType,
+      coverImagePublicId: formValues.coverImagePublicId || undefined,
+      posterImagePublicId: formValues.posterImagePublicId || undefined,
     };
 
     if (isEdit && currentRow) {
@@ -325,147 +311,84 @@ function EventFormDialog({
         { publicId: currentRow.publicId, input: shared as UpdateEventInput },
         {
           onSuccess: () => onOpenChange(false),
-          onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
+          onError: (error) => {
+            applyApiFieldErrors(form, error);
+          },
         },
       );
     } else {
       createEvent.mutate(shared as CreateEventInput, {
         onSuccess: () => onOpenChange(false),
-        onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       });
     }
-  };
-
-  const set = (key: keyof EventFormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm((f) => ({ ...f, [key]: e.target.value }));
-
-  const handleUploadImage = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    key: "coverImagePublicId" | "posterImagePublicId",
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      const result: Record<string, unknown> = await uploadMedia.mutateAsync(file);
-      const publicId = extractUploadMediaPayload(result)?.publicId;
-      if (publicId) {
-        setForm((f) => ({ ...f, [key]: publicId }));
-      }
-    } finally {
-      event.target.value = "";
-    }
-  };
+  });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader className="text-start">
-          <DialogTitle>{isEdit ? "Chỉnh sửa sự kiện" : "Tạo sự kiện mới"}</DialogTitle>
-          <DialogDescription>
-            {isEdit ? "Cập nhật thông tin sự kiện." : "Điền thông tin để tạo sự kiện mới."}
-          </DialogDescription>
-        </DialogHeader>
+    <WorkspaceDetailSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title={isEdit ? currentRow.title : "Tạo sự kiện mới"}
+      subtitle={isEdit ? "Xem chi tiết và cập nhật thông tin sự kiện." : "Điền thông tin để tạo sự kiện mới."}
+    >
 
-        <div className="space-y-4">
+        <WorkspaceDetailSection title="Thông tin" className="space-y-4">
+          <FieldError message={errors.root?.server?.message} />
           <Field label="Tiêu đề *">
             <Input
-              value={form.title}
-              onChange={(e) => {
-                set("title")(e);
-                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-              }}
+              {...form.register("title")}
               placeholder="Tên sự kiện..."
-              className={invalidFieldClass(Boolean(fieldErrors.title))}
+              className={invalidFieldClass(Boolean(errors.title))}
             />
-            <FieldError message={fieldErrors.title} />
+            <FieldError message={errors.title?.message} />
           </Field>
           <Field label="Mô tả">
-            <Textarea value={form.description} onChange={set("description")} placeholder="Mô tả sự kiện..." rows={3} />
+            <Textarea {...form.register("description")} placeholder="Mô tả sự kiện..." rows={3} />
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Bắt đầu *">
               <DateTimeField
-                value={form.startAt}
+                value={values.startAt ?? ""}
                 onChange={(next) => {
-                  setForm((f) => ({ ...f, startAt: next }));
-                  if (fieldErrors.startAt) setFieldErrors((prev) => ({ ...prev, startAt: "" }));
+                  form.setValue("startAt", next, { shouldDirty: true, shouldValidate: true });
                 }}
                 placeholder="Chọn ngày bắt đầu"
-                invalid={Boolean(fieldErrors.startAt)}
+                invalid={Boolean(errors.startAt)}
               />
-              <FieldError message={fieldErrors.startAt} />
+              <FieldError message={errors.startAt?.message} />
             </Field>
             <Field label="Kết thúc">
               <DateTimeField
-                value={form.endAt}
-                onChange={(next) => setForm((f) => ({ ...f, endAt: next }))}
+                value={values.endAt ?? ""}
+                onChange={(next) => form.setValue("endAt", next, { shouldDirty: true, shouldValidate: true })}
                 placeholder="Chọn ngày kết thúc"
               />
             </Field>
           </div>
           <Field label="Địa điểm">
-            <Input value={form.location} onChange={set("location")} placeholder="Nơi tổ chức..." />
+            <Input {...form.register("location")} placeholder="Nơi tổ chức..." />
           </Field>
+        </WorkspaceDetailSection>
+
+        <WorkspaceDetailSection title="Biên tập" className="space-y-4">
           <Field label="Ảnh cover sự kiện">
-            <input
-              ref={coverInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => void handleUploadImage(event, "coverImagePublicId")}
-            />
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => coverInputRef.current?.click()}>
-                Upload ảnh mới
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setForm((f) => ({ ...f, coverImagePublicId: "" }))}
-                disabled={!form.coverImagePublicId}
-              >
-                Bỏ chọn
-              </Button>
-            </div>
-            <ImageAssetPicker
-              assets={imageAssets}
-              value={form.coverImagePublicId}
-              onChange={(publicId) => setForm((f) => ({ ...f, coverImagePublicId: publicId }))}
+            <MediaPickerField
+              value={values.coverImagePublicId ?? ""}
+              onChange={(publicId) => form.setValue("coverImagePublicId", publicId, { shouldDirty: true, shouldValidate: true })}
               placeholder="Chọn ảnh cover từ thư viện..."
             />
           </Field>
           <Field label="Ảnh poster sự kiện">
-            <input
-              ref={posterInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => void handleUploadImage(event, "posterImagePublicId")}
-            />
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => posterInputRef.current?.click()}>
-                Upload ảnh mới
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setForm((f) => ({ ...f, posterImagePublicId: "" }))}
-                disabled={!form.posterImagePublicId}
-              >
-                Bỏ chọn
-              </Button>
-            </div>
-            <ImageAssetPicker
-              assets={imageAssets}
-              value={form.posterImagePublicId}
-              onChange={(publicId) => setForm((f) => ({ ...f, posterImagePublicId: publicId }))}
+            <MediaPickerField
+              value={values.posterImagePublicId ?? ""}
+              onChange={(publicId) => form.setValue("posterImagePublicId", publicId, { shouldDirty: true, shouldValidate: true })}
               placeholder="Chọn ảnh poster từ thư viện..."
             />
           </Field>
           <Field label="Loại sự kiện *">
-            <Select value={form.eventType} onValueChange={(v) => setForm((f) => ({ ...f, eventType: v }))}>
+            <Select value={values.eventType ?? "CEREMONY"} onValueChange={(v) => form.setValue("eventType", v, { shouldDirty: true, shouldValidate: true })}>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -476,16 +399,36 @@ function EventFormDialog({
               </SelectContent>
             </Select>
           </Field>
-        </div>
+        </WorkspaceDetailSection>
 
-        <DialogFooter>
+        {isEdit && currentRow ? (
+          <WorkspaceDetailSection title="Audit">
+            <dl className="grid gap-2 text-sm">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Người tạo</dt>
+                <dd className="font-medium">{currentRow.createdBy.displayName}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Ngày tạo</dt>
+                <dd className="font-medium">{new Date(currentRow.createdAt).toLocaleString("vi-VN")}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Xuất bản</dt>
+                <dd className="font-medium">
+                  {currentRow.publishedAt ? new Date(currentRow.publishedAt).toLocaleString("vi-VN") : "Chưa xuất bản"}
+                </dd>
+              </div>
+            </dl>
+          </WorkspaceDetailSection>
+        ) : null}
+
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Huỷ</Button>
-          <Button onClick={handleSubmit} disabled={isPending || !form.title.trim() || !form.startAt}>
+          <Button onClick={() => void handleSubmit()} disabled={isPending || !values.title.trim() || !values.startAt}>
             {isPending ? "Đang lưu..." : isEdit ? "Lưu thay đổi" : "Tạo sự kiện"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+    </WorkspaceDetailSheet>
   );
 }
 
@@ -500,7 +443,7 @@ function CalendarRowActions({ row }: { row: CalendarEventItem }) {
   };
 
   const actions = [
-    { label: "Chỉnh sửa", icon: PencilIcon, onClick: () => open("edit") },
+    { label: "Xem chi tiết", icon: EyeIcon, onClick: () => open("edit") },
     ...(row.status === "DRAFT"
       ? [{ label: "Xuất bản", icon: SendIcon, onClick: () => open("publish"), separator: true as const }]
       : []),
@@ -513,6 +456,7 @@ function CalendarRowActions({ row }: { row: CalendarEventItem }) {
 // ── Table ─────────────────────────────────────────────────────────────
 
 function CalendarTable() {
+  const { setOpen, setCurrentRow } = useCalendar();
   const { data: envelope, isLoading } = useQuery(eventListOptions({ limit: 100 }));
   const events = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
@@ -665,6 +609,10 @@ function CalendarTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có sự kiện nào."
+        onRowClick={(row) => {
+          setCurrentRow(row);
+          setOpen("edit");
+        }}
       />
       <DataTableBulkActions table={table} entityName="sự kiện" />
     </div>
@@ -952,8 +900,14 @@ export function CalendarEventsPage() {
 
         {view === "calendar" ? (
           isLoading ? (
-            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
-              Đang tải lịch…
+            <div className="grid gap-2 rounded-lg border bg-card p-4">
+              {Array.from({ length: 6 }).map((_, rowIndex) => (
+                <div key={rowIndex} className="grid grid-cols-7 gap-2">
+                  {Array.from({ length: 7 }).map((__, cellIndex) => (
+                    <Skeleton key={`${rowIndex}-${cellIndex}`} className="h-20 w-full" />
+                  ))}
+                </div>
+              ))}
             </div>
           ) : (
             <CalendarMonthView events={events} />
@@ -967,5 +921,3 @@ export function CalendarEventsPage() {
     </CalendarProvider>
   );
 }
-
-

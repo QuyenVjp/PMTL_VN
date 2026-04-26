@@ -8,6 +8,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +82,7 @@ export function AltarManagementLogsTable() {
         columns={logColumns}
         isLoading={isLoading}
         emptyMessage="Chưa có nhật ký nào."
+        onRowClick={setDetailLog}
       />
 
       <WorkspaceDetailSheet
@@ -129,6 +131,7 @@ export function AltarManagementLogsTable() {
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

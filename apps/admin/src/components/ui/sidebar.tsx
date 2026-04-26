@@ -167,12 +167,12 @@ export function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           side={side}
-          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+          className="!z-[70] !w-[18rem] max-w-[85vw] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
           style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the PMTL admin mobile sidebar.</SheetDescription>
+            <SheetTitle>Thanh điều hướng</SheetTitle>
+            <SheetDescription>Hiển thị thanh điều hướng admin trên màn hình nhỏ.</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
@@ -246,7 +246,7 @@ export function SidebarTrigger({
       {...props}
     >
       <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+      <span className="sr-only">Mở hoặc đóng thanh điều hướng</span>
     </Button>
   );
 }

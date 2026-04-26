@@ -282,17 +282,22 @@ export function AdminDetailField({
 export function AdminFormField({
   label,
   hint,
+  invalid = false,
   children,
   className,
 }: {
   label: string;
   hint?: string;
+  invalid?: boolean;
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <div className={cn("grid items-start content-start self-start gap-1.5", className)}>
-      <span className="block self-start justify-self-start text-sm font-medium leading-none">{label}</span>
+    <div
+      data-invalid={invalid || undefined}
+      className={cn("group grid w-full items-start content-start gap-1.5", className)}
+    >
+      <span className="block self-start justify-self-start text-sm font-medium leading-none group-data-[invalid=true]:text-destructive">{label}</span>
       {children}
       {hint && <span className="block self-start justify-self-start text-xs text-muted-foreground">{hint}</span>}
     </div>

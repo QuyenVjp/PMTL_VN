@@ -14,10 +14,19 @@ export const assistedEntrySchema = z.object({
   vowType: z.enum(["LIFE_RELEASE", "CHANTING", "SUTRA_READING", "CUSTOM"]),
   description: z.string().min(5).max(2000),
   targetCount: z.number().int().min(1).optional(),
-  startDate: z.string().datetime(),
+  startDate: z.string().date(),
   assistReason: z.string().min(10).max(500),
 });
 export type AssistedEntryInput = z.infer<typeof assistedEntrySchema>;
+
+export const assistedProgressEntrySchema = z.object({
+  memberPublicId: z.string().min(1),
+  vowPublicId: z.string().min(1),
+  addCount: z.number().int().min(1).max(100000),
+  note: z.string().max(500).optional(),
+  assistReason: z.string().min(10).max(500),
+});
+export type AssistedProgressEntryInput = z.infer<typeof assistedProgressEntrySchema>;
 
 export const lifeReleaseEntrySchema = z.object({
   memberPublicId: z.string().min(1),
@@ -25,7 +34,7 @@ export const lifeReleaseEntrySchema = z.object({
   quantity: z.number().int().min(1),
   location: z.string().max(500).optional(),
   note: z.string().max(2000).optional(),
-  journalDate: z.string().datetime(),
+  journalDate: z.string().date(),
   assistReason: z.string().min(10).max(500),
 });
 export type LifeReleaseEntryInput = z.infer<typeof lifeReleaseEntrySchema>;

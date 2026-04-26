@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { FeatureFlagsRepository } from "./feature-flags.repository.js";
 import { featureFlagKeys, type FeatureFlagKey } from "./feature-flags.schemas.js";
 
@@ -18,12 +18,19 @@ const FEATURE_FLAG_DESCRIPTIONS: Record<FeatureFlagKey, string> = {
 
 @Injectable()
 export class FeatureFlagsService implements OnModuleInit {
+  private readonly logger = new Logger(FeatureFlagsService.name);
   private cache = new Map<string, boolean>();
 
   constructor(private readonly repository: FeatureFlagsRepository) {}
 
   async onModuleInit() {
-    await this.refreshCache();
+    try {
+      await this.refreshCache();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Không thể tải feature flags lúc khởi động, dùng cache rỗng: ${message}`);
+      this.clearCache();
+    }
   }
 
   async isEnabled(key: FeatureFlagKey): Promise<boolean> {

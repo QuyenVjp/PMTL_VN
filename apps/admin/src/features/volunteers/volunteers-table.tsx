@@ -13,7 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { EyeIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -41,8 +41,8 @@ function VolunteerRowActions({ row }: { row: VolunteerItem }) {
       <WorkspaceRowActions
         actions={[
           {
-            label: "Chỉnh sửa",
-            icon: PencilIcon,
+            label: "Xem chi tiết",
+            icon: EyeIcon,
             onClick: () => { void navigate({ to: "/he-thong/phung-su-vien/$publicId", params: { publicId: row.publicId } }); },
           },
           {

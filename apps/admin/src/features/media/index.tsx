@@ -288,6 +288,10 @@ function MediaAssetsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage={emptyMessage}
+        onRowClick={(row) => {
+          setCurrentRow(row);
+          setOpen("detail");
+        }}
       />
       <DataTableBulkActions table={table} entityName="media asset" />
     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { Trash2Icon } from "lucide-react";
 
@@ -9,23 +9,19 @@ import {
   AdminDetailSection,
   AdminDetailField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 
-import { adminClient } from "@/lib/api/admin-client";
 import { useRevokeSession } from "@/features/sessions/mutations";
-import { sessionStatusLabel, sessionStatusVariant, type AdminSessionListItem } from "@/features/sessions/types";
+import { sessionDetailOptions } from "@/features/sessions/queries";
+import { sessionStatusLabel, sessionStatusVariant } from "@/features/sessions/types";
+import { readRouteParam } from "@/lib/router-utils";
 
 export function SessionDetailPage() {
   const navigate = useNavigate();
-  const { sessionId } = useParams({ strict: false });
+  const sessionId = readRouteParam(useParams({ strict: false }), "sessionId");
 
-  const { data: envelope, isLoading, isError } = useQuery(
-    queryOptions({
-      queryKey: ["admin-sessions", "detail", sessionId],
-      queryFn: () => adminClient.get<{ data: AdminSessionListItem }>(`/admin/sessions/${sessionId ?? ""}`),
-      enabled: !!sessionId,
-    }),
-  );
+  const { data: envelope, isLoading, isError } = useQuery(sessionDetailOptions(sessionId));
   const session = envelope?.data;
 
   const revokeSession = useRevokeSession();
@@ -47,11 +43,7 @@ export function SessionDetailPage() {
   // ── Loading / error states ────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[200px] items-center justify-center text-muted-foreground">
-        Đang tải...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
 
   if (isError || !session) {

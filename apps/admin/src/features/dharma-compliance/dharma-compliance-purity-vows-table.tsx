@@ -9,6 +9,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { vowListOptions } from "./queries.js";
@@ -77,6 +78,7 @@ export function DharmaCompliancePurityVowsTable() {
         columns={vowColumns}
         isLoading={isLoading}
         emptyMessage="Chưa có lời nguyện nào."
+        onRowClick={setSelectedVow}
       />
 
       <WorkspaceDetailSheet
@@ -123,6 +125,7 @@ export function DharmaCompliancePurityVowsTable() {
             />
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

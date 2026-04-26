@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,9 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { FieldError } from "@/components/ui/field-error";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 
 import { useCheckIn } from "./mutations.js";
+
+const checkInSchema = z.object({
+  memberId: z.string().trim().min(1, "Vui lòng nhập mã thành viên."),
+});
 
 interface EventsCheckInDialogProps {
   eventPublicId: string;
@@ -27,26 +33,30 @@ export function EventsCheckInDialog({
   open,
   onOpenChange,
 }: EventsCheckInDialogProps) {
-  const [memberId, setMemberId] = useState("");
   const checkIn = useCheckIn();
+  const form = useAdminZodForm(checkInSchema, {
+    defaultValues: {
+      memberId: "",
+    },
+  });
+  const { errors } = form.formState;
 
   function handleClose() {
-    setMemberId("");
+    form.reset({ memberId: "" });
     onOpenChange(false);
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = memberId.trim();
-    if (!trimmed) {
-      toast.error("Vui lòng nhập mã thành viên.");
-      return;
-    }
+  const handleSubmit = form.handleSubmit((values) => {
     checkIn.mutate(
-      { eventPublicId, userId: trimmed },
-      { onSuccess: () => handleClose() },
+      { eventPublicId, userId: values.memberId },
+      {
+        onSuccess: () => handleClose(),
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
+      },
     );
-  }
+  });
 
   return (
     <Dialog open={open} onOpenChange={(next) => (next ? onOpenChange(true) : handleClose())}>
@@ -54,7 +64,7 @@ export function EventsCheckInDialog({
         <DialogHeader>
           <DialogTitle>Điểm danh thành viên</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
           <p className="text-sm text-muted-foreground">
             Sự kiện: <span className="font-medium text-foreground">{eventTitle}</span>
           </p>
@@ -64,12 +74,13 @@ export function EventsCheckInDialog({
             </Label>
             <Input
               id="memberId"
-              value={memberId}
-              onChange={(e) => setMemberId(e.target.value)}
+              {...form.register("memberId")}
+              aria-invalid={Boolean(errors.memberId)}
+              className={invalidFieldClass(errors.memberId)}
               placeholder="Nhập mã thành viên cần điểm danh"
               autoFocus
-              required
             />
+            <FieldError message={errors.memberId?.message ?? errors.root?.server?.message} />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>

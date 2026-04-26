@@ -12,6 +12,7 @@
     "start:prod": "node dist/main.js",
     "lint": "eslint \"src/**/*.ts\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "audit:admin-api-contract": "node scripts/audit-admin-api-contract.mjs",
     "test": "node ./scripts/prepare-test-db.mjs && vitest run",
     "test:watch": "vitest",
     "test:e2e": "vitest run -c vitest.e2e.config.ts",

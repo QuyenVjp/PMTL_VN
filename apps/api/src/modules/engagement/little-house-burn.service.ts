@@ -5,6 +5,7 @@
 import { Injectable, BadRequestException, UnprocessableEntityException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service.js';
 import { BurnSessionStatus } from '../../generated/prisma/enums.js';
+import { AuditService } from '../../platform/audit/audit.service.js';
 
 interface PreBurnCheckDto {
   littleHouseId: string;
@@ -20,7 +21,10 @@ interface PostBurnCheckDto {
 
 @Injectable()
 export class LittleHouseBurnService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly audit: AuditService,
+  ) {}
 
   /**
    * PRE-BURN CHECKLIST - Kiểm tra trước khi đốt
@@ -57,8 +61,17 @@ export class LittleHouseBurnService {
       },
     });
 
-    // TODO: Audit log
-    // await this.auditService.log('little-house.burn.pre-check.passed', {...});
+    await this.audit.append(
+      { actorId: userId, actorType: 'user' },
+      'member.lh.burn.pre_check_passed',
+      'little_house_burn_session',
+      session.id,
+      {
+        littleHouseId: dto.littleHouseId,
+        tweezersOnBlankEdge: dto.tweezersOnBlankEdge,
+        burnAreaReady: dto.burnAreaReady,
+      },
+    );
 
     return {
       sessionId: session.id,
@@ -110,8 +123,17 @@ export class LittleHouseBurnService {
         },
       });
 
-      // TODO: Audit
-      // await this.auditService.log('little-house.burn.completed-fully', {...});
+      await this.audit.append(
+        { actorId: userId, actorType: 'user' },
+        'member.lh.burn.completed',
+        'little_house_burn_session',
+        updated.id,
+        {
+          littleHouseId: dto.littleHouseId,
+          hadScraps: false,
+          remediationDone: false,
+        },
+      );
 
       return {
         sessionId: updated.id,
@@ -141,8 +163,17 @@ export class LittleHouseBurnService {
         },
       });
 
-      // TODO: Audit
-      // await this.auditService.log('little-house.burn.completed-with-remediation', {...});
+      await this.audit.append(
+        { actorId: userId, actorType: 'user' },
+        'member.lh.burn.completed',
+        'little_house_burn_session',
+        updated.id,
+        {
+          littleHouseId: dto.littleHouseId,
+          hadScraps: true,
+          remediationDone: true,
+        },
+      );
 
       return {
         sessionId: updated.id,

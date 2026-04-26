@@ -41,6 +41,7 @@ function EventRowActions({ row }: { row: EventListItem }) {
 }
 
 export function EventsTable() {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(eventListOptions());
   const events = useMemo(() => envelope?.data ?? [], [envelope]);
 
@@ -97,6 +98,14 @@ export function EventsTable() {
   });
 
   return (
-    <WorkspaceDataTable table={table} columns={columns} isLoading={isLoading} emptyMessage="Chưa có sự kiện nào." />
+    <WorkspaceDataTable
+      table={table}
+      columns={columns}
+      isLoading={isLoading}
+      emptyMessage="Chưa có sự kiện nào."
+      onRowClick={(row) => {
+        void navigate({ to: "/su-kien/danh-sach/$publicId", params: { publicId: row.id } });
+      }}
+    />
   );
 }

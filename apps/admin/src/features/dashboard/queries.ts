@@ -57,7 +57,11 @@ export interface DashboardStats {
 
 export const dashboardKeys = {
   all: ["admin-dashboard"] as const,
-  stats: () => [...dashboardKeys.all, "stats"] as const,
+  lists: () => [...dashboardKeys.all, "list"] as const,
+  list: () => [...dashboardKeys.lists(), "stats"] as const,
+  details: () => [...dashboardKeys.all, "detail"] as const,
+  detail: (widget: string) => [...dashboardKeys.details(), widget] as const,
+  stats: () => dashboardKeys.list(),
 };
 
 export function dashboardStatsOptions() {

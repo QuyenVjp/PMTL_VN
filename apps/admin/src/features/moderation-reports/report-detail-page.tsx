@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/lib/api/admin-client";
-import type { SingleEnvelope } from "@/lib/api/envelopes.js";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +17,7 @@ import {
   AdminDetailPage,
   AdminDetailSection,
   AdminDetailField,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import {
   DECISION_LABELS,
@@ -27,17 +26,8 @@ import {
   type ModerationReportListItem,
 } from "@/features/moderation-reports/types";
 import { useResolveReport } from "@/features/moderation-reports/mutations";
-
-// ── Query ─────────────────────────────────────────────────────────────
-
-function reportDetailOptions(publicId: string) {
-  return queryOptions({
-    queryKey: ["admin-moderation-reports", "detail", publicId],
-    queryFn: () =>
-      adminClient.get<SingleEnvelope<ModerationReportListItem>>(`/moderation/reports/${publicId}`),
-    enabled: Boolean(publicId),
-  });
-}
+import { reportDetailOptions } from "@/features/moderation-reports/queries";
+import { readRouteParam } from "@/lib/router-utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -145,7 +135,7 @@ function ResolveDialog({
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function ReportDetailPage() {
-  const { publicId } = useParams({ strict: false });
+  const publicId = readRouteParam(useParams({ strict: false }), "publicId");
   const navigate = useNavigate();
 
   const [resolveOpen, setResolveOpen] = useState(false);
@@ -153,16 +143,12 @@ export function ReportDetailPage() {
   const { data: envelope, isLoading, isError } = useQuery(
     reportDetailOptions(publicId ?? ""),
   );
-  const report = envelope?.data;
+  const report = envelope;
 
   const goBack = () => { void navigate({ to: "/kiem-duyet/bao-cao" }); };
 
   if (isLoading) {
-    return (
-      <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        Đang tải...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
   if (isError || !report) {
     return (

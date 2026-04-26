@@ -106,18 +106,20 @@ export interface AddItemInput {
   sortOrder?:          number;
 }
 
+export function addCollectionItem(collectionPublicId: string, body: AddItemInput) {
+  if (!collectionPublicId) {
+    throw new Error("Collection ID is required to add items");
+  }
+  return adminClient.post<void>(
+    `/admin/content/media-library/collections/${collectionPublicId}/items`,
+    body,
+  );
+}
+
 export function useAddCollectionItem(collectionPublicId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: AddItemInput) => {
-      if (!collectionPublicId) {
-        throw new Error("Collection ID is required to add items");
-      }
-      return adminClient.post<void>(
-        `/admin/content/media-library/collections/${collectionPublicId}/items`,
-        body,
-      );
-    },
+    mutationFn: (body: AddItemInput) => addCollectionItem(collectionPublicId, body),
     onSuccess: () => {
       toast.success("Đã thêm item.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.items(collectionPublicId) });

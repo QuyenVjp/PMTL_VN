@@ -9,7 +9,6 @@ import {
   Res,
   HttpCode,
   HttpStatus,
-  UsePipes,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { randomBytes } from "node:crypto";
@@ -27,6 +26,7 @@ import {
   changePasswordSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  verifyEmailSchema,
   bootstrapAdminSchema,
   type LoginInput,
   type RegisterInput,
@@ -35,6 +35,7 @@ import {
   type ChangePasswordInput,
   type ForgotPasswordInput,
   type ResetPasswordInput,
+  type VerifyEmailInput,
 } from "./identity.schemas.js";
 import { ConfigService } from "../../common/config/config.service.js";
 import { UnauthorizedError } from "../../common/errors/app-error.js";
@@ -76,11 +77,10 @@ export class IdentityController {
   @Public()
   @RateLimit("auth.login")
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(ZodValidate(registerSchema))
   @ApiOperation({ summary: "Đăng ký tài khoản mới" })
   @ApiResponse({ status: 201, description: "Đăng ký thành công" })
   @ApiResponse({ status: 409, description: "Email đã được sử dụng" })
-  async register(@Body() input: RegisterInput) {
+  async register(@Body(ZodValidate(registerSchema)) input: RegisterInput) {
     return this.identityService.register(input);
   }
 
@@ -197,12 +197,8 @@ export class IdentityController {
   @ApiOperation({ summary: "Xác minh email bằng token" })
   @ApiResponse({ status: 200, description: "Email đã được xác minh" })
   @ApiResponse({ status: 400, description: "Token không hợp lệ hoặc đã hết hạn" })
-  async verifyEmail(@Body() body: { token: string }) {
-    const token = typeof body.token === "string" ? body.token.trim() : "";
-    if (!token) {
-      throw new UnauthorizedError("Token xác minh không được để trống");
-    }
-    return this.identityService.verifyEmail(token);
+  async verifyEmail(@Body(ZodValidate(verifyEmailSchema)) body: VerifyEmailInput) {
+    return this.identityService.verifyEmail(body.token);
   }
 
   @Post("send-verification")

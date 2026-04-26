@@ -8,6 +8,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -147,6 +148,7 @@ export function LhRecordsTable() {
         columns={lhColumns}
         isLoading={isLoading}
         emptyMessage="Chưa có sớ nào."
+        onRowClick={setDetailItem}
       />
 
       <WorkspaceDetailSheet
@@ -208,6 +210,7 @@ export function LhRecordsTable() {
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

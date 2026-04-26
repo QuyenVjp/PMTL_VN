@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { resolveMediaSrc } from "@/lib/media-src";
 import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
@@ -451,10 +452,9 @@ export function MediaPickerModal({
                     )}
                   >
                     {Array.from({ length: activeTab === "document" ? 6 : 12 }).map((_, i) => (
-                      <div
+                      <Skeleton
                         key={i}
                         className={cn(
-                          "animate-pulse rounded-lg bg-muted",
                           activeTab === "document" ? "h-12" : "aspect-square",
                         )}
                       />

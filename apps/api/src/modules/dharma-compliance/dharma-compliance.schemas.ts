@@ -165,7 +165,20 @@ export type GuidanceQueueQuery = z.infer<typeof guidanceQueueQuerySchema>;
 
 export const contentScanInputSchema = z.object({
   text: z.string().min(1).max(10000),
-  contentType: z.enum(["POST", "COMMENT", "DONATION_FORM", "MESSAGE", "OTHER"]),
+  contentType: z.enum([
+    "POST",
+    "COMMENT",
+    "DONATION_FORM",
+    "MESSAGE",
+    "OTHER",
+    "post",
+    "comment",
+    "testimonial",
+    "guestbook",
+    "wisdom_question",
+    "wisdom_answer",
+    "contact_message",
+  ]),
 });
 export type ContentScanInput = z.infer<typeof contentScanInputSchema>;
 

@@ -31,6 +31,10 @@ export const resetPasswordSchema = z.object({
   password: z.string().min(8, "Mật khẩu phải có ít nhất 8 ký tự"),
 });
 
+export const verifyEmailSchema = z.object({
+  token: z.string().trim().min(1, "Token xác minh không được để trống"),
+});
+
 // Update profile
 const avatarUrlSchema = z.union([
   z.string().url(),
@@ -64,6 +68,7 @@ export type RegisterInput = z.infer<typeof registerSchema>;
 export type BootstrapAdminInput = z.infer<typeof bootstrapAdminSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type AuthResponse = z.infer<typeof authResponseSchema>;

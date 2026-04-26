@@ -2,7 +2,7 @@
  * API Envelope Types — matches backend ResponseInterceptor + GlobalExceptionFilter
  *
  * Backend success: { data: T, meta: { timestamp, requestId, path } }
- * Backend error:   { error: { code, message, status, requestId, details? } }
+ * Backend error:   { error: { code, message, status, requestId, traceId, details? } }
  *
  * The client auto-unwraps the success envelope, so callers receive T directly.
  */
@@ -22,6 +22,7 @@ export interface ApiErrorEnvelope {
     message: string;
     status: number;
     requestId?: string;
+    traceId?: string;
     details?: Record<string, unknown>;
   };
 }

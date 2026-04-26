@@ -36,6 +36,8 @@ export const eventKeys = {
   all: ["admin-events"] as const,
   lists: () => [...eventKeys.all, "list"] as const,
   list: (filters: CalendarEventFilters) => [...eventKeys.lists(), filters] as const,
+  details: () => [...eventKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...eventKeys.details(), publicId] as const,
 };
 
 // ── Query options ───────────────────────────────────────────────────

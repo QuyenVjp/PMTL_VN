@@ -35,4 +35,7 @@ export const adminReindexSchema = z.object({
   reason: z.string().max(500).optional(),
 });
 
+export const adminReindexSourceSchema = z.enum(["posts", "guides", "wisdom", "little_house_guides", "sutras", "qa"]);
+
 export type AdminReindexInput = z.infer<typeof adminReindexSchema>;
+export type AdminReindexSourceInput = z.infer<typeof adminReindexSourceSchema>;

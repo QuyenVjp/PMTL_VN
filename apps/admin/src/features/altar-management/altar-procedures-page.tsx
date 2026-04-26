@@ -1,27 +1,10 @@
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { adminClient } from "@/lib/api/admin-client.js";
-
-import { altarMgmtKeys } from "./queries.js";
-
-interface ProtocolTemplate {
-  publicId?: string;
-  id?: string;
-  protocolType: string;
-  titleVi: string;
-  descriptionVi?: string | null;
-  steps?: Array<{ title: string; description?: string | null }> | null;
-  isActive?: boolean;
-}
-
-const protocolTemplatesOptions = queryOptions({
-  queryKey: [...altarMgmtKeys.all, "protocol-templates"] as const,
-  queryFn: () =>
-    adminClient.get<ProtocolTemplate[]>("/admin/altar-management/protocol-templates"),
-});
+import { Skeleton } from "@/components/ui/skeleton";
+import { protocolTemplatesOptions } from "./queries.js";
 
 export function AltarProceduresPage() {
-  const { data, isLoading, isError } = useQuery(protocolTemplatesOptions);
+  const { data, isLoading, isError } = useQuery(protocolTemplatesOptions());
   const templates = data ?? [];
 
   return (
@@ -34,8 +17,16 @@ export function AltarProceduresPage() {
       </div>
 
       {isLoading ? (
-        <div className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-          Đang tải quy trình…
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="rounded-xl border bg-card p-6">
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-5 w-48" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-4 w-full" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : isError ? (
         <div className="rounded-xl border bg-card p-6 text-sm text-destructive">

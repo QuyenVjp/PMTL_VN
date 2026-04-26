@@ -15,6 +15,7 @@ import { Roles } from "../../common/decorators/roles.decorator.js";
 import { CurrentUser } from "../../common/decorators/current-user.decorator.js";
 import type { AuthenticatedUser } from "../../common/auth/auth-request.types.js";
 import { AdminMediaLibraryService } from "./admin-media-library.service.js";
+import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 import {
   createCollectionSchema,
   updateCollectionSchema,
@@ -22,6 +23,12 @@ import {
   addCollectionItemSchema,
   updateCollectionItemSchema,
   listItemsSchema,
+  type AddCollectionItemInput,
+  type CreateCollectionInput,
+  type ListCollectionsInput,
+  type ListItemsInput,
+  type UpdateCollectionInput,
+  type UpdateCollectionItemInput,
 } from "./admin-media-library.schemas.js";
 
 @ApiTags("admin-media-library")
@@ -44,8 +51,8 @@ export class AdminMediaLibraryController {
 
   @Get("collections")
   @ApiOperation({ summary: "Danh sách collections thư viện pháp môn" })
-  list(@Query() raw: Record<string, unknown>) {
-    return this.service.listCollections(listCollectionsSchema.parse(raw));
+  list(@Query(ZodValidate(listCollectionsSchema)) query: ListCollectionsInput) {
+    return this.service.listCollections(query);
   }
 
   @Get("collections/:publicId")
@@ -57,11 +64,11 @@ export class AdminMediaLibraryController {
   @Post("collections")
   @ApiOperation({ summary: "Tạo collection mới" })
   create(
-    @Body() body: Record<string, unknown>,
+    @Body(ZodValidate(createCollectionSchema)) body: CreateCollectionInput,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.service.createCollection(
-      createCollectionSchema.parse(body),
+      body,
       user.id,
     );
   }
@@ -70,9 +77,9 @@ export class AdminMediaLibraryController {
   @ApiOperation({ summary: "Cập nhật collection" })
   update(
     @Param("publicId") publicId: string,
-    @Body() body: Record<string, unknown>,
+    @Body(ZodValidate(updateCollectionSchema)) body: UpdateCollectionInput,
   ) {
-    return this.service.updateCollection(publicId, updateCollectionSchema.parse(body));
+    return this.service.updateCollection(publicId, body);
   }
 
   @Post("collections/:publicId/publish")
@@ -99,18 +106,18 @@ export class AdminMediaLibraryController {
   @ApiOperation({ summary: "Danh sách items trong collection" })
   listItems(
     @Param("publicId") publicId: string,
-    @Query() raw: Record<string, unknown>,
+    @Query(ZodValidate(listItemsSchema)) query: ListItemsInput,
   ) {
-    return this.service.listItems(publicId, listItemsSchema.parse(raw));
+    return this.service.listItems(publicId, query);
   }
 
   @Post("collections/:publicId/items")
   @ApiOperation({ summary: "Thêm item vào collection" })
   addItem(
     @Param("publicId") publicId: string,
-    @Body() body: Record<string, unknown>,
+    @Body(ZodValidate(addCollectionItemSchema)) body: AddCollectionItemInput,
   ) {
-    return this.service.addItem(publicId, addCollectionItemSchema.parse(body));
+    return this.service.addItem(publicId, body);
   }
 
   @Patch("collections/:publicId/items/:itemPublicId")
@@ -118,13 +125,9 @@ export class AdminMediaLibraryController {
   updateItem(
     @Param("publicId") publicId: string,
     @Param("itemPublicId") itemPublicId: string,
-    @Body() body: Record<string, unknown>,
+    @Body(ZodValidate(updateCollectionItemSchema)) body: UpdateCollectionItemInput,
   ) {
-    return this.service.updateItem(
-      publicId,
-      itemPublicId,
-      updateCollectionItemSchema.parse(body),
-    );
+    return this.service.updateItem(publicId, itemPublicId, body);
   }
 
   @Delete("collections/:publicId/items/:itemPublicId")

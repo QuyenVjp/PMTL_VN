@@ -236,3 +236,31 @@ export function WorkspaceDetailField({
 export function WorkspaceDetailDivider({ className }: { className?: string }) {
   return <hr className={cn("border-border/30", className)} />;
 }
+
+export interface WorkspaceDetailStandardSectionsProps {
+  editNote?: React.ReactNode;
+  auditNote?: React.ReactNode;
+  dangerNote?: React.ReactNode;
+}
+
+export function WorkspaceDetailStandardSections({
+  editNote = "Biên tập qua các hành động được hiển thị ở đầu khung chi tiết.",
+  auditNote = "Audit sẽ hiển thị tại đây khi API trả lịch sử thao tác của bản ghi.",
+  dangerNote,
+}: WorkspaceDetailStandardSectionsProps) {
+  return (
+    <>
+      <WorkspaceDetailSection title="Biên tập">
+        <p className="text-sm text-muted-foreground">{editNote}</p>
+      </WorkspaceDetailSection>
+      <WorkspaceDetailSection title="Audit">
+        <p className="text-sm text-muted-foreground">{auditNote}</p>
+      </WorkspaceDetailSection>
+      {dangerNote ? (
+        <WorkspaceDetailSection title="Nguy hiểm">
+          <p className="text-sm text-destructive">{dangerNote}</p>
+        </WorkspaceDetailSection>
+      ) : null}
+    </>
+  );
+}

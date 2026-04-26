@@ -12,7 +12,6 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { CheckCircleIcon, Trash2Icon } from "lucide-react";
 
@@ -26,6 +25,7 @@ import { guideListOptions, type GuideItem } from "@/features/guides/queries";
 import { usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
 import { mediaListOptions } from "@/features/media/queries";
 import { resolveMediaSrc } from "@/lib/media-src";
+import { useNavigateTo } from "@/lib/router-utils";
 
 // ── Options for toolbar faceted filters ─────────────────────────────
 
@@ -94,7 +94,7 @@ type GuidesTableProps = {
 };
 
 export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong-dan" }: GuidesTableProps) {
-  const navigate = useNavigate();
+  const navigateTo = useNavigateTo();
   const { data: envelope, isLoading } = useQuery(guideListOptions({ limit: 100 }));
   const guides = envelope?.data ?? [];
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
@@ -256,7 +256,7 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
         isLoading={isLoading}
         emptyMessage="Chưa có hướng dẫn nào."
         onRowClick={(row) => {
-          void navigate({ to: "/noi-dung/huong-dan/$publicId", params: { publicId: row.publicId } });
+          navigateTo(`${detailBasePath}/${row.publicId}`);
         }}
       />
       <DataTableBulkActions table={table} entityName="hướng dẫn">
@@ -282,4 +282,3 @@ export function GuidesTable({ defaultCategory, detailBasePath = "/noi-dung/huong
     </div>
   );
 }
-

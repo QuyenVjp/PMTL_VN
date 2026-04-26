@@ -40,6 +40,10 @@
         "@upstash/context7-mcp@latest"
       ]
     },
+    "neural-memory": {
+      "type": "stdio",
+      "command": "C:\\Users\\ADMIN\\.local\\bin\\nmem-mcp.cmd"
+    },
     "prisma-local": {
       "type": "stdio",
       "command": "cmd",
@@ -59,17 +63,6 @@
         "C:\\Users\\ADMIN\\.codex\\tools\\gitnexus\\node_modules\\.bin\\gitnexus.cmd",
         "mcp"
       ]
-    },
-    "openspace": {
-      "type": "stdio",
-      "command": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace\\.venv\\Scripts\\openspace-mcp.exe",
-      "env": {
-        "PYTHONUTF8": "1",
-        "OPENSPACE_HOST_SKILL_DIRS": "C:\\Users\\ADMIN\\.codex\\skills,C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\.agents\\skills",
-        "OPENSPACE_WORKSPACE": "C:\\Users\\ADMIN\\DEV2\\PMTL_VN\\tmp\\OpenSpace",
-        "OPENSPACE_MODEL": "gemini/gemini-3-flash-preview",
-        "OPENSPACE_API_KEY": ""
-      }
     },
     "next-devtools": {
       "type": "stdio",

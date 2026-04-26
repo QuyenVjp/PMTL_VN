@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, LoaderCircleIcon, PlusIcon, RefreshCwIcon, XCircleIcon } from "lucide-react";
+import { z } from "zod";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
 
 function SlugStatusIcon({ status }: { status: SlugStatus }) {
@@ -10,18 +11,19 @@ function SlugStatusIcon({ status }: { status: SlugStatus }) {
   return null;
 }
 
-import { WorkspaceConfirmDialog } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceDetailSheet, WorkspaceDetailStandardSections, WorkspaceRouteSkeleton } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
 import { cn } from "@/lib/utils";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { selfCultivationOverviewOptions, type SelfCultivationGuide, type SelfCultivationGuideGroup } from "./queries";
 import { useCreateSelfCultivationFaq, useCreateSelfCultivationGuide, usePublishSelfCultivation } from "./mutations";
 import { TemplatesTab } from "./templates-tab.js";
@@ -41,9 +43,30 @@ function statusBadgeClass(status: "DRAFT" | "PUBLISHED") {
     : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400";
 }
 
+const createGuideSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  summary: z.string().trim().min(1, "Tóm tắt không được để trống."),
+  groupKey: z.enum(["BAT_DAU", "CACH_DUNG", "BAO_QUAN", "TRUONG_HOP_SU_DUNG", "TAI_XUONG"]),
+  sourceReference: z.string().trim().min(1, "Phải có sourceReference."),
+  boundaryNote: z.string().trim().optional(),
+  warningText: z.string().trim().optional(),
+});
+
+const createFaqSchema = z.object({
+  question: z.string().trim().min(1, "Câu hỏi không được để trống."),
+  answer: z.string().trim().min(1, "Câu trả lời không được để trống."),
+  sourceReference: z.string().trim().min(1, "Phải có sourceReference."),
+});
+
 function GuideList({ items }: { items: SelfCultivationGuide[] }) {
   if (!items.length) {
-    return <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">Chưa có nội dung. [Thêm mới]</div>;
+    return (
+      <Card>
+        <CardContent className="pt-6 text-sm text-muted-foreground">
+          Chưa có nội dung.
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -84,69 +107,73 @@ function GuideList({ items }: { items: SelfCultivationGuide[] }) {
 
 function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const createGuide = useCreateSelfCultivationGuide();
-  const [title, setTitle] = useState("");
-  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "SELF_CULTIVATION_GUIDE" });
-  const [summary, setSummary] = useState("");
-  const [groupKey, setGroupKey] = useState<SelfCultivationGuideGroup>("CACH_DUNG");
-  const [sourceReference, setSourceReference] = useState("");
-  const [boundaryNote, setBoundaryNote] = useState("");
-  const [warningText, setWarningText] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const form = useAdminZodForm(createGuideSchema, {
+    defaultValues: {
+      title: "",
+      summary: "",
+      groupKey: "CACH_DUNG",
+      sourceReference: "",
+      boundaryNote: "",
+      warningText: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title: values.title, entityType: "SELF_CULTIVATION_GUIDE" });
 
   const reset = () => {
-    setTitle("");
+    form.reset({
+      title: "",
+      summary: "",
+      groupKey: "CACH_DUNG",
+      sourceReference: "",
+      boundaryNote: "",
+      warningText: "",
+    });
     resetSlug();
-    setSummary("");
-    setGroupKey("CACH_DUNG");
-    setSourceReference("");
-    setBoundaryNote("");
-    setWarningText("");
-    setFieldErrors({});
   };
 
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (!summary.trim()) nextErrors.summary = "Tóm tắt không được để trống.";
-    if (!sourceReference.trim()) nextErrors.sourceReference = "Phải có sourceReference.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
+  const handleSave = form.handleSubmit((formValues) => {
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
       return;
     }
 
     createGuide.mutate(
       {
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        summary: summary.trim(),
-        groupKey,
-        sourceReference: sourceReference.trim(),
-        boundaryNote: boundaryNote.trim() || undefined,
-        warningNotes: warningText.split("\n").map((item) => item.trim()).filter(Boolean),
+        summary: formValues.summary,
+        groupKey: formValues.groupKey as SelfCultivationGuideGroup,
+        sourceReference: formValues.sourceReference,
+        boundaryNote: formValues.boundaryNote || undefined,
+        warningNotes: (formValues.warningText ?? "").split("\n").map((item) => item.trim()).filter(Boolean),
       },
       {
         onSuccess: () => {
           reset();
           onOpenChange(false);
         },
-        onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       },
     );
-  };
+  });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader className="text-start">
-          <DialogTitle>Thêm guide Kinh văn tự tu</DialogTitle>
-          <DialogDescription>Guide mới phải có sourceReference và boundary note nếu wording đụng lane khác.</DialogDescription>
-        </DialogHeader>
+    <WorkspaceDetailSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Thêm guide Kinh văn tự tu"
+      subtitle="Guide mới phải có sourceReference và boundary note nếu wording đụng lane khác."
+    >
         <div className="grid gap-4">
+          <FieldError message={errors.root?.server?.message} />
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Tiêu đề</span>
-            <Input value={title} onChange={(event) => setTitle(event.target.value)} className={invalidFieldClass(Boolean(fieldErrors.title))} />
-            <FieldError message={fieldErrors.title} />
+            <Input {...form.register("title")} className={invalidFieldClass(Boolean(errors.title))} />
+            <FieldError message={errors.title?.message} />
           </label>
           <div className="grid gap-4 md:grid-cols-2">
             <label className="grid gap-1.5">
@@ -165,11 +192,11 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
                   </span>
                 )}
               </div>
-              <FieldError message={fieldErrors.slug} />
+              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
             </label>
             <label className="grid gap-1.5">
               <span className="text-sm font-medium">Nhóm</span>
-              <Select value={groupKey} onValueChange={(value) => setGroupKey(value as SelfCultivationGuideGroup)}>
+              <Select value={values.groupKey} onValueChange={(value) => form.setValue("groupKey", value as SelfCultivationGuideGroup, { shouldDirty: true, shouldValidate: true })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Object.entries(GROUP_LABELS).map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}
@@ -179,94 +206,89 @@ function CreateGuideDialog({ open, onOpenChange }: { open: boolean; onOpenChange
           </div>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Tóm tắt</span>
-            <Textarea value={summary} onChange={(event) => setSummary(event.target.value)} rows={3} className={invalidFieldClass(Boolean(fieldErrors.summary))} />
-            <FieldError message={fieldErrors.summary} />
+            <Textarea {...form.register("summary")} rows={3} className={invalidFieldClass(Boolean(errors.summary))} />
+            <FieldError message={errors.summary?.message} />
           </label>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Source reference</span>
-            <Input value={sourceReference} onChange={(event) => setSourceReference(event.target.value)} className={invalidFieldClass(Boolean(fieldErrors.sourceReference))} placeholder="VD: KINH-VAN-TU-TU-CONTENT-INVENTORY §2.2" />
-            <FieldError message={fieldErrors.sourceReference} />
+            <Input {...form.register("sourceReference")} className={invalidFieldClass(Boolean(errors.sourceReference))} placeholder="VD: KINH-VAN-TU-TU-CONTENT-INVENTORY §2.2" />
+            <FieldError message={errors.sourceReference?.message} />
           </label>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Boundary note</span>
-            <Textarea value={boundaryNote} onChange={(event) => setBoundaryNote(event.target.value)} rows={2} placeholder="Nêu rõ boundary nếu wording gần lane khác" />
+            <Textarea {...form.register("boundaryNote")} rows={2} placeholder="Nêu rõ boundary nếu wording gần lane khác" />
           </label>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Warning notes</span>
-            <Textarea value={warningText} onChange={(event) => setWarningText(event.target.value)} rows={3} placeholder="Mỗi dòng một warning" />
+            <Textarea {...form.register("warningText")} rows={3} placeholder="Mỗi dòng một warning" />
           </label>
         </div>
-        <DialogFooter>
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSave} disabled={createGuide.isPending}>{createGuide.isPending ? "Đang tạo..." : "Thêm guide"}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <Button onClick={() => void handleSave()} disabled={createGuide.isPending}>{createGuide.isPending ? "Đang tạo..." : "Thêm guide"}</Button>
+        </div>
+    <WorkspaceDetailStandardSections />
+    </WorkspaceDetailSheet>
   );
 }
 
 function CreateFaqDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const createFaq = useCreateSelfCultivationFaq();
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [sourceReference, setSourceReference] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const form = useAdminZodForm(createFaqSchema, {
+    defaultValues: {
+      question: "",
+      answer: "",
+      sourceReference: "",
+    },
+  });
+  const { errors } = form.formState;
 
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!question.trim()) nextErrors.question = "Câu hỏi không được để trống.";
-    if (!answer.trim()) nextErrors.answer = "Câu trả lời không được để trống.";
-    if (!sourceReference.trim()) nextErrors.sourceReference = "Phải có sourceReference.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      return;
-    }
-
+  const handleSave = form.handleSubmit((formValues) => {
     createFaq.mutate(
-      { question: question.trim(), answer: answer.trim(), sourceReference: sourceReference.trim() },
+      { question: formValues.question, answer: formValues.answer, sourceReference: formValues.sourceReference },
       {
         onSuccess: () => {
-          setQuestion("");
-          setAnswer("");
-          setSourceReference("");
-          setFieldErrors({});
+          form.reset({ question: "", answer: "", sourceReference: "" });
           onOpenChange(false);
         },
-        onError: (error) => setFieldErrors(extractValidationFieldErrors(error)),
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       },
     );
-  };
+  });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
-        <DialogHeader className="text-start">
-          <DialogTitle>Thêm FAQ Kinh văn tự tu</DialogTitle>
-          <DialogDescription>FAQ phải giữ wording retrieval-friendly, không biến thành prose dài.</DialogDescription>
-        </DialogHeader>
+    <WorkspaceDetailSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Thêm FAQ Kinh văn tự tu"
+      subtitle="FAQ phải giữ wording retrieval-friendly, không biến thành prose dài."
+    >
         <div className="grid gap-4">
+          <FieldError message={errors.root?.server?.message} />
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Câu hỏi</span>
-            <Input value={question} onChange={(event) => setQuestion(event.target.value)} className={invalidFieldClass(Boolean(fieldErrors.question))} />
-            <FieldError message={fieldErrors.question} />
+            <Input {...form.register("question")} className={invalidFieldClass(Boolean(errors.question))} />
+            <FieldError message={errors.question?.message} />
           </label>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Câu trả lời</span>
-            <Textarea value={answer} onChange={(event) => setAnswer(event.target.value)} rows={4} className={invalidFieldClass(Boolean(fieldErrors.answer))} />
-            <FieldError message={fieldErrors.answer} />
+            <Textarea {...form.register("answer")} rows={4} className={invalidFieldClass(Boolean(errors.answer))} />
+            <FieldError message={errors.answer?.message} />
           </label>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium">Source reference</span>
-            <Input value={sourceReference} onChange={(event) => setSourceReference(event.target.value)} className={invalidFieldClass(Boolean(fieldErrors.sourceReference))} />
-            <FieldError message={fieldErrors.sourceReference} />
+            <Input {...form.register("sourceReference")} className={invalidFieldClass(Boolean(errors.sourceReference))} />
+            <FieldError message={errors.sourceReference?.message} />
           </label>
         </div>
-        <DialogFooter>
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSave} disabled={createFaq.isPending}>{createFaq.isPending ? "Đang tạo..." : "Thêm FAQ"}</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <Button onClick={() => void handleSave()} disabled={createFaq.isPending}>{createFaq.isPending ? "Đang tạo..." : "Thêm FAQ"}</Button>
+        </div>
+    <WorkspaceDetailStandardSections />
+    </WorkspaceDetailSheet>
   );
 }
 
@@ -323,11 +345,11 @@ export function SelfCultivationWorkspacePage() {
         <CardContent className="grid gap-4 lg:grid-cols-3">
           <Card>
             <CardHeader className="pb-3"><CardTitle className="text-base">Khác với Kinh Bài Tập</CardTitle></CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? "Đang tải..."}</CardContent>
+            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromDailyPractice ?? <Skeleton className="h-4 w-full" />}</CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-3"><CardTitle className="text-base">Khác với Ngôi Nhà Nhỏ</CardTitle></CardHeader>
-            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromLittleHouse ?? "Đang tải..."}</CardContent>
+            <CardContent className="text-sm text-muted-foreground">{overview?.boundarySummary.differentFromLittleHouse ?? <Skeleton className="h-4 w-full" />}</CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-3"><CardTitle className="text-base">Review metadata</CardTitle></CardHeader>
@@ -381,7 +403,11 @@ export function SelfCultivationWorkspacePage() {
                 </Card>
               ))}
             </div>
-          ) : <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">Chưa có nội dung. [Thêm mới]</div>}
+          ) : (
+            <Card>
+              <CardContent className="pt-6 text-sm text-muted-foreground">Chưa có nội dung.</CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="tai-xuong" className="space-y-3">
@@ -395,7 +421,11 @@ export function SelfCultivationWorkspacePage() {
                 <Badge variant="outline">{item.assetType}</Badge>
               </CardContent>
             </Card>
-          )) : <div className="rounded-xl border border-dashed px-4 py-8 text-sm text-muted-foreground">Chưa có nội dung. [Thêm mới]</div>}
+          )) : (
+            <Card>
+              <CardContent className="pt-6 text-sm text-muted-foreground">Chưa có nội dung.</CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="bieu-mau"><TemplatesTab /></TabsContent>
@@ -432,14 +462,7 @@ export function SelfCultivationWorkspacePage() {
         />
       ) : null}
 
-      {isLoading ? (
-        <Card>
-          <CardContent className="flex items-center gap-2 pt-6 text-sm text-muted-foreground">
-            <RefreshCwIcon className="size-4 animate-spin" />
-            Đang tải workspace Kinh văn tự tu...
-          </CardContent>
-        </Card>
-      ) : null}
+      {isLoading ? <WorkspaceRouteSkeleton /> : null}
     </div>
   );
 }

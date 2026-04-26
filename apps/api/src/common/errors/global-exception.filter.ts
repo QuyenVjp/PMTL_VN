@@ -5,7 +5,7 @@
  * "global exception filter standardizes error envelope" — pipeline position #10
  *
  * Error envelope canon format:
- * { error: { code, message, status, requestId, details? } }
+ * { error: { code, message, status, requestId, traceId, details? } }
  *
  * Registered via APP_FILTER provider (NOT app.useGlobalFilters).
  * No stack trace leak to production client.
@@ -33,8 +33,41 @@ interface CanonErrorEnvelope {
     message: string;
     status: number;
     requestId?: string;
+    traceId?: string;
     details?: Record<string, unknown>;
   };
+}
+
+function fieldDetails(fields: string[], message: string): Record<string, unknown> | undefined {
+  const uniqueFields = [...new Set(fields.filter((field) => field.length > 0))];
+  if (uniqueFields.length === 0) return undefined;
+
+  return {
+    properties: Object.fromEntries(
+      uniqueFields.map((field) => [field, { errors: [message] }]),
+    ),
+    fieldErrors: Object.fromEntries(uniqueFields.map((field) => [field, message])),
+    fields: uniqueFields,
+  };
+}
+
+function extractPrismaValidationFields(message: string): string[] {
+  const fields = new Set<string>();
+  const patterns = [
+    /Argument `([^`]+)` is missing/g,
+    /Argument `([^`]+)`:/g,
+    /Invalid value for argument `([^`]+)`/g,
+    /Unknown argument `([^`]+)`/g,
+  ];
+
+  for (const pattern of patterns) {
+    for (const match of message.matchAll(pattern)) {
+      const field = match[1]?.trim();
+      if (field) fields.add(field);
+    }
+  }
+
+  return [...fields];
 }
 
 @Catch()
@@ -47,6 +80,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const requestId = request.headers["x-request-id"] as string | undefined;
+    const traceId = (request.headers["x-trace-id"] as string | undefined) ?? requestId;
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let code = "INTERNAL_ERROR";
@@ -92,6 +126,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
           message: issue.message,
           code: issue.code,
         })),
+        fields: [...new Set(exception.issues.map((issue) => issue.path.join(".")).filter(Boolean))],
+        fieldErrors: exception.issues.reduce<Record<string, string>>((acc, issue) => {
+          const path = issue.path.join(".");
+          if (path && !acc[path]) {
+            acc[path] = issue.message;
+          }
+          return acc;
+        }, {}),
       };
 
       this.logger.warn(
@@ -104,10 +146,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         statusCode = HttpStatus.CONFLICT;
         code = "CONFLICT";
         message = "Dữ liệu đã tồn tại (unique constraint).";
+        const target = exception.meta?.target;
+        details = fieldDetails(
+          Array.isArray(target) ? target.filter((field): field is string => typeof field === "string") : [],
+          "Giá trị này đã được dùng.",
+        );
       } else if (exception.code === "P2003") {
         statusCode = HttpStatus.BAD_REQUEST;
         code = "INVALID_REFERENCE";
         message = "Dữ liệu tham chiếu không hợp lệ (khóa ngoại).";
+        const fieldName = exception.meta?.field_name;
+        details = fieldDetails(typeof fieldName === "string" ? [fieldName] : [], "Dữ liệu tham chiếu không hợp lệ.");
       } else if (exception.code === "P2025") {
         statusCode = HttpStatus.NOT_FOUND;
         code = "NOT_FOUND";
@@ -132,7 +181,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof Prisma.PrismaClientValidationError) {
       statusCode = HttpStatus.BAD_REQUEST;
       code = "VALIDATION_ERROR";
-      message = "Dữ liệu không hợp lệ (Prisma validation).";
+      message = "Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các trường trong form.";
+      details = fieldDetails(
+        extractPrismaValidationFields(exception.message),
+        "Dữ liệu của trường này không hợp lệ.",
+      );
       this.logger.error(
         { err: { message: exception.message }, path: request.url, requestId },
         `Prisma validation error`,
@@ -162,6 +215,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         message,
         status: statusCode,
         requestId,
+        traceId,
         ...(details && { details }),
       },
     };

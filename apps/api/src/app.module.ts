@@ -143,7 +143,7 @@ import { LittleHouseModule } from "./modules/little-house/little-house.module.js
     // Success envelope — wraps all responses in { data, meta }
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
 
-    // Error envelope authority — canon format { error: { code, message, status, requestId } }
+    // Error envelope authority — canon format { error: { code, message, status, requestId, traceId } }
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
   ],
 })

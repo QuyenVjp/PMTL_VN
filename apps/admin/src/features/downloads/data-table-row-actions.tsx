@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigateTo } from "@/lib/router-utils";
-import { CheckCircleIcon, EyeOffIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, EyeIcon, EyeOffIcon, Trash2Icon } from "lucide-react";
 
 import { WorkspaceRowActions, WorkspaceConfirmDialog } from "@/components/workspace";
 import type { DownloadItem } from "@/features/downloads/queries";
@@ -35,8 +35,8 @@ export function DownloadsRowActions({
       <WorkspaceRowActions
         actions={[
           {
-            label: "Chỉnh sửa",
-            icon: PencilIcon,
+            label: "Xem chi tiết",
+            icon: EyeIcon,
             onClick: () => navigateTo(`${detailBasePath}/${row.publicId}`),
           },
           ...(row.status === "DRAFT"

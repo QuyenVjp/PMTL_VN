@@ -5,8 +5,8 @@
  * No business authority here — all writes stay at apps/api.
  */
 import { useQuery } from "@tanstack/react-query";
-import { adminClient } from "@/lib/api/admin-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ActivityIcon,
   BookOpenIcon,
@@ -14,20 +14,7 @@ import {
   HeartHandshakeIcon,
   FlameIcon,
 } from "lucide-react";
-
-interface PracticeStats {
-  totalMembers: number;
-  activeVows: number;
-  gongkeLogsLast30Days: number;
-  littleHousesActive: number;
-  littleHousesBurnedTotal: number;
-  repentanceLogsLast30Days: number;
-  activationLogsLast30Days: number;
-}
-
-async function fetchPracticeStats(): Promise<PracticeStats> {
-  return adminClient.get<PracticeStats>("/admin/practice/stats");
-}
+import { practiceStatsOptions, type PracticeStats } from "./queries";
 
 const STAT_CARDS = (stats: PracticeStats) => [
   {
@@ -69,9 +56,7 @@ const STAT_CARDS = (stats: PracticeStats) => [
 
 export function PracticeStatsOverview() {
   const { data: stats, isLoading, isError } = useQuery({
-    queryKey: ["admin", "practice", "stats"],
-    queryFn: fetchPracticeStats,
-    staleTime: 5 * 60_000, // 5 min — stats are not real-time
+    ...practiceStatsOptions(),
   });
 
   if (isLoading) {
@@ -80,8 +65,8 @@ export function PracticeStatsOverview() {
         {[0, 1, 2, 3, 4].map((i) => (
           <Card key={i}>
             <CardHeader className="space-y-2">
-              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
-              <div className="h-8 w-16 animate-pulse rounded bg-muted" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-16" />
             </CardHeader>
           </Card>
         ))}

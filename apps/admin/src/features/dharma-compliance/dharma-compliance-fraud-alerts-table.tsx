@@ -10,6 +10,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { fraudAlertListOptions } from "./queries.js";
@@ -106,6 +107,7 @@ export function DharmaComplianceFraudAlertsTable({
         columns={fraudColumns}
         isLoading={isLoading}
         emptyMessage="Không có cảnh báo nào."
+        onRowClick={setSelectedAlert}
       />
 
       <WorkspaceDetailSheet
@@ -169,6 +171,7 @@ export function DharmaComplianceFraudAlertsTable({
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

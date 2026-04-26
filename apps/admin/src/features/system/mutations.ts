@@ -64,8 +64,6 @@ export function useReindexMutation() {
       });
     },
     onError: (error, indexName) => {
-      console.error("Reindex failed:", error);
-
       // Handle authentication errors specifically
       if (error instanceof Error && error.message.includes("401")) {
         toast.error("🔒 Cần đăng nhập", {

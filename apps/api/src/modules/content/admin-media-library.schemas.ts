@@ -47,6 +47,10 @@ export const listCollectionsSchema = z.object({
   offset:         z.coerce.number().int().min(0).default(0),
 });
 
+export type CreateCollectionInput = z.infer<typeof createCollectionSchema>;
+export type UpdateCollectionInput = z.infer<typeof updateCollectionSchema>;
+export type ListCollectionsInput = z.infer<typeof listCollectionsSchema>;
+
 // ── Item schemas ──────────────────────────────────────────────────────
 
 export const addCollectionItemSchema = z.object({
@@ -73,3 +77,7 @@ export const listItemsSchema = z.object({
   limit:  z.coerce.number().int().min(1).max(200).default(100),
   offset: z.coerce.number().int().min(0).default(0),
 });
+
+export type AddCollectionItemInput = z.infer<typeof addCollectionItemSchema>;
+export type UpdateCollectionItemInput = z.infer<typeof updateCollectionItemSchema>;
+export type ListItemsInput = z.infer<typeof listItemsSchema>;

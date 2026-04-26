@@ -10,6 +10,7 @@
 import { flexRender, type Table, type ColumnDef } from "@tanstack/react-table";
 
 import { DataTablePagination } from "@/components/data-table";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table as UiTable,
   TableBody,
@@ -38,7 +39,6 @@ export function WorkspaceDataTable<TData>({
   table,
   columns,
   isLoading = false,
-  loadingMessage = "Đang tải dữ liệu...",
   emptyMessage = "Không có kết quả phù hợp.",
   onRowClick,
 }: WorkspaceDataTableProps<TData>) {
@@ -63,14 +63,15 @@ export function WorkspaceDataTable<TData>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  {loadingMessage}
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 6 }).map((_, rowIndex) => (
+                <TableRow key={`skeleton-${rowIndex}`}>
+                  {Array.from({ length: Math.max(columns.length, 1) }).map((__, cellIndex) => (
+                    <TableCell key={`skeleton-${rowIndex}-${cellIndex}`}>
+                      <Skeleton className="h-5 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
             ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow

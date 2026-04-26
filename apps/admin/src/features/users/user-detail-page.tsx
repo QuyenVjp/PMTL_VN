@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { LockIcon, UnlockIcon } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -20,11 +21,14 @@ import {
   AdminDetailField,
   AdminFormField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { FieldError } from "@/components/ui/field-error";
 
 import { resolveMediaSrc } from "@/lib/media-src";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
+import { readRouteParam } from "@/lib/router-utils";
 
 import { userDetailOptions } from "@/features/users/queries";
 import {
@@ -41,8 +45,14 @@ import {
   type ApiUserRole,
 } from "@/features/users/types";
 
+const userDetailSchema = z.object({
+  displayName: z.string().trim().min(1, "Tên hiển thị không được để trống."),
+  email: z.string().trim().min(1, "Email không được để trống."),
+  role: z.enum(["MEMBER", "ADMIN", "SUPER_ADMIN"]),
+});
+
 export function UserDetailPage() {
-  const { publicId } = useParams({ strict: false });
+  const publicId = readRouteParam(useParams({ strict: false }), "publicId");
 
   const { data: envelope, isLoading, isError } = useQuery(
     userDetailOptions(publicId ?? ""),
@@ -54,10 +64,15 @@ export function UserDetailPage() {
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
 
-  const [displayName, setDisplayName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<ApiUserRole>("MEMBER");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const form = useAdminZodForm(userDetailSchema, {
+    defaultValues: {
+      displayName: "",
+      email: "",
+      role: "MEMBER",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
 
   const [confirmBlock, setConfirmBlock] = useState(false);
   const [confirmUnblock, setConfirmUnblock] = useState(false);
@@ -65,39 +80,30 @@ export function UserDetailPage() {
   // Sync form state when user data loads
   useEffect(() => {
     if (user) {
-      setDisplayName(user.displayName);
-      setEmail(user.email);
-      setRole(user.role);
-      setFieldErrors({});
+      form.reset({
+        displayName: user.displayName,
+        email: user.email,
+        role: user.role,
+      });
     }
   }, [user]);
 
-  const handleSave = () => {
+  const handleSave = form.handleSubmit((formValues) => {
     if (!user) return;
 
-    const nextErrors: FieldErrors = {};
-    if (!displayName.trim()) nextErrors.displayName = "Tên hiển thị không được để trống.";
-    if (!email.trim()) nextErrors.email = "Email không được để trống.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(String(Object.values(nextErrors)[0]));
-      return;
-    }
-    setFieldErrors({});
-
     const profileChanged =
-      displayName !== user.displayName || email !== user.email;
-    const roleChanged = role !== user.role;
+      formValues.displayName !== user.displayName || formValues.email !== user.email;
+    const roleChanged = formValues.role !== user.role;
 
     const promises: Promise<unknown>[] = [];
 
     if (profileChanged) {
       promises.push(
         updateProfile.mutateAsync({
-          publicId: user.publicId,
-          input: {
-            ...(displayName !== user.displayName && { displayName: displayName.trim() }),
-            ...(email !== user.email && { email: email.trim() }),
+            publicId: user.publicId,
+            input: {
+            ...(formValues.displayName !== user.displayName && { displayName: formValues.displayName }),
+            ...(formValues.email !== user.email && { email: formValues.email }),
           },
         }),
       );
@@ -107,7 +113,7 @@ export function UserDetailPage() {
       promises.push(
         changeRole.mutateAsync({
           publicId: user.publicId,
-          input: { role },
+          input: { role: formValues.role as ApiUserRole },
         }),
       );
     }
@@ -118,9 +124,9 @@ export function UserDetailPage() {
     }
 
     Promise.all(promises).catch((error: unknown) => {
-      setFieldErrors(extractValidationFieldErrors(error));
+      applyApiFieldErrors(form, error);
     });
-  };
+  });
 
   const isSaving = updateProfile.isPending || changeRole.isPending;
 
@@ -151,11 +157,7 @@ export function UserDetailPage() {
   // ── Loading / error states ────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[200px] items-center justify-center text-muted-foreground">
-        Đang tải...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
 
   if (isError || !user) {
@@ -266,7 +268,9 @@ export function UserDetailPage() {
             {statusLabel(user.status)}
           </Badge>
         }
-        onSave={handleSave}
+        onSave={() => {
+          void handleSave();
+        }}
         isSaving={isSaving}
         saveLabel="Lưu thay đổi"
         actions={actions}
@@ -294,31 +298,21 @@ export function UserDetailPage() {
 
             <AdminFormField label="Tên hiển thị">
               <Input
-                value={displayName}
-                onChange={(e) => {
-                  setDisplayName(e.target.value);
-                  if (fieldErrors.displayName)
-                    setFieldErrors((prev) => ({ ...prev, displayName: "" }));
-                }}
-                className={invalidFieldClass(Boolean(fieldErrors.displayName))}
+                {...form.register("displayName")}
+                className={invalidFieldClass(Boolean(errors.displayName))}
                 placeholder="Nhập tên hiển thị"
               />
-              <FieldError message={fieldErrors.displayName} />
+              <FieldError message={errors.displayName?.message} />
             </AdminFormField>
 
             <AdminFormField label="Email">
               <Input
                 type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (fieldErrors.email)
-                    setFieldErrors((prev) => ({ ...prev, email: "" }));
-                }}
-                className={invalidFieldClass(Boolean(fieldErrors.email))}
+                {...form.register("email")}
+                className={invalidFieldClass(Boolean(errors.email))}
                 placeholder="Nhập địa chỉ email"
               />
-              <FieldError message={fieldErrors.email} />
+              <FieldError message={errors.email?.message} />
             </AdminFormField>
           </div>
         </AdminDetailSection>
@@ -326,7 +320,10 @@ export function UserDetailPage() {
         {/* ── Vai trò ─────────────────────────────────────────── */}
         <AdminDetailSection title="Vai trò">
           <AdminFormField label="Vai trò người dùng">
-            <Select value={role} onValueChange={(v) => setRole(v as ApiUserRole)}>
+            <Select
+              value={values.role}
+              onValueChange={(v) => form.setValue("role", v as ApiUserRole, { shouldDirty: true })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Chọn vai trò" />
               </SelectTrigger>

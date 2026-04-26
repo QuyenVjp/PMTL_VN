@@ -18,6 +18,7 @@ import { NavigationProgress } from "@/components/navigation-progress";
 import { SkipToMain } from "@/components/skip-to-main";
 
 import { AdminShell } from "@/components/layout/admin-shell";
+import { WorkspaceRouteSkeleton } from "@/components/workspace";
 import { getCurrentUser } from "@/lib/auth";
 import { niemKinhRoutes } from "@/routes/noi-dung/niem-kinh/index.js";
 
@@ -125,6 +126,9 @@ const WisdomPage = lazy(() =>
 const WisdomCreatePage = lazy(() =>
   import("@/features/wisdom-baihoa/create-page").then((mod) => ({ default: mod.WisdomCreatePage })),
 );
+const WisdomDetailPage = lazy(() =>
+  import("@/features/wisdom-baihoa/detail-page").then((mod) => ({ default: mod.WisdomDetailPage })),
+);
 const DesignSystemPage = lazy(() =>
   import("@/features/design-system").then((mod) => ({ default: mod.DesignSystemPage })),
 );
@@ -203,12 +207,12 @@ const VolunteerDetailPage = lazy(() =>
 // Guide detail/create wrappers — same component, different back-nav per category
 const DailyPracticeGuideCreatePage = lazy(() =>
   import("@/features/guides/guide-create-page").then((mod) => ({
-    default: () => <mod.GuideCreatePage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh Bài Tập" defaultCategory="DAILY_PRACTICE" />,
+    default: () => <mod.GuideCreatePage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh bài tập" defaultCategory="DAILY_PRACTICE" />,
   })),
 );
 const DailyPracticeGuideDetailPage = lazy(() =>
   import("@/features/guides/guide-detail-page").then((mod) => ({
-    default: () => <mod.GuideDetailPage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh Bài Tập" />,
+    default: () => <mod.GuideDetailPage backHref="/noi-dung/kinh-bai-tap" backLabel="Kinh bài tập" />,
   })),
 );
 const LittleHouseGuideCreatePage = lazy(() =>
@@ -269,13 +273,7 @@ const TaiLieuDownloadDetailPage = lazy(() =>
 function withSuspense(Component: ComponentType) {
   return function SuspendedRouteComponent() {
     return (
-      <Suspense
-        fallback={
-          <div className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-            Đang tải workspace...
-          </div>
-        }
-      >
+      <Suspense fallback={<WorkspaceRouteSkeleton />}>
         <Component />
       </Suspense>
     );
@@ -673,6 +671,11 @@ const wisdomCreateRoute = createRoute({
   path: "/noi-dung/bach-thoai/tao-moi",
   component: withSuspense(WisdomCreatePage),
 });
+const wisdomDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/bach-thoai/$publicId",
+  component: withSuspense(WisdomDetailPage),
+});
 
 // Legacy alias for old bookmarked route
 const wisdomLegacyRoute = createRoute({
@@ -705,7 +708,7 @@ const fraudAlertsRoute = createRoute({
 const purityVowsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/loi-nguyen-thanh-tu",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
   },
@@ -713,7 +716,7 @@ const purityVowsRoute = createRoute({
 const guidanceQueueRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/phap-luat/hang-doi-huong-dan",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/phap-luat/canh-bao-gian-lan" });
   },
@@ -733,7 +736,7 @@ const eventsCreateRoute = createRoute({
 const eventsCreateLegacyRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/su-kien/tao-moi",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/su-kien/danh-sach/tao-moi" });
   },
@@ -789,7 +792,7 @@ const lhFraudQueueRoute = createRoute({
 const altarItemsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/vat-pham",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/dashboard" });
   },
@@ -797,7 +800,7 @@ const altarItemsRoute = createRoute({
 const validationLogsRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/nhat-ky",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/dashboard" });
   },
@@ -805,7 +808,7 @@ const validationLogsRoute = createRoute({
 const altarProceduresRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/ban-tho/quy-trinh",
-  beforeLoad: async () => {
+  beforeLoad: () => {
     // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
     throw redirect({ to: "/dashboard" });
   },
@@ -887,6 +890,7 @@ export const routeTree = rootRoute.addChildren([
     // Bạch thoại Phật pháp
     wisdomRoute,
     wisdomCreateRoute,
+    wisdomDetailRoute,
     wisdomLegacyRoute,
     // Thanh Tịnh Pháp — Tuân thủ Pháp luật
     charitiesRoute,

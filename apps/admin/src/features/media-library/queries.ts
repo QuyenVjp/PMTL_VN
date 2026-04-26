@@ -59,8 +59,12 @@ export interface CollectionItem {
 
 export const mediaLibraryKeys = {
   all:         ["admin-media-library"] as const,
-  collections: () => [...mediaLibraryKeys.all, "collections"] as const,
-  collection:  (id: string) => [...mediaLibraryKeys.collections(), id] as const,
+  lists: () => [...mediaLibraryKeys.all, "list"] as const,
+  list: (filters: ListCollectionsFilters) => [...mediaLibraryKeys.lists(), "collections", filters] as const,
+  details: () => [...mediaLibraryKeys.all, "detail"] as const,
+  detail: (id: string) => [...mediaLibraryKeys.details(), "collections", id] as const,
+  collections: () => [...mediaLibraryKeys.lists(), "collections"] as const,
+  collection:  (id: string) => mediaLibraryKeys.detail(id),
   items:       (collectionId: string) => [...mediaLibraryKeys.collection(collectionId), "items"] as const,
 };
 
@@ -84,7 +88,7 @@ export function collectionsListOptions(filters: ListCollectionsFilters = {}) {
   };
 
   return queryOptions({
-    queryKey: [...mediaLibraryKeys.collections(), filters],
+    queryKey: mediaLibraryKeys.list(filters),
     queryFn:  () =>
       adminClient.get<ListEnvelope<CollectionListItem>>(
         "/admin/content/media-library/collections",

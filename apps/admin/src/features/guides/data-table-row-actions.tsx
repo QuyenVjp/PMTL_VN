@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigateTo } from "@/lib/router-utils";
-import { CheckCircleIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, EyeIcon, Trash2Icon } from "lucide-react";
 
 import { WorkspaceRowActions, WorkspaceConfirmDialog } from "@/components/workspace";
 import type { GuideItem } from "@/features/guides/queries";
@@ -24,8 +24,8 @@ export function GuidesRowActions({ row, detailBasePath = "/noi-dung/huong-dan" }
       <WorkspaceRowActions
         actions={[
           {
-            label: "Chỉnh sửa",
-            icon: PencilIcon,
+            label: "Xem chi tiết",
+            icon: EyeIcon,
             onClick: () => navigateTo(`${detailBasePath}/${row.publicId}`),
           },
           ...(row.status === "DRAFT"

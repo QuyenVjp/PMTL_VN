@@ -26,6 +26,63 @@ function Write-Warn {
   Write-Host "[pmtl] ⚠ $Msg" -ForegroundColor Yellow
 }
 
+function Get-ChildProcessIds {
+  param([int]$ParentProcessId)
+
+  $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId = $ParentProcessId" -ErrorAction SilentlyContinue)
+  foreach ($child in $children) {
+    [int]$child.ProcessId
+    Get-ChildProcessIds -ParentProcessId ([int]$child.ProcessId)
+  }
+}
+
+function Stop-ProcessTree {
+  param(
+    [int]$ProcessId,
+    [string]$Reason = "cleanup"
+  )
+
+  if (-not $ProcessId -or $ProcessId -eq $PID) {
+    return
+  }
+
+  $processIds = @(
+    @(Get-ChildProcessIds -ParentProcessId $ProcessId) |
+      Sort-Object -Unique -Descending
+    $ProcessId
+  ) | Where-Object { $_ -and $_ -ne $PID } | Select-Object -Unique
+
+  foreach ($targetPid in $processIds) {
+    try {
+      Stop-Process -Id $targetPid -Force -ErrorAction Stop
+      Write-Warn "Đã dừng PID $targetPid ($Reason)."
+    } catch {
+      # Process may already have exited while we were walking the tree.
+    }
+  }
+}
+
+function Stop-PmtlApiProcesses {
+  $apiPathPattern = "*$repoRoot*"
+  $apiProcessPatterns = @(
+    "*--filter @pmtl/api dev*",
+    "*@nestjs*cli*nest.js*start --watch*",
+    "*apps\api\dist\main*"
+  )
+
+  $matches = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object {
+      $cmd = $_.CommandLine
+      $_.ProcessId -ne $PID -and
+      $cmd -and
+      $cmd -like $apiPathPattern -and
+      ($apiProcessPatterns | Where-Object { $cmd -like $_ } | Select-Object -First 1)
+    })
+
+  foreach ($proc in ($matches | Sort-Object ProcessId -Unique)) {
+    Stop-ProcessTree -ProcessId ([int]$proc.ProcessId) -Reason "PMTL API cũ"
+  }
+}
+
 function Stop-DevPortProcesses {
   param([int[]] $Ports)
   $composeFile = Join-Path $repoRoot "infra/docker/compose.dev.yml"
@@ -51,8 +108,17 @@ function Stop-DevPortProcesses {
         }
 
         Write-Warn "Giải phóng port $port từ PID $pid_..."
-        Stop-Process -Id $pid_ -Force -ErrorAction SilentlyContinue
+        Stop-ProcessTree -ProcessId $pid_ -Reason "port $port"
       }
+    }
+
+    $deadline = (Get-Date).AddSeconds(10)
+    while ((Get-Date) -lt $deadline) {
+      $stillListening = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
+      if ($stillListening.Count -eq 0) {
+        break
+      }
+      Start-Sleep -Milliseconds 250
     }
   }
 }
@@ -114,6 +180,39 @@ function Get-LatestLogLine {
   return $lines[-1]
 }
 
+function Test-LogContains {
+  param(
+    [string]$Path,
+    [string[]]$Patterns
+  )
+
+  if (-not (Test-Path $Path)) {
+    return $false
+  }
+
+  $text = (Get-Content $Path -Tail 120 -ErrorAction SilentlyContinue) -join [Environment]::NewLine
+  foreach ($pattern in $Patterns) {
+    if ($text -like "*$pattern*") {
+      return $true
+    }
+  }
+
+  return $false
+}
+
+function Test-BenignStartupLogLine {
+  param([string]$Line)
+
+  if (-not $Line) {
+    return $false
+  }
+
+  return (
+    $Line -like '*"typeCheck" will not have any effect when "builder" is not "swc"*' -or
+    $Line -like '*Eviction policy is volatile-lru*'
+  )
+}
+
 function Wait-ForPortWithProgress {
   param(
     [string]$TargetHost,
@@ -129,7 +228,12 @@ function Wait-ForPortWithProgress {
   $lastProgressAt = $startedAt.AddSeconds(-15)
 
   do {
-    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+    if (
+      (Test-TcpPort -TargetHost $TargetHost -Port $Port) -or
+      (Test-TcpPort -TargetHost "localhost" -Port $Port) -or
+      (Test-TcpPort -TargetHost "::1" -Port $Port) -or
+      (Test-LogContains -Path $StdoutPath -Patterns @("Nest application successfully started", "API server running on port $Port"))
+    ) {
       return $true
     }
 
@@ -143,7 +247,7 @@ function Wait-ForPortWithProgress {
       $stderrLine = Get-LatestLogLine -Path $StderrPath
       $stdoutLine = Get-LatestLogLine -Path $StdoutPath
 
-      if ($stderrLine) {
+      if ($stderrLine -and -not (Test-BenignStartupLogLine -Line $stderrLine)) {
         Write-Warn "$Label vẫn đang chạy sau ${elapsed}s. stderr mới nhất: $stderrLine"
       } elseif ($stdoutLine) {
         Write-Step "$Label vẫn đang chạy sau ${elapsed}s. stdout mới nhất: $stdoutLine"
@@ -168,33 +272,33 @@ function Start-PnpmProcess {
     [string]$Label
   )
 
-  $pnpmPs1 = Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue
+  $pnpmPs1 = @(Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue)[0]
   if ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1") {
-    $shellCmd = Get-Command pwsh -ErrorAction SilentlyContinue
+    $shellCmd = @(Get-Command pwsh -ErrorAction SilentlyContinue)[0]
     if (-not $shellCmd) {
-      $shellCmd = Get-Command powershell -ErrorAction SilentlyContinue
+      $shellCmd = @(Get-Command powershell -ErrorAction SilentlyContinue)[0]
     }
     if (-not $shellCmd) {
       throw "Không tìm thấy pwsh/powershell để chạy pnpm.ps1."
     }
 
     $resolvedFilePath = $shellCmd.Source
-    $resolvedArguments = @(
+    $resolvedArguments = [string[]](@(
       "-NoLogo",
       "-NoProfile",
       "-ExecutionPolicy",
       "Bypass",
       "-File",
       $pnpmPs1.Source
-    ) + $ArgumentList
+    ) + $ArgumentList)
   } else {
-    $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
+    $pnpmCmd = @(Get-Command pnpm.cmd -ErrorAction SilentlyContinue)[0]
     if (-not $pnpmCmd) {
       throw "Không tìm thấy pnpm trong PATH."
     }
 
     $resolvedFilePath = $pnpmCmd.Source
-    $resolvedArguments = $ArgumentList
+    $resolvedArguments = [string[]]$ArgumentList
   }
 
   Write-Step "${Label}: pnpm $($ArgumentList -join ' ')"
@@ -211,6 +315,7 @@ function Start-ApiWithFallback {
   param([string]$LogDir)
 
   New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+  Stop-PmtlApiProcesses
   Stop-DevPortProcesses -Ports @(3001)
 
   $devOut = Join-Path $LogDir "api-dev.out.log"
@@ -325,6 +430,19 @@ function Assert-DockerInfra {
   if ($LASTEXITCODE -ne 0) {
     throw "Không thể khởi động Docker infra. Kiểm tra Docker Desktop có đang chạy không."
   }
+
+  $infraPorts = @(
+    @{ Name = "Postgres"; Port = 55432 },
+    @{ Name = "Redis"; Port = 6379 },
+    @{ Name = "Meilisearch"; Port = 7700 }
+  )
+
+  foreach ($check in $infraPorts) {
+    if (-not (Wait-ForPort -TargetHost "127.0.0.1" -Port $check.Port -TimeoutSec 45)) {
+      throw "$($check.Name) chưa sẵn sàng trên 127.0.0.1:$($check.Port)."
+    }
+  }
+
   Write-Ok "Docker infra core đã chạy."
 }
 
@@ -342,6 +460,7 @@ try {
   Write-Ok "Env vars đã load."
 
   Write-Step "Giải phóng ports 5173, 3001 và 3002..."
+  Stop-PmtlApiProcesses
   Stop-DevPortProcesses -Ports @(5173, 3001, 3002)
 
   Assert-DockerInfra

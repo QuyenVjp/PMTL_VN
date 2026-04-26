@@ -72,6 +72,13 @@ type DashboardWidgetKey =
   | "searchOpsSummary"
   | "recentAuditEvents";
 
+type DashboardWidgetResponse =
+  | { activeFeatureFlags: number; lastUpdated: string }
+  | { reportCount: number; commentCount: number }
+  | { draftCount: number; publishedCount: number; lastPublished: string }
+  | { status: "available"; lastIndexed: string; indexCount: number }
+  | Array<{ id: string; action: string; actor: string; timestamp: string }>;
+
 export interface HealthExtended {
   overall: HealthStatus;
   components: ComponentHealth[];
@@ -93,7 +100,7 @@ export class AdminSystemService {
     private readonly healthService: HealthService,
   ) {}
 
-  async getDashboardStats(widget?: string, limit?: string): Promise<DashboardStats | unknown> {
+  async getDashboardStats(widget?: string, limit?: string): Promise<DashboardStats | DashboardWidgetResponse> {
     if (this.isDashboardWidgetKey(widget)) {
       return this.getDashboardWidget(widget, limit);
     }
@@ -303,7 +310,7 @@ export class AdminSystemService {
     );
   }
 
-  private async getDashboardWidget(widget: DashboardWidgetKey, limit?: string) {
+  private async getDashboardWidget(widget: DashboardWidgetKey, limit?: string): Promise<DashboardWidgetResponse> {
     const parsedLimit = Math.min(Math.max(Number(limit) || 10, 1), 50);
 
     if (widget === "systemSummary") {

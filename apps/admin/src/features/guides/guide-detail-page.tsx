@@ -1,17 +1,17 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useNavigateTo } from "@/lib/router-utils";
-import { toast } from "sonner";
+import { z } from "zod";
 import {
   AdminDetailPage,
   AdminDetailSection,
   AdminDetailField,
   AdminFormField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
@@ -22,15 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ImageAssetPicker } from "@/components/media/image-asset-picker";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
-import { useUploadMediaAsset } from "@/features/media/mutations";
-import { resolveMediaSrc } from "@/lib/media-src";
-import { extractUploadMediaPayload } from "@/lib/media-upload";
+import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { guideDetailOptions } from "@/features/guides/queries";
 import { useUpdateGuide, usePublishGuide, useDeleteGuide } from "@/features/guides/mutations";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
 import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
 
@@ -98,86 +95,92 @@ type GuideDetailPageProps = {
   backLabel: string;
 };
 
+const guideDetailSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  category: z.string().trim().min(1),
+  sortOrder: z.coerce.number().catch(0),
+  versionNote: z.string().trim().optional(),
+});
+
+function readPublicId(params: unknown): string {
+  if (!params || typeof params !== "object" || !("publicId" in params)) return "";
+  const publicId = (params as { publicId?: unknown }).publicId;
+  return typeof publicId === "string" ? publicId : "";
+}
+
 export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
   const navigateTo = useNavigateTo();
-  const { publicId } = useParams({ strict: false });
+  const publicId = readPublicId(useParams({ strict: false }));
 
-  const { data: guide, isLoading } = useQuery(guideDetailOptions(publicId ?? ""));
+  const { data: guide, isLoading } = useQuery(guideDetailOptions(publicId));
 
   const updateGuide = useUpdateGuide();
   const publishGuide = usePublishGuide();
   const deleteGuide = useDeleteGuide();
-  const uploadMedia = useUploadMediaAsset();
-  const uploadRef = useRef<HTMLInputElement>(null);
 
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("BEGINNER");
-  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "GUIDE", excludePublicId: guide?.publicId });
+  const form = useAdminZodForm(guideDetailSchema, {
+    defaultValues: {
+      title: "",
+      category: "BEGINNER",
+      sortOrder: 0,
+      versionNote: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+  const { slug, setSlug, slugStatus } = useSlugField({
+    title: values.title,
+    entityType: "GUIDE",
+    excludePublicId: guide?.publicId,
+    initialSlug: guide?.slug,
+  });
   const [bodyHtml, setBodyHtml] = useState("");
-  const [sortOrder, setSortOrder] = useState("0");
-  const [versionNote, setVersionNote] = useState("");
   const [coverMediaPublicId, setCoverMediaPublicId] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [isDownloadable, setIsDownloadable] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmPublish, setConfirmPublish] = useState(false);
 
   useEffect(() => {
     if (!guide) return;
-    setTitle(guide.title);
+    form.reset({
+      title: guide.title,
+      category: guide.category,
+      sortOrder: 0,
+      versionNote: "",
+    });
     setSlug(guide.slug);
-    setCategory(guide.category);
     setBodyHtml(readGuideBodyHtml(guide.content));
-    setSortOrder("0");
-    setVersionNote("");
     setCoverMediaPublicId(guide.coverMediaPublicId ?? "");
-    setFieldErrors({});
   }, [guide]);
 
-  const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100, mimeType: "image/" }));
-  const imageAssets = useMemo(
-    () => (mediaEnvelope?.data ?? []).filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
-    [mediaEnvelope],
-  );
-  const selectedCover = imageAssets.find((a) => a.publicId === coverMediaPublicId) ?? null;
-
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
+  const handleSave = form.handleSubmit((formValues) => {
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
       return;
     }
     if (!guide) return;
-    setFieldErrors({});
     updateGuide.mutate(
       {
         publicId: guide.publicId,
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        category,
+        category: formValues.category,
         content: buildGuideContent(bodyHtml),
         coverMediaPublicId: coverMediaPublicId || null,
-        sortOrder: Number(sortOrder) || undefined,
-        versionNote: versionNote.trim() || undefined,
+        sortOrder: Number(formValues.sortOrder) || undefined,
+        versionNote: formValues.versionNote || undefined,
       },
       {
         onError: (error) => {
-          setFieldErrors(extractValidationFieldErrors(error));
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  };
+  });
 
   if (isLoading || !guide) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {isLoading ? "Đang tải..." : "Không tìm thấy hướng dẫn."}
-      </div>
-    );
+    return isLoading ? <WorkspaceDetailSkeleton /> : <div className="flex h-64 items-center justify-center text-muted-foreground">Không tìm thấy hướng dẫn.</div>;
   }
 
   const sidebar = (
@@ -222,8 +225,7 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
           <AdminFormField label="Thứ tự hiển thị">
             <Input
               type="number"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+              {...form.register("sortOrder")}
               placeholder="0"
             />
           </AdminFormField>
@@ -263,10 +265,12 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
             {statusLabel(guide.status)}
           </Badge>
         }
-        onSave={handleSave}
+        onSave={() => {
+          void handleSave();
+        }}
         isSaving={updateGuide.isPending}
         saveLabel="Lưu"
-        saveDisabled={!title.trim()}
+        saveDisabled={!values.title.trim() || slugStatus === "taken"}
         actions={[
           ...(guide.status === "DRAFT"
             ? [{ label: "Xuất bản", onClick: () => setConfirmPublish(true) }]
@@ -284,14 +288,10 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
           <div className="space-y-4">
             <AdminFormField label="Tiêu đề">
               <Input
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-                }}
-                className={invalidFieldClass(Boolean(fieldErrors.title))}
+                {...form.register("title")}
+                className={invalidFieldClass(Boolean(errors.title))}
               />
-              <FieldError message={fieldErrors.title} />
+              <FieldError message={errors.title?.message} />
             </AdminFormField>
 
             <div className="grid grid-cols-2 gap-3">
@@ -309,10 +309,13 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
                     </span>
                   )}
                 </div>
-                <FieldError message={fieldErrors.slug} />
+                <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
               </AdminFormField>
               <AdminFormField label="Danh mục">
-                <Select value={category} onValueChange={setCategory}>
+                <Select
+                  value={values.category}
+                  onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -338,64 +341,20 @@ export function GuideDetailPage({ backHref, backLabel }: GuideDetailPageProps) {
 
             <AdminFormField label="Ghi chú phiên bản" hint="Dùng để ghi lại thay đổi nội dung">
               <Input
-                value={versionNote}
-                onChange={(e) => setVersionNote(e.target.value)}
+                {...form.register("versionNote")}
                 placeholder="VD: Cập nhật theo pháp thoại 2025..."
               />
             </AdminFormField>
           </div>
         </AdminDetailSection>
 
-        <AdminDetailSection title="Ảnh cover">
-          <div className="space-y-3">
-            <input
-              ref={uploadRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                void (async () => {
-                  try {
-                    const result = await uploadMedia.mutateAsync(file);
-                    const publicId = extractUploadMediaPayload(result)?.publicId;
-                    if (publicId) setCoverMediaPublicId(publicId);
-                  } finally {
-                    event.target.value = "";
-                  }
-                })();
-              }}
-            />
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => uploadRef.current?.click()}>
-                Upload ảnh mới
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setCoverMediaPublicId("")}
-                disabled={!coverMediaPublicId}
-              >
-                Bỏ chọn
-              </Button>
-            </div>
-            <ImageAssetPicker
-              assets={imageAssets}
-              value={coverMediaPublicId}
-              onChange={setCoverMediaPublicId}
-              placeholder="Chọn ảnh cover từ thư viện..."
-            />
-            {!selectedCover && guide.coverImageUrl ? (
-              <img
-                src={resolveMediaSrc(guide.coverImageUrl) ?? undefined}
-                alt={guide.title}
-                className="h-20 w-auto rounded border object-cover"
-                loading="lazy"
-              />
-            ) : null}
-          </div>
+        <AdminDetailSection title="Ảnh cover" description="Chọn ảnh từ thư viện media hoặc upload ảnh mới ngay trong cửa sổ chọn ảnh.">
+          <MediaPickerField
+            value={coverMediaPublicId}
+            onChange={setCoverMediaPublicId}
+            currentImageUrl={guide.coverImageUrl}
+            placeholder="Chọn ảnh cover từ thư viện..."
+          />
         </AdminDetailSection>
       </AdminDetailPage>
 

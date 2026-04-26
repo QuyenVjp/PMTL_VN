@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { BookMarkedIcon, BookOpenCheckIcon, PencilIcon } from "lucide-react";
+import { BookMarkedIcon, BookOpenCheckIcon, EyeIcon } from "lucide-react";
 
 import {
   DataTableBulkActions,
@@ -22,14 +22,6 @@ import {
 } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
@@ -40,7 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import { WorkspaceDataTable, WorkspaceDetailSheet, WorkspaceDetailStandardSections, WorkspaceRowActions } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import {
   getChantEnvironmentRulesQueryOptions,
@@ -112,8 +104,8 @@ function EnvironmentRuleRowActions({
     <WorkspaceRowActions
       actions={[
         {
-          label: "Chỉnh sửa",
-          icon: PencilIcon,
+          label: "Xem chi tiết",
+          icon: EyeIcon,
           onClick: () => onEdit(row),
         },
         {
@@ -180,15 +172,12 @@ function EnvironmentRuleEditDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Chỉnh sửa quy tắc</DialogTitle>
-          <DialogDescription>
-            Cập nhật rule <span className="font-mono">{row.ruleKey}</span> trong nhóm{" "}
-            <span className="font-medium">{row.groupTitle}</span>.
-          </DialogDescription>
-        </DialogHeader>
+    <WorkspaceDetailSheet
+      open={open}
+      onOpenChange={onOpenChange}
+      title={row.title}
+      subtitle={`Rule ${row.ruleKey} · ${row.groupTitle}`}
+    >
 
         <div className="space-y-4">
           <div className="space-y-2">
@@ -251,7 +240,7 @@ function EnvironmentRuleEditDialog({
           </div>
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-2 border-t pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Hủy
           </Button>
@@ -261,9 +250,9 @@ function EnvironmentRuleEditDialog({
           >
             {updateRule.isPending ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+    <WorkspaceDetailStandardSections />
+    </WorkspaceDetailSheet>
   );
 }
 
@@ -430,6 +419,10 @@ export function EnvironmentRulesTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Không có quy tắc nào."
+        onRowClick={(row) => {
+          setEditingRow(row);
+          setEditOpen(true);
+        }}
       />
 
       <DataTableBulkActions table={table} entityName="quy tắc">

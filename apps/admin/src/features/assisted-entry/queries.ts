@@ -23,6 +23,15 @@ export interface MemberSearchResult {
   email: string;
 }
 
+export interface MemberVowSummary {
+  publicId: string;
+  vowType: string;
+  description: string;
+  targetCount: number | null;
+  currentCount: number;
+  status: string;
+}
+
 export interface VowHistoryFilters {
   limit?: number;
   offset?: number;
@@ -36,8 +45,12 @@ export const assistedEntryKeys = {
   all: ["admin-assisted-entry"] as const,
   lists: () => [...assistedEntryKeys.all, "list"] as const,
   list: (filters: VowHistoryFilters) => [...assistedEntryKeys.lists(), filters] as const,
+  details: () => [...assistedEntryKeys.all, "detail"] as const,
+  detail: (memberPublicId: string) => [...assistedEntryKeys.details(), memberPublicId] as const,
   memberSearch: (search: string) =>
     [...assistedEntryKeys.all, "member-search", search] as const,
+  memberVows: (memberPublicId: string) =>
+    [...assistedEntryKeys.detail(memberPublicId), "member-vows"] as const,
 };
 
 // ── Query Options ───────────────────────────────────────────────────
@@ -69,5 +82,17 @@ export function memberSearchOptions(search: string) {
         { search, limit: 10 },
       ),
     enabled: search.length >= 2,
+  });
+}
+
+export function memberVowsOptions(memberPublicId: string | undefined) {
+  return queryOptions({
+    queryKey: assistedEntryKeys.memberVows(memberPublicId ?? ""),
+    queryFn: () =>
+      adminClient.get<{
+        data: MemberVowSummary[];
+        member: { publicId: string; displayName: string };
+      }>(`/admin/vows/assisted-entry/members/${memberPublicId}/vows`),
+    enabled: Boolean(memberPublicId),
   });
 }

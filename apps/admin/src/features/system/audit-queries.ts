@@ -16,6 +16,8 @@ export const auditKeys = {
   all: ["admin-audit-logs"] as const,
   lists: () => [...auditKeys.all, "list"] as const,
   list: (filters: Record<string, unknown>) => [...auditKeys.lists(), filters] as const,
+  details: () => [...auditKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...auditKeys.details(), publicId] as const,
 };
 
 export function auditListOptions() {

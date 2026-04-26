@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -118,7 +119,7 @@ export function FeatureFlagsPage() {
             <div>
               <CardTitle className="text-base">Danh sách cờ</CardTitle>
               <CardDescription>
-                {isLoading ? "Đang tải..." : `${filteredFlags.length} cờ hiển thị / ${flags.length} cờ tổng cộng`}
+                {isLoading ? <Skeleton className="h-4 w-48" /> : `${filteredFlags.length} cờ hiển thị / ${flags.length} cờ tổng cộng`}
               </CardDescription>
             </div>
             <Badge variant="outline">{updateFlag.isPending ? "Đang cập nhật" : "Sẵn sàng"}</Badge>
@@ -128,8 +129,8 @@ export function FeatureFlagsPage() {
           {isLoading ? (
             Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="rounded-xl border px-4 py-4">
-                <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-                <div className="mt-3 h-3 w-80 animate-pulse rounded bg-muted" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="mt-3 h-3 w-80" />
               </div>
             ))
           ) : filteredFlags.length ? (

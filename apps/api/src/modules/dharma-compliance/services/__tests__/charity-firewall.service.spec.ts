@@ -120,7 +120,8 @@ describe("CharityFirewallService", () => {
           bankAccount: expect.stringMatching(/^\d{2}\*+\d{2}$/),
         },
       });
-      expect(prismaService.$transaction).not.toHaveBeenCalled();
+      expect(prismaService.fraudDetectionAlert.create).not.toHaveBeenCalled();
+      expect(outboxService.appendEvent).not.toHaveBeenCalled();
     });
 
     it("should create violation and append outbox event when account is unwhitelisted", async () => {
@@ -288,6 +289,26 @@ describe("CharityFirewallService", () => {
         userViolationCount: 0,
       });
       expect(prismaService.$transaction).not.toHaveBeenCalled();
+    });
+
+    it("should scan route-level content types used by the interceptor", async () => {
+      // Arrange
+      const userId = "user-123";
+      const contentType = "guestbook";
+      const contentId = "POST:/guestbook";
+      const text = "Xin gửi lời cảm niệm. STK: 9876543210";
+
+      vi.spyOn(cacheService, "getJson").mockResolvedValue([]);
+      vi.spyOn(cacheService, "setJson").mockResolvedValue(undefined);
+      vi.spyOn(prismaService.charityWhitelist, "findMany").mockResolvedValue([]);
+      vi.spyOn(prismaService.fraudDetectionAlert, "count").mockResolvedValue(1);
+
+      // Act
+      const result = await service.scanContent(userId, contentType, contentId, text, mockAuditContext);
+
+      // Assert
+      expect(result.hasViolation).toBe(true);
+      expect(prismaService.$transaction).toHaveBeenCalled();
     });
 
     it("should reject empty text", async () => {

@@ -1,18 +1,8 @@
 import { useState } from "react";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { LockIcon, UnlockIcon, UserRoundPenIcon } from "lucide-react";
+import { EyeIcon, LockIcon, UnlockIcon } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { WorkspaceConfirmDialog } from "@/components/workspace";
+import { WorkspaceConfirmDialog, WorkspaceRowActions } from "@/components/workspace";
 import type { AdminUserListItem } from "@/features/users/types";
 import { useBlockUser, useUnblockUser } from "@/features/users/mutations";
 
@@ -28,43 +18,28 @@ export function DataTableRowActions({ row }: { row: AdminUserListItem }) {
 
   return (
     <>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="flex size-8 p-0 data-[state=open]:bg-muted">
-            <DotsHorizontalIcon className="size-4" />
-            <span className="sr-only">Mở menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-[168px] rounded-xl">
-          <DropdownMenuItem
-            onClick={() => { void navigate({ to: "/nguoi-dung/$publicId", params: { publicId: row.publicId } }); }}
-          >
-            Chỉnh sửa
-            <DropdownMenuShortcut>
-              <UserRoundPenIcon className="size-4" />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          {isSuspended ? (
-            <DropdownMenuItem onClick={() => setConfirmUnblock(true)}>
-              Mở khóa
-              <DropdownMenuShortcut>
-                <UnlockIcon className="size-4" />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem
-              onClick={() => setConfirmBlock(true)}
-              className="text-destructive focus:text-destructive"
-            >
-              Khóa tài khoản
-              <DropdownMenuShortcut>
-                <LockIcon className="size-4" />
-              </DropdownMenuShortcut>
-            </DropdownMenuItem>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <WorkspaceRowActions
+        actions={[
+          {
+            label: "Xem chi tiết",
+            icon: EyeIcon,
+            onClick: () => { void navigate({ to: "/nguoi-dung/$publicId", params: { publicId: row.publicId } }); },
+          },
+          isSuspended
+            ? {
+                label: "Mở khóa",
+                icon: UnlockIcon,
+                onClick: () => setConfirmUnblock(true),
+              }
+            : {
+                label: "Khóa tài khoản",
+                icon: LockIcon,
+                onClick: () => setConfirmBlock(true),
+                variant: "destructive" as const,
+                separator: true,
+              },
+        ]}
+      />
 
       <WorkspaceConfirmDialog
         open={confirmBlock}

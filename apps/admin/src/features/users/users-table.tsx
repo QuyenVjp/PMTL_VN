@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import {
   type SortingState,
   type VisibilityState,
-  flexRender,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -16,11 +15,11 @@ import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { ShieldCheckIcon, UserXIcon, UserCheckIcon, LogOutIcon } from "lucide-react";
 
-import { DataTableBulkActions, DataTableColumnHeader, DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { WorkspaceDataTable } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { DataTableRowActions } from "@/features/users/data-table-row-actions";
 import { userListOptions } from "@/features/users/queries";
@@ -179,60 +178,13 @@ export function UsersTable() {
         ]}
       />
 
-      <div className="overflow-hidden rounded-xl border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  Đang tải dữ liệu...
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer"
-                  onClick={() => { void navigate({ to: "/nguoi-dung/$publicId", params: { publicId: row.original.publicId } }); }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      onClick={
-                        cell.column.id === "select" || cell.column.id === "actions"
-                          ? (e) => e.stopPropagation()
-                          : undefined
-                      }
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                  Không có kết quả phù hợp.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      <DataTablePagination table={table} className="mt-auto" />
+      <WorkspaceDataTable
+        table={table}
+        columns={columns}
+        isLoading={isLoading}
+        emptyMessage="Không có kết quả phù hợp."
+        onRowClick={(row) => { void navigate({ to: "/nguoi-dung/$publicId", params: { publicId: row.publicId } }); }}
+      />
       <DataTableBulkActions table={table} entityName="người dùng">
         <Button
           size="sm"
@@ -265,5 +217,4 @@ export function UsersTable() {
     </div>
   );
 }
-
 

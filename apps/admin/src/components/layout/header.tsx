@@ -61,15 +61,15 @@ export function Header({
             'after:absolute after:inset-0 after:-z-10 after:bg-background/20 after:backdrop-blur-lg'
         )}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <SidebarTrigger variant="outline" className="max-md:scale-95" />
-          <Separator orientation="vertical" className="hidden h-6 sm:block" />
-          <TopNav links={topNavLinks} mode="desktop" className="min-w-0 flex-1" />
+        <div className="flex min-w-0 flex-1 items-center gap-3 overflow-hidden">
+          <SidebarTrigger variant="outline" className="shrink-0 max-md:scale-95" />
+          <Separator orientation="vertical" className="hidden h-6 shrink-0 sm:block" />
+          <TopNav links={topNavLinks} mode="desktop" className="shrink-0 max-xl:hidden" />
         </div>
 
-        <Search className="hidden md:flex" />
+        <Search className="hidden shrink-0 lg:flex" />
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-1">
           <TopNav links={topNavLinks} mode="mobile" />
           <ThemeSwitch />
           <NotificationDropdown />

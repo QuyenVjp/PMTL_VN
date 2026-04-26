@@ -50,6 +50,8 @@ export const sessionAdminKeys = {
   all: ["admin-sessions"] as const,
   lists: () => [...sessionAdminKeys.all, "list"] as const,
   list: (filters: SessionListFilters) => [...sessionAdminKeys.lists(), filters] as const,
+  details: () => [...sessionAdminKeys.all, "detail"] as const,
+  detail: (sessionId: string) => [...sessionAdminKeys.details(), sessionId] as const,
 };
 
 // ── Query options ─────────────────────────────────────────────────────
@@ -64,5 +66,14 @@ export function sessionListOptions(filters: SessionListFilters = {}) {
         status: filters.status,
         userId: filters.userId,
       }),
+  });
+}
+
+export function sessionDetailOptions(sessionId: string | undefined) {
+  return queryOptions({
+    queryKey: sessionAdminKeys.detail(sessionId ?? ""),
+    queryFn: () =>
+      adminClient.get<{ data: AdminSessionListItem }>(`/admin/sessions/${sessionId ?? ""}`),
+    enabled: Boolean(sessionId),
   });
 }

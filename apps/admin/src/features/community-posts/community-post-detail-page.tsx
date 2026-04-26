@@ -7,6 +7,7 @@ import {
   AdminDetailSection,
   AdminDetailField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { communityPostDetailOptions } from "@/features/community-posts/queries";
 import {
@@ -15,6 +16,7 @@ import {
   useHidePost,
   useRestorePost,
 } from "@/features/community-posts/mutations";
+import { readRouteParam } from "@/lib/router-utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -61,7 +63,7 @@ function statusLabel(s: string, isHidden: boolean): string {
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function CommunityPostDetailPage() {
-  const { publicId } = useParams({ strict: false });
+  const publicId = readRouteParam(useParams({ strict: false }), "publicId");
   const navigate = useNavigate();
 
   const [confirmHide, setConfirmHide] = useState(false);
@@ -81,11 +83,7 @@ export function CommunityPostDetailPage() {
   const goBack = () => { void navigate({ to: "/cong-dong/bai-dang" }); };
 
   if (isLoading || !post) {
-    return (
-      <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        Đang tải...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
 
   const rawTitle = post.content ?? "";

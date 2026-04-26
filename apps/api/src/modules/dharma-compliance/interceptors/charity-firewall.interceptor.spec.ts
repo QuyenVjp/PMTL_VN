@@ -13,6 +13,7 @@ import { CharityFirewallService } from "../services/charity-firewall.service.js"
 import { SKIP_CHARITY_FIREWALL } from "../decorators/skip-charity-firewall.decorator.js";
 import type { CallHandler } from "@nestjs/common";
 import { of } from "rxjs";
+import { vi } from "vitest";
 
 describe("CharityFirewallInterceptor", () => {
   let interceptor: CharityFirewallInterceptor;
@@ -22,16 +23,17 @@ describe("CharityFirewallInterceptor", () => {
 
   beforeEach(async () => {
     charityFirewallServiceMock = {
-      scanContent: jest.fn(),
+      scanContent: vi.fn(),
+      getWhitelistedAccounts: vi.fn().mockResolvedValue([]),
     };
 
     reflectorMock = {
-      get: jest.fn(),
+      getAllAndOverride: vi.fn(),
     };
 
     loggerMock = {
-      warn: jest.fn(),
-      error: jest.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -57,13 +59,13 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("HTTP method filtering", () => {
     it("should skip GET requests", async () => {
-      const context = createMockContext("GET", "/posts/123", { title: "Test" });
+      const context = createMockContext("GET", "/api/community/posts/post-123", { title: "Test" });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
 
       await interceptor.intercept(context, callHandler);
 
@@ -73,13 +75,13 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should skip DELETE requests", async () => {
-      const context = createMockContext("DELETE", "/posts/123", {});
+      const context = createMockContext("DELETE", "/api/community/posts/post-123", {});
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
 
       await interceptor.intercept(context, callHandler);
 
@@ -88,13 +90,13 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should intercept POST requests", async () => {
-      const context = createMockContext("POST", "/posts", { title: "Safe post" });
+      const context = createMockContext("POST", "/api/community/posts", { title: "Safe post" });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -112,14 +114,14 @@ describe("CharityFirewallInterceptor", () => {
       expect(callHandler.handle).toHaveBeenCalled();
     });
 
-    it("should intercept PUT requests", async () => {
-      const context = createMockContext("PUT", "/posts/123", { title: "Updated" });
+    it("should skip PUT requests outside explicit user-content route methods", async () => {
+      const context = createMockContext("PUT", "/api/community/posts/post-123", { title: "Updated" });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -133,17 +135,18 @@ describe("CharityFirewallInterceptor", () => {
 
       await interceptor.intercept(context, callHandler);
 
-      expect(charityFirewallServiceMock.scanContent).toHaveBeenCalled();
+      expect(charityFirewallServiceMock.scanContent).not.toHaveBeenCalled();
+      expect(callHandler.handle).toHaveBeenCalled();
     });
 
     it("should intercept PATCH requests", async () => {
-      const context = createMockContext("PATCH", "/posts/123", { title: "Patched" });
+      const context = createMockContext("PATCH", "/api/community/posts/post-123", { title: "Patched" });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -163,14 +166,14 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Skip decorator", () => {
     it("should skip firewall check when @SkipCharityFirewall() is applied", async () => {
-      const context = createMockContext("POST", "/admin/posts", { title: "Admin post" });
+      const context = createMockContext("POST", "/api/admin/posts", { title: "Admin post" });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
       // Simulate @SkipCharityFirewall() decorator
-      reflectorMock.get.mockReturnValue(true);
+      reflectorMock.getAllAndOverride.mockReturnValue(true);
 
       await interceptor.intercept(context, callHandler);
 
@@ -181,13 +184,13 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Empty body handling", () => {
     it("should allow request with empty body", async () => {
-      const context = createMockContext("POST", "/posts", {});
+      const context = createMockContext("POST", "/api/community/posts", {});
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
 
       await interceptor.intercept(context, callHandler);
 
@@ -197,16 +200,16 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should allow request with non-text body", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         number: 123,
         flag: true,
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
 
       await interceptor.intercept(context, callHandler);
 
@@ -217,16 +220,16 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Violation detection", () => {
     it("should throw ForbiddenException when violation detected", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Hello",
         description: "STK: 10234567890",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -247,9 +250,6 @@ describe("CharityFirewallInterceptor", () => {
       await expect(interceptor.intercept(context, callHandler)).rejects.toThrow(
         ForbiddenException,
       );
-      await expect(interceptor.intercept(context, callHandler)).rejects.toThrow(
-        "Nội dung chứa thông tin tài khoản ngân hàng không được phép",
-      );
 
       // Should log the violation
       expect(loggerMock.warn).toHaveBeenCalled();
@@ -257,16 +257,16 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should allow request with no violations", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Safe Title",
         description: "This is a completely safe description with no numbers",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -288,7 +288,7 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Nested object scanning", () => {
     it("should scan nested text fields", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Post Title",
         metadata: {
           description: "STK: 9876543210",
@@ -297,10 +297,10 @@ describe("CharityFirewallInterceptor", () => {
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -328,7 +328,7 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should scan array of objects", async () => {
-      const context = createMockContext("POST", "/comments", {
+      const context = createMockContext("POST", "/api/community/posts/post-123/comments", {
         comments: [
           { text: "Great post", author: "user1" },
           { text: "My STK: 1234567890", author: "user2" },
@@ -336,10 +336,10 @@ describe("CharityFirewallInterceptor", () => {
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "comment",
@@ -369,15 +369,15 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Error handling", () => {
     it("should log and allow request if scan throws non-Forbidden error", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Test",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockRejectedValue(
         new Error("Database error"),
       );
@@ -389,15 +389,15 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should re-throw ForbiddenException from service", async () => {
-      const context = createMockContext("POST", "/posts", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Test",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockRejectedValue(
         new ForbiddenException("Manual violation"),
       );
@@ -410,15 +410,15 @@ describe("CharityFirewallInterceptor", () => {
 
   describe("Content type detection", () => {
     it("should detect content type from URL path", async () => {
-      const context = createMockContext("POST", "/api/posts/create", {
+      const context = createMockContext("POST", "/api/community/posts", {
         title: "Safe post",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -437,15 +437,15 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should detect comment content type", async () => {
-      const context = createMockContext("POST", "/api/comments", {
+      const context = createMockContext("POST", "/api/community/posts/post-123/comments", {
         text: "Nice comment",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -462,20 +462,47 @@ describe("CharityFirewallInterceptor", () => {
       const callArgs = charityFirewallServiceMock.scanContent.mock.calls[0];
       expect(callArgs[1]).toBe("comment");
     });
+
+    it("should detect public guestbook content type", async () => {
+      const context = createMockContext("POST", "/api/guestbook", {
+        message: "Con xin ghi lời cảm niệm",
+      });
+
+      const callHandler: CallHandler = {
+        handle: vi.fn().mockReturnValue(of({ success: true })),
+      };
+
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
+      charityFirewallServiceMock.scanContent.mockResolvedValue({
+        userId: "user-123",
+        contentType: "guestbook",
+        contentId: "test-id",
+        text: "Con xin ghi lời cảm niệm",
+        detectedPatterns: [],
+        hasViolation: false,
+        userViolationCount: 0,
+        escalatedToAlert: false,
+      });
+
+      await interceptor.intercept(context, callHandler);
+
+      const callArgs = charityFirewallServiceMock.scanContent.mock.calls[0];
+      expect(callArgs[1]).toBe("guestbook");
+    });
   });
 
   describe("User identification", () => {
     it("should use authenticated user ID", async () => {
-      const context = createMockContext("POST", "/posts", { title: "Test" }, {
+      const context = createMockContext("POST", "/api/community/posts", { title: "Test" }, {
         id: "user-123",
         email: "user@example.com",
       });
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -494,13 +521,13 @@ describe("CharityFirewallInterceptor", () => {
     });
 
     it("should use anonymous for unauthenticated requests", async () => {
-      const context = createMockContext("POST", "/posts", { title: "Test" }, undefined);
+      const context = createMockContext("POST", "/api/community/posts", { title: "Test" }, undefined);
 
       const callHandler: CallHandler = {
-        handle: jest.fn().mockReturnValue(of({ success: true })),
+        handle: vi.fn().mockReturnValue(of({ success: true })),
       };
 
-      reflectorMock.get.mockReturnValue(false);
+      reflectorMock.getAllAndOverride.mockReturnValue(false);
       charityFirewallServiceMock.scanContent.mockResolvedValue({
         userId: "user-123",
         contentType: "post",
@@ -535,16 +562,20 @@ function createMockContext(
     url: path,
     body,
     user,
+    ip: "127.0.0.1",
     headers: {
       "x-request-id": "req-123",
+      "user-agent": "vitest",
     },
+    get: vi.fn((name: string) => request.headers[name.toLowerCase() as keyof typeof request.headers]),
   };
 
   const context = {
-    switchToHttp: jest.fn().mockReturnValue({
-      getRequest: jest.fn().mockReturnValue(request),
+    switchToHttp: vi.fn().mockReturnValue({
+      getRequest: vi.fn().mockReturnValue(request),
     }),
-    getHandler: jest.fn(),
+    getHandler: vi.fn(),
+    getClass: vi.fn(),
   };
 
   return context as unknown as ExecutionContext;

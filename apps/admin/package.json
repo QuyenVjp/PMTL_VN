@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "generate:api-types": "tsx scripts/generate-api-types.ts"
+    "generate:api-types": "tsx scripts/generate-api-types.ts",
+    "audit:admin-contract": "node scripts/audit-admin-contract.mjs"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.8",

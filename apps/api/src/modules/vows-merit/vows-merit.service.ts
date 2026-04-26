@@ -1,21 +1,19 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { nanoid } from "nanoid";
-import { AuditService, type AuditContext } from "../../platform/audit/audit.service.js";
+import type { AuditContext } from "../../platform/audit/audit.service.js";
 import { mapVowToAdminItem } from "./vows-merit.mapper.js";
 import { VowsMeritRepository } from "./vows-merit.repository.js";
 import type {
   AssistedEntryHistoryQuery,
   AssistedEntryInput,
+  AssistedProgressEntryInput,
   LifeReleaseEntryInput,
   MemberSearchQuery,
 } from "./vows-merit.schemas.js";
 
 @Injectable()
 export class VowsMeritService {
-  constructor(
-    private readonly repo: VowsMeritRepository,
-    private readonly audit: AuditService,
-  ) {}
+  constructor(private readonly repo: VowsMeritRepository) {}
 
   async adminAssistedEntryHistory(query: AssistedEntryHistoryQuery) {
     const { data, total } = await this.repo.findManyVows(query);
@@ -41,19 +39,19 @@ export class VowsMeritService {
     const member = await this.repo.findMemberByPublicId(input.memberPublicId);
     if (!member) throw new NotFoundException("Thành viên không tồn tại");
 
-    const vow = await this.repo.createVow(input, member.id, nanoid(21));
-
-    // Canonical assisted-entry audit: MUST capture both the owner (member being assisted)
-    // AND the actor (admin performing the action) as explicit fields. See
-    // design/03-domains/vows-merit/CONTRACTS.md §assisted-entry-audit and DESIGN_GAP_ANALYSIS.md §2.
-    await this.audit.append(auditContext, "admin.vow.create", "vow", vow.publicId, {
-      assistedEntry: true,
-      ownerUserId: member.id,
-      ownerPublicId: member.publicId,
-      actorUserId: adminId,
-      memberPublicId: input.memberPublicId,
-      vowType: input.vowType,
-      assistReason: input.assistReason,
+    const vow = await this.repo.createVow(input, member.id, nanoid(21), {
+      context: auditContext,
+      action: "admin.vow.create",
+      resource: "vow",
+      metadata: {
+        assistedEntry: true,
+        ownerUserId: member.id,
+        ownerPublicId: member.publicId,
+        actorUserId: adminId,
+        memberPublicId: input.memberPublicId,
+        vowType: input.vowType,
+        assistReason: input.assistReason,
+      },
     });
 
     return mapVowToAdminItem(vow);
@@ -63,22 +61,60 @@ export class VowsMeritService {
     const member = await this.repo.findMemberByPublicId(input.memberPublicId);
     if (!member) throw new NotFoundException("Thành viên không tồn tại");
 
-    const journal = await this.repo.createLifeReleaseJournal(input, member.id, adminId, nanoid(21));
-
-    // Canonical assisted-entry audit: MUST capture both ownerUserId (member being assisted)
-    // and actorUserId (admin) per design/03-domains/vows-merit/CONTRACTS.md §assisted-entry-audit.
-    await this.audit.append(auditContext, "admin.life_release.create", "life_release_journal", journal.publicId, {
-      assistedEntry: true,
-      ownerUserId: member.id,
-      ownerPublicId: member.publicId,
-      actorUserId: adminId,
-      memberPublicId: input.memberPublicId,
-      animalType: input.animalType,
-      quantity: input.quantity,
-      assistReason: input.assistReason,
+    const journal = await this.repo.createLifeReleaseJournal(input, member.id, adminId, nanoid(21), {
+      context: auditContext,
+      action: "admin.life_release.create",
+      resource: "life_release_journal",
+      metadata: {
+        assistedEntry: true,
+        ownerUserId: member.id,
+        ownerPublicId: member.publicId,
+        actorUserId: adminId,
+        memberPublicId: input.memberPublicId,
+        animalType: input.animalType,
+        quantity: input.quantity,
+        assistReason: input.assistReason,
+      },
     });
 
     return journal;
+  }
+
+  async adminAddAssistedProgress(input: AssistedProgressEntryInput, adminId: string, auditContext: AuditContext) {
+    const member = await this.repo.findMemberByPublicId(input.memberPublicId);
+    if (!member) throw new NotFoundException("Thành viên không tồn tại");
+
+    const result = await this.repo.addAssistedProgress(input, member.id, ({ before, after, autoCompleted }) => ({
+      context: auditContext,
+      action: "admin.vow.progress",
+      resource: "vow",
+      metadata: {
+        assistedEntry: true,
+        ownerUserId: member.id,
+        ownerPublicId: member.publicId,
+        actorUserId: adminId,
+        memberPublicId: input.memberPublicId,
+        vowPublicId: input.vowPublicId,
+        addCount: input.addCount,
+        note: input.note ?? null,
+        assistReason: input.assistReason,
+        previousState: {
+          currentCount: before.currentCount,
+          status: before.status,
+        },
+        newState: {
+          currentCount: after.currentCount,
+          status: after.status,
+          autoCompleted,
+        },
+      },
+    }));
+    if (!result) throw new NotFoundException("Nguyện lực không tồn tại");
+    if (result.kind === "inactive") {
+      throw new BadRequestException("Chỉ có thể nhập hộ tiến độ cho nguyện lực đang thực hiện");
+    }
+
+    return mapVowToAdminItem(result.after);
   }
 
   async adminGetMemberVows(memberPublicId: string) {

@@ -12,7 +12,10 @@ export interface ContactInfo {
 
 export const contactInfoKeys = {
   all: ["admin-contact-info"] as const,
-  detail: () => [...contactInfoKeys.all, "detail"] as const,
+  lists: () => [...contactInfoKeys.all, "list"] as const,
+  list: () => [...contactInfoKeys.lists()] as const,
+  details: () => [...contactInfoKeys.all, "detail"] as const,
+  detail: () => [...contactInfoKeys.details(), "singleton"] as const,
 };
 
 export function contactInfoOptions() {

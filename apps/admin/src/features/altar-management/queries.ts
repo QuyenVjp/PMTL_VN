@@ -5,10 +5,25 @@ import type { AltarItemListItem, ValidationLogItem } from "./types.js";
 
 export type { AltarItemListItem, ValidationLogItem } from "./types.js";
 
+export interface ProtocolTemplate {
+  publicId?: string;
+  id?: string;
+  protocolType: string;
+  titleVi: string;
+  descriptionVi?: string | null;
+  steps?: Array<{ title: string; description?: string | null }> | null;
+  isActive?: boolean;
+}
+
 export const altarMgmtKeys = {
   all: ["altar-management"] as const,
-  items: (f: Record<string, unknown>) => [...altarMgmtKeys.all, "items", f] as const,
-  logs: (f: Record<string, unknown>) => [...altarMgmtKeys.all, "logs", f] as const,
+  lists: () => [...altarMgmtKeys.all, "list"] as const,
+  list: (owner: "items" | "logs", f: Record<string, unknown>) => [...altarMgmtKeys.lists(), owner, f] as const,
+  details: () => [...altarMgmtKeys.all, "detail"] as const,
+  detail: (owner: "items" | "logs", publicId: string) => [...altarMgmtKeys.details(), owner, publicId] as const,
+  items: (f: Record<string, unknown>) => altarMgmtKeys.list("items", f),
+  logs: (f: Record<string, unknown>) => altarMgmtKeys.list("logs", f),
+  protocolTemplates: () => [...altarMgmtKeys.lists(), "protocol-templates"] as const,
 };
 
 export function altarItemListOptions(filters: { limit?: number; offset?: number; condition?: string; itemType?: string } = {}) {
@@ -35,5 +50,12 @@ export function validationLogListOptions(filters: { limit?: number; offset?: num
   return queryOptions({
     queryKey: altarMgmtKeys.logs(filters),
     queryFn: () => adminClient.get<ListEnvelope<ValidationLogItem>>("/admin/altar-management/validation-logs", params),
+  });
+}
+
+export function protocolTemplatesOptions() {
+  return queryOptions({
+    queryKey: altarMgmtKeys.protocolTemplates(),
+    queryFn: () => adminClient.get<ProtocolTemplate[]>("/admin/altar-management/protocol-templates"),
   });
 }

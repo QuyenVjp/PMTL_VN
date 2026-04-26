@@ -1,16 +1,9 @@
 import { useState } from "react";
 import { PlusIcon } from "lucide-react";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -19,6 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { FieldError } from "@/components/ui/field-error";
+import { AdminFormField, WorkspaceDetailSheet, WorkspaceDetailStandardSections } from "@/components/workspace";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { SacredFormTemplatesTable } from "./sacred-forms-templates-table.js";
 import { useCreateTemplate } from "./mutations.js";
 import { FORM_TYPE_LABELS, type SacredFormType } from "./types.js";
@@ -31,38 +28,57 @@ const FORM_TYPE_OPTIONS: { label: string; value: SacredFormType }[] = [
   { label: FORM_TYPE_LABELS.DHARMA_STUDY_FORM, value: "DHARMA_STUDY_FORM" },
 ];
 
+const templateFormSchema = z.object({
+  formType: z.enum(["REFUGE_FORM", "VOW_FORM", "MERIT_TRANSFER_FORM", "RECITATION_CERTIFICATE", "DHARMA_STUDY_FORM"]).or(z.literal("")),
+  titleVi: z.string().trim().min(1, "Tên mẫu đơn không được để trống."),
+  titleZh: z.string().trim().optional(),
+  description: z.string().trim().optional(),
+});
+
+type TemplateFormValues = z.infer<typeof templateFormSchema>;
+
 export function SacredFormTemplatesPage() {
   const [open, setOpen] = useState(false);
-  const [formType, setFormType] = useState<SacredFormType | "">("");
-  const [titleVi, setTitleVi] = useState("");
-  const [titleZh, setTitleZh] = useState("");
-  const [description, setDescription] = useState("");
   const createTemplate = useCreateTemplate();
+  const form = useAdminZodForm(templateFormSchema, {
+    defaultValues: {
+      formType: "",
+      titleVi: "",
+      titleZh: "",
+      description: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
 
-  const canCreate = Boolean(formType && titleVi.trim());
+  const canCreate = Boolean(values.formType && values.titleVi.trim());
 
   function handleClose() {
     setOpen(false);
-    setFormType("");
-    setTitleVi("");
-    setTitleZh("");
-    setDescription("");
+    form.reset({ formType: "", titleVi: "", titleZh: "", description: "" });
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!formType || !titleVi.trim()) return;
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (!formValues.formType) {
+      form.setError("formType", { type: "manual", message: "Vui lòng chọn loại đơn." }, { shouldFocus: true });
+      return;
+    }
     createTemplate.mutate(
       {
-        formType,
-        titleVi: titleVi.trim(),
-        titleZh: titleZh.trim() || undefined,
-        description: description.trim() || undefined,
+        formType: formValues.formType,
+        titleVi: formValues.titleVi,
+        titleZh: formValues.titleZh || undefined,
+        description: formValues.description || undefined,
         isActive: true,
       },
-      { onSuccess: handleClose },
+      {
+        onSuccess: handleClose,
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
+      },
     );
-  }
+  });
 
   return (
     <div className="space-y-6">
@@ -81,17 +97,18 @@ export function SacredFormTemplatesPage() {
 
       <SacredFormTemplatesTable />
 
-      <Dialog open={open} onOpenChange={(v) => (!v ? handleClose() : setOpen(true))}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Tạo mẫu đơn mới</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="formType">
-                Loại đơn <span className="text-destructive">*</span>
-              </Label>
-              <Select value={formType} onValueChange={(v) => setFormType(v as SacredFormType)}>
+      <WorkspaceDetailSheet
+        open={open}
+        onOpenChange={(v) => (!v ? handleClose() : setOpen(true))}
+        title="Tạo mẫu đơn mới"
+        subtitle="Mẫu đơn đăng ký Pháp Bảo sẽ xuất hiện trong bảng sau khi tạo."
+      >
+          <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
+            <AdminFormField label="Loại đơn *">
+              <Select
+                value={values.formType}
+                onValueChange={(v) => form.setValue("formType", v as TemplateFormValues["formType"], { shouldDirty: true, shouldValidate: true })}
+              >
                 <SelectTrigger id="formType">
                   <SelectValue placeholder="Chọn loại đơn" />
                 </SelectTrigger>
@@ -103,52 +120,54 @@ export function SacredFormTemplatesPage() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+              <FieldError message={errors.formType?.message} />
+            </AdminFormField>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="titleVi">
-                Tên mẫu đơn (tiếng Việt) <span className="text-destructive">*</span>
-              </Label>
+            <AdminFormField label="Tên mẫu đơn (tiếng Việt) *">
               <Input
                 id="titleVi"
-                value={titleVi}
-                onChange={(e) => setTitleVi(e.target.value)}
+                {...form.register("titleVi")}
+                aria-invalid={Boolean(errors.titleVi)}
+                className={invalidFieldClass(errors.titleVi)}
                 placeholder="Nhập tên mẫu đơn..."
               />
-            </div>
+              <FieldError message={errors.titleVi?.message} />
+            </AdminFormField>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="titleZh">Tên mẫu đơn (Hán tự)</Label>
+            <AdminFormField label="Tên mẫu đơn (Hán tự)">
               <Input
                 id="titleZh"
-                value={titleZh}
-                onChange={(e) => setTitleZh(e.target.value)}
+                {...form.register("titleZh")}
+                aria-invalid={Boolean(errors.titleZh)}
+                className={invalidFieldClass(errors.titleZh)}
                 placeholder="Tuỳ chọn"
               />
-            </div>
+              <FieldError message={errors.titleZh?.message} />
+            </AdminFormField>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="description">Mô tả</Label>
+            <AdminFormField label="Mô tả">
               <Textarea
                 id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...form.register("description")}
+                aria-invalid={Boolean(errors.description)}
+                className={invalidFieldClass(errors.description)}
                 placeholder="Mô tả ngắn về mẫu đơn (tuỳ chọn)"
                 rows={3}
               />
-            </div>
+              <FieldError message={errors.description?.message ?? errors.root?.server?.message} />
+            </AdminFormField>
 
-            <DialogFooter>
+            <div className="flex justify-end gap-2 border-t pt-4">
               <Button type="button" variant="outline" onClick={handleClose}>
                 Huỷ
               </Button>
               <Button type="submit" disabled={!canCreate || createTemplate.isPending}>
                 {createTemplate.isPending ? "Đang tạo..." : "Tạo mẫu đơn"}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
-        </DialogContent>
-      </Dialog>
+      <WorkspaceDetailStandardSections />
+      </WorkspaceDetailSheet>
     </div>
   );
 }

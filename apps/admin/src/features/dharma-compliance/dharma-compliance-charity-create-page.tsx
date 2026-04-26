@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -13,6 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AdminDetailPage, AdminDetailSection, AdminFormField } from "@/components/workspace";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { useCreateCharity } from "@/features/dharma-compliance/mutations";
 
 const CHARITY_TYPE_OPTIONS = [
@@ -24,80 +25,103 @@ const CHARITY_TYPE_OPTIONS = [
   { label: "Khác", value: "OTHER" },
 ];
 
+const charityCreateSchema = z.object({
+  name: z.string().trim().min(1, "Tên tổ chức không được để trống."),
+  charityType: z.string().trim().min(1, "Vui lòng chọn loại tổ chức."),
+  registrationNumber: z.string().trim().optional(),
+  contactEmail: z.string().trim().optional(),
+  websiteUrl: z.string().trim().optional(),
+});
+
+type CharityCreateValues = z.infer<typeof charityCreateSchema>;
+
 export function DharmaComplianceCharityCreatePage() {
   const navigate = useNavigate();
   const createCharity = useCreateCharity();
-
-  const [form, setForm] = useState({
-    name: "",
-    charityType: "",
-    registrationNumber: "",
-    contactEmail: "",
-    websiteUrl: "",
+  const form = useAdminZodForm(charityCreateSchema, {
+    defaultValues: {
+      name: "",
+      charityType: "",
+      registrationNumber: "",
+      contactEmail: "",
+      websiteUrl: "",
+    },
   });
+  const { errors } = form.formState;
+  const values = form.watch();
 
-  function handleCreate() {
-    if (!form.name || !form.charityType) {
-      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
-      return;
-    }
-
+  const handleCreate = form.handleSubmit((formValues: CharityCreateValues) => {
     createCharity.mutate(
       {
-        name: form.name,
-        charityType: form.charityType,
-        registrationNumber: form.registrationNumber || undefined,
-        contactEmail: form.contactEmail || undefined,
-        websiteUrl: form.websiteUrl || undefined,
+        name: formValues.name,
+        charityType: formValues.charityType,
+        registrationNumber: formValues.registrationNumber || undefined,
+        contactEmail: formValues.contactEmail || undefined,
+        websiteUrl: formValues.websiteUrl || undefined,
       },
       {
         onSuccess: () => {
           toast.success("Đã thêm tổ chức từ thiện.");
           void navigate({ to: "/phap-luat/to-chuc-tu-thien" });
         },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       },
     );
-  }
+  });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Thêm tổ chức từ thiện</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Đăng ký một tổ chức từ thiện mới vào hệ thống.
-          </p>
-        </div>
-      </div>
-
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <CardTitle>Thông tin tổ chức</CardTitle>
-          <CardDescription>
-            Điền đầy đủ thông tin cơ bản của tổ chức từ thiện.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Tên tổ chức */}
-          <div className="space-y-2">
-            <Label htmlFor="charity-name">
-              Tên tổ chức <span className="text-destructive">*</span>
-            </Label>
+    <AdminDetailPage
+      backHref="/phap-luat/to-chuc-tu-thien"
+      backLabel="Tổ chức từ thiện"
+      title="Thêm tổ chức từ thiện"
+      onSave={() => {
+        void handleCreate();
+      }}
+      saveLabel="Thêm tổ chức"
+      isSaving={createCharity.isPending}
+      saveDisabled={!values.name.trim() || !values.charityType}
+      actions={[
+        {
+          label: "Huỷ",
+          onClick: () => {
+            void navigate({ to: "/phap-luat/to-chuc-tu-thien" });
+          },
+        },
+      ]}
+      sidebar={
+        <AdminDetailSection title="Quy tắc vận hành">
+          <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+            <p>Tổ chức mới được đưa vào hàng kiểm tra trước khi dùng trong các luồng công khai.</p>
+            <p>Thông tin liên hệ và website giúp reviewer xác minh nguồn chính xác hơn.</p>
+          </div>
+        </AdminDetailSection>
+      }
+    >
+      <AdminDetailSection title="Thông tin tổ chức">
+        <div className="flex flex-col gap-4">
+          <AdminFormField label="Tên tổ chức *" invalid={Boolean(errors.name)}>
             <Input
               id="charity-name"
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              {...form.register("name")}
               placeholder="Nhập tên tổ chức"
+              aria-invalid={Boolean(errors.name)}
+              className={invalidFieldClass(Boolean(errors.name))}
             />
-          </div>
+            <FieldError message={errors.name?.message} />
+          </AdminFormField>
 
-          {/* Loại tổ chức */}
-          <div className="space-y-2">
-            <Label htmlFor="charity-type">
-              Loại <span className="text-destructive">*</span>
-            </Label>
-            <Select value={form.charityType} onValueChange={(v) => setForm((f) => ({ ...f, charityType: v }))}>
-              <SelectTrigger id="charity-type">
+          <AdminFormField label="Loại tổ chức *" invalid={Boolean(errors.charityType)}>
+            <Select
+              value={values.charityType}
+              onValueChange={(v) => form.setValue("charityType", v, { shouldDirty: true, shouldValidate: true })}
+            >
+              <SelectTrigger
+                id="charity-type"
+                aria-invalid={Boolean(errors.charityType)}
+                className={invalidFieldClass(Boolean(errors.charityType))}
+              >
                 <SelectValue placeholder="Chọn loại tổ chức" />
               </SelectTrigger>
               <SelectContent>
@@ -108,57 +132,35 @@ export function DharmaComplianceCharityCreatePage() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+            <FieldError message={errors.charityType?.message} />
+          </AdminFormField>
 
-          {/* Mã đăng ký */}
-          <div className="space-y-2">
-            <Label htmlFor="charity-reg">Mã đăng ký</Label>
+          <AdminFormField label="Mã đăng ký">
             <Input
               id="charity-reg"
-              value={form.registrationNumber}
-              onChange={(e) => setForm((f) => ({ ...f, registrationNumber: e.target.value }))}
+              {...form.register("registrationNumber")}
               placeholder="Mã đăng ký (tuỳ chọn)"
             />
-          </div>
+          </AdminFormField>
 
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="charity-email">Email liên hệ</Label>
+          <AdminFormField label="Email liên hệ">
             <Input
               id="charity-email"
               type="email"
-              value={form.contactEmail}
-              onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))}
+              {...form.register("contactEmail")}
               placeholder="email@tổ-chức.vn"
             />
-          </div>
+          </AdminFormField>
 
-          {/* Website */}
-          <div className="space-y-2">
-            <Label htmlFor="charity-web">Website</Label>
+          <AdminFormField label="Website">
             <Input
               id="charity-web"
-              value={form.websiteUrl}
-              onChange={(e) => setForm((f) => ({ ...f, websiteUrl: e.target.value }))}
+              {...form.register("websiteUrl")}
               placeholder="https://..."
             />
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => { void navigate({ to: "/phap-luat/to-chuc-tu-thien" }); }}
-              disabled={createCharity.isPending}
-            >
-              Huỷ
-            </Button>
-            <Button onClick={handleCreate} disabled={!form.name || !form.charityType || createCharity.isPending}>
-              {createCharity.isPending ? "Đang lưu..." : "Thêm tổ chức"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </AdminFormField>
+        </div>
+      </AdminDetailSection>
+    </AdminDetailPage>
   );
 }

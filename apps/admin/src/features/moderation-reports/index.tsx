@@ -18,6 +18,7 @@ import { KanbanIcon, ListIcon } from "lucide-react";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -506,8 +507,17 @@ export function ModerationReportsPage() {
 
         {view === "kanban" ? (
           isLoading ? (
-            <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
-              Đang tải…
+            <div className="grid gap-4 md:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, columnIndex) => (
+                <div key={columnIndex} className="rounded-xl border bg-card p-4">
+                  <div className="flex flex-col gap-3">
+                    <Skeleton className="h-5 w-32" />
+                    {Array.from({ length: 3 }).map((__, itemIndex) => (
+                      <Skeleton key={itemIndex} className="h-20 w-full" />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <KanbanBoard reports={allReports} />
@@ -521,6 +531,5 @@ export function ModerationReportsPage() {
     </ReportProvider>
   );
 }
-
 
 

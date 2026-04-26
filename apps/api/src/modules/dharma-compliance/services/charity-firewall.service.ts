@@ -160,9 +160,7 @@ export class CharityFirewallService {
           violationCreated = true;
           violationId = violPublicId;
 
-          // Create ContentViolation record
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-          await (tx as any).fraudDetectionAlert.create({
+          await tx.fraudDetectionAlert.create({
             data: {
               publicId: violPublicId,
               alertType: "ACCOUNT_ANOMALY",
@@ -200,8 +198,7 @@ export class CharityFirewallService {
               confidence: pattern.confidence,
               timestamp: new Date().toISOString(),
             },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-            tx as any,
+            tx,
           );
 
           // Audit log
@@ -373,9 +370,7 @@ export class CharityFirewallService {
     const alertPublicId = nanoid(21);
 
     await this.prisma.$transaction(async (tx) => {
-      // Create escalation alert
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await (tx as any).fraudDetectionAlert.create({
+      await tx.fraudDetectionAlert.create({
         data: {
           publicId: alertPublicId,
           alertType: "DONATION_ABUSE",
@@ -395,8 +390,7 @@ export class CharityFirewallService {
           reason: "Multiple unwhitelisted account detections",
           timestamp: new Date().toISOString(),
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-        tx as any,
+        tx,
       );
 
       // Audit log

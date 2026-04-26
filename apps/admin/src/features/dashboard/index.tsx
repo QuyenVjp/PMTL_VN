@@ -9,9 +9,7 @@ import {
   CheckIcon,
   ImageIcon,
   MessageSquareIcon,
-  RefreshCcwIcon,
   ScrollTextIcon,
-  SearchIcon,
   ServerIcon,
   ShieldAlertIcon,
   UsersIcon,
@@ -58,9 +56,7 @@ import {
   DashboardOverviewCardV3,
   SparklineAreaChart,
 } from "@/components/dashboard";
-import { getCurrentUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
-import { useSearch } from "@/stores/search";
 import { dashboardStatsOptions, dashboardKeys } from "./queries.js";
 import { healthExtendedOptions } from "@/features/system/health-queries.js";
 
@@ -109,15 +105,6 @@ function targetTypeLabel(type: string): string {
     guestbook: "Sổ lưu niệm",
   };
   return map[type] ?? type;
-}
-
-function userInitials(displayName: string): string {
-  return displayName
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 }
 
 function timeAgo(isoDate: string): string {
@@ -341,7 +328,6 @@ function ProgressRow({
 // ── Main export ───────────────────────────────────────────────────────
 
 export function DashboardOverview() {
-  const { setOpen } = useSearch();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [chartReady, setChartReady] = useState(false);
@@ -350,13 +336,6 @@ export function DashboardOverview() {
   useEffect(() => {
     setChartReady(true);
   }, []);
-
-  const { data: adminUser } = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: getCurrentUser,
-    staleTime: Infinity,
-  });
-  const isSuperAdmin = adminUser?.role === "SUPER_ADMIN";
 
   const { data: stats, isLoading, isError, error } = useQuery(dashboardStatsOptions());
 
@@ -537,40 +516,6 @@ export function DashboardOverview() {
 
   return (
     <div className="space-y-6">
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Card className="relative overflow-hidden border-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-sm ring-1 ring-border/60">
-        <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
-          <div className="flex items-center gap-4">
-            {adminUser && (
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-md">
-                {adminUser.displayName ? userInitials(adminUser.displayName) : "AD"}
-              </div>
-            )}
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold tracking-tight">Tổng quan vận hành PMTL</h1>
-                {isSuperAdmin && (
-                  <Badge className="border-violet-300 bg-violet-100 text-violet-700 dark:border-violet-700 dark:bg-violet-900/50 dark:text-violet-300" variant="outline">
-                    Super Admin
-                  </Badge>
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground">{adminUser?.email ?? "—"}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-              <SearchIcon className="size-4" />
-              Tìm nhanh
-            </Button>
-            <Button size="sm" variant="outline" onClick={handleRefresh}>
-              <RefreshCcwIcon className="size-4" />
-              Làm mới
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* ── Error ────────────────────────────────────────────────────── */}
       {isError && (
         <Card className="border-red-200 dark:border-red-800">

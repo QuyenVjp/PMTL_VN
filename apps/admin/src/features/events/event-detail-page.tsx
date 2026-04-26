@@ -18,6 +18,7 @@ import {
   AdminDetailSection,
   AdminDetailField,
   AdminFormField,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { eventDetailOptions } from "./queries.js";
 import { useUpdateEvent, type UpdateEventInput } from "./mutations.js";
@@ -83,7 +84,7 @@ export function EventDetailPage() {
   }, [event]);
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">Đang tải...</div>;
+    return <WorkspaceDetailSkeleton />;
   }
 
   if (!event) {

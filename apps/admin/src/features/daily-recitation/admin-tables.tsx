@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   type ColumnDef,
   type SortingState,
@@ -10,52 +10,18 @@ import {
 import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceDataTable } from "@/components/workspace";
-import { adminClient } from "@/lib/api/admin-client.js";
-import type { ListEnvelope } from "@/lib/api/envelopes.js";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-
-const dailyRecitationKeys = {
-  all: ["admin-daily-recitation"] as const,
-  schedules: () => [...dailyRecitationKeys.all, "schedules"] as const,
-  guidelines: () => [...dailyRecitationKeys.all, "guidelines"] as const,
-  routines: () => [...dailyRecitationKeys.all, "routines"] as const,
-};
-
-type Status = "DRAFT" | "PUBLISHED" | "ARCHIVED";
-type Difficulty = "BEGINNER" | "INTERMEDIATE" | "ADVANCED";
-type Importance = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-
-type ScheduleRow = {
-  publicId: string;
-  name: string;
-  description: string | null;
-  difficulty: Difficulty;
-  dailyMinutes: number;
-  minRecitations: number;
-  maxRecitations: number | null;
-  status: Status;
-  createdAt: string;
-  _count?: { guidelines?: number; routines?: number };
-};
-
-type GuidelineRow = {
-  publicId: string;
-  topic: string;
-  guidance: string;
-  importance: Importance;
-  createdAt: string;
-  schedule?: { publicId: string; name: string } | null;
-};
-
-type RoutineRow = {
-  publicId: string;
-  dayNumber: number;
-  scriptureSequence: string[];
-  timing: string;
-  notes: string | null;
-  createdAt: string;
-  schedule?: { publicId: string; name: string } | null;
-};
+import {
+  listGuidelinesOptions,
+  listRoutinesOptions,
+  listSchedulesOptions,
+  type Difficulty,
+  type GuidelineRow,
+  type Importance,
+  type RoutineRow,
+  type ScheduleRow,
+  type Status,
+} from "./queries.js";
 
 const statusOptions = [
   { label: "Đã xuất bản", value: "PUBLISHED" },
@@ -68,35 +34,6 @@ const difficultyOptions = [
   { label: "Trung cấp", value: "INTERMEDIATE" },
   { label: "Nâng cao", value: "ADVANCED" },
 ];
-
-function listSchedulesOptions() {
-  return queryOptions({
-    queryKey: dailyRecitationKeys.schedules(),
-    queryFn: () =>
-      adminClient.get<ListEnvelope<ScheduleRow>>("/admin/daily-recitation/schedules", {
-        page: 1,
-        limit: 100,
-      }),
-  });
-}
-
-function listGuidelinesOptions() {
-  return queryOptions({
-    queryKey: dailyRecitationKeys.guidelines(),
-    queryFn: () =>
-      adminClient.get<ListEnvelope<GuidelineRow>>("/admin/daily-recitation/guidelines", {
-        page: 1,
-        limit: 100,
-      }),
-  });
-}
-
-function listRoutinesOptions() {
-  return queryOptions({
-    queryKey: dailyRecitationKeys.routines(),
-    queryFn: () => adminClient.get<{ data: RoutineRow[] }>("/admin/daily-recitation/routines"),
-  });
-}
 
 function statusLabel(status: Status) {
   if (status === "PUBLISHED") return "Đã xuất bản";

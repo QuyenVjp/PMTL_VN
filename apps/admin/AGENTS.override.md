@@ -88,6 +88,8 @@ features/{name}/
 
 When you need a helper that doesn't exist, add it to `workspace-helpers.ts` — **not** inline in the component.
 
+See also `design/02-platform-baseline/admin-runtime/ADMIN_UI_CONTRACT.md` for the cross-workspace shadcn-admin contract.
+
 ---
 
 ## 5. Query Pattern

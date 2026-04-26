@@ -8,6 +8,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -95,6 +96,7 @@ export function LhFraudQueueTable() {
         columns={fraudColumns}
         isLoading={isLoading}
         emptyMessage="Không có hồ sơ gian lận nào."
+        onRowClick={setDetailItem}
       />
 
       <WorkspaceDetailSheet
@@ -157,6 +159,7 @@ export function LhFraudQueueTable() {
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
 
       <ResolveDialog

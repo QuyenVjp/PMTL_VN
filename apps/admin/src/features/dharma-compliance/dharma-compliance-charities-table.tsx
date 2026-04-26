@@ -37,6 +37,7 @@ function CharityRowActions({ item }: { item: CharityListItem }) {
 }
 
 export function DharmaComplianceCharitiesTable() {
+  const navigate = useNavigate();
   const { data: envelope, isLoading } = useQuery(charityListOptions());
   const items = useMemo(() => envelope?.data ?? [], [envelope]);
 
@@ -91,6 +92,9 @@ export function DharmaComplianceCharitiesTable() {
       columns={charityColumns}
       isLoading={isLoading}
       emptyMessage="Chưa có tổ chức nào."
+      onRowClick={(row) => {
+        void navigate({ to: `/phap-luat/to-chuc-tu-thien/${row.id}` });
+      }}
     />
   );
 }

@@ -15,7 +15,6 @@ export function SpeculationRulesAdmin() {
   useEffect(() => {
     // Progressive enhancement check
     if (!("speculationrules" in HTMLScriptElement.prototype)) {
-      console.log("[SpeculationRulesAdmin] Not supported in this browser");
       return;
     }
 
@@ -64,8 +63,6 @@ export function SpeculationRulesAdmin() {
     script.type = "speculationrules";
     script.textContent = JSON.stringify(rules);
     document.head.appendChild(script);
-
-    console.log("[SpeculationRulesAdmin] Injected for admin panel");
 
     return () => {
       // Cleanup on unmount

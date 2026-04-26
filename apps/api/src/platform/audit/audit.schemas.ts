@@ -110,6 +110,7 @@ export const auditActionSchema = z.enum([
   // Vow / merit actions
   "admin.vow.create",
   "admin.vow.update",
+  "admin.vow.progress",
   "admin.life_release.create",
   "member.altar_item.create",
   "admin.altar_item.condition",
@@ -146,6 +147,8 @@ export const auditActionSchema = z.enum([
   "admin.lh.fraud_flag",
   "admin.lh.fraud_resolve",
   "member.lh.create",
+  "member.lh.burn.pre_check_passed",
+  "member.lh.burn.completed",
 
   // Sacred forms actions
   "admin.sacred_form_template.create",

@@ -7,12 +7,14 @@ import {
   AdminDetailSection,
   AdminDetailField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { guestbookDetailOptions } from "@/features/guestbook/queries";
 import {
   useDeleteGuestbook,
   useUpdateGuestbookStatus,
 } from "@/features/guestbook/mutations";
+import { readRouteParam } from "@/lib/router-utils";
 
 // ── Helpers ───────────────────────────────────────────────────────────
 
@@ -45,7 +47,7 @@ function statusLabel(s: string): string {
 // ── Page ──────────────────────────────────────────────────────────────
 
 export function GuestbookDetailPage() {
-  const { publicId } = useParams({ strict: false });
+  const publicId = readRouteParam(useParams({ strict: false }), "publicId");
   const navigate = useNavigate();
 
   const [confirmApprove, setConfirmApprove] = useState(false);
@@ -62,11 +64,7 @@ export function GuestbookDetailPage() {
   const goBack = () => { void navigate({ to: "/cong-dong/so-luu-niem" }); };
 
   if (isLoading || !entry) {
-    return (
-      <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        Đang tải...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
 
   const title = entry.content.length > 60 ? entry.content.slice(0, 60) + "..." : entry.content;

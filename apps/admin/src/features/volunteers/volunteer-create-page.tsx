@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { z } from "zod";
 
 import {
   AdminDetailPage,
@@ -12,58 +11,60 @@ import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateVolunteer } from "@/features/volunteers/mutations";
-import {
-  extractValidationFieldErrors,
-  hasFieldErrors,
-  invalidFieldClass,
-  type FieldErrors,
-} from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
+
+const volunteerCreateSchema = z.object({
+  displayName: z.string().trim().min(1, "Tên không được để trống."),
+  role: z.string().trim().min(1, "Vai trò không được để trống."),
+  avatarUrl: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  zaloLink: z.string().trim().optional(),
+  bio: z.string().trim().optional(),
+  sortOrder: z.coerce.number().catch(0),
+  isActive: z.boolean(),
+});
 
 export function VolunteerCreatePage() {
   const navigate = useNavigate();
   const createVolunteer = useCreateVolunteer();
+  const form = useAdminZodForm(volunteerCreateSchema, {
+    defaultValues: {
+      displayName: "",
+      role: "",
+      avatarUrl: "",
+      phone: "",
+      zaloLink: "",
+      bio: "",
+      sortOrder: 0,
+      isActive: true,
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
 
-  const [displayName, setDisplayName] = useState("");
-  const [role, setRole] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [phone, setPhone] = useState("");
-  const [zaloLink, setZaloLink] = useState("");
-  const [bio, setBio] = useState("");
-  const [sortOrder, setSortOrder] = useState("0");
-  const [isActive, setIsActive] = useState(true);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!displayName.trim()) nextErrors.displayName = "Tên không được để trống.";
-    if (!role.trim()) nextErrors.role = "Vai trò không được để trống.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
-      return;
-    }
-    setFieldErrors({});
+  const handleSave = form.handleSubmit((formValues) => {
     createVolunteer.mutate(
       {
-        displayName: displayName.trim(),
-        role: role.trim(),
-        avatarUrl: avatarUrl.trim() || undefined,
-        phone: phone.trim() || undefined,
-        zaloLink: zaloLink.trim() || undefined,
-        bio: bio.trim() || undefined,
-        sortOrder: Number(sortOrder) || 0,
-        isActive,
+        displayName: formValues.displayName,
+        role: formValues.role,
+        avatarUrl: formValues.avatarUrl || undefined,
+        phone: formValues.phone || undefined,
+        zaloLink: formValues.zaloLink || undefined,
+        bio: formValues.bio || undefined,
+        sortOrder: Number(formValues.sortOrder) || 0,
+        isActive: formValues.isActive,
       },
       {
         onSuccess: () => {
           void navigate({ to: "/he-thong/phung-su-vien" });
         },
         onError: (error) => {
-          setFieldErrors(extractValidationFieldErrors(error));
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  };
+  });
 
   const sidebar = (
     <AdminDetailSection title="Cài đặt">
@@ -71,16 +72,15 @@ export function VolunteerCreatePage() {
         <AdminFormField label="Thứ tự hiển thị">
           <Input
             type="number"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
+            {...form.register("sortOrder")}
             placeholder="0"
           />
         </AdminFormField>
         <div className="flex items-center gap-2 py-1">
           <Checkbox
             id="create-volunteer-active"
-            checked={isActive}
-            onCheckedChange={(v) => setIsActive(v === true)}
+            checked={values.isActive}
+            onCheckedChange={(v) => form.setValue("isActive", v === true, { shouldDirty: true })}
           />
           <label htmlFor="create-volunteer-active" className="cursor-pointer text-sm font-medium">
             Đang hoạt động
@@ -95,44 +95,37 @@ export function VolunteerCreatePage() {
       backHref="/he-thong/phung-su-vien"
       backLabel="Phụng sự viên"
       title="Thêm phụng sự viên mới"
-      onSave={handleSave}
+      onSave={() => {
+        void handleSave();
+      }}
       isSaving={createVolunteer.isPending}
       saveLabel="Thêm"
-      saveDisabled={!displayName.trim() || !role.trim()}
+      saveDisabled={!values.displayName.trim() || !values.role.trim()}
       sidebar={sidebar}
     >
       <AdminDetailSection title="Thông tin">
         <div className="space-y-4">
           <AdminFormField label="Tên hiển thị">
             <Input
-              value={displayName}
-              onChange={(e) => {
-                setDisplayName(e.target.value);
-                if (fieldErrors.displayName) setFieldErrors((prev) => ({ ...prev, displayName: "" }));
-              }}
+              {...form.register("displayName")}
               placeholder="Tên phụng sự viên..."
-              className={invalidFieldClass(Boolean(fieldErrors.displayName))}
+              className={invalidFieldClass(Boolean(errors.displayName))}
             />
-            <FieldError message={fieldErrors.displayName} />
+            <FieldError message={errors.displayName?.message} />
           </AdminFormField>
 
           <AdminFormField label="Vai trò">
             <Input
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
-                if (fieldErrors.role) setFieldErrors((prev) => ({ ...prev, role: "" }));
-              }}
+              {...form.register("role")}
               placeholder="Ví dụ: Điều phối viên"
-              className={invalidFieldClass(Boolean(fieldErrors.role))}
+              className={invalidFieldClass(Boolean(errors.role))}
             />
-            <FieldError message={fieldErrors.role} />
+            <FieldError message={errors.role?.message} />
           </AdminFormField>
 
           <AdminFormField label="Giới thiệu">
             <Textarea
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              {...form.register("bio")}
               placeholder="Mô tả ngắn..."
               rows={3}
             />
@@ -140,8 +133,7 @@ export function VolunteerCreatePage() {
 
           <AdminFormField label="Ảnh đại diện (URL)">
             <Input
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
+              {...form.register("avatarUrl")}
               placeholder="https://..."
             />
           </AdminFormField>
@@ -149,15 +141,13 @@ export function VolunteerCreatePage() {
           <div className="grid grid-cols-2 gap-3">
             <AdminFormField label="Số điện thoại">
               <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                {...form.register("phone")}
                 placeholder="0912..."
               />
             </AdminFormField>
             <AdminFormField label="Zalo">
               <Input
-                value={zaloLink}
-                onChange={(e) => setZaloLink(e.target.value)}
+                {...form.register("zaloLink")}
                 placeholder="https://zalo.me/..."
               />
             </AdminFormField>

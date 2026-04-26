@@ -7,6 +7,8 @@ export const lifeReleaseKeys = {
   all: ["life-releases"] as const,
   lists: () => [...lifeReleaseKeys.all, "list"] as const,
   list: (f: Record<string, unknown>) => [...lifeReleaseKeys.lists(), f] as const,
+  details: () => [...lifeReleaseKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...lifeReleaseKeys.details(), publicId] as const,
   summary: () => [...lifeReleaseKeys.all, "species-summary"] as const,
 };
 

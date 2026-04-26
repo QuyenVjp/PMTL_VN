@@ -9,6 +9,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { guidanceQueueOptions } from "./queries.js";
@@ -86,6 +87,7 @@ export function DharmaComplianceGuidanceQueueTable({ isLoading }: { isLoading: b
         columns={guidanceColumns}
         isLoading={isLoading}
         emptyMessage="Không có yêu cầu nào."
+        onRowClick={setSelectedItem}
       />
 
       <WorkspaceDetailSheet
@@ -136,6 +138,7 @@ export function DharmaComplianceGuidanceQueueTable({ isLoading }: { isLoading: b
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

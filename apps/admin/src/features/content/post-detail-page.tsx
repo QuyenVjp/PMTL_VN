@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { z } from "zod";
+import type { UseFormReturn } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +35,7 @@ import {
   AdminDetailField,
   AdminFormField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import {
   useUpdatePost,
@@ -41,13 +44,10 @@ import {
   useDeletePost,
 } from "@/features/content/mutations";
 import { postDetailOptions } from "@/features/content/queries";
-import {
-  extractValidationFieldErrors,
-  hasFieldErrors,
-  invalidFieldClass,
-  type FieldErrors,
-} from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
+import { readRouteParam } from "@/lib/router-utils";
 import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
 
 function SlugStatusIcon({ status }: { status: SlugStatus }) {
@@ -65,6 +65,14 @@ const POST_TYPE_OPTIONS = [
   { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
+
+const postDetailSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  postType: z.string().trim().min(1),
+  sourceRef: z.string().trim().optional(),
+});
+
+type PostDetailFormValues = z.infer<typeof postDetailSchema>;
 
 function excerptTextLength(value: string) {
   return value
@@ -212,48 +220,33 @@ function FeaturedImageSection({
 // ── Editable form ─────────────────────────────────────────────────────
 
 function EditableForm({
-  title,
-  setTitle,
+  form,
   slug,
   setSlug,
   slugStatus,
-  postType,
-  setPostType,
-  sourceRef,
-  setSourceRef,
   bodyHtml,
   setBodyHtml,
-  fieldErrors,
-  setFieldErrors,
 }: {
-  title: string;
-  setTitle: (v: string) => void;
+  form: UseFormReturn<PostDetailFormValues>;
   slug: string;
   setSlug: (v: string) => void;
   slugStatus: SlugStatus;
-  postType: string;
-  setPostType: (v: string) => void;
-  sourceRef: string;
-  setSourceRef: (v: string) => void;
   bodyHtml: string;
   setBodyHtml: (v: string) => void;
-  fieldErrors: FieldErrors;
-  setFieldErrors: (updater: (prev: FieldErrors) => FieldErrors) => void;
 }) {
+  const { errors } = form.formState;
+  const values = form.watch();
+
   return (
     <AdminDetailSection title="Thông tin cơ bản">
       <div className="space-y-4">
+        <FieldError message={errors.root?.server?.message} />
         <AdminFormField label="Tiêu đề *">
           <Input
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              if (fieldErrors.title)
-                setFieldErrors((prev) => ({ ...prev, title: "" }));
-            }}
-            className={invalidFieldClass(Boolean(fieldErrors.title))}
+            {...form.register("title")}
+            className={invalidFieldClass(Boolean(errors.title))}
           />
-          <FieldError message={fieldErrors.title} />
+          <FieldError message={errors.title?.message} />
         </AdminFormField>
 
         <div className="grid items-start gap-4 md:grid-cols-2">
@@ -271,11 +264,11 @@ function EditableForm({
                 </span>
               )}
             </div>
-            <FieldError message={fieldErrors.slug} />
+            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
           </AdminFormField>
 
           <AdminFormField label="Loại bài viết">
-            <Select value={postType} onValueChange={setPostType}>
+            <Select value={values.postType} onValueChange={(value) => form.setValue("postType", value, { shouldDirty: true, shouldValidate: true })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -293,8 +286,7 @@ function EditableForm({
 
         <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
           <Input
-            value={sourceRef}
-            onChange={(e) => setSourceRef(e.target.value)}
+            {...form.register("sourceRef")}
             placeholder="VD: Pháp thoại 2024-08-08..."
           />
         </AdminFormField>
@@ -450,7 +442,7 @@ function UnpublishDialog({
 
 export function PostDetailPage() {
   const navigate = useNavigate();
-  const { publicId } = useParams({ strict: false });
+  const publicId = readRouteParam(useParams({ strict: false }), "publicId");
 
   const { data: post, isLoading, isError } = useQuery(
     postDetailOptions(publicId ?? ""),
@@ -460,16 +452,25 @@ export function PostDetailPage() {
   const publishPost = usePublishPost();
   const unpublishPost = useUnpublishPost();
   const deletePost = useDeletePost();
-  const [title, setTitle] = useState("");
-  const [postType, setPostType] = useState("ARTICLE");
-  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "POST", excludePublicId: post?.publicId });
-  const [sourceRef, setSourceRef] = useState("");
+  const form = useAdminZodForm(postDetailSchema, {
+    defaultValues: {
+      title: "",
+      postType: "ARTICLE",
+      sourceRef: "",
+    },
+  });
+  const values = form.watch();
+  const { slug, setSlug, slugStatus } = useSlugField({
+    title: values.title,
+    entityType: "POST",
+    excludePublicId: post?.publicId,
+    initialSlug: post?.slug,
+  });
   const [bodyHtml, setBodyHtml] = useState("");
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featuredImageChanged, setFeaturedImageChanged] = useState(false);
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const [confirmPublish, setConfirmPublish] = useState(false);
   const [confirmUnpublish, setConfirmUnpublish] = useState(false);
@@ -478,41 +479,37 @@ export function PostDetailPage() {
   // Sync form state when post loads
   useEffect(() => {
     if (!post) return;
-    setTitle(post.title);
+    form.reset({
+      title: post.title,
+      postType: post.postType,
+      sourceRef: post.sourceRef ?? "",
+    });
     setSlug(post.slug);
-    setPostType(post.postType);
-    setSourceRef(post.sourceRef ?? "");
     setBodyHtml(readPostBodyHtml(post.content));
     setFeaturedImageId("");
     setFeaturedImageChanged(false);
     setFeatured(post.featured);
     setAllowComments(post.allowComments);
-    setFieldErrors({});
-  }, [post]);
+  }, [form, post, setSlug]);
 
-  const handleSave = () => {
+  const handleSave = form.handleSubmit((formValues) => {
     const postKey = post?.publicId ?? post?.id ?? publicId ?? "";
     if (!postKey) {
       toast.error("Không xác định được mã bài viết.");
       return;
     }
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
       return;
     }
-    setFieldErrors({});
 
     updatePost.mutate(
       {
         publicId: postKey,
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        postType,
-        sourceRef: sourceRef.trim() || null,
+        postType: formValues.postType,
+        sourceRef: formValues.sourceRef || null,
         content: buildPostContent(bodyHtml),
         ...(featuredImageChanged
           ? { featuredImageId: featuredImageId.trim() || null }
@@ -522,20 +519,16 @@ export function PostDetailPage() {
       },
       {
         onError: (error) => {
-          setFieldErrors(extractValidationFieldErrors(error));
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  };
+  });
 
   // ── Loading / error states ──────────────────────────────────────────
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-muted-foreground">
-        Đang tải bài viết...
-      </div>
-    );
+    return <WorkspaceDetailSkeleton />;
   }
 
   if (isError || !post) {
@@ -567,19 +560,12 @@ export function PostDetailPage() {
 
   const editableForm = (
     <EditableForm
-      title={title}
-      setTitle={setTitle}
+      form={form}
       slug={slug}
       setSlug={setSlug}
       slugStatus={slugStatus}
-      postType={postType}
-      setPostType={setPostType}
-      sourceRef={sourceRef}
-      setSourceRef={setSourceRef}
       bodyHtml={bodyHtml}
       setBodyHtml={setBodyHtml}
-      fieldErrors={fieldErrors}
-      setFieldErrors={setFieldErrors}
     />
   );
 
@@ -614,10 +600,12 @@ export function PostDetailPage() {
             {statusLabel(post.status)}
           </Badge>
         }
-        onSave={handleSave}
+        onSave={() => {
+          void handleSave();
+        }}
         isSaving={updatePost.isPending}
         saveLabel="Lưu"
-        saveDisabled={!title.trim()}
+        saveDisabled={!values.title.trim() || slugStatus === "taken"}
         actions={actions}
         sidebar={
           <>

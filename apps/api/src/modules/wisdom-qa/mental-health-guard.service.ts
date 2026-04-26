@@ -7,6 +7,7 @@
 
 import { Injectable, Logger, BadRequestException } from "@nestjs/common";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import { MentalHealthCondition } from "../../generated/prisma/enums.js";
 
 const MENTAL_ILLNESS_DBZ_MAX = 21;
 
@@ -95,12 +96,8 @@ export class MentalHealthGuardService {
    * Update user's mental health profile and auto-set DBZ limit
    */
   async updateMentalHealthProfile(userId: string, condition: string) {
-    const hasMentalIllness = [
-      "DEPRESSION",
-      "SCHIZOPHRENIA",
-      "BIPOLAR",
-      "OTHER_MENTAL_ILLNESS",
-    ].includes(condition);
+    const parsedCondition = parseMentalHealthCondition(condition);
+    const hasMentalIllness = isMentalIllness(parsedCondition);
 
     const daBeiZhouDailyLimit = hasMentalIllness ? MENTAL_ILLNESS_DBZ_MAX : null;
 
@@ -108,13 +105,11 @@ export class MentalHealthGuardService {
       where: { userId },
       create: {
         userId,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-        mentalHealthCondition: condition as any,
+        mentalHealthCondition: parsedCondition,
         daBeiZhouDailyLimit,
       },
       update: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-        mentalHealthCondition: condition as any,
+        mentalHealthCondition: parsedCondition,
         daBeiZhouDailyLimit,
       },
     });
@@ -122,11 +117,11 @@ export class MentalHealthGuardService {
     this.logger.log({
       msg: "mental_health_profile_updated",
       userId,
-      condition,
+      condition: parsedCondition,
       daBeiZhouDailyLimit,
     });
 
-    return { condition, daBeiZhouDailyLimit };
+    return { condition: parsedCondition, daBeiZhouDailyLimit };
   }
 
   /**
@@ -155,4 +150,26 @@ export class MentalHealthGuardService {
       });
     }
   }
+}
+
+function parseMentalHealthCondition(condition: string): MentalHealthCondition {
+  if (Object.values(MentalHealthCondition).includes(condition as MentalHealthCondition)) {
+    return condition as MentalHealthCondition;
+  }
+
+  throw new BadRequestException({
+    code: "invalid_mental_health_condition",
+    message: "Tình trạng sức khỏe tinh thần không hợp lệ.",
+  });
+}
+
+function isMentalIllness(condition: MentalHealthCondition): boolean {
+  const mentalIllnessConditions = new Set<MentalHealthCondition>([
+    MentalHealthCondition.DEPRESSION,
+    MentalHealthCondition.SCHIZOPHRENIA,
+    MentalHealthCondition.BIPOLAR,
+    MentalHealthCondition.OTHER_MENTAL_ILLNESS,
+  ]);
+
+  return mentalIllnessConditions.has(condition);
 }

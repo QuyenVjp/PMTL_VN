@@ -13,7 +13,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { CheckCircleIcon, PencilIcon, StarIcon, Trash2Icon } from "lucide-react";
+import { CheckCircleIcon, EyeIcon, StarIcon, Trash2Icon } from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -82,8 +82,8 @@ function PostsRowActions({ row }: { row: PostListItem }) {
 
   const actions = [
     {
-      label: "Chỉnh sửa",
-      icon: PencilIcon,
+      label: "Xem chi tiết",
+      icon: EyeIcon,
       onClick: () => {
         void navigate({ to: "/noi-dung/bai-viet/$publicId", params: { publicId: row.id } });
       },

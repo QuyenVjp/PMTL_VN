@@ -1,8 +1,8 @@
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { useNavigateTo } from "@/lib/router-utils";
-import { toast } from "sonner";
+import { z } from "zod";
 
 import {
   AdminDetailPage,
@@ -10,6 +10,7 @@ import {
   AdminDetailField,
   AdminFormField,
   WorkspaceConfirmDialog,
+  WorkspaceDetailSkeleton,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,10 +24,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ImageAssetPicker } from "@/components/media/image-asset-picker";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
+import { MediaPickerField } from "@/components/media/media-picker-modal";
+import { mediaListOptions } from "@/features/media/queries";
 import { useUploadMediaAsset } from "@/features/media/mutations";
-import { resolveMediaSrc } from "@/lib/media-src";
 import { extractUploadMediaPayload } from "@/lib/media-upload";
 import { downloadDetailOptions } from "@/features/downloads/queries";
 import {
@@ -34,12 +34,17 @@ import {
   useDeleteDownload,
   usePublishDownload,
 } from "@/features/downloads/mutations";
-import {
-  extractValidationFieldErrors,
-  hasFieldErrors,
-  invalidFieldClass,
-  type FieldErrors,
-} from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
+
+const downloadDetailSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  description: z.string().trim().optional(),
+  category: z.string().trim().min(1),
+  fileUrl: z.string().trim().min(1, "Đường dẫn file không được để trống."),
+  fileType: z.string().trim().min(1, "Loại file không được để trống."),
+  fileSize: z.coerce.number().catch(0),
+});
 
 function statusLabel(s: string): string {
   if (s === "PUBLISHED") return "Đã xuất bản";
@@ -74,91 +79,83 @@ type DownloadDetailPageProps = {
   backLabel: string;
 };
 
+function readPublicId(params: unknown): string {
+  if (!params || typeof params !== "object" || !("publicId" in params)) return "";
+  const publicId = (params as { publicId?: unknown }).publicId;
+  return typeof publicId === "string" ? publicId : "";
+}
+
 export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPageProps) {
   const navigateTo = useNavigateTo();
-  const { publicId } = useParams({ strict: false });
+  const publicId = readPublicId(useParams({ strict: false }));
 
-  const { data: download, isLoading } = useQuery(downloadDetailOptions(publicId ?? ""));
+  const { data: download, isLoading } = useQuery(downloadDetailOptions(publicId));
 
   const updateDownload = useUpdateDownload();
   const deleteDownload = useDeleteDownload();
   const publishDownload = usePublishDownload();
   const uploadMedia = useUploadMediaAsset();
   const uploadDocRef = useRef<HTMLInputElement>(null);
-  const uploadThumbRef = useRef<HTMLInputElement>(null);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("GUIDE");
-  const [fileUrl, setFileUrl] = useState("");
-  const [fileType, setFileType] = useState("");
-  const [fileSize, setFileSize] = useState("");
+  const form = useAdminZodForm(downloadDetailSchema, {
+    defaultValues: {
+      title: "",
+      description: "",
+      category: "GUIDE",
+      fileUrl: "",
+      fileType: "",
+      fileSize: 0,
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
   const [fileMediaPublicId, setFileMediaPublicId] = useState("");
   const [thumbnailMediaPublicId, setThumbnailMediaPublicId] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmPublish, setConfirmPublish] = useState(false);
 
   useEffect(() => {
     if (!download) return;
-    setTitle(download.title);
-    setDescription(download.description ?? "");
-    setCategory(download.category);
-    setFileUrl(download.fileUrl);
-    setFileType(download.fileType);
-    setFileSize(String(download.fileSize));
+    form.reset({
+      title: download.title,
+      description: download.description ?? "",
+      category: download.category,
+      fileUrl: download.fileUrl,
+      fileType: download.fileType,
+      fileSize: download.fileSize,
+    });
     setFileMediaPublicId(download.fileMediaPublicId ?? "");
     setThumbnailMediaPublicId(download.thumbnailMediaPublicId ?? "");
-    setFieldErrors({});
   }, [download]);
 
   const { data: mediaEnvelope } = useQuery(mediaListOptions({ limit: 100 }));
   const assets = mediaEnvelope?.data ?? [];
-  const imageAssets = useMemo(
-    () => assets.filter((item: MediaAssetListItem) => item.mimeType.startsWith("image/")),
-    [assets],
-  );
   const selectedFileAsset = assets.find((a) => a.publicId === fileMediaPublicId) ?? null;
-  const selectedThumbnailAsset = imageAssets.find((a) => a.publicId === thumbnailMediaPublicId) ?? null;
 
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (!fileUrl.trim()) nextErrors.fileUrl = "Đường dẫn file không được để trống.";
-    if (!fileType.trim()) nextErrors.fileType = "Loại file không được để trống.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
-      return;
-    }
+  const handleSave = form.handleSubmit((formValues) => {
     if (!download) return;
-    setFieldErrors({});
     updateDownload.mutate(
       {
         publicId: download.publicId,
-        title: title.trim(),
-        description: description.trim() || undefined,
-        category,
-        fileUrl: fileUrl.trim(),
-        fileType: fileType.trim(),
-        fileSize: Number(fileSize) || 0,
+        title: formValues.title,
+        description: formValues.description || undefined,
+        category: formValues.category,
+        fileUrl: formValues.fileUrl,
+        fileType: formValues.fileType,
+        fileSize: Number(formValues.fileSize) || 0,
         fileMediaPublicId: fileMediaPublicId || null,
         thumbnailMediaPublicId: thumbnailMediaPublicId || null,
       },
       {
         onError: (error) => {
-          setFieldErrors(extractValidationFieldErrors(error));
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  };
+  });
 
   if (isLoading || !download) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {isLoading ? "Đang tải..." : "Không tìm thấy tài liệu."}
-      </div>
-    );
+    return isLoading ? <WorkspaceDetailSkeleton /> : <div className="flex h-64 items-center justify-center text-muted-foreground">Không tìm thấy tài liệu.</div>;
   }
 
   const sidebar = (
@@ -215,10 +212,12 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
             {statusLabel(download.status)}
           </Badge>
         }
-        onSave={handleSave}
+        onSave={() => {
+          void handleSave();
+        }}
         isSaving={updateDownload.isPending}
         saveLabel="Lưu"
-        saveDisabled={!title.trim()}
+        saveDisabled={!values.title.trim()}
         actions={[
           ...(download.status === "DRAFT"
             ? [{ label: "Xuất bản", onClick: () => setConfirmPublish(true) }]
@@ -236,18 +235,17 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
           <div className="space-y-4">
             <AdminFormField label="Tiêu đề">
               <Input
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-                }}
-                className={invalidFieldClass(Boolean(fieldErrors.title))}
+                {...form.register("title")}
+                className={invalidFieldClass(Boolean(errors.title))}
               />
-              <FieldError message={fieldErrors.title} />
+              <FieldError message={errors.title?.message} />
             </AdminFormField>
 
             <AdminFormField label="Danh mục">
-              <Select value={category} onValueChange={setCategory}>
+              <Select
+                value={values.category}
+                onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -262,35 +260,26 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
 
             <AdminFormField label="Đường dẫn file">
               <Input
-                value={fileUrl}
-                onChange={(e) => {
-                  setFileUrl(e.target.value);
-                  if (fieldErrors.fileUrl) setFieldErrors((prev) => ({ ...prev, fileUrl: "" }));
-                }}
+                {...form.register("fileUrl")}
                 placeholder="https://..."
-                className={invalidFieldClass(Boolean(fieldErrors.fileUrl))}
+                className={invalidFieldClass(Boolean(errors.fileUrl))}
               />
-              <FieldError message={fieldErrors.fileUrl} />
+              <FieldError message={errors.fileUrl?.message} />
             </AdminFormField>
 
             <div className="grid grid-cols-2 gap-3">
               <AdminFormField label="Loại file">
                 <Input
-                  value={fileType}
-                  onChange={(e) => {
-                    setFileType(e.target.value);
-                    if (fieldErrors.fileType) setFieldErrors((prev) => ({ ...prev, fileType: "" }));
-                  }}
+                  {...form.register("fileType")}
                   placeholder="PDF, DOCX..."
-                  className={invalidFieldClass(Boolean(fieldErrors.fileType))}
+                  className={invalidFieldClass(Boolean(errors.fileType))}
                 />
-                <FieldError message={fieldErrors.fileType} />
+                <FieldError message={errors.fileType?.message} />
               </AdminFormField>
               <AdminFormField label="Kích thước (bytes)">
                 <Input
                   type="number"
-                  value={fileSize}
-                  onChange={(e) => setFileSize(e.target.value)}
+                  {...form.register("fileSize")}
                   placeholder="0"
                 />
               </AdminFormField>
@@ -298,8 +287,7 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
 
             <AdminFormField label="Mô tả">
               <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...form.register("description")}
                 placeholder="Mô tả ngắn về tài liệu..."
                 rows={3}
               />
@@ -322,9 +310,9 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
                     const payload = extractUploadMediaPayload(result);
                     const pid = payload?.publicId;
                     if (pid) setFileMediaPublicId(pid);
-                    if (payload?.url) setFileUrl(payload.url);
-                    if (payload?.mimeType) setFileType(payload.mimeType);
-                    if (typeof payload?.size === "number") setFileSize(String(payload.size));
+                    if (payload?.url) form.setValue("fileUrl", payload.url, { shouldDirty: true, shouldValidate: true });
+                    if (payload?.mimeType) form.setValue("fileType", payload.mimeType, { shouldDirty: true, shouldValidate: true });
+                    if (typeof payload?.size === "number") form.setValue("fileSize", payload.size, { shouldDirty: true });
                   } finally {
                     event.target.value = "";
                   }
@@ -352,9 +340,9 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
                 setFileMediaPublicId(nextId);
                 const selected = assets.find((a) => a.publicId === nextId);
                 if (selected) {
-                  setFileUrl(selected.url);
-                  setFileType(selected.mimeType);
-                  setFileSize(String(selected.size));
+                  form.setValue("fileUrl", selected.url, { shouldDirty: true, shouldValidate: true });
+                  form.setValue("fileType", selected.mimeType, { shouldDirty: true, shouldValidate: true });
+                  form.setValue("fileSize", selected.size, { shouldDirty: true });
                 }
               }}
             >
@@ -378,70 +366,13 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
           </div>
         </AdminDetailSection>
 
-        <AdminDetailSection title="Thumbnail (tuỳ chọn)">
-          <div className="space-y-3">
-            <input
-              ref={uploadThumbRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (!file) return;
-                void (async () => {
-                  try {
-                    const result = await uploadMedia.mutateAsync(file);
-                    const payload = extractUploadMediaPayload(result);
-                    const pid = payload?.publicId;
-                    if (pid) setThumbnailMediaPublicId(pid);
-                  } finally {
-                    event.target.value = "";
-                  }
-                })();
-              }}
-            />
-            <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => uploadThumbRef.current?.click()}>
-                Upload thumbnail
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setThumbnailMediaPublicId("")}
-                disabled={!thumbnailMediaPublicId}
-              >
-                Bỏ chọn
-              </Button>
-            </div>
-            <ImageAssetPicker
-              assets={imageAssets}
-              value={thumbnailMediaPublicId}
-              onChange={setThumbnailMediaPublicId}
-              placeholder="Chọn thumbnail từ thư viện..."
-            />
-            {selectedThumbnailAsset ? (
-              <div className="flex items-center gap-2 rounded border p-2">
-                <img
-                  src={resolveMediaSrc(selectedThumbnailAsset.url) ?? undefined}
-                  alt={selectedThumbnailAsset.filename}
-                  className="size-12 rounded border object-cover"
-                  loading="lazy"
-                />
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{selectedThumbnailAsset.filename}</p>
-                  <p className="text-xs text-muted-foreground">{selectedThumbnailAsset.publicId}</p>
-                </div>
-              </div>
-            ) : download.thumbnailUrl ? (
-              <img
-                src={resolveMediaSrc(download.thumbnailUrl) ?? undefined}
-                alt={download.title}
-                className="h-16 w-auto rounded border object-cover"
-                loading="lazy"
-              />
-            ) : null}
-          </div>
+        <AdminDetailSection title="Thumbnail (tuỳ chọn)" description="Chọn ảnh từ thư viện media hoặc upload ảnh mới ngay trong cửa sổ chọn ảnh.">
+          <MediaPickerField
+            value={thumbnailMediaPublicId}
+            onChange={setThumbnailMediaPublicId}
+            currentImageUrl={download.thumbnailUrl}
+            placeholder="Chọn thumbnail từ thư viện..."
+          />
         </AdminDetailSection>
       </AdminDetailPage>
 

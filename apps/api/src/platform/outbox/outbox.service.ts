@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 /**
  * OutboxService — Transactional Event Sourcing
  *
@@ -10,6 +9,8 @@
  * Reference: design/02-platform-baseline/optional-scale/EVENT_SOURCING_ARCHITECTURE.md
  */
 import { Injectable, Logger } from "@nestjs/common";
+import type { OutboxEvent } from "../../generated/prisma/client.js";
+import { Prisma } from "../../generated/prisma/client.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
 import { OUTBOX_CONFIG, type OutboxEventType } from "./outbox.constants.js";
 
@@ -21,7 +22,7 @@ type TransactionClient = Parameters<
 >[0];
 
 export interface OutboxEventPayload {
-  [key: string]: any;
+  [key: string]: Prisma.InputJsonValue;
 }
 
 export interface OutboxEventRow {
@@ -30,7 +31,7 @@ export interface OutboxEventRow {
   processedAt: Date | null;
   eventType: string;
   aggregateId: string;
-  payload: OutboxEventPayload;
+  payload: Prisma.JsonValue;
   error: string | null;
   retryCount: number;
 }
@@ -60,10 +61,10 @@ export class OutboxService {
   async appendEvent(
     eventType: OutboxEventType,
     aggregateId: string,
-    payload: OutboxEventPayload,
+    payload: Prisma.InputJsonObject,
     tx: TransactionClient,
   ): Promise<OutboxEventRow> {
-    const event = await (tx as any).outboxEvent.create({
+    const event = await tx.outboxEvent.create({
       data: {
         eventType,
         aggregateId,
@@ -79,7 +80,7 @@ export class OutboxService {
       eventId: event.id,
     });
 
-    return event as OutboxEventRow;
+    return toOutboxEventRow(event);
   }
 
   /**
@@ -89,7 +90,7 @@ export class OutboxService {
    * Used by: OutboxProcessor polling loop
    */
   async findUnprocessed(batchSize: number): Promise<OutboxEventRow[]> {
-    const events = await (this.prisma as any).outboxEvent.findMany({
+    const events = await this.prisma.outboxEvent.findMany({
       where: {
         processedAt: null,
         retryCount: {
@@ -102,7 +103,7 @@ export class OutboxService {
       take: batchSize,
     });
 
-    return events as OutboxEventRow[];
+    return events.map(toOutboxEventRow);
   }
 
   /**
@@ -110,7 +111,7 @@ export class OutboxService {
    * Set processedAt timestamp.
    */
   async markProcessed(eventId: string): Promise<OutboxEventRow> {
-    const event = await (this.prisma as any).outboxEvent.update({
+    const event = await this.prisma.outboxEvent.update({
       where: { id: eventId },
       data: {
         processedAt: new Date(),
@@ -124,7 +125,7 @@ export class OutboxService {
       eventType: event.eventType,
     });
 
-    return event as OutboxEventRow;
+    return toOutboxEventRow(event);
   }
 
   /**
@@ -134,7 +135,7 @@ export class OutboxService {
   async markFailed(eventId: string, error: string): Promise<OutboxEventRow> {
     const truncatedError = error.substring(0, 500);
 
-    const event = await (this.prisma as any).outboxEvent.update({
+    const event = await this.prisma.outboxEvent.update({
       where: { id: eventId },
       data: {
         retryCount: { increment: 1 },
@@ -150,7 +151,7 @@ export class OutboxService {
       error: truncatedError,
     });
 
-    return event as OutboxEventRow;
+    return toOutboxEventRow(event);
   }
 
   /**
@@ -166,7 +167,7 @@ export class OutboxService {
       retentionDate.getDate() - OUTBOX_CONFIG.RETENTION_DAYS,
     );
 
-    const result = await (this.prisma as any).outboxEvent.deleteMany({
+    const result = await this.prisma.outboxEvent.deleteMany({
       where: {
         processedAt: {
           lt: retentionDate,
@@ -193,24 +194,24 @@ export class OutboxService {
       failedCount,
       totalCount,
     ] = await Promise.all([
-      (this.prisma as any).outboxEvent.count({
+      this.prisma.outboxEvent.count({
         where: {
           processedAt: null,
           retryCount: { lt: OUTBOX_CONFIG.MAX_RETRIES },
         },
       }),
-      (this.prisma as any).outboxEvent.count({
+      this.prisma.outboxEvent.count({
         where: {
           processedAt: null,
           retryCount: { gte: OUTBOX_CONFIG.MAX_RETRIES },
         },
       }),
-      (this.prisma as any).outboxEvent.count({
+      this.prisma.outboxEvent.count({
         where: {
           error: { not: null },
         },
       }),
-      (this.prisma as any).outboxEvent.count(),
+      this.prisma.outboxEvent.count(),
     ]);
 
     return {
@@ -220,4 +221,17 @@ export class OutboxService {
       total: totalCount,
     };
   }
+}
+
+function toOutboxEventRow(event: OutboxEvent): OutboxEventRow {
+  return {
+    id: event.id,
+    createdAt: event.createdAt,
+    processedAt: event.processedAt,
+    eventType: event.eventType,
+    aggregateId: event.aggregateId,
+    payload: event.payload,
+    error: event.error,
+    retryCount: event.retryCount,
+  };
 }

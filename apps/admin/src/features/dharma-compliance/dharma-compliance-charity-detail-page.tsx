@@ -5,7 +5,6 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AdminDetailField, AdminDetailPage, AdminDetailSection, WorkspaceDetailSkeleton } from "@/components/workspace";
 import { useUpdateCharityStatus } from "@/features/dharma-compliance/mutations";
 import { charityDetailOptions } from "@/features/dharma-compliance/queries";
 import { CHARITY_STATUS_LABELS, type CharityStatus } from "@/features/dharma-compliance/types";
@@ -35,15 +35,20 @@ function statusBadgeClass(s: string): string {
 
 export function DharmaComplianceCharityDetailPage() {
   const navigate = useNavigate();
-  const params = useParams({ strict: false });
-  const charityId = params.charityId ?? "";
+  const rawParams: unknown = useParams({ strict: false });
+  const charityId =
+    typeof rawParams === "object" &&
+    rawParams !== null &&
+    typeof (rawParams as Record<string, unknown>).charityId === "string"
+      ? (rawParams as Record<string, string>).charityId
+      : "";
   const { data: charity, isLoading } = useQuery(charityDetailOptions(charityId));
   const updateStatus = useUpdateCharityStatus();
 
   const [statusDialog, setStatusDialog] = useState<StatusDialogState>(null);
 
   if (isLoading) {
-    return <div className="text-sm text-muted-foreground">Đang tải...</div>;
+    return <WorkspaceDetailSkeleton />;
   }
 
   if (!charity) {
@@ -74,94 +79,57 @@ export function DharmaComplianceCharityDetailPage() {
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{charity?.name}</h1>
-          {charity && (
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Trạng thái:</span>
-              <Badge className={statusBadgeClass(charity.status)} variant="outline">
-                {CHARITY_STATUS_LABELS[charity.status]}
-              </Badge>
-            </div>
-          )}
-        </div>
-        <Button variant="outline" onClick={() => { void navigate({ to: "/phap-luat/to-chuc-tu-thien" }); }}>
-          Quay lại
-        </Button>
-      </div>
+  const actions = [
+    ...(charity.status === "PENDING_REVIEW"
+      ? [{ label: "Xác minh & kích hoạt", onClick: () => handleStatusChange("ACTIVE") }]
+      : []),
+    ...(charity.status === "ACTIVE"
+      ? [{ label: "Tạm dừng", onClick: () => handleStatusChange("SUSPENDED"), variant: "outline" as const }]
+      : []),
+    ...(charity.status === "SUSPENDED"
+      ? [{ label: "Kích hoạt lại", onClick: () => handleStatusChange("ACTIVE") }]
+      : []),
+    ...(charity.status !== "FLAGGED"
+      ? [{ label: "Thu hồi", onClick: () => handleStatusChange("FLAGGED"), variant: "destructive" as const, separator: true }]
+      : []),
+  ];
 
-      {charity && (
-        <>
-          {/* Thông tin cơ bản */}
-          <Card>
-        <CardHeader>
-          <CardTitle>Thông tin tổ chức</CardTitle>
-          <CardDescription>Các chi tiết đăng ký của tổ chức.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-6 sm:grid-cols-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Loại tổ chức</p>
-            <p className="text-base font-medium">{charity.charityType}</p>
-          </div>
-          {charity.registrationNumber && (
-            <div>
-              <p className="text-sm text-muted-foreground">Mã đăng ký</p>
-              <p className="text-base font-medium">{charity.registrationNumber}</p>
-            </div>
-          )}
-          {charity.contactEmail && (
-            <div>
-              <p className="text-sm text-muted-foreground">Email liên hệ</p>
-              <p className="text-base font-medium">{charity.contactEmail}</p>
-            </div>
-          )}
-          {charity.websiteUrl && (
-            <div>
-              <p className="text-sm text-muted-foreground">Website</p>
-              <p className="text-base font-medium">
-                <a href={charity.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+  return (
+    <>
+      <AdminDetailPage
+        backHref="/phap-luat/to-chuc-tu-thien"
+        backLabel="Tổ chức từ thiện"
+        title={charity.name}
+        status={<Badge className={statusBadgeClass(charity.status)} variant="outline">{CHARITY_STATUS_LABELS[charity.status]}</Badge>}
+        actions={actions}
+        sidebar={
+          <AdminDetailSection title="Trạng thái">
+            <AdminDetailField
+              label="Hiện tại"
+              value={<Badge className={statusBadgeClass(charity.status)} variant="outline">{CHARITY_STATUS_LABELS[charity.status]}</Badge>}
+            />
+            <AdminDetailField label="Mã bản ghi" value={charity.id} />
+          </AdminDetailSection>
+        }
+      >
+        <AdminDetailSection title="Thông tin tổ chức">
+          <AdminDetailField label="Loại tổ chức" value={charity.charityType} />
+          <AdminDetailField label="Mã đăng ký" value={charity.registrationNumber} />
+          <AdminDetailField label="Email liên hệ" value={charity.contactEmail} />
+          <AdminDetailField
+            label="Website"
+            value={
+              charity.websiteUrl ? (
+                <a href={charity.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline-offset-4 hover:underline">
                   {charity.websiteUrl}
                 </a>
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              ) : null
+            }
+            stacked
+          />
+        </AdminDetailSection>
+      </AdminDetailPage>
 
-      {/* Quản lý trạng thái */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quản lý trạng thái</CardTitle>
-          <CardDescription>Thay đổi trạng thái tổ chức từ thiện.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {charity.status === "PENDING_REVIEW" && (
-            <Button onClick={() => handleStatusChange("ACTIVE")} className="w-full">
-              Xác minh & kích hoạt
-            </Button>
-          )}
-          {charity.status === "ACTIVE" && (
-            <Button onClick={() => handleStatusChange("SUSPENDED")} variant="outline" className="w-full">
-              Tạm dừng
-            </Button>
-          )}
-          {charity.status === "SUSPENDED" && (
-            <Button onClick={() => handleStatusChange("ACTIVE")} className="w-full">
-              Kích hoạt lại
-            </Button>
-          )}
-          {charity.status !== "FLAGGED" && (
-            <Button onClick={() => handleStatusChange("FLAGGED")} variant="destructive" className="w-full">
-              Thu hồi
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Status change dialog */}
       <Dialog open={statusDialog !== null} onOpenChange={(open) => !open && setStatusDialog(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -202,8 +170,6 @@ export function DharmaComplianceCharityDetailPage() {
           )}
         </DialogContent>
       </Dialog>
-        </>
-      )}
-    </div>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { HttpError } from "@/lib/api/http-error";
-import { extractValidationFieldErrors } from "@/lib/form-validation.js";
+import { extractValidationFieldErrors, firstFieldErrorMessage } from "@/lib/form-validation.js";
 
 /**
  * Unified API error handler for React Query mutations.
@@ -15,7 +15,7 @@ export function handleApiError(error: unknown): void {
     if (error.isUnauthorized) return;
 
     const fieldErrors = extractValidationFieldErrors(error);
-    const firstFieldError = Object.values(fieldErrors)[0];
+    const firstFieldError = firstFieldErrorMessage(fieldErrors);
     if (firstFieldError) {
       toast.error(firstFieldError);
       return;

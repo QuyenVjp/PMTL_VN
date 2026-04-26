@@ -8,6 +8,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -85,6 +86,7 @@ export function AltarManagementItemsTable() {
         columns={itemColumns}
         isLoading={isLoading}
         emptyMessage="Chưa có vật phẩm nào."
+        onRowClick={setDetailItem}
       />
 
       <WorkspaceDetailSheet
@@ -133,6 +135,7 @@ export function AltarManagementItemsTable() {
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
 
     </>

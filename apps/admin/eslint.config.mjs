@@ -11,13 +11,17 @@ export default [...baseConfig, {
     globals: {
       ...globals.browser,
     },
+    parserOptions: {
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
+    },
   },
 }, {
-  files: [".storybook/*.ts", "scripts/*.ts"],
+  files: [".storybook/*.ts"],
   languageOptions: {
     parserOptions: {
       projectService: {
-        allowDefaultProject: [".storybook/*.ts", "scripts/*.ts"],
+        allowDefaultProject: [".storybook/*.ts"],
       },
       tsconfigRootDir: import.meta.dirname,
     },

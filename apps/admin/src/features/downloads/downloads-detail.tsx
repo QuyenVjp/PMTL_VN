@@ -15,6 +15,7 @@ import {
 import {
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
   WorkspaceDetailDivider,
   contentStatusLabel,
@@ -191,8 +192,8 @@ export function DownloadsDetailSheet({ open, onClose, currentRow }: DownloadsDet
 
       <WorkspaceDetailDivider />
 
-      {/* ── Chỉnh sửa ─────────────────────────────────────────────── */}
-      <WorkspaceDetailSection title="Chỉnh sửa">
+      {/* ── Biên tập ──────────────────────────────────────────────── */}
+      <WorkspaceDetailSection title="Biên tập">
         <div className="space-y-4 pt-1">
           <Field label="Tiêu đề">
             <Input value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -218,6 +219,7 @@ export function DownloadsDetailSheet({ open, onClose, currentRow }: DownloadsDet
           </Button>
         </div>
       </WorkspaceDetailSection>
+    <WorkspaceDetailStandardSections />
     </WorkspaceDetailSheet>
   );
 }

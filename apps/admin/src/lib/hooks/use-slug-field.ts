@@ -72,6 +72,16 @@ export function useSlugField({ title, entityType, excludePublicId, initialSlug }
   const [isManual, setIsManual] = useState(Boolean(initialSlug));
   // Debounced slug sent to the check query
   const [debouncedSlug, setDebouncedSlug] = useState(initialSlug ?? "");
+  const lastInitialSlugRef = useRef(initialSlug ?? "");
+
+  useEffect(() => {
+    const nextInitialSlug = initialSlug ?? "";
+    if (!nextInitialSlug || nextInitialSlug === lastInitialSlugRef.current) return;
+    lastInitialSlugRef.current = nextInitialSlug;
+    setIsManual(true);
+    setSlugRaw(nextInitialSlug);
+    setDebouncedSlug(nextInitialSlug);
+  }, [initialSlug]);
 
   // Debounce title → auto-slug (600 ms)
   const titleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -105,14 +115,20 @@ export function useSlugField({ title, entityType, excludePublicId, initialSlug }
     retry: false,
   });
 
+  const isCurrentRecordSlug = Boolean(initialSlug && excludePublicId && debouncedSlug === initialSlug);
+
   const slugStatus: SlugStatus =
     debouncedSlug.length < 2
       ? "idle"
+      : isCurrentRecordSlug
+        ? "available"
       : isFetching || slug !== debouncedSlug
         ? "checking"
-        : data?.available
+        : data?.available === true
           ? "available"
-          : "taken";
+          : data?.available === false
+            ? "taken"
+            : "idle";
 
   const setSlug = useCallback((value: string) => {
     setIsManual(true);

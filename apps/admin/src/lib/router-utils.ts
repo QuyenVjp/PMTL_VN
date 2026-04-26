@@ -10,3 +10,9 @@ export function useNavigateTo(): (to: string) => void {
     void navigate({ to } as Parameters<typeof navigate>[0]);
   };
 }
+
+export function readRouteParam(params: unknown, key: string): string | undefined {
+  if (!params || typeof params !== "object") return undefined;
+  const value = (params as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : undefined;
+}

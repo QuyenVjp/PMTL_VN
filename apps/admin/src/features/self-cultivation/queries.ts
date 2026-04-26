@@ -56,7 +56,11 @@ export interface SelfCultivationOverview {
 
 export const selfCultivationKeys = {
   all: ["admin-self-cultivation"] as const,
-  overview: () => [...selfCultivationKeys.all, "overview"] as const,
+  lists: () => [...selfCultivationKeys.all, "list"] as const,
+  list: () => [...selfCultivationKeys.lists(), "overview"] as const,
+  details: () => [...selfCultivationKeys.all, "detail"] as const,
+  detail: () => [...selfCultivationKeys.details(), "overview"] as const,
+  overview: () => selfCultivationKeys.detail(),
 };
 
 export function selfCultivationOverviewOptions() {

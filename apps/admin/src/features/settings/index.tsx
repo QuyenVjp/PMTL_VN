@@ -119,7 +119,6 @@ export function SettingsPage() {
   // overwriting an in-progress staged selection during a background refetch.
   useEffect(() => {
     if (!avatarFileRef.current) setAvatarPreview(resolveMediaSrc(adminUser.avatar) ?? undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [adminUser.avatar]);
 
   useEffect(() => {

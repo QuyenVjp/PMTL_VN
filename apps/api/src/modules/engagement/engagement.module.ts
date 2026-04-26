@@ -19,8 +19,10 @@ import { DreamJournalService } from "./dream-journal.service.js";
 import { GamingAddictionDiagnosisService } from "./gaming-addiction.service.js";
 import { LittleHouseBurnService } from "./little-house-burn.service.js";
 import { LittleHouseCronService } from "./little-house-cron.service.js";
+import { AuditModule } from "../../platform/audit/audit.module.js";
 
 @Module({
+  imports: [AuditModule],
   controllers: [
     EngagementController,
     DailyGongkeController,

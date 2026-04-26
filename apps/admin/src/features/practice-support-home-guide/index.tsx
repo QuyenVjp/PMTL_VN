@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -383,14 +384,14 @@ export function PracticeHomePracticeGuidePage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Tự tu tại gia Việt Nam</h1>
-          <p className="mt-2 text-sm text-muted-foreground">Đang tải dữ liệu...</p>
+          <Skeleton className="mt-2 h-4 w-64" />
         </div>
         <div className="grid gap-4">
           {[0, 1, 2].map((i) => (
             <Card key={i}>
               <CardHeader>
-                <div className="h-6 w-48 animate-pulse rounded bg-muted" />
-                <div className="h-4 w-64 animate-pulse rounded bg-muted" />
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-64" />
               </CardHeader>
             </Card>
           ))}

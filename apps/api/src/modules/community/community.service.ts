@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException } from "@nestjs/comm
 import { nanoid } from "nanoid";
 import pino from "pino";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import type { Prisma } from "../../generated/prisma/client.js";
 import { AuditService } from "../../platform/audit/audit.service.js";
 import { CharityFirewallService } from "../dharma-compliance/services/charity-firewall.service.js";
 import { mapGuestbookEntryToAdminItem, mapPostToAdminItem } from "./community.mapper.js";
@@ -544,10 +545,7 @@ export class CommunityService {
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const prismaAny = this.prisma as any;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const testimonial = await prismaAny.communityTestimonial.create({
+    const testimonial = await this.prisma.communityTestimonial.create({
       data: {
         publicId: nanoid(),
         authorId: userId,
@@ -563,7 +561,7 @@ export class CommunityService {
         status: "PUBLISHED",
         visibility: "PUBLIC",
       },
-    }) as { publicId: string; contentType: string };
+    });
 
     await this.audit.append(
       { actorId: userId, actorType: "user" },
@@ -585,14 +583,11 @@ export class CommunityService {
   }
 
   async listTestimonials(query: TestimonialQuery) {
-    const where: Record<string, unknown> = { status: "PUBLISHED", visibility: "PUBLIC" };
+    const where: Prisma.CommunityTestimonialWhereInput = { status: "PUBLISHED", visibility: "PUBLIC" };
     if (query.contentType) where.contentType = query.contentType;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
-    const prismaAny = this.prisma as any;
     const [data, total] = await Promise.all([
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/await-thenable
-      prismaAny.communityTestimonial.findMany({
+      this.prisma.communityTestimonial.findMany({
         where,
         orderBy: { createdAt: "desc" },
         take: query.limit,
@@ -610,9 +605,8 @@ export class CommunityService {
           createdAt: true,
           author: { select: { publicId: true, displayName: true } },
         },
-      }) as unknown[],
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      prismaAny.communityTestimonial.count({ where }) as Promise<number>,
+      }),
+      this.prisma.communityTestimonial.count({ where }),
     ]);
 
     return {

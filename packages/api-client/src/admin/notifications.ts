@@ -43,8 +43,10 @@ export const pushKeys = {
   all: ["admin-push-jobs"] as const,
   lists: () => [...pushKeys.all, "list"] as const,
   list: (filters: PushJobFilters) => [...pushKeys.lists(), filters] as const,
-  status: () => [...pushKeys.all, "status"] as const,
-  subscriptionStats: () => [...pushKeys.all, "subscription-stats"] as const,
+  details: () => [...pushKeys.all, "detail"] as const,
+  detail: (publicId: string) => [...pushKeys.details(), publicId] as const,
+  status: () => [...pushKeys.details(), "status"] as const,
+  subscriptionStats: () => [...pushKeys.details(), "subscription-stats"] as const,
 };
 
 // ── Query options ─────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { type ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
 
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import {
@@ -8,6 +9,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +30,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { FieldError } from "@/components/ui/field-error";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { lifeReleaseListOptions } from "./queries.js";
 import {
   LIFE_RELEASE_STATUS_LABELS,
@@ -45,6 +50,13 @@ const STATUS_TRANSITIONS: Record<LifeReleaseStatus, LifeReleaseStatus[]> = {
   CANCELLED: [],
 };
 
+const updateStatusSchema = z.object({
+  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"]).or(z.literal("")),
+  notes: z.string().trim().optional(),
+});
+
+type UpdateStatusFormValues = z.infer<typeof updateStatusSchema>;
+
 function UpdateStatusDialog({
   record,
   onClose,
@@ -52,35 +64,43 @@ function UpdateStatusDialog({
   record: LifeReleaseListItem | null;
   onClose: () => void;
 }) {
-  const [newStatus, setNewStatus] = useState<LifeReleaseStatus | "">("");
-  const [notes, setNotes] = useState("");
   const updateStatus = useUpdateLifeReleaseStatus();
+  const form = useAdminZodForm(updateStatusSchema, {
+    defaultValues: {
+      status: "",
+      notes: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
 
   const availableTransitions = record ? STATUS_TRANSITIONS[record.status] : [];
 
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
-      setNewStatus("");
-      setNotes("");
+      form.reset({ status: "", notes: "" });
       onClose();
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!record || !newStatus) return;
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (!record || !formValues.status) return;
 
     updateStatus.mutate(
-      { publicId: record.id, status: newStatus, notes: notes.trim() || undefined },
+      { publicId: record.id, status: formValues.status, notes: formValues.notes || undefined },
       {
         onSuccess: () => {
-          setNewStatus("");
-          setNotes("");
+          form.reset({ status: "", notes: "" });
           onClose();
+        },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  }
+  });
+
+  const newStatus = values.status;
 
   return (
     <Dialog open={record !== null} onOpenChange={handleOpenChange}>
@@ -89,7 +109,7 @@ function UpdateStatusDialog({
           <DialogTitle>Cập nhật trạng thái hồ sơ phóng sinh</DialogTitle>
         </DialogHeader>
         {record && (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Trạng thái hiện tại</p>
               <Badge variant={STATUS_VARIANT[record.status]}>
@@ -104,7 +124,7 @@ function UpdateStatusDialog({
               {availableTransitions.length > 0 ? (
                 <Select
                   value={newStatus}
-                  onValueChange={(v) => setNewStatus(v as LifeReleaseStatus)}
+                  onValueChange={(v) => form.setValue("status", v as UpdateStatusFormValues["status"], { shouldDirty: true, shouldValidate: true })}
                 >
                   <SelectTrigger id="newStatus">
                     <SelectValue placeholder="Chọn trạng thái mới" />
@@ -128,12 +148,15 @@ function UpdateStatusDialog({
               <Label htmlFor="notes">Lý do (tùy chọn)</Label>
               <Textarea
                 id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                {...form.register("notes")}
+                aria-invalid={Boolean(errors.notes)}
+                className={invalidFieldClass(errors.notes)}
                 placeholder="Nhập lý do thay đổi trạng thái (tùy chọn)"
                 rows={3}
               />
+              <FieldError message={errors.notes?.message} />
             </div>
+            <FieldError message={errors.status?.message ?? errors.root?.server?.message} />
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>
@@ -233,6 +256,7 @@ export function LifeReleaseTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có hồ sơ phóng sinh nào."
+        onRowClick={setDetailItem}
       />
 
       <WorkspaceDetailSheet
@@ -281,6 +305,7 @@ export function LifeReleaseTable() {
             />
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
 
       <UpdateStatusDialog

@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { VowType } from "../../generated/prisma/client.js";
+import { Prisma, VowType } from "../../generated/prisma/client.js";
 import { PrismaService } from "../../common/prisma/prisma.service.js";
+import type { AuditAction } from "../../platform/audit/audit.schemas.js";
+import type { AuditContext } from "../../platform/audit/audit.service.js";
 import type {
   AssistedEntryHistoryQuery,
   AssistedEntryInput,
+  AssistedProgressEntryInput,
   LifeReleaseEntryInput,
   MemberSearchQuery,
 } from "./vows-merit.schemas.js";
@@ -12,9 +15,31 @@ const USER_SUMMARY_SELECT = {
   select: { publicId: true, displayName: true, email: true, avatarUrl: true },
 } as const;
 
+type VowWithUser = Prisma.VowGetPayload<{ include: { user: typeof USER_SUMMARY_SELECT } }>;
+
+interface AssistedAuditInput {
+  context: AuditContext;
+  action: AuditAction;
+  resource: string;
+  metadata: Record<string, unknown>;
+}
+
 @Injectable()
 export class VowsMeritRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  private toAuditCreateData(audit: AssistedAuditInput, resourceId: string): Prisma.AuditLogCreateInput {
+    return {
+      actorType: audit.context.actorType,
+      action: audit.action,
+      resource: audit.resource,
+      resourceId,
+      metadata: audit.metadata as Prisma.InputJsonValue,
+      ...(audit.context.actorId ? { actorId: audit.context.actorId } : {}),
+      ...(audit.context.ipAddress ? { ipAddress: audit.context.ipAddress } : {}),
+      ...(audit.context.userAgent ? { userAgent: audit.context.userAgent } : {}),
+    };
+  }
 
   async findManyVows(query: AssistedEntryHistoryQuery) {
     const [data, total] = await Promise.all([
@@ -51,35 +76,51 @@ export class VowsMeritRepository {
     });
   }
 
-  async createVow(input: AssistedEntryInput, memberId: string, publicId: string) {
-    return this.prisma.vow.create({
-      data: {
-        publicId,
-        userId: memberId,
-        vowType: input.vowType as VowType,
-        description: input.description,
-        targetCount: input.targetCount,
-        currentCount: 0,
-        status: "ACTIVE",
-        startDate: new Date(input.startDate),
-      },
-      include: { user: USER_SUMMARY_SELECT },
+  async createVow(input: AssistedEntryInput, memberId: string, publicId: string, audit: AssistedAuditInput) {
+    return this.prisma.$transaction(async (tx) => {
+      const vow = await tx.vow.create({
+        data: {
+          publicId,
+          userId: memberId,
+          vowType: input.vowType as VowType,
+          description: input.description,
+          targetCount: input.targetCount,
+          currentCount: 0,
+          status: "ACTIVE",
+          startDate: new Date(input.startDate),
+        },
+        include: { user: USER_SUMMARY_SELECT },
+      });
+
+      await tx.auditLog.create({ data: this.toAuditCreateData(audit, vow.publicId) });
+      return vow;
     });
   }
 
-  async createLifeReleaseJournal(input: LifeReleaseEntryInput, memberId: string, actorUserId: string, publicId: string) {
-    return this.prisma.lifeReleaseJournal.create({
-      data: {
-        publicId,
-        userId: memberId,
-        journalDate: new Date(input.journalDate),
-        animalType: input.animalType,
-        quantity: input.quantity,
-        actorUserId,
-        ...(input.location !== undefined && { location: input.location }),
-        ...(input.note !== undefined && { note: input.note }),
-      },
-      include: { user: USER_SUMMARY_SELECT },
+  async createLifeReleaseJournal(
+    input: LifeReleaseEntryInput,
+    memberId: string,
+    actorUserId: string,
+    publicId: string,
+    audit: AssistedAuditInput,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const journal = await tx.lifeReleaseJournal.create({
+        data: {
+          publicId,
+          userId: memberId,
+          journalDate: new Date(input.journalDate),
+          animalType: input.animalType,
+          quantity: input.quantity,
+          actorUserId,
+          ...(input.location !== undefined && { location: input.location }),
+          ...(input.note !== undefined && { note: input.note }),
+        },
+        include: { user: USER_SUMMARY_SELECT },
+      });
+
+      await tx.auditLog.create({ data: this.toAuditCreateData(audit, journal.publicId) });
+      return journal;
     });
   }
 
@@ -87,6 +128,50 @@ export class VowsMeritRepository {
     return this.prisma.vow.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async addAssistedProgress(
+    input: AssistedProgressEntryInput,
+    memberId: string,
+    buildAudit: (result: {
+      before: VowWithUser;
+      after: VowWithUser;
+      autoCompleted: boolean;
+    }) => AssistedAuditInput,
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      const vow = await tx.vow.findFirst({
+        where: { publicId: input.vowPublicId, userId: memberId },
+        include: { user: USER_SUMMARY_SELECT },
+      });
+      if (!vow) return null;
+      if (vow.status !== "ACTIVE") return { kind: "inactive" as const, vow };
+
+      const updated = await tx.vow.update({
+        where: { id: vow.id },
+        data: { currentCount: { increment: input.addCount } },
+        include: { user: USER_SUMMARY_SELECT },
+      });
+
+      const completed =
+        updated.targetCount !== null && updated.currentCount >= updated.targetCount;
+      const finalVow = completed
+        ? await tx.vow.update({
+            where: { id: updated.id },
+            data: { status: "COMPLETED" },
+            include: { user: USER_SUMMARY_SELECT },
+          })
+        : updated;
+
+      await tx.auditLog.create({
+        data: this.toAuditCreateData(
+          buildAudit({ before: vow, after: finalVow, autoCompleted: completed }),
+          finalVow.publicId,
+        ),
+      });
+
+      return { kind: "updated" as const, before: vow, after: finalVow, autoCompleted: completed };
     });
   }
 }

@@ -8,6 +8,7 @@ import {
   WorkspaceRowActions,
   WorkspaceDetailSheet,
   WorkspaceDetailSection,
+  WorkspaceDetailStandardSections,
   WorkspaceDetailField,
 } from "@/components/workspace";
 import { Badge } from "@/components/ui/badge";
@@ -106,6 +107,7 @@ export function SacredFormApplicantsTable({
         columns={applicantColumns}
         isLoading={isLoading}
         emptyMessage="Chưa có đơn đăng ký nào."
+        onRowClick={setSelectedApplicant}
       />
 
       <WorkspaceDetailSheet
@@ -185,6 +187,7 @@ export function SacredFormApplicantsTable({
             )}
           </WorkspaceDetailSection>
         )}
+      <WorkspaceDetailStandardSections />
       </WorkspaceDetailSheet>
     </>
   );

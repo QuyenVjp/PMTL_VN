@@ -36,6 +36,21 @@ interface AuthenticatedRequest extends Request {
   };
 }
 
+const USER_GENERATED_CONTENT_ROUTES: Array<{
+  methods: string[];
+  pattern: RegExp;
+  contentType: string;
+}> = [
+  { methods: ["POST", "PATCH"], pattern: /^\/(?:api\/)?community\/posts(?:\/[^/]+)?$/, contentType: "post" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?community\/posts\/[^/]+\/comments$/, contentType: "comment" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?community\/testimonials$/, contentType: "testimonial" },
+  { methods: ["POST", "PATCH"], pattern: /^\/(?:api\/)?community\/guestbook(?:\/[^/]+)?$/, contentType: "guestbook" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?guestbook$/, contentType: "guestbook" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?wisdom-qa\/questions$/, contentType: "wisdom_question" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?wisdom-qa\/answers$/, contentType: "wisdom_answer" },
+  { methods: ["POST"], pattern: /^\/(?:api\/)?contact$/, contentType: "contact_message" },
+];
+
 /**
  * Recursively extract all string values from an object
  */
@@ -77,8 +92,19 @@ export class CharityFirewallInterceptor implements NestInterceptor {
     }
 
     // Check if route is marked to skip firewall
-    const skipFirewall = this.reflector.get<boolean>(SKIP_CHARITY_FIREWALL, context.getHandler());
+    const skipFirewall = this.reflector.getAllAndOverride<boolean>(SKIP_CHARITY_FIREWALL, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     if (skipFirewall) {
+      return next.handle();
+    }
+
+    const path = request.path.toLowerCase();
+    const route = USER_GENERATED_CONTENT_ROUTES.find(
+      (candidate) => candidate.methods.includes(method) && candidate.pattern.test(path),
+    );
+    if (!route) {
       return next.handle();
     }
 
@@ -96,13 +122,7 @@ export class CharityFirewallInterceptor implements NestInterceptor {
     // Get userId from JWT (AuthGuard populates this)
     const userId = request.user?.id || "anonymous";
 
-    // Determine content type from request path
-    const path = request.path.toLowerCase();
-    let contentType = "unknown";
-    if (path.includes("post")) contentType = "post";
-    else if (path.includes("comment")) contentType = "comment";
-    else if (path.includes("profile")) contentType = "profile";
-    else if (path.includes("bio")) contentType = "bio";
+    const contentType = route.contentType;
 
     // Generate content ID from path (use path as unique identifier for this request)
     const contentId = `${method}:${request.path}`;

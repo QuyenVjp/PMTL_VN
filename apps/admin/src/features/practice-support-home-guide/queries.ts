@@ -36,7 +36,10 @@ interface DetailEnvelope {
 
 export const practiceHomeGuideKeys = {
   all: ["admin-practice-support-home-guide"] as const,
-  detail: () => [...practiceHomeGuideKeys.all, "detail"] as const,
+  lists: () => [...practiceHomeGuideKeys.all, "list"] as const,
+  list: () => [...practiceHomeGuideKeys.lists(), "singleton"] as const,
+  details: () => [...practiceHomeGuideKeys.all, "detail"] as const,
+  detail: () => [...practiceHomeGuideKeys.details(), "vietnam-home-practice-guide"] as const,
 };
 
 // ── Query Options ───────────────────────────────────────────────────

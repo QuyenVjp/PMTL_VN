@@ -32,7 +32,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     captureAdminException(error, { componentStack: info.componentStack });
-    console.error("[ErrorBoundary]", error, info.componentStack);
   }
 
   handleReset = () => {

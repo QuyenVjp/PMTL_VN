@@ -42,12 +42,16 @@ export interface DashboardAggregate {
 
 export const dashboardKeys = {
   all: ["admin-dashboard"] as const,
-  aggregate: () => [...dashboardKeys.all, "aggregate"] as const,
-  systemSummary: () => [...dashboardKeys.all, "system-summary"] as const,
-  pendingModeration: () => [...dashboardKeys.all, "pending-moderation"] as const,
-  contentOpsSummary: () => [...dashboardKeys.all, "content-ops"] as const,
-  searchOpsSummary: () => [...dashboardKeys.all, "search-ops"] as const,
-  recentAuditEvents: () => [...dashboardKeys.all, "audit-events"] as const,
+  lists: () => [...dashboardKeys.all, "list"] as const,
+  list: (widget: string) => [...dashboardKeys.lists(), widget] as const,
+  details: () => [...dashboardKeys.all, "detail"] as const,
+  detail: (widget: string) => [...dashboardKeys.details(), widget] as const,
+  aggregate: () => dashboardKeys.list("aggregate"),
+  systemSummary: () => dashboardKeys.detail("system-summary"),
+  pendingModeration: () => dashboardKeys.detail("pending-moderation"),
+  contentOpsSummary: () => dashboardKeys.detail("content-ops"),
+  searchOpsSummary: () => dashboardKeys.detail("search-ops"),
+  recentAuditEvents: () => dashboardKeys.detail("audit-events"),
 };
 
 /**

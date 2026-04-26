@@ -12,7 +12,8 @@ import {
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { BookOpenIcon, CheckCircle2Icon, CheckCircleIcon, LoaderCircleIcon, PencilIcon, SparklesIcon, Trash2Icon, XCircleIcon } from "lucide-react";
+import { z } from "zod";
+import { BookOpenIcon, CheckCircle2Icon, CheckCircleIcon, EyeIcon, LoaderCircleIcon, SparklesIcon, Trash2Icon, XCircleIcon } from "lucide-react";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
 
 function SlugStatusIcon({ status }: { status: SlugStatus }) {
@@ -59,7 +60,8 @@ import {
   useDeleteWisdomEntry,
   useCreateWisdomTranslationDraft,
 } from "./mutations";
-import { extractValidationFieldErrors, hasFieldErrors, invalidFieldClass, type FieldErrors } from "@/lib/form-validation.js";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation.js";
 
 // ── Context ───────────────────────────────────────────────────────────
 
@@ -73,6 +75,16 @@ type WisdomContextValue = {
 };
 
 const WisdomContext = createContext<WisdomContextValue | null>(null);
+
+const wisdomDialogSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  entryType: z.enum(["BACH_THOAI", "KHAI_THI", "PHAT_NGON", "PHAP_HOI"]),
+  sourceCode: z.string().trim().optional(),
+  sourceUrl: z.string().trim().optional(),
+  sourceFamily: z.string().trim().optional(),
+  originalText: z.string().trim().optional(),
+  translatedText: z.string().trim().optional(),
+});
 
 function WisdomProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState<WisdomDialogType>(null);
@@ -147,11 +159,12 @@ function Field({ label, children, hint }: { label: string; children: React.React
 
 function WisdomRowActions({ row }: { row: WisdomEntryItem }) {
   const { setOpen, setCurrentRow } = useWisdom();
+  const navigateTo = useNavigateTo();
   const open = (dialog: WisdomDialogType) => { setCurrentRow(row); setOpen(dialog); };
   return (
     <WorkspaceRowActions
       actions={[
-        { label: "Chỉnh sửa", icon: PencilIcon, onClick: () => open("edit") },
+        { label: "Xem chi tiết", icon: EyeIcon, onClick: () => navigateTo(`/noi-dung/bach-thoai/${row.publicId}`) },
         ...(row.status !== "PUBLISHED"
           ? [{ label: "Xuất bản", icon: CheckCircleIcon, onClick: () => open("publish") }]
           : []),
@@ -172,68 +185,74 @@ function WisdomRowActions({ row }: { row: WisdomEntryItem }) {
 export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const create = useCreateWisdomEntry();
   const createDraft = useCreateWisdomTranslationDraft();
-  const [title, setTitle] = useState("");
-  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title, entityType: "WISDOM" });
-  const [entryType, setEntryType] = useState<"BACH_THOAI" | "KHAI_THI" | "PHAT_NGON" | "PHAP_HOI">("BACH_THOAI");
-  const [sourceCode, setSourceCode] = useState("");
-  const [sourceUrl, setSourceUrl] = useState("");
-  const [originalText, setOriginalText] = useState("");
-  const [translatedText, setTranslatedText] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const form = useAdminZodForm(wisdomDialogSchema, {
+    defaultValues: {
+      title: "",
+      entryType: "BACH_THOAI",
+      sourceCode: "",
+      sourceUrl: "",
+      sourceFamily: "",
+      originalText: "",
+      translatedText: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+  const { slug, setSlug, resetSlug, slugStatus } = useSlugField({ title: values.title, entityType: "WISDOM" });
 
   const reset = () => {
-    setTitle("");
+    form.reset({
+      title: "",
+      entryType: "BACH_THOAI",
+      sourceCode: "",
+      sourceUrl: "",
+      sourceFamily: "",
+      originalText: "",
+      translatedText: "",
+    });
     resetSlug();
-    setEntryType("BACH_THOAI");
-    setSourceCode("");
-    setSourceUrl("");
-    setOriginalText("");
-    setTranslatedText("");
-    setFieldErrors({});
   };
 
-  const handleSubmit = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
-    setFieldErrors({});
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      return;
+    }
     create.mutate(
       {
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        entryType,
-        sourceCode: sourceCode.trim() || undefined,
-        sourceUrl: sourceUrl.trim() || undefined,
-        originalText: originalText.trim() || undefined,
-        translatedText: translatedText.trim() || undefined,
+        entryType: formValues.entryType,
+        sourceCode: formValues.sourceCode || undefined,
+        sourceUrl: formValues.sourceUrl || undefined,
+        originalText: formValues.originalText || undefined,
+        translatedText: formValues.translatedText || undefined,
       },
       {
         onSuccess: () => { reset(); onOpenChange(false); },
-        onError: (error) => { setFieldErrors(extractValidationFieldErrors(error)); },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       },
     );
-  };
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-start">
-          <DialogTitle>Thêm bài Bạch thoại</DialogTitle>
+          <DialogTitle>Bài Bạch thoại</DialogTitle>
           <DialogDescription>Tạo bài mới cho Bạch thoại, Khai thị hoặc Phật ngôn để biên tập tiếp sau đó.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
+          <FieldError message={errors.root?.server?.message} />
           <Field label="Tiêu đề">
             <Input
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-              }}
+              {...form.register("title")}
               placeholder="Nhập tiêu đề..."
-              className={invalidFieldClass(Boolean(fieldErrors.title))}
+              className={invalidFieldClass(Boolean(errors.title))}
             />
-            <FieldError message={fieldErrors.title} />
+            <FieldError message={errors.title?.message} />
           </Field>
           <Field label="Slug">
             <div className="relative">
@@ -250,10 +269,10 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
                 </span>
               )}
             </div>
-            <FieldError message={fieldErrors.slug} />
+            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
           </Field>
           <Field label="Loại bài">
-            <Select value={entryType} onValueChange={(v) => setEntryType(v as typeof entryType)}>
+            <Select value={values.entryType} onValueChange={(value) => form.setValue("entryType", value as typeof values.entryType, { shouldDirty: true, shouldValidate: true })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 {entryTypeOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
@@ -262,34 +281,34 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Mã nguồn" hint="VD: shuohua20140808">
-              <Input value={sourceCode} onChange={(e) => setSourceCode(e.target.value)} placeholder="Mã bài gốc..." />
+              <Input {...form.register("sourceCode")} placeholder="Mã bài gốc..." />
             </Field>
             <Field label="URL nguồn">
-              <Input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://..." />
+              <Input {...form.register("sourceUrl")} placeholder="https://..." />
             </Field>
           </div>
           <Field label="Nguyên văn gốc">
-            <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc..." rows={4} />
+            <Textarea {...form.register("originalText")} placeholder="Văn bản gốc..." rows={4} />
           </Field>
           <Field label="Bản dịch tiếng Việt">
             <div className="grid gap-2">
-              <Textarea value={translatedText} onChange={(e) => setTranslatedText(e.target.value)} placeholder="Bản dịch nháp..." rows={4} />
+              <Textarea {...form.register("translatedText")} placeholder="Bản dịch nháp..." rows={4} />
               <div className="flex justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  disabled={createDraft.isPending || !originalText.trim()}
+                  disabled={createDraft.isPending || !(values.originalText ?? "").trim()}
                   onClick={() =>
                     createDraft.mutate(
                       {
-                        originalText: originalText.trim(),
-                        title: title.trim() || undefined,
-                        sourceCode: sourceCode.trim() || undefined,
+                        originalText: (values.originalText ?? "").trim(),
+                        title: values.title.trim() || undefined,
+                        sourceCode: (values.sourceCode ?? "").trim() || undefined,
                       },
                       {
                         onSuccess: (res) => {
-                          setTranslatedText(res.translatedText);
+                          form.setValue("translatedText", res.translatedText, { shouldDirty: true, shouldValidate: true });
                           toast.success("Đã tạo bản dịch nháp.");
                         },
                       },
@@ -305,7 +324,7 @@ export function WisdomCreateDialog({ open, onOpenChange }: { open: boolean; onOp
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={create.isPending || !title.trim()}>
+          <Button onClick={() => void handleSubmit()} disabled={create.isPending || !values.title.trim()}>
             {create.isPending ? "Đang tạo..." : "Tạo"}
           </Button>
         </DialogFooter>
@@ -327,71 +346,80 @@ function WisdomEditDialog({
 }) {
   const update = useUpdateWisdomEntry();
   const createDraft = useCreateWisdomTranslationDraft();
-  const [title, setTitle] = useState(currentRow.title);
-  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "WISDOM", excludePublicId: currentRow.publicId });
-  const [entryType, setEntryType] = useState(currentRow.entryType);
-  const [sourceCode, setSourceCode] = useState(currentRow.sourceCode ?? "");
-  const [sourceUrl, setSourceUrl] = useState(currentRow.sourceUrl ?? "");
-  const [sourceFamily, setSourceFamily] = useState(currentRow.sourceFamily ?? "");
-  const [originalText, setOriginalText] = useState(currentRow.originalText ?? "");
-  const [translatedText, setTranslatedText] = useState(currentRow.translatedText ?? "");
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const form = useAdminZodForm(wisdomDialogSchema, {
+    defaultValues: {
+      title: currentRow.title,
+      entryType: currentRow.entryType,
+      sourceCode: currentRow.sourceCode ?? "",
+      sourceUrl: currentRow.sourceUrl ?? "",
+      sourceFamily: currentRow.sourceFamily ?? "",
+      originalText: currentRow.originalText ?? "",
+      translatedText: currentRow.translatedText ?? "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+  const { slug, setSlug, slugStatus } = useSlugField({
+    title: values.title,
+    entityType: "WISDOM",
+    excludePublicId: currentRow.publicId,
+    initialSlug: currentRow.slug,
+  });
 
   React.useEffect(() => {
-    setTitle(currentRow.title);
+    form.reset({
+      title: currentRow.title,
+      entryType: currentRow.entryType,
+      sourceCode: currentRow.sourceCode ?? "",
+      sourceUrl: currentRow.sourceUrl ?? "",
+      sourceFamily: currentRow.sourceFamily ?? "",
+      originalText: currentRow.originalText ?? "",
+      translatedText: currentRow.translatedText ?? "",
+    });
     setSlug(currentRow.slug);
-    setEntryType(currentRow.entryType);
-    setSourceCode(currentRow.sourceCode ?? "");
-    setSourceUrl(currentRow.sourceUrl ?? "");
-    setSourceFamily(currentRow.sourceFamily ?? "");
-    setOriginalText(currentRow.originalText ?? "");
-    setTranslatedText(currentRow.translatedText ?? "");
-    setFieldErrors({});
-  }, [currentRow, open]);
+  }, [currentRow, form, open, setSlug]);
 
-  const handleSubmit = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) { setFieldErrors(nextErrors); toast.error(Object.values(nextErrors)[0]); return; }
-    setFieldErrors({});
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
+      return;
+    }
     update.mutate(
       {
         publicId: currentRow.publicId,
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        entryType,
-        sourceCode: sourceCode.trim() || undefined,
-        sourceUrl: sourceUrl.trim() || undefined,
-        sourceFamily: sourceFamily.trim() || undefined,
-        originalText: originalText.trim() || undefined,
-        translatedText: translatedText.trim() || undefined,
+        entryType: formValues.entryType,
+        sourceCode: formValues.sourceCode || undefined,
+        sourceUrl: formValues.sourceUrl || undefined,
+        sourceFamily: formValues.sourceFamily || undefined,
+        originalText: formValues.originalText || undefined,
+        translatedText: formValues.translatedText || undefined,
       },
       {
         onSuccess: () => onOpenChange(false),
-        onError: (error) => { setFieldErrors(extractValidationFieldErrors(error)); },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
       },
     );
-  };
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader className="text-start">
-          <DialogTitle>Chỉnh sửa bài Bạch thoại</DialogTitle>
+          <DialogTitle>Bài Bạch thoại</DialogTitle>
           <DialogDescription>Cập nhật thông tin nguồn và nội dung dịch của bài.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
+          <FieldError message={errors.root?.server?.message} />
           <Field label="Tiêu đề">
             <Input
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-              }}
-              className={invalidFieldClass(Boolean(fieldErrors.title))}
+              {...form.register("title")}
+              className={invalidFieldClass(Boolean(errors.title))}
             />
-            <FieldError message={fieldErrors.title} />
+            <FieldError message={errors.title?.message} />
           </Field>
           <Field label="Slug">
             <div className="relative">
@@ -408,10 +436,11 @@ function WisdomEditDialog({
                 </span>
               )}
             </div>
+            <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Loại bài">
-              <Select value={entryType} onValueChange={(v) => setEntryType(v as typeof entryType)}>
+              <Select value={values.entryType} onValueChange={(value) => form.setValue("entryType", value as typeof values.entryType, { shouldDirty: true, shouldValidate: true })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {entryTypeOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
@@ -419,39 +448,39 @@ function WisdomEditDialog({
               </Select>
             </Field>
             <Field label="Nguồn gốc">
-              <Input value={sourceFamily} onChange={(e) => setSourceFamily(e.target.value)} placeholder="VD: community_translation" />
+              <Input {...form.register("sourceFamily")} placeholder="VD: community_translation" />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Mã nguồn">
-              <Input value={sourceCode} onChange={(e) => setSourceCode(e.target.value)} placeholder="shuohua20140808" />
+              <Input {...form.register("sourceCode")} placeholder="shuohua20140808" />
             </Field>
             <Field label="URL nguồn">
-              <Input value={sourceUrl} onChange={(e) => setSourceUrl(e.target.value)} placeholder="https://..." />
+              <Input {...form.register("sourceUrl")} placeholder="https://..." />
             </Field>
           </div>
           <Field label="Nguyên văn gốc">
-            <Textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} placeholder="Văn bản gốc (Hoa văn)..." rows={4} />
+            <Textarea {...form.register("originalText")} placeholder="Văn bản gốc (Hoa văn)..." rows={4} />
           </Field>
           <Field label="Bản dịch tiếng Việt">
             <div className="grid gap-2">
-              <Textarea value={translatedText} onChange={(e) => setTranslatedText(e.target.value)} placeholder="Bản dịch Việt..." rows={4} />
+              <Textarea {...form.register("translatedText")} placeholder="Bản dịch Việt..." rows={4} />
               <div className="flex justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  disabled={createDraft.isPending || !originalText.trim()}
+                  disabled={createDraft.isPending || !(values.originalText ?? "").trim()}
                   onClick={() =>
                     createDraft.mutate(
                       {
-                        originalText: originalText.trim(),
-                        title: title.trim() || undefined,
-                        sourceCode: sourceCode.trim() || undefined,
+                        originalText: (values.originalText ?? "").trim(),
+                        title: values.title.trim() || undefined,
+                        sourceCode: (values.sourceCode ?? "").trim() || undefined,
                       },
                       {
                         onSuccess: (res) => {
-                          setTranslatedText(res.translatedText);
+                          form.setValue("translatedText", res.translatedText, { shouldDirty: true, shouldValidate: true });
                           toast.success("Đã tạo bản dịch nháp.");
                         },
                       },
@@ -467,7 +496,7 @@ function WisdomEditDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={update.isPending || !title.trim()}>
+          <Button onClick={() => void handleSubmit()} disabled={update.isPending || !values.title.trim()}>
             {update.isPending ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </DialogFooter>
@@ -479,6 +508,7 @@ function WisdomEditDialog({
 // ── Table ─────────────────────────────────────────────────────────────
 
 function WisdomTable() {
+  const navigateTo = useNavigateTo();
   const { data: envelope, isLoading } = useQuery(wisdomEntryListOptions({ limit: 100 }));
   const entries = envelope?.data ?? [];
 
@@ -585,6 +615,7 @@ function WisdomTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có bài nào trong thư viện Bạch thoại."
+        onRowClick={(row) => navigateTo(`/noi-dung/bach-thoai/${row.publicId}`)}
       />
       <DataTableBulkActions table={table} entityName="bài Bạch thoại" />
     </div>

@@ -166,7 +166,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
 ## MCP Routing
 - Workspace MCP stack lives in `.mcp.json`. Prefer MCPs when they provide fresher docs, runtime internals, browser evidence, or infra state that repo files cannot provide.
 - **GitNexus priority rule for this repo (PMTL_VN):**
-  - **ONLY use GitNexus tools** with prefix `gitnexus_`: `gitnexus_query`, `gitnexus_impact`, `gitnexus_context`, `gitnexus_detect_changes`, `gitnexus_cypher`.
+  - **ONLY use GitNexus tools**. In Claude-style docs these may appear as `gitnexus_query`, `gitnexus_impact`, `gitnexus_context`, `gitnexus_detect_changes`, `gitnexus_cypher`; in Codex MCP sessions they are exposed as `mcp__gitnexus__.query`, `mcp__gitnexus__.impact`, `mcp__gitnexus__.context`, `mcp__gitnexus__.detect_changes`, and `mcp__gitnexus__.cypher`.
   - **NEVER use deprecated `corn_*` tools** (`corn_code_search`, `corn_code_context`, `corn_code_impact`, `corn_detect_changes`, etc.).
   - For any non-trivial bugfix, refactor, or feature: start with `gitnexus_query` to find symbols.
   - Before editing: run `gitnexus_context` to see callers/callees.
@@ -174,8 +174,7 @@ Interim fallback rule until PMTL-native backend/runtime/security skills are crea
   - Before committing: run `gitnexus_detect_changes` to verify scope.
   - **NestJS DI Limitation:** If `gitnexus_impact` reports ZERO upstream callers for a Service, manually grep to find controller imports + @Module providers (see CLAUDE.md NestJS Hybrid Protocol).
 - **Codex CLI specific:** When using Codex in this repo, pass `--use-gitnexus` or explicitly call gitnexus tools; never fall back to corn_* tools.
-- OpenSpace is the default execution lane for Claude Code task runs in this repo. Prefer the `openspace` MCP server first for implementation/debug tasks unless a task explicitly requires another MCP.
-- Do not hardcode provider API keys for OpenSpace in repo config. Prefer host-agent integration and environment-driven model/key resolution.
+- OpenSpace is not an active MCP lane for this repo. Do not route implementation/debug tasks to `openspace` unless it is explicitly re-enabled by the user.
 - Use `context7` first for current library/framework docs across the wider stack: Next.js, React, TanStack, RHF, Zod, Motion, Docker, cloud SDKs, etc.
 - Use `next-devtools` first for live Next.js runtime/app-router diagnostics. When available, initialize it early in a Next.js session before making routing/caching claims.
 - Use `shadcn` for component acquisition, install guidance, registry-backed examples, and shadcn-specific composition.

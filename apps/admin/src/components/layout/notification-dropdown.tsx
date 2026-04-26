@@ -29,6 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 // ── Notification types ───────────────────────────────────────────────
@@ -178,8 +179,16 @@ export function NotificationDropdown() {
         {/* Using native overflow div to prevent ScrollArea flex overlaps */}
         <div className="flex-1 overflow-y-auto max-h-[360px]">
           {isLoading ? (
-            <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-              Đang tải thông báo...
+            <div className="flex flex-col gap-3 px-4 py-4">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="flex items-start gap-4">
+                  <Skeleton className="size-9 rounded-full" />
+                  <div className="flex flex-1 flex-col gap-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : notifications.length > 0 ? (
             <div className="flex flex-col">

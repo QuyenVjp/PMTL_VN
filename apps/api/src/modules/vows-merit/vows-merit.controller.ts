@@ -24,10 +24,12 @@ import {
   assistedEntryHistorySchema,
   memberSearchSchema,
   assistedEntrySchema,
+  assistedProgressEntrySchema,
   lifeReleaseEntrySchema,
   type AssistedEntryHistoryQuery,
   type MemberSearchQuery,
   type AssistedEntryInput,
+  type AssistedProgressEntryInput,
   type LifeReleaseEntryInput,
 } from "./vows-merit.schemas.js";
 import {
@@ -114,6 +116,23 @@ export class AdminVowsController {
     @Req() req: Request,
   ) {
     return this.vowsMeritService.adminCreateLifeReleaseEntry(input, user.id, {
+      actorId: user.id,
+      actorType: "user",
+      ipAddress: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  }
+
+  @Post("assisted-entry/progress")
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: "Nhập hộ tiến độ nguyện lực cho thành viên" })
+  @ApiResponse({ status: 201, description: "Đã cập nhật tiến độ nguyện lực" })
+  async createProgressEntry(
+    @Body(ZodValidate(assistedProgressEntrySchema)) input: AssistedProgressEntryInput,
+    @CurrentUser() user: AuthenticatedUser,
+    @Req() req: Request,
+  ) {
+    return this.vowsMeritService.adminAddAssistedProgress(input, user.id, {
       actorId: user.id,
       actorType: "user",
       ipAddress: req.ip,

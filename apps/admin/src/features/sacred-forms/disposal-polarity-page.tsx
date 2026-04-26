@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   type ColumnDef,
   type SortingState,
@@ -11,22 +11,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { WorkspaceDataTable } from "@/components/workspace";
-import { adminClient } from "@/lib/api/admin-client.js";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
-import { sacredFormKeys } from "./queries.js";
-
-type DisposalPolarity = "BURN" | "KEEP" | "OTHER";
-
-interface DisposalPolarityItem {
-  publicId?: string;
-  id?: string;
-  formType: string;
-  polarity: DisposalPolarity;
-  rule?: string | null;
-  note?: string | null;
-  effectiveAt?: string | null;
-}
+import { disposalPolaritiesOptions, type DisposalPolarity, type DisposalPolarityItem } from "./queries.js";
 
 const POLARITY_BADGE: Record<
   DisposalPolarity,
@@ -37,16 +24,8 @@ const POLARITY_BADGE: Record<
   OTHER: { label: "Theo hướng dẫn", variant: "outline" },
 };
 
-const disposalPolaritiesOptions = queryOptions({
-  queryKey: [...sacredFormKeys.all, "disposal-polarities"] as const,
-  queryFn: () =>
-    adminClient.get<{ data: DisposalPolarityItem[] }>(
-      "/admin/sacred-forms/disposal-polarities",
-    ),
-});
-
 export function DisposalPolarityPage() {
-  const { data, isLoading, isError } = useQuery(disposalPolaritiesOptions);
+  const { data, isLoading, isError } = useQuery(disposalPolaritiesOptions());
   const rules = useMemo(() => data?.data ?? [], [data]);
   const [sorting, setSorting] = useState<SortingState>([]);
 

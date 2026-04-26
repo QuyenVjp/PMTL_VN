@@ -23,7 +23,11 @@ export interface HealthExtended {
 
 export const healthKeys = {
   all: ["admin-health"] as const,
-  summary: () => [...healthKeys.all, "summary"] as const,
+  lists: () => [...healthKeys.all, "list"] as const,
+  list: () => [...healthKeys.lists(), "summary"] as const,
+  details: () => [...healthKeys.all, "detail"] as const,
+  detail: (component: string) => [...healthKeys.details(), component] as const,
+  summary: () => healthKeys.list(),
 };
 
 export function healthExtendedOptions() {

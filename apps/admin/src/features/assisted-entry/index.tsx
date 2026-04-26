@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import {
   type ColumnDef,
   type SortingState,
@@ -23,17 +24,21 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { FieldError } from "@/components/ui/field-error";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 
 import {
   vowHistoryOptions,
   memberSearchOptions,
+  memberVowsOptions,
   assistedEntryKeys,
   type VowHistoryFilters,
   type VowHistoryItem,
   type MemberSearchResult,
 } from "./queries.js";
-import { useCreateVow, useCreateLifeReleaseJournal } from "./mutations.js";
+import { useCreateAssistedProgress, useCreateVow, useCreateLifeReleaseJournal } from "./mutations.js";
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
@@ -78,6 +83,40 @@ function timeAgo(iso: string): string {
 function memberLabel(item: { member?: { displayName?: string }; user?: { displayName?: string } }) {
   return item.member?.displayName ?? item.user?.displayName ?? "Thành viên không xác định";
 }
+
+function todayInputValue(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+const createVowSchema = z.object({
+  vowType: z.enum(["LIFE_RELEASE", "CHANTING", "SUTRA_READING", "CUSTOM"]),
+  description: z.string().trim().min(1, "Mô tả không được để trống."),
+  assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
+  targetCount: z.coerce.number().int().positive("Mục tiêu phải lớn hơn 0.").optional().or(z.literal("")),
+  startDate: z.string().trim().min(1, "Ngày bắt đầu không được để trống."),
+});
+
+type CreateVowFormValues = z.infer<typeof createVowSchema>;
+
+const createLifeReleaseSchema = z.object({
+  animalType: z.string().trim().min(1, "Loại vật không được để trống."),
+  quantity: z.coerce.number().int().positive("Số lượng phải lớn hơn 0."),
+  location: z.string().trim().min(1, "Địa điểm không được để trống."),
+  note: z.string().trim().optional(),
+  assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
+  journalDate: z.string().trim().min(1, "Ngày phóng sanh không được để trống."),
+});
+
+type CreateLifeReleaseFormValues = z.infer<typeof createLifeReleaseSchema>;
+
+const createProgressSchema = z.object({
+  vowPublicId: z.string().trim().min(1, "Vui lòng chọn nguyện lực."),
+  addCount: z.coerce.number().int().positive("Số lượng tăng thêm phải lớn hơn 0."),
+  note: z.string().trim().optional(),
+  assistReason: z.string().trim().min(10, "Lý do nhập hộ cần tối thiểu 10 ký tự."),
+});
+
+type CreateProgressFormValues = z.infer<typeof createProgressSchema>;
 
 // ── Member Search Input ─────────────────────────────────────────────
 
@@ -292,36 +331,50 @@ function HistoryTab() {
 
 function CreateVowForm() {
   const [member, setMember] = useState<MemberSearchResult | null>(null);
-  const [vowType, setVowType] = useState("LIFE_RELEASE");
-  const [description, setDescription] = useState("");
-  const [assistReason, setAssistReason] = useState("");
-  const [targetCount, setTargetCount] = useState("");
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
   const createVow = useCreateVow();
+  const form = useAdminZodForm(createVowSchema, {
+    defaultValues: {
+      vowType: "LIFE_RELEASE",
+      description: "",
+      assistReason: "",
+      targetCount: "",
+      startDate: todayInputValue(),
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!member || !description.trim() || assistReason.trim().length < 10) return;
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (!member) {
+      form.setError("root.server", { type: "manual", message: "Vui lòng chọn thành viên." }, { shouldFocus: true });
+      return;
+    }
     createVow.mutate(
       {
         memberPublicId: member.publicId,
-        vowType,
-        description: description.trim(),
-        targetCount: targetCount ? Number(targetCount) : undefined,
-        startDate,
-        assistReason: assistReason.trim(),
+        vowType: formValues.vowType,
+        description: formValues.description,
+        targetCount: formValues.targetCount === "" ? undefined : formValues.targetCount,
+        startDate: formValues.startDate,
+        assistReason: formValues.assistReason,
       },
       {
         onSuccess: () => {
           setMember(null);
-          setDescription("");
-          setAssistReason("");
-          setTargetCount("");
-          setStartDate(new Date().toISOString().slice(0, 10));
+          form.reset({
+            vowType: "LIFE_RELEASE",
+            description: "",
+            assistReason: "",
+            targetCount: "",
+            startDate: todayInputValue(),
+          });
+        },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  }
+  });
 
   return (
     <Card>
@@ -330,14 +383,17 @@ function CreateVowForm() {
         <CardDescription>Tạo phiếu phát nguyện hộ cho thành viên.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Thành viên</label>
             <MemberSearchInput selectedMember={member} onSelect={setMember} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Loại nguyện</label>
-            <Select value={vowType} onValueChange={setVowType}>
+            <Select
+              value={values.vowType}
+              onValueChange={(next) => form.setValue("vowType", next as CreateVowFormValues["vowType"], { shouldDirty: true, shouldValidate: true })}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -352,46 +408,52 @@ function CreateVowForm() {
           <div className="space-y-2">
             <label className="text-sm font-medium">Mô tả</label>
             <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              {...form.register("description")}
+              aria-invalid={Boolean(errors.description)}
+              className={invalidFieldClass(errors.description)}
               placeholder="Nội dung lời nguyện..."
               rows={3}
-              required
             />
+            <FieldError message={errors.description?.message} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">
               Lý do nhập hộ <span className="text-muted-foreground font-normal">(bắt buộc, tối thiểu 10 ký tự)</span>
             </label>
             <Textarea
-              value={assistReason}
-              onChange={(e) => setAssistReason(e.target.value)}
+              {...form.register("assistReason")}
+              aria-invalid={Boolean(errors.assistReason)}
+              className={invalidFieldClass(errors.assistReason)}
               placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
               rows={2}
-              required
             />
+            <FieldError message={errors.assistReason?.message} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Mục tiêu (số lần)</label>
               <Input
                 type="number"
-                value={targetCount}
-                onChange={(e) => setTargetCount(e.target.value)}
+                {...form.register("targetCount")}
+                aria-invalid={Boolean(errors.targetCount)}
+                className={invalidFieldClass(errors.targetCount)}
                 placeholder="Không bắt buộc"
               />
+              <FieldError message={errors.targetCount?.message} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Ngày bắt đầu</label>
               <Input
                 type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
+                {...form.register("startDate")}
+                aria-invalid={Boolean(errors.startDate)}
+                className={invalidFieldClass(errors.startDate)}
               />
+              <FieldError message={errors.startDate?.message} />
             </div>
           </div>
-          <Button type="submit" disabled={createVow.isPending || !member || !description.trim() || assistReason.trim().length < 10}>
+          <FieldError message={errors.root?.server?.message} />
+          <Button type="submit" disabled={createVow.isPending || !member}>
             {createVow.isPending ? "Đang tạo..." : "Tạo phiếu phát nguyện"}
           </Button>
         </form>
@@ -404,40 +466,52 @@ function CreateVowForm() {
 
 function CreateLifeReleaseForm() {
   const [member, setMember] = useState<MemberSearchResult | null>(null);
-  const [animalType, setAnimalType] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [location, setLocation] = useState("");
-  const [note, setNote] = useState("");
-  const [assistReason, setAssistReason] = useState("");
-  const [journalDate, setJournalDate] = useState(new Date().toISOString().slice(0, 10));
   const createJournal = useCreateLifeReleaseJournal();
+  const form = useAdminZodForm(createLifeReleaseSchema, {
+    defaultValues: {
+      animalType: "",
+      quantity: 1,
+      location: "",
+      note: "",
+      assistReason: "",
+      journalDate: todayInputValue(),
+    },
+  });
+  const { errors } = form.formState;
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!member || !animalType.trim() || !quantity || !location.trim() || assistReason.trim().length < 10) return;
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (!member) {
+      form.setError("root.server", { type: "manual", message: "Vui lòng chọn thành viên." }, { shouldFocus: true });
+      return;
+    }
     createJournal.mutate(
       {
         memberPublicId: member.publicId,
-        animalType: animalType.trim(),
-        quantity: Number(quantity),
-        location: location.trim(),
-        note: note.trim() || undefined,
-        journalDate,
-        assistReason: assistReason.trim(),
+        animalType: formValues.animalType,
+        quantity: formValues.quantity,
+        location: formValues.location,
+        note: formValues.note || undefined,
+        journalDate: formValues.journalDate,
+        assistReason: formValues.assistReason,
       },
       {
         onSuccess: () => {
           setMember(null);
-          setAnimalType("");
-          setQuantity("");
-          setLocation("");
-          setNote("");
-          setAssistReason("");
-          setJournalDate(new Date().toISOString().slice(0, 10));
+          form.reset({
+            animalType: "",
+            quantity: 1,
+            location: "",
+            note: "",
+            assistReason: "",
+            journalDate: todayInputValue(),
+          });
+        },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  }
+  });
 
   return (
     <Card>
@@ -446,7 +520,7 @@ function CreateLifeReleaseForm() {
         <CardDescription>Tạo nhật ký phóng sanh hộ cho thành viên.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Thành viên</label>
             <MemberSearchInput selectedMember={member} onSelect={setMember} />
@@ -455,67 +529,218 @@ function CreateLifeReleaseForm() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Loại vật</label>
               <Input
-                value={animalType}
-                onChange={(e) => setAnimalType(e.target.value)}
+                {...form.register("animalType")}
+                aria-invalid={Boolean(errors.animalType)}
+                className={invalidFieldClass(errors.animalType)}
                 placeholder="Cá, chim, rùa..."
-                required
               />
+              <FieldError message={errors.animalType?.message} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Số lượng</label>
               <Input
                 type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                {...form.register("quantity")}
+                aria-invalid={Boolean(errors.quantity)}
+                className={invalidFieldClass(errors.quantity)}
                 placeholder="0"
-                required
               />
+              <FieldError message={errors.quantity?.message} />
             </div>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Địa điểm</label>
             <Input
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              {...form.register("location")}
+              aria-invalid={Boolean(errors.location)}
+              className={invalidFieldClass(errors.location)}
               placeholder="Sông, hồ, biển..."
-              required
             />
+            <FieldError message={errors.location?.message} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Ghi chú</label>
             <Textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
+              {...form.register("note")}
+              aria-invalid={Boolean(errors.note)}
+              className={invalidFieldClass(errors.note)}
               placeholder="Ghi chú thêm..."
               rows={2}
             />
+            <FieldError message={errors.note?.message} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">
               Lý do nhập hộ <span className="text-muted-foreground font-normal">(bắt buộc, tối thiểu 10 ký tự)</span>
             </label>
             <Textarea
-              value={assistReason}
-              onChange={(e) => setAssistReason(e.target.value)}
+              {...form.register("assistReason")}
+              aria-invalid={Boolean(errors.assistReason)}
+              className={invalidFieldClass(errors.assistReason)}
               placeholder="VD: Thành viên nhờ ban quản trị nhập hộ vì không có thiết bị..."
               rows={2}
-              required
             />
+            <FieldError message={errors.assistReason?.message} />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Ngày phóng sanh</label>
             <Input
               type="date"
-              value={journalDate}
-              onChange={(e) => setJournalDate(e.target.value)}
-              required
+              {...form.register("journalDate")}
+              aria-invalid={Boolean(errors.journalDate)}
+              className={invalidFieldClass(errors.journalDate)}
             />
+            <FieldError message={errors.journalDate?.message} />
           </div>
+          <FieldError message={errors.root?.server?.message} />
           <Button
             type="submit"
-            disabled={createJournal.isPending || !member || !animalType.trim() || !quantity || !location.trim() || assistReason.trim().length < 10}
+            disabled={createJournal.isPending || !member}
           >
             {createJournal.isPending ? "Đang tạo..." : "Tạo phiếu phóng sanh"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+// ── Create Progress Form ────────────────────────────────────────────
+
+function CreateProgressForm() {
+  const [member, setMember] = useState<MemberSearchResult | null>(null);
+  const { data: memberVows, isLoading } = useQuery(memberVowsOptions(member?.publicId));
+  const createProgress = useCreateAssistedProgress();
+  const activeVows = (memberVows?.data ?? []).filter((vow) => vow.status === "ACTIVE");
+  const form = useAdminZodForm(createProgressSchema, {
+    defaultValues: {
+      vowPublicId: "",
+      addCount: 1,
+      note: "",
+      assistReason: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+
+  const handleSubmit = form.handleSubmit((formValues) => {
+    if (!member) {
+      form.setError("root.server", { type: "manual", message: "Vui lòng chọn thành viên." }, { shouldFocus: true });
+      return;
+    }
+    createProgress.mutate(
+      {
+        memberPublicId: member.publicId,
+        vowPublicId: formValues.vowPublicId,
+        addCount: formValues.addCount,
+        note: formValues.note || undefined,
+        assistReason: formValues.assistReason,
+      },
+      {
+        onSuccess: () => {
+          form.reset({
+            vowPublicId: "",
+            addCount: 1,
+            note: "",
+            assistReason: "",
+          });
+        },
+        onError: (error) => {
+          applyApiFieldErrors(form, error);
+        },
+      },
+    );
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Cập nhật tiến độ</CardTitle>
+        <CardDescription>
+          Nhập hộ tiến độ cho một nguyện lực đang thực hiện. Mọi thay đổi đều ghi audit owner/actor.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={(event) => void handleSubmit(event)} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Thành viên</label>
+            <MemberSearchInput
+              selectedMember={member}
+              onSelect={(next) => {
+                setMember(next);
+                form.setValue("vowPublicId", "", { shouldDirty: true, shouldValidate: true });
+              }}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Nguyện lực</label>
+            <Select
+              value={values.vowPublicId}
+              onValueChange={(next) => form.setValue("vowPublicId", next, { shouldDirty: true, shouldValidate: true })}
+              disabled={!member || isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={isLoading ? "Đang tải nguyện lực..." : "Chọn nguyện lực đang thực hiện"} />
+              </SelectTrigger>
+              <SelectContent>
+                {activeVows.map((vow) => (
+                  <SelectItem key={vow.publicId} value={vow.publicId}>
+                    {vowTypeLabel(vow.vowType)} - {vow.currentCount}
+                    {vow.targetCount ? `/${vow.targetCount}` : ""} - {vow.description}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {member && !isLoading && activeVows.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                Thành viên này chưa có nguyện lực đang thực hiện.
+              </p>
+            ) : null}
+            <FieldError message={errors.vowPublicId?.message} />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Số lượng tăng thêm</label>
+              <Input
+                type="number"
+                min={1}
+                {...form.register("addCount")}
+                aria-invalid={Boolean(errors.addCount)}
+                className={invalidFieldClass(errors.addCount)}
+                placeholder="1"
+              />
+              <FieldError message={errors.addCount?.message} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ghi chú</label>
+              <Input
+                {...form.register("note")}
+                aria-invalid={Boolean(errors.note)}
+                className={invalidFieldClass(errors.note)}
+                placeholder="Không bắt buộc"
+              />
+              <FieldError message={errors.note?.message} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Lý do nhập hộ <span className="text-muted-foreground font-normal">(bắt buộc, tối thiểu 10 ký tự)</span>
+            </label>
+            <Textarea
+              {...form.register("assistReason")}
+              aria-invalid={Boolean(errors.assistReason)}
+              className={invalidFieldClass(errors.assistReason)}
+              placeholder="VD: Thành viên báo tiến độ qua điện thoại, ban quản trị nhập hộ..."
+              rows={2}
+            />
+            <FieldError message={errors.assistReason?.message} />
+          </div>
+          <FieldError message={errors.root?.server?.message} />
+          <Button
+            type="submit"
+            disabled={createProgress.isPending || !member}
+          >
+            {createProgress.isPending ? "Đang cập nhật..." : "Cập nhật tiến độ"}
           </Button>
         </form>
       </CardContent>
@@ -539,6 +764,7 @@ export function AssistedEntryPage() {
         <TabsList>
           <TabsTrigger value="history">Lịch sử</TabsTrigger>
           <TabsTrigger value="create">Tạo phiếu</TabsTrigger>
+          <TabsTrigger value="progress">Cập nhật tiến độ</TabsTrigger>
         </TabsList>
 
         <TabsContent value="history" className="mt-4">
@@ -549,6 +775,12 @@ export function AssistedEntryPage() {
           <div className="grid gap-6 lg:grid-cols-2">
             <CreateVowForm />
             <CreateLifeReleaseForm />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="progress" className="mt-4">
+          <div className="max-w-3xl">
+            <CreateProgressForm />
           </div>
         </TabsContent>
       </Tabs>

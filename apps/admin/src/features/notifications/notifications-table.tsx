@@ -15,7 +15,14 @@ import { Trash2Icon } from "lucide-react";
 import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
-import { WorkspaceDataTable, WorkspaceRowActions } from "@/components/workspace";
+import {
+  WorkspaceDataTable,
+  WorkspaceDetailField,
+  WorkspaceDetailStandardSections,
+  WorkspaceDetailSection,
+  WorkspaceDetailSheet,
+  WorkspaceRowActions,
+} from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
 import { pushJobListOptions, type PushJobItem } from "./queries.js";
 import { useNotif } from "./notifications-provider.js";
@@ -92,6 +99,7 @@ export function NotificationsTable() {
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [detailRow, setDetailRow] = useState<PushJobItem | null>(null);
 
   const columns = useMemo<ColumnDef<PushJobItem>[]>(
     () => [
@@ -204,8 +212,34 @@ export function NotificationsTable() {
         columns={columns}
         isLoading={isLoading}
         emptyMessage="Chưa có đợt gửi thông báo nào."
+        onRowClick={setDetailRow}
       />
       <DataTableBulkActions table={table} entityName="job thông báo" />
+      <WorkspaceDetailSheet
+        open={Boolean(detailRow)}
+        onOpenChange={(open) => {
+          if (!open) setDetailRow(null);
+        }}
+        title={detailRow?.title ?? "Thông báo"}
+        subtitle={detailRow ? `Tạo bởi ${detailRow.createdBy.displayName}` : undefined}
+        status={
+          detailRow ? (
+            <Badge variant="outline" className={statusBadgeClass(detailRow.status)}>
+              {statusLabel(detailRow.status)}
+            </Badge>
+          ) : undefined
+        }
+      >
+        {detailRow ? (
+          <WorkspaceDetailSection title="Chi tiết">
+            <WorkspaceDetailField label="Đối tượng" value={audienceLabel(detailRow.targetAudience)} />
+            <WorkspaceDetailField label="Đã gửi" value={detailRow.sentCount.toLocaleString("vi-VN")} />
+            <WorkspaceDetailField label="Thất bại" value={detailRow.failedCount.toLocaleString("vi-VN")} />
+            <WorkspaceDetailField label="Ngày tạo" value={new Date(detailRow.createdAt).toLocaleString("vi-VN")} />
+          </WorkspaceDetailSection>
+        ) : null}
+      <WorkspaceDetailStandardSections />
+      </WorkspaceDetailSheet>
     </div>
   );
 }

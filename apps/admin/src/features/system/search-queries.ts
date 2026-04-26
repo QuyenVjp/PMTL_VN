@@ -22,12 +22,16 @@ export interface SearchAdminStatus {
 
 export const searchKeys = {
   all: ["admin-search"] as const,
-  status: () => [...searchKeys.all, "status"] as const,
-  operationalStatus: () => [...searchKeys.all, "operational-status"] as const,
-  performance: () => [...searchKeys.all, "performance"] as const,
-  indexingJobs: () => [...searchKeys.all, "indexing-jobs"] as const,
-  fallbackEvents: () => [...searchKeys.all, "fallback-events"] as const,
-  indexSettings: () => [...searchKeys.all, "index-settings"] as const,
+  lists: () => [...searchKeys.all, "list"] as const,
+  list: (owner: string) => [...searchKeys.lists(), owner] as const,
+  details: () => [...searchKeys.all, "detail"] as const,
+  detail: (owner: string) => [...searchKeys.details(), owner] as const,
+  status: () => searchKeys.list("status"),
+  operationalStatus: () => searchKeys.detail("operational-status"),
+  performance: () => searchKeys.detail("performance"),
+  indexingJobs: () => searchKeys.list("indexing-jobs"),
+  fallbackEvents: () => searchKeys.list("fallback-events"),
+  indexSettings: () => searchKeys.detail("index-settings"),
 };
 
 /**

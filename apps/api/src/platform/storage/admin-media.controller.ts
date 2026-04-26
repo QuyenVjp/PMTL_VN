@@ -31,6 +31,7 @@ import { ConfigService } from "../../common/config/config.service.js";
 import { StorageService } from "./storage.service.js";
 import { AuditService } from "../../platform/audit/audit.service.js";
 import { NotFoundError } from "../../common/errors/app-error.js";
+import { ZodValidate } from "../../common/validation/zod-validation.pipe.js";
 
 const mediaListQuerySchema = z.object({
   status: z
@@ -43,6 +44,14 @@ const mediaListQuerySchema = z.object({
 });
 
 type MediaListQuery = z.infer<typeof mediaListQuerySchema>;
+
+const updateMediaMetadataSchema = z.object({
+  altText:     z.string().max(500).optional(),
+  caption:     z.string().max(1000).optional(),
+  description: z.string().max(2000).optional(),
+});
+
+type UpdateMediaMetadataInput = z.infer<typeof updateMediaMetadataSchema>;
 
 @ApiTags("admin-media")
 @Controller("admin/media")
@@ -107,9 +116,7 @@ export class AdminMediaController {
 
   @Get()
   @ApiOperation({ summary: "Danh sách media assets (admin)" })
-  async list(@Query() rawQuery: Record<string, unknown>) {
-    const query: MediaListQuery = mediaListQuerySchema.parse(rawQuery);
-
+  async list(@Query(ZodValidate(mediaListQuerySchema)) query: MediaListQuery) {
     const where: Record<string, unknown> = {};
 
     if (query.status) {
@@ -282,15 +289,8 @@ export class AdminMediaController {
   @ApiOperation({ summary: "Cập nhật metadata media asset (admin)" })
   async updateMetadata(
     @Param("publicId") publicId: string,
-    @Body() body: Record<string, unknown>,
+    @Body(ZodValidate(updateMediaMetadataSchema)) parsed: UpdateMediaMetadataInput,
   ) {
-    const schema = z.object({
-      altText:     z.string().max(500).optional(),
-      caption:     z.string().max(1000).optional(),
-      description: z.string().max(2000).optional(),
-    });
-    const parsed = schema.parse(body);
-
     const asset = await this.prisma.mediaAsset.findUnique({ where: { publicId } });
     if (!asset) throw new NotFoundError("Media asset", publicId);
 

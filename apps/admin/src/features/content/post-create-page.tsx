@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { z } from "zod";
 
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,12 +21,8 @@ import {
 import { MediaPickerField } from "@/components/media/media-picker-modal";
 import { useCreatePost } from "@/features/content/mutations";
 import { RichTextEditor } from "@/features/content/rich-text-editor";
-import {
-  extractValidationFieldErrors,
-  hasFieldErrors,
-  invalidFieldClass,
-  type FieldErrors,
-} from "@/lib/form-validation";
+import { applyApiFieldErrors, useAdminZodForm } from "@/lib/admin-form";
+import { invalidFieldClass } from "@/lib/form-validation";
 import { useSlugField, type SlugStatus } from "@/lib/hooks/use-slug-field";
 import { LoaderCircleIcon, CheckCircle2Icon, XCircleIcon } from "lucide-react";
 
@@ -45,6 +41,12 @@ const POST_TYPE_OPTIONS = [
   { label: "Ghi chú nguồn", value: "SOURCE_NOTE" },
   { label: "Tóm tắt sự kiện", value: "EVENT_RECAP" },
 ];
+
+const postCreateSchema = z.object({
+  title: z.string().trim().min(1, "Tiêu đề không được để trống."),
+  postType: z.string().trim().min(1),
+  sourceRef: z.string().trim().optional(),
+});
 
 function excerptTextLength(value: string) {
   return value
@@ -129,33 +131,33 @@ function CreateSidebar({
 export function PostCreatePage() {
   const navigate = useNavigate();
   const createPost = useCreatePost();
-  const [title, setTitle] = useState("");
-  const [postType, setPostType] = useState("ARTICLE");
-  const { slug, setSlug, slugStatus } = useSlugField({ title, entityType: "POST" });
-  const [sourceRef, setSourceRef] = useState("");
+  const form = useAdminZodForm(postCreateSchema, {
+    defaultValues: {
+      title: "",
+      postType: "ARTICLE",
+      sourceRef: "",
+    },
+  });
+  const { errors } = form.formState;
+  const values = form.watch();
+  const { slug, setSlug, slugStatus } = useSlugField({ title: values.title, entityType: "POST" });
   const [bodyHtml, setBodyHtml] = useState(() => readPostBodyHtml({}));
   const [featuredImageId, setFeaturedImageId] = useState("");
   const [featured, setFeatured] = useState(false);
   const [allowComments, setAllowComments] = useState(true);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-  const handleSave = () => {
-    const nextErrors: FieldErrors = {};
-    if (!title.trim()) nextErrors.title = "Tiêu đề không được để trống.";
-    if (slugStatus === "taken") nextErrors.slug = "Slug này đã được dùng, hãy chỉnh lại.";
-    if (hasFieldErrors(nextErrors)) {
-      setFieldErrors(nextErrors);
-      toast.error(Object.values(nextErrors)[0]);
+  const handleSave = form.handleSubmit((formValues) => {
+    if (slugStatus === "taken") {
+      form.setError("root.server", { type: "server", message: "Slug này đã được dùng, hãy chỉnh lại." });
       return;
     }
-    setFieldErrors({});
 
     createPost.mutate(
       {
-        title: title.trim(),
+        title: formValues.title,
         slug: slug.trim() || undefined,
-        postType,
-        sourceRef: sourceRef.trim() || undefined,
+        postType: formValues.postType,
+        sourceRef: formValues.sourceRef || undefined,
         content: buildPostContent(bodyHtml),
         featuredImageId: featuredImageId.trim() || undefined,
         featured,
@@ -166,11 +168,11 @@ export function PostCreatePage() {
           void navigate({ to: "/noi-dung/bai-viet" });
         },
         onError: (error) => {
-          setFieldErrors(extractValidationFieldErrors(error));
+          applyApiFieldErrors(form, error);
         },
       },
     );
-  };
+  });
 
   return (
     <AdminDetailPage
@@ -182,10 +184,12 @@ export function PostCreatePage() {
           Nháp
         </Badge>
       }
-      onSave={handleSave}
+      onSave={() => {
+        void handleSave();
+      }}
       isSaving={createPost.isPending}
       saveLabel="Tạo"
-      saveDisabled={!title.trim() || slugStatus === "taken"}
+      saveDisabled={!values.title.trim() || slugStatus === "taken"}
       sidebar={
         <CreateSidebar
           featured={featured}
@@ -197,17 +201,14 @@ export function PostCreatePage() {
     >
       <AdminDetailSection title="Thông tin cơ bản">
         <div className="space-y-4">
+          <FieldError message={errors.root?.server?.message} />
           <AdminFormField label="Tiêu đề *">
             <Input
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                if (fieldErrors.title) setFieldErrors((prev) => ({ ...prev, title: "" }));
-              }}
+              {...form.register("title")}
               placeholder="Nhập tiêu đề bài viết..."
-              className={invalidFieldClass(Boolean(fieldErrors.title))}
+              className={invalidFieldClass(Boolean(errors.title))}
             />
-            <FieldError message={fieldErrors.title} />
+            <FieldError message={errors.title?.message} />
           </AdminFormField>
 
           <div className="grid items-start gap-4 md:grid-cols-2">
@@ -226,11 +227,11 @@ export function PostCreatePage() {
                   </span>
                 )}
               </div>
-              <FieldError message={fieldErrors.slug} />
+              <FieldError message={slugStatus === "taken" ? "Slug này đã được dùng, hãy chỉnh lại." : undefined} />
             </AdminFormField>
 
             <AdminFormField label="Loại bài viết">
-              <Select value={postType} onValueChange={setPostType}>
+              <Select value={values.postType} onValueChange={(value) => form.setValue("postType", value, { shouldDirty: true, shouldValidate: true })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -246,8 +247,7 @@ export function PostCreatePage() {
           </div>
 <AdminFormField label="Nguồn tham chiếu" hint="Tham chiếu nguồn chính thống nếu có">
             <Input
-              value={sourceRef}
-              onChange={(e) => setSourceRef(e.target.value)}
+              {...form.register("sourceRef")}
               placeholder="VD: Pháp thoại 2024-08-08..."
             />
           </AdminFormField>

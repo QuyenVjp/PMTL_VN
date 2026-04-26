@@ -6,8 +6,8 @@
  *   Client returns:  T (just the data)
  *
  * Error handling matches GlobalExceptionFilter canon envelope:
- *   Backend returns: { error: { code, message, status, requestId, details? } }
- *   Client throws:   HttpError(status, { code, message, details })
+ *   Backend returns: { error: { code, message, status, requestId, traceId, details? } }
+ *   Client throws:   HttpError(status, { code, message, requestId, traceId, details })
  */
 import { HttpError } from "./http-error.js";
 import type { ApiErrorPayload } from "./http-error.js";
@@ -120,6 +120,12 @@ export function createAdminClient(baseUrl: string) {
           code: err.code,
           message: err.message,
         };
+        if (err.requestId !== undefined) {
+          payload.requestId = err.requestId;
+        }
+        if (err.traceId !== undefined) {
+          payload.traceId = err.traceId;
+        }
         if (err.details !== undefined) {
           payload.details = err.details;
         }
