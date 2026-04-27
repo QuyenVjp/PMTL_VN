@@ -41,7 +41,7 @@ const TABS: WorkspaceTab[] = [
   {
     path: "/noi-dung/niem-kinh/kinh-bai-tap-hang-ngay",
     label: "Kinh bài tập hàng ngày",
-    description: "Catalog bài kinh, bài chú, quy tắc thời gian/thời tiết, phác đồ tu học và luồng 7 bước.",
+    description: "Danh mục bài kinh, bài chú, quy tắc thời gian, thời tiết, phác đồ tu học và luồng 7 bước.",
   },
   {
     path: "/noi-dung/niem-kinh/don-tu-tam-linh",
@@ -136,7 +136,7 @@ function NiemKinhWorkspace() {
               Niệm kinh
             </h1>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              Workspace này gom các lane owner của module Niệm kinh: Bản kinh,
+              Khu biên tập này gom các lane chính của module Niệm kinh: Bản kinh,
               Nghi thức, Kế hoạch, Môi trường & thời gian, Kinh bài tập hàng ngày
               và Đơn từ tâm linh. Mỗi tab giữ đúng ngữ cảnh biên tập riêng.
             </p>
@@ -144,7 +144,7 @@ function NiemKinhWorkspace() {
 
           <div className="rounded-xl border bg-background px-4 py-3 text-sm text-muted-foreground">
             <p className="font-medium text-foreground">Lát cắt hiện tại</p>
-            <p className="mt-1">Chọn đúng tab để tiếp tục thao tác theo owner lane tương ứng.</p>
+            <p className="mt-1">Chọn đúng tab để tiếp tục thao tác theo đúng phần nội dung tương ứng.</p>
           </div>
         </div>
       </section>

@@ -12,7 +12,6 @@ const SESSION_SELECT = {
   userAgent: true,
   ipAddress: true,
   createdAt: true,
-  updatedAt: true,
   expiresAt: true,
   revokedAt: true,
 } as const;

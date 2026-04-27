@@ -9390,6 +9390,7 @@ export const PracticeGuideScalarFieldEnum = {
   title: 'title',
   slug: 'slug',
   body: 'body',
+  scriptureImageMediaId: 'scriptureImageMediaId',
   duration: 'duration',
   difficulty: 'difficulty',
   status: 'status',

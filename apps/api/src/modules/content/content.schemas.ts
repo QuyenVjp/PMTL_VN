@@ -207,7 +207,7 @@ export type DownloadQuery = z.infer<typeof downloadQuerySchema>;
 export const createDownloadSchema = z.object({
   title: z.string().min(3).max(300),
   description: z.string().max(2000).optional(),
-  category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ"]),
+  category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ", "SPIRITUAL_APPLICATION"]),
   fileUrl: z.string().min(1),
   fileType: z.string().min(1),
   fileSize: z.number().int().min(0).default(0),
@@ -240,7 +240,7 @@ export type BeginnerGuidePublicQuery = z.infer<typeof beginnerGuidePublicQuerySc
 export const downloadPublicQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
-  category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ"]).optional(),
+  category: z.enum(["GUIDE", "TEMPLATE", "REFERENCE", "FAQ", "SPIRITUAL_APPLICATION"]).optional(),
 });
 export type DownloadPublicQuery = z.infer<typeof downloadPublicQuerySchema>;
 

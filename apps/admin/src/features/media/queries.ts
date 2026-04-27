@@ -18,18 +18,36 @@ export interface MediaAssetListItem {
   metadata?: Record<string, string> | null;
 }
 
+export interface MediaFolderListItem {
+  publicId: string;
+  name: string;
+  slug: string;
+  itemCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface MediaListFilters {
   limit?: number;
   offset?: number;
   search?: string;
   status?: string;
   mimeType?: string;
+  mediaKind?: "image" | "video" | "document";
+  folderPublicId?: string;
+}
+
+export interface MediaFolderFilters {
+  mimeType?: string;
+  mediaKind?: "image" | "video" | "document";
 }
 
 export const mediaKeys = {
   all: ["admin-media"] as const,
   lists: () => [...mediaKeys.all, "list"] as const,
   list: (filters: MediaListFilters) => [...mediaKeys.lists(), filters] as const,
+  folders: () => [...mediaKeys.all, "folders"] as const,
+  folderList: (filters: MediaFolderFilters) => [...mediaKeys.folders(), filters] as const,
   details: () => [...mediaKeys.all, "detail"] as const,
   detail: (publicId: string) => [...mediaKeys.details(), publicId] as const,
 };
@@ -50,10 +68,29 @@ export function mediaListOptions(filters: MediaListFilters = {}) {
     search: normalizedFilters.search || undefined,
     status: normalizedFilters.status || undefined,
     mimeType: normalizedFilters.mimeType || undefined,
+    mediaKind: normalizedFilters.mediaKind || undefined,
+    folderPublicId: normalizedFilters.folderPublicId || undefined,
   };
 
   return queryOptions({
     queryKey: mediaKeys.list(normalizedFilters),
     queryFn: () => adminClient.get<ListEnvelope<MediaAssetListItem>>("/admin/media", params),
+  });
+}
+
+export function mediaFoldersOptions(filters: MediaFolderFilters = {}) {
+  const normalizedFilters: MediaFolderFilters = {
+    mimeType: filters.mimeType || undefined,
+    mediaKind: filters.mediaKind || undefined,
+  };
+  const params: Record<string, string | number | boolean | undefined> = {
+    mimeType: normalizedFilters.mimeType,
+    mediaKind: normalizedFilters.mediaKind,
+  };
+
+  return queryOptions({
+    queryKey: mediaKeys.folderList(normalizedFilters),
+    queryFn: () =>
+      adminClient.get<{ data: MediaFolderListItem[] }>("/admin/media/folders", params),
   });
 }

@@ -106,7 +106,16 @@ export function createAdminClient(baseUrl: string) {
 
     if (!response.ok) {
       // On first 401, attempt token refresh once and retry the original request.
-      if (response.status === 401 && !retrying) {
+      const canRefresh =
+        response.status === 401 &&
+        !retrying &&
+        path !== "/auth/refresh" &&
+        path !== "/auth/login" &&
+        path !== "/auth/bootstrap-admin" &&
+        path !== "/auth/logout" &&
+        path !== "/auth/logout-all";
+
+      if (canRefresh) {
         const refreshed = await tryRefreshTokens();
         if (refreshed) {
           return request<T>(path, options, true);

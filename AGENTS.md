@@ -363,3 +363,5 @@ To check whether embeddings exist, inspect `.gitnexus/meta.json` — the `stats.
 - **Phase 3** (Weeks 5–6): Audit integration across all domains
 
 **When working on ANY domain**: Always cross-check with `design/03-domains/{domain}/CONTRACTS.md` first, then use `gitnexus_query` to find code, then compare intent vs reality.
+
+@RTK.md

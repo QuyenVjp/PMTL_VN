@@ -11,7 +11,7 @@ export function SacredFormApplicantsPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Đơn đăng ký Pháp Bảo</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Theo dõi applicant workflow, trạng thái xét duyệt và audit của đơn Pháp Bảo.
+          Theo dõi luồng tiếp nhận hồ sơ, trạng thái xét duyệt và lịch sử lưu vết của đơn Pháp Bảo.
         </p>
       </div>
 
@@ -20,12 +20,12 @@ export function SacredFormApplicantsPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <FileCheckIcon className="size-4 text-muted-foreground" />
-              Applicant state
+              Trạng thái hồ sơ
             </CardTitle>
-            <CardDescription>Form applicant / review owner</CardDescription>
+            <CardDescription>Hồ sơ đăng ký và khu xét duyệt</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Màn này chỉ xử lý trạng thái đơn, ghi chú review và kết quả xét duyệt.
+            Màn này chỉ xử lý trạng thái đơn, ghi chú xét duyệt và kết quả phê duyệt.
           </CardContent>
         </Card>
         <Card>
@@ -34,7 +34,7 @@ export function SacredFormApplicantsPage() {
               <FileTextIcon className="size-4 text-muted-foreground" />
               Mẫu đơn
             </CardTitle>
-            <CardDescription>Template và prerequisite không sửa trực tiếp trong applicant.</CardDescription>
+            <CardDescription>Mẫu đơn và điều kiện tiên quyết không sửa trực tiếp trong hồ sơ nộp.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" size="sm">
@@ -51,10 +51,10 @@ export function SacredFormApplicantsPage() {
               <HistoryIcon className="size-4 text-muted-foreground" />
               Audit bắt buộc
             </CardTitle>
-            <CardDescription>Approve/reject/dispose đều phải có trace.</CardDescription>
+            <CardDescription>Duyệt, từ chối hay xử lý tiếp đều phải có lưu vết.</CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            Các thao tác sensitive không được xử lý bằng ghi chú tự do ngoài API.
+            Các thao tác nhạy cảm không được xử lý bằng ghi chú tự do ngoài API.
           </CardContent>
         </Card>
       </div>

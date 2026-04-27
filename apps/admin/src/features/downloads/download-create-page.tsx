@@ -37,9 +37,25 @@ type DownloadCreatePageProps = {
   backHref: string;
   backLabel: string;
   defaultCategory?: string;
+  pageTitle?: string;
+  sectionTitle?: string;
+  descriptionPlaceholder?: string;
+  categoryLabel?: string;
+  lockCategory?: boolean;
+  lockedCategoryLabel?: string;
 };
 
-export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: DownloadCreatePageProps) {
+export function DownloadCreatePage({
+  backHref,
+  backLabel,
+  defaultCategory,
+  pageTitle = "Thêm tài liệu mới",
+  sectionTitle = "Thông tin tài liệu",
+  descriptionPlaceholder = "Mô tả ngắn về tài liệu...",
+  categoryLabel = "Danh mục",
+  lockCategory = false,
+  lockedCategoryLabel,
+}: DownloadCreatePageProps) {
   const navigateTo = useNavigateTo();
   const createDownload = useCreateDownload();
 
@@ -98,7 +114,7 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
     <AdminDetailPage
       backHref={backHref}
       backLabel={backLabel}
-      title="Thêm tài liệu mới"
+      title={pageTitle}
       onSave={() => {
         void handleSave();
       }}
@@ -106,7 +122,7 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
       saveLabel="Tạo"
       saveDisabled={!values.title.trim()}
     >
-      <AdminDetailSection title="Thông tin tài liệu">
+      <AdminDetailSection title={sectionTitle}>
         <div className="space-y-4">
           <AdminFormField label="Tiêu đề">
             <Input
@@ -117,22 +133,29 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
             <FieldError message={errors.title?.message} />
           </AdminFormField>
 
-          <AdminFormField label="Danh mục">
-            <Select
-              value={values.category}
-              onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="GUIDE">Hướng dẫn</SelectItem>
-                <SelectItem value="TEMPLATE">Template</SelectItem>
-                <SelectItem value="REFERENCE">Tham khảo</SelectItem>
-                <SelectItem value="FAQ">FAQ</SelectItem>
-              </SelectContent>
-            </Select>
-          </AdminFormField>
+          {lockCategory ? (
+            <AdminFormField label={categoryLabel}>
+              <Input value={lockedCategoryLabel ?? values.category} disabled readOnly />
+            </AdminFormField>
+          ) : (
+            <AdminFormField label={categoryLabel}>
+              <Select
+                value={values.category}
+                onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="GUIDE">Hướng dẫn</SelectItem>
+                  <SelectItem value="TEMPLATE">Biểu mẫu</SelectItem>
+                  <SelectItem value="REFERENCE">Tham khảo</SelectItem>
+                  <SelectItem value="FAQ">Hỏi đáp</SelectItem>
+                  <SelectItem value="SPIRITUAL_APPLICATION">Đơn từ tâm linh</SelectItem>
+                </SelectContent>
+              </Select>
+            </AdminFormField>
+          )}
 
           <AdminFormField label="Đường dẫn file">
             <Input
@@ -164,7 +187,7 @@ export function DownloadCreatePage({ backHref, backLabel, defaultCategory }: Dow
           <AdminFormField label="Mô tả">
             <Textarea
               {...form.register("description")}
-              placeholder="Mô tả ngắn về tài liệu..."
+              placeholder={descriptionPlaceholder}
               rows={3}
             />
           </AdminFormField>

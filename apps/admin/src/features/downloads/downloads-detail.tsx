@@ -58,9 +58,10 @@ function CategorySelect({
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="GUIDE">Hướng dẫn</SelectItem>
-        <SelectItem value="TEMPLATE">Template</SelectItem>
+        <SelectItem value="TEMPLATE">Biểu mẫu</SelectItem>
         <SelectItem value="REFERENCE">Tham khảo</SelectItem>
-        <SelectItem value="FAQ">FAQ</SelectItem>
+        <SelectItem value="FAQ">Hỏi đáp</SelectItem>
+        <SelectItem value="SPIRITUAL_APPLICATION">Đơn từ tâm linh</SelectItem>
       </SelectContent>
     </Select>
   );

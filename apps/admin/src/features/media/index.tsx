@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   type ColumnDef,
+  type PaginationState,
   type SortingState,
   type VisibilityState,
   getCoreRowModel,
@@ -9,16 +10,29 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
-import { useSafeReactTable } from "@/lib/table/use-safe-react-table";
-import { CheckIcon, CopyIcon, EyeIcon, FileImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  CheckIcon,
+  CopyIcon,
+  Edit2Icon,
+  EyeIcon,
+  FileImageIcon,
+  FolderIcon,
+  FolderPlusIcon,
+  MoveRightIcon,
+  Trash2Icon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
 
 import { DataTableBulkActions, DataTableColumnHeader, DataTableToolbar } from "@/components/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -27,8 +41,21 @@ import {
   WorkspaceRowActions,
 } from "@/components/workspace";
 import { createSelectColumn } from "@/lib/table/select-column";
-import { mediaListOptions, type MediaAssetListItem } from "@/features/media/queries";
-import { useDeleteMediaAsset, useUpdateMediaAsset, useUploadMediaAsset } from "@/features/media/mutations";
+import {
+  mediaFoldersOptions,
+  mediaListOptions,
+  type MediaAssetListItem,
+  type MediaFolderListItem,
+} from "@/features/media/queries";
+import {
+  useCreateMediaFolder,
+  useDeleteMediaAsset,
+  useDeleteMediaFolder,
+  useMoveMediaAssetToFolder,
+  useUpdateMediaAsset,
+  useUpdateMediaFolder,
+  useUploadMediaAsset,
+} from "@/features/media/mutations";
 import { resolveMediaSrc } from "@/lib/media-src";
 import {
   MEDIA_ASSET_STATUS_OPTIONS,
@@ -45,8 +72,12 @@ type MediaAssetMode = "all" | "image" | "video" | "document";
 type MediaContextValue = {
   open: MediaDialogType;
   mode: MediaAssetMode;
+  activeFolderPublicId: string | null;
+  folderAssets: MediaAssetListItem[] | null;
+  isFolderLoading: boolean;
   currentRow: MediaAssetListItem | null;
   setOpen: (value: MediaDialogType) => void;
+  selectFolder: (publicId: string | null) => void;
   setCurrentRow: React.Dispatch<React.SetStateAction<MediaAssetListItem | null>>;
   lightboxIndex: number | null;
   setLightboxIndex: (i: number | null) => void;
@@ -55,12 +86,70 @@ type MediaContextValue = {
 const MediaContext = createContext<MediaContextValue | null>(null);
 
 function MediaProvider({ children, mode }: { children: React.ReactNode; mode: MediaAssetMode }) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState<MediaDialogType>(null);
+  const [activeFolderPublicId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("folder");
+  });
+  const [folderAssets, setFolderAssets] = useState<MediaAssetListItem[] | null>(null);
+  const [isFolderLoading, setIsFolderLoading] = useState(false);
   const [currentRow, setCurrentRow] = useState<MediaAssetListItem | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!activeFolderPublicId) {
+      setFolderAssets(null);
+      setIsFolderLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsFolderLoading(true);
+    void queryClient
+      .fetchQuery(
+        mediaListOptions({
+          limit: 100,
+          mimeType: modeMimePrefix(mode),
+          mediaKind: modeMediaKind(mode),
+          folderPublicId: activeFolderPublicId,
+        }),
+      )
+      .then((envelope) => {
+        if (!cancelled) setFolderAssets(envelope?.data ?? []);
+      })
+      .finally(() => {
+        if (!cancelled) setIsFolderLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeFolderPublicId, mode, queryClient]);
+
+  function selectFolder(publicId: string | null) {
+    const url = new URL(window.location.href);
+    if (publicId) url.searchParams.set("folder", publicId);
+    else url.searchParams.delete("folder");
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+  }
+
   return (
-    <MediaContext.Provider value={{ open, mode, currentRow, setOpen, setCurrentRow, lightboxIndex, setLightboxIndex }}>
+    <MediaContext.Provider
+      value={{
+        open,
+        mode,
+        activeFolderPublicId,
+        folderAssets,
+        isFolderLoading,
+        currentRow,
+        setOpen,
+        selectFolder,
+        setCurrentRow,
+        lightboxIndex,
+        setLightboxIndex,
+      }}
+    >
       {children}
     </MediaContext.Provider>
   );
@@ -70,6 +159,17 @@ function useMedia() {
   const context = useContext(MediaContext);
   if (!context) throw new Error("useMedia must be used within MediaProvider");
   return context;
+}
+
+function modeMimePrefix(mode: MediaAssetMode) {
+  if (mode === "image") return "image/";
+  if (mode === "video") return "video/";
+  return undefined;
+}
+
+function modeMediaKind(mode: MediaAssetMode) {
+  if (mode === "image" || mode === "video" || mode === "document") return mode;
+  return undefined;
 }
 
 // ── Row actions ───────────────────────────────────────────────────────
@@ -107,19 +207,16 @@ function MediaRowActions({ row }: { row: MediaAssetListItem }) {
 // ── Table ─────────────────────────────────────────────────────────────
 
 function MediaAssetsTable() {
-  const { mode } = useMedia();
-  const { data: envelope, isLoading } = useQuery(mediaListOptions({ limit: 100 }));
-  const allAssets = envelope?.data ?? [];
-  const assets = useMemo(
-    () => {
-      if (mode === "video") return allAssets.filter((asset) => asset.mimeType.startsWith("video/"));
-      if (mode === "image") return allAssets.filter((asset) => asset.mimeType.startsWith("image/"));
-      if (mode === "document")
-        return allAssets.filter((asset) => !asset.mimeType.startsWith("image/") && !asset.mimeType.startsWith("video/"));
-      return allAssets;
-    },
-    [allAssets, mode],
+  const { mode, activeFolderPublicId, folderAssets, isFolderLoading } = useMedia();
+  const { data: envelope, isLoading: isBaseLoading } = useQuery(
+    mediaListOptions({
+      limit: 100,
+      mimeType: modeMimePrefix(mode),
+      mediaKind: modeMediaKind(mode),
+    }),
   );
+  const assets = activeFolderPublicId ? (folderAssets ?? []) : (envelope?.data ?? []);
+  const isLoading = isBaseLoading || isFolderLoading;
   const emptyMessage = mode === "video"
     ? "Chưa có video asset nào."
     : mode === "image"
@@ -131,6 +228,7 @@ function MediaAssetsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 });
 
   const { setOpen, setCurrentRow } = useMedia();
 
@@ -148,7 +246,8 @@ function MediaAssetsTable() {
               <button
                 type="button"
                 className="size-10 shrink-0 overflow-hidden rounded border border-border bg-muted flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   setCurrentRow(row.original);
                   setOpen("lightbox");
                 }}
@@ -229,15 +328,16 @@ function MediaAssetsTable() {
     [setCurrentRow, setOpen],
   );
 
-  const table = useSafeReactTable({
+  const table = useReactTable({
     data: assets,
     columns,
-    state: { sorting, rowSelection, columnVisibility },
+    state: { sorting, rowSelection, columnVisibility, pagination },
     getRowId: (row) => row.publicId,
     enableRowSelection: true,
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -271,33 +371,228 @@ function MediaAssetsTable() {
   );
 }
 
+// ── Folder management ─────────────────────────────────────────────────
+
+function MediaFolderPanel() {
+  const { mode, activeFolderPublicId, selectFolder } = useMedia();
+  const { data, isLoading } = useQuery(mediaFoldersOptions({ mimeType: modeMimePrefix(mode), mediaKind: modeMediaKind(mode) }));
+  const folders: MediaFolderListItem[] = data?.data ?? [];
+  const createFolder = useCreateMediaFolder();
+  const updateFolder = useUpdateMediaFolder();
+  const deleteFolder = useDeleteMediaFolder();
+  const [newName, setNewName] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
+  function handleCreate() {
+    const name = newName.trim();
+    if (!name) return;
+    createFolder.mutate(
+      { name },
+      {
+        onSuccess: (result) => {
+          const folder = result?.data;
+          if (folder?.publicId) selectFolder(folder.publicId);
+          setNewName("");
+        },
+      },
+    );
+  }
+
+  function handleUpdate(publicId: string) {
+    const name = editingName.trim();
+    if (!name) return;
+    updateFolder.mutate(
+      { publicId, name },
+      {
+        onSuccess: () => {
+          setEditingId(null);
+          setEditingName("");
+        },
+      },
+    );
+  }
+
+  function handleDelete(folder: MediaFolderListItem) {
+    if (!window.confirm(`Xoá thư mục "${folder.name}"? File bên trong không bị xoá, chỉ bỏ khỏi thư mục.`)) {
+      return;
+    }
+    deleteFolder.mutate(folder.publicId, {
+      onSuccess: () => {
+        if (activeFolderPublicId === folder.publicId) selectFolder(null);
+      },
+    });
+  }
+
+  return (
+    <aside className="rounded-lg border bg-card p-3">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div>
+          <h2 className="text-sm font-semibold">Thư mục media</h2>
+          <p className="text-xs text-muted-foreground">Chọn folder để lọc và upload vào đúng nơi.</p>
+        </div>
+        <FolderIcon className="size-4 text-muted-foreground" />
+      </div>
+
+      <div className="mb-3 flex gap-2">
+        <Input
+          value={newName}
+          onChange={(event) => setNewName(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") handleCreate();
+          }}
+          placeholder="Tên thư mục mới"
+          className="h-9"
+        />
+        <Button
+          type="button"
+          size="icon"
+          className="size-9 shrink-0"
+          onClick={handleCreate}
+          disabled={!newName.trim() || createFolder.isPending}
+          aria-label="Tạo thư mục"
+        >
+          <FolderPlusIcon className="size-4" />
+        </Button>
+      </div>
+
+      <div className="space-y-1">
+        <button
+          type="button"
+          onClick={() => selectFolder(null)}
+          className={[
+            "flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm",
+            activeFolderPublicId === null ? "bg-primary/10 text-primary" : "hover:bg-muted",
+          ].join(" ")}
+        >
+          <span className="font-medium">Tất cả media</span>
+        </button>
+
+        {isLoading ? (
+          <div className="space-y-2">
+            <div className="h-9 rounded-md bg-muted" />
+            <div className="h-9 rounded-md bg-muted" />
+            <div className="h-9 rounded-md bg-muted" />
+          </div>
+        ) : folders.length ? (
+          folders.map((folder) => (
+            <div
+              key={folder.publicId}
+              className={[
+                "group rounded-md px-2 py-2",
+                activeFolderPublicId === folder.publicId ? "bg-primary/10" : "hover:bg-muted",
+              ].join(" ")}
+            >
+              {editingId === folder.publicId ? (
+                <div className="flex gap-1">
+                  <Input
+                    value={editingName}
+                    onChange={(event) => setEditingName(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") handleUpdate(folder.publicId);
+                      if (event.key === "Escape") {
+                        setEditingId(null);
+                        setEditingName("");
+                      }
+                    }}
+                    className="h-8"
+                    autoFocus
+                  />
+                  <Button size="icon" className="size-8" onClick={() => handleUpdate(folder.publicId)}>
+                    <CheckIcon className="size-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-8"
+                    onClick={() => {
+                      setEditingId(null);
+                      setEditingName("");
+                    }}
+                  >
+                    <XIcon className="size-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                    onClick={() => selectFolder(folder.publicId)}
+                  >
+                    <FolderIcon className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium">{folder.name}</span>
+                    <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                      {folder.itemCount}
+                    </span>
+                  </button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 opacity-70 hover:opacity-100"
+                    onClick={() => {
+                      setEditingId(folder.publicId);
+                      setEditingName(folder.name);
+                    }}
+                  >
+                    <Edit2Icon className="size-3.5" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 text-destructive opacity-70 hover:opacity-100"
+                    onClick={() => handleDelete(folder)}
+                  >
+                    <Trash2Icon className="size-3.5" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="rounded-md border border-dashed px-3 py-6 text-center text-xs text-muted-foreground">
+            Chưa có thư mục nào.
+          </div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
 // ── Upload dialog ─────────────────────────────────────────────────────
 
 function MediaUploadDialog() {
-  const { open, setOpen, mode } = useMedia();
+  const { open, setOpen, mode, activeFolderPublicId } = useMedia();
   const upload = useUploadMediaAsset();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [staged, setStaged] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [staged, setStaged] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   function handleClose() {
-    setStaged(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
+    setStaged([]);
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    setPreviewUrls([]);
     setOpen(null);
   }
 
   function handleFiles(files: FileList | null) {
     if (!files?.length) return;
-    const file = files[0];
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setStaged(file);
-    setPreviewUrl(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
+    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    const nextFiles = Array.from(files);
+    setStaged(nextFiles);
+    setPreviewUrls(nextFiles.filter((file) => file.type.startsWith("image/")).slice(0, 6).map((file) => URL.createObjectURL(file)));
   }
 
   function handleConfirm() {
-    if (!staged) return;
-    upload.mutate(staged, { onSuccess: handleClose });
+    if (!staged.length) return;
+    void (async () => {
+      for (const file of staged) {
+        await upload.mutateAsync({ file, folderPublicId: activeFolderPublicId });
+      }
+      handleClose();
+    })();
   }
 
   const uploadDialogTitle = mode === "video"
@@ -329,7 +624,7 @@ function MediaUploadDialog() {
           <DialogTitle>{uploadDialogTitle}</DialogTitle>
         </DialogHeader>
 
-        {!staged ? (
+        {!staged.length ? (
           <div
             className="mt-2 flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border bg-muted/40 p-10 text-center transition-colors hover:border-primary/50 cursor-pointer"
             onClick={() => inputRef.current?.click()}
@@ -348,15 +643,20 @@ function MediaUploadDialog() {
               ref={inputRef}
               type="file"
               accept={uploadAccept}
+              multiple
               className="hidden"
               onChange={(e) => handleFiles(e.target.files)}
             />
           </div>
         ) : (
           <div className="mt-2 space-y-4">
-            {previewUrl ? (
-              <div className="overflow-hidden rounded-lg border bg-muted aspect-video flex items-center justify-center">
-                <img src={previewUrl} alt={staged.name} className="max-h-full max-w-full object-contain" />
+            {previewUrls.length ? (
+              <div className="grid grid-cols-3 gap-2 rounded-lg border bg-muted/40 p-2">
+                {previewUrls.map((url, index) => (
+                  <div key={url} className="aspect-square overflow-hidden rounded-md border bg-background">
+                    <img src={url} alt={staged[index]?.name ?? "Preview"} className="size-full object-cover" />
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="flex h-24 items-center justify-center rounded-lg border bg-muted">
@@ -365,24 +665,33 @@ function MediaUploadDialog() {
             )}
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tên file</span>
-                <span className="font-medium truncate max-w-[220px]">{staged.name}</span>
+                <span className="text-muted-foreground">Số file</span>
+                <span className="font-medium">{staged.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Loại</span>
-                <span>{staged.type}</span>
+                <span className="text-muted-foreground">Lưu vào thư mục</span>
+                <span>{activeFolderPublicId ? "Thư mục đang chọn" : "Tất cả media"}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Kích thước</span>
-                <span className="tabular-nums">{formatFileSize(staged.size)}</span>
+                <span className="text-muted-foreground">Tổng dung lượng</span>
+                <span className="tabular-nums">{formatFileSize(staged.reduce((sum, file) => sum + file.size, 0))}</span>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="flex-1" onClick={() => { setStaged(null); setPreviewUrl(null); }} disabled={upload.isPending}>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setStaged([]);
+                  previewUrls.forEach((url) => URL.revokeObjectURL(url));
+                  setPreviewUrls([]);
+                }}
+                disabled={upload.isPending}
+              >
                 Chọn lại
               </Button>
               <Button className="flex-1" onClick={handleConfirm} disabled={upload.isPending}>
-                {upload.isPending ? "Đang tải lên…" : "Xác nhận tải lên"}
+                {upload.isPending ? "Đang tải lên..." : `Tải ${staged.length} file`}
               </Button>
             </div>
           </div>
@@ -430,11 +739,15 @@ function MediaLightbox() {
 // ── Detail sheet ──────────────────────────────────────────────────────
 
 function MediaDetailSheet() {
-  const { open, setOpen, currentRow, setCurrentRow } = useMedia();
+  const { open, mode, setOpen, currentRow, setCurrentRow } = useMedia();
+  const { data: folderData } = useQuery(mediaFoldersOptions({ mimeType: modeMimePrefix(mode), mediaKind: modeMediaKind(mode) }));
+  const folders: MediaFolderListItem[] = folderData?.data ?? [];
   const update = useUpdateMediaAsset();
+  const moveAsset = useMoveMediaAssetToFolder();
   const [altText, setAltText] = useState("");
   const [caption, setCaption] = useState("");
   const [description, setDescription] = useState("");
+  const [targetFolderPublicId, setTargetFolderPublicId] = useState<string>("__none");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -443,6 +756,7 @@ function MediaDetailSheet() {
       setAltText(meta?.altText ?? "");
       setCaption(meta?.caption ?? "");
       setDescription(meta?.description ?? "");
+      setTargetFolderPublicId("__none");
     }
   }, [currentRow, open]);
 
@@ -454,6 +768,14 @@ function MediaDetailSheet() {
   function handleSave() {
     if (!currentRow) return;
     update.mutate({ publicId: currentRow.publicId, altText: altText || undefined, caption: caption || undefined, description: description || undefined });
+  }
+
+  function handleMoveToFolder() {
+    if (!currentRow) return;
+    moveAsset.mutate({
+      publicId: currentRow.publicId,
+      folderPublicId: targetFolderPublicId === "__none" ? null : targetFolderPublicId,
+    });
   }
 
   function copyUrl() {
@@ -580,6 +902,29 @@ function MediaDetailSheet() {
                 />
               </div>
             </div>
+
+            <div className="space-y-3 border-t pt-4">
+              <p className="text-sm font-medium">Thư mục</p>
+              <div className="flex gap-2">
+                <Select value={targetFolderPublicId} onValueChange={setTargetFolderPublicId}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Chọn thư mục" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none">Không nằm trong thư mục</SelectItem>
+                    {folders.map((folder) => (
+                      <SelectItem key={folder.publicId} value={folder.publicId}>
+                        {folder.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button type="button" variant="outline" onClick={handleMoveToFolder} disabled={moveAsset.isPending}>
+                  <MoveRightIcon className="mr-2 size-4" />
+                  Chuyển
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -675,7 +1020,10 @@ function MediaAssetsPageBase({ mode }: { mode: MediaAssetMode }) {
     <MediaProvider mode={mode}>
       <div className="space-y-6">
         <MediaPageHeader />
-        <MediaAssetsTable />
+        <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <MediaFolderPanel />
+          <MediaAssetsTable />
+        </div>
       </div>
 
       <MediaUploadDialog />

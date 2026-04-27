@@ -70,9 +70,10 @@ export function guideCategoryBadgeClass(cat: string): string {
 
 const DOWNLOAD_CATEGORY_LABELS: Record<string, string> = {
   GUIDE: "Hướng dẫn",
-  TEMPLATE: "Template",
+  TEMPLATE: "Biểu mẫu",
   REFERENCE: "Tham khảo",
-  FAQ: "FAQ",
+  FAQ: "Hỏi đáp",
+  SPIRITUAL_APPLICATION: "Đơn từ tâm linh",
 };
 
 export function downloadCategoryLabel(cat: string): string {

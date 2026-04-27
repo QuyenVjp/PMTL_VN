@@ -20,6 +20,7 @@ import { z } from "zod";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import type { Response } from "express";
+import { nanoid } from "nanoid";
 import { RolesGuard } from "../../common/auth/roles.guard.js";
 import { Public } from "../../common/decorators/public.decorator.js";
 import { Roles } from "../../common/decorators/roles.decorator.js";
@@ -38,12 +39,45 @@ const mediaListQuerySchema = z.object({
     .enum(["UPLOADING", "READY", "ORPHANED", "DELETED"])
     .optional(),
   mimeType: z.string().optional(),
+  mediaKind: z.enum(["image", "video", "document"]).optional(),
+  folderPublicId: z.string().trim().min(1).optional(),
   search: z.string().optional(),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   offset: z.coerce.number().int().min(0).default(0),
 });
 
 type MediaListQuery = z.infer<typeof mediaListQuerySchema>;
+
+const mediaFolderListQuerySchema = z.object({
+  mimeType: z.string().optional(),
+  mediaKind: z.enum(["image", "video", "document"]).optional(),
+});
+
+type MediaFolderListQuery = z.infer<typeof mediaFolderListQuerySchema>;
+
+const createMediaFolderSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+});
+
+type CreateMediaFolderInput = z.infer<typeof createMediaFolderSchema>;
+
+const updateMediaFolderSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+});
+
+type UpdateMediaFolderInput = z.infer<typeof updateMediaFolderSchema>;
+
+const moveMediaAssetSchema = z.object({
+  folderPublicId: z.string().trim().min(1).nullable().optional(),
+});
+
+type MoveMediaAssetInput = z.infer<typeof moveMediaAssetSchema>;
+
+const uploadMediaFieldsSchema = z.object({
+  folderPublicId: z.string().trim().min(1).optional(),
+});
+
+type UploadMediaFields = z.infer<typeof uploadMediaFieldsSchema>;
 
 const updateMediaMetadataSchema = z.object({
   altText:     z.string().max(500).optional(),
@@ -69,9 +103,10 @@ export class AdminMediaController {
   @RateLimit("upload.media")
   @ApiOperation({ summary: "Upload media file (admin)" })
   @ApiConsumes("multipart/form-data")
-  @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 10 * 1024 * 1024 } }))
+  @UseInterceptors(FileInterceptor("file", { limits: { fileSize: 100 * 1024 * 1024 } }))
   async upload(
     @UploadedFile() file: Express.Multer.File | undefined,
+    @Body() body: Record<string, unknown>,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     if (!file) {
@@ -88,12 +123,18 @@ export class AdminMediaController {
       throw new BadRequestException("File upload không hợp lệ hoặc rỗng");
     }
 
+    const parsedBody = uploadMediaFieldsSchema.parse(body);
+
     const asset = await this.storageService.uploadFile(
       fileBuffer,
       file.originalname,
       file.mimetype,
       user.id,
     );
+
+    if (parsedBody.folderPublicId) {
+      await this.addAssetToFolder(parsedBody.folderPublicId, asset.id, asset.mimeType);
+    }
 
     await this.audit.append(
       { actorId: user.id, actorType: "user" },
@@ -114,6 +155,179 @@ export class AdminMediaController {
     };
   }
 
+  @Get("folders")
+  @ApiOperation({ summary: "Danh sách thư mục media (admin)" })
+  async listFolders(@Query(ZodValidate(mediaFolderListQuerySchema)) query: MediaFolderListQuery) {
+    const folders = await this.prisma.mediaCollection.findMany({
+      where: {
+        collectionType: "MEDIA_FOLDER",
+        status: { not: "ARCHIVED" },
+      },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+      select: {
+        publicId: true,
+        title: true,
+        slug: true,
+        createdAt: true,
+        updatedAt: true,
+        items: {
+          select: {
+            mediaAsset: {
+              select: {
+                mimeType: true,
+                status: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const data = folders.map((folder) => {
+      const itemCount = folder.items.filter((item) => {
+        const asset = item.mediaAsset;
+        if (!asset || asset.status === "DELETED") return false;
+        return this.matchesMediaFilter(asset.mimeType, query.mediaKind, query.mimeType);
+      }).length;
+
+      return {
+        publicId: folder.publicId,
+        name: folder.title,
+        slug: folder.slug,
+        itemCount,
+        createdAt: folder.createdAt,
+        updatedAt: folder.updatedAt,
+      };
+    });
+
+    return { data };
+  }
+
+  @Post("folders")
+  @ApiOperation({ summary: "Tạo thư mục media (admin)" })
+  async createFolder(
+    @Body(ZodValidate(createMediaFolderSchema)) parsed: CreateMediaFolderInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const slugBase = this.slugifyFolderName(parsed.name);
+    const slug = await this.nextFolderSlug(slugBase);
+    const folder = await this.prisma.mediaCollection.create({
+      data: {
+        publicId: nanoid(21),
+        title: parsed.name,
+        slug,
+        collectionType: "MEDIA_FOLDER",
+        status: "PUBLISHED",
+        createdById: user.id,
+      },
+      select: {
+        publicId: true,
+        title: true,
+        slug: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.folder.create",
+      "media_collection",
+      folder.publicId,
+      { title: folder.title, slug: folder.slug },
+    );
+
+    return {
+      data: {
+        publicId: folder.publicId,
+        name: folder.title,
+        slug: folder.slug,
+        itemCount: 0,
+        createdAt: folder.createdAt,
+        updatedAt: folder.updatedAt,
+      },
+    };
+  }
+
+  @Patch("folders/:publicId")
+  @ApiOperation({ summary: "Đổi tên thư mục media (admin)" })
+  async updateFolder(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(updateMediaFolderSchema)) parsed: UpdateMediaFolderInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const folder = await this.prisma.mediaCollection.findFirst({
+      where: { publicId, collectionType: "MEDIA_FOLDER" },
+      select: { id: true },
+    });
+
+    if (!folder) {
+      throw new NotFoundError("Media folder", publicId);
+    }
+
+    const slugBase = this.slugifyFolderName(parsed.name);
+    const slug = await this.nextFolderSlug(slugBase, publicId);
+    const updated = await this.prisma.mediaCollection.update({
+      where: { publicId },
+      data: { title: parsed.name, slug },
+      select: {
+        publicId: true,
+        title: true,
+        slug: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: { select: { items: true } },
+      },
+    });
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.folder.update",
+      "media_collection",
+      publicId,
+      { title: updated.title, slug: updated.slug },
+    );
+
+    return {
+      data: {
+        publicId: updated.publicId,
+        name: updated.title,
+        slug: updated.slug,
+        itemCount: updated._count.items,
+        createdAt: updated.createdAt,
+        updatedAt: updated.updatedAt,
+      },
+    };
+  }
+
+  @Delete("folders/:publicId")
+  @ApiOperation({ summary: "Xoá thư mục media (admin)" })
+  async deleteFolder(
+    @Param("publicId") publicId: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const folder = await this.prisma.mediaCollection.findFirst({
+      where: { publicId, collectionType: "MEDIA_FOLDER" },
+      select: { publicId: true, title: true },
+    });
+
+    if (!folder) {
+      throw new NotFoundError("Media folder", publicId);
+    }
+
+    await this.prisma.mediaCollection.delete({ where: { publicId } });
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.folder.delete",
+      "media_collection",
+      publicId,
+      { title: folder.title },
+    );
+
+    return { data: { publicId, deleted: true } };
+  }
+
   @Get()
   @ApiOperation({ summary: "Danh sách media assets (admin)" })
   async list(@Query(ZodValidate(mediaListQuerySchema)) query: MediaListQuery) {
@@ -124,11 +338,30 @@ export class AdminMediaController {
     } else {
       where.status = { not: "DELETED" };
     }
-    if (query.mimeType) {
+    if (query.mediaKind === "image") {
+      where.mimeType = { startsWith: "image/" };
+    } else if (query.mediaKind === "video") {
+      where.mimeType = { startsWith: "video/" };
+    } else if (query.mediaKind === "document") {
+      where.AND = [
+        { mimeType: { not: { startsWith: "image/" } } },
+        { mimeType: { not: { startsWith: "video/" } } },
+      ];
+    } else if (query.mimeType) {
       where.mimeType = { startsWith: query.mimeType };
     }
     if (query.search) {
       where.filename = { contains: query.search, mode: "insensitive" };
+    }
+    if (query.folderPublicId) {
+      where.collectionItems = {
+        some: {
+          collection: {
+            publicId: query.folderPublicId,
+            collectionType: "MEDIA_FOLDER",
+          },
+        },
+      };
     }
 
     const [assets, total] = await Promise.all([
@@ -305,6 +538,44 @@ export class AdminMediaController {
     return { data: { publicId, updated: true } };
   }
 
+  @Patch(":publicId/folder")
+  @ApiOperation({ summary: "Chuyển media asset vào thư mục (admin)" })
+  async moveToFolder(
+    @Param("publicId") publicId: string,
+    @Body(ZodValidate(moveMediaAssetSchema)) parsed: MoveMediaAssetInput,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
+    const asset = await this.prisma.mediaAsset.findUnique({
+      where: { publicId },
+      select: { id: true, filename: true, mimeType: true },
+    });
+
+    if (!asset) {
+      throw new NotFoundError("Media asset", publicId);
+    }
+
+    await this.prisma.mediaCollectionItem.deleteMany({
+      where: {
+        mediaAssetId: asset.id,
+        collection: { collectionType: "MEDIA_FOLDER" },
+      },
+    });
+
+    if (parsed.folderPublicId) {
+      await this.addAssetToFolder(parsed.folderPublicId, asset.id, asset.mimeType);
+    }
+
+    await this.audit.append(
+      { actorId: user.id, actorType: "user" },
+      "media.folder.move_asset",
+      "media_asset",
+      publicId,
+      { filename: asset.filename, folderPublicId: parsed.folderPublicId ?? null },
+    );
+
+    return { data: { publicId, folderPublicId: parsed.folderPublicId ?? null } };
+  }
+
   @Delete(":publicId")
   @ApiOperation({ summary: "Soft-delete media asset (admin)" })
   async softDelete(
@@ -333,5 +604,68 @@ export class AdminMediaController {
     );
 
     return { data: { publicId, deleted: true } };
+  }
+
+  private async addAssetToFolder(folderPublicId: string, mediaAssetId: string, mimeType: string) {
+    const folder = await this.prisma.mediaCollection.findFirst({
+      where: { publicId: folderPublicId, collectionType: "MEDIA_FOLDER" },
+      select: {
+        id: true,
+        _count: { select: { items: true } },
+      },
+    });
+
+    if (!folder) {
+      throw new NotFoundError("Media folder", folderPublicId);
+    }
+
+    await this.prisma.mediaCollectionItem.create({
+      data: {
+        publicId: nanoid(21),
+        collectionId: folder.id,
+        mediaAssetId,
+        itemType: this.itemTypeForMime(mimeType),
+        sortOrder: folder._count.items + 1,
+      },
+    });
+  }
+
+  private itemTypeForMime(mimeType: string) {
+    if (mimeType.startsWith("image/")) return "IMAGE";
+    if (mimeType.startsWith("video/")) return "UPLOADED_VIDEO";
+    return "DOCUMENT";
+  }
+
+  private matchesMediaFilter(mimeType: string, mediaKind?: "image" | "video" | "document", mimePrefix?: string) {
+    if (mediaKind === "image") return mimeType.startsWith("image/");
+    if (mediaKind === "video") return mimeType.startsWith("video/");
+    if (mediaKind === "document") return !mimeType.startsWith("image/") && !mimeType.startsWith("video/");
+    return mimePrefix ? mimeType.startsWith(mimePrefix) : true;
+  }
+
+  private slugifyFolderName(name: string) {
+    const slug = name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "d")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+    return slug || `thu-muc-${nanoid(6).toLowerCase()}`;
+  }
+
+  private async nextFolderSlug(base: string, excludePublicId?: string) {
+    let suffix = 0;
+    while (true) {
+      const slug = suffix === 0 ? base : `${base}-${suffix + 1}`;
+      const existing = await this.prisma.mediaCollection.findUnique({
+        where: { slug },
+        select: { publicId: true },
+      });
+      if (!existing || existing.publicId === excludePublicId) return slug;
+      suffix += 1;
+    }
   }
 }

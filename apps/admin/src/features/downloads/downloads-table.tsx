@@ -31,9 +31,10 @@ import { useNavigateTo } from "@/lib/router-utils";
 
 const categoryOptions = [
   { label: "Hướng dẫn", value: "GUIDE" },
-  { label: "Template", value: "TEMPLATE" },
+  { label: "Biểu mẫu", value: "TEMPLATE" },
   { label: "Tham khảo", value: "REFERENCE" },
-  { label: "FAQ", value: "FAQ" },
+  { label: "Hỏi đáp", value: "FAQ" },
+  { label: "Đơn từ tâm linh", value: "SPIRITUAL_APPLICATION" },
 ];
 
 const statusOptions = [
@@ -46,9 +47,10 @@ const statusOptions = [
 
 const CATEGORY_LABELS: Record<string, string> = {
   GUIDE: "Hướng dẫn",
-  TEMPLATE: "Template",
+  TEMPLATE: "Biểu mẫu",
   REFERENCE: "Tham khảo",
-  FAQ: "FAQ",
+  FAQ: "Hỏi đáp",
+  SPIRITUAL_APPLICATION: "Đơn từ tâm linh",
 };
 
 function categoryLabel(cat: string) {
@@ -85,6 +87,7 @@ type DownloadsTableProps = {
   detailBasePath?: string;
   entityLabel?: string;
   emptyMessage?: string;
+  searchPlaceholder?: string;
 };
 
 export function DownloadsTable({
@@ -92,6 +95,7 @@ export function DownloadsTable({
   detailBasePath = "/noi-dung/tai-lieu",
   entityLabel = "tài liệu",
   emptyMessage = "Chưa có tài liệu nào.",
+  searchPlaceholder = "Lọc tài liệu...",
 }: DownloadsTableProps) {
   const navigateTo = useNavigateTo();
   const { data: envelope, isLoading } = useQuery(downloadListOptions({ limit: 100 }));
@@ -203,7 +207,7 @@ export function DownloadsTable({
         enableHiding: false,
       },
     ],
-    [mediaUrlByPublicId, detailBasePath],
+    [mediaUrlByPublicId, detailBasePath, entityLabel],
   );
 
   const table = useSafeReactTable({
@@ -236,7 +240,7 @@ export function DownloadsTable({
 
   const handleBulkDelete = async () => {
     if (!selectedRows.length) return;
-    if (!confirm(`Xác nhận xóa ${selectedRows.length} tài liệu?`)) return;
+    if (!confirm(`Xác nhận xóa ${selectedRows.length} ${entityLabel}?`)) return;
     await Promise.all(selectedRows.map((d) => deleteDownload.mutateAsync(d.publicId)));
     table.resetRowSelection();
   };
@@ -245,7 +249,7 @@ export function DownloadsTable({
     <div className="max-sm:has-[div[role='toolbar']]:mb-16 flex flex-1 flex-col gap-4">
       <DataTableToolbar
         table={table}
-        searchPlaceholder="Lọc tài liệu..."
+        searchPlaceholder={searchPlaceholder}
         searchKey="title"
         viewButtonLabel="Xem"
         filters={[

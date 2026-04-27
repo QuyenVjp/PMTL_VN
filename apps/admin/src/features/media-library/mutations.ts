@@ -32,7 +32,7 @@ export function useCreateCollection() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (body: CreateCollectionInput) =>
-      adminClient.post<{ publicId: string }>("/admin/content/media-library/collections", body),
+      adminClient.post<{ data: { publicId: string } }>("/admin/content/media-library/collections", body),
     onSuccess: () => {
       toast.success("Đã tạo collection.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.collections() });
@@ -49,6 +49,7 @@ export function useUpdateCollection() {
     onSuccess: () => {
       toast.success("Đã cập nhật collection.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.collections() });
+      void qc.invalidateQueries({ queryKey: mediaLibraryKeys.details() });
     },
     onError: handleApiError,
   });
@@ -62,6 +63,7 @@ export function usePublishCollection() {
     onSuccess: () => {
       toast.success("Đã xuất bản collection.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.collections() });
+      void qc.invalidateQueries({ queryKey: mediaLibraryKeys.details() });
     },
     onError: handleApiError,
   });
@@ -75,6 +77,7 @@ export function useUnpublishCollection() {
     onSuccess: () => {
       toast.success("Đã gỡ xuất bản collection.");
       void qc.invalidateQueries({ queryKey: mediaLibraryKeys.collections() });
+      void qc.invalidateQueries({ queryKey: mediaLibraryKeys.details() });
     },
     onError: handleApiError,
   });

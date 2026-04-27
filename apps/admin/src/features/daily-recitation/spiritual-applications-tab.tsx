@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,6 @@ type BurnRule = "MUST_BURN" | "NEVER_BURN" | "OPTIONAL";
 interface SpiritualApplication {
   id: string;
   name: string;
-  nameEn: string;
   purpose: string;
   burnRule: BurnRule;
   paperSizes: string[];
@@ -40,7 +39,6 @@ const APPLICATIONS: SpiritualApplication[] = [
   {
     id: "name-change",
     name: "Đơn Thăng Văn Đổi Tên",
-    nameEn: "Application for Change of Name",
     purpose:
       "Dành cho người muốn dùng tên mới (đã dùng trên 1 năm) để niệm kinh và ghi lên Tiểu Phương Tử.",
     burnRule: "MUST_BURN",
@@ -56,7 +54,6 @@ const APPLICATIONS: SpiritualApplication[] = [
   {
     id: "family-persuasion",
     name: "Đơn Khuyến Đạo Người Nhà",
-    nameEn: "Application for Convincing Family Members",
     purpose:
       "Dành cho đồng tu muốn xin Bồ Tát khai mở trí tuệ cho người nhà chưa tin Phật pháp.",
     burnRule: "NEVER_BURN",
@@ -117,7 +114,6 @@ function ApplicationCard({ app }: { app: SpiritualApplication }) {
             </div>
             <div>
               <CardTitle className="text-base">{app.name}</CardTitle>
-              <CardDescription className="text-xs mt-0.5">{app.nameEn}</CardDescription>
             </div>
           </div>
           <BurnRuleBadge rule={app.burnRule} />
@@ -183,15 +179,14 @@ export function SpiritualApplicationsTab() {
       <div>
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <FlameKindlingIcon className="h-5 w-5 text-primary" />
-          Đơn Từ Tâm Linh (Spiritual Applications)
+          Đơn từ tâm linh
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          Các mẫu đơn giấy vàng A4 "gửi lên Bồ Tát". Admin quản lý PDF template + hướng dẫn nghi thức.
-          PDF thực tế quản lý trong module <strong>Tải xuống</strong> với category = SPIRITUAL_APPLICATION.
+          Các mẫu đơn giấy vàng A4 để dâng lên chư Phật, Bồ Tát. Quản trị viên quản lý tệp PDF và hướng dẫn nghi thức ngay trong nhóm <strong>Đơn từ tâm linh</strong> của module Tải xuống.
         </p>
       </div>
 
-      {/* Burn Rule Legend */}
+      {/* Chú giải quy tắc đốt */}
       <div className="flex flex-wrap gap-4 rounded-xl border px-4 py-3 text-xs">
         <span className="flex items-center gap-1.5">
           <FlameIcon className="h-3.5 w-3.5 text-amber-500" />
@@ -211,7 +206,6 @@ export function SpiritualApplicationsTab() {
 
       <Separator />
 
-      {/* Admin Notes */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Quy tắc quản trị</CardTitle>
@@ -220,19 +214,19 @@ export function SpiritualApplicationsTab() {
           <div className="flex items-start gap-2">
             <InfoIcon className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
             <p className="text-muted-foreground">
-              <strong>Download tracking:</strong> Chỉ thu thập aggregate (tổng lượt tải/loại/tháng). Không lưu thông tin cá nhân người tải.
+              <strong>Theo dõi lượt tải:</strong> Chỉ thu thập số liệu tổng hợp theo loại và theo tháng. Không lưu thông tin cá nhân người tải.
             </p>
           </div>
           <div className="flex items-start gap-2">
             <InfoIcon className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
             <p className="text-muted-foreground">
-              <strong>Instruction mandatory:</strong> User không thể tải PDF mà bỏ qua hướng dẫn nghi thức. Modal hiển thị trước nút Download.
+              <strong>Bắt buộc đọc hướng dẫn:</strong> Người dùng không thể tải PDF mà bỏ qua phần hướng dẫn nghi thức. Hộp thoại hướng dẫn phải hiện trước nút tải.
             </p>
           </div>
           <div className="flex items-start gap-2">
             <AlertTriangleIcon className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
             <p className="text-muted-foreground">
-              <strong>NEVER_BURN enforcement:</strong> Nếu frontend gửi request đánh dấu "đã đốt" cho đơn Khuyến Đạo, backend phải reject với HTTP 422.
+              <strong>Chặn trường hợp cấm đốt:</strong> Nếu frontend gửi request đánh dấu "đã đốt" cho đơn Khuyến Đạo, backend phải từ chối với HTTP 422.
             </p>
           </div>
         </CardContent>

@@ -59,6 +59,12 @@ const LifeReleasePage = lazy(() =>
 const MediaLibraryPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.MediaLibraryPage })),
 );
+const MediaLibraryCreatePage = lazy(() =>
+  import("@/features/media-library").then((mod) => ({ default: mod.MediaLibraryCreatePage })),
+);
+const MediaLibraryDetailPage = lazy(() =>
+  import("@/features/media-library").then((mod) => ({ default: mod.MediaLibraryDetailPage })),
+);
 const DownloadsPage = lazy(() =>
   import("@/features/workspaces/module-pages").then((mod) => ({ default: mod.DownloadsPage })),
 );
@@ -116,6 +122,18 @@ const AssistedEntryPage = lazy(() =>
 );
 const SelfCultivationWorkspacePage = lazy(() =>
   import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationWorkspacePage })),
+);
+const SelfCultivationGuideCreatePage = lazy(() =>
+  import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationGuideCreatePage })),
+);
+const SelfCultivationGuideDetailPage = lazy(() =>
+  import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationGuideDetailPage })),
+);
+const SelfCultivationFaqCreatePage = lazy(() =>
+  import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationFaqCreatePage })),
+);
+const SelfCultivationFaqDetailPage = lazy(() =>
+  import("@/features/self-cultivation").then((mod) => ({ default: mod.SelfCultivationFaqDetailPage })),
 );
 const PracticeHomePracticeGuidePage = lazy(() =>
   import("@/features/practice-support-home-guide").then((mod) => ({ default: mod.PracticeHomePracticeGuidePage })),
@@ -194,6 +212,24 @@ const PostCreatePage = lazy(() =>
 const PostDetailPage = lazy(() =>
   import("@/features/content/post-detail-page").then((mod) => ({ default: mod.PostDetailPage })),
 );
+const DailyPracticeGuideCreatePage = lazy(() =>
+  import("@/features/daily-recitation/guide-pages").then((mod) => ({ default: mod.DailyPracticeGuideCreatePage })),
+);
+const DailyPracticeGuideDetailPage = lazy(() =>
+  import("@/features/daily-recitation/guide-pages").then((mod) => ({ default: mod.DailyPracticeGuideDetailPage })),
+);
+const DailyPracticePresetCreatePage = lazy(() =>
+  import("@/features/daily-recitation/preset-pages").then((mod) => ({ default: mod.DailyPracticePresetCreatePage })),
+);
+const DailyPracticePresetDetailPage = lazy(() =>
+  import("@/features/daily-recitation/preset-pages").then((mod) => ({ default: mod.DailyPracticePresetDetailPage })),
+);
+const DailyPracticeFaqCreatePage = lazy(() =>
+  import("@/features/daily-recitation/faq-pages").then((mod) => ({ default: mod.DailyPracticeFaqCreatePage })),
+);
+const DailyPracticeFaqDetailPage = lazy(() =>
+  import("@/features/daily-recitation/faq-pages").then((mod) => ({ default: mod.DailyPracticeFaqDetailPage })),
+);
 const GuestbookDetailPage = lazy(() =>
   import("@/features/guestbook/guestbook-detail-page").then((mod) => ({ default: mod.GuestbookDetailPage })),
 );
@@ -215,12 +251,35 @@ const VolunteerDetailPage = lazy(() =>
 
 const SutraDownloadCreatePage = lazy(() =>
   import("@/features/downloads/download-create-page").then((mod) => ({
-    default: () => <mod.DownloadCreatePage backHref="/noi-dung/kinh-sach" backLabel="Kinh sách" defaultCategory="REFERENCE" />,
+    default: () => (
+      <mod.DownloadCreatePage
+        backHref="/noi-dung/kinh-sach"
+        backLabel="Kinh sách"
+        defaultCategory="REFERENCE"
+        pageTitle="Thêm kinh sách"
+        sectionTitle="Thông tin kinh sách"
+        descriptionPlaceholder="Mô tả ngắn về kinh sách..."
+        categoryLabel="Loại nội dung"
+        lockCategory
+        lockedCategoryLabel="Kinh sách"
+      />
+    ),
   })),
 );
 const SutraDownloadDetailPage = lazy(() =>
   import("@/features/downloads/download-detail-page").then((mod) => ({
-    default: () => <mod.DownloadDetailPage backHref="/noi-dung/kinh-sach" backLabel="Kinh sách" />,
+    default: () => (
+      <mod.DownloadDetailPage
+        backHref="/noi-dung/kinh-sach"
+        backLabel="Kinh sách"
+        emptyStateLabel="kinh sách"
+        sectionTitle="Thông tin kinh sách"
+        descriptionPlaceholder="Mô tả ngắn về kinh sách..."
+        categoryLabel="Loại nội dung"
+        lockCategory
+        lockedCategoryLabel="Kinh sách"
+      />
+    ),
   })),
 );
 
@@ -363,18 +422,32 @@ const dailyPracticeRoute = createRoute({
 const dailyPracticeCreateRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-bai-tap/tao-moi",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/kinh-bai-tap" });
-  },
+  component: withSuspense(DailyPracticeGuideCreatePage),
+});
+const dailyPracticePresetCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/kich-ban/tao-moi",
+  component: withSuspense(DailyPracticePresetCreatePage),
+});
+const dailyPracticePresetDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/kich-ban/$publicId",
+  component: withSuspense(DailyPracticePresetDetailPage),
+});
+const dailyPracticeFaqCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/hoi-dap/tao-moi",
+  component: withSuspense(DailyPracticeFaqCreatePage),
+});
+const dailyPracticeFaqDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-bai-tap/hoi-dap/$publicId",
+  component: withSuspense(DailyPracticeFaqDetailPage),
 });
 const dailyPracticeDetailRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/kinh-bai-tap/$publicId",
-  beforeLoad: () => {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirect pattern
-    throw redirect({ to: "/noi-dung/kinh-bai-tap" });
-  },
+  component: withSuspense(DailyPracticeGuideDetailPage),
 });
 
 const littleHouseRoute = createRoute({
@@ -425,6 +498,16 @@ const mediaLibraryRoute = createRoute({
   getParentRoute: () => authenticatedRoute,
   path: "/noi-dung/thu-vien-phap-mon",
   component: withSuspense(MediaLibraryPage),
+});
+const mediaLibraryCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/thu-vien-phap-mon/tao-moi",
+  component: withSuspense(MediaLibraryCreatePage),
+});
+const mediaLibraryDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/thu-vien-phap-mon/$publicId",
+  component: withSuspense(MediaLibraryDetailPage),
 });
 
 const downloadsRoute = createRoute({
@@ -648,6 +731,26 @@ const practiceHomeGuideRoute = createRoute({
   path: "/noi-dung/kinh-van-tu-tu",
   component: withSuspense(SelfCultivationWorkspacePage),
 });
+const selfCultivationGuideCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-van-tu-tu/huong-dan/tao-moi",
+  component: withSuspense(SelfCultivationGuideCreatePage),
+});
+const selfCultivationGuideDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-van-tu-tu/huong-dan/$guidePublicId",
+  component: withSuspense(SelfCultivationGuideDetailPage),
+});
+const selfCultivationFaqCreateRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-van-tu-tu/hoi-dap/tao-moi",
+  component: withSuspense(SelfCultivationFaqCreatePage),
+});
+const selfCultivationFaqDetailRoute = createRoute({
+  getParentRoute: () => authenticatedRoute,
+  path: "/noi-dung/kinh-van-tu-tu/hoi-dap/$faqPublicId",
+  component: withSuspense(SelfCultivationFaqDetailPage),
+});
 
 // Legacy alias for old tu-tai-gia guide page kept only for bookmarked draft review
 const practiceHomeGuideLegacyRoute = createRoute({
@@ -821,6 +924,10 @@ export const routeTree = rootRoute.addChildren([
     guidesDetailRoute,
     dailyPracticeRoute,
     dailyPracticeCreateRoute,
+    dailyPracticePresetCreateRoute,
+    dailyPracticePresetDetailRoute,
+    dailyPracticeFaqCreateRoute,
+    dailyPracticeFaqDetailRoute,
     dailyPracticeDetailRoute,
     littleHouseRoute,
     littleHouseCreateRoute,
@@ -829,6 +936,8 @@ export const routeTree = rootRoute.addChildren([
     lifeReleaseCreateRoute,
     lifeReleaseDetailRoute,
     mediaLibraryRoute,
+    mediaLibraryCreateRoute,
+    mediaLibraryDetailRoute,
     downloadsRoute,
     downloadsCreateRoute,
     downloadsDetailRoute,
@@ -841,6 +950,10 @@ export const routeTree = rootRoute.addChildren([
     documentAssetsRoute,
     niemKinhRoutes,
     practiceHomeGuideRoute,
+    selfCultivationGuideCreateRoute,
+    selfCultivationGuideDetailRoute,
+    selfCultivationFaqCreateRoute,
+    selfCultivationFaqDetailRoute,
     practiceHomeGuideLegacyRoute,
     // Cộng đồng
     communityPostsRoute,

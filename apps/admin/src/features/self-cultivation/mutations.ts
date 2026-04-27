@@ -41,7 +41,7 @@ export function useCreateSelfCultivationGuide() {
   return useMutation({
     mutationFn: (input: CreateSelfCultivationGuideInput) => adminClient.post("/admin/content/self-cultivation/guides", input),
     onSuccess: () => {
-      toast.success("Đã thêm guide Kinh văn tự tu.");
+      toast.success("Đã thêm bài hướng dẫn Kinh văn tự tu.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,
@@ -53,7 +53,7 @@ export function useUpdateSelfCultivationGuide() {
   return useMutation({
     mutationFn: ({ publicId, ...input }: UpdateSelfCultivationGuideInput) => adminClient.patch(`/admin/content/self-cultivation/guides/${publicId}`, input),
     onSuccess: () => {
-      toast.success("Đã cập nhật guide Kinh văn tự tu.");
+      toast.success("Đã cập nhật bài hướng dẫn Kinh văn tự tu.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,
@@ -65,7 +65,7 @@ export function useCreateSelfCultivationFaq() {
   return useMutation({
     mutationFn: (input: CreateSelfCultivationFaqInput) => adminClient.post("/admin/content/self-cultivation/faq", input),
     onSuccess: () => {
-      toast.success("Đã thêm FAQ Kinh văn tự tu.");
+      toast.success("Đã thêm mục hỏi đáp Kinh văn tự tu.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,
@@ -77,7 +77,7 @@ export function useUpdateSelfCultivationFaq() {
   return useMutation({
     mutationFn: ({ publicId, ...input }: UpdateSelfCultivationFaqInput) => adminClient.patch(`/admin/content/self-cultivation/faq/${publicId}`, input),
     onSuccess: () => {
-      toast.success("Đã cập nhật FAQ Kinh văn tự tu.");
+      toast.success("Đã cập nhật mục hỏi đáp Kinh văn tự tu.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,
@@ -89,7 +89,7 @@ export function usePublishSelfCultivation() {
   return useMutation({
     mutationFn: (input: PublishSelfCultivationInput) => adminClient.post("/admin/content/self-cultivation/publish", input),
     onSuccess: (_data, variables) => {
-      toast.success(variables.status === "PUBLISHED" ? "Đã publish Kinh văn tự tu." : "Đã đưa Kinh văn tự tu về nháp.");
+      toast.success(variables.status === "PUBLISHED" ? "Đã xuất bản Kinh văn tự tu." : "Đã đưa Kinh văn tự tu về nháp.");
       void queryClient.invalidateQueries({ queryKey: selfCultivationKeys.all });
     },
     onError: handleApiError,

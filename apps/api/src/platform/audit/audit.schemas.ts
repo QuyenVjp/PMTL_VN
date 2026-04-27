@@ -30,6 +30,10 @@ export const auditActionSchema = z.enum([
   // Media actions
   "media.upload",
   "media.delete",
+  "media.folder.create",
+  "media.folder.update",
+  "media.folder.delete",
+  "media.folder.move_asset",
   
   // Admin actions
   "admin.feature_flag.update",
@@ -110,6 +114,22 @@ export const auditActionSchema = z.enum([
   "admin.self_cultivation.faq.update",
   "admin.self_cultivation.publish",
   "admin.self_cultivation.unpublish",
+  "admin.little_house.guide.create",
+  "admin.little_house.guide.update",
+  "admin.little_house.variant.create",
+  "admin.little_house.variant.update",
+  "admin.little_house.faq.create",
+  "admin.little_house.faq.update",
+  "admin.little_house.publish",
+  "admin.little_house.unpublish",
+  "admin.life_release.guide.create",
+  "admin.life_release.guide.update",
+  "admin.life_release.variant.create",
+  "admin.life_release.variant.update",
+  "admin.life_release.faq.create",
+  "admin.life_release.faq.update",
+  "admin.life_release.publish",
+  "admin.life_release.unpublish",
 
   // Vow / merit actions
   "admin.vow.create",

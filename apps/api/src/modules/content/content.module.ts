@@ -19,6 +19,8 @@ import { StorageModule } from "../../platform/storage/storage.module.js";
 import { ChantingModule } from "./chanting/chanting.module.js";
 import { PracticeSupportModule } from "./practice-support/practice-support.module.js";
 import { SelfCultivationModule } from "./self-cultivation/self-cultivation.module.js";
+import { LittleHouseModule } from "./little-house/little-house.module.js";
+import { LifeReleaseContentModule } from "./life-release/life-release.module.js";
 import { SearchModule } from "../search/search.module.js";
 import { ConvincingFamilyRitualService } from "./convincing-family-ritual.service.js";
 import { NameChangeService } from "./name-change.service.js";
@@ -26,7 +28,7 @@ import { SutraInterruptionService } from "./sutra-interruption.service.js";
 import { SutraReaderHygieneService } from "./sutra-reader-hygiene.service.js";
 
 @Module({
-  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule, SearchModule],
+  imports: [AuditModule, StorageModule, ChantingModule, PracticeSupportModule, SelfCultivationModule, LittleHouseModule, LifeReleaseContentModule, SearchModule],
   controllers: [
     ContentController,
     GuideController,

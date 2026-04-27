@@ -165,6 +165,13 @@ function Wait-ForPort {
   return $false
 }
 
+function Test-ListeningPort {
+  param([int]$Port)
+
+  $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+  return $listeners.Count -gt 0
+}
+
 function Get-LatestLogLine {
   param([string]$Path)
 
@@ -229,6 +236,7 @@ function Wait-ForPortWithProgress {
 
   do {
     if (
+      (Test-ListeningPort -Port $Port) -or
       (Test-TcpPort -TargetHost $TargetHost -Port $Port) -or
       (Test-TcpPort -TargetHost "localhost" -Port $Port) -or
       (Test-TcpPort -TargetHost "::1" -Port $Port) -or
@@ -272,8 +280,15 @@ function Start-PnpmProcess {
     [string]$Label
   )
 
-  $pnpmPs1 = @(Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue)[0]
-  if ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1") {
+  $pnpmCmd = @(Get-Command pnpm.cmd -ErrorAction SilentlyContinue)[0]
+  if ($pnpmCmd) {
+    $resolvedFilePath = $pnpmCmd.Source
+    $resolvedArguments = [string[]]$ArgumentList
+  } else {
+    $pnpmPs1 = @(Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue)[0]
+    if (-not ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1")) {
+      throw "Không tìm thấy pnpm trong PATH."
+    }
     $shellCmd = @(Get-Command pwsh -ErrorAction SilentlyContinue)[0]
     if (-not $shellCmd) {
       $shellCmd = @(Get-Command powershell -ErrorAction SilentlyContinue)[0]
@@ -291,14 +306,6 @@ function Start-PnpmProcess {
       "-File",
       $pnpmPs1.Source
     ) + $ArgumentList)
-  } else {
-    $pnpmCmd = @(Get-Command pnpm.cmd -ErrorAction SilentlyContinue)[0]
-    if (-not $pnpmCmd) {
-      throw "Không tìm thấy pnpm trong PATH."
-    }
-
-    $resolvedFilePath = $pnpmCmd.Source
-    $resolvedArguments = [string[]]$ArgumentList
   }
 
   Write-Step "${Label}: pnpm $($ArgumentList -join ' ')"
@@ -345,7 +352,7 @@ function Start-ApiWithFallback {
   }
 
   if (-not $apiDevProcess.HasExited) {
-    Stop-Process -Id $apiDevProcess.Id -Force -ErrorAction SilentlyContinue
+    Stop-ProcessTree -ProcessId $apiDevProcess.Id -Reason "API dev fallback"
   }
 
   Write-Warn "API dev mode không lên được (thường do compile errors). Chuyển sang fallback từ dist..."
@@ -376,7 +383,7 @@ function Start-ApiWithFallback {
   }
 
   if (-not $apiStartProcess.HasExited) {
-    Stop-Process -Id $apiStartProcess.Id -Force -ErrorAction SilentlyContinue
+    Stop-ProcessTree -ProcessId $apiStartProcess.Id -Reason "API fallback cleanup"
   }
 
   $devOutTail = if (Test-Path $devOut) { (Get-Content $devOut -Tail 40) -join [Environment]::NewLine } else { "(không có log)" }
@@ -504,9 +511,10 @@ try {
   Write-Host "[pmtl] Stack trace: $($_.ScriptStackTrace)" -ForegroundColor DarkRed
   exit 1
 } finally {
-  if ($apiProcess -and -not $apiProcess.HasExited) {
-    Write-Warn "Dừng API process nền (PID $($apiProcess.Id))..."
-    Stop-Process -Id $apiProcess.Id -Force -ErrorAction SilentlyContinue
+  $apiProcessObject = $apiProcess | Where-Object { $_ -is [System.Diagnostics.Process] } | Select-Object -First 1
+  if ($apiProcessObject -and -not $apiProcessObject.HasExited) {
+    Write-Warn "Dừng API process nền (PID $($apiProcessObject.Id))..."
+    Stop-ProcessTree -ProcessId $apiProcessObject.Id -Reason "PMTL shutdown"
   }
   Pop-Location
 }

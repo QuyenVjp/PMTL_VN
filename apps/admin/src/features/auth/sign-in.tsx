@@ -7,6 +7,7 @@
  */
 import { useEffect, useState, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { AuthShell } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { adminClient } from "@/lib/api/admin-client";
 import { HttpError } from "@/lib/api/http-error";
-import { clearAuthCache } from "@/lib/auth";
+import { primeAuthCacheFromLogin } from "@/lib/auth";
 
 interface LoginResponse {
   user: {
-    publicId: string;
+    id?: string;
+    publicId?: string;
     email: string;
     displayName: string;
     role: string;
@@ -35,6 +37,7 @@ export function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [checkingBootstrap, setCheckingBootstrap] = useState(true);
@@ -84,9 +87,9 @@ export function SignInPage() {
         return;
       }
 
-      // Cookie httpOnly đã được set bởi API.
-      // Clear module-level cache trước khi navigate để beforeLoad fetch lại user mới.
-      clearAuthCache();
+      // Cookie httpOnly đã được set bởi API; snapshot này chỉ giúp route guard
+      // không đá về login nếu Vite/API đang reload ngay sau thao tác đăng nhập.
+      primeAuthCacheFromLogin(result.user);
 
       // Dùng window.location để force full navigation — tránh TanStack Router
       // dùng cached beforeLoad result (cachedUser = null) → redirect về login.
@@ -176,16 +179,26 @@ export function SignInPage() {
                   </Link>
                 )}
               </div>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="min-h-[44px]"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="min-h-[44px] pr-11"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                >
+                  {showPassword ? <EyeOffIcon className="size-4" /> : <EyeIcon className="size-4" />}
+                </button>
+              </div>
             </div>
             <Button type="submit" className="mt-2 min-h-[44px]" disabled={loading}>
               {loading ? "Đang xác thực..." : needsBootstrap ? "Tạo tài khoản quản trị đầu tiên" : "Đăng nhập"}

@@ -40,7 +40,11 @@ export class AdminMediaLibraryService {
   async listCollections(dto: ListCollectionsDto) {
     const where: Record<string, unknown> = {};
     if (dto.status)         where.status         = dto.status;
-    if (dto.collectionType) where.collectionType = dto.collectionType;
+    if (dto.collectionType) {
+      where.collectionType = dto.collectionType;
+    } else {
+      where.collectionType = { not: "MEDIA_FOLDER" };
+    }
     if (dto.featured !== undefined) where.featured = dto.featured;
     if (dto.search) {
       where.OR = [

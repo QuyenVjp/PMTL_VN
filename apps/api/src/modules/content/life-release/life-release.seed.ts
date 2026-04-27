@@ -1,0 +1,138 @@
+import type { LifeReleaseOverviewDto } from "./life-release.schemas.js";
+
+const now = "2026-04-27T16:45:00.000Z";
+
+export const LIFE_RELEASE_SEED: LifeReleaseOverviewDto = {
+  publicId: "lifect-0001",
+  slug: "phong-sanh",
+  title: "Phóng sanh",
+  status: "DRAFT",
+  updatedAt: now,
+  updatedByLabel: "Biên tập Phóng sanh",
+  boundarySummary: {
+    differentFromJournal:
+      "Workspace này chỉ giữ ritual guidance, variants, warning và downloads. Life release journal là owner factual record riêng, không được viết đè từ lane nội dung.",
+    differentFromCalendar:
+      "Calendar chỉ compose advisory theo ngày đặc biệt và reminder. Không chỉnh ritual truth hay checklist chuẩn bị từ calendar lane.",
+    nonNegotiables: [
+      "Script wording nhạy cảm phải có sourceReference và reviewNote.",
+      "Variants cho bản thân, cho người khác, niệm trên đường và xử lý sự cố phải là record first-class.",
+      "Checklist chuẩn bị, warning đạo đức và emergency handling phải là typed blocks, không chôn trong rich text.",
+    ],
+  },
+  sourceReferences: [
+    "design/03-domains/content/REFERENCES/LIFE-RELEASE-EXPERIENCE-ARCHITECTURE.MD",
+    "design/03-domains/content/REFERENCES/LIFE-RELEASE-RITUAL-CHECKLIST.md",
+    "design/02-platform-baseline/admin-runtime/ADMIN_MODULE_SPECS.md#6-phong-sanh",
+  ],
+  versionNotes: [
+    "v1.0 — Khởi tạo workspace Phóng sanh theo split guide hub / ritual variants / journal bridge.",
+  ],
+  guides: [
+    {
+      publicId: "lrg-0001",
+      slug: "nghi-thuc-co-ban",
+      title: "Nghi thức cơ bản",
+      summary: "Giữ flow chuẩn bị, cung thỉnh, khấn chính, tụng kinh/chú trước khi thả và cảm ân kết thúc.",
+      groupKey: "NGHI_THUC",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §4, §5",
+      reviewNote: "Primary ritual steps phải có thứ tự rõ và companion journal bridge.",
+      warningNotes: [],
+      displayOrder: 0,
+      updatedAt: now,
+    },
+    {
+      publicId: "lrg-0002",
+      slug: "luu-y-va-chuan-bi",
+      title: "Lưu ý và chuẩn bị",
+      summary: "Checklist chuẩn bị, warning đạo đức, thời điểm và điều kiện thuận lợi trước khi phóng sanh.",
+      groupKey: "LUU_Y_CHUAN_BI",
+      sourceReference: "LIFE-RELEASE-RITUAL-CHECKLIST",
+      reviewNote: "Chuẩn bị và cảnh báo phải tách khỏi script chính.",
+      warningNotes: ["Ban đêm hoặc thời tiết xấu chỉ là advisory, không hard-block mặc định."],
+      displayOrder: 0,
+      updatedAt: now,
+    },
+    {
+      publicId: "lrg-0003",
+      slug: "hoi-dap",
+      title: "Hỏi đáp và cầu nối sang journal",
+      summary: "FAQ thường gặp, note dùng guideContextRef và ritualVariantRef khi member ghi lại buổi phóng sanh.",
+      groupKey: "HOI_DAP",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §6",
+      reviewNote: "Không cho phép FAQ drift thành journal business rules.",
+      warningNotes: [],
+      displayOrder: 0,
+      updatedAt: now,
+    },
+  ],
+  ritualVariants: [
+    {
+      publicId: "lrv-0001",
+      name: "Cho bản thân",
+      summary: "Variant chuẩn khi user tự phóng sanh cho chính mình.",
+      routeSlug: "cho-ban-than",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §4.2, §5",
+      reviewNote: "Phải giữ summary box và CTA sang journal member.",
+      warningNotes: [],
+      displayOrder: 0,
+      updatedAt: now,
+    },
+    {
+      publicId: "lrv-0002",
+      name: "Cho người khác",
+      summary: "Variant hồi hướng hoặc phóng sanh thay người khác, giữ rõ placeholder tên người nhận.",
+      routeSlug: "cho-nguoi-khac",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §4.2, §7",
+      reviewNote: "Bắt buộc sourceReference và placeholder rõ cho người được hồi hướng.",
+      warningNotes: ["Không gộp mơ hồ nhiều người nhận trong cùng một variant wording."],
+      displayOrder: 1,
+      updatedAt: now,
+    },
+    {
+      publicId: "lrv-0003",
+      name: "Xử lý khi có loài vật tử vong",
+      summary: "Emergency card và flow siêu độ ngắn khi phát sinh sự cố tại hiện trường.",
+      routeSlug: "xu-ly-khi-co-loai-vat-tu-vong",
+      sourceReference: "LIFE-RELEASE-RITUAL-CHECKLIST §4",
+      reviewNote: "Emergency handling phải tách thành variant first-class, không bury trong note phụ.",
+      warningNotes: [],
+      displayOrder: 2,
+      updatedAt: now,
+    },
+  ],
+  faq: [
+    {
+      publicId: "lrfaq-0001",
+      question: "Phóng sanh khác gì với sổ tay phóng sanh của member?",
+      answer: "Workspace này giữ ritual truth, variants và downloads. Sổ tay phóng sanh của member giữ record factual, context đã dùng và milestone liên quan.",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §3.1, §6",
+      displayOrder: 0,
+      updatedAt: now,
+    },
+    {
+      publicId: "lrfaq-0002",
+      question: "Có chỉnh journal từ màn nội dung này không?",
+      answer: "Không. Journal, assisted-entry và species stats là lane vận hành riêng. Content workspace chỉ cung cấp guideContextRef và ritualVariantRef để journal tham chiếu.",
+      sourceReference: "LIFE-RELEASE-EXPERIENCE-ARCHITECTURE §6.2",
+      displayOrder: 1,
+      updatedAt: now,
+    },
+  ],
+  downloads: [
+    {
+      publicId: "lrdl-0001",
+      title: "PDF nghi thức phóng sanh",
+      assetType: "GUIDE_PDF",
+      fileName: "phong-sanh-nghi-thuc.pdf",
+      displayOrder: 0,
+    },
+    {
+      publicId: "lrdl-0002",
+      title: "Checklist hiện trường",
+      assetType: "CHECKLIST",
+      fileName: "phong-sanh-checklist-hien-truong.pdf",
+      displayOrder: 1,
+    },
+  ],
+};

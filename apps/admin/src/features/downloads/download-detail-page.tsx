@@ -60,9 +60,10 @@ function statusBadgeClass(s: string): string {
 
 const CATEGORY_LABELS: Record<string, string> = {
   GUIDE: "Hướng dẫn",
-  TEMPLATE: "Template",
+  TEMPLATE: "Biểu mẫu",
   REFERENCE: "Tham khảo",
-  FAQ: "FAQ",
+  FAQ: "Hỏi đáp",
+  SPIRITUAL_APPLICATION: "Đơn từ tâm linh",
 };
 
 function formatFileSize(bytes: number): string {
@@ -74,6 +75,12 @@ function formatFileSize(bytes: number): string {
 type DownloadDetailPageProps = {
   backHref: string;
   backLabel: string;
+  emptyStateLabel?: string;
+  sectionTitle?: string;
+  descriptionPlaceholder?: string;
+  categoryLabel?: string;
+  lockCategory?: boolean;
+  lockedCategoryLabel?: string;
 };
 
 function readPublicId(params: unknown): string {
@@ -82,7 +89,16 @@ function readPublicId(params: unknown): string {
   return typeof publicId === "string" ? publicId : "";
 }
 
-export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPageProps) {
+export function DownloadDetailPage({
+  backHref,
+  backLabel,
+  emptyStateLabel = "tài liệu",
+  sectionTitle = "Thông tin tài liệu",
+  descriptionPlaceholder = "Mô tả ngắn về tài liệu...",
+  categoryLabel = "Danh mục",
+  lockCategory = false,
+  lockedCategoryLabel,
+}: DownloadDetailPageProps) {
   const navigateTo = useNavigateTo();
   const publicId = readPublicId(useParams({ strict: false }));
 
@@ -157,7 +173,7 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
   });
 
   if (isLoading || !download) {
-    return isLoading ? <WorkspaceDetailSkeleton /> : <div className="flex h-64 items-center justify-center text-muted-foreground">Không tìm thấy tài liệu.</div>;
+    return isLoading ? <WorkspaceDetailSkeleton /> : <div className="flex h-64 items-center justify-center text-muted-foreground">Không tìm thấy {emptyStateLabel}.</div>;
   }
 
   const sidebar = (
@@ -173,8 +189,8 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
             }
           />
           <AdminDetailField
-            label="Danh mục"
-            value={CATEGORY_LABELS[download.category] ?? download.category}
+            label={categoryLabel}
+            value={lockedCategoryLabel ?? CATEGORY_LABELS[download.category] ?? download.category}
           />
           <AdminDetailField
             label="Loại file"
@@ -233,7 +249,7 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
         ]}
         sidebar={sidebar}
       >
-        <AdminDetailSection title="Thông tin tài liệu">
+        <AdminDetailSection title={sectionTitle}>
           <div className="space-y-4">
             <AdminFormField label="Tiêu đề">
               <Input
@@ -243,22 +259,29 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
               <FieldError message={errors.title?.message} />
             </AdminFormField>
 
-            <AdminFormField label="Danh mục">
-              <Select
-                value={values.category}
-                onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="GUIDE">Hướng dẫn</SelectItem>
-                  <SelectItem value="TEMPLATE">Template</SelectItem>
-                  <SelectItem value="REFERENCE">Tham khảo</SelectItem>
-                  <SelectItem value="FAQ">FAQ</SelectItem>
-                </SelectContent>
-              </Select>
-            </AdminFormField>
+            {lockCategory ? (
+              <AdminFormField label={categoryLabel}>
+                <Input value={lockedCategoryLabel ?? CATEGORY_LABELS[values.category] ?? values.category} disabled readOnly />
+              </AdminFormField>
+            ) : (
+              <AdminFormField label={categoryLabel}>
+                <Select
+                  value={values.category}
+                  onValueChange={(value) => form.setValue("category", value, { shouldDirty: true })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="GUIDE">Hướng dẫn</SelectItem>
+                    <SelectItem value="TEMPLATE">Biểu mẫu</SelectItem>
+                    <SelectItem value="REFERENCE">Tham khảo</SelectItem>
+                    <SelectItem value="FAQ">Hỏi đáp</SelectItem>
+                    <SelectItem value="SPIRITUAL_APPLICATION">Đơn từ tâm linh</SelectItem>
+                  </SelectContent>
+                </Select>
+              </AdminFormField>
+            )}
 
             <AdminFormField label="Đường dẫn file">
               <Input
@@ -290,7 +313,7 @@ export function DownloadDetailPage({ backHref, backLabel }: DownloadDetailPagePr
             <AdminFormField label="Mô tả">
               <Textarea
                 {...form.register("description")}
-                placeholder="Mô tả ngắn về tài liệu..."
+                placeholder={descriptionPlaceholder}
                 rows={3}
               />
             </AdminFormField>

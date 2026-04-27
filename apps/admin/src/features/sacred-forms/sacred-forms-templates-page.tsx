@@ -12,7 +12,7 @@ export function SacredFormTemplatesPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Mẫu đơn Pháp Bảo</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Quản lý template, prerequisite và rule source cho từng loại đơn Pháp Bảo.
+          Quản lý mẫu đơn, điều kiện tiên quyết và nguồn quy tắc cho từng loại đơn Pháp Bảo.
         </p>
       </div>
 
@@ -21,13 +21,13 @@ export function SacredFormTemplatesPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base">
               <FileTextIcon className="size-4 text-muted-foreground" />
-              Template owner
+              Khu quản lý mẫu đơn
             </CardTitle>
-            <CardDescription>Content / Sacred Forms</CardDescription>
+            <CardDescription>Kho mẫu đơn và hướng dẫn chuẩn</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>Template giữ wording, prerequisite, tài liệu hướng dẫn và trạng thái publish.</p>
-            <Badge variant="outline">Không phải applicant state</Badge>
+            <p>Mẫu đơn giữ wording chuẩn, điều kiện tiên quyết, tài liệu hướng dẫn và trạng thái xuất bản.</p>
+            <Badge variant="outline">Không phải trạng thái hồ sơ nộp</Badge>
           </CardContent>
         </Card>
         <Card>
@@ -50,7 +50,7 @@ export function SacredFormTemplatesPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Đơn đăng ký</CardTitle>
-            <CardDescription>Applicant workflow riêng, có review/audit riêng.</CardDescription>
+            <CardDescription>Luồng tiếp nhận hồ sơ riêng, có xét duyệt và lưu vết riêng.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild variant="outline" size="sm">

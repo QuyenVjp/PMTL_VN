@@ -18,6 +18,42 @@ function Invoke-Checked {
   }
 }
 
+function Get-ChildProcessIds {
+  param([int]$ParentProcessId)
+
+  $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId = $ParentProcessId" -ErrorAction SilentlyContinue)
+  foreach ($child in $children) {
+    [int]$child.ProcessId
+    Get-ChildProcessIds -ParentProcessId ([int]$child.ProcessId)
+  }
+}
+
+function Stop-ProcessTree {
+  param(
+    [int]$ProcessId,
+    [string]$Reason = "cleanup"
+  )
+
+  if (-not $ProcessId -or $ProcessId -eq $PID) {
+    return
+  }
+
+  $processIds = @(
+    @(Get-ChildProcessIds -ParentProcessId $ProcessId) |
+      Sort-Object -Unique -Descending
+    $ProcessId
+  ) | Where-Object { $_ -and $_ -ne $PID } | Select-Object -Unique
+
+  foreach ($targetPid in $processIds) {
+    try {
+      Stop-Process -Id $targetPid -Force -ErrorAction Stop
+      Write-Host "[host-admin] Stopped PID $targetPid ($Reason)." -ForegroundColor Yellow
+    } catch {
+      # Process may already have exited while walking the tree.
+    }
+  }
+}
+
 function Test-TcpPort {
   param(
     [string]$TargetHost,
@@ -51,13 +87,25 @@ function Wait-ForPort {
 
   $deadline = (Get-Date).AddSeconds($TimeoutSec)
   do {
-    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+    if (
+      (Test-ListeningPort -Port $Port) -or
+      (Test-TcpPort -TargetHost $TargetHost -Port $Port) -or
+      (Test-TcpPort -TargetHost "localhost" -Port $Port) -or
+      (Test-TcpPort -TargetHost "::1" -Port $Port)
+    ) {
       return $true
     }
     Start-Sleep -Milliseconds 500
   } while ((Get-Date) -lt $deadline)
 
   return $false
+}
+
+function Test-ListeningPort {
+  param([int]$Port)
+
+  $listeners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue)
+  return $listeners.Count -gt 0
 }
 
 function Get-LatestLogLine {
@@ -90,7 +138,12 @@ function Wait-ForPortWithProgress {
   $lastProgressAt = $startedAt.AddSeconds(-15)
 
   do {
-    if (Test-TcpPort -TargetHost $TargetHost -Port $Port) {
+    if (
+      (Test-ListeningPort -Port $Port) -or
+      (Test-TcpPort -TargetHost $TargetHost -Port $Port) -or
+      (Test-TcpPort -TargetHost "localhost" -Port $Port) -or
+      (Test-TcpPort -TargetHost "::1" -Port $Port)
+    ) {
       return $true
     }
 
@@ -129,8 +182,15 @@ function Start-PnpmProcess {
     [string]$Label
   )
 
-  $pnpmPs1 = Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue
-  if ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1") {
+  $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
+  if ($pnpmCmd) {
+    $resolvedFilePath = $pnpmCmd.Source
+    $resolvedArguments = [string[]]$ArgumentList
+  } else {
+    $pnpmPs1 = Get-Command pnpm -CommandType ExternalScript -ErrorAction SilentlyContinue
+    if (-not ($pnpmPs1 -and $pnpmPs1.Source -like "*.ps1")) {
+      throw "Khong tim thay pnpm trong PATH."
+    }
     $shellCmd = Get-Command pwsh -ErrorAction SilentlyContinue
     if (-not $shellCmd) {
       $shellCmd = Get-Command powershell -ErrorAction SilentlyContinue
@@ -140,22 +200,14 @@ function Start-PnpmProcess {
     }
 
     $resolvedFilePath = $shellCmd.Source
-    $resolvedArguments = @(
+    $resolvedArguments = [string[]](@(
       "-NoLogo",
       "-NoProfile",
       "-ExecutionPolicy",
       "Bypass",
       "-File",
       $pnpmPs1.Source
-    ) + $ArgumentList
-  } else {
-    $pnpmCmd = Get-Command pnpm.cmd -ErrorAction SilentlyContinue
-    if (-not $pnpmCmd) {
-      throw "Khong tim thay pnpm trong PATH."
-    }
-
-    $resolvedFilePath = $pnpmCmd.Source
-    $resolvedArguments = $ArgumentList
+    ) + $ArgumentList)
   }
 
   Write-Host "[host-admin] ${Label}: pnpm $($ArgumentList -join ' ')" -ForegroundColor Cyan
@@ -197,7 +249,7 @@ function Start-ApiWithFallback {
   }
 
   if (-not $apiDev.HasExited) {
-    Stop-Process -Id $apiDev.Id -Force -ErrorAction SilentlyContinue
+    Stop-ProcessTree -ProcessId $apiDev.Id -Reason "API dev fallback"
   }
 
   Write-Host "[host-admin] API dev mode that bai, fallback sang dist..." -ForegroundColor Yellow
@@ -221,7 +273,7 @@ function Start-ApiWithFallback {
   }
 
   if (-not $apiStart.HasExited) {
-    Stop-Process -Id $apiStart.Id -Force -ErrorAction SilentlyContinue
+    Stop-ProcessTree -ProcessId $apiStart.Id -Reason "API fallback cleanup"
   }
 
   $devOutTail = if (Test-Path $devOut) { (Get-Content $devOut -Tail 30) -join [Environment]::NewLine } else { "(khong co log)" }
@@ -259,8 +311,9 @@ try {
   exit $LASTEXITCODE
 }
 finally {
-  if ($apiProcess -and -not $apiProcess.HasExited) {
-    Stop-Process -Id $apiProcess.Id -Force -ErrorAction SilentlyContinue
+  $apiProcessObject = $apiProcess | Where-Object { $_ -is [System.Diagnostics.Process] } | Select-Object -First 1
+  if ($apiProcessObject -and -not $apiProcessObject.HasExited) {
+    Stop-ProcessTree -ProcessId $apiProcessObject.Id -Reason "host-admin shutdown"
   }
   Pop-Location
 }

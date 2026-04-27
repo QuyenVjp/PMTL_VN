@@ -13,6 +13,7 @@ type DownloadsPageProps = {
   createLabel?: string;
   entityLabel?: string;
   emptyMessage?: string;
+  searchPlaceholder?: string;
 };
 
 export function DownloadsPage({
@@ -24,6 +25,7 @@ export function DownloadsPage({
   createLabel = "Thêm tài liệu",
   entityLabel = "tài liệu",
   emptyMessage = "Chưa có tài liệu nào.",
+  searchPlaceholder = "Lọc tài liệu...",
 }: DownloadsPageProps) {
   const navigate = useNavigate();
 
@@ -45,6 +47,7 @@ export function DownloadsPage({
         detailBasePath={detailBasePath}
         entityLabel={entityLabel}
         emptyMessage={emptyMessage}
+        searchPlaceholder={searchPlaceholder}
       />
     </div>
   );

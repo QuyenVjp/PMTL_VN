@@ -97,6 +97,17 @@ export function collectionsListOptions(filters: ListCollectionsFilters = {}) {
   });
 }
 
+export function collectionDetailOptions(collectionPublicId: string) {
+  return queryOptions({
+    queryKey: mediaLibraryKeys.detail(collectionPublicId),
+    queryFn:  () =>
+      adminClient.get<{ data: CollectionListItem }>(
+        `/admin/content/media-library/collections/${collectionPublicId}`,
+      ),
+    enabled: !!collectionPublicId,
+  });
+}
+
 export function collectionItemsOptions(collectionPublicId: string) {
   return queryOptions({
     queryKey: mediaLibraryKeys.items(collectionPublicId),

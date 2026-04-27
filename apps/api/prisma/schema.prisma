@@ -59,12 +59,14 @@ enum MediaCollectionType {
   VIDEO_PLAYLIST
   MIXED_GALLERY
   FEATURED_STORY_GALLERY
+  MEDIA_FOLDER
 }
 
 enum MediaItemType {
   IMAGE
   VIDEO_EMBED
   UPLOADED_VIDEO
+  DOCUMENT
   POSTER
   EXTERNAL_PLAYLIST_LINK
 }
@@ -278,6 +280,7 @@ model MediaAsset {
   coveredCollections MediaCollection[]     @relation("collectionCover")
   postFeaturedImages Post[]                @relation("postFeaturedImage")
   guideCoverMedia BeginnerGuide[]          @relation("guideCoverMedia")
+  practiceGuideScriptureImages PracticeGuide[] @relation("practiceGuideScriptureImage")
   downloadFileMedia Download[]             @relation("downloadFileMedia")
   downloadThumbnailMedia Download[]        @relation("downloadThumbnailMedia")
   calendarCoverImages CalendarEvent[]      @relation("calendarCoverImage")
@@ -2577,6 +2580,7 @@ model PracticeGuide {
   title       String
   slug        String             @unique
   body        String             @db.Text
+  scriptureImageMediaId String?  @map("scripture_image_media_id")
   duration    Int                @default(0)   // minutes
   difficulty  PracticeGuideLevel @default(BEGINNER)
   status      ContentStatus      @default(DRAFT)
@@ -2585,8 +2589,11 @@ model PracticeGuide {
   createdAt   DateTime           @default(now()) @map("created_at")
   updatedAt   DateTime           @updatedAt @map("updated_at")
 
+  scriptureImageMedia MediaAsset? @relation("practiceGuideScriptureImage", fields: [scriptureImageMediaId], references: [id])
+
   @@index([status])
   @@index([difficulty])
+  @@index([scriptureImageMediaId])
   @@map("practice_guides")
 }
 

@@ -15,6 +15,7 @@ import {
   VowType,
   GuideCategory,
   DownloadCategory,
+  PracticeGuideLevel,
 } from "../src/generated/prisma/client.js";
 import { nanoid } from "nanoid";
 import * as argon2 from "argon2";
@@ -1723,6 +1724,327 @@ async function seedDownloads(usersByEmail: Map<string, { id: string; publicId: s
   console.log(`Seeded ${downloads.length} downloads.`);
 }
 
+const DAILY_PRACTICE_GUIDES = [
+  {
+    title: "Tịnh Khẩu Nghiệp Chân Ngôn",
+    slug: "tinh-khau-nghiep-chan-ngon",
+    body:
+      "Loại: mantra.\n\nMục đích: làm sạch khẩu nghiệp trước thời công phu hoặc nghi thức thắp tâm hương.\n\nSố biến gợi ý:\n- 7 biến: mặc định\n- 13 biến: trường hợp người chưa ăn chay theo tài liệu thắp tâm hương\n\nLời khấn: không cần lời khấn dài riêng; thường đứng ở bước chuẩn bị trước khi vào bài niệm chính.\n\nQuy tắc thời gian/ngữ cảnh:\n- Dùng trước công khóa\n- Dùng trước nghi thức thắp tâm hương\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...\n- 3. Trình tự thắp tâm hương...",
+    duration: 3,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 1,
+  },
+  {
+    title: "Chú Đại Bi",
+    slug: "chu-dai-bi",
+    body:
+      "Loại: mantra.\n\nMục đích: hộ thân, tăng công lực, hỗ trợ tiêu tai giải nạn.\n\nSố biến gợi ý:\n- 3-7 biến: công khóa hằng ngày cho người mới\n- 21 hoặc 49+ biến: trường hợp nặng theo tài liệu hằng ngày\n- 1 biến: trong nghi thức phóng sinh\n\nLời khấn mở đầu:\n“Thỉnh cầu Nam Mô Đại Từ Đại Bi Cứu Khổ Cứu Nạn Quảng Đại Linh Cảm Quán Thế Âm Bồ Tát Ma Ha Tát phù hộ cho con (tên) thân thể khỏe mạnh, tăng cường công lực.”\n\nQuy tắc thời gian/ngữ cảnh:\n- Có thể niệm trong khung 5h sáng đến 12h đêm theo tài liệu hằng ngày\n- Khi đi phóng sinh có thể bắt đầu niệm ngay trên đường\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...\n- 5. Nghi thức phóng sinh...",
+    duration: 15,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 2,
+  },
+  {
+    title: "Tâm Kinh",
+    slug: "tam-kinh",
+    body:
+      "Loại: sutra.\n\nMục đích: khai mở trí tuệ, giữ đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não.\n\nSố biến gợi ý:\n- 3-7 biến: công khóa hằng ngày\n- 1 biến: trong nghi thức phóng sinh\n\nLời khấn mở đầu:\n“Thỉnh cầu ... phù hộ cho con (tên) khai mở trí tuệ, đầu óc tỉnh táo bình tĩnh, tiêu trừ phiền não.”\n\nQuy tắc thời gian/ngữ cảnh:\n- Có thể niệm trước 10h tối và ban ngày theo tài liệu hằng ngày\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...\n- 5. Nghi thức phóng sinh...",
+    duration: 10,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 3,
+  },
+  {
+    title: "Lễ Phật Đại Sám Hối Văn",
+    slug: "le-phat-dai-sam-hoi-van",
+    body:
+      "Loại: sutra.\n\nMục đích: sám hối, tiêu trừ nghiệp chướng.\n\nSố biến gợi ý:\n- 1-7 biến: lane công khóa ngày thường\n- Ngày đặc biệt theo Q161: 21, 27, 49, 63, 79 và cụm cap 87 cho 30 Tết + Mùng 1\n\nLời khấn mở đầu:\n“Thỉnh cầu ... giúp con sám hối và tiêu trừ nghiệp chướng...”\n\nQuy tắc thời gian/ngữ cảnh:\n- Ngày thường tốt nhất tránh 22:00 đến 05:00\n- Ngày có thắp đầu hương và nhà có bàn thờ có thể mở lane 24h\n\nGuardrails:\n- Không vượt cap theo ngày hoặc cap cộng dồn của cụm ngày\n- Cap ngày đã bao gồm phần trong Kinh Bài Tập; không cộng thêm vượt trần\n- Thai phụ/sản phụ: ngày đặc biệt không vượt 7 biến\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...\n- Q161 - Lễ Phật Đại Sám Hối Văn ngày đặc biệt\n\nCần rà soát: lane ngày đặc biệt có nhiều cap theo lịch âm, cần canonical calendar rule-pack trước khi hard-code preset UI.",
+    duration: 20,
+    difficulty: PracticeGuideLevel.ADVANCED,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 4,
+  },
+  {
+    title: "Tiêu Tai Cát Tường Thần Chú",
+    slug: "tieu-tai-cat-tuong-than-chu",
+    body:
+      "Loại: mantra.\n\nMục đích: cầu bình an thuận lợi, tiêu tai cát tường.\n\nSố biến gợi ý:\n- 21\n- 27\n- 49\n\nLời khấn mở đầu:\n“Thỉnh cầu ... phù hộ cho con (tên) tiêu tai cát tường, bình an thuận lợi.”\n\nQuy tắc thời gian/ngữ cảnh:\n- Dùng như bài bổ sung trong công khóa\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...",
+    duration: 12,
+    difficulty: PracticeGuideLevel.INTERMEDIATE,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 5,
+  },
+  {
+    title: "Chuẩn Đề Thần Chú",
+    slug: "chuan-de-than-chu",
+    body:
+      "Loại: mantra.\n\nMục đích: cầu tâm tưởng sự thành.\n\nSố biến gợi ý:\n- 21\n- 27\n- 49\n\nLời khấn mở đầu:\n“Thỉnh cầu ... phù hộ cho con (tên) tâm tưởng sự thành...”\n\nQuy tắc thời gian/ngữ cảnh:\n- Dùng như bài bổ sung trong công khóa\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...",
+    duration: 8,
+    difficulty: PracticeGuideLevel.INTERMEDIATE,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 6,
+  },
+  {
+    title: "Bổ Khuyết Chân Ngôn",
+    slug: "bo-khuyet-chan-ngon",
+    body:
+      "Loại: closing-mantra.\n\nMục đích: khép lại phần niệm, dùng sau công khóa.\n\nSố biến gợi ý:\n- 3\n- 7\n\nLời khấn: không cần lời khấn riêng.\n\nQuy tắc thời gian/ngữ cảnh:\n- Niệm sau khi hoàn tất Kinh Văn Bài Tập Hằng Ngày\n- Không bắt buộc sau từng bài riêng\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...",
+    duration: 5,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 7,
+  },
+  {
+    title: "Công Đức Bảo Sơn Thần Chú",
+    slug: "cong-duc-bao-son-than-chu",
+    body:
+      "Loại: mantra.\n\nMục đích: hỗ trợ chuyển việc thiện đã làm thành công đức và dùng công đức đã có làm nền để cầu tiêu trừ nghiệp chướng hoặc cầu một việc cụ thể.\n\nSố biến gợi ý:\n- 21\n- 27\n- 49\n- 49 / 59 / 73: lane cần chuyển công đức rõ hơn theo khai thị đã được người dùng cung cấp; không coi là preset bắt buộc hằng ngày cho mọi người\n\nLời khấn/ngữ cảnh:\n- Dùng như bài hỗ trợ sau khi đã làm việc thiện / bố thí pháp / phóng sinh / gieo duyên pháp bảo\n- App chỉ được giữ prayer template và support note an toàn, không tự sinh lời khấn mới ngoài owner wording đã duyệt\n\nQuy tắc thời gian/ngữ cảnh:\n- Sáng hoặc tối đều có thể niệm\n- Không phải bài mặc định bắt buộc trong mọi công khóa hằng ngày\n- Chỉ nên được gợi ý khi user thật sự có thiện hạnh / công đức gần đây hoặc có ngữ cảnh cầu xin rõ\n\nGuardrails:\n- App không được tính số dư công đức\n- App không được hứa hẹn hiệu nghiệm hay coi đây là công cụ đổi công đức cơ giới\n- App không được ép user nhập phần trăm công đức\n\nNguồn trích xuất:\n- user-supplied guidance: Công Đức Bảo Sơn Thần Chú\n\nCần rà soát: editor chốt wording tiếng Việt chuẩn cho prayer template, distinction thiện sự -> công đức và case việc thiện quá lâu đã thành phúc đức.",
+    duration: 8,
+    difficulty: PracticeGuideLevel.ADVANCED,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 8,
+  },
+  {
+    title: "Thất Phật Diệt Tội Chân Ngôn",
+    slug: "that-phat-diet-toi-chan-ngon",
+    body:
+      "Loại: mantra.\n\nMục đích: dùng trong bước thanh tịnh, sám hối và một số nghi thức.\n\nSố biến gợi ý:\n- 3: cuối công khóa hằng ngày\n- 7: trong thắp tâm hương và nghi thức phóng sinh\n\nLời khấn: không cần lời khấn dài riêng.\n\nQuy tắc thời gian/ngữ cảnh:\n- Phụ thuộc flow\n- Nên hiển thị dưới dạng preset theo ritual context\n\nNguồn trích xuất:\n- 1. Các bước niệm kinh bài tập...\n- 3. Trình tự thắp tâm hương...\n- 5. Nghi thức phóng sinh...",
+    duration: 5,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 9,
+  },
+  {
+    title: "Kinh bài tập: Bắt đầu cho người mới",
+    slug: "kinh-bai-tap-bat-dau-cho-nguoi-moi",
+    body:
+      "Giải thích Kinh bài tập là công khóa hằng ngày, dùng để đi đều mỗi ngày và không trộn với Ngôi Nhà Nhỏ hoặc Kinh văn tự tu.\n\nNội dung cần có:\n- Kinh Bài Tập là gì\n- Khi nào nên bắt đầu\n- Bộ công khóa cơ bản cho người mới\n- Ranh giới với các surface khác",
+    duration: 8,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 10,
+  },
+  {
+    title: "Kinh bài tập: Các bước niệm cho người mới",
+    slug: "kinh-bai-tap-cac-buoc-cho-nguoi-moi",
+    body:
+      "Sắp đúng trình tự các bước niệm cơ bản cho người mới.\n\nCác phần cần quản lý:\n- Bắt đầu bằng phần chuẩn bị tâm và môi trường\n- Chú Đại Bi là bài nền tảng\n- Tâm Kinh, Lễ Phật Đại Sám Hối Văn và các bài bổ trợ phải theo đúng ngữ cảnh\n- Phần kết thúc giữ rõ bước thanh lọc và hồi hướng",
+    duration: 12,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 11,
+  },
+  {
+    title: "Kinh bài tập: Cách niệm đúng và những điều cần tránh",
+    slug: "kinh-bai-tap-cach-niem-dung",
+    body:
+      "Nhắc rõ cách niệm, nhịp đọc, xử lý gián đoạn và những điều cần tránh.\n\nGuardrails:\n- Không đánh dấu hoàn thành khi chưa thật sự niệm xong\n- Không tự tăng số biến quá sức\n- Không niệm các bài có cảnh báo trong khung giờ hoặc thời tiết không phù hợp",
+    duration: 10,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 12,
+  },
+  {
+    title: "Kinh bài tập: Câu hỏi thường gặp",
+    slug: "kinh-bai-tap-cau-hoi-thuong-gap",
+    body:
+      "Tổng hợp các câu hỏi người mới hay gặp về giờ giấc, số biến, cách bù bài, xử lý gián đoạn và ranh giới với Tiểu Phòng Tử.\n\nFAQ này là content guide để operator chỉnh nội dung dài; các câu hỏi ngắn vẫn nằm ở tab Hỏi đáp.",
+    duration: 7,
+    difficulty: PracticeGuideLevel.BEGINNER,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 13,
+  },
+  {
+    title: "Kinh bài tập: Theo từng trường hợp",
+    slug: "kinh-bai-tap-theo-tung-truong-hop",
+    body:
+      "Gợi ý hướng thực hành theo từng hoàn cảnh như người mới, người cao tuổi, người bệnh nặng hoặc người bận rộn.\n\nBài này là hub nội dung cho scenario presets; từng preset cụ thể vẫn phải được quản lý ở tab Kịch bản tu học.",
+    duration: 9,
+    difficulty: PracticeGuideLevel.INTERMEDIATE,
+    status: ContentStatus.PUBLISHED,
+    sortOrder: 14,
+  },
+] as const;
+
+const DAILY_PRACTICE_PRESETS = [
+  {
+    name: "Người mới bắt đầu",
+    scenarioType: "nguoi-moi",
+    practiceCount: 8,
+    guideSlugs: [
+      "tinh-khau-nghiep-chan-ngon",
+      "chu-dai-bi",
+      "tam-kinh",
+      "le-phat-dai-sam-hoi-van",
+      "tieu-tai-cat-tuong-than-chu",
+      "chuan-de-than-chu",
+      "bo-khuyet-chan-ngon",
+      "that-phat-diet-toi-chan-ngon",
+    ],
+  },
+  {
+    name: "Công việc và học hành",
+    scenarioType: "cong-viec-hoc-hanh",
+    practiceCount: 4,
+    guideSlugs: ["chu-dai-bi", "tam-kinh", "chuan-de-than-chu", "bo-khuyet-chan-ngon"],
+  },
+  {
+    name: "Hóa giải oán kết",
+    scenarioType: "hoa-giai-oan-ket",
+    practiceCount: 4,
+    guideSlugs: ["chu-dai-bi", "tam-kinh", "le-phat-dai-sam-hoi-van", "that-phat-diet-toi-chan-ngon"],
+  },
+  {
+    name: "Người cao tuổi",
+    scenarioType: "nguoi-cao-tuoi",
+    practiceCount: 4,
+    guideSlugs: ["chu-dai-bi", "tam-kinh", "tieu-tai-cat-tuong-than-chu", "that-phat-diet-toi-chan-ngon"],
+  },
+  {
+    name: "Bệnh nặng",
+    scenarioType: "benh-nang",
+    practiceCount: 4,
+    guideSlugs: ["chu-dai-bi", "tam-kinh", "le-phat-dai-sam-hoi-van", "that-phat-diet-toi-chan-ngon"],
+  },
+] as const;
+
+const DAILY_PRACTICE_FAQS = [
+  {
+    question: "Nên niệm Kinh bài tập vào lúc nào?",
+    answer:
+      "Ưu tiên hoàn thành trước 22h. Tránh niệm trong khung 2h đến 5h sáng. Với các bài có quy tắc mạnh như Tâm Kinh hoặc Lễ Phật Đại Sám Hối Văn thì phải giữ đúng guardrail giờ giấc.",
+    category: "thoi-gian",
+    featured: true,
+    sortOrder: 1,
+  },
+  {
+    question: "Khi mưa bão có nên tiếp tục niệm không?",
+    answer:
+      "Các bài có cảnh báo về thời tiết hoặc khí trường phải dừng theo đúng quy tắc. Các bài khác cần giữ thái độ thận trọng và không gượng ép hoàn thành đủ số biến.",
+    category: "thoi-tiet",
+    featured: true,
+    sortOrder: 2,
+  },
+  {
+    question: "Số biến Kinh bài tập có tính chung với Tiểu Phòng Tử không?",
+    answer:
+      "Không. Đây là hai ngữ cảnh hoàn toàn khác nhau. Kinh bài tập là công khóa hằng ngày, còn Tiểu Phòng Tử là một lane riêng để xử lý nghiệp và hồi hướng theo từng trường hợp.",
+    category: "ranh-gioi",
+    featured: true,
+    sortOrder: 3,
+  },
+  {
+    question: "Nếu bị gián đoạn giữa chừng thì xử lý thế nào?",
+    answer:
+      "Người dùng phải quay lại đúng bài đang niệm theo hướng dẫn của từng bài. Không giả vờ đánh dấu hoàn thành cho đủ. Các trường hợp cần niệm lại từ đầu phải được nêu rõ ngay trong bài niệm/bài chú.",
+    category: "thuc-hanh",
+    featured: false,
+    sortOrder: 4,
+  },
+] as const;
+
+async function seedDailyPracticeWorkspace() {
+  const guideIdBySlug = new Map<string, string>();
+
+  await prisma.practiceGuide.deleteMany({
+    where: {
+      slug: { in: ["vang-sinh-chu", "giai-ket-chu"] },
+    },
+  });
+
+  for (const guide of DAILY_PRACTICE_GUIDES) {
+    const seeded = await prisma.practiceGuide.upsert({
+      where: { slug: guide.slug },
+      update: {
+        title: guide.title,
+        body: guide.body,
+        duration: guide.duration,
+        difficulty: guide.difficulty,
+        status: guide.status,
+        sortOrder: guide.sortOrder,
+        publishedAt: guide.status === ContentStatus.PUBLISHED ? new Date() : null,
+      },
+      create: {
+        publicId: `seed-practice-guide-${guide.slug}`,
+        slug: guide.slug,
+        title: guide.title,
+        body: guide.body,
+        duration: guide.duration,
+        difficulty: guide.difficulty,
+        status: guide.status,
+        sortOrder: guide.sortOrder,
+        publishedAt: guide.status === ContentStatus.PUBLISHED ? new Date() : null,
+      },
+    });
+
+    guideIdBySlug.set(guide.slug, seeded.publicId);
+  }
+
+  for (const preset of DAILY_PRACTICE_PRESETS) {
+    const guideIds = preset.guideSlugs
+      .map((slug) => guideIdBySlug.get(slug))
+      .filter((value): value is string => Boolean(value));
+
+    const existing = await prisma.scenarioPreset.findFirst({
+      where: { name: preset.name, scenarioType: preset.scenarioType },
+    });
+
+    if (existing) {
+      await prisma.scenarioPreset.update({
+        where: { publicId: existing.publicId },
+        data: {
+          practiceCount: preset.practiceCount,
+          guideIds,
+        },
+      });
+      continue;
+    }
+
+    await prisma.scenarioPreset.create({
+      data: {
+        publicId: `seed-scenario-preset-${preset.scenarioType}`,
+        name: preset.name,
+        scenarioType: preset.scenarioType,
+        practiceCount: preset.practiceCount,
+        guideIds,
+      },
+    });
+  }
+
+  for (const faq of DAILY_PRACTICE_FAQS) {
+    const existing = await prisma.practiceFaq.findFirst({
+      where: { question: faq.question },
+    });
+
+    if (existing) {
+      await prisma.practiceFaq.update({
+        where: { publicId: existing.publicId },
+        data: {
+          answer: faq.answer,
+          category: faq.category,
+          featured: faq.featured,
+          sortOrder: faq.sortOrder,
+        },
+      });
+      continue;
+    }
+
+    await prisma.practiceFaq.create({
+      data: {
+        publicId: `seed-practice-faq-${faq.sortOrder}`,
+        question: faq.question,
+        answer: faq.answer,
+        category: faq.category,
+        featured: faq.featured,
+        sortOrder: faq.sortOrder,
+      },
+    });
+  }
+
+  console.log(`Seeded ${DAILY_PRACTICE_GUIDES.length} practice guides, ${DAILY_PRACTICE_PRESETS.length} presets, ${DAILY_PRACTICE_FAQS.length} FAQs.`);
+}
+
 // ============================================================================
 // VOWS & LIFE RELEASE JOURNALS SEED
 // ============================================================================
@@ -1923,6 +2245,7 @@ async function main() {
     await seedPushSubscriptions(usersByEmail);
     await seedBeginnerGuides(usersByEmail);
     await seedDownloads(usersByEmail);
+    await seedDailyPracticeWorkspace();
     await seedVowsAndJournals(usersByEmail);
     await printSeedSummary();
   } catch (error) {

@@ -70,7 +70,8 @@ export const MediaCollectionType = {
   PHOTO_ALBUM: 'PHOTO_ALBUM',
   VIDEO_PLAYLIST: 'VIDEO_PLAYLIST',
   MIXED_GALLERY: 'MIXED_GALLERY',
-  FEATURED_STORY_GALLERY: 'FEATURED_STORY_GALLERY'
+  FEATURED_STORY_GALLERY: 'FEATURED_STORY_GALLERY',
+  MEDIA_FOLDER: 'MEDIA_FOLDER'
 } as const
 
 export type MediaCollectionType = (typeof MediaCollectionType)[keyof typeof MediaCollectionType]
@@ -80,6 +81,7 @@ export const MediaItemType = {
   IMAGE: 'IMAGE',
   VIDEO_EMBED: 'VIDEO_EMBED',
   UPLOADED_VIDEO: 'UPLOADED_VIDEO',
+  DOCUMENT: 'DOCUMENT',
   POSTER: 'POSTER',
   EXTERNAL_PLAYLIST_LINK: 'EXTERNAL_PLAYLIST_LINK'
 } as const

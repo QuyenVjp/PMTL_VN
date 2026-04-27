@@ -42,6 +42,7 @@ export type PracticeGuideMinAggregateOutputType = {
   title: string | null
   slug: string | null
   body: string | null
+  scriptureImageMediaId: string | null
   duration: number | null
   difficulty: $Enums.PracticeGuideLevel | null
   status: $Enums.ContentStatus | null
@@ -57,6 +58,7 @@ export type PracticeGuideMaxAggregateOutputType = {
   title: string | null
   slug: string | null
   body: string | null
+  scriptureImageMediaId: string | null
   duration: number | null
   difficulty: $Enums.PracticeGuideLevel | null
   status: $Enums.ContentStatus | null
@@ -72,6 +74,7 @@ export type PracticeGuideCountAggregateOutputType = {
   title: number
   slug: number
   body: number
+  scriptureImageMediaId: number
   duration: number
   difficulty: number
   status: number
@@ -99,6 +102,7 @@ export type PracticeGuideMinAggregateInputType = {
   title?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   body?: true | runtime.Types.Skip
+  scriptureImageMediaId?: true | runtime.Types.Skip
   duration?: true | runtime.Types.Skip
   difficulty?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
@@ -114,6 +118,7 @@ export type PracticeGuideMaxAggregateInputType = {
   title?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   body?: true | runtime.Types.Skip
+  scriptureImageMediaId?: true | runtime.Types.Skip
   duration?: true | runtime.Types.Skip
   difficulty?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
@@ -129,6 +134,7 @@ export type PracticeGuideCountAggregateInputType = {
   title?: true | runtime.Types.Skip
   slug?: true | runtime.Types.Skip
   body?: true | runtime.Types.Skip
+  scriptureImageMediaId?: true | runtime.Types.Skip
   duration?: true | runtime.Types.Skip
   difficulty?: true | runtime.Types.Skip
   status?: true | runtime.Types.Skip
@@ -231,6 +237,7 @@ export type PracticeGuideGroupByOutputType = {
   title: string
   slug: string
   body: string
+  scriptureImageMediaId: string | null
   duration: number
   difficulty: $Enums.PracticeGuideLevel
   status: $Enums.ContentStatus
@@ -269,6 +276,7 @@ export type PracticeGuideWhereInput = {
   title?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
   slug?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
   body?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.StringNullableFilter<"PracticeGuide"> | string | null | runtime.Types.Skip
   duration?: Prisma.IntFilter<"PracticeGuide"> | number | runtime.Types.Skip
   difficulty?: Prisma.EnumPracticeGuideLevelFilter<"PracticeGuide"> | $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFilter<"PracticeGuide"> | $Enums.ContentStatus | runtime.Types.Skip
@@ -276,6 +284,7 @@ export type PracticeGuideWhereInput = {
   publishedAt?: Prisma.DateTimeNullableFilter<"PracticeGuide"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
+  scriptureImageMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }
 
 export type PracticeGuideOrderByWithRelationInput = {
@@ -284,6 +293,7 @@ export type PracticeGuideOrderByWithRelationInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   body?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   duration?: Prisma.SortOrder | runtime.Types.Skip
   difficulty?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
@@ -291,6 +301,7 @@ export type PracticeGuideOrderByWithRelationInput = {
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   createdAt?: Prisma.SortOrder | runtime.Types.Skip
   updatedAt?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMedia?: Prisma.MediaAssetOrderByWithRelationInput | runtime.Types.Skip
 }
 
 export type PracticeGuideWhereUniqueInput = Prisma.AtLeast<{
@@ -302,6 +313,7 @@ export type PracticeGuideWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PracticeGuideWhereInput | Prisma.PracticeGuideWhereInput[] | runtime.Types.Skip
   title?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
   body?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.StringNullableFilter<"PracticeGuide"> | string | null | runtime.Types.Skip
   duration?: Prisma.IntFilter<"PracticeGuide"> | number | runtime.Types.Skip
   difficulty?: Prisma.EnumPracticeGuideLevelFilter<"PracticeGuide"> | $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFilter<"PracticeGuide"> | $Enums.ContentStatus | runtime.Types.Skip
@@ -309,6 +321,7 @@ export type PracticeGuideWhereUniqueInput = Prisma.AtLeast<{
   publishedAt?: Prisma.DateTimeNullableFilter<"PracticeGuide"> | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
+  scriptureImageMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null | runtime.Types.Skip
 }, "id" | "publicId" | "slug">
 
 export type PracticeGuideOrderByWithAggregationInput = {
@@ -317,6 +330,7 @@ export type PracticeGuideOrderByWithAggregationInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   body?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.SortOrderInput | Prisma.SortOrder | runtime.Types.Skip
   duration?: Prisma.SortOrder | runtime.Types.Skip
   difficulty?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
@@ -340,6 +354,7 @@ export type PracticeGuideScalarWhereWithAggregatesInput = {
   title?: Prisma.StringWithAggregatesFilter<"PracticeGuide"> | string | runtime.Types.Skip
   slug?: Prisma.StringWithAggregatesFilter<"PracticeGuide"> | string | runtime.Types.Skip
   body?: Prisma.StringWithAggregatesFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.StringNullableWithAggregatesFilter<"PracticeGuide"> | string | null | runtime.Types.Skip
   duration?: Prisma.IntWithAggregatesFilter<"PracticeGuide"> | number | runtime.Types.Skip
   difficulty?: Prisma.EnumPracticeGuideLevelWithAggregatesFilter<"PracticeGuide"> | $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: Prisma.EnumContentStatusWithAggregatesFilter<"PracticeGuide"> | $Enums.ContentStatus | runtime.Types.Skip
@@ -362,6 +377,7 @@ export type PracticeGuideCreateInput = {
   publishedAt?: Date | string | null | runtime.Types.Skip
   createdAt?: Date | string | runtime.Types.Skip
   updatedAt?: Date | string | runtime.Types.Skip
+  scriptureImageMedia?: Prisma.MediaAssetCreateNestedOneWithoutPracticeGuideScriptureImagesInput | runtime.Types.Skip
 }
 
 export type PracticeGuideUncheckedCreateInput = {
@@ -370,6 +386,7 @@ export type PracticeGuideUncheckedCreateInput = {
   title: string
   slug: string
   body: string
+  scriptureImageMediaId?: string | null | runtime.Types.Skip
   duration?: number | runtime.Types.Skip
   difficulty?: $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
@@ -392,6 +409,7 @@ export type PracticeGuideUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  scriptureImageMedia?: Prisma.MediaAssetUpdateOneWithoutPracticeGuideScriptureImagesNestedInput | runtime.Types.Skip
 }
 
 export type PracticeGuideUncheckedUpdateInput = {
@@ -400,6 +418,7 @@ export type PracticeGuideUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   body?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   duration?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   difficulty?: Prisma.EnumPracticeGuideLevelFieldUpdateOperationsInput | $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
@@ -415,6 +434,7 @@ export type PracticeGuideCreateManyInput = {
   title: string
   slug: string
   body: string
+  scriptureImageMediaId?: string | null | runtime.Types.Skip
   duration?: number | runtime.Types.Skip
   difficulty?: $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: $Enums.ContentStatus | runtime.Types.Skip
@@ -445,6 +465,7 @@ export type PracticeGuideUncheckedUpdateManyInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
   body?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null | runtime.Types.Skip
   duration?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
   difficulty?: Prisma.EnumPracticeGuideLevelFieldUpdateOperationsInput | $Enums.PracticeGuideLevel | runtime.Types.Skip
   status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
@@ -454,12 +475,23 @@ export type PracticeGuideUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
+export type PracticeGuideListRelationFilter = {
+  every?: Prisma.PracticeGuideWhereInput | runtime.Types.Skip
+  some?: Prisma.PracticeGuideWhereInput | runtime.Types.Skip
+  none?: Prisma.PracticeGuideWhereInput | runtime.Types.Skip
+}
+
+export type PracticeGuideOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder | runtime.Types.Skip
+}
+
 export type PracticeGuideCountOrderByAggregateInput = {
   id?: Prisma.SortOrder | runtime.Types.Skip
   publicId?: Prisma.SortOrder | runtime.Types.Skip
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   body?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.SortOrder | runtime.Types.Skip
   duration?: Prisma.SortOrder | runtime.Types.Skip
   difficulty?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
@@ -480,6 +512,7 @@ export type PracticeGuideMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   body?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.SortOrder | runtime.Types.Skip
   duration?: Prisma.SortOrder | runtime.Types.Skip
   difficulty?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
@@ -495,6 +528,7 @@ export type PracticeGuideMinOrderByAggregateInput = {
   title?: Prisma.SortOrder | runtime.Types.Skip
   slug?: Prisma.SortOrder | runtime.Types.Skip
   body?: Prisma.SortOrder | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.SortOrder | runtime.Types.Skip
   duration?: Prisma.SortOrder | runtime.Types.Skip
   difficulty?: Prisma.SortOrder | runtime.Types.Skip
   status?: Prisma.SortOrder | runtime.Types.Skip
@@ -509,8 +543,185 @@ export type PracticeGuideSumOrderByAggregateInput = {
   sortOrder?: Prisma.SortOrder | runtime.Types.Skip
 }
 
+export type PracticeGuideCreateNestedManyWithoutScriptureImageMediaInput = {
+  create?: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput> | Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput[] | Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput | Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.PracticeGuideCreateManyScriptureImageMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PracticeGuideUncheckedCreateNestedManyWithoutScriptureImageMediaInput = {
+  create?: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput> | Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput[] | Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput | Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.PracticeGuideCreateManyScriptureImageMediaInputEnvelope | runtime.Types.Skip
+  connect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+}
+
+export type PracticeGuideUpdateManyWithoutScriptureImageMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput> | Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput[] | Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput | Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.PracticeGuideUpsertWithWhereUniqueWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpsertWithWhereUniqueWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.PracticeGuideCreateManyScriptureImageMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PracticeGuideUpdateWithWhereUniqueWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpdateWithWhereUniqueWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PracticeGuideUpdateManyWithWhereWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpdateManyWithWhereWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PracticeGuideScalarWhereInput | Prisma.PracticeGuideScalarWhereInput[] | runtime.Types.Skip
+}
+
+export type PracticeGuideUncheckedUpdateManyWithoutScriptureImageMediaNestedInput = {
+  create?: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput> | Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput[] | Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  connectOrCreate?: Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput | Prisma.PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  upsert?: Prisma.PracticeGuideUpsertWithWhereUniqueWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpsertWithWhereUniqueWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  createMany?: Prisma.PracticeGuideCreateManyScriptureImageMediaInputEnvelope | runtime.Types.Skip
+  set?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  disconnect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  delete?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  connect?: Prisma.PracticeGuideWhereUniqueInput | Prisma.PracticeGuideWhereUniqueInput[] | runtime.Types.Skip
+  update?: Prisma.PracticeGuideUpdateWithWhereUniqueWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpdateWithWhereUniqueWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  updateMany?: Prisma.PracticeGuideUpdateManyWithWhereWithoutScriptureImageMediaInput | Prisma.PracticeGuideUpdateManyWithWhereWithoutScriptureImageMediaInput[] | runtime.Types.Skip
+  deleteMany?: Prisma.PracticeGuideScalarWhereInput | Prisma.PracticeGuideScalarWhereInput[] | runtime.Types.Skip
+}
+
 export type EnumPracticeGuideLevelFieldUpdateOperationsInput = {
   set?: $Enums.PracticeGuideLevel | runtime.Types.Skip
+}
+
+export type PracticeGuideCreateWithoutScriptureImageMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  body: string
+  duration?: number | runtime.Types.Skip
+  difficulty?: $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  body: string
+  duration?: number | runtime.Types.Skip
+  difficulty?: $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideCreateOrConnectWithoutScriptureImageMediaInput = {
+  where: Prisma.PracticeGuideWhereUniqueInput
+  create: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput>
+}
+
+export type PracticeGuideCreateManyScriptureImageMediaInputEnvelope = {
+  data: Prisma.PracticeGuideCreateManyScriptureImageMediaInput | Prisma.PracticeGuideCreateManyScriptureImageMediaInput[]
+  skipDuplicates?: boolean | runtime.Types.Skip
+}
+
+export type PracticeGuideUpsertWithWhereUniqueWithoutScriptureImageMediaInput = {
+  where: Prisma.PracticeGuideWhereUniqueInput
+  update: Prisma.XOR<Prisma.PracticeGuideUpdateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedUpdateWithoutScriptureImageMediaInput>
+  create: Prisma.XOR<Prisma.PracticeGuideCreateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedCreateWithoutScriptureImageMediaInput>
+}
+
+export type PracticeGuideUpdateWithWhereUniqueWithoutScriptureImageMediaInput = {
+  where: Prisma.PracticeGuideWhereUniqueInput
+  data: Prisma.XOR<Prisma.PracticeGuideUpdateWithoutScriptureImageMediaInput, Prisma.PracticeGuideUncheckedUpdateWithoutScriptureImageMediaInput>
+}
+
+export type PracticeGuideUpdateManyWithWhereWithoutScriptureImageMediaInput = {
+  where: Prisma.PracticeGuideScalarWhereInput
+  data: Prisma.XOR<Prisma.PracticeGuideUpdateManyMutationInput, Prisma.PracticeGuideUncheckedUpdateManyWithoutScriptureImageMediaInput>
+}
+
+export type PracticeGuideScalarWhereInput = {
+  AND?: Prisma.PracticeGuideScalarWhereInput | Prisma.PracticeGuideScalarWhereInput[] | runtime.Types.Skip
+  OR?: Prisma.PracticeGuideScalarWhereInput[] | runtime.Types.Skip
+  NOT?: Prisma.PracticeGuideScalarWhereInput | Prisma.PracticeGuideScalarWhereInput[] | runtime.Types.Skip
+  id?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  publicId?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  title?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  slug?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  body?: Prisma.StringFilter<"PracticeGuide"> | string | runtime.Types.Skip
+  scriptureImageMediaId?: Prisma.StringNullableFilter<"PracticeGuide"> | string | null | runtime.Types.Skip
+  duration?: Prisma.IntFilter<"PracticeGuide"> | number | runtime.Types.Skip
+  difficulty?: Prisma.EnumPracticeGuideLevelFilter<"PracticeGuide"> | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFilter<"PracticeGuide"> | $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: Prisma.IntFilter<"PracticeGuide"> | number | runtime.Types.Skip
+  publishedAt?: Prisma.DateTimeNullableFilter<"PracticeGuide"> | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFilter<"PracticeGuide"> | Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideCreateManyScriptureImageMediaInput = {
+  id?: string | runtime.Types.Skip
+  publicId: string
+  title: string
+  slug: string
+  body: string
+  duration?: number | runtime.Types.Skip
+  difficulty?: $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: number | runtime.Types.Skip
+  publishedAt?: Date | string | null | runtime.Types.Skip
+  createdAt?: Date | string | runtime.Types.Skip
+  updatedAt?: Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideUpdateWithoutScriptureImageMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  body?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  duration?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  difficulty?: Prisma.EnumPracticeGuideLevelFieldUpdateOperationsInput | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideUncheckedUpdateWithoutScriptureImageMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  body?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  duration?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  difficulty?: Prisma.EnumPracticeGuideLevelFieldUpdateOperationsInput | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+}
+
+export type PracticeGuideUncheckedUpdateManyWithoutScriptureImageMediaInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  title?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  slug?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  body?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  duration?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  difficulty?: Prisma.EnumPracticeGuideLevelFieldUpdateOperationsInput | $Enums.PracticeGuideLevel | runtime.Types.Skip
+  status?: Prisma.EnumContentStatusFieldUpdateOperationsInput | $Enums.ContentStatus | runtime.Types.Skip
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null | runtime.Types.Skip
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string | runtime.Types.Skip
 }
 
 
@@ -521,6 +732,7 @@ export type PracticeGuideSelect<ExtArgs extends runtime.Types.Extensions.Interna
   title?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   body?: boolean | runtime.Types.Skip
+  scriptureImageMediaId?: boolean | runtime.Types.Skip
   duration?: boolean | runtime.Types.Skip
   difficulty?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
@@ -528,6 +740,7 @@ export type PracticeGuideSelect<ExtArgs extends runtime.Types.Extensions.Interna
   publishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["practiceGuide"]>
 
 export type PracticeGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -536,6 +749,7 @@ export type PracticeGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   title?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   body?: boolean | runtime.Types.Skip
+  scriptureImageMediaId?: boolean | runtime.Types.Skip
   duration?: boolean | runtime.Types.Skip
   difficulty?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
@@ -543,6 +757,7 @@ export type PracticeGuideSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   publishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["practiceGuide"]>
 
 export type PracticeGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -551,6 +766,7 @@ export type PracticeGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   title?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   body?: boolean | runtime.Types.Skip
+  scriptureImageMediaId?: boolean | runtime.Types.Skip
   duration?: boolean | runtime.Types.Skip
   difficulty?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
@@ -558,6 +774,7 @@ export type PracticeGuideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   publishedAt?: boolean | runtime.Types.Skip
   createdAt?: boolean | runtime.Types.Skip
   updatedAt?: boolean | runtime.Types.Skip
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
 }, ExtArgs["result"]["practiceGuide"]>
 
 export type PracticeGuideSelectScalar = {
@@ -566,6 +783,7 @@ export type PracticeGuideSelectScalar = {
   title?: boolean | runtime.Types.Skip
   slug?: boolean | runtime.Types.Skip
   body?: boolean | runtime.Types.Skip
+  scriptureImageMediaId?: boolean | runtime.Types.Skip
   duration?: boolean | runtime.Types.Skip
   difficulty?: boolean | runtime.Types.Skip
   status?: boolean | runtime.Types.Skip
@@ -575,17 +793,29 @@ export type PracticeGuideSelectScalar = {
   updatedAt?: boolean | runtime.Types.Skip
 }
 
-export type PracticeGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "body" | "duration" | "difficulty" | "status" | "sortOrder" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["practiceGuide"], runtime.Types.Skip>
+export type PracticeGuideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "title" | "slug" | "body" | "scriptureImageMediaId" | "duration" | "difficulty" | "status" | "sortOrder" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["practiceGuide"], runtime.Types.Skip>
+export type PracticeGuideInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
+}
+export type PracticeGuideIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
+}
+export type PracticeGuideIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  scriptureImageMedia?: boolean | Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> | runtime.Types.Skip
+}
 
 export type $PracticeGuidePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PracticeGuide"
-  objects: {}
+  objects: {
+    scriptureImageMedia: Prisma.$MediaAssetPayload<ExtArgs> | null
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     publicId: string
     title: string
     slug: string
     body: string
+    scriptureImageMediaId: string | null
     duration: number
     difficulty: $Enums.PracticeGuideLevel
     status: $Enums.ContentStatus
@@ -987,6 +1217,7 @@ readonly fields: PracticeGuideFieldRefs;
  */
 export interface Prisma__PracticeGuideClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  scriptureImageMedia<T extends Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PracticeGuide$scriptureImageMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1021,6 +1252,7 @@ export interface PracticeGuideFieldRefs {
   readonly title: Prisma.FieldRef<"PracticeGuide", 'String'>
   readonly slug: Prisma.FieldRef<"PracticeGuide", 'String'>
   readonly body: Prisma.FieldRef<"PracticeGuide", 'String'>
+  readonly scriptureImageMediaId: Prisma.FieldRef<"PracticeGuide", 'String'>
   readonly duration: Prisma.FieldRef<"PracticeGuide", 'Int'>
   readonly difficulty: Prisma.FieldRef<"PracticeGuide", 'PracticeGuideLevel'>
   readonly status: Prisma.FieldRef<"PracticeGuide", 'ContentStatus'>
@@ -1045,6 +1277,10 @@ export type PracticeGuideFindUniqueArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
+  /**
    * Filter, which PracticeGuide to fetch.
    */
   where: Prisma.PracticeGuideWhereUniqueInput
@@ -1063,6 +1299,10 @@ export type PracticeGuideFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Ext
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
+  /**
    * Filter, which PracticeGuide to fetch.
    */
   where: Prisma.PracticeGuideWhereUniqueInput
@@ -1080,6 +1320,10 @@ export type PracticeGuideFindFirstArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the PracticeGuide
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
   /**
    * Filter, which PracticeGuide to fetch.
    */
@@ -1129,6 +1373,10 @@ export type PracticeGuideFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
+  /**
    * Filter, which PracticeGuide to fetch.
    */
   where?: Prisma.PracticeGuideWhereInput | runtime.Types.Skip
@@ -1176,6 +1424,10 @@ export type PracticeGuideFindManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the PracticeGuide
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
   /**
    * Filter, which PracticeGuides to fetch.
    */
@@ -1225,6 +1477,10 @@ export type PracticeGuideCreateArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
+  /**
    * The data needed to create a PracticeGuide.
    */
   data: Prisma.XOR<Prisma.PracticeGuideCreateInput, Prisma.PracticeGuideUncheckedCreateInput>
@@ -1258,6 +1514,10 @@ export type PracticeGuideCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    */
   data: Prisma.PracticeGuideCreateManyInput | Prisma.PracticeGuideCreateManyInput[]
   skipDuplicates?: boolean | runtime.Types.Skip
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1272,6 +1532,10 @@ export type PracticeGuideUpdateArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the PracticeGuide
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
   /**
    * The data needed to update a PracticeGuide.
    */
@@ -1324,6 +1588,10 @@ export type PracticeGuideUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * Limit how many PracticeGuides to update.
    */
   limit?: number | runtime.Types.Skip
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1338,6 +1606,10 @@ export type PracticeGuideUpsertArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the PracticeGuide
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
   /**
    * The filter to search for the PracticeGuide to update in case it exists.
    */
@@ -1365,6 +1637,10 @@ export type PracticeGuideDeleteArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
+  /**
    * Filter which PracticeGuide to delete.
    */
   where: Prisma.PracticeGuideWhereUniqueInput
@@ -1385,6 +1661,25 @@ export type PracticeGuideDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
+ * PracticeGuide.scriptureImageMedia
+ */
+export type PracticeGuide$scriptureImageMediaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MediaAsset
+   */
+  select?: Prisma.MediaAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MediaAsset
+   */
+  omit?: Prisma.MediaAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MediaAssetInclude<ExtArgs> | null
+  where?: Prisma.MediaAssetWhereInput | runtime.Types.Skip
+}
+
+/**
  * PracticeGuide without action
  */
 export type PracticeGuideDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1396,4 +1691,8 @@ export type PracticeGuideDefaultArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the PracticeGuide
    */
   omit?: Prisma.PracticeGuideOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PracticeGuideInclude<ExtArgs> | null
 }
